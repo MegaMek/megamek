@@ -33,7 +33,77 @@ package megamek.common.rules.core;
  */
 
 
+import megamek.common.RangeType;
+import megamek.common.ToHitData;
 import megamek.common.rules.RulesC3;
+import megamek.common.units.Entity;
 
 public class CoreRulesC3 extends RulesC3 {
+
+    /**
+     * {@inheritDoc}
+     * C3 can be used with ECM affecting it. Core p.198
+     */
+    @Override
+    public int getC3RangeToUse(int range, int c3range, int c3ecmRange) {
+        if ((c3range > c3ecmRange) && (range > c3ecmRange)) {
+            return c3ecmRange;
+        } else if (range > c3range) {
+            return c3range;
+        }
+        return RangeType.RANGE_OUT;
+    }
+    
+    /**
+     * {@inheritDoc}
+     * C3 and ECM can interact to lower values. Core p.198
+     */
+    @Override
+    public void getC3RangeModifier(ToHitData mods, int range, int usingRange, int c3ecmRange, int c3range,
+          boolean ecmAffected, Entity attacker) {
+        if (usingRange == c3ecmRange && usingRange != c3range && ecmAffected) {
+            // Halve the bonus, so we need to know what the original range was too.
+            int rangeModifier = 0;
+            if (range == RangeType.RANGE_LONG) {
+                rangeModifier = attacker.getLongRangeModifier();
+            } else if (range == RangeType.RANGE_MEDIUM) {
+                rangeModifier = attacker.getMediumRangeModifier();
+            } else if (range == RangeType.RANGE_EXTREME) {
+                rangeModifier = attacker.getExtremeRangeModifier();
+            }
+            if ((c3ecmRange == RangeType.RANGE_SHORT) || (c3ecmRange == RangeType.RANGE_MINIMUM)) {
+                rangeModifier = (rangeModifier + attacker.getShortRangeModifier()) / 2;
+                mods.addModifier(rangeModifier, "short range due to C3 spotter under ECM");
+            } else if (c3ecmRange == RangeType.RANGE_MEDIUM) {
+                rangeModifier = (rangeModifier + attacker.getMediumRangeModifier()) / 2;
+                mods.addModifier(rangeModifier, "medium range due to C3 spotter under ECM");
+            } else if (c3ecmRange == RangeType.RANGE_LONG) {
+                rangeModifier = (rangeModifier + attacker.getLongRangeModifier()) / 2;
+                mods.addModifier(rangeModifier, "long range due to C3 spotter under ECM");
+            }
+        } else {
+            // Normal C3 operation, no ECM
+            if ((c3range == RangeType.RANGE_SHORT) || (c3range == RangeType.RANGE_MINIMUM)) {
+                mods.addModifier(attacker.getShortRangeModifier(), "short range due to C3 spotter");
+            } else if (c3range == RangeType.RANGE_MEDIUM) {
+                mods.addModifier(attacker.getMediumRangeModifier(), "medium range due to C3 spotter");
+            } else if (c3range == RangeType.RANGE_LONG) {
+                mods.addModifier(attacker.getLongRangeModifier(), "long range due to C3 spotter");
+            }
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     * C3 spotters require LOS to target. Core p.198
+     */
+    @Override
+    public boolean c3SpotterLOSRequired() { return true; }
+    
+    /**
+     * {@inheritDoc}
+     * C3 can work with ECM, it is just reduced. Core p.198
+     */
+    @Override
+    public boolean c3AllowedWithECM() { return true; }
 }

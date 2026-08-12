@@ -32,5 +32,49 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import megamek.common.equipment.WeaponType;
+
 public abstract class RulesUnderwater {
+
+    /**
+     * What is the target number for the breach.
+     *
+     * @return the breach target number
+     */
+    public abstract int getBreachTarget();
+
+    /**
+     * Does water block LOS?
+     *
+     * @return true if water blocks line of sight
+     */
+    public abstract boolean waterBlocksLOS();
+
+    /**
+     * Get the short range of the weapon in water
+     * @param weaponType
+     * @return short range
+     */
+    public abstract int getShortRange(WeaponType weaponType);
+
+    /**
+     * Get the medium range of the weapon in water
+     * @param weaponType
+     * @return medium range
+     */
+    public abstract int getMediumRange(WeaponType weaponType);
+
+    /**
+     * Get the long range of the weapon in water
+     * @param weaponType
+     * @return long range
+     */
+    public abstract int getLongRange(WeaponType weaponType);
+
+    /**
+     * Get the extreme range of the weapon in water
+     * @param weaponType
+     * @return extreme range
+     */
+    public abstract int getExtremeRange(WeaponType weaponType);
 }

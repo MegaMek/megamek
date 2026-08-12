@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -72,6 +72,8 @@ import megamek.common.weapons.missiles.MMLWeapon;
 import megamek.common.weapons.missiles.rocketLauncher.RLWeapon;
 import megamek.common.weapons.mortars.MekMortarWeapon;
 import megamek.common.weapons.ppc.clan.CLPlasmaCannon;
+import megamek.common.weapons.ppc.innerSphere.ISHeavyPlasmaRifle;
+import megamek.common.weapons.ppc.innerSphere.ISLightPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISPlasmaRifle;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.common.weapons.srms.StreakSRMWeapon;
@@ -601,6 +603,8 @@ public class ModelRecord extends AbstractUnitRecord {
                     if (eq instanceof FlamerWeapon ||
                           eq instanceof BAFlamerWeapon ||
                           eq instanceof ISPlasmaRifle ||
+                          eq instanceof ISLightPlasmaRifle ||
+                          eq instanceof ISHeavyPlasmaRifle ||
                           eq instanceof CLPlasmaCannon) {
                         incendiary = true;
                     }
@@ -1091,7 +1095,7 @@ public class ModelRecord extends AbstractUnitRecord {
             }
         } else if (checkWeapon instanceof CLBAMGBearhunterSuperheavy) {
             return extremelyEffective;
-        } else if (checkWeapon instanceof ISPlasmaRifle ||
+        } else if (checkWeapon instanceof ISPlasmaRifle || checkWeapon instanceof ISLightPlasmaRifle || checkWeapon instanceof ISHeavyPlasmaRifle ||
               checkWeapon instanceof CLPlasmaCannon) {
             return veryEffective;
         } else if (checkWeapon instanceof ISPulseLaserSmall ||

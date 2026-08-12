@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,8 +44,8 @@ import megamek.common.compute.Compute;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
-import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.options.IOption;
+import megamek.common.options.PilotOptions;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.verifier.EntityVerifier;
@@ -84,21 +84,34 @@ public class InfantryTROView extends TROView {
               String.format("%d %s",
                     inf.getSecondaryWeaponsPerSquad() * inf.getSquadCount(),
                     inf.getSecondaryWeapon().getName()));
-        final EquipmentType armorKit = inf.getArmorKit();
-        if (null != armorKit) {
-            setModelData("armorKit", armorKit.getName());
+        String armorName;
+        if (inf.hasArmor()) {
+            EquipmentType armor = inf.getArmorKit();
+            if (null != armor) {
+                armorName = armor.getName();
+            } else {
+                armorName = inf.getCustomArmorName() != null ? inf.getCustomArmorName()
+                      : Messages.getString("TROView.Custom");
+                if (!inf.getArmorSpecials().isBlank()) {
+                    armorName += " " + inf.getArmorSpecials();
+                }
+            }
+        } else {
+            armorName = Messages.getString("TROView.None");
+            if (!inf.getArmorSpecials().isBlank()) {
+                armorName += " " + inf.getArmorSpecials();
+            }
         }
+        setModelData("armorKit", armorName);
 
         final List<String> notes = new ArrayList<>();
         addWeaponNotes(notes);
-        if (null != armorKit) {
-            addArmorNotes(notes, armorKit);
-        }
+        addArmorNotes(notes);
         addAugmentationNotes(notes);
         if (notes.isEmpty()) {
             setModelData("notes", Messages.getString("TROView.None"));
         } else {
-            setModelData("notes", String.join(" ", notes));
+            setModelData("notes", String.join("\n", notes));
         }
 
         if (inf.getMount() != null) {
@@ -241,24 +254,25 @@ public class InfantryTROView extends TROView {
         }
     }
 
-    private void addArmorNotes(List<String> notes, EquipmentType armorKit) {
-        if (armorKit.hasFlag(MiscTypeFlag.S_DEST)) {
+    private void addArmorNotes(List<String> notes) {
+        if (inf.hasDEST()) {
             notes.add(Messages.getString("TROView.InfantryNote.DESTArmor"));
-        }
-        if (armorKit.hasFlag(MiscTypeFlag.S_SNEAK_CAMO)) {
-            notes.add(Messages.getString("TROView.InfantryNote.CamoArmor"));
-        }
-        if (armorKit.hasFlag(MiscTypeFlag.S_SNEAK_IR)) {
-            notes.add(Messages.getString("TROView.InfantryNote.IRArmor"));
-        }
-        if (armorKit.hasFlag(MiscTypeFlag.S_SNEAK_ECM)) {
-            notes.add(Messages.getString("TROView.InfantryNote.ECMArmor"));
+        } else {
+            if (inf.hasSneakCamo()) {
+                notes.add(Messages.getString("TROView.InfantryNote.CamoArmor"));
+            }
+            if (inf.hasSneakIR()) {
+                notes.add(Messages.getString("TROView.InfantryNote.IRArmor"));
+            }
+            if (inf.hasSneakECM()) {
+                notes.add(Messages.getString("TROView.InfantryNote.ECMArmor"));
+            }
         }
     }
 
     private void addAugmentationNotes(List<String> notes) {
         final List<IOption> options = new ArrayList<>();
-        for (final Enumeration<IOption> e = inf.getCrew().getOptions().getOptions(); e.hasMoreElements(); ) {
+        for (final Enumeration<IOption> e = inf.getCrew().getOptions(PilotOptions.MD_ADVANTAGES); e.hasMoreElements(); ) {
             final IOption option = e.nextElement();
             if (option.booleanValue()) {
                 options.add(option);
@@ -266,8 +280,10 @@ public class InfantryTROView extends TROView {
         }
         if (!options.isEmpty()) {
             notes.add(Messages.getString("TROView.InfantryNote.Augmented"));
-            options.forEach(o -> notes.add(o.getDisplayableName().replaceAll("\\s+\\(Not Implemented\\)", "") + ": "
-                  + o.getDescription().replaceAll("See IO.*", "")));
+            options.forEach(o -> notes.add(o.getDisplayableName().replaceAll(
+                  Messages.getString("TROView.InfantryNote.notImplementedRegex"), "") +
+                  ": " +
+                  o.getDescription().replaceAll(Messages.getString("TROView.InfantryNote.seeIORegex"), "")));
         }
     }
 }

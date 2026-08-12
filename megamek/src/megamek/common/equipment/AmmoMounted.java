@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,6 +44,8 @@ import megamek.common.units.Entity;
 
 public class AmmoMounted extends Mounted<AmmoType> {
 
+    private boolean halfLoadAmmo = false;
+    
     public AmmoMounted(Entity entity, AmmoType type) {
         super(entity, type);
 
@@ -51,6 +53,22 @@ public class AmmoMounted extends Mounted<AmmoType> {
         setSize(type.getTonnage(entity));
     }
 
+    /**
+     * Is this bin be marked for half ammo loading?
+     * @return if half loading has been set
+     */
+    public boolean isHalfLoadAmmo() {
+        return halfLoadAmmo;
+    }
+
+    /**
+     * Set whether this bin should be half-loaded or not
+     * @param bHalfLoad
+     */
+    public void setHalfLoadAmmo(boolean bHalfLoad) {
+        halfLoadAmmo = bHalfLoad;
+    }
+    
     /**
      * Change the type of ammo in this bin
      *

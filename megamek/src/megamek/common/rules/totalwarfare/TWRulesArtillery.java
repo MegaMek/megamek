@@ -34,7 +34,21 @@ package megamek.common.rules.totalwarfare;
  */
 
 
-import megamek.common.rules.core.CoreRulesArtillery;
+import megamek.common.rules.RulesArtillery;
 
-public class TWRulesArtillery extends CoreRulesArtillery {
+public class TWRulesArtillery extends RulesArtillery {
+
+    /**
+     * Determine correct base mods for artillery fire
+     * @param distance  range from attacker to target in hexes
+     * @param direct    direct fire, otherwise indirect fire
+     * @param flak      direct fire against airborne ground or ASF target if true
+     * @return base Artillery attack mod
+     */
+    @Override
+    public int computeArtilleryBaseMod(int distance, boolean direct, boolean flak) {
+
+        return (flak) ? 3 : ((direct) ? 4 : ((distance > 17) ? 7 : 4));
+
+    }
 }

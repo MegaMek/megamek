@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -60,7 +60,7 @@ public final class MMLoggingConstants {
 
     // region Version Constants
     public static final String VERSION_ERROR_CANNOT_PARSE_VERSION_FROM_STRING = "Cannot parse the version from %s. This may lead to severe issues that cannot be otherwise explained.";
-    public static final String VERSION_ILLEGAL_VERSION_FORMAT = "Version text %s is in an illegal version format. Versions should be in the format 'release.major.minor-SNAPSHOT', with the snapshot being an optional inclusion. This may lead to severe issues that cannot be otherwise explained.";
+    public static final String VERSION_ILLEGAL_VERSION_FORMAT = "Version text %s is in an illegal version format. Versions should be in the format 'major.minor.patch[.revision][-extra]', where the revision is an optional fourth number used by point releases and the extra is an optional suffix such as a snapshot or nightly build tag. This may lead to severe issues that cannot be otherwise explained.";
     public static final String VERSION_FAILED_TO_PARSE_RELEASE = "Failed to parse the release value from Version text %s. This may lead to severe issues that cannot be otherwise explained.";
     public static final String VERSION_FAILED_TO_PARSE_MAJOR = "Failed to parse the major value from Version text %s. This may lead to severe issues that cannot be otherwise explained.";
     public static final String VERSION_FAILED_TO_PARSE_MINOR = "Failed to parse the minor value from Version text %s. This may lead to severe issues that cannot be otherwise explained.";

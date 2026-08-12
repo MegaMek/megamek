@@ -37,6 +37,9 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameVictoryEvent;
+import megamek.common.options.IOption;
+import megamek.common.options.OptionsConstants;
+import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.Entity;
 import megamek.server.ServerHelper;
 
@@ -46,8 +49,15 @@ record TWPhaseEndManager(TWGameManager gameManager) {
         switch (gameManager.getGame().getPhase()) {
             case LOUNGE:
                 gameManager.getGame().addReports(gameManager.getMainPhaseReport());
-                // RULES initialize the rules as per the current game options
-                gameManager.getGame().initializeRulesManager();
+                // Case for if the options didn't set the rules properly 
+                IOption rules_system = gameManager.getGame().getOptions().getOption(OptionsConstants.RULES_SYSTEM);
+                String loadedOption = (gameManager.getGame().rulesManager instanceof CoreRulesManager) ?
+                      OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW;
+                if (rules_system == null) {
+                    gameManager.getGame().initializeRulesManager(OptionsConstants.RULES_CORE);
+                } else if (!rules_system.stringValue().equals(loadedOption)) {
+                    gameManager.getGame().initializeRulesManager(rules_system.stringValue());
+                }
                 gameManager.changePhase(GamePhase.EXCHANGE);
                 break;
             case EXCHANGE:
@@ -143,7 +153,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.changePhase(GamePhase.FIRING);
                 break;
             case FIRING:
-                // write Weapon Attack Phase header
+                // write Ranged Attack Phase header
                 gameManager.addReport(new Report(3000, Report.PUBLIC));
                 // Add ghost target reports (resolved during PRE_FIRING, displayed here)
                 gameManager.addGhostTargetReports();
@@ -164,6 +174,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.checkForPSRFromDamage();
                 gameManager.cleanupDestroyedNarcPods();
                 gameManager.addReport(gameManager.resolvePilotingRolls());
+                gameManager.addReport(gameManager.resolveCrewConsciousness());
                 gameManager.checkForFlawedCooling();
                 // check phase report
                 if (gameManager.getMainPhaseReport().size() > 1) {
@@ -193,6 +204,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.applyBuildingDamage();
                 gameManager.checkForPSRFromDamage();
                 gameManager.addReport(gameManager.resolvePilotingRolls());
+                gameManager.addReport(gameManager.resolveCrewConsciousness());
                 gameManager.resolveSinkVees();
                 gameManager.cleanupDestroyedNarcPods();
                 gameManager.checkForFlawedCooling();
@@ -256,6 +268,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.applyBuildingDamage();
                 gameManager.checkForPSRFromDamage();
                 gameManager.addReport(gameManager.resolvePilotingRolls());
+                gameManager.addReport(gameManager.resolveCrewConsciousness());
 
                 gameManager.cleanupDestroyedNarcPods();
                 gameManager.checkForFlawedCooling();
@@ -283,6 +296,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.changePhase(GamePhase.PREMOVEMENT);
                 break;
             case END:
+                gameManager.addReport(gameManager.resolveCrewConsciousness());
                 // remove any entities that died in the heat/end phase before
                 // checking for victory
                 gameManager.resetEntityPhase(GamePhase.END);

@@ -39,6 +39,7 @@ import static java.util.stream.Collectors.toList;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
@@ -148,6 +149,7 @@ public class ConvInfantry extends Infantry {
     private InfantryMount mount = null;
 
     // Armor
+    private String customArmorName = null;
     private double customArmorDamageDivisor = 1.0;
     private boolean encumbering = false;
     private boolean spaceSuit = false;
@@ -1231,6 +1233,15 @@ public class ConvInfantry extends Infantry {
         }
     }
 
+    /**
+     * Checks if infantry has armor kit or custom armor (does not include Myomer Implants)
+     * @return true if infantry has armor kit or custom armor, false otherwise
+     */
+    public boolean hasArmor() {
+        return getArmorKit() != null || getCustomArmorName() != null || getCustomArmorDamageDivisor() != 1.0 ||
+              isArmorEncumbering() || hasSpaceSuit() || hasDEST() || hasSneakCamo() || hasSneakIR() || hasSneakECM();
+    }
+
     public double calcDamageDivisor() {
         double divisor;
         EquipmentType armorKit = getArmorKit();
@@ -1241,7 +1252,7 @@ public class ConvInfantry extends Infantry {
             divisor = getCustomArmorDamageDivisor();
         }
         // TSM implant reduces divisor to 0.5 if no other armor is worn
-        if ((armorKit == null) && (divisor == 1.0) && hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+        if (!hasArmor() && hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             divisor = 0.5;
         }
         // Dermal camo armor provides divisor of 1.0 (prevents 0.5 from TSM alone)
@@ -1257,6 +1268,23 @@ public class ConvInfantry extends Infantry {
             divisor *= mount.damageDivisor();
         }
         return divisor;
+    }
+
+    /**
+     * Gets the custom armor name
+     * @return The custom armor name
+     */
+    @Nullable
+    public String getCustomArmorName() {
+        return customArmorName;
+    }
+
+    /**
+     * Sets the custom armor name. Cleans blank names to null.
+     * @param customArmorName Custom armor name
+     */
+    public void setCustomArmorName(@Nullable String customArmorName) {
+        this.customArmorName = (customArmorName == null || customArmorName.isBlank()) ? null : customArmorName;
     }
 
     /**
@@ -1479,31 +1507,44 @@ public class ConvInfantry extends Infantry {
     public String getArmorDesc() {
         StringBuilder sArmor = new StringBuilder();
         sArmor.append(calcDamageDivisor());
+
         if (isArmorEncumbering()) {
             sArmor.append("E");
         }
 
-        if (hasSpaceSuit()) {
-            sArmor.append(" (Spacesuit) ");
-        }
-
-        if (hasDEST()) {
-            sArmor.append(" (DEST) ");
-        }
-
-        if (hasSneakCamo() || (getCrew() != null && hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR))) {
-            sArmor.append(" (Camo) ");
-        }
-
-        if (hasSneakIR()) {
-            sArmor.append(" (IR) ");
-        }
-
-        if (hasSneakECM()) {
-            sArmor.append(" (ECM) ");
+        if (!getArmorSpecials().isBlank()) {
+            sArmor.append(" ").append(getArmorSpecials());
         }
 
         return sArmor.toString();
+    }
+
+    public String getArmorSpecials() {
+        StringJoiner armorSpecials = new StringJoiner("/", "(", ")");
+        armorSpecials.setEmptyValue("");
+
+        if (hasSpaceSuit()) {
+            armorSpecials.add("Spacesuit");
+        }
+
+        if (hasDEST()) {
+            armorSpecials.add("DEST");
+        } else {
+            // Dermal Camouflage Armor is not active if wearing any other Armor
+            if (hasSneakCamo() || (!hasArmor() && getCrew() != null && hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR))) {
+                armorSpecials.add("Camo");
+            }
+
+            if (hasSneakIR()) {
+                armorSpecials.add("IR");
+            }
+
+            if (hasSneakECM()) {
+                armorSpecials.add("ECM");
+            }
+        }
+
+        return armorSpecials.toString();
     }
 
     @Override

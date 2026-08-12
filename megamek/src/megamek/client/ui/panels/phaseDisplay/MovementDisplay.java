@@ -70,15 +70,7 @@ import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.AtmosphericLandingMovePath;
-import megamek.common.Hex;
-import megamek.common.IndustrialElevator;
-import megamek.common.LandingDirection;
-import megamek.common.ManeuverType;
-import megamek.common.OffBoardDirection;
-import megamek.common.Player;
-import megamek.common.Report;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.AirMekRamAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
@@ -99,6 +91,7 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.DockingCollar;
+import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.ExternalCargo;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
@@ -106,8 +99,10 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.TankTrailerHitch;
 import megamek.common.equipment.Transporter;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.game.IGame;
 import megamek.common.moves.ClimbingHelper;
@@ -2749,6 +2744,44 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                 toAttacker))) {
                         // if they answer yes, charge the target.
                         cmd.getLastStep().setTarget(target);
+                        if (currentlySelectedEntity.hasShield()) {
+                            boolean hasLance = false;
+                            for (MiscMounted getClub : currentlySelectedEntity.getClubs()) {
+                                if (getClub.getType().hasFlag(MiscTypeFlag.S_LANCE) && !getClub.isDestroyed() && !getClub.isBreached() && !getClub.isMissing()) {
+                                    hasLance = true;
+                                }
+                            }
+                            // No shield up when a lance is present
+                            if (!hasLance) {
+                                // Do we want to raise the shield?
+                                if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.ChargeDialog.RaiseShield"),
+                                      Messages.getString("MovementDisplay.ChargeDialog.ShieldMessage"))) {
+                                    for (MiscMounted m : currentlySelectedEntity.getMisc()) {
+                                        MiscType type = m.getType();
+                                        if (((m.getLocation() == Mek.LOC_LEFT_ARM) || (m.getLocation()
+                                              == Mek.LOC_RIGHT_ARM))
+                                              && type.isShield()
+                                              && !m.isInoperable()
+                                              && (currentlySelectedEntity.getInternal(m.getLocation()) > 0)) {
+                                            // Only one shield needs to be raised
+                                            m.setMode(MiscType.S_ACTIVE_SHIELD);
+                                            Enumeration<EquipmentMode> shieldModes = m.getType().getModes();
+                                            int nMode = 0;
+                                            while (shieldModes.hasMoreElements()) {
+                                                EquipmentMode shieldMode = shieldModes.nextElement();
+                                                if (shieldMode.equals(MiscType.S_ACTIVE_SHIELD)) {
+                                                    break;
+                                                }
+                                                nMode++;
+                                            }
+                                            clientgui.getClient().sendModeChange(currentlySelectedEntity.getId(),
+                                                  m.equipmentIndex(), nMode);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         ready();
                     } else {
                         // else clear movement
@@ -2784,7 +2817,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
                     return;
                 }
-
                 // check if it's a valid DFA
                 ToHitData toHit = DfaAttackAction.toHit(game, currentEntity, target, cmd);
                 if (toHit != null && toHit.getValue() != TargetRoll.IMPOSSIBLE) {
@@ -2793,7 +2825,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         // Calculate piloting roll to stay standing after DFA
                         PilotingRollData pilotRoll = currentlySelectedEntity.getBasePilotingRoll(
                               EntityMovementType.MOVE_JUMP);
-                        pilotRoll.addModifier(4, Messages.getString("MovementDisplay.DFADialog.dfaModifier"));
+                        pilotRoll.addModifier(Game.rulesManager.getRulesPSR().getSuccessfulDFAModifier(), Messages.getString(
+                              "MovementDisplay" 
+                              + ".DFADialog" 
+                              + ".dfaModifier"));
 
                         if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.DFADialog.title",
                                     target.getDisplayName()),

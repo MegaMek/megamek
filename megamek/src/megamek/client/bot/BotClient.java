@@ -262,9 +262,9 @@ public abstract class BotClient extends Client {
                         // essentially same as if the auto_ams option was on
                         waa = Compute.getHighestExpectedDamage(game, evt.getWAAs(), true);
 
-                        // Add second weapon attack counter for the bot when playtest 3 is active
+                        // If AMS can make multiple attacks
                         WeaponAttackAction secondWaa = null;
-                        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                        if (Game.rulesManager.getRulesEquipment().getAMSMultiShot()) {
                             secondWaa = Compute.getSecondHighestExpectedDamage(game, evt.getWAAs(), true);
                         }
 

@@ -52,11 +52,13 @@ import megamek.common.compute.Compute;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.game.Game;
+import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.*;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.TeleMissile;
@@ -85,8 +87,22 @@ public class TWDamageManager implements IDamageManager {
     }
 
     public void setGame(Game game) {
+        IOption rules_system = null;
+        if (this.game != null) {
+            rules_system = game.getOptions().getOption(OptionsConstants.RULES_SYSTEM);
+        }
         this.game = game;
         initialized = (manager != null);
+        if (rules_system == null) {
+            rules_system = game.getOptions().getOption(OptionsConstants.RULES_SYSTEM);
+        }
+        String loadedOption = (game.rulesManager instanceof CoreRulesManager) ?
+              OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW;
+        if (rules_system == null) {
+            game.initializeRulesManager(OptionsConstants.RULES_CORE);
+        } else if (!rules_system.stringValue().equals(loadedOption)) {
+            game.initializeRulesManager(rules_system.stringValue());
+        }
     }
 
     public void setManager(TWGameManager manager) {
@@ -252,7 +268,15 @@ public class TWDamageManager implements IDamageManager {
         // TACs from the hit location table
         int crits;
         if ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) {
-            crits = 1;
+            if (Game.rulesManager.getRulesArmor().blockTAC(entity.getArmorType(hit.getLocation()))) {
+                crits = 0;
+                Report tacBlockedReport = new Report(6266);
+                tacBlockedReport.subject = entityId;
+                tacBlockedReport.indent(2);
+                reportVec.addElement(tacBlockedReport);
+            } else {
+                crits = 1;
+            }
             // Damage Interrupt Circuit (IO p.39) is disabled by any hit that rolls "2" on
             // the hit location table (TAC), regardless of whether a critical actually occurs
             if ((entity instanceof Mek mek) && (mek.hasDamageInterruptCircuit()) && (!mek.isDICDisabled())) {
@@ -675,11 +699,7 @@ public class TWDamageManager implements IDamageManager {
                 // ok, we dealt damage but didn't go on to internal
                 // we get a chance of a crit, using Armor Piercing.
                 // but only if we don't have hardened, Ferro-Lamellor, or reactive armor
-                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                    if (!(mods.hardenedArmor || mods.abaArmor)) {
-                        mods.specCrits = mods.specCrits + 1;
-                    }
-                } else if (!(mods.hardenedArmor || mods.ferroLamellorArmor || mods.reactiveArmor)) {
+                if (Game.rulesManager.getRulesArmor().allowArmorPiercing(mods)) {
                     mods.specCrits = mods.specCrits + 1;
                 }
             }
@@ -772,19 +792,42 @@ public class TWDamageManager implements IDamageManager {
                     }
                 }
             }
-
-            // Report this either way
-            report = new Report(6065);
-            report.subject = entityId;
-            report.indent(2);
-            report.addDesc(mek);
-            report.add(damage);
-            if (damageIS) {
-                report.messageId = 6070;
+            
+            if (ammoExplosion && Game.rulesManager.getRulesExplosions().explosionsAreReduced()) {
+                boolean cased = mek.locationHasCase(hit.getLocation());
+                boolean caseIId = mek.hasCASEII(hit.getLocation());
+                int reducedDamage = damage;
+                if (cased && damage > 10) {
+                    reducedDamage = 10;
+                } else if (caseIId) {
+                    reducedDamage = 1;
+                } else if (damage > 20) {
+                    reducedDamage = 20;
+                }
+                
+                // Report this either way
+                report = new Report(6129);
+                report.subject = entityId;
+                report.indent(2);
+                report.addDesc(mek);
+                report.add(damage);
+                report.add(mek.getLocationAbbr(hit));
+                report.add(reducedDamage);
+                reportVec.addElement(report);
+            } else {
+                // Report this either way
+                report = new Report(6065);
+                report.subject = entityId;
+                report.indent(2);
+                report.addDesc(mek);
+                report.add(damage);
+                if (damageIS) {
+                    report.messageId = 6070;
+                }
+                report.add(mek.getLocationAbbr(hit));
+                reportVec.addElement(report);
             }
-            report.add(mek.getLocationAbbr(hit));
-            reportVec.addElement(report);
-
+            
             if (ammoExplosion) {
                 if (mek instanceof LandAirMek lam) {
                     // LAMs eject if the CT-destroyed switch is on
@@ -904,14 +947,11 @@ public class TWDamageManager implements IDamageManager {
             // Apply damage to armor
             damage = applyEntityArmorDamage(mek, hit, damage, ammoExplosion, damageIS, areaSatArty, reportVec, mods);
 
-
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_1)) {
-                // Apply playtest ammo explosion cap
-                damage = applyPlaytestExplosionReduction(mek, hit, damage, ammoExplosion, reportVec);
-            } else {
-                // Apply CASE II
-                damage = applyCASEIIDamageReduction(mek, hit, damage, ammoExplosion, reportVec);
-            }
+            // Apply damage reductions (max damage, CASE, CASEII)
+            damage = Game.rulesManager.getRulesExplosions().explosionDamageReduction(mek, hit, damage, ammoExplosion, reportVec);
+            mods.critBonus +=
+                  Game.rulesManager.getRulesExplosions().explosionCASEIImod(mek.hasCASEII(hit.getLocation()),
+                              ammoExplosion);
 
             // if damage has not all been absorbed, continue dealing with damage internally
             if (damage > 0) {
@@ -1610,7 +1650,8 @@ public class TWDamageManager implements IDamageManager {
         // adjust VTOL rotor damage
         if ((tank instanceof VTOL) &&
               (hit.getLocation() == VTOL.LOC_ROTOR) &&
-              (hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL) &&
+              (hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL
+                    && hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL_NONATTACK) &&
               !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_FULL_ROTOR_HITS)) {
             damage = (damage + 9) / 10;
         }
@@ -1683,7 +1724,8 @@ public class TWDamageManager implements IDamageManager {
             damage = applyEntityArmorDamage(tank, hit, damage, ammoExplosion, damageIS, areaSatArty, reportVec, mods);
 
             // Apply CASE II first
-            damage = applyCASEIIDamageReduction(tank, hit, damage, ammoExplosion, reportVec);
+            damage = Game.rulesManager.getRulesExplosions().applyCASEIIDamageReduction(tank, hit, damage, ammoExplosion,
+                  reportVec);
 
             // Apply Tank CASE here
             damage = applyTankCASEDamageReduction(tank, hit, damage, ammoExplosion, reportVec);
@@ -1906,9 +1948,8 @@ public class TWDamageManager implements IDamageManager {
             damage = applyEntityArmorDamage(hhw, hit, damage, ammoExplosion, damageIS, areaSatArty, reportVec, mods);
 
             // Apply CASE II first
-            damage = applyCASEIIDamageReduction(hhw, hit, damage, ammoExplosion, reportVec);
-
-            // Apply Tank CASE here
+            damage = Game.rulesManager.getRulesExplosions().applyCASEIIDamageReduction(hhw, hit, damage, ammoExplosion,
+                  reportVec);
 
             // is there damage remaining?
             if (damage > 0) {
@@ -2959,158 +3000,6 @@ public class TWDamageManager implements IDamageManager {
     }
 
     /**
-     * Determine how much damage will be reduced by Playtest rules update to internal explosion.
-     *
-     * @param mek           Mek entity that we are damaging
-     * @param hit           HitData recording aspects of the incoming damage
-     * @param damage        Actual amount of incoming damage
-     * @param ammoExplosion Whether damage was caused by an ammo explosion
-     * @param reportVec     Vector of Reports containing prior reports; usually modded and returned
-     *
-     * @return int          total of damage remaining after reduction by Playtest rules
-     */
-    public int applyPlaytestExplosionReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion,
-          Vector<Report> reportVec) {
-        if (!ammoExplosion) {
-            return damage;
-        }
-
-        int loc = hit.getLocation();
-
-        boolean cased = mek.locationHasCase(hit.getLocation());
-        boolean caseIId = mek.hasCASEII(hit.getLocation());
-
-        Report report;
-
-        if (caseIId) {
-            Roll diceRoll = Compute.rollD6(2);
-            report = new Report(6127);
-            report.subject = mek.getId();
-            report.add(diceRoll);
-            reportVec.add(report);
-
-            if (diceRoll.getIntValue() >= 8) {
-                hit.setEffect(HitData.EFFECT_NO_CRITICAL_SLOTS);
-            }
-        }
-
-        int cap = caseIId ? 1 : cased ? 10 : 20;
-        if (damage < cap) {
-            return damage;
-        }
-
-        report = new Report(caseIId ? 6134 : cased ? 6133 : 6132);
-        report.subject = mek.getId();
-        report.indent(3);
-        report.add(damage);
-        reportVec.addElement(report);
-
-        // Torso locations blow out the rear armor
-        boolean torso = mek.locationIsTorso(loc);
-
-        // For Case II
-        int half = (int) Math.ceil(mek.getOArmor(loc) / 2.0);
-
-        if (mek.getInternal(loc) > cap) { // Location survives, blow out armor
-            int armorDamage;
-            if (caseIId && !torso && mek.getArmor(loc) > half) {
-                // case II only blows out half of limb/head armor
-                armorDamage = half;
-                mek.setArmor(mek.getArmor(loc) - half, loc);
-            } else {
-                armorDamage = mek.getArmor(loc, torso);
-                mek.setArmor(IArmorState.ARMOR_DESTROYED, loc, torso);
-            }
-
-            mek.damageThisPhase += armorDamage;
-            report = new Report(6131);
-            report.subject = mek.getId();
-            report.indent(3);
-            report.add((torso ? "Rear " : "") + mek.getLocationAbbr(loc));
-            report.add(armorDamage);
-            reportVec.addElement(report);
-        }
-
-        return cap;
-    }
-
-    /**
-     * Determine how much damage will be reduced by CASE II equipment
-     *
-     * @param entity        Entity that we are damaging
-     * @param hit           HitData recording aspects of the incoming damage
-     * @param damage        Actual amount of incoming damage
-     * @param ammoExplosion Whether damage was caused by an ammo explosion
-     * @param reportVec     Vector of Reports containing prior reports; usually modded and returned
-     *
-     * @return int          total of damage remaining after reduction by CASE II
-     */
-    public int applyCASEIIDamageReduction(Entity entity, HitData hit, int damage, boolean ammoExplosion,
-          Vector<Report> reportVec) {
-        // Check for CASE II right away. If so, reduce damage to 1 and let it hit the IS. Also, remove as much of the
-        // rear armor as allowed by the damage. If arm/leg/head, Then they lose all their armor if it's less than the
-        // explosion damage.
-        int entityId = entity.getId();
-        Report report;
-
-        if (ammoExplosion && entity.hasCASEII(hit.getLocation())) {
-            // 1 point of damage goes to IS
-            damage--;
-            // Remaining damage prevented by CASE II
-            report = new Report(6126);
-            report.subject = entityId;
-            report.add(damage);
-            report.indent(3);
-            reportVec.addElement(report);
-            int loc = hit.getLocation();
-            if ((entity instanceof Mek) &&
-                  ((loc == Mek.LOC_HEAD) || ((Mek) entity).isArm(loc) || entity.locationIsLeg(loc))) {
-                int half = (int) Math.ceil(entity.getOArmor(loc, false) / 2.0);
-                if (damage > half) {
-                    damage = half;
-                }
-                if (damage >= entity.getArmor(loc, false)) {
-                    // Remember the exact amount of armor damage for PSR purposes
-                    damage = entity.getArmor(loc, false);
-                    entity.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
-                } else {
-                    entity.setArmor(entity.getArmor(loc, false) - damage, loc, false);
-                }
-            } else {
-                if (damage >= entity.getArmor(loc, true)) {
-                    // Remember the exact amount of armor damage for PSR purposes
-                    damage = entity.getArmor(loc, true);
-                    entity.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
-                } else {
-                    entity.setArmor(entity.getArmor(loc, true) - damage, loc, true);
-                }
-            }
-
-            // The armor blown out contributes towards the 20+ PSR
-            entity.damageThisPhase += damage;
-
-            if (entity.getInternal(hit) > 0) {
-                // Mek takes 1 point of IS damage
-                damage = 1;
-            } else {
-                damage = 0;
-            }
-
-            Roll diceRoll = Compute.rollD6(2);
-            report = new Report(6127);
-            report.subject = entity.getId();
-            report.add(diceRoll);
-            reportVec.add(report);
-
-            if (diceRoll.getIntValue() >= 8) {
-                hit.setEffect(HitData.EFFECT_NO_CRITICAL_SLOTS);
-            }
-        }
-
-        return damage;
-    }
-
-    /**
      * Deals special critical damage effects to the entity taking damage.
      *
      * @param entity     Entity we are damaging
@@ -3151,13 +3040,14 @@ public class TWDamageManager implements IDamageManager {
             for (int i = 0; i < mods.specCrits; i++) {
                 // against BAR or reflective armor, we get a +2 mod
                 int critMod = entity.hasBARArmor(hit.getLocation()) ? 2 : 0;
-                critMod += ((mods.reflectiveArmor) && !(mods.isBattleArmor)) ? 2 : 0; // BA
-                // against impact armor, we get a +1 mod
-                // PLAYTEST3 no longer gets the +1 mod with impact.
-                if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                    critMod += (mods.impactArmor) ? 1 : 0;
-                }
-                // hardened armour has no crit penalty
+                critMod += ((Game.rulesManager.getRulesArmor().reflectiveAP(mods.reflectiveArmor)) && !(mods.isBattleArmor)) ?
+                      2 :
+                      0; // BA
+
+                // Check for impact armor
+                critMod += (mods.impactArmor) ? Game.rulesManager.getRulesArmor().impactArmorMod() : 0;
+
+                // hardened armor has no crit penalty
                 if (!mods.hardenedArmor) {
                     // non-hardened armor gets modifiers
                     // the -2 for hardened is handled in the critBonus
@@ -3233,7 +3123,6 @@ public class TWDamageManager implements IDamageManager {
               isBattleArmor &&
                     (entity.getArmorType(hit.getLocation()) ==
                           EquipmentType.T_ARMOR_BA_REFLECTIVE);
-        // PLAYTEST3 add notes for ABA and heat
         mods.heatArmor = (entity instanceof Mek) &&
               (entity.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING);
         mods.abaArmor = (entity instanceof Mek) &&
@@ -3502,17 +3391,11 @@ public class TWDamageManager implements IDamageManager {
                 report.indent(3);
                 report.add(damage);
                 reportVec.addElement(report);
-            } else if (impactArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)) {
-                // As long as there is even 1 point of armor in this location, reduce _all_ damage
-                // to 2 points for every whole 3 points applied (IntOps pg 88).
-                damage = Math.max(1, (2 * (damage / 3)) + (damage % 3));
-                report = new Report(6089);
-                report.subject = entityId;
-                report.indent(3);
-                report.add(damage);
-                reportVec.addElement(report);
+            } else if (impactArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL || hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL_NONATTACK)) {
+                damage = Game.rulesManager.getRulesArmor().reduceImpactDamage(entityId, hit, damage, reportVec,
+                      hit.getGeneralDamageType());
             } else if (reflectiveArmor &&
-                  (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL) &&
+                  (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL || hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL_NONATTACK) &&
                   !isBattleArmor) { // BA reflect does not receive extra physical damage
                 tmpDamageHold = damage;
                 int currArmor = entity.getArmor(hit);
@@ -3564,10 +3447,7 @@ public class TWDamageManager implements IDamageManager {
                 report.indent(3);
                 report.add(damage);
                 reportVec.addElement(report);
-            } else if (heatArmor && hit.getHeatWeapon() && game.getOptions()
-                  .booleanOption(OptionsConstants.PLAYTEST_3)) {
-                // PLAYTEST3 only applies if heat_weapon is true in hitdata, which can only occur when playtest
-                // is on.
+            } else if (heatArmor && hit.getHeatWeapon() ) {
                 tmpDamageHold = damage;
                 damage = (int) Math.ceil((((double) damage) / 2));
                 if (tmpDamageHold == 1) {
@@ -3578,6 +3458,16 @@ public class TWDamageManager implements IDamageManager {
                 report.indent(3);
                 report.add(damage);
                 reportVec.addElement(report);
+            } else if (hit.getGeneralDamageType() == HitData.DAMAGE_AX) {
+                tmpDamageHold = Game.rulesManager.getRulesAmmo().getAXMissileDamage(entity.getArmor(hit), mods, damage);
+                if (tmpDamageHold != damage) {
+                    damage = tmpDamageHold;
+                    report = new Report();
+                    report.subject = entityId;
+                    report.indent(3);
+                    report.add(getArmorFriendlyName(mods));
+                    reportVec.addElement(report);
+                }
             }
 
             // if there's a mast mount in the rotor, it and all other equipment on it get destroyed if it takes
@@ -3681,7 +3571,8 @@ public class TWDamageManager implements IDamageManager {
                       (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
                     absorbed = (absorbed * 2) - ((entity.isHardenedArmorDamaged(hit)) ? 1 : 0);
                 }
-                if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL) && !isBattleArmor) {
+                if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL || hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL_NONATTACK)
+                      && !isBattleArmor) {
                     absorbed = (int) Math.ceil(absorbed / 2.0);
                     damage = tmpDamageHold;
                     tmpDamageHold = 0;
@@ -3734,6 +3625,29 @@ public class TWDamageManager implements IDamageManager {
         return damage;
     }
 
+    // Get the friendly name for armors
+    public String getArmorFriendlyName(ModsInfo mods) {
+        if (mods.reflectiveArmor) {
+            return ArmorType.getArmorTypeName(ArmorType.T_ARMOR_REFLECTIVE);
+        }
+        if (mods.ballisticArmor) {
+            return ArmorType.getArmorTypeName(ArmorType.T_ARMOR_BALLISTIC_REINFORCED);
+        }
+        if (mods.hardenedArmor) {
+            return ArmorType.getArmorTypeName(ArmorType.T_ARMOR_HARDENED);
+        }
+        if (mods.abaArmor) {
+            return ArmorType.getArmorTypeName(ArmorType.T_ARMOR_ANTI_PENETRATIVE_ABLATION);
+        }
+        if (mods.ferroLamellorArmor) {
+            return ArmorType.getArmorTypeName(ArmorType.T_ARMOR_FERRO_LAMELLOR);
+        }
+        if (mods.reactiveArmor) {
+            return ArmorType.getArmorTypeName(ArmorType.T_ARMOR_REACTIVE);
+        }
+        return "";
+    }
+
     /**
      * Record-type class that various methods pass around and modify
      */
@@ -3755,7 +3669,6 @@ public class TWDamageManager implements IDamageManager {
         public int crits = 0;
         public int specCrits = 0;
         public int damageOriginal = 0;
-        // PLAYTEST3 add armor types
         public boolean heatArmor = false;
         public boolean abaArmor = false;
     }

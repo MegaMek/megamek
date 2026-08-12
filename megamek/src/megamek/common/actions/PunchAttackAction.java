@@ -37,17 +37,11 @@ package megamek.common.actions;
 import java.io.Serial;
 
 import megamek.client.ui.Messages;
-import megamek.common.CriticalSlot;
 import megamek.common.Hex;
 import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeSideTable;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.Mounted;
-import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
@@ -208,9 +202,9 @@ public class PunchAttackAction extends PhysicalAttackAction {
             }
         }
 
-        // Cannot punch with an arm that has an active shield on it.
-        if (ae.hasActiveShield(armLoc)) {
-            return "Cannot punch with shield in active mode";
+        // Cannot punch with an arm that has an raised shield on it.
+        if (ae.hasRaisedShield(armLoc)) {
+            return "Cannot punch with a raised shield";
         }
 
         if (!ae.canFireWeapon(armLoc)) {
@@ -263,7 +257,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
         toHit = new ToHitData(base, "base");
 
-        toHit.addModifier(0, "Punch");
+        toHit.addModifier(Game.rulesManager.getRulesPhysical().getPunchModifier(), "Punch");
 
         PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
 
@@ -333,12 +327,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
               || ((arm == PunchAttackAction.LEFT) && !ae.hasQuirk(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)))) {
             toHit.addModifier(1, "Hand actuator missing or destroyed");
         } else if (hasClaws) {
-            // PLAYTEST3 claw modifier removed
-            if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                toHit.addModifier(1, "Using Claws");
-            } else {
-                toHit.addModifier(0, "Using Claws");
-            }
+            toHit.addModifier(Game.rulesManager.getRulesPhysical().getClawToHitModifier(), "Using Claws");
         }
 
         if (hasHandActuator
@@ -410,40 +399,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
             damage = (int) Math.ceil(entity.getWeight() / 7.0);
         }
 
-        // PLAYTEST3 shields boost punching power. We only need to find the first shield entry to figure it out.
-        if (entity.hasShield() && entity.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            for (int slot = 0; slot < entity.getNumberOfCriticalSlots(armLoc); slot++) {
-                CriticalSlot cs = entity.getCritical(armLoc, slot);
-
-                if (cs == null) {
-                    continue;
-                }
-
-                if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
-                    continue;
-                }
-
-                Mounted<?> m = cs.getMount();
-                EquipmentType type = m.getType();
-                if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
-                    if ((((MiscMounted) m).getDamageAbsorption(entity, armLoc) > 0) && (((MiscMounted) m).getCurrentDamageCapacity(entity, armLoc) > 0)) {
-                        if (type.hasFlag(MiscTypeFlag.S_SHIELD_LARGE)) {
-                            damage += 3;
-                            break;
-                        } else if (type.hasFlag(MiscTypeFlag.S_SHIELD_MEDIUM)) {
-                            damage += 2;
-                            break;
-                        } else if (type.hasFlag(MiscTypeFlag.S_SHIELD_SMALL)) {
-                            damage += 1;
-                            break;
-                        }
-                    } else {
-                        // Shield DA or DC is 0, so no bonus
-                        break;
-                    }
-                }
-            }
-        }
+        // Add Damage with a shield
+        damage += Game.rulesManager.getRulesPhysical().getShieldDamageBoost(entity, armLoc);
         
         // CamOps, pg. 82
         if (zweihandering) {

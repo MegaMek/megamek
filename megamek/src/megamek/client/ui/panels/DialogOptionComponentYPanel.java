@@ -380,9 +380,11 @@ public class DialogOptionComponentYPanel extends FixedYPanel
         switch (option.getType()) {
             case IOption.BOOLEAN:
                 checkbox.setEnabled(editable);
+                nameLabel.setEnabled(editable);
                 break;
             case IOption.CHOICE:
                 choice.setEnabled(editable);
+                nameLabel.setEnabled(editable);
                 break;
             default:
                 textField.setEnabled(editable);

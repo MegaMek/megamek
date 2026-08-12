@@ -37,4 +37,14 @@ package megamek.common.rules.core;
 import megamek.common.rules.RulesArtillery;
 
 public class CoreRulesArtillery extends RulesArtillery {
+
+    /**
+     * {@inheritDoc}
+     * Core p. 63, 68-69, etc.
+     * 
+     */
+    @Override
+    public int computeArtilleryBaseMod(int distance, boolean direct, boolean flak) {
+        return 4;
+    }
 }

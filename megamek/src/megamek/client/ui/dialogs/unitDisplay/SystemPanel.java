@@ -74,8 +74,10 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
@@ -584,6 +586,7 @@ class SystemPanel extends PicMap
 
                         if ((m.getType() instanceof MiscType)
                               && ((MiscType) m.getType()).isShield()
+                              && !Game.rulesManager.getRulesPhysical().phaseChangeShield()
                               && !clientgui.getClient().getGame().getPhase().isFiring()) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.ShieldModePhase"));
                             return;
@@ -851,11 +854,11 @@ class SystemPanel extends PicMap
                       && (client.getGame().getOptions().intOption(OptionsConstants.BASE_DUMPING_FROM_ROUND) <= client
                       .getGame().getRoundCount())
                       && !carryingBAsOnBack && !invalidEnvironment) {
-                    m_bDumpAmmo.setEnabled(true);
+                    m_bDumpAmmo.setEnabled(Game.rulesManager.getRulesGame().ammoDumping());
                 } else if ((mounted != null) && bOwner
                       && (mounted.getType() instanceof WeaponType)
                       && !mounted.isMissing() && mounted.isDWPMounted()) {
-                    m_bDumpAmmo.setEnabled(true);
+                    m_bDumpAmmo.setEnabled(Game.rulesManager.getRulesGame().ammoDumping());
                     // Allow dumping of body-mounted missile launchers on BA
                 } else if ((mounted != null) && bOwner
                       && (en instanceof BattleArmor)
@@ -864,7 +867,7 @@ class SystemPanel extends PicMap
                       && mounted.getType().hasFlag(WeaponType.F_MISSILE)
                       && (mounted.getLinked() != null)
                       && (mounted.getLinked().getUsableShotsLeft() > 0)) {
-                    m_bDumpAmmo.setEnabled(true);
+                    m_bDumpAmmo.setEnabled(Game.rulesManager.getRulesGame().ammoDumping());
                 }
                 int round = client.getGame().getRoundCount();
                 boolean inSquadron = en.isPartOfFighterSquadron();
@@ -945,6 +948,27 @@ class SystemPanel extends PicMap
                               && isMiscEquipment
                               && mountedType.hasFlag(MiscType.F_STEALTH)
                               && !EquipmentActivation.hasEcmAvailableForStealth(en)) {
+                            continue;
+                        }
+                        // Blue shield prevents stealth systems from being activated.
+                        if (equipmentMode.equals(Mounted.MODE_ON)
+                              && isMiscEquipment
+                              && (mountedType.hasFlag(MiscType.F_STEALTH)
+                              || mountedType.hasFlag(MiscType.F_CHAMELEON_SHIELD)
+                              || mountedType.hasFlag(MiscType.F_VOID_SIG)
+                              || mountedType.hasFlag(MiscType.F_NULL_SIG))
+                              && Game.rulesManager.getRulesEquipment().blueShieldStealth(mounted.getEntity().hasActiveBlueShield())) {
+                            continue;
+                        }
+                        // Mirror case. If Stealth is active, Blue Shield can't be turned on.
+                        if (equipmentMode.equals(Mounted.MODE_ON)
+                              && isMiscEquipment
+                              && mountedType.hasFlag(MiscType.F_BLUE_SHIELD)
+                              && (EquipmentActivation.isStealthOnOrActivating(en)
+                              || en.isNullSigOn()
+                              || en.isVoidSigOn()
+                              || en.isChameleonShieldOn())
+                              && Game.rulesManager.getRulesEquipment().blueShieldStealth()) {
                             continue;
                         }
                         m_chMode.addItem(equipmentMode.getDisplayableName());

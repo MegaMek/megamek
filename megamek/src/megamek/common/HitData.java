@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,6 +35,7 @@
 package megamek.common;
 
 import megamek.common.equipment.AmmoType;
+import megamek.common.game.Game;
 import megamek.common.units.Entity;
 
 /**
@@ -55,6 +56,7 @@ public class HitData {
     public static final int DAMAGE_ARMOR_PIERCING_MISSILE = -7;
     public static final int DAMAGE_IGNORES_DMG_REDUCTION = -8;
     public static final int DAMAGE_AX = -9;
+    public static final int DAMAGE_PHYSICAL_NONATTACK = -10;
 
     private int location;
     private final boolean rear;
@@ -151,48 +153,9 @@ public class HitData {
         return fromFront;
     }
 
-    // PLAYTEST 3 - Only called if playtest 3 is enabled
-    public void makeArmorPiercingPlaytest(AmmoType inType, int modifier) {
-        specCrit = true;
-        if (inType.getRackSize() == 2) {
-            specCritMod = -2;
-        } else if (inType.getRackSize() == 4) {
-            specCritMod = -2;
-        } else if (inType.getRackSize() == 5) {
-            specCritMod = -2;
-        } else if (inType.getRackSize() == 6) {
-            specCritMod = -2;
-        } else if (inType.getRackSize() == 8) {
-            specCritMod = -1;
-        } else if (inType.getRackSize() == 10) {
-            specCritMod = -1;
-        } else if (inType.getRackSize() == 15) {
-            specCritMod = -1;
-        } else if (inType.getRackSize() == 20) {
-            specCritMod = -1;
-        }
-        specCritMod += modifier;
-    }
-
     public void makeArmorPiercing(AmmoType inType, int modifier) {
         specCrit = true;
-        if (inType.getRackSize() == 2) {
-            specCritMod = -4;
-        } else if (inType.getRackSize() == 4) {
-            specCritMod = -3;
-        } else if (inType.getRackSize() == 5) {
-            specCritMod = -3;
-        } else if (inType.getRackSize() == 6) {
-            specCritMod = -3;
-        } else if (inType.getRackSize() == 8) {
-            specCritMod = -2;
-        } else if (inType.getRackSize() == 10) {
-            specCritMod = -2;
-        } else if (inType.getRackSize() == 15) {
-            specCritMod = -2;
-        } else if (inType.getRackSize() == 20) {
-            specCritMod = -1;
-        }
+        specCritMod = Game.rulesManager.getRulesAmmo().armorPiercingMod(inType);
         specCritMod += modifier;
     }
 
@@ -270,9 +233,8 @@ public class HitData {
         return generalDamageType;
     }
 
-    // PLAYTEST3 for heat-causing weapons
     public boolean getHeatWeapon() {
-        return heat_weapon;
+        return Game.rulesManager.getRulesArmor().allowHeatWeapon(heat_weapon);
     }
 
     public void setGeneralDamageType(int type) {

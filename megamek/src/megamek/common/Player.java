@@ -181,26 +181,26 @@ public final class Player extends TurnOrdered {
     }
 
     public boolean hasMinefields() {
-    	boolean hasMinefields = false;
-    	
-    	for (int minefieldIndex = 0; minefieldIndex < Minefield.TYPE_SIZE; minefieldIndex++) {
-    		if (minefieldCounts[minefieldIndex] > 0) {
-    			hasMinefields = true;
-    			break;
-    		}
-    	}
-    	
+        boolean hasMinefields = false;
+
+        for (int minefieldIndex = 0; minefieldIndex < Minefield.TYPE_SIZE; minefieldIndex++) {
+            if (minefieldCounts[minefieldIndex] > 0) {
+                hasMinefields = true;
+                break;
+            }
+        }
+
         return hasMinefields ||
               (numFortifiedHexes > 0) ||
               !getGroundObjectsToPlace().isEmpty();
     }
-    
+
     /**
      * Given a minefield type from one of the TYPE_[MINEFIELDTYPE] constants in Minefield.java
      * and a count (preferably more than 0), set the count of that type of mine for this player.
      */
     public void setMinefieldCount(int minefieldType, int count) {
-    	minefieldCounts[minefieldType] = count;
+        minefieldCounts[minefieldType] = count;
     }
 
     public void setNbrMFConventional(int nbrMF) {
@@ -208,31 +208,31 @@ public final class Player extends TurnOrdered {
     }
 
     public void setNbrMFCommand(int nbrMF) {
-    	minefieldCounts[Minefield.TYPE_COMMAND_DETONATED] = nbrMF;
+        minefieldCounts[Minefield.TYPE_COMMAND_DETONATED] = nbrMF;
     }
 
     public void setNbrMFVibra(int nbrMF) {
-    	minefieldCounts[Minefield.TYPE_VIBRABOMB] = nbrMF;
+        minefieldCounts[Minefield.TYPE_VIBRABOMB] = nbrMF;
     }
 
     public void setNbrMFActive(int nbrMF) {
-    	minefieldCounts[Minefield.TYPE_ACTIVE] = nbrMF;
+        minefieldCounts[Minefield.TYPE_ACTIVE] = nbrMF;
     }
 
     public void setNbrMFInferno(int nbrMF) {
-    	minefieldCounts[Minefield.TYPE_INFERNO] = nbrMF;
+        minefieldCounts[Minefield.TYPE_INFERNO] = nbrMF;
     }
-    
+
     public void setNbrMFEMP(int nbrMF) {
-    	minefieldCounts[Minefield.TYPE_EMP] = nbrMF;
+        minefieldCounts[Minefield.TYPE_EMP] = nbrMF;
     }
-    
+
     /**
      * Given a minefield type from one of the TYPE_[MINEFIELDTYPE] constants in Minefield.java
      * returns how many mines of that type this player has
      */
     public int getMinefieldCount(int minefieldType) {
-    	return minefieldCounts[minefieldType];
+        return minefieldCounts[minefieldType];
     }
 
     public int getNbrMFConventional() {
@@ -310,12 +310,12 @@ public final class Player extends TurnOrdered {
     public void setTeam(int team) {
         this.team = team;
     }
-    
+
     public String getTeamName() {
         if (getTeam() <= TEAM_NONE) {
             return "No Team";
         }
-        
+
         return "Team " + getTeam();
     }
 
@@ -797,7 +797,7 @@ public final class Player extends TurnOrdered {
             if (object instanceof Entity entity && entity.getOwner().equals(this)) {
                 if (isActiveForCommandBonus(entity)) {
                     if (entity.hasCommandConsoleBonus() || entity.getCrew().hasActiveTechOfficer()) {
-                        return 2;
+                        return Game.rulesManager.getRulesEquipment().getCommandConsoleBonus();
                     }
                 }
             }

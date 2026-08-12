@@ -856,38 +856,51 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
     }
 
-    private static Version getVersion(Node n) {
-        final NodeList nl = n.getChildNodes();
+    /**
+     * Rebuilds the {@link Version} a save game was written by, from the components stored in its version node.
+     *
+     * @param versionNode the save game's version node
+     *
+     * @return the version the save game was written by
+     */
+    private static Version getVersion(Node versionNode) {
+        final NodeList versionChildren = versionNode.getChildNodes();
         String major = null;
         String minor = null;
         String patch = null;
+        String revision = null;
         String extra = null;
-        for (int i = 0; i < nl.getLength(); i++) {
-            final Node n2 = nl.item(i);
-            if (n2.getNodeType() != Node.ELEMENT_NODE) {
+        for (int childIndex = 0; childIndex < versionChildren.getLength(); childIndex++) {
+            final Node versionComponent = versionChildren.item(childIndex);
+            if (versionComponent.getNodeType() != Node.ELEMENT_NODE) {
                 continue;
             }
 
-            switch (n2.getNodeName()) {
+            switch (versionComponent.getNodeName()) {
                 case "major":
-                    major = n2.getTextContent();
+                    major = versionComponent.getTextContent();
                     break;
                 case "minor":
-                    minor = n2.getTextContent();
+                    minor = versionComponent.getTextContent();
                     break;
                 case "patch":
-                    patch = n2.getTextContent();
+                    patch = versionComponent.getTextContent();
+                    break;
+                // Absent from saves written by an ordinary release, and by every release before the revision
+                // component existed.
+                case "revision":
+                    revision = versionComponent.getTextContent();
                     break;
                 case "snapshot":
                 case "extra":
-                    extra = n2.getTextContent();
+                    extra = versionComponent.getTextContent();
                     break;
                 default:
                     break;
             }
         }
 
-        return new Version(major, minor, patch, extra);
+        return new Version(major, minor, patch, revision, extra);
     }
 
     private void parsePlayerNames(final Node nodePlayers, final Vector<String> playerNames) {

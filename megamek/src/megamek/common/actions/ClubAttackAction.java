@@ -414,15 +414,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
                       "Hand actuator destroyed");
             }
         } else if (shield) {
-            if (!ae.hasPassiveShield(club.getLocation())) {
-                // PLAYTEST3 no_shield mode is now the default
-                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && !ae.hasActiveShield(club.getLocation())) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE,
-                          "Shield not in default mode");
-                } else {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE,
-                          "Shield not in passive mode");
-                }
+            if (!ae.hasLoweredShield(club.getLocation())) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                      "Shield is not lowered");
             }
         } else {
             // check if location is present
@@ -501,10 +495,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
         }
 
-        // Prone 'Mechs can only be clubbed if they are one level higher than the attacker
-        // See BMM 7th Printing, Physical Attacks and Prone 'Mechs
+        // Can we club the prone mek?
         if ((target instanceof Entity) && ((Entity) target).isProne()) {
-            if (targetElevation != attackerElevation + 1) {
+            if(Game.rulesManager.getRulesPhysical().cannotClubProne(targetElevation, attackerElevation)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                       Messages.getString("PhysicalAttackAction.ProneMekClub"));
             }

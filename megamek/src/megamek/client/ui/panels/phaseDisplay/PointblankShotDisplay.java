@@ -62,6 +62,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.ChargeLevel;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
@@ -419,6 +420,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         setFlipArmsEnabled(false);
         setFireModeEnabled(false);
         setFireCalledEnabled(false);
+        setFireChargeLevelEnabled(false);
     }
 
     private boolean checkNags() {
@@ -769,7 +771,6 @@ public class PointblankShotDisplay extends FiringDisplay {
             Mounted<?> m = currentEntity().getEquipment(weaponId);
             setFireModeEnabled(m.isModeSwitchable());
         }
-
         updateSearchlight();
     }
 

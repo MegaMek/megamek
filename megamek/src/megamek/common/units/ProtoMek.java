@@ -63,6 +63,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
@@ -661,12 +662,9 @@ public class ProtoMek extends Entity {
         int roll;
 
         if ((aimedLocation != LOC_NONE) && aimingMode.isImmobile()) {
-            roll = Compute.d6(2);
-
-            if ((5 < roll) && (roll < 9)) {
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation()) {
                 return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
-
         }
 
         roll = Compute.d6(2);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -56,6 +56,7 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_DOUBLE_ONE_SHOT, // Fusillade works like a one-shot weapon but has a second round.
     F_EXTINGUISHER, // fire Extinguisher
     F_HEAT_AS_DICE, // Variable heat, heat is listed in dice, not points
+    F_HEAT_VARIABLE, // Variable heat, heat depends on the weapon mode
     F_INFANTRY_ONLY, // may only target Infantry
     F_MISSILE_HITS, // use missile rules for # of hits
     F_MORTAR_TYPE_INDIRECT,  // This flag is used by mortar-type weapons that allow indirect fire without a spotter and/or with LOS.
@@ -97,6 +98,7 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_TASER,
     F_TSEMP, // Used for TSEMP Weapons.
     F_VGL,
+    F_ARROW_IV,
 
     // Bomb types
     F_ALT_BOMB,

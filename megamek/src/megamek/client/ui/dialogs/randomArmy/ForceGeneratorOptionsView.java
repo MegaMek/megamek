@@ -69,6 +69,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityListFile;
 import megamek.common.units.EntityWeightClass;
@@ -1232,6 +1233,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
         // Create a fake game so we can write the entities to a file without adding them
         // to the real game.
+        // Make sure we set the right rules manager here.
+        if (Game.rulesManager instanceof TWRulesManager) {
+            gameOptions.getOption(OptionsConstants.RULES_SYSTEM).setValue(OptionsConstants.RULES_TW);
+        }
         Game game = new Game();
         // Add a player to prevent complaining in the log file
         Player p = new Player(1, "Observer");

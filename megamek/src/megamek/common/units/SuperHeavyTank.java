@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2012-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -53,6 +53,7 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 
@@ -168,11 +169,8 @@ public class SuperHeavyTank extends Tank {
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-            int roll = Compute.d6(2);
-
-            if ((5 < roll) && (roll < 9)) {
-                rv = new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
-                      true);
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation()) {
+                rv = new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
                 bHitAimed = true;
             }
         }

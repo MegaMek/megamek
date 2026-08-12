@@ -37,6 +37,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import megamek.common.TargetRollModifier;
@@ -49,6 +50,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.NarcPod;
 import megamek.common.equipment.Sensor;
 import megamek.common.equipment.Transporter;
+import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.game.InitiativeBonusBreakdown;
 import megamek.common.interfaces.ITechnology;
@@ -64,6 +66,8 @@ import megamek.common.units.InfantryMount;
 import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.victory.VictoryCondition;
+
+import java.util.ArrayList;
 
 /**
  * Class that off-loads serialization related code from Server.java
@@ -117,6 +121,11 @@ public class SerializationHelper {
         // they are explicitly omitted to keep those saves loading.
         xStream.omitField(Mek.class, "sinksOn");
         xStream.omitField(Mek.class, "sinksOnNextRound");
+        xStream.aliasField("pendingCharges", Game.class, "pendingDisplacementAttacks");
+        xStream.aliasField("pilotRolls", Game.class, "pilotingRolls");
+        
+        xStream.registerLocalConverter(Game.class, "pilotingRolls", new CollectionConverter(xStream.getMapper(),
+              ArrayList.class));
 
         xStream.registerConverter(new Converter() {
             @Override

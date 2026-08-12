@@ -4507,8 +4507,8 @@ public final class BoardView extends AbstractBoardView
             }
         }
 
-        for (Enumeration<AttackAction> i = game.getCharges();
-              i.hasMoreElements(); ) {
+        for (Enumeration<AttackAction> i = game.getDisplacementAttacks();
+             i.hasMoreElements(); ) {
             AttackAction attackAction = i.nextElement();
             if (attackAction instanceof PhysicalAttackAction physicalAttackAction) {
                 addAttack(physicalAttackAction);

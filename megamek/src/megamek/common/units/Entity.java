@@ -56,15 +56,7 @@ import megamek.client.ui.util.PlayerColour;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
-import megamek.common.actions.AbstractAttackAction;
-import megamek.common.actions.ChargeAttackAction;
-import megamek.common.actions.DfaAttackAction;
-import megamek.common.actions.DisplacementAttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.PushAttackAction;
-import megamek.common.actions.TeleMissileAttackAction;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.actions.WoodsClearingAttackAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.battleArmor.BattleArmorHandles;
@@ -119,6 +111,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.turns.TurnOrdered;
 import megamek.common.util.UUIDUtil;
 import megamek.common.util.RoundWeight;
@@ -264,7 +257,6 @@ public abstract class Entity extends TurnOrdered
     public static final int MAX_NOVA_CEWS_NODES = 3;
     public static final String C3_NETWORK_ID_SEPARATOR = ".";
 
-    // PLAYTEST3 isC3ecmAffected
     protected boolean isC3ecmAffected = false;
 
     public static final int GRAPPLE_BOTH = 0;
@@ -1094,7 +1086,7 @@ public abstract class Entity extends TurnOrdered
     private boolean hasFleeZone = false;
     private HexArea fleeZone = HexArea.EMPTY_AREA;
 
-    /**
+     /**
      * Generates a new, blank, entity.
      */
     public Entity() {
@@ -1133,6 +1125,7 @@ public abstract class Entity extends TurnOrdered
         offBoardShotObservers = new HashSet<>();
         incomingGuidedAttacks = new ArrayList<>();
         carriedObjects = new HashMap<>();
+
     }
 
     /**
@@ -2357,23 +2350,56 @@ public abstract class Entity extends TurnOrdered
         return getCrew() == null || (getCrew().isCrewTypeNone());
     }
 
+    /**
+     * When the elements the game has don't match the entity, re-add them
+     */
+    private void renumerateDisplacementAttacks() {
+        if (game != null) {
+            Enumeration<AttackAction> attackActions = game.getDisplacementAttacks();
+            if (attackActions != null) {
+                while (attackActions.hasMoreElements()) {
+                    AttackAction attack = attackActions.nextElement();
+                    if (attack instanceof DisplacementAttackAction && attack.getEntityId() == id) {
+                        displacementAttack = (DisplacementAttackAction) attack;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     public boolean isCharging() {
+        if (displacementAttack == null) {
+            renumerateDisplacementAttacks();
+        }
         return displacementAttack instanceof ChargeAttackAction;
     }
 
     public boolean isPushing() {
+        if (displacementAttack == null) {
+            renumerateDisplacementAttacks();
+        }
         return displacementAttack instanceof PushAttackAction;
     }
 
     public boolean isMakingDfa() {
+        if (displacementAttack == null) {
+            renumerateDisplacementAttacks();
+        }
         return displacementAttack instanceof DfaAttackAction;
     }
 
     public boolean hasDisplacementAttack() {
+        if (displacementAttack == null) {
+            renumerateDisplacementAttacks();
+        }
         return displacementAttack != null;
     }
 
     public DisplacementAttackAction getDisplacementAttack() {
+        if (displacementAttack == null) {
+            renumerateDisplacementAttacks();
+        }
         return displacementAttack;
     }
 
@@ -3351,7 +3377,8 @@ public abstract class Entity extends TurnOrdered
                   (ammoType == AmmoType.AmmoTypeEnum.PAC)) &&
                   mounted.isJammed() &&
                   !mounted.isDestroyed() &&
-                  gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC)) {
+                  gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC) &&
+                  game.rulesManager.getRulesWeapons().canUACsJam()) {
                 return true;
             }
         }
@@ -6202,28 +6229,28 @@ public abstract class Entity extends TurnOrdered
     /**
      * Does the Mek have an active shield This should only be called after hasShield has been called.
      */
-    public boolean hasActiveShield(int location, boolean rear) {
+    public boolean hasRaisedShield(int location, boolean rear) {
         return true;
     }
 
     /**
      * Does the Mek have an active shield This should only be called by hasActiveShield(location, rear)
      */
-    public boolean hasActiveShield(int location) {
+    public boolean hasRaisedShield(int location) {
         return false;
     }
 
     /**
      * Does the Mek have a passive shield This should only be called after hasShield has been called.
      */
-    public boolean hasPassiveShield(int location, boolean rear) {
+    public boolean hasLoweredShield(int location, boolean rear) {
         return false;
     }
 
     /**
      * Does the Mek have a passive shield This should only be called by hasPassiveShield(location, rear)
      */
-    public boolean hasPassiveShield(int location) {
+    public boolean hasLoweredShield(int location) {
         return false;
     }
 
@@ -6492,15 +6519,9 @@ public abstract class Entity extends TurnOrdered
                 // A probe the player has switched off provides no sensing (activation/deactivation rules); for a
                 // Watchdog/Nova CEWS the shared "Off" mode silences the probe half along with the rest of the suite.
                 if (!m.isInoperable() && !m.isModeTurnedOff()) {
-                    // Beagle Isn't affected by normal ECM
-                    if (type.getName().equals("Beagle Active Probe")) {
-                        return (game == null) ||
-                              !checkECM ||
-                              !ComputeECM.isAffectedByAngelECM(this, getPosition(), getPosition());
-                    }
-                    return !checkECM ||
-                          (game == null) ||
-                          !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
+                    return (game == null) ||
+                          Game.rulesManager.getRulesEquipment().isBAPActive(checkECM, m.getType(),
+                                this, getPosition());
                 }
             }
         }
@@ -7285,8 +7306,8 @@ public abstract class Entity extends TurnOrdered
         while ((master != null) &&
               !master.equals(m) &&
               master.hasC3()) {
-            // PLAYTEST3 broke out the logic so we return the master, even with ECM in play
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            if (Game.rulesManager.getRulesC3().c3AllowedWithECM()) {
+                // Even with ECM we can always talk to the master
                 m = master;
                 master = m.getC3Master();
             } else if ((m.hasBoostedC3() &&
@@ -7505,8 +7526,7 @@ public abstract class Entity extends TurnOrdered
             if (ignoreECM) {
                 return true;
             }
-            // PLAYTEST3 we don't care about ECM here, the network is still there.
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+            if (Game.rulesManager.getRulesC3().c3AllowedWithECM()) {
                 return true;
             }
             return !(ComputeECM.isAffectedByECM(e, e.getPosition(), e.getPosition())) &&
@@ -7537,8 +7557,8 @@ public abstract class Entity extends TurnOrdered
             }
             ECMInfo srcInfo = ComputeECM.getECMEffects(e, e.getPosition(), e.getPosition(), true, null);
             ECMInfo dstInfo = ComputeECM.getECMEffects(this, getPosition(), getPosition(), true, null);
-            // PLAYTEST3 ignoring ECM for this check
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+
+            if (Game.rulesManager.getRulesC3().c3AllowedWithECM()) {
                 return true;
             }
             return !((srcInfo != null) && srcInfo.isNovaECM()) && !((dstInfo != null) && dstInfo.isNovaECM());
@@ -7982,6 +8002,7 @@ public abstract class Entity extends TurnOrdered
         final Set<WeaponAttackAction> targets = new HashSet<>();
         getActiveAMS().stream().filter(ams -> !ams.isAPDS()).forEach(ams -> {
             // make a new list of only incoming attacks in arc
+            // TODO: determine if adjustments for MRM Saturation attacks are necessary.
             final List<WeaponAttackAction> attacksInArc = attacks.stream()
                   .filter(weaponHandler -> (weaponHandler.getWeaponAttackAction() !=
                         null) &&
@@ -8019,8 +8040,7 @@ public abstract class Entity extends TurnOrdered
                 if (waa != null) {
                     waa.addCounterEquipment(ams);
                 }
-            } else if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                // PLAYTEST3 AMS shoots twice handling
+            } else if (Game.rulesManager.getRulesEquipment().getAMSMultiShot()) {
                 // Assuming AMS has not been used at all yet, so both shots are available.
                 final WeaponAttackAction waa = Compute.getHighestExpectedDamage(getGame(), attacksInArc, true);
                 if (waa != null) {
@@ -8347,22 +8367,14 @@ public abstract class Entity extends TurnOrdered
         }
         // gyro operational? does not apply if using tracked/quadvee vehicle/lam fighter
         // movement
-        // PLAYTEST2 Gyro destroyed no longer adds +6
         if (isGyroDestroyed() &&
               canFall() &&
               moveType != EntityMovementType.MOVE_VTOL_WALK &&
               moveType != EntityMovementType.MOVE_VTOL_RUN) {
-            if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                 return new PilotingRollData(entityId,
                       TargetRoll.AUTOMATIC_FAIL,
-                      getCrew().getPiloting(),
+                      Game.rulesManager.getRulesPilot().getSeatbeltGyroModifier(getCrew().getPiloting()),
                       "Gyro destroyed");
-            } else {
-                return new PilotingRollData(entityId,
-                      TargetRoll.AUTOMATIC_FAIL,
-                      getCrew().getPiloting() + 6,
-                      "Gyro destroyed");
-            }
         }
 
         // both legs present?
@@ -8370,37 +8382,23 @@ public abstract class Entity extends TurnOrdered
               (((BipedMek) this).countBadLegs() == 2) &&
               (moveType != EntityMovementType.MOVE_VTOL_WALK) &&
               (moveType != EntityMovementType.MOVE_VTOL_RUN)) {
-            if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
                 return new PilotingRollData(entityId,
                       TargetRoll.AUTOMATIC_FAIL,
-                      getCrew().getPiloting() + 8,
+                      Game.rulesManager.getRulesPilot().getSeatbeltLegModifier(getCrew().getPiloting(), 2),
                       "Both legs destroyed");
-            } else {
-                return new PilotingRollData(entityId,
-                      TargetRoll.AUTOMATIC_FAIL,
-                      getCrew().getPiloting() + 10,
-                      "Both legs destroyed");
-            }
         } else if (this instanceof QuadMek) {
             if (((QuadMek) this).countBadLegs() >= 3) {
-                if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                    return new PilotingRollData(entityId,
+                   return new PilotingRollData(entityId,
                           TargetRoll.AUTOMATIC_FAIL,
-                          getCrew().getPiloting() + (((Mek) this).countBadLegs() * 4),
-                          ((Mek) this).countBadLegs() + " legs destroyed");
-                } else {
-                    return new PilotingRollData(entityId,
-                          TargetRoll.AUTOMATIC_FAIL,
-                          getCrew().getPiloting() + (((Mek) this).countBadLegs() * 5),
-                          ((Mek) this).countBadLegs() + " legs destroyed");
-                }
+                         Game.rulesManager.getRulesPilot().getSeatbeltLegModifier(getCrew().getPiloting(),
+                               ((Mek) this).countBadLegs()), "legs destroyed");
             }
         }
         // entity shut down?
         if (isShutDown() && isShutDownThisPhase()) {
             return new PilotingRollData(entityId,
                   TargetRoll.AUTOMATIC_FAIL,
-                  getCrew().getPiloting() + 3,
+                  Game.rulesManager.getRulesPilot().getSeatbeltShutdown(getCrew().getPiloting()),
                   "Reactor shut down");
         } else if (isShutDown()) {
             return new PilotingRollData(entityId,
@@ -8626,26 +8624,13 @@ public abstract class Entity extends TurnOrdered
      * Checks if the entity is attempting to run with damage that would force a PSR. If so, returns the target roll for
      * the piloting skill check.
      */
-    public PilotingRollData checkRunningWithDamage(EntityMovementType overallMoveType) {
+    public PilotingRollData checkRunningWithDamage(EntityMovementType overallMoveType, int distance) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         int gyroDamage = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CENTER_TORSO);
-        if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
-            // PLAYTEST3 No rolls for running with HD Gyro
-            if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                gyroDamage = 0;
-            } else {
-                gyroDamage--; // HD gyro ignores 1st damage
-            }
-        }
-        if (((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT)) &&
-              canFall() &&
-              ((gyroDamage > 0) || hasHipCrit())) {
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), 0, "running with damaged hip actuator or gyro"));
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to run with damage");
-        }
+
+        Game.rulesManager.getRulesPSR().checkRunningWithDamage(this, roll, gyroDamage, overallMoveType, distance);
+
         addPilotingModifierForTerrain(roll);
         return roll;
     }
@@ -8789,6 +8774,23 @@ public abstract class Entity extends TurnOrdered
         return roll;
     }
 
+    public boolean hasBadLegs() {
+        int badLegs = 0;
+        int legLocations = 0;
+        for (int loc = 0; loc < locations(); loc++) {
+            if (locationIsLeg(loc) ) {
+                if (isLocationBad(loc)) {
+                    badLegs++;
+                    }
+                legLocations++;
+            }
+        }
+        if (legLocations == 4) {
+            return (badLegs >= 3) ? true : false;
+        }
+        return (badLegs >= 1) ? true : false;
+    }
+
     /**
      * Checks if the entity is landing (from a jump) with damage that would force a PSR. If so, returns the target roll
      * for the piloting skill check.
@@ -8797,17 +8799,25 @@ public abstract class Entity extends TurnOrdered
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         int gyroHits = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CENTER_TORSO);
-        // Heavy-duty gyro does not force PSR until second hit
-        if (getGyroType() == Mek.GYRO_HEAVY_DUTY || getGyroType() == Mek.GYRO_SUPERHEAVY) {
+        // Compensate for values in critical damage if needed
+        int gyroModifier = Game.rulesManager.getRulesPSR().getGyroJumpModifier(gyroHits, getGyroType());
+
+        // Heavy-duty gyro does not force PSR until second hit (Only under Total Warfare)
+        if ((getGyroType() == Mek.GYRO_HEAVY_DUTY || getGyroType() == Mek.GYRO_SUPERHEAVY) && Game.rulesManager instanceof TWRulesManager) {
             gyroHits--;
         }
-        if (gyroHits > 0 || hasLegActuatorCrit()) {
+
+        if (gyroHits > 0 || hasLegActuatorCrit() || Game.rulesManager.getRulesUnits().hasBadLegs(this)) {
             // append the reason modifier
-            roll.append(new PilotingRollData(getId(), 0, "landing with damaged leg actuator or gyro"));
+            if (getGyroType() == Mek.GYRO_HEAVY_DUTY || getGyroType() == Mek.GYRO_SUPERHEAVY) {
+                roll.append(new PilotingRollData(getId(), gyroModifier, "landing with damaged leg or heavy-duty gyro"));
+            } else {
+                roll.append(new PilotingRollData(getId(), 0, "landing with damaged leg or gyro"));
+            }
             addPilotingModifierForTerrain(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                  "Entity does not have gyro or leg actuator damage -- checking for purposes of determining PSR " +
+                  "Entity does not have gyro or leg damage -- checking for purposes of determining PSR " +
                         "after jump.");
         }
         return roll;
@@ -8937,6 +8947,10 @@ public abstract class Entity extends TurnOrdered
 
         if ((null != prevStep) && prevStep.isHasJustStood()) {
             return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "units don't skid from getting up");
+        }
+
+        if (!Game.rulesManager.getRulesMovement().skidEnabled()) {
+            return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "skidding not enabled");
         }
 
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
@@ -9093,14 +9107,9 @@ public abstract class Entity extends TurnOrdered
         } else {
             mod = 1;
         }
-        // PLAYTEST2 water PSR changes
-        if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-            if (waterLevel >= 1 && overallMoveType == EntityMovementType.MOVE_RUN) {
-                roll.append(new PilotingRollData(getId(), 0, "entering Depth " + waterLevel + " Water"));
-            } else {
-                roll.addModifier(TargetRoll.CHECK_FALSE, "No need for roll");
-            }
-            return roll;
+
+        if (waterLevel >=1 && overallMoveType == EntityMovementType.MOVE_RUN && !Game.rulesManager.getRulesMovement().cannotRunInWater(movementMode, false)) {
+            roll.append(new PilotingRollData(getId(), 0, "entering Depth " + waterLevel + " Water"));
         }
 
         if ((waterLevel > 1) &&
@@ -9109,9 +9118,12 @@ public abstract class Entity extends TurnOrdered
             roll.append(new PilotingRollData(getId(), -1, "Frogman"));
         }
         if (waterLevel > 0) {
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), mod, "entering Depth " + waterLevel + " Water"));
-            adjustDifficultTerrainPSRModifier(roll);
+            if(!Game.rulesManager.getRulesPSR().psrForWaterEntry(overallMoveType)) {
+                roll.addModifier(TargetRoll.CHECK_FALSE, "No roll required for walk");
+            } else {
+                roll.append(new PilotingRollData(getId(), mod, "entering Depth " + waterLevel + " Water"));
+                adjustDifficultTerrainPSRModifier(roll);
+            }
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: No water here.");
         }
@@ -11276,16 +11288,15 @@ public abstract class Entity extends TurnOrdered
         if (!phase.isPhysical() && !phase.isFiring() && !phase.isOffboard()) {
             return false;
         }
-        // if you're charging or finding a club, it's already declared
-        // PLAYTEST3 unjamming RAC no longer prevents weapon attacks
-        if ((isUnjammingRAC() && !gameOptions().booleanOption(OptionsConstants.PLAYTEST_3))
-              || isCharging()
-              || isMakingDfa()
-              || isRamming()
-              || isFindingClub()
-              || isOffBoard()) {
+
+        if (!Game.rulesManager.getRulesGame().eligibleForPhase(this, phase)) {
             return false;
         }
+
+        if (isCharging() || isMakingDfa() || isRamming() || isOffBoard()) {
+            return false;
+        }
+
         // must be active
         if (!isActive()) {
             return false;
@@ -11305,8 +11316,7 @@ public abstract class Entity extends TurnOrdered
         }
 
         // if you're charging, no shooting
-        // PLAYTEST3 unjamming RAC you can still shoot
-        if ((isUnjammingRAC() && !gameOptions().booleanOption(OptionsConstants.PLAYTEST_3))
+        if ((isUnjammingRAC() && Game.rulesManager.getRulesWeapons().getRACUnjamRestriction())
               || isCharging()
               || isMakingDfa()
               || isRamming()) {
@@ -11378,10 +11388,10 @@ public abstract class Entity extends TurnOrdered
         }
 
         // if you're charging, no shooting
-        // PLAYTEST3 Unjamming RAC no longer prevents this
-        if ((isUnjammingRAC() && !gameOptions().booleanOption(OptionsConstants.PLAYTEST_3))
-              || isCharging()
-              || isMakingDfa()) {
+        if (!Game.rulesManager.getRulesGame().eligibleForPhase(this, GamePhase.OFFBOARD)) {
+            return false;
+        }
+        if (isCharging() || isMakingDfa()) {
             return false;
         }
 
@@ -11435,19 +11445,41 @@ public abstract class Entity extends TurnOrdered
             return false;
         }
 
-        // if you're charging or finding a club, it's already declared
-        // PLAYTEST3 unjamming no longer prevents this
-        if ((isUnjammingRAC() && !gameOptions().booleanOption(OptionsConstants.PLAYTEST_3)) ||
-              isCharging() ||
+        if (isCharging() ||
               isMakingDfa() ||
               isRamming() ||
-              isFindingClub() ||
               isOffBoard() ||
               isAssaultDropInProgress() ||
               isDropping() ||
               isBracing()) {
+            if (isCharging() && Game.rulesManager.getRulesPhysical().canChargeCancel()
+                && getDisplacementAttack() instanceof ChargeAttackAction) {
+                ChargeAttackAction chargeAttack = (ChargeAttackAction) getDisplacementAttack();
+                if (!(chargeAttack.getTarget(game) instanceof Entity target)) {
+                    return false;
+                }
+                if (target.isDestroyed() || target.isProne()) {
+                    Enumeration<AttackAction> gameDisplacementAttacks = game.getDisplacementAttacks();
+                    while (gameDisplacementAttacks != null && gameDisplacementAttacks.hasMoreElements()) {
+                        AttackAction attackAction = gameDisplacementAttacks.nextElement();
+                        if (attackAction.equals(chargeAttack)) {
+                            game.removeDisplacementAttack(chargeAttack);
+                            break;
+                        }
+                    }
+                    displacementAttack = null;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        // if you're finding a club or unjamming a RAC, it's already declared
+        if (!Game.rulesManager.getRulesGame().eligibleForPhase(this, GamePhase.PHYSICAL)) {
             return false;
         }
+
 
         // check game options
         if (gameOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) &&
@@ -15281,12 +15313,11 @@ public abstract class Entity extends TurnOrdered
         // extra from c3 networks. a valid network requires at least 2 members some hackery and magic numbers here.
         // could be better also, each 'has' loops through all equipment. inefficient to do it 3 times Nova CEWS is
         // quirky and handled apart from the other C3
-        int extraBV = 0;
+        // This is updated as per Core Rules p.220
+        int returnBV = 0;
         if (game != null) {
-            int totalForceBV = 0;
             double multiplier = 0.05;
-            // PLAYTEST3 C3 BV changes. each unit is +30% BV, +35% for boosted
-            boolean playtestThree = gameOptions().booleanOption(OptionsConstants.PLAYTEST_3);
+            double c3BoostedMultiplier = 0;
 
             // C3 network bonus requires at least 2 members. Check conditions:
             // - C3MM: has at least one C3M connected
@@ -15297,45 +15328,35 @@ public abstract class Entity extends TurnOrdered
                   (hasC3M() && ((calculateFreeC3Nodes() < 3) || (getC3Master() != null))) ||
                   (hasC3S() && (c3Master > NONE)) ||
                   ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5))) {
-                totalForceBV += baseBV;
-                // Ignore all other network members for playtest3
-                if (!playtestThree) {
-                    for (Entity entity : game.getC3NetworkMembers(this)) {
-                        if (!equals(entity) && onSameC3NetworkAs(entity)) {
-                            totalForceBV += entity.calculateBattleValue(true, true);
-                        }
-                    }
-                }
+
+                Vector<Entity> c3Members = game.getC3NetworkMembers(this);
+                int numberOfC3Members = c3Members.size();
+
                 if (hasBoostedC3()) {
-                    multiplier = 0.07;
+                    // Only set this if they have C3 Boosted
+                    c3BoostedMultiplier = 0.05;
+                }
+                if (numberOfC3Members > 1 && numberOfC3Members <=8) {
+                    returnBV = (int) Math.round(baseBV * ((multiplier * numberOfC3Members) + c3BoostedMultiplier));
+                } else if (numberOfC3Members > 8) {
+                    returnBV = (int) Math.round(baseBV * ((multiplier * 8) + c3BoostedMultiplier));
                 }
             } else if (hasNovaCEWS()) { //Nova CEWS applies 5% to every mek with Nova on the team {
+                int novaMembers = 1;
                 for (Entity entity : game.getEntitiesVector()) {
-                    if (!equals(entity) && entity.hasNovaCEWS() && !(entity.owner.isEnemyOf(this.owner))) {
-                        totalForceBV += entity.calculateBattleValue(true, true);
+                    if (!entity.equals(this) && entity.hasNovaCEWS() && !(entity.owner.isEnemyOf(this.owner))) {
+                        novaMembers++;
                     }
                 }
-                if (totalForceBV > 0) { //But only if there's at least one other mek with Nova CEWS
-                    totalForceBV += baseBV;
+                if (novaMembers > 1 && novaMembers <=7) {
+                    returnBV = (int) Math.round(baseBV * (multiplier * novaMembers));
+                } else if (novaMembers > 7) {
+                    // IO: Alternate Eras p.183: Nova CEWS BV bonus capped at 35% of unit's base BV
+                    returnBV = (int) Math.round(baseBV * (multiplier * 7));
                 }
             }
-            // PLAYTEST3 set the modifier. Since it is only a single unit, we are good.
-            if (playtestThree && !hasNovaCEWS()) {
-                if (hasBoostedC3()) {
-                    multiplier = 0.35;
-                } else {
-                    multiplier = 0.3;
-                }
-            }
-            double rawBonus = totalForceBV * multiplier;
-            // IO: Alternate Eras p.183: Nova CEWS BV bonus capped at 35% of unit's base BV
-            if (hasNovaCEWS()) {
-                double maxBonus = baseBV * 0.35;
-                rawBonus = Math.min(rawBonus, maxBonus);
-            }
-            extraBV += (int) Math.round(rawBonus);
         }
-        return extraBV;
+        return returnBV;
     }
 
     public boolean hasUnloadedUnitsFromBays() {
@@ -15549,12 +15570,14 @@ public abstract class Entity extends TurnOrdered
 
     /** @return Target number taking into account game options */
     private int getMASCorSuperchargerTarget(int nLevel) {
-        if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED)) {
+        if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED)
+        && Game.rulesManager instanceof TWRulesManager) {
             return ALTERNATE_MASC_FAILURE_ENHANCED[nLevel];
-        } else if (game != null && gameOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC)) {
+        } else if (game != null && gameOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC)
+              && Game.rulesManager instanceof TWRulesManager) {
             return ALTERNATE_MASC_FAILURE[nLevel];
         } else {
-            return MASC_FAILURE[nLevel];
+            return Game.rulesManager.getRulesEquipment().getMascFailure(nLevel);
         }
     }
 
@@ -15661,40 +15684,11 @@ public abstract class Entity extends TurnOrdered
                 r.choose(false);
                 vDesc.addElement(r);
 
-                if (isSupercharger) {
+                int hits = Game.rulesManager.getRulesEquipment().getMascSuperChargerFailureHits(getId(), vDesc,
+                      isSupercharger);
+
+                if (isSupercharger && hits > 0) {
                     // do the damage - engine critical slots
-                    int hits = 0;
-                    Roll diceRoll2 = Compute.rollD6(2);
-                    r = new Report(6310);
-                    r.subject = getId();
-                    r.add(diceRoll2);
-                    r.newlines = 0;
-                    vDesc.addElement(r);
-                    if (diceRoll2.getIntValue() <= 7) {
-                        // no effect
-                        r = new Report(6005);
-                        r.subject = getId();
-                        r.newlines = 0;
-                        vDesc.addElement(r);
-                    } else if ((diceRoll2.getIntValue() == 8) || (diceRoll2.getIntValue() == 9)) {
-                        hits = 1;
-                        r = new Report(6315);
-                        r.subject = getId();
-                        r.newlines = 0;
-                        vDesc.addElement(r);
-                    } else if ((diceRoll2.getIntValue() == 10) || (diceRoll2.getIntValue() == 11)) {
-                        hits = 2;
-                        r = new Report(6320);
-                        r.subject = getId();
-                        r.newlines = 0;
-                        vDesc.addElement(r);
-                    } else if (diceRoll2.getIntValue() == 12) {
-                        hits = 3;
-                        r = new Report(6325);
-                        r.subject = getId();
-                        r.newlines = 0;
-                        vDesc.addElement(r);
-                    }
                     if (this instanceof Mek) {
                         vCriticalSlots.put(Mek.LOC_CENTER_TORSO, new LinkedList<>());
                         for (int i = 0; (i < 12) && (hits > 0); i++) {
@@ -15752,19 +15746,8 @@ public abstract class Entity extends TurnOrdered
                         }
                     }
 
-                } else {
-                    // do the damage. random critical slot on each leg, but MASC is not destroyed
-                    for (int loc = 0; loc < locations(); loc++) {
-                        if (locationIsLeg(loc) && (getHittableCriticalSlots(loc) > 0)) {
-                            CriticalSlot slot;
-                            do {
-                                int slotIndex = Compute.randomInt(getNumberOfCriticalSlots(loc));
-                                slot = getCritical(loc, slotIndex);
-                            } while ((slot == null) || !slot.isHittable());
-                            vCriticalSlots.put(loc, new LinkedList<>());
-                            vCriticalSlots.get(loc).add(slot);
-                        }
-                    }
+                } else if (!isSupercharger) {
+                    Game.rulesManager.getRulesEquipment().doMascFailureCrits(this, vCriticalSlots, hits);
                 }
                 // failed a PSR, check for stalling
                 doCheckEngineStallRoll(vDesc);

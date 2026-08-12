@@ -110,10 +110,11 @@ public class Crew implements Serializable {
     private final int[] gunneryL;
     private final int[] gunneryM;
     private final int[] gunneryB;
-
+    private boolean[] pendingConRolls;
+    
     // Separate artillery skill
     private final int[] artillery;
-
+    
     // init bonuses
     // bonus for individual initiative
     private int initBonus;
@@ -194,7 +195,7 @@ public class Crew implements Serializable {
     // endregion Variable Declarations
 
     // region Constructors
-
+    
     /**
      * Creates a nameless P5/G4 crew of the given size.
      *
@@ -277,6 +278,9 @@ public class Crew implements Serializable {
         koThisRound = new boolean[slots];
         toughness = new int[slots];
         fatigue = new int[slots];
+        
+        this.pendingConRolls = new boolean[slots];
+        Arrays.fill(this.pendingConRolls, false);
 
         options.initialize();
 
@@ -350,6 +354,32 @@ public class Crew implements Serializable {
         return (pos < getGenders().length) ? getGenders()[pos] : Gender.RANDOMIZE;
     }
 
+    public boolean hasPendingConRolls() { 
+        for (int i = 0; i < pendingConRolls.length; i++) {
+            if (pendingConRolls[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean hasPendingConRoll(final int pos) {
+        return pendingConRolls[pos];
+    }
+    
+    public void setPendingConRolls(final boolean pendingConRolls, int crewPos) {
+        this.pendingConRolls[crewPos] = pendingConRolls;
+    }
+
+    /**
+     * Not used yet, but if we need to clear pending con rolls.
+     */
+    public void resetPendingConRolls() {
+        for (int i = 0; i < pendingConRolls.length; i++) {
+            pendingConRolls[i] = false;
+        }
+    }
+    
     public void setGender(final Gender gender, final int pos) {
         getGenders()[pos] = gender;
     }
@@ -1260,6 +1290,7 @@ public class Crew implements Serializable {
             unconscious[i] = false;
             dead[i] = false;
             missing[i] = false;
+            pendingConRolls[i] = false;
         }
     }
 

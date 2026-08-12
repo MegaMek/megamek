@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -49,7 +49,7 @@ public abstract class ExtendedLRMWeapon extends LRMWeapon {
     public ExtendedLRMWeapon() {
         super();
         ammoType = AmmoType.AmmoTypeEnum.EXLRM;
-        flags = flags.andNot(F_ARTEMIS_COMPATIBLE).andNot(F_PROTO_WEAPON);
+        flags = flags.andNot(F_PROTO_WEAPON).or(F_ARTEMIS_COMPATIBLE);
         minimumRange = 10;
         shortRange = 12;
         mediumRange = 22;

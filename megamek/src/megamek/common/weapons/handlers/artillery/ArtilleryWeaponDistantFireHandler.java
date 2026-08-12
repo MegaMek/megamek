@@ -80,15 +80,15 @@ import megamek.server.totalWarfare.TWGameManager;
  * @author Sebastian Brocks
  * @since Sep 24, 2004
  */
-public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
-    private static final MMLogger logger = MMLogger.create(ArtilleryWeaponIndirectFireHandler.class);
+public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
+    private static final MMLogger logger = MMLogger.create(ArtilleryWeaponDistantFireHandler.class);
 
     @Serial
     private static final long serialVersionUID = -1277649123562229298L;
     boolean handledAmmoAndReport = false;
     private int shootingBA = -1;
 
-    public ArtilleryWeaponIndirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+    public ArtilleryWeaponDistantFireHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
           throws EntityLoadingException {
         super(t, w, g, m);
         if (w.getEntity(g) instanceof BattleArmor) {
@@ -276,7 +276,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             // fire will hit the hex automatically.
             // This should only happen for indirect shots
             if (roll.getIntValue() >= toHit.getValue()
-                  && !(this instanceof ArtilleryWeaponDirectFireHandler)) {
+                  && !(this instanceof ArtilleryWeaponCloseFireHandler)) {
                 attackingEntity.aTracker.setModifier(TargetRoll.AUTOMATIC_SUCCESS, targetPos);
                 logger.debug("Artillery HIT - setting AUTOMATIC_SUCCESS for pos={}", targetPos);
             }
@@ -290,7 +290,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             // shot (not salvo!) previously fired at the target hex, this would
             // in fact appear to be correct.
             // Only apply these modifiers to indirect artillery
-            else if ((bestSpotter.isPresent()) && !(this instanceof ArtilleryWeaponDirectFireHandler)) {
+            else if ((bestSpotter.isPresent()) && !(this instanceof ArtilleryWeaponCloseFireHandler)) {
                 // only add mods if it's not an automatic success
                 if (attackingEntity.aTracker.getModifier(weapon, targetPos) != TargetRoll.AUTOMATIC_SUCCESS) {
                     if (bestSpotter.get().hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {

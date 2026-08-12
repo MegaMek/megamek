@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -141,31 +141,8 @@ public record Sensor(int type) implements Serializable {
     }
 
     public int getRangeByBracket() {
-
-        return switch (type) {
-            case TYPE_BAP, TYPE_BAPP -> 12;
-            case TYPE_BLOODHOUND -> 16;
-            case TYPE_CLAN_AP -> 15;
-            case TYPE_WATCHDOG, TYPE_LIGHT_AP, TYPE_VEE_MAG_SCAN, TYPE_VEE_IR, TYPE_BA_HEAT -> 9;
-            case TYPE_NOVA ->
-                // I've not found a reference for sensor range of NovaCEWS.
-                // Assuming Watchdog range.
-                  9;
-            //Under the current errata (3.0,Dec 2017), the rules only give aero sensor ranges against overflown ground units
-            //No differences in range are mentioned for any sensor but active probe, so I'm assuming magscan range for standard sensors
-            case TYPE_MEK_MAG_SCAN, TYPE_MEK_IR, TYPE_AERO_SENSOR -> 10;
-            case TYPE_MEK_RADAR -> 8;
-            case TYPE_VEE_RADAR, TYPE_BA_IMPROVED -> 6;
-            case TYPE_EW_EQUIPMENT -> 3;
-            case TYPE_MEK_SEISMIC -> 2;
-            case TYPE_VEE_SEISMIC, TYPE_EI_PROBE -> 1;
-            //The ranges listed for the various sensors in SO are so far beyond gameplay distances that I'm condensing
-            //them into just the types that have different detection mechanics.
-            case TYPE_SPACECRAFT_RADAR, TYPE_SPACECRAFT_ESM -> 5555;
-            case TYPE_SPACECRAFT_THERMAL -> 1388;
-            case TYPE_AERO_THERMAL -> 139;
-            default -> 0;
-        };
+        int range = Game.rulesManager.getRulesEquipment().getSensorRanges(type);
+        return range;
     }
 
     public int adjustRange(int range, Game game, LosEffects los) {

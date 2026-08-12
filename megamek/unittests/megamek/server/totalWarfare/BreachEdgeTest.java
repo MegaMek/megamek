@@ -63,7 +63,7 @@ import org.mockito.MockedStatic;
  */
 class BreachEdgeTest {
 
-    private static final int TARGET = 10;
+    private static final int TARGET = 4;
 
     private final TWGameManager gameManager = new TWGameManager();
 
@@ -91,16 +91,16 @@ class BreachEdgeTest {
     void breachingRollIsRerolled() {
         Entity entity = breachingUnit(true);
         Vector<Report> reports = new Vector<>();
-        Roll safeReroll = rollOf(4);
+        Roll safeReroll = rollOf(5);
 
         int result;
         try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
             mockedCompute.when(() -> Compute.rollD6(2)).thenReturn(safeReroll);
-            // Original roll of 11 breaches (>= 10); the Edge reroll comes up safe (4).
-            result = gameManager.applyBreachEdge(entity, 0, TARGET, 11, reports);
+            // Original roll of 2 breaches (<4); the Edge reroll comes up safe (5).
+            result = gameManager.applyBreachEdge(entity, 0, TARGET, 2, reports, true);
         }
 
-        assertEquals(4, result, "The rerolled breach roll should replace the breaching roll");
+        assertEquals(5, result, "The rerolled breach roll should replace the breaching roll");
         verify(entity.getCrew(), times(1)).decreaseEdge();
         assertFalse(reports.isEmpty(), "Edge-use and reroll reports should be added");
     }
@@ -111,8 +111,8 @@ class BreachEdgeTest {
         Entity entity = breachingUnit(true);
         Vector<Report> reports = new Vector<>();
 
-        // Roll of 5 is below the target of 10, so no breach and no reroll.
-        int result = gameManager.applyBreachEdge(entity, 0, TARGET, 5, reports);
+        // Roll of 5 is above the target of 3, so no breach and no reroll.
+        int result = gameManager.applyBreachEdge(entity, 0, TARGET, 5, reports, true);
 
         assertEquals(5, result, "A non-breaching roll should be returned unchanged");
         verify(entity.getCrew(), never()).decreaseEdge();
@@ -125,9 +125,9 @@ class BreachEdgeTest {
         Entity entity = breachingUnit(false);
         Vector<Report> reports = new Vector<>();
 
-        int result = gameManager.applyBreachEdge(entity, 0, TARGET, 11, reports);
+        int result = gameManager.applyBreachEdge(entity, 0, TARGET, 3, reports, true);
 
-        assertEquals(11, result, "Without the trigger the breaching roll should stand");
+        assertEquals(3, result, "Without the trigger the breaching roll should stand");
         verify(entity.getCrew(), never()).decreaseEdge();
         assertTrue(reports.isEmpty(), "No reports should be added when the trigger is disabled");
     }
@@ -137,15 +137,15 @@ class BreachEdgeTest {
     void rerollThatAlsoBreachesSpendsOneEdge() {
         Entity entity = breachingUnit(true);
         Vector<Report> reports = new Vector<>();
-        Roll breachingReroll = rollOf(12);
+        Roll breachingReroll = rollOf(3);
 
         int result;
         try (MockedStatic<Compute> mockedCompute = mockStatic(Compute.class)) {
             mockedCompute.when(() -> Compute.rollD6(2)).thenReturn(breachingReroll);
-            result = gameManager.applyBreachEdge(entity, 0, TARGET, 11, reports);
+            result = gameManager.applyBreachEdge(entity, 0, TARGET, 3, reports, true);
         }
 
-        assertEquals(12, result, "The single reroll result stands even if it also breaches");
+        assertEquals(3, result, "The single reroll result stands even if it also breaches");
         verify(entity.getCrew(), times(1)).decreaseEdge();
     }
 }

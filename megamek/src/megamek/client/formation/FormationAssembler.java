@@ -379,7 +379,7 @@ public final class FormationAssembler {
      * empty parts is broken by only ever opening the first of them, so each set partition is visited
      * once.
      */
-    private final class PoolSolver {
+    private static final class PoolSolver {
         private final List<List<AssemblyUnit>> atoms;
         private final int[] atomSizes;
         private final Map<Integer, ElementEval> evalByMask = new HashMap<>();
@@ -658,12 +658,10 @@ public final class FormationAssembler {
         }
         boolean air = element.getFirst().family() == Family.AERO;
 
-        List<FormationType> candidates = new ArrayList<>(FormationType.getAllFormations());
-        candidates.sort(Comparator.comparing(FormationType::getName));
         FormationType best = null;
         boolean bestSharesIdealRole = false;
         int bestDemands = -1;
-        for (FormationType candidate : candidates) {
+        for (FormationType candidate : formationTypesByName()) {
             if ((candidate.isGround() == air) || (candidate.getExclusiveFaction() != null)
                   || !candidate.qualifies(summaries)) {
                 continue;
@@ -680,6 +678,29 @@ public final class FormationAssembler {
             }
         }
         return best;
+    }
+
+    /**
+     * The formation catalog in name order, built once. The exhaustive search evaluates a few hundred
+     * distinct elements on a large pool and each one asks the catalog the same question, so copying
+     * and sorting the list every time is work with no result. The catalog is filled once on first
+     * access and never changes afterwards, so one sorted view serves every caller.
+     *
+     * @return the catalog, sorted by name, not to be modified
+     */
+    private static List<FormationType> formationTypesByName() {
+        return SortedCatalog.BY_NAME;
+    }
+
+    /** Holds the sorted catalog, built on first use by the class loader rather than by a lock. */
+    private static final class SortedCatalog {
+        private static final List<FormationType> BY_NAME = sortByName();
+
+        private static List<FormationType> sortByName() {
+            List<FormationType> types = new ArrayList<>(FormationType.getAllFormations());
+            types.sort(Comparator.comparing(FormationType::getName));
+            return List.copyOf(types);
+        }
     }
 
     /** @return how many separate things a formation type asks of its units, the measure of how much it says */
@@ -857,8 +878,7 @@ public final class FormationAssembler {
         if (type.getGroupingCriteria() != null) {
             FormationType.GroupingConstraint grouping = type.getGroupingCriteria();
             requirements.add(new FormationRationale.Requirement(FormationRationale.Kind.GROUPING,
-                  grouping.getDescription(),
-                  Math.max(0, grouping.getNumGroups() * grouping.getGroupSize()),
+                  grouping.getDescription(), groupedUnitsRequired(grouping, summaries),
                   scoreEach(summaries, grouping::matches), true));
         }
         return requirements;
@@ -873,6 +893,36 @@ public final class FormationAssembler {
             }
         }
         return names.isEmpty() ? "-" : String.join(", ", names);
+    }
+
+    /**
+     * How many units a grouping rule actually demands, resolved the same way
+     * {@link FormationType#qualifies(List)} resolves it. Two cases would otherwise report zero and
+     * make a demanding rule look like it asks nothing: a group size of zero means one group of
+     * everything (the Order Lance, where every unit must be the same model), and the group count is
+     * capped by how many whole groups the units it applies to can actually form.
+     *
+     * @param grouping  the rule to measure
+     * @param summaries the units in hand
+     *
+     * @return how many units must fall into matched groups
+     */
+    private static int groupedUnitsRequired(FormationType.GroupingConstraint grouping,
+          List<MekSummary> summaries) {
+        int applicable = 0;
+        for (MekSummary summary : summaries) {
+            if (grouping.appliesTo(ModelRecord.parseUnitType(summary.getUnitType()))) {
+                applicable++;
+            }
+        }
+        if (applicable == 0) {
+            return 0;
+        }
+        int groupSize = (grouping.getGroupSize() <= 0)
+              ? applicable
+              : Math.min(grouping.getGroupSize(), applicable);
+        int groupCount = Math.min(grouping.getNumGroups(), applicable / groupSize);
+        return Math.max(0, groupCount * groupSize);
     }
 
     private static List<Boolean> scoreEach(List<MekSummary> summaries, Predicate<MekSummary> test) {

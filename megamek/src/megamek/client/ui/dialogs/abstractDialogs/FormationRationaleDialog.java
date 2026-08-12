@@ -46,6 +46,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 import megamek.client.formation.AssemblyUnit;
@@ -54,6 +55,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.UnitRole;
+import org.apache.commons.text.StringEscapeUtils;
 
 /**
  * Explains why one formation holds the units it holds: the doctrine name it earned, the ledger that
@@ -87,17 +89,23 @@ public class FormationRationaleDialog extends AbstractDialog {
         JEditorPane reportPane = new JEditorPane("text/html", report);
         reportPane.setEditable(false);
         reportPane.setCaretPosition(0);
+        // Without this the HTML renderer uses its own fixed font and ignores both the GUI scale and
+        // the theme, so the report stays small and light while the rest of the dialog scales.
+        reportPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+        reportPane.setFont(UIManager.getFont("Label.font"));
+        reportPane.setForeground(UIManager.getColor("Label.foreground"));
         reportPane.setBorder(new EmptyBorder(0, 0, 0, UIUtil.scaleForGUI(10)));
 
         JButton copyText = new JButton(Messages.getString("FormationRationaleDialog.copy"));
+        String plainText = toPlainText(report);
         copyText.addActionListener(evt -> {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            clipboard.setContents(new StringSelection(report), null);
+            clipboard.setContents(new StringSelection(plainText), null);
         });
 
         JScrollPane scrollPane = new JScrollPane(reportPane, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
               ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(UIUtil.scaleForGUI(16));
         scrollPane.setBorder(new EmptyBorder(UIUtil.scaleForGUI(10), 0, 0, 0));
         scrollPane.setPreferredSize(UIUtil.scaleForGUI(620, 560));
 
@@ -115,13 +123,14 @@ public class FormationRationaleDialog extends AbstractDialog {
     /** Builds the whole report: the plain-language answer first, the supporting detail after. */
     private String buildReport() {
         StringBuilder report = new StringBuilder("<html><body>");
-        report.append("<h2>").append(rationale.formationName()).append("</h2>");
+        report.append("<h2>").append(escape(rationale.formationName())).append("</h2>");
 
         int unitCount = rationale.units().size();
         report.append("<p><b>");
         if (rationale.type() != null) {
             report.append(Messages.getString("FormationRationale.summary.typed", unitCount,
-                  rationale.type().getName() + " " + rationale.organization().getElementWord()));
+                  escape(rationale.type().getName() + " "
+                        + rationale.organization().getElementWord())));
         } else {
             report.append(Messages.getString("FormationRationale.summary.untyped", unitCount));
         }
@@ -163,7 +172,7 @@ public class FormationRationaleDialog extends AbstractDialog {
             return;
         }
 
-        report.append("<table cellpadding='3'><tr><th align='left'>")
+        report.append("<table cellpadding='").append(UIUtil.scaleForGUI(3)).append("'><tr><th align='left'>")
               .append(Messages.getString("FormationRationale.col.requirement")).append("</th>");
         // Columns are the unit numbers from the members table above: model designations repeat
         // within a formation ("Stalking Spider II" twice) and would label two columns the same.
@@ -202,25 +211,22 @@ public class FormationRationaleDialog extends AbstractDialog {
     /** Turns a requirement's facts into a sentence, so the wording lives in one place. */
     private String describe(FormationRationale.Requirement requirement) {
         int size = rationale.units().size();
+        String description = escape(requirement.description());
         return switch (requirement.kind()) {
-            case UNIT_TYPE -> Messages.getString("FormationRationale.req.unitType",
-                  requirement.description());
-            case WEIGHT_CLASS -> Messages.getString("FormationRationale.req.weight",
-                  requirement.description());
-            case EVERY_UNIT -> Messages.getString("FormationRationale.req.everyUnit",
-                  requirement.description());
+            case UNIT_TYPE -> Messages.getString("FormationRationale.req.unitType", description);
+            case WEIGHT_CLASS -> Messages.getString("FormationRationale.req.weight", description);
+            case EVERY_UNIT -> Messages.getString("FormationRationale.req.everyUnit", description);
             case AT_LEAST -> Messages.getString("FormationRationale.req.atLeast",
-                  requirement.required(), size, requirement.description());
+                  requirement.required(), size, description);
             case AT_LEAST_ALTERNATIVE -> Messages.getString("FormationRationale.req.atLeastAlternative",
-                  requirement.required(), size, requirement.description());
-            case GROUPING -> Messages.getString("FormationRationale.req.grouping",
-                  requirement.description());
+                  requirement.required(), size, description);
+            case GROUPING -> Messages.getString("FormationRationale.req.grouping", description);
         };
     }
 
     private void appendMembers(StringBuilder report) {
         report.append("<h3>").append(Messages.getString("FormationRationale.members")).append("</h3>");
-        report.append("<table cellpadding='3'><tr><th align='left'>#</th>")
+        report.append("<table cellpadding='").append(UIUtil.scaleForGUI(3)).append("'><tr><th align='left'>#</th>")
               .append(headerCell("FormationRationale.col.unit"))
               .append(headerCell("FormationRationale.col.role"))
               .append(headerCell("FormationRationale.col.weight"))
@@ -230,8 +236,8 @@ public class FormationRationaleDialog extends AbstractDialog {
         int number = 1;
         for (AssemblyUnit unit : rationale.units()) {
             report.append("<tr><td>").append(number++).append("</td><td>")
-                  .append(unit.displayName()).append("</td><td>")
-                  .append(roleName(unit.role())).append("</td><td>")
+                  .append(escape(unit.displayName())).append("</td><td>")
+                  .append(escape(roleName(unit.role()))).append("</td><td>")
                   .append(EntityWeightClass.getClassName(unit.weightClass())).append("</td><td>")
                   .append(unit.walkMp()).append("</td><td>")
                   .append(unit.battleValue())
@@ -251,7 +257,8 @@ public class FormationRationaleDialog extends AbstractDialog {
         if (rationale.type() != null) {
             report.append("<li>").append(Messages.getString(rationale.idealRoleWaived()
                   ? "FormationRationale.why.typeByIdealRole"
-                  : "FormationRationale.why.type", rationale.type().getName())).append("</li>");
+                  : "FormationRationale.why.type", escape(rationale.type().getName())))
+                  .append("</li>");
         } else if (!rationale.unknownToCatalog().isEmpty()) {
             report.append("<li>").append(Messages.getString("FormationRationale.why.noTypeUnknown",
                   String.join(", ", rationale.unknownToCatalog()))).append("</li>");
@@ -265,7 +272,7 @@ public class FormationRationaleDialog extends AbstractDialog {
                   .append("</li>");
         } else {
             report.append("<li>").append(Messages.getString("FormationRationale.why.role",
-                  roleName(rationale.modalRole()), rationale.modalRoleCount(),
+                  escape(roleName(rationale.modalRole())), rationale.modalRoleCount(),
                   rationale.units().size())).append("</li>");
         }
 
@@ -293,7 +300,7 @@ public class FormationRationaleDialog extends AbstractDialog {
         report.append("<h3>").append(Messages.getString("FormationRationale.bindings"))
               .append("</h3><ul>");
         for (String binding : rationale.bindings()) {
-            report.append("<li>").append(binding).append("</li>");
+            report.append("<li>").append(escape(binding)).append("</li>");
         }
         report.append("</ul>");
     }
@@ -311,10 +318,39 @@ public class FormationRationaleDialog extends AbstractDialog {
             String key = (swap.cost() >= 0)
                   ? "FormationRationale.alternatives.row"
                   : "FormationRationale.alternatives.rowBetter";
-            report.append("<li>").append(Messages.getString(key, swap.unitName(), swap.otherUnitName(),
-                  swap.otherFormation(), Math.round(Math.abs(swap.cost())))).append("</li>");
+            report.append("<li>").append(Messages.getString(key, escape(swap.unitName()),
+                  escape(swap.otherUnitName()), escape(swap.otherFormation()),
+                  Math.round(Math.abs(swap.cost())))).append("</li>");
         }
         report.append("</ul>");
+    }
+
+    /**
+     * Makes text safe to drop into the report. Unit and force names are whatever a player typed, and
+     * an angle bracket in one would otherwise be read as markup.
+     */
+    private static String escape(String text) {
+        return StringEscapeUtils.escapeHtml4(text);
+    }
+
+    /**
+     * The report as plain text, for the clipboard: the point of copying it is to paste it into a bug
+     * report or a chat window, and markup there is noise. Cells become tabs and blocks become lines,
+     * so the requirements table survives the trip as a readable grid. Only the small set of tags this
+     * report writes needs handling.
+     *
+     * @param html the rendered report
+     *
+     * @return the same report as text
+     */
+    private static String toPlainText(String html) {
+        String text = html.replaceAll("(?i)</t[dh]>", "\t")
+              .replaceAll("(?i)</(tr|p|li|h2|h3|table|ul)>", "\n")
+              .replaceAll("(?i)<br\\s*/?>", "\n")
+              .replaceAll("<[^>]+>", "");
+        text = StringEscapeUtils.unescapeHtml4(text);
+        // Collapse the blank lines left where one block tag closed inside another.
+        return text.replaceAll("[ \t]+\n", "\n").replaceAll("\n{3,}", "\n\n").strip();
     }
 
     private static String roleName(UnitRole role) {

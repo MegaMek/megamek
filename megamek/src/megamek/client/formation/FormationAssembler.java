@@ -524,18 +524,20 @@ public final class FormationAssembler {
                 for (int secondPart = firstPart + 1; secondPart < parts.size() && !improved; secondPart++) {
                     List<List<AssemblyUnit>> first = parts.get(firstPart);
                     List<List<AssemblyUnit>> second = parts.get(secondPart);
-                    for (int i = 0; i < first.size() && !improved; i++) {
-                        for (int j = 0; j < second.size() && !improved; j++) {
-                            if (first.get(i).size() != second.get(j).size()) {
+                    for (int firstAtom = 0; firstAtom < first.size() && !improved; firstAtom++) {
+                        for (int secondAtom = 0; secondAtom < second.size() && !improved; secondAtom++) {
+                            // Only same-sized atoms may trade places, or the elements change size.
+                            if (first.get(firstAtom).size() != second.get(secondAtom).size()) {
                                 continue;
                             }
-                            List<AssemblyUnit> atomA = first.set(i, second.get(j));
-                            second.set(j, atomA);
+                            List<AssemblyUnit> fromFirst = first.set(firstAtom, second.get(secondAtom));
+                            second.set(secondAtom, fromFirst);
                             if (partitionScore(parts) > currentScore) {
                                 improved = true;
                             } else {
-                                List<AssemblyUnit> atomB = first.set(i, second.get(j));
-                                second.set(j, atomB);
+                                // No better: put both atoms back where they came from.
+                                List<AssemblyUnit> restored = first.set(firstAtom, second.get(secondAtom));
+                                second.set(secondAtom, restored);
                             }
                         }
                     }

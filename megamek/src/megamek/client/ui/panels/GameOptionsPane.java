@@ -32,7 +32,7 @@
  */
 package megamek.client.ui.panels;
 
-import static megamek.client.ui.Messages.getString;
+import static megamek.common.internationalization.I18n.getTextAt;
 import static megamek.utilities.ImageUtilities.addTintToImageIcon;
 import static megamek.utilities.ImageUtilities.scaleImageIcon;
 
@@ -81,6 +81,7 @@ import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
 /** Searchable settings-tree presentation for metadata-backed game option groups. */
 public class GameOptionsPane extends JPanel {
     private static final int START_HEIGHT = 800;
+    private static final String CLIENT_BUNDLE = "megamek.client.messages";
     private static final int HEADER_IMAGE_SIZE = 80;
     private static final int LANDING_HEADER_IMAGE_SIZE = 200;
     private static final int MAX_VICTORY_CONDITIONS = 100;
@@ -102,13 +103,13 @@ public class GameOptionsPane extends JPanel {
     private static final Color UNOFFICIAL_COLOR = new Color(0xE6, 0x9F, 0x00);
     private static final SettingsTextProvider TEXT = SettingsTextProvider.megaMek();
     private static final SettingsBadge IMPORTANT_BADGE = new SettingsBadge(IMPORTANT_ICON, null,
-          getString("GameOptionsDialog.legend.important"));
+          getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.legend.important"));
     private static final SettingsBadge ADVANCED_BADGE = new SettingsBadge(ADVANCED_ICON, null,
-          getString("GameOptionsDialog.legend.advanced"));
+          getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.legend.advanced"));
     private static final SettingsBadge UNOFFICIAL_BADGE = new SettingsBadge(UNOFFICIAL_ICON, UNOFFICIAL_COLOR,
-          getString("GameOptionsDialog.legend.unofficial"));
+          getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.legend.unofficial"));
     private static final SettingsBadge LEGACY_BADGE = new SettingsBadge(LEGACY_ICON, null,
-          getString("GameOptionsDialog.legend.legacy"));
+          getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.legend.legacy"));
     private static final Set<String> UNOFFICIAL_OPTIONS = Set.of(
           OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT,
           OptionsConstants.ADVANCED_COMBAT_FULL_ROTOR_HITS,
@@ -262,12 +263,12 @@ public class GameOptionsPane extends JPanel {
         }
 
         SettingsNavigationText navigationText = new SettingsNavigationText(
-              getString("GameOptionsDialog.Search"),
-              getString("GameOptionsDialog.SearchToolTip"),
-              getString("GameOptionsDialog.SearchNoMatches"),
-              getString("GameOptionsDialog.SearchMatches"),
-              getString("SettingsPagePanel.expandAll.text"),
-              getString("SettingsPagePanel.collapseAll.text"));
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.Search"),
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.SearchToolTip"),
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.SearchNoMatches"),
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.SearchMatches"),
+              getTextAt(CLIENT_BUNDLE, "SettingsPagePanel.expandAll.text"),
+              getTextAt(CLIENT_BUNDLE, "SettingsPagePanel.collapseAll.text"));
         settingsPane = new SettingsPane(routes, pageFactories, navigationText);
         add(settingsPane, BorderLayout.CENTER);
     }
@@ -584,9 +585,9 @@ public class GameOptionsPane extends JPanel {
 
         private static Map<Integer, String> rngTypeChoices() {
             Map<Integer, String> choices = new LinkedHashMap<>();
-            choices.put(MMRandom.R_SUN, getString("GameOptionsDialog.rngType.sunRandom"));
-            choices.put(MMRandom.R_CRYPTO, getString("GameOptionsDialog.rngType.cryptoRandom"));
-            choices.put(MMRandom.R_POOL36, getString("GameOptionsDialog.rngType.pool36Random"));
+            choices.put(MMRandom.R_SUN, getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.rngType.sunRandom"));
+            choices.put(MMRandom.R_CRYPTO, getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.rngType.cryptoRandom"));
+            choices.put(MMRandom.R_POOL36, getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.rngType.pool36Random"));
             return choices;
         }
 
@@ -716,11 +717,11 @@ public class GameOptionsPane extends JPanel {
     }
 
     private static String sectionTitle(String sectionId) {
-        return getString("GameOptionsDialog.section." + sectionId + ".title");
+        return getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.section." + sectionId + ".title");
     }
 
     private static String sectionSummary(String sectionId) {
-        return getString("GameOptionsDialog.section." + sectionId + ".summary");
+        return getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.section." + sectionId + ".summary");
     }
 
     static String sectionId(String groupId, String optionName) {

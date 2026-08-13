@@ -33,8 +33,8 @@
  */
 package megamek.client.ui.dialogs.buttonDialogs;
 
-import static megamek.client.ui.Messages.getString;
 import static megamek.client.ui.util.UIUtil.WrappingButtonPanel;
+import static megamek.common.internationalization.I18n.getTextAt;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -61,7 +61,6 @@ import javax.xml.parsers.DocumentBuilder;
 
 import org.apache.commons.text.StringEscapeUtils;
 
-import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
@@ -89,6 +88,7 @@ import org.w3c.dom.NodeList;
 /** Responsible for displaying the current game options and allowing the user to change them. */
 public class GameOptionsDialog extends AbstractButtonDialog implements ActionListener, DialogOptionListener {
     private static final int BUTTON_GAP = 8;
+    private static final String CLIENT_BUNDLE = "megamek.client.messages";
     private static final Set<String> CORE_RULES_DISABLED_OPTIONS = Set.of(
           OptionsConstants.BASE_FLAMER_HEAT,
           OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS,
@@ -116,13 +116,13 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     private GameOptionsPane gameOptionsPane;
 
     private final WrappingButtonPanel panPassword = new WrappingButtonPanel();
-    private final JLabel labPass = new JLabel(Messages.getString("GameOptionsDialog.Password"));
+    private final JLabel labPass = new JLabel(getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.Password"));
     private final JTextField texPass = new JTextField(15);
-    private final JButton butSave = new JButton(Messages.getString("GameOptionsDialog.Save"));
-    private final JButton butLoad = new JButton(Messages.getString("GameOptionsDialog.Load"));
-    private final JButton butDefaults = new JButton(Messages.getString("GameOptionsDialog.Defaults"));
-    private final JButton butOkay = new JButton(Messages.getString("Okay"));
-    private final JButton butCancel = new JButton(Messages.getString("Cancel"));
+    private final JButton butSave = new JButton(getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.Save"));
+    private final JButton butLoad = new JButton(getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.Load"));
+    private final JButton butDefaults = new JButton(getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.Defaults"));
+    private final JButton butOkay = new JButton(getTextAt(CLIENT_BUNDLE, "Okay"));
+    private final JButton butCancel = new JButton(getTextAt(CLIENT_BUNDLE, "Cancel"));
     private final JToggleButton butUnofficial = new JToggleButton();
     private final JToggleButton butLegacy = new JToggleButton();
 
@@ -219,8 +219,8 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         actionButtons.add(butLoad);
 
         JButton legendButton = SettingsIconLegend.createLegendButton(
-              Messages.getString("GameOptionsDialog.legend.button"),
-              Messages.getString("GameOptionsDialog.legend.tooltip"),
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.legend.button"),
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.legend.tooltip"),
               GameOptionsPane.legendEntries());
         JPanel legendPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, gap, 0));
         legendPanel.add(legendButton);
@@ -323,15 +323,17 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     private static void configureRuleToggle(JToggleButton button, SettingsBadge badge, String labelKey,
           String tooltipKey) {
         boolean selected = button.isSelected();
-        String label = getString(labelKey);
-        button.setText(ruleToggleText(badge, label, getString("GameOptionsDialog.ruleToggle.on")));
+      String label = getTextAt(CLIENT_BUNDLE, labelKey);
+      button.setText(ruleToggleText(badge, label,
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.ruleToggle.on")));
         Dimension onSize = button.getPreferredSize();
-        button.setText(ruleToggleText(badge, label, getString("GameOptionsDialog.ruleToggle.off")));
+      button.setText(ruleToggleText(badge, label,
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.ruleToggle.off")));
         Dimension offSize = button.getPreferredSize();
         Dimension size = new Dimension(Math.max(onSize.width, offSize.width), Math.max(onSize.height, offSize.height));
         button.setPreferredSize(size);
         button.setMinimumSize(size);
-        button.setToolTipText(getString(tooltipKey));
+        button.setToolTipText(getTextAt(CLIENT_BUNDLE, tooltipKey));
         button.setSelected(selected);
         updateRuleToggleText(button, badge, label);
     }
@@ -345,7 +347,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         String stateKey = button.isSelected()
               ? "GameOptionsDialog.ruleToggle.on"
               : "GameOptionsDialog.ruleToggle.off";
-        String state = getString(stateKey);
+        String state = getTextAt(CLIENT_BUNDLE, stateKey);
         button.setText(ruleToggleText(badge, label, state));
         button.getAccessibleContext().setAccessibleName(label + ": " + state);
     }
@@ -475,8 +477,9 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         butUnofficial.setSelected(!backingOptionSelected(OptionsConstants.BASE_HIDE_UNOFFICIAL));
         butLegacy.setSelected(!backingOptionSelected(OptionsConstants.BASE_HIDE_LEGACY));
         updateRuleToggleText(butUnofficial, GameOptionsPane.unofficialBadge(),
-              getString("GameOptionsDialog.Unofficial"));
-        updateRuleToggleText(butLegacy, GameOptionsPane.legacyBadge(), getString("GameOptionsDialog.Legacy"));
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.Unofficial"));
+        updateRuleToggleText(butLegacy, GameOptionsPane.legacyBadge(),
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.Legacy"));
     }
 
     private boolean backingOptionSelected(String optionName) {
@@ -1045,17 +1048,17 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         if (!hasBackingOption(backingOptionName)) {
             return;
         }
-        if (!button.isSelected()
-              && !MMConfirmDialog.confirm(frame, "Warning", getString("GameOptionsDialog.HideWarning"))) {
+        if (!button.isSelected() && !MMConfirmDialog.confirm(frame, "Warning",
+            getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.HideWarning"))) {
             button.setSelected(true);
-            updateRuleToggleText(button, badge, getString(labelKey));
+            updateRuleToggleText(button, badge, getTextAt(CLIENT_BUNDLE, labelKey));
             return;
         }
         optionComps.get(backingOptionName).getFirst().setSelected(!button.isSelected());
         if (!button.isSelected()) {
             deactivateOptions(optionComps, category);
         }
-        updateRuleToggleText(button, badge, getString(labelKey));
+        updateRuleToggleText(button, badge, getTextAt(CLIENT_BUNDLE, labelKey));
         toggleOptions();
     }
 

@@ -32,7 +32,7 @@
  */
 package megamek.client.ui.panels;
 
-import static megamek.client.ui.Messages.getString;
+import static megamek.common.internationalization.I18n.getTextAt;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,6 +45,7 @@ import megamek.logging.MMLogger;
 /** Explicit presentation-only placement for every registered game option. */
 final class GameOptionsPresentation {
     private static final MMLogger LOGGER = MMLogger.create(GameOptionsPresentation.class);
+      private static final String CLIENT_BUNDLE = "megamek.client.messages";
     private static final String BASIC = "basic";
     private static final String GAME_MASTER = "gameMaster";
     private static final String VICTORY = "victory";
@@ -572,14 +573,15 @@ final class GameOptionsPresentation {
         String title(Map<String, String> sourceGroups) {
             return usesSingleSourceFallback(sourceGroups)
                   ? sourceGroups.get(fallbackSourceGroupId)
-                  : getString("GameOptionsDialog.page." + id + ".title");
+                  : getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.page." + id + ".title");
         }
 
         List<String> path(Map<String, String> sourceGroups) {
                   if (categoryId.isBlank()) {
                         return List.of(title(sourceGroups));
                   }
-            return List.of(getString("GameOptionsDialog.category." + categoryId), title(sourceGroups));
+            return List.of(getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.category." + categoryId),
+                  title(sourceGroups));
         }
 
         List<String> pathIds() {

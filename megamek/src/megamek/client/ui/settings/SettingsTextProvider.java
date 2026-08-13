@@ -36,7 +36,7 @@ import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-import megamek.client.ui.Messages;
+import megamek.common.internationalization.I18n;
 
 /**
  * Resolves localized text for the shared settings UI without coupling it to a consumer's resource-bundle loader.
@@ -98,20 +98,21 @@ public interface SettingsTextProvider {
      * @return a provider backed by MegaMek's standard client message bundle
      */
     static SettingsTextProvider megaMek() {
+        String bundleName = "megamek.client.messages";
         return new SettingsTextProvider() {
             @Override
             public boolean containsKey(String key) {
-                return Messages.keyExists(key);
+                return I18n.getKeys(bundleName).contains(key);
             }
 
             @Override
             public String getText(String key) {
-                return containsKey(key) ? Messages.getString(key) : missingResourceMarker(key);
+                return I18n.getTextAt(bundleName, key);
             }
 
             @Override
             public String getFormattedText(String key, Object... arguments) {
-                return arguments.length == 0 ? getText(key) : Messages.getString(key, arguments);
+                return arguments.length == 0 ? getText(key) : I18n.getFormattedTextAt(bundleName, key, arguments);
             }
         };
     }

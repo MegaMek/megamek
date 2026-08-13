@@ -331,7 +331,7 @@ public class GameOptionsPane extends JPanel {
         DialogOptionComponentYPanel assaultDrop = componentsByName.get(OptionsConstants.ADVANCED_ASSAULT_DROP);
         DialogOptionComponentYPanel paratroopers = componentsByName.get(OptionsConstants.ADVANCED_PARATROOPERS);
         if (assaultDrop != null && paratroopers != null) {
-            paratroopers.setSelectableWhenSelected(assaultDrop);
+            paratroopers.setEditableWhenSelected(assaultDrop);
         }
     }
 

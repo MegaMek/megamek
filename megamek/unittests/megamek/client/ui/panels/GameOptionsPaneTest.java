@@ -1399,7 +1399,7 @@ class GameOptionsPaneTest {
     }
 
     @Test
-    void paratroopersRequireAssaultDrop() throws Exception {
+    void paratroopersRequireAssaultDropWithoutClearingSavedValue() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
             options.getOption(OptionsConstants.ADVANCED_PARATROOPERS).setValue(true);
@@ -1411,12 +1411,15 @@ class GameOptionsPaneTest {
             pane("advancedRules", List.of(assaultDrop, paratroopers), option -> true);
 
             assertFalse(paratroopers.settingsCheckBox().isEnabled());
-            assertFalse(paratroopers.settingsCheckBox().isSelected());
+            assertTrue(paratroopers.settingsCheckBox().isSelected());
+            assertFalse(paratroopers.hasChanged());
             assaultDrop.setSelected(true);
             assertTrue(paratroopers.settingsCheckBox().isEnabled());
+            assertTrue(paratroopers.settingsCheckBox().isSelected());
             assaultDrop.setSelected(false);
             assertFalse(paratroopers.settingsCheckBox().isEnabled());
-            assertFalse(paratroopers.settingsCheckBox().isSelected());
+            assertTrue(paratroopers.settingsCheckBox().isSelected());
+            assertFalse(paratroopers.hasChanged());
         });
     }
 

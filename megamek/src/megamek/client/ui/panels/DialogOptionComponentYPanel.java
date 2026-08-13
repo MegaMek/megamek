@@ -234,7 +234,15 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     }
 
     void setEditableWhenSelected(DialogOptionComponentYPanel controllingComponent) {
-        bindEditableToSelection(controllingComponent, false);
+        if (controllingComponent.option.getType() != IOption.BOOLEAN) {
+            throw new IllegalArgumentException("Editability dependencies require a boolean option");
+        }
+        dependencyEditable = controllingComponent.checkbox.isSelected();
+        controllingComponent.checkbox.addItemListener(event -> {
+            dependencyEditable = controllingComponent.checkbox.isSelected();
+            applyEditable();
+        });
+        applyEditable();
     }
 
     void setEditableWhenAnySelected(DialogOptionComponentYPanel... controllingComponents) {
@@ -261,32 +269,6 @@ public class DialogOptionComponentYPanel extends FixedYPanel
             }
         }
         return false;
-    }
-
-    void setSelectableWhenSelected(DialogOptionComponentYPanel controllingComponent) {
-        if (option.getType() != IOption.BOOLEAN) {
-            throw new IllegalStateException("Selection dependencies require a boolean option");
-        }
-        bindEditableToSelection(controllingComponent, true);
-    }
-
-    private void bindEditableToSelection(DialogOptionComponentYPanel controllingComponent,
-          boolean clearWhenDisabled) {
-        if (controllingComponent.option.getType() != IOption.BOOLEAN) {
-            throw new IllegalArgumentException("Editability dependencies require a boolean option");
-        }
-        dependencyEditable = controllingComponent.checkbox.isSelected();
-        if (clearWhenDisabled && !dependencyEditable) {
-            checkbox.setSelected(false);
-        }
-        controllingComponent.checkbox.addItemListener(event -> {
-            dependencyEditable = controllingComponent.checkbox.isSelected();
-            if (clearWhenDisabled && !dependencyEditable) {
-                checkbox.setSelected(false);
-            }
-            applyEditable();
-        });
-        applyEditable();
     }
 
     JCheckBox settingsCheckBox() {

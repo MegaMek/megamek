@@ -254,8 +254,15 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastEdgePenalty = edgePenalty(path, game, venue);
         lastManeuverRisk = maneuverRiskPenalty(path, game, venue);
 
-        return lastEngagementCredit + lastArcAdvantage - lastControlRiskPenalty - lastVelocityPenalty
-              - lastEdgePenalty - lastManeuverRisk;
+        // The pro-con of any maneuver, priced as flown: its gains - the pose it reaches, the arc it
+        // claims - only exist if the control roll passes, so they are worth their expected value, not
+        // their face value. Its costs are certain either way. A 58% Immelmann onto a committed enemy
+        // offers 58% of its pose; the crash risk and the spent turn are owed in full.
+        double gains = lastEngagementCredit + lastArcAdvantage;
+        if (lastManeuverType != ManeuverType.MAN_NONE) {
+            gains *= maneuverSuccessChance(path.getEntity(), lastManeuverType);
+        }
+        return gains - lastControlRiskPenalty - lastVelocityPenalty - lastEdgePenalty - lastManeuverRisk;
     }
 
     /**
@@ -517,7 +524,7 @@ public class AerospacePathRanker extends BasicPathRanker {
                 continue;
             }
             lastManeuverType = step.getManeuverType();
-            if (!maneuverSanctioned(lastManeuverType, lastCommittedEnemies, path, game, venue)) {
+            if (!maneuverSanctioned(lastManeuverType, lastCommittedEnemies, lastAirEnemies, path, game, venue)) {
                 return UNSANCTIONED_MANEUVER_COST;
             }
             double failureChance = 1.0 - maneuverSuccessChance(path.getEntity(), lastManeuverType);
@@ -533,44 +540,48 @@ public class AerospacePathRanker extends BasicPathRanker {
      * at the start of the movement phase, before any enemy has moved - and an aero unit's paths are never
      * re-enumerated when an enemy commits. Rank time is the only moment the game state is current.</p>
      *
-     * <p>Offensive maneuvers (Split-S, Loop, Side Slips, Half Roll) require a committed - already moved -
-     * enemy: they exist to exploit a position the opponent can no longer take back. Escape maneuvers
-     * (Hammerhead, Immelmann) are also sanctioned by geometry alone: a fighter whose current pose has the
-     * board edge inside its unsteerable straight run gets its way out regardless of who has moved, because
-     * the alternative is flying off the map.</p>
+     * <p>Reactive maneuvers (Split-S, Side Slips, Half Roll) require a committed - already moved - enemy
+     * and decent odds: they exist to exploit a position the opponent can no longer take back. The escape
+     * pair (Hammerhead, Immelmann) reacts at any odds. Before anyone commits, only the energy hedges
+     * (Immelmann, Loop) are sanctioned, with enemy air present and the odds in hand - moving first hands
+     * the opponent a predictable line, and the hedge is how a first mover stays unexploitable.</p>
      *
      * @param maneuverType     the {@link ManeuverType} constant found on the path
      * @param committedEnemies enemies already evaluated as moved this turn
+     * @param airEnemies       enemy aerospace sharing this fight, moved or not
      * @param path             the path being ranked
      * @param game             the current game
      * @param venue            which set of atmospheric rules is in force
      *
      * @return {@code true} when the maneuver may be scored on its merits, {@code false} to bury the path
      */
-    boolean maneuverSanctioned(int maneuverType, int committedEnemies, MovePath path, Game game,
-          AerospaceVenue venue) {
-        boolean escape = (maneuverType == ManeuverType.MAN_HAMMERHEAD)
-              || (maneuverType == ManeuverType.MAN_IMMELMAN);
-        // An offensive maneuver is a stunt, and a stunt at bad odds is not flying, it is gambling: the
-        // ranker scores the pose the maneuver reaches, but a failed roll never reaches it - the fighter
-        // flies out straight instead. Seen live: a piloting-6 pilot opened round 1 with a Split-S it
-        // would fail 72% of the time. Below an even chance the offensive set is off the table; a
-        // veteran keeps the whole toolbox. Escapes are exempt - when cornered, poor odds of the
-        // Hammerhead still beat the certainty of flying off the map.
-        if (!escape && (maneuverSuccessChance(path.getEntity(), maneuverType) < MINIMUM_STUNT_SUCCESS_CHANCE)) {
-            return false;
-        }
+    boolean maneuverSanctioned(int maneuverType, int committedEnemies, int airEnemies, MovePath path,
+          Game game, AerospaceVenue venue) {
         if (committedEnemies > 0) {
-            return true;
+            // Reacting to a committed enemy: the escape pair flies at any odds - reversing off an
+            // overshoot is worth a bad roll. The rest are stunts, and a stunt at bad odds is not
+            // flying, it is gambling: the ranker scores the pose the maneuver reaches, and a failed
+            // roll never reaches it. Seen live: a piloting-6 pilot opened round 1 with a Split-S it
+            // would fail 72% of the time. Below an even chance the reactive set is off the table.
+            if ((maneuverType == ManeuverType.MAN_HAMMERHEAD)
+                  || (maneuverType == ManeuverType.MAN_IMMELMAN)) {
+                return true;
+            }
+            return maneuverSuccessChance(path.getEntity(), maneuverType) >= MINIMUM_STUNT_SUCCESS_CHANCE;
         }
-        if (!escape) {
+        // Nobody has moved yet. Reactive maneuvers exploit a committed position and are pointless on
+        // spec - but the energy hedges are flown precisely because nobody has committed. Moving first
+        // hands the opponent a long predictable line to answer; an Immelmann ends slow, high, and
+        // free-facing - banked energy and nothing to exploit - and a Loop dumps overshoot velocity in
+        // place. Both are sensible first moves when enemy air is present and the pilot has the odds.
+        // (An earlier version read the committed-enemy rule as absolute; corrected on Dave's call -
+        // "Only Sith deal in absolutes" - 2026-08-13.)
+        boolean energyHedge = (maneuverType == ManeuverType.MAN_IMMELMAN)
+              || (maneuverType == ManeuverType.MAN_LOOP);
+        if (!energyHedge || (airEnemies == 0)) {
             return false;
         }
-        Entity mover = path.getEntity();
-        int minStraight = venue.isGroundMap() ? 8 : 1;
-        int exitDistance = AerospaceGeometry.hexesUntilOffBoard(mover.getPosition(), mover.getFacing(),
-              game.getBoard(path.getFinalBoardId()), minStraight + 1);
-        return exitDistance <= minStraight;
+        return maneuverSuccessChance(path.getEntity(), maneuverType) >= MINIMUM_STUNT_SUCCESS_CHANCE;
     }
 
     /**
@@ -606,9 +617,14 @@ public class AerospacePathRanker extends BasicPathRanker {
      *
      * @return the penalty to subtract from this path's utility
      */
-    private double edgePenalty(MovePath path, Game game, AerospaceVenue venue) {
+    double edgePenalty(MovePath path, Game game, AerospaceVenue venue) {
         if (path.fliesOffBoard()) {
-            return OFF_BOARD_COST;
+            // Flying off is not an absolute sin (Dave, 2026-08-13: "I'm ok with CASPAR flying off if
+            // it needs to"). A fighter that flies off returns some rounds later, untargetable in the
+            // meantime - which is a disengage, not a defeat. A healthy fighter still pays full price,
+            // because wandering off mid-fight hands the opponent the sky for free; a mauled one
+            // leaves cheap, because staying is how it dies.
+            return OFF_BOARD_COST * disengageCostFraction(path.getEntity());
         }
         int committed = Math.max(0, path.getFinalVelocity()) * venue.hexesPerVelocityPoint();
         if (committed == 0) {
@@ -627,6 +643,25 @@ public class AerospacePathRanker extends BasicPathRanker {
         }
         double directional = OFF_BOARD_COST * EDGE_PRESSURE_WEIGHT * (committed - exitDistance) / committed;
         return Math.min(OFF_BOARD_COST, directional + edgeHugPenalty(path, game, minStraight));
+    }
+
+    /**
+     * How much of the full off-board cost a deliberate fly-off pays, by how much fight the unit has
+     * left: full price while healthy, half below half armor, a fifth once crippled.
+     *
+     * @param mover the unit flying off
+     *
+     * @return the fraction of {@code OFF_BOARD_COST} this unit pays to leave
+     */
+    private static double disengageCostFraction(Entity mover) {
+        if (mover.isCrippled()) {
+            return 0.2;
+        }
+        double armorRemaining = mover.getArmorRemainingPercent();
+        if ((armorRemaining >= 0) && (armorRemaining < 0.5)) {
+            return 0.5;
+        }
+        return 1.0;
     }
 
     /**

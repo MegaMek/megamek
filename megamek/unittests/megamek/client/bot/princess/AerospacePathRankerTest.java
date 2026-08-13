@@ -176,20 +176,42 @@ class AerospacePathRankerTest {
     }
 
     /**
-     * Dave's rule, enforced where the game state is current: an offensive maneuver may only be scored
+     * Dave's rule, enforced where the game state is current: a reactive maneuver may only be scored
      * against an enemy that has already moved. Path generation cannot hold this gate - it runs inside
      * Precognition before any enemy commits - so this is the check that keeps the rule alive.
      */
     @Test
-    void offensiveManeuversRequireACommittedEnemy() {
+    void reactiveManeuversRequireACommittedEnemy() {
         Game game = mock(Game.class);
         Board board = groundBoard(40, 40);
         MovePath path = maneuverPathAt(new Coords(20, 20), 0, game, board);
 
-        assertFalse(ranker.maneuverSanctioned(ManeuverType.MAN_SPLIT_S, 0, path, game,
-              AerospaceVenue.GROUND_MAP), "no committed enemy, no Split-S");
-        assertTrue(ranker.maneuverSanctioned(ManeuverType.MAN_SPLIT_S, 1, path, game,
-              AerospaceVenue.GROUND_MAP), "one committed enemy opens the offensive set");
+        assertFalse(ranker.maneuverSanctioned(ManeuverType.MAN_SPLIT_S, 0, 2, path, game,
+              AerospaceVenue.GROUND_MAP), "no committed enemy, no Split-S - it exploits a known position");
+        assertTrue(ranker.maneuverSanctioned(ManeuverType.MAN_SPLIT_S, 1, 2, path, game,
+              AerospaceVenue.GROUND_MAP), "one committed enemy opens the reactive set");
+    }
+
+    /**
+     * The first mover's hedge: an Immelmann before anyone commits ends slow, high, and free-facing -
+     * banked energy and nothing for the opponent's reply to exploit. Sensible exactly when moving first,
+     * with enemy air present and the odds in hand. ("Only Sith deal in absolutes" - Dave, correcting an
+     * absolute reading of the committed-enemy rule.)
+     */
+    @Test
+    void energyHedgesAreSanctionedBeforeAnyoneCommits() {
+        Game game = mock(Game.class);
+        Board board = groundBoard(40, 40);
+        MovePath path = maneuverPathAt(new Coords(20, 20), 0, game, board);
+
+        assertTrue(ranker.maneuverSanctioned(ManeuverType.MAN_IMMELMAN, 0, 2, path, game,
+              AerospaceVenue.GROUND_MAP), "Immelmann is the first mover's hedge");
+        assertTrue(ranker.maneuverSanctioned(ManeuverType.MAN_LOOP, 0, 2, path, game,
+              AerospaceVenue.GROUND_MAP), "Loop dumps overshoot velocity before committing");
+        assertFalse(ranker.maneuverSanctioned(ManeuverType.MAN_IMMELMAN, 0, 0, path, game,
+              AerospaceVenue.GROUND_MAP), "no enemy air, nothing to hedge against");
+        assertFalse(ranker.maneuverSanctioned(ManeuverType.MAN_HAMMERHEAD, 0, 2, path, game,
+              AerospaceVenue.GROUND_MAP), "a Hammerhead on spec parks a stalled fighter for no reason");
     }
 
     /**
@@ -260,13 +282,13 @@ class AerospacePathRankerTest {
         when(pathFighter.getCrew()).thenReturn(greenCrew);
         when(pathFighter.isFighter()).thenReturn(true);
 
-        assertFalse(ranker.maneuverSanctioned(ManeuverType.MAN_SPLIT_S, 1, path, game,
+        assertFalse(ranker.maneuverSanctioned(ManeuverType.MAN_SPLIT_S, 1, 2, path, game,
               AerospaceVenue.GROUND_MAP), "28% odds is a gamble, not a maneuver - even with a committed enemy");
 
         Crew veteranCrew = mock(Crew.class);
         when(veteranCrew.getPiloting()).thenReturn(4);
         when(pathFighter.getCrew()).thenReturn(veteranCrew);
-        assertTrue(ranker.maneuverSanctioned(ManeuverType.MAN_SPLIT_S, 1, path, game,
+        assertTrue(ranker.maneuverSanctioned(ManeuverType.MAN_SPLIT_S, 1, 2, path, game,
               AerospaceVenue.GROUND_MAP), "a veteran at 58% keeps the offensive toolbox");
     }
 
@@ -285,19 +307,54 @@ class AerospacePathRankerTest {
     }
 
     /**
-     * The escape carve-out: a fighter whose pose has the board edge inside its 8-hex unsteerable straight
-     * run gets Hammerhead and Immelmann regardless of who has moved - the alternative is flying off the map.
+     * A cornered fighter with nobody committed does not stunt its way out - flying off and returning is
+     * an acceptable answer (Dave, 2026-08-13), and the cheap-disengage pricing below makes it available.
+     * With a committed enemy, the escape pair reacts at any odds, green pilot or not.
      */
     @Test
-    void escapeManeuversAreSanctionedByGeometryAlone() {
+    void aCorneredFighterFliesOffRatherThanStunting() {
         Game game = mock(Game.class);
         Board board = groundBoard(40, 40);
         MovePath cornered = maneuverPathAt(new Coords(37, 3), 1, game, board);
-        MovePath midBoard = maneuverPathAt(new Coords(20, 20), 0, game, board);
+        Crew greenCrew = mock(Crew.class);
+        when(greenCrew.getPiloting()).thenReturn(6);
 
-        assertTrue(ranker.maneuverSanctioned(ManeuverType.MAN_HAMMERHEAD, 0, cornered, game,
-              AerospaceVenue.GROUND_MAP), "a cornered fighter escapes without waiting on anyone");
-        assertFalse(ranker.maneuverSanctioned(ManeuverType.MAN_HAMMERHEAD, 0, midBoard, game,
-              AerospaceVenue.GROUND_MAP), "mid-board there is nothing to escape from");
+        assertFalse(ranker.maneuverSanctioned(ManeuverType.MAN_HAMMERHEAD, 0, 2, cornered, game,
+              AerospaceVenue.GROUND_MAP), "even cornered, a Hammerhead on spec is not the answer - fly off");
+        assertTrue(ranker.maneuverSanctioned(ManeuverType.MAN_HAMMERHEAD, 1, 2, cornered, game,
+              AerospaceVenue.GROUND_MAP), "with a committed enemy the escape pair flies at any odds");
+        when(cornered.getEntity().getCrew()).thenReturn(greenCrew);
+        assertTrue(ranker.maneuverSanctioned(ManeuverType.MAN_HAMMERHEAD, 1, 2, cornered, game,
+              AerospaceVenue.GROUND_MAP), "bad odds do not gate the escape pair");
+    }
+
+    /**
+     * Flying off is a disengage, not a defeat (Dave, 2026-08-13): the fighter returns some rounds later
+     * and is untargetable in the meantime. A healthy fighter still pays the full off-board cost; a mauled
+     * one leaves cheap, because staying is how it dies.
+     */
+    @Test
+    void aMauledFighterDisengagesOffBoardCheaply() {
+        Game game = mock(Game.class);
+        Entity healthy = mock(Entity.class);
+        when(healthy.isCrippled()).thenReturn(false);
+        when(healthy.getArmorRemainingPercent()).thenReturn(0.9);
+        Entity crippled = mock(Entity.class);
+        when(crippled.isCrippled()).thenReturn(true);
+
+        MovePath healthyOff = mock(MovePath.class);
+        when(healthyOff.fliesOffBoard()).thenReturn(true);
+        when(healthyOff.getEntity()).thenReturn(healthy);
+        MovePath crippledOff = mock(MovePath.class);
+        when(crippledOff.fliesOffBoard()).thenReturn(true);
+        when(crippledOff.getEntity()).thenReturn(crippled);
+
+        double healthyCost = ranker.edgePenalty(healthyOff, game, AerospaceVenue.GROUND_MAP);
+        double crippledCost = ranker.edgePenalty(crippledOff, game, AerospaceVenue.GROUND_MAP);
+
+        assertTrue(crippledCost < healthyCost / 2,
+              "a crippled fighter's exit must cost a fraction of a healthy one's");
+        assertTrue(healthyCost >= crippledCost * 4,
+              "a healthy fighter still pays full price for wandering off mid-fight");
     }
 }

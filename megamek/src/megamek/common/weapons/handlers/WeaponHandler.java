@@ -65,6 +65,7 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.ChargeLevel;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
@@ -1271,6 +1272,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 }
             }
         }
+        
+        // If we fired a charged bombast laser, reset the charge to none.
+        if (weaponType.hasFlag(WeaponType.F_BOMBAST_LASER) && weapon.getChargeState().equals(ChargeLevel.CHARGED)) {
+            weapon.setChargeState(ChargeLevel.CHARGE_NONE);
+        }
+        
         Report.addNewline(vPhaseReport);
 
         insertAttacks(phase, vPhaseReport);

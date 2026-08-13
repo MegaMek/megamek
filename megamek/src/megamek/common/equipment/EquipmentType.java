@@ -43,11 +43,13 @@ import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.ChargeLevel;
 import megamek.common.enums.Era;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.enums.BombType;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.units.Entity;
 import megamek.common.util.RoundWeight;
@@ -413,9 +415,12 @@ public class EquipmentType implements ITechnology {
         }
 
         // Special case: discharged M- and B-pods shouldn't explode.
-        if (((this instanceof MPodWeapon) || (this instanceof BPodWeapon)) &&
-              ((mounted.getLinked() == null) || (mounted.getLinked().getUsableShotsLeft() == 0))) {
-            return false;
+        if ((this instanceof MPodWeapon) || (this instanceof BPodWeapon)) {
+            boolean explosivePods =
+                  Game.rulesManager.getRulesExplosions().arePodsExplosive(mounted);
+            if (!explosivePods) {
+                return false;
+            }
         }
 
         // special case: RISC laser pulse module are only explosive when the
@@ -484,13 +489,13 @@ public class EquipmentType implements ITechnology {
                   (mounted.getLinked() != null)) {
                 return true;
             }
-
         }
         if ((mounted.getType() instanceof MiscType) &&
               mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR) &&
               !mounted.curMode().equals("Charge")) {
             return false;
         }
+        
         if ((mounted.getType() instanceof PPCWeapon) && (mounted.hasChargedCapacitor() == 0)) {
             return false;
         }

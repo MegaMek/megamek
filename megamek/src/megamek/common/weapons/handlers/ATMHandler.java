@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -119,14 +119,9 @@ public class ATMHandler extends MissileWeaponHandler {
         return hits;
     }
 
-    // PLAYTEST3 ATMs now cluster in 6s
     @Override
     protected int calculateNumCluster() {
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            return 6;
-        } else {
-            return 5;
-        }
+        return Game.rulesManager.getRulesWeapons().getATMClusterSize();
     }
 
     /**

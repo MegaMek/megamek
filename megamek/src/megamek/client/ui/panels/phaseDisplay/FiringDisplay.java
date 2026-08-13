@@ -137,7 +137,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         FIRE_ACTIVATE_SPA("fireActivateSPA"),
         FIRE_RHS("fireRHS"),
         FIRE_SUICIDE_IMPLANTS("fireSuicideImplants"),
-        FIRE_MORE("fireMore");
+        FIRE_MORE("fireMore"),
+        FIRE_CHARGE("fireCharge");
 
         final String cmd;
 
@@ -697,6 +698,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         setFireClearWeaponJamEnabled(false);
         setFireExtinguishEnabled(false);
         setStrafeEnabled(false);
+        setFireChargeLevelEnabled(false);
     }
 
     /**
@@ -739,6 +741,32 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                   weaponMounted.pendingMode().getDisplayableName(true)));
         }
 
+        updateTarget();
+        clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
+        clientgui.getUnitDisplay().wPan.selectWeapon(weaponMounted);
+    }
+
+    /**
+     * Charge Mode - Adds a Charge Mode Change to the current Attack Action
+     */
+    protected void changeChargeLevel() {
+        WeaponMounted weaponMounted = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+
+        // Do nothing we have no unit selected or no weapon selected or if the weapon is not a bombast laser
+        if (currentEntity() == null || weaponMounted == null || !weaponMounted.getType().hasFlag(WeaponType.F_BOMBAST_LASER)) {
+            return;
+        }
+        
+        // send change to the server
+        int nChargeLevel = weaponMounted.switchChargeLevel();
+        
+        clientgui.getClient().sendChargeLevelChange(weaponMounted.getEntity().getId(), weaponMounted.getEquipmentNum(),
+              nChargeLevel);
+
+        // notify the player
+        clientgui.systemMessage(Messages.getString("FiringDisplay.switched", weaponMounted.getName(),
+                  weaponMounted.getChargeState().getDescription()));
+        
         updateTarget();
         clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
         clientgui.getUnitDisplay().wPan.selectWeapon(weaponMounted);
@@ -1863,6 +1891,14 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             setFireModeEnabled(false);
         }
 
+        WeaponMounted wm = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        if ((clientgui.getDisplayedUnit() !=null) && (wm != null) && clientgui.getDisplayedUnit().equals(attacker) &&
+            wm.getType().hasFlag(WeaponType.F_BOMBAST_LASER)) {
+            setFireChargeLevelEnabled(true);
+        } else {
+            setFireChargeLevelEnabled(false);
+        }
+        
         updateSearchlight();
         updateRHS();
         updateActivateSPA();
@@ -2147,6 +2183,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             // Fire Mode - More Fire Mode button handling - Rasia
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_MODE.getCmd())) {
             changeMode(true);
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_CHARGE.getCmd())) {
+            changeChargeLevel();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_CALLED.getCmd())) {
             changeCalled();
         } else if (("changeSinks".equalsIgnoreCase(ev.getActionCommand()))
@@ -2487,6 +2525,11 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     protected void setFireModeEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_MODE).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_MODE.getCmd(), enabled);
+    }
+
+    protected void setFireChargeLevelEnabled(boolean enabled) {
+        buttons.get(FiringCommand.FIRE_CHARGE).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_CHARGE.getCmd(), enabled);
     }
 
     /**

@@ -135,7 +135,8 @@ public class MGAWeaponHandler extends MGHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         int shotsHit;
         int nMod = getClusterModifiers(true);
-
+        nMod += Game.rulesManager.getRulesWeapons().getMGABonus();
+        
         if ((howManyShots == 1) || target.isConventionalInfantry()) {
             shotsHit = 1;
         } else {

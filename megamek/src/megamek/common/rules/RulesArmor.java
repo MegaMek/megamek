@@ -32,5 +32,88 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+
+import megamek.common.HitData;
+import megamek.common.Report;
+import megamek.common.units.Entity;
+import megamek.server.totalWarfare.TWDamageManager;
+
+import java.util.Vector;
+
 public abstract class RulesArmor {
+    /**
+     * Allow heat weapons for heat armor.
+     *
+     * @param heat_weapon true if the weapon is a heat weapon
+     * @return true if heat weapons are allowed
+     */
+    public abstract boolean allowHeatWeapon(boolean heat_weapon);
+
+    /**
+     * Does armor allow armor piercing.
+     *
+     * @param mods the modifications info
+     * @return true if armor piercing is allowed
+     */
+    public abstract boolean allowArmorPiercing(TWDamageManager.ModsInfo mods);
+
+    /**
+     * Impact resistant armor.
+     *
+     * @return the impact armor modifier
+     */
+    public abstract int impactArmorMod();
+
+    /**
+     * Impact Resistant Armor breach.
+     *
+     * @return the breach value modifier
+     */
+    public abstract int impactArmorBreach();
+
+    /**
+     * Does a lance penetrate the armor.
+     *
+     * @param armorType the type of armor
+     * @return true if a lance penetrates the armor
+     */
+    public abstract boolean checkLancePenetration(int armorType);
+
+    /**
+     * Does the armor reduce heat?
+     *
+     * @param armorType the type of armor
+     * @param heatDamage the amount of heat damage
+     * @return the reduced heat damage amount
+     */
+    public abstract int reduceHeatDamageByArmor(int armorType, int heatDamage);
+
+    /**
+     * Does reflective armor cause modifiers for AP?
+     *
+     * @param reflectiveArmor true if the armor is reflective
+     * @return true if reflective armor affects AP modifiers
+     */
+    public abstract boolean reflectiveAP(boolean reflectiveArmor);
+
+    /**
+     * Block TAC (Targeting Auto-Correlator).
+     *
+     * @param armorType the type of armor
+     * @return true if TAC is blocked
+     */
+    public abstract boolean blockTAC(int armorType);
+
+    /**
+     * How does impact armor reduce damage.
+     *
+     * @param entityId the entity ID
+     * @param hit the hit data
+     * @param damage the damage amount
+     * @param reportVec vector of reports describing the damage reduction
+     * @param damageType the type of damage
+     * @return the reduced damage amount
+     */
+    public abstract int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec,
+          int damageType);
 }

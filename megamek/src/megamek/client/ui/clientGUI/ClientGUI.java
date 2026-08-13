@@ -3420,7 +3420,7 @@ public class ClientGUI extends AbstractClientGUI
             // Note: entity may be null for CFR types that don't use entityId (e.g., TAG_TARGET, TELEGUIDED_TARGET)
             // Each case handles null checking as appropriate
             Entity entity = client.getGame().getEntity(gameCFREvent.getEntityId());
-
+            int direction = gameCFREvent.getDirection();
             Object result;
             String input;
 
@@ -3437,14 +3437,17 @@ public class ClientGUI extends AbstractClientGUI
 
                     MovePath stepForward = new MovePath(client.getGame(), entity);
                     MovePath stepBackward = new MovePath(client.getGame(), entity);
-                    stepForward.addStep(MoveStepType.FORWARDS);
-                    stepBackward.addStep(MoveStepType.BACKWARDS);
+                    boolean bNoCost = !Game.rulesManager.getRulesMovement().getDominoDisplacementCostsMP();
+                    stepForward.addStep(MoveStepType.FORWARDS, bNoCost);
+                    stepBackward.addStep(MoveStepType.BACKWARDS, bNoCost);
                     stepForward.compile(client.getGame(), entity, false);
                     stepBackward.compile(client.getGame(), entity, false);
                     Object[] options;
                     MovePath[] paths;
                     int optionType;
-                    if (stepForward.isMoveLegal() && stepBackward.isMoveLegal()) {
+                    if (Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepForward, true) 
+                          && Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepBackward,
+                          false)) {
                         options = new Object[3];
                         paths = new MovePath[3];
                         options[0] = Messages.getString("CFRDomino.Forward", stepForward.getMpUsed());
@@ -3454,12 +3457,21 @@ public class ClientGUI extends AbstractClientGUI
                         paths[1] = stepBackward;
                         paths[2] = null;
                         optionType = JOptionPane.YES_NO_CANCEL_OPTION;
-                    } else if (stepForward.isMoveLegal()) {
+                    } else if (Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepForward, true)) {
                         options = new Object[2];
                         paths = new MovePath[2];
                         options[0] = Messages.getString("CFRDomino.Forward", stepForward.getMpUsed());
                         options[1] = Messages.getString("CFRDomino.NoAction");
                         paths[0] = stepForward;
+                        paths[1] = null;
+                        optionType = JOptionPane.YES_NO_OPTION;
+                    } else if (Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepBackward
+                          ,false)) {
+                        options = new Object[2];
+                        paths = new MovePath[2];
+                        options[0] = Messages.getString("CFRDomino.Backward", stepBackward.getMpUsed());
+                        options[1] = Messages.getString("CFRDomino.NoAction");
+                        paths[0] = stepBackward;
                         paths[1] = null;
                         optionType = JOptionPane.YES_NO_OPTION;
                     } else {
@@ -3504,12 +3516,12 @@ public class ClientGUI extends AbstractClientGUI
                         amsOptions.add(waaMsg);
                     }
 
-                    // Updated AMS selection code for dealing with Multi_AMS, Playtest3 and standard selection
+                    // Updated AMS selection code for dealing with Multi_AMS and standard selection
                     JList amsList = new JList(amsOptions.toArray());
                     JScrollPane amsScrollPane = new JScrollPane(amsList);
                     if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS)) {
                         amsList.setSelectionModel(new AmsAssignGUI(amsList, amsOptions.size()));
-                    } else if (entity.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                    } else if (Game.rulesManager.getRulesEquipment().getAMSMultiShot()) {
                         amsList.setSelectionModel(new AmsAssignGUI(amsList, 2));
                     } else {
                         amsList.setSelectionModel(new AmsAssignGUI(amsList, 1));

@@ -618,12 +618,12 @@ public class Server implements Runnable {
             gamePlayer.setStartingAnySEy(player.getStartingAnySEy());
             gamePlayer.setTeam(player.getTeam());
             gamePlayer.setCamouflage(player.getCamouflage().clone());
-            
+
             // minefields
             for (int minefieldIndex = 0; minefieldIndex < Minefield.TYPE_SIZE; minefieldIndex++) {
-            	gamePlayer.setMinefieldCount(minefieldIndex, player.getMinefieldCount(minefieldIndex));
+                gamePlayer.setMinefieldCount(minefieldIndex, player.getMinefieldCount(minefieldIndex));
             }
-            
+
             gamePlayer.setNbrFortifiedHexes(player.getNbrFortifiedHexes());
             if (gamePlayer.getConstantInitBonus() != player.getConstantInitBonus()) {
                 sendServerChat("Player " +
@@ -948,6 +948,7 @@ public class Server implements Runnable {
 
             XStream xStream = SerializationHelper.getLoadSaveGameXStream();
             newGame = (Game) xStream.fromXML(gzi);
+            newGame.initializeAfterLoad();
         } catch (Exception e) {
             message = String.format("Unable to load file: %s", f);
             LOGGER.error(e, message);
@@ -1399,7 +1400,11 @@ public class Server implements Runnable {
                 case LOAD_GAME:
                     try {
                         sendServerChat(getPlayer(connId).getName() + " loaded a new game.");
-                        setGame((Game) packet.getObject(0));
+                        Game receivedGame = (Game) packet.getObject(0);
+                        if (receivedGame != null) {
+                            receivedGame.initializeAfterLoad();
+                        }
+                        setGame(receivedGame);
                         for (AbstractConnection conn : connections) {
                             sendCurrentInfo(conn.getId());
                         }

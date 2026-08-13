@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -315,6 +315,13 @@ public class LRMHandler extends MissileWeaponHandler {
                         nMissilesModifier += 2;
                     }
                 }
+            } else if (((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
+                  || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
+                  || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML)
+                  || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM))
+                  && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED))) {
+                nMissilesModifier += Game.rulesManager.getRulesAmmo().getSemiGuidedNMissiles((entityTarget.getTaggedBy() != WeaponAttackAction.UNASSIGNED),
+                      weapon.curMode().equals("Indirect"));
             }
         }
 
@@ -330,15 +337,14 @@ public class LRMHandler extends MissileWeaponHandler {
         int rackSize = effectiveRackSize;
         boolean minRangeELRMAttack = false;
 
-        // ELRMs only hit with half their rack size rounded up at minimum range.
+        // ELRMs may be reduced under minimum range.
         // Ignore this for space combat. 1 hex is 18km across.
-        // PLAYTEST3 this is now ignored completely
-        if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            if (weaponType instanceof ExtendedLRMWeapon
-                  && !game.getBoard().isSpace()
-                  && (nRange <= weaponType.getMinimumRange())) {
-                rackSize = rackSize / 2 + rackSize % 2;
+        if (weaponType instanceof ExtendedLRMWeapon && !game.getBoard().isSpace()
+              && (nRange <= weaponType.getMinimumRange())) {
+            int reducedRackSize = Game.rulesManager.getRulesWeapons().getELRMMinimumRackSize(rackSize);
+            if (reducedRackSize < rackSize) {
                 minRangeELRMAttack = true;
+                rackSize = reducedRackSize;
             }
         }
 

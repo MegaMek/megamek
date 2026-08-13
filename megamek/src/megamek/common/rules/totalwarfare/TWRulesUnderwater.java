@@ -32,7 +32,67 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
-import megamek.common.rules.core.CoreRulesUnderwater;
+import megamek.common.equipment.WeaponType;
+import megamek.common.rules.RulesUnderwater;
 
-public class TWRulesUnderwater extends CoreRulesUnderwater {
+public class TWRulesUnderwater extends RulesUnderwater {
+    /**
+     * What is the target number for the breach?
+     *
+     * @return the breach target number is 10
+     */
+    @Override
+    public int getBreachTarget() {
+        return 10;
+    }
+
+    /**
+     * Crossing the waterline blocks LOS
+     *
+     * @return true if water blocks line of sight
+     */
+    @Override
+    public boolean waterBlocksLOS() {
+        return true;
+    }
+
+    /**
+     * Get the short range of the weapon in water
+     * @param weaponType
+     * @return short range
+     */
+    @Override
+    public int getShortRange(WeaponType weaponType) {
+        return weaponType.getWShortRange();
+    }
+
+    /**
+     * Get the medium range of the weapon in water
+     * @param weaponType
+     * @return medium range
+     */
+    @Override
+    public int getMediumRange(WeaponType weaponType) {
+        return weaponType.getWMediumRange();
+    }
+
+    /**
+     * Get the long range of the weapon in water
+     * @param weaponType
+     * @return long range
+     */
+    @Override
+    public int getLongRange(WeaponType weaponType) {
+        return weaponType.getWLongRange();
+    }
+
+    /**
+     * Get the extreme range of the weapon in water
+     * @param weaponType
+     * @return extreme range
+     */
+    @Override
+    public int getExtremeRange(WeaponType weaponType) {
+        return weaponType.getWExtremeRange();
+    }
 }

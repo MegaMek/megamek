@@ -32,9 +32,98 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
+import megamek.common.Report;
+import megamek.common.TargetRollModifier;
+import megamek.common.compute.Compute;
+import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.PilotingRollData;
+import megamek.common.rolls.Roll;
+import megamek.common.rules.RulesPilot;
+import megamek.common.units.Entity;
 
-import megamek.common.rules.core.CoreRulesPilot;
+import java.util.List;
+import java.util.Vector;
 
-public class TWRulesPilot extends CoreRulesPilot {
+public class TWRulesPilot extends RulesPilot {
 
+    /**
+     * Two pilot hits for an explosion
+     *
+     * @return the number of pilot hits caused by an explosion
+     */
+    @Override
+    public int getExplosionPilotHits() {
+        return 2;
+    }
+
+    /**
+     * Gyro destroyed seatbelt check is +6
+     *
+     * @param piloting the piloting skill
+     * @return the seatbelt gyro modifier
+     */
+    @Override
+    public int getSeatbeltGyroModifier(int piloting) {
+        return piloting + 6;
+    }
+
+    /**
+     * Do we modify seatbelt by legs destroyed?
+     * Yes, increasing difficulties
+     *
+     * @param piloting the piloting skill
+     * @param legsDestroyed the number of legs destroyed
+     * @return the seatbelt leg modifier
+     */
+    @Override
+    public int getSeatbeltLegModifier(int piloting, int legsDestroyed) {
+        if (legsDestroyed == 2) {
+            return piloting + 10;
+        }
+        if (legsDestroyed >=3) {
+            return piloting + legsDestroyed * 5;
+        }
+        return piloting;
+    }
+
+    /**
+     * What is the seatbelt check on shutdown.
+     * Reactor shutdown is harder on the check
+     *
+     * @param piloting the piloting skill
+     * @return the seatbelt shutdown target number
+     */
+    @Override
+    public int getSeatbeltShutdown(int piloting) {
+        return piloting + 3;
+    }
+
+    /**
+     * {@inheritDoc}
+     * In TW this is fall height - 1
+     * */
+    @Override
+    public int getSeatbeltHeightModifier(int fallHeight) { return fallHeight - 1; }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PilotingRollData getSeatbeltRoll(Entity entity,
+           int fallHeight,
+          int piloting,
+          List<TargetRollModifier> modifiers,
+          PilotingRollData roll) {
+        if (modifiers == null) {
+            return roll;
+        }
+        PilotingRollData prd = new PilotingRollData(entity.getId(),
+              piloting,
+              "Base piloting skill");
+        if (!modifiers.isEmpty()) {
+            modifiers.forEach(prd::addModifier);
+        }
+        return prd;        
+    }
 }

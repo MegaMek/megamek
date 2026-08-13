@@ -80,7 +80,8 @@ class WeaponTypeTest {
                             || (ammoType == AmmoTypeEnum.LRM_TORPEDO)
                             || (ammoType == AmmoTypeEnum.SRM_TORPEDO)
                             || (ammoType == AmmoTypeEnum.NLRM_TORPEDO)
-                            || (ammoType == AmmoTypeEnum.LRM_TORPEDO_COMBO));
+                            || (ammoType == AmmoTypeEnum.LRM_TORPEDO_COMBO)
+                            || (ammoType == AmmoTypeEnum.EXLRM));
             }
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,6 +46,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.game.Game;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
@@ -294,7 +295,7 @@ public abstract class MekWithArms extends Mek {
     }
 
     @Override
-    public boolean hasActiveShield(int location) {
+    public boolean hasRaisedShield(int location) {
         if ((location != Mek.LOC_RIGHT_ARM) && (location != Mek.LOC_LEFT_ARM)) {
             return false;
         }
@@ -319,16 +320,16 @@ public abstract class MekWithArms extends Mek {
     }
 
     @Override
-    public boolean hasPassiveShield(int location, boolean rear) {
+    public boolean hasLoweredShield(int location, boolean rear) {
         return switch (location) {
-            case Mek.LOC_LEFT_ARM, Mek.LOC_LEFT_TORSO -> !rear && hasPassiveShield(Mek.LOC_LEFT_ARM);
-            case Mek.LOC_RIGHT_ARM, Mek.LOC_RIGHT_TORSO -> !rear && hasPassiveShield(Mek.LOC_RIGHT_ARM);
+            case Mek.LOC_LEFT_ARM, Mek.LOC_LEFT_TORSO -> !rear && hasLoweredShield(Mek.LOC_LEFT_ARM);
+            case Mek.LOC_RIGHT_ARM, Mek.LOC_RIGHT_TORSO -> !rear && hasLoweredShield(Mek.LOC_RIGHT_ARM);
             default -> false;
         };
     }
 
     @Override
-    public boolean hasPassiveShield(int location) {
+    public boolean hasLoweredShield(int location) {
         if (isShutDown() || (getCrew().isKoThisRound() || getCrew().isUnconscious())) {
             return false;
         }
@@ -417,10 +418,7 @@ public abstract class MekWithArms extends Mek {
     }
 
     private void addAttemptStandingPenalties(PilotingRollData roll) {
-        // PLAYTEST2 Standing has -1 PSR
-        if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-            roll.addModifier(-1, "Trying to stand");
-        }
+        Game.rulesManager.getRulesPSR().standing(roll);
 
         if (hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
             roll.addModifier(2, "no/minimal arms");
@@ -448,11 +446,8 @@ public abstract class MekWithArms extends Mek {
 
     @Override
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
-        if (countBadLegs() == 0) {
-            return super.getRunMP(mpCalculationSetting);
-        } else {
-            return getWalkMP(mpCalculationSetting);
-        }
+        return Game.rulesManager.getRulesMovement().getMekRunMP(countBadLegs(), getWalkMP(mpCalculationSetting),
+              super.getRunMP(mpCalculationSetting), false);
     }
 
     @Override

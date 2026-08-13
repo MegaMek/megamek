@@ -653,8 +653,47 @@ public class EquipChoicePanel extends JPanel {
                     bTechMatch = atCheck.getStaticTechLevel().ordinal() <= legalLevel.ordinal() && canUseThisAmmo;
                 }
 
-                // If clan_ignore_eq_limits is unchecked, do NOT allow Clans to use IS-only ammo.
                 EnumSet<AmmoType.Munitions> munitionsTypes = atCheck.getMunitionType();
+
+                boolean bTWRules = false;
+                IOption rules_system = gameOpts.getOption(OptionsConstants.RULES_SYSTEM);
+                String rules_selected = (rules_system == null) ? OptionsConstants.RULES_CORE :
+                      rules_system.stringValue();
+                if (OptionsConstants.RULES_TW.equals(rules_selected)) {
+                    bTWRules = true;
+                }
+                if (bTWRules) {
+                    // Check if the ammo type is caseless, and do not include it if it is.
+                    if (atCheck.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY
+                          && munitionsTypes.contains(AmmoType.Munitions.M_CASELESS)) {
+                        continue;
+                    }
+
+                    // Check for advanced Thunderbolt ammos and skip them if TWRules is not enabled
+                    switch (atCheck.getAmmoType()) {
+                        case AmmoType.AmmoTypeEnum.TBOLT_5:
+                        case AmmoType.AmmoTypeEnum.TBOLT_10:
+                        case AmmoType.AmmoTypeEnum.TBOLT_15:
+                        case AmmoType.AmmoTypeEnum.TBOLT_20:
+                            if (munitionsTypes.contains(AmmoType.Munitions.M_SEMIGUIDED)) {
+                                continue;
+                            }
+                            if (munitionsTypes.contains(AmmoType.Munitions.M_NARC_CAPABLE)) {
+                                continue;
+                            }
+                            if (munitionsTypes.contains(AmmoType.Munitions.M_THUNDER)) {
+                                continue;
+                            }
+                    }
+
+                    // Extended LRMs don't get advanced ammo under TW, even if the launcher has them
+                    if (munitionsTypes.contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE) &&
+                          atCheck.getAmmoType() == AmmoType.AmmoTypeEnum.EXLRM) {
+                        continue;
+                    }
+                }
+                
+                // If clan_ignore_eq_limits is unchecked, do NOT allow Clans to use IS-only ammo.
                 if (!gameOpts.booleanOption(OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH) &&
                       entity.isClan() &&
                       atCheck.notAllowedByClanRules()) {
@@ -672,7 +711,7 @@ public class EquipChoicePanel extends JPanel {
                     continue;
                 }
 
-                if (!gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS) &&
+                if (!Game.rulesManager.getRulesGame().allowMinefields(gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) &&
                       AmmoType.canDeliverMinefield(atCheck)) {
                     continue;
                 }

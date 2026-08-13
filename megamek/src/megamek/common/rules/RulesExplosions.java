@@ -33,5 +33,73 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+
+import megamek.common.HitData;
+import megamek.common.Report;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+
+import java.util.Vector;
+
 public abstract class RulesExplosions {
+    /**
+     * Damage reduction for CASE, CASE II, etc.
+     *
+     * @param mek the MEK taking damage
+     * @param hit the hit data
+     * @param damage the damage amount
+     * @param ammoExplosion true if this is an ammo explosion
+     * @param reportVec vector of reports describing the damage reduction
+     * @return the reduced damage amount
+     */
+    public abstract int explosionDamageReduction(Mek mek, HitData hit, int damage, boolean ammoExplosion,
+          Vector<Report> reportVec);
+
+    /**
+     * CASE II damage reduction.
+     *
+     * @param entity the entity taking damage
+     * @param hit the hit data
+     * @param damage the damage amount
+     * @param ammoExplosion true if this is an ammo explosion
+     * @param reportVec vector of reports describing the damage reduction
+     * @return the reduced damage amount
+     */
+    public abstract int applyCASEIIDamageReduction(Entity entity, HitData hit, int damage, boolean ammoExplosion,
+          Vector<Report> reportVec);
+
+    /**
+     * CASE II check crit chance for explosions.
+     *
+     * @param hasCaseII true if the entity has CASE II
+     * @param ammoExplosion true if this is an ammo explosion
+     * @return the critical hit modifier
+     */
+    public abstract int explosionCASEIImod(boolean hasCaseII, boolean ammoExplosion);
+
+    /**
+     * How much damage to equipment explosions do.
+     *
+     * @param mounted the mounted equipment
+     * @param weaponType the weapon type
+     * @return the damage amount
+     */
+    public abstract int equipmentDamage(Mounted<?> mounted, WeaponType weaponType);
+
+    /**
+     * Are M and B pods explosive?
+     * @param mounted the mounted weapon
+     * @return true if they are
+     */
+    public abstract boolean arePodsExplosive(Mounted<?> mounted);
+
+    /**
+     * Should explosions be reduced? 
+     * @return false by default
+     */
+    public boolean explosionsAreReduced() {
+        return false;
+    }
 }

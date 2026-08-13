@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -56,7 +56,6 @@ import megamek.common.units.Entity;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.BayWeaponHandler;
-import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponIndirectFireHandler;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -96,7 +95,7 @@ public abstract class BayWeapon extends Weapon {
           TWGameManager manager) {
         try {
             if ((isCapital() || isSubCapital()) && waa.isOrbitToSurface(game)) {
-                return new ArtilleryBayWeaponIndirectFireHandler(toHit, waa, game, manager);
+                return new megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponDistantFireHandler(toHit, waa, game, manager);
             } else {
                 return new BayWeaponHandler(toHit, waa, game, manager);
             }

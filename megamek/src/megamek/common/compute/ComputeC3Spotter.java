@@ -70,9 +70,9 @@ public class ComputeC3Spotter {
     }
 
     /**
-     * Same as {@link #findC3Spotter(Game, Entity, Targetable)}, but accepts a precomputed list of ECM information
-     * for all game entities. Computing that list scans the entire game and is expensive; callers that evaluate many
-     * attacks in a row (bots, to-hit previews) should compute it once and pass it in.
+     * Same as {@link #findC3Spotter(Game, Entity, Targetable)}, but accepts a precomputed list of ECM information for
+     * all game entities. Computing that list scans the entire game and is expensive; callers that evaluate many attacks
+     * in a row (bots, to-hit previews) should compute it once and pass it in.
      *
      * @param attacker   The firing unit
      * @param target     The target of the potential attack
@@ -96,8 +96,8 @@ public class ComputeC3Spotter {
                   : ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
             spotters.sort(Comparator.comparingInt(SpotterInfo::rangeToTarget));
 
-            // PLAYTEST3 C3 spotters can only work if they have LOS to the target.
-            boolean spotterNeedsLOS = game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
+            // Do C3 spotters need LOS?
+            boolean spotterNeedsLOS = Game.rulesManager.getRulesC3().c3SpotterLOSRequired();
 
             // Memoizes canCompleteNodePath results for the duration of this lookup. Uncached, the recursive search
             // explores every increasing-index path through the network - exponential in a dense, ECM-heavy network,
@@ -111,7 +111,6 @@ public class ComputeC3Spotter {
                 for (int count = position++; count < spotters.size(); count++) {
                     if (canCompleteNodePath(spotter, attacker, spotters, count, ecmInfo, pathCache)) {
 
-                        // PLAYTEST3 check the LOS from the spotter to the target
                         if (spotterNeedsLOS) {
                             LosEffects c3LOS = LosEffects.calculateLOS(game, spotter, target);
                             if (!c3LOS.isBlocked()) {
@@ -128,13 +127,13 @@ public class ComputeC3Spotter {
         return attacker;
     }
 
-    // PLAYTEST3 return spotter even with ECM
-    static Entity playtestFindC3Spotter(Game game, Entity attacker, Targetable target) {
-        return playtestFindC3Spotter(game, attacker, target, null);
+    // Find C3 spotters, even if they are under ECM
+    static Entity findC3SpotterUnderECM(Game game, Entity attacker, Targetable target) {
+        return findC3SpotterUnderECM(game, attacker, target, null);
     }
 
     /**
-     * Same as {@link #playtestFindC3Spotter(Game, Entity, Targetable)}, but accepts a precomputed list of ECM
+     * Same as {@link #findC3SpotterUnderECM(Game, Entity, Targetable)}, but accepts a precomputed list of ECM
      * information for all game entities to avoid recomputing it on every call.
      *
      * @param attacker   The firing unit
@@ -145,7 +144,7 @@ public class ComputeC3Spotter {
      *
      * @return A C3-type spotter or the attacker itself if no spotters are found
      */
-    static Entity playtestFindC3Spotter(Game game, Entity attacker, Targetable target,
+    static Entity findC3SpotterUnderECM(Game game, Entity attacker, Targetable target,
           @Nullable List<ECMInfo> allECMInfo) {
         if (!attackerCanUseC3(attacker, game)) {
             return attacker;
@@ -208,20 +207,16 @@ public class ComputeC3Spotter {
      */
     private static boolean attackerCanUseC3(Entity attacker, Game game) {
         if (attacker.isOffBoard() || attacker.isShutDown()
-              || !attacker.hasC3() && !attacker.hasC3i() && !attacker.hasActiveNovaCEWS() && !attacker.hasNavalC3()) {
+              || (!attacker.hasC3()
+              && !attacker.hasC3i()
+              && !attacker.hasActiveNovaCEWS()
+              && !attacker.hasNavalC3())
+              || EquipmentActivation.isC3SwitchedOff(attacker)) {
             return false;
         }
 
-        // C3 gear the player has switched off provides no targeting data (it rejoins its network when reactivated)
-        if (EquipmentActivation.isC3SwitchedOff(attacker)) {
+        if (attacker.isStealthActive()) {
             return false;
-        }
-        
-        // PLAYTEST3 Stealth kills C3. Now that ECM halves bonuses, we need to exit early.
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            if (attacker.isStealthActive()) {
-                return false;
-            }
         }
 
         if (attacker.isLargeCraft() && !attacker.isSpaceborne()) {

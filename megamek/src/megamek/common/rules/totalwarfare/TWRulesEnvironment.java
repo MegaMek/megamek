@@ -33,7 +33,7 @@ package megamek.common.rules.totalwarfare;
  */
 
 
-import megamek.common.rules.core.CoreRulesEnvironment;
+import megamek.common.rules.RulesEnvironment;
 
-public class TWRulesEnvironment extends CoreRulesEnvironment {
+public class TWRulesEnvironment extends RulesEnvironment {
 }

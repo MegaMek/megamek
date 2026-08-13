@@ -659,22 +659,14 @@ public abstract class BotClient extends Client {
                     initialize();
                     break;
                 case MOVEMENT:
-                    /*
-                     * Do not uncomment this. It is so that bots stick around till end of game
-                     * for proper salvage. If the bot dies out here, the salvage for all but the
-                     * last bot disappears for some reason
-                     * if (game.getEntitiesOwnedBy(getLocalPlayer()) == 0) {
-                     * sendChat(Messages.getString("BotClient.HowAbout"));
-                     * die();
-                     * }
-                     */
-                    // if the game is not double blind and I can't see anyone
-                    // else on the board I should kill myself.
-                    if (!(game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) &&
-                          ((game.getEntitiesOwnedBy(getLocalPlayer()) - game.getNoOfEntities()) == 0)) {
-                        die();
-                    }
-
+                    // A bot never dismisses itself from a running game. There used to be two exit
+                    // rules here and both caused real harm: leaving when the bot had no units broke
+                    // salvage for every bot but the last, and leaving when the bot owned everything
+                    // visible ("no enemies left") hung the game whenever the last enemy was merely
+                    // off the board - an aerospace fighter that flies off returns some rounds later,
+                    // but the count could not see it, so the bot quit mid-game and the server waited
+                    // forever on its units. The victory check ends finished games; the VICTORY phase
+                    // below is where a bot says goodbye.
                     if (Compute.randomInt(4) == 1) {
                         String message = getRandomBotMessage();
                         if (message != null) {

@@ -41,9 +41,12 @@ import megamek.client.bot.princess.AerospaceGeometry.AltitudeBand;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
+import megamek.common.ManeuverType;
 import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 
@@ -148,6 +151,8 @@ public class AerospacePathRanker extends BasicPathRanker {
     private double lastControlRiskPenalty;
     private double lastVelocityPenalty;
     private double lastEdgePenalty;
+    private double lastManeuverRisk;
+    private int lastManeuverType;
     private int lastEngageableEnemies;
     private int lastCommittedEnemies;
     private int lastAirEnemies;
@@ -178,6 +183,8 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastControlRiskPenalty = 0;
         lastVelocityPenalty = 0;
         lastEdgePenalty = 0;
+        lastManeuverRisk = 0;
+        lastManeuverType = 0;
         lastEngageableEnemies = 0;
         lastCommittedEnemies = 0;
         lastAirEnemies = 0;
@@ -211,9 +218,10 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastControlRiskPenalty = controlRiskPenalty(path);
         lastVelocityPenalty = velocityPenalty(path, venue);
         lastEdgePenalty = edgePenalty(path, game, venue);
+        lastManeuverRisk = maneuverRiskPenalty(path);
 
         return lastEngagementCredit + lastArcAdvantage - lastControlRiskPenalty - lastVelocityPenalty
-              - lastEdgePenalty;
+              - lastEdgePenalty - lastManeuverRisk;
     }
 
     /**
@@ -457,6 +465,35 @@ public class AerospacePathRanker extends BasicPathRanker {
     }
 
     /**
+     * What a special maneuver on this path is betting on the airframe.
+     *
+     * <p>A maneuver's real price is its control modifier, not its thrust (TW p.85): a failed control roll
+     * costs 1d6 altitude, so the same +3 Hammerhead is nearly free at altitude 8 and a coin-flip on the
+     * airframe at altitude 3. Priced as the chance the roll fails times the chance the resulting drop
+     * reaches the ground, against the same airframe cost the overthrust term uses. The half-roll's -1
+     * modifier prices cheaper than not maneuvering, which is exactly what the table says about it.</p>
+     *
+     * @param path the path being ranked
+     *
+     * @return the penalty to subtract from this path's utility
+     */
+    private double maneuverRiskPenalty(MovePath path) {
+        for (MoveStep step : path.getStepVector()) {
+            if (step.getType() != MoveStepType.MANEUVER) {
+                continue;
+            }
+            lastManeuverType = step.getManeuverType();
+            int controlModifier = ManeuverType.getMod(lastManeuverType, false);
+            // TW control roll: piloting skill, plus the standing +2 for atmospheric operations, plus the
+            // maneuver's own modifier.
+            int target = path.getEntity().getCrew().getPiloting() + 2 + controlModifier;
+            double failureChance = 1.0 - (Compute.oddsAbove(target) / 100.0);
+            return CONTROL_LOSS_COST * failureChance * oddsOfReachingTheGround(path.getFinalAltitude());
+        }
+        return 0;
+    }
+
+    /**
      * What this pose is conceding to the board edge.
      *
      * <p>A path that flies off outright pays the full cost. A path that stays on board pays by how trapped
@@ -652,6 +689,8 @@ public class AerospacePathRanker extends BasicPathRanker {
         scores.put("aeroControlRiskPenalty", lastControlRiskPenalty);
         scores.put("aeroVelocityPenalty", lastVelocityPenalty);
         scores.put("aeroEdgePenalty", lastEdgePenalty);
+        scores.put("aeroManeuverRisk", lastManeuverRisk);
+        scores.put("aeroManeuverType", (double) lastManeuverType);
         scores.put("aeroFinalVelocity", (double) lastFinalVelocity);
         return scores;
     }

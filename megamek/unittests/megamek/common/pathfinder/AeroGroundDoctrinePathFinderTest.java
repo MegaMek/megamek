@@ -204,9 +204,12 @@ class AeroGroundDoctrinePathFinderTest {
 
         assertTrue(stockPaths > 0, "the stock finder should produce paths to compare against");
         assertTrue(doctrinePaths >= stockPaths, "the doctrine finder should not lose options");
-        assertTrue(doctrinePaths <= stockPaths * AeroGroundDoctrinePathFinder.MAXIMUM_CANDIDATE_ALTITUDES,
+        // Altitude candidates multiply the stock set; maneuver roots (both enemies here have moved) add
+        // their own bounded subtrees on top. The bound is deliberately generous - the point is to catch
+        // unbounded growth, not to freeze the exact count.
+        assertTrue(doctrinePaths <= (stockPaths * AeroGroundDoctrinePathFinder.MAXIMUM_CANDIDATE_ALTITUDES) + 250,
               "path count grew from " + stockPaths + " to " + doctrinePaths
-                    + ", beyond the candidate cap");
+                    + ", beyond the candidate cap plus the maneuver allowance");
     }
 
     @Test
@@ -226,5 +229,79 @@ class AeroGroundDoctrinePathFinderTest {
 
         assertTrue(altitudes.size() > 1,
               "the whole point is that the ranker gets a choice; reached only " + altitudes);
+    }
+
+    // --- special maneuvers (TW p.85) -------------------------------------------------------------------
+
+    private Entity armedFlyer(Coords position, int facing, int velocity) {
+        mover.setPosition(position);
+        mover.setFacing(facing);
+        mover.setSecondaryFacing(facing);
+        mover.setOriginalWalkMP(6);
+        ((AeroSpaceFighter) mover).setSI(7);
+        ((AeroSpaceFighter) mover).setCurrentVelocity(velocity);
+        return mover;
+    }
+
+    private long maneuverRootedPaths(AeroGroundDoctrinePathFinder finder) {
+        finder.run(new MovePath(game, mover, null));
+        long count = 0;
+        for (MovePath path : finder.getAllComputedPathsUncategorized()) {
+            if (!path.getStepVector().isEmpty()
+                  && path.getStepVector().get(0).getType() == megamek.common.enums.MoveStepType.MANEUVER) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * The live hang, replayed: a fighter cornered with its velocity committed toward the edge, whose every
+     * ordinary path leaves the board. The maneuver set must hand it a way to stay in the game - this is the
+     * escape gate, and it deliberately needs no enemy at all.
+     */
+    @Test
+    void aCorneredFighterGetsManeuverEscapePaths() {
+        armedFlyer(new Coords(37, 3), 1, 3);
+
+        AeroGroundDoctrinePathFinder finder = AeroGroundDoctrinePathFinder.getInstance(game);
+        finder.run(new MovePath(game, mover, null));
+
+        boolean maneuverOnBoard = false;
+        for (MovePath path : finder.getAllComputedPathsUncategorized()) {
+            if (path.getStepVector().isEmpty()) {
+                continue;
+            }
+            if (path.getStepVector().get(0).getType() == megamek.common.enums.MoveStepType.MANEUVER
+                  && !path.fliesOffBoard()) {
+                maneuverOnBoard = true;
+                break;
+            }
+        }
+        assertTrue(maneuverOnBoard,
+              "a cornered fighter must be offered at least one maneuver path that stays on the board");
+    }
+
+    /**
+     * Dave's doctrine rule: offensive maneuvers are a reaction to known geometry. An enemy that has not
+     * moved yet is a guess, and a maneuver is too expensive to spend on a guess.
+     */
+    @Test
+    void noManeuversAgainstOnlyUnmovedEnemies() {
+        armedFlyer(new Coords(20, 20), 0, 3);
+        enemyFighter(20, new Coords(20, 28), 5, false);
+
+        assertEquals(0, maneuverRootedPaths(AeroGroundDoctrinePathFinder.getInstance(game)),
+              "an unmoved enemy must not unlock offensive maneuvers");
+    }
+
+    /** Once the enemy has committed, the maneuver set opens. */
+    @Test
+    void aCommittedEnemyUnlocksOffensiveManeuvers() {
+        armedFlyer(new Coords(20, 20), 0, 3);
+        enemyFighter(20, new Coords(20, 28), 5, true);
+
+        assertTrue(maneuverRootedPaths(AeroGroundDoctrinePathFinder.getInstance(game)) > 0,
+              "a committed enemy should unlock maneuver-rooted paths");
     }
 }

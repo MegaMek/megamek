@@ -38,11 +38,18 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import megamek.client.bot.princess.AerospaceGeometry;
+import megamek.common.ManeuverType;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
+import megamek.common.units.Aero;
 import megamek.common.units.Entity;
+import megamek.common.units.IAero;
+import megamek.logging.MMLogger;
 
 /**
  * Ground-mapsheet aerospace paths that offer the ranker an altitude to choose from.
@@ -76,8 +83,241 @@ public class AeroGroundDoctrinePathFinder extends AeroGroundPathFinder {
      */
     static final int MAXIMUM_CANDIDATE_ALTITUDES = 3;
 
+    private static final MMLogger DOCTRINE_LOGGER = MMLogger.create(AeroGroundDoctrinePathFinder.class);
+
+    /**
+     * Wing armor difference, as a fraction of original, above which a half-roll is worth offering.
+     * TW p.85: the half-roll swaps left and right sides, trading a stripped wing for a fresh one between
+     * passes, at 1 thrust and a control modifier of -1 - the only maneuver that makes the roll easier.
+     */
+    static final double HALF_ROLL_ASYMMETRY = 0.25;
+
+    /** Hexes an aerodyne must fly straight before any facing change on a ground map (TW p.92). */
+    static final int MIN_STRAIGHT_GROUND = 8;
+
     protected AeroGroundDoctrinePathFinder(Game game) {
         super(game);
+    }
+
+    /**
+     * Runs the stock generation, then adds the special maneuvers (TW p.85) the stock generator has never
+     * offered.
+     *
+     * <p>The maneuver set is intent-gated twice over, because every root multiplies the path count:</p>
+     * <ul>
+     *     <li><b>Offensive maneuvers require a committed enemy</b> - one that has already moved this turn.
+     *     A maneuver spends real thrust and a control roll to buy one specific geometry; buying it against
+     *     an opponent who has not moved yet is paying full price for a guess. This mirrors the doctrine
+     *     everywhere else in the ranker: react to what has committed, hedge on what has not.</li>
+     *     <li><b>Escape maneuvers require an edge trap</b> - the pose's committed straight run crossing the
+     *     board edge. A trapped fighter does not need an enemy's permission to save itself: a live game
+     *     hung exactly here, a cornered fighter whose every ordinary path left the board, while an
+     *     Immelmann out of the corner was sitting in the rules unused.</li>
+     * </ul>
+     */
+    @Override
+    public void run(MovePath startingEdge) {
+        super.run(startingEdge);
+        try {
+            getAllComputedPathsUncategorized().addAll(maneuverPaths(startingEdge));
+        } catch (Exception exception) {
+            // Maneuvers enrich the candidate set; they must never be the reason there is no set at all.
+            DOCTRINE_LOGGER.error(exception, "Maneuver generation failed; continuing with ordinary paths");
+        }
+    }
+
+    /**
+     * The maneuver-rooted paths this pose supports, fully extended into ordinary movement.
+     */
+    private List<MovePath> maneuverPaths(MovePath start) {
+        Entity mover = start.getEntity();
+        if (!(mover instanceof IAero aero) || !mover.isAirborne()) {
+            return List.of();
+        }
+        Board board = game.getBoard(start.getFinalBoardId());
+        int velocity = aero.getCurrentVelocity();
+        int altitude = start.getFinalAltitude();
+
+        List<Coords> committedEnemies = committedEnemyPositions(mover);
+        boolean offense = !committedEnemies.isEmpty();
+        // Trapped means the edge sits inside the UNSTEERABLE straight run - the eight hexes that must be
+        // flown before any facing change (TW p.92) - not merely inside the committed distance. At velocity 3
+        // the committed run is 48 hexes, longer than most boards, so gating on it would call every pose
+        // trapped and the escape set would swallow the committed-enemy rule whole. Eight is the criterion
+        // the edge penalty's full-cost tier uses, and it still catches the live hang (exit distance 2-3).
+        boolean trapped = (start.getFinalCoords() != null)
+              && (AerospaceGeometry.hexesUntilOffBoard(start.getFinalCoords(), start.getFinalFacing(), board,
+              MIN_STRAIGHT_GROUND + 1) <= MIN_STRAIGHT_GROUND);
+        if (!offense && !trapped) {
+            return List.of();
+        }
+
+        // The facing a purposeful maneuver comes out on: at the nearest committed enemy when attacking,
+        // at the middle of the board when escaping - anywhere but the edge.
+        int purposeFacing = purposeFacing(start, committedEnemies, board);
+
+        List<MovePath> roots = new ArrayList<>();
+
+        // Hammerhead: 180 degrees in the same hex for thrust equal to velocity (+3 control). The overshoot
+        // answer - reverse onto an enemy behind you, or out of a corner, without crossing the map to turn.
+        if ((offense || trapped)
+              && canPerform(ManeuverType.MAN_HAMMERHEAD, velocity, altitude, board, start)
+              && (velocity <= maxThrust)) {
+            MovePath root = start.clone();
+            root.addManeuver(ManeuverType.MAN_HAMMERHEAD);
+            root.addStep(MoveStepType.YAW, true, true, ManeuverType.MAN_HAMMERHEAD);
+            roots.add(root);
+        }
+
+        // Immelmann: 4 thrust, +1 control - up two altitudes, out on any facing, velocity down two. The
+        // reset maneuver: escape the corner, or come around above a committed enemy at controllable speed.
+        if ((offense || trapped)
+              && canPerform(ManeuverType.MAN_IMMELMAN, velocity, altitude, board, start)
+              && (4 <= maxThrust)) {
+            MovePath root = start.clone();
+            root.addManeuver(ManeuverType.MAN_IMMELMAN);
+            root.addStep(MoveStepType.UP, true, true, ManeuverType.MAN_IMMELMAN);
+            root.addStep(MoveStepType.UP, true, true, ManeuverType.MAN_IMMELMAN);
+            root.addStep(MoveStepType.DEC, true, true, ManeuverType.MAN_IMMELMAN);
+            root.addStep(MoveStepType.DEC, true, true, ManeuverType.MAN_IMMELMAN);
+            root.rotatePathfinder(purposeFacing, true, ManeuverType.MAN_IMMELMAN);
+            roots.add(root);
+        }
+
+        // Split-S: 2 thrust, +2 control - down two altitudes, any facing, velocity up one. Offensive only:
+        // dive out of the dead zone onto an enemy below. Guarded to keep two levels of air below, because
+        // the engine's own legality check reads (altitude + 2) > ceiling, which permits a Split-S from
+        // altitude 2 straight into the ground.
+        if (offense
+              && canPerform(ManeuverType.MAN_SPLIT_S, velocity, altitude, board, start)
+              && (altitude - 2 >= AerospaceGeometry.MINIMUM_ALTITUDE)
+              && (2 <= maxThrust)) {
+            MovePath root = start.clone();
+            root.addManeuver(ManeuverType.MAN_SPLIT_S);
+            root.addStep(MoveStepType.DOWN, true, true, ManeuverType.MAN_SPLIT_S);
+            root.addStep(MoveStepType.DOWN, true, true, ManeuverType.MAN_SPLIT_S);
+            root.addStep(MoveStepType.ACC, true, true, ManeuverType.MAN_SPLIT_S);
+            root.rotatePathfinder(purposeFacing, true, ManeuverType.MAN_SPLIT_S);
+            roots.add(root);
+        }
+
+        // Loop: 4 thrust, +1 control - spends four velocity going nowhere. The loiter tool for a fighter
+        // carrying too much speed for the dogfight it is already in.
+        if (offense
+              && canPerform(ManeuverType.MAN_LOOP, velocity, altitude, board, start)
+              && (4 <= maxThrust)) {
+            MovePath root = start.clone();
+            root.addManeuver(ManeuverType.MAN_LOOP);
+            root.addStep(MoveStepType.LOOP, true, true, ManeuverType.MAN_LOOP);
+            roots.add(root);
+        }
+
+        // Side-slips: 1 thrust, no control modifier - on a ground map, eight hexes front-left or
+        // front-right and eight more ahead, facing unchanged. Leaves an enemy's arc while keeping the nose
+        // on them, and shifts the flown line without a turn.
+        for (int type : new int[] { ManeuverType.MAN_SIDE_SLIP_LEFT, ManeuverType.MAN_SIDE_SLIP_RIGHT }) {
+            if (offense && canPerform(type, velocity, altitude, board, start)) {
+                MovePath root = start.clone();
+                root.addManeuver(type);
+                MoveStepType lateral = (type == ManeuverType.MAN_SIDE_SLIP_LEFT)
+                      ? MoveStepType.LATERAL_LEFT : MoveStepType.LATERAL_RIGHT;
+                for (int hex = 0; hex < 8; hex++) {
+                    root.addStep(lateral, true, true, type);
+                }
+                for (int hex = 0; hex < 8; hex++) {
+                    root.addStep(MoveStepType.FORWARDS, true, true, type);
+                }
+                roots.add(root);
+            }
+        }
+
+        // Half-roll: 1 thrust, -1 control - the only maneuver that makes the roll easier. Swaps a stripped
+        // wing for a fresh one, so it is only worth a root when the wings are meaningfully uneven.
+        if (offense && wingsAreUneven(mover)
+              && canPerform(ManeuverType.MAN_HALF_ROLL, velocity, altitude, board, start)) {
+            MovePath root = start.clone();
+            root.addManeuver(ManeuverType.MAN_HALF_ROLL);
+            root.addStep(MoveStepType.ROLL, true, true, ManeuverType.MAN_HALF_ROLL);
+            roots.add(root);
+        }
+
+        // Each root then flies out like any other prefix. No altitude fan on top: Immelmann and Split-S
+        // choose their own altitude, and the rest keep the pose's - the candidate cap stays honest.
+        List<MovePath> results = new ArrayList<>();
+        for (MovePath root : roots) {
+            results.addAll(GenerateAllPaths(root));
+        }
+        return results;
+    }
+
+    private boolean canPerform(int maneuverType, int velocity, int altitude, Board board, MovePath start) {
+        // Ceiling as the human UI supplies it: hex terrain ceiling, and always 0 over a ground map,
+        // where aerospace ignores hex elevations (TW p.91).
+        return ManeuverType.canPerform(maneuverType, velocity, altitude, 0,
+              ((IAero) start.getEntity()).isVSTOL(), 0, board, start);
+    }
+
+    /**
+     * The facing a maneuver should come out on: toward the nearest committed enemy when there is one,
+     * otherwise toward the middle of the board - the whole point of an escape is to end up pointing at
+     * open air.
+     */
+    private int purposeFacing(MovePath start, List<Coords> committedEnemies, Board board) {
+        Coords from = start.getFinalCoords();
+        if (from == null) {
+            return start.getFinalFacing();
+        }
+        Coords target = null;
+        int best = Integer.MAX_VALUE;
+        for (Coords enemy : committedEnemies) {
+            int distance = from.distance(enemy);
+            if (distance < best) {
+                best = distance;
+                target = enemy;
+            }
+        }
+        if (target == null) {
+            target = new Coords(board.getWidth() / 2, board.getHeight() / 2);
+        }
+        return from.equals(target) ? start.getFinalFacing() : from.direction(target);
+    }
+
+    /** Positions of enemy aircraft that have already moved this turn, on this board. */
+    private List<Coords> committedEnemyPositions(Entity mover) {
+        List<Coords> positions = new ArrayList<>();
+        Iterator<Entity> enemies = game.getAllEnemyEntities(mover);
+        while (enemies.hasNext()) {
+            Entity enemy = enemies.next();
+            if (!enemy.isAero() || !enemy.isAirborne() || (enemy.getPosition() == null)) {
+                continue;
+            }
+            if (enemy.getBoardId() != mover.getBoardId()) {
+                continue;
+            }
+            if (enemy.isSelectableThisTurn() && !enemy.isImmobile()) {
+                continue;
+            }
+            positions.add(enemy.getPosition());
+        }
+        return positions;
+    }
+
+    /**
+     * @return {@code true} when one wing has lost {@value #HALF_ROLL_ASYMMETRY} more of its armor than the
+     *       other, which is what a half-roll exists to fix
+     */
+    private static boolean wingsAreUneven(Entity mover) {
+        double left = wingArmorFraction(mover, Aero.LOC_LEFT_WING);
+        double right = wingArmorFraction(mover, Aero.LOC_RIGHT_WING);
+        return Math.abs(left - right) >= HALF_ROLL_ASYMMETRY;
+    }
+
+    private static double wingArmorFraction(Entity mover, int location) {
+        int original = mover.getOArmor(location);
+        if (original <= 0) {
+            return 1.0;
+        }
+        return Math.max(0, mover.getArmor(location)) / (double) original;
     }
 
     public static AeroGroundDoctrinePathFinder getInstance(Game game) {

@@ -140,14 +140,25 @@ public class ISBombastLaser extends LaserWeapon {
         return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 1.02 : 0;
     }
     
+    /**
+     * A Bombast Laser is only explosive while it is holding a charge, so this needs a specific mount to answer for.
+     *
+     * @param mounted      the specific weapon mount to test, or {@code null} to ask about the weapon type in the
+     *                     abstract (as the AlphaStrike ENE conversion does)
+     * @param ignoreCharge unused for this weapon; the charge state is what decides the answer
+     *
+     * @return {@code true} if the given mount is currently carrying a charge that can detonate, otherwise
+     *       {@code false}
+     */
     @Override
-    public boolean isExplosive(Mounted<?> mounted, boolean ignoreCharge) {
-        if (mounted.getType().hasFlag(WeaponType.F_BOMBAST_LASER) &&
-              mounted.getChargeState().equals(ChargeLevel.CHARGED) &&
-              !mounted.isUsedThisRound()) {
-            // Bombast laser is only explosive when charged.
-            return true;
+    public boolean isExplosive(@Nullable Mounted<?> mounted, boolean ignoreCharge) {
+        if (mounted == null) {
+            // No mount to inspect means no charge state to read, and an uncharged Bombast Laser is not explosive.
+            return false;
         }
-        return false;
+        // Bombast laser is only explosive when charged.
+        return mounted.getType().hasFlag(WeaponType.F_BOMBAST_LASER) &&
+              mounted.getChargeState().equals(ChargeLevel.CHARGED) &&
+              !mounted.isUsedThisRound();
     }
 }

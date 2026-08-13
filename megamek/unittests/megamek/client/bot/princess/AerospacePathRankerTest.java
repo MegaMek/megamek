@@ -44,6 +44,8 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
+import megamek.common.units.AeroSpaceFighter;
+import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -183,6 +185,57 @@ class AerospacePathRankerTest {
               AerospaceVenue.GROUND_MAP), "no committed enemy, no Split-S");
         assertTrue(ranker.maneuverSanctioned(ManeuverType.MAN_SPLIT_S, 1, path, game,
               AerospaceVenue.GROUND_MAP), "one committed enemy opens the offensive set");
+    }
+
+    /**
+     * The ground fall machinery must never price an airborne aerospace path. Its two consumers - the
+     * fall-tolerance cull and fallShame, up to UNIT_DESTRUCTION_FACTOR at probability zero - buried every
+     * maneuver path by hundreds of points (a post-Hammerhead stall read as certain destruction), which is
+     * why CASPAR ranked maneuvers across four live games and never flew one. Control risk for aeros is
+     * priced at crash scale by controlRiskPenalty and maneuverRiskPenalty instead.
+     */
+    @Test
+    void airborneAeroPathsIgnoreTheGroundFallMachinery() {
+        Entity fighter = mock(Entity.class);
+        when(fighter.isAero()).thenReturn(true);
+        when(fighter.isAirborne()).thenReturn(true);
+        when(fighter.isSpaceborne()).thenReturn(false);
+        MovePath path = mock(MovePath.class);
+        when(path.getEntity()).thenReturn(fighter);
+
+        assertEquals(1.0, ranker.getMovePathSuccessProbability(path), 0.0001,
+              "control risk is priced by the aero terms, not by fallShame");
+    }
+
+    /**
+     * With the fall machinery switched off, the stall must be priced honestly here instead: an aerodyne
+     * ending its move at velocity zero rolls against piloting + 2 + 2 and loses altitude on a failure
+     * (TW p.81).
+     */
+    @Test
+    void endingAtVelocityZeroIsPricedAsAStall() {
+        AeroSpaceFighter fighter = mock(AeroSpaceFighter.class);
+        Crew crew = mock(Crew.class);
+        when(crew.getPiloting()).thenReturn(4);
+        when(fighter.getCrew()).thenReturn(crew);
+        when(fighter.isSpheroid()).thenReturn(false);
+        when(fighter.isVSTOL()).thenReturn(false);
+
+        MovePath stalled = mock(MovePath.class);
+        when(stalled.getEntity()).thenReturn(fighter);
+        when(stalled.getMpUsed()).thenReturn(0);
+        when(stalled.getFinalVelocity()).thenReturn(0);
+        when(stalled.getFinalAltitude()).thenReturn(3);
+
+        MovePath flying = mock(MovePath.class);
+        when(flying.getEntity()).thenReturn(fighter);
+        when(flying.getMpUsed()).thenReturn(0);
+        when(flying.getFinalVelocity()).thenReturn(1);
+        when(flying.getFinalAltitude()).thenReturn(3);
+
+        assertTrue(ranker.controlRiskPenalty(stalled) > 0, "a stall low down is a real control risk");
+        assertEquals(0.0, ranker.controlRiskPenalty(flying), 0.0001,
+              "the same pose with velocity on the clock carries no stall risk");
     }
 
     /**

@@ -159,6 +159,9 @@ public class AerospacePathRanker extends BasicPathRanker {
      * {@link #maneuverSanctioned}). Large enough that no engagement credit can outbid it.
      */
     static final double UNSANCTIONED_MANEUVER_COST = 1_000;
+
+    /** Control-roll modifier for a stalled aerodyne (TW p.81). */
+    static final int STALL_CONTROL_MODIFIER = 2;
     private int lastEngageableEnemies;
     private int lastCommittedEnemies;
     private int lastAirEnemies;
@@ -176,6 +179,28 @@ public class AerospacePathRanker extends BasicPathRanker {
 
     public AerospacePathRanker(Princess owningPrincess) {
         super(owningPrincess);
+    }
+
+    /**
+     * Airborne aerospace paths do not answer to the ground units' fall machinery.
+     *
+     * <p>This method feeds two consumers in the stock ranker, both built for falling: paths whose success
+     * product drops below the fall tolerance are culled before ranking, and survivors are charged
+     * fallShame - up to {@code UNIT_DESTRUCTION_FACTOR} when the product reaches zero. An airborne
+     * aerospace unit's piloting rolls are control rolls, and this ranker already prices them at crash
+     * scale, graded by altitude ({@link #controlRiskPenalty}, {@link #maneuverRiskPenalty}) - a failed
+     * roll at altitude 8 is a scare, at altitude 2 a crater. Left in force, the ground pricing charged
+     * every maneuver path twice and read a post-Hammerhead stall as certain destruction (482 points
+     * against a winning path at 120) - which is why CASPAR ranked maneuver paths for days and never flew
+     * one.</p>
+     */
+    @Override
+    protected double getMovePathSuccessProbability(MovePath movePath) {
+        Entity mover = movePath.getEntity();
+        if (mover.isAero() && mover.isAirborne() && !mover.isSpaceborne()) {
+            return 1.0;
+        }
+        return super.getMovePathSuccessProbability(movePath);
     }
 
     /**
@@ -606,16 +631,27 @@ public class AerospacePathRanker extends BasicPathRanker {
      * control roll the same at altitude 9 as at altitude 2. The odds here are the odds of the drop reaching
      * the ground - a d6 rolling at least the unit's current altitude.</p>
      */
-    private double controlRiskPenalty(MovePath path) {
+    double controlRiskPenalty(MovePath path) {
         Entity mover = path.getEntity();
         if (!(mover instanceof IAero aero)) {
             return 0;
         }
+        double penalty = 0;
         int safeThrust = AeroPathUtil.calculateMaxSafeThrust(aero);
-        if (path.getMpUsed() <= safeThrust) {
-            return 0;
+        if (path.getMpUsed() > safeThrust) {
+            penalty += CONTROL_LOSS_COST * oddsOfReachingTheGround(path.getFinalAltitude());
         }
-        return CONTROL_LOSS_COST * oddsOfReachingTheGround(path.getFinalAltitude());
+        // An aerodyne that ends its move at velocity zero stalls (TW p.81): a control roll against
+        // piloting + 2, and altitude lost on a failure. Priced here in the same crash-scale family as
+        // the other control risks, because the stock fall machinery that used to catch this state is
+        // switched off for airborne aeros (see getMovePathSuccessProbability) - it read a stall as
+        // certain destruction and buried every post-Hammerhead pose by hundreds of points.
+        if ((path.getFinalVelocity() == 0) && !aero.isSpheroid() && !aero.isVSTOL()) {
+            int stallTarget = mover.getCrew().getPiloting() + 2 + STALL_CONTROL_MODIFIER;
+            double stallFailureChance = 1.0 - (Compute.oddsAbove(stallTarget) / 100.0);
+            penalty += CONTROL_LOSS_COST * stallFailureChance * oddsOfReachingTheGround(path.getFinalAltitude());
+        }
+        return penalty;
     }
 
     /**

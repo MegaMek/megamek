@@ -608,8 +608,19 @@ public class AerospacePathRanker extends BasicPathRanker {
         // An unmoved opponent is a guess, so both sides of the exchange are discounted by the same
         // confidence the engagement credit uses. getMaxDamageAtRange answers zero outside every bracket, so
         // it is the range check too - see the note in scoreEngagements about unit mismatch.
-        response.addToMyEstimatedDamage(
-              getMaxDamageAtRange(mover, range, useExtremeRange, useLOSRange) * UNMOVED_ENEMY_CONFIDENCE);
+        //
+        // The arc gate is NOT optional here. Without it this estimate feeds bravery a damage figure for
+        // poses no weapon can fire from, and since aggression and mutual support are disabled for airborne
+        // aero on ground maps, that phantom credit is the biggest term left - the ranker then maximises it
+        // by standing far away, nose elsewhere, "able" to deal damage while taking none. Observed live as an
+        // undamaged Chippewa crossing the map to an edge corner past a 44-point edge penalty: the exact
+        // pose its own engagement credit scored as unable to shoot, bravery scored at +51.
+        boolean myGunsBear = anyWeaponBears(mover, path.getFinalCoords(), path.getFinalFacing(),
+              enemy.getPosition(), Compute.useSpheroidAtmosphere(path.getGame(), mover));
+        if (myGunsBear) {
+            response.addToMyEstimatedDamage(
+                  getMaxDamageAtRange(mover, range, useExtremeRange, useLOSRange) * UNMOVED_ENEMY_CONFIDENCE);
+        }
         response.addToEstimatedEnemyDamage(
               getMaxDamageAtRange(enemy, range, useExtremeRange, useLOSRange) * UNMOVED_ENEMY_CONFIDENCE);
         return response;

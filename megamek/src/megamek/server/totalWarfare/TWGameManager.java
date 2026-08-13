@@ -27962,6 +27962,28 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Sends the given reports to every player as an immediate special-report packet (surfaced client-side as a
+     * kill-feed toast), respecting double blind: with double blind on, each player receives only the reports they
+     * are entitled to see; otherwise the packet is broadcast unfiltered. Use this instead of broadcasting
+     * {@link #createSpecialReportPacket(Vector)} whenever the reports concern a unit that might be hidden from
+     * some players.
+     *
+     * @param reports the specific reports to push immediately; they are not added to the phase report here
+     */
+    void sendSpecialReport(Vector<Report> reports) {
+        if (!doBlind()) {
+            send(createSpecialReportPacket(reports));
+            return;
+        }
+        for (Player player : game.getPlayersList()) {
+            Vector<Report> filteredReports = filterReportVector(reports, player);
+            if (!filteredReports.isEmpty()) {
+                send(player.getId(), createSpecialReportPacket(filteredReports));
+            }
+        }
+    }
+
+    /**
      * Creates a packet containing a Vector of Reports that represent a Tactical Genius re-roll request which needs to
      * update a current phase's report.
      */

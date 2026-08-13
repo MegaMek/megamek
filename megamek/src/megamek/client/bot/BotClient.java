@@ -784,7 +784,7 @@ public abstract class BotClient extends Client {
         boolean success = false;
 
         while ((retryCount < BOT_TURN_RETRY_COUNT) && !success) {
-            success = calculateMyTurnWorker();
+            success = calculateMyTurnWorker(retryCount == (BOT_TURN_RETRY_COUNT - 1));
 
             if (!success) {
                 // if we fail, take a nap for 500-1500 milliseconds, then try again
@@ -805,6 +805,13 @@ public abstract class BotClient extends Client {
      * Worker function for a single attempt to calculate the bot's turn.
      */
     private synchronized boolean calculateMyTurnWorker() {
+        return calculateMyTurnWorker(false);
+    }
+
+    /**
+     * @param lastAttempt whether this is the final retry, after which the bot would otherwise fall silent
+     */
+    private synchronized boolean calculateMyTurnWorker(boolean lastAttempt) {
         // clear out transient data
         currentTurnEnemyEntities = null;
         currentTurnFriendlyEntities = null;
@@ -829,6 +836,18 @@ public abstract class BotClient extends Client {
                 // MP can be null due to various factors in pathing.  Avoid derailing the bot if so.
                 if (mp != null) {
                     moveEntity(mp.getEntity().getId(), mp);
+                } else if (lastAttempt && (moverId != -1) && (game.getEntity(moverId) != null)) {
+                    // Out of retries with a specific unit to move and still no path. The retries recompute
+                    // deterministically, so a unit whose candidate set is empty - a cornered fighter whose
+                    // every path leaves the board is the observed live case - returns null every time, and
+                    // a bot that then submits nothing hangs the game: the server waits forever on a turn
+                    // that is never answered. Submit an empty move instead. The server applies the mandatory
+                    // movement rules itself (an aero flies its committed velocity straight ahead, off the
+                    // edge under return flyovers if it must), which is the least-bad honest outcome and,
+                    // unlike silence, always ends the turn.
+                    LOGGER.warn("No path found for entity ID {} after {} attempts; submitting an empty move "
+                          + "so the turn is not lost", moverId, BOT_TURN_RETRY_COUNT);
+                    moveEntity(moverId, new MovePath(game, game.getEntity(moverId)));
                 } else {
                     // This attempt to calculate the turn failed, but we don't want to log
                     // an exception here.

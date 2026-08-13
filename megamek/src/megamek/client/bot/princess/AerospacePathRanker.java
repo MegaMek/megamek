@@ -127,10 +127,6 @@ public class AerospacePathRanker extends BasicPathRanker {
     private int lastAirEnemies;
     private int lastVenueGround;
     private double lastCloseRangeDamage;
-    private int lastWeaponCount;
-    private int lastCrippledWeapons;
-    private int lastTotalWeapons;
-    private int lastCapitalFighter;
     private int lastFinalAltitude;
     private int lastFinalVelocity;
     private CombatPosture lastPosture;
@@ -160,10 +156,6 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastAirEnemies = 0;
         lastVenueGround = 0;
         lastCloseRangeDamage = 0;
-        lastWeaponCount = 0;
-        lastCrippledWeapons = 0;
-        lastTotalWeapons = 0;
-        lastCapitalFighter = 0;
         lastFinalAltitude = 0;
         lastFinalVelocity = 0;
         lastPosture = null;
@@ -176,20 +168,14 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastFinalAltitude = path.getFinalAltitude();
         lastFinalVelocity = path.getFinalVelocity();
         AerospaceVenue venue = AerospaceVenue.of(game, mover);
-        // Diagnosis columns, kept cheap: which venue this ranking believed it was in, and what the damage
-        // helper thinks this airframe can do up close. Every aero term multiplies one of these, so when the
-        // TSV shows the terms at zero these two columns say which factor collapsed - the venue read or the
-        // damage model - without another instrumented rebuild.
+        // Standing diagnosis columns: which venue this ranking believed it was in, and what the damage
+        // helper thinks this airframe can do up close. Every aero term multiplies one of these two factors,
+        // so when the TSV shows the terms at zero these columns say which factor collapsed without an
+        // instrumented rebuild. They earned their keep: a batch of forensic columns built on exactly this
+        // pattern traced 40 bloodless games to fighters whose effective weapon list was empty (the
+        // stratops_capital_fighter option inherited from the user's saved gameoptions.xml).
         lastVenueGround = venue.isGroundMap() ? 1 : 0;
         lastCloseRangeDamage = getMaxDamageAtRange(mover, 1, isExtremeRange(game), isLosRange(game));
-        for (WeaponMounted weapon : mover.getWeaponList()) {
-            lastWeaponCount++;
-            if (weapon.isCrippled()) {
-                lastCrippledWeapons++;
-            }
-        }
-        lastTotalWeapons = mover.getTotalWeaponList().size();
-        lastCapitalFighter = mover.isCapitalFighter() ? 1 : 0;
         // Resolving here is what gives an aerospace force a stance at all. The ground code's two calls to
         // resolvePosture both sit behind guards an airborne aero never passes, so until now a flight had no
         // attack-or-defend answer, and nothing that reads posture applied to it.
@@ -563,10 +549,6 @@ public class AerospacePathRanker extends BasicPathRanker {
         scores.put("aeroAirEnemies", (double) lastAirEnemies);
         scores.put("aeroVenueGround", (double) lastVenueGround);
         scores.put("aeroCloseRangeDamage", lastCloseRangeDamage);
-        scores.put("aeroWeaponCount", (double) lastWeaponCount);
-        scores.put("aeroCrippledWeapons", (double) lastCrippledWeapons);
-        scores.put("aeroTotalWeapons", (double) lastTotalWeapons);
-        scores.put("aeroCapitalFighter", (double) lastCapitalFighter);
         scores.put("aeroEngagementCredit", lastEngagementCredit);
         scores.put("aeroArcAdvantage", lastArcAdvantage);
         scores.put("aeroControlRiskPenalty", lastControlRiskPenalty);

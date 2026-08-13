@@ -32,7 +32,7 @@
  */
 package megamek.client.ui.panels;
 
-import static megamek.client.ui.Messages.getString;
+import static megamek.common.internationalization.I18n.getTextAt;
 import static megamek.utilities.ImageUtilities.addTintToImageIcon;
 import static megamek.utilities.ImageUtilities.scaleImageIcon;
 
@@ -53,7 +53,11 @@ import java.util.function.Supplier;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.settings.SettingsBadge;
@@ -77,6 +81,7 @@ import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
 /** Searchable settings-tree presentation for metadata-backed game option groups. */
 public class GameOptionsPane extends JPanel {
     private static final int START_HEIGHT = 800;
+    private static final String CLIENT_BUNDLE = "megamek.client.messages";
     private static final int HEADER_IMAGE_SIZE = 80;
     private static final int LANDING_HEADER_IMAGE_SIZE = 200;
     private static final int MAX_VICTORY_CONDITIONS = 100;
@@ -98,13 +103,13 @@ public class GameOptionsPane extends JPanel {
     private static final Color UNOFFICIAL_COLOR = new Color(0xE6, 0x9F, 0x00);
     private static final SettingsTextProvider TEXT = SettingsTextProvider.megaMek();
     private static final SettingsBadge IMPORTANT_BADGE = new SettingsBadge(IMPORTANT_ICON, null,
-          getString("GameOptionsDialog.legend.important"));
+          getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.legend.important"));
     private static final SettingsBadge ADVANCED_BADGE = new SettingsBadge(ADVANCED_ICON, null,
-          getString("GameOptionsDialog.legend.advanced"));
+          getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.legend.advanced"));
     private static final SettingsBadge UNOFFICIAL_BADGE = new SettingsBadge(UNOFFICIAL_ICON, UNOFFICIAL_COLOR,
-          getString("GameOptionsDialog.legend.unofficial"));
+          getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.legend.unofficial"));
     private static final SettingsBadge LEGACY_BADGE = new SettingsBadge(LEGACY_ICON, null,
-          getString("GameOptionsDialog.legend.legacy"));
+          getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.legend.legacy"));
     private static final Set<String> UNOFFICIAL_OPTIONS = Set.of(
           OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT,
           OptionsConstants.ADVANCED_COMBAT_FULL_ROTOR_HITS,
@@ -258,12 +263,12 @@ public class GameOptionsPane extends JPanel {
         }
 
         SettingsNavigationText navigationText = new SettingsNavigationText(
-              getString("GameOptionsDialog.Search"),
-              getString("GameOptionsDialog.SearchToolTip"),
-              getString("GameOptionsDialog.SearchNoMatches"),
-              getString("GameOptionsDialog.SearchMatches"),
-              getString("SettingsPagePanel.expandAll.text"),
-              getString("SettingsPagePanel.collapseAll.text"));
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.Search"),
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.SearchToolTip"),
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.SearchNoMatches"),
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.SearchMatches"),
+              getTextAt(CLIENT_BUNDLE, "SettingsPagePanel.expandAll.text"),
+              getTextAt(CLIENT_BUNDLE, "SettingsPagePanel.collapseAll.text"));
         settingsPane = new SettingsPane(routes, pageFactories, navigationText);
         add(settingsPane, BorderLayout.CENTER);
     }
@@ -326,7 +331,7 @@ public class GameOptionsPane extends JPanel {
         DialogOptionComponentYPanel assaultDrop = componentsByName.get(OptionsConstants.ADVANCED_ASSAULT_DROP);
         DialogOptionComponentYPanel paratroopers = componentsByName.get(OptionsConstants.ADVANCED_PARATROOPERS);
         if (assaultDrop != null && paratroopers != null) {
-            paratroopers.setSelectableWhenSelected(assaultDrop);
+            paratroopers.setEditableWhenSelected(assaultDrop);
         }
     }
 
@@ -527,6 +532,9 @@ public class GameOptionsPane extends JPanel {
                 addCheckBoxes(content, checkBoxes);
                 configureSettingsControl(component);
                 content.addRow(component.settingsLabel(), component.settingsControl());
+                if (row.supplementalContent() != null) {
+                    content.addFullWidthComponent(row.supplementalContent());
+                }
             }
             addCheckBoxes(content, checkBoxes);
         }
@@ -577,9 +585,9 @@ public class GameOptionsPane extends JPanel {
 
         private static Map<Integer, String> rngTypeChoices() {
             Map<Integer, String> choices = new LinkedHashMap<>();
-            choices.put(MMRandom.R_SUN, getString("GameOptionsDialog.rngType.sunRandom"));
-            choices.put(MMRandom.R_CRYPTO, getString("GameOptionsDialog.rngType.cryptoRandom"));
-            choices.put(MMRandom.R_POOL36, getString("GameOptionsDialog.rngType.pool36Random"));
+            choices.put(MMRandom.R_SUN, getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.rngType.sunRandom"));
+            choices.put(MMRandom.R_CRYPTO, getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.rngType.cryptoRandom"));
+            choices.put(MMRandom.R_POOL36, getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.rngType.pool36Random"));
             return choices;
         }
 
@@ -709,11 +717,11 @@ public class GameOptionsPane extends JPanel {
     }
 
     private static String sectionTitle(String sectionId) {
-        return getString("GameOptionsDialog.section." + sectionId + ".title");
+        return getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.section." + sectionId + ".title");
     }
 
     private static String sectionSummary(String sectionId) {
-        return getString("GameOptionsDialog.section." + sectionId + ".summary");
+        return getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.section." + sectionId + ".summary");
     }
 
     static String sectionId(String groupId, String optionName) {
@@ -740,8 +748,30 @@ public class GameOptionsPane extends JPanel {
         return PAGE_FACTION_LOGOS;
     }
 
+    private static JComponent rulesSystemDescription(DialogOptionComponentYPanel component) {
+        JLabel description = new JLabel();
+        description.setName("lblRulesSystemDescription");
+        description.setVerticalAlignment(SwingConstants.TOP);
+        int textWidth = UIUtil.scaleForGUI(SettingsPagePanel.DEFAULT_SECTION_STACK_WIDTH - 30);
+        Runnable updateText = () -> {
+            String key = OptionsConstants.RULES_CORE.equals(component.getValue())
+                  ? "GameOptionsDialog.page.landing.rulesSystem.core"
+                  : "GameOptionsDialog.page.landing.rulesSystem.totalWarfare";
+            description.setText("<html><div style='width: " + textWidth + "'>" + TEXT.getText(key)
+                  + "</div></html>");
+            description.revalidate();
+            description.repaint();
+        };
+        if (component.settingsControl() instanceof JComboBox<?> choices) {
+            choices.addActionListener(event -> updateText.run());
+        }
+        updateText.run();
+        return description;
+    }
+
     private record OptionRow(DialogOptionComponentYPanel component, IOption option, String searchableText,
-          String pageSearchableText, String sectionSearchableText, int optionOrder) {
+          String pageSearchableText, String sectionSearchableText, @Nullable JComponent supplementalContent,
+          int optionOrder) {
         private static OptionRow create(DialogOptionComponentYPanel component, int optionOrder,
               String pageSearchableText, String sectionSearchableText) {
             IOption option = component.getOption();
@@ -750,9 +780,15 @@ public class GameOptionsPane extends JPanel {
             if (hasDetails(option)) {
                 component.setSettingsHelpText(TEXT.getText(detailsKey(option)));
             }
+            JComponent supplementalContent = OptionsConstants.RULES_SYSTEM.equals(option.getName())
+                  ? rulesSystemDescription(component)
+                  : null;
+            String supplementalSearchText = supplementalContent == null ? "" : " "
+                  + TEXT.getText("GameOptionsDialog.page.landing.rulesSystem.core") + " "
+                  + TEXT.getText("GameOptionsDialog.page.landing.rulesSystem.totalWarfare");
             return new OptionRow(component, option, SettingsRoute.normalizeSearchText(
-                  option.getName() + ' ' + option.getDisplayableName() + ' ' + displayName),
-                  pageSearchableText, sectionSearchableText, optionOrder);
+                  option.getName() + ' ' + option.getDisplayableName() + ' ' + displayName + supplementalSearchText),
+                  pageSearchableText, sectionSearchableText, supplementalContent, optionOrder);
         }
 
         private boolean matches(String normalizedFilter, String groupSearchableText) {

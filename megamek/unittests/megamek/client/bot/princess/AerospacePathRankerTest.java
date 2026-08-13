@@ -38,6 +38,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import megamek.common.Hex;
+import megamek.common.ManeuverType;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
 import megamek.common.units.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -139,5 +145,60 @@ class AerospacePathRankerTest {
                         >= AerospacePathRanker.oddsOfReachingTheGround(altitude + 1),
                   "risk must never rise with altitude, checked at " + altitude);
         }
+    }
+
+    // --- the maneuver doctrine gate -----------------------------------------------------------------
+
+    private static MovePath maneuverPathAt(Coords position, int facing, Game game, Board board) {
+        Entity fighter = mock(Entity.class);
+        when(fighter.getPosition()).thenReturn(position);
+        when(fighter.getFacing()).thenReturn(facing);
+        MovePath path = mock(MovePath.class);
+        when(path.getEntity()).thenReturn(fighter);
+        when(path.getFinalBoardId()).thenReturn(0);
+        when(game.getBoard(0)).thenReturn(board);
+        return path;
+    }
+
+    private static Board groundBoard(int width, int height) {
+        Hex[] hexes = new Hex[width * height];
+        for (int index = 0; index < hexes.length; index++) {
+            hexes[index] = new Hex();
+        }
+        return new Board(width, height, hexes);
+    }
+
+    /**
+     * Dave's rule, enforced where the game state is current: an offensive maneuver may only be scored
+     * against an enemy that has already moved. Path generation cannot hold this gate - it runs inside
+     * Precognition before any enemy commits - so this is the check that keeps the rule alive.
+     */
+    @Test
+    void offensiveManeuversRequireACommittedEnemy() {
+        Game game = mock(Game.class);
+        Board board = groundBoard(40, 40);
+        MovePath path = maneuverPathAt(new Coords(20, 20), 0, game, board);
+
+        assertFalse(ranker.maneuverSanctioned(ManeuverType.MAN_SPLIT_S, 0, path, game,
+              AerospaceVenue.GROUND_MAP), "no committed enemy, no Split-S");
+        assertTrue(ranker.maneuverSanctioned(ManeuverType.MAN_SPLIT_S, 1, path, game,
+              AerospaceVenue.GROUND_MAP), "one committed enemy opens the offensive set");
+    }
+
+    /**
+     * The escape carve-out: a fighter whose pose has the board edge inside its 8-hex unsteerable straight
+     * run gets Hammerhead and Immelmann regardless of who has moved - the alternative is flying off the map.
+     */
+    @Test
+    void escapeManeuversAreSanctionedByGeometryAlone() {
+        Game game = mock(Game.class);
+        Board board = groundBoard(40, 40);
+        MovePath cornered = maneuverPathAt(new Coords(37, 3), 1, game, board);
+        MovePath midBoard = maneuverPathAt(new Coords(20, 20), 0, game, board);
+
+        assertTrue(ranker.maneuverSanctioned(ManeuverType.MAN_HAMMERHEAD, 0, cornered, game,
+              AerospaceVenue.GROUND_MAP), "a cornered fighter escapes without waiting on anyone");
+        assertFalse(ranker.maneuverSanctioned(ManeuverType.MAN_HAMMERHEAD, 0, midBoard, game,
+              AerospaceVenue.GROUND_MAP), "mid-board there is nothing to escape from");
     }
 }

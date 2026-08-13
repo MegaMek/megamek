@@ -153,6 +153,12 @@ public class AerospacePathRanker extends BasicPathRanker {
     private double lastEdgePenalty;
     private double lastManeuverRisk;
     private int lastManeuverType;
+
+    /**
+     * The penalty that buries a maneuver path whose doctrine gate is closed this turn (see
+     * {@link #maneuverSanctioned}). Large enough that no engagement credit can outbid it.
+     */
+    static final double UNSANCTIONED_MANEUVER_COST = 1_000;
     private int lastEngageableEnemies;
     private int lastCommittedEnemies;
     private int lastAirEnemies;
@@ -218,7 +224,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastControlRiskPenalty = controlRiskPenalty(path);
         lastVelocityPenalty = velocityPenalty(path, venue);
         lastEdgePenalty = edgePenalty(path, game, venue);
-        lastManeuverRisk = maneuverRiskPenalty(path);
+        lastManeuverRisk = maneuverRiskPenalty(path, game, venue);
 
         return lastEngagementCredit + lastArcAdvantage - lastControlRiskPenalty - lastVelocityPenalty
               - lastEdgePenalty - lastManeuverRisk;
@@ -477,12 +483,15 @@ public class AerospacePathRanker extends BasicPathRanker {
      *
      * @return the penalty to subtract from this path's utility
      */
-    private double maneuverRiskPenalty(MovePath path) {
+    private double maneuverRiskPenalty(MovePath path, Game game, AerospaceVenue venue) {
         for (MoveStep step : path.getStepVector()) {
             if (step.getType() != MoveStepType.MANEUVER) {
                 continue;
             }
             lastManeuverType = step.getManeuverType();
+            if (!maneuverSanctioned(lastManeuverType, lastCommittedEnemies, path, game, venue)) {
+                return UNSANCTIONED_MANEUVER_COST;
+            }
             int controlModifier = ManeuverType.getMod(lastManeuverType, false);
             // TW control roll: piloting skill, plus the standing +2 for atmospheric operations, plus the
             // maneuver's own modifier.
@@ -491,6 +500,44 @@ public class AerospacePathRanker extends BasicPathRanker {
             return CONTROL_LOSS_COST * failureChance * oddsOfReachingTheGround(path.getFinalAltitude());
         }
         return 0;
+    }
+
+    /**
+     * Whether this maneuver is permitted this turn at all.
+     *
+     * <p>The doctrine gates live here and not in path generation because generation runs inside Precognition
+     * at the start of the movement phase, before any enemy has moved - and an aero unit's paths are never
+     * re-enumerated when an enemy commits. Rank time is the only moment the game state is current.</p>
+     *
+     * <p>Offensive maneuvers (Split-S, Loop, Side Slips, Half Roll) require a committed - already moved -
+     * enemy: they exist to exploit a position the opponent can no longer take back. Escape maneuvers
+     * (Hammerhead, Immelmann) are also sanctioned by geometry alone: a fighter whose current pose has the
+     * board edge inside its unsteerable straight run gets its way out regardless of who has moved, because
+     * the alternative is flying off the map.</p>
+     *
+     * @param maneuverType     the {@link ManeuverType} constant found on the path
+     * @param committedEnemies enemies already evaluated as moved this turn
+     * @param path             the path being ranked
+     * @param game             the current game
+     * @param venue            which set of atmospheric rules is in force
+     *
+     * @return {@code true} when the maneuver may be scored on its merits, {@code false} to bury the path
+     */
+    boolean maneuverSanctioned(int maneuverType, int committedEnemies, MovePath path, Game game,
+          AerospaceVenue venue) {
+        if (committedEnemies > 0) {
+            return true;
+        }
+        boolean escape = (maneuverType == ManeuverType.MAN_HAMMERHEAD)
+              || (maneuverType == ManeuverType.MAN_IMMELMAN);
+        if (!escape) {
+            return false;
+        }
+        Entity mover = path.getEntity();
+        int minStraight = venue.isGroundMap() ? 8 : 1;
+        int exitDistance = AerospaceGeometry.hexesUntilOffBoard(mover.getPosition(), mover.getFacing(),
+              game.getBoard(path.getFinalBoardId()), minStraight + 1);
+        return exitDistance <= minStraight;
     }
 
     /**

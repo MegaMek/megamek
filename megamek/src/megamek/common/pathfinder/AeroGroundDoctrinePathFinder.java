@@ -92,9 +92,6 @@ public class AeroGroundDoctrinePathFinder extends AeroGroundPathFinder {
      */
     static final double HALF_ROLL_ASYMMETRY = 0.25;
 
-    /** Hexes an aerodyne must fly straight before any facing change on a ground map (TW p.92). */
-    static final int MIN_STRAIGHT_GROUND = 8;
-
     protected AeroGroundDoctrinePathFinder(Game game) {
         super(game);
     }
@@ -138,19 +135,13 @@ public class AeroGroundDoctrinePathFinder extends AeroGroundPathFinder {
         int velocity = aero.getCurrentVelocity();
         int altitude = start.getFinalAltitude();
 
+        // Generation carries NO enemy-state gates. This finder runs inside Precognition at the start of
+        // the movement phase, before any enemy has moved, and an aero unit is never re-enumerated when an
+        // enemy commits (markUnitAsDirty skips its neighbor-dirtying step for aero units) - so a gate on
+        // committed enemies here would never open in a live game. Every root is generated, and
+        // AerospacePathRanker.maneuverSanctioned enforces the doctrine at rank time with fresh state:
+        // offensive maneuvers need a committed enemy, escapes need a cornered pose or a committed enemy.
         List<Coords> committedEnemies = committedEnemyPositions(mover);
-        boolean offense = !committedEnemies.isEmpty();
-        // Trapped means the edge sits inside the UNSTEERABLE straight run - the eight hexes that must be
-        // flown before any facing change (TW p.92) - not merely inside the committed distance. At velocity 3
-        // the committed run is 48 hexes, longer than most boards, so gating on it would call every pose
-        // trapped and the escape set would swallow the committed-enemy rule whole. Eight is the criterion
-        // the edge penalty's full-cost tier uses, and it still catches the live hang (exit distance 2-3).
-        boolean trapped = (start.getFinalCoords() != null)
-              && (AerospaceGeometry.hexesUntilOffBoard(start.getFinalCoords(), start.getFinalFacing(), board,
-              MIN_STRAIGHT_GROUND + 1) <= MIN_STRAIGHT_GROUND);
-        if (!offense && !trapped) {
-            return List.of();
-        }
 
         // The facing a purposeful maneuver comes out on: at the nearest committed enemy when attacking,
         // at the middle of the board when escaping - anywhere but the edge.
@@ -160,8 +151,7 @@ public class AeroGroundDoctrinePathFinder extends AeroGroundPathFinder {
 
         // Hammerhead: 180 degrees in the same hex for thrust equal to velocity (+3 control). The overshoot
         // answer - reverse onto an enemy behind you, or out of a corner, without crossing the map to turn.
-        if ((offense || trapped)
-              && canPerform(ManeuverType.MAN_HAMMERHEAD, velocity, altitude, board, start)
+        if (canPerform(ManeuverType.MAN_HAMMERHEAD, velocity, altitude, board, start)
               && (velocity <= maxThrust)) {
             MovePath root = start.clone();
             root.addManeuver(ManeuverType.MAN_HAMMERHEAD);
@@ -171,8 +161,7 @@ public class AeroGroundDoctrinePathFinder extends AeroGroundPathFinder {
 
         // Immelmann: 4 thrust, +1 control - up two altitudes, out on any facing, velocity down two. The
         // reset maneuver: escape the corner, or come around above a committed enemy at controllable speed.
-        if ((offense || trapped)
-              && canPerform(ManeuverType.MAN_IMMELMAN, velocity, altitude, board, start)
+        if (canPerform(ManeuverType.MAN_IMMELMAN, velocity, altitude, board, start)
               && (4 <= maxThrust)) {
             MovePath root = start.clone();
             root.addManeuver(ManeuverType.MAN_IMMELMAN);
@@ -188,8 +177,7 @@ public class AeroGroundDoctrinePathFinder extends AeroGroundPathFinder {
         // dive out of the dead zone onto an enemy below. Guarded to keep two levels of air below, because
         // the engine's own legality check reads (altitude + 2) > ceiling, which permits a Split-S from
         // altitude 2 straight into the ground.
-        if (offense
-              && canPerform(ManeuverType.MAN_SPLIT_S, velocity, altitude, board, start)
+        if (canPerform(ManeuverType.MAN_SPLIT_S, velocity, altitude, board, start)
               && (altitude - 2 >= AerospaceGeometry.MINIMUM_ALTITUDE)
               && (2 <= maxThrust)) {
             MovePath root = start.clone();
@@ -203,8 +191,7 @@ public class AeroGroundDoctrinePathFinder extends AeroGroundPathFinder {
 
         // Loop: 4 thrust, +1 control - spends four velocity going nowhere. The loiter tool for a fighter
         // carrying too much speed for the dogfight it is already in.
-        if (offense
-              && canPerform(ManeuverType.MAN_LOOP, velocity, altitude, board, start)
+        if (canPerform(ManeuverType.MAN_LOOP, velocity, altitude, board, start)
               && (4 <= maxThrust)) {
             MovePath root = start.clone();
             root.addManeuver(ManeuverType.MAN_LOOP);
@@ -216,7 +203,7 @@ public class AeroGroundDoctrinePathFinder extends AeroGroundPathFinder {
         // front-right and eight more ahead, facing unchanged. Leaves an enemy's arc while keeping the nose
         // on them, and shifts the flown line without a turn.
         for (int type : new int[] { ManeuverType.MAN_SIDE_SLIP_LEFT, ManeuverType.MAN_SIDE_SLIP_RIGHT }) {
-            if (offense && canPerform(type, velocity, altitude, board, start)) {
+            if (canPerform(type, velocity, altitude, board, start)) {
                 MovePath root = start.clone();
                 root.addManeuver(type);
                 MoveStepType lateral = (type == ManeuverType.MAN_SIDE_SLIP_LEFT)
@@ -233,7 +220,7 @@ public class AeroGroundDoctrinePathFinder extends AeroGroundPathFinder {
 
         // Half-roll: 1 thrust, -1 control - the only maneuver that makes the roll easier. Swaps a stripped
         // wing for a fresh one, so it is only worth a root when the wings are meaningfully uneven.
-        if (offense && wingsAreUneven(mover)
+        if (wingsAreUneven(mover)
               && canPerform(ManeuverType.MAN_HALF_ROLL, velocity, altitude, board, start)) {
             MovePath root = start.clone();
             root.addManeuver(ManeuverType.MAN_HALF_ROLL);

@@ -283,16 +283,18 @@ class AeroGroundDoctrinePathFinderTest {
     }
 
     /**
-     * Dave's doctrine rule: offensive maneuvers are a reaction to known geometry. An enemy that has not
-     * moved yet is a guess, and a maneuver is too expensive to spend on a guess.
+     * Generation deliberately ignores enemy state: this finder runs inside Precognition before any enemy
+     * has moved, so an enemy-state gate here would never open live (7,317 ranked paths, zero maneuvers, in
+     * the first probe game). The committed-enemy rule is enforced at rank time -
+     * {@code AerospacePathRanker.maneuverSanctioned}.
      */
     @Test
-    void noManeuversAgainstOnlyUnmovedEnemies() {
+    void maneuversAreGeneratedEvenBeforeEnemiesCommit() {
         armedFlyer(new Coords(20, 20), 0, 3);
         enemyFighter(20, new Coords(20, 28), 5, false);
 
-        assertEquals(0, maneuverRootedPaths(AeroGroundDoctrinePathFinder.getInstance(game)),
-              "an unmoved enemy must not unlock offensive maneuvers");
+        assertTrue(maneuverRootedPaths(AeroGroundDoctrinePathFinder.getInstance(game)) > 0,
+              "maneuver roots must be generated before enemies commit - the ranker owns the gate");
     }
 
     /** Once the enemy has committed, the maneuver set opens. */
@@ -303,5 +305,43 @@ class AeroGroundDoctrinePathFinderTest {
 
         assertTrue(maneuverRootedPaths(AeroGroundDoctrinePathFinder.getInstance(game)) > 0,
               "a committed enemy should unlock maneuver-rooted paths");
+    }
+
+    /**
+     * PathEnumerator discards any aero path that is not fully legal or ends with velocity unspent
+     * ({@code isLegalAeroMove}). A maneuver set that only exists upstream of that filter is invisible in
+     * real games - which is exactly what happened first time: 7,317 ranked paths in a live probe game,
+     * none with a maneuver. At least one maneuver-rooted path must survive the same checks the enumerator
+     * applies.
+     */
+    @Test
+    void maneuverPathsSurviveTheEnumeratorLegalityFilter() {
+        armedFlyer(new Coords(20, 20), 0, 3);
+        enemyFighter(20, new Coords(20, 28), 5, true);
+
+        AeroGroundDoctrinePathFinder finder = AeroGroundDoctrinePathFinder.getInstance(game);
+        finder.run(new MovePath(game, mover, null));
+
+        int maneuverPaths = 0;
+        int illegal = 0;
+        int velocityLeft = 0;
+        int survivors = 0;
+        for (MovePath path : finder.getAllComputedPathsUncategorized()) {
+            if (path.getStepVector().isEmpty()
+                  || path.getStepVector().get(0).getType() != megamek.common.enums.MoveStepType.MANEUVER) {
+                continue;
+            }
+            maneuverPaths++;
+            if (!path.isMoveLegal()) {
+                illegal++;
+            } else if ((path.getLastStep() != null) && (path.getLastStep().getVelocityLeft() != 0)) {
+                velocityLeft++;
+            } else {
+                survivors++;
+            }
+        }
+        assertTrue(survivors > 0, "no maneuver path survives the enumerator's filter: "
+              + maneuverPaths + " generated, " + illegal + " fail isMoveLegal, "
+              + velocityLeft + " end with velocity unspent");
     }
 }

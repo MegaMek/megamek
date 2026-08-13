@@ -421,7 +421,19 @@ public abstract class TestEntity implements TestEntityOption {
 
     public static List<EquipmentType> validJumpJets(long entityType, boolean industrial) {
         if ((entityType & Entity.ETYPE_MEK) != 0) {
-            return MekJumpJets.allJJs(industrial);
+            List<EquipmentType> jumpJets = Arrays.asList(
+                  EquipmentType.get(EquipmentTypeLookup.JUMP_JET),
+                  EquipmentType.get(EquipmentTypeLookup.IMPROVED_JUMP_JET),
+                  EquipmentType.get(EquipmentTypeLookup.PROTOTYPE_JUMP_JET),
+                  EquipmentType.get(EquipmentTypeLookup.PROTOTYPE_IMPROVED_JJ),
+                  EquipmentType.get(EquipmentTypeLookup.MEK_UMU)
+            );
+
+            if (industrial) {
+                return jumpJets.stream().filter(eq -> ((MiscType) eq).isIndustrial()).toList();
+            }
+
+            return jumpJets;
         } else if ((entityType & Entity.ETYPE_TANK) != 0) {
             return Collections.singletonList(EquipmentType.get(EquipmentTypeLookup.VEHICLE_JUMP_JET));
         } else if ((entityType & Entity.ETYPE_BATTLEARMOR) != 0) {

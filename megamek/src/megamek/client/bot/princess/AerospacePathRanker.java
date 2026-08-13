@@ -109,6 +109,16 @@ public class AerospacePathRanker extends BasicPathRanker {
     /** Fraction of the off-board cost charged, per committed hex the pose cannot stop short of the edge. */
     private static final double EDGE_PRESSURE_WEIGHT = 0.5;
 
+    /**
+     * Fraction of the off-board cost charged for hugging an edge the pose is not even pointing at.
+     *
+     * <p>The directional walk missed this case live: a damaged fighter fled to the westernmost column facing
+     * north, and because its straight run exited far away it paid almost nothing - while sitting one hexside
+     * of drift from an exit the whole time. Proximity to any edge inside the unsteerable straight run is a
+     * standing risk whatever the nose points at.</p>
+     */
+    private static final double EDGE_HUG_WEIGHT = 0.4;
+
     /** Faces on a d6, for the odds an out-of-control unit falls far enough to hit the ground. */
     private static final double DIE_FACES = 6.0;
 
@@ -470,17 +480,38 @@ public class AerospacePathRanker extends BasicPathRanker {
         if (committed == 0) {
             return 0;
         }
+        int minStraightForHug = venue.isGroundMap() ? 8 : 1;
         int exitDistance = AerospaceGeometry.hexesUntilOffBoard(path.getFinalCoords(), path.getFinalFacing(),
               game.getBoard(path.getFinalBoardId()), committed + 1);
         if (exitDistance > committed) {
-            return 0;
+            return edgeHugPenalty(path, game, minStraightForHug);
         }
         // The straight run required before the first facing change: nothing inside it can be steered.
         int minStraight = venue.isGroundMap() ? 8 : 1;
         if (exitDistance <= minStraight) {
             return OFF_BOARD_COST;
         }
-        return OFF_BOARD_COST * EDGE_PRESSURE_WEIGHT * (committed - exitDistance) / committed;
+        double directional = OFF_BOARD_COST * EDGE_PRESSURE_WEIGHT * (committed - exitDistance) / committed;
+        return Math.min(OFF_BOARD_COST, directional + edgeHugPenalty(path, game, minStraight));
+    }
+
+    /**
+     * The standing charge for ending beside an edge, whatever the pose points at.
+     *
+     * @param path        the path being ranked
+     * @param game        the current game
+     * @param minStraight the unsteerable straight run for this venue
+     *
+     * @return zero when the nearest edge is outside the unsteerable run, scaling to
+     *       {@code OFF_BOARD_COST * EDGE_HUG_WEIGHT} when standing on one
+     */
+    private double edgeHugPenalty(MovePath path, Game game, int minStraight) {
+        int nearestEdge = AerospaceGeometry.hexesToNearestEdge(path.getFinalCoords(),
+              game.getBoard(path.getFinalBoardId()));
+        if (nearestEdge >= minStraight) {
+            return 0;
+        }
+        return OFF_BOARD_COST * EDGE_HUG_WEIGHT * (minStraight - nearestEdge) / minStraight;
     }
 
     /**

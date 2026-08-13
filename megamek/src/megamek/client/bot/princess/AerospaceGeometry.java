@@ -188,6 +188,30 @@ public final class AerospaceGeometry {
     }
 
     /**
+     * How far this hex sits from the nearest board edge, in hexes.
+     *
+     * <p>The directional walk in {@link #hexesUntilOffBoard} prices the exit a pose is pointing at; this
+     * prices the edges it is merely standing beside. A fighter parked on the westernmost column facing north
+     * reads as safe to the directional walk while one hexside of leftward drift is an instant exit - observed
+     * live as a damaged bot hugging the map edge with the directional charge barely registering.</p>
+     *
+     * @param position the hex to measure
+     * @param board    the board being flown over
+     *
+     * @return hexes to the nearest edge; 0 means standing on an edge row or column
+     */
+    public static int hexesToNearestEdge(Coords position, Board board) {
+        if ((position == null) || (board == null)) {
+            return Integer.MAX_VALUE;
+        }
+        int fromWest = position.getX();
+        int fromEast = board.getWidth() - 1 - position.getX();
+        int fromNorth = position.getY();
+        int fromSouth = board.getHeight() - 1 - position.getY();
+        return Math.min(Math.min(fromWest, fromEast), Math.min(fromNorth, fromSouth));
+    }
+
+    /**
      * The altitudes a unit could still be at when its turn ends.
      *
      * <p>Asymmetric, because the rules are: climbing costs {@value #THRUST_PER_ALTITUDE_GAIN} thrust per

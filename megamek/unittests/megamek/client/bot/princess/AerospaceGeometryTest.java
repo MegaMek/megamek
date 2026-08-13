@@ -293,4 +293,17 @@ class AerospaceGeometryTest {
         // Null-safety returns the cap rather than a crash mid-ranking.
         assertEquals(9, AerospaceGeometry.hexesUntilOffBoard(null, 0, board, 9));
     }
+
+    /** The lateral companion: distance to the nearest edge, whatever the pose points at. */
+    @Test
+    void hexesToNearestEdgeMeasuresTheClosestBoundary() {
+        Board board = board(BoardType.GROUND);
+
+        // On the west column: hugging an edge even when facing along it.
+        assertEquals(0, AerospaceGeometry.hexesToNearestEdge(new Coords(0, 37), board));
+        // Mid-board on a 10-wide board: the near side is 4 columns away.
+        assertEquals(4, AerospaceGeometry.hexesToNearestEdge(new Coords(4, 40), board));
+        // Corner-adjacent: the closer of the two axes wins.
+        assertEquals(1, AerospaceGeometry.hexesToNearestEdge(new Coords(1, 3), board));
+    }
 }

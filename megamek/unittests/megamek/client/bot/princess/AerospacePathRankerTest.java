@@ -44,6 +44,7 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
@@ -304,6 +305,67 @@ class AerospacePathRankerTest {
         // Live game 6: "Needs 9 [6 + 2 - 1 + 2 (Split S maneuver)]" - 2d6 >= 9 is 27.78%.
         assertEquals(10.0 / 36.0, AerospacePathRanker.maneuverSuccessChance(fighter, ManeuverType.MAN_SPLIT_S),
               0.001, "target must be piloting + 2 - 1 + maneuver mod, as the server rolls it");
+    }
+
+    /**
+     * When the path carries a real maneuver step, the odds come from the server's own
+     * {@code IAero.checkManeuver} - which sees avionics hits and damaged controls the flat formula
+     * cannot. A shot-up fighter must be more reluctant to stunt than a fresh one at the same piloting.
+     */
+    @Test
+    void pathOddsPreferTheEnginesOwnControlRollMath() {
+        AeroSpaceFighter fighter = mock(AeroSpaceFighter.class);
+        MoveStep maneuverStep = mock(MoveStep.class);
+        when(maneuverStep.getType()).thenReturn(megamek.common.enums.MoveStepType.MANEUVER);
+        MovePath path = mock(MovePath.class);
+        when(path.getEntity()).thenReturn(fighter);
+        when(path.getStepVector()).thenReturn(new java.util.Vector<>(java.util.List.of(maneuverStep)));
+
+        // The engine says the roll is an 11 - say, piloting 6 plus two avionics hits the flat
+        // formula never sees. 2d6 >= 11 is 3/36.
+        when(fighter.checkManeuver(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any()))
+              .thenReturn(new megamek.common.rolls.PilotingRollData(1, 11, "avionics-riddled"));
+
+        assertEquals(3.0 / 36.0,
+              AerospacePathRanker.maneuverSuccessChance(path, ManeuverType.MAN_SPLIT_S), 0.001,
+              "with a maneuver step present, the engine's target number wins over the flat formula");
+    }
+
+    /**
+     * A failed maneuver is not just an altitude gamble: the server forces half the remaining velocity
+     * flown out straight, unsteerable - which carried a live Cheetah clean off the map. That exit is
+     * priced at the odds of failing, so a risky stunt at the edge buries itself while the same roll
+     * mid-board stays nearly free.
+     */
+    @Test
+    void aFailedManeuversForcedRunOffTheBoardIsPriced() {
+        Game game = mock(Game.class);
+        Board board = groundBoard(40, 40);
+        // Velocity 2: a failed roll forces max(2/2, 1) * 16 = 16 straight hexes.
+        AeroSpaceFighter atEdge = mock(AeroSpaceFighter.class);
+        when(atEdge.getPosition()).thenReturn(new Coords(35, 20));
+        when(atEdge.getFacing()).thenReturn(2);
+        when(atEdge.getCurrentVelocity()).thenReturn(2);
+        Crew crew = mock(Crew.class);
+        when(crew.getPiloting()).thenReturn(4);
+        when(atEdge.getCrew()).thenReturn(crew);
+        when(atEdge.isFighter()).thenReturn(true);
+        when(atEdge.getArmorRemainingPercent()).thenReturn(1.0);
+
+        MovePath path = mock(MovePath.class);
+        when(path.getEntity()).thenReturn(atEdge);
+        when(path.getFinalBoardId()).thenReturn(0);
+        when(game.getBoard(0)).thenReturn(board);
+        double edgeCost = ranker.failedManeuverExitCost(path, game, AerospaceVenue.GROUND_MAP);
+
+        // Same fighter mid-board: 16 forced hexes from (20,20) stay on the 40x40 board - no exit cost.
+        when(atEdge.getPosition()).thenReturn(new Coords(20, 20));
+        when(atEdge.getFacing()).thenReturn(0);
+        double midBoardCost = ranker.failedManeuverExitCost(path, game, AerospaceVenue.GROUND_MAP);
+
+        assertTrue(edgeCost > 0, "a forced run off the board must carry a cost, got " + edgeCost);
+        assertEquals(0.0, midBoardCost, 0.0001,
+              "the same failed roll mid-board exits nothing and costs nothing");
     }
 
     /**

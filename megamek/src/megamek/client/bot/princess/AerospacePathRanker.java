@@ -47,6 +47,8 @@ import megamek.common.game.Game;
 import megamek.common.ManeuverType;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
+import megamek.common.rolls.PilotingRollData;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 
@@ -153,6 +155,7 @@ public class AerospacePathRanker extends BasicPathRanker {
     private double lastEdgePenalty;
     private double lastManeuverRisk;
     private int lastManeuverType;
+    private double lastManeuverOdds;
 
     /**
      * The penalty that buries a maneuver path whose doctrine gate is closed this turn (see
@@ -219,6 +222,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastEdgePenalty = 0;
         lastManeuverRisk = 0;
         lastManeuverType = 0;
+        lastManeuverOdds = 1.0;
         lastEngageableEnemies = 0;
         lastCommittedEnemies = 0;
         lastAirEnemies = 0;
@@ -260,7 +264,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         // offers 58% of its pose; the crash risk and the spent turn are owed in full.
         double gains = lastEngagementCredit + lastArcAdvantage;
         if (lastManeuverType != ManeuverType.MAN_NONE) {
-            gains *= maneuverSuccessChance(path.getEntity(), lastManeuverType);
+            gains *= lastManeuverOdds;
         }
         return gains - lastControlRiskPenalty - lastVelocityPenalty - lastEdgePenalty - lastManeuverRisk;
     }
@@ -524,13 +528,44 @@ public class AerospacePathRanker extends BasicPathRanker {
                 continue;
             }
             lastManeuverType = step.getManeuverType();
+            lastManeuverOdds = maneuverSuccessChance(path, lastManeuverType);
             if (!maneuverSanctioned(lastManeuverType, lastCommittedEnemies, lastAirEnemies, path, game, venue)) {
                 return UNSANCTIONED_MANEUVER_COST;
             }
-            double failureChance = 1.0 - maneuverSuccessChance(path.getEntity(), lastManeuverType);
-            return CONTROL_LOSS_COST * failureChance * oddsOfReachingTheGround(path.getFinalAltitude());
+            double failureChance = 1.0 - lastManeuverOdds;
+            return failureChance * (CONTROL_LOSS_COST * oddsOfReachingTheGround(path.getFinalAltitude())
+                  + failedManeuverExitCost(path, game, venue));
         }
         return 0;
+    }
+
+    /**
+     * What a FAILED roll actually does to this pose, beyond the altitude gamble: the server forces the
+     * fighter to fly out straight for half its remaining velocity, no steering. Seen live: a failed
+     * Split-S carried a Cheetah clean off the map. If that forced run exits the board, the failure
+     * costs a disengage - priced like the deliberate one, by how much fight the unit has left - and
+     * that cost is charged at the odds of failing. A maneuver whose failure is cheap (high, mid-board)
+     * prices nearly free here; the same roll at the edge prices itself out.
+     *
+     * @param path  the maneuver path being ranked
+     * @param game  the current game
+     * @param venue which set of atmospheric rules is in force
+     *
+     * @return the fly-off cost of the forced straight run, or zero when it stays on the board
+     */
+    double failedManeuverExitCost(MovePath path, Game game, AerospaceVenue venue) {
+        Entity mover = path.getEntity();
+        if (!(mover instanceof IAero aero) || (mover.getPosition() == null)) {
+            return 0;
+        }
+        // MovePathHandler on a failed maneuver: forward = max(velocityLeft / 2, 1), x16 on ground maps.
+        int forcedHexes = Math.max(aero.getCurrentVelocity() / 2, 1) * venue.hexesPerVelocityPoint();
+        int exitDistance = AerospaceGeometry.hexesUntilOffBoard(mover.getPosition(), mover.getFacing(),
+              game.getBoard(path.getFinalBoardId()), forcedHexes + 1);
+        if (exitDistance > forcedHexes) {
+            return 0;
+        }
+        return OFF_BOARD_COST * disengageCostFraction(mover);
     }
 
     /**
@@ -567,7 +602,7 @@ public class AerospacePathRanker extends BasicPathRanker {
                   || (maneuverType == ManeuverType.MAN_IMMELMAN)) {
                 return true;
             }
-            return maneuverSuccessChance(path.getEntity(), maneuverType) >= MINIMUM_STUNT_SUCCESS_CHANCE;
+            return maneuverSuccessChance(path, maneuverType) >= MINIMUM_STUNT_SUCCESS_CHANCE;
         }
         // Nobody has moved yet. Reactive maneuvers exploit a committed position and are pointless on
         // spec - but the energy hedges are flown precisely because nobody has committed. Moving first
@@ -581,7 +616,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         if (!energyHedge || (airEnemies == 0)) {
             return false;
         }
-        return maneuverSuccessChance(path.getEntity(), maneuverType) >= MINIMUM_STUNT_SUCCESS_CHANCE;
+        return maneuverSuccessChance(path, maneuverType) >= MINIMUM_STUNT_SUCCESS_CHANCE;
     }
 
     /**
@@ -599,6 +634,47 @@ public class AerospacePathRanker extends BasicPathRanker {
               + ManeuverType.getMod(maneuverType, false)
               - (mover.isFighter() ? 1 : 0);
         return Compute.oddsAbove(target) / 100.0;
+    }
+
+    /**
+     * The chance this path's maneuver control roll passes, preferring the server's own target number.
+     *
+     * <p>{@link IAero#checkManeuver} is the exact math the server rolls against, and its base piloting
+     * roll carries what the flat formula cannot see: avionics hits, damaged controls, planetary
+     * conditions. A fighter with a shot-up cockpit should be far more reluctant to stunt, and with the
+     * flat formula it was not. Falls back to the flat formula when the path carries no maneuver step or
+     * the engine declines to price the roll.</p>
+     *
+     * @param path         the path whose maneuver is being priced
+     * @param maneuverType the {@link ManeuverType} constant found on the path
+     *
+     * @return the probability (0.0 to 1.0) of passing the control roll
+     */
+    static double maneuverSuccessChance(MovePath path, int maneuverType) {
+        Entity mover = path.getEntity();
+        if (mover instanceof IAero aero) {
+            List<MoveStep> steps = path.getStepVector();
+            if (steps != null) {
+                for (MoveStep step : steps) {
+                    if (step.getType() != MoveStepType.MANEUVER) {
+                        continue;
+                    }
+                    PilotingRollData rollTarget = aero.checkManeuver(step, path.getLastStepMovementType());
+                    int target = rollTarget.getValue();
+                    if (target == TargetRoll.AUTOMATIC_SUCCESS) {
+                        return 1.0;
+                    }
+                    if ((target == TargetRoll.IMPOSSIBLE) || (target == TargetRoll.AUTOMATIC_FAIL)) {
+                        return 0.0;
+                    }
+                    if (target != TargetRoll.CHECK_FALSE) {
+                        return Compute.oddsAbove(target) / 100.0;
+                    }
+                    break;
+                }
+            }
+        }
+        return maneuverSuccessChance(mover, maneuverType);
     }
 
     /**
@@ -834,6 +910,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         scores.put("aeroEdgePenalty", lastEdgePenalty);
         scores.put("aeroManeuverRisk", lastManeuverRisk);
         scores.put("aeroManeuverType", (double) lastManeuverType);
+        scores.put("aeroManeuverOdds", lastManeuverOdds);
         scores.put("aeroFinalVelocity", (double) lastFinalVelocity);
         return scores;
     }

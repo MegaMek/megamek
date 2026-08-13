@@ -428,6 +428,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String RND_ARMY_POS_X = "RndArmyPosX";
     public static final String RND_ARMY_POS_Y = "RndArmyPosY";
     public static final String RND_ARMY_SPLIT_POS = "RndArmySplitPos";
+    // The army generator's last-used settings, restored when the dialog reopens. The year is
+    // deliberately absent: it follows the game options and is re-read every time the dialog opens.
+    public static final String RND_ARMY_LAST_FACTION = "RndArmyLastFaction";
+    public static final String RND_ARMY_LAST_SUB_FACTION = "RndArmyLastSubFaction";
+    public static final String RND_ARMY_LAST_UNIT_TYPE = "RndArmyLastUnitType";
+    public static final String RND_ARMY_LAST_RATING = "RndArmyLastRating";
+    public static final String RND_ARMY_LAST_UNIT_COUNT = "RndArmyLastUnitCount";
+    public static final String RND_ARMY_LAST_TAB = "RndArmyLastTab";
     public static final String RND_MAP_POS_X = "RndMapPosX";
     public static final String RND_MAP_POS_Y = "RndMapPosY";
     public static final String RND_MAP_SIZE_HEIGHT = "RndMapSizeHeight";
@@ -825,6 +833,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(RND_ARMY_POS_X, 200);
         store.setDefault(RND_ARMY_POS_Y, 200);
         store.setDefault(RND_ARMY_SPLIT_POS, 300);
+        store.setDefault(RND_ARMY_LAST_FACTION, "");
+        store.setDefault(RND_ARMY_LAST_SUB_FACTION, "");
+        store.setDefault(RND_ARMY_LAST_UNIT_TYPE, "");
+        store.setDefault(RND_ARMY_LAST_RATING, "");
+        store.setDefault(RND_ARMY_LAST_UNIT_COUNT, "");
+        store.setDefault(RND_ARMY_LAST_TAB, "");
 
         store.setDefault(MINI_MAP_COLOURS, "defaultminimap.txt");
         store.setDefault(MINI_MAP_ENABLED, true);
@@ -2797,6 +2811,31 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public String getRATSelectedRAT() {
         return store.getString(RAT_SELECTED_RAT);
+    }
+
+    public void setRATSelectedRAT(String selectedRat) {
+        store.setValue(RAT_SELECTED_RAT, selectedRat);
+    }
+
+    /**
+     * The army generator's last-used settings, so the dialog reopens on the choices the player made
+     * rather than resetting to nothing. Stored as strings because the values are faction keys, rating
+     * codes and echelon codes rather than numbers.
+     *
+     * @param key   the setting name, from the {@code RND_ARMY_LAST_*} constants
+     * @param value the value to remember
+     */
+    public void setRandomArmySetting(String key, String value) {
+        store.setValue(key, value);
+    }
+
+    /**
+     * @param key the setting name, from the {@code RND_ARMY_LAST_*} constants
+     *
+     * @return the remembered value, blank when the player has not chosen one yet
+     */
+    public String getRandomArmySetting(String key) {
+        return store.getString(key);
     }
 
     public void setBoardEdRndStart(boolean b) {

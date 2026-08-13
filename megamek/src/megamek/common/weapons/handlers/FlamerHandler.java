@@ -70,7 +70,8 @@ public class FlamerHandler extends WeaponHandler {
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding bldg, int hits,
           int nCluster, int bldgAbsorbs) {
-        boolean bmmFlamerDamage = game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT);
+        boolean flamerHeatAndDamage =
+              Game.rulesManager.getRulesWeapons().flamerHeatAndDamage(game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT));
         Entity entity = game.getEntity(weaponAttackAction.getEntityId());
 
         if (entity == null) {
@@ -83,16 +84,13 @@ public class FlamerHandler extends WeaponHandler {
               && currentWeaponMode.equals(Weapon.MODE_FLAMER_HEAT);
         boolean flamerDoesOnlyDamage = currentWeaponMode != null && currentWeaponMode.equals(Weapon.MODE_FLAMER_DAMAGE);
 
-        if (bmmFlamerDamage || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
-            // PLAYTEST3 Heat-dissipating armor reduces damage
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                if (hit != null) {
-                    hit.setHeatWeapon(true);
-                }
+        if (flamerHeatAndDamage || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
+            if (hit != null) {
+                hit.setHeatWeapon(true);
             }
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
 
-            if (bmmFlamerDamage && entityTarget.tracksHeat() &&
+            if (flamerHeatAndDamage && entityTarget.tracksHeat() &&
                   !entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
                         ComputeSideTable.sideTable(attackingEntity, entityTarget, weapon.getCalledShot().getCall()))) {
                 FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit);

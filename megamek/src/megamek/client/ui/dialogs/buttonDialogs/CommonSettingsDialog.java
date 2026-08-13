@@ -33,8 +33,6 @@
  */
 package megamek.client.ui.dialogs.buttonDialogs;
 
-import static java.util.stream.Collectors.toList;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -49,10 +47,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
-import java.util.stream.Stream;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
@@ -4061,13 +4061,43 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             logger.warn("Path {} does not exist.", path);
             return new ArrayList<>();
         }
-        try (Stream<Path> entries = Files.walk(path.toPath())) {
-            return entries.map(Objects::toString).filter(name -> name.endsWith(fileEnding)).collect(toList());
+            List<String> result = new ArrayList<>();
+            try {
+                  Files.walkFileTree(path.toPath(), filteredFileVisitor(fileEnding, result));
         } catch (IOException e) {
-            logger.warn("Error while reading {} files from {}", fileEnding, path);
-            return new ArrayList<>();
+                  logger.warn(e, "Error while reading {} files from {}", fileEnding, path);
         }
-    }
+            return result;
+      }
+
+      static SimpleFileVisitor<Path> filteredFileVisitor(String fileEnding, List<String> result) {
+            return new SimpleFileVisitor<>() {
+                  @Override
+                  public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
+                        if (file.toString().endsWith(fileEnding)) {
+                              result.add(file.toString());
+                        }
+                        return FileVisitResult.CONTINUE;
+                  }
+
+                  @Override
+                  public FileVisitResult visitFileFailed(Path file, IOException exception) {
+                        logger.warn(exception, "Unable to access {} while searching for {} files; skipping it.", file,
+                                fileEnding);
+                        return FileVisitResult.CONTINUE;
+                  }
+
+                  @Override
+                  public FileVisitResult postVisitDirectory(Path directory, IOException exception) {
+                        if (exception != null) {
+                              logger.warn(exception,
+                                      "Unable to finish reading {} while searching for {} files; skipping it.", directory,
+                                      fileEnding);
+                        }
+                        return FileVisitResult.CONTINUE;
+                  }
+            };
+      }
 
     /**
      * Shows a file chooser for selecting a user directory and sets the given text field to the result if one was

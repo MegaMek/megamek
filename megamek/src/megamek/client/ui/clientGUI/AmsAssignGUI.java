@@ -35,7 +35,6 @@ package megamek.client.ui.clientGUI;
 import javax.swing.*;
 
 /**
- * @author James Magnan
  * Implements a custom list selection model to assign AMS with varying numbers of selections
  */
 

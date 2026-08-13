@@ -61,6 +61,8 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EnemyArtilleryInbound;
 import megamek.common.actions.EntityAction;
+import megamek.common.actions.RamAttackAction;
+import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
@@ -94,6 +96,7 @@ import megamek.common.interfaces.ReportEntry;
 import megamek.common.loaders.MapSettings;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IGameOptions;
+import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Wind;
@@ -125,8 +128,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public static final int TEAM_HAS_COMBAT_SENSE = 1;
     public static final int TEAM_HAS_NO_INITIATIVE_APTITUDE = 0;
     public static final int TEAM_HAS_COMBAT_PARALYSIS = -1;
-    public static RulesManager rulesManager;
-
+    public static RulesManager rulesManager = new CoreRulesManager();
     /**
      * A UUID to identify this game instance.
      */
@@ -176,10 +178,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private GamePhase lastPhase = GamePhase.UNKNOWN;
 
     // phase state
-    private final Vector<AttackAction> pendingCharges = new Vector<>();
-    private final Vector<AttackAction> pendingRams = new Vector<>();
-    private final Vector<AttackAction> pendingTeleMissileAttacks = new Vector<>();
-    private final Vector<PilotingRollData> pilotRolls = new Vector<>();
+    private Vector<AttackAction> pendingDisplacementAttacks = new Vector<>();
+    private Vector<AttackAction> pendingRams = new Vector<>();
+    private Vector<AttackAction> pendingTeleMissileAttacks = new Vector<>();
+    private final ArrayList<PilotingRollData> pilotingRolls = new ArrayList<>();
     private final Vector<PilotingRollData> extremeGravityRolls = new Vector<>();
     private final Vector<PilotingRollData> controlRolls = new Vector<>();
     private final Vector<Team> initiativeRerollRequests = new Vector<>();
@@ -318,16 +320,14 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return woodsClearingTracker;
     }
 
-    /**
-     * Initalize which set of rules to use (eg: TW, Core, etc)
-     */
-    public void initializeRulesManager() {
-        if (getOptions().booleanOption(OptionsConstants.TWRULES)) {
+    public void initializeRulesManager(String system) {
+        if (system.equals(OptionsConstants.RULES_TW)) {
             rulesManager = new TWRulesManager();
+        } else if (system.equals(OptionsConstants.RULES_CORE)) {
+            rulesManager = new CoreRulesManager();
         }
-        rulesManager = new CoreRulesManager();
     }
-
+    
     /**
      * Returns the map of hex locations being cleared by saws to turns remaining. Used by the board view to render cut
      * indicators and tooltips.
@@ -497,6 +497,15 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                     entity.setGameOptions();
                 }
             }
+            // Check Rules system and reapply as needed.
+            IOption rules_system = this.options.getOption(OptionsConstants.RULES_SYSTEM);
+            String loadedOption = (rulesManager instanceof CoreRulesManager) ?
+                  OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW;
+            if (rules_system == null) {
+                initializeRulesManager(OptionsConstants.RULES_CORE);
+            } else if (!rules_system.stringValue().equals(loadedOption)) {
+                initializeRulesManager(rules_system.stringValue());
+            } 
             processGameEvent(new GameSettingsChangeEvent(this));
         }
     }
@@ -1371,7 +1380,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 case Targetable.TYPE_HEX_CLEAR, Targetable.TYPE_HEX_IGNITE, Targetable.TYPE_HEX_BOMB,
                      Targetable.TYPE_MINEFIELD_DELIVER, Targetable.TYPE_FLARE_DELIVER, Targetable.TYPE_HEX_EXTINGUISH,
                      Targetable.TYPE_HEX_ARTILLERY, Targetable.TYPE_HEX_SCREEN, Targetable.TYPE_HEX_AERO_BOMB,
-                     Targetable.TYPE_HEX_TAG -> new HexTarget(HexTarget.idToLocation(targetId), targetType);
+                     Targetable.TYPE_SATURATION, Targetable.TYPE_HEX_TAG -> new HexTarget(HexTarget.idToLocation(targetId), targetType);
 
                 case Targetable.TYPE_FUEL_TANK, Targetable.TYPE_FUEL_TANK_IGNITE, Targetable.TYPE_BUILDING,
                      Targetable.TYPE_BLDG_IGNITE, Targetable.TYPE_BLDG_TAG -> {
@@ -2632,30 +2641,38 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * Adds a pending displacement attack to the list for this phase.
      */
-    public void addCharge(AttackAction ea) {
-        pendingCharges.addElement(ea);
+    public void addDisplacementAttack(AttackAction ea) {
+        pendingDisplacementAttacks.addElement(ea);
         processGameEvent(new GameNewActionEvent(this, ea));
+    }
+
+    /**
+     * Remove displacement attacks that were added previously
+     * @param ea
+     */
+    public void removeDisplacementAttack(AttackAction ea) {
+        pendingDisplacementAttacks.removeElement(ea);
     }
 
     /**
      * @return Enumeration of displacement attacks scheduled for the end of the physical phase.
      */
-    public Enumeration<AttackAction> getCharges() {
-        return pendingCharges.elements();
+    public Enumeration<AttackAction> getDisplacementAttacks() {
+        return pendingDisplacementAttacks.elements();
     }
 
     /**
      * Resets the pending charges list.
      */
     public void resetCharges() {
-        pendingCharges.removeAllElements();
+        pendingDisplacementAttacks.removeAllElements();
     }
 
     /**
      * @return the charges vector. Do not modify. Used for sending all charges to the client.
      */
     public List<AttackAction> getChargesVector() {
-        return Collections.unmodifiableList(pendingCharges);
+        return Collections.unmodifiableList(pendingDisplacementAttacks);
     }
 
     /**
@@ -2689,6 +2706,32 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return Collections.unmodifiableList(pendingRams);
     }
 
+    public void initializeAfterLoad() {
+        if (pendingRams == null) {
+            pendingRams = new Vector<>();
+        }
+        if (pendingTeleMissileAttacks == null) {
+            pendingTeleMissileAttacks = new Vector<>();
+        }
+        if (pendingDisplacementAttacks == null) {
+            pendingDisplacementAttacks = new Vector<>();
+        } 
+        if (!pendingDisplacementAttacks.isEmpty()){
+            // Reverse traverse the pendingDisplacementAttacks, otherwise when we remove things, it causes problems
+            for (int attack = (pendingDisplacementAttacks.size()-1); attack >= 0; attack--) {
+                AttackAction pendingAttack = pendingDisplacementAttacks.get(attack);
+                if (pendingAttack == null) { continue; }
+                if (pendingAttack instanceof RamAttackAction) {
+                    addRam(pendingAttack);
+                    pendingDisplacementAttacks.remove(attack);
+                } else if (pendingAttack instanceof TeleMissileAttackAction) {
+                    addTeleMissileAttack(pendingAttack);
+                    pendingDisplacementAttacks.remove(attack);
+                }
+            }
+        }
+    }
+    
     /**
      * Adds a pending ramming attack to the list for this phase.
      *
@@ -2730,14 +2773,14 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @see PilotingRollData
      */
     public void addPSR(PilotingRollData psr) {
-        pilotRolls.addElement(psr);
+        pilotingRolls.add(psr);
     }
 
     /**
      * Returns an Enumeration of pending PSRs.
      */
     public Enumeration<PilotingRollData> getPSRs() {
-        return pilotRolls.elements();
+        return Collections.enumeration(pilotingRolls);
     }
 
     /**
@@ -2755,105 +2798,28 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
+     * Get PSR rolls for a given entity. These are references to the pilotingRolls ArrayList
+     */
+    public ArrayList<PilotingRollData> getPSRsForEntity(Entity entity) {
+        ArrayList<PilotingRollData> rollsForEntity = new ArrayList<>();
+        
+        for (PilotingRollData psr : pilotingRolls) {
+            if (psr.getEntityId() == entity.getId()) {
+                rollsForEntity.add(psr);
+            }
+        }
+        return rollsForEntity;
+    }
+        
+    public void removePSRsByArray(ArrayList<PilotingRollData> psrList) {
+        pilotingRolls.removeAll(psrList);
+    }
+    
+    /**
      * Resets the PSR list for a given entity.
      */
     public void resetPSRs(Entity entity) {
-        PilotingRollData roll;
-        Vector<Integer> rollsToRemove = new Vector<>();
-        int i;
-
-        // first, find all the rolls belonging to the target entity
-        for (i = 0; i < pilotRolls.size(); i++) {
-            roll = pilotRolls.elementAt(i);
-            if (roll.getEntityId() == entity.getId()) {
-                rollsToRemove.addElement(i);
-            }
-        }
-
-        // now, clear them out
-        for (i = rollsToRemove.size() - 1; i > -1; i--) {
-            pilotRolls.removeElementAt(rollsToRemove.elementAt(i));
-        }
-    }
-
-    // PLAYTEST2 single PSR roll for actuators/hips
-    public void reducePSRforActuatorCrits(Entity entity) {
-        PilotingRollData roll;
-        Vector<Integer> rollsToRemove = new Vector<>();
-        Vector<Integer> rollTarget = new Vector<>();
-        Vector<Integer> rollLocation = new Vector<>();
-        Vector<Integer> saveRolls = new Vector<>();
-
-        // first, find all the rolls belonging to the target entity
-        // Locations are: 1 = left leg, 2 = right leg, 3 = front left leg, 4 = front right leg, 5 = center leg
-        for (int i = 0; i < pilotRolls.size(); i++) {
-            roll = pilotRolls.elementAt(i);
-            if (roll.getEntityId() == entity.getId()) {
-                // This is the critical part.
-                if (roll.getDesc().equals("left leg actuator hit") || roll.getDesc().equals("left hip actuator hit")) {
-                    rollTarget.addElement(roll.getValue());
-                    rollLocation.addElement(1);
-                    rollsToRemove.addElement(i);
-                } else if (roll.getDesc().equals("right leg actuator hit") || roll.getDesc()
-                      .equals("right hip actuator hit")) {
-                    rollTarget.addElement(roll.getValue());
-                    rollLocation.addElement(2);
-                    rollsToRemove.addElement(i);
-                } else if (roll.getDesc().equals("front left leg actuator hit") || roll.getDesc().equals("front left "
-                      + "hip actuator hit")) {
-                    rollTarget.addElement(roll.getValue());
-                    rollLocation.addElement(3);
-                    rollsToRemove.addElement(i);
-                } else if (roll.getDesc().equals("front right leg actuator hit") || roll.getDesc().equals("front "
-                      + "right hip actuator hit")) {
-                    rollTarget.addElement(roll.getValue());
-                    rollLocation.addElement(4);
-                    rollsToRemove.addElement(i);
-                } else if (roll.getDesc().equals("center leg actuator hit") || roll.getDesc().equals("center hip "
-                      + "actuator hit")) {
-                    rollTarget.addElement(roll.getValue());
-                    rollLocation.addElement(5);
-                    rollsToRemove.addElement(i);
-                }
-            }
-        }
-
-        if (rollsToRemove.size() > 1) {
-            int saveEntry = 0;
-            int highTarget = 0;
-            boolean entrySaved = false;
-            // check which roll target is highest
-            for (int location = 1; location < 6; location++) {
-                highTarget = 0;
-                saveEntry = 0;
-                entrySaved = false;
-                for (int i = 0; i < rollTarget.size(); i++) {
-                    if ((rollTarget.elementAt(i) > highTarget) && (rollLocation.elementAt(i) == location)) {
-                        saveEntry = i;
-                        entrySaved = true;
-                        highTarget = rollTarget.elementAt(i);
-                    }
-                }
-                if (entrySaved) {
-                    saveRolls.addElement(rollsToRemove.elementAt(saveEntry));
-                }
-            }
-            logger.debug("Playtest: Removing PSR rolls for {}", entity.getDisplayName());
-            // Remove the saved element from our removal list
-            for (int i = saveRolls.size() - 1; i > -1; i--) {
-                roll = pilotRolls.elementAt(saveRolls.elementAt(i));
-                logger.debug("Saving PSR roll: {}", roll.getDesc());
-                rollsToRemove.removeElementAt(saveRolls.elementAt(i));
-            }
-
-            // now, clear out remaining rolls from the PSRs
-            for (int i = rollsToRemove.size() - 1; i > -1; i--) {
-                roll = pilotRolls.elementAt(rollsToRemove.elementAt(i));
-                logger.debug("Removing PSR roll: {}", roll.getDesc());
-                pilotRolls.removeElementAt(rollsToRemove.elementAt(i));
-            }
-            logger.debug("Done removing PSR rolls");
-        }
+        pilotingRolls.removeAll(getPSRsForEntity(entity));
     }
 
     /**
@@ -2889,7 +2855,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * Resets the PSR list.
      */
     public void resetPSRs() {
-        pilotRolls.removeAllElements();
+        pilotingRolls.clear();
     }
 
     /**

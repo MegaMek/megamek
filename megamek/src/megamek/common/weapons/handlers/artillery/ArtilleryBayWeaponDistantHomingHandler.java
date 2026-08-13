@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2012-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -68,8 +68,8 @@ import megamek.common.weapons.DamageType;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 
-public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponIndirectFireHandler {
-    private static final MMLogger LOGGER = MMLogger.create(ArtilleryBayWeaponIndirectHomingHandler.class);
+public class ArtilleryBayWeaponDistantHomingHandler extends ArtilleryBayWeaponDistantFireHandler {
+    private static final MMLogger LOGGER = MMLogger.create(ArtilleryBayWeaponDistantHomingHandler.class);
     @Serial
     private static final long serialVersionUID = -7243477723032010917L;
     boolean advancedPD;
@@ -79,11 +79,11 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
     /**
      *
      */
-    public ArtilleryBayWeaponIndirectHomingHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
+    public ArtilleryBayWeaponDistantHomingHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
           throws EntityLoadingException {
         super(t, w, g, m);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);
-        advancedAMS = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS);
+        advancedAMS = Game.rulesManager.getRulesEquipment().getAMSReduction(g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS));
         multiAMS = g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS);
     }
 

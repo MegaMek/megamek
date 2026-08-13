@@ -302,18 +302,8 @@ public class ComputeAttackerToHitMods {
         // Is the attacker hindered by a shield?
         if (attacker.hasShield() && (weapon != null)) {
             // active shield has already been checked as it makes shots impossible
-            // time to check passive defense and no defense
-            if (attacker.hasPassiveShield(weapon.getLocation(), weapon.isRearMounted())) {
-                // PLAYTEST3 shield modifiers no longer apply.
-                if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                    toHit.addModifier(+2, Messages.getString("WeaponAttackAction.PassiveShield"));
-                }
-            } else if (attacker.hasNoDefenseShield(weapon.getLocation())) {
-                // PLAYTEST3 shield modifiers no longer apply
-                if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Shield"));
-                }
-            }
+            // Check if shields cause any other issues
+            Game.rulesManager.getRulesPhysical().getShieldToHitModifier(toHit, attacker, weapon);
         }
 
         // add targeting computer aimed shot modifiers (except with LBX cluster ammo)

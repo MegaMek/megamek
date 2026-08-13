@@ -73,6 +73,7 @@ import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.commands.*;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.event.MekDisplayListener;
 import megamek.client.ui.Messages;
@@ -3425,7 +3426,7 @@ public class ClientGUI extends AbstractClientGUI
             // Note: entity may be null for CFR types that don't use entityId (e.g., TAG_TARGET, TELEGUIDED_TARGET)
             // Each case handles null checking as appropriate
             Entity entity = client.getGame().getEntity(gameCFREvent.getEntityId());
-
+            int direction = gameCFREvent.getDirection();
             Object result;
             String input;
 
@@ -3442,14 +3443,17 @@ public class ClientGUI extends AbstractClientGUI
 
                     MovePath stepForward = new MovePath(client.getGame(), entity);
                     MovePath stepBackward = new MovePath(client.getGame(), entity);
-                    stepForward.addStep(MoveStepType.FORWARDS);
-                    stepBackward.addStep(MoveStepType.BACKWARDS);
+                    boolean bNoCost = !Game.rulesManager.getRulesMovement().getDominoDisplacementCostsMP();
+                    stepForward.addStep(MoveStepType.FORWARDS, bNoCost);
+                    stepBackward.addStep(MoveStepType.BACKWARDS, bNoCost);
                     stepForward.compile(client.getGame(), entity, false);
                     stepBackward.compile(client.getGame(), entity, false);
                     Object[] options;
                     MovePath[] paths;
                     int optionType;
-                    if (stepForward.isMoveLegal() && stepBackward.isMoveLegal()) {
+                    if (Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepForward, true) 
+                          && Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepBackward,
+                          false)) {
                         options = new Object[3];
                         paths = new MovePath[3];
                         options[0] = Messages.getString("CFRDomino.Forward", stepForward.getMpUsed());
@@ -3459,12 +3463,21 @@ public class ClientGUI extends AbstractClientGUI
                         paths[1] = stepBackward;
                         paths[2] = null;
                         optionType = JOptionPane.YES_NO_CANCEL_OPTION;
-                    } else if (stepForward.isMoveLegal()) {
+                    } else if (Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepForward, true)) {
                         options = new Object[2];
                         paths = new MovePath[2];
                         options[0] = Messages.getString("CFRDomino.Forward", stepForward.getMpUsed());
                         options[1] = Messages.getString("CFRDomino.NoAction");
                         paths[0] = stepForward;
+                        paths[1] = null;
+                        optionType = JOptionPane.YES_NO_OPTION;
+                    } else if (Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepBackward
+                          ,false)) {
+                        options = new Object[2];
+                        paths = new MovePath[2];
+                        options[0] = Messages.getString("CFRDomino.Backward", stepBackward.getMpUsed());
+                        options[1] = Messages.getString("CFRDomino.NoAction");
+                        paths[0] = stepBackward;
                         paths[1] = null;
                         optionType = JOptionPane.YES_NO_OPTION;
                     } else {
@@ -3509,12 +3522,12 @@ public class ClientGUI extends AbstractClientGUI
                         amsOptions.add(waaMsg);
                     }
 
-                    // Updated AMS selection code for dealing with Multi_AMS, Playtest3 and standard selection
+                    // Updated AMS selection code for dealing with Multi_AMS and standard selection
                     JList amsList = new JList(amsOptions.toArray());
                     JScrollPane amsScrollPane = new JScrollPane(amsList);
                     if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS)) {
                         amsList.setSelectionModel(new AmsAssignGUI(amsList, amsOptions.size()));
-                    } else if (entity.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                    } else if (Game.rulesManager.getRulesEquipment().getAMSMultiShot()) {
                         amsList.setSelectionModel(new AmsAssignGUI(amsList, 2));
                     } else {
                         amsList.setSelectionModel(new AmsAssignGUI(amsList, 1));
@@ -3755,6 +3768,39 @@ public class ClientGUI extends AbstractClientGUI
     @Override
     public Map<String, AbstractClient> getLocalBots() {
         return client.getBots();
+    }
+
+    /**
+     * What each player's units were generated for - faction, command, year and rating - keyed by
+     * player id. Recorded when an army generator adds units, and used by force organization to build
+     * a structure the way that faction would.
+     *
+     * <p>Client-local and deliberately not transmitted: it describes a choice this client's user made
+     * in a dialog, and only this client generates on their behalf. It is not game state.</p>
+     */
+    private final Map<Integer, GenerationContext> generationContexts = new HashMap<>();
+
+    /**
+     * Records what a player's newly generated units were rolled for, replacing any earlier record.
+     * Callers record only what a generator actually asked the player, never a default, so that a
+     * later roll on a generator that knows nothing cannot erase a real choice.
+     *
+     * @param playerId the owner of the generated units
+     * @param context  what they were generated for
+     */
+    public void setGenerationContext(int playerId, GenerationContext context) {
+        generationContexts.put(playerId, context);
+    }
+
+    /**
+     * @param playerId the player to look up
+     *
+     * @return what that player's units were generated for, or {@code null} when nothing has been
+     *       recorded for them - they have generated nothing, or only from a generator that asks for
+     *       no faction, command or rating
+     */
+    public @Nullable GenerationContext getGenerationContext(int playerId) {
+        return generationContexts.get(playerId);
     }
 
     /**

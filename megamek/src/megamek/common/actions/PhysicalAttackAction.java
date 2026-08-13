@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2001-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2006-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -50,6 +50,11 @@ import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.RulesTarget;
+import megamek.common.rules.RulesUnits;
+import megamek.common.rules.RulesManager;
+
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.*;
 
 public class PhysicalAttackAction extends AbstractAttackAction {
@@ -176,6 +181,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, target);
         int attackerId = ae.getId();
         int targetId = target.getId();
+ 
         // Battle Armor targets are hard for Meks and Tanks to hit.
         if (target instanceof BattleArmor) {
             toHit.addModifier(1, "battle armor target");
@@ -194,7 +200,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         }
 
         // Enhanced Imaging bonus for physical attacks - IO p.69
-        // "All Piloting Skill rolls required for the EI-equipped unit receives a -1
+        // "All physical attack rolls required for the EI-equipped unit receives a -1
         // target number modifier. This includes checks made for physical attacks"
         if (ae.hasActiveEiCockpit()) {
             toHit.addModifier(-1, Messages.getString("Compute.EnhancedImaging"));
@@ -208,6 +214,14 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
         // target terrain
         toHit.append(Compute.getTargetTerrainModifier(game, target, 0, inSameBuilding));
+
+        // RULES large targets check
+        int largeTarget = (game.getEntity(target.getId()) == null) ? 0 :
+              Game.rulesManager.getRulesTarget().largeTargetModifier(game.getEntity(target.getId()).getWeightClass());
+        // RULESFUTURE Call this with the 2nd parameter when objectives that are large are added
+        if (largeTarget != 0 && !(game.rulesManager instanceof TWRulesManager)) {
+            toHit.addModifier(largeTarget, "large target");
+        }
 
         if (ae.hasModularArmor()) {
             toHit.addModifier(1, "Modular Armor");

@@ -76,6 +76,7 @@ public class FactionRecord {
     private boolean minor;
     private boolean clan;
     private boolean periphery;
+    private boolean subunit;
     private String name;
     private final TreeMap<Integer, String> altNames;
     private final TreeMap<Integer, String> aliases;
@@ -146,6 +147,7 @@ public class FactionRecord {
         setMinor(faction2.isMinorPower());
         setClan(faction2.isClan());
         setPeriphery(faction2.isPeriphery());
+        setSubunit(faction2.isSubunit());
         setParentFactions(String.join(",", faction2.getFallBackFactions()));
         setRatings(String.join(",", faction2.getRatingLevels()));
         List<String> dateRanges = new ArrayList<>(faction2.getYearsActive().stream().map(DateRange::toString).toList());
@@ -195,6 +197,23 @@ public class FactionRecord {
 
     public void setClan(boolean clan) {
         this.clan = clan;
+    }
+
+    /**
+     * Returns whether this record is a subordinate formation declared inside another command's file, such as an
+     * individual regiment of the St. Ives Lancers, rather than a command in its own right.
+     *
+     * <p>Subunits are fully generatable, but callers that offer a choice of whole commands should leave them out -
+     * otherwise a single faction's sub-faction list grows by every regiment of every command it owns.</p>
+     *
+     * @return {@code true} if this record came from another command's subunit declaration
+     */
+    public boolean isSubunit() {
+        return subunit;
+    }
+
+    public void setSubunit(boolean subunit) {
+        this.subunit = subunit;
     }
 
     public boolean isPeriphery() {

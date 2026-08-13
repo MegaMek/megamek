@@ -4065,7 +4065,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             try {
                   Files.walkFileTree(path.toPath(), filteredFileVisitor(fileEnding, result));
         } catch (IOException e) {
-            logger.warn("Error while reading {} files from {}", fileEnding, path);
+                  logger.warn(e, "Error while reading {} files from {}", fileEnding, path);
         }
             return result;
       }
@@ -4082,14 +4082,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
                   @Override
                   public FileVisitResult visitFileFailed(Path file, IOException exception) {
-                        logger.warn("Unable to access {} while searching for {} files; skipping it.", file, fileEnding);
+                        logger.warn(exception, "Unable to access {} while searching for {} files; skipping it.", file,
+                                fileEnding);
                         return FileVisitResult.CONTINUE;
                   }
 
                   @Override
                   public FileVisitResult postVisitDirectory(Path directory, IOException exception) {
                         if (exception != null) {
-                              logger.warn("Unable to finish reading {} while searching for {} files; skipping it.", directory,
+                              logger.warn(exception,
+                                      "Unable to finish reading {} while searching for {} files; skipping it.", directory,
                                       fileEnding);
                         }
                         return FileVisitResult.CONTINUE;

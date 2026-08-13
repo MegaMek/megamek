@@ -23,7 +23,7 @@
  * of The Topps Company, Inc. All Rights Reserved.
  *
  * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
- * InMediaRes Productions LLC.
+ * InMediaRes Productions, LLC.
  *
  * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
  * Microsoft's "Game Content Usage Rules"

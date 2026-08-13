@@ -34,6 +34,7 @@ package megamek.client.ui.settings;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Component;
@@ -47,6 +48,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.junit.jupiter.api.Test;
@@ -199,6 +201,29 @@ class SettingsPaneTest {
     }
 
     @Test
+    void navigatingWithActiveFilterRebindsHelpWhenHiddenControlReturns() throws Exception {
+        runOnEdt(() -> {
+            SettingsRoute first = new SettingsRoute("first", List.of("First"));
+            SettingsRoute second = new SettingsRoute("second", List.of("Second"));
+            FilterableHelpPage secondPage = new FilterableHelpPage();
+            SettingsPane pane = new SettingsPane(List.of(first, second), Map.of(
+                  "first", () -> componentPage("First option"),
+                  "second", () -> secondPage), NAVIGATION_TEXT);
+
+            pane.selectRoute(second);
+            pane.selectRoute(first);
+            pane.setFilterText("needle");
+            pane.selectRoute(second);
+
+            assertEquals("Other help", secondPage.other.getToolTipText());
+
+            pane.setFilterText("");
+
+            assertNull(secondPage.other.getToolTipText());
+        });
+    }
+
+    @Test
     void parentRouteFallsBackToFirstDescendantPage() throws Exception {
         AtomicInteger childBuilds = new AtomicInteger();
         runOnEdt(() -> {
@@ -323,6 +348,34 @@ class SettingsPaneTest {
         return SettingsPagePanel.builder("Test", PAGE_TEXT, "header", null)
               .component(new JLabel(text))
               .build();
+    }
+
+    private static final class FilterableHelpPage extends JPanel implements SettingsFilterable {
+        private final JLabel needle = helpLabel("Needle option", "Needle help");
+        private final JLabel other = helpLabel("Other option", "Other help");
+
+        private FilterableHelpPage() {
+            applySettingsFilter("");
+        }
+
+        @Override
+        public void applySettingsFilter(String normalizedFilter) {
+            removeAll();
+            if (normalizedFilter.isBlank() || "needle option".contains(normalizedFilter)) {
+                add(needle);
+            }
+            if (normalizedFilter.isBlank() || "other option".contains(normalizedFilter)) {
+                add(other);
+            }
+            revalidate();
+            repaint();
+        }
+
+        private static JLabel helpLabel(String text, String help) {
+            JLabel label = new JLabel(text);
+            label.setToolTipText(help);
+            return label;
+        }
     }
 
     private static List<CollapsibleSectionPanel> findSections(Container root) {

@@ -676,8 +676,8 @@ public class GameOptionsPane extends JPanel {
 
     private static String optionDisplayName(IOption option) {
         String displayName = hasShortLabel(option) ? TEXT.getText(shortLabelKey(option)) : option.getDisplayableName();
-        if (isUnofficialOption(option)) {
-            displayName = stripUnofficialMarker(displayName);
+        if (isUnofficialOption(option) || isLegacyOption(option)) {
+            displayName = stripCategoryMarker(displayName);
         }
         return displayName.replaceFirst("(?i)^\\(Legacy(?:\\s+MaxTech)?\\)\\s*", "")
               .replaceFirst("(?i)\\s*\\(Legacy(?:\\s+only)?\\)\\s*", " ")
@@ -685,9 +685,9 @@ public class GameOptionsPane extends JPanel {
               .trim();
     }
 
-    static String stripUnofficialMarker(String displayName) {
+    static String stripCategoryMarker(String displayName) {
         return displayName.replaceFirst("^\\([^)]*\\)\\s*", "")
-              .replaceFirst("(?i)^Unofficial:\\s*", "");
+              .replaceFirst("(?i)^(?:Unofficial|Legacy):\\s*", "");
     }
 
     private static String shortLabelKey(IOption option) {

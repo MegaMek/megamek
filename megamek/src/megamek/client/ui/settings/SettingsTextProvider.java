@@ -35,6 +35,7 @@ package megamek.client.ui.settings;
 import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import megamek.common.internationalization.I18n;
 
@@ -99,10 +100,11 @@ public interface SettingsTextProvider {
      */
     static SettingsTextProvider megaMek() {
         String bundleName = "megamek.client.messages";
+        Set<String> resourceKeys = Set.copyOf(I18n.getKeys(bundleName));
         return new SettingsTextProvider() {
             @Override
             public boolean containsKey(String key) {
-                return I18n.getKeys(bundleName).contains(key);
+                return resourceKeys.contains(key);
             }
 
             @Override

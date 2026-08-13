@@ -284,8 +284,7 @@ public class ConvInfantry extends Infantry {
 
     @Override
     public boolean canAssaultDrop() {
-        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP)
-              && gameOptions().booleanOption(OptionsConstants.ADVANCED_PARATROOPERS)) {
+        if (gameOptions().booleanOption(OptionsConstants.ADVANCED_PARATROOPERS)) {
             return true;
         }
 

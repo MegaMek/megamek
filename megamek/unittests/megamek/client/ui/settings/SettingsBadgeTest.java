@@ -48,7 +48,7 @@ class SettingsBadgeTest {
 
         assertEquals(
               " <font face=\"Material Symbols Rounded\">\uE002</font>"
-                  + " <font face=\"Material Symbols Rounded\" color=\"#123456\">\uE838</font>",
+                    + " <font face=\"Material Symbols Rounded\" color=\"#123456\">\uE838</font>",
               SettingsBadge.formatHtml(List.of(inheritedColor, colored)));
     }
 

@@ -146,9 +146,9 @@ public class SettingsPane extends JPanel {
             return false;
         }
         currentRoute = effectiveRoute;
-        contentHost.setContent(page, effectiveRoute.shouldShowDetailsPanel());
         String activeFilter = navigationPanel.getActiveFilter();
         applySettingsFilter(page, activeFilter);
+        contentHost.setContent(page, effectiveRoute.shouldShowDetailsPanel());
         contentHost.setSearchFilter(activeFilter);
         applyFilterExpansion(effectiveRoute, page, activeFilter);
         return true;
@@ -159,6 +159,7 @@ public class SettingsPane extends JPanel {
         Component page = pageCache.get(currentRoute.getId());
         if (page != null) {
             applySettingsFilter(page, normalizedFilter);
+            contentHost.refreshHelpBindings();
         }
         if (normalizedFilter.isBlank()) {
             restoreAllExpansionStates();

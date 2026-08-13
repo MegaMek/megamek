@@ -1115,7 +1115,19 @@ class GameOptionsPaneTest {
         when(option.getDisplayableName()).thenReturn(spanishDisplayName);
 
         assertTrue(GameOptionsPane.isUnofficialOption(option));
-        assertEquals("Alternativo MASC/Supercharger", GameOptionsPane.stripUnofficialMarker(spanishDisplayName));
+        assertEquals("Alternativo MASC/Supercharger", GameOptionsPane.stripCategoryMarker(spanishDisplayName));
+    }
+
+    @Test
+    void legacyClassificationStripsLocalizedLeadingMarkers() {
+        IOption option = mock(IOption.class);
+        when(option.getName()).thenReturn(OptionsConstants.ADVANCED_ASSAULT_DROP);
+
+        assertTrue(GameOptionsPane.isLegacyOption(option));
+        assertEquals("Descenso de asalto", GameOptionsPane.stripCategoryMarker("(Legado) Descenso de asalto"));
+                assertEquals("\u0428\u0442\u0443\u0440\u043C\u043E\u0432\u043E\u0439 \u0441\u0431\u0440\u043E\u0441",
+              GameOptionsPane.stripCategoryMarker("(\u0423\u0441\u0442\u0430\u0440\u0435\u0432\u0448\u0435\u0435) "
+                  + "\u0428\u0442\u0443\u0440\u043C\u043E\u0432\u043E\u0439 \u0441\u0431\u0440\u043E\u0441"));
     }
 
     @Test

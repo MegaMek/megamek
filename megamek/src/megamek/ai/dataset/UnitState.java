@@ -39,6 +39,7 @@ import java.util.List;
 import megamek.ai.utility.EntityFeatureUtils;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.UnitRole;
@@ -87,7 +88,8 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
         ARMOR_LEFT_P,
         ARMOR_RIGHT_P,
         ARMOR_BACK_P,
-        WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE
+        WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE,
+        REMOVAL
     }
 
     /**
@@ -138,7 +140,8 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
               .put(Field.OFF_BOARD, entity.isOffBoard())
               .put(Field.CRIPPLED, entity.isCrippled())
               .put(Field.DESTROYED, entity.isDestroyed())
-              .put(Field.DONE, entity.isDone());
+              .put(Field.DONE, entity.isDone())
+              .put(Field.REMOVAL, removalConditionName(entity.getRemovalCondition()));
 
         // Health and armor
         map.put(Field.ARMOR_P, entity.getArmorRemainingPercent())
@@ -172,5 +175,28 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
         map.put(Field.WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE, weaponData);
 
         return map;
+    }
+
+    /**
+     * The reason a unit left the game, as a stable analysis-friendly token - or {@code ACTIVE} for a unit
+     * still in play. Distinguishes a kill from a retreat: {@code DESTROYED} alone cannot, because a unit
+     * that fled reads as not-destroyed and a dead unit only carries the flag for the brief window before
+     * it is moved to the graveyard.
+     *
+     * @param removalCondition the {@link IEntityRemovalConditions} constant from the entity
+     *
+     * @return the condition name, or {@code ACTIVE} when the unit has not been removed
+     */
+    private static String removalConditionName(int removalCondition) {
+        return switch (removalCondition) {
+            case IEntityRemovalConditions.REMOVE_IN_RETREAT -> "IN_RETREAT";
+            case IEntityRemovalConditions.REMOVE_PUSHED -> "PUSHED";
+            case IEntityRemovalConditions.REMOVE_CAPTURED -> "CAPTURED";
+            case IEntityRemovalConditions.REMOVE_SALVAGEABLE -> "SALVAGEABLE";
+            case IEntityRemovalConditions.REMOVE_EJECTED -> "EJECTED";
+            case IEntityRemovalConditions.REMOVE_DEVASTATED -> "DEVASTATED";
+            case IEntityRemovalConditions.REMOVE_NEVER_JOINED -> "NEVER_JOINED";
+            default -> "ACTIVE";
+        };
     }
 }

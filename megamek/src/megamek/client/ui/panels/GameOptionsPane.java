@@ -53,7 +53,11 @@ import java.util.function.Supplier;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.settings.SettingsBadge;
@@ -527,6 +531,9 @@ public class GameOptionsPane extends JPanel {
                 addCheckBoxes(content, checkBoxes);
                 configureSettingsControl(component);
                 content.addRow(component.settingsLabel(), component.settingsControl());
+                if (row.supplementalContent() != null) {
+                    content.addFullWidthComponent(row.supplementalContent());
+                }
             }
             addCheckBoxes(content, checkBoxes);
         }
@@ -740,8 +747,30 @@ public class GameOptionsPane extends JPanel {
         return PAGE_FACTION_LOGOS;
     }
 
+    private static JComponent rulesSystemDescription(DialogOptionComponentYPanel component) {
+        JLabel description = new JLabel();
+        description.setName("lblRulesSystemDescription");
+        description.setVerticalAlignment(SwingConstants.TOP);
+        int textWidth = UIUtil.scaleForGUI(SettingsPagePanel.DEFAULT_SECTION_STACK_WIDTH - 30);
+        Runnable updateText = () -> {
+            String key = OptionsConstants.RULES_CORE.equals(component.getValue())
+                  ? "GameOptionsDialog.page.landing.rulesSystem.core"
+                  : "GameOptionsDialog.page.landing.rulesSystem.totalWarfare";
+            description.setText("<html><div style='width: " + textWidth + "'>" + TEXT.getText(key)
+                  + "</div></html>");
+            description.revalidate();
+            description.repaint();
+        };
+        if (component.settingsControl() instanceof JComboBox<?> choices) {
+            choices.addActionListener(event -> updateText.run());
+        }
+        updateText.run();
+        return description;
+    }
+
     private record OptionRow(DialogOptionComponentYPanel component, IOption option, String searchableText,
-          String pageSearchableText, String sectionSearchableText, int optionOrder) {
+          String pageSearchableText, String sectionSearchableText, @Nullable JComponent supplementalContent,
+          int optionOrder) {
         private static OptionRow create(DialogOptionComponentYPanel component, int optionOrder,
               String pageSearchableText, String sectionSearchableText) {
             IOption option = component.getOption();
@@ -750,9 +779,15 @@ public class GameOptionsPane extends JPanel {
             if (hasDetails(option)) {
                 component.setSettingsHelpText(TEXT.getText(detailsKey(option)));
             }
+            JComponent supplementalContent = OptionsConstants.RULES_SYSTEM.equals(option.getName())
+                  ? rulesSystemDescription(component)
+                  : null;
+            String supplementalSearchText = supplementalContent == null ? "" : " "
+                  + TEXT.getText("GameOptionsDialog.page.landing.rulesSystem.core") + " "
+                  + TEXT.getText("GameOptionsDialog.page.landing.rulesSystem.totalWarfare");
             return new OptionRow(component, option, SettingsRoute.normalizeSearchText(
-                  option.getName() + ' ' + option.getDisplayableName() + ' ' + displayName),
-                  pageSearchableText, sectionSearchableText, optionOrder);
+                  option.getName() + ' ' + option.getDisplayableName() + ' ' + displayName + supplementalSearchText),
+                  pageSearchableText, sectionSearchableText, supplementalContent, optionOrder);
         }
 
         private boolean matches(String normalizedFilter, String groupSearchableText) {

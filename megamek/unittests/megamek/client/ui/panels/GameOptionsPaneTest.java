@@ -934,6 +934,8 @@ class GameOptionsPaneTest {
             TreePath selectedPath = tree.getSelectionPath();
             SettingsPagePanel landingPage = findComponent(pane, SettingsPagePanel.class);
             JComboBox<?> rulesSystemControl = (JComboBox<?>) rulesSystem.settingsControl();
+            JLabel rulesSystemDescription = findComponentByName(
+                  landingPage, "lblRulesSystemDescription", JLabel.class);
             JLabel logo = findIconLabel(landingPage);
             GameOptionsPresentation.Location location = GameOptionsPresentation.location(
                   "basic", OptionsConstants.RULES_SYSTEM);
@@ -953,6 +955,12 @@ class GameOptionsPaneTest {
             assertEquals(OptionsConstants.RULES_CORE, rulesSystemControl.getItemAt(0));
             assertEquals(OptionsConstants.RULES_TW, rulesSystemControl.getItemAt(1));
             assertEquals(OptionsConstants.RULES_CORE, rulesSystemControl.getSelectedItem());
+            assertTrue(rulesSystemDescription.getText().contains("Core rules (2026)"));
+            assertTrue(rulesSystemDescription.getText().contains("greyed out and disabled"));
+            rulesSystemControl.setSelectedItem(OptionsConstants.RULES_TW);
+            assertTrue(rulesSystemDescription.getText().contains("Total Warfare (2006)"));
+            assertTrue(rulesSystemDescription.getText().contains("Bombast Lasers"));
+            assertTrue(rulesSystemDescription.getText().contains("Extended LRMs"));
             assertEquals(UIUtil.scaleForGUI(200), logo.getIcon().getIconWidth());
             assertEquals(UIUtil.scaleForGUI(200), logo.getIcon().getIconHeight());
             assertTrue(landingPage.getPageSearchText().contains("Across the Inner Sphere"));
@@ -1666,6 +1674,27 @@ class GameOptionsPaneTest {
             }
         }
         throw new AssertionError("No " + type.getSimpleName() + " found");
+    }
+
+    private static <T extends Component> T findComponentByName(Container root, String name, Class<T> type) {
+        return findComponentByNameOptional(root, name, type)
+              .orElseThrow(() -> new AssertionError("No " + type.getSimpleName() + " named " + name + " found"));
+    }
+
+    private static <T extends Component> Optional<T> findComponentByNameOptional(
+          Container root, String name, Class<T> type) {
+        for (Component child : root.getComponents()) {
+            if (type.isInstance(child) && name.equals(child.getName())) {
+                return Optional.of(type.cast(child));
+            }
+            if (child instanceof Container container) {
+                Optional<T> result = findComponentByNameOptional(container, name, type);
+                if (result.isPresent()) {
+                    return result;
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     private static <T extends Component> T findComponentOrNull(Container root, Class<T> type) {

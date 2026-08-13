@@ -94,6 +94,21 @@ public class AerospacePathRanker extends BasicPathRanker {
     /** What reaching the ground out of control is priced at, before the odds of it happening. */
     private static final double CONTROL_LOSS_COST = 40.0;
 
+    /**
+     * What leaving the board is priced at.
+     *
+     * <p>Deliberately the largest cost in the ranker. Flying off removes the unit from the fight for at
+     * least {@code 1 + ceil(velocity/4)} turns under return flyovers, and under common victory settings it
+     * simply concedes - an observed live game was lost exactly this way, the bot drifting into a heading it
+     * was then committed to. The stock ranker prices this at literally zero for atmospheric aerospace:
+     * {@code BasicPathRanker.calculateOffBoardMod} returns 0.0, and the path generator keeps one fly-off
+     * path in every candidate set.</p>
+     */
+    private static final double OFF_BOARD_COST = 80.0;
+
+    /** Fraction of the off-board cost charged, per committed hex the pose cannot stop short of the edge. */
+    private static final double EDGE_PRESSURE_WEIGHT = 0.5;
+
     /** Faces on a d6, for the odds an out-of-control unit falls far enough to hit the ground. */
     private static final double DIE_FACES = 6.0;
 
@@ -122,6 +137,7 @@ public class AerospacePathRanker extends BasicPathRanker {
     private double lastArcAdvantage;
     private double lastControlRiskPenalty;
     private double lastVelocityPenalty;
+    private double lastEdgePenalty;
     private int lastEngageableEnemies;
     private int lastCommittedEnemies;
     private int lastAirEnemies;
@@ -151,6 +167,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastArcAdvantage = 0;
         lastControlRiskPenalty = 0;
         lastVelocityPenalty = 0;
+        lastEdgePenalty = 0;
         lastEngageableEnemies = 0;
         lastCommittedEnemies = 0;
         lastAirEnemies = 0;
@@ -183,8 +200,10 @@ public class AerospacePathRanker extends BasicPathRanker {
         scoreEngagements(path, game, enemies, venue);
         lastControlRiskPenalty = controlRiskPenalty(path);
         lastVelocityPenalty = velocityPenalty(path, venue);
+        lastEdgePenalty = edgePenalty(path, game, venue);
 
-        return lastEngagementCredit + lastArcAdvantage - lastControlRiskPenalty - lastVelocityPenalty;
+        return lastEngagementCredit + lastArcAdvantage - lastControlRiskPenalty - lastVelocityPenalty
+              - lastEdgePenalty;
     }
 
     /**
@@ -428,6 +447,43 @@ public class AerospacePathRanker extends BasicPathRanker {
     }
 
     /**
+     * What this pose is conceding to the board edge.
+     *
+     * <p>A path that flies off outright pays the full cost. A path that stays on board pays by how trapped
+     * it is: the velocity it ends with is displacement it must spend next turn, the first
+     * {@code minStraight} hexes of it dead ahead before any facing change is allowed (TW p.92 on a ground
+     * mapsheet). If the edge is inside that committed, unsteerable run, the exit has effectively already
+     * happened and the full cost applies; if the edge merely falls inside the committed distance, the cost
+     * scales with how much of the run cannot stop short of it.</p>
+     *
+     * @param path  the path being ranked
+     * @param game  the current game
+     * @param venue which set of atmospheric rules is in force
+     *
+     * @return the penalty to subtract from this path's utility
+     */
+    private double edgePenalty(MovePath path, Game game, AerospaceVenue venue) {
+        if (path.fliesOffBoard()) {
+            return OFF_BOARD_COST;
+        }
+        int committed = Math.max(0, path.getFinalVelocity()) * venue.hexesPerVelocityPoint();
+        if (committed == 0) {
+            return 0;
+        }
+        int exitDistance = AerospaceGeometry.hexesUntilOffBoard(path.getFinalCoords(), path.getFinalFacing(),
+              game.getBoard(path.getFinalBoardId()), committed + 1);
+        if (exitDistance > committed) {
+            return 0;
+        }
+        // The straight run required before the first facing change: nothing inside it can be steered.
+        int minStraight = venue.isGroundMap() ? 8 : 1;
+        if (exitDistance <= minStraight) {
+            return OFF_BOARD_COST;
+        }
+        return OFF_BOARD_COST * EDGE_PRESSURE_WEIGHT * (committed - exitDistance) / committed;
+    }
+
+    /**
      * What this path is betting on the airframe by spending more thrust than it safely can.
      *
      * <p>Overthrusting risks a control roll, and a failed one costs 1d6 altitude. That is nearly free high
@@ -553,6 +609,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         scores.put("aeroArcAdvantage", lastArcAdvantage);
         scores.put("aeroControlRiskPenalty", lastControlRiskPenalty);
         scores.put("aeroVelocityPenalty", lastVelocityPenalty);
+        scores.put("aeroEdgePenalty", lastEdgePenalty);
         scores.put("aeroFinalVelocity", (double) lastFinalVelocity);
         return scores;
     }

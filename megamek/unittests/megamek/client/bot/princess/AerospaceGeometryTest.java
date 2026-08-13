@@ -278,4 +278,19 @@ class AerospaceGeometryTest {
         assertEquals(AerospaceGeometry.MINIMUM_ALTITUDE, band.lowest(), "cannot descend below altitude 1");
         assertTrue(band.highest() <= AerospaceGeometry.MAXIMUM_ALTITUDE);
     }
+
+    // --- distance to the board edge --------------------------------------------------------------------
+
+    /** The edge walk that prices off-board headings: straight-line hexes remaining before leaving the board. */
+    @Test
+    void hexesUntilOffBoardCountsTheStraightRun() {
+        Board board = board(BoardType.GROUND);
+
+        // Facing 0 is north: from y=5 there are 5 hexes before y goes negative.
+        assertEquals(5, AerospaceGeometry.hexesUntilOffBoard(new Coords(5, 5), 0, board, 50));
+        // Facing 3 is south on a 80-tall board: capped by the maximum, not the edge.
+        assertEquals(20, AerospaceGeometry.hexesUntilOffBoard(new Coords(5, 5), 3, board, 20));
+        // Null-safety returns the cap rather than a crash mid-ranking.
+        assertEquals(9, AerospaceGeometry.hexesUntilOffBoard(null, 0, board, 9));
+    }
 }

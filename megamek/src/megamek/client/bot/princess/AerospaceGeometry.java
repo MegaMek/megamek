@@ -32,6 +32,7 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
@@ -155,6 +156,35 @@ public final class AerospaceGeometry {
         }
         int altitudeDifference = Math.abs(attackerAltitude - targetAltitude);
         return venue.toEngagementRange(attackerPosition.distance(targetPosition)) + altitudeDifference;
+    }
+
+    /**
+     * How many hexes a unit can fly straight ahead from this pose before leaving the board.
+     *
+     * <p>Aerospace movement is mostly committed displacement: the velocity a path ends with must be flown
+     * next turn, largely along the facing it ends on. A pose a few hexes from the edge, pointing out, is a
+     * departure already in progress whatever the pilot intends - so the ranker needs this distance to price
+     * edge headings before they become exits.</p>
+     *
+     * @param start   the hex the pose ends in
+     * @param facing  the facing the pose ends on
+     * @param board   the board being flown over
+     * @param maximum cap on the walk, so the cost stays bounded by what the caller cares about
+     *
+     * @return hexes travelled before the first off-board hex, capped at {@code maximum}
+     */
+    public static int hexesUntilOffBoard(Coords start, int facing, Board board, int maximum) {
+        if ((start == null) || (board == null)) {
+            return maximum;
+        }
+        Coords current = start;
+        for (int travelled = 0; travelled < maximum; travelled++) {
+            current = current.translated(facing);
+            if (!board.contains(current)) {
+                return travelled;
+            }
+        }
+        return maximum;
     }
 
     /**

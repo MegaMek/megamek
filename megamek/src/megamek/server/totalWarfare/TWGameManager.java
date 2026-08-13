@@ -2573,6 +2573,16 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
+        // The server-side half of the turn-dispatch audit trail: which player the server is now
+        // waiting on, for which entity, in which phase. When a game stalls, pairing this line with
+        // the bot's own dispatch log says immediately whether the turn packet was never sent, sent
+        // and dropped, or received and mishandled.
+        LOGGER.info("Turn dispatch: phase {}, turn {} -> player {} ({}), first entity {}",
+              game.getPhase(), game.getTurnIndex(),
+              (player != null) ? player.getId() : Player.PLAYER_NONE,
+              (player != null) ? player.getName() : "none",
+              (nextEntity != null) ? nextEntity.getDisplayName() : "none");
+
         if (prevPlayerId != -1) {
             send(packetHelper.createTurnIndexPacket(prevPlayerId));
         } else {

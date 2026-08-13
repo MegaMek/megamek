@@ -164,8 +164,21 @@ public abstract class BotClient extends Client {
     public class CalculateBotTurn implements Runnable {
         @Override
         public void run() {
-            calculateMyTurn();
-            flushConn();
+            // Lifecycle bracket plus a Throwable net: a calc thread that dies uncaught leaves the
+            // server waiting on a move forever, with nothing in any log. Both freeze investigations
+            // needed exactly these lines.
+            LOGGER.info("{}: calc thread started for phase {}, turnIndex {}",
+                  getName(), getGame().getPhase(), game.getTurnIndex());
+            try {
+                calculateMyTurn();
+                flushConn();
+                LOGGER.info("{}: calc thread finished for phase {}, turnIndex {}",
+                      getName(), getGame().getPhase(), game.getTurnIndex());
+            } catch (Throwable t) {
+                LOGGER.error(t, "{}: calc thread DIED for phase {}, turnIndex {} - the server is now "
+                      + "waiting on a move this bot will never send",
+                      getName(), getGame().getPhase(), game.getTurnIndex());
+            }
         }
     }
 
@@ -192,7 +205,18 @@ public abstract class BotClient extends Client {
                       (e.getPreviousPlayerId() != localPlayerNumber) &&
                       calculatedTurnThisPhase;
 
-                if (isMyTurn() && !ignoreSimTurn) {
+                boolean myTurn = isMyTurn();
+                // Every dispatch decision is logged with its full inputs. Two live games froze with
+                // the server waiting on a bot move and NO record of why no calc thread existed - a
+                // dropped or suppressed turn event here is invisible without this line, and with it
+                // the next freeze names itself.
+                LOGGER.info("{}: turn change - phase {}, turnIndex {}, prevPlayer {}, me {}, "
+                            + "myTurn {}, ignoreSimTurn {}, alreadyCalculatedThisPhase {} -> {}",
+                      getName(), getGame().getPhase(), game.getTurnIndex(), e.getPreviousPlayerId(),
+                      localPlayerNumber, myTurn, ignoreSimTurn, calculatedTurnThisPhase,
+                      myTurn && !ignoreSimTurn ? "SPAWNING calc thread" : "skipping");
+
+                if (myTurn && !ignoreSimTurn) {
                     calculatedTurnThisPhase = true;
                     // Run bot's turn processing in a separate thread.
                     // So calling thread is free to process the other actions.
@@ -221,6 +245,8 @@ public abstract class BotClient extends Client {
 
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
+                LOGGER.info("{}: phase change {} -> {}, resetting calculatedTurnThisPhase (was {})",
+                      getName(), e.getOldPhase(), e.getNewPhase(), calculatedTurnThisPhase);
                 calculatedTurnThisPhase = false;
                 rerolledInitiative = false;
                 if (!getGame().getPhase().isLounge()) {

@@ -162,6 +162,9 @@ public class AerospacePathRanker extends BasicPathRanker {
 
     /** Control-roll modifier for a stalled aerodyne (TW p.81). */
     static final int STALL_CONTROL_MODIFIER = 2;
+
+    /** An offensive maneuver below this success chance is gambling, not flying, and is not sanctioned. */
+    static final double MINIMUM_STUNT_SUCCESS_CHANCE = 0.5;
     private int lastEngageableEnemies;
     private int lastCommittedEnemies;
     private int lastAirEnemies;
@@ -517,11 +520,7 @@ public class AerospacePathRanker extends BasicPathRanker {
             if (!maneuverSanctioned(lastManeuverType, lastCommittedEnemies, path, game, venue)) {
                 return UNSANCTIONED_MANEUVER_COST;
             }
-            int controlModifier = ManeuverType.getMod(lastManeuverType, false);
-            // TW control roll: piloting skill, plus the standing +2 for atmospheric operations, plus the
-            // maneuver's own modifier.
-            int target = path.getEntity().getCrew().getPiloting() + 2 + controlModifier;
-            double failureChance = 1.0 - (Compute.oddsAbove(target) / 100.0);
+            double failureChance = 1.0 - maneuverSuccessChance(path.getEntity(), lastManeuverType);
             return CONTROL_LOSS_COST * failureChance * oddsOfReachingTheGround(path.getFinalAltitude());
         }
         return 0;
@@ -550,11 +549,20 @@ public class AerospacePathRanker extends BasicPathRanker {
      */
     boolean maneuverSanctioned(int maneuverType, int committedEnemies, MovePath path, Game game,
           AerospaceVenue venue) {
+        boolean escape = (maneuverType == ManeuverType.MAN_HAMMERHEAD)
+              || (maneuverType == ManeuverType.MAN_IMMELMAN);
+        // An offensive maneuver is a stunt, and a stunt at bad odds is not flying, it is gambling: the
+        // ranker scores the pose the maneuver reaches, but a failed roll never reaches it - the fighter
+        // flies out straight instead. Seen live: a piloting-6 pilot opened round 1 with a Split-S it
+        // would fail 72% of the time. Below an even chance the offensive set is off the table; a
+        // veteran keeps the whole toolbox. Escapes are exempt - when cornered, poor odds of the
+        // Hammerhead still beat the certainty of flying off the map.
+        if (!escape && (maneuverSuccessChance(path.getEntity(), maneuverType) < MINIMUM_STUNT_SUCCESS_CHANCE)) {
+            return false;
+        }
         if (committedEnemies > 0) {
             return true;
         }
-        boolean escape = (maneuverType == ManeuverType.MAN_HAMMERHEAD)
-              || (maneuverType == ManeuverType.MAN_IMMELMAN);
         if (!escape) {
             return false;
         }
@@ -563,6 +571,23 @@ public class AerospacePathRanker extends BasicPathRanker {
         int exitDistance = AerospaceGeometry.hexesUntilOffBoard(mover.getPosition(), mover.getFacing(),
               game.getBoard(path.getFinalBoardId()), minStraight + 1);
         return exitDistance <= minStraight;
+    }
+
+    /**
+     * The chance this unit's pilot makes the maneuver's control roll, matching the server's target
+     * number: base piloting, +2 atmospheric operations, -1 for a fighter or small craft, plus the
+     * maneuver's own modifier (the live game 6 roll read "Needs 9 [6 + 2 - 1 + 2]").
+     *
+     * @param mover        the maneuvering unit
+     * @param maneuverType the {@link ManeuverType} constant
+     *
+     * @return the probability (0.0 to 1.0) of passing the control roll
+     */
+    static double maneuverSuccessChance(Entity mover, int maneuverType) {
+        int target = mover.getCrew().getPiloting() + 2
+              + ManeuverType.getMod(maneuverType, false)
+              - (mover.isFighter() ? 1 : 0);
+        return Compute.oddsAbove(target) / 100.0;
     }
 
     /**

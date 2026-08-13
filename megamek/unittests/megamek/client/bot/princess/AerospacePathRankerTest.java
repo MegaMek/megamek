@@ -155,6 +155,11 @@ class AerospacePathRankerTest {
         Entity fighter = mock(Entity.class);
         when(fighter.getPosition()).thenReturn(position);
         when(fighter.getFacing()).thenReturn(facing);
+        // A competent crew by default, so the odds gate stays out of tests that are not about it.
+        Crew crew = mock(Crew.class);
+        when(crew.getPiloting()).thenReturn(4);
+        when(fighter.getCrew()).thenReturn(crew);
+        when(fighter.isFighter()).thenReturn(true);
         MovePath path = mock(MovePath.class);
         when(path.getEntity()).thenReturn(fighter);
         when(path.getFinalBoardId()).thenReturn(0);
@@ -236,6 +241,47 @@ class AerospacePathRankerTest {
         assertTrue(ranker.controlRiskPenalty(stalled) > 0, "a stall low down is a real control risk");
         assertEquals(0.0, ranker.controlRiskPenalty(flying), 0.0001,
               "the same pose with velocity on the clock carries no stall risk");
+    }
+
+    /**
+     * A stunt at bad odds is gambling, not flying. Live game 6: a piloting-6 pilot opened round 1 with a
+     * Split-S it would fail 72% of the time, because the ranker scores the pose a maneuver reaches and a
+     * failed roll never reaches it. Below an even chance the offensive set is off the table; a piloting-4
+     * veteran (58% on a Split-S) keeps it. Escapes stay exempt - see the cornered test below.
+     */
+    @Test
+    void greenPilotsDoNotGetOffensiveManeuvers() {
+        Game game = mock(Game.class);
+        Board board = groundBoard(40, 40);
+        MovePath path = maneuverPathAt(new Coords(20, 20), 0, game, board);
+        Crew greenCrew = mock(Crew.class);
+        when(greenCrew.getPiloting()).thenReturn(6);
+        Entity pathFighter = path.getEntity();
+        when(pathFighter.getCrew()).thenReturn(greenCrew);
+        when(pathFighter.isFighter()).thenReturn(true);
+
+        assertFalse(ranker.maneuverSanctioned(ManeuverType.MAN_SPLIT_S, 1, path, game,
+              AerospaceVenue.GROUND_MAP), "28% odds is a gamble, not a maneuver - even with a committed enemy");
+
+        Crew veteranCrew = mock(Crew.class);
+        when(veteranCrew.getPiloting()).thenReturn(4);
+        when(pathFighter.getCrew()).thenReturn(veteranCrew);
+        assertTrue(ranker.maneuverSanctioned(ManeuverType.MAN_SPLIT_S, 1, path, game,
+              AerospaceVenue.GROUND_MAP), "a veteran at 58% keeps the offensive toolbox");
+    }
+
+    /** The success chance must match the server's target number, including the fighter's -1. */
+    @Test
+    void maneuverOddsMatchTheServerTargetNumber() {
+        Entity fighter = mock(Entity.class);
+        Crew crew = mock(Crew.class);
+        when(crew.getPiloting()).thenReturn(6);
+        when(fighter.getCrew()).thenReturn(crew);
+        when(fighter.isFighter()).thenReturn(true);
+
+        // Live game 6: "Needs 9 [6 + 2 - 1 + 2 (Split S maneuver)]" - 2d6 >= 9 is 27.78%.
+        assertEquals(10.0 / 36.0, AerospacePathRanker.maneuverSuccessChance(fighter, ManeuverType.MAN_SPLIT_S),
+              0.001, "target must be piloting + 2 - 1 + maneuver mod, as the server rolls it");
     }
 
     /**

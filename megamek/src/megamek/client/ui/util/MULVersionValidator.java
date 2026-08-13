@@ -74,8 +74,9 @@ public final class MULVersionValidator {
         }
 
         if (parser.isOlderVersion()) {
+            final String fileVersion = (parser.getFileVersion() == null) ? "?" : parser.getFileVersion().toString();
             final int choice = JOptionPane.showConfirmDialog(parent,
-                  Messages.getString("MULParser.versionWarning.olderVersion"),
+                  Messages.getString("MULParser.versionWarning.olderVersion", fileVersion, SuiteConstants.VERSION),
                   Messages.getString("MULParser.versionWarning.olderVersion.title"),
                   JOptionPane.YES_NO_OPTION,
                   JOptionPane.WARNING_MESSAGE);

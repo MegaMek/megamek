@@ -136,7 +136,9 @@ class EntityListFileVersionTest {
         assertTrue(parser.isOlderVersion(), "Older-version MUL should be flagged as older");
         assertFalse(parser.isNewerVersion(), "Older-version MUL must not be flagged as newer");
         // Parsing was still attempted (unlike the newer-version case, which refuses outright).
-        assertFalse(parser.getWarningMessage().contains("cannot be loaded"),
+        // getWarningMessage() may be null when the buffer is empty, so guard against it.
+        String warningMessage = parser.getWarningMessage();
+        assertFalse(warningMessage != null && warningMessage.contains("cannot be loaded"),
               "Older-version MUL should be parsed, not refused");
     }
 

@@ -4019,6 +4019,35 @@ public class Princess extends BotClient {
      * @return Altered move path
      */
     private MovePath performPathPostProcessing(MovePath path, double expectedDamage) {
+        // Everything below is an embellishment on a path that has already been chosen: evading, a searchlight,
+        // unloading, fleeing at the end. None of it is the move itself. Letting one of them throw used to cost
+        // the whole turn - the caller logs "MP is now null!", submits nothing, and the game waits for a bot
+        // that will never answer. That is not hypothetical: an ejected pilot mis-cast in evadeIfNotFiring hung
+        // a game this way (issue #8542), and Compute.isPilotingSkillNeeded still throws outright when the game
+        // has forgotten an entity mid-calculation, which the bot's own turn thread can race into.
+        //
+        // So an embellishment that fails now costs only itself. The path the ranker chose is still a legal,
+        // fully-formed move, and moving is always better than standing still because a searchlight failed.
+        try {
+            return embellishPath(path, expectedDamage);
+        } catch (Exception exception) {
+            LOGGER.error(exception,
+                  "Post-processing failed for {}; using the un-embellished path rather than losing the turn",
+                  path.getEntity().getDisplayName());
+            return path;
+        }
+    }
+
+    /**
+     * The optional extras applied to a path once it has been chosen: evading, searchlight, unloading, launching,
+     * abandoning, unjamming, aero flight-path fix-up, and fleeing.
+     *
+     * @param path           The move path to process
+     * @param expectedDamage The damage expected to be done by the unit as a result of the path
+     *
+     * @return Altered move path
+     */
+    private MovePath embellishPath(MovePath path, double expectedDamage) {
         MovePath retVal = path;
         // Guard on expectedDamage > 0, not >= 0: expected damage is never negative, so >= 0 was always true. That
         // left evadeIfNotFiring (which only evades when NOT able to inflict damage) permanently dead, and turned

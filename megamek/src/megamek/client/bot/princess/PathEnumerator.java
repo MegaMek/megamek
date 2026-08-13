@@ -216,7 +216,7 @@ public class PathEnumerator {
             // currently only applies to a) conventional aircraft, b) AeroTek units, c) lams
             // in air mode
             if (mover.isAirborneAeroOnGroundMap() && !((IAero) mover).isSpheroid()) {
-                AeroGroundPathFinder apf = AeroGroundPathFinder.getInstance(getGame());
+                AeroGroundPathFinder apf = getOwner().aeroGroundPathFinder(getGame());
                 MovePath startPath = new MovePath(getGame(), mover, wayPoint);
                 apf.run(startPath);
                 paths.addAll(apf.getAllComputedPathsUncategorized());

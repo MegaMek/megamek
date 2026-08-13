@@ -1,0 +1,143 @@
+/*
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.client.bot.princess;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import megamek.common.units.Entity;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+/**
+ * Covers the two decisions that make the aerospace doctrine react rather than guess: telling a committed
+ * opponent from one still to move, and pricing a control roll by how far there is to fall.
+ */
+class AerospacePathRankerTest {
+
+    private AerospacePathRanker ranker;
+
+    @BeforeEach
+    void beforeEach() {
+        // The base ranker reads behaviour settings while constructing, so a bare mock is not enough.
+        Princess princess = mock(Princess.class);
+        when(princess.getBehaviorSettings()).thenReturn(new BehaviorSettings());
+        ranker = new AerospacePathRanker(princess);
+    }
+
+    private static Entity airborneFighter(boolean stillToMove) {
+        Entity fighter = mock(Entity.class);
+        when(fighter.isAero()).thenReturn(true);
+        when(fighter.isAirborne()).thenReturn(true);
+        when(fighter.isImmobile()).thenReturn(false);
+        when(fighter.isSelectableThisTurn()).thenReturn(stillToMove);
+        return fighter;
+    }
+
+    // --- the reaction fix ---------------------------------------------------------------------------
+
+    /**
+     * The defect this whole doctrine hangs off. The stock ranker adds {@code isAirborneAeroOnGroundMap()} to
+     * this test, so an enemy fighter reports as committed before it has moved and the bot matches a stale
+     * altitude. Reverting the override makes this case fail.
+     */
+    @Test
+    void anEnemyFighterThatHasNotMovedIsNotTreatedAsCommitted() {
+        Entity enemy = airborneFighter(true);
+        when(enemy.isAirborneAeroOnGroundMap()).thenReturn(true);
+
+        assertFalse(ranker.evaluateAsMoved(enemy),
+              "a fighter still to move this turn has not committed to an altitude");
+    }
+
+    @Test
+    void anEnemyFighterThatHasMovedIsTreatedAsCommitted() {
+        Entity enemy = airborneFighter(false);
+        when(enemy.isAirborneAeroOnGroundMap()).thenReturn(true);
+
+        assertTrue(ranker.evaluateAsMoved(enemy), "a fighter that has moved has committed");
+    }
+
+    @Test
+    void anImmobileFighterCountsAsCommittedWhereverItIs() {
+        Entity enemy = airborneFighter(true);
+        when(enemy.isImmobile()).thenReturn(true);
+
+        assertTrue(ranker.evaluateAsMoved(enemy), "an immobile fighter is going nowhere");
+    }
+
+    @Test
+    void groundUnitsStillUseTheStockRule() {
+        Entity mek = mock(Entity.class);
+        when(mek.isAero()).thenReturn(false);
+        when(mek.isAirborne()).thenReturn(false);
+        when(mek.isSelectableThisTurn()).thenReturn(false);
+        when(mek.isImmobile()).thenReturn(false);
+        when(mek.isAirborneAeroOnGroundMap()).thenReturn(false);
+
+        assertTrue(ranker.evaluateAsMoved(mek), "a ground unit that has moved is still evaluated as moved");
+    }
+
+    // --- control-roll risk, graded by altitude -------------------------------------------------------
+
+    /**
+     * A failed control roll costs 1d6 altitude, so the risk of it ending on the ground is the chance the die
+     * comes up at least the current altitude. The stock code treats that risk as the same everywhere.
+     */
+    @Test
+    void theOddsOfHittingTheGroundFallAwayWithAltitude() {
+        assertEquals(1.0, AerospacePathRanker.oddsOfReachingTheGround(1), 0.0001,
+              "at altitude 1 any roll reaches the ground");
+        assertEquals(5.0 / 6.0, AerospacePathRanker.oddsOfReachingTheGround(2), 0.0001);
+        assertEquals(3.0 / 6.0, AerospacePathRanker.oddsOfReachingTheGround(4), 0.0001);
+        assertEquals(1.0 / 6.0, AerospacePathRanker.oddsOfReachingTheGround(6), 0.0001);
+    }
+
+    @Test
+    void aboveSixAltitudesADieCannotReachTheGround() {
+        assertEquals(0.0, AerospacePathRanker.oddsOfReachingTheGround(7), 0.0001);
+        assertEquals(0.0, AerospacePathRanker.oddsOfReachingTheGround(10), 0.0001);
+    }
+
+    @Test
+    void theRiskGradingIsMonotonic() {
+        for (int altitude = 1; altitude < AerospaceGeometry.MAXIMUM_ALTITUDE; altitude++) {
+            assertTrue(AerospacePathRanker.oddsOfReachingTheGround(altitude)
+                        >= AerospacePathRanker.oddsOfReachingTheGround(altitude + 1),
+                  "risk must never rise with altitude, checked at " + altitude);
+        }
+    }
+}

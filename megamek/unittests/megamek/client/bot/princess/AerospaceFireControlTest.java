@@ -1,0 +1,175 @@
+/*
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.client.bot.princess;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+
+import megamek.common.Hex;
+import megamek.common.ToHitData;
+import megamek.common.board.Board;
+import megamek.common.board.BoardType;
+import megamek.common.board.Coords;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.game.Game;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.AeroSpaceFighter;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import org.junit.jupiter.api.Test;
+
+/**
+ * Covers the two ways the stock guess disagrees with the server about an air-to-air shot: it never checks the
+ * dead zone, and it measures range with integer division and no altitude term.
+ */
+class AerospaceFireControlTest {
+
+    private static final int BOARD_WIDTH = 10;
+    private static final int BOARD_HEIGHT = 80;
+
+    private record Setup(Game game, AerospaceFireControl fireControl) {
+    }
+
+    private static Setup setup(BoardType boardType) {
+        Hex[] hexes = new Hex[BOARD_WIDTH * BOARD_HEIGHT];
+        for (int index = 0; index < hexes.length; index++) {
+            hexes[index] = new Hex();
+        }
+        Board board = new Board(BOARD_WIDTH, BOARD_HEIGHT, hexes);
+        board.setBoardType(boardType);
+        Game game = new Game();
+        game.setBoard(board);
+        return new Setup(game, new AerospaceFireControl(mock(Princess.class)));
+    }
+
+    private static Entity fighter(Game game, int id, Coords position, int altitude) {
+        AeroSpaceFighter fighter = new AeroSpaceFighter();
+        fighter.setId(id);
+        fighter.setGame(game);
+        fighter.setPosition(position);
+        fighter.setAltitude(altitude);
+        fighter.setDeployed(true);
+        game.addEntity(fighter);
+        return fighter;
+    }
+
+    private static Entity groundMek(Game game, int id, Coords position) {
+        BipedMek mek = new BipedMek();
+        mek.setId(id);
+        mek.setGame(game);
+        mek.setPosition(position);
+        mek.setDeployed(true);
+        game.addEntity(mek);
+        return mek;
+    }
+
+    // --- range ---------------------------------------------------------------------------------------
+
+    /** TW p.241's worked example: ten hexes apart at altitudes 3 and 5 is an effective twelve. */
+    @Test
+    void lowAltitudeRangeAddsTheAltitudeDifference() {
+        Setup setup = setup(BoardType.SKY);
+        Entity shooter = fighter(setup.game(), 1, new Coords(0, 0), 5);
+        Entity target = fighter(setup.game(), 2, new Coords(0, 10), 3);
+
+        int distance = setup.fireControl().guessDistance(shooter, new EntityState(shooter), target,
+              new EntityState(target), setup.game());
+
+        assertEquals(12, distance);
+    }
+
+    /**
+     * Over a ground map the conversion rounds up and then adds altitude. The stock guess uses integer
+     * division and adds nothing, so it would answer 2 here and believe the target two brackets closer than
+     * the server does.
+     */
+    @Test
+    void groundMapRangeRoundsUpThenAddsAltitude() {
+        Setup setup = setup(BoardType.GROUND);
+        Entity shooter = fighter(setup.game(), 1, new Coords(0, 0), 5);
+        Entity target = fighter(setup.game(), 2, new Coords(0, 33), 3);
+
+        int distance = setup.fireControl().guessDistance(shooter, new EntityState(shooter), target,
+              new EntityState(target), setup.game());
+
+        // 33 ground hexes rounds up to 3 low-altitude hexes, plus 2 levels of altitude.
+        assertEquals(5, distance);
+    }
+
+    @Test
+    void groundToAirStillUsesTheStockCalculation() {
+        Setup setup = setup(BoardType.GROUND);
+        Entity shooter = groundMek(setup.game(), 1, new Coords(0, 0));
+        Entity target = fighter(setup.game(), 2, new Coords(0, 4), 3);
+
+        int distance = setup.fireControl().guessDistance(shooter, new EntityState(shooter), target,
+              new EntityState(target), setup.game());
+
+        // Stock rule: raw hex distance plus two per altitude of the target.
+        assertEquals(4 + (2 * 3), distance);
+    }
+
+    // --- the dead zone -------------------------------------------------------------------------------
+
+    /**
+     * The stock guess plans this shot, the server refuses it, and the bot has already moved on the strength
+     * of damage it was never going to do.
+     */
+    @Test
+    void aShotIntoTheDeadZoneIsRefusedOutright() {
+        Setup setup = setup(BoardType.GROUND);
+        Entity shooter = fighter(setup.game(), 1, new Coords(0, 0), 5);
+        Entity target = fighter(setup.game(), 2, new Coords(0, 10), 3);
+
+        ToHitData toHit = setup.fireControl().guessToHitModifierForWeapon(shooter, new EntityState(shooter),
+              target, new EntityState(target), mock(WeaponMounted.class), null, setup.game());
+
+        assertEquals(TargetRoll.IMPOSSIBLE, toHit.getValue());
+        assertTrue(toHit.getDesc().toLowerCase().contains("dead zone"));
+    }
+
+    @Test
+    void aShotFromMatchedAltitudeIsNotRefusedByGeometry() {
+        Setup setup = setup(BoardType.GROUND);
+        Entity shooter = fighter(setup.game(), 1, new Coords(0, 0), 5);
+        Entity target = fighter(setup.game(), 2, new Coords(0, 10), 5);
+
+        ToHitData toHit = setup.fireControl().guessToHitModifierForWeapon(shooter, new EntityState(shooter),
+              target, new EntityState(target), mock(WeaponMounted.class), null, setup.game());
+
+        // It may still be refused for other reasons - no weapon, no arc - but not for the dead zone.
+        assertTrue(!toHit.getDesc().toLowerCase().contains("dead zone"),
+              "matched altitude clears the cone: " + toHit.getDesc());
+    }
+}

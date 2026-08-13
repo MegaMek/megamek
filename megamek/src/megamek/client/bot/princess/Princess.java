@@ -82,6 +82,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.player.GamePlayerChatEvent;
+import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.game.InitiativeRoll;
 import megamek.common.moves.MovePath;
@@ -90,6 +91,7 @@ import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
+import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.PathDecorator;
 import megamek.common.pathfinder.ShortestPathFinder;
@@ -306,9 +308,29 @@ public class Princess extends BotClient {
             return pathRankers.get(PathRankerType.NewtonianAerospace);
         } else if (behaviorSettings.isExperimental()) {
             return pathRankers.get(PathRankerType.Utility);
+        } else if (isAtmosphericAerospace(entity)) {
+            // Deliberately the last branch before the fallback: everything that reached a ranker before now
+            // still reaches the same one, and only what used to fall through to Basic arrives here. Princess
+            // registers its Basic ranker in this slot, so for Princess that fall-through is unchanged.
+            return pathRankers.get(PathRankerType.Aerospace);
         }
 
         return pathRankers.get(PathRankerType.Basic);
+    }
+
+    /**
+     * Whether this unit is flying under the atmospheric aerospace rules - over a ground mapsheet or on a
+     * low-altitude map.
+     *
+     * <p>Excludes space, which has no altitude and therefore no dead zone, and excludes vector movement,
+     * which {@link PathRankerType#NewtonianAerospace} already handles.</p>
+     *
+     * @param entity the unit to test
+     *
+     * @return {@code true} if the unit is an airborne aerospace unit in an atmosphere
+     */
+    protected boolean isAtmosphericAerospace(Entity entity) {
+        return entity.isAero() && entity.isAirborne() && !entity.isSpaceborne() && !game.useVectorMove();
     }
 
     IPathRanker getPathRanker(PathRankerType pathRankerType) {
@@ -883,6 +905,10 @@ public class Princess extends BotClient {
               entity.hasAbility(OptionsConstants.GUNNERY_MULTI_TASKER) ||
               entity.getCrew().getCrewType().getMaxPrimaryTargets() < 0) {
             return fireControls.get(FireControlType.MultiTarget);
+        } else if (isAtmosphericAerospace(entity)) {
+            // Last branch before the fallback, for the same reason as in getPathRanker: a multi-target aero
+            // crew keeps the fire control it already had, and only the Basic fall-through arrives here.
+            return fireControls.get(FireControlType.Aerospace);
         }
 
         return fireControls.get(FireControlType.Basic);
@@ -1796,7 +1822,7 @@ public class Princess extends BotClient {
      *
      * @return The movement index of this unit. May be positive or negative. Higher index values should move first.
      */
-    double calculateMoveIndex(final Entity entity, final StringBuilder msg) {
+    protected double calculateMoveIndex(final Entity entity, final StringBuilder msg) {
         final double PRIORITY_PRONE = 1.1;
         final double PRIORITY_TANK = 1.5;
         final double PRIORITY_BA = 2;
@@ -3614,12 +3640,26 @@ public class Princess extends BotClient {
 
         FireControl fireControl = new FireControl(this);
         fireControls.put(FireControlType.Basic, fireControl);
+        // The same object, not a second one: Princess resolves atmospheric aerospace gunnery to exactly the
+        // instance it always did. CASPAR replaces this slot alone.
+        fireControls.put(FireControlType.Aerospace, fireControl);
 
         InfantryFireControl infantryFireControl = new InfantryFireControl(this);
         fireControls.put(FireControlType.Infantry, infantryFireControl);
 
         MultiTargetFireControl multiTargetFireControl = new MultiTargetFireControl(this);
         fireControls.put(FireControlType.MultiTarget, multiTargetFireControl);
+    }
+
+    /**
+     * Wiring seam for subclasses (CASPAR): replaces the registered fire control of the given type. Call after
+     * {@code super.initializeFireControls()}. Mirrors {@link #registerPathRanker}.
+     *
+     * @param fireControlType the fire control slot to replace
+     * @param fireControl     the replacement fire control
+     */
+    protected void registerFireControl(FireControlType fireControlType, FireControl fireControl) {
+        fireControls.put(fireControlType, fireControl);
     }
 
     /**
@@ -3633,6 +3673,9 @@ public class Princess extends BotClient {
         BasicPathRanker basicPathRanker = new BasicPathRanker(this);
         basicPathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.Basic, basicPathRanker);
+        // The same object, not a second one: Princess resolves atmospheric aerospace movement to exactly the
+        // ranker it always did. CASPAR replaces this slot alone.
+        pathRankers.put(PathRankerType.Aerospace, basicPathRanker);
 
         InfantryPathRanker infantryPathRanker = new InfantryPathRanker(this);
         infantryPathRanker.setPathEnumerator(precognition.getPathEnumerator());
@@ -3658,6 +3701,22 @@ public class Princess extends BotClient {
     protected void registerPathRanker(PathRankerType rankerType, BasicPathRanker pathRanker) {
         pathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(rankerType, pathRanker);
+    }
+
+    /**
+     * Factory seam for subclasses (CASPAR): builds the path finder used for airborne aerodyne units flying
+     * over a ground mapsheet.
+     *
+     * <p>Unlike the low-altitude finder, the stock ground finder drives every path it generates to a single
+     * altitude, so a ranker never gets an altitude to choose between. Overriding this is the only way to put
+     * that choice back without changing what Princess generates.</p>
+     *
+     * @param game the current game
+     *
+     * @return the path finder to enumerate ground-mapsheet aerospace movement with
+     */
+    protected AeroGroundPathFinder aeroGroundPathFinder(Game game) {
+        return AeroGroundPathFinder.getInstance(game);
     }
 
     /**

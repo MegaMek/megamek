@@ -51,6 +51,8 @@ import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import javax.xml.parsers.DocumentBuilder;
 
+import megamek.SuiteConstants;
+import megamek.Version;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
@@ -213,9 +215,11 @@ public class MULParser {
     public static final String ATTR_DEPLOYMENT_ZONE_ANY_SEX = "deploymentZoneAnySEx";
     public static final String ATTR_DEPLOYMENT_ZONE_ANY_SEY = "deploymentZoneAnySEy";
     public static final String ATTR_NEVER_DEPLOYED = "neverDeployed";
-    /** The unit-file UUID. Written for every unit that has one and used as the primary lookup on load (the chassis and
+    /**
+     * The unit-file UUID. Written for every unit that has one and used as the primary lookup on load (the chassis and
      * model remain for backwards-compatibility and readability). It is essential for Battlefield Support Assets, which
-     * share a name with their base unit. */
+     * share a name with their base unit.
+     */
     public static final String ATTR_UNIT_FILE_UUID = "unitFileUUID";
     /** Distinguishes alternate entity forms that can share the same chassis/model name. */
     public static final String ATTR_ENTITY_FORM = "entityForm";
@@ -361,6 +365,24 @@ public class MULParser {
 
     StringBuffer warning;
 
+    /**
+     * The MegaMek version this MUL was saved in, as read from the root element's {@link #VERSION} attribute. This is
+     * {@code null} when the file did not specify a (parseable) version.
+     */
+    private Version fileVersion;
+
+    /**
+     * True when the MUL was saved in a MegaMek version newer (by major.minor.patch) than the one currently running. A
+     * newer MUL can never be loaded in an older version, so no entities are parsed in this case.
+     */
+    private boolean newerVersion;
+
+    /**
+     * True when the MUL was saved in an older MegaMek version than the one currently running, or when it does not carry
+     * a parseable version at all. Loading is still possible, but correct behavior is not guaranteed.
+     */
+    private boolean olderVersion;
+
     // region Constructors
 
     /**
@@ -443,11 +465,78 @@ public class MULParser {
         element.normalize();
 
         final String version = element.getAttribute(VERSION);
+        determineVersionCompatibility(version);
+
+        if (newerVersion) {
+            // A MUL saved in a newer version can never be loaded in an older one. Refuse to parse any entities.
+            warning.append("This MUL was created in a newer version of MegaMek (")
+                  .append(version)
+                  .append(") than the one currently running (")
+                  .append(SuiteConstants.VERSION)
+                  .append("). It cannot be loaded.\n");
+            if (hasWarningMessage()) {
+                LOGGER.warn(getWarningMessage());
+            }
+            return;
+        }
+
         if (version.isBlank()) {
             warning.append("Warning: No version specified, correct parsing ")
                   .append("not guaranteed!\n");
         }
         parse(element, options);
+    }
+
+    /**
+     * Reads the MUL's saved version (as taken from the root element's {@link #VERSION} attribute) and records how it
+     * relates to the currently running version. A missing or unparseable version is treated as older, since it cannot
+     * be confirmed to match the current format. Only the major.minor.patch components are compared; the
+     * snapshot/nightly suffix is ignored.
+     *
+     * @param versionText the raw version attribute value, which may be blank
+     */
+    private void determineVersionCompatibility(final String versionText) {
+        fileVersion = parseVersionSafely(versionText);
+
+        if (fileVersion == null) {
+            // Missing or unparseable version: assume it predates the current format.
+            olderVersion = true;
+            return;
+        }
+
+        final Version runningVersion = SuiteConstants.VERSION;
+        if (fileVersion.isHigherThan(runningVersion)) {
+            newerVersion = true;
+        } else if (fileVersion.isLowerThan(runningVersion)) {
+            olderVersion = true;
+        }
+        // Equal major.minor.patch: load silently.
+    }
+
+    /**
+     * Parses a version string into a {@link Version} without triggering the fatal error dialog that
+     * {@link Version#Version(String)} raises on malformed input. Returns {@code null} for blank or malformed values.
+     *
+     * @param versionText the raw version attribute value
+     *
+     * @return the parsed {@link Version}, or {@code null} if it is blank or cannot be parsed
+     */
+    private static @Nullable Version parseVersionSafely(final @Nullable String versionText) {
+        if ((versionText == null) || versionText.isBlank()) {
+            return null;
+        }
+
+        final String[] extraSplit = versionText.split("-", 2);
+        final String[] versionSplit = extraSplit[0].split("\\.");
+        if ((extraSplit.length > 2) || (versionSplit.length < 3)) {
+            return null;
+        }
+        for (int i = 0; i < 3; i++) {
+            if (!versionSplit[i].matches("\\d+")) {
+                return null;
+            }
+        }
+        return new Version(versionText);
     }
 
     private void parse(final Element element, final @Nullable GameOptions options) {
@@ -712,18 +801,18 @@ public class MULParser {
 
     /**
      * Loads a unit from the cache. When a unit-file UUID is given it is the primary lookup - it pins the exact saved
-    * unit file - and the chassis/model name is the fallback. A MUL entity-form discriminator makes that fallback use
-    * the separate Battlefield Support Asset name index, preventing a same-name base unit from being substituted.
+     * unit file - and the chassis/model name is the fallback. A MUL entity-form discriminator makes that fallback use
+     * the separate Battlefield Support Asset name index, preventing a same-name base unit from being substituted.
      *
      * @param chassis      the unit chassis
      * @param model        the unit model, or {@code null}
-        * @param unitFileUUID the unit-file UUID to resolve first, or {@code null}/blank to look up by name only
-        * @param assetForm    whether the MUL explicitly identifies the entity as its Battlefield Support Asset form
+     * @param unitFileUUID the unit-file UUID to resolve first, or {@code null}/blank to look up by name only
+     * @param assetForm    whether the MUL explicitly identifies the entity as its Battlefield Support Asset form
      *
      * @return the loaded entity, or {@code null} if it could not be found or loaded
      */
-        private Entity getEntity(String chassis, @Nullable String model, @Nullable String unitFileUUID,
-                    boolean assetForm) {
+    private Entity getEntity(String chassis, @Nullable String model, @Nullable String unitFileUUID,
+          boolean assetForm) {
         // The unit-file UUID is the primary lookup: it pins the exact saved unit file (and is the only way to resolve a
         // Battlefield Support Asset, which shares its name with its base unit). Old UUID-less MULs, and any UUID not in
         // this cache, fall through to the chassis/model name lookup below.
@@ -2742,9 +2831,9 @@ public class MULParser {
     /**
      * Parses the trailers a tractor tows, in order from front to back.
      * <p>
-     * The ids read here are the ones the saving game used. They are stored as-is, exactly like the conveyance id
-     * above, and translated to real ids once the units have been added to a game and their server-side ids are known.
-     * Only the tractor records the train; each trailer's own tractor and hitch are rebuilt from this list.
+     * The ids read here are the ones the saving game used. They are stored as-is, exactly like the conveyance id above,
+     * and translated to real ids once the units have been added to a game and their server-side ids are known. Only the
+     * tractor records the train; each trailer's own tractor and hitch are rebuilt from this list.
      * </p>
      */
     private void parseTowedUnits(Element towedUnitsTag, Entity entity) {
@@ -2981,6 +3070,29 @@ public class MULParser {
             return warning.toString();
         }
         return null;
+    }
+
+    /**
+     * @return the MegaMek version this MUL was saved in, or {@code null} if the file did not carry a parseable version
+     */
+    public @Nullable Version getFileVersion() {
+        return fileVersion;
+    }
+
+    /**
+     * @return true if the MUL was saved in a MegaMek version newer than the one currently running. Such a file is never
+     *       loaded, so {@link #getEntities()} and the other result accessors will be empty.
+     */
+    public boolean isNewerVersion() {
+        return newerVersion;
+    }
+
+    /**
+     * @return true if the MUL was saved in an older MegaMek version than the one currently running, or does not carry a
+     *       parseable version. The file is still parsed, but correct behavior is not guaranteed.
+     */
+    public boolean isOlderVersion() {
+        return olderVersion;
     }
 
     /**

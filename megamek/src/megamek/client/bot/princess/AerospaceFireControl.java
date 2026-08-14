@@ -32,13 +32,21 @@
  */
 package megamek.client.bot.princess;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import megamek.common.HexTarget;
 import megamek.common.TargetRollModifier;
 import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
+import megamek.common.board.Coords;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
@@ -102,6 +110,77 @@ public class AerospaceFireControl extends FireControl {
      * <p>Falls back to the stock calculation for anything that is not one airborne aerospace unit shooting at
      * another, so ground gunnery and ground-to-air are untouched.</p>
      */
+    /**
+     * Drops on the best blast-footprint hex of the flown line, not on the target's own hex.
+     *
+     * <p>The movement half steers the fighter over the seam of a formation; this half makes the drop
+     * actually land there. Worked from the pilot's seat: against a box lance with two hexes of
+     * spacing, cluster bombs (5 damage across all seven hexes, no falloff) on a corner mek's hex
+     * reach one target - its neighbors are empty - while the seam hex between two meks delivers full
+     * damage to both. Every hex the fighter physically flew through is a legal aim point
+     * ({@code passedOver}), so the drop target is a search over the flown line with the same ring
+     * tables the ranker's footprint credit uses. When the search finds nothing better than the
+     * offered target's own hex - single targets, spread formations, plain HE - the stock plan stands
+     * unchanged.</p>
+     */
+    @Override
+    protected FiringPlan getDiveBombPlan(final Entity shooter, final MovePath flightPath,
+          final Targetable target, final Game game, final boolean passedOverTarget, final boolean guess) {
+        Coords bestAim = bestFootprintAimHex(shooter, flightPath, game);
+        if ((bestAim != null) && (target.getPosition() != null) && !bestAim.equals(target.getPosition())) {
+            HexTarget seam = new HexTarget(bestAim, shooter.getBoardId(), Targetable.TYPE_HEX_AERO_BOMB);
+            // The seam hex is on the flown line by construction, so the fly-over requirement holds.
+            return super.getDiveBombPlan(shooter, flightPath, seam, game, true, guess);
+        }
+        return super.getDiveBombPlan(shooter, flightPath, target, game, passedOverTarget, guess);
+    }
+
+    /**
+     * The hex on the flown line whose blast footprint delivers the most total damage across every
+     * enemy ground unit, or {@code null} when no flown hex delivers anything. Uses the executed
+     * move's own hexes ({@link Entity#getPassedThrough}) in preference to the planning-time path,
+     * because at firing time the flown line is a fact.
+     */
+    private Coords bestFootprintAimHex(Entity shooter, MovePath flightPath, Game game) {
+        List<Coords> flownLine = shooter.getPassedThrough();
+        if (((flownLine == null) || flownLine.isEmpty()) && (flightPath != null)) {
+            flownLine = new ArrayList<>(flightPath.getCoordsSet());
+        }
+        List<BombMounted> groundBombs = shooter.getBombs(AmmoType.F_GROUND_BOMB);
+        if ((flownLine == null) || flownLine.isEmpty() || groundBombs.isEmpty()) {
+            return null;
+        }
+        List<Entity> targets = new ArrayList<>();
+        for (Entity enemy : game.getEntitiesVector()) {
+            if (enemy.getOwner().isEnemyOf(shooter.getOwner())
+                  && !enemy.isAirborne()
+                  && (enemy.getPosition() != null)
+                  && (enemy.getBoardId() == shooter.getBoardId())
+                  && !enemy.isDestroyed()) {
+                targets.add(enemy);
+            }
+        }
+        if (targets.isEmpty()) {
+            return null;
+        }
+        Coords bestAimHex = null;
+        double bestFootprint = 0;
+        for (Coords aimPoint : flownLine) {
+            double footprint = 0;
+            for (Entity target : targets) {
+                int ring = aimPoint.distance(target.getPosition());
+                for (BombMounted bomb : groundBombs) {
+                    footprint += AerospacePathRanker.bombRingDamage(bomb, ring);
+                }
+            }
+            if (footprint > bestFootprint) {
+                bestFootprint = footprint;
+                bestAimHex = aimPoint;
+            }
+        }
+        return bestAimHex;
+    }
+
     @Override
     protected int guessDistance(final Entity shooter, final EntityState shooterState, final Targetable target,
           final EntityState targetState, final Game game) {

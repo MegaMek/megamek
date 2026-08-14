@@ -561,6 +561,26 @@ class AerospacePathRankerTest {
                     + " seam=" + seamCredit);
     }
 
+    /**
+     * The exposure hazard is the fire actually pointed at you. A flat constant let a 10-bomb attack
+     * credit outbid it every turn; the live Chippewa died pressing low passes into an LB 20-X. Under
+     * flak-scale incoming fire, low altitude must price several times dearer than under none - and an
+     * empty sky prices at zero.
+     */
+    @Test
+    void exposureScalesWithIncomingFire() {
+        double emptySky = AerospacePathRanker.exposurePenalty(0, 2);
+        double lightFire = AerospacePathRanker.exposurePenalty(10, 2);
+        double flakBattery = AerospacePathRanker.exposurePenalty(35, 2);
+
+        assertEquals(0.0, emptySky, 0.0001, "no incoming fire, no exposure hazard");
+        assertTrue(flakBattery > lightFire * 2,
+              "a flak battery must price low flight far above light fire: light=" + lightFire
+                    + " flak=" + flakBattery);
+        assertTrue(AerospacePathRanker.exposurePenalty(35, 7) < flakBattery / 2,
+              "the same fire prices far cheaper up high");
+    }
+
     // --- the attack run ------------------------------------------------------------------------------
 
     private static Entity groundMek(Coords position) {

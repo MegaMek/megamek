@@ -307,6 +307,20 @@ class AeroGroundDoctrinePathFinderTest {
      * the first probe game). The committed-enemy rule is enforced at rank time -
      * {@code AerospacePathRanker.maneuverSanctioned}.
      */
+    /**
+     * An out-of-control aircraft cannot fly a maneuver; offering one anyway produced live turns whose
+     * only candidate was a doctrine-buried Hammerhead the server would never accept.
+     */
+    @Test
+    void anOutOfControlFighterGetsNoManeuverRoots() {
+        armedFlyer(new Coords(20, 20), 0, 3);
+        ((megamek.common.units.AeroSpaceFighter) mover).setOutControl(true);
+        enemyFighter(20, new Coords(20, 28), 5, true);
+
+        assertEquals(0, maneuverRootedPaths(AeroGroundDoctrinePathFinder.getInstance(game)),
+              "no maneuver roots while out of control - the server will not accept them");
+    }
+
     @Test
     void maneuversAreGeneratedEvenBeforeEnemiesCommit() {
         armedFlyer(new Coords(20, 20), 0, 3);

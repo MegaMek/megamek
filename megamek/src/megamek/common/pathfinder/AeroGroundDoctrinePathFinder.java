@@ -138,6 +138,11 @@ public class AeroGroundDoctrinePathFinder extends AeroGroundPathFinder {
         if (!(mover instanceof IAero aero) || !mover.isAirborne()) {
             return List.of();
         }
+        // An out-of-control aircraft cannot fly a maneuver, and offering one anyway produced live
+        // turns whose ONLY candidate was a doctrine-buried Hammerhead the server would never accept.
+        if (aero.isOutControl()) {
+            return List.of();
+        }
         Board board = game.getBoard(start.getFinalBoardId());
         int velocity = aero.getCurrentVelocity();
         int altitude = start.getFinalAltitude();

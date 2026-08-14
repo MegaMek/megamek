@@ -121,12 +121,19 @@ public class AerospacePathRanker extends BasicPathRanker {
     private static final int STRIKE_ALTITUDE_TOLL = 1;
 
     /**
-     * Fraction of the control-loss cost charged as a standing hazard for flying low with armed
-     * enemies about. Enemy fire forces control rolls, and at low altitude a failed one is the ground
-     * - a fighter loitering at NoE was one hit from death every round and the ranker priced it at
-     * zero. Scales with the same crash odds every other risk term uses.
+     * How much each point of expected incoming damage inflates the low-altitude exposure hazard.
+     *
+     * <p>A flat exposure constant killed a live Chippewa: its 10-bomb attack-run credit (~60)
+     * outbid a ~17-point exposure penalty every turn, so it pressed repeat low passes into an
+     * Akuma's LB 20-X flak until the threshold rolls finished it - while its 5-bomb wingman, whose
+     * credit did not swamp the same penalty, porpoised and lived. The hazard of being low is the
+     * fire actually pointed at you: two meks with flak and LRM racks make altitude 2 a kill zone,
+     * and an empty sky makes it merely unwise.</p>
      */
-    private static final double LOW_ALTITUDE_EXPOSURE_WEIGHT = 0.5;
+    private static final double EXPOSURE_PER_INCOMING_DAMAGE = 0.03;
+
+    /** Ceiling on the incoming-damage scale factor, so massed batteries saturate rather than explode. */
+    private static final double EXPOSURE_SCALE_CAP = 1.5;
 
     /**
      * What each level of banked altitude is worth, up to {@link #ALTITUDE_BANK_CEILING}. Climbing to
@@ -453,11 +460,8 @@ public class AerospacePathRanker extends BasicPathRanker {
         // Flying low with armed enemies about is a standing bet: any hit forces a control roll, and
         // the crash odds are the same d6 every other term prices. Flying high is the banked inverse.
         if ((lastGroundTargets + lastAirEnemies) > 0) {
-            // Damage-induced rolls carry the same spiral: the exposure hazard prices OOC entry plus
-            // the crash odds, scaled down because enemy fire forcing a roll is possible, not certain.
-            lastExposurePenalty = CONTROL_LOSS_COST * LOW_ALTITUDE_EXPOSURE_WEIGHT
-                  * (OUT_OF_CONTROL_ENTRY_FRACTION * 0.5
-                        + oddsOfReachingTheGround(lastPostAttackAltitude));
+            lastExposurePenalty = exposurePenalty(
+                  expectedIncomingDamage(path, game, enemies), lastPostAttackAltitude);
         }
         lastAltitudeBank = ALTITUDE_BANK_WEIGHT * Math.min(lastPostAttackAltitude, ALTITUDE_BANK_CEILING);
 
@@ -708,7 +712,7 @@ public class AerospacePathRanker extends BasicPathRanker {
      *
      * @return the damage this bomb deals at that distance
      */
-    private static double bombRingDamage(BombMounted bomb, int ring) {
+    static double bombRingDamage(BombMounted bomb, int ring) {
         return switch (bomb.getType().getBombType()) {
             case CLUSTER -> (ring <= 1) ? 5 : 0;
             case FAE_SMALL -> switch (ring) {
@@ -726,6 +730,49 @@ public class AerospacePathRanker extends BasicPathRanker {
             };
             default -> (ring == 0) ? bomb.getType().getDamagePerShot() : 0;
         };
+    }
+
+    /**
+     * The standing hazard of ending a move at this altitude under this much fire. Enemy fire forces
+     * control rolls (damage thresholds, criticals), each one an OOC-entry-plus-crash bet, so the
+     * hazard is the usual control-loss pricing scaled by how much fire is actually pointed at the
+     * pose. No incoming fire, no hazard; a flak battery in range makes low altitude price like the
+     * kill zone it is - without ever outbidding the attack run flown INTO that zone, which earns
+     * its credit in the same auction.
+     *
+     * @param incomingDamage expected damage per round the enemies in range can put on this pose
+     * @param altitude       the altitude the pose really ends the round at
+     *
+     * @return the penalty to subtract from this path's utility
+     */
+    static double exposurePenalty(double incomingDamage, int altitude) {
+        double scale = Math.min(EXPOSURE_SCALE_CAP, incomingDamage * EXPOSURE_PER_INCOMING_DAMAGE);
+        return CONTROL_LOSS_COST * scale
+              * (OUT_OF_CONTROL_ENTRY_FRACTION * 0.5 + oddsOfReachingTheGround(altitude));
+    }
+
+    /**
+     * A cheap estimate of the fire the enemies could put on this pose next round: each enemy's
+     * maximum damage at the slant range to the pose (ground distance plus altitude, the engine's
+     * ground-to-air approximation).
+     */
+    private double expectedIncomingDamage(MovePath path, Game game, List<Entity> enemies) {
+        Coords pose = path.getFinalCoords();
+        if (pose == null) {
+            return 0;
+        }
+        boolean extremeRange = isExtremeRange(game);
+        boolean losRange = isLosRange(game);
+        double incoming = 0;
+        for (Entity enemy : enemies) {
+            if ((enemy.getPosition() == null) || (enemy.getBoardId() != path.getFinalBoardId())
+                  || isIgnorableEnemy(path.getEntity(), enemy, game)) {
+                continue;
+            }
+            int slantRange = enemy.getPosition().distance(pose) + lastPostAttackAltitude;
+            incoming += getMaxDamageAtRange(enemy, slantRange, extremeRange, losRange);
+        }
+        return incoming;
     }
 
     /** The summed damage of every ground bomb aboard - the payload one full dive-bomb pass can deliver. */

@@ -130,7 +130,11 @@ public class AerospacePathRanker extends BasicPathRanker {
      * fire actually pointed at you: two meks with flak and LRM racks make altitude 2 a kill zone,
      * and an empty sky makes it merely unwise.</p>
      */
-    private static final double EXPOSURE_PER_INCOMING_DAMAGE = 0.03;
+    // Tuning point 2 (overnight 2026-08-13): 0.03 collapsed bombing entirely - zero dive bombs in
+    // 15 games, because the stock bravery term already charges expected damage taken from the same
+    // enemies and the two stacked to bury every window entry by ~170 points. Halved; the two-point
+    // curve (0.03 vs 0.015) is the morning tuning discussion.
+    private static final double EXPOSURE_PER_INCOMING_DAMAGE = 0.015;
 
     /** Ceiling on the incoming-damage scale factor, so massed batteries saturate rather than explode. */
     private static final double EXPOSURE_SCALE_CAP = 1.5;
@@ -459,7 +463,9 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastManeuverRisk = maneuverRiskPenalty(path, game, venue);
         // Flying low with armed enemies about is a standing bet: any hit forces a control roll, and
         // the crash odds are the same d6 every other term prices. Flying high is the banked inverse.
-        if ((lastGroundTargets + lastAirEnemies) > 0) {
+        // Ground enemies only: the exposure term was built for flak, and its slant-range estimate
+        // misprices co-altitude air-to-air fire, which the engagement terms already handle.
+        if (lastGroundTargets > 0) {
             lastExposurePenalty = exposurePenalty(
                   expectedIncomingDamage(path, game, enemies), lastPostAttackAltitude);
         }
@@ -765,7 +771,8 @@ public class AerospacePathRanker extends BasicPathRanker {
         boolean losRange = isLosRange(game);
         double incoming = 0;
         for (Entity enemy : enemies) {
-            if ((enemy.getPosition() == null) || (enemy.getBoardId() != path.getFinalBoardId())
+            if (enemy.isAirborne() || (enemy.getPosition() == null)
+                  || (enemy.getBoardId() != path.getFinalBoardId())
                   || isIgnorableEnemy(path.getEntity(), enemy, game)) {
                 continue;
             }

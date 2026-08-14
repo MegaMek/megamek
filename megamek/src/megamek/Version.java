@@ -79,6 +79,42 @@ public final class Version implements Comparable<Version>, Serializable {
     /** Key of the optional revision entry in {@code Version.properties}. Absent for ordinary releases. */
     private static final String REVISION_BUNDLE_KEY = "revision";
 
+    /** Key of the optional build note entry in {@code Version.properties}. Absent for ordinary releases. */
+    private static final String NOTES_BUNDLE_KEY = "notes";
+
+    /** Key of the optional colour name the build note is drawn in. Absent unless a build note sets one. */
+    private static final String NOTES_COLOR_BUNDLE_KEY = "notesColor";
+
+    /** Key of the optional point size the build note is drawn at. Absent unless a build note sets one. */
+    private static final String NOTES_FONT_SIZE_BUNDLE_KEY = "notesFontSize";
+
+    /**
+     * The value {@link #getBuildNotesFontSize()} reports when no point size is configured, meaning the build note
+     * is drawn at whatever size the rest of the menu uses.
+     */
+    public static final int NO_NOTES_FONT_SIZE = 0;
+
+    /**
+     * Bounds accepted for a configured build note point size. A size outside these is treated as a mistake and
+     * ignored, because a note at 2 points is unreadable and one at 400 points would push the menu buttons off the
+     * bottom of the screen.
+     */
+    private static final int MINIMUM_NOTES_FONT_SIZE = 6;
+    private static final int MAXIMUM_NOTES_FONT_SIZE = 72;
+
+    /**
+     * The free-text note about this particular build, or {@code null} when the build carries none, which is the
+     * case for every ordinary release.
+     *
+     * <p>This describes the build the code is running as, not any one {@code Version} object, so it is read once
+     * at class load and is deliberately not part of a version's identity: it takes no part in {@link #toString()},
+     * {@link #compareTo(Version)} or {@link #equals(Object)}, and is never sent to another client. The colour and
+     * point size below are the presentation of that same note and are read the same way.</p>
+     */
+    private static final String BUILD_NOTES = readOptionalNotesFromBundle();
+    private static final String BUILD_NOTES_COLOR_NAME = readOptionalEntryFromBundle(NOTES_COLOR_BUNDLE_KEY);
+    private static final int BUILD_NOTES_FONT_SIZE = readOptionalNotesFontSizeFromBundle();
+
     private int major;
     private int minor;
     private int patch;
@@ -233,6 +269,133 @@ public final class Version implements Comparable<Version>, Serializable {
 
         LOGGER.debug("[Version] Optional revision component {} loaded from Version.properties", parsedRevision);
         return parsedRevision;
+    }
+
+    /**
+     * Reads the optional {@code notes} entry from {@code Version.properties}.
+     *
+     * <p>The key is absent for ordinary releases and is only filled in when a build needs to say something about
+     * itself on the main menu, so a missing key is the expected case and is not reported as a problem.</p>
+     *
+     * @return the configured build note, or {@code null} when the key is absent or blank
+     */
+    private static @Nullable String readOptionalNotesFromBundle() {
+        final String configuredNotes = readOptionalEntryFromBundle(NOTES_BUNDLE_KEY);
+        if (configuredNotes == null) {
+            return null;
+        }
+
+        LOGGER.info("[Version] Build note loaded from Version.properties: {}", configuredNotes);
+        return configuredNotes;
+    }
+
+    /**
+     * Reads the optional {@code notesFontSize} entry from {@code Version.properties}.
+     *
+     * @return the configured point size, or {@link #NO_NOTES_FONT_SIZE} when the key is absent, blank, not a
+     *       number, or outside the sizes that make sense on the menu
+     */
+    private static int readOptionalNotesFontSizeFromBundle() {
+        final String configuredFontSize = readOptionalEntryFromBundle(NOTES_FONT_SIZE_BUNDLE_KEY);
+        if (configuredFontSize == null) {
+            return NO_NOTES_FONT_SIZE;
+        }
+
+        final int parsedFontSize = MathUtility.parseInt(configuredFontSize, NO_NOTES_FONT_SIZE);
+        final boolean isTooSmall = parsedFontSize < MINIMUM_NOTES_FONT_SIZE;
+        final boolean isTooLarge = parsedFontSize > MAXIMUM_NOTES_FONT_SIZE;
+        if (isTooSmall || isTooLarge) {
+            LOGGER.warn(
+                  "[Version] Version.properties sets notesFontSize to '{}', which is not a point size between "
+                        + "{} and {}. The build note will be shown at the menu's ordinary size instead.",
+                  configuredFontSize,
+                  MINIMUM_NOTES_FONT_SIZE,
+                  MAXIMUM_NOTES_FONT_SIZE);
+            return NO_NOTES_FONT_SIZE;
+        }
+
+        LOGGER.debug("[Version] Build note point size {} loaded from Version.properties", parsedFontSize);
+        return parsedFontSize;
+    }
+
+    /**
+     * Reads an optional entry from {@code Version.properties}, treating an absent key and a blank value alike.
+     *
+     * @param bundleKey the key to read
+     *
+     * @return the trimmed value, or {@code null} when the key is absent or its value is blank
+     */
+    private static @Nullable String readOptionalEntryFromBundle(final String bundleKey) {
+        if (!VERSION_BUNDLE.containsKey(bundleKey)) {
+            return null;
+        }
+
+        final String normalizedEntry = normalizeOptionalEntry(VERSION_BUNDLE.getString(bundleKey));
+        if (normalizedEntry == null) {
+            LOGGER.debug("[Version] Version.properties has a {} entry, but it is blank; it is ignored", bundleKey);
+        }
+
+        return normalizedEntry;
+    }
+
+    /**
+     * Trims a configured entry and reduces an empty one to {@code null}, so that callers have a single "there is
+     * nothing configured" case to handle rather than also having to allow for whitespace.
+     *
+     * @param configuredEntry the raw value of the entry, or {@code null} when there is none
+     *
+     * @return the trimmed value, or {@code null} when there is nothing there
+     */
+    static @Nullable String normalizeOptionalEntry(final @Nullable String configuredEntry) {
+        if (configuredEntry == null) {
+            return null;
+        }
+
+        final String trimmedEntry = configuredEntry.trim();
+        return trimmedEntry.isEmpty() ? null : trimmedEntry;
+    }
+
+    /**
+     * Returns the free-text note this build was released with, such as a warning that it is a development build.
+     *
+     * @return the build note, or {@code null} when this build has none, which is the case for every ordinary
+     *       release
+     */
+    public static @Nullable String getBuildNotes() {
+        return BUILD_NOTES;
+    }
+
+    /**
+     * @return {@code true} if this build was released with a note to show the player, otherwise {@code false}
+     */
+    public static boolean hasBuildNotes() {
+        return BUILD_NOTES != null;
+    }
+
+    /**
+     * Returns the colour the build note asks to be drawn in, as the plain name written in
+     * {@code Version.properties} rather than as a colour object, because this class is also used well away from
+     * the user interface.
+     *
+     * @return the configured colour name, or {@code null} when the note did not ask for a particular colour
+     */
+    public static @Nullable String getBuildNotesColorName() {
+        return BUILD_NOTES_COLOR_NAME;
+    }
+
+    /**
+     * @return the point size the build note asks to be drawn at, or {@link #NO_NOTES_FONT_SIZE} when it did not
+     *       ask for a particular size
+     */
+    public static int getBuildNotesFontSize() {
+        return BUILD_NOTES_FONT_SIZE;
+    }
+
+    /**
+     * @return {@code true} if the build note asks for a particular point size, otherwise {@code false}
+     */
+    public static boolean hasBuildNotesFontSize() {
+        return BUILD_NOTES_FONT_SIZE != NO_NOTES_FONT_SIZE;
     }
 
     // region Getters

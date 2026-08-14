@@ -33,6 +33,7 @@
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import megamek.common.HexTarget;
@@ -43,6 +44,8 @@ import megamek.common.compute.Compute;
 import megamek.common.board.Coords;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.BombLoadout;
+import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
@@ -130,9 +133,85 @@ public class AerospaceFireControl extends FireControl {
         if ((bestAim != null) && (target.getPosition() != null) && !bestAim.equals(target.getPosition())) {
             HexTarget seam = new HexTarget(bestAim, shooter.getBoardId(), Targetable.TYPE_HEX_AERO_BOMB);
             // The seam hex is on the flown line by construction, so the fly-over requirement holds.
+            // Seam drops keep the full load: the aim point was chosen precisely because several
+            // targets sit in the footprint.
             return super.getDiveBombPlan(shooter, flightPath, seam, game, true, guess);
         }
-        return super.getDiveBombPlan(shooter, flightPath, target, game, passedOverTarget, guess);
+        FiringPlan plan = super.getDiveBombPlan(shooter, flightPath, target, game, passedOverTarget, guess);
+        rationBombPayload(plan, target);
+        return plan;
+    }
+
+    /**
+     * Sizes the salvo to the victim, closing the stock code's own TODO ("more intelligent bomb
+     * drops"): it loads every bomb aboard into one attack, so ten HE fell on anything that was
+     * overflown. Ten bombs on a Locust is dumb; ten on an Atlas is smart (Dave). The drop is trimmed
+     * to the count expected to destroy the target - effective armor plus structure over expected
+     * damage per bomb - and the rest stay racked for the next pass, turning one overkill alpha into
+     * several lethal ones. The plan's damage estimate intentionally keeps the pre-trim value: it
+     * over-promises by at most the overkill this exists to remove.
+     */
+    private void rationBombPayload(FiringPlan plan, Targetable target) {
+        if (!(target instanceof Entity victim)) {
+            return;
+        }
+        for (WeaponFireInfo info : plan) {
+            HashMap<String, BombLoadout> payloads = info.getWeaponAttackAction().getBombPayloads();
+            if (payloads == null) {
+                continue;
+            }
+            // Combine the internal and external racks, choose type-aware, then write back per rack.
+            BombLoadout combined = new BombLoadout();
+            for (BombLoadout loadout : payloads.values()) {
+                for (java.util.Map.Entry<BombType.BombTypeEnum, Integer> entry : loadout.entrySet()) {
+                    combined.addBombs(entry.getKey(), entry.getValue());
+                }
+            }
+            if (combined.getTotalBombs() <= 1) {
+                continue;
+            }
+            BombLoadout selection = rationSelection(combined,
+                  info.getProbabilityToHit(), victim.getTotalArmor() + victim.getTotalInternal());
+            for (BombLoadout loadout : payloads.values()) {
+                for (java.util.Map.Entry<BombType.BombTypeEnum, Integer> entry : loadout.entrySet()) {
+                    int grant = Math.min(entry.getValue(), selection.getCount(entry.getKey()));
+                    selection.addBombs(entry.getKey(), -grant);
+                    entry.setValue(grant);
+                }
+            }
+        }
+    }
+
+    /**
+     * Chooses WHICH bombs a kill honestly asks for, by type (Dave): heaviest damage-per-bomb first
+     * until the target's effective hit points are funded at the expected hit rate, so a mixed rack
+     * spends its big ordnance on the hard target and keeps the small stuff racked for softer work.
+     * Zero-damage ordnance - TAG, mine-layers, infernos - is never released as generic tonnage.
+     * Always releases at least one damaging bomb when any is aboard.
+     */
+    static BombLoadout rationSelection(BombLoadout available, double hitChance, int effectiveHitPoints) {
+        double odds = Math.max(0.05, hitChance);
+        List<java.util.Map.Entry<BombType.BombTypeEnum, Integer>> byDamage =
+              new ArrayList<>(available.entrySet());
+        byDamage.sort((a, b) -> Integer.compare(
+              BombType.createBombByType(b.getKey()).getDamagePerShot(),
+              BombType.createBombByType(a.getKey()).getDamagePerShot()));
+        BombLoadout selection = new BombLoadout();
+        double funded = 0;
+        for (java.util.Map.Entry<BombType.BombTypeEnum, Integer> entry : byDamage) {
+            int perBomb = BombType.createBombByType(entry.getKey()).getDamagePerShot();
+            if (perBomb <= 0) {
+                continue;
+            }
+            for (int i = 0; i < entry.getValue(); i++) {
+                if ((funded >= effectiveHitPoints) && (selection.getTotalBombs() >= 1)) {
+                    return selection;
+                }
+                selection.addBombs(entry.getKey(), 1);
+                funded += perBomb * odds;
+            }
+        }
+        return selection;
     }
 
     /**

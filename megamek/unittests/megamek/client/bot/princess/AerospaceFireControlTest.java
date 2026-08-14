@@ -172,4 +172,37 @@ class AerospaceFireControlTest {
         assertTrue(!toHit.getDesc().toLowerCase().contains("dead zone"),
               "matched altitude clears the cone: " + toHit.getDesc());
     }
+
+    /**
+     * The salvo is sized to the victim AND chosen by type (Dave): ten HE on a Locust is dumb, ten on
+     * an Atlas is smart, and a mixed rack spends its heaviest ordnance on the hard target while the
+     * small stuff stays racked. Zero-damage ordnance never releases as generic tonnage.
+     */
+    @Test
+    void salvoIsSizedToTheVictimAndChosenByType() {
+        megamek.common.equipment.BombLoadout tenHE = new megamek.common.equipment.BombLoadout();
+        tenHE.addBombs(megamek.common.equipment.enums.BombType.BombTypeEnum.HE, 10);
+        assertEquals(7, AerospaceFireControl.rationSelection(tenHE, 0.77, 50).getTotalBombs(),
+              "a light mek asks for a fraction of the rack");
+        assertEquals(10, AerospaceFireControl.rationSelection(tenHE, 0.77, 300).getTotalBombs(),
+              "an assault mek honestly asks for the full rack");
+        assertEquals(1, AerospaceFireControl.rationSelection(tenHE, 0.95, 1).getTotalBombs(),
+              "never fewer than one damaging bomb");
+
+        megamek.common.equipment.BombLoadout mixed = new megamek.common.equipment.BombLoadout();
+        mixed.addBombs(megamek.common.equipment.enums.BombType.BombTypeEnum.HE, 5);
+        mixed.addBombs(megamek.common.equipment.enums.BombType.BombTypeEnum.CLUSTER, 5);
+        megamek.common.equipment.BombLoadout pick = AerospaceFireControl.rationSelection(mixed, 0.8, 30);
+        assertEquals(4, pick.getCount(megamek.common.equipment.enums.BombType.BombTypeEnum.HE),
+              "the heavy ordnance funds the kill first");
+        assertEquals(0, pick.getCount(megamek.common.equipment.enums.BombType.BombTypeEnum.CLUSTER),
+              "the cluster bombs stay racked for softer work");
+
+        megamek.common.equipment.BombLoadout withTag = new megamek.common.equipment.BombLoadout();
+        withTag.addBombs(megamek.common.equipment.enums.BombType.BombTypeEnum.TAG, 2);
+        withTag.addBombs(megamek.common.equipment.enums.BombType.BombTypeEnum.HE, 2);
+        assertEquals(0, AerospaceFireControl.rationSelection(withTag, 0.8, 100)
+                    .getCount(megamek.common.equipment.enums.BombType.BombTypeEnum.TAG),
+              "zero-damage ordnance is never released as generic tonnage");
+    }
 }

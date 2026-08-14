@@ -116,6 +116,29 @@ public class AerospacePathRanker extends BasicPathRanker {
     /** A dive-bomb attack costs the attacker this many altitude levels (TW). */
     private static final int DIVE_BOMB_ALTITUDE_TOLL = 2;
 
+    /** A gun strike costs the attacker this many altitude levels (TW). */
+    private static final int STRIKE_ALTITUDE_TOLL = 1;
+
+    /**
+     * Fraction of the control-loss cost charged as a standing hazard for flying low with armed
+     * enemies about. Enemy fire forces control rolls, and at low altitude a failed one is the ground
+     * - a fighter loitering at NoE was one hit from death every round and the ranker priced it at
+     * zero. Scales with the same crash odds every other risk term uses.
+     */
+    private static final double LOW_ALTITUDE_EXPOSURE_WEIGHT = 0.5;
+
+    /**
+     * What each level of banked altitude is worth, up to {@link #ALTITUDE_BANK_CEILING}. Climbing to
+     * gain altitude for future things is good flying (Dave): altitude is stored energy and safety
+     * margin, spent on attack runs and refilled between them. Deliberately small - a live attack run
+     * must always outbid the bank - but nonzero, so a fighter with no run this turn climbs instead
+     * of sagging.
+     */
+    private static final double ALTITUDE_BANK_WEIGHT = 1.5;
+
+    /** Altitude above which the bank credit stops growing - high enough; go fight. */
+    private static final int ALTITUDE_BANK_CEILING = 7;
+
     /** What reaching the ground out of control is priced at, before the odds of it happening. */
     private static final double CONTROL_LOSS_COST = 40.0;
 
@@ -202,6 +225,8 @@ public class AerospacePathRanker extends BasicPathRanker {
      * that honestly is what pushes runs to the top of the window (attack from 5, exit at 3).
      */
     private int lastPostAttackAltitude;
+    private double lastExposurePenalty;
+    private double lastAltitudeBank;
 
     /** Test seam: read or set the post-attack altitude the risk terms will price against. */
     int lastPostAttackAltitudeForTest() {
@@ -365,6 +390,8 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastOverflownTargets = 0;
         lastAttackRunCredit = 0;
         lastPostAttackAltitude = 0;
+        lastExposurePenalty = 0;
+        lastAltitudeBank = 0;
         lastVenueGround = 0;
         lastCloseRangeDamage = 0;
         lastFinalAltitude = 0;
@@ -398,16 +425,24 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastVelocityPenalty = velocityPenalty(path, venue);
         lastEdgePenalty = edgePenalty(path, game, venue);
         lastManeuverRisk = maneuverRiskPenalty(path, game, venue);
+        // Flying low with armed enemies about is a standing bet: any hit forces a control roll, and
+        // the crash odds are the same d6 every other term prices. Flying high is the banked inverse.
+        if ((lastGroundTargets + lastAirEnemies) > 0) {
+            lastExposurePenalty = CONTROL_LOSS_COST * LOW_ALTITUDE_EXPOSURE_WEIGHT
+                  * oddsOfReachingTheGround(lastPostAttackAltitude);
+        }
+        lastAltitudeBank = ALTITUDE_BANK_WEIGHT * Math.min(lastPostAttackAltitude, ALTITUDE_BANK_CEILING);
 
         // The pro-con of any maneuver, priced as flown: its gains - the pose it reaches, the arc it
         // claims - only exist if the control roll passes, so they are worth their expected value, not
         // their face value. Its costs are certain either way. A 58% Immelmann onto a committed enemy
         // offers 58% of its pose; the crash risk and the spent turn are owed in full.
-        double gains = lastEngagementCredit + lastArcAdvantage + lastAttackRunCredit;
+        double gains = lastEngagementCredit + lastArcAdvantage + lastAttackRunCredit + lastAltitudeBank;
         if (lastManeuverType != ManeuverType.MAN_NONE) {
             gains *= lastManeuverOdds;
         }
-        return gains - lastControlRiskPenalty - lastVelocityPenalty - lastEdgePenalty - lastManeuverRisk;
+        return gains - lastControlRiskPenalty - lastVelocityPenalty - lastEdgePenalty - lastManeuverRisk
+              - lastExposurePenalty;
     }
 
     /**
@@ -588,12 +623,13 @@ public class AerospacePathRanker extends BasicPathRanker {
             // the count is the diagnostic (did we line runs up?), the credit is the incentive.
             lastOverflownTargets++;
             lastAttackRunCredit += runDamage * ATTACK_RUN_WEIGHT;
-            // The credit assumes the dive bomb, so the risk pricing must assume its altitude toll
-            // too: 2 levels (TW), never below the deck the engine itself enforces.
-            if (inDiveBombWindow && (bombDamage >= gunDamage)) {
-                lastPostAttackAltitude = Math.max(AerospaceGeometry.MINIMUM_ALTITUDE,
-                      finalAltitude - DIVE_BOMB_ALTITUDE_TOLL);
-            }
+            // The credit assumes the attack, so the risk pricing must assume its altitude toll too:
+            // 2 levels for a dive bomb, 1 for a gun strike (TW), never below the deck the engine
+            // itself enforces. Unpriced, the strike toll walked a live Chippewa down 4-3-2 after its
+            // bombs ran out - each strike exiting one level lower - into a fatal control roll.
+            int toll = (inDiveBombWindow && (bombDamage >= gunDamage))
+                  ? DIVE_BOMB_ALTITUDE_TOLL : STRIKE_ALTITUDE_TOLL;
+            lastPostAttackAltitude = Math.max(AerospaceGeometry.MINIMUM_ALTITUDE, finalAltitude - toll);
         }
     }
 
@@ -1183,6 +1219,8 @@ public class AerospacePathRanker extends BasicPathRanker {
         scores.put("aeroGroundTargets", (double) lastGroundTargets);
         scores.put("aeroOverflownTargets", (double) lastOverflownTargets);
         scores.put("aeroAttackRunCredit", lastAttackRunCredit);
+        scores.put("aeroExposurePenalty", lastExposurePenalty);
+        scores.put("aeroAltitudeBank", lastAltitudeBank);
         scores.put("aeroFinalVelocity", (double) lastFinalVelocity);
         return scores;
     }

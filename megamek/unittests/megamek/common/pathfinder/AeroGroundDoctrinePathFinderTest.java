@@ -146,12 +146,31 @@ class AeroGroundDoctrinePathFinderTest {
         assertFalse(candidates.contains(3), "an enemy over a different map says nothing about this one");
     }
 
+    /**
+     * NoE is never offered: dive bombing is illegal below altitude 3 and the bot cannot strafe - the
+     * one thing NoE serves. A live Cheetah loitered at altitude 1 on the old bombs-aboard candidate,
+     * where any failed control roll is the ground, and died there.
+     */
     @Test
-    void napOfTheEarthIsOnlyOfferedToSomethingCarryingBombs() {
+    void napOfTheEarthIsNeverOffered() {
         List<Integer> candidates = finder.candidateAltitudes(mover);
 
         assertFalse(candidates.contains(AeroGroundPathFinder.NAP_OF_THE_EARTH),
-              "with no bombs there is nothing to go down there for");
+              "NoE serves only strafing, which the bot cannot fly");
+    }
+
+    /**
+     * Climbing to gain altitude for future things is good flying (Dave): the climb-out candidate is
+     * always on offer, two levels up capped at the safe-recovery ceiling, so the porpoise profile -
+     * climb between runs, drop into the window, climb out - is generatable at all.
+     */
+    @Test
+    void aClimbOutCandidateIsAlwaysOffered() {
+        List<Integer> candidates = finder.candidateAltitudes(mover);
+
+        assertTrue(candidates.contains(Math.min(mover.getAltitude() + 2,
+                    AeroGroundDoctrinePathFinder.CLIMB_OUT_CEILING)),
+              "the fighter must be able to generate climbing paths between attack runs");
     }
 
     @Test

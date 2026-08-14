@@ -92,6 +92,13 @@ public class AeroGroundDoctrinePathFinder extends AeroGroundPathFinder {
      */
     static final double HALF_ROLL_ASYMMETRY = 0.25;
 
+    /**
+     * Where the climb-out candidate tops out: high enough that a 1d6 control-loss cannot reach the
+     * ground (see the ranker's crash-odds grading), low enough to re-enter the attack windows in one
+     * to two turns of descent.
+     */
+    static final int CLIMB_OUT_CEILING = 7;
+
     protected AeroGroundDoctrinePathFinder(Game game) {
         super(game);
     }
@@ -370,9 +377,18 @@ public class AeroGroundDoctrinePathFinder extends AeroGroundPathFinder {
 
         altitudes.add(OPTIMAL_STRIKE_ALTITUDE);
 
-        if (carriesGroundBombs(mover)) {
-            altitudes.add(NAP_OF_THE_EARTH);
-        }
+        // The climb-out candidate: altitude is banked energy and safety margin, refilled between
+        // attack runs and spent on dives. Without it the fighter literally cannot generate a climbing
+        // path for ground work, and the only direction the attack windows pull is down - a live
+        // Chippewa descended 4-3-2 after its bombs ran out and died to a control roll it could not
+        // afford. Two levels up, capped at the safe-recovery ceiling, keeps the porpoise profile
+        // available: climb high between runs, drop into the window, climb out again.
+        altitudes.add(Math.min(mover.getAltitude() + 2, CLIMB_OUT_CEILING));
+
+        // NoE is deliberately NOT offered. It was inherited as a bombs-aboard candidate, but dive
+        // bombing is illegal below altitude 3 and the bot cannot strafe - the one thing NoE serves.
+        // A live Cheetah loitered at altitude 1 for five rounds on this candidate, where any failed
+        // control roll is the ground, and died there.
 
         List<Integer> candidates = new ArrayList<>(altitudes);
         if (candidates.size() > MAXIMUM_CANDIDATE_ALTITUDES) {

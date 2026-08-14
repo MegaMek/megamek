@@ -41,8 +41,9 @@ import java.util.ResourceBundle;
 import megamek.MegaMek;
 
 public class Messages {
+    public static final String CLIENT_BUNDLE = "megamek.client.messages";
 
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("megamek.client.messages",
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(CLIENT_BUNDLE,
           MegaMek.getMMOptions().getLocale());
 
     // All static class, should never be instantiated

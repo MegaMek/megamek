@@ -146,6 +146,51 @@ class SettingsFormPanelTest {
         assertEquals(2, constraintsFor(panel, 1).gridwidth);
     }
 
+    @Test
+    void equalWidthComponentGridUsesConfiguredCellWidth() {
+        SettingsFormPanel panel = new SettingsFormPanel("Test", 300);
+        JLabel shortComponent = new JLabel("Short");
+        JLabel longComponent = new JLabel("A much longer component");
+
+        panel.addEqualWidthComponentGrid(2, shortComponent, longComponent);
+        panel.setSize(panel.getPreferredSize());
+        panel.doLayout();
+
+        assertEquals(longComponent.getPreferredSize().width, shortComponent.getPreferredSize().width);
+        assertEquals(UIUtil.scaleForGUI(300), shortComponent.getPreferredSize().width);
+        assertEquals(longComponent.getWidth(), shortComponent.getWidth());
+    }
+
+    @Test
+    void equalWidthComponentGridsAlignAcrossPanelsWithDifferentContent() {
+        SettingsFormPanel longContentPanel = new SettingsFormPanel("Long", 300);
+        JLabel longFirst = new JLabel("A very long option that determines this section's preferred width");
+        JLabel longSecond = new JLabel("Second");
+        longContentPanel.addEqualWidthComponentGrid(2, longFirst, longSecond);
+
+        SettingsFormPanel shortContentPanel = new SettingsFormPanel("Short", 300);
+        JLabel shortFirst = new JLabel("First");
+        JLabel shortSecond = new JLabel("Second");
+        JLabel finalRow = new JLabel("Final row");
+        shortContentPanel.addEqualWidthComponentGrid(2, shortFirst, shortSecond, finalRow);
+
+        int sharedWidth = UIUtil.scaleForGUI(900);
+        layoutAtWidth(longContentPanel, sharedWidth);
+        layoutAtWidth(shortContentPanel, sharedWidth);
+
+        assertEquals(UIUtil.scaleForGUI(300), longFirst.getPreferredSize().width);
+        assertEquals(longContentPanel.getPreferredSize().width, shortContentPanel.getPreferredSize().width);
+        assertEquals(longFirst.getWidth(), longSecond.getWidth());
+        assertEquals(shortFirst.getWidth(), shortSecond.getWidth());
+        assertEquals(longSecond.getX(), shortSecond.getX());
+        assertEquals(shortFirst.getWidth(), finalRow.getWidth());
+    }
+
+    private static void layoutAtWidth(SettingsFormPanel panel, int width) {
+        panel.setSize(width, panel.getPreferredSize().height);
+        panel.doLayout();
+    }
+
     private static GridBagConstraints constraintsFor(SettingsFormPanel panel, int index) {
         GridBagLayout layout = (GridBagLayout) panel.getLayout();
         return layout.getConstraints(panel.getComponent(index));

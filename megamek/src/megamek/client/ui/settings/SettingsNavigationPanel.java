@@ -242,11 +242,18 @@ public class SettingsNavigationPanel extends JPanel {
         buildNavigationTree(filterField.getText());
     }
 
+    /** @return the normalized active search filter */
     public String getActiveFilter() {
         return SettingsRoute.normalizeSearchText(filterField.getText());
     }
 
-    public void setFilterText(String filterText) {
+    /** @return the search field's unmodified display text */
+    public String getFilterText() {
+        return filterField.getText();
+    }
+
+    /** Sets the search field's display text; {@code null} clears it and listeners receive its normalized form. */
+    public void setFilterText(@Nullable String filterText) {
         filterField.setText(Objects.requireNonNullElse(filterText, ""));
     }
 

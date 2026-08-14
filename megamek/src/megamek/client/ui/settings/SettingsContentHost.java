@@ -76,7 +76,7 @@ public class SettingsContentHost extends JPanel {
     private final List<HelpBinding> activeHelpBindings = new ArrayList<>();
     private Component currentContent;
 
-    public SettingsContentHost(Component content, String helpTitle, boolean showHelpPanel) {
+    public SettingsContentHost(Component content, boolean showHelpPanel) {
         super(new BorderLayout());
         setName("settingsContentHost");
         contentPanel.setName("settingsContentPanel");
@@ -87,10 +87,16 @@ public class SettingsContentHost extends JPanel {
         contentScrollPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
         searchHighlightLayer = new JLayer<>(contentScrollPane, searchHighlightLayerUI);
         searchHighlightLayer.setName("settingsSearchHighlightLayer");
-        helpPanel = new SettingsHelpPanel(helpTitle);
+        helpPanel = new SettingsHelpPanel();
         add(searchHighlightLayer, BorderLayout.CENTER);
         add(helpPanel, BorderLayout.SOUTH);
         setContent(content, showHelpPanel);
+    }
+
+    /** @deprecated settings help surfaces always use the shared localized title */
+    @Deprecated(since = "0.51.01", forRemoval = true)
+    public SettingsContentHost(Component content, String ignoredHelpTitle, boolean showHelpPanel) {
+        this(content, showHelpPanel);
     }
 
     public void setContent(Component content) {
@@ -117,6 +123,15 @@ public class SettingsContentHost extends JPanel {
         revalidate();
         repaint();
         SwingUtilities.invokeLater(this::resetScrollPosition);
+    }
+
+    /** Rebuilds contextual-help listeners after the current content's component hierarchy changes. */
+    public void refreshHelpBindings() {
+        unbindHelp();
+        helpPanel.clearHelpText();
+        if (helpPanel.isVisible() && currentContent != null) {
+            bindHelp(currentContent, null);
+        }
     }
 
     public void resetScrollPosition() {
@@ -146,9 +161,12 @@ public class SettingsContentHost extends JPanel {
             helpPanel.setHelpText(helpText);
             return;
         }
-        String body = containsHtmlTag(helpText)
+        String body = (containsHtmlTag(helpText)
               ? helpText
-              : StringEscapeUtils.escapeHtml4(helpText);
+              : StringEscapeUtils.escapeHtml4(helpText))
+              .replace("\r\n", "\n")
+              .replace('\r', '\n')
+              .replace("\n", "<br>");
         helpPanel.setHelpText("<html>" + body + "</html>");
     }
 
@@ -213,8 +231,7 @@ public class SettingsContentHost extends JPanel {
                         setHelpText(helpText);
                     }
                 };
-                boolean suppressTooltip = ownHelpText != null && !ownHelpText.isBlank()
-                      && swingComponent.getToolTipText() != null;
+                boolean suppressTooltip = swingComponent.getToolTipText() != null;
                 HelpBinding binding = new HelpBinding(swingComponent, swingComponent.getToolTipText(),
                       suppressTooltip, mouseListener, focusListener);
                 swingComponent.addMouseListener(binding.mouseListener());

@@ -68,6 +68,7 @@ import megamek.MMConstants;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.TimerSingleton;
+import megamek.client.bot.AIType;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.commands.*;
@@ -94,21 +95,10 @@ import megamek.client.ui.clientGUI.boardview.overlay.TurnDetailsOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.UnitOverviewOverlay;
 import megamek.client.ui.clientGUI.boardview.spriteHandler.*;
 import megamek.client.ui.clientGUI.boardview.toolTip.TWBoardViewTooltip;
-import megamek.client.ui.dialogs.AccessibilityDialog;
+import megamek.client.ui.dialogs.*;
 import megamek.client.ui.dialogs.BotCommands.BotCommandsDialog;
 import megamek.client.ui.dialogs.BotCommands.BotCommandsPanel;
-import megamek.client.ui.dialogs.ChoiceDialog;
-import megamek.client.ui.dialogs.ConfirmDialog;
-import megamek.client.ui.dialogs.InformDialog;
-import megamek.client.ui.dialogs.MMAboutDialog;
-import megamek.client.ui.dialogs.GameMasterAppointedDialog;
-import megamek.client.ui.dialogs.GameMasterVoteDialog;
-import megamek.client.ui.dialogs.PlayerListDialog;
-import megamek.client.ui.dialogs.RandomNameDialog;
-import megamek.client.ui.dialogs.RoundsInAirDialog;
-import megamek.client.ui.dialogs.UnitLoadingDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
-import megamek.client.bot.AIType;
 import megamek.client.ui.dialogs.buttonDialogs.EditBotsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.GameOptionsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.NetworkInformationDialog;
@@ -139,6 +129,7 @@ import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.BASE64ToolKit;
 import megamek.client.ui.util.KeyCommandBind;
+import megamek.client.ui.util.MULVersionValidator;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
@@ -635,8 +626,8 @@ public class ClientGUI extends AbstractClientGUI
     /**
      * Shows a progress toast for each of the local player's platoons that is busy raising or dismantling a bridge
      * (TO:AUE). Called once per round at the start of the movement phase: a busy platoon is eligible only in the
-     * movement phase (movement-only, so it can continue/cancel/pause/resume) and takes no other action, so this is
-     * its main per-turn feedback besides the hex indicator and the END phase report.
+     * movement phase (movement-only, so it can continue/cancel/pause/resume) and takes no other action, so this is its
+     * main per-turn feedback besides the hex indicator and the END phase report.
      */
     private void showBridgeBuildProgressToasts() {
         for (Entity entity : getClient().getGame().getEntitiesVector()) {
@@ -674,8 +665,8 @@ public class ClientGUI extends AbstractClientGUI
      * unaffected by that setting.</p>
      *
      * <p>Every reason to skip is checked before the report is formatted, because formatting is what records entries
-     * as already toasted. Recording an entry that was never shown would suppress it later, when the player turns
-     * toasts back on part way through the same phase.</p>
+     * as already toasted. Recording an entry that was never shown would suppress it later, when the player turns toasts
+     * back on part way through the same phase.</p>
      */
     private void showReportAsToasts(String defaultPrefix, String report) {
         if (toastOverlay == null) {
@@ -850,8 +841,8 @@ public class ClientGUI extends AbstractClientGUI
 
     /**
      * Opens, follows and closes the Game Master vote dialog as the server shares the vote's state: the dialog opens
-     * when a vote is called, follows the ballots as they come in, and closes when the vote resolves. The outcome
-     * itself is announced in the chat.
+     * when a vote is called, follows the ballots as they come in, and closes when the vote resolves. The outcome itself
+     * is announced in the chat.
      */
     private void updateGameMasterVoteDialog(Poll poll) {
         if (poll.getStatus().isResolved()) {
@@ -872,8 +863,8 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Keeps the Game menu's Game Master entries in step with who holds the role and whether the game allows one:
-     * Give Up while the local player holds it, Become while the role is free, neither while another player has it.
+     * Keeps the Game menu's Game Master entries in step with who holds the role and whether the game allows one: Give
+     * Up while the local player holds it, Become while the role is free, neither while another player has it.
      */
     private void updateGameMasterMenuItems() {
         Player localPlayer = client.getLocalPlayer();
@@ -900,8 +891,8 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Asks first, then gives up the Game Master role through the same /gm command that takes it, so the rules stay
-     * with the server. The menu entry that leads here is only shown while the local player holds the role.
+     * Asks first, then gives up the Game Master role through the same /gm command that takes it, so the rules stay with
+     * the server. The menu entry that leads here is only shown while the local player holds the role.
      */
     private void giveUpGameMaster() {
         int choice = JOptionPane.showConfirmDialog(frame,
@@ -915,11 +906,10 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Tells every player who won a passed Game Master vote and how the role is taken away again: the Game Master
-     * gives it up (the lobby's GM Mode button or the Game menu's Give Up Game Master entry), or the host turns off
-     * Allow Game Master in the game options. Shown after the vote dialog closes, so the outcome is not just a line
-     * of chat that scrolls away. Queued on the event thread so it does not block the game event that brought the
-     * result.
+     * Tells every player who won a passed Game Master vote and how the role is taken away again: the Game Master gives
+     * it up (the lobby's GM Mode button or the Game menu's Give Up Game Master entry), or the host turns off Allow Game
+     * Master in the game options. Shown after the vote dialog closes, so the outcome is not just a line of chat that
+     * scrolls away. Queued on the event thread so it does not block the game event that brought the result.
      *
      * @param gameMasterId the id of the player the vote made Game Master
      */
@@ -2152,9 +2142,9 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * @return {@code true} if any player in the game is a bot. Without one there is nobody the bot commands panel
-     *       could give orders to, so it stays hidden - leaving the command bar with only the Commands button - until
-     *       a bot joins (e.g. when a player is replaced by one).
+     * @return {@code true} if any player in the game is a bot. Without one there is nobody the bot commands panel could
+     *       give orders to, so it stays hidden - leaving the command bar with only the Commands button - until a bot
+     *       joins (e.g. when a player is replaced by one).
      */
     private boolean gameHasBots() {
         for (Player player : getClient().getGame().getPlayersList()) {
@@ -2738,8 +2728,12 @@ public class ClientGUI extends AbstractClientGUI
 
             try {
                 // Read the units from the file.
-                final Vector<Entity> loadedUnits = new MULParser(unitFile,
-                      (GameOptions) getClient().getGame().getOptions()).getEntities();
+                final MULParser parser = new MULParser(unitFile,
+                      (GameOptions) getClient().getGame().getOptions());
+                if (!MULVersionValidator.isCorrectVersion(frame, parser)) {
+                    return;
+                }
+                final Vector<Entity> loadedUnits = parser.getEntities();
 
                 // in the Lounge, set default deployment to "Before Game Start", round 0
                 // but in a game in-progress, deploy at the start of next round
@@ -4085,8 +4079,8 @@ public class ClientGUI extends AbstractClientGUI
                  GUIPreferences.SOUND_BING_FILENAME_OTHERS_TURN -> audioService.loadSoundFiles();
             case GUIPreferences.MASTER_VOLUME -> audioService.setVolume();
             case GUIPreferences.BOT_COMMANDS_ENABLED, GUIPreferences.BOT_COMMANDS_LOCATION ->
-                  // Route through maybeShowBotCommands() so the phase rules (non-board phases never show the panel)
-                  // are enforced consistently, whether the change came from the menu, the hotkey, or a phase change.
+                // Route through maybeShowBotCommands() so the phase rules (non-board phases never show the panel)
+                // are enforced consistently, whether the change came from the menu, the hotkey, or a phase change.
                   maybeShowBotCommands();
         }
     }

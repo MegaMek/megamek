@@ -35,11 +35,14 @@
 package megamek.common.weapons.handlers;
 
 import java.io.Serial;
+import java.util.Vector;
 
 import megamek.common.HitData;
+import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.ChargeLevel;
+import megamek.common.enums.GamePhase;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -51,16 +54,34 @@ public class BombastLaserWeaponHandler extends EnergyWeaponHandler {
 
     /**
      * Bombast Laser handler
-     * @param toHit tohit calc
-     * @param waa weapon attack action
-     * @param game game
+     *
+     * @param toHit       tohit calc
+     * @param waa         weapon attack action
+     * @param game        game
      * @param gameManager TWGameManager
+     *
      * @throws EntityLoadingException
      */
     public BombastLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager gameManager)
           throws EntityLoadingException {
         super(toHit, waa, game, gameManager);
         generalDamageType = HitData.DAMAGE_ENERGY;
+    }
+
+    @Override
+    public boolean handle(GamePhase phase, Vector<Report> returnedReports) {
+        boolean handled = false;
+        handled = super.handle(phase, returnedReports);
+        dischargeIfCharged();
+
+        return handled;
+    }
+
+    private void dischargeIfCharged() {
+        if (weapon.getChargeState() != ChargeLevel.CHARGED) {
+            return;
+        }
+        weapon.setChargeState(ChargeLevel.CHARGE_NONE);
     }
 
     public static int getDamageValue(Mounted<?> weapon) {

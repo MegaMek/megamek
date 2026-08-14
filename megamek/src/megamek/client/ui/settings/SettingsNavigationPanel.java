@@ -252,7 +252,7 @@ public class SettingsNavigationPanel extends JPanel {
         return filterField.getText();
     }
 
-    /** Sets the search field's display text; listeners receive its normalized form. */
+    /** Sets the search field's display text; {@code null} clears it and listeners receive its normalized form. */
     public void setFilterText(@Nullable String filterText) {
         filterField.setText(Objects.requireNonNullElse(filterText, ""));
     }

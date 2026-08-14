@@ -37,6 +37,7 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import megamek.client.ui.Messages;
 import megamek.common.internationalization.I18n;
 
 /**
@@ -99,7 +100,7 @@ public interface SettingsTextProvider {
      * @return a provider backed by MegaMek's standard client message bundle
      */
     static SettingsTextProvider megaMek() {
-        String bundleName = "megamek.client.messages";
+        String bundleName = Messages.CLIENT_BUNDLE;
         Set<String> resourceKeys = Set.copyOf(I18n.getKeys(bundleName));
         return new SettingsTextProvider() {
             @Override

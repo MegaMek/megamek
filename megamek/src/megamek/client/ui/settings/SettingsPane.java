@@ -113,7 +113,7 @@ public class SettingsPane extends JPanel {
         navigationPanel.focusSearchField();
     }
 
-    /** Sets the search field's display text; matching uses its normalized form. */
+    /** Sets the search field's display text; {@code null} clears it and matching uses its normalized form. */
     public void setFilterText(@Nullable String filterText) {
         navigationPanel.setFilterText(filterText);
     }

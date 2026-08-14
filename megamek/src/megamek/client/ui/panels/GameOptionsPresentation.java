@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.panels;
 
+import static megamek.client.ui.Messages.CLIENT_BUNDLE;
 import static megamek.common.internationalization.I18n.getTextAt;
 
 import java.util.LinkedHashMap;
@@ -45,7 +46,6 @@ import megamek.logging.MMLogger;
 /** Explicit presentation-only placement for every registered game option. */
 final class GameOptionsPresentation {
     private static final MMLogger LOGGER = MMLogger.create(GameOptionsPresentation.class);
-      private static final String CLIENT_BUNDLE = "megamek.client.messages";
     private static final String BASIC = "basic";
     private static final String GAME_MASTER = "gameMaster";
     private static final String VICTORY = "victory";
@@ -56,8 +56,7 @@ final class GameOptionsPresentation {
     private static final String AEROSPACE = "advancedAeroRules";
     private static final String INITIATIVE = "initiative";
     private static final String RPG = "rpg";
-
-            private static final PageDefinition LANDING = directPage("landing", BASIC, false, 0);
+    private static final PageDefinition LANDING = directPage("landing", BASIC, false, 0);
     private static final PageDefinition GENERAL_MATCH_SETUP = nestedPage(
           "general.matchSetup", "general", BASIC, false, 10);
     private static final PageDefinition GENERAL_MATCH_FLOW = nestedPage(
@@ -66,7 +65,7 @@ final class GameOptionsPresentation {
           "general.victoryAndGameMaster", "general", VICTORY, GAME_MASTER, false, 30);
     private static final PageDefinition GENERAL_UNITS_AND_TECHNOLOGY = nestedPage(
           "general.unitsAndTechnology", "general", ALLOWED_UNITS, false, 40);
-            private static final PageDefinition RULES_GENERAL = nestedPage("rules.general", "rules", BASIC, false, 60);
+    private static final PageDefinition RULES_GENERAL = nestedPage("rules.general", "rules", BASIC, false, 60);
     private static final PageDefinition RULES_SENSORS = nestedPage(
           "rules.sensors", "rules", ADVANCED_RULES, true, 70);
     private static final PageDefinition RULES_ENVIRONMENT = nestedPage(
@@ -150,7 +149,7 @@ final class GameOptionsPresentation {
     }
 
     private static void registerBasicOptions() {
-      register(BASIC, LANDING, "landing.rulesSystem", OptionsConstants.RULES_SYSTEM);
+        register(BASIC, LANDING, "landing.rulesSystem", OptionsConstants.RULES_SYSTEM);
         register(BASIC, GENERAL_MATCH_SETUP, "general.matchSetup.teams",
               OptionsConstants.BASE_TEAM_INITIATIVE,
               OptionsConstants.BASE_SET_DEFAULT_TEAM_1,
@@ -187,14 +186,13 @@ final class GameOptionsPresentation {
               OptionsConstants.BASE_DISABLE_LOCAL_SAVE,
               OptionsConstants.BASE_RNG_TYPE,
               OptionsConstants.BASE_RNG_LOG);
-
-                        register(BASIC, RULES_GENERAL, "rules.general.battlefield",
+        register(BASIC, RULES_GENERAL, "rules.general.battlefield",
               OptionsConstants.SEARCHLIGHTS_ON,
               OptionsConstants.BASE_PUSH_OFF_BOARD,
               OptionsConstants.BASE_BRIDGE_CF,
               OptionsConstants.BASE_RANDOM_BASEMENTS,
               OptionsConstants.BASE_BREEZE);
-                        register(BASIC, RULES_GENERAL, "rules.general.combat",
+        register(BASIC, RULES_GENERAL, "rules.general.combat",
               OptionsConstants.BASE_FRIENDLY_FIRE,
               OptionsConstants.BASE_INDIRECT_FIRE,
               OptionsConstants.BASE_FLAMER_HEAT,
@@ -540,10 +538,9 @@ final class GameOptionsPresentation {
           int order) {
         return new PageDefinition(id, categoryId, iconGroupId, "", advanced, order);
     }
-
-      private static PageDefinition directPage(String id, String iconGroupId, boolean advanced, int order) {
-            return new PageDefinition(id, "", iconGroupId, "", advanced, order);
-      }
+    private static PageDefinition directPage(String id, String iconGroupId, boolean advanced, int order) {
+        return new PageDefinition(id, "", iconGroupId, "", advanced, order);
+    }
 
     private static PageDefinition nestedPageWithSingleSourceFallback(String id, String categoryId, String iconGroupId,
           String fallbackSourceGroupId, boolean advanced, int order) {
@@ -577,23 +574,23 @@ final class GameOptionsPresentation {
         }
 
         List<String> path(Map<String, String> sourceGroups) {
-                  if (categoryId.isBlank()) {
-                        return List.of(title(sourceGroups));
-                  }
+            if (categoryId.isBlank()) {
+                return List.of(title(sourceGroups));
+            }
             return List.of(getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.category." + categoryId),
                   title(sourceGroups));
         }
 
         List<String> pathIds() {
-                  if (categoryId.isBlank()) {
-                        return List.of(routeId());
-                  }
+            if (categoryId.isBlank()) {
+                return List.of(routeId());
+            }
             return List.of("gameOptions." + categoryId, routeId());
         }
 
-            boolean isDirect() {
-                  return categoryId.isBlank();
-            }
+        boolean isDirect() {
+            return categoryId.isBlank();
+        }
 
         String effectiveIconGroupId(Map<String, String> sourceGroups) {
             return usesSingleSourceFallback(sourceGroups) ? fallbackSourceGroupId : iconGroupId;

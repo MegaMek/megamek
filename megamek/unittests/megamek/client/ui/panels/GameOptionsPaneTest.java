@@ -61,6 +61,8 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -812,7 +814,7 @@ class GameOptionsPaneTest {
         ResourceBundle bundle = ResourceBundle.getBundle("megamek.client.messages", Locale.ROOT);
         Set<String> localizedKeys = bundle.keySet().stream()
               .filter(key -> key.startsWith("GameOptionsDialog.section."))
-              .collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
+              .collect(Collectors.toCollection(LinkedHashSet::new));
 
         assertEquals(catalogKeys, localizedKeys);
     }
@@ -965,6 +967,8 @@ class GameOptionsPaneTest {
             assertEquals(UIUtil.scaleForGUI(200), logo.getIcon().getIconHeight());
             assertTrue(landingPage.getPageSearchText().contains("Across the Inner Sphere"));
             assertTrue(landingPage.getPageSearchText().contains("clarity at the planning table"));
+            assertEquals("GameOptionsDialog.page.landing.rulesSystem.core",
+                  GameOptionsPane.rulesSystemDescriptionKey("future rules"));
         });
     }
 
@@ -1436,6 +1440,31 @@ class GameOptionsPaneTest {
     }
 
     @Test
+    void climbOutRequiresReturnFlyoverWithoutClearingSavedValue() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            options.getOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER).setValue(false);
+            options.getOption(OptionsConstants.ADVANCED_AERO_RULES_CLIMB_OUT).setValue(true);
+            DialogOptionComponentYPanel returnFlyover = component(
+                  options.getOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER));
+            DialogOptionComponentYPanel climbOut = component(
+                  options.getOption(OptionsConstants.ADVANCED_AERO_RULES_CLIMB_OUT));
+
+            pane("advancedAeroRules", List.of(returnFlyover, climbOut), option -> true);
+
+            assertFalse(climbOut.settingsCheckBox().isEnabled());
+            assertTrue(climbOut.settingsCheckBox().isSelected());
+            assertFalse(climbOut.hasChanged());
+            returnFlyover.setSelected(true);
+            assertTrue(climbOut.settingsCheckBox().isEnabled());
+            returnFlyover.setSelected(false);
+            assertFalse(climbOut.settingsCheckBox().isEnabled());
+            assertTrue(climbOut.settingsCheckBox().isSelected());
+            assertFalse(climbOut.hasChanged());
+        });
+    }
+
+    @Test
     void vibrabombProtectionAppearsInMekMovementWithShorterLabel() {
         GameOptionsPresentation.Location location = GameOptionsPresentation.location(
               "advancedGroundMovement", OptionsConstants.ADVANCED_GROUND_MOVEMENT_NO_PRE_MOVE_VIBRA);
@@ -1550,12 +1579,12 @@ class GameOptionsPaneTest {
     }
 
     private static GameOptionsPane pane(List<DialogOptionComponentYPanel> components,
-          java.util.function.Predicate<IOption> visibility) {
+          Predicate<IOption> visibility) {
         return pane("basic", components, visibility);
     }
 
     private static GameOptionsPane pane(String groupId, List<DialogOptionComponentYPanel> components,
-          java.util.function.Predicate<IOption> visibility) {
+          Predicate<IOption> visibility) {
         return new GameOptionsPane(List.of(new GameOptionsPane.OptionGroup(groupId, groupId, components)),
               visibility);
     }

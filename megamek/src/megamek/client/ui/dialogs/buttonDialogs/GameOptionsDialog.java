@@ -33,6 +33,7 @@
  */
 package megamek.client.ui.dialogs.buttonDialogs;
 
+import static megamek.client.ui.Messages.CLIENT_BUNDLE;
 import static megamek.client.ui.util.UIUtil.WrappingButtonPanel;
 import static megamek.common.internationalization.I18n.getTextAt;
 
@@ -81,14 +82,15 @@ import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
+import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 /** Responsible for displaying the current game options and allowing the user to change them. */
 public class GameOptionsDialog extends AbstractButtonDialog implements ActionListener, DialogOptionListener {
+    private static final MMLogger LOGGER = MMLogger.create(GameOptionsDialog.class);
     private static final int BUTTON_GAP = 8;
-    private static final String CLIENT_BUNDLE = "megamek.client.messages";
     private static final Set<String> CORE_RULES_DISABLED_OPTIONS = Set.of(
           OptionsConstants.BASE_FLAMER_HEAT,
           OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS,
@@ -506,36 +508,29 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
     /** Refreshes unofficial/legacy visibility and dependent control state without changing hidden rule values. */
     private void toggleOptions() {
-        gameOptionsPane.refreshVisibility();
-        applyRulesSystemEditability();
+        refreshOptionPresentation(gameOptionsPane, optionComps, editable, selectedRulesSystem());
+    }
 
-        // Initialize dependent options: Climb Out requires Return Flyover
-        boolean returnFlyoverEnabled = options.getOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER)
-              .booleanValue();
-        List<DialogOptionComponentYPanel> climbOutComps = optionComps.get(OptionsConstants.ADVANCED_AERO_RULES_CLIMB_OUT);
-        if (climbOutComps != null) {
-            for (DialogOptionComponentYPanel comp : climbOutComps) {
-                comp.setEditable(returnFlyoverEnabled);
-                if (!returnFlyoverEnabled) {
-                    comp.setSelected(false);
-                }
-            }
-        }
+    static void refreshOptionPresentation(GameOptionsPane pane,
+          Map<String, List<DialogOptionComponentYPanel>> optionComponents, boolean dialogEditable,
+          String rulesSystem) {
+        pane.refreshVisibility();
+        applyRulesSystemEditability(optionComponents, dialogEditable, rulesSystem);
     }
 
     static void deactivateOptions(Map<String, List<DialogOptionComponentYPanel>> optionComponents,
           Predicate<IOption> category) {
-        for (List<DialogOptionComponentYPanel> comps : optionComponents.values()) {
+        for (List<DialogOptionComponentYPanel> components : optionComponents.values()) {
             // Each option in the list should have the same value, so picking the first is fine
-            if (!comps.isEmpty()) {
-                DialogOptionComponentYPanel comp = comps.getFirst();
-                if (!category.test(comp.getOption())) {
+            if (!components.isEmpty()) {
+                DialogOptionComponentYPanel component = components.getFirst();
+                if (!category.test(component.getOption())) {
                     continue;
                 }
-                if (comp.getOption().getType() == IOption.BOOLEAN) {
-                    comp.setSelected(false);
-                } else if (comp.getOption().getName().equals(OptionsConstants.ADVANCED_GHOST_TARGET_MODE)) {
-                    comp.setValue(OptionsConstants.GHOST_TARGET_MODE_STANDARD);
+                if (component.getOption().getType() == IOption.BOOLEAN) {
+                    component.setSelected(false);
+                } else if (component.getOption().getName().equals(OptionsConstants.ADVANCED_GHOST_TARGET_MODE)) {
+                    component.setValue(OptionsConstants.GHOST_TARGET_MODE_STANDARD);
                 }
             }
         }
@@ -560,7 +555,8 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
     static void applyRulesSystemEditability(Map<String, List<DialogOptionComponentYPanel>> optionComponents,
           boolean dialogEditable, String rulesSystem) {
-        boolean rulesOptionsEditable = dialogEditable && !OptionsConstants.RULES_CORE.equals(rulesSystem);
+        boolean rulesOptionsEditable = dialogEditable
+              && OptionsConstants.RULES_TW.equals(normalizeRulesSystem(rulesSystem));
         for (String optionName : CORE_RULES_DISABLED_OPTIONS) {
             List<DialogOptionComponentYPanel> components = optionComponents.get(optionName);
             if (components != null) {
@@ -572,12 +568,28 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     private String selectedRulesSystem() {
         List<DialogOptionComponentYPanel> components = optionComps.get(OptionsConstants.RULES_SYSTEM);
         if (components != null && !components.isEmpty()) {
-            return (String) components.getFirst().getValue();
+            return normalizeRulesSystem(components.getFirst().getValue());
         }
         IOption rulesSystem = options.getOption(OptionsConstants.RULES_SYSTEM);
-        return rulesSystem == null ? OptionsConstants.RULES_CORE : rulesSystem.stringValue();
+        return normalizeRulesSystem(rulesSystem == null ? null : rulesSystem.getValue());
     }
 
+    static String normalizeRulesSystem(@Nullable Object value) {
+        if (value instanceof String rulesSystem
+              && (OptionsConstants.RULES_CORE.equals(rulesSystem) || OptionsConstants.RULES_TW.equals(rulesSystem))) {
+            return rulesSystem;
+        }
+        LOGGER.debug("Unknown rules system '{}'; using '{}'.", value, OptionsConstants.RULES_CORE);
+        return OptionsConstants.RULES_CORE;
+    }
+
+    /**
+     * Creates an editor for an option.
+     *
+     * @param option option to represent; {@code null} returns no component
+     *
+     * @return the option editor, or {@code null} when {@code option} is {@code null}
+     */
     private @Nullable DialogOptionComponentYPanel createOptionComponent(@Nullable IOption option) {
         if (option == null) {
             return null;
@@ -950,15 +962,6 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                 }
             }
         }
-        if (option.getName().equals(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER)) {
-            comps = optionComps.get(OptionsConstants.ADVANCED_AERO_RULES_CLIMB_OUT);
-            for (DialogOptionComponentYPanel comp_i : comps) {
-                comp_i.setEditable(state);
-                if (!state) {
-                    comp_i.setSelected(false);
-                }
-            }
-        }
     }
 
     @Override
@@ -1048,7 +1051,8 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         if (!hasBackingOption(backingOptionName)) {
             return;
         }
-        if (!button.isSelected() && !MMConfirmDialog.confirm(frame, "Warning",
+        if (!button.isSelected() && !MMConfirmDialog.confirm(frame,
+            getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.warning.title"),
             getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.HideWarning"))) {
             button.setSelected(true);
             updateRuleToggleText(button, badge, getTextAt(CLIENT_BUNDLE, labelKey));
@@ -1128,7 +1132,6 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         butLoad.setVisible(editable);
         revalidate();
         repaint();
-
     }
 
     /**

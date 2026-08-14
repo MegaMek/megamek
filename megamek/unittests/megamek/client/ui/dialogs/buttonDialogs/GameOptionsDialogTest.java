@@ -67,15 +67,15 @@ class GameOptionsDialogTest {
     @Test
     void ruleToggleLabelsUseBadgeIconsAndOnOffText() {
         String unofficialOn = GameOptionsDialog.ruleToggleText(
-              GameOptionsPane.unofficialBadge(), "Unofficial Rules", "On");
+              GameOptionsPane.unofficialBadge(), "Reglas no oficiales", "Activado");
         String legacyOff = GameOptionsDialog.ruleToggleText(
-              GameOptionsPane.legacyBadge(), "Legacy Rules", "Off");
+              GameOptionsPane.legacyBadge(), "Reglas heredadas", "Desactivado");
 
         assertTrue(unofficialOn.contains(Character.toString(0xEA4B)), unofficialOn);
         assertTrue(unofficialOn.contains("color=\"#e69f00\""), unofficialOn);
-        assertTrue(unofficialOn.contains("Unofficial Rules: <b>On</b>"), unofficialOn);
+        assertTrue(unofficialOn.contains("Reglas no oficiales: <b>Activado</b>"), unofficialOn);
         assertTrue(legacyOff.contains(Character.toString(0xE889)), legacyOff);
-        assertTrue(legacyOff.contains("Legacy Rules: <b>Off</b>"), legacyOff);
+        assertTrue(legacyOff.contains("Reglas heredadas: <b>Desactivado</b>"), legacyOff);
         assertFalse(unofficialOn.contains("\u2713"), unofficialOn);
         assertFalse(legacyOff.contains("\u2717"), legacyOff);
     }
@@ -168,7 +168,7 @@ class GameOptionsDialogTest {
     }
 
     @Test
-    void coreRulesDisableExactlyTheBlogListedOptions() {
+    void coreRulesDisableExactlyTheRulesSpecificOptions() {
         Set<String> expectedDisabledOptions = Set.of(
               OptionsConstants.BASE_FLAMER_HEAT,
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS,
@@ -207,6 +207,51 @@ class GameOptionsDialogTest {
         GameOptionsDialog.applyRulesSystemEditability(optionComponents, false, OptionsConstants.RULES_TW);
         expectedDisabledOptions.forEach(optionName ->
               assertFalse(optionComponents.get(optionName).getFirst().getEditable(), optionName));
+    }
+
+    @Test
+    void unknownRulesSystemFallsBackToCore() {
+        assertEquals(OptionsConstants.RULES_CORE, GameOptionsDialog.normalizeRulesSystem(null));
+        assertEquals(OptionsConstants.RULES_CORE, GameOptionsDialog.normalizeRulesSystem(42));
+        assertEquals(OptionsConstants.RULES_CORE, GameOptionsDialog.normalizeRulesSystem("future rules"));
+        assertEquals(OptionsConstants.RULES_TW, GameOptionsDialog.normalizeRulesSystem(OptionsConstants.RULES_TW));
+    }
+
+    @Test
+    void openingDialogPresentationDoesNotChangeHiddenRuleValues() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            options.getOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS).setValue(true);
+            options.getOption(OptionsConstants.ADVANCED_ASSAULT_DROP).setValue(true);
+            options.getOption(OptionsConstants.BASE_FLAMER_HEAT).setValue(true);
+            DialogOptionComponentYPanel bridgeRepair = component(
+                  options.getOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS));
+            DialogOptionComponentYPanel assaultDrop = component(
+                  options.getOption(OptionsConstants.ADVANCED_ASSAULT_DROP));
+            DialogOptionComponentYPanel flamerHeat = component(
+                  options.getOption(OptionsConstants.BASE_FLAMER_HEAT));
+            List<GameOptionsPane.OptionGroup> groups = List.of(
+                  new GameOptionsPane.OptionGroup("advancedRules", "Advanced Rules",
+                        List.of(bridgeRepair, assaultDrop)),
+                  new GameOptionsPane.OptionGroup("basic", "Basic", List.of(flamerHeat)));
+            GameOptionsPane pane = new GameOptionsPane(groups,
+                  option -> !GameOptionsPane.isUnofficialOption(option) && !GameOptionsPane.isLegacyOption(option));
+            Map<String, List<DialogOptionComponentYPanel>> optionComponents = Map.of(
+                  OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS, List.of(bridgeRepair),
+                  OptionsConstants.ADVANCED_ASSAULT_DROP, List.of(assaultDrop),
+                  OptionsConstants.BASE_FLAMER_HEAT, List.of(flamerHeat));
+
+            GameOptionsDialog.refreshOptionPresentation(
+                  pane, optionComponents, true, OptionsConstants.RULES_CORE);
+
+            for (DialogOptionComponentYPanel component : List.of(bridgeRepair, assaultDrop, flamerHeat)) {
+                assertTrue((Boolean) component.getValue());
+                assertFalse(component.hasChanged());
+            }
+            assertFalse(bridgeRepair.isVisible());
+            assertFalse(assaultDrop.isVisible());
+            assertFalse(flamerHeat.getEditable());
+        });
     }
 
     @Test

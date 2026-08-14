@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.panels;
 
+import static megamek.client.ui.Messages.CLIENT_BUNDLE;
 import static megamek.common.internationalization.I18n.getTextAt;
 import static megamek.utilities.ImageUtilities.addTintToImageIcon;
 import static megamek.utilities.ImageUtilities.scaleImageIcon;
@@ -77,11 +78,12 @@ import megamek.common.annotations.Nullable;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
+import megamek.logging.MMLogger;
 
 /** Searchable settings-tree presentation for metadata-backed game option groups. */
 public class GameOptionsPane extends JPanel {
+    private static final MMLogger LOGGER = MMLogger.create(GameOptionsPane.class);
     private static final int START_HEIGHT = 800;
-    private static final String CLIENT_BUNDLE = "megamek.client.messages";
     private static final int HEADER_IMAGE_SIZE = 80;
     private static final int LANDING_HEADER_IMAGE_SIZE = 200;
     private static final int MAX_VICTORY_CONDITIONS = 100;
@@ -283,7 +285,7 @@ public class GameOptionsPane extends JPanel {
         return settingsPane.getFilterText();
     }
 
-    /** Sets the displayed search text and reapplies its normalized form to all staged pages. */
+    /** Sets the displayed search text and reapplies its normalized form to all staged pages; {@code null} clears it. */
     public void setFilterText(@Nullable String filterText) {
         settingsPane.setFilterText(filterText);
         String normalizedFilter = SettingsRoute.normalizeSearchText(Objects.requireNonNullElse(filterText, ""));
@@ -315,6 +317,9 @@ public class GameOptionsPane extends JPanel {
         configureEditableDependency(componentsByName,
               OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED,
               OptionsConstants.ADVANCED_ALTERNATE_MASC);
+        configureEditableDependency(componentsByName,
+              OptionsConstants.ADVANCED_AERO_RULES_CLIMB_OUT,
+              OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER);
 
         DialogOptionComponentYPanel infantryAndProtoMekGroupSize = componentsByName.get(
               OptionsConstants.INIT_INF_PROTO_MOVE_MULTI);
@@ -491,8 +496,8 @@ public class GameOptionsPane extends JPanel {
                       pageSeed.definition().id() + entry.getKey(), entry.getValue().rows, labelWidth);
                 sectionContentRows.put(content, entry.getValue().rows);
                 displayedSectionRows.put(content, List.copyOf(entry.getValue().rows));
-                    builder.literalSection(sectionTitle(entry.getKey()), sectionSummary(entry.getKey()), content,
-                        sectionBadges(pageSeed.definition().advanced()), pageSeed.searchAliases());
+                builder.literalSection(sectionTitle(entry.getKey()), sectionSummary(entry.getKey()), content,
+                      sectionBadges(pageSeed.definition().advanced()), pageSeed.searchAliases());
             }
             pagePanel = builder.build();
             add(pagePanel, BorderLayout.CENTER);
@@ -754,9 +759,7 @@ public class GameOptionsPane extends JPanel {
         description.setVerticalAlignment(SwingConstants.TOP);
         int textWidth = UIUtil.scaleForGUI(SettingsPagePanel.DEFAULT_SECTION_STACK_WIDTH - 30);
         Runnable updateText = () -> {
-            String key = OptionsConstants.RULES_CORE.equals(component.getValue())
-                  ? "GameOptionsDialog.page.landing.rulesSystem.core"
-                  : "GameOptionsDialog.page.landing.rulesSystem.totalWarfare";
+            String key = rulesSystemDescriptionKey(component.getValue());
             description.setText("<html><div style='width: " + textWidth + "'>" + TEXT.getText(key)
                   + "</div></html>");
             description.revalidate();
@@ -767,6 +770,16 @@ public class GameOptionsPane extends JPanel {
         }
         updateText.run();
         return description;
+    }
+
+    static String rulesSystemDescriptionKey(Object value) {
+        if (OptionsConstants.RULES_TW.equals(value)) {
+            return "GameOptionsDialog.page.landing.rulesSystem.totalWarfare";
+        }
+        if (!OptionsConstants.RULES_CORE.equals(value)) {
+            LOGGER.debug("Unknown rules system '{}'; showing Core rules guidance.", value);
+        }
+        return "GameOptionsDialog.page.landing.rulesSystem.core";
     }
 
     private record OptionRow(DialogOptionComponentYPanel component, IOption option, String searchableText,

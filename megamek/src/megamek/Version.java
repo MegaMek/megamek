@@ -88,6 +88,9 @@ public final class Version implements Comparable<Version>, Serializable {
     /** Key of the optional point size the build note is drawn at. Absent unless a build note sets one. */
     private static final String NOTES_FONT_SIZE_BUNDLE_KEY = "notesFontSize";
 
+    /** Key of the optional tag sprayed across the MegaMek logo on the splash art. Absent for ordinary releases. */
+    private static final String SPLASH_TAG_BUNDLE_KEY = "splashTag";
+
     /**
      * The value {@link #getBuildNotesFontSize()} reports when no point size is configured, meaning the build note
      * is drawn at whatever size the rest of the menu uses.
@@ -114,6 +117,7 @@ public final class Version implements Comparable<Version>, Serializable {
     private static final String BUILD_NOTES = readOptionalNotesFromBundle();
     private static final String BUILD_NOTES_COLOR_NAME = readOptionalEntryFromBundle(NOTES_COLOR_BUNDLE_KEY);
     private static final int BUILD_NOTES_FONT_SIZE = readOptionalNotesFontSizeFromBundle();
+    private static final String SPLASH_TAG = readOptionalEntryFromBundle(SPLASH_TAG_BUNDLE_KEY);
 
     private int major;
     private int minor;
@@ -396,6 +400,27 @@ public final class Version implements Comparable<Version>, Serializable {
      */
     public static boolean hasBuildNotesFontSize() {
         return BUILD_NOTES_FONT_SIZE != NO_NOTES_FONT_SIZE;
+    }
+
+    /**
+     * Returns the short tag this build sprays across the MegaMek logo on the splash art, such as the name of the
+     * edition it is celebrating.
+     *
+     * <p>This is separate from {@link #getBuildNotes()} so that the artwork and the menu can say different
+     * things, or so that a build can have one without the other.</p>
+     *
+     * @return the splash tag, or {@code null} when this build has none, which is the case for every ordinary
+     *       release
+     */
+    public static @Nullable String getSplashTag() {
+        return SPLASH_TAG;
+    }
+
+    /**
+     * @return {@code true} if this build has a tag to spray across the splash art, otherwise {@code false}
+     */
+    public static boolean hasSplashTag() {
+        return SPLASH_TAG != null;
     }
 
     // region Getters

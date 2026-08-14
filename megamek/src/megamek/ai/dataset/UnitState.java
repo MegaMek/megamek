@@ -89,7 +89,9 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
         ARMOR_RIGHT_P,
         ARMOR_BACK_P,
         WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE,
-        REMOVAL
+        REMOVAL,
+        ALTITUDE,
+        VELOCITY
     }
 
     /**
@@ -141,7 +143,11 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
               .put(Field.CRIPPLED, entity.isCrippled())
               .put(Field.DESTROYED, entity.isDestroyed())
               .put(Field.DONE, entity.isDone())
-              .put(Field.REMOVAL, removalConditionName(entity.getRemovalCondition()));
+              .put(Field.REMOVAL, removalConditionName(entity.getRemovalCondition()))
+              // The altitude profile IS the story of an aerospace round - cruise, let-down, attack run,
+              // climb-out - and X/Y alone cannot tell it. Zero for anything on the ground.
+              .put(Field.ALTITUDE, entity.getAltitude())
+              .put(Field.VELOCITY, (entity instanceof IAero aero) ? aero.getCurrentVelocity() : 0);
 
         // Health and armor
         map.put(Field.ARMOR_P, entity.getArmorRemainingPercent())

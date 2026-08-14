@@ -40,8 +40,11 @@ import java.util.Map;
 import megamek.client.bot.princess.AerospaceGeometry.AltitudeBand;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.MMConstants;
 import megamek.common.compute.ComputeArc;
 import megamek.common.enums.MoveStepType;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
 import megamek.common.ManeuverType;
@@ -95,6 +98,20 @@ public class AerospacePathRanker extends BasicPathRanker {
 
     /** Credit for holding an arc the target cannot answer, as a fraction of the engagement credit. */
     private static final double ARC_ADVANTAGE_WEIGHT = 0.25;
+
+    /**
+     * Credit for a path that overflies an enemy ground unit inside the legal attack window.
+     *
+     * <p>Weighted above the air-to-air engagement credit because an overflight is not an opportunity, it
+     * is the whole attack: every air-to-ground weapon requires the target's hex on this turn's flown
+     * line ({@code passedOver}), ground units have all moved by the time a fighter plans, and the flown
+     * hexes reset every round. Miss the overflight and there is no attack this turn, full stop. Measured
+     * without this term: two unopposed fighters averaged one bombing pass every fourteen rounds.</p>
+     */
+    private static final double ATTACK_RUN_WEIGHT = 0.6;
+
+    /** Strike attacks (guns, air-to-ground) are impossible above this altitude. */
+    private static final int STRIKE_MAX_ALTITUDE = 5;
 
     /** What reaching the ground out of control is priced at, before the odds of it happening. */
     private static final double CONTROL_LOSS_COST = 40.0;
@@ -171,6 +188,9 @@ public class AerospacePathRanker extends BasicPathRanker {
     private int lastEngageableEnemies;
     private int lastCommittedEnemies;
     private int lastAirEnemies;
+    int lastGroundTargets;
+    int lastOverflownTargets;
+    private double lastAttackRunCredit;
     private int lastVenueGround;
     private double lastCloseRangeDamage;
     private int lastFinalAltitude;
@@ -226,6 +246,9 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastEngageableEnemies = 0;
         lastCommittedEnemies = 0;
         lastAirEnemies = 0;
+        lastGroundTargets = 0;
+        lastOverflownTargets = 0;
+        lastAttackRunCredit = 0;
         lastVenueGround = 0;
         lastCloseRangeDamage = 0;
         lastFinalAltitude = 0;
@@ -253,6 +276,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         // attack-or-defend answer, and nothing that reads posture applied to it.
         lastPosture = resolveAerospacePosture(game, mover.getBoardId(), venue);
         scoreEngagements(path, game, enemies, venue);
+        scoreAttackRuns(path, game, enemies, venue);
         lastControlRiskPenalty = controlRiskPenalty(path);
         lastVelocityPenalty = velocityPenalty(path, venue);
         lastEdgePenalty = edgePenalty(path, game, venue);
@@ -262,7 +286,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         // claims - only exist if the control roll passes, so they are worth their expected value, not
         // their face value. Its costs are certain either way. A 58% Immelmann onto a committed enemy
         // offers 58% of its pose; the crash risk and the spent turn are owed in full.
-        double gains = lastEngagementCredit + lastArcAdvantage;
+        double gains = lastEngagementCredit + lastArcAdvantage + lastAttackRunCredit;
         if (lastManeuverType != ManeuverType.MAN_NONE) {
             gains *= lastManeuverOdds;
         }
@@ -403,6 +427,75 @@ public class AerospacePathRanker extends BasicPathRanker {
     }
 
     /**
+     * Credits this path for every enemy ground unit whose hex its flown line crosses inside the legal
+     * attack window.
+     *
+     * <p>The mechanic this prices: every air-to-ground attack requires {@code passedOver(target)} - the
+     * target's hex must be on the line the fighter physically flew THIS round, and the line resets every
+     * round. Ground units move before aerospace on a ground map, so their final positions are known facts
+     * when this ranker runs: an overflight is never a guess, always a plan. The legal window is read from
+     * the armament - dive bombing needs a final altitude of {@value MMConstants#DIVE_BOMB_MIN_ALTITUDE} to
+     * {@value MMConstants#DIVE_BOMB_MAX_ALTITUDE} with ground bombs aboard, gun strikes work up to
+     * {@value #STRIKE_MAX_ALTITUDE} - and a pose outside every window earns nothing, because it cannot
+     * attack no matter what it flew over.</p>
+     */
+    void scoreAttackRuns(MovePath path, Game game, List<Entity> enemies, AerospaceVenue venue) {
+        if (!venue.isGroundMap()) {
+            return;
+        }
+        Entity mover = path.getEntity();
+        int finalAltitude = path.getFinalAltitude();
+        boolean hasGroundBombs = !mover.getBombs(AmmoType.F_GROUND_BOMB).isEmpty();
+        boolean inDiveBombWindow = hasGroundBombs
+              && (finalAltitude >= MMConstants.DIVE_BOMB_MIN_ALTITUDE)
+              && (finalAltitude <= MMConstants.DIVE_BOMB_MAX_ALTITUDE);
+        // A strike still costs 1 altitude, so the pose must keep a level in hand above the deck.
+        boolean inStrikeWindow = (finalAltitude > AerospaceGeometry.MINIMUM_ALTITUDE)
+              && (finalAltitude <= STRIKE_MAX_ALTITUDE);
+
+        double bombDamage = inDiveBombWindow ? groundBombDamage(mover) : 0;
+        double gunDamage = inStrikeWindow
+              ? getMaxDamageAtRange(mover, 1, isExtremeRange(game), isLosRange(game)) : 0;
+        double runDamage = Math.max(bombDamage, gunDamage);
+
+        boolean inAnyWindow = inDiveBombWindow || inStrikeWindow;
+        for (Entity enemy : enemies) {
+            if (!isGroundTargetCandidate(mover, enemy, game)) {
+                continue;
+            }
+            lastGroundTargets++;
+            if (!inAnyWindow || !path.getCoordsSet().contains(enemy.getPosition())) {
+                continue;
+            }
+            // Counted whenever the geometry works, credited only for what the armament can deliver -
+            // the count is the diagnostic (did we line runs up?), the credit is the incentive.
+            lastOverflownTargets++;
+            lastAttackRunCredit += runDamage * ATTACK_RUN_WEIGHT;
+        }
+    }
+
+    /** The summed damage of every ground bomb aboard - the payload one full dive-bomb pass can deliver. */
+    private static double groundBombDamage(Entity mover) {
+        double total = 0;
+        for (BombMounted bomb : mover.getBombs(AmmoType.F_GROUND_BOMB)) {
+            total += bomb.getType().getDamagePerShot();
+        }
+        return total;
+    }
+
+    /**
+     * Whether this enemy is a ground unit an attack run could target: on the ground, on our board, and
+     * worth attacking. Airborne enemies belong to {@link #scoreEngagements}; the two sets never overlap.
+     */
+    private boolean isGroundTargetCandidate(Entity mover, Entity enemy, Game game) {
+        return !enemy.isAirborne()
+              && (enemy.getPosition() != null)
+              && (enemy.getBoardId() == mover.getBoardId())
+              && !enemy.isOffBoard()
+              && !isIgnorableEnemy(mover, enemy, game);
+    }
+
+    /**
      * Whether this enemy is one the dead zone has any say about: an airborne aerospace unit sharing our board.
      *
      * <p>The board filter is not optional. Entity lists are game-wide, and on a multi-board game an enemy
@@ -495,8 +588,11 @@ public class AerospacePathRanker extends BasicPathRanker {
      *
      * @return the penalty to subtract from this path's utility
      */
-    private double velocityPenalty(MovePath path, AerospaceVenue venue) {
-        if (!venue.isGroundMap() || (lastAirEnemies == 0)) {
+    double velocityPenalty(MovePath path, AerospaceVenue venue) {
+        // Ground targets discipline velocity for a different reason than enemy air does: a bombing run
+        // must thread the target's exact hex, and at velocity 3 a facing change comes only every 16
+        // hexes - the run cannot be aimed. Measured without this: fourteen-round gaps between passes.
+        if (!venue.isGroundMap() || ((lastAirEnemies == 0) && (lastGroundTargets == 0))) {
             return 0;
         }
         int excessVelocity = Math.max(0, path.getFinalVelocity() - 1);
@@ -911,6 +1007,9 @@ public class AerospacePathRanker extends BasicPathRanker {
         scores.put("aeroManeuverRisk", lastManeuverRisk);
         scores.put("aeroManeuverType", (double) lastManeuverType);
         scores.put("aeroManeuverOdds", lastManeuverOdds);
+        scores.put("aeroGroundTargets", (double) lastGroundTargets);
+        scores.put("aeroOverflownTargets", (double) lastOverflownTargets);
+        scores.put("aeroAttackRunCredit", lastAttackRunCredit);
         scores.put("aeroFinalVelocity", (double) lastFinalVelocity);
         return scores;
     }

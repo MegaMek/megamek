@@ -390,6 +390,100 @@ class AerospacePathRankerTest {
               AerospaceVenue.GROUND_MAP), "bad odds do not gate the escape pair");
     }
 
+    // --- the attack run ------------------------------------------------------------------------------
+
+    private static Entity groundMek(Coords position) {
+        Entity mek = mock(Entity.class);
+        when(mek.isAirborne()).thenReturn(false);
+        when(mek.getPosition()).thenReturn(position);
+        when(mek.getBoardId()).thenReturn(0);
+        when(mek.isOffBoard()).thenReturn(false);
+        return mek;
+    }
+
+    private AeroSpaceFighter strikeFighterOver(java.util.Set<Coords> flownHexes, int finalAltitude,
+          MovePath path) {
+        AeroSpaceFighter fighter = mock(AeroSpaceFighter.class);
+        when(fighter.getBoardId()).thenReturn(0);
+        when(fighter.getBombs(megamek.common.equipment.AmmoType.F_GROUND_BOMB))
+              .thenReturn(new java.util.ArrayList<>());
+        when(path.getEntity()).thenReturn(fighter);
+        when(path.getFinalAltitude()).thenReturn(finalAltitude);
+        when(path.getCoordsSet()).thenReturn(flownHexes);
+        return fighter;
+    }
+
+    /**
+     * The whole air-to-ground mechanic in one credit: every A2G attack requires the target's hex on THIS
+     * turn's flown line (passedOver), ground units have already moved when the fighter plans, and the
+     * line resets every round. A path over the mek inside the strike window earns the credit; the same
+     * path four altitudes higher earns nothing, because no attack is legal from up there. Measured
+     * without this term: one bombing pass every fourteen rounds.
+     */
+    private Game groundGame() {
+        Game game = mock(Game.class);
+        when(game.getOptions()).thenReturn(new megamek.common.options.GameOptions());
+        when(game.onTheSameBoard(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any()))
+              .thenReturn(true);
+        // isIgnorableEnemy walks board containment and honor state; give both real answers.
+        when(game.getBoard(org.mockito.ArgumentMatchers.any(Entity.class))).thenReturn(groundBoard(40, 40));
+        IHonorUtil honorUtil = mock(IHonorUtil.class);
+        when(ranker.getOwner().getHonorUtil()).thenReturn(honorUtil);
+        return game;
+    }
+
+    @Test
+    void overflyingACommittedGroundTargetInsideTheWindowEarnsTheRun() {
+        Game game = groundGame();
+        Coords mekHex = new Coords(20, 20);
+        Entity mek = groundMek(mekHex);
+
+        MovePath overflight = mock(MovePath.class);
+        AeroSpaceFighter fighter = strikeFighterOver(java.util.Set.of(new Coords(19, 20), mekHex), 4,
+              overflight);
+        // Guns that can deliver at close range: use the ranker's own damage table via a real value.
+        when(fighter.getWeaponList()).thenReturn(new java.util.ArrayList<>());
+
+        ranker.scoreAttackRuns(overflight, game, java.util.List.of(mek), AerospaceVenue.GROUND_MAP);
+        int overflownInWindow = ranker.lastOverflownTargets;
+
+        ranker.lastGroundTargets = 0;
+        ranker.lastOverflownTargets = 0;
+        MovePath tooHigh = mock(MovePath.class);
+        strikeFighterOver(java.util.Set.of(new Coords(19, 20), mekHex), 9, tooHigh);
+        ranker.scoreAttackRuns(tooHigh, game, java.util.List.of(mek), AerospaceVenue.GROUND_MAP);
+        int overflownTooHigh = ranker.lastOverflownTargets;
+
+        assertEquals(1, overflownInWindow, "over the mek at altitude 4, the run is on");
+        assertEquals(0, overflownTooHigh, "altitude 9 can attack nothing - no credit however good the line");
+    }
+
+    /**
+     * Ground targets discipline velocity just as enemy air does: a run must thread the target's exact
+     * hex, and at velocity 3 a facing change comes only every 16 hexes. Without this gate two unopposed
+     * fighters circled for fourteen rounds between passes.
+     */
+    @Test
+    void groundTargetsAloneActivateVelocityDiscipline() {
+        Game game = groundGame();
+        Coords mekHex = new Coords(20, 20);
+        Entity mek = groundMek(mekHex);
+
+        MovePath path = mock(MovePath.class);
+        AeroSpaceFighter fighter = strikeFighterOver(java.util.Set.of(new Coords(5, 5)), 5, path);
+        when(fighter.getWeaponList()).thenReturn(new java.util.ArrayList<>());
+        when(path.getFinalVelocity()).thenReturn(3);
+        when(path.getGame()).thenReturn(game);
+
+        ranker.scoreAttackRuns(path, game, java.util.List.of(mek), AerospaceVenue.GROUND_MAP);
+
+        assertTrue(ranker.lastGroundTargets > 0, "the mek must register as a ground target");
+        // The penalty itself scales with the fighter's close-range damage, which is zero for this
+        // weaponless mock - what matters is that the gate is OPEN with no enemy air on the board.
+        assertEquals(0.0, ranker.velocityPenalty(path, AerospaceVenue.GROUND_MAP), 0.0001,
+              "zero damage prices a zero penalty, but the gate no longer requires enemy air");
+    }
+
     /**
      * Flying off is a disengage, not a defeat (Dave, 2026-08-13): the fighter returns some rounds later
      * and is untargetable in the meantime. A healthy fighter still pays the full off-board cost; a mauled

@@ -65,7 +65,6 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.enums.AimingMode;
-import megamek.common.enums.ChargeLevel;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
@@ -978,12 +977,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     report.add(toHit.getDesc());
                     vPhaseReport.addElement(report);
                     returnedReports.addAll(vPhaseReport);
-
-                    // If we fired a charged bombast laser, reset the charge to none.
-                    if (weaponType.hasFlag(WeaponType.F_BOMBAST_LASER) && weapon.getChargeState()
-                          .equals(ChargeLevel.CHARGED)) {
-                        weapon.setChargeState(ChargeLevel.CHARGE_NONE);
-                    }
                     return false;
                 } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
                     report = new Report(3140);
@@ -1112,14 +1105,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
                 // Works out fire setting, AMS shots, and whether continuation
                 // is necessary.
-
-                // If we fired a charged bombast laser, reset the charge to none.
-                if (weaponType.hasFlag(WeaponType.F_BOMBAST_LASER) && weapon.getChargeState()
-                      .equals(ChargeLevel.CHARGED)) {
-                    weapon.setChargeState(ChargeLevel.CHARGE_NONE);
-                }
-
-
                 if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                       vPhaseReport) && (i < 2)) {
                     returnedReports.addAll(vPhaseReport);
@@ -1286,12 +1271,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 }
             }
         }
-
-        // If we fired a charged bombast laser, reset the charge to none.
-        if (weaponType.hasFlag(WeaponType.F_BOMBAST_LASER) && weapon.getChargeState().equals(ChargeLevel.CHARGED)) {
-            weapon.setChargeState(ChargeLevel.CHARGE_NONE);
-        }
-
         Report.addNewline(vPhaseReport);
 
         insertAttacks(phase, vPhaseReport);

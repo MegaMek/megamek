@@ -70,20 +70,18 @@ public class BombastLaserWeaponHandler extends EnergyWeaponHandler {
 
     @Override
     public boolean handle(GamePhase phase, Vector<Report> returnedReports) {
-        try {
-            return super.handle(phase, returnedReports);
-        } finally {
-            dischargeIfCharged();
-        }
+        boolean handled = false;
+        handled = super.handle(phase, returnedReports);
+        dischargeIfCharged();
+
+        return handled;
     }
 
     private void dischargeIfCharged() {
         if (weapon.getChargeState() != ChargeLevel.CHARGED) {
             return;
         }
-        if (weapon.isFired()) {
-            weapon.setChargeState(ChargeLevel.CHARGE_NONE);
-        }
+        weapon.setChargeState(ChargeLevel.CHARGE_NONE);
     }
 
     public static int getDamageValue(Mounted<?> weapon) {

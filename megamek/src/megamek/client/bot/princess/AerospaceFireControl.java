@@ -53,6 +53,7 @@ import megamek.common.moves.MovePath;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
+import megamek.logging.MMLogger;
 
 /**
  * Gunnery for aerospace units flying in an atmosphere.
@@ -71,6 +72,8 @@ import megamek.common.units.Targetable;
  * </ul>
  */
 public class AerospaceFireControl extends FireControl {
+
+    private static final MMLogger RATION_LOGGER = MMLogger.create(AerospaceFireControl.class);
 
     /** Refusal reason for a shot the geometry forbids, mirroring the server's own wording. */
     static final TargetRollModifier TH_IN_DEAD_ZONE = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
@@ -122,9 +125,9 @@ public class AerospaceFireControl extends FireControl {
      * reach one target - its neighbors are empty - while the seam hex between two meks delivers full
      * damage to both. Every hex the fighter physically flew through is a legal aim point
      * ({@code passedOver}), so the drop target is a search over the flown line with the same ring
-     * tables the ranker's footprint credit uses. When the search finds nothing better than the
-     * offered target's own hex - single targets, spread formations, plain HE - the stock plan stands
-     * unchanged.</p>
+     * tables the ranker's footprint credit uses. Either way the payload is rationed - to the single
+     * victim's hit points on a direct drop, to the summed hit points of everything under the blast
+     * rings on a seam drop.</p>
      */
     @Override
     protected FiringPlan getDiveBombPlan(final Entity shooter, final MovePath flightPath,
@@ -133,13 +136,54 @@ public class AerospaceFireControl extends FireControl {
         if ((bestAim != null) && (target.getPosition() != null) && !bestAim.equals(target.getPosition())) {
             HexTarget seam = new HexTarget(bestAim, shooter.getBoardId(), Targetable.TYPE_HEX_AERO_BOMB);
             // The seam hex is on the flown line by construction, so the fly-over requirement holds.
-            // Seam drops keep the full load: the aim point was chosen precisely because several
-            // targets sit in the footprint.
-            return super.getDiveBombPlan(shooter, flightPath, seam, game, true, guess);
+            FiringPlan seamPlan = super.getDiveBombPlan(shooter, flightPath, seam, game, true, guess);
+            // Rationed to the WHOLE footprint: every enemy inside the blast rings at this aim point
+            // funds the salvo. Exempting seam drops entirely was a live bug - Princess builds one
+            // candidate plan per enemy, so every enemy not standing on the best hex produced an
+            // unrationed full-load twin aimed there, and the auction always preferred the twin.
+            rationBombPayloadForFootprint(seamPlan, shooter, bestAim, game);
+            return seamPlan;
         }
         FiringPlan plan = super.getDiveBombPlan(shooter, flightPath, target, game, passedOverTarget, guess);
         rationBombPayload(plan, target);
         return plan;
+    }
+
+    /**
+     * Rations a hex-aimed drop to the sum of every enemy ground unit inside the payload's blast
+     * rings at the aim point. For single-hex ordnance this degenerates to the one victim standing
+     * there; for cluster and fuel-air seams it funds killing everything under the footprint, and
+     * no more.
+     */
+    private void rationBombPayloadForFootprint(FiringPlan plan, Entity shooter, Coords aimPoint,
+          Game game) {
+        List<Entity> enemies = new ArrayList<>();
+        for (Entity enemy : game.getEntitiesVector()) {
+            if (enemy.getOwner().isEnemyOf(shooter.getOwner()) && !enemy.isAirborne()
+                  && (enemy.getPosition() != null) && (enemy.getBoardId() == shooter.getBoardId())
+                  && !enemy.isDestroyed()) {
+                enemies.add(enemy);
+            }
+        }
+        int footprintHitPoints = footprintHitPoints(
+              shooter.getBombs(AmmoType.F_GROUND_BOMB), aimPoint, enemies);
+        rationPayloadToHitPoints(plan, Math.max(1, footprintHitPoints));
+    }
+
+    /** Sums effective hit points of every enemy inside any bomb's blast ring at the aim point. */
+    static int footprintHitPoints(List<BombMounted> groundBombs, Coords aimPoint,
+          List<Entity> enemies) {
+        int footprintHitPoints = 0;
+        for (Entity enemy : enemies) {
+            int ring = aimPoint.distance(enemy.getPosition());
+            for (BombMounted bomb : groundBombs) {
+                if (AerospacePathRanker.bombRingDamage(bomb, ring) > 0) {
+                    footprintHitPoints += enemy.getTotalArmor() + enemy.getTotalInternal();
+                    break;
+                }
+            }
+        }
+        return footprintHitPoints;
     }
 
     /**
@@ -155,10 +199,18 @@ public class AerospaceFireControl extends FireControl {
         if (!(target instanceof Entity victim)) {
             return;
         }
+        rationPayloadToHitPoints(plan, victim.getTotalArmor() + victim.getTotalInternal());
+    }
+
+    private void rationPayloadToHitPoints(FiringPlan plan, int effectiveHitPoints) {
         for (WeaponFireInfo info : plan) {
             HashMap<String, BombLoadout> payloads = info.getWeaponAttackAction().getBombPayloads();
             if (payloads == null) {
                 continue;
+            }
+            int aboard = 0;
+            for (BombLoadout loadout : payloads.values()) {
+                aboard += loadout.getTotalBombs();
             }
             // Combine the internal and external racks, choose type-aware, then write back per rack.
             BombLoadout combined = new BombLoadout();
@@ -171,7 +223,8 @@ public class AerospaceFireControl extends FireControl {
                 continue;
             }
             BombLoadout selection = rationSelection(combined,
-                  info.getProbabilityToHit(), victim.getTotalArmor() + victim.getTotalInternal());
+                  info.getProbabilityToHit(), effectiveHitPoints);
+            int released = selection.getTotalBombs();
             for (BombLoadout loadout : payloads.values()) {
                 for (java.util.Map.Entry<BombType.BombTypeEnum, Integer> entry : loadout.entrySet()) {
                     int grant = Math.min(entry.getValue(), selection.getCount(entry.getKey()));
@@ -179,6 +232,10 @@ public class AerospaceFireControl extends FireControl {
                     entry.setValue(grant);
                 }
             }
+            // Observability first: the alpha-dump bypass survived a live game unnoticed because
+            // nothing logged the decision. RATION lines are the debrief for the bomb bay.
+            RATION_LOGGER.info("RATION {}: releasing {} of {} bombs against {} effective HP",
+                  plan.getTarget().getDisplayName(), released, aboard, effectiveHitPoints);
         }
     }
 

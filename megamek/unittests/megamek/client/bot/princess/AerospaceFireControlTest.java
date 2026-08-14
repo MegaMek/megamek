@@ -205,4 +205,56 @@ class AerospaceFireControlTest {
                     .getCount(megamek.common.equipment.enums.BombType.BombTypeEnum.TAG),
               "zero-damage ordnance is never released as generic tonnage");
     }
+
+    /**
+     * The seam-drop bypass, pinned: Princess builds one candidate plan per enemy, so every enemy
+     * not standing on the best footprint hex used to produce an unrationed full-load twin aimed
+     * there, and the auction always picked the twin - the live game showed straight alpha dumps.
+     * Seam drops now ration against the summed hit points of everything under the blast rings:
+     * cluster rings reach both meks flanking the seam, HE reaches only the hex it lands on.
+     */
+    @Test
+    void aSeamDropIsFundedByEveryTargetUnderTheFootprint() {
+        Setup setup = setup(BoardType.GROUND);
+        Coords seam = new Coords(21, 20);
+        // Two meks flanking the seam hex, a third well outside any blast ring.
+        Entity left = groundMek(setup.game(), 10, new Coords(20, 20));
+        Entity right = groundMek(setup.game(), 11, new Coords(22, 20));
+        Entity distant = groundMek(setup.game(), 12, new Coords(30, 30));
+        java.util.List<Entity> enemies = java.util.List.of(left, right, distant);
+        left.initializeInternal(10, megamek.common.units.Mek.LOC_CENTER_TORSO);
+        right.initializeInternal(6, megamek.common.units.Mek.LOC_CENTER_TORSO);
+        int leftHitPoints = left.getTotalArmor() + left.getTotalInternal();
+        int rightHitPoints = right.getTotalArmor() + right.getTotalInternal();
+        assertTrue((leftHitPoints > 0) && (leftHitPoints != rightHitPoints),
+              "fixture meks need distinct nonzero hit points or the sums prove nothing");
+
+        megamek.common.equipment.BombMounted cluster =
+              mock(megamek.common.equipment.BombMounted.class);
+        megamek.common.equipment.enums.BombType clusterType =
+              mock(megamek.common.equipment.enums.BombType.class);
+        org.mockito.Mockito.when(clusterType.getBombType())
+              .thenReturn(megamek.common.equipment.enums.BombType.BombTypeEnum.CLUSTER);
+        org.mockito.Mockito.when(cluster.getType()).thenReturn(clusterType);
+
+        assertEquals(leftHitPoints + rightHitPoints, AerospaceFireControl.footprintHitPoints(
+                    java.util.List.of(cluster), seam, enemies),
+              "cluster rings reach both flanking meks and nothing else");
+
+        megamek.common.equipment.BombMounted highExplosive =
+              mock(megamek.common.equipment.BombMounted.class);
+        megamek.common.equipment.enums.BombType heType =
+              mock(megamek.common.equipment.enums.BombType.class);
+        org.mockito.Mockito.when(heType.getBombType())
+              .thenReturn(megamek.common.equipment.enums.BombType.BombTypeEnum.HE);
+        org.mockito.Mockito.when(heType.getDamagePerShot()).thenReturn(10);
+        org.mockito.Mockito.when(highExplosive.getType()).thenReturn(heType);
+
+        assertEquals(0, AerospaceFireControl.footprintHitPoints(
+                    java.util.List.of(highExplosive), seam, enemies),
+              "HE on an empty seam hex funds nothing - the drop stays minimal");
+        assertEquals(leftHitPoints, AerospaceFireControl.footprintHitPoints(
+                    java.util.List.of(highExplosive), left.getPosition(), enemies),
+              "HE on an occupied hex funds exactly that one victim");
+    }
 }

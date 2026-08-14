@@ -132,8 +132,19 @@ public abstract class BotClient extends Client {
     /**
      * Keeps track of whether this client has started to calculate a turn this phase.
      */
-    boolean calculatedTurnThisPhase = false;
+    /**
+     * The turn index this bot last spawned a calculation for in the current phase, or -1. Replaces
+     * the old once-per-phase flag: the point is to suppress duplicate spawns for the SAME pending
+     * turn (in simultaneous phases every player's turn-end fires a turn-change event at everyone),
+     * never to suppress a genuinely new turn of ours.
+     */
+    int lastCalculatedTurnIndex = -1;
     int calculatedTurnsThisPhase = 0;
+
+    /** Test seam for the spawn decision: would a turn-change event at this turn index spawn a calc? */
+    boolean shouldSpawnForTest(int turnIndex) {
+        return turnIndex != lastCalculatedTurnIndex;
+    }
 
     // Let bots remember whether they've rerolled an initiative roll this round
     protected boolean rerolledInitiative = false;
@@ -197,27 +208,23 @@ public abstract class BotClient extends Client {
 
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
-                // On simultaneous phases, each player ending their turn will generate a turn
-                // change
-                // We want to ignore turns from other players and only listen to events we
-                // generated
-                boolean ignoreSimTurn = getGame().getPhase().isSimultaneous(getGame()) &&
-                      (e.getPreviousPlayerId() != localPlayerNumber) &&
-                      calculatedTurnThisPhase;
-
+                // In simultaneous phases every player's turn-end fires a turn-change event at every
+                // client, so the same pending turn can arrive several times. Suppress duplicates by
+                // turn INDEX, never by a once-per-phase flag: the old ignoreSimTurn guard skipped any
+                // turn that arrived after another player's event once this bot had calculated once,
+                // which silently dropped every second-and-later turn of a multi-unit bot - caught
+                // verbatim by this very log line ("myTurn true ... -> skipping") after ~50 corrupted
+                // benchmark games. A turn the server says is ours is ours.
                 boolean myTurn = isMyTurn();
-                // Every dispatch decision is logged with its full inputs. Two live games froze with
-                // the server waiting on a bot move and NO record of why no calc thread existed - a
-                // dropped or suppressed turn event here is invisible without this line, and with it
-                // the next freeze names itself.
+                boolean alreadySpawnedForThisTurn = (game.getTurnIndex() == lastCalculatedTurnIndex);
                 LOGGER.info("{}: turn change - phase {}, turnIndex {}, prevPlayer {}, me {}, "
-                            + "myTurn {}, ignoreSimTurn {}, alreadyCalculatedThisPhase {} -> {}",
+                            + "myTurn {}, alreadySpawnedForThisTurn {} -> {}",
                       getName(), getGame().getPhase(), game.getTurnIndex(), e.getPreviousPlayerId(),
-                      localPlayerNumber, myTurn, ignoreSimTurn, calculatedTurnThisPhase,
-                      myTurn && !ignoreSimTurn ? "SPAWNING calc thread" : "skipping");
+                      localPlayerNumber, myTurn, alreadySpawnedForThisTurn,
+                      myTurn && !alreadySpawnedForThisTurn ? "SPAWNING calc thread" : "skipping");
 
-                if (myTurn && !ignoreSimTurn) {
-                    calculatedTurnThisPhase = true;
+                if (myTurn && !alreadySpawnedForThisTurn) {
+                    lastCalculatedTurnIndex = game.getTurnIndex();
                     // Run bot's turn processing in a separate thread.
                     // So calling thread is free to process the other actions.
                     Thread worker = new Thread(new CalculateBotTurn(),
@@ -245,9 +252,9 @@ public abstract class BotClient extends Client {
 
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
-                LOGGER.info("{}: phase change {} -> {}, resetting calculatedTurnThisPhase (was {})",
-                      getName(), e.getOldPhase(), e.getNewPhase(), calculatedTurnThisPhase);
-                calculatedTurnThisPhase = false;
+                LOGGER.info("{}: phase change {} -> {}, resetting lastCalculatedTurnIndex (was {})",
+                      getName(), e.getOldPhase(), e.getNewPhase(), lastCalculatedTurnIndex);
+                lastCalculatedTurnIndex = -1;
                 rerolledInitiative = false;
                 if (!getGame().getPhase().isLounge()) {
                     requestedTrains.clear();

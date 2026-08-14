@@ -33,6 +33,7 @@
 package megamek.client.bot;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Vector;
 
@@ -126,11 +127,30 @@ class BotClientTest {
     }
 
     /**
-     * A bot must never dismiss itself from a running game. The removed rule made a bot {@code die()} at the
-     * start of the movement phase whenever it owned every entity on the board and the game was not double
-     * blind - which is exactly the state when the last enemy is a fighter that flew off the map and is
-     * scheduled to return: the bot quit mid-game and the server waited forever on its units. An empty game
-     * reproduces the trigger arithmetic (own everything visible) without a connection.
+     * The turn-dropper, pinned: in simultaneous phases every player's turn-end fires a turn-change
+     * event at every client, and the old ignoreSimTurn guard skipped any turn arriving after another
+     * player's event once the bot had calculated once - silently dropping every second-and-later turn
+     * of a multi-unit bot ("myTurn true -> skipping", caught verbatim in ~50 corrupted benchmark
+     * games). Duplicate events for the SAME turn index must still spawn only once; a NEW turn index
+     * must always spawn, whoever's event carried it.
+     */
+    @Test
+    void aNewTurnAlwaysSpawnsAndDuplicateEventsDoNot() {
+        RecordingBotClient bot = new RecordingBotClient();
+
+        // Turn index 0, our turn: first event spawns, duplicate event for the same index does not.
+        bot.lastCalculatedTurnIndex = -1;
+        assertTrue(bot.shouldSpawnForTest(0), "a fresh turn index must spawn");
+        bot.lastCalculatedTurnIndex = 0;
+        assertFalse(bot.shouldSpawnForTest(0), "a duplicate event for the same turn index must not");
+        // The killer case: another player's event delivered our NEXT turn. Old guard skipped it.
+        assertTrue(bot.shouldSpawnForTest(1), "a new turn index must spawn whoever's event carried it");
+    }
+
+    /**
+     * A bot must never dismiss itself from a running game. The removed rule made a bot {@code die()} at
+     * the start of the movement phase whenever it owned every entity on the board and the game was not
+     * double blind - the state when the last enemy is a fighter that flew off scheduled to return.
      */
     @Test
     void aBotNeverDismissesItselfMidGame() {

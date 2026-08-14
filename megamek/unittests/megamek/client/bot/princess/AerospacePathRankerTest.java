@@ -445,6 +445,32 @@ class AerospacePathRankerTest {
                     + healthyPrice + " shotUp=" + shotUpPrice);
     }
 
+    /**
+     * Losing control is never free, at any altitude. The old pricing scaled overthrust risk purely by
+     * the odds of the first d6 fall reaching the ground - zero above altitude 6 - so a live Cheetah
+     * overthrusted at altitude 7 for free, went out of control, and died in the spiral (no steering,
+     * a fall every round, recovery on 7+, the stall at the bottom). Entry to that state now carries
+     * its own cost.
+     */
+    @Test
+    void losingControlIsNeverFreeEvenUpHigh() {
+        AeroSpaceFighter fighter = mock(AeroSpaceFighter.class);
+        when(fighter.getBasePilotingRoll(org.mockito.ArgumentMatchers.any()))
+              .thenReturn(new megamek.common.rolls.PilotingRollData(1, 6, "base"));
+        when(fighter.isSpheroid()).thenReturn(false);
+        when(fighter.isVSTOL()).thenReturn(false);
+
+        MovePath overthrustHigh = mock(MovePath.class);
+        when(overthrustHigh.getEntity()).thenReturn(fighter);
+        when(overthrustHigh.getMpUsed()).thenReturn(99);
+        when(overthrustHigh.getFinalVelocity()).thenReturn(2);
+        when(overthrustHigh.getFinalAltitude()).thenReturn(8);
+        ranker.lastPostAttackAltitudeForTest(8);
+
+        assertTrue(ranker.controlRiskPenalty(overthrustHigh) > 0,
+              "overthrusting at altitude 8 must still cost - out of control is the spiral's entrance");
+    }
+
     private MovePath stalledPathAtAltitudeThree(AeroSpaceFighter fighter) {
         when(fighter.isSpheroid()).thenReturn(false);
         when(fighter.isVSTOL()).thenReturn(false);

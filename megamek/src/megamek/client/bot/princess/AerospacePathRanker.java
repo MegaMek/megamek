@@ -139,6 +139,16 @@ public class AerospacePathRanker extends BasicPathRanker {
     /** Altitude above which the bank credit stops growing - high enough; go fight. */
     private static final int ALTITUDE_BANK_CEILING = 7;
 
+    /**
+     * The fraction of the control-loss cost charged just for ENTERING the out-of-control state,
+     * before any crash odds. Losing a control roll was priced only by the chance of the first d6
+     * fall reaching the ground - zero above altitude 6 - so overthrusting up high was free. But the
+     * first fall was never the real cost: out of control means no steering, another d6 fall every
+     * round, recovery on 7+, and the stall waiting at the bottom. Three fighters died in that spiral
+     * from poses the ranker called safe. Altitude does not make it safe; it makes the coffin longer.
+     */
+    private static final double OUT_OF_CONTROL_ENTRY_FRACTION = 0.5;
+
     /** What reaching the ground out of control is priced at, before the odds of it happening. */
     private static final double CONTROL_LOSS_COST = 40.0;
 
@@ -428,8 +438,11 @@ public class AerospacePathRanker extends BasicPathRanker {
         // Flying low with armed enemies about is a standing bet: any hit forces a control roll, and
         // the crash odds are the same d6 every other term prices. Flying high is the banked inverse.
         if ((lastGroundTargets + lastAirEnemies) > 0) {
+            // Damage-induced rolls carry the same spiral: the exposure hazard prices OOC entry plus
+            // the crash odds, scaled down because enemy fire forcing a roll is possible, not certain.
             lastExposurePenalty = CONTROL_LOSS_COST * LOW_ALTITUDE_EXPOSURE_WEIGHT
-                  * oddsOfReachingTheGround(lastPostAttackAltitude);
+                  * (OUT_OF_CONTROL_ENTRY_FRACTION * 0.5
+                        + oddsOfReachingTheGround(lastPostAttackAltitude));
         }
         lastAltitudeBank = ALTITUDE_BANK_WEIGHT * Math.min(lastPostAttackAltitude, ALTITUDE_BANK_CEILING);
 
@@ -788,7 +801,8 @@ public class AerospacePathRanker extends BasicPathRanker {
                 return UNSANCTIONED_MANEUVER_COST;
             }
             double failureChance = 1.0 - lastManeuverOdds;
-            return failureChance * (CONTROL_LOSS_COST * oddsOfReachingTheGround(lastPostAttackAltitude)
+            return failureChance * (CONTROL_LOSS_COST
+                  * (OUT_OF_CONTROL_ENTRY_FRACTION + oddsOfReachingTheGround(lastPostAttackAltitude))
                   + failedManeuverExitCost(path, game, venue));
         }
         return 0;
@@ -1054,14 +1068,16 @@ public class AerospacePathRanker extends BasicPathRanker {
         double crashOdds = oddsOfReachingTheGround(lastPostAttackAltitude);
         int safeThrust = AeroPathUtil.calculateMaxSafeThrust(aero);
         if (path.getMpUsed() > safeThrust) {
-            penalty += CONTROL_LOSS_COST * controlRollFailureChance(path, 0) * crashOdds;
+            penalty += CONTROL_LOSS_COST * controlRollFailureChance(path, 0)
+                  * (OUT_OF_CONTROL_ENTRY_FRACTION + crashOdds);
         }
         // An aerodyne that ends its move at velocity zero stalls (TW p.81): a control roll at +2,
         // altitude lost on a failure. Priced in the same crash-scale family as the other control
         // risks, because the stock fall machinery is switched off for airborne aeros (see
         // getMovePathSuccessProbability).
         if ((path.getFinalVelocity() == 0) && !aero.isSpheroid() && !aero.isVSTOL()) {
-            penalty += CONTROL_LOSS_COST * controlRollFailureChance(path, STALL_CONTROL_MODIFIER) * crashOdds;
+            penalty += CONTROL_LOSS_COST * controlRollFailureChance(path, STALL_CONTROL_MODIFIER)
+                  * (OUT_OF_CONTROL_ENTRY_FRACTION + crashOdds);
         }
         return penalty;
     }

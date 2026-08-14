@@ -52,6 +52,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
@@ -60,6 +61,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
@@ -140,6 +142,7 @@ import megamek.server.Server;
 import megamek.server.sbf.SBFGameManager;
 import megamek.server.totalWarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
+import org.apache.commons.text.StringEscapeUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -398,6 +401,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             minButtonDim = textDim;
         }
 
+        // Most builds carry no note, in which case this is null and the menu is laid out exactly as before.
+        JLabel buildNotesLabel = createBuildNotesLabel(minButtonDim.width);
+
         hostB.setPreferredSize(minButtonDim);
         connectB.setPreferredSize(minButtonDim);
         botB.setPreferredSize(minButtonDim);
@@ -441,7 +447,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         c.gridheight = 1;
         c.gridx = 1;
         c.gridy = 0;
-        addBag(labVersion, gridBagLayout, c);
+        addBag(stackBuildNotesUnderVersion(labVersion, buildNotesLabel), gridBagLayout, c);
         c.gridy++;
         addBag(hostB, gridBagLayout, c);
         c.gridy++;
@@ -461,6 +467,157 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         frame.pack();
         // center window in screen
         frame.setLocationRelativeTo(null);
+    }
+
+    /**
+     * Puts the build note immediately under the version number, as one block sharing a single row of the menu.
+     *
+     * <p>Giving the note a menu row of its own would let the layout spread the two apart, leaving the note
+     * stranded halfway down the gap above the buttons. Keeping them in one row instead means the pair sits
+     * together where the version number alone used to be.</p>
+     *
+     * @param versionLabel    the version label, which is what a build with no note shows on its own
+     * @param buildNotesLabel the build note to tuck under it, or {@code null} when this build has no note
+     *
+     * @return the version label itself when there is no note, otherwise the two of them stacked together
+     */
+    private static JComponent stackBuildNotesUnderVersion(JLabel versionLabel, @Nullable JLabel buildNotesLabel) {
+        if (buildNotesLabel == null) {
+            return versionLabel;
+        }
+
+        JPanel versionPanel = new JPanel(new GridBagLayout());
+        versionPanel.setOpaque(false);
+
+        GridBagConstraints versionConstraints = new GridBagConstraints();
+        versionConstraints.fill = GridBagConstraints.HORIZONTAL;
+        versionConstraints.weightx = 1.0;
+        versionConstraints.gridx = 0;
+        versionConstraints.gridy = 0;
+        versionPanel.add(versionLabel, versionConstraints);
+
+        versionConstraints.gridy = 1;
+        versionPanel.add(buildNotesLabel, versionConstraints);
+
+        return versionPanel;
+    }
+
+    /**
+     * Creates the label that shows this build's note on the main menu, directly under the version number.
+     *
+     * <p>Almost every build has nothing to say for itself, so the usual result is {@code null} and the menu is
+     * built exactly as it always was. A note only exists when {@code Version.properties} carries a non-blank
+     * {@code notes} entry, which is how a build is flagged as something other than an ordinary release.</p>
+     *
+     * <p>The note is drawn in bold so that it reads as a notice about the build rather than as part of the
+     * version string, and it wraps at the width of the menu buttons so that a note longer than one line stays
+     * inside the column instead of being cut off. Its colour and point size come from {@code Version.properties}
+     * alongside the text itself; a note that asks for neither is drawn in the usual warning colour at the menu's
+     * ordinary size.</p>
+     *
+     * @param wrapWidth the width in pixels at which the note wraps, which is the menu button width
+     *
+     * @return the label to place under the version label, or {@code null} when this build has no note
+     */
+    private @Nullable JLabel createBuildNotesLabel(int wrapWidth) {
+        if (!Version.hasBuildNotes()) {
+            LOGGER.debug("[BuildNotes] Version.properties sets no notes entry - main menu shows no build note");
+            return null;
+        }
+
+        String buildNotes = Version.getBuildNotes();
+        LOGGER.debug("[BuildNotes] Showing build note on the main menu, wrapping at {} pixels: {}",
+              wrapWidth,
+              buildNotes);
+
+        // The note is free text from Version.properties, so it is escaped before going into the HTML that gives
+        // the label its wrapping. A single-cell table of a fixed pixel width is used rather than a CSS width,
+        // because Swing scales CSS pixel lengths by about a third and the note would then be wider than the
+        // buttons it sits above. The table is stripped of its padding, spacing and border for the same reason.
+        String escapedBuildNotes = StringEscapeUtils.escapeHtml4(buildNotes);
+        JLabel buildNotesLabel = new JLabel("<html><table cellpadding='0' cellspacing='0' border='0'>" +
+              "<tr><td width='" +
+              wrapWidth +
+              "' align='center'><b>" +
+              escapedBuildNotes +
+              "</b></td></tr></table></html>", JLabel.CENTER);
+        buildNotesLabel.setForeground(resolveBuildNotesColor());
+        applyBuildNotesFontSize(buildNotesLabel);
+        return buildNotesLabel;
+    }
+
+    /**
+     * Works out what colour to draw the build note in.
+     *
+     * <p>A note that names no colour, or names one that is not recognised, is drawn in the same warning colour
+     * the rest of the interface uses for things the player should notice.</p>
+     *
+     * @return the colour to draw the build note in, never {@code null}
+     */
+    private Color resolveBuildNotesColor() {
+        Color warningColor = GUIPreferences.getInstance().getWarningColor();
+        String configuredColorName = Version.getBuildNotesColorName();
+        if (configuredColorName == null) {
+            LOGGER.debug("[BuildNotes] No notesColor set - the build note uses the warning colour");
+            return warningColor;
+        }
+
+        Color namedColor = colorForName(configuredColorName);
+        if (namedColor == null) {
+            LOGGER.warn("[BuildNotes] Version.properties sets notesColor to '{}', which is not a colour name "
+                        + "MegaMek knows. The build note will use the warning colour instead.",
+                  configuredColorName);
+            return warningColor;
+        }
+
+        LOGGER.debug("[BuildNotes] Build note colour set to {}", configuredColorName);
+        return namedColor;
+    }
+
+    /**
+     * Maps a colour name written in {@code Version.properties} to the colour it stands for.
+     *
+     * @param colorName the configured colour name, in any mix of upper and lower case
+     *
+     * @return the matching colour, or {@code null} when the name is not one of the recognised colours
+     */
+    private static @Nullable Color colorForName(String colorName) {
+        return switch (colorName.toLowerCase(Locale.ROOT)) {
+            case "red" -> Color.RED;
+            case "orange" -> Color.ORANGE;
+            case "yellow" -> Color.YELLOW;
+            case "green" -> Color.GREEN;
+            case "blue" -> Color.BLUE;
+            case "cyan" -> Color.CYAN;
+            case "magenta" -> Color.MAGENTA;
+            case "pink" -> Color.PINK;
+            case "white" -> Color.WHITE;
+            case "black" -> Color.BLACK;
+            case "gray", "grey" -> Color.GRAY;
+            case "lightgray", "lightgrey" -> Color.LIGHT_GRAY;
+            case "darkgray", "darkgrey" -> Color.DARK_GRAY;
+            default -> null;
+        };
+    }
+
+    /**
+     * Resizes the build note to the point size it asked for, leaving it at the menu's ordinary size when it asked
+     * for none.
+     *
+     * <p>The configured size is put through the GUI scale, so that a note stays in proportion with the menu
+     * around it for a player who runs MegaMek scaled up or down.</p>
+     *
+     * @param buildNotesLabel the build note label to resize
+     */
+    private static void applyBuildNotesFontSize(JLabel buildNotesLabel) {
+        if (!Version.hasBuildNotesFontSize()) {
+            LOGGER.debug("[BuildNotes] No notesFontSize set - the build note uses the menu's ordinary size");
+            return;
+        }
+
+        int buildNotesFontSize = Version.getBuildNotesFontSize();
+        LOGGER.debug("[BuildNotes] Build note point size set to {}", buildNotesFontSize);
+        buildNotesLabel.setFont(buildNotesLabel.getFont().deriveFont(UIUtil.scaleForGUI((float) buildNotesFontSize)));
     }
 
     private RawImagePanel getRawImagePanel(Image splashImage, Dimension splashPanelPreferredSize) {

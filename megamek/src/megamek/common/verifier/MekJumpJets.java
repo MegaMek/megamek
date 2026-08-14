@@ -47,7 +47,7 @@ public enum MekJumpJets {
     JJ_IMPROVED(EquipmentTypeLookup.IMPROVED_JUMP_JET, false, Mek.JUMP_IMPROVED),
     JJ_PROTOTYPE(EquipmentTypeLookup.PROTOTYPE_JUMP_JET, true, Mek.JUMP_PROTOTYPE),
     JJ_PROTOTYPE_IMPROVED(EquipmentTypeLookup.PROTOTYPE_IMPROVED_JJ, false, Mek.JUMP_PROTOTYPE_IMPROVED),
-    JJ_UMU(EquipmentTypeLookup.MEK_UMU, false, Mek.JUMP_NONE);
+    JJ_UMU(EquipmentTypeLookup.MEK_UMU, true, Mek.JUMP_NONE);
 
     private final String internalName;
     private final boolean industrial;

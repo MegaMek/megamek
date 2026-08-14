@@ -430,10 +430,12 @@ public abstract class TestEntity implements TestEntityOption {
             );
 
             if (industrial) {
-                return jumpJets.stream().filter(eq -> ((MiscType) eq).isIndustrial()).toList();
+                return jumpJets.stream()
+                      .filter(eq -> (eq != null) && ((MiscType) eq).isIndustrial())
+                      .collect(Collectors.toCollection(ArrayList::new));
             }
 
-            return jumpJets;
+            return new ArrayList<>(jumpJets);
         } else if ((entityType & Entity.ETYPE_TANK) != 0) {
             return Collections.singletonList(EquipmentType.get(EquipmentTypeLookup.VEHICLE_JUMP_JET));
         } else if ((entityType & Entity.ETYPE_BATTLEARMOR) != 0) {

@@ -89,6 +89,43 @@ class SettingsPagePanelTest {
     }
 
     @Test
+    void sectionSearchTextIncludesHiddenAliases() {
+        SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null)
+              .literalSection("Display", "Visible summary", new JPanel(), List.of(), List.of("tooltip needle"))
+              .build();
+
+        assertTrue(page.getSectionSearchText().contains("tooltip needle"));
+        assertTrue(page.expandSectionsMatching(text -> text.contains("tooltip needle")));
+    }
+
+    @Test
+    void structuralSearchTextIncludesSectionMetadataButNotContent() {
+        SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null)
+              .literalSection("Battlefield Engineering", "Visible summary", new JLabel("Hidden option name"),
+                    List.of(), List.of("legacy section alias"))
+              .build();
+
+        String searchText = page.getStructuralSearchText();
+
+        assertTrue(searchText.contains("Battlefield Engineering"), searchText);
+        assertTrue(searchText.contains("Visible summary"), searchText);
+        assertTrue(searchText.contains("legacy section alias"), searchText);
+        assertFalse(searchText.contains("Hidden option name"), searchText);
+    }
+
+    @Test
+    void collapseAllSectionsRestoresCollapsedState() {
+        SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null)
+              .sectionsExpandedByDefault(true)
+              .literalSection("Section", null, new JPanel())
+              .build();
+
+        page.collapseAllSections();
+
+        assertFalse(findSections(page).getFirst().isExpanded());
+    }
+
+    @Test
     void sectionSearchTextIncludesRenderedStaticContentWithoutHtmlOrInputValues() {
         JPanel content = new JPanel();
         content.add(new JLabel("<html><b>Heat &amp; Fire</b></html>"));

@@ -36,13 +36,16 @@ import static megamek.client.ui.util.FlatLafStyleBuilder.setFontScaling;
 import static megamek.client.ui.util.FontHandler.symbolIcon;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 import javax.swing.BorderFactory;
@@ -74,7 +77,9 @@ public class SettingsPagePanel extends JPanel {
     private final boolean showDetailsPanel;
     private final String bodySearchText;
     private final String pageSearchText;
+    private final String structuralSearchText;
     private final List<SearchableSection> searchableSections;
+    private final Map<Component, CollapsibleSectionPanel> sectionsByContent = new IdentityHashMap<>();
     private final int maximumPageWidth;
 
     private SettingsPagePanel(Builder builder) {
@@ -91,16 +96,19 @@ public class SettingsPagePanel extends JPanel {
         List<CollapsibleSectionPanel> sections = new ArrayList<>();
         List<SearchableSection> searchable = new ArrayList<>();
         StringBuilder allBodyText = new StringBuilder();
+        StringBuilder allStructuralBodyText = new StringBuilder();
         for (Object bodyItem : builder.bodyItems) {
             if (bodyItem instanceof Section definition) {
                 CollapsibleSectionPanel section = createSection(builder, definition);
                 sections.add(section);
+                sectionsByContent.put(definition.content, section);
                 renderItems.add(section);
                 String text = sectionSearchText(builder.textProvider, definition);
                 searchable.add(new SearchableSection(section, text));
                 if (!text.isBlank()) {
                     allBodyText.append(' ').append(text);
                 }
+                appendSearchText(allStructuralBodyText, sectionMetadataSearchText(builder.textProvider, definition));
             } else if (bodyItem instanceof JComponent component) {
                 renderItems.add(component);
                 String text = SettingsSearchText.collect(component);
@@ -117,6 +125,12 @@ public class SettingsPagePanel extends JPanel {
         appendSearchText(allPageText, bodySearchText);
         appendSearchText(allPageText, quoteSearchText(builder));
         pageSearchText = allPageText.toString();
+        StringBuilder allStructuralText = new StringBuilder();
+        appendSearchText(allStructuralText, headerSearchText(builder));
+        appendSearchText(allStructuralText, introSearchText(builder));
+        appendSearchText(allStructuralText, allStructuralBodyText.toString());
+        appendSearchText(allStructuralText, quoteSearchText(builder));
+        structuralSearchText = allStructuralText.toString();
 
         JPanel sectionControls = createSectionControls(sections);
         int minimumSectionStackWidth = sections.isEmpty() && !builder.standardContentWidth
@@ -155,6 +169,13 @@ public class SettingsPagePanel extends JPanel {
         return pageSearchText;
     }
 
+    /**
+     * @return page chrome plus section titles, summaries, and aliases, excluding mutable section content
+     */
+    public String getStructuralSearchText() {
+        return structuralSearchText;
+    }
+
     /** Expands matching sections and collapses the others, leaving the page unchanged when nothing matches. */
     public boolean expandSectionsMatching(Predicate<String> sectionTextMatcher) {
         boolean[] matches = new boolean[searchableSections.size()];
@@ -173,7 +194,27 @@ public class SettingsPagePanel extends JPanel {
     }
 
     public void expandAllSections() {
-        setExpanded(true, searchableSections.stream().map(SearchableSection::panel).toList());
+        setExpanded(true, sectionPanels());
+    }
+
+    public void collapseAllSections() {
+        setExpanded(false, sectionPanels());
+    }
+
+    /** Sets the visibility of the section containing the given content component. */
+    public void setSectionVisible(Component content, boolean visible) {
+        CollapsibleSectionPanel section = sectionsByContent.get(content);
+        if (section != null) {
+            section.setVisible(visible);
+        }
+    }
+
+    private List<CollapsibleSectionPanel> sectionPanels() {
+        List<CollapsibleSectionPanel> sections = new ArrayList<>();
+        for (SearchableSection section : searchableSections) {
+            sections.add(section.panel());
+        }
+        return sections;
     }
 
     List<Boolean> getSectionExpansionState() {
@@ -332,11 +373,17 @@ public class SettingsPagePanel extends JPanel {
     }
 
     private static String sectionSearchText(SettingsTextProvider textProvider, Section definition) {
+        String metadata = sectionMetadataSearchText(textProvider, definition);
+        String contentText = SettingsSearchText.collect(definition.content);
+        return (metadata + ' ' + contentText).trim();
+    }
+
+    private static String sectionMetadataSearchText(SettingsTextProvider textProvider, Section definition) {
         String title = SettingsSearchText.renderedText(
               definition.literal ? definition.title : textProvider.getText(definition.title));
         String summary = SettingsSearchText.renderedText(sectionSummary(textProvider, definition));
-        String contentText = SettingsSearchText.collect(definition.content);
-        return (title + ' ' + summary + ' ' + contentText).trim();
+        return (title + ' ' + summary + ' '
+              + String.join(" ", definition.searchAliases)).trim();
     }
 
     private static String headerSearchText(Builder builder) {
@@ -465,7 +512,7 @@ public class SettingsPagePanel extends JPanel {
     }
 
     private record Section(String title, @Nullable String summary, JComponent content,
-                           Collection<SettingsBadge> badges, boolean literal) {
+                           Collection<SettingsBadge> badges, Collection<String> searchAliases, boolean literal) {
     }
 
     public static final class Builder {
@@ -557,12 +604,17 @@ public class SettingsPagePanel extends JPanel {
 
         public Builder section(String titleKey, @Nullable String summaryKey, JComponent content,
               Collection<SettingsBadge> badges) {
-            bodyItems.add(new Section(titleKey, summaryKey, content, List.copyOf(badges), false));
+            bodyItems.add(new Section(titleKey, summaryKey, content, List.copyOf(badges), List.of(), false));
             return this;
         }
 
         public Builder literalSection(String title, @Nullable String summary, JComponent content) {
-            bodyItems.add(new Section(title, summary, content, List.of(), true));
+            return literalSection(title, summary, content, List.of(), List.of());
+        }
+
+        public Builder literalSection(String title, @Nullable String summary, JComponent content,
+              Collection<SettingsBadge> badges, Collection<String> searchAliases) {
+            bodyItems.add(new Section(title, summary, content, List.copyOf(badges), List.copyOf(searchAliases), true));
             return this;
         }
 

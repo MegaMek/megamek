@@ -669,7 +669,7 @@ public class EquipChoicePanel extends JPanel {
                         continue;
                     }
 
-                    // Check for advanced Thunderbolt ammos and skip them if TWRules is not enabled
+                    // Check for advanced Thunderbolt ammos and skip them if Core is not enabled
                     switch (atCheck.getAmmoType()) {
                         case AmmoType.AmmoTypeEnum.TBOLT_5:
                         case AmmoType.AmmoTypeEnum.TBOLT_10:
@@ -685,14 +685,8 @@ public class EquipChoicePanel extends JPanel {
                                 continue;
                             }
                     }
-
-                    // Extended LRMs don't get advanced ammo under TW, even if the launcher has them
-                    if (munitionsTypes.contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE) &&
-                          atCheck.getAmmoType() == AmmoType.AmmoTypeEnum.EXLRM) {
-                        continue;
-                    }
                 }
-                
+
                 // If clan_ignore_eq_limits is unchecked, do NOT allow Clans to use IS-only ammo.
                 if (!gameOpts.booleanOption(OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH) &&
                       entity.isClan() &&
@@ -711,7 +705,8 @@ public class EquipChoicePanel extends JPanel {
                     continue;
                 }
 
-                if (!Game.rulesManager.getRulesGame().allowMinefields(gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) &&
+                if (!Game.rulesManager.getRulesGame()
+                      .allowMinefields(gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) &&
                       AmmoType.canDeliverMinefield(atCheck)) {
                     continue;
                 }

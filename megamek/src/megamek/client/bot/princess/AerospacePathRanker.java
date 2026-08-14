@@ -230,6 +230,7 @@ public class AerospacePathRanker extends BasicPathRanker {
     private double lastManeuverRisk;
     private int lastManeuverType;
     private double lastManeuverOdds;
+    private double lastMasteryCredit;
 
     /**
      * The penalty that buries a maneuver path whose doctrine gate is closed this turn (see
@@ -242,6 +243,16 @@ public class AerospacePathRanker extends BasicPathRanker {
 
     /** An offensive maneuver below this success chance is gambling, not flying, and is not sanctioned. */
     static final double MINIMUM_STUNT_SUCCESS_CHANCE = 0.5;
+
+    /**
+     * The mastery credit: what a maneuver is worth BEYOND its pose, scaled by how far the pilot's
+     * control-roll odds sit above the sanction floor. The pose arithmetic prices what the maneuver
+     * reaches; it cannot see what the maneuver IS to a pilot who makes the roll nine times in ten -
+     * unpredictability, banked energy state, the next turn's options. Zero at the 50% floor (a
+     * marginal pilot gets no style points), full value for an ace: skill becomes visible in flying
+     * style. Sized so an elite flips a close auction and never outbids a live attack run.
+     */
+    static final double MANEUVER_MASTERY_CREDIT = 40.0;
     private int lastEngageableEnemies;
     private int lastCommittedEnemies;
     private int lastAirEnemies;
@@ -427,6 +438,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastManeuverRisk = 0;
         lastManeuverType = 0;
         lastManeuverOdds = 1.0;
+        lastMasteryCredit = 0;
         lastEngageableEnemies = 0;
         lastCommittedEnemies = 0;
         lastAirEnemies = 0;
@@ -487,6 +499,12 @@ public class AerospacePathRanker extends BasicPathRanker {
         double gains = lastEngagementCredit + lastArcAdvantage + lastAttackRunCredit + lastAltitudeBank;
         if (lastManeuverType != ManeuverType.MAN_NONE) {
             gains *= lastManeuverOdds;
+            // Mastery: above the sanction floor, a maneuver carries value beyond its pose, growing
+            // with the pilot's margin over the floor.
+            lastMasteryCredit = MANEUVER_MASTERY_CREDIT
+                  * Math.max(0, lastManeuverOdds - MINIMUM_STUNT_SUCCESS_CHANCE)
+                  / (1.0 - MINIMUM_STUNT_SUCCESS_CHANCE);
+            gains += lastMasteryCredit;
         }
         return gains - lastControlRiskPenalty - lastVelocityPenalty - lastEdgePenalty - lastManeuverRisk
               - lastExposurePenalty;
@@ -1377,6 +1395,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         scores.put("aeroManeuverRisk", lastManeuverRisk);
         scores.put("aeroManeuverType", (double) lastManeuverType);
         scores.put("aeroManeuverOdds", lastManeuverOdds);
+        scores.put("aeroMasteryCredit", lastMasteryCredit);
         scores.put("aeroGroundTargets", (double) lastGroundTargets);
         scores.put("aeroOverflownTargets", (double) lastOverflownTargets);
         scores.put("aeroAttackRunCredit", lastAttackRunCredit);

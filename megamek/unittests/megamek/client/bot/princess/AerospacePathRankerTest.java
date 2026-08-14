@@ -581,6 +581,25 @@ class AerospacePathRankerTest {
               "the same fire prices far cheaper up high");
     }
 
+    /**
+     * The mastery credit: the more elite the pilot, the more a maneuver is worth beyond its pose
+     * (Dave). Zero at the 50% sanction floor - a marginal pilot gets no style points - and full value
+     * for an ace, so skill becomes visible in flying style.
+     */
+    @Test
+    void masteryCreditScalesWithSkillAboveTheFloor() {
+        double atFloor = AerospacePathRanker.MANEUVER_MASTERY_CREDIT
+              * Math.max(0, 0.50 - AerospacePathRanker.MINIMUM_STUNT_SUCCESS_CHANCE) / 0.5;
+        double veteran = AerospacePathRanker.MANEUVER_MASTERY_CREDIT
+              * Math.max(0, 0.58 - AerospacePathRanker.MINIMUM_STUNT_SUCCESS_CHANCE) / 0.5;
+        double elite = AerospacePathRanker.MANEUVER_MASTERY_CREDIT
+              * Math.max(0, 0.83 - AerospacePathRanker.MINIMUM_STUNT_SUCCESS_CHANCE) / 0.5;
+
+        assertEquals(0.0, atFloor, 0.0001, "no style points at the sanction floor");
+        assertTrue(elite > veteran * 3,
+              "an ace's mastery must dwarf a veteran's: veteran=" + veteran + " elite=" + elite);
+    }
+
     // --- the attack run ------------------------------------------------------------------------------
 
     private static Entity groundMek(Coords position) {

@@ -109,12 +109,13 @@ public class AerospacePathRanker extends BasicPathRanker {
      * hexes reset every round. Miss the overflight and there is no attack this turn, full stop. Measured
      * without this term: two unopposed fighters averaged one bombing pass every fourteen rounds.</p>
      */
-    // Tuning point 3 (2026-08-14): 0.6 never won an auction under real AA. The stock bravery term
-    // charges a bombing pass full standing-exchange price for damage taken, but one transit round
-    // through the flak IS the mission - measured DEBRIEF margins showed ~100-damage footprint runs
-    // rejected by ~170 points at weight 0.6 (credit 60). 2.5 clears the measured gap; the run's own
-    // risk terms (exposure, altitude toll, control) still price recklessness.
-    private static final double ATTACK_RUN_WEIGHT = 2.5;
+    // Swept on the clean harness (fixed bomb meter, simultaneous options pinned, full turn
+    // dispatch), 15 games per arm, 2026-08-14: weight 2.5 delivered 15/15 full payloads but lost
+    // the campaign (11 fighters down, 0.84:1 exchange); 1.2 kept the cadence but hesitated into
+    // 1.05:1; 1.5 is the peak - 13/15 payloads, pilot errors halved, 2.21:1 BV exchange. The DEBRIEF
+    // margins that motivated raising it from 0.6 remain the calibration floor: the credit must beat
+    // the stock bravery term's standing-exchange charge for one committed pass, and no more.
+    private static final double ATTACK_RUN_WEIGHT = 1.5;
 
     /** Strike attacks (guns, air-to-ground) are impossible above this altitude. */
     private static final int STRIKE_MAX_ALTITUDE = 5;

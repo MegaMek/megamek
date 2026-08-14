@@ -45,6 +45,13 @@ options:
     # fighter's getWeaponList() returns the weapon-group list, which scenario-started games never populate -
     # every fighter plans and fires with no visible weapons. Found after four bloodless 10-game batches.
     - stratops_capital_fighter
+    # Pinned OFF: inherited simultaneous phases trip a BotClient guard (ignoreSimTurn) that drops
+    # every bot turn after its first each phase - a two-fighter bot fires ONE unit per firing phase,
+    # which silently zeroed all dive bombing across ~50 headless benchmark games.
+    - simultaneous_targeting
+    - simultaneous_firing
+    - simultaneous_physical
+    - simultaneous_deployment
 
 factions:
   # The first player slot is the headless watcher (ScenarioGameRunner excludes it from the bot slots),

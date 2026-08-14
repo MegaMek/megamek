@@ -500,6 +500,7 @@ class AerospacePathRankerTest {
         megamek.common.equipment.BombMounted bomb = mock(megamek.common.equipment.BombMounted.class);
         megamek.common.equipment.enums.BombType bombType = mock(megamek.common.equipment.enums.BombType.class);
         when(bombType.getDamagePerShot()).thenReturn(10);
+        when(bombType.getBombType()).thenReturn(megamek.common.equipment.enums.BombType.BombTypeEnum.HE);
         when(bomb.getType()).thenReturn(bombType);
         when(bomber.getBombs(megamek.common.equipment.AmmoType.F_GROUND_BOMB))
               .thenReturn(new java.util.ArrayList<>(java.util.List.of(bomb)));
@@ -510,6 +511,54 @@ class AerospacePathRankerTest {
 
         assertEquals(1, ranker.lastPostAttackAltitudeForTest(),
               "bombing from altitude 3 means exiting at 1 - the risk terms must know");
+    }
+
+    /**
+     * The pilot exercise, verbatim: a mek lance in a box formation, two hexes of spacing each way.
+     * With cluster bombs (5 damage across all seven hexes, NO falloff), bombing a corner mek's hex
+     * wastes the footprint - its neighbors are empty - while the seam hex between two meks delivers
+     * full damage to both. The best aim point is a search over the flown line, not a lookup of enemy
+     * positions, and the model must find the seam on its own.
+     */
+    @Test
+    void aClusterBombAimsAtTheSeamOfABoxFormation() {
+        Game game = groundGame();
+        // The box: four meks at the corners, 2-hex spacing.
+        java.util.List<Entity> lance = java.util.List.of(
+              groundMek(new Coords(20, 20)), groundMek(new Coords(22, 20)),
+              groundMek(new Coords(20, 22)), groundMek(new Coords(22, 22)));
+
+        megamek.common.equipment.BombMounted cluster = mock(megamek.common.equipment.BombMounted.class);
+        megamek.common.equipment.enums.BombType clusterType =
+              mock(megamek.common.equipment.enums.BombType.class);
+        when(clusterType.getBombType())
+              .thenReturn(megamek.common.equipment.enums.BombType.BombTypeEnum.CLUSTER);
+        when(cluster.getType()).thenReturn(clusterType);
+
+        // Run A: the line crosses only a corner mek's hex - one target in the footprint.
+        MovePath cornerRun = mock(MovePath.class);
+        AeroSpaceFighter bomber = strikeFighterOver(
+              java.util.Set.of(new Coords(20, 19), new Coords(20, 20)), 5, cornerRun);
+        when(bomber.getBombs(megamek.common.equipment.AmmoType.F_GROUND_BOMB))
+              .thenReturn(new java.util.ArrayList<>(java.util.List.of(cluster)));
+        when(bomber.getWeaponList()).thenReturn(new java.util.ArrayList<>());
+        ranker.lastPostAttackAltitudeForTest(5);
+        ranker.scoreAttackRuns(cornerRun, game, lance, AerospaceVenue.GROUND_MAP);
+        double cornerCredit = ranker.lastAttackRunCreditForTest();
+
+        // Run B: the line flies the box lengthwise through the seam hex (21,20) - adjacent to both
+        // front meks. Same bomb, same bomber, better geometry.
+        ranker.resetGroundCountersForTest();
+        MovePath seamRun = mock(MovePath.class);
+        strikeFighterOver(java.util.Set.of(new Coords(21, 19), new Coords(21, 20)), 5, seamRun);
+        when(seamRun.getEntity()).thenReturn(bomber);
+        ranker.lastPostAttackAltitudeForTest(5);
+        ranker.scoreAttackRuns(seamRun, game, lance, AerospaceVenue.GROUND_MAP);
+        double seamCredit = ranker.lastAttackRunCreditForTest();
+
+        assertTrue(seamCredit >= cornerCredit * 1.9,
+              "the seam splashes two meks where the corner reaches one: corner=" + cornerCredit
+                    + " seam=" + seamCredit);
     }
 
     // --- the attack run ------------------------------------------------------------------------------

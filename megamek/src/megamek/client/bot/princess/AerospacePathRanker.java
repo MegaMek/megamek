@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import megamek.client.bot.princess.AerospaceGeometry.AltitudeBand;
 import megamek.common.board.Coords;
@@ -227,6 +228,7 @@ public class AerospacePathRanker extends BasicPathRanker {
     int lastGroundTargets;
     int lastOverflownTargets;
     private double lastAttackRunCredit;
+    private double lastBombFootprint;
 
     /**
      * The altitude this path really ends the round at: the flown final altitude, minus the two-level
@@ -237,6 +239,18 @@ public class AerospacePathRanker extends BasicPathRanker {
     private int lastPostAttackAltitude;
     private double lastExposurePenalty;
     private double lastAltitudeBank;
+
+    /** Test seams for the attack-run scorer. */
+    double lastAttackRunCreditForTest() {
+        return lastAttackRunCredit;
+    }
+
+    void resetGroundCountersForTest() {
+        lastGroundTargets = 0;
+        lastOverflownTargets = 0;
+        lastAttackRunCredit = 0;
+        lastBombFootprint = 0;
+    }
 
     /** Test seam: read or set the post-attack altitude the risk terms will price against. */
     int lastPostAttackAltitudeForTest() {
@@ -399,6 +413,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastGroundTargets = 0;
         lastOverflownTargets = 0;
         lastAttackRunCredit = 0;
+        lastBombFootprint = 0;
         lastPostAttackAltitude = 0;
         lastExposurePenalty = 0;
         lastAltitudeBank = 0;
@@ -618,32 +633,99 @@ public class AerospacePathRanker extends BasicPathRanker {
         boolean inStrikeWindow = (finalAltitude > AerospaceGeometry.MINIMUM_ALTITUDE)
               && (finalAltitude <= STRIKE_MAX_ALTITUDE);
 
-        double bombDamage = inDiveBombWindow ? groundBombDamage(mover) : 0;
         double gunDamage = inStrikeWindow
               ? getMaxDamageAtRange(mover, 1, isExtremeRange(game), isLosRange(game)) : 0;
-        double runDamage = Math.max(bombDamage, gunDamage);
+
+        List<Entity> targets = new ArrayList<>();
+        for (Entity enemy : enemies) {
+            if (isGroundTargetCandidate(mover, enemy, game)) {
+                lastGroundTargets++;
+                targets.add(enemy);
+            }
+        }
+        if (targets.isEmpty()) {
+            return;
+        }
+        Set<Coords> flownLine = path.getCoordsSet();
+        if (flownLine == null) {
+            return;
+        }
 
         boolean inAnyWindow = inDiveBombWindow || inStrikeWindow;
-        for (Entity enemy : enemies) {
-            if (!isGroundTargetCandidate(mover, enemy, game)) {
-                continue;
+        boolean overflewSomeone = false;
+        for (Entity target : targets) {
+            if (inAnyWindow && flownLine.contains(target.getPosition())) {
+                lastOverflownTargets++;
+                overflewSomeone = true;
             }
-            lastGroundTargets++;
-            if (!inAnyWindow || !path.getCoordsSet().contains(enemy.getPosition())) {
-                continue;
-            }
-            // Counted whenever the geometry works, credited only for what the armament can deliver -
-            // the count is the diagnostic (did we line runs up?), the credit is the incentive.
-            lastOverflownTargets++;
-            lastAttackRunCredit += runDamage * ATTACK_RUN_WEIGHT;
-            // The credit assumes the attack, so the risk pricing must assume its altitude toll too:
-            // 2 levels for a dive bomb, 1 for a gun strike (TW), never below the deck the engine
-            // itself enforces. Unpriced, the strike toll walked a live Chippewa down 4-3-2 after its
-            // bombs ran out - each strike exiting one level lower - into a fatal control roll.
-            int toll = (inDiveBombWindow && (bombDamage >= gunDamage))
-                  ? DIVE_BOMB_ALTITUDE_TOLL : STRIKE_ALTITUDE_TOLL;
-            lastPostAttackAltitude = Math.max(AerospaceGeometry.MINIMUM_ALTITUDE, finalAltitude - toll);
         }
+
+        // Guns are a rifle: split fire is illegal, so a strike delivers to exactly ONE overflown
+        // target however many the line crosses.
+        double gunRun = (overflewSomeone && (gunDamage > 0)) ? gunDamage : 0;
+
+        // Bombs are a footprint: the aim point is a hex, any hex on the flown line, and the blast
+        // reaches every target at its ring distance. Worked as the pilot against a 2-hex-spaced box
+        // lance: bombing a corner mek's hex wastes a cluster (its neighbors are empty), while the
+        // seam hex between two meks delivers full no-falloff cluster damage to BOTH at hex to-hit
+        // odds. The best aim point is a search over the line, not a lookup of enemy positions.
+        double bombRun = 0;
+        if (inDiveBombWindow) {
+            List<BombMounted> groundBombs = mover.getBombs(AmmoType.F_GROUND_BOMB);
+            for (Coords aimPoint : flownLine) {
+                double footprint = 0;
+                for (Entity target : targets) {
+                    int ring = aimPoint.distance(target.getPosition());
+                    for (BombMounted bomb : groundBombs) {
+                        footprint += bombRingDamage(bomb, ring);
+                    }
+                }
+                bombRun = Math.max(bombRun, footprint);
+            }
+        }
+        lastBombFootprint = bombRun;
+
+        double bestRun = Math.max(gunRun, bombRun);
+        if (bestRun <= 0) {
+            return;
+        }
+        lastAttackRunCredit = bestRun * ATTACK_RUN_WEIGHT;
+        // The credit assumes the attack, so the risk pricing must assume its altitude toll too:
+        // 2 levels for a dive bomb, 1 for a gun strike (TW), never below the deck the engine
+        // itself enforces.
+        int toll = (bombRun >= gunRun) ? DIVE_BOMB_ALTITUDE_TOLL : STRIKE_ALTITUDE_TOLL;
+        lastPostAttackAltitude = Math.max(AerospaceGeometry.MINIMUM_ALTITUDE, finalAltitude - toll);
+    }
+
+    /**
+     * What one bomb delivers to a target this many hexes from its aim point, per the engine's own
+     * blast tables ({@code AreaEffectHelper.calculateDamageFallOff} and the fuel-air ring array):
+     * HE is a single hex, cluster is 5 across all seven hexes with NO falloff, and the fuel-air
+     * bombs reach two and three rings with graded damage.
+     *
+     * @param bomb the mounted bomb
+     * @param ring hex distance from the aim point to the target
+     *
+     * @return the damage this bomb deals at that distance
+     */
+    private static double bombRingDamage(BombMounted bomb, int ring) {
+        return switch (bomb.getType().getBombType()) {
+            case CLUSTER -> (ring <= 1) ? 5 : 0;
+            case FAE_SMALL -> switch (ring) {
+                case 0 -> 20;
+                case 1 -> 10;
+                case 2 -> 5;
+                default -> 0;
+            };
+            case FAE_LARGE -> switch (ring) {
+                case 0 -> 30;
+                case 1 -> 20;
+                case 2 -> 10;
+                case 3 -> 5;
+                default -> 0;
+            };
+            default -> (ring == 0) ? bomb.getType().getDamagePerShot() : 0;
+        };
     }
 
     /** The summed damage of every ground bomb aboard - the payload one full dive-bomb pass can deliver. */
@@ -1235,6 +1317,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         scores.put("aeroGroundTargets", (double) lastGroundTargets);
         scores.put("aeroOverflownTargets", (double) lastOverflownTargets);
         scores.put("aeroAttackRunCredit", lastAttackRunCredit);
+        scores.put("aeroBombFootprint", lastBombFootprint);
         scores.put("aeroExposurePenalty", lastExposurePenalty);
         scores.put("aeroAltitudeBank", lastAltitudeBank);
         scores.put("aeroFinalVelocity", (double) lastFinalVelocity);

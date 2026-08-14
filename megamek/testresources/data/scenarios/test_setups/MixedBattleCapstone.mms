@@ -27,7 +27,7 @@ description: >
 
 map:
   boards:
-    - file: buildingsnobasement/citadel
+    - file: buildingsnobasement/citadel.board
 
 options:
   on:

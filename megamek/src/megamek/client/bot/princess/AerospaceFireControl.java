@@ -142,10 +142,13 @@ public class AerospaceFireControl extends FireControl {
      * because at firing time the flown line is a fact.
      */
     private Coords bestFootprintAimHex(Entity shooter, MovePath flightPath, Game game) {
-        List<Coords> flownLine = shooter.getPassedThrough();
-        if (((flownLine == null) || flownLine.isEmpty()) && (flightPath != null)) {
-            flownLine = new ArrayList<>(flightPath.getCoordsSet());
-        }
+        // The candidate path FIRST: during movement-phase plan evaluation, getPassedThrough() is the
+        // PREVIOUS round's flown line, so preferring it priced candidate paths' bombing utility
+        // against stale hexes. At actual firing time the callers pass a null flightPath and the
+        // executed move's passedThrough is exactly right.
+        List<Coords> flownLine = (flightPath != null)
+              ? new ArrayList<>(flightPath.getCoordsSet())
+              : shooter.getPassedThrough();
         List<BombMounted> groundBombs = shooter.getBombs(AmmoType.F_GROUND_BOMB);
         if ((flownLine == null) || flownLine.isEmpty() || groundBombs.isEmpty()) {
             return null;

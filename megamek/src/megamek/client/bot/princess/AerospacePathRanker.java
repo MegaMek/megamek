@@ -113,6 +113,9 @@ public class AerospacePathRanker extends BasicPathRanker {
     /** Strike attacks (guns, air-to-ground) are impossible above this altitude. */
     private static final int STRIKE_MAX_ALTITUDE = 5;
 
+    /** A dive-bomb attack costs the attacker this many altitude levels (TW). */
+    private static final int DIVE_BOMB_ALTITUDE_TOLL = 2;
+
     /** What reaching the ground out of control is priced at, before the odds of it happening. */
     private static final double CONTROL_LOSS_COST = 40.0;
 
@@ -191,6 +194,23 @@ public class AerospacePathRanker extends BasicPathRanker {
     int lastGroundTargets;
     int lastOverflownTargets;
     private double lastAttackRunCredit;
+
+    /**
+     * The altitude this path really ends the round at: the flown final altitude, minus the two-level
+     * toll of the dive bomb the pose is credited for. Every crash-odds term prices against this - a
+     * run bombed from altitude 3 exits at 1, where any failed roll reaches the ground, and pricing
+     * that honestly is what pushes runs to the top of the window (attack from 5, exit at 3).
+     */
+    private int lastPostAttackAltitude;
+
+    /** Test seam: read or set the post-attack altitude the risk terms will price against. */
+    int lastPostAttackAltitudeForTest() {
+        return lastPostAttackAltitude;
+    }
+
+    void lastPostAttackAltitudeForTest(int altitude) {
+        lastPostAttackAltitude = altitude;
+    }
     private int lastVenueGround;
     private double lastCloseRangeDamage;
     private int lastFinalAltitude;
@@ -249,6 +269,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastGroundTargets = 0;
         lastOverflownTargets = 0;
         lastAttackRunCredit = 0;
+        lastPostAttackAltitude = 0;
         lastVenueGround = 0;
         lastCloseRangeDamage = 0;
         lastFinalAltitude = 0;
@@ -261,6 +282,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         }
 
         lastFinalAltitude = path.getFinalAltitude();
+        lastPostAttackAltitude = lastFinalAltitude;
         lastFinalVelocity = path.getFinalVelocity();
         AerospaceVenue venue = AerospaceVenue.of(game, mover);
         // Standing diagnosis columns: which venue this ranking believed it was in, and what the damage
@@ -471,6 +493,12 @@ public class AerospacePathRanker extends BasicPathRanker {
             // the count is the diagnostic (did we line runs up?), the credit is the incentive.
             lastOverflownTargets++;
             lastAttackRunCredit += runDamage * ATTACK_RUN_WEIGHT;
+            // The credit assumes the dive bomb, so the risk pricing must assume its altitude toll
+            // too: 2 levels (TW), never below the deck the engine itself enforces.
+            if (inDiveBombWindow && (bombDamage >= gunDamage)) {
+                lastPostAttackAltitude = Math.max(AerospaceGeometry.MINIMUM_ALTITUDE,
+                      finalAltitude - DIVE_BOMB_ALTITUDE_TOLL);
+            }
         }
     }
 
@@ -629,7 +657,7 @@ public class AerospacePathRanker extends BasicPathRanker {
                 return UNSANCTIONED_MANEUVER_COST;
             }
             double failureChance = 1.0 - lastManeuverOdds;
-            return failureChance * (CONTROL_LOSS_COST * oddsOfReachingTheGround(path.getFinalAltitude())
+            return failureChance * (CONTROL_LOSS_COST * oddsOfReachingTheGround(lastPostAttackAltitude)
                   + failedManeuverExitCost(path, game, venue));
         }
         return 0;
@@ -689,13 +717,15 @@ public class AerospacePathRanker extends BasicPathRanker {
     boolean maneuverSanctioned(int maneuverType, int committedEnemies, int airEnemies, MovePath path,
           Game game, AerospaceVenue venue) {
         if (committedEnemies > 0) {
-            // Reacting to a committed enemy: the escape pair flies at any odds - reversing off an
-            // overshoot is worth a bad roll. The rest are stunts, and a stunt at bad odds is not
-            // flying, it is gambling: the ranker scores the pose the maneuver reaches, and a failed
-            // roll never reaches it. Seen live: a piloting-6 pilot opened round 1 with a Split-S it
-            // would fail 72% of the time. Below an even chance the reactive set is off the table.
-            if ((maneuverType == ManeuverType.MAN_HAMMERHEAD)
-                  || (maneuverType == ManeuverType.MAN_IMMELMAN)) {
+            // Every maneuver is a stunt, and a stunt at bad odds is gambling: the ranker scores the
+            // pose the maneuver reaches, and a failed roll never reaches it. Two live games opened
+            // with sub-30% Hammerheads under a blanket escape exemption; both fighters later died to
+            // control-roll spirals. The exemption now requires being genuinely cornered - the board
+            // edge inside the unsteerable straight run - where a 17% reversal really does beat the
+            // alternatives. Everywhere else, the escape pair answers to the same floor as the rest.
+            boolean escapePair = (maneuverType == ManeuverType.MAN_HAMMERHEAD)
+                  || (maneuverType == ManeuverType.MAN_IMMELMAN);
+            if (escapePair && cornered(path, game, venue)) {
                 return true;
             }
             return maneuverSuccessChance(path, maneuverType) >= MINIMUM_STUNT_SUCCESS_CHANCE;
@@ -713,6 +743,21 @@ public class AerospacePathRanker extends BasicPathRanker {
             return false;
         }
         return maneuverSuccessChance(path, maneuverType) >= MINIMUM_STUNT_SUCCESS_CHANCE;
+    }
+
+    /**
+     * Whether this pose has the board edge inside its unsteerable straight run - the one situation
+     * where a bad-odds escape maneuver still beats every alternative.
+     */
+    private static boolean cornered(MovePath path, Game game, AerospaceVenue venue) {
+        Entity mover = path.getEntity();
+        if (mover.getPosition() == null) {
+            return false;
+        }
+        int minStraight = venue.isGroundMap() ? 8 : 1;
+        int exitDistance = AerospaceGeometry.hexesUntilOffBoard(mover.getPosition(), mover.getFacing(),
+              game.getBoard(path.getFinalBoardId()), minStraight + 1);
+        return exitDistance <= minStraight;
     }
 
     /**
@@ -868,22 +913,55 @@ public class AerospacePathRanker extends BasicPathRanker {
         if (!(mover instanceof IAero aero)) {
             return 0;
         }
+        // Both fighters lost in live game 8 died to exactly the risks priced here, because the old
+        // pricing used a healthy airframe's arithmetic: flat costs that ignored avionics hits and
+        // damage modifiers (a real End Phase read "3 control rolls: stalled out; avionics hit;
+        // 40 damage +2" - every roll a 9), and the pre-attack altitude when a planned dive bomb was
+        // about to cost two more levels. "Should I do this move" is only answerable at the real odds
+        // in the real post-move state.
         double penalty = 0;
+        double crashOdds = oddsOfReachingTheGround(lastPostAttackAltitude);
         int safeThrust = AeroPathUtil.calculateMaxSafeThrust(aero);
         if (path.getMpUsed() > safeThrust) {
-            penalty += CONTROL_LOSS_COST * oddsOfReachingTheGround(path.getFinalAltitude());
+            penalty += CONTROL_LOSS_COST * controlRollFailureChance(path, 0) * crashOdds;
         }
-        // An aerodyne that ends its move at velocity zero stalls (TW p.81): a control roll against
-        // piloting + 2, and altitude lost on a failure. Priced here in the same crash-scale family as
-        // the other control risks, because the stock fall machinery that used to catch this state is
-        // switched off for airborne aeros (see getMovePathSuccessProbability) - it read a stall as
-        // certain destruction and buried every post-Hammerhead pose by hundreds of points.
+        // An aerodyne that ends its move at velocity zero stalls (TW p.81): a control roll at +2,
+        // altitude lost on a failure. Priced in the same crash-scale family as the other control
+        // risks, because the stock fall machinery is switched off for airborne aeros (see
+        // getMovePathSuccessProbability).
         if ((path.getFinalVelocity() == 0) && !aero.isSpheroid() && !aero.isVSTOL()) {
-            int stallTarget = mover.getCrew().getPiloting() + 2 + STALL_CONTROL_MODIFIER;
-            double stallFailureChance = 1.0 - (Compute.oddsAbove(stallTarget) / 100.0);
-            penalty += CONTROL_LOSS_COST * stallFailureChance * oddsOfReachingTheGround(path.getFinalAltitude());
+            penalty += CONTROL_LOSS_COST * controlRollFailureChance(path, STALL_CONTROL_MODIFIER) * crashOdds;
         }
         return penalty;
+    }
+
+    /**
+     * The chance THIS airframe, in its current state, fails a control roll with the given extra
+     * modifier. Built on {@link Entity#getBasePilotingRoll} - the same base the server rolls from -
+     * so avionics hits, damaged controls, pilot wounds, and conditions all raise the price. The flat
+     * crew-skill formula answered for a fighter that no longer exists once the armor starts coming
+     * off.
+     *
+     * @param path          the path being priced
+     * @param extraModifier the roll's own modifier on top of the base (stall +2, maneuver mods, ...)
+     *
+     * @return the probability (0.0 to 1.0) that the roll fails
+     */
+    private static double controlRollFailureChance(MovePath path, int extraModifier) {
+        Entity mover = path.getEntity();
+        PilotingRollData baseRoll = mover.getBasePilotingRoll(path.getLastStepMovementType());
+        int target = baseRoll.getValue();
+        if (target == TargetRoll.AUTOMATIC_SUCCESS) {
+            return 0.0;
+        }
+        if ((target == TargetRoll.IMPOSSIBLE) || (target == TargetRoll.AUTOMATIC_FAIL)) {
+            return 1.0;
+        }
+        if (target == TargetRoll.CHECK_FALSE) {
+            // The engine declines to price this roll; fall back to the bare crew number.
+            target = mover.getCrew().getPiloting() + 2;
+        }
+        return 1.0 - (Compute.oddsAbove(target + extraModifier) / 100.0);
     }
 
     /**

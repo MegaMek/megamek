@@ -246,8 +246,11 @@ class AerospacePathRankerTest {
         Crew crew = mock(Crew.class);
         when(crew.getPiloting()).thenReturn(4);
         when(fighter.getCrew()).thenReturn(crew);
+        when(fighter.getBasePilotingRoll(org.mockito.ArgumentMatchers.any()))
+              .thenReturn(new megamek.common.rolls.PilotingRollData(1, 5, "base"));
         when(fighter.isSpheroid()).thenReturn(false);
         when(fighter.isVSTOL()).thenReturn(false);
+        ranker.lastPostAttackAltitudeForTest(3);
 
         MovePath stalled = mock(MovePath.class);
         when(stalled.getEntity()).thenReturn(fighter);
@@ -388,6 +391,99 @@ class AerospacePathRankerTest {
         when(cornered.getEntity().getCrew()).thenReturn(greenCrew);
         assertTrue(ranker.maneuverSanctioned(ManeuverType.MAN_HAMMERHEAD, 1, 2, cornered, game,
               AerospaceVenue.GROUND_MAP), "bad odds do not gate the escape pair");
+    }
+
+    /**
+     * The lesson of live game 8, where both fighters died to control-roll spirals: 28% odds of reaching
+     * an attack position is a 72% chance of a wasted turn and a forced straight run - more likely to
+     * fail than to attack. Outside a genuine corner, the escape pair now answers to the same 50% floor
+     * as everything else; cornered, any odds still beat the certain fly-off.
+     */
+    @Test
+    void midBoardEscapeManeuversObeyTheOddsFloor() {
+        Game game = mock(Game.class);
+        Board board = groundBoard(40, 40);
+        MovePath midBoard = maneuverPathAt(new Coords(20, 20), 0, game, board);
+        Crew greenCrew = mock(Crew.class);
+        when(greenCrew.getPiloting()).thenReturn(6);
+        when(midBoard.getEntity().getCrew()).thenReturn(greenCrew);
+
+        assertFalse(ranker.maneuverSanctioned(ManeuverType.MAN_HAMMERHEAD, 1, 2, midBoard, game,
+              AerospaceVenue.GROUND_MAP),
+              "a 17%-odds Hammerhead mid-board is a gamble, not an escape - committed enemy or not");
+
+        MovePath cornered = maneuverPathAt(new Coords(37, 3), 1, game, board);
+        when(cornered.getEntity().getCrew()).thenReturn(greenCrew);
+        assertTrue(ranker.maneuverSanctioned(ManeuverType.MAN_HAMMERHEAD, 1, 2, cornered, game,
+              AerospaceVenue.GROUND_MAP),
+              "cornered, the same bad odds still beat the certain fly-off");
+    }
+
+    /**
+     * "Should I do this move" is only answerable at THIS airframe's real odds: the control-risk price
+     * must rise with the state of the airframe, because the server's roll does. A fighter whose base
+     * piloting roll reads 9 (avionics hit, fresh damage) stalls at far worse odds than one rolling
+     * against 6, and the old flat-crew-skill pricing charged them identically.
+     */
+    @Test
+    void controlRiskPricesTheAirframesRealRollNotTheCrewSheet() {
+        AeroSpaceFighter healthy = mock(AeroSpaceFighter.class);
+        when(healthy.getBasePilotingRoll(org.mockito.ArgumentMatchers.any()))
+              .thenReturn(new megamek.common.rolls.PilotingRollData(1, 6, "healthy"));
+        AeroSpaceFighter shotUp = mock(AeroSpaceFighter.class);
+        when(shotUp.getBasePilotingRoll(org.mockito.ArgumentMatchers.any()))
+              .thenReturn(new megamek.common.rolls.PilotingRollData(1, 9, "avionics hit, 40 damage"));
+
+        MovePath healthyStall = stalledPathAtAltitudeThree(healthy);
+        MovePath shotUpStall = stalledPathAtAltitudeThree(shotUp);
+
+        double healthyPrice = ranker.controlRiskPenalty(healthyStall);
+        double shotUpPrice = ranker.controlRiskPenalty(shotUpStall);
+
+        assertTrue(shotUpPrice > healthyPrice * 1.5,
+              "the damaged airframe must pay meaningfully more for the same stall: healthy="
+                    + healthyPrice + " shotUp=" + shotUpPrice);
+    }
+
+    private MovePath stalledPathAtAltitudeThree(AeroSpaceFighter fighter) {
+        when(fighter.isSpheroid()).thenReturn(false);
+        when(fighter.isVSTOL()).thenReturn(false);
+        MovePath path = mock(MovePath.class);
+        when(path.getEntity()).thenReturn(fighter);
+        when(path.getMpUsed()).thenReturn(0);
+        when(path.getFinalVelocity()).thenReturn(0);
+        when(path.getFinalAltitude()).thenReturn(3);
+        // controlRiskPenalty reads the post-attack altitude field; mirror what calculateAerospaceMod
+        // sets before the risk terms run.
+        ranker.lastPostAttackAltitudeForTest(3);
+        return path;
+    }
+
+    /**
+     * The dive-bomb toll is part of the move: a run credited at altitude 3 exits at 1 after the
+     * attack's two-level cost, and every crash-odds term must price that exit, not the flown pose.
+     */
+    @Test
+    void aDiveBombRunIsPricedAtItsExitAltitude() {
+        Game game = groundGame();
+        Coords mekHex = new Coords(20, 20);
+        Entity mek = groundMek(mekHex);
+
+        MovePath run = mock(MovePath.class);
+        AeroSpaceFighter bomber = strikeFighterOver(java.util.Set.of(mekHex), 3, run);
+        megamek.common.equipment.BombMounted bomb = mock(megamek.common.equipment.BombMounted.class);
+        megamek.common.equipment.enums.BombType bombType = mock(megamek.common.equipment.enums.BombType.class);
+        when(bombType.getDamagePerShot()).thenReturn(10);
+        when(bomb.getType()).thenReturn(bombType);
+        when(bomber.getBombs(megamek.common.equipment.AmmoType.F_GROUND_BOMB))
+              .thenReturn(new java.util.ArrayList<>(java.util.List.of(bomb)));
+        when(bomber.getWeaponList()).thenReturn(new java.util.ArrayList<>());
+
+        ranker.lastPostAttackAltitudeForTest(3);
+        ranker.scoreAttackRuns(run, game, java.util.List.of(mek), AerospaceVenue.GROUND_MAP);
+
+        assertEquals(1, ranker.lastPostAttackAltitudeForTest(),
+              "bombing from altitude 3 means exiting at 1 - the risk terms must know");
     }
 
     // --- the attack run ------------------------------------------------------------------------------

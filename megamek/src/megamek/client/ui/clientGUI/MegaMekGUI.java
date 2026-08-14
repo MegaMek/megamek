@@ -42,6 +42,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.font.GlyphVector;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -164,8 +165,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     /** Family name of the spray-paint font the splash tag is drawn in. Ships in mm-data under data/fonts. */
     private static final String SPRAY_PAINT_FONT_FAMILY = "Rubik Spray Paint";
 
-    /** Colour of the sprayed splash tag: a strong red, left see-through enough that the logo shows through it. */
-    private static final Color SPLASH_TAG_COLOR = new Color(198, 26, 26, 232);
+    /** Colour the splash tag is sprayed in when it does not name one: a strong red. */
+    private static final Color SPLASH_TAG_DEFAULT_COLOR = new Color(198, 26, 26);
+
+    /** How solid the sprayed tag is, out of 255. Short of opaque, so the logo shows through the paint. */
+    private static final int SPLASH_TAG_ALPHA = 232;
 
     /** Colour outlining the sprayed tag, which lifts the red clear of the light wordmark underneath it. */
     private static final Color SPLASH_TAG_OUTLINE_COLOR = new Color(0, 0, 0, 225);
@@ -175,9 +179,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * every window size instead of turning into a heavy blob on a small launcher.
      */
     private static final double SPLASH_TAG_OUTLINE_WIDTH_FRACTION = 0.085;
-
-    /** How far off level the sprayed tag sits, in degrees, so it does not read as a tidy interface caption. */
-    private static final double SPLASH_TAG_TILT_DEGREES = -2.5;
 
     /** Fraction of the logo's width the sprayed tag spans, leaving it a little narrower than the logo itself. */
     private static final double SPLASH_TAG_WIDTH_FRACTION_OF_LOGO = 0.92;
@@ -218,6 +219,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private ManagedVolatileImage medalImage;
     /** Font the splash tag is sprayed in, or {@code null} when this build has no tag to spray. */
     private Font splashTagFont;
+    /** Colour the splash tag is sprayed in, worked out once when the menu is built. */
+    private Color splashTagColor = SPLASH_TAG_DEFAULT_COLOR;
     private TipOfTheDay tipOfTheDay;
     private AbstractRandomArmyDialog randomArmyDialog;
     private NetworkInformationDialog networkInformationDialog;
@@ -435,6 +438,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         logoImage = new ManagedVolatileImage(getImage(FILENAME_LOGO), Transparency.TRANSLUCENT);
         medalImage = new ManagedVolatileImage(getImage(FILENAME_MEDAL), Transparency.TRANSLUCENT);
         splashTagFont = loadSplashTagFont();
+        splashTagColor = resolveSplashTagColor();
         Dimension splashPanelPreferredSize = calculateSplashPanelPreferredSize(scaledMonitorSize, splashImage);
         // This is an empty panel that will contain the splash image
         // Draw background, border, and children first
@@ -540,7 +544,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * is why {@code Version.properties} asks for a short one.</p>
      *
      * @param graphics   the graphics context the tag will be painted with, used to measure the lettering
-     * @param panelWidth the width in pixels of the splash artwork
+     * @param logoBounds the area the logo occupies, which the tag is sized against
      *
      * @return the font to spray the tag in, already at the right size, or {@code null} when this build has no tag
      */
@@ -551,11 +555,14 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         String splashTag = Version.getSplashTag();
 
-        // Measure at a reference size and scale from there, which is one measurement instead of a search.
+        // Measure at a reference size and scale from there, which is one measurement instead of a search. The
+        // measurement is of the painted lettering itself rather than of the font's ascent and descent, because
+        // those describe what the font could draw rather than what this particular tag does draw.
         Font referenceFont = splashTagFont.deriveFont(SPLASH_TAG_REFERENCE_FONT_SIZE);
-        FontMetrics referenceMetrics = graphics.getFontMetrics(referenceFont);
-        int referenceWidth = referenceMetrics.stringWidth(splashTag);
-        int referenceHeight = referenceMetrics.getAscent() - referenceMetrics.getDescent();
+        Rectangle2D referenceInk = referenceFont.createGlyphVector(graphics.getFontRenderContext(), splashTag)
+              .getVisualBounds();
+        double referenceWidth = referenceInk.getWidth();
+        double referenceHeight = referenceInk.getHeight();
         if ((referenceWidth <= 0) || (referenceHeight <= 0)) {
             return null;
         }
@@ -597,28 +604,30 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
 
         String splashTag = Version.getSplashTag();
-        FontMetrics tagMetrics = graphics.getFontMetrics(sizedSplashTagFont);
-        int tagWidth = tagMetrics.stringWidth(splashTag);
-
-        // Centred across the logo, and down it at the height the wordmark sits at
-        int tagX = logoBounds.x + ((logoBounds.width - tagWidth) / 2);
-        int lettersHeight = tagMetrics.getAscent() - tagMetrics.getDescent();
-        int wordmarkCentreY = logoBounds.y + (int) (logoBounds.height * LOGO_WORDMARK_CENTRE_FRACTION);
-        int tagY = wordmarkCentreY + (lettersHeight / 2);
 
         Graphics2D tagGraphics = (Graphics2D) graphics.create();
         try {
             tagGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             tagGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                   RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            tagGraphics.rotate(Math.toRadians(SPLASH_TAG_TILT_DEGREES),
-                  tagX + (tagWidth / 2.0),
-                  tagY - (tagMetrics.getAscent() / 2.0));
 
-            // The lettering is outlined in black and then filled in red, rather than simply drawn, so that it
-            // stands clear of the pale wordmark it is sprayed across.
+            // Measure the painted lettering, so that centring it uses where the paint actually lands rather than
+            // where the font says its tallest and lowest characters could reach.
             GlyphVector tagGlyphs = sizedSplashTagFont.createGlyphVector(tagGraphics.getFontRenderContext(),
                   splashTag);
+            Rectangle2D tagInk = tagGlyphs.getVisualBounds();
+
+            // Centred across the logo, and down it at the height the wordmark sits at
+            int tagX = logoBounds.x + (int) ((logoBounds.width - tagInk.getWidth()) / 2 - tagInk.getX());
+            int wordmarkCentreY = logoBounds.y + (int) (logoBounds.height * LOGO_WORDMARK_CENTRE_FRACTION);
+            int tagY = wordmarkCentreY - (int) (tagInk.getY() + (tagInk.getHeight() / 2));
+
+            tagGraphics.rotate(Math.toRadians(Version.getSplashTagRotation()),
+                  tagX + tagInk.getCenterX(),
+                  wordmarkCentreY);
+
+            // The lettering is outlined and then filled, rather than simply drawn, so that it stands clear of the
+            // pale wordmark it is sprayed across.
             Shape tagOutline = tagGlyphs.getOutline(tagX, tagY);
 
             float outlineWidth = (float) Math.max(1.0,
@@ -627,11 +636,38 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             tagGraphics.setColor(SPLASH_TAG_OUTLINE_COLOR);
             tagGraphics.draw(tagOutline);
 
-            tagGraphics.setColor(SPLASH_TAG_COLOR);
+            tagGraphics.setColor(splashTagColor);
             tagGraphics.fill(tagOutline);
         } finally {
             tagGraphics.dispose();
         }
+    }
+
+    /**
+     * Works out what colour to spray the splash tag in, the same way the build note's colour is chosen: by the
+     * plain colour name written in {@code Version.properties}.
+     *
+     * <p>A tag that names no colour, or names one that is not recognised, is sprayed in red. Whichever colour is
+     * used is left slightly see-through so the logo shows through the paint.</p>
+     *
+     * @return the colour to spray the tag in, never {@code null}
+     */
+    private static Color resolveSplashTagColor() {
+        String configuredColorName = Version.getSplashTagColorName();
+        if (configuredColorName == null) {
+            LOGGER.debug("[SplashTag] No splashTagColor set - the tag is sprayed in red");
+            return UIUtil.addAlpha(SPLASH_TAG_DEFAULT_COLOR, SPLASH_TAG_ALPHA);
+        }
+
+        Color namedColor = colorForName(configuredColorName);
+        if (namedColor == null) {
+            LOGGER.warn("[SplashTag] Version.properties sets splashTagColor to '{}', which is not a colour name "
+                        + "MegaMek knows. The tag will be sprayed in red instead.", configuredColorName);
+            return UIUtil.addAlpha(SPLASH_TAG_DEFAULT_COLOR, SPLASH_TAG_ALPHA);
+        }
+
+        LOGGER.debug("[SplashTag] Splash tag colour set to {}", configuredColorName);
+        return UIUtil.addAlpha(namedColor, SPLASH_TAG_ALPHA);
     }
 
     /**

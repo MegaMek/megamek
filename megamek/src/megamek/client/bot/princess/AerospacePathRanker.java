@@ -250,6 +250,101 @@ public class AerospacePathRanker extends BasicPathRanker {
     }
 
     /**
+     * The debrief: after every auction, one durable record of the decision and the roads not taken.
+     *
+     * <p>Aerospace is complex enough that the story is in the alternatives - the mek was in this hex, the
+     * chosen path ended in that one, and a maneuver that overflew the target lost by nine points. The
+     * per-path TSV holds all of it but rotates away mid-game; this line survives in the bot log, one per
+     * aero turn, greppable by DEBRIEF. Every engagement gets its debrief, and the data is the story.</p>
+     */
+    @Override
+    public java.util.TreeSet<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange,
+          double fallTolerance, List<Entity> enemies, List<Entity> friends) {
+        java.util.TreeSet<RankedPath> ranked = super.rankPaths(movePaths, game, maxRange, fallTolerance,
+              enemies, friends);
+        try {
+            logDebrief(ranked);
+        } catch (Exception exception) {
+            DEBRIEF_LOGGER.error(exception, "Debrief logging failed; the ranking itself is unaffected");
+        }
+        return ranked;
+    }
+
+    private static final megamek.logging.MMLogger DEBRIEF_LOGGER =
+          megamek.logging.MMLogger.create(AerospacePathRanker.class);
+
+    private void logDebrief(java.util.TreeSet<RankedPath> ranked) {
+        if (ranked.isEmpty()) {
+            return;
+        }
+        RankedPath chosen = ranked.first();
+        Entity mover = chosen.getPath().getEntity();
+        if (!mover.isAero() || !mover.isAirborne() || mover.isSpaceborne()) {
+            return;
+        }
+        double chosenRank = chosen.getRank();
+        RankedPath bestOverflight = null;
+        RankedPath bestManeuver = null;
+        int maneuverPaths = 0;
+        int overflightPaths = 0;
+        for (RankedPath candidate : ranked) {
+            Map<String, Double> scores = candidate.getScores();
+            if (scores.getOrDefault("aeroManeuverType", 0.0) != 0.0) {
+                maneuverPaths++;
+                // A buried maneuver (doctrine gate closed) never bid in the auction; the debrief's
+                // "best rejected" must name a real contender, not the burial constant.
+                boolean buried = scores.getOrDefault("aeroManeuverRisk", 0.0) >= UNSANCTIONED_MANEUVER_COST;
+                if ((bestManeuver == null) && (candidate != chosen) && !buried) {
+                    bestManeuver = candidate;
+                }
+            }
+            if (scores.getOrDefault("aeroOverflownTargets", 0.0) > 0.0) {
+                overflightPaths++;
+                if ((bestOverflight == null) && (candidate != chosen)) {
+                    bestOverflight = candidate;
+                }
+            }
+        }
+        StringBuilder debrief = new StringBuilder("DEBRIEF ").append(mover.getDisplayName())
+              .append(": chose ").append(describe(chosen))
+              .append(String.format(" rank=%.1f", chosenRank))
+              .append(" | ").append(ranked.size()).append(" paths, ")
+              .append(maneuverPaths).append(" maneuvers, ")
+              .append(overflightPaths).append(" overflights");
+        if ((bestOverflight != null)
+              && (chosen.getScores().getOrDefault("aeroOverflownTargets", 0.0) == 0.0)) {
+            debrief.append(" | best rejected OVERFLIGHT: ").append(describe(bestOverflight))
+                  .append(String.format(" lost by %.1f", chosenRank - bestOverflight.getRank()));
+        }
+        if ((bestManeuver != null)
+              && (chosen.getScores().getOrDefault("aeroManeuverType", 0.0) == 0.0)) {
+            debrief.append(" | best rejected MANEUVER: ").append(describe(bestManeuver))
+                  .append(String.format(" lost by %.1f", chosenRank - bestManeuver.getRank()));
+        }
+        DEBRIEF_LOGGER.info(debrief.toString());
+    }
+
+    /** One phrase for a ranked path: maneuver name and odds if any, end hex, altitude, velocity. */
+    private static String describe(RankedPath rankedPath) {
+        MovePath path = rankedPath.getPath();
+        Map<String, Double> scores = rankedPath.getScores();
+        StringBuilder text = new StringBuilder();
+        int maneuverType = (int) Math.round(scores.getOrDefault("aeroManeuverType", 0.0));
+        if (maneuverType != ManeuverType.MAN_NONE) {
+            text.append(ManeuverType.getTypeName(maneuverType))
+                  .append(String.format(" (odds %.0f%%) ", scores.getOrDefault("aeroManeuverOdds", 1.0) * 100));
+        }
+        text.append(path.getFinalCoords() != null ? path.getFinalCoords().getBoardNum() : "off-board")
+              .append(" alt ").append(path.getFinalAltitude())
+              .append(" vel ").append(path.getFinalVelocity());
+        double overflown = scores.getOrDefault("aeroOverflownTargets", 0.0);
+        if (overflown > 0) {
+            text.append(String.format(" overflying %.0f target(s)", overflown));
+        }
+        return text.toString();
+    }
+
+    /**
      * Prices the geometry the stock terms cannot see: whether this pose can shoot anybody, whether it does so
      * from an arc they cannot answer, and what it is risking to get there.
      */

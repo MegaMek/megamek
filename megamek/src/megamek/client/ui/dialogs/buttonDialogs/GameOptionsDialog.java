@@ -33,35 +33,46 @@
  */
 package megamek.client.ui.dialogs.buttonDialogs;
 
-import static megamek.client.ui.Messages.getString;
-import static megamek.client.ui.util.UIUtil.FixedYPanel;
+import static megamek.client.ui.Messages.CLIENT_BUNDLE;
 import static megamek.client.ui.util.UIUtil.WrappingButtonPanel;
+import static megamek.common.internationalization.I18n.getTextAt;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
+import java.util.function.Predicate;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 
-import megamek.client.ui.Messages;
-import megamek.client.ui.buttons.MMToggleButton;
+import org.apache.commons.text.StringEscapeUtils;
+
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
 import megamek.client.ui.panels.DialogOptionComponentYPanel;
+import megamek.client.ui.panels.GameOptionsPane;
 import megamek.client.ui.panels.phaseDisplay.lobby.VictoryConditionsDialog;
+import megamek.client.ui.settings.SettingsBadge;
+import megamek.client.ui.settings.SettingsIconLegend;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.TechConstants;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -71,57 +82,57 @@ import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
+import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 /** Responsible for displaying the current game options and allowing the user to change them. */
 public class GameOptionsDialog extends AbstractButtonDialog implements ActionListener, DialogOptionListener {
+    private static final MMLogger LOGGER = MMLogger.create(GameOptionsDialog.class);
+    private static final int BUTTON_GAP = 8;
+    private static final Set<String> CORE_RULES_DISABLED_OPTIONS = Set.of(
+          OptionsConstants.BASE_FLAMER_HEAT,
+          OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS,
+          OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE,
+          OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS,
+          OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES,
+          OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC,
+          OptionsConstants.INIT_FRONT_LOAD_INITIATIVE,
+          OptionsConstants.ADVANCED_MINEFIELDS,
+          OptionsConstants.ADVANCED_ALTERNATE_MASC,
+          OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED);
 
     private ClientGUI clientGui;
     private JFrame frame;
     private GameOptions options;
     private boolean editable = true;
+    private Set<String> excludedOptionNames = Set.of();
 
     /**
      * A map that maps an option to a collection of DialogOptionComponents that can effect the value of this option.
      */
     private Map<String, List<DialogOptionComponentYPanel>> optionComps = new HashMap<>();
 
-    /**
-     * Keeps track of the DialogOptionComponents that have been added to the search panel. This is used to remove those
-     * components from optionComps when they get removed.
-     */
-    private final ArrayList<DialogOptionComponentYPanel> searchComps = new ArrayList<>();
-
-    private int maxOptionWidth;
-
-    private final JTabbedPane panOptions = new JTabbedPane();
-
-    /** Panel that holds all the options found via search */
-    private final JPanel panSearchOptions = new JPanel();
-
-    /** Text field that contains text to search on */
-    private final JTextField txtSearch = new JTextField("");
+    private final JPanel panOptions = new JPanel(new BorderLayout());
+    private GameOptionsPane gameOptionsPane;
 
     private final WrappingButtonPanel panPassword = new WrappingButtonPanel();
-    private final JLabel labPass = new JLabel(Messages.getString("GameOptionsDialog.Password"));
+    private final JLabel labPass = new JLabel(getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.Password"));
     private final JTextField texPass = new JTextField(15);
-    private final WrappingButtonPanel panButtons = new WrappingButtonPanel();
-    private final JButton butSave = new JButton(Messages.getString("GameOptionsDialog.Save"));
-    private final JButton butLoad = new JButton(Messages.getString("GameOptionsDialog.Load"));
-    private final JButton butDefaults = new JButton(Messages.getString("GameOptionsDialog.Defaults"));
-    private final JButton butOkay = new JButton(Messages.getString("Okay"));
-    private final JButton butCancel = new JButton(Messages.getString("Cancel"));
-    private final MMToggleButton butUnofficial = new MMToggleButton("Unofficial Opts");
+    private final JButton butSave = new JButton(getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.Save"));
+    private final JButton butLoad = new JButton(getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.Load"));
+    private final JButton butDefaults = new JButton(getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.Defaults"));
+    private final JButton butOkay = new JButton(getTextAt(CLIENT_BUNDLE, "Okay"));
+    private final JButton butCancel = new JButton(getTextAt(CLIENT_BUNDLE, "Cancel"));
+    private final JToggleButton butUnofficial = new JToggleButton();
+    private final JToggleButton butLegacy = new JToggleButton();
 
     /**
      * When the OK button is pressed, the options can be saved to a file; this behavior happens by default but there are
      * some situations where the options should not be saved, such as when loading a scenario.
      */
     private boolean performSave = true;
-
-    private final static String UNOFFICIAL = "Unofficial";
 
     /**
      * Creates a new GameOptionsDialog with the given ClientGUI as parent. The ClientGUI supplies the game options. Used
@@ -138,8 +149,21 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
      * a scenario.
      */
     public GameOptionsDialog(JFrame frame, GameOptions options, boolean shouldSave) {
+        this(frame, options, shouldSave, Set.of());
+    }
+
+    /**
+     * Creates a scenario-style Game Options dialog while omitting options owned by the calling application.
+     *
+     * @param frame               parent frame
+     * @param options             options edited by the dialog
+     * @param shouldSave          whether confirming should save options to disk
+     * @param excludedOptionNames option names that must not appear in this presentation
+     */
+    public GameOptionsDialog(JFrame frame, GameOptions options, boolean shouldSave, Set<String> excludedOptionNames) {
         super(frame, "GameOptionsDialog", "GameOptionsDialog.title");
         performSave = shouldSave;
+        this.excludedOptionNames = Set.copyOf(excludedOptionNames);
         init(frame, options);
     }
 
@@ -156,34 +180,194 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
     @Override
     protected Container createCenterPane() {
-        var mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
-        mainPanel.add(panOptions);
-        mainPanel.add(Box.createVerticalStrut(5));
-        mainPanel.add(panPassword);
-        mainPanel.add(Box.createVerticalStrut(5));
-        mainPanel.add(panButtons);
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(panOptions, BorderLayout.CENTER);
+        mainPanel.add(panPassword, BorderLayout.SOUTH);
         return mainPanel;
     }
 
     @Override
     protected JPanel createButtonPanel() {
+        butOkay.setName("okButton");
+        butCancel.setName("cancelButton");
+        butDefaults.setName("defaultsButton");
+        butSave.setName("saveButton");
+        butLoad.setName("loadButton");
+        butUnofficial.setName("unofficialToggle");
+        butLegacy.setName("legacyToggle");
         butOkay.addActionListener(this::okButtonActionPerformed);
         butCancel.addActionListener(this::cancelActionPerformed);
         butDefaults.addActionListener(this::resetToDefaults);
         butSave.addActionListener(this);
         butLoad.addActionListener(this);
         butUnofficial.addActionListener(this);
+        butLegacy.addActionListener(this);
 
-        panButtons.add(butUnofficial);
-        panButtons.add(Box.createHorizontalStrut(30));
-        panButtons.add(butOkay);
-        panButtons.add(butCancel);
-        panButtons.add(butDefaults);
-        panButtons.add(butSave);
-        panButtons.add(butLoad);
+        configureRuleToggle(butUnofficial, GameOptionsPane.unofficialBadge(),
+              "GameOptionsDialog.Unofficial", "GameOptionsDialog.Unofficial.tooltip");
+        configureRuleToggle(butLegacy, GameOptionsPane.legacyBadge(),
+              "GameOptionsDialog.Legacy", "GameOptionsDialog.Legacy.tooltip");
 
-        return panButtons;
+        butOkay.putClientProperty("FlatLaf.style",
+              "background: $Button.default.background; foreground: $Button.default.foreground");
+        setUniformButtonSize(butOkay, butCancel, butDefaults, butSave, butLoad);
+        int gap = UIUtil.scaleForGUI(BUTTON_GAP);
+
+        JPanel actionButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, gap, 0));
+        actionButtons.add(butOkay);
+        actionButtons.add(butCancel);
+        actionButtons.add(butDefaults);
+        actionButtons.add(butSave);
+        actionButtons.add(butLoad);
+
+        JButton legendButton = SettingsIconLegend.createLegendButton(
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.legend.button"),
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.legend.tooltip"),
+              GameOptionsPane.legendEntries());
+        JPanel legendPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, gap, 0));
+        legendPanel.add(legendButton);
+        legendPanel.add(butUnofficial);
+        legendPanel.add(butLegacy);
+
+        return responsiveFooter(legendPanel, actionButtons, gap);
+    }
+
+    static JPanel responsiveFooter(JPanel ruleControls, JPanel actionButtons, int gap) {
+        JPanel footer = new JPanel(new ResponsiveFooterLayout(gap));
+        footer.add(ruleControls);
+        footer.add(actionButtons);
+        return footer;
+    }
+
+    private static final class ResponsiveFooterLayout implements LayoutManager {
+        private final int gap;
+
+        private ResponsiveFooterLayout(int gap) {
+            this.gap = gap;
+        }
+
+        @Override
+        public void addLayoutComponent(String name, Component component) {
+        }
+
+        @Override
+        public void removeLayoutComponent(Component component) {
+        }
+
+        @Override
+        public Dimension preferredLayoutSize(Container parent) {
+            return layoutSize(parent, true);
+        }
+
+        @Override
+        public Dimension minimumLayoutSize(Container parent) {
+            return layoutSize(parent, false);
+        }
+
+        private Dimension layoutSize(Container parent, boolean preferred) {
+            if (parent.getComponentCount() < 2) {
+                return new Dimension();
+            }
+            Dimension controlsSize = componentSize(parent.getComponent(0), preferred);
+            Dimension actionsSize = componentSize(parent.getComponent(1), preferred);
+            Insets insets = parent.getInsets();
+            int requiredWidth = controlsSize.width + actionsSize.width + (gap * 3)
+                  + insets.left + insets.right;
+            int availableWidth = parent.getWidth();
+            boolean wraps = availableWidth > 0 && requiredWidth > availableWidth;
+            int width = wraps
+                  ? Math.max(controlsSize.width, actionsSize.width) + (gap * 2) + insets.left + insets.right
+                  : requiredWidth;
+            int height = wraps
+                  ? controlsSize.height + actionsSize.height + (gap * 3)
+                  : Math.max(controlsSize.height, actionsSize.height) + (gap * 2);
+            return new Dimension(width, height + insets.top + insets.bottom);
+        }
+
+        private static Dimension componentSize(Component component, boolean preferred) {
+            return preferred ? component.getPreferredSize() : component.getMinimumSize();
+        }
+
+        @Override
+        public void layoutContainer(Container parent) {
+            if (parent.getComponentCount() < 2) {
+                return;
+            }
+            Component controls = parent.getComponent(0);
+            Component actions = parent.getComponent(1);
+            Dimension controlsSize = controls.getPreferredSize();
+            Dimension actionsSize = actions.getPreferredSize();
+            Insets insets = parent.getInsets();
+            int availableWidth = parent.getWidth() - insets.left - insets.right;
+            int requiredWidth = controlsSize.width + actionsSize.width + (gap * 3);
+            if (requiredWidth <= availableWidth) {
+                int controlsX = insets.left + gap;
+                int maximumActionsX = parent.getWidth() - insets.right - gap - actionsSize.width;
+                int actionsX = Math.min(maximumActionsX,
+                      Math.max((parent.getWidth() - actionsSize.width) / 2,
+                            controlsX + controlsSize.width + gap));
+                int contentHeight = parent.getHeight() - insets.top - insets.bottom;
+                controls.setBounds(controlsX, insets.top + (contentHeight - controlsSize.height) / 2,
+                      controlsSize.width, controlsSize.height);
+                actions.setBounds(actionsX, insets.top + (contentHeight - actionsSize.height) / 2,
+                      actionsSize.width, actionsSize.height);
+            } else {
+                int controlsX = insets.left + gap;
+                int actionsX = Math.max(insets.left + gap, (parent.getWidth() - actionsSize.width) / 2);
+                int controlsY = insets.top + gap;
+                controls.setBounds(controlsX, controlsY, controlsSize.width, controlsSize.height);
+                actions.setBounds(actionsX, controlsY + controlsSize.height + gap,
+                      actionsSize.width, actionsSize.height);
+            }
+        }
+    }
+
+    private static void configureRuleToggle(JToggleButton button, SettingsBadge badge, String labelKey,
+          String tooltipKey) {
+        boolean selected = button.isSelected();
+      String label = getTextAt(CLIENT_BUNDLE, labelKey);
+      button.setText(ruleToggleText(badge, label,
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.ruleToggle.on")));
+        Dimension onSize = button.getPreferredSize();
+      button.setText(ruleToggleText(badge, label,
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.ruleToggle.off")));
+        Dimension offSize = button.getPreferredSize();
+        Dimension size = new Dimension(Math.max(onSize.width, offSize.width), Math.max(onSize.height, offSize.height));
+        button.setPreferredSize(size);
+        button.setMinimumSize(size);
+        button.setToolTipText(getTextAt(CLIENT_BUNDLE, tooltipKey));
+        button.setSelected(selected);
+        updateRuleToggleText(button, badge, label);
+    }
+
+    static String ruleToggleText(SettingsBadge badge, String label, String state) {
+        return "<html><nobr>" + badge.toHtml() + "&nbsp;" + StringEscapeUtils.escapeHtml4(label)
+              + ": <b>" + StringEscapeUtils.escapeHtml4(state) + "</b></nobr></html>";
+    }
+
+    private static void updateRuleToggleText(JToggleButton button, SettingsBadge badge, String label) {
+        String stateKey = button.isSelected()
+              ? "GameOptionsDialog.ruleToggle.on"
+              : "GameOptionsDialog.ruleToggle.off";
+        String state = getTextAt(CLIENT_BUNDLE, stateKey);
+        button.setText(ruleToggleText(badge, label, state));
+        button.getAccessibleContext().setAccessibleName(label + ": " + state);
+    }
+
+    private static void setUniformButtonSize(JButton... buttons) {
+        int width = Arrays.stream(buttons)
+              .mapToInt(button -> button.getPreferredSize().width)
+              .max()
+              .orElse(0);
+        int height = Arrays.stream(buttons)
+              .mapToInt(button -> button.getPreferredSize().height)
+              .max()
+              .orElse(0);
+        Dimension size = new Dimension(width, height);
+        for (JButton button : buttons) {
+            button.setPreferredSize(size);
+            button.setMinimumSize(size);
+        }
     }
 
     /** Updates the dialog ui with the given options. */
@@ -226,7 +410,21 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                 output.addElement(option);
             }
         }
+        appendUnrepresentedOptions(output, options, optionComps.keySet());
         return output;
+    }
+
+    static void appendUnrepresentedOptions(Vector<IBasicOption> output, GameOptions options,
+          Set<String> representedOptionNames) {
+        for (Enumeration<IOptionGroup> groups = options.getGroups(); groups.hasMoreElements(); ) {
+            IOptionGroup group = groups.nextElement();
+            for (Enumeration<IOption> groupOptions = group.getOptions(); groupOptions.hasMoreElements(); ) {
+                IOption option = groupOptions.nextElement();
+                if (!representedOptionNames.contains(option.getName())) {
+                    output.addElement(option);
+                }
+            }
+        }
     }
 
     private void resetToDefaults(final ActionEvent ev) {
@@ -237,32 +435,63 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                 }
             }
         }
+        synchronizeRuleToggles();
+        toggleOptions();
     }
 
     public void refreshOptions() {
+        String activeFilter = gameOptionsPane == null ? "" : gameOptionsPane.getFilterText();
         panOptions.removeAll();
         optionComps = new HashMap<>();
-        boolean bRulesCore = true; 
-        
+        List<GameOptionsPane.OptionGroup> groups = new ArrayList<>();
         for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
             if (isVictoryGroupHiddenForLobby(group)) {
                 continue;
             }
-            JPanel groupPanel = addGroup(group);
+            List<DialogOptionComponentYPanel> groupComponents = new ArrayList<>();
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
-                addOption(groupPanel, option);
-                if (option.getName().equals(OptionsConstants.RULES_SYSTEM) && option.getValue().equals(OptionsConstants.RULES_TW)) {
-                    bRulesCore = false;
+                if (excludedOptionNames.contains(option.getName())) {
+                    continue;
+                }
+                DialogOptionComponentYPanel component = createOptionComponent(option);
+                if (component != null) {
+                    groupComponents.add(component);
                 }
             }
+            groups.add(new GameOptionsPane.OptionGroup(group.getName(), group.getDisplayableName(), groupComponents));
         }
-        butUnofficial.setSelected(!(Boolean) options.getOption(OptionsConstants.BASE_HIDE_UNOFFICIAL).getValue());
+        gameOptionsPane = new GameOptionsPane(groups, this::shouldShow, excludedOptionNames);
+        panOptions.add(gameOptionsPane, BorderLayout.CENTER);
+        synchronizeRuleToggles();
         toggleOptions();
-        addSearchPanel();
-        rulesSystemPrevention(bRulesCore);
+        gameOptionsPane.setFilterText(activeFilter);
+        panOptions.revalidate();
+        panOptions.repaint();
         validate();
+    }
+
+    private void synchronizeRuleToggles() {
+        // Without a backing hide option, the caller has chosen an always-visible category with no user toggle.
+        butUnofficial.setVisible(hasBackingOption(OptionsConstants.BASE_HIDE_UNOFFICIAL));
+        butLegacy.setVisible(hasBackingOption(OptionsConstants.BASE_HIDE_LEGACY));
+        butUnofficial.setSelected(!backingOptionSelected(OptionsConstants.BASE_HIDE_UNOFFICIAL));
+        butLegacy.setSelected(!backingOptionSelected(OptionsConstants.BASE_HIDE_LEGACY));
+        updateRuleToggleText(butUnofficial, GameOptionsPane.unofficialBadge(),
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.Unofficial"));
+        updateRuleToggleText(butLegacy, GameOptionsPane.legacyBadge(),
+              getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.Legacy"));
+    }
+
+    private boolean backingOptionSelected(String optionName) {
+        List<DialogOptionComponentYPanel> components = optionComps.get(optionName);
+        return components != null && !components.isEmpty() && (Boolean) components.getFirst().getValue();
+    }
+
+    private boolean hasBackingOption(String optionName) {
+        List<DialogOptionComponentYPanel> components = optionComps.get(optionName);
+        return components != null && !components.isEmpty();
     }
 
     /**
@@ -277,149 +506,95 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         return isInLobby && VictoryConditionsDialog.VICTORY_OPTIONS_GROUP_NAME.equals(group.getName());
     }
 
-    /**
-     * When show is true, options that contain the given String str are shown. When show is false, these options are
-     * hidden and deselected. Used to show/hide unofficial options.
-     */
+    /** Refreshes unofficial/legacy visibility and dependent control state without changing hidden rule values. */
     private void toggleOptions() {
-        for (List<DialogOptionComponentYPanel> comps : optionComps.values()) {
+        refreshOptionPresentation(gameOptionsPane, optionComps, editable, selectedRulesSystem());
+    }
+
+    static void refreshOptionPresentation(GameOptionsPane pane,
+          Map<String, List<DialogOptionComponentYPanel>> optionComponents, boolean dialogEditable,
+          String rulesSystem) {
+        pane.refreshVisibility();
+        applyRulesSystemEditability(optionComponents, dialogEditable, rulesSystem);
+    }
+
+    static void deactivateOptions(Map<String, List<DialogOptionComponentYPanel>> optionComponents,
+          Predicate<IOption> category) {
+        for (List<DialogOptionComponentYPanel> components : optionComponents.values()) {
             // Each option in the list should have the same value, so picking the first is fine
-            if (!comps.isEmpty()) {
-                DialogOptionComponentYPanel comp = comps.getFirst();
-                if (isUnofficialOption(comp)) {
-                    comp.setVisible(shouldShow(comp));
-                    if (!shouldShow(comp)) {
-                        // Disable hidden unofficial options
-                        if (comp.getOption().getType() == IOption.BOOLEAN) {
-                            comp.setSelected(false);
-                        }
-                    }
+            if (!components.isEmpty()) {
+                DialogOptionComponentYPanel component = components.getFirst();
+                if (!category.test(component.getOption())) {
+                    continue;
                 }
-                if (isHiddenOption(comp)) {
-                    comp.setVisible(false);
-                }
-
-            }
-        }
-
-        // Initialize dependent options: Climb Out requires Return Flyover
-        boolean returnFlyoverEnabled = options.getOption(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER)
-              .booleanValue();
-        List<DialogOptionComponentYPanel> climbOutComps = optionComps.get(OptionsConstants.ADVANCED_AERO_RULES_CLIMB_OUT);
-        if (climbOutComps != null) {
-            for (DialogOptionComponentYPanel comp : climbOutComps) {
-                comp.setEditable(returnFlyoverEnabled);
-                if (!returnFlyoverEnabled) {
-                    comp.setSelected(false);
+                if (component.getOption().getType() == IOption.BOOLEAN) {
+                    component.setSelected(false);
+                } else if (component.getOption().getName().equals(OptionsConstants.ADVANCED_GHOST_TARGET_MODE)) {
+                    component.setValue(OptionsConstants.GHOST_TARGET_MODE_STANDARD);
                 }
             }
         }
     }
 
     /** Returns true when the given Option should never show in the dialog. */
-    private boolean isHiddenOption(DialogOptionComponentYPanel comp) {
-        return comp.getOption().getName().equals(OptionsConstants.BASE_HIDE_UNOFFICIAL);
-    }
-
-    private boolean isUnofficialOption(DialogOptionComponentYPanel comp) {
-        return comp.getOption().getDisplayableName().contains(UNOFFICIAL);
+    private boolean isHiddenOption(IOption option) {
+        return option.getName().equals(OptionsConstants.BASE_HIDE_UNOFFICIAL)
+              || option.getName().equals(OptionsConstants.BASE_HIDE_LEGACY);
     }
 
     /** Returns true when the given Option should be visible in the dialog. */
-    private boolean shouldShow(DialogOptionComponentYPanel comp) {
-        boolean isHiddenUnofficial = !butUnofficial.isSelected() && isUnofficialOption(comp);
-        return !(isHiddenUnofficial || isHiddenOption(comp));
+    private boolean shouldShow(IOption option) {
+        boolean isHiddenUnofficial = !butUnofficial.isSelected() && GameOptionsPane.isUnofficialOption(option);
+        boolean isHiddenLegacy = !butLegacy.isSelected() && GameOptionsPane.isLegacyOption(option);
+        return !(isHiddenUnofficial || isHiddenLegacy || isHiddenOption(option));
     }
 
-    private void refreshSearchPanel() {
-        panSearchOptions.removeAll();
-        searchComps.clear();
+    private void applyRulesSystemEditability() {
+        applyRulesSystemEditability(optionComps, editable, selectedRulesSystem());
+    }
 
-        // Add new DialogOptionComponents for all matching Options
-        final String searchText = txtSearch.getText().toLowerCase();
-        if (!searchText.isBlank()) {
-            ArrayList<DialogOptionComponentYPanel> allNewComps = new ArrayList<>();
-            for (List<DialogOptionComponentYPanel> comps : optionComps.values()) {
-                for (DialogOptionComponentYPanel comp : comps) {
-                    String optName = comp.getOption().getDisplayableName().toLowerCase();
-                    String optDesc = comp.getOption().getDescription().toLowerCase();
-                    if ((optName.contains(searchText) || optDesc.contains(searchText)) && shouldShow(comp)) {
-                        allNewComps.add(comp);
-                    }
-                }
-            }
-            Collections.sort(allNewComps);
-            for (DialogOptionComponentYPanel comp : allNewComps) {
-                searchComps.add(comp);
-                panSearchOptions.add(comp);
+    static void applyRulesSystemEditability(Map<String, List<DialogOptionComponentYPanel>> optionComponents,
+          boolean dialogEditable, String rulesSystem) {
+        boolean rulesOptionsEditable = dialogEditable
+              && OptionsConstants.RULES_TW.equals(normalizeRulesSystem(rulesSystem));
+        for (String optionName : CORE_RULES_DISABLED_OPTIONS) {
+            List<DialogOptionComponentYPanel> components = optionComponents.get(optionName);
+            if (components != null) {
+                components.forEach(component -> component.setEditable(rulesOptionsEditable));
             }
         }
-        panSearchOptions.revalidate();
-        panOptions.repaint();
     }
 
-    private JPanel addGroup(IOptionGroup group) {
-        JPanel groupPanel = new JPanel();
-        JScrollPane scrOptions = new JScrollPane(groupPanel);
-        scrOptions.getVerticalScrollBar().setUnitIncrement(16);
-        groupPanel.setLayout(new BoxLayout(groupPanel, BoxLayout.Y_AXIS));
-        scrOptions.setAutoscrolls(true);
-        scrOptions.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        scrOptions.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        panOptions.addTab(group.getDisplayableName(), scrOptions);
-        return groupPanel;
+    private String selectedRulesSystem() {
+        List<DialogOptionComponentYPanel> components = optionComps.get(OptionsConstants.RULES_SYSTEM);
+        if (components != null && !components.isEmpty()) {
+            return normalizeRulesSystem(components.getFirst().getValue());
+        }
+        IOption rulesSystem = options.getOption(OptionsConstants.RULES_SYSTEM);
+        return normalizeRulesSystem(rulesSystem == null ? null : rulesSystem.getValue());
     }
 
-    private void addSearchPanel() {
-        JPanel panSearch = new JPanel();
-        JScrollPane scrOptions = new JScrollPane(panSearch);
-        scrOptions.getVerticalScrollBar().setUnitIncrement(16);
-        panSearch.setLayout(new BoxLayout(panSearch, BoxLayout.PAGE_AXIS));
-        scrOptions.setAutoscrolls(true);
-        scrOptions.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        scrOptions.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-        // Panel for holding the label and text field for searching
-        var panSearchBar = new FixedYPanel();
-        JLabel lblSearch = new JLabel(Messages.getString("GameOptionsDialog.Search") + ":");
-        lblSearch.setLabelFor(txtSearch);
-        lblSearch.setToolTipText(Messages.getString("GameOptionsDialog.SearchToolTip"));
-        txtSearch.setToolTipText(Messages.getString("GameOptionsDialog.SearchToolTip"));
-        txtSearch.setColumns(20);
-        txtSearch.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                refreshSearchPanel();
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                refreshSearchPanel();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                refreshSearchPanel();
-            }
-        });
-
-        panSearchOptions.setLayout(new BoxLayout(panSearchOptions, BoxLayout.PAGE_AXIS));
-        panSearchBar.add(lblSearch);
-        panSearchBar.add(txtSearch);
-        panSearch.add(panSearchBar);
-        panSearch.add(panSearchOptions);
-        panOptions.addTab(Messages.getString("GameOptionsDialog.Search"), scrOptions);
-        refreshSearchPanel();
+    static String normalizeRulesSystem(@Nullable Object value) {
+        if (value instanceof String rulesSystem
+              && (OptionsConstants.RULES_CORE.equals(rulesSystem) || OptionsConstants.RULES_TW.equals(rulesSystem))) {
+            return rulesSystem;
+        }
+        LOGGER.debug("Unknown rules system '{}'; using '{}'.", value, OptionsConstants.RULES_CORE);
+        return OptionsConstants.RULES_CORE;
     }
 
-    private void addOption(JPanel groupPanel, IOption option) {
+    /**
+     * Creates an editor for an option.
+     *
+     * @param option option to represent; {@code null} returns no component
+     *
+     * @return the option editor, or {@code null} when {@code option} is {@code null}
+     */
+    private @Nullable DialogOptionComponentYPanel createOptionComponent(@Nullable IOption option) {
         if (option == null) {
-            return;
+            return null;
         }
         DialogOptionComponentYPanel optionComp = new DialogOptionComponentYPanel(this, option, true, true);
-
-        groupPanel.add(optionComp);
-        maxOptionWidth = Math.max(maxOptionWidth, optionComp.getPreferredSize().width);
 
         if (OptionsConstants.INIT_INF_DEPLOY_EVEN.equals(option.getName())) {
             if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() ||
@@ -506,6 +681,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                 //Set to the maximum velocity if over
                 option.setValue(CapitalMissileBayWeapon.CAPITAL_MISSILE_MAX_VELOCITY);
             }
+            optionComp.setEditable(editable);
         } else if (option.getName().equals(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED)) {
             if ((options.getOption(OptionsConstants.ADVANCED_ALTERNATE_MASC)).booleanValue()) {
                 optionComp.setEditable(editable);
@@ -577,95 +753,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         }
         List<DialogOptionComponentYPanel> comps = optionComps.computeIfAbsent(option.getName(), k -> new ArrayList<>());
         comps.add(optionComp);
-    }
-
-    /**
-     * If the rules system is changed, enable or disable certain options from being changed
-     * Core will disable them, but does not change the selection mark.
-     * @param core Is it core rules or not
-     */
-    private void rulesSystemPrevention(boolean core) {
-        // Change the following
-        // Flamers per BattleMech Manual
-        if (!editable) {
-            return;
-        }
-        List<DialogOptionComponentYPanel> comps = optionComps.get(OptionsConstants.BASE_FLAMER_HEAT);
-        if (comps != null) {
-            for (DialogOptionComponentYPanel comp_i : comps) {
-                comp_i.setEditable(!core);
-            }
-        }
-        // TacOps Enhanced Missile Defense
-        comps = optionComps.get(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS);
-        if (comps != null) {
-            for (DialogOptionComponentYPanel comp_i : comps) {
-                comp_i.setEditable(!core);
-            }
-        }
-        // TacOps Charge Damage
-        comps = optionComps.get(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE);
-        if (comps != null) {
-            for (DialogOptionComponentYPanel comp_i : comps) {
-                comp_i.setEditable(!core);
-            }
-        }
-        // TacOps Backward Movement (Expanded)
-        comps = optionComps.get(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_WALK_BACKWARDS);
-        if (comps != null) {
-            for (DialogOptionComponentYPanel comp_i : comps) {
-                comp_i.setEditable(!core);
-            }
-        }
-        // (Unofficial) CASE/CASEII reduces pilot damage on ammo explosion
-        comps = optionComps.get(OptionsConstants.ADVANCED_COMBAT_CASE_PILOT_DAMAGE);
-        if (comps != null) {
-            for (DialogOptionComponentYPanel comp_i : comps) {
-                comp_i.setEditable(!core);
-            }
-        }
-        // TacOps Retractable Blades
-        comps = optionComps.get(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RETRACTABLE_BLADES);
-        if (comps != null) {
-            for (DialogOptionComponentYPanel comp_i : comps) {
-                comp_i.setEditable(!core);
-            }
-        }
-        // (Unofficial) Unjam Ultra Autocannons
-        comps = optionComps.get(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC);
-        if (comps != null) {
-            for (DialogOptionComponentYPanel comp_i : comps) {
-                comp_i.setEditable(!core);
-            }
-        }
-        // From Load Initiative
-        comps = optionComps.get(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE);
-        if (comps != null) {
-            for (DialogOptionComponentYPanel comp_i : comps) {
-                comp_i.setEditable(!core);
-            }
-        }
-        // TacOps Minefields / BMM Minefield Support
-        comps = optionComps.get(OptionsConstants.ADVANCED_MINEFIELDS);
-        if (comps != null) {
-            for (DialogOptionComponentYPanel comp_i : comps) {
-                comp_i.setEditable(!core);
-            }
-        }
-        // (Unofficial) Alternate "Better" MASC/Supercharger
-        comps = optionComps.get(OptionsConstants.ADVANCED_ALTERNATE_MASC);
-        if (comps != null) {
-            for (DialogOptionComponentYPanel comp_i : comps) {
-                comp_i.setEditable(!core);
-            }
-        }
-        // (Unofficial) Alternate "Better" MASC/Supercharger
-        comps = optionComps.get(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED);
-        if (comps != null) {
-            for (DialogOptionComponentYPanel comp_i : comps) {
-                comp_i.setEditable(!core);
-            }
-        }
+        return optionComp;
     }
 
     // Gets called when one of the option checkboxes is clicked.
@@ -874,15 +962,6 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                 }
             }
         }
-        if (option.getName().equals(OptionsConstants.ADVANCED_AERO_RULES_RETURN_FLYOVER)) {
-            comps = optionComps.get(OptionsConstants.ADVANCED_AERO_RULES_CLIMB_OUT);
-            for (DialogOptionComponentYPanel comp_i : comps) {
-                comp_i.setEditable(state);
-                if (!state) {
-                    comp_i.setSelected(false);
-                }
-            }
-        }
     }
 
     @Override
@@ -897,12 +976,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             }
         }
         if (option.getName().equals(OptionsConstants.RULES_SYSTEM)) {
-            if (clickedComp.getValue().equals(OptionsConstants.RULES_CORE)) {
-                rulesSystemPrevention(true);
-            }
-            if (clickedComp.getValue().equals(OptionsConstants.RULES_TW)) {
-                rulesSystemPrevention(false);
-            }
+            applyRulesSystemEditability();
         }
     }
 
@@ -927,7 +1001,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         } else if (e.getSource() == butLoad) {
             File gameOptsFile = selectGameOptionsFile(false);
             if (gameOptsFile != null) {
-                options.loadOptions(gameOptsFile, false);
+                loadOptionsPreservingExcluded(options, gameOptsFile, excludedOptionNames);
                 ArrayList<IOption> changed = new ArrayList<>();
                 for (List<DialogOptionComponentYPanel> comps : optionComps.values()) {
                     // Each option in the list should have the same value, so picking the first is fine
@@ -950,20 +1024,46 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             }
 
         } else if (e.getSource().equals(butUnofficial)) {
-            if (!butUnofficial.isSelected()) {
-                boolean okay = MMConfirmDialog.confirm(frame, "Warning", getString("GameOptionsDialog.HideWarning"));
-                if (!okay) {
-                    butUnofficial.removeActionListener(this);
-                    butUnofficial.setSelected(true);
-                    butUnofficial.addActionListener(this);
-                    return;
-                }
-            }
-            optionComps.get(OptionsConstants.BASE_HIDE_UNOFFICIAL).getFirst().setSelected(!butUnofficial.isSelected());
-            toggleOptions();
-            refreshSearchPanel();
+            ruleToggleChanged(butUnofficial, OptionsConstants.BASE_HIDE_UNOFFICIAL,
+                  GameOptionsPane.unofficialBadge(), "GameOptionsDialog.Unofficial",
+                  GameOptionsPane::isUnofficialOption);
+        } else if (e.getSource().equals(butLegacy)) {
+            ruleToggleChanged(butLegacy, OptionsConstants.BASE_HIDE_LEGACY,
+                  GameOptionsPane.legacyBadge(), "GameOptionsDialog.Legacy", GameOptionsPane::isLegacyOption);
 
         }
+    }
+
+    static void loadOptionsPreservingExcluded(GameOptions options, File file, Set<String> excludedOptionNames) {
+        Map<String, Object> excludedValues = new HashMap<>();
+        for (String optionName : excludedOptionNames) {
+            IOption option = options.getOption(optionName);
+            if (option != null) {
+                excludedValues.put(optionName, option.getValue());
+            }
+        }
+        options.loadOptions(file, false);
+        excludedValues.forEach((optionName, value) -> options.getOption(optionName).setValue(value));
+    }
+
+    private void ruleToggleChanged(JToggleButton button, String backingOptionName, SettingsBadge badge,
+          String labelKey, Predicate<IOption> category) {
+        if (!hasBackingOption(backingOptionName)) {
+            return;
+        }
+        if (!button.isSelected() && !MMConfirmDialog.confirm(frame,
+            getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.warning.title"),
+            getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.HideWarning"))) {
+            button.setSelected(true);
+            updateRuleToggleText(button, badge, getTextAt(CLIENT_BUNDLE, labelKey));
+            return;
+        }
+        optionComps.get(backingOptionName).getFirst().setSelected(!button.isSelected());
+        if (!button.isSelected()) {
+            deactivateOptions(optionComps, category);
+        }
+        updateRuleToggleText(button, badge, getTextAt(CLIENT_BUNDLE, labelKey));
+        toggleOptions();
     }
 
     private File selectGameOptionsFile(boolean saveDialog) {
@@ -1019,14 +1119,19 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             }
         }
 
+        this.editable = editable;
+        applyRulesSystemEditability();
+
         // If the panel is editable, the player can commit or reset.
         texPass.setEnabled(editable);
         butOkay.setEnabled(editable);
-        butDefaults.setEnabled(editable);
         butUnofficial.setEnabled(editable);
-
-        // Update our data element.
-        this.editable = editable;
+        butLegacy.setEnabled(editable);
+        // Resetting and loading only change values that a view-only dialog can never commit.
+        butDefaults.setVisible(editable);
+        butLoad.setVisible(editable);
+        revalidate();
+        repaint();
     }
 
     /**

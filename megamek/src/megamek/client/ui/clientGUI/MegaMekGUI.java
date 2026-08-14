@@ -41,6 +41,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.font.GlyphVector;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,6 +54,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
@@ -60,6 +63,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
@@ -100,6 +104,7 @@ import megamek.client.ui.dialogs.scenario.ScenarioChooserDialog;
 import megamek.client.ui.dialogs.unitSelectorDialogs.MainMenuUnitBrowserDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.skinEditor.SkinEditorMainGUIPanel;
+import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.MegaMekButton;
@@ -140,6 +145,7 @@ import megamek.server.Server;
 import megamek.server.sbf.SBFGameManager;
 import megamek.server.totalWarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
+import org.apache.commons.text.StringEscapeUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -156,6 +162,54 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
 
+    /** Family name of the spray-paint font the splash tag is drawn in. Ships in mm-data under data/fonts. */
+    private static final String SPRAY_PAINT_FONT_FAMILY = "Rubik Spray Paint";
+
+    /** Colour the splash tag is sprayed in when it does not name one: a strong red. */
+    private static final Color SPLASH_TAG_DEFAULT_COLOR = new Color(198, 26, 26);
+
+    /** How solid the sprayed tag is, out of 255. Short of opaque, so the logo shows through the paint. */
+    private static final int SPLASH_TAG_ALPHA = 232;
+
+    /** Colour outlining the sprayed tag, which lifts the red clear of the light wordmark underneath it. */
+    private static final Color SPLASH_TAG_OUTLINE_COLOR = new Color(0, 0, 0, 225);
+
+    /**
+     * Thickness of that outline, as a fraction of the tag's font size, so the outline stays in proportion at
+     * every window size instead of turning into a heavy blob on a small launcher.
+     */
+    private static final double SPLASH_TAG_OUTLINE_WIDTH_FRACTION = 0.085;
+
+    /** Fraction of the logo's width the sprayed tag spans, leaving it a little narrower than the logo itself. */
+    private static final double SPLASH_TAG_WIDTH_FRACTION_OF_LOGO = 0.92;
+
+    /**
+     * How far down the logo image the MegaMek wordmark plate sits, as a fraction of the image's height.
+     *
+     * <p>The logo artwork is a tall composite: a 'Mek standing above the wordmark plate, with the plate filling
+     * only the bottom quarter or so of the image. The tag belongs across the wordmark, so centring it on the
+     * image as a whole would put it up on the 'Mek instead. Measuring the artwork, the plate runs from about
+     * three-quarters of the way down to the bottom edge; the tag sits low on that plate, overlapping the bottom
+     * of the lettering, which is where a tag sprayed across a sign tends to land.</p>
+     */
+    private static final double LOGO_WORDMARK_CENTRE_FRACTION = 0.93;
+
+    /**
+     * The tallest the tag's lettering may be, as a fraction of the logo's height, so that it stays on the
+     * wordmark plate.
+     *
+     * <p>Without this, a very short tag would be blown up to span the width of the logo and end up taller than
+     * the plate it is supposed to be sprayed across. This applies at every window size, because the tag is sized
+     * from the logo and the logo is sized from the window.</p>
+     */
+    private static final double SPLASH_TAG_MAX_HEIGHT_FRACTION_OF_LOGO = 0.17;
+
+    /** Size the tag is measured at before being scaled to fit; large enough that the measurement is accurate. */
+    private static final float SPLASH_TAG_REFERENCE_FONT_SIZE = 100f;
+
+    /** Size the tag's font is created at. The real size is derived from the artwork's width when painting. */
+    private static final int SPLASH_TAG_PLACEHOLDER_FONT_SIZE = 12;
+
     private JFrame frame;
     private IClient client;
     private Server server;
@@ -163,6 +217,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private CommonSettingsDialog settingsDialog;
     private ManagedVolatileImage logoImage;
     private ManagedVolatileImage medalImage;
+    /** Font the splash tag is sprayed in, or {@code null} when this build has no tag to spray. */
+    private Font splashTagFont;
+    /** Colour the splash tag is sprayed in, worked out once when the menu is built. */
+    private Color splashTagColor = SPLASH_TAG_DEFAULT_COLOR;
     private TipOfTheDay tipOfTheDay;
     private AbstractRandomArmyDialog randomArmyDialog;
     private NetworkInformationDialog networkInformationDialog;
@@ -277,7 +335,14 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         return targetMedalWidth;
     }
 
-    private void drawLogo(Graphics2D g2d, int panelWidth, int panelHeight, int targetMedalWidth, int padding) {
+    /**
+     * Draws the MegaMek logo in the bottom-right of the splash artwork.
+     *
+     * @return the area the logo was drawn into, so that the splash tag can be sprayed across it, or {@code null}
+     *       when the image was not ready to draw
+     */
+    private @Nullable Rectangle drawLogo(Graphics2D g2d, int panelWidth, int panelHeight, int targetMedalWidth,
+          int padding) {
         VolatileImage image = logoImage.getImage();
         if (image.getWidth(null) > 0 && image.getHeight(null) > 0) {
             double logoWidthScalePercent = 0.25; // Logo width as 25% of panel width
@@ -302,7 +367,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             if (logoY < 0) {logoY = 0;}
 
             g2d.drawImage(image, logoX, logoY, targetLogoWidth, targetLogoHeight, null);
+            return new Rectangle(logoX, logoY, targetLogoWidth, targetLogoHeight);
         }
+        return null;
     }
 
     /**
@@ -370,6 +437,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         Image splashImage = getImage(FILENAME_MEGAMEK_SPLASH);
         logoImage = new ManagedVolatileImage(getImage(FILENAME_LOGO), Transparency.TRANSLUCENT);
         medalImage = new ManagedVolatileImage(getImage(FILENAME_MEDAL), Transparency.TRANSLUCENT);
+        splashTagFont = loadSplashTagFont();
+        splashTagColor = resolveSplashTagColor();
         Dimension splashPanelPreferredSize = calculateSplashPanelPreferredSize(scaledMonitorSize, splashImage);
         // This is an empty panel that will contain the splash image
         // Draw background, border, and children first
@@ -397,6 +466,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (textDim.getWidth() > minButtonDim.getWidth()) {
             minButtonDim = textDim;
         }
+
+        // Most builds carry no note, in which case this is null and the menu is laid out exactly as before.
+        JLabel buildNotesLabel = createBuildNotesLabel(minButtonDim.width);
 
         hostB.setPreferredSize(minButtonDim);
         connectB.setPreferredSize(minButtonDim);
@@ -441,7 +513,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         c.gridheight = 1;
         c.gridx = 1;
         c.gridy = 0;
-        addBag(labVersion, gridBagLayout, c);
+        addBag(stackBuildNotesUnderVersion(labVersion, buildNotesLabel), gridBagLayout, c);
         c.gridy++;
         addBag(hostB, gridBagLayout, c);
         c.gridy++;
@@ -461,6 +533,320 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         frame.pack();
         // center window in screen
         frame.setLocationRelativeTo(null);
+    }
+
+    /**
+     * Works out which font this build's splash tag is sprayed in, and how big it should be, given the width of
+     * the artwork it is being painted onto.
+     *
+     * <p>The tag is sized to sit across the width of the MegaMek logo above it, so it stays in proportion however
+     * large the window is. A short tag therefore comes out big and bold, and a long one comes out smaller, which
+     * is why {@code Version.properties} asks for a short one.</p>
+     *
+     * @param graphics   the graphics context the tag will be painted with, used to measure the lettering
+     * @param logoBounds the area the logo occupies, which the tag is sized against
+     *
+     * @return the font to spray the tag in, already at the right size, or {@code null} when this build has no tag
+     */
+    private @Nullable Font deriveSplashTagFont(Graphics2D graphics, Rectangle logoBounds) {
+        if (splashTagFont == null) {
+            return null;
+        }
+
+        String splashTag = Version.getSplashTag();
+
+        // Measure at a reference size and scale from there, which is one measurement instead of a search. The
+        // measurement is of the painted lettering itself rather than of the font's ascent and descent, because
+        // those describe what the font could draw rather than what this particular tag does draw.
+        Font referenceFont = splashTagFont.deriveFont(SPLASH_TAG_REFERENCE_FONT_SIZE);
+        Rectangle2D referenceInk = referenceFont.createGlyphVector(graphics.getFontRenderContext(), splashTag)
+              .getVisualBounds();
+        double referenceWidth = referenceInk.getWidth();
+        double referenceHeight = referenceInk.getHeight();
+        if ((referenceWidth <= 0) || (referenceHeight <= 0)) {
+            return null;
+        }
+
+        // Size the tag to span the logo, then pull it back if that would make it taller than the wordmark plate,
+        // which is what happens with a very short tag.
+        double targetTagWidth = logoBounds.width * SPLASH_TAG_WIDTH_FRACTION_OF_LOGO;
+        double maximumTagHeight = logoBounds.height * SPLASH_TAG_MAX_HEIGHT_FRACTION_OF_LOGO;
+        double sizeThatFitsWidth = SPLASH_TAG_REFERENCE_FONT_SIZE * targetTagWidth / referenceWidth;
+        double sizeThatFitsHeight = SPLASH_TAG_REFERENCE_FONT_SIZE * maximumTagHeight / referenceHeight;
+
+        float sprayedFontSize = (float) Math.min(sizeThatFitsWidth, sizeThatFitsHeight);
+        if (sprayedFontSize < 1f) {
+            return null;
+        }
+
+        return splashTagFont.deriveFont(sprayedFontSize);
+    }
+
+    /**
+     * Sprays this build's tag straight across the MegaMek logo, the way a tag gets put on a wall.
+     *
+     * <p>It is drawn in red outlined in black, tilted very slightly off level and left a little see-through so
+     * the logo shows through it, which is what makes it read as paint on top of the picture rather than as
+     * another caption belonging to the interface. The black outline is what keeps the red readable where it
+     * crosses the pale lettering of the wordmark.</p>
+     *
+     * @param graphics   the graphics context to paint into
+     * @param logoBounds the area the logo occupies, or {@code null} when the logo was not drawn
+     */
+    private void drawSplashTag(Graphics2D graphics, @Nullable Rectangle logoBounds) {
+        if (logoBounds == null) {
+            return;
+        }
+
+        Font sizedSplashTagFont = deriveSplashTagFont(graphics, logoBounds);
+        if (sizedSplashTagFont == null) {
+            return;
+        }
+
+        String splashTag = Version.getSplashTag();
+
+        Graphics2D tagGraphics = (Graphics2D) graphics.create();
+        try {
+            tagGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            tagGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                  RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+            // Measure the painted lettering, so that centring it uses where the paint actually lands rather than
+            // where the font says its tallest and lowest characters could reach.
+            GlyphVector tagGlyphs = sizedSplashTagFont.createGlyphVector(tagGraphics.getFontRenderContext(),
+                  splashTag);
+            Rectangle2D tagInk = tagGlyphs.getVisualBounds();
+
+            // Centred across the logo, and down it at the height the wordmark sits at
+            int tagX = logoBounds.x + (int) ((logoBounds.width - tagInk.getWidth()) / 2 - tagInk.getX());
+            int wordmarkCentreY = logoBounds.y + (int) (logoBounds.height * LOGO_WORDMARK_CENTRE_FRACTION);
+            int tagY = wordmarkCentreY - (int) (tagInk.getY() + (tagInk.getHeight() / 2));
+
+            tagGraphics.rotate(Math.toRadians(Version.getSplashTagRotation()),
+                  tagX + tagInk.getCenterX(),
+                  wordmarkCentreY);
+
+            // The lettering is outlined and then filled, rather than simply drawn, so that it stands clear of the
+            // pale wordmark it is sprayed across.
+            Shape tagOutline = tagGlyphs.getOutline(tagX, tagY);
+
+            float outlineWidth = (float) Math.max(1.0,
+                  sizedSplashTagFont.getSize2D() * SPLASH_TAG_OUTLINE_WIDTH_FRACTION);
+            tagGraphics.setStroke(new BasicStroke(outlineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            tagGraphics.setColor(SPLASH_TAG_OUTLINE_COLOR);
+            tagGraphics.draw(tagOutline);
+
+            tagGraphics.setColor(splashTagColor);
+            tagGraphics.fill(tagOutline);
+        } finally {
+            tagGraphics.dispose();
+        }
+    }
+
+    /**
+     * Works out what colour to spray the splash tag in, the same way the build note's colour is chosen: by the
+     * plain colour name written in {@code Version.properties}.
+     *
+     * <p>A tag that names no colour, or names one that is not recognised, is sprayed in red. Whichever colour is
+     * used is left slightly see-through so the logo shows through the paint.</p>
+     *
+     * @return the colour to spray the tag in, never {@code null}
+     */
+    private static Color resolveSplashTagColor() {
+        String configuredColorName = Version.getSplashTagColorName();
+        if (configuredColorName == null) {
+            LOGGER.debug("[SplashTag] No splashTagColor set - the tag is sprayed in red");
+            return UIUtil.addAlpha(SPLASH_TAG_DEFAULT_COLOR, SPLASH_TAG_ALPHA);
+        }
+
+        Color namedColor = colorForName(configuredColorName);
+        if (namedColor == null) {
+            LOGGER.warn("[SplashTag] Version.properties sets splashTagColor to '{}', which is not a colour name "
+                        + "MegaMek knows. The tag will be sprayed in red instead.", configuredColorName);
+            return UIUtil.addAlpha(SPLASH_TAG_DEFAULT_COLOR, SPLASH_TAG_ALPHA);
+        }
+
+        LOGGER.debug("[SplashTag] Splash tag colour set to {}", configuredColorName);
+        return UIUtil.addAlpha(namedColor, SPLASH_TAG_ALPHA);
+    }
+
+    /**
+     * Loads the font the splash tag is sprayed in, once, when the menu is built.
+     *
+     * <p>Doing this here rather than while painting keeps the decision, and the log line explaining it, out of a
+     * method that runs on every repaint.</p>
+     *
+     * @return the spray-paint font, a plain fallback when that font is not installed, or {@code null} when this
+     *       build has no tag to spray
+     */
+    private static @Nullable Font loadSplashTagFont() {
+        if (!Version.hasSplashTag()) {
+            LOGGER.debug("[SplashTag] Version.properties sets no splashTag entry - the artwork is left clean");
+            return null;
+        }
+
+        String splashTag = Version.getSplashTag();
+        if (!FontHandler.getAvailableFonts().contains(SPRAY_PAINT_FONT_FAMILY)) {
+            LOGGER.warn("[SplashTag] The '{}' font is not installed, so '{}' cannot be sprayed and will be "
+                        + "painted in the default font instead. Check that mm-data has been staged.",
+                  SPRAY_PAINT_FONT_FAMILY,
+                  splashTag);
+            return new Font(Font.SANS_SERIF, Font.BOLD, SPLASH_TAG_PLACEHOLDER_FONT_SIZE);
+        }
+
+        LOGGER.info("[SplashTag] Spraying '{}' onto the splash artwork in {}", splashTag, SPRAY_PAINT_FONT_FAMILY);
+        return new Font(SPRAY_PAINT_FONT_FAMILY, Font.PLAIN, SPLASH_TAG_PLACEHOLDER_FONT_SIZE);
+    }
+
+    /**
+     * Puts the build note immediately under the version number, as one block sharing a single row of the menu.
+     *
+     * <p>Giving the note a menu row of its own would let the layout spread the two apart, leaving the note
+     * stranded halfway down the gap above the buttons. Keeping them in one row instead means the pair sits
+     * together where the version number alone used to be.</p>
+     *
+     * @param versionLabel    the version label, which is what a build with no note shows on its own
+     * @param buildNotesLabel the build note to tuck under it, or {@code null} when this build has no note
+     *
+     * @return the version label itself when there is no note, otherwise the two of them stacked together
+     */
+    private static JComponent stackBuildNotesUnderVersion(JLabel versionLabel, @Nullable JLabel buildNotesLabel) {
+        if (buildNotesLabel == null) {
+            return versionLabel;
+        }
+
+        JPanel versionPanel = new JPanel(new GridBagLayout());
+        versionPanel.setOpaque(false);
+
+        GridBagConstraints versionConstraints = new GridBagConstraints();
+        versionConstraints.fill = GridBagConstraints.HORIZONTAL;
+        versionConstraints.weightx = 1.0;
+        versionConstraints.gridx = 0;
+        versionConstraints.gridy = 0;
+        versionPanel.add(versionLabel, versionConstraints);
+
+        versionConstraints.gridy = 1;
+        versionPanel.add(buildNotesLabel, versionConstraints);
+
+        return versionPanel;
+    }
+
+    /**
+     * Creates the label that shows this build's note on the main menu, directly under the version number.
+     *
+     * <p>Almost every build has nothing to say for itself, so the usual result is {@code null} and the menu is
+     * built exactly as it always was. A note only exists when {@code Version.properties} carries a non-blank
+     * {@code notes} entry, which is how a build is flagged as something other than an ordinary release.</p>
+     *
+     * <p>The note is drawn in bold so that it reads as a notice about the build rather than as part of the
+     * version string, and it wraps at the width of the menu buttons so that a note longer than one line stays
+     * inside the column instead of being cut off. Its colour and point size come from {@code Version.properties}
+     * alongside the text itself; a note that asks for neither is drawn in the usual warning colour at the menu's
+     * ordinary size.</p>
+     *
+     * @param wrapWidth the width in pixels at which the note wraps, which is the menu button width
+     *
+     * @return the label to place under the version label, or {@code null} when this build has no note
+     */
+    private @Nullable JLabel createBuildNotesLabel(int wrapWidth) {
+        if (!Version.hasBuildNotes()) {
+            LOGGER.debug("[BuildNotes] Version.properties sets no notes entry - main menu shows no build note");
+            return null;
+        }
+
+        String buildNotes = Version.getBuildNotes();
+        LOGGER.debug("[BuildNotes] Showing build note on the main menu, wrapping at {} pixels: {}",
+              wrapWidth,
+              buildNotes);
+
+        // The note is free text from Version.properties, so it is escaped before going into the HTML that gives
+        // the label its wrapping. A single-cell table of a fixed pixel width is used rather than a CSS width,
+        // because Swing scales CSS pixel lengths by about a third and the note would then be wider than the
+        // buttons it sits above. The table is stripped of its padding, spacing and border for the same reason.
+        String escapedBuildNotes = StringEscapeUtils.escapeHtml4(buildNotes);
+        JLabel buildNotesLabel = new JLabel("<html><table cellpadding='0' cellspacing='0' border='0'>" +
+              "<tr><td width='" +
+              wrapWidth +
+              "' align='center'><b>" +
+              escapedBuildNotes +
+              "</b></td></tr></table></html>", JLabel.CENTER);
+        buildNotesLabel.setForeground(resolveBuildNotesColor());
+        applyBuildNotesFontSize(buildNotesLabel);
+        return buildNotesLabel;
+    }
+
+    /**
+     * Works out what colour to draw the build note in.
+     *
+     * <p>A note that names no colour, or names one that is not recognised, is drawn in the same warning colour
+     * the rest of the interface uses for things the player should notice.</p>
+     *
+     * @return the colour to draw the build note in, never {@code null}
+     */
+    private Color resolveBuildNotesColor() {
+        Color warningColor = GUIPreferences.getInstance().getWarningColor();
+        String configuredColorName = Version.getBuildNotesColorName();
+        if (configuredColorName == null) {
+            LOGGER.debug("[BuildNotes] No notesColor set - the build note uses the warning colour");
+            return warningColor;
+        }
+
+        Color namedColor = colorForName(configuredColorName);
+        if (namedColor == null) {
+            LOGGER.warn("[BuildNotes] Version.properties sets notesColor to '{}', which is not a colour name "
+                        + "MegaMek knows. The build note will use the warning colour instead.",
+                  configuredColorName);
+            return warningColor;
+        }
+
+        LOGGER.debug("[BuildNotes] Build note colour set to {}", configuredColorName);
+        return namedColor;
+    }
+
+    /**
+     * Maps a colour name written in {@code Version.properties} to the colour it stands for.
+     *
+     * @param colorName the configured colour name, in any mix of upper and lower case
+     *
+     * @return the matching colour, or {@code null} when the name is not one of the recognised colours
+     */
+    private static @Nullable Color colorForName(String colorName) {
+        return switch (colorName.toLowerCase(Locale.ROOT)) {
+            case "red" -> Color.RED;
+            case "orange" -> Color.ORANGE;
+            case "yellow" -> Color.YELLOW;
+            case "green" -> Color.GREEN;
+            case "blue" -> Color.BLUE;
+            case "cyan" -> Color.CYAN;
+            case "magenta" -> Color.MAGENTA;
+            case "pink" -> Color.PINK;
+            case "white" -> Color.WHITE;
+            case "black" -> Color.BLACK;
+            case "gray", "grey" -> Color.GRAY;
+            case "lightgray", "lightgrey" -> Color.LIGHT_GRAY;
+            case "darkgray", "darkgrey" -> Color.DARK_GRAY;
+            default -> null;
+        };
+    }
+
+    /**
+     * Resizes the build note to the point size it asked for, leaving it at the menu's ordinary size when it asked
+     * for none.
+     *
+     * <p>The configured size is put through the GUI scale, so that a note stays in proportion with the menu
+     * around it for a player who runs MegaMek scaled up or down.</p>
+     *
+     * @param buildNotesLabel the build note label to resize
+     */
+    private static void applyBuildNotesFontSize(JLabel buildNotesLabel) {
+        if (!Version.hasBuildNotesFontSize()) {
+            LOGGER.debug("[BuildNotes] No notesFontSize set - the build note uses the menu's ordinary size");
+            return;
+        }
+
+        int buildNotesFontSize = Version.getBuildNotesFontSize();
+        LOGGER.debug("[BuildNotes] Build note point size set to {}", buildNotesFontSize);
+        buildNotesLabel.setFont(buildNotesLabel.getFont().deriveFont(UIUtil.scaleForGUI((float) buildNotesFontSize)));
     }
 
     private RawImagePanel getRawImagePanel(Image splashImage, Dimension splashPanelPreferredSize) {
@@ -488,7 +874,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     targetMedalWidth = drawMedal(g2d, panelWidth, panelHeight, padding);
 
                     // Draw logoImage
-                    drawLogo(g2d, panelWidth, panelHeight, targetMedalWidth, padding);
+                    Rectangle logoBounds = drawLogo(g2d, panelWidth, panelHeight, targetMedalWidth, padding);
+
+                    // Spray the splash tag across the logo
+                    drawSplashTag(g2d, logoBounds);
                 } finally {
                     g2d.dispose();
                 }

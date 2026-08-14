@@ -486,6 +486,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
         if (game().getPhase().isSimultaneous(game())
               && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
               && (game().getTurnIndex() != 0)) {
+            setStatusBarText(getRemainingPlayerWithTurns());
             return;
         }
 

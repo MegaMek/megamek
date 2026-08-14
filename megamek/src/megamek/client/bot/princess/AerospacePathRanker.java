@@ -109,7 +109,12 @@ public class AerospacePathRanker extends BasicPathRanker {
      * hexes reset every round. Miss the overflight and there is no attack this turn, full stop. Measured
      * without this term: two unopposed fighters averaged one bombing pass every fourteen rounds.</p>
      */
-    private static final double ATTACK_RUN_WEIGHT = 0.6;
+    // Tuning point 3 (2026-08-14): 0.6 never won an auction under real AA. The stock bravery term
+    // charges a bombing pass full standing-exchange price for damage taken, but one transit round
+    // through the flak IS the mission - measured DEBRIEF margins showed ~100-damage footprint runs
+    // rejected by ~170 points at weight 0.6 (credit 60). 2.5 clears the measured gap; the run's own
+    // risk terms (exposure, altitude toll, control) still price recklessness.
+    private static final double ATTACK_RUN_WEIGHT = 2.5;
 
     /** Strike attacks (guns, air-to-ground) are impossible above this altitude. */
     private static final int STRIKE_MAX_ALTITUDE = 5;
@@ -134,7 +139,10 @@ public class AerospacePathRanker extends BasicPathRanker {
     // 15 games, because the stock bravery term already charges expected damage taken from the same
     // enemies and the two stacked to bury every window entry by ~170 points. Halved; the two-point
     // curve (0.03 vs 0.015) is the morning tuning discussion.
-    private static final double EXPOSURE_PER_INCOMING_DAMAGE = 0.015;
+    // Restored to the point-1 value: 15-game arms measured 0.03 (8 fighters lost, 1.35:1 exchange)
+    // vs 0.015 (13 lost incl. a wipe, 1.12:1) with bombing collapsed in BOTH - the deterrent was
+    // never the binding constraint, and the stronger one survives better. Ground-only stays.
+    private static final double EXPOSURE_PER_INCOMING_DAMAGE = 0.03;
 
     /** Ceiling on the incoming-damage scale factor, so massed batteries saturate rather than explode. */
     private static final double EXPOSURE_SCALE_CAP = 1.5;

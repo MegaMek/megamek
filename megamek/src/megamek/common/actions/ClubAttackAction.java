@@ -144,8 +144,6 @@ public class ClubAttackAction extends PhysicalAttackAction {
         } else if (mType.hasFlag(MiscTypeFlag.S_MINING_DRILL)) {
             // Mining drills have constant damage, not variable like most.
             nDamage = 4;
-        } else if (mType.isShield()) {
-            nDamage = club.getDamageAbsorption(entity, club.getLocation());
         } else if (mType.hasFlag(MiscTypeFlag.S_WRECKING_BALL)) {
             // Wrecking Balls have constant damage, not variable like most.
             nDamage = 8;
@@ -189,7 +187,6 @@ public class ClubAttackAction extends PhysicalAttackAction {
               && !(mType.hasFlag(MiscTypeFlag.S_DUAL_SAW)
               || mType.hasFlag(MiscTypeFlag.S_CHAINSAW)
               || mType.hasFlag(MiscTypeFlag.S_PILE_DRIVER)
-              || mType.isShield()
               || mType.hasFlag(MiscTypeFlag.S_WRECKING_BALL)
               || mType.hasFlag(MiscTypeFlag.S_FLAIL)
               || (mType.isVibroblade() && club.curMode().equals("Active"))
@@ -230,7 +227,6 @@ public class ClubAttackAction extends PhysicalAttackAction {
         } else if (clubType.hasFlag(MiscTypeFlag.S_BACKHOE)
               || clubType.hasFlag(MiscTypeFlag.S_ROCK_CUTTER)
               || clubType.hasFlag(MiscTypeFlag.S_WRECKING_BALL)
-              || clubType.hasFlag(MiscTypeFlag.S_LANCE)
               || clubType.hasFlag(MiscTypeFlag.S_MACE)) {
             return 1;
         } else if (clubType.hasFlag(MiscTypeFlag.S_CHAINSAW)
@@ -244,14 +240,11 @@ public class ClubAttackAction extends PhysicalAttackAction {
               || clubType.hasFlag(MiscTypeFlag.S_RETRACTABLE_BLADE)
               || clubType.hasFlag(MiscTypeFlag.S_SWORD)
               || clubType.hasFlag(MiscTypeFlag.S_CHAIN_WHIP)
-              || clubType.hasFlag(MiscTypeFlag.S_SHIELD_SMALL)
               || clubType.isVibroblade()
               || clubType.hasFlag(MiscTypeFlag.S_COMBINE)) {
             return -2;
-        } else if (clubType.hasFlag(MiscTypeFlag.S_SHIELD_MEDIUM)) {
-            return -3;
-        } else if (clubType.hasFlag(MiscTypeFlag.S_SHIELD_LARGE)) {
-            return -4;
+        } else if (clubType.hasFlag(MiscTypeFlag.S_LANCE)) {
+            return Game.rulesManager.getRulesPhysical().getLanceToHitModifier();
         } else {
             return -1;
         }
@@ -364,7 +357,6 @@ public class ClubAttackAction extends PhysicalAttackAction {
         // Cast is safe because non-'Meks never even get here.
         final boolean hasClaws = ((Mek) ae).hasClaw(Mek.LOC_RIGHT_ARM)
               || ((Mek) ae).hasClaw(Mek.LOC_LEFT_ARM);
-        final boolean shield = clubType.isShield();
         boolean needsHand = true;
         final boolean armMounted = (club.getLocation() == Mek.LOC_LEFT_ARM
               || club.getLocation() == Mek.LOC_RIGHT_ARM);
@@ -413,11 +405,6 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                       "Hand actuator destroyed");
             }
-        } else if (shield) {
-            if (!ae.hasLoweredShield(club.getLocation())) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE,
-                      "Shield is not lowered");
-            }
         } else {
             // check if location is present
             if (ae.isLocationBad(club.getLocation())) {
@@ -450,8 +437,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         // club must not be damaged
-        if (!shield
-              && (ae.getBadCriticalSlots(CriticalSlot.TYPE_EQUIPMENT,
+        if ((ae.getBadCriticalSlots(CriticalSlot.TYPE_EQUIPMENT,
               ae.getEquipmentNum(club), club.getLocation()) > 0)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Club is damaged");
         }
@@ -497,7 +483,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
         // Can we club the prone mek?
         if ((target instanceof Entity) && ((Entity) target).isProne()) {
-            if(Game.rulesManager.getRulesPhysical().cannotClubProne(targetElevation, attackerElevation)) {
+            if (Game.rulesManager.getRulesPhysical().cannotClubProne(targetElevation, attackerElevation)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                       Messages.getString("PhysicalAttackAction.ProneMekClub"));
             }
@@ -594,7 +580,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 }
             } else if (attackerElevation < targetElevation) {
                 if (target.getHeight() == 0) {
-                    if (shield || isConvertedQuadVee(target, game)) {
+                    if (isConvertedQuadVee(target, game)) {
                         toHit.setHitTable(ToHitData.HIT_PUNCH);
                     } else {
                         toHit.setHitTable(ToHitData.HIT_NORMAL);

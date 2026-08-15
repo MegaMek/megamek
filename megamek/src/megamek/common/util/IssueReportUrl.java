@@ -56,12 +56,12 @@ import megamek.logging.MMLogger;
  * {@code .github/ISSUE_TEMPLATE/bug_report.yml} in each of those repositories: if a field id is renamed there, the
  * corresponding field here silently stops being filled in, without any error.</p>
  *
- * <p><b>The {@code labels} query parameter is deliberately never set.</b> The template already applies the
- * {@code bug} label server-side for every reporter. GitHub, by contrast, requires the visitor to hold permission for
- * any action a query parameter performs, and serves a 404 page when they do not. Since ordinary players have no
- * triage permission on the suite's repositories, adding a {@code labels} parameter would replace the issue form with
- * a 404 for exactly the people this feature exists to help, while continuing to work for every maintainer who
- * tested it.</p>
+ * <p><b>The {@code labels} query parameter is deliberately never set.</b> GitHub requires the visitor to hold
+ * permission for any action a query parameter performs, and serves a 404 page when they do not. Since ordinary
+ * players have no triage permission on the suite's repositories, adding a {@code labels} parameter would replace the
+ * issue form with a 404 for exactly the people this feature exists to help, while continuing to work for every
+ * maintainer who tested it. Labelling belongs to the issue template, which applies its labels for every reporter
+ * regardless of permission.</p>
  *
  * @see megamek.common.util.BugReportBundle
  */

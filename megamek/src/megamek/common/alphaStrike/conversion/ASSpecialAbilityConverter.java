@@ -238,6 +238,7 @@ public class ASSpecialAbilityConverter {
                 assign(misc, SAW);
             }
         } else if (miscType.hasFlag(F_SHIELD)) {
+            assign(misc, MEL);
             assign(misc, SHLD);
         } else if (miscType.hasFlag(F_SPIKES)) {
             assign(misc, MEL);

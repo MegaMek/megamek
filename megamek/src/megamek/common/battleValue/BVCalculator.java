@@ -1002,7 +1002,8 @@ public abstract class BVCalculator {
             }
 
             double bv = offensiveEquipmentBV(miscType, misc.getLocation());
-            if ((miscType.hasFlag(MiscType.F_CLUB) || miscType.hasFlag(MiscType.F_HAND_WEAPON)) &&
+            if ((miscType.hasFlag(MiscType.F_CLUB) || miscType.hasFlag(MiscType.F_HAND_WEAPON) || miscType.hasFlag(
+                  MiscType.F_SHIELD)) &&
                   entity.hasFunctionalArmAES(misc.getLocation())) {
                 bv *= 1.25;
             } else if (miscType.hasFlag(MiscType.F_WATCHDOG)) {

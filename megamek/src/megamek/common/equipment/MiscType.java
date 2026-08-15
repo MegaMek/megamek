@@ -396,11 +396,7 @@ public class MiscType extends EquipmentType {
     public boolean isBoobyTrap() {
         return hasFlag(F_BOOBY_TRAP);
     }
-
-    public boolean isShield() {
-        return hasFlag(F_SHIELD);
-    }
-
+    
     public boolean isVibroblade() {
         return hasFlag(F_CLUB)
               && hasAnyFlag(

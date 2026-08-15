@@ -20834,7 +20834,7 @@ public class TWGameManager extends AbstractGameManager {
         reports.addElement(r);
 
         // Shield objects are not useless when they take one crit.
-        if ((eqType instanceof MiscType) && ((MiscType) eqType).isShield()) {
+        if ((eqType instanceof MiscType) && ((MiscType) eqType).hasFlag(MiscType.F_SHIELD)) {
             mounted.setHit(false);
         } else if (mounted.is(EquipmentTypeLookup.SCM)) {
             // Super-Cooled Myomer remains functional until all its slots have been hit

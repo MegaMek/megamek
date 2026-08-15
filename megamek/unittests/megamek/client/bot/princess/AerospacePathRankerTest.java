@@ -836,4 +836,33 @@ class AerospacePathRankerTest {
               AerospacePathRanker.interceptCredit(200.0, 0.5, true, false), 0.001,
               "an unmoved enemy's threat carries the same certainty discount as its engagement");
     }
+
+    /**
+     * The focus order's arithmetic (Dave: "Focus on Aerospace, Focus on Ground" as bot commands).
+     * The favored credit set doubles, the other quarters - a bias, never a gate - and AUTO is the
+     * exact identity, so a bot that has never been given an order flies byte-identical doctrine.
+     * The measured basis for order-not-default: the tuning run where a standing air priority won
+     * the air war and lost the battle 0.71:1.
+     */
+    @Test
+    void aFocusOrderBiasesTheCreditSetsAndAutoChangesNothing() {
+        assertEquals(1.0, AerospacePathRanker.focusMultiplier(AerospaceFocus.AUTO, true), 0.0,
+              "AUTO must be the exact identity on the air set");
+        assertEquals(1.0, AerospacePathRanker.focusMultiplier(AerospaceFocus.AUTO, false), 0.0,
+              "AUTO must be the exact identity on the ground set");
+        assertEquals(AerospacePathRanker.FOCUS_FAVORED_MULTIPLIER,
+              AerospacePathRanker.focusMultiplier(AerospaceFocus.AEROSPACE, true), 0.001,
+              "Focus Aerospace doubles the air credit set");
+        assertEquals(AerospacePathRanker.FOCUS_SUPPRESSED_MULTIPLIER,
+              AerospacePathRanker.focusMultiplier(AerospaceFocus.AEROSPACE, false), 0.001,
+              "Focus Aerospace quarters the ground set - suppressed, never zeroed");
+        assertEquals(AerospacePathRanker.FOCUS_FAVORED_MULTIPLIER,
+              AerospacePathRanker.focusMultiplier(AerospaceFocus.GROUND, false), 0.001,
+              "Focus Ground doubles the ground credit set");
+        assertEquals(AerospacePathRanker.FOCUS_SUPPRESSED_MULTIPLIER,
+              AerospacePathRanker.focusMultiplier(AerospaceFocus.GROUND, true), 0.001,
+              "Focus Ground quarters the air set");
+        assertTrue(AerospacePathRanker.FOCUS_SUPPRESSED_MULTIPLIER > 0,
+              "orders bias, they never blind - the suppressed set must stay positive");
+    }
 }

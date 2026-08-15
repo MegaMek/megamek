@@ -114,6 +114,17 @@ public class AerospacePathRanker extends BasicPathRanker {
      */
     static final double DEFENSIVE_INTERCEPT_MULTIPLIER = 1.5;
 
+    /**
+     * What a standing focus order does to the favored credit set. Together with
+     * {@link #FOCUS_SUPPRESSED_MULTIPLIER} this is a bias, not a gate: the tuning run of
+     * 2026-08-14 showed a standing air-priority (intercept weight 0.6) wins the air war and loses
+     * the battle 0.71:1, so the strong lean is reserved for an explicit player order.
+     */
+    static final double FOCUS_FAVORED_MULTIPLIER = 2.0;
+
+    /** What a standing focus order does to the other credit set. Quartered, never zeroed. */
+    static final double FOCUS_SUPPRESSED_MULTIPLIER = 0.25;
+
     /** Credit for holding an arc the target cannot answer, as a fraction of the engagement credit. */
     private static final double ARC_ADVANTAGE_WEIGHT = 0.25;
 
@@ -344,6 +355,7 @@ public class AerospacePathRanker extends BasicPathRanker {
     private double lastCloseRangeDamage;
     private int lastWinchester;
     private double lastInterceptCredit;
+    private AerospaceFocus lastFocus = AerospaceFocus.AUTO;
     private int lastFinalAltitude;
     private int lastFinalVelocity;
     private CombatPosture lastPosture;
@@ -455,6 +467,10 @@ public class AerospacePathRanker extends BasicPathRanker {
         if (chosen.getScores().getOrDefault("aeroWinchester", 0.0) != 0.0) {
             debrief.append(" | WINCHESTER: bombs out, guns cannot decide - disengage credited");
         }
+        double focusOrdinal = chosen.getScores().getOrDefault("aeroFocus", (double) AerospaceFocus.AUTO.ordinal());
+        if (focusOrdinal != AerospaceFocus.AUTO.ordinal()) {
+            debrief.append(" | FOCUS: ").append(AerospaceFocus.values()[(int) focusOrdinal]);
+        }
         DEBRIEF_LOGGER.info(debrief.toString());
     }
 
@@ -507,6 +523,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastCloseRangeDamage = 0;
         lastWinchester = 0;
         lastInterceptCredit = 0;
+        lastFocus = AerospaceFocus.AUTO;
         lastFinalAltitude = 0;
         lastFinalVelocity = 0;
         lastPosture = null;
@@ -553,8 +570,15 @@ public class AerospacePathRanker extends BasicPathRanker {
         // claims - only exist if the control roll passes, so they are worth their expected value, not
         // their face value. Its costs are certain either way. A 58% Immelmann onto a committed enemy
         // offers 58% of its pose; the crash risk and the spent turn are owed in full.
-        double gains = lastEngagementCredit + lastArcAdvantage + lastAttackRunCredit + lastAltitudeBank
-              + lastInterceptCredit;
+        // The player's standing order, applied as a multiplier pair on the two credit sets. A bias,
+        // never a gate - a Focus-Ground fighter with a free shot at a laden bomber still sees most
+        // of it. Winchester and every risk term are untouched: orders redirect effort, they do not
+        // repeal physics.
+        lastFocus = getOwner().getAerospaceFocus();
+        double airMultiplier = focusMultiplier(lastFocus, true);
+        double groundMultiplier = focusMultiplier(lastFocus, false);
+        double gains = (lastEngagementCredit + lastArcAdvantage + lastInterceptCredit) * airMultiplier
+              + lastAttackRunCredit * groundMultiplier + lastAltitudeBank;
         if (lastManeuverType != ManeuverType.MAN_NONE) {
             gains *= lastManeuverOdds;
             // Mastery: above the sanction floor, a maneuver carries value beyond its pose, growing
@@ -718,6 +742,18 @@ public class AerospacePathRanker extends BasicPathRanker {
                 lastArcAdvantage += reachableDamage * ENGAGEMENT_WEIGHT * ARC_ADVANTAGE_WEIGHT;
             }
         }
+    }
+
+    /**
+     * The focus order's arithmetic, pure: the favored credit set is doubled, the other quartered,
+     * AUTO touches nothing.
+     */
+    static double focusMultiplier(AerospaceFocus focus, boolean airCreditSet) {
+        return switch (focus) {
+            case AUTO -> 1.0;
+            case AEROSPACE -> airCreditSet ? FOCUS_FAVORED_MULTIPLIER : FOCUS_SUPPRESSED_MULTIPLIER;
+            case GROUND -> airCreditSet ? FOCUS_SUPPRESSED_MULTIPLIER : FOCUS_FAVORED_MULTIPLIER;
+        };
     }
 
     /**
@@ -1313,6 +1349,14 @@ public class AerospacePathRanker extends BasicPathRanker {
         if (groundBombDamage(mover) > 0) {
             return false;
         }
+        if (friendlyGroundUnitsPresent(mover, game)) {
+            // Allies still carry the fight: even trivial gun passes support a live combined-arms
+            // battle, and the time-to-decision test below only knows this one fighter's guns. The
+            // 21-round win of 2026-08-14 declared Winchester while the ground lance was winning -
+            // harmless there only because the fly-off never won the auction. The stall this rule
+            // exists for was a LONE fighter; that is the only case it should fire in.
+            return false;
+        }
         int remainingEnemyHitPoints = 0;
         boolean anyGroundTarget = false;
         for (Entity enemy : enemies) {
@@ -1580,6 +1624,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         scores.put("aeroFinalVelocity", (double) lastFinalVelocity);
         scores.put("aeroWinchester", (double) lastWinchester);
         scores.put("aeroInterceptCredit", lastInterceptCredit);
+        scores.put("aeroFocus", (double) lastFocus.ordinal());
         return scores;
     }
 }

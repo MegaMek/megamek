@@ -248,11 +248,27 @@ public class AerospaceFireControl extends FireControl {
         }
         double adjustment = bombPlanUtilityAdjustment(firingPlan.getExpectedDamage(),
               tally.expectedDamage(), released, targetHitPoints, targetBattleValue, othersRemain);
-        RATION_LOGGER.info("AUCTION {}: utility {} {} {} ({} bombs worth {}, {} HP, {} BV, others={})",
+        RATION_LOGGER.debug("AUCTION {}: utility {} {} {} ({} bombs worth {}, {} HP, {} BV, others={})",
               firingPlan.getTarget().getDisplayName(), Math.round(firingPlan.getUtility()),
               (adjustment >= 0) ? "+" : "-", Math.round(Math.abs(adjustment)), released,
               Math.round(tally.expectedDamage()), targetHitPoints, targetBattleValue, othersRemain);
-        firingPlan.setUtility(firingPlan.getUtility() + adjustment);
+        firingPlan.setUtility(applyFocus(firingPlan.getUtility() + adjustment, firingPlan));
+    }
+
+    /**
+     * The firing half of the focus order, so both halves of the doctrine agree (the footprint
+     * lesson: movement steering without firing agreement, or the reverse, is half a feature). An
+     * airborne target is the air credit set, anything else the ground set; AUTO changes nothing.
+     * Applied to positive utility only - a focus order makes disfavored work less attractive, it
+     * must never make a bad plan look better by shrinking its badness.
+     */
+    private double applyFocus(double utility, FiringPlan plan) {
+        AerospaceFocus focus = owner.getAerospaceFocus();
+        if ((focus == AerospaceFocus.AUTO) || (utility <= 0)) {
+            return utility;
+        }
+        boolean airTarget = (plan.getTarget() instanceof Entity targetEntity) && targetEntity.isAirborne();
+        return utility * AerospacePathRanker.focusMultiplier(focus, airTarget);
     }
 
     /**
@@ -384,7 +400,7 @@ public class AerospaceFireControl extends FireControl {
             }
             // Observability first: the alpha-dump bypass survived a live game unnoticed because
             // nothing logged the decision. RATION lines are the debrief for the bomb bay.
-            RATION_LOGGER.info("RATION {}: releasing {} of {} bombs against {} effective HP",
+            RATION_LOGGER.debug("RATION {}: releasing {} of {} bombs against {} effective HP",
                   plan.getTarget().getDisplayName(), released, aboard, effectiveHitPoints);
         }
     }

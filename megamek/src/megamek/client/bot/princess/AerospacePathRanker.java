@@ -577,6 +577,16 @@ public class AerospacePathRanker extends BasicPathRanker {
         return aerospacePostureByBoard.computeIfAbsent(boardId, id -> {
             PostureResolver resolver = aerospacePostureResolvers.computeIfAbsent(id,
                   newBoard -> new PostureResolver());
+            // Once per round per board, alongside the posture it will one day modulate: the
+            // ground-attack threat of every enemy aircraft, so live games show the assessment.
+            for (Entity enemy : getOwner().getEnemyEntities()) {
+                if (enemy.isAero() && enemy.isAirborne() && !enemy.isSpaceborne()
+                      && (enemy.getBoardId() == id) && (enemy.getPosition() != null)) {
+                    DEBRIEF_LOGGER.info("AIRTHREAT {}: {} ground damage per turn (bombs + guns)",
+                          enemy.getDisplayName(),
+                          Math.round(groundAttackThreatPerTurn(enemy, game)));
+                }
+            }
             return resolver.resolve(getOwner().getBehaviorSettings(), round,
                   airbornePositions(getOwner().getEntitiesOwned(), id),
                   airbornePositions(getOwner().getEnemyEntities(), id),
@@ -845,6 +855,28 @@ public class AerospacePathRanker extends BasicPathRanker {
             incoming += getMaxDamageAtRange(enemy, slantRange, extremeRange, losRange);
         }
         return incoming;
+    }
+
+    /**
+     * What this aircraft can put on ground targets in a single turn: every damaging bomb aboard
+     * plus its guns at strike range. Bombs count in full because a dive-bomb attack releases the
+     * whole rack in one pass - the stock bot alpha-dumps, and even a rationing bomber CAN commit
+     * everything to one drop. Guns count because an empty-racked fighter with heavy strike guns is
+     * still a ground-attack threat every turn it overflies the line.
+     *
+     * <p>Detection primitive for the air-cover doctrine (Dave, 2026-08-14): the future intercept
+     * credit prices an enemy aircraft by this number, and the bot-commands focus modes
+     * (Focus on Aerospace / Focus on Ground) will gate on it. Logged per enemy aircraft each round
+     * as AIRTHREAT so live games show the assessment before anything consumes it.</p>
+     *
+     * @param aircraft the aircraft being priced
+     * @param game     the current game
+     *
+     * @return the expected ground-attack damage this aircraft can deliver in one turn
+     */
+    double groundAttackThreatPerTurn(Entity aircraft, Game game) {
+        return groundBombDamage(aircraft)
+              + getMaxDamageAtRange(aircraft, 1, isExtremeRange(game), isLosRange(game));
     }
 
     /** The summed damage of every ground bomb aboard - the payload one full dive-bomb pass can deliver. */

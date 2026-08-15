@@ -768,4 +768,47 @@ class AerospacePathRankerTest {
         assertEquals(-AerospacePathRanker.WINCHESTER_DISENGAGE_CREDIT, winchester, 0.001,
               "the credit is the constant, not a health-scaled cost");
     }
+
+    /**
+     * The air-cover detection primitive (Dave): an aircraft's ground-attack threat on any given
+     * turn is bombs PLUS guns. Bombs count in full - a dive-bomb attack can release the whole rack
+     * in one pass - and guns count because an empty-racked fighter with heavy strike guns is still
+     * a threat every turn. The future intercept credit and the bot-commands focus modes both key
+     * on this number.
+     */
+    @Test
+    void groundAttackThreatIsBombsPlusGunsPerTurn() {
+        Game game = mock(Game.class);
+        AerospacePathRanker spyRanker = org.mockito.Mockito.spy(ranker);
+        // The range-bracket helpers read game options the mock does not carry; both are incidental
+        // to what this test pins (the bombs + guns sum), so stub them alongside the gun estimate.
+        org.mockito.Mockito.doReturn(false).when(spyRanker).isExtremeRange(game);
+        org.mockito.Mockito.doReturn(false).when(spyRanker).isLosRange(game);
+        org.mockito.Mockito.doReturn(12.0).when(spyRanker)
+              .getMaxDamageAtRange(org.mockito.Mockito.any(Entity.class),
+                    org.mockito.Mockito.anyInt(),
+                    org.mockito.Mockito.anyBoolean(), org.mockito.Mockito.anyBoolean());
+
+        megamek.common.equipment.enums.BombType heType =
+              mock(megamek.common.equipment.enums.BombType.class);
+        when(heType.getDamagePerShot()).thenReturn(10);
+        megamek.common.equipment.BombMounted bombOne =
+              mock(megamek.common.equipment.BombMounted.class);
+        when(bombOne.getType()).thenReturn(heType);
+        megamek.common.equipment.BombMounted bombTwo =
+              mock(megamek.common.equipment.BombMounted.class);
+        when(bombTwo.getType()).thenReturn(heType);
+
+        Entity ladenBomber = mock(Entity.class);
+        when(ladenBomber.getBombs(megamek.common.equipment.AmmoType.F_GROUND_BOMB))
+              .thenReturn(new java.util.ArrayList<>(java.util.List.of(bombOne, bombTwo)));
+        Entity emptyRacks = mock(Entity.class);
+        when(emptyRacks.getBombs(megamek.common.equipment.AmmoType.F_GROUND_BOMB))
+              .thenReturn(new java.util.ArrayList<>());
+
+        assertEquals(32.0, spyRanker.groundAttackThreatPerTurn(ladenBomber, game), 0.001,
+              "two ten-point bombs plus twelve points of guns is a 32-point threat");
+        assertEquals(12.0, spyRanker.groundAttackThreatPerTurn(emptyRacks, game), 0.001,
+              "an empty-racked fighter is still its guns' worth of threat, not zero");
+    }
 }

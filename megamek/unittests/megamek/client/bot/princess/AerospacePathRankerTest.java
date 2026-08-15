@@ -1018,6 +1018,40 @@ class AerospacePathRankerTest {
               "three head-on victims at the odds haircut must beat the 10-damage strike rifle");
     }
 
+    /**
+     * The pilot-orbiting regression of 2026-08-15, pinned: ejected crews are not targets. The
+     * firing half vetoes shooting them (EJECTED_PILOT_DISUTILITY), so the movement half must not
+     * price them either - a fighter spent 24 rounds flying "attack runs" over crash-site pilots it
+     * would never shoot while two live enemy fighters flew unchallenged.
+     */
+    @Test
+    void anEjectedCrewEarnsNoAttackRunCredit() {
+        Game game = groundGame();
+        Coords crewHex = new Coords(20, 20);
+        Entity crew = mock(megamek.common.units.EjectedCrew.class);
+        when(crew.getPosition()).thenReturn(crewHex);
+        when(crew.getBoardId()).thenReturn(0);
+        when(crew.isAirborne()).thenReturn(false);
+
+        MovePath run = mock(MovePath.class);
+        AeroSpaceFighter fighter = strikeFighterOver(java.util.Set.of(crewHex), 3, run);
+        when(fighter.getWeaponList()).thenReturn(new java.util.ArrayList<>());
+
+        AerospacePathRanker spyRanker = org.mockito.Mockito.spy(ranker);
+        org.mockito.Mockito.doReturn(false).when(spyRanker).isExtremeRange(game);
+        org.mockito.Mockito.doReturn(false).when(spyRanker).isLosRange(game);
+        org.mockito.Mockito.doReturn(10.0).when(spyRanker)
+              .getMaxDamageAtRange(org.mockito.Mockito.any(Entity.class),
+                    org.mockito.Mockito.anyInt(),
+                    org.mockito.Mockito.anyBoolean(), org.mockito.Mockito.anyBoolean());
+        spyRanker.resetGroundCountersForTest();
+        spyRanker.lastPostAttackAltitudeForTest(3);
+        spyRanker.scoreAttackRuns(run, game, java.util.List.of(crew), AerospaceVenue.GROUND_MAP);
+
+        assertEquals(0.0, spyRanker.lastAttackRunCreditForTest(), 0.001,
+              "a crash-site pilot the guns refuse to shoot must earn the movement side nothing");
+    }
+
     /** TW p.243's weapon clause, mirrored: energy yes, ammo no. */
     @Test
     void onlyDirectFireEnergyWeaponsAreStrafeEligible() {

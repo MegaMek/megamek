@@ -258,6 +258,7 @@ public class AerospaceFireControl extends FireControl {
             for (Entity unit : game.getEntitiesVector(hex, shooter.getPassedThroughBoardId())) {
                 if (unit.getOwner().isEnemyOf(shooter.getOwner()) && !unit.isAirborne()
                       && !unit.isDestroyed()
+                      && !(unit instanceof megamek.common.units.EjectedCrew)
                       && !((unit instanceof Infantry) && Compute.isInBuilding(game, unit))) {
                     victims.add(unit);
                 }
@@ -283,7 +284,11 @@ public class AerospaceFireControl extends FireControl {
     private static List<Entity> liveEnemyGroundUnits(Entity shooter, Game game) {
         List<Entity> enemies = new ArrayList<>();
         for (Entity enemy : game.getEntitiesVector()) {
+            // Ejected crews carry no footprint value and the utility math vetoes shooting them;
+            // counting their hit points here would misprice drops (and the ranker excludes them
+            // from attack runs for the same both-halves reason).
             if (enemy.getOwner().isEnemyOf(shooter.getOwner()) && !enemy.isAirborne()
+                  && !(enemy instanceof megamek.common.units.EjectedCrew)
                   && (enemy.getPosition() != null) && (enemy.getBoardId() == shooter.getBoardId())
                   && !enemy.isDestroyed()) {
                 enemies.add(enemy);

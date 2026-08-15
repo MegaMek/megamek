@@ -1278,7 +1278,13 @@ public class AerospacePathRanker extends BasicPathRanker {
      * worth attacking. Airborne enemies belong to {@link #scoreEngagements}; the two sets never overlap.
      */
     private boolean isGroundTargetCandidate(Entity mover, Entity enemy, Game game) {
+        // Ejected crews are excluded outright: the firing half refuses to shoot them
+        // (EJECTED_PILOT_DISUTILITY vetoes every such plan), so pricing them here sent a fighter
+        // on endless "attack runs" over pilots it would never fire at - orbiting the crash sites
+        // while live enemy fighters flew unchallenged (the 47-round game of 2026-08-15). The two
+        // halves must agree on what a target is.
         return !enemy.isAirborne()
+              && !(enemy instanceof megamek.common.units.EjectedCrew)
               && (enemy.getPosition() != null)
               && (enemy.getBoardId() == mover.getBoardId())
               && !enemy.isOffBoard()

@@ -1391,6 +1391,11 @@ public class AerospacePathRanker extends BasicPathRanker {
         if (!venue.isGroundMap() || ((lastAirEnemies == 0) && (lastGroundTargets == 0))) {
             return 0;
         }
+        // Spheroids hover: velocity is not committed displacement for them, so the whole
+        // aerodyne-momentum argument this term prices does not exist (SC/DS audit).
+        if (Compute.useSpheroidAtmosphere(path.getGame(), path.getEntity())) {
+            return 0;
+        }
         int excessVelocity = Math.max(0, path.getFinalVelocity() - 1);
         if (excessVelocity == 0) {
             return 0;
@@ -1620,6 +1625,11 @@ public class AerospacePathRanker extends BasicPathRanker {
             // leaves cheap, because staying is how it dies.
             return OFF_BOARD_COST * disengageCostFraction(path.getEntity());
         }
+        // Spheroids hover: they have no unsteerable committed run, so the only edge event they can
+        // have is the deliberate fly-off priced above (SC/DS audit).
+        if (Compute.useSpheroidAtmosphere(game, path.getEntity())) {
+            return 0;
+        }
         int committed = Math.max(0, path.getFinalVelocity()) * venue.hexesPerVelocityPoint();
         if (committed == 0) {
             return 0;
@@ -1648,6 +1658,12 @@ public class AerospacePathRanker extends BasicPathRanker {
      * gun work alone cannot grind down the remaining enemy force inside the time horizon.
      */
     private boolean isCombatIneffective(Entity mover, Game game, List<Entity> enemies) {
+        if (!mover.isFighter()) {
+            // Winchester is a fighter's call. A bombless DropShip or small craft is not "combat
+            // ineffective" - it is a gunship and a transport, and its reasons to stay or leave are
+            // mission reasons, not ordnance arithmetic (SC/DS audit).
+            return false;
+        }
         if (groundBombDamage(mover) > 0) {
             return false;
         }

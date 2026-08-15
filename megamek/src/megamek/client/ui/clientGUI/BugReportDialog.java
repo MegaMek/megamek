@@ -49,6 +49,7 @@ import megamek.MMConstants;
 import megamek.client.ui.BugReportMessages;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
+import megamek.common.util.IssueReportUrl;
 
 public class BugReportDialog {
 
@@ -64,10 +65,31 @@ public class BugReportDialog {
     private final JComponent content;
 
     private final Action copySystemDataAction;
+    private final Action packageBugReportAction;
 
+    /**
+     * Creates the dialog without a bug report packaging button.
+     *
+     * @param parent               the window to centre on, or {@code null}
+     * @param copySystemDataAction shown as a button when not {@code null}
+     */
     public BugReportDialog(@Nullable Window parent, @Nullable Action copySystemDataAction) {
+        this(parent, copySystemDataAction, null);
+    }
+
+    /**
+     * Creates the dialog.
+     *
+     * @param parent                 the window to centre on, or {@code null}
+     * @param copySystemDataAction   shown as a button when not {@code null}
+     * @param packageBugReportAction shown as a button when not {@code null}; collects the save and logs into a single
+     *                               archive the player can attach to an issue
+     */
+    public BugReportDialog(@Nullable Window parent, @Nullable Action copySystemDataAction,
+          @Nullable Action packageBugReportAction) {
         this.parent = parent;
         this.copySystemDataAction = copySystemDataAction;
+        this.packageBugReportAction = packageBugReportAction;
         content = new JPanel(new GridBagLayout());
         var gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
@@ -87,13 +109,21 @@ public class BugReportDialog {
         JPanel row1 = new JPanel();
         row1.add(new UrlButton(I18N.get("discord.text"), MMConstants.DISCORD_LINK));
 
+        // The three repositories that use the suite bug report template get their environment fields filled in for
+        // the player; mm-data has no such template, so its link is left alone.
         JPanel row2 = new JPanel();
-        row2.add(new UrlButton(I18N.get("mm.text"), REPORT_LINK_MM));
-        row2.add(new UrlButton(I18N.get("mml.text"), REPORT_LINK_MML));
-        row2.add(new UrlButton(I18N.get("mhq.text"), REPORT_LINK_MHQ));
+        row2.add(new UrlButton(I18N.get("mm.text"), IssueReportUrl.forIssueForm(REPORT_LINK_MM, null),
+              REPORT_LINK_MM));
+        row2.add(new UrlButton(I18N.get("mml.text"), IssueReportUrl.forIssueForm(REPORT_LINK_MML, null),
+              REPORT_LINK_MML));
+        row2.add(new UrlButton(I18N.get("mhq.text"), IssueReportUrl.forIssueForm(REPORT_LINK_MHQ, null),
+              REPORT_LINK_MHQ));
         row2.add(new UrlButton(I18N.get("mmData.text"), REPORT_LINK_MM_DATA));
 
         JPanel row3 = new JPanel();
+        if (packageBugReportAction != null) {
+            row3.add(new JButton(packageBugReportAction));
+        }
         if (copySystemDataAction != null) {
             row3.add(new JButton(copySystemDataAction));
         }
@@ -107,8 +137,19 @@ public class BugReportDialog {
 
     private static class UrlButton extends JButton {
         UrlButton(String text, String address) {
+            this(text, address, address);
+        }
+
+        /**
+         * @param text            the button label
+         * @param address         the address opened when the button is pressed
+         * @param displayedAddress the address shown in the tooltip; a prefilled issue-form URL carries a long query
+         *                        string that is of no use to the reader, so the plain repository link is shown
+         *                        instead
+         */
+        UrlButton(String text, String address, String displayedAddress) {
             super(text);
-            setToolTipText(address);
+            setToolTipText(displayedAddress);
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             addActionListener(e -> UIUtil.browse(address));
         }

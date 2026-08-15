@@ -1330,7 +1330,7 @@ public class TestMek extends TestEntity {
                     buff.append("LAMs cannot mount heavy gauss rifles.\n");
                     illegal = true;
                 } else if ((m.getType() instanceof MiscType)
-                      && m.getType().hasFlag(MiscType.F_CLUB)) {
+                      && (m.getType().hasFlag(MiscType.F_CLUB) || m.getType().hasFlag(MiscType.F_SHIELD))) {
                     buff.append("LAMs cannot be constructed with physical weapons.\n");
                     illegal = true;
                 } else if (m.getType().isSpreadable()) {

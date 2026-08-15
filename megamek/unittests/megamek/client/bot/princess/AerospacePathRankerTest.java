@@ -1052,6 +1052,41 @@ class AerospacePathRankerTest {
               "a crash-site pilot the guns refuse to shoot must earn the movement side nothing");
     }
 
+    /**
+     * The mirror image of the crew exclusion: a CRASHED enemy fighter is a prime ground target -
+     * immobile, full battle value on the kill, helpless - and must stay in the attack-run target
+     * set. Pinned so the crew fix is never "generalized" into excluding grounded aerospace units
+     * (the 2026-08-15 game where a crashed Hellcat sat untouched for 33 rounds is the case this
+     * exists to end).
+     */
+    @Test
+    void aCrashedEnemyFighterIsAnAttackRunTarget() {
+        Game game = groundGame();
+        Coords crashSite = new Coords(20, 20);
+        Entity crashed = mock(AeroSpaceFighter.class);
+        when(crashed.getPosition()).thenReturn(crashSite);
+        when(crashed.getBoardId()).thenReturn(0);
+        when(crashed.isAirborne()).thenReturn(false);
+
+        MovePath run = mock(MovePath.class);
+        AeroSpaceFighter fighter = strikeFighterOver(java.util.Set.of(crashSite), 3, run);
+        when(fighter.getWeaponList()).thenReturn(new java.util.ArrayList<>());
+
+        AerospacePathRanker spyRanker = org.mockito.Mockito.spy(ranker);
+        org.mockito.Mockito.doReturn(false).when(spyRanker).isExtremeRange(game);
+        org.mockito.Mockito.doReturn(false).when(spyRanker).isLosRange(game);
+        org.mockito.Mockito.doReturn(10.0).when(spyRanker)
+              .getMaxDamageAtRange(org.mockito.Mockito.any(Entity.class),
+                    org.mockito.Mockito.anyInt(),
+                    org.mockito.Mockito.anyBoolean(), org.mockito.Mockito.anyBoolean());
+        spyRanker.resetGroundCountersForTest();
+        spyRanker.lastPostAttackAltitudeForTest(3);
+        spyRanker.scoreAttackRuns(run, game, java.util.List.of(crashed), AerospaceVenue.GROUND_MAP);
+
+        assertTrue(spyRanker.lastAttackRunCreditForTest() > 0,
+              "a helpless crashed fighter under the flown line must earn the attack-run credit");
+    }
+
     /** TW p.243's weapon clause, mirrored: energy yes, ammo no. */
     @Test
     void onlyDirectFireEnergyWeaponsAreStrafeEligible() {

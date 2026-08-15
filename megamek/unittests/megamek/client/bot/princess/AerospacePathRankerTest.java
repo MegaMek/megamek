@@ -865,4 +865,84 @@ class AerospacePathRankerTest {
         assertTrue(AerospacePathRanker.FOCUS_SUPPRESSED_MULTIPLIER > 0,
               "orders bias, they never blind - the suppressed set must stay positive");
     }
+
+    /**
+     * The roll-in direction chooses the armor facing (Dave: "could be as simple as rolling in of a
+     * right turn vs a left turn"). The engine resolves every air-to-ground attack on the side
+     * table given by the hex the fighter entered the target's hex from, so the astern approach
+     * prices half again higher than the head-on one - same target, same line length, different
+     * entry direction.
+     */
+    @Test
+    void anAsternRollInOutbidsAHeadOnPassOverTheSameTarget() {
+        assertEquals(AerospacePathRanker.REAR_APPROACH_MULTIPLIER,
+              AerospacePathRanker.approachMultiplier(megamek.common.ToHitData.SIDE_REAR), 0.001);
+        assertEquals(AerospacePathRanker.REAR_APPROACH_MULTIPLIER,
+              AerospacePathRanker.approachMultiplier(megamek.common.ToHitData.SIDE_REAR_LEFT), 0.001,
+              "the rear quarter arcs price as rear");
+        assertEquals(AerospacePathRanker.SIDE_APPROACH_MULTIPLIER,
+              AerospacePathRanker.approachMultiplier(megamek.common.ToHitData.SIDE_LEFT), 0.001);
+        assertEquals(1.0,
+              AerospacePathRanker.approachMultiplier(megamek.common.ToHitData.SIDE_FRONT), 0.001,
+              "a head-on pass earns no premium");
+
+        // And through the full attack-run scoring: identical gun runs over the same mek, one
+        // entering its hex from astern, one from ahead - the astern run's credit is 1.5x.
+        Game game = groundGame();
+        Coords mekHex = new Coords(20, 20);
+        Coords fromBehind = new Coords(20, 21);
+        Coords fromAhead = new Coords(20, 19);
+        Entity mek = groundMek(mekHex);
+        when(mek.sideTable(fromBehind)).thenReturn(megamek.common.ToHitData.SIDE_REAR);
+        when(mek.sideTable(fromAhead)).thenReturn(megamek.common.ToHitData.SIDE_FRONT);
+
+        double asternCredit = gunRunCredit(game, mek, fromBehind, mekHex);
+        double headOnCredit = gunRunCredit(game, mek, fromAhead, mekHex);
+
+        assertEquals(AerospacePathRanker.REAR_APPROACH_MULTIPLIER,
+              asternCredit / headOnCredit, 0.001,
+              "same mek, same line, astern entry must price 1.5x the head-on entry");
+    }
+
+    private double gunRunCredit(Game game, Entity mek, Coords entryHex, Coords mekHex) {
+        MovePath run = mock(MovePath.class);
+        AeroSpaceFighter fighter = strikeFighterOver(
+              new java.util.LinkedHashSet<>(java.util.List.of(entryHex, mekHex)), 3, run);
+        when(fighter.getWeaponList()).thenReturn(new java.util.ArrayList<>());
+        java.util.Vector<megamek.common.moves.MoveStep> steps = new java.util.Vector<>();
+        for (Coords position : java.util.List.of(entryHex, mekHex)) {
+            megamek.common.moves.MoveStep step = mock(megamek.common.moves.MoveStep.class);
+            when(step.getPosition()).thenReturn(position);
+            steps.add(step);
+        }
+        when(run.getStepVector()).thenReturn(steps);
+
+        AerospacePathRanker spyRanker = org.mockito.Mockito.spy(ranker);
+        org.mockito.Mockito.doReturn(false).when(spyRanker).isExtremeRange(game);
+        org.mockito.Mockito.doReturn(false).when(spyRanker).isLosRange(game);
+        org.mockito.Mockito.doReturn(10.0).when(spyRanker)
+              .getMaxDamageAtRange(org.mockito.Mockito.any(Entity.class),
+                    org.mockito.Mockito.anyInt(),
+                    org.mockito.Mockito.anyBoolean(), org.mockito.Mockito.anyBoolean());
+        spyRanker.resetGroundCountersForTest();
+        spyRanker.lastPostAttackAltitudeForTest(3);
+        spyRanker.scoreAttackRuns(run, game, java.util.List.of(mek), AerospaceVenue.GROUND_MAP);
+        return spyRanker.lastAttackRunCreditForTest();
+    }
+
+    /**
+     * The heat map of the opposition's movement, distilled: the stern-alignment arithmetic that
+     * turns per-unit drift into "am I behind them?". Dead astern earns full credit, one hexside
+     * off half, anything else nothing - including across the 5-to-0 direction wraparound.
+     */
+    @Test
+    void sternAlignmentIsFullBehindHalfOffAxisAndZeroElsewhere() {
+        assertEquals(1.0, AerospacePathRanker.sternAlignment(2, 2), 0.001, "dead astern");
+        assertEquals(0.5, AerospacePathRanker.sternAlignment(3, 2), 0.001, "one hexside off");
+        assertEquals(0.5, AerospacePathRanker.sternAlignment(5, 0), 0.001,
+              "the 5-to-0 wraparound is one hexside, not five");
+        assertEquals(0.0, AerospacePathRanker.sternAlignment(0, 3), 0.001,
+              "dead ahead of the force earns nothing");
+        assertEquals(0.0, AerospacePathRanker.sternAlignment(4, 2), 0.001, "two off is broadside");
+    }
 }

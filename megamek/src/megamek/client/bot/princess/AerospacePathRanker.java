@@ -34,6 +34,7 @@ package megamek.client.bot.princess;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import megamek.common.ToHitData;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -124,6 +125,28 @@ public class AerospacePathRanker extends BasicPathRanker {
 
     /** What a standing focus order does to the other credit set. Quartered, never zeroed. */
     static final double FOCUS_SUPPRESSED_MULTIPLIER = 0.25;
+
+    /**
+     * Thin-armor pricing for the roll-in direction (Dave: strafing and striking are most effective
+     * from behind - "could be as simple as rolling in of a right turn vs a left turn"). The engine
+     * resolves every air-to-ground attack on the side table given by the hex the fighter ENTERED
+     * the target's hex from (ComputeSideTable, passedThroughPrevious), so approach direction
+     * chooses the armor facing. Rear plates run roughly a third of front on most meks; the same
+     * expected damage is worth more where the armor is thin.
+     */
+    static final double REAR_APPROACH_MULTIPLIER = 1.5;
+
+    /** Side-arc roll-ins are worth a smaller premium than a clean astern entry. */
+    static final double SIDE_APPROACH_MULTIPLIER = 1.15;
+
+    /**
+     * Credit for EXITING a turn positioned astern of the enemy force's direction of travel: the
+     * drift of their positions round over round predicts next round's column and which way its
+     * tail points, and a fighter that banks around behind it this turn buys next turn's rear-arc
+     * run. Modest by design - a positioning investment on the scale of the altitude bank, not a
+     * reason to skip a live attack.
+     */
+    static final double STERN_SETUP_CREDIT = 6.0;
 
     /** Credit for holding an arc the target cannot answer, as a fraction of the engagement credit. */
     private static final double ARC_ADVANTAGE_WEIGHT = 0.25;
@@ -356,6 +379,13 @@ public class AerospacePathRanker extends BasicPathRanker {
     private int lastWinchester;
     private double lastInterceptCredit;
     private AerospaceFocus lastFocus = AerospaceFocus.AUTO;
+    private double lastApproachMultiplier = 1.0;
+    private double lastSternSetup;
+    // Enemy drift: last round's positions and the per-unit movement vectors derived from them.
+    // Multi-round history, so it carries the round-went-backwards reset like the posture resolvers.
+    private final Map<Integer, Coords> enemyPreviousPositions = new HashMap<>();
+    private final Map<Integer, Coords> enemyDrift = new HashMap<>();
+    private int driftRound = -1;
     private int lastFinalAltitude;
     private int lastFinalVelocity;
     private CombatPosture lastPosture;
@@ -524,6 +554,8 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastWinchester = 0;
         lastInterceptCredit = 0;
         lastFocus = AerospaceFocus.AUTO;
+        lastApproachMultiplier = 1.0;
+        lastSternSetup = 0;
         lastFinalAltitude = 0;
         lastFinalVelocity = 0;
         lastPosture = null;
@@ -550,8 +582,10 @@ public class AerospacePathRanker extends BasicPathRanker {
         // resolvePosture both sit behind guards an airborne aero never passes, so until now a flight had no
         // attack-or-defend answer, and nothing that reads posture applied to it.
         lastPosture = resolveAerospacePosture(game, mover.getBoardId(), venue);
+        updateEnemyDrift(game, enemies);
         scoreEngagements(path, game, enemies, venue);
         scoreAttackRuns(path, game, enemies, venue);
+        lastSternSetup = sternSetupCredit(path, game, enemies);
         lastControlRiskPenalty = controlRiskPenalty(path);
         lastVelocityPenalty = velocityPenalty(path, venue);
         lastEdgePenalty = edgePenalty(path, game, venue);
@@ -578,7 +612,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         double airMultiplier = focusMultiplier(lastFocus, true);
         double groundMultiplier = focusMultiplier(lastFocus, false);
         double gains = (lastEngagementCredit + lastArcAdvantage + lastInterceptCredit) * airMultiplier
-              + lastAttackRunCredit * groundMultiplier + lastAltitudeBank;
+              + (lastAttackRunCredit + lastSternSetup) * groundMultiplier + lastAltitudeBank;
         if (lastManeuverType != ManeuverType.MAN_NONE) {
             gains *= lastManeuverOdds;
             // Mastery: above the sanction floor, a maneuver carries value beyond its pose, growing
@@ -835,8 +869,24 @@ public class AerospacePathRanker extends BasicPathRanker {
         }
 
         // Guns are a rifle: split fire is illegal, so a strike delivers to exactly ONE overflown
-        // target however many the line crosses.
-        double gunRun = (overflewSomeone && (gunDamage > 0)) ? gunDamage : 0;
+        // target however many the line crosses - and the roll-in direction chooses the armor
+        // facing it lands on. The rifle aims at the best-priced victim: the ordered flown line
+        // gives the hex each target's hex was entered from, the engine's own side table says which
+        // facing that approach strikes, and rear plates price the same damage half again higher.
+        double gunRun = 0;
+        if (overflewSomeone && (gunDamage > 0)) {
+            double bestApproach = 1.0;
+            List<Coords> orderedLine = orderedFlownLine(path);
+            for (Entity target : targets) {
+                if (!flownLine.contains(target.getPosition())) {
+                    continue;
+                }
+                bestApproach = Math.max(bestApproach,
+                      approachMultiplier(entryDirectionSideTable(orderedLine, target)));
+            }
+            lastApproachMultiplier = bestApproach;
+            gunRun = gunDamage * bestApproach;
+        }
 
         // Bombs are a footprint: the aim point is a hex, any hex on the flown line, and the blast
         // reaches every target at its ring distance. Worked as the pilot against a 2-hex-spaced box
@@ -966,6 +1016,138 @@ public class AerospacePathRanker extends BasicPathRanker {
     double groundAttackThreatPerTurn(Entity aircraft, Game game) {
         return groundBombDamage(aircraft)
               + getMaxDamageAtRange(aircraft, 1, isExtremeRange(game), isLosRange(game));
+    }
+
+    /**
+     * Refreshes the per-enemy movement vectors once per round: this round's position minus last
+     * round's is the drift, and the drift is the heat map of the opposition's movement distilled
+     * to its actionable core - where the column is going, and which way its tail points. A round
+     * going backwards means a new game on a reused bot client; the history is cleared.
+     */
+    private void updateEnemyDrift(Game game, List<Entity> enemies) {
+        int round = game.getCurrentRound();
+        if (round == driftRound) {
+            return;
+        }
+        if (round < driftRound) {
+            enemyPreviousPositions.clear();
+            enemyDrift.clear();
+        }
+        driftRound = round;
+        for (Entity enemy : enemies) {
+            Coords position = enemy.getPosition();
+            if ((position == null) || enemy.isAirborne()) {
+                continue;
+            }
+            Coords previous = enemyPreviousPositions.get(enemy.getId());
+            if ((previous != null) && !previous.equals(position)) {
+                enemyDrift.put(enemy.getId(), previous);
+            }
+            enemyPreviousPositions.put(enemy.getId(), position);
+        }
+    }
+
+    /**
+     * Credit for exiting the turn astern of the enemy ground force's direction of travel. The
+     * force's dominant drift direction (majority vote of the per-unit movement vectors) points
+     * where the column is going; a fighter whose final pose sits behind the force - the direction
+     * FROM the fighter TO the force agreeing with the drift - is positioned to roll in on rear
+     * arcs next round. Zero when the force is not moving or the fighter is on top of it.
+     */
+    double sternSetupCredit(MovePath path, Game game, List<Entity> enemies) {
+        Coords exitPose = path.getFinalCoords();
+        if (exitPose == null) {
+            return 0;
+        }
+        int[] directionVotes = new int[6];
+        int votes = 0;
+        double centroidX = 0;
+        double centroidY = 0;
+        int groundEnemies = 0;
+        for (Entity enemy : enemies) {
+            if ((enemy.getPosition() == null) || enemy.isAirborne()
+                  || (enemy.getBoardId() != path.getFinalBoardId())) {
+                continue;
+            }
+            groundEnemies++;
+            centroidX += enemy.getPosition().getX();
+            centroidY += enemy.getPosition().getY();
+            Coords previous = enemyDrift.get(enemy.getId());
+            if (previous != null) {
+                directionVotes[previous.direction(enemy.getPosition())]++;
+                votes++;
+            }
+        }
+        if ((groundEnemies == 0) || (votes == 0)) {
+            return 0;
+        }
+        int dominantDirection = 0;
+        for (int direction = 1; direction < 6; direction++) {
+            if (directionVotes[direction] > directionVotes[dominantDirection]) {
+                dominantDirection = direction;
+            }
+        }
+        Coords centroid = new Coords((int) Math.round(centroidX / groundEnemies),
+              (int) Math.round(centroidY / groundEnemies));
+        if (exitPose.equals(centroid)) {
+            return 0;
+        }
+        return STERN_SETUP_CREDIT * sternAlignment(exitPose.direction(centroid), dominantDirection);
+    }
+
+    /**
+     * How astern a pose is, pure: full credit when the direction from the fighter to the force IS
+     * the force's direction of travel (dead astern), half credit one hexside off, nothing else.
+     */
+    static double sternAlignment(int directionToForce, int forceDriftDirection) {
+        int difference = Math.abs(directionToForce - forceDriftDirection);
+        int hexSides = Math.min(difference, 6 - difference);
+        if (hexSides == 0) {
+            return 1.0;
+        }
+        return (hexSides == 1) ? 0.5 : 0.0;
+    }
+
+    /**
+     * The flown line in flight order, from the path's steps. {@code getCoordsSet()} is a set and
+     * carries no order; the entry direction into a target's hex needs the hex BEFORE it.
+     */
+    private static List<Coords> orderedFlownLine(MovePath path) {
+        List<Coords> line = new ArrayList<>();
+        if (path.getStepVector() == null) {
+            return line;
+        }
+        for (megamek.common.moves.MoveStep step : path.getStepVector()) {
+            Coords position = step.getPosition();
+            if ((position != null) && (line.isEmpty() || !line.getLast().equals(position))) {
+                line.add(position);
+            }
+        }
+        return line;
+    }
+
+    /**
+     * The side table this run's entry into the target's hex resolves on, asked of the engine's own
+     * arithmetic: the hex flown through immediately before the target's, against the target's
+     * committed facing (ground moves before aero - facts, not guesses). Front when the line never
+     * reaches the target or has no prior hex.
+     */
+    private static int entryDirectionSideTable(List<Coords> orderedLine, Entity target) {
+        int index = orderedLine.indexOf(target.getPosition());
+        if (index < 1) {
+            return ToHitData.SIDE_FRONT;
+        }
+        return target.sideTable(orderedLine.get(index - 1));
+    }
+
+    /** Thin-armor pricing per side table: rear pays the full premium, side arcs a smaller one. */
+    static double approachMultiplier(int sideTableCode) {
+        return switch (sideTableCode) {
+            case ToHitData.SIDE_REAR, ToHitData.SIDE_REAR_LEFT, ToHitData.SIDE_REAR_RIGHT ->
+                  REAR_APPROACH_MULTIPLIER;
+            case ToHitData.SIDE_LEFT, ToHitData.SIDE_RIGHT -> SIDE_APPROACH_MULTIPLIER;
+            default -> 1.0;
+        };
     }
 
     /** The summed damage of every ground bomb aboard - the payload one full dive-bomb pass can deliver. */
@@ -1625,6 +1807,8 @@ public class AerospacePathRanker extends BasicPathRanker {
         scores.put("aeroWinchester", (double) lastWinchester);
         scores.put("aeroInterceptCredit", lastInterceptCredit);
         scores.put("aeroFocus", (double) lastFocus.ordinal());
+        scores.put("aeroApproachMultiplier", lastApproachMultiplier);
+        scores.put("aeroSternSetup", lastSternSetup);
         return scores;
     }
 }

@@ -159,7 +159,9 @@ public class PackageBugReportAction extends AbstractAction {
         if (!chosenFile.getName().toLowerCase(Locale.ROOT).endsWith(ARCHIVE_EXTENSION)) {
             chosenFile = new File(chosenFile.getParentFile(), chosenFile.getName() + ARCHIVE_EXTENSION);
         }
-        return chosenFile;
+        // Absolute, so the containing directory is always resolvable; a relative choice would leave
+        // getParentFile() null and the save request would have nowhere to point.
+        return chosenFile.getAbsoluteFile();
     }
 
     /**
@@ -173,7 +175,7 @@ public class PackageBugReportAction extends AbstractAction {
      */
     private void requestSaveThenBuildArchive(Client client, File archiveFile) {
         File archiveDirectory = archiveFile.getParentFile();
-        String temporarySaveName = stripExtension(archiveFile.getName());
+        String temporarySaveName = temporarySaveNameFor(archiveFile);
 
         // Whichever of the callback and the timeout arrives first wins; the other must become a no-op.
         AtomicBoolean alreadyProceeded = new AtomicBoolean(false);
@@ -358,6 +360,22 @@ public class PackageBugReportAction extends AbstractAction {
         } catch (Exception exception) {
             LOGGER.error(exception, "[BugReport] Could not copy {} to the clipboard", archiveFile.getName());
         }
+    }
+
+    /**
+     * Derives the temporary save's name from the archive's name.
+     *
+     * <p>The server splits the {@code /localsave} chat command on spaces, so a name containing one would be read as
+     * two separate arguments and the save written somewhere unintended - the player is free to type
+     * "Bug Report.zip" into the file chooser. The directory is escaped and unescaped either side of the wire, but
+     * the filename has no such mechanism, so whitespace is replaced outright.</p>
+     *
+     * @param archiveFile the archive the player chose
+     *
+     * @return a save name safe to send as a single chat-command argument
+     */
+    private static String temporarySaveNameFor(File archiveFile) {
+        return stripExtension(archiveFile.getName()).replaceAll("\\s+", "_");
     }
 
     /**

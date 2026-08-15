@@ -45,6 +45,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -86,6 +87,13 @@ public class BugReportBundle {
 
     /** Log basenames collected only when a bot actually ran, most important first. */
     private static final List<String> BOT_LOG_BASE_NAMES = List.of("princess", "bot_path_ranker");
+
+    /**
+     * Every basename this bundle collects. Precomputed because the rolled-log filter is applied once per file in the
+     * log directory, which can hold thousands.
+     */
+    private static final List<String> ALL_LOG_BASE_NAMES =
+          Stream.concat(ESSENTIAL_LOG_BASE_NAMES.stream(), BOT_LOG_BASE_NAMES.stream()).toList();
 
     private static final String LOG_EXTENSION = ".log";
     private static final String ROLLED_LOG_EXTENSION = ".log.gz";
@@ -294,9 +302,7 @@ public class BugReportBundle {
         if (!file.isFile() || !file.getName().endsWith(ROLLED_LOG_EXTENSION)) {
             return false;
         }
-        List<String> allBaseNames = new ArrayList<>(ESSENTIAL_LOG_BASE_NAMES);
-        allBaseNames.addAll(BOT_LOG_BASE_NAMES);
-        return allBaseNames.stream().anyMatch(baseName -> file.getName().startsWith(baseName + "_"));
+        return ALL_LOG_BASE_NAMES.stream().anyMatch(baseName -> file.getName().startsWith(baseName + "_"));
     }
 
     /**

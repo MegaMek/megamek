@@ -633,6 +633,10 @@ class AerospacePathRankerTest {
     private Game groundGame() {
         Game game = mock(Game.class);
         when(game.getOptions()).thenReturn(new megamek.common.options.GameOptions());
+        // The spheroid pricing guard asks the engine whether the mover flies as a spheroid, which
+        // reads the game's planetary conditions; standard atmosphere keeps aerodynes aerodyne.
+        when(game.getPlanetaryConditions())
+              .thenReturn(new megamek.common.planetaryConditions.PlanetaryConditions());
         when(game.onTheSameBoard(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any()))
               .thenReturn(true);
         // isIgnorableEnemy walks board containment and honor state; give both real answers.

@@ -277,7 +277,7 @@ public abstract class MekWithArms extends Mek {
 
         for (MiscMounted misc : getMisc()) {
             MiscType type = misc.getType();
-            if (type.hasFlag(MiscType.F_CLUB) && (type.hasFlag(shieldSize))) {
+            if (type.hasFlag(MiscType.F_SHIELD) && (type.hasFlag(shieldSize))) {
                 // ok so we have a shield of certain size. know which arm is it.
                 if (misc.getLocation() == Mek.LOC_RIGHT_ARM) {
                     raShield = 1;

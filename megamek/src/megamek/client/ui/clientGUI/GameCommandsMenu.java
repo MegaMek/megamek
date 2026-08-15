@@ -38,7 +38,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import megamek.client.Client;
+import megamek.client.ui.CopySystemDataAction;
 import megamek.client.ui.Messages;
+import megamek.client.ui.PackageBugReportAction;
 import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
@@ -120,6 +122,25 @@ public class GameCommandsMenu {
         popup.addSeparator();
         popup.add(createCommandItem("CheckBvPlayers", COMMAND_CHECK_BV));
         popup.add(createCommandItem("CheckBvTeams", COMMAND_CHECK_BV_TEAM));
+        popup.addSeparator();
+        popup.add(createReportBugItem());
+    }
+
+    /**
+     * Creates the Report a Bug item. Unlike its neighbours this sends no chat command; it opens the bug report helper,
+     * which can package the running game and its logs into a single archive. It is offered here because the Commands
+     * button sits above the board throughout play, so a player who has just seen something go wrong can reach the
+     * reporting tools without leaving the game to hunt through the menu bar.
+     *
+     * @return The Report a Bug menu item
+     */
+    private JMenuItem createReportBugItem() {
+        JMenuItem reportBugItem = new JMenuItem(Messages.getString("GameCommands.ReportBug.title"));
+        reportBugItem.setToolTipText(Messages.getString("GameCommands.ReportBug.tooltip"));
+        reportBugItem.addActionListener(event -> new BugReportDialog(clientGUI.getFrame(),
+              new CopySystemDataAction(),
+              new PackageBugReportAction(clientGUI.getFrame(), this::getClient)).show());
+        return reportBugItem;
     }
 
     /**

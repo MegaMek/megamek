@@ -48,7 +48,9 @@ import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
 import megamek.common.force.Force;
 import megamek.common.game.Game;
+import megamek.client.bot.princess.AerospaceGroundOrder;
 import megamek.common.moves.MovePath;
+import megamek.common.units.Dropship;
 import megamek.common.units.IAero;
 import megamek.common.pathfinder.AeroGroundDoctrinePathFinder;
 import megamek.common.pathfinder.AeroGroundPathFinder;
@@ -166,12 +168,29 @@ public class Caspar extends Princess {
         if (takeoffPath != null) {
             return takeoffPath;
         }
+        MovePath landingPath = buildLandingPath(entity);
+        if (landingPath != null) {
+            return landingPath;
+        }
         return super.continueMovementFor(entity);
     }
 
     private MovePath buildTakeoffPath(final Entity entity) {
         if (!(entity instanceof IAero aero) || !entity.isAero() || entity.isAirborne()
               || entity.isShutDown() || (entity.getPosition() == null)) {
+            return null;
+        }
+        if (!groundOrderPermitsTakeoff(entity.isFighter(), getAerospaceGroundOrder())) {
+            // A DropShip or small craft on the ground may be doing its job - cargo, fortress fire
+            // support - so it moves between domains only on a player order. Fighters need no
+            // orders; a grounded fighter's job is always to get back up.
+            return null;
+        }
+        if ((entity instanceof Dropship) && adjacentFriendlyGroundUnit(entity)) {
+            // A DropShip liftoff blasts every adjacent unit (applyDropShipProximityDamage). Wait
+            // for the friendlies to clear rather than fry the infantry screen.
+            LOGGER.info("TAKEOFF {}: DEFERRED (friendly units adjacent to the liftoff blast)",
+                  entity.getDisplayName());
             return null;
         }
         boolean runwayClear = aero.canTakeOffHorizontally()
@@ -191,6 +210,53 @@ public class Caspar extends Princess {
         takeoffPath.addStep(mode == TakeoffMode.RUNWAY
               ? MoveStepType.TAKEOFF : MoveStepType.VERTICAL_TAKE_OFF);
         return takeoffPath;
+    }
+
+    /**
+     * The ground-or-sky order gate, pure: fighters always may (their takeoff doctrine self-gates
+     * on odds), everything else only on a standing LIFT_OFF order.
+     */
+    static boolean groundOrderPermitsTakeoff(boolean isFighter, AerospaceGroundOrder order) {
+        return isFighter || (order == AerospaceGroundOrder.LIFT_OFF);
+    }
+
+    /** The landing half of the order: never fighters, only on a standing LAND order. */
+    static boolean groundOrderRequestsLanding(boolean isFighter, AerospaceGroundOrder order) {
+        return !isFighter && (order == AerospaceGroundOrder.LAND);
+    }
+
+    private boolean adjacentFriendlyGroundUnit(final Entity entity) {
+        for (Coords neighbor : entity.getPosition().allAdjacent()) {
+            for (Entity unit : getGame().getEntitiesVector(neighbor, entity.getBoardId())) {
+                if (!unit.getOwner().isEnemyOf(entity.getOwner()) && !unit.isAirborne()
+                      && !unit.equals(entity)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Rough-in of the LAND order for the bot commands panel: an airborne DropShip or small craft
+     * under a standing LAND order sets down vertically as soon as it is legal - altitude 1, the
+     * capability, and clear ground below. No approach doctrine yet (the ship does not deliberately
+     * descend to reach the window); that ships with the landing doctrine block.
+     */
+    private MovePath buildLandingPath(final Entity entity) {
+        if (!(entity instanceof IAero aero) || !entity.isAero() || !entity.isAirborne()
+              || (entity.getPosition() == null)
+              || !groundOrderRequestsLanding(entity.isFighter(), getAerospaceGroundOrder())) {
+            return null;
+        }
+        if ((entity.getAltitude() != 1) || !aero.canLandVertically()
+              || (aero.hasRoomForVerticalLanding() != null)) {
+            return null;
+        }
+        LOGGER.info("LAND {}: vertical landing ordered and legal", entity.getDisplayName());
+        MovePath landingPath = new MovePath(getGame(), entity);
+        landingPath.addStep(MoveStepType.VERTICAL_LAND);
+        return landingPath;
     }
 
     /**

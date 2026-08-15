@@ -208,6 +208,7 @@ public class Princess extends BotClient {
     private boolean fleeBoard = false;
     private boolean holdPosition = false;
     private AerospaceFocus aerospaceFocus = AerospaceFocus.AUTO;
+    private AerospaceGroundOrder aerospaceGroundOrder = AerospaceGroundOrder.AUTO;
     private boolean shootAndScoot = false;
     private Coords shootAndScootHex = null;
     private final Set<Integer> unitsScootingToHex = new HashSet<>();
@@ -488,6 +489,25 @@ public class Princess extends BotClient {
     public void setAerospaceFocus(final AerospaceFocus aerospaceFocus) {
         LOGGER.info("{}: setting aerospace focus to {}", getName(), aerospaceFocus);
         this.aerospaceFocus = aerospaceFocus;
+    }
+
+    /**
+     * @return the standing ground-or-sky order for DropShips and small craft, {@link AerospaceGroundOrder#AUTO}
+     *       when none has been given.
+     */
+    public AerospaceGroundOrder getAerospaceGroundOrder() {
+        return aerospaceGroundOrder;
+    }
+
+    /**
+     * Orders the bot's DropShips and small craft to lift off, land, or hold their current domain. Fighters are
+     * unaffected. A battle order rather than saved configuration - it resets with the bot client.
+     *
+     * @param aerospaceGroundOrder the order to follow
+     */
+    public void setAerospaceGroundOrder(final AerospaceGroundOrder aerospaceGroundOrder) {
+        LOGGER.info("{}: setting aerospace ground order to {}", getName(), aerospaceGroundOrder);
+        this.aerospaceGroundOrder = aerospaceGroundOrder;
     }
 
     /**

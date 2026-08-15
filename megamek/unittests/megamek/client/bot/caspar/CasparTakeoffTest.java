@@ -64,6 +64,30 @@ class CasparTakeoffTest {
               "the floor itself is enough - even odds beat a hopeless siege");
     }
 
+    /**
+     * The mission-value gate (SC/DS design): a DropShip or small craft on the ground may be doing
+     * its job, so only a standing LIFT_OFF order moves it; fighters need no orders at all. The
+     * landing half mirrors it: LAND moves ships down, never fighters.
+     */
+    @Test
+    void dropShipsMoveBetweenDomainsOnlyOnOrders() {
+        assertEquals(true, Caspar.groundOrderPermitsTakeoff(true,
+                    megamek.client.bot.princess.AerospaceGroundOrder.AUTO),
+              "a grounded fighter's job is always to get back up - no order needed");
+        assertEquals(false, Caspar.groundOrderPermitsTakeoff(false,
+                    megamek.client.bot.princess.AerospaceGroundOrder.AUTO),
+              "a DropShip under AUTO holds its domain");
+        assertEquals(true, Caspar.groundOrderPermitsTakeoff(false,
+                    megamek.client.bot.princess.AerospaceGroundOrder.LIFT_OFF),
+              "LIFT_OFF is the order that sends the ships up");
+        assertEquals(true, Caspar.groundOrderRequestsLanding(false,
+                    megamek.client.bot.princess.AerospaceGroundOrder.LAND),
+              "LAND is the order that brings the ships down");
+        assertEquals(false, Caspar.groundOrderRequestsLanding(true,
+                    megamek.client.bot.princess.AerospaceGroundOrder.LAND),
+              "fighters never land on orders - their doctrine flies them");
+    }
+
     @Test
     void aCrippledFighterStaysDownRatherThanRollingTheCrashTable() {
         assertEquals(Caspar.TakeoffMode.STAY,

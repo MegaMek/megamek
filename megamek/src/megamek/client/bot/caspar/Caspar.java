@@ -44,8 +44,12 @@ import megamek.client.bot.princess.MutualSupportPathRanker;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.client.bot.princess.Princess;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.enums.MoveStepType;
 import megamek.common.force.Force;
 import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
+import megamek.common.units.IAero;
 import megamek.common.pathfinder.AeroGroundDoctrinePathFinder;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.units.Entity;
@@ -129,6 +133,82 @@ public class Caspar extends Princess {
     @Override
     protected AeroGroundPathFinder aeroGroundPathFinder(Game game) {
         return AeroGroundDoctrinePathFinder.getInstance(game);
+    }
+
+    /** How a grounded aerospace unit gets back in the air this turn, if at all. */
+    enum TakeoffMode {
+        /** Horizontal takeoff down a clear runway: no roll to fail. */
+        RUNWAY,
+        /** Vertical liftoff: works anywhere, costs a control roll. */
+        VERTICAL,
+        /** Neither is safe or legal: keep fighting as a ground turret. */
+        STAY
+    }
+
+    /**
+     * The vertical-liftoff roll must clear the same floor as a combat stunt: a healthy fighter
+     * needs about a 7 (piloting +2 for a fighter's vertical liftoff), and below even odds the
+     * failed-liftoff table is how the crashed-Hellcat game started.
+     */
+    static final double TAKEOFF_ROLL_FLOOR = 0.5;
+
+    /**
+     * CASPAR divergence: a grounded aerospace unit tries to get back in the air. The engine has
+     * always supported both takeoff types; no bot has ever asked for one - a crashed fighter sat
+     * as terrain for 33 rounds in the game that motivated this. Runway first when the strip is
+     * clear (nothing to roll), vertical liftoff when boxed in and the roll clears the stunt floor,
+     * ground turret otherwise. A crippled-but-flyable fighter taking off IS its forced withdrawal:
+     * once airborne, the Winchester and fallback doctrines fly it off the board.
+     */
+    @Override
+    protected MovePath continueMovementFor(final Entity entity) {
+        MovePath takeoffPath = buildTakeoffPath(entity);
+        if (takeoffPath != null) {
+            return takeoffPath;
+        }
+        return super.continueMovementFor(entity);
+    }
+
+    private MovePath buildTakeoffPath(final Entity entity) {
+        if (!(entity instanceof IAero aero) || !entity.isAero() || entity.isAirborne()
+              || entity.isShutDown() || (entity.getPosition() == null)) {
+            return null;
+        }
+        boolean runwayClear = aero.canTakeOffHorizontally()
+              && (aero.hasRoomForHorizontalTakeOff() == null);
+        boolean verticalLegal = aero.canTakeOffVertically();
+        double verticalOdds = verticalLegal
+              ? Compute.oddsAbove(aero.checkVerticalTakeOff().getValue()) / 100.0 : 0.0;
+        TakeoffMode mode = chooseTakeoffMode(runwayClear, verticalLegal, verticalOdds);
+        // The decision tree, visible per turn (house rule): what was chosen and what it was
+        // chosen over.
+        LOGGER.info("TAKEOFF {}: {} (runway clear={}, vertical odds={}%)",
+              entity.getDisplayName(), mode, runwayClear, Math.round(verticalOdds * 100));
+        if (mode == TakeoffMode.STAY) {
+            return null;
+        }
+        MovePath takeoffPath = new MovePath(getGame(), entity);
+        takeoffPath.addStep(mode == TakeoffMode.RUNWAY
+              ? MoveStepType.TAKEOFF : MoveStepType.VERTICAL_TAKE_OFF);
+        return takeoffPath;
+    }
+
+    /**
+     * The runway-versus-vertical decision, pure. A clear runway wins outright: it has no roll to
+     * fail, and the exposure of ending twenty hexes downrange is survivable in a way the
+     * failed-liftoff table is not. Vertical liftoff is the boxed-in answer - no strip needed - but
+     * only above the stunt floor: below even odds the expected outcome is the crash that created
+     * this situation. Neither means stay and fight as a turret.
+     */
+    static TakeoffMode chooseTakeoffMode(boolean runwayClear, boolean verticalLegal,
+          double verticalOdds) {
+        if (runwayClear) {
+            return TakeoffMode.RUNWAY;
+        }
+        if (verticalLegal && (verticalOdds >= TAKEOFF_ROLL_FLOOR)) {
+            return TakeoffMode.VERTICAL;
+        }
+        return TakeoffMode.STAY;
     }
 
     /**

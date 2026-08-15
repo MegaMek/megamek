@@ -271,9 +271,9 @@ class AerospaceFireControlTest {
         // Both plans carry the pre-ration estimate of ten HE at 0.77: 77 expected damage.
         // Locust: 30 effective HP, BV 432, ration releases 4. Atlas: 307 HP, BV 1897, releases 10.
         double locustUtility = 77.0 + AerospaceFireControl.bombPlanUtilityAdjustment(
-              77.0, 4, 30, 432, true);
+              77.0, 77.0, 4, 30, 432, true);
         double atlasUtility = 77.0 + AerospaceFireControl.bombPlanUtilityAdjustment(
-              77.0, 10, 307, 1897, true);
+              77.0, 77.0, 10, 307, 1897, true);
 
         assertTrue(locustUtility > atlasUtility,
               "the four-bomb Locust kill (%.1f) must outbid the ten-bomb Atlas dent (%.1f)"
@@ -285,12 +285,34 @@ class AerospaceFireControlTest {
     /** When the Atlas is the last bombable enemy standing, the rack is spent freely - no charge. */
     @Test
     void theLastBombableTargetIsBombedWithoutCharge() {
-        double withOthers = AerospaceFireControl.bombPlanUtilityAdjustment(77.0, 10, 307, 1897, true);
-        double lastTarget = AerospaceFireControl.bombPlanUtilityAdjustment(77.0, 10, 307, 1897, false);
+        double withOthers = AerospaceFireControl.bombPlanUtilityAdjustment(77.0, 77.0, 10, 307, 1897, true);
+        double lastTarget = AerospaceFireControl.bombPlanUtilityAdjustment(77.0, 77.0, 10, 307, 1897, false);
 
         assertEquals(AerospaceFireControl.BOMB_OPPORTUNITY_COST_PER_BOMB * 10,
               lastTarget - withOthers, 0.001,
               "the only difference between mid-battle and last-target is the per-bomb charge");
         assertTrue(lastTarget > 0, "a dent in the last target still earns its kill-fraction credit");
+    }
+
+    /**
+     * The live-game regression of 2026-08-14 (20:09 game), pinned: the stock code scores hex-aimed
+     * bomb plans at ZERO expected damage, and the first auction build trusted it - zero kill
+     * credit, full opportunity cost, every bomb plan at -50 to -85, and the Huscarl died at round
+     * 24 with fifteen bombs still racked. The payload's own worth (17 bombs, ~150 damage at real
+     * odds, a 195-HP / 1242-BV footprint) must carry the bid: strongly positive, and higher than
+     * an honest smaller drop.
+     */
+    @Test
+    void aSeamPlanTheStockCodeScoresAtZeroStillBidsItsPayload() {
+        double seventeenBombSeam = AerospaceFireControl.bombPlanUtilityAdjustment(
+              0.0, 153.0, 17, 195, 1242, true);
+        double smallerDrop = AerospaceFireControl.bombPlanUtilityAdjustment(
+              0.0, 90.0, 10, 195, 1242, true);
+
+        assertTrue(seventeenBombSeam > 100,
+              "a base-zero seam plan must bid its payload's worth, not sit at pure penalty: "
+                    + seventeenBombSeam);
+        assertTrue(seventeenBombSeam > smallerDrop,
+              "more delivered damage on the same footprint must outbid less");
     }
 }

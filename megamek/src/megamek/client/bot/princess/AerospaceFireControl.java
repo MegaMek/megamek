@@ -211,7 +211,8 @@ public class AerospaceFireControl extends FireControl {
     void calculateUtility(final FiringPlan firingPlan, final int overheatTolerance,
           final boolean shooterIsAero) {
         super.calculateUtility(firingPlan, overheatTolerance, shooterIsAero);
-        int released = releasedBombCount(firingPlan);
+        BombTally tally = tallyBombPlan(firingPlan);
+        int released = tally.released();
         if ((released == 0) || firingPlan.isEmpty()) {
             return;
         }
@@ -245,46 +246,68 @@ public class AerospaceFireControl extends FireControl {
         } else {
             return;
         }
-        double adjustment = bombPlanUtilityAdjustment(firingPlan.getExpectedDamage(), released,
-              targetHitPoints, targetBattleValue, othersRemain);
-        RATION_LOGGER.info("AUCTION {}: utility {} {} {} ({} bombs, {} HP, {} BV, others={})",
+        double adjustment = bombPlanUtilityAdjustment(firingPlan.getExpectedDamage(),
+              tally.expectedDamage(), released, targetHitPoints, targetBattleValue, othersRemain);
+        RATION_LOGGER.info("AUCTION {}: utility {} {} {} ({} bombs worth {}, {} HP, {} BV, others={})",
               firingPlan.getTarget().getDisplayName(), Math.round(firingPlan.getUtility()),
               (adjustment >= 0) ? "+" : "-", Math.round(Math.abs(adjustment)), released,
-              targetHitPoints, targetBattleValue, othersRemain);
+              Math.round(tally.expectedDamage()), targetHitPoints, targetBattleValue, othersRemain);
         firingPlan.setUtility(firingPlan.getUtility() + adjustment);
     }
 
     /**
-     * The value-of-the-target arithmetic, pure: refund phantom overkill damage, credit expected
-     * battle value removed, charge each bomb its future use while other targets remain.
+     * The value-of-the-target arithmetic, pure. The honest damage figure is the larger of the stock
+     * estimate and the payload's own worth (per-bomb damage times hit odds) - the stock code scores
+     * hex-aimed bomb plans at zero, and an auction fed zero credits bombing at pure penalty. From
+     * the honest figure: value past the target's hit points is refunded as overkill, kills earn the
+     * square of the kill fraction times battle value, and each released bomb charges its future use
+     * while other bombable targets remain.
      */
-    static double bombPlanUtilityAdjustment(double expectedDamage, int bombsReleased,
-          int targetEffectiveHitPoints, int targetBattleValue, boolean otherBombTargetsRemain) {
+    static double bombPlanUtilityAdjustment(double stockExpectedDamage, double payloadExpectedDamage,
+          int bombsReleased, int targetEffectiveHitPoints, int targetBattleValue,
+          boolean otherBombTargetsRemain) {
         int effectiveHitPoints = Math.max(1, targetEffectiveHitPoints);
-        double cappedDamage = Math.min(expectedDamage, effectiveHitPoints);
-        double killFraction = Math.min(1.0, cappedDamage / effectiveHitPoints);
+        double honestDamage = Math.max(stockExpectedDamage, payloadExpectedDamage);
+        double cappedDamage = Math.min(honestDamage, effectiveHitPoints);
+        double killFraction = cappedDamage / effectiveHitPoints;
         double killCredit = BOMB_KILL_UTILITY * killFraction * killFraction
               * (targetBattleValue / 1000.0);
         double opportunityCost = otherBombTargetsRemain
               ? BOMB_OPPORTUNITY_COST_PER_BOMB * bombsReleased : 0.0;
-        return -(DAMAGE_UTILITY * (expectedDamage - cappedDamage)) + killCredit - opportunityCost;
+        return (DAMAGE_UTILITY * (cappedDamage - stockExpectedDamage)) + killCredit - opportunityCost;
     }
 
-    /** Bombs this plan actually releases, post-ration, across every rack. */
-    private static int releasedBombCount(FiringPlan plan) {
+    /** What a plan's racks are actually worth: bombs released and their honest expected damage. */
+    private record BombTally(int released, double expectedDamage) {
+    }
+
+    /**
+     * Walks the plan's payloads once, counting released bombs and pricing the drop from the
+     * ordnance itself: per-bomb damage times the plan's real to-hit odds. The live game of
+     * 2026-08-14 proved the stock estimate cannot be trusted here - it scores hex-aimed bomb plans
+     * at ZERO expected damage, which fed the auction zero kill credit and full opportunity cost,
+     * and a bomber died at round 24 with fifteen bombs still racked.
+     */
+    private static BombTally tallyBombPlan(FiringPlan plan) {
         int released = 0;
+        double expectedDamage = 0;
         for (WeaponFireInfo info : plan) {
             // getAction(), not getWeaponAttackAction(): the latter lazily CREATES an action and
             // recomputes a real to-hit - a side effect gun plans must not pay during an auction.
             if ((info.getAction() == null) || (info.getAction().getBombPayloads() == null)) {
                 continue;
             }
-            HashMap<String, BombLoadout> payloads = info.getAction().getBombPayloads();
-            for (BombLoadout loadout : payloads.values()) {
-                released += loadout.getTotalBombs();
+            int payloadDamage = 0;
+            for (BombLoadout loadout : info.getAction().getBombPayloads().values()) {
+                for (java.util.Map.Entry<BombType.BombTypeEnum, Integer> entry : loadout.entrySet()) {
+                    released += entry.getValue();
+                    payloadDamage += BombType.createBombByType(entry.getKey()).getDamagePerShot()
+                          * entry.getValue();
+                }
             }
+            expectedDamage += payloadDamage * Math.max(0.05, info.getProbabilityToHit());
         }
-        return released;
+        return new BombTally(released, expectedDamage);
     }
 
     /** Sums effective hit points of every enemy inside any bomb's blast ring at the aim point. */

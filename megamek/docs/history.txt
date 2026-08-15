@@ -1,5 +1,7 @@
 MEGAMEK VERSION HISTORY:
 ----------------
+0.51.01
+
 0.51.00.1-MegaMek Core Rules Release (2026-08-14 2300 UTC)
 ## What's Changed
 * Fixed Legal Statement by @IllianiBird in https://github.com/MegaMek/megamek/pull/8321

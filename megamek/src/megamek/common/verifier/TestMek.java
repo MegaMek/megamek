@@ -1659,10 +1659,10 @@ public class TestMek extends TestEntity {
                     return false;
                 }
             }
-            if (eq.hasFlag(MiscType.F_CLUB) && (eq.hasAnyFlag(MiscTypeFlag.S_HATCHET, MiscTypeFlag.S_SWORD,
+            if (((eq.hasFlag(MiscType.F_CLUB) && (eq.hasAnyFlag(MiscTypeFlag.S_HATCHET, MiscTypeFlag.S_SWORD,
                   MiscTypeFlag.S_CHAIN_WHIP, MiscTypeFlag.S_FLAIL, MiscTypeFlag.S_LANCE, MiscTypeFlag.S_WRECKING_BALL,
                   MiscTypeFlag.S_MACE, MiscTypeFlag.S_RETRACTABLE_BLADE)
-                  || ((MiscType) eq).isShield() || ((MiscType) eq).isVibroblade())
+                  || ((MiscType) eq).isVibroblade())) || eq.hasFlag(MiscType.F_SHIELD))
                   && (mek.entityIsQuad() || ((location != Mek.LOC_LEFT_ARM) && (location != Mek.LOC_RIGHT_ARM)))) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in an arm.\n");

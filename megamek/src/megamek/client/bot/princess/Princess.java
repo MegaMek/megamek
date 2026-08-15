@@ -207,6 +207,7 @@ public class Princess extends BotClient {
     private final ChatProcessor chatProcessor = new ChatProcessor();
     private boolean fleeBoard = false;
     private boolean holdPosition = false;
+    private AerospaceFocus aerospaceFocus = AerospaceFocus.AUTO;
     private boolean shootAndScoot = false;
     private Coords shootAndScootHex = null;
     private final Set<Integer> unitsScootingToHex = new HashSet<>();
@@ -468,6 +469,25 @@ public class Princess extends BotClient {
     public void setHoldPosition(final boolean holdPosition) {
         LOGGER.info("{}: setting hold position to {}", getName(), holdPosition);
         this.holdPosition = holdPosition;
+    }
+
+    /**
+     * @return the standing aerospace focus order, {@link AerospaceFocus#AUTO} when none has been given.
+     */
+    public AerospaceFocus getAerospaceFocus() {
+        return aerospaceFocus;
+    }
+
+    /**
+     * Sets the flight's standing order: press the air battle, support the ground force, or AUTO to let the doctrine
+     * weigh both halves itself. A battle order rather than saved configuration - it is not part of behavior settings
+     * and resets with the bot client.
+     *
+     * @param aerospaceFocus the focus to fly under
+     */
+    public void setAerospaceFocus(final AerospaceFocus aerospaceFocus) {
+        LOGGER.info("{}: setting aerospace focus to {}", getName(), aerospaceFocus);
+        this.aerospaceFocus = aerospaceFocus;
     }
 
     /**

@@ -139,7 +139,7 @@ public class TWRulesPhysical extends RulesPhysical {
     public int getLanceTarget() {return 10;}
 
     /**
-     * {@inheritDoc} core p.194
+     * {@inheritDoc} lances are +1 to hit
      */
     @Override
     public int getLanceToHitModifier() {

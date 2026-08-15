@@ -97,6 +97,23 @@ public class AerospacePathRanker extends BasicPathRanker {
      */
     private static final double UNMOVED_ENEMY_CONFIDENCE = 0.5;
 
+    /**
+     * The air-cover doctrine (Dave, 2026-08-14: "should I fly Air Cover and focus on killing enemy
+     * aircraft before they bomb my ground units"): credit per point of ground-attack threat an
+     * engageable enemy aircraft carries, paid only while friendly ground units are on the board to
+     * be protected. A laden bomber (~170 bombs + guns) is worth intercepting over a mek; once its
+     * racks are empty the credit collapses to its gun threat and the fighters convert to ground
+     * attack on their own. Tuned by A/B on the AirGroundFromSave scenario.
+     */
+    static final double INTERCEPT_WEIGHT = 0.3;
+
+    /**
+     * A flight fighting under a DEFEND posture leans harder into cover work: the enemy air is
+     * coming to it, and its ground force is what the enemy is coming for. The posture's first
+     * consumer - until now it was resolved and reported but changed nothing.
+     */
+    static final double DEFENSIVE_INTERCEPT_MULTIPLIER = 1.5;
+
     /** Credit for holding an arc the target cannot answer, as a fraction of the engagement credit. */
     private static final double ARC_ADVANTAGE_WEIGHT = 0.25;
 
@@ -326,6 +343,7 @@ public class AerospacePathRanker extends BasicPathRanker {
     private int lastVenueGround;
     private double lastCloseRangeDamage;
     private int lastWinchester;
+    private double lastInterceptCredit;
     private int lastFinalAltitude;
     private int lastFinalVelocity;
     private CombatPosture lastPosture;
@@ -488,6 +506,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastVenueGround = 0;
         lastCloseRangeDamage = 0;
         lastWinchester = 0;
+        lastInterceptCredit = 0;
         lastFinalAltitude = 0;
         lastFinalVelocity = 0;
         lastPosture = null;
@@ -534,7 +553,8 @@ public class AerospacePathRanker extends BasicPathRanker {
         // claims - only exist if the control roll passes, so they are worth their expected value, not
         // their face value. Its costs are certain either way. A 58% Immelmann onto a committed enemy
         // offers 58% of its pose; the crash risk and the spent turn are owed in full.
-        double gains = lastEngagementCredit + lastArcAdvantage + lastAttackRunCredit + lastAltitudeBank;
+        double gains = lastEngagementCredit + lastArcAdvantage + lastAttackRunCredit + lastAltitudeBank
+              + lastInterceptCredit;
         if (lastManeuverType != ManeuverType.MAN_NONE) {
             gains *= lastManeuverOdds;
             // Mastery: above the sanction floor, a maneuver carries value beyond its pose, growing
@@ -639,6 +659,7 @@ public class AerospacePathRanker extends BasicPathRanker {
      */
     private void scoreEngagements(MovePath path, Game game, List<Entity> enemies, AerospaceVenue venue) {
         Entity mover = path.getEntity();
+        boolean friendlyGroundPresent = friendlyGroundUnitsPresent(mover, game);
         Coords finalCoords = path.getFinalCoords();
         int finalAltitude = path.getFinalAltitude();
         boolean fliesAsSpheroid = Compute.useSpheroidAtmosphere(game, mover);
@@ -685,10 +706,42 @@ public class AerospacePathRanker extends BasicPathRanker {
             lastEngageableEnemies++;
             lastEngagementCredit += reachableDamage * ENGAGEMENT_WEIGHT * confidence;
 
+            // Air cover: an engageable enemy is worth extra in proportion to the ground-attack
+            // damage still in its racks and guns - but only while there is a ground force below
+            // to protect, and never for a pose that could not shoot it anyway (all the engagement
+            // gates above apply). This is what sends a fighter after the laden Rapier instead of
+            // the nearest mek.
+            lastInterceptCredit += interceptCredit(groundAttackThreatPerTurn(enemy, game),
+                  confidence, friendlyGroundPresent, lastPosture == CombatPosture.DEFEND);
+
             if (committed && holdsUnanswerableArc(path, enemy, game)) {
                 lastArcAdvantage += reachableDamage * ENGAGEMENT_WEIGHT * ARC_ADVANTAGE_WEIGHT;
             }
         }
+    }
+
+    /**
+     * The air-cover arithmetic, pure: threat times weight times the same certainty discount the
+     * engagement credit uses, raised under a DEFEND posture, zero with no ground force to protect.
+     */
+    static double interceptCredit(double groundAttackThreat, double confidence,
+          boolean friendlyGroundPresent, boolean defendPosture) {
+        if (!friendlyGroundPresent || (groundAttackThreat <= 0)) {
+            return 0;
+        }
+        double postureDial = defendPosture ? DEFENSIVE_INTERCEPT_MULTIPLIER : 1.0;
+        return groundAttackThreat * INTERCEPT_WEIGHT * confidence * postureDial;
+    }
+
+    /** Whether this flight has a ground force below it to protect on the given board. */
+    private boolean friendlyGroundUnitsPresent(Entity mover, Game game) {
+        for (Entity friend : getOwner().getFriendEntities()) {
+            if (!friend.isAirborne() && (friend.getPosition() != null)
+                  && (friend.getBoardId() == mover.getBoardId()) && !friend.isDestroyed()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -1526,6 +1579,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         scores.put("aeroAltitudeBank", lastAltitudeBank);
         scores.put("aeroFinalVelocity", (double) lastFinalVelocity);
         scores.put("aeroWinchester", (double) lastWinchester);
+        scores.put("aeroInterceptCredit", lastInterceptCredit);
         return scores;
     }
 }

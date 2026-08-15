@@ -811,4 +811,29 @@ class AerospacePathRankerTest {
         assertEquals(12.0, spyRanker.groundAttackThreatPerTurn(emptyRacks, game), 0.001,
               "an empty-racked fighter is still its guns' worth of threat, not zero");
     }
+
+    /**
+     * The air-cover credit (Dave): a laden enemy bomber is worth intercepting in proportion to the
+     * ground-attack damage it carries - but only while a friendly ground force exists to protect,
+     * discounted by the same certainty the engagement credit uses, and raised under a DEFEND
+     * posture (the posture's first consumer). No ground force below means no cover mission: zero.
+     */
+    @Test
+    void interceptCreditScalesWithThreatAndVanishesWithNothingToProtect() {
+        double ladenBomber = AerospacePathRanker.interceptCredit(200.0, 1.0, true, false);
+        double emptyRacks = AerospacePathRanker.interceptCredit(30.0, 1.0, true, false);
+
+        assertEquals(200.0 * AerospacePathRanker.INTERCEPT_WEIGHT, ladenBomber, 0.001,
+              "a 200-point bomber outbids everything an empty fighter offers");
+        assertTrue(ladenBomber > emptyRacks * 4,
+              "the laden bomber must be a categorically better intercept than the empty one");
+        assertEquals(0.0, AerospacePathRanker.interceptCredit(200.0, 1.0, false, false), 0.001,
+              "no friendly ground force below means no cover mission");
+        assertEquals(ladenBomber * AerospacePathRanker.DEFENSIVE_INTERCEPT_MULTIPLIER,
+              AerospacePathRanker.interceptCredit(200.0, 1.0, true, true), 0.001,
+              "a DEFEND posture leans harder into cover work");
+        assertEquals(ladenBomber * 0.5,
+              AerospacePathRanker.interceptCredit(200.0, 0.5, true, false), 0.001,
+              "an unmoved enemy's threat carries the same certainty discount as its engagement");
+    }
 }

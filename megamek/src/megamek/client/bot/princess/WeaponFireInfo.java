@@ -414,6 +414,33 @@ public class WeaponFireInfo {
         return getProbabilityToHit() * getDamageOnHit();
     }
 
+    /**
+     * Re-prices this shot as one leg of a strafing run: flags the action so the server resolves it
+     * as a strafe, recomputes the real to-hit with the strafing modifiers (+4, energy-only
+     * legality, TW p.243), and charges heat only on the first shot of each weapon's run - the
+     * rules bill a strafing weapon's heat once however many targets its run crosses.
+     *
+     * <p>Inert unless called; the only caller is the CASPAR aerospace fire control, so stock
+     * Princess behavior is untouched.</p>
+     *
+     * @param firstShot {@code true} for the first shot of this weapon's run (carries the heat)
+     */
+    void convertToStrafe(final boolean firstShot) {
+        WeaponAttackAction strafeAction = getWeaponAttackAction();
+        if (strafeAction == null) {
+            return;
+        }
+        strafeAction.setStrafing(true);
+        strafeAction.setStrafingFirstShot(firstShot);
+        ToHitData strafeToHit = strafeAction.toHit(getGame());
+        setToHit(strafeToHit);
+        setProbabilityToHit(Compute.oddsAbove(strafeToHit.getValue(),
+              getShooterState().hasNaturalAptGun()) / 100.0);
+        if (!firstShot) {
+            setHeat(0);
+        }
+    }
+
     WeaponAttackAction buildWeaponAttackAction() {
         if (!(getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY)
               || (getWeapon().getType() instanceof CapitalMissileWeapon

@@ -140,6 +140,14 @@ public class AerospacePathRanker extends BasicPathRanker {
     static final double SIDE_APPROACH_MULTIPLIER = 1.15;
 
     /**
+     * The odds haircut a strafe pays relative to a gun strike: +4 to-hit against the strike's +2
+     * costs roughly half the hit rate at mid-table numbers, so each strafed target is worth about
+     * 0.55 of a struck one. The multi-target sum is what pays for it - break-even at two targets
+     * under the line, a clear win at three (the Wasp/Dervish/BattleMaster column exercise).
+     */
+    static final double STRAFE_ODDS_FACTOR = 0.55;
+
+    /**
      * Credit for EXITING a turn positioned astern of the enemy force's direction of travel: the
      * drift of their positions round over round predicts next round's column and which way its
      * tail points, and a fighter that banks around behind it this turn buys next turn's rear-arc
@@ -166,7 +174,7 @@ public class AerospacePathRanker extends BasicPathRanker {
     // 1.05:1; 1.5 is the peak - 13/15 payloads, pilot errors halved, 2.21:1 BV exchange. The DEBRIEF
     // margins that motivated raising it from 0.6 remain the calibration floor: the credit must beat
     // the stock bravery term's standing-exchange charge for one committed pass, and no more.
-    private static final double ATTACK_RUN_WEIGHT = 1.5;
+    static final double ATTACK_RUN_WEIGHT = 1.5;
 
     /** Strike attacks (guns, air-to-ground) are impossible above this altitude. */
     private static final int STRIKE_MAX_ALTITUDE = 5;
@@ -381,6 +389,7 @@ public class AerospacePathRanker extends BasicPathRanker {
     private AerospaceFocus lastFocus = AerospaceFocus.AUTO;
     private double lastApproachMultiplier = 1.0;
     private double lastSternSetup;
+    private double lastStrafeRun;
     // Enemy drift: last round's positions and the per-unit movement vectors derived from them.
     // Multi-round history, so it carries the round-went-backwards reset like the posture resolvers.
     private final Map<Integer, Coords> enemyPreviousPositions = new HashMap<>();
@@ -501,6 +510,22 @@ public class AerospacePathRanker extends BasicPathRanker {
         if (focusOrdinal != AerospaceFocus.AUTO.ordinal()) {
             debrief.append(" | FOCUS: ").append(AerospaceFocus.values()[(int) focusOrdinal]);
         }
+        // The positioning decision tree, visible per turn: which armor facing the chosen roll-in
+        // strikes, and whether the exit pose was bought as next round's astern approach.
+        double approach = chosen.getScores().getOrDefault("aeroApproachMultiplier", 1.0);
+        if (approach > 1.0) {
+            debrief.append(String.format(" | ROLL-IN: %s x%.2f",
+                  (approach >= REAR_APPROACH_MULTIPLIER) ? "astern" : "side arc", approach));
+        }
+        double sternSetup = chosen.getScores().getOrDefault("aeroSternSetup", 0.0);
+        if (sternSetup > 0) {
+            debrief.append(String.format(" | STERN SETUP +%.1f (banking in behind their line of travel)",
+                  sternSetup));
+        }
+        double strafeRun = chosen.getScores().getOrDefault("aeroStrafeRun", 0.0);
+        if (strafeRun > 0) {
+            debrief.append(String.format(" | STRAFE WINDOW worth %.0f", strafeRun));
+        }
         DEBRIEF_LOGGER.info(debrief.toString());
     }
 
@@ -556,6 +581,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastFocus = AerospaceFocus.AUTO;
         lastApproachMultiplier = 1.0;
         lastSternSetup = 0;
+        lastStrafeRun = 0;
         lastFinalAltitude = 0;
         lastFinalVelocity = 0;
         lastPosture = null;
@@ -909,11 +935,38 @@ public class AerospacePathRanker extends BasicPathRanker {
         }
         lastBombFootprint = bombRun;
 
-        double bestRun = Math.max(gunRun, bombRun);
+        // A strafe is the third bidder: energy guns raked along a straight window of the flown
+        // line, every eligible weapon rolling against every target under it, heat once, no
+        // altitude toll. Each target pays the +4-vs-+2 odds haircut but keeps its thin-armor
+        // approach premium - the astern pass over the walking column is the whole play.
+        double strafeRun = 0;
+        double strafeDamage = strafeEligibleDamage(mover);
+        boolean inStrafeWindow = (finalAltitude >= 2) && (finalAltitude <= 3) && (strafeDamage > 0)
+              && !mover.isSpheroid();
+        if (inStrafeWindow) {
+            List<Coords> orderedLine = orderedFlownLine(path);
+            for (List<Coords> window : straightWindows(orderedLine, 5)) {
+                double windowValue = 0;
+                for (Entity target : targets) {
+                    if (window.contains(target.getPosition())) {
+                        windowValue += approachMultiplier(entryDirectionSideTable(orderedLine, target));
+                    }
+                }
+                strafeRun = Math.max(strafeRun, strafeDamage * windowValue * STRAFE_ODDS_FACTOR);
+            }
+        }
+        lastStrafeRun = strafeRun;
+
+        double bestRun = Math.max(Math.max(gunRun, bombRun), strafeRun);
         if (bestRun <= 0) {
             return;
         }
         lastAttackRunCredit = bestRun * ATTACK_RUN_WEIGHT;
+        if (strafeRun >= bestRun) {
+            // A strafe costs no altitude (TW p.243); the exit-pose risk pricing below is for the
+            // strike and dive-bomb tolls and must not charge one here.
+            return;
+        }
         // The credit assumes the attack, so the risk pricing must assume its altitude toll too:
         // 2 levels for a dive bomb, 1 for a gun strike (TW), never below the deck the engine
         // itself enforces.
@@ -1109,6 +1162,38 @@ public class AerospacePathRanker extends BasicPathRanker {
     }
 
     /**
+     * Every straight window of at most {@code maxLength} consecutive hexes on the ordered line -
+     * the legal shapes of a strafing run (TW p.243: consecutive, one straight line, five hexes at
+     * most). Shared by the movement ranker (which steers toward good windows) and the fire control
+     * (which builds the actual run), like the bomb ring tables.
+     */
+    static List<List<Coords>> straightWindows(List<Coords> orderedLine, int maxLength) {
+        List<List<Coords>> windows = new ArrayList<>();
+        for (int start = 0; start < orderedLine.size(); start++) {
+            windows.add(List.of(orderedLine.get(start)));
+            Integer direction = null;
+            for (int end = start + 1; end < orderedLine.size(); end++) {
+                Coords previous = orderedLine.get(end - 1);
+                Coords next = orderedLine.get(end);
+                if (previous.distance(next) != 1) {
+                    break;
+                }
+                int stepDirection = previous.direction(next);
+                if (direction == null) {
+                    direction = stepDirection;
+                } else if (direction != stepDirection) {
+                    break;
+                }
+                if ((end - start + 1) > maxLength) {
+                    break;
+                }
+                windows.add(orderedLine.subList(start, end + 1));
+            }
+        }
+        return windows;
+    }
+
+    /**
      * The flown line in flight order, from the path's steps. {@code getCoordsSet()} is a set and
      * carries no order; the entry direction into a target's hex needs the hex BEFORE it.
      */
@@ -1148,6 +1233,35 @@ public class AerospacePathRanker extends BasicPathRanker {
             case ToHitData.SIDE_LEFT, ToHitData.SIDE_RIGHT -> SIDE_APPROACH_MULTIPLIER;
             default -> 1.0;
         };
+    }
+
+    /**
+     * The summed damage of every weapon the strafing rules allow: forward-mounted direct-fire
+     * energy (laser, PPC, flamer) and energy bays - TW p.243's "non-ammo-dependent direct-fire
+     * energy" clause, mirrored from the server's own legality test.
+     */
+    static double strafeEligibleDamage(Entity mover) {
+        double total = 0;
+        for (WeaponMounted weapon : mover.getWeaponList()) {
+            if (weapon.canFire() && !weapon.isRearMounted()
+                  && (weapon.getLocation() != megamek.common.units.Aero.LOC_AFT)
+                  && isStrafeEligible(weapon.getType())) {
+                total += weapon.getType().getDamage();
+            }
+        }
+        return Math.max(0, total);
+    }
+
+    /** The TW p.243 weapon test: direct-fire lasers and PPCs, flamers, and energy bays. */
+    static boolean isStrafeEligible(megamek.common.equipment.WeaponType weaponType) {
+        boolean directFireEnergy = (weaponType.hasFlag(megamek.common.equipment.WeaponType.F_DIRECT_FIRE)
+              && (weaponType.hasFlag(megamek.common.equipment.WeaponType.F_LASER)
+                    || weaponType.hasFlag(megamek.common.equipment.WeaponType.F_PPC)))
+              || weaponType.hasFlag(megamek.common.equipment.WeaponType.F_FLAMER);
+        boolean energyBay = (weaponType instanceof megamek.common.weapons.bayWeapons.LaserBayWeapon)
+              || (weaponType instanceof megamek.common.weapons.bayWeapons.PPCBayWeapon)
+              || (weaponType instanceof megamek.common.weapons.bayWeapons.PulseLaserBayWeapon);
+        return directFireEnergy || energyBay;
     }
 
     /** The summed damage of every ground bomb aboard - the payload one full dive-bomb pass can deliver. */
@@ -1809,6 +1923,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         scores.put("aeroFocus", (double) lastFocus.ordinal());
         scores.put("aeroApproachMultiplier", lastApproachMultiplier);
         scores.put("aeroSternSetup", lastSternSetup);
+        scores.put("aeroStrafeRun", lastStrafeRun);
         return scores;
     }
 }

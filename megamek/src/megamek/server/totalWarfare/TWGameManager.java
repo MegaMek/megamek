@@ -9993,6 +9993,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // looks like mostly everything's okay
+        announceStrafingRun(entity, actionList);
         processAttack(entity, actionList);
 
         // Update visibility indications if using double-blind.
@@ -10001,6 +10002,30 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         endCurrentTurn(entity);
+    }
+
+    /**
+     * Announces a strafing run the moment it is declared: one report line and its kill-feed toast,
+     * nothing more. Without it the run only surfaces as a burst of unexplained attack lines in the
+     * end-of-phase report - the same reads-as-a-bug problem the maneuver announcement solved.
+     */
+    private void announceStrafingRun(Entity entity, List<EntityAction> entityActions) {
+        if (entityActions == null) {
+            return;
+        }
+        for (EntityAction entityAction : entityActions) {
+            if ((entityAction instanceof WeaponAttackAction attack)
+                  && attack.isStrafing() && attack.isStrafingFirstShot()) {
+                Report strafeReport = new Report(9605);
+                strafeReport.subject = entity.getId();
+                strafeReport.addDesc(entity);
+                addReport(strafeReport);
+                Vector<Report> strafeSpecial = new Vector<>();
+                strafeSpecial.add(strafeReport);
+                sendSpecialReport(strafeSpecial);
+                return;
+            }
+        }
     }
 
     /**

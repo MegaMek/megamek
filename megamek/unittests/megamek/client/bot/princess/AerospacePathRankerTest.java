@@ -931,6 +931,112 @@ class AerospacePathRankerTest {
     }
 
     /**
+     * The legal shapes of a strafing run (TW p.243): straight windows of at most five consecutive
+     * hexes on the flown line. A bend in the line ends the window; a five-hex straight run yields
+     * every sub-window but nothing longer.
+     */
+    @Test
+    void strafingWindowsAreStraightConsecutiveAndAtMostFive() {
+        // A straight six-hex column: windows of length 1-5 exist, no window of 6.
+        java.util.List<Coords> straight = new java.util.ArrayList<>();
+        for (int y = 10; y < 16; y++) {
+            straight.add(new Coords(20, y));
+        }
+        java.util.List<java.util.List<Coords>> windows = AerospacePathRanker.straightWindows(straight, 5);
+        int longest = 0;
+        for (java.util.List<Coords> window : windows) {
+            longest = Math.max(longest, window.size());
+        }
+        assertEquals(5, longest, "a six-hex straight line caps at the five-hex window");
+
+        // A dogleg: 3 hexes south then a bend. No straight window crosses the bend.
+        java.util.List<Coords> dogleg = java.util.List.of(new Coords(20, 10), new Coords(20, 11),
+              new Coords(20, 12), new Coords(21, 12));
+        for (java.util.List<Coords> window : AerospacePathRanker.straightWindows(dogleg, 5)) {
+            assertTrue(window.size() <= 3
+                        || !(window.contains(new Coords(20, 10)) && window.contains(new Coords(21, 12))),
+                  "no straight window may span the bend");
+        }
+    }
+
+    /**
+     * The strafe is the third bidder in the attack-run auction, and against the worked column -
+     * three meks with a hex between each, spanning exactly a five-hex window - it must outbid the
+     * single-target strike: three victims at the 0.55 odds haircut is 1.65x the rifle. All astern
+     * entries multiply further, but even head-on the count carries it.
+     */
+    @Test
+    void aStrafeOverTheColumnOutbidsAStrikeOnOneMek() {
+        Game game = groundGame();
+        // Wasp - gap - Dervish - gap - BattleMaster, walking a column at x=20.
+        java.util.List<Coords> line = new java.util.ArrayList<>();
+        for (int y = 9; y < 16; y++) {
+            line.add(new Coords(20, y));
+        }
+        java.util.List<Entity> column = new java.util.ArrayList<>();
+        for (int y : new int[] { 10, 12, 14 }) {
+            Entity mek = groundMek(new Coords(20, y));
+            when(mek.sideTable(org.mockito.Mockito.any(Coords.class)))
+                  .thenReturn(megamek.common.ToHitData.SIDE_FRONT);
+            column.add(mek);
+        }
+        MovePath run = mock(MovePath.class);
+        AeroSpaceFighter fighter = strikeFighterOver(new java.util.LinkedHashSet<>(line), 3, run);
+        java.util.Vector<megamek.common.moves.MoveStep> steps = new java.util.Vector<>();
+        for (Coords position : line) {
+            megamek.common.moves.MoveStep step = mock(megamek.common.moves.MoveStep.class);
+            when(step.getPosition()).thenReturn(position);
+            steps.add(step);
+        }
+        when(run.getStepVector()).thenReturn(steps);
+        // A 10-damage strafe-eligible laser battery: the same guns price the strike.
+        megamek.common.equipment.WeaponType laserType = mock(megamek.common.equipment.WeaponType.class);
+        when(laserType.hasFlag(megamek.common.equipment.WeaponType.F_DIRECT_FIRE)).thenReturn(true);
+        when(laserType.hasFlag(megamek.common.equipment.WeaponType.F_LASER)).thenReturn(true);
+        when(laserType.getDamage()).thenReturn(10);
+        megamek.common.equipment.WeaponMounted laser = mock(megamek.common.equipment.WeaponMounted.class);
+        when(laser.canFire()).thenReturn(true);
+        when(laser.isRearMounted()).thenReturn(false);
+        when(laser.getLocation()).thenReturn(1);
+        when(laser.getType()).thenReturn(laserType);
+        when(fighter.getWeaponList()).thenReturn(new java.util.ArrayList<>(java.util.List.of(laser)));
+
+        AerospacePathRanker spyRanker = org.mockito.Mockito.spy(ranker);
+        org.mockito.Mockito.doReturn(false).when(spyRanker).isExtremeRange(game);
+        org.mockito.Mockito.doReturn(false).when(spyRanker).isLosRange(game);
+        org.mockito.Mockito.doReturn(10.0).when(spyRanker)
+              .getMaxDamageAtRange(org.mockito.Mockito.any(Entity.class),
+                    org.mockito.Mockito.anyInt(),
+                    org.mockito.Mockito.anyBoolean(), org.mockito.Mockito.anyBoolean());
+        spyRanker.resetGroundCountersForTest();
+        spyRanker.lastPostAttackAltitudeForTest(3);
+        spyRanker.scoreAttackRuns(run, game, column, AerospaceVenue.GROUND_MAP);
+
+        double expectedStrafe = 10.0 * 3 * AerospacePathRanker.STRAFE_ODDS_FACTOR
+              * AerospacePathRanker.ATTACK_RUN_WEIGHT;
+        assertEquals(expectedStrafe, spyRanker.lastAttackRunCreditForTest(), 0.001,
+              "three head-on victims at the odds haircut must beat the 10-damage strike rifle");
+    }
+
+    /** TW p.243's weapon clause, mirrored: energy yes, ammo no. */
+    @Test
+    void onlyDirectFireEnergyWeaponsAreStrafeEligible() {
+        megamek.common.equipment.WeaponType laser = mock(megamek.common.equipment.WeaponType.class);
+        when(laser.hasFlag(megamek.common.equipment.WeaponType.F_DIRECT_FIRE)).thenReturn(true);
+        when(laser.hasFlag(megamek.common.equipment.WeaponType.F_LASER)).thenReturn(true);
+        assertTrue(AerospacePathRanker.isStrafeEligible(laser), "a direct-fire laser strafes");
+
+        megamek.common.equipment.WeaponType autocannon = mock(megamek.common.equipment.WeaponType.class);
+        when(autocannon.hasFlag(megamek.common.equipment.WeaponType.F_DIRECT_FIRE)).thenReturn(true);
+        assertFalse(AerospacePathRanker.isStrafeEligible(autocannon),
+              "an autocannon needs ammo and may not strafe");
+
+        megamek.common.equipment.WeaponType flamer = mock(megamek.common.equipment.WeaponType.class);
+        when(flamer.hasFlag(megamek.common.equipment.WeaponType.F_FLAMER)).thenReturn(true);
+        assertTrue(AerospacePathRanker.isStrafeEligible(flamer), "flamers are in per TW p.243");
+    }
+
+    /**
      * The heat map of the opposition's movement, distilled: the stern-alignment arithmetic that
      * turns per-unit drift into "am I behind them?". Dead astern earns full credit, one hexside
      * off half, anything else nothing - including across the 5-to-0 direction wraparound.

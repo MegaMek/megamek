@@ -51,7 +51,10 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.rolls.TargetRoll;
+import java.util.Map;
+
 import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 
@@ -164,6 +167,106 @@ public class AerospaceFireControl extends FireControl {
     }
 
     /**
+     * Considers a strafing run alongside the stock per-target plans and flies whichever bids
+     * higher. The stock chooser never strafes at all; this is the whole of PC-16-01's strafing
+     * half for the bot.
+     */
+    @Override
+    FiringPlan getBestFiringPlan(final Entity shooter, final IHonorUtil honorUtil, final Game game,
+          final Map<WeaponMounted, Double> ammoConservation) {
+        FiringPlan best = super.getBestFiringPlan(shooter, honorUtil, game, ammoConservation);
+        FiringPlan strafe = getStrafePlan(shooter, game);
+        if ((strafe != null) && !strafe.isEmpty()
+              && ((best == null) || (strafe.getUtility() > best.getUtility()))) {
+            RATION_LOGGER.info("STRAFE {}: {} shots along the run, utility {} over {}",
+                  shooter.getDisplayName(), strafe.size(), Math.round(strafe.getUtility()),
+                  (best == null) ? 0 : Math.round(best.getUtility()));
+            return strafe;
+        }
+        return best;
+    }
+
+    /**
+     * Builds the best legal strafing run over this turn's flown line (TW p.243): the straight
+     * window of at most five passed-through hexes covering the most enemy ground units, every
+     * eligible energy weapon rolling once against every unit under it. Each shot carries the
+     * strafing flags so the server resolves it as a strafe, and heat lands once per weapon
+     * however many targets its run crosses. Nap-of-the-earth strafing is deliberately out of this
+     * first pass - the +2 and its dead-zone rules make altitude 2-3 the honest window.
+     *
+     * @return the strafe plan, empty when no legal run covers anyone
+     */
+    FiringPlan getStrafePlan(final Entity shooter, final Game game) {
+        if (!shooter.isAero() || !shooter.isAirborne() || shooter.isSpheroid()
+              || (shooter.getAltitude() < 2) || (shooter.getAltitude() > 3)) {
+            return null;
+        }
+        List<WeaponMounted> strafeWeapons = new ArrayList<>();
+        for (WeaponMounted weapon : shooter.getWeaponList()) {
+            if (weapon.canFire() && !weapon.isRearMounted()
+                  && (weapon.getLocation() != megamek.common.units.Aero.LOC_AFT)
+                  && AerospacePathRanker.isStrafeEligible(weapon.getType())) {
+                strafeWeapons.add(weapon);
+            }
+        }
+        if (strafeWeapons.isEmpty()) {
+            return null;
+        }
+        List<Coords> flownLine = new ArrayList<>(shooter.getPassedThrough());
+        List<Entity> bestVictims = List.of();
+        for (List<Coords> window : AerospacePathRanker.straightWindows(flownLine, 5)) {
+            List<Entity> victims = strafeVictims(shooter, game, window);
+            if (victims.size() > bestVictims.size()) {
+                bestVictims = victims;
+            }
+        }
+        if (bestVictims.isEmpty()) {
+            return null;
+        }
+        // The nominal target anchors the auction's value math: the biggest thing under the line.
+        Entity nominalTarget = bestVictims.getFirst();
+        for (Entity victim : bestVictims) {
+            if (victim.calculateBattleValue() > nominalTarget.calculateBattleValue()) {
+                nominalTarget = victim;
+            }
+        }
+        FiringPlan strafePlan = new FiringPlan(nominalTarget);
+        for (WeaponMounted weapon : strafeWeapons) {
+            boolean firstShot = true;
+            for (Entity victim : bestVictims) {
+                WeaponFireInfo shot = new WeaponFireInfo(shooter, victim, weapon, null, game,
+                      false, owner);
+                shot.convertToStrafe(firstShot);
+                if (shot.getProbabilityToHit() <= 0) {
+                    continue;
+                }
+                strafePlan.add(shot);
+                firstShot = false;
+            }
+        }
+        if (strafePlan.isEmpty()) {
+            return null;
+        }
+        calculateUtility(strafePlan, calcHeatTolerance(shooter, null), true);
+        return strafePlan;
+    }
+
+    /** The enemy ground units a strafing window can hit: on it, not airborne, not dug into a building. */
+    private List<Entity> strafeVictims(Entity shooter, Game game, List<Coords> window) {
+        List<Entity> victims = new ArrayList<>();
+        for (Coords hex : window) {
+            for (Entity unit : game.getEntitiesVector(hex, shooter.getPassedThroughBoardId())) {
+                if (unit.getOwner().isEnemyOf(shooter.getOwner()) && !unit.isAirborne()
+                      && !unit.isDestroyed()
+                      && !((unit instanceof Infantry) && Compute.isInBuilding(game, unit))) {
+                    victims.add(unit);
+                }
+            }
+        }
+        return victims;
+    }
+
+    /**
      * Rations a hex-aimed drop to the sum of every enemy ground unit inside the payload's blast
      * rings at the aim point. For single-hex ordnance this degenerates to the one victim standing
      * there; for cluster and fuel-air seams it funds killing everything under the footprint, and
@@ -214,6 +317,9 @@ public class AerospaceFireControl extends FireControl {
         BombTally tally = tallyBombPlan(firingPlan);
         int released = tally.released();
         if ((released == 0) || firingPlan.isEmpty()) {
+            // Gun plans still carry the player's focus order - the dial covers the whole
+            // firing half, not just the bomb bay.
+            firingPlan.setUtility(applyFocus(firingPlan.getUtility(), firingPlan));
             return;
         }
         Entity shooter = firingPlan.get(0).getShooter();

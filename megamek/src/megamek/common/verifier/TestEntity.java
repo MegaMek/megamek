@@ -1700,7 +1700,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (m.getType().hasFlag(MiscType.F_LIFT_HOIST)) {
                 liftHoists++;
             } else if ((m.getLocation() > 0)
-                  && ((m.getType().hasFlag(MiscType.F_SHIELD) && !((MiscType) m.getType()).isShield())
+                  && (m.getType().hasFlag(MiscType.F_CLUB)
                   || m.getType().hasFlag(MiscType.F_BULLDOZER)
                   || m.getType().hasFlag(MiscType.F_HAND_WEAPON))) {
                 physicalWeaponsByLocation.computeIfAbsent(m.getLocation(), ArrayList::new).add(m.getType());

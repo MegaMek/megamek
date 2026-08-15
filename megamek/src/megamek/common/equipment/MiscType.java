@@ -398,9 +398,7 @@ public class MiscType extends EquipmentType {
     }
 
     public boolean isShield() {
-        return hasFlag(F_SHIELD) && hasAnyFlag(MiscTypeFlag.S_SHIELD_LARGE,
-              MiscTypeFlag.S_SHIELD_MEDIUM,
-              MiscTypeFlag.S_SHIELD_SMALL);
+        return hasFlag(F_SHIELD);
     }
 
     public boolean isVibroblade() {

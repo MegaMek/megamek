@@ -876,10 +876,7 @@ public class TestMek extends TestEntity {
             hasMekJumpBooster |= m.is(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER);
             hasPartialWing |= m.getType().hasFlag(MiscType.F_PARTIAL_WING);
 
-            if (m.getType().hasFlag(MiscType.F_SHIELD) &&
-                  (m.getType().hasAnyFlag(MiscTypeFlag.S_SHIELD_SMALL,
-                        MiscTypeFlag.S_SHIELD_MEDIUM,
-                        MiscTypeFlag.S_SHIELD_LARGE))) {
+            if (m.getType().hasFlag(MiscType.F_SHIELD)) {
                 if (shieldLocations.contains(m.getLocation())) {
                     illegal = true;
                     buff.append("Only one shield can be mounted in a location.\n");

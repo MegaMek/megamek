@@ -723,4 +723,49 @@ class AerospacePathRankerTest {
         assertTrue(healthyCost >= crippledCost * 4,
               "a healthy fighter still pays full price for wandering off mid-fight");
     }
+
+    /**
+     * The disengage rule's time-to-decision test, calibrated on the 150-round stall of 2026-08-14:
+     * a bombless Hellcat II (paper maximum ~30, honest delivery ~7.5 a round) against two meks at
+     * ~400 combined hit points is a 53-round siege - leave. The same fighter against one crippled
+     * straggler at 40 hit points finishes in a handful of rounds - stay. No working guns at all is
+     * always done.
+     */
+    @Test
+    void aWinchesterFighterLeavesASiegeButStaysToFinishAStraggler() {
+        double hellcatPerRound = 30.0 * AerospacePathRanker.GUN_PASS_DELIVERY_FRACTION;
+
+        assertTrue(AerospacePathRanker.cannotForceADecision(hellcatPerRound, 400),
+              "two healthy meks are a 53-round siege - past the horizon, disengage");
+        assertFalse(AerospacePathRanker.cannotForceADecision(hellcatPerRound, 40),
+              "one crippled straggler dies in rounds - stay and finish it");
+        assertTrue(AerospacePathRanker.cannotForceADecision(0.0, 40),
+              "no working guns is always combat ineffective");
+    }
+
+    /**
+     * Winchester flips the fly-off ledger: instead of paying the off-board cost (scaled by health),
+     * leaving is CREDITED - the winning move for a healthy fighter that cannot change the outcome.
+     * Forced Withdrawal never fires here because it is damage-triggered and the airframe is intact.
+     */
+    @Test
+    void winchesterMakesTheFlyOffTheWinningMove() {
+        Game game = mock(Game.class);
+        Entity healthy = mock(Entity.class);
+        when(healthy.isCrippled()).thenReturn(false);
+        when(healthy.getArmorRemainingPercent()).thenReturn(0.9);
+        MovePath flyOff = mock(MovePath.class);
+        when(flyOff.fliesOffBoard()).thenReturn(true);
+        when(flyOff.getEntity()).thenReturn(healthy);
+
+        ranker.lastWinchesterForTest(0);
+        double stillFighting = ranker.edgePenalty(flyOff, game, AerospaceVenue.GROUND_MAP);
+        ranker.lastWinchesterForTest(1);
+        double winchester = ranker.edgePenalty(flyOff, game, AerospaceVenue.GROUND_MAP);
+
+        assertTrue(stillFighting > 0, "a healthy fighter with work left pays to leave");
+        assertTrue(winchester < 0, "a Winchester fighter is credited for leaving");
+        assertEquals(-AerospacePathRanker.WINCHESTER_DISENGAGE_CREDIT, winchester, 0.001,
+              "the credit is the constant, not a health-scaled cost");
+    }
 }

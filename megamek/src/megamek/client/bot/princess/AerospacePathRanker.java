@@ -198,6 +198,30 @@ public class AerospacePathRanker extends BasicPathRanker {
      */
     private static final double EDGE_HUG_WEIGHT = 0.4;
 
+    /**
+     * The disengage rule's time horizon: if grinding down the remaining enemy force with guns alone
+     * would take longer than this many rounds, the fight is a siege, not a battle, and leaving is
+     * the mission. Calibrated against the 150-round stall of 2026-08-14: a lone bombless fighter
+     * against two meks (~53 rounds to decision at honest delivery rates) leaves around round 25; a
+     * fighter finishing off one crippled straggler (a few rounds) stays.
+     */
+    static final double DISENGAGE_TIME_TO_KILL_ROUNDS = 30.0;
+
+    /**
+     * The honest fraction of a fighter's maximum close-range damage that actually lands per round
+     * of gun work against ground targets: an attack run roughly every other round, at roughly even
+     * hit odds. The stall game measured ~2-3 damage a round from a fighter whose paper maximum was
+     * ~30.
+     */
+    static final double GUN_PASS_DELIVERY_FRACTION = 0.25;
+
+    /**
+     * What a Winchester fly-off earns instead of paying {@code OFF_BOARD_COST}: enough to outbid
+     * the plink-run overflights (observed ranks ~10) and the safe circles it would otherwise fly
+     * forever.
+     */
+    static final double WINCHESTER_DISENGAGE_CREDIT = 25.0;
+
     /** Faces on a d6, for the odds an out-of-control unit falls far enough to hit the ground. */
     private static final double DIE_FACES = 6.0;
 
@@ -284,6 +308,14 @@ public class AerospacePathRanker extends BasicPathRanker {
     }
 
     /** Test seam: read or set the post-attack altitude the risk terms will price against. */
+    void lastWinchesterForTest(int winchester) {
+        lastWinchester = winchester;
+    }
+
+    int lastWinchesterForTest() {
+        return lastWinchester;
+    }
+
     int lastPostAttackAltitudeForTest() {
         return lastPostAttackAltitude;
     }
@@ -293,6 +325,7 @@ public class AerospacePathRanker extends BasicPathRanker {
     }
     private int lastVenueGround;
     private double lastCloseRangeDamage;
+    private int lastWinchester;
     private int lastFinalAltitude;
     private int lastFinalVelocity;
     private CombatPosture lastPosture;
@@ -401,6 +434,9 @@ public class AerospacePathRanker extends BasicPathRanker {
             debrief.append(" | best rejected MANEUVER: ").append(describe(bestManeuver))
                   .append(String.format(" lost by %.1f", chosenRank - bestManeuver.getRank()));
         }
+        if (chosen.getScores().getOrDefault("aeroWinchester", 0.0) != 0.0) {
+            debrief.append(" | WINCHESTER: bombs out, guns cannot decide - disengage credited");
+        }
         DEBRIEF_LOGGER.info(debrief.toString());
     }
 
@@ -451,6 +487,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         lastAltitudeBank = 0;
         lastVenueGround = 0;
         lastCloseRangeDamage = 0;
+        lastWinchester = 0;
         lastFinalAltitude = 0;
         lastFinalVelocity = 0;
         lastPosture = null;
@@ -472,6 +509,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         // stratops_capital_fighter option inherited from the user's saved gameoptions.xml).
         lastVenueGround = venue.isGroundMap() ? 1 : 0;
         lastCloseRangeDamage = getMaxDamageAtRange(mover, 1, isExtremeRange(game), isLosRange(game));
+        lastWinchester = isCombatIneffective(mover, game, enemies) ? 1 : 0;
         // Resolving here is what gives an aerospace force a stance at all. The ground code's two calls to
         // resolvePosture both sit behind guards an airborne aero never passes, so until now a flight had no
         // attack-or-defend answer, and nothing that reads posture applied to it.
@@ -1144,6 +1182,14 @@ public class AerospacePathRanker extends BasicPathRanker {
      */
     double edgePenalty(MovePath path, Game game, AerospaceVenue venue) {
         if (path.fliesOffBoard()) {
+            // Winchester, RTB: bombs expended, no air work left, and the guns cannot force a
+            // decision inside the time horizon. The airframe is healthy and militarily irrelevant -
+            // Forced Withdrawal never fires (it is damage-triggered), so this doctrine gate is what
+            // ends the fight instead of a hundred rounds of plinking. Leaving is credited, not
+            // charged.
+            if (lastWinchester == 1) {
+                return -WINCHESTER_DISENGAGE_CREDIT;
+            }
             // Flying off is not an absolute sin (Dave, 2026-08-13: "I'm ok with CASPAR flying off if
             // it needs to"). A fighter that flies off returns some rounds later, untargetable in the
             // meantime - which is a disengage, not a defeat. A healthy fighter still pays full price,
@@ -1168,6 +1214,50 @@ public class AerospacePathRanker extends BasicPathRanker {
         }
         double directional = OFF_BOARD_COST * EDGE_PRESSURE_WEIGHT * (committed - exitDistance) / committed;
         return Math.min(OFF_BOARD_COST, directional + edgeHugPenalty(path, game, minStraight));
+    }
+
+    /**
+     * Whether this fighter can still change the outcome of the battle: the disengage rule's
+     * trigger, distinct from Forced Withdrawal. Forced Withdrawal asks "am I too broken to fight?"
+     * (damage-triggered, mandatory, TW p.258); this asks "is there anything left here worth
+     * fighting for?" (capability-triggered doctrine - the fighter pilot's Winchester call). True
+     * only when all three hold: no damaging bombs aboard, no airborne enemies on the board, and
+     * gun work alone cannot grind down the remaining enemy force inside the time horizon.
+     */
+    private boolean isCombatIneffective(Entity mover, Game game, List<Entity> enemies) {
+        if (groundBombDamage(mover) > 0) {
+            return false;
+        }
+        int remainingEnemyHitPoints = 0;
+        boolean anyGroundTarget = false;
+        for (Entity enemy : enemies) {
+            if (isAirToAirCandidate(mover, enemy, game)) {
+                // Air work remains - the guns are exactly the right tool for it.
+                return false;
+            }
+            if (isGroundTargetCandidate(mover, enemy, game)) {
+                anyGroundTarget = true;
+                remainingEnemyHitPoints += enemy.getTotalArmor() + enemy.getTotalInternal();
+            }
+        }
+        if (!anyGroundTarget) {
+            // Nothing to leave FROM - victory handling owns the empty board, not doctrine.
+            return false;
+        }
+        double gunDamagePerRound = lastCloseRangeDamage * GUN_PASS_DELIVERY_FRACTION;
+        return cannotForceADecision(gunDamagePerRound, remainingEnemyHitPoints);
+    }
+
+    /**
+     * The time-to-decision test, pure: the fight is decided when the enemy force is dead, so the
+     * question is whether honest per-round gun delivery gets there inside the horizon. A fighter
+     * with no working guns at all is always done.
+     */
+    static boolean cannotForceADecision(double gunDamagePerRound, int remainingEnemyHitPoints) {
+        if (gunDamagePerRound <= 0) {
+            return true;
+        }
+        return (remainingEnemyHitPoints / gunDamagePerRound) > DISENGAGE_TIME_TO_KILL_ROUNDS;
     }
 
     /**
@@ -1403,6 +1493,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         scores.put("aeroExposurePenalty", lastExposurePenalty);
         scores.put("aeroAltitudeBank", lastAltitudeBank);
         scores.put("aeroFinalVelocity", (double) lastFinalVelocity);
+        scores.put("aeroWinchester", (double) lastWinchester);
         return scores;
     }
 }

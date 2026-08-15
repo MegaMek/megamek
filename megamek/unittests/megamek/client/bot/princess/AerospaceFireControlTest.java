@@ -257,4 +257,40 @@ class AerospaceFireControlTest {
                     java.util.List.of(highExplosive), left.getPosition(), enemies),
               "HE on an occupied hex funds exactly that one victim");
     }
+
+    /**
+     * The value-of-the-target question (Dave): a Locust, a Rifleman, a Centurion and an Atlas on
+     * the board - rationing must not degrade into "10, 5, 3, 1". The stock auction scores raw
+     * expected damage, so the ten-bomb Atlas dent always outbid the four-bomb Locust kill. With the
+     * opportunity-cost adjustment the kill wins: overkill damage is refunded, the kill fraction
+     * squared times battle value credits removing a unit from the fight, and each released bomb
+     * charges its future use against the targets still standing.
+     */
+    @Test
+    void aLocustKillOutbidsAnAtlasDent() {
+        // Both plans carry the pre-ration estimate of ten HE at 0.77: 77 expected damage.
+        // Locust: 30 effective HP, BV 432, ration releases 4. Atlas: 307 HP, BV 1897, releases 10.
+        double locustUtility = 77.0 + AerospaceFireControl.bombPlanUtilityAdjustment(
+              77.0, 4, 30, 432, true);
+        double atlasUtility = 77.0 + AerospaceFireControl.bombPlanUtilityAdjustment(
+              77.0, 10, 307, 1897, true);
+
+        assertTrue(locustUtility > atlasUtility,
+              "the four-bomb Locust kill (%.1f) must outbid the ten-bomb Atlas dent (%.1f)"
+                    .formatted(locustUtility, atlasUtility));
+        assertTrue(locustUtility < 77.0,
+              "the Locust plan must not keep phantom damage past the victim's hit points");
+    }
+
+    /** When the Atlas is the last bombable enemy standing, the rack is spent freely - no charge. */
+    @Test
+    void theLastBombableTargetIsBombedWithoutCharge() {
+        double withOthers = AerospaceFireControl.bombPlanUtilityAdjustment(77.0, 10, 307, 1897, true);
+        double lastTarget = AerospaceFireControl.bombPlanUtilityAdjustment(77.0, 10, 307, 1897, false);
+
+        assertEquals(AerospaceFireControl.BOMB_OPPORTUNITY_COST_PER_BOMB * 10,
+              lastTarget - withOthers, 0.001,
+              "the only difference between mid-battle and last-target is the per-bomb charge");
+        assertTrue(lastTarget > 0, "a dent in the last target still earns its kill-fraction credit");
+    }
 }

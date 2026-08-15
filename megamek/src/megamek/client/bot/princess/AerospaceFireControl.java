@@ -75,6 +75,20 @@ public class AerospaceFireControl extends FireControl {
 
     private static final MMLogger RATION_LOGGER = MMLogger.create(AerospaceFireControl.class);
 
+    /**
+     * Credit for the battle value a salvo is expected to remove, scaled by BV/1000 and by the
+     * SQUARE of the kill fraction, so a near-certain kill of a cheap unit outearns a shallow dent
+     * in an expensive one. A dent does not remove a unit from the fight; a kill does.
+     */
+    static final double BOMB_KILL_UTILITY = 100.0;
+
+    /**
+     * What one released bomb charges the plan when other bomb-worthy enemies remain: its
+     * next-best-future-use value, roughly half an HE bomb's damage at even odds on a later pass.
+     * Zero when this is the last bombable target - the mission is over, spend freely.
+     */
+    static final double BOMB_OPPORTUNITY_COST_PER_BOMB = 5.0;
+
     /** Refusal reason for a shot the geometry forbids, mirroring the server's own wording. */
     static final TargetRollModifier TH_IN_DEAD_ZONE = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
           "target in dead zone");
@@ -157,6 +171,13 @@ public class AerospaceFireControl extends FireControl {
      */
     private void rationBombPayloadForFootprint(FiringPlan plan, Entity shooter, Coords aimPoint,
           Game game) {
+        int footprintHitPoints = footprintHitPoints(shooter.getBombs(AmmoType.F_GROUND_BOMB),
+              aimPoint, liveEnemyGroundUnits(shooter, game));
+        rationPayloadToHitPoints(plan, Math.max(1, footprintHitPoints));
+    }
+
+    /** Every live enemy ground unit on the shooter's board - the bombable target set. */
+    private static List<Entity> liveEnemyGroundUnits(Entity shooter, Game game) {
         List<Entity> enemies = new ArrayList<>();
         for (Entity enemy : game.getEntitiesVector()) {
             if (enemy.getOwner().isEnemyOf(shooter.getOwner()) && !enemy.isAirborne()
@@ -165,25 +186,131 @@ public class AerospaceFireControl extends FireControl {
                 enemies.add(enemy);
             }
         }
-        int footprintHitPoints = footprintHitPoints(
-              shooter.getBombs(AmmoType.F_GROUND_BOMB), aimPoint, enemies);
-        rationPayloadToHitPoints(plan, Math.max(1, footprintHitPoints));
+        return enemies;
+    }
+
+    /**
+     * <p>The bomb opportunity-cost block: with a Locust, a Rifleman, a Centurion and an Atlas on
+     * the board, what is the value of the target? The stock auction scores a bomb plan by raw
+     * expected damage, so the biggest target always monopolizes the rack - a ten-bomb dent in an
+     * Atlas outbids a three-bomb Locust kill every time. Three corrections, applied after the stock
+     * utility:</p>
+     *
+     * <ul>
+     *     <li><b>Overkill earns nothing.</b> Expected damage past the target's effective hit points
+     *     is phantom value (the plan's estimate keeps the pre-ration payload) and is refunded.</li>
+     *     <li><b>Kills are worth battle value.</b> Credit scales with the square of the kill
+     *     fraction times BV/1000: removing a unit from the fight is the prize, denting one is
+     *     not.</li>
+     *     <li><b>A bomb spent here is a bomb not spent later.</b> While other bombable enemies
+     *     remain, each released bomb charges its next-best-future-use value; on the last target the
+     *     charge is zero. This is what banks seven bombs off the Locust kill for the Atlas.</li>
+     * </ul>
+     */
+    @Override
+    void calculateUtility(final FiringPlan firingPlan, final int overheatTolerance,
+          final boolean shooterIsAero) {
+        super.calculateUtility(firingPlan, overheatTolerance, shooterIsAero);
+        int released = releasedBombCount(firingPlan);
+        if ((released == 0) || firingPlan.isEmpty()) {
+            return;
+        }
+        Entity shooter = firingPlan.get(0).getShooter();
+        if ((shooter == null) || (shooter.getGame() == null)) {
+            return;
+        }
+        List<Entity> enemies = liveEnemyGroundUnits(shooter, shooter.getGame());
+        int targetHitPoints;
+        int targetBattleValue = 0;
+        boolean othersRemain = false;
+        if (firingPlan.getTarget() instanceof Entity victim) {
+            targetHitPoints = victim.getTotalArmor() + victim.getTotalInternal();
+            targetBattleValue = victim.calculateBattleValue();
+            for (Entity enemy : enemies) {
+                if (enemy.getId() != victim.getId()) {
+                    othersRemain = true;
+                    break;
+                }
+            }
+        } else if (firingPlan.getTarget().getPosition() != null) {
+            List<Entity> underFootprint = enemiesUnderFootprint(
+                  shooter.getBombs(AmmoType.F_GROUND_BOMB), firingPlan.getTarget().getPosition(),
+                  enemies);
+            targetHitPoints = 0;
+            for (Entity enemy : underFootprint) {
+                targetHitPoints += enemy.getTotalArmor() + enemy.getTotalInternal();
+                targetBattleValue += enemy.calculateBattleValue();
+            }
+            othersRemain = enemies.size() > underFootprint.size();
+        } else {
+            return;
+        }
+        double adjustment = bombPlanUtilityAdjustment(firingPlan.getExpectedDamage(), released,
+              targetHitPoints, targetBattleValue, othersRemain);
+        RATION_LOGGER.info("AUCTION {}: utility {} {} {} ({} bombs, {} HP, {} BV, others={})",
+              firingPlan.getTarget().getDisplayName(), Math.round(firingPlan.getUtility()),
+              (adjustment >= 0) ? "+" : "-", Math.round(Math.abs(adjustment)), released,
+              targetHitPoints, targetBattleValue, othersRemain);
+        firingPlan.setUtility(firingPlan.getUtility() + adjustment);
+    }
+
+    /**
+     * The value-of-the-target arithmetic, pure: refund phantom overkill damage, credit expected
+     * battle value removed, charge each bomb its future use while other targets remain.
+     */
+    static double bombPlanUtilityAdjustment(double expectedDamage, int bombsReleased,
+          int targetEffectiveHitPoints, int targetBattleValue, boolean otherBombTargetsRemain) {
+        int effectiveHitPoints = Math.max(1, targetEffectiveHitPoints);
+        double cappedDamage = Math.min(expectedDamage, effectiveHitPoints);
+        double killFraction = Math.min(1.0, cappedDamage / effectiveHitPoints);
+        double killCredit = BOMB_KILL_UTILITY * killFraction * killFraction
+              * (targetBattleValue / 1000.0);
+        double opportunityCost = otherBombTargetsRemain
+              ? BOMB_OPPORTUNITY_COST_PER_BOMB * bombsReleased : 0.0;
+        return -(DAMAGE_UTILITY * (expectedDamage - cappedDamage)) + killCredit - opportunityCost;
+    }
+
+    /** Bombs this plan actually releases, post-ration, across every rack. */
+    private static int releasedBombCount(FiringPlan plan) {
+        int released = 0;
+        for (WeaponFireInfo info : plan) {
+            // getAction(), not getWeaponAttackAction(): the latter lazily CREATES an action and
+            // recomputes a real to-hit - a side effect gun plans must not pay during an auction.
+            if ((info.getAction() == null) || (info.getAction().getBombPayloads() == null)) {
+                continue;
+            }
+            HashMap<String, BombLoadout> payloads = info.getAction().getBombPayloads();
+            for (BombLoadout loadout : payloads.values()) {
+                released += loadout.getTotalBombs();
+            }
+        }
+        return released;
     }
 
     /** Sums effective hit points of every enemy inside any bomb's blast ring at the aim point. */
     static int footprintHitPoints(List<BombMounted> groundBombs, Coords aimPoint,
           List<Entity> enemies) {
         int footprintHitPoints = 0;
+        for (Entity enemy : enemiesUnderFootprint(groundBombs, aimPoint, enemies)) {
+            footprintHitPoints += enemy.getTotalArmor() + enemy.getTotalInternal();
+        }
+        return footprintHitPoints;
+    }
+
+    /** The enemies standing inside any bomb's blast ring at the aim point. */
+    static List<Entity> enemiesUnderFootprint(List<BombMounted> groundBombs, Coords aimPoint,
+          List<Entity> enemies) {
+        List<Entity> underFootprint = new ArrayList<>();
         for (Entity enemy : enemies) {
             int ring = aimPoint.distance(enemy.getPosition());
             for (BombMounted bomb : groundBombs) {
                 if (AerospacePathRanker.bombRingDamage(bomb, ring) > 0) {
-                    footprintHitPoints += enemy.getTotalArmor() + enemy.getTotalInternal();
+                    underFootprint.add(enemy);
                     break;
                 }
             }
         }
-        return footprintHitPoints;
+        return underFootprint;
     }
 
     /**

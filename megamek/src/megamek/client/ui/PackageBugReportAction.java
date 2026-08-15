@@ -57,6 +57,7 @@ import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
@@ -94,6 +95,9 @@ public class PackageBugReportAction extends AbstractAction {
 
     private static final String ARCHIVE_EXTENSION = ".zip";
     private static final String DEFAULT_ARCHIVE_NAME = "MegaMek-BugReport.zip";
+
+    /** Width of the result message before the user's GUI scale is applied, matching {@code BugReportDialog}. */
+    private static final int UNSCALED_MESSAGE_WIDTH = 420;
 
     private final Component parent;
     private final Supplier<Client> clientSupplier;
@@ -256,7 +260,10 @@ public class PackageBugReportAction extends AbstractAction {
      * @param saveGameFile the temporary save, or {@code null} if none was made
      */
     private static void deleteTemporarySave(@Nullable File saveGameFile) {
-        if ((saveGameFile != null) && saveGameFile.isFile() && !saveGameFile.delete()) {
+        if ((saveGameFile == null) || !saveGameFile.isFile()) {
+            return;
+        }
+        if (!saveGameFile.delete()) {
             LOGGER.warn("[BugReport] Could not delete the temporary save {}", saveGameFile.getName());
         }
     }
@@ -268,7 +275,8 @@ public class PackageBugReportAction extends AbstractAction {
      * @param cautionNotice a note about anything that did not go to plan, or {@code null}
      */
     private void showResult(BugReportBundle.BundleResult result, @Nullable String cautionNotice) {
-        StringBuilder message = new StringBuilder("<html><body width='420'>");
+        int messageWidth = UIUtil.scaleForGUI(UNSCALED_MESSAGE_WIDTH);
+        StringBuilder message = new StringBuilder("<html><body width=%d>".formatted(messageWidth));
         if (cautionNotice != null) {
             message.append("<p><b>").append(cautionNotice).append("</b></p>");
         }

@@ -151,7 +151,7 @@ public class BugReportDialog {
             super(text);
             setToolTipText(displayedAddress);
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            addActionListener(e -> UIUtil.browse(address));
+            addActionListener(event -> UIUtil.browse(address));
         }
     }
 }

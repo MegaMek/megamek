@@ -268,12 +268,7 @@ public class BugReportBundle {
      * @return the rolled logs, newest first; empty when none have been rolled yet
      */
     private List<File> rolledLogsNewestFirst() {
-        List<String> allBaseNames = new ArrayList<>(ESSENTIAL_LOG_BASE_NAMES);
-        allBaseNames.addAll(BOT_LOG_BASE_NAMES);
-
-        File[] rolledLogs = logDirectory.listFiles(file -> file.isFile()
-              && file.getName().endsWith(ROLLED_LOG_EXTENSION)
-              && allBaseNames.stream().anyMatch(baseName -> file.getName().startsWith(baseName + "_")));
+        File[] rolledLogs = logDirectory.listFiles(BugReportBundle::isCollectableRolledLog);
 
         if (rolledLogs == null) {
             return List.of();
@@ -282,6 +277,26 @@ public class BugReportBundle {
         return Arrays.stream(rolledLogs)
               .sorted(Comparator.comparingLong(File::lastModified).reversed())
               .toList();
+    }
+
+    /**
+     * Whether a file is a rolled archive of one of the logs this bundle collects.
+     *
+     * <p>Log4j rolls {@code megamek.log} to {@code megamek_1.log.gz} and so on, so a rolled archive is recognised by
+     * the basename, an underscore, and the compressed extension. This excludes the unrelated compressed files that
+     * also accumulate in the log directory.</p>
+     *
+     * @param file the file to test
+     *
+     * @return {@code true} if the file is a rolled archive of a collected log
+     */
+    private static boolean isCollectableRolledLog(File file) {
+        if (!file.isFile() || !file.getName().endsWith(ROLLED_LOG_EXTENSION)) {
+            return false;
+        }
+        List<String> allBaseNames = new ArrayList<>(ESSENTIAL_LOG_BASE_NAMES);
+        allBaseNames.addAll(BOT_LOG_BASE_NAMES);
+        return allBaseNames.stream().anyMatch(baseName -> file.getName().startsWith(baseName + "_"));
     }
 
     /**

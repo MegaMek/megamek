@@ -38,9 +38,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import megamek.client.Client;
-import megamek.client.ui.CopySystemDataAction;
 import megamek.client.ui.Messages;
-import megamek.client.ui.PackageBugReportAction;
 import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
@@ -137,9 +135,8 @@ public class GameCommandsMenu {
     private JMenuItem createReportBugItem() {
         JMenuItem reportBugItem = new JMenuItem(Messages.getString("GameCommands.ReportBug.title"));
         reportBugItem.setToolTipText(Messages.getString("GameCommands.ReportBug.tooltip"));
-        reportBugItem.addActionListener(event -> new BugReportDialog(clientGUI.getFrame(),
-              new CopySystemDataAction(),
-              new PackageBugReportAction(clientGUI.getFrame(), this::getClient)).show());
+        reportBugItem.addActionListener(event -> BugReportDialog.showWithGameTools(clientGUI.getFrame(),
+              this::getClient));
         return reportBugItem;
     }
 

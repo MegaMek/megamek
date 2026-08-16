@@ -39,8 +39,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.StringJoiner;
 
+import jakarta.annotation.Nullable;
 import megamek.SuiteConstants;
-import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 /**

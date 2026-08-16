@@ -83,9 +83,7 @@ import megamek.client.bot.BotFactory;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.BugReportMessages;
-import megamek.client.ui.CopySystemDataAction;
 import megamek.client.ui.Messages;
-import megamek.client.ui.PackageBugReportAction;
 import megamek.client.ui.boardeditor.BoardEditorPanel;
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.dialogs.LicensingDialog;
@@ -310,8 +308,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private void installBugReportButtonOnErrorDialogs() {
         MMLogger.setErrorDialogButton(new MMLogger.ErrorDialogButton(
               new BugReportMessages().get("package.reportBug"),
-              () -> new BugReportDialog(frame, new CopySystemDataAction(),
-                    new PackageBugReportAction(frame, this::currentTotalWarfareClient)).show()));
+              Messages.getString("Okay"),
+              () -> BugReportDialog.showWithGameTools(frame, this::currentTotalWarfareClient)));
     }
 
     /**
@@ -1709,7 +1707,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // just to free some memory
         client = null;
         System.gc();
-        System.runFinalization();
     }
 
     private final ActionListener actionListener = ev -> {

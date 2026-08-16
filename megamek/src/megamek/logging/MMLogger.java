@@ -36,7 +36,6 @@ package megamek.logging;
 
 import java.util.Objects;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 
 import io.sentry.Sentry;
 import org.apache.logging.log4j.Level;
@@ -271,12 +270,17 @@ public class MMLogger extends ExtendedLoggerWrapper {
     }
 
     /**
-     * An extra button offered alongside OK on error dialogs, installed by the user interface layer.
+     * An extra button offered on error dialogs, installed by the user interface layer.
      *
-     * @param label  the button text, already localized by whoever installs it
-     * @param action what to do when the button is pressed
+     * <p>The label of the button that merely closes the dialog is supplied here as well. Offering a choice of buttons
+     * means naming both of them, and {@code megamek.logging} sits below the user interface and so has no access to the
+     * translated strings; whoever installs the hook does.</p>
+     *
+     * @param label        the reporting button text, already localized by whoever installs it
+     * @param dismissLabel the text of the button that simply closes the dialog, already localized
+     * @param action       what to do when the reporting button is pressed
      */
-    public record ErrorDialogButton(String label, Runnable action) {}
+    public record ErrorDialogButton(String label, String dismissLabel, Runnable action) {}
 
     /**
      * The extra error-dialog button, or {@code null} when none is installed.
@@ -330,8 +334,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
                 return;
             }
 
-            String okLabel = UIManager.getString("OptionPane.okButtonText");
-            Object[] options = { extraButton.label(), (okLabel == null) ? "OK" : okLabel };
+            Object[] options = { extraButton.label(), extraButton.dismissLabel() };
             int choice = JOptionPane.showOptionDialog(null, message, title, JOptionPane.DEFAULT_OPTION,
                   JOptionPane.ERROR_MESSAGE, null, options, options[1]);
             if (choice == 0) {

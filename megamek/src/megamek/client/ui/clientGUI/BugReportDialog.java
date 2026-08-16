@@ -38,6 +38,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Window;
+import java.util.function.Supplier;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -46,7 +47,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import megamek.MMConstants;
+import megamek.client.Client;
 import megamek.client.ui.BugReportMessages;
+import megamek.client.ui.CopySystemDataAction;
+import megamek.client.ui.PackageBugReportAction;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.IssueReportUrl;
@@ -105,33 +109,50 @@ public class BugReportDialog {
         JOptionPane.showMessageDialog(parent, content, I18N.get("title"), JOptionPane.PLAIN_MESSAGE, null);
     }
 
+    /**
+     * Opens the helper with the full set of gathering tools, for the places in the program that are reached while a
+     * game may be running.
+     *
+     * @param parent         the window to centre on, or {@code null}
+     * @param clientSupplier supplies the client whose game should be packaged, consulted when the player presses the
+     *                       button rather than now; may return {@code null}, which packages the logs alone
+     */
+    public static void showWithGameTools(@Nullable Window parent, Supplier<Client> clientSupplier) {
+        new BugReportDialog(parent, new CopySystemDataAction(),
+              new PackageBugReportAction(parent, clientSupplier)).show();
+    }
+
+    /**
+     * Lays the buttons out in the order the instructions above them ask the player to use: gather the files first,
+     * then go to the repository the problem belongs to.
+     */
     private JComponent buttonPanel() {
-        JPanel row1 = new JPanel();
-        row1.add(new UrlButton(I18N.get("discord.text"), MMConstants.DISCORD_LINK));
+        JPanel discordRow = new JPanel();
+        discordRow.add(new UrlButton(I18N.get("discord.text"), MMConstants.DISCORD_LINK));
+
+        JPanel gatherFilesRow = new JPanel();
+        if (packageBugReportAction != null) {
+            gatherFilesRow.add(new JButton(packageBugReportAction));
+        }
+        if (copySystemDataAction != null) {
+            gatherFilesRow.add(new JButton(copySystemDataAction));
+        }
 
         // The three repositories that use the suite bug report template get their environment fields filled in for
         // the player; mm-data has no such template, so its link is left alone.
-        JPanel row2 = new JPanel();
-        row2.add(new UrlButton(I18N.get("mm.text"), IssueReportUrl.forIssueForm(REPORT_LINK_MM, null),
+        JPanel repositoryRow = new JPanel();
+        repositoryRow.add(new UrlButton(I18N.get("mm.text"), IssueReportUrl.forIssueForm(REPORT_LINK_MM, null),
               REPORT_LINK_MM));
-        row2.add(new UrlButton(I18N.get("mml.text"), IssueReportUrl.forIssueForm(REPORT_LINK_MML, null),
+        repositoryRow.add(new UrlButton(I18N.get("mml.text"), IssueReportUrl.forIssueForm(REPORT_LINK_MML, null),
               REPORT_LINK_MML));
-        row2.add(new UrlButton(I18N.get("mhq.text"), IssueReportUrl.forIssueForm(REPORT_LINK_MHQ, null),
+        repositoryRow.add(new UrlButton(I18N.get("mhq.text"), IssueReportUrl.forIssueForm(REPORT_LINK_MHQ, null),
               REPORT_LINK_MHQ));
-        row2.add(new UrlButton(I18N.get("mmData.text"), REPORT_LINK_MM_DATA));
-
-        JPanel row3 = new JPanel();
-        if (packageBugReportAction != null) {
-            row3.add(new JButton(packageBugReportAction));
-        }
-        if (copySystemDataAction != null) {
-            row3.add(new JButton(copySystemDataAction));
-        }
+        repositoryRow.add(new UrlButton(I18N.get("mmData.text"), REPORT_LINK_MM_DATA));
 
         JComponent rootPanel = new JPanel(new GridLayout(3, 1, 0, 8));
-        rootPanel.add(row1);
-        rootPanel.add(row2);
-        rootPanel.add(row3);
+        rootPanel.add(discordRow);
+        rootPanel.add(gatherFilesRow);
+        rootPanel.add(repositoryRow);
         return rootPanel;
     }
 

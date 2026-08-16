@@ -53,12 +53,12 @@ import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.annotations.Nullable;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BugReportBundle;
@@ -116,6 +116,25 @@ public class PackageBugReportAction extends AbstractAction {
         this.parent = parent;
         this.clientSupplier = clientSupplier;
         putValue(AbstractAction.SHORT_DESCRIPTION, I18N.get("package.tooltip"));
+    }
+
+    /**
+     * Copies this action, matching the behaviour of the other actions in the suite.
+     *
+     * <p>Both fields are immutable references that the copy is meant to share - the same parent window and the same
+     * client supplier - so the shallow copy {@link Object#clone()} makes is exactly what is wanted here.</p>
+     *
+     * @return the copy, or {@code null} if it could not be made
+     */
+    @Override
+    public @Nullable PackageBugReportAction clone() {
+        try {
+            return (PackageBugReportAction) super.clone();
+        } catch (CloneNotSupportedException cloneNotSupportedException) {
+            LOGGER.error("Failed to clone PackageBugReportAction. State of the object: {}", this,
+                  cloneNotSupportedException);
+            return null;
+        }
     }
 
     @Override

@@ -42,13 +42,13 @@ import java.util.Vector;
 import java.util.function.Consumer;
 import javax.swing.SwingUtilities;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.SuiteConstants;
 import megamek.Version;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.Base64Image;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameScriptedMessageEvent;

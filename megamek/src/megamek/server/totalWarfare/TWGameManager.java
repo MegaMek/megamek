@@ -2573,6 +2573,16 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
+        // The server-side half of the turn-dispatch audit trail: which player the server is now
+        // waiting on, for which entity, in which phase. When a game stalls, pairing this line with
+        // the bot's own dispatch log says immediately whether the turn packet was never sent, sent
+        // and dropped, or received and mishandled.
+        LOGGER.info("Turn dispatch: phase {}, turn {} -> player {} ({}), first entity {}",
+              game.getPhase(), game.getTurnIndex(),
+              (player != null) ? player.getId() : Player.PLAYER_NONE,
+              (player != null) ? player.getName() : "none",
+              (nextEntity != null) ? nextEntity.getDisplayName() : "none");
+
         if (prevPlayerId != -1) {
             send(packetHelper.createTurnIndexPacket(prevPlayerId));
         } else {
@@ -9984,6 +9994,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // looks like mostly everything's okay
+        announceStrafingRun(entity, actionList);
         processAttack(entity, actionList);
 
         // Update visibility indications if using double-blind.
@@ -9992,6 +10003,30 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         endCurrentTurn(entity);
+    }
+
+    /**
+     * Announces a strafing run the moment it is declared: one report line and its kill-feed toast,
+     * nothing more. Without it the run only surfaces as a burst of unexplained attack lines in the
+     * end-of-phase report - the same reads-as-a-bug problem the maneuver announcement solved.
+     */
+    private void announceStrafingRun(Entity entity, List<EntityAction> entityActions) {
+        if (entityActions == null) {
+            return;
+        }
+        for (EntityAction entityAction : entityActions) {
+            if ((entityAction instanceof WeaponAttackAction attack)
+                  && attack.isStrafing() && attack.isStrafingFirstShot()) {
+                Report strafeReport = new Report(9610);
+                strafeReport.subject = entity.getId();
+                strafeReport.addDesc(entity);
+                addReport(strafeReport);
+                Vector<Report> strafeSpecial = new Vector<>();
+                strafeSpecial.add(strafeReport);
+                sendSpecialReport(strafeSpecial);
+                return;
+            }
+        }
     }
 
     /**
@@ -27959,6 +27994,28 @@ public class TWGameManager extends AbstractGameManager {
      */
     public Packet createSpecialReportPacket(Vector<Report> reports) {
         return new Packet(PacketCommand.SENDING_REPORTS_SPECIAL, reports.clone());
+    }
+
+    /**
+     * Sends the given reports to every player as an immediate special-report packet (surfaced client-side as a
+     * kill-feed toast), respecting double blind: with double blind on, each player receives only the reports they
+     * are entitled to see; otherwise the packet is broadcast unfiltered. Use this instead of broadcasting
+     * {@link #createSpecialReportPacket(Vector)} whenever the reports concern a unit that might be hidden from
+     * some players.
+     *
+     * @param reports the specific reports to push immediately; they are not added to the phase report here
+     */
+    void sendSpecialReport(Vector<Report> reports) {
+        if (!doBlind()) {
+            send(createSpecialReportPacket(reports));
+            return;
+        }
+        for (Player player : game.getPlayersList()) {
+            Vector<Report> filteredReports = filterReportVector(reports, player);
+            if (!filteredReports.isEmpty()) {
+                send(player.getId(), createSpecialReportPacket(filteredReports));
+            }
+        }
     }
 
     /**

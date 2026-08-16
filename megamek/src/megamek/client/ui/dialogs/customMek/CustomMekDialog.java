@@ -1407,20 +1407,15 @@ public class CustomMekDialog extends AbstractButtonDialog
                               : weaponType.getLongRange();
                         distanceInHexes = offBoardArtilleryDistance(entity, weaponType, ratedRangeInMapSheets);
                     } else if (weaponType.isCapital() || weaponType.isSubCapital()) {
-                        // Capital weapons use their maximum space hex range as the map sheet range
-                        int rangeInMapSheets = 0;
-                        if (weaponType.getMaxRange(weaponMount) == WeaponType.RANGE_EXT) {
-                            rangeInMapSheets = 50;
-                        }
-                        if (weaponType.getMaxRange(weaponMount) == WeaponType.RANGE_LONG) {
-                            rangeInMapSheets = 40;
-                        }
-                        if (weaponType.getMaxRange(weaponMount) == WeaponType.RANGE_MED) {
-                            rangeInMapSheets = 24;
-                        }
-                        if (weaponType.getMaxRange(weaponMount) == WeaponType.RANGE_SHORT) {
-                            rangeInMapSheets = 12;
-                        }
+                        // Capital weapons use their maximum space hex range as the map sheet range. The range
+                        // bracket is read once: working it out walks the mount's linked ammo.
+                        int rangeInMapSheets = switch (weaponType.getMaxRange(weaponMount)) {
+                            case WeaponType.RANGE_EXT -> 50;
+                            case WeaponType.RANGE_LONG -> 40;
+                            case WeaponType.RANGE_MED -> 24;
+                            case WeaponType.RANGE_SHORT -> 12;
+                            default -> 0;
+                        };
                         // Now, convert to hexes
                         distanceInHexes = rangeInMapSheets * Board.DEFAULT_BOARD_HEIGHT;
                     }

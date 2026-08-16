@@ -47,6 +47,8 @@ import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import org.mockito.Mockito;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 import java.util.Set;
 import java.util.LinkedHashSet;
@@ -972,6 +974,45 @@ class AerospacePathRankerTest {
             assertTrue(window.size() <= 3
                         || !(window.contains(new Coords(20, 10)) && window.contains(new Coords(21, 12))),
                   "no straight window may span the bend");
+        }
+    }
+
+    /**
+     * The sliding-sum window scorer the movement ranker uses must agree with the full window
+     * enumeration it replaced, on every shape a flown line takes: straight runs longer than the
+     * window, bends, and gaps where the line jumps.
+     */
+    @Test
+    void slidingWindowScorerAgreesWithWindowEnumeration() {
+        Map<Coords, Double> valueByHex = new HashMap<>();
+        valueByHex.put(new Coords(20, 10), 1.5);
+        valueByHex.put(new Coords(20, 13), 1.0);
+        valueByHex.put(new Coords(20, 15), 1.15);
+        valueByHex.put(new Coords(21, 12), 1.0);
+
+        List<Coords> straight = new ArrayList<>();
+        for (int y = 9; y < 17; y++) {
+            straight.add(new Coords(20, y));
+        }
+        List<Coords> dogleg = List.of(new Coords(20, 10), new Coords(20, 11),
+              new Coords(20, 12), new Coords(21, 12), new Coords(22, 13));
+        List<Coords> gapped = List.of(new Coords(20, 10), new Coords(20, 11),
+              new Coords(20, 14), new Coords(20, 15));
+
+        for (List<Coords> line : List.of(straight, dogleg, gapped)) {
+            double enumerated = 0;
+            for (List<Coords> window : AerospacePathRanker.straightWindows(line, 5)) {
+                double windowValue = 0;
+                for (Map.Entry<Coords, Double> hexValue : valueByHex.entrySet()) {
+                    if (window.contains(hexValue.getKey())) {
+                        windowValue += hexValue.getValue();
+                    }
+                }
+                enumerated = Math.max(enumerated, windowValue);
+            }
+            assertEquals(enumerated,
+                  AerospacePathRanker.bestStraightWindowValue(line, valueByHex, 5), 0.0001,
+                  "sliding sum must match the enumeration on " + line);
         }
     }
 

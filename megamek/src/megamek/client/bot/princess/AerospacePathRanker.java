@@ -33,6 +33,7 @@
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
+import java.util.ArrayDeque;
 import java.util.HashMap;
 import megamek.common.ToHitData;
 import java.util.TreeSet;
@@ -361,6 +362,29 @@ public class AerospacePathRanker extends BasicPathRanker {
     private int lastPostAttackAltitude;
     private double lastExposurePenalty;
     private double lastAltitudeBank;
+    private int lastVenueGround;
+    private double lastCloseRangeDamage;
+    private int lastWinchester;
+    private double lastInterceptCredit;
+    private AerospaceFocus lastFocus = AerospaceFocus.AUTO;
+    private double lastApproachMultiplier = 1.0;
+    private double lastSternSetup;
+    private double lastStrafeRun;
+    private int lastFinalAltitude;
+    private int lastFinalVelocity;
+    private CombatPosture lastPosture;
+
+    // Enemy drift: last round's positions and the per-unit movement vectors derived from them.
+    // Multi-round history, so it carries the round-went-backwards reset like the posture resolvers.
+    private final Map<Integer, Coords> enemyPreviousPositions = new HashMap<>();
+    private final Map<Integer, Coords> enemyDrift = new HashMap<>();
+    private int driftRound = -1;
+
+    // The flight's own attack-or-defend stance, resolved once per round per board and kept separate from the
+    // ground force's. Multi-round history, so it needs the round-went-backwards reset in resolveAerospacePosture.
+    private final Map<Integer, PostureResolver> aerospacePostureResolvers = new HashMap<>();
+    private final Map<Integer, CombatPosture> aerospacePostureByBoard = new HashMap<>();
+    private int aerospacePostureRound = -1;
 
     /** Test seams for the attack-run scorer. */
     double lastAttackRunCreditForTest() {
@@ -390,28 +414,6 @@ public class AerospacePathRanker extends BasicPathRanker {
     void lastPostAttackAltitudeForTest(int altitude) {
         lastPostAttackAltitude = altitude;
     }
-    private int lastVenueGround;
-    private double lastCloseRangeDamage;
-    private int lastWinchester;
-    private double lastInterceptCredit;
-    private AerospaceFocus lastFocus = AerospaceFocus.AUTO;
-    private double lastApproachMultiplier = 1.0;
-    private double lastSternSetup;
-    private double lastStrafeRun;
-    // Enemy drift: last round's positions and the per-unit movement vectors derived from them.
-    // Multi-round history, so it carries the round-went-backwards reset like the posture resolvers.
-    private final Map<Integer, Coords> enemyPreviousPositions = new HashMap<>();
-    private final Map<Integer, Coords> enemyDrift = new HashMap<>();
-    private int driftRound = -1;
-    private int lastFinalAltitude;
-    private int lastFinalVelocity;
-    private CombatPosture lastPosture;
-
-    // The flight's own attack-or-defend stance, resolved once per round per board and kept separate from the
-    // ground force's. Multi-round history, so it needs the round-went-backwards reset in resolveAerospacePosture.
-    private final Map<Integer, PostureResolver> aerospacePostureResolvers = new HashMap<>();
-    private final Map<Integer, CombatPosture> aerospacePostureByBoard = new HashMap<>();
-    private int aerospacePostureRound = -1;
 
     public AerospacePathRanker(Princess owningPrincess) {
         super(owningPrincess);
@@ -650,7 +652,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         updateEnemyDrift(game, enemies);
         scoreEngagements(path, game, enemies, venue);
         scoreAttackRuns(path, game, enemies, venue);
-        lastSternSetup = sternSetupCredit(path, game, enemies);
+        lastSternSetup = sternSetupCredit(path, enemies);
         lastControlRiskPenalty = controlRiskPenalty(path);
         lastVelocityPenalty = velocityPenalty(path, venue);
         lastEdgePenalty = edgePenalty(path, game, venue);
@@ -984,15 +986,19 @@ public class AerospacePathRanker extends BasicPathRanker {
               && !mover.isSpheroid();
         if (inStrafeWindow) {
             List<Coords> orderedLine = orderedFlownLine(path);
-            for (List<Coords> window : straightWindows(orderedLine, 5)) {
-                double windowValue = 0;
-                for (Entity target : targets) {
-                    if (window.contains(target.getPosition())) {
-                        windowValue += approachMultiplier(entryDirectionSideTable(orderedLine, target));
-                    }
+            // Per-hex target value built once, then a single sliding pass over the line - this runs
+            // per candidate path, so it cannot afford the windows-times-targets enumeration the
+            // fire control uses once per firing phase.
+            Map<Coords, Double> valueByHex = new HashMap<>();
+            for (Entity target : targets) {
+                Coords targetHex = target.getPosition();
+                if (targetHex != null) {
+                    valueByHex.merge(targetHex,
+                          approachMultiplier(entryDirectionSideTable(orderedLine, target)), Double::sum);
                 }
-                strafeRun = Math.max(strafeRun, strafeDamage * windowValue * STRAFE_ODDS_FACTOR);
             }
+            strafeRun = strafeDamage * STRAFE_ODDS_FACTOR
+                  * bestStraightWindowValue(orderedLine, valueByHex, 5);
         }
         lastStrafeRun = strafeRun;
 
@@ -1146,7 +1152,7 @@ public class AerospacePathRanker extends BasicPathRanker {
      * FROM the fighter TO the force agreeing with the drift - is positioned to roll in on rear
      * arcs next round. Zero when the force is not moving or the fighter is on top of it.
      */
-    double sternSetupCredit(MovePath path, Game game, List<Entity> enemies) {
+    double sternSetupCredit(MovePath path, List<Entity> enemies) {
         Coords exitPose = path.getFinalCoords();
         if (exitPose == null) {
             return 0;
@@ -1230,6 +1236,47 @@ public class AerospacePathRanker extends BasicPathRanker {
             }
         }
         return windows;
+    }
+
+    /**
+     * The best total per-hex value under any legal strafe window on the line - straight,
+     * consecutive, at most {@code maxLength} hexes (TW p.243) - in one pass. Per-hex values are
+     * non-negative, so within a straight segment the longest legal window ending at a hex beats
+     * every shorter one, and a sliding sum replaces enumerating the windows. A bend restarts the
+     * run at the bend hex, matching {@link #straightWindows(List, int)}.
+     */
+    static double bestStraightWindowValue(List<Coords> orderedLine, Map<Coords, Double> valueByHex,
+          int maxLength) {
+        double best = 0;
+        ArrayDeque<Double> window = new ArrayDeque<>();
+        double windowSum = 0;
+        Integer direction = null;
+        Coords previous = null;
+        for (Coords hex : orderedLine) {
+            if ((previous == null) || (previous.distance(hex) != 1)) {
+                window.clear();
+                windowSum = 0;
+                direction = null;
+            } else {
+                int stepDirection = previous.direction(hex);
+                if ((direction != null) && (direction != stepDirection)) {
+                    double bendValue = valueByHex.getOrDefault(previous, 0.0);
+                    window.clear();
+                    window.add(bendValue);
+                    windowSum = bendValue;
+                }
+                direction = stepDirection;
+            }
+            double value = valueByHex.getOrDefault(hex, 0.0);
+            window.add(value);
+            windowSum += value;
+            if (window.size() > maxLength) {
+                windowSum -= window.removeFirst();
+            }
+            best = Math.max(best, windowSum);
+            previous = hex;
+        }
+        return best;
     }
 
     /**

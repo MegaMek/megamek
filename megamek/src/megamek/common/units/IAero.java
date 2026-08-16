@@ -753,7 +753,9 @@ public interface IAero {
         }
         Entity self = (Entity) this;
         // Conventional fighters need VSTOL gear (handled above); aerospace fighters and aerodyne
-        // small craft may always lift vertically.
+        // small craft may always lift vertically. Spheroid small craft never reach this line (the
+        // isSpheroid() branch above catches them), and Dropship extends SmallCraft, so excluding it
+        // here keeps aerodyne DropShips on the vacuum-only rule in their own override.
         return (self instanceof AeroSpaceFighter && !(self instanceof ConvFighter))
               || (self instanceof SmallCraft && !(self instanceof Dropship));
     }

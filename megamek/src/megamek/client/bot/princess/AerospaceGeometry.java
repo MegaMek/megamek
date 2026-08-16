@@ -208,7 +208,9 @@ public final class AerospaceGeometry {
         int fromEast = board.getWidth() - 1 - position.getX();
         int fromNorth = position.getY();
         int fromSouth = board.getHeight() - 1 - position.getY();
-        return Math.min(Math.min(fromWest, fromEast), Math.min(fromNorth, fromSouth));
+        int westToEast = Math.min(fromWest, fromEast);
+        int northToSouth = Math.min(fromNorth, fromSouth);
+        return Math.min(westToEast, northToSouth);
     }
 
     /**

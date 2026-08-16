@@ -75,6 +75,7 @@ import org.junit.jupiter.api.Test;
  * does not exist for those targets. That crashed the server in the middle of resolving the firing phase and left the
  * game unable to advance (issue #8723). The designation is now looked up through the game, which knows about TAG'd
  * hexes and buildings as well as TAG'd units.
+ * </p>
  *
  * @author Hammer - Built with Claude Code
  * @since 2026-08-16

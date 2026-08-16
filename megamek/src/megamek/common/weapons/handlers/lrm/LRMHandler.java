@@ -186,6 +186,7 @@ public class LRMHandler extends MissileWeaponHandler {
      * <p>
      * Buildings and hexes can be designated by TAG just like units can, so the designation is looked up through the
      * game rather than on the target unit, which does not exist for those targets.
+     * </p>
      *
      * @return the number of missiles to add to or subtract from the cluster roll
      */

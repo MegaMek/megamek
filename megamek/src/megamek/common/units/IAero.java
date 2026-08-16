@@ -739,7 +739,25 @@ public interface IAero {
     }
 
     default boolean canTakeOffVertically() {
-        return (isVSTOL() || isSpheroid()) && (getCurrentThrust() > 2);
+        // SO: "Aerospace fighters, aerodyne small craft, and VSTOL-equipped conventional fighters
+        // may lift off or land vertically... all spheroid DropShips and spheroid small craft lift
+        // off vertically. A unit must spend 2 Thrust Points to lift off." The old test allowed
+        // only VSTOL and spheroids, which contradicted the vertical-liftoff roll's own "+2,
+        // Fighter making vertical liftoff" modifier a few lines above. Aerodyne DropShips
+        // (vacuum-only rule) have their own override.
+        if (getCurrentThrust() < 2) {
+            return false;
+        }
+        if (isVSTOL() || isSpheroid()) {
+            return true;
+        }
+        Entity self = (Entity) this;
+        // Conventional fighters need VSTOL gear (handled above); aerospace fighters and aerodyne
+        // small craft may always lift vertically. Spheroid small craft never reach this line (the
+        // isSpheroid() branch above catches them), and Dropship extends SmallCraft, so excluding it
+        // here keeps aerodyne DropShips on the vacuum-only rule in their own override.
+        return (self instanceof AeroSpaceFighter && !(self instanceof ConvFighter))
+              || (self instanceof SmallCraft && !(self instanceof Dropship));
     }
 
     default boolean canLandVertically() {

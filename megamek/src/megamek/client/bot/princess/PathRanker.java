@@ -42,6 +42,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -106,7 +107,53 @@ public abstract class PathRanker implements IPathRanker {
         Basic,
         Infantry,
         NewtonianAerospace,
-        Utility
+        Utility,
+        /**
+         * Airborne aerospace units flying in an atmosphere, on either a ground mapsheet or a low-altitude
+         * map. Distinct from {@link #NewtonianAerospace}, which covers vector movement instead.
+         *
+         * <p>Princess registers its ordinary {@link BasicPathRanker} here, so this slot changes nothing for
+         * it; the slot exists so that CASPAR can replace atmospheric aerospace movement on its own.</p>
+         */
+        Aerospace
+    }
+
+    /**
+     * The posture already resolved for this board this round, or {@code null} when none has been.
+     *
+     * <p>Read-only by contract: implementations must not resolve a posture that has not been asked for, since
+     * resolving announces it. Overridden by {@link BasicPathRanker}; there is nothing to report here.</p>
+     *
+     * @param game    the current game
+     * @param boardId the board to report on
+     *
+     * @return the resolved posture, or {@code null}
+     */
+    protected @Nullable CombatPosture resolvedPostureFor(Game game, int boardId) {
+        return null;
+    }
+
+    /**
+     * Whether each of this bot's units is fighting offensively or defensively, for the log.
+     *
+     * <p>Both values are read as already decided, never computed here. A unit that has not been evaluated yet
+     * this turn reports nothing rather than an answer invented for the logger's benefit.</p>
+     *
+     * @param game the current game
+     *
+     * @return entity id to its logged context, for this bot's units only
+     */
+    private Map<Integer, BotLogger.UnitContext> ownUnitContexts(Game game) {
+        Map<Integer, BotLogger.UnitContext> contexts = new HashMap<>();
+        UnitBehavior behaviorTracker = getOwner().getUnitBehaviorTracker();
+        for (Entity ownedUnit : getOwner().getEntitiesOwned()) {
+            UnitBehavior.BehaviorType behavior = behaviorTracker.getCachedBehaviorType(ownedUnit);
+            CombatPosture posture = resolvedPostureFor(game, ownedUnit.getBoardId());
+            contexts.put(ownedUnit.getId(),
+                  new BotLogger.UnitContext(behavior == null ? "" : behavior.name(),
+                        posture == null ? "" : posture.name()));
+        }
+        return contexts;
     }
 
     private final Princess owner;
@@ -193,7 +240,7 @@ public abstract class PathRanker implements IPathRanker {
             logger.error(exception, exception.getMessage());
             return returnPaths;
         }
-        botLogger.append(game, true);
+        botLogger.append(game, true, ownUnitContexts(game));
         // log at most 500 paths
         int i = 0;
         int maxRankedPaths = Math.max(500, returnPaths.size());

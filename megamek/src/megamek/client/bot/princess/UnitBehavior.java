@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import megamek.common.board.Coords;
+import megamek.common.annotations.Nullable;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.logging.MMLogger;
@@ -124,6 +125,21 @@ public class UnitBehavior {
             entityBehaviors.put(entity.getId(), calculateUnitBehavior(entity, owner));
         }
 
+        return entityBehaviors.get(entity.getId());
+    }
+
+    /**
+     * The behavior already worked out for this unit, without working one out if none has been.
+     *
+     * <p>For logging and analysis only. {@link #getBehaviorType} computes and caches on a miss, and what it
+     * computes depends on where everything is standing at the time - so asking early, for a unit that has not
+     * moved yet, would pin an answer the bot would otherwise have reached later with better information.</p>
+     *
+     * @param entity the unit to look up
+     *
+     * @return the cached behavior, or {@code null} if this unit has not been evaluated this turn
+     */
+    public @Nullable BehaviorType getCachedBehaviorType(Entity entity) {
         return entityBehaviors.get(entity.getId());
     }
 

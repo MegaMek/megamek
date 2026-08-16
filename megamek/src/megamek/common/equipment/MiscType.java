@@ -72,6 +72,13 @@ public class MiscType extends EquipmentType {
      */
     public static final String MODE_ECM = "ECM";
 
+    /**
+     * Internal (non-localized) name of the running mode of an Enhanced Imaging Interface, paired with
+     * {@link Mounted#MODE_OFF}. Per IO p.69 EI runs unless the pilot deliberately shuts it down, so this is the
+     * interface's default mode.
+     */
+    public static final String MODE_EI_ON = "Initiate enhanced imaging";
+
     // equipment flags (okay, like every type of equipment has its own flag)
     public static final MiscTypeFlag F_HEAT_SINK = MiscTypeFlag.F_HEAT_SINK;
     public static final MiscTypeFlag F_DOUBLE_HEAT_SINK = MiscTypeFlag.F_DOUBLE_HEAT_SINK;
@@ -5947,8 +5954,10 @@ public class MiscType extends EquipmentType {
               F_PROTOMEK_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "69, IO";
-        // EI modes: Off disables EI completely, On enables all EI benefits including aimed shots
-        String[] modes = { "Off", "Initiate enhanced imaging" };
+        // EI modes: On enables all EI benefits including aimed shots, Off disables EI completely. The running mode is
+        // listed first so that it is the default: a newly mounted interface takes mode index 0, and per IO p.69 EI is
+        // running unless the pilot deliberately shuts it down during the End Phase.
+        String[] modes = { MODE_EI_ON, Mounted.MODE_OFF };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
         // EI Interface introduced 3040 by Clan Smoke Jaguar, per IO p.69

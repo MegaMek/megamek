@@ -416,26 +416,6 @@ public class TWDamageManager implements IDamageManager {
 
         boolean tookInternalDamage = mods.tookInternalDamage;
 
-        // Meks using EI implants take pilot damage each time a hit
-        // inflicts IS damage
-        if (tookInternalDamage &&
-              ((entity instanceof Mek) || (entity instanceof ProtoMek)) &&
-              entity.hasActiveEiCockpit()) {
-            Report.addNewline(reportVec);
-            Roll diceRoll = Compute.rollD6(2);
-            report = new Report(5075);
-            report.subject = entity.getId();
-            report.addDesc(entity);
-            report.add(7);
-            report.add(diceRoll);
-            report.choose(diceRoll.getIntValue() >= 7);
-            report.indent(2);
-            reportVec.add(report);
-            if (diceRoll.getIntValue() < 7) {
-                reportVec.addAll(manager.damageCrew(entity, 1));
-            }
-        }
-
         // if using VDNI (but not buffered), check for damage on an internal hit
         // When tracking neural interface hardware, require DNI cockpit mod for feedback
         if (tookInternalDamage &&
@@ -459,37 +439,8 @@ public class TWDamageManager implements IDamageManager {
             }
         }
 
-        // EI (Enhanced Imaging) feedback on internal damage per IO p.69
-        // When taking IS damage, roll 2d6 - if result < 7, take 1 pilot damage
-        // Pain Shunt blocks this feedback
-        if (tookInternalDamage &&
-              entity.hasActiveEiCockpit() &&
-              !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
-            Report.addNewline(reportVec);
-            Roll diceRoll = Compute.rollD6(2);
-            report = new Report(3593);
-            report.subject = entity.getId();
-            report.addDesc(entity);
-            report.add(7);
-            report.add(diceRoll);
-            // choose(true) shows "takes a hit!", choose(false) shows "no damage."
-            report.choose(diceRoll.getIntValue() < 7);
-            report.indent(2);
-            reportVec.add(report);
-
-            if (diceRoll.getIntValue() < 7) {
-                reportVec.addAll(manager.damageCrew(entity, 1));
-            }
-        } else if (tookInternalDamage &&
-              entity.hasActiveEiCockpit() &&
-              entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
-            // Pain Shunt blocks EI feedback - show message for clarity
-            Report.addNewline(reportVec);
-            report = new Report(3594);
-            report.subject = entity.getId();
-            report.addDesc(entity);
-            report.indent(2);
-            reportVec.add(report);
+        if (tookInternalDamage) {
+            applyEnhancedImagingFeedback(reportVec, entity);
         }
 
         // TacOps p.78 Ammo booms can hurt other units in the same and adjacent hexes, But this does not apply to
@@ -543,6 +494,66 @@ public class TWDamageManager implements IDamageManager {
                   .ifPresent(reportVec::add);
         }
         return reportVec;
+    }
+
+    /**
+     * Resolves Enhanced Imaging feedback for a single instance of internal structure damage (IO p.69).
+     *
+     * <p>Per the rule, any time an EI-equipped Mek unit suffers damage to its internal structure its controlling
+     * player rolls 2D6 against a target number of 7. A failed roll inflicts one point of pilot damage and the
+     * consciousness check that follows from it. One hit produces at most one roll no matter how many points of
+     * internal structure it strips, but each separate hit that reaches internal structure rolls again. The rule is
+     * limited to Mek units, so battle armor carrying an EI Interface takes no feedback damage.</p>
+     *
+     * <p>An Artificial Pain Shunt blocks the feedback entirely. The rules text mentions only VDNI, but Xotl confirmed
+     * on 13 April 2021 that it applies to EI implants as well:
+     * <a href="https://battletech.com/forums/index.php?topic=73224.0">(Answered) IO - Enhanced Imaging Implants and
+     * Artificial Pain Shunts</a>.</p>
+     *
+     * @param reportVec the report vector to append the feedback reports to
+     * @param entity    the unit that just suffered internal structure damage
+     */
+    private void applyEnhancedImagingFeedback(Vector<Report> reportVec, Entity entity) {
+        boolean isMekUnit = (entity instanceof Mek) || (entity instanceof ProtoMek);
+        if (!isMekUnit) {
+            return;
+        }
+        if (!entity.hasActiveEiCockpit()) {
+            if (entity.hasEiCockpit()) {
+                logger.debug("[EnhancedImaging] {}: no feedback roll - EI interface is not active (shut down: {})",
+                      entity.getShortName(), entity.isEiShutdown());
+            }
+            return;
+        }
+
+        Report.addNewline(reportVec);
+
+        if (entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+            logger.debug("[EnhancedImaging] {}: no feedback roll - Artificial Pain Shunt blocks EI feedback",
+                  entity.getShortName());
+            Report painShuntReport = new Report(3594);
+            painShuntReport.subject = entity.getId();
+            painShuntReport.addDesc(entity);
+            painShuntReport.indent(2);
+            reportVec.add(painShuntReport);
+            return;
+        }
+
+        Roll diceRoll = Compute.rollD6(2);
+        boolean avoidedFeedback = diceRoll.getIntValue() >= 7;
+        Report feedbackReport = new Report(3593);
+        feedbackReport.subject = entity.getId();
+        feedbackReport.addDesc(entity);
+        feedbackReport.add(7);
+        feedbackReport.add(diceRoll);
+        // choose(true) shows "takes a hit!", choose(false) shows "no damage."
+        feedbackReport.choose(!avoidedFeedback);
+        feedbackReport.indent(2);
+        reportVec.add(feedbackReport);
+
+        if (!avoidedFeedback) {
+            reportVec.addAll(manager.damageCrew(entity, 1));
+        }
     }
 
     /**

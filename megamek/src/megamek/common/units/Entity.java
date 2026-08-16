@@ -12678,24 +12678,29 @@ public abstract class Entity extends TurnOrdered
      * Returns whether this unit has an active Enhanced Imaging (EI) cockpit system. The EI implant is the primary
      * requirement (same pattern as DNI via {@link #isNeuralInterfaceActive}). When tracking hardware is disabled
      * (default), the implant alone provides EI benefits. When tracking is enabled, the unit must also have EI cockpit
-     * equipment that is not shut down.
+     * equipment.
      *
-     * @return true if the unit has an active EI cockpit system
+     * <p>A voluntarily shut down EI Interface suppresses the system in every neural interface mode. Per IO p.69 a
+     * shut down interface "will deactivate the system's benefits, but will also protect the pilot from the negative
+     * effects of EI use in combat", so this check cannot be folded into the hardware requirement - the
+     * {@code Pilot Abilities Only} mode never evaluates that argument.</p>
+     *
+     * @return {@code true} if the unit has an active EI cockpit system
      */
     public boolean hasActiveEiCockpit() {
-        return isNeuralInterfaceActive(
-              hasAbility(OptionsConstants.MD_EI_IMPLANT),
-              hasEiCockpit() && !isEiShutdown()
-        );
+        if (hasEiCockpit() && isEiShutdown()) {
+            return false;
+        }
+        return isNeuralInterfaceActive(hasAbility(OptionsConstants.MD_EI_IMPLANT), hasEiCockpit());
     }
 
     /**
      * Returns whether the EI Interface is currently shut down (in "Off" mode).
      */
     public boolean isEiShutdown() {
-        for (MiscMounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
-                return m.curMode().getName().equals("Off");
+        for (MiscMounted eiInterface : getMisc()) {
+            if (eiInterface.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                return eiInterface.curMode().getName().equals(Mounted.MODE_OFF);
             }
         }
         return false;
@@ -12711,10 +12716,9 @@ public abstract class Entity extends TurnOrdered
         if (!canShutdownEi()) {
             return;
         }
-        for (MiscMounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
-                int targetMode = shutdown ? 0 : 1; // 0 = "Off", 1 = "On"
-                m.setMode(targetMode);
+        for (MiscMounted eiInterface : getMisc()) {
+            if (eiInterface.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                eiInterface.setMode(shutdown ? Mounted.MODE_OFF : MiscType.MODE_EI_ON);
                 break;
             }
         }

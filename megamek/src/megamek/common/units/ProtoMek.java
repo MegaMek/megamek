@@ -1045,9 +1045,9 @@ public class ProtoMek extends Entity {
         super.setGameOptions();
         // Update EI Interface equipment mode based on neural interface game option
         boolean eiEnabled = isNeuralInterfaceEnabled();
-        for (Mounted<?> m : getEquipment()) {
-            if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
-                m.setMode(eiEnabled ? 1 : 0);
+        for (Mounted<?> eiInterface : getEquipment()) {
+            if ((eiInterface.getType() instanceof MiscType) && eiInterface.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                eiInterface.setMode(eiEnabled ? MiscType.MODE_EI_ON : Mounted.MODE_OFF);
                 break;
             }
         }

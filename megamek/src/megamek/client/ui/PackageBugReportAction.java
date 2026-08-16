@@ -340,7 +340,7 @@ public class PackageBugReportAction extends AbstractAction {
      */
     private static void openIssueForm(File archiveFile) {
         copyToClipboard(archiveFile);
-        String issueFormUrl = IssueReportUrl.forIssueForm(IssueReportUrl.MEGAMEK_ISSUES_URL, archiveFile.getName());
+        String issueFormUrl = IssueReportUrl.forIssueForm(IssueReportUrl.MEGAMEK_ISSUES_URL);
         LOGGER.info("[BugReport] Opening the issue form for {}", archiveFile.getName());
         UIUtil.browse(issueFormUrl);
     }

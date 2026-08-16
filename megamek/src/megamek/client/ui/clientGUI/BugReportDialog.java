@@ -171,7 +171,7 @@ public class BugReportDialog {
      * @return a button opening that repository's issue form with the environment fields already filled in
      */
     private static UrlButton prefilledIssueButton(String labelKey, String issuesUrl) {
-        return new UrlButton(I18N.get(labelKey), IssueReportUrl.forIssueForm(issuesUrl, null), issuesUrl);
+        return new UrlButton(I18N.get(labelKey), IssueReportUrl.forIssueForm(issuesUrl), issuesUrl);
     }
 
     /**

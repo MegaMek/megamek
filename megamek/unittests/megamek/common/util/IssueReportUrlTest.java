@@ -45,7 +45,7 @@ class IssueReportUrlTest {
 
     @Test
     void prefillsTheThreeRequiredEnvironmentFields() {
-        String url = IssueReportUrl.forIssueForm(MEGAMEK_ISSUES, null);
+        String url = IssueReportUrl.forIssueForm(MEGAMEK_ISSUES);
 
         assertTrue(url.contains("custom-megamek-version="), url);
         assertTrue(url.contains("operating-system="), url);
@@ -54,7 +54,7 @@ class IssueReportUrlTest {
 
     @Test
     void namesTheTemplateBecauseTheRepositoriesDisableBlankIssues() {
-        String url = IssueReportUrl.forIssueForm(MEGAMEK_ISSUES, null);
+        String url = IssueReportUrl.forIssueForm(MEGAMEK_ISSUES);
 
         assertTrue(url.contains("template=bug_report.yml"), url);
         assertTrue(url.startsWith("https://github.com/MegaMek/megamek/issues/new?"), url);
@@ -67,55 +67,42 @@ class IssueReportUrlTest {
      */
     @Test
     void neverSetsTheLabelsParameter() {
-        String url = IssueReportUrl.forIssueForm(MEGAMEK_ISSUES, "attach bug-report.zip");
+        String url = IssueReportUrl.forIssueForm(MEGAMEK_ISSUES);
 
         assertFalse(url.contains("labels="), "a labels parameter would 404 for non-maintainers: " + url);
     }
 
-    @Test
-    void includesTheAttachmentNoteWhenOneIsGiven() {
-        String url = IssueReportUrl.forIssueForm(MEGAMEK_ISSUES, "Please attach MegaMek-BugReport.zip");
-
-        assertTrue(url.contains("attached-files="), url);
-        assertTrue(url.contains("MegaMek-BugReport.zip"), url);
-    }
-
-    @Test
-    void omitsTheAttachmentFieldWhenThereIsNoNote() {
-        String url = IssueReportUrl.forIssueForm(MEGAMEK_ISSUES, null);
-
-        assertFalse(url.contains("attached-files="), url);
-    }
-
+    /** Both the operating system and Java descriptions are built with spaces in them on every platform. */
     @Test
     void encodesValuesSoSpacesCannotBreakTheUrl() {
-        String url = IssueReportUrl.forIssueForm(MEGAMEK_ISSUES, "a note with spaces");
+        String url = IssueReportUrl.forIssueForm(MEGAMEK_ISSUES);
 
         assertFalse(url.contains(" "), "an unencoded space would truncate the link: " + url);
     }
 
     @Test
     void acceptsARepositoryUrlThatIsAlreadyInFormRatherThanChooserShape() {
-        String url = IssueReportUrl.forIssueForm("https://github.com/MegaMek/mekhq/issues/new", null);
+        String url = IssueReportUrl.forIssueForm("https://github.com/MegaMek/mekhq/issues/new");
 
         assertTrue(url.startsWith("https://github.com/MegaMek/mekhq/issues/new?"), url);
         assertFalse(url.contains("/choose"), url);
     }
 
+    /**
+     * The bug report form now takes files through an {@code upload} element named {@code report-files}, which no
+     * query parameter can fill. The old {@code attached-files} text field no longer exists in any of the templates.
+     */
     @Test
-    void dropsTheAttachmentNoteRatherThanEmittingAnOverlongUrl() {
-        String overlongNote = "z".repeat(10_000);
+    void neverSetsTheRetiredAttachmentField() {
+        String url = IssueReportUrl.forIssueForm(MEGAMEK_ISSUES);
 
-        String url = IssueReportUrl.forIssueForm(MEGAMEK_ISSUES, overlongNote);
-
-        assertFalse(url.contains("attached-files="), "the note should have been dropped, not truncated");
-        assertTrue(url.contains("custom-megamek-version="), "the required fields should survive: " + url);
+        assertFalse(url.contains("attached-files="), "that field was retired when the templates were reworked: " + url);
     }
 
     @Test
     void buildsTheSameFieldSetForEverySuiteRepository() {
-        String megaMekUrl = IssueReportUrl.forIssueForm(MEGAMEK_ISSUES, null);
-        String mekHqUrl = IssueReportUrl.forIssueForm("https://github.com/MegaMek/mekhq/issues/new/choose", null);
+        String megaMekUrl = IssueReportUrl.forIssueForm(MEGAMEK_ISSUES);
+        String mekHqUrl = IssueReportUrl.forIssueForm("https://github.com/MegaMek/mekhq/issues/new/choose");
 
         assertEquals(queryStringOf(megaMekUrl), queryStringOf(mekHqUrl),
               "the three suite repositories share identical issue-form field ids");

@@ -39,7 +39,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.StringJoiner;
 
-import jakarta.annotation.Nullable;
 import megamek.SuiteConstants;
 import megamek.logging.MMLogger;
 
@@ -72,7 +71,6 @@ public final class IssueReportUrl {
     private static final String FIELD_VERSION = "custom-megamek-version";
     private static final String FIELD_OPERATING_SYSTEM = "operating-system";
     private static final String FIELD_JAVA_VERSION = "java-version";
-    private static final String FIELD_ATTACHED_FILES = "attached-files";
 
     /** The suite's repositories disable blank issues, so the template has to be named explicitly. */
     private static final String TEMPLATE_PARAMETER = "template=bug_report.yml";
@@ -81,7 +79,7 @@ public final class IssueReportUrl {
     private static final String CHOOSER_PATH = "/issues/new/choose";
     private static final String FORM_PATH = "/issues/new";
 
-    /** Kept well inside what browsers and GitHub accept, so a long note can never break the link. */
+    /** Kept well inside what browsers and GitHub accept, so the link can never be broken by its own length. */
     private static final int MAX_URL_LENGTH = 6000;
 
     /** The issue links of the three repositories that share the suite bug report template. */
@@ -94,18 +92,15 @@ public final class IssueReportUrl {
     /**
      * Builds a prefilled issue-form URL for one of the repositories that uses the suite bug report template.
      *
-     * <p>If including the attachment note would push the URL past {@link #MAX_URL_LENGTH}, the note is dropped; if
-     * the URL is still too long without it, the plain issue-chooser link is returned instead. A truncated URL is
-     * never produced, since that would land the player on a 404.</p>
+     * <p>If the URL would exceed {@link #MAX_URL_LENGTH} the link is returned exactly as it was given, with no
+     * prefilled fields. A truncated URL is never produced, since that would land the player on a 404.</p>
      *
      * @param repositoryIssuesUrl the repository's issue link, in either the {@code /issues/new/choose} or
      *                            {@code /issues/new} form
-     * @param attachmentNote      a note naming the bug report archive the player just built, or {@code null} when no
-     *                            archive has been created yet
      *
      * @return a URL that opens the issue form with the environment fields populated
      */
-    public static String forIssueForm(String repositoryIssuesUrl, @Nullable String attachmentNote) {
+    public static String forIssueForm(String repositoryIssuesUrl) {
         String formUrl = repositoryIssuesUrl.endsWith(CHOOSER_PATH)
               ? repositoryIssuesUrl.substring(0, repositoryIssuesUrl.length() - CHOOSER_PATH.length()) + FORM_PATH
               : repositoryIssuesUrl;
@@ -114,25 +109,14 @@ public final class IssueReportUrl {
         fields.put(FIELD_VERSION, SuiteConstants.VERSION.toString());
         fields.put(FIELD_OPERATING_SYSTEM, operatingSystemDescription());
         fields.put(FIELD_JAVA_VERSION, javaVersionDescription());
-        if ((attachmentNote != null) && !attachmentNote.isBlank()) {
-            fields.put(FIELD_ATTACHED_FILES, attachmentNote);
-        }
 
         String candidateUrl = assemble(formUrl, fields);
         if (candidateUrl.length() <= MAX_URL_LENGTH) {
             return candidateUrl;
         }
 
-        LOGGER.debug("[BugReport] Prefilled issue URL was {} characters; dropping the attachment note",
-              candidateUrl.length());
-        fields.remove(FIELD_ATTACHED_FILES);
-        candidateUrl = assemble(formUrl, fields);
-        if (candidateUrl.length() <= MAX_URL_LENGTH) {
-            return candidateUrl;
-        }
-
         LOGGER.warn("[BugReport] Could not build a prefilled issue URL within {} characters; "
-              + "falling back to the plain issue chooser", MAX_URL_LENGTH);
+              + "falling back to {} unchanged", MAX_URL_LENGTH, repositoryIssuesUrl);
         return repositoryIssuesUrl;
     }
 

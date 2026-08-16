@@ -92,8 +92,8 @@ public final class IssueReportUrl {
     /**
      * Builds a prefilled issue-form URL for one of the repositories that uses the suite bug report template.
      *
-     * <p>If the URL would exceed {@link #MAX_URL_LENGTH} the plain issue-chooser link is returned instead. A
-     * truncated URL is never produced, since that would land the player on a 404.</p>
+     * <p>If the URL would exceed {@link #MAX_URL_LENGTH} the link is returned exactly as it was given, with no
+     * prefilled fields. A truncated URL is never produced, since that would land the player on a 404.</p>
      *
      * @param repositoryIssuesUrl the repository's issue link, in either the {@code /issues/new/choose} or
      *                            {@code /issues/new} form
@@ -116,7 +116,7 @@ public final class IssueReportUrl {
         }
 
         LOGGER.warn("[BugReport] Could not build a prefilled issue URL within {} characters; "
-              + "falling back to the plain issue chooser", MAX_URL_LENGTH);
+              + "falling back to {} unchanged", MAX_URL_LENGTH, repositoryIssuesUrl);
         return repositoryIssuesUrl;
     }
 

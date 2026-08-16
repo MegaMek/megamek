@@ -152,6 +152,31 @@ class ScatterTest {
         }
     }
 
+    @Test
+    @DisplayName("a scatter reduction shortens the drift of a missed shot instead of cancelling it")
+    void reductionShortensNegativeMarginOfFailure() {
+        // Regression test for #8726: the margin of failure arrives negative, and adding the reduction to it instead
+        // of to its magnitude clamped every Oblique Artilleryman shot to zero hexes, so the round always landed on
+        // the hex it was aimed at.
+        Coords target = new Coords(6, 9);
+        for (int trial = 0; trial < 200; trial++) {
+            ScatterResult result = ScatterMethod.STANDARD.omnidirectional(target, -10, Scatter.SPA_SCATTER_REDUCTION);
+            assertEquals(8, result.distanceHexes(), "missing by 10 with the reduction must drift 8 hexes, not 0");
+        }
+    }
+
+    @Test
+    @DisplayName("a scatter reduction cannot pull a missed shot back onto the target hex unless the miss was narrow")
+    void reductionOnlyReachesZeroOnANarrowMiss() {
+        Coords target = new Coords(6, 9);
+        assertEquals(1, ScatterMethod.STANDARD.omnidirectional(target, -3, Scatter.SPA_SCATTER_REDUCTION)
+              .distanceHexes(), "missing by 3 with the reduction must drift 1 hex");
+        assertEquals(0, ScatterMethod.STANDARD.omnidirectional(target, -2, Scatter.SPA_SCATTER_REDUCTION)
+              .distanceHexes(), "missing by 2 with the reduction must land on the target hex");
+        assertEquals(0, ScatterMethod.STANDARD.omnidirectional(target, -1, Scatter.SPA_SCATTER_REDUCTION)
+              .distanceHexes(), "the reduction must never push the drift below zero");
+    }
+
     /** @return whether {@code hex} lies on one of the six straight-line directions from {@code target} */
     private static boolean isOnStraightLine(Coords target, Coords hex) {
         int distance = target.distance(hex);

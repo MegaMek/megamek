@@ -444,6 +444,18 @@ public class AerospacePathRanker extends BasicPathRanker {
           double fallTolerance, List<Entity> enemies, List<Entity> friends) {
         java.util.TreeSet<RankedPath> ranked = super.rankPaths(movePaths, game, maxRange, fallTolerance,
               enemies, friends);
+        // An overflight attack IS expected damage. The base ranker's damage estimate is pose-based
+        // (shots from the final hex), so a strafe or bombing run that ends past its targets reads
+        // as zero - and the post-processing damage judgment then EVADES the fighter straight
+        // through its own attack run, making every shot illegal ("attacker is evading", the first
+        // strafe hunt's final wall). Raising the ranked path's expected damage to its attack-run
+        // value lets the chooser and the post-processor agree that this path shoots.
+        for (RankedPath candidate : ranked) {
+            double overflightValue = candidate.getScores().getOrDefault("aeroAttackRunCredit", 0.0);
+            if ((overflightValue > 0) && (candidate.getExpectedDamage() <= 0)) {
+                candidate.setExpectedDamage(overflightValue);
+            }
+        }
         try {
             logDebrief(ranked);
         } catch (Exception exception) {
@@ -525,6 +537,25 @@ public class AerospacePathRanker extends BasicPathRanker {
         double strafeRun = chosen.getScores().getOrDefault("aeroStrafeRun", 0.0);
         if (strafeRun > 0) {
             debrief.append(String.format(" | STRAFE WINDOW worth %.0f", strafeRun));
+        } else {
+            // The strafe decision must be visible even when it loses (or never bids): the best
+            // strafe candidate across the whole auction, with what beat it. Diagnosing the first
+            // strafe hunt without this took a path-log excavation.
+            RankedPath bestStrafe = null;
+            for (RankedPath candidate : ranked) {
+                if (candidate.getScores().getOrDefault("aeroStrafeRun", 0.0) > 0.0
+                      && ((bestStrafe == null) || (candidate.getRank() > bestStrafe.getRank()))) {
+                    bestStrafe = candidate;
+                }
+            }
+            if (bestStrafe != null) {
+                debrief.append(String.format(" | best STRAFE candidate: %s worth %.0f lost by %.1f",
+                      describe(bestStrafe),
+                      bestStrafe.getScores().getOrDefault("aeroStrafeRun", 0.0),
+                      chosenRank - bestStrafe.getRank()));
+            } else {
+                debrief.append(" | no strafe candidate bid");
+            }
         }
         DEBRIEF_LOGGER.info(debrief.toString());
     }

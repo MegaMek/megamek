@@ -10016,7 +10016,7 @@ public class TWGameManager extends AbstractGameManager {
         for (EntityAction entityAction : entityActions) {
             if ((entityAction instanceof WeaponAttackAction attack)
                   && attack.isStrafing() && attack.isStrafingFirstShot()) {
-                Report strafeReport = new Report(9605);
+                Report strafeReport = new Report(9610);
                 strafeReport.subject = entity.getId();
                 strafeReport.addDesc(entity);
                 addReport(strafeReport);

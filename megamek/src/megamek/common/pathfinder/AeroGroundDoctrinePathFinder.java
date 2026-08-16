@@ -382,6 +382,16 @@ public class AeroGroundDoctrinePathFinder extends AeroGroundPathFinder {
 
         altitudes.add(OPTIMAL_STRIKE_ALTITUDE);
 
+        // The strafe window. Altitude 3 sits inside both the strafe window (1-3) and the dive-bomb
+        // window (3-5), so one candidate serves both attacks. Offered only when the airframe
+        // carries strafe-eligible guns - the ranker's strafe bid can only buy an altitude that
+        // generation offers (the maneuver-gates lesson, second verse: the first live strafe hunt
+        // watched the movement side see a five-platoon column, roll in astern, and choose altitude
+        // 5, because no strafe-window path ever existed to outbid it).
+        if (hasStrafeEligibleGuns(mover)) {
+            altitudes.add(STRAFE_WINDOW_ALTITUDE);
+        }
+
         // The climb-out candidate: altitude is banked energy and safety margin, refilled between
         // attack runs and spent on dives. Without it the fighter literally cannot generate a climbing
         // path for ground work, and the only direction the attack windows pull is down - a live
@@ -390,8 +400,9 @@ public class AeroGroundDoctrinePathFinder extends AeroGroundPathFinder {
         // available: climb high between runs, drop into the window, climb out again.
         altitudes.add(Math.min(mover.getAltitude() + 2, CLIMB_OUT_CEILING));
 
-        // NoE is deliberately NOT offered. It was inherited as a bombs-aboard candidate, but dive
-        // bombing is illegal below altitude 3 and the bot cannot strafe - the one thing NoE serves.
+        // NoE is deliberately NOT offered. The strafe window candidate above covers gun work at
+        // altitude 3; dropping to 1 buys nothing but the NoE +2 to-hit, the strafing dead-zone
+        // rules, and a ground that catches every failed control roll.
         // A live Cheetah loitered at altitude 1 for five rounds on this candidate, where any failed
         // control roll is the ground, and died there.
 
@@ -400,6 +411,32 @@ public class AeroGroundDoctrinePathFinder extends AeroGroundPathFinder {
             return candidates.subList(0, MAXIMUM_CANDIDATE_ALTITUDES);
         }
         return candidates;
+    }
+
+    /** Inside both the strafe (1-3) and dive-bomb (3-5) windows; the gun-work altitude. */
+    static final int STRAFE_WINDOW_ALTITUDE = 3;
+
+    /**
+     * Whether the airframe carries anything the strafing rules accept: forward-mounted direct-fire
+     * energy (TW p.243). Mirrors the server's own legality test, like the bot-side
+     * {@code AerospacePathRanker.isStrafeEligible} - the server is the canon both copy.
+     */
+    private static boolean hasStrafeEligibleGuns(Entity mover) {
+        for (megamek.common.equipment.WeaponMounted weapon : mover.getWeaponList()) {
+            if (!weapon.canFire() || weapon.isRearMounted()
+                  || (weapon.getLocation() == megamek.common.units.Aero.LOC_AFT)) {
+                continue;
+            }
+            megamek.common.equipment.WeaponType weaponType = weapon.getType();
+            boolean directFireEnergy = (weaponType.hasFlag(megamek.common.equipment.WeaponType.F_DIRECT_FIRE)
+                  && (weaponType.hasFlag(megamek.common.equipment.WeaponType.F_LASER)
+                        || weaponType.hasFlag(megamek.common.equipment.WeaponType.F_PPC)))
+                  || weaponType.hasFlag(megamek.common.equipment.WeaponType.F_FLAMER);
+            if (directFireEnergy) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

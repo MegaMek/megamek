@@ -136,6 +136,39 @@ class AeroGroundDoctrinePathFinderTest {
               "an enemy still to move may be anywhere in its band; matching it now is a guess, not a read");
     }
 
+    /**
+     * The strafe-window candidate (the first strafe hunt's first wall): a fighter with
+     * strafe-eligible energy guns is offered altitude 3 - inside both the strafe and dive-bomb
+     * windows - because the ranker's strafe bid can only buy an altitude generation offers. A
+     * gunless airframe is not (the bare fixture mover already proves the negative in the
+     * unmoved-enemy test above).
+     */
+    @Test
+    void aFighterWithEnergyGunsIsOfferedTheStrafeWindow() {
+        megamek.common.equipment.WeaponType laserType =
+              org.mockito.Mockito.mock(megamek.common.equipment.WeaponType.class);
+        org.mockito.Mockito.when(laserType.hasFlag(megamek.common.equipment.WeaponType.F_DIRECT_FIRE))
+              .thenReturn(true);
+        org.mockito.Mockito.when(laserType.hasFlag(megamek.common.equipment.WeaponType.F_LASER))
+              .thenReturn(true);
+        megamek.common.equipment.WeaponMounted laser =
+              org.mockito.Mockito.mock(megamek.common.equipment.WeaponMounted.class);
+        org.mockito.Mockito.when(laser.canFire()).thenReturn(true);
+        org.mockito.Mockito.when(laser.getType()).thenReturn(laserType);
+        Entity armedMover = org.mockito.Mockito.mock(Entity.class);
+        org.mockito.Mockito.when(armedMover.getWeaponList())
+              .thenReturn(new java.util.ArrayList<>(List.of(laser)));
+        org.mockito.Mockito.when(armedMover.getBoardId()).thenReturn(0);
+        org.mockito.Mockito.when(armedMover.getPosition()).thenReturn(new Coords(10, 10));
+        org.mockito.Mockito.when(armedMover.getAltitude()).thenReturn(5);
+        org.mockito.Mockito.when(armedMover.getGame()).thenReturn(game);
+
+        List<Integer> candidates = finder.candidateAltitudes(armedMover);
+
+        assertTrue(candidates.contains(AeroGroundDoctrinePathFinder.STRAFE_WINDOW_ALTITUDE),
+              "energy guns must buy the strafe-window altitude");
+    }
+
     @Test
     void enemiesOnAnotherBoardAreIgnored() {
         Entity offBoardEnemy = enemyFighter(20, new Coords(20, 20), 3, true);

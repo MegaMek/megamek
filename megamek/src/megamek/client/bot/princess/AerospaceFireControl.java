@@ -199,6 +199,8 @@ public class AerospaceFireControl extends FireControl {
     FiringPlan getStrafePlan(final Entity shooter, final Game game) {
         if (!shooter.isAero() || !shooter.isAirborne() || shooter.isSpheroid()
               || (shooter.getAltitude() < 2) || (shooter.getAltitude() > 3)) {
+            RATION_LOGGER.debug("STRAFE-PLAN {}: out of window (airborne={} alt={})",
+                  shooter.getDisplayName(), shooter.isAirborne(), shooter.getAltitude());
             return null;
         }
         List<WeaponMounted> strafeWeapons = new ArrayList<>();
@@ -210,6 +212,7 @@ public class AerospaceFireControl extends FireControl {
             }
         }
         if (strafeWeapons.isEmpty()) {
+            RATION_LOGGER.debug("STRAFE-PLAN {}: no strafe-eligible weapons", shooter.getDisplayName());
             return null;
         }
         List<Coords> flownLine = new ArrayList<>(shooter.getPassedThrough());
@@ -221,6 +224,8 @@ public class AerospaceFireControl extends FireControl {
             }
         }
         if (bestVictims.isEmpty()) {
+            RATION_LOGGER.debug("STRAFE-PLAN {}: no victims under any window ({} flown hexes)",
+                  shooter.getDisplayName(), flownLine.size());
             return null;
         }
         // The nominal target anchors the auction's value math: the biggest thing under the line.
@@ -238,6 +243,8 @@ public class AerospaceFireControl extends FireControl {
                       false, owner);
                 shot.convertToStrafe(firstShot);
                 if (shot.getProbabilityToHit() <= 0) {
+                    RATION_LOGGER.debug("STRAFE-SHOT {} vs {}: {}", weapon.getName(),
+                          victim.getDisplayName(), shot.getToHit().getDesc());
                     continue;
                 }
                 strafePlan.add(shot);
@@ -245,9 +252,14 @@ public class AerospaceFireControl extends FireControl {
             }
         }
         if (strafePlan.isEmpty()) {
+            RATION_LOGGER.info("STRAFE-PLAN {}: {} victims but every shot impossible",
+                  shooter.getDisplayName(), bestVictims.size());
             return null;
         }
         calculateUtility(strafePlan, calcHeatTolerance(shooter, null), true);
+        RATION_LOGGER.info("STRAFE-PLAN {}: built {} shots on {} victims, utility {}",
+              shooter.getDisplayName(), strafePlan.size(), bestVictims.size(),
+              Math.round(strafePlan.getUtility()));
         return strafePlan;
     }
 

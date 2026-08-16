@@ -35,6 +35,8 @@ package megamek.client.ui.clientGUI;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -65,6 +67,12 @@ public class BugReportDialog {
 
     /** Hazard yellow, for the border that marks out the reporting buttons. */
     private static final Color ATTENTION_COLOR = new Color(255, 204, 0);
+
+    private static final int UNSCALED_REPORT_BUTTON_WIDTH = 260;
+    private static final int UNSCALED_REPORT_BUTTON_HEIGHT = 48;
+
+    /** How much larger the reporting button's text is than the text on the buttons around it. */
+    private static final float REPORT_BUTTON_FONT_FACTOR = 1.4f;
 
     private static final String REPORT_LINK_MM = "https://github.com/MegaMek/megamek/issues/new/choose";
     private static final String REPORT_LINK_MML = "https://github.com/MegaMek/megameklab/issues/new/choose";
@@ -146,6 +154,24 @@ public class BugReportDialog {
     }
 
     /**
+     * Creates the button that does the actual work, sized and coloured so that it reads as the main thing to press.
+     *
+     * <p>It shares the dialog with nine other buttons, all of which merely open a link, so at the default size it
+     * looked like one option among many rather than the step the instructions above it begin with.</p>
+     *
+     * @return the reporting button
+     */
+    private JButton createReportButton() {
+        JButton reportButton = new JButton(packageBugReportAction);
+        reportButton.setBorder(attentionBorder());
+        reportButton.setFont(reportButton.getFont().deriveFont(Font.BOLD,
+              reportButton.getFont().getSize2D() * REPORT_BUTTON_FONT_FACTOR));
+        reportButton.setPreferredSize(new Dimension(UIUtil.scaleForGUI(UNSCALED_REPORT_BUTTON_WIDTH),
+              UIUtil.scaleForGUI(UNSCALED_REPORT_BUTTON_HEIGHT)));
+        return reportButton;
+    }
+
+    /**
      * Lays the buttons out in the order the instructions above them ask the player to use: gather the files first,
      * then go to the repository the problem belongs to.
      */
@@ -155,9 +181,7 @@ public class BugReportDialog {
 
         JPanel gatherFilesRow = new JPanel();
         if (packageBugReportAction != null) {
-            JButton packageButton = new JButton(packageBugReportAction);
-            packageButton.setBorder(attentionBorder());
-            gatherFilesRow.add(packageButton);
+            gatherFilesRow.add(createReportButton());
         } else if (copySystemDataAction != null) {
             // Only worth offering where nothing gathers the files automatically: the archive carries a
             // system-info.txt and the repository buttons fill the same details into the issue form. MegaMekLab and

@@ -74,6 +74,7 @@ import megamek.common.Player;
 import megamek.common.TechConstants;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
+import megamek.common.compute.ArtilleryRange;
 import megamek.common.enums.Gender;
 import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.equipment.EquipmentMode;
@@ -1395,38 +1396,32 @@ public class CustomMekDialog extends AbstractButtonDialog
             // effective range, even if many of the unit's weapons would be out of range
             int maxDistance = 0;
             for (Entity entity : entities) {
-                for (WeaponMounted wep : entity.getWeaponList()) {
-                    WeaponType w = wep.getType();
-                    int nDistance = 0;
-                    if (w.hasFlag(WeaponType.F_ARTILLERY)) {
-                        if (w instanceof ArtilleryBayWeapon) {
-                            // Artillery bays can mix and match, so limit the bay
-                            // to the shortest range of the weapons in it
-                            nDistance = getBayShortestRange(wep);
-                        } else {
-                            // Max TO range in map sheets - 1 for the actual play area
-                            nDistance = (w.getLongRange() - 1);
-                        }
-                    } else if (w.isCapital() || w.isSubCapital()) {
-                        // Capital weapons use their maximum space hex range as the map sheet range
-                        if (w.getMaxRange(wep) == WeaponType.RANGE_EXT) {
-                            nDistance = 50;
-                        }
-                        if (w.getMaxRange(wep) == WeaponType.RANGE_LONG) {
-                            nDistance = 40;
-                        }
-                        if (w.getMaxRange(wep) == WeaponType.RANGE_MED) {
-                            nDistance = 24;
-                        }
-                        if (w.getMaxRange(wep) == WeaponType.RANGE_SHORT) {
-                            nDistance = 12;
-                        }
+                for (WeaponMounted weaponMount : entity.getWeaponList()) {
+                    WeaponType weaponType = weaponMount.getType();
+                    int distanceInHexes = 0;
+                    if (weaponType.hasFlag(WeaponType.F_ARTILLERY)) {
+                        // Artillery bays can mix and match, so limit the bay
+                        // to the shortest range of the weapons in it
+                        int ratedRangeInMapSheets = (weaponType instanceof ArtilleryBayWeapon)
+                              ? getBayShortestRange(weaponMount)
+                              : weaponType.getLongRange();
+                        distanceInHexes = offBoardArtilleryDistance(entity, weaponType, ratedRangeInMapSheets);
+                    } else if (weaponType.isCapital() || weaponType.isSubCapital()) {
+                        // Capital weapons use their maximum space hex range as the map sheet range. The range
+                        // bracket is read once: working it out walks the mount's linked ammo.
+                        int rangeInMapSheets = switch (weaponType.getMaxRange(weaponMount)) {
+                            case WeaponType.RANGE_EXT -> 50;
+                            case WeaponType.RANGE_LONG -> 40;
+                            case WeaponType.RANGE_MED -> 24;
+                            case WeaponType.RANGE_SHORT -> 12;
+                            default -> 0;
+                        };
+                        // Now, convert to hexes
+                        distanceInHexes = rangeInMapSheets * Board.DEFAULT_BOARD_HEIGHT;
                     }
-                    // Now, convert to map sheets
-                    nDistance = nDistance * Board.DEFAULT_BOARD_HEIGHT;
                     // And set our maximum slider hex distance based on the calculations
-                    if (nDistance > maxDistance) {
-                        maxDistance = nDistance;
+                    if (distanceInHexes > maxDistance) {
+                        maxDistance = distanceInHexes;
                     }
                 }
 
@@ -1466,16 +1461,37 @@ public class CustomMekDialog extends AbstractButtonDialog
         }
     }
 
-    private static int getBayShortestRange(WeaponMounted wep) {
+    /**
+     * @param weaponMount the artillery bay to measure
+     *
+     * @return the rated range in map sheets of the shortest-ranged weapon in the bay, since that is as far as the whole
+     *       bay can reach
+     */
+    private static int getBayShortestRange(WeaponMounted weaponMount) {
         int bayShortestRange = 150; // Cruise missile/120
-        for (WeaponMounted bayWeapons : wep.getBayWeapons()) {
-            // Max TO range in map sheets - 1 for the actual play area
-            int currentDistance = (bayWeapons.getType().getLongRange() - 1);
-            if (currentDistance < bayShortestRange) {
-                bayShortestRange = currentDistance;
-            }
+        for (WeaponMounted bayWeapon : weaponMount.getBayWeapons()) {
+            bayShortestRange = Math.min(bayShortestRange, bayWeapon.getType().getLongRange());
         }
         return bayShortestRange;
+    }
+
+    /**
+     * Calculates how far off board a unit may deploy and still reach the play area with an artillery weapon. One map
+     * sheet of the weapon's range is reserved for the play area itself. A crew with the Oblique Artilleryman ability
+     * reaches ten percent farther (CamOps p.78, 5th printing), and ten percent of a map sheet is a fraction of one, so
+     * the calculation is made in hexes.
+     *
+     * @param entity                the unit being deployed off board
+     * @param weaponType            the type of the artillery weapon being measured
+     * @param ratedRangeInMapSheets the artillery weapon's rated range, in map sheets
+     *
+     * @return the greatest distance off board the unit may deploy, in hexes
+     */
+    private static int offBoardArtilleryDistance(Entity entity, WeaponType weaponType, int ratedRangeInMapSheets) {
+        int rangeInHexes = ArtilleryRange.extendedRangeInHexes(ratedRangeInMapSheets,
+              ArtilleryRange.isExtendedByObliqueArtilleryman(entity, weaponType));
+        // The play area itself takes up one map sheet of the weapon's reach
+        return Math.max(rangeInHexes - Board.DEFAULT_BOARD_HEIGHT, 0);
     }
 
     @Override

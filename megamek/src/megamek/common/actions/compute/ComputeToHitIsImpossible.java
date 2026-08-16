@@ -53,6 +53,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.CrossBoardAttackHelper;
+import megamek.common.compute.ArtilleryRange;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.enums.ChargeLevel;
@@ -1178,31 +1179,9 @@ class ComputeToHitIsImpossible {
                     return Messages.getString("WeaponAttackAction.FlakIndirect");
                 }
 
-                int boardRange = (int) Math.ceil(distance / 17f);
-                int maxRange = weaponType.getLongRange();
-                // Capital/subcapital missiles have a board range equal to their max space hex
-                // range
-                if (weaponType instanceof CapitalMissileWeapon) {
-                    if (weaponType.getMaxRange(weapon) == WeaponType.RANGE_EXT) {
-                        maxRange = 50;
-                    }
-                    if (weaponType.getMaxRange(weapon) == WeaponType.RANGE_LONG) {
-                        maxRange = 40;
-                    }
-                    if (weaponType.getMaxRange(weapon) == WeaponType.RANGE_MED) {
-                        maxRange = 24;
-                    }
-                    if (weaponType.getMaxRange(weapon) == WeaponType.RANGE_SHORT) {
-                        maxRange = 12;
-                    }
-                }
-
-                // Apply gravity mod here, per TO: AR pg 155
-                maxRange = (int) (Math.floor((double) (maxRange * Board.DEFAULT_BOARD_HEIGHT) /
-                      game.getPlanetaryConditions().getGravity()) / 17f);
-
-                // Maximum range is measured in map sheets
-                if (boardRange > maxRange) {
+                // Measured in hexes rather than map sheets, since Oblique Artilleryman extends the weapon's rated
+                // range by a fraction of a map sheet
+                if (distance > ArtilleryRange.maximumIndirectRangeInHexes(game, attacker, weaponType, weapon)) {
                     return Messages.getString("WeaponAttackAction.OutOfRange");
                 }
                 // Indirect (=targeting phase) shots cannot be made at less than 17 hexes range unless

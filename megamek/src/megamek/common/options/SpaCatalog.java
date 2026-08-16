@@ -97,7 +97,7 @@ public final class SpaCatalog {
           entry(OptionsConstants.PILOT_MELEE_SPECIALIST, FULL_MINOR_GAPS, 77, "1"),
           entry(OptionsConstants.GUNNERY_MULTI_TASKER, FULL, 78, "2"),
           entry("natural_grace", NOT_IMPLEMENTED, 78, "3"),
-          entry(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY, PARTIAL, 78, "1"),
+          entry(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY, FULL, 78, "1"),
           entry(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER, FULL, 78, "1"),
           entry(OptionsConstants.GUNNERY_RANGE_MASTER, FULL, 78, "2"),
           entry("ride_the_wash", NOT_IMPLEMENTED, 79, "4"),

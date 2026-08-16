@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
@@ -248,6 +249,18 @@ public class EiImplantTest {
             MiscType miscType = (MiscType) eiInterface;
             assertTrue(miscType.hasFlag(MiscType.F_EI_INTERFACE),
                   "EI Interface should have F_EI_INTERFACE flag");
+        }
+
+        @Test
+        @DisplayName("EI Interface running mode has a state-form display name")
+        void eiInterfaceRunningModeHasStateFormDisplayName() {
+            // The internal mode name is the imperative from the cartoon and is what MUL files persist. The player
+            // facing label has to read as a state, because the unit display shows it as "(<mode>)" and
+            // "(next turn, <mode>)". A missing or mis-escaped bundle key silently falls back to the internal name,
+            // which is what this pins down.
+            assertEquals("Enhanced Imaging Initiated",
+                  EquipmentMode.getMode(MiscType.MODE_EI_ON).getDisplayableName(),
+                  "The EI running mode must resolve to its localized state-form name, not the internal name");
         }
 
         @Test

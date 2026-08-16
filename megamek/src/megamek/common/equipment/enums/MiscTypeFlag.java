@@ -127,6 +127,7 @@ public enum MiscTypeFlag implements EquipmentFlag {
     F_TALON,
     F_SPIKES,
     F_COMMUNICATIONS,
+    F_SHIELD,
 
     F_PPC_CAPACITOR,
 

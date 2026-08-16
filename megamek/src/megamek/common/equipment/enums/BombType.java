@@ -721,8 +721,7 @@ public class BombType extends AmmoType {
         bomb.setInternalName(BombTypeEnum.RLP.getInternalName());
         bomb.addLookupName("RL-P 10 (Bomb)");
         bomb.damagePerShot = 1;
-        // This works but is fragile
-        bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB).or(WeaponType.F_PROTOTYPE);
+        bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB);
         bomb.rackSize = 10;
         bomb.ammoType = AmmoTypeEnum.RL_BOMB;
         bomb.bombType = BombTypeEnum.RLP;

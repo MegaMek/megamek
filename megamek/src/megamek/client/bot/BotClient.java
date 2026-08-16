@@ -186,9 +186,9 @@ public abstract class BotClient extends Client {
                 LOGGER.info("{}: calc thread finished for phase {}, turnIndex {}",
                       getName(), getGame().getPhase(), game.getTurnIndex());
             } catch (Throwable t) {
-                LOGGER.error(t, "{}: calc thread DIED for phase {}, turnIndex {} - the server is now "
-                      + "waiting on a move this bot will never send",
-                      getName(), getGame().getPhase(), game.getTurnIndex());
+                LOGGER.error(t, getName() + ": calc thread DIED for phase " + getGame().getPhase()
+                      + ", turnIndex " + game.getTurnIndex()
+                      + " - the server is now waiting on a move this bot will never send");
             }
         }
     }

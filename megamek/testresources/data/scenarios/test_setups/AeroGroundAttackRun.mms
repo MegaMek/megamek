@@ -29,8 +29,9 @@ description: >
   loiter at altitude waiting for an air target that does not exist. Compare an ai: PRINCESS run against an
   ai: CASPAR one - the behaviour here should look much the same either way.
 
-map:
-  file: unofficial/Cakefish/General/50x50 Grass QRF Airbase.board
+# Board copied into testresources (qrf_airbase_50x50.board) so this scenario loads in CI, where
+# the external data boards are not checked out - ScenarioBombLoadingTest depends on it.
+map: qrf_airbase_50x50.board
 
 options:
   on:

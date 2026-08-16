@@ -614,7 +614,7 @@ public class AerospaceFireControl extends FireControl {
     @Override
     protected int guessDistance(final Entity shooter, final EntityState shooterState, final Targetable target,
           final EntityState targetState, final Game game) {
-        if (!isAtmosphericAirToAir(shooter, shooterState, target, targetState, game)) {
+        if (!isAtmosphericAirToAir(shooter, shooterState, target, targetState)) {
             return super.guessDistance(shooter, shooterState, target, targetState, game);
         }
         return AerospaceGeometry.effectiveRange(AerospaceVenue.of(game, shooter),
@@ -629,7 +629,7 @@ public class AerospaceFireControl extends FireControl {
      */
     private boolean isBlockedByDeadZone(Entity shooter, EntityState shooterState, Targetable target,
           EntityState targetState, Game game) {
-        if (!isAtmosphericAirToAir(shooter, shooterState, target, targetState, game)) {
+        if (!isAtmosphericAirToAir(shooter, shooterState, target, targetState)) {
             return false;
         }
         return AerospaceGeometry.deadZoneBlocksAttack(AerospaceVenue.of(game, shooter),
@@ -645,7 +645,7 @@ public class AerospaceFireControl extends FireControl {
      * substituted by the engine in ways this geometry does not model.</p>
      */
     private boolean isAtmosphericAirToAir(Entity shooter, EntityState shooterState, Targetable target,
-          EntityState targetState, Game game) {
+          EntityState targetState) {
         if ((shooterState.getPosition() == null) || (targetState.getPosition() == null)) {
             return false;
         }

@@ -4130,9 +4130,8 @@ public class Princess extends BotClient {
         try {
             return embellishPath(path, expectedDamage);
         } catch (Exception exception) {
-            LOGGER.error(exception,
-                  "Post-processing failed for {}; using the un-embellished path rather than losing the turn",
-                  path.getEntity().getDisplayName());
+            LOGGER.error(exception, "Post-processing failed for " + path.getEntity().getDisplayName()
+                  + "; using the un-embellished path rather than losing the turn");
             return path;
         }
     }

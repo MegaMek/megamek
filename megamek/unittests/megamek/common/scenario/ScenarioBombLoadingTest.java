@@ -75,6 +75,6 @@ class ScenarioBombLoadingTest {
             assertTrue(shots > 0, entity.getShortName() + " mounts " + bombs.size()
                   + " ground bomb(s) but has " + shots + " shots - the racks are empty");
         }
-        assertFalse(!sawBomber, "the scenario's fighters must mount their declared bombs at all");
+        assertTrue(sawBomber, "the scenario's fighters must mount their declared bombs at all");
     }
 }

@@ -90,7 +90,7 @@ class VerticalLiftoffRulesTest {
         AeroSpaceFighter winded = new AeroSpaceFighter();
         winded.setOriginalWalkMP(1);
         assertFalse(winded.canTakeOffVertically(),
-              "one thrust point cannot pay the two the liftoff costs");
+              "one thrust point cannot pay the two-point liftoff cost");
 
         AeroSpaceFighter exact = new AeroSpaceFighter();
         exact.setOriginalWalkMP(2);

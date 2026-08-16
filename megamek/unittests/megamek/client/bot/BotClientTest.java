@@ -57,7 +57,7 @@ class BotClientTest {
         }
 
         @Override
-        public void die() {
+        public synchronized void die() {
             dismissedItself = true;
         }
 

@@ -496,9 +496,13 @@ class TWDamageManagerTest {
     void testEnhancedImagingDoesNotApplyToBattleArmor() throws EntityLoadingException {
         BattleArmor battleArmor = loadBA("Elemental BA [Laser] (Sqd5).blk");
         equipWithRunningEnhancedImaging(battleArmor);
+        assertTrue(battleArmor.hasActiveEiCockpit(), "Test setup: the squad must have EI running");
         HitData hit = new HitData(BattleArmor.LOC_TROOPER_1);
 
-        Vector<Report> reports = manager.damageEntity(new DamageInfo(battleArmor, hit, 20));
+        // damageIS drives the internal-damage flag the feedback roll keys off, so this is the battle armor case
+        // that would have rolled before the Mek restriction was restored
+        Vector<Report> reports = manager.damageEntity(
+              new DamageInfo(battleArmor, hit, 5, false, DamageType.NONE, true));
 
         assertEquals(0, countReports(reports, REPORT_EI_FEEDBACK),
               "EI feedback damage is limited to Mek units, so battle armor must not roll for it");

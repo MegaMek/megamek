@@ -407,11 +407,14 @@ public class TestTank extends TestEntity {
             }
         }
 
-        if (tank.getMovementMode() == EntityMovementMode.WIGE) {
-            if (tank.getWalkMP() < 5) {
-                buff.append("WiGE must have at least 5 Cruise MP.\n");
-                correct = false;
-            }
+        if (tank.getMovementMode() == EntityMovementMode.WIGE && tank.getWalkMP() < 5) {
+            buff.append("WiGE must have at least 5 Cruise MP.\n");
+            correct = false;
+        }
+
+        if (!tank.isTrailer() && tank.hasNoControlSystems()) {
+            buff.append("Non-trailer must have control systems.\n");
+            correct = false;
         }
 
         if (showFailedEquip() && hasFailedEquipment(buff)) {

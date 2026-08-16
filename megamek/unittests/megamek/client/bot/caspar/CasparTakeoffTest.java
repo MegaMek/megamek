@@ -35,6 +35,7 @@ package megamek.client.bot.caspar;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import megamek.client.bot.princess.AerospaceGroundOrder;
 
 /**
  * The runway-versus-vertical takeoff decision: a clear runway wins outright (nothing to roll), a
@@ -72,19 +73,19 @@ class CasparTakeoffTest {
     @Test
     void dropShipsMoveBetweenDomainsOnlyOnOrders() {
         assertEquals(true, Caspar.groundOrderPermitsTakeoff(true,
-                    megamek.client.bot.princess.AerospaceGroundOrder.AUTO),
+                    AerospaceGroundOrder.AUTO),
               "a grounded fighter's job is always to get back up - no order needed");
         assertEquals(false, Caspar.groundOrderPermitsTakeoff(false,
-                    megamek.client.bot.princess.AerospaceGroundOrder.AUTO),
+                    AerospaceGroundOrder.AUTO),
               "a DropShip under AUTO holds its domain");
         assertEquals(true, Caspar.groundOrderPermitsTakeoff(false,
-                    megamek.client.bot.princess.AerospaceGroundOrder.LIFT_OFF),
+                    AerospaceGroundOrder.LIFT_OFF),
               "LIFT_OFF is the order that sends the ships up");
         assertEquals(true, Caspar.groundOrderRequestsLanding(false,
-                    megamek.client.bot.princess.AerospaceGroundOrder.LAND),
+                    AerospaceGroundOrder.LAND),
               "LAND is the order that brings the ships down");
         assertEquals(false, Caspar.groundOrderRequestsLanding(true,
-                    megamek.client.bot.princess.AerospaceGroundOrder.LAND),
+                    AerospaceGroundOrder.LAND),
               "fighters never land on orders - their doctrine flies them");
     }
 

@@ -45,6 +45,18 @@ import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
+import org.mockito.Mockito;
+import java.util.ArrayList;
+import java.util.Vector;
+import java.util.Set;
+import java.util.LinkedHashSet;
+import java.util.List;
+import megamek.common.ToHitData;
+import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.BombMounted;
 import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
@@ -322,7 +334,7 @@ class AerospacePathRankerTest {
         when(maneuverStep.getType()).thenReturn(megamek.common.enums.MoveStepType.MANEUVER);
         MovePath path = mock(MovePath.class);
         when(path.getEntity()).thenReturn(fighter);
-        when(path.getStepVector()).thenReturn(new java.util.Vector<>(java.util.List.of(maneuverStep)));
+        when(path.getStepVector()).thenReturn(new Vector<>(List.of(maneuverStep)));
 
         // The engine says the roll is an 11 - say, piloting 6 plus two avionics hits the flat
         // formula never sees. 2d6 >= 11 is 3/36.
@@ -496,18 +508,18 @@ class AerospacePathRankerTest {
         Entity mek = groundMek(mekHex);
 
         MovePath run = mock(MovePath.class);
-        AeroSpaceFighter bomber = strikeFighterOver(java.util.Set.of(mekHex), 3, run);
-        megamek.common.equipment.BombMounted bomb = mock(megamek.common.equipment.BombMounted.class);
-        megamek.common.equipment.enums.BombType bombType = mock(megamek.common.equipment.enums.BombType.class);
+        AeroSpaceFighter bomber = strikeFighterOver(Set.of(mekHex), 3, run);
+        BombMounted bomb = mock(BombMounted.class);
+        BombType bombType = mock(BombType.class);
         when(bombType.getDamagePerShot()).thenReturn(10);
-        when(bombType.getBombType()).thenReturn(megamek.common.equipment.enums.BombType.BombTypeEnum.HE);
+        when(bombType.getBombType()).thenReturn(BombType.BombTypeEnum.HE);
         when(bomb.getType()).thenReturn(bombType);
-        when(bomber.getBombs(megamek.common.equipment.AmmoType.F_GROUND_BOMB))
-              .thenReturn(new java.util.ArrayList<>(java.util.List.of(bomb)));
-        when(bomber.getWeaponList()).thenReturn(new java.util.ArrayList<>());
+        when(bomber.getBombs(AmmoType.F_GROUND_BOMB))
+              .thenReturn(new ArrayList<>(List.of(bomb)));
+        when(bomber.getWeaponList()).thenReturn(new ArrayList<>());
 
         ranker.lastPostAttackAltitudeForTest(3);
-        ranker.scoreAttackRuns(run, game, java.util.List.of(mek), AerospaceVenue.GROUND_MAP);
+        ranker.scoreAttackRuns(run, game, List.of(mek), AerospaceVenue.GROUND_MAP);
 
         assertEquals(1, ranker.lastPostAttackAltitudeForTest(),
               "bombing from altitude 3 means exiting at 1 - the risk terms must know");
@@ -524,24 +536,24 @@ class AerospacePathRankerTest {
     void aClusterBombAimsAtTheSeamOfABoxFormation() {
         Game game = groundGame();
         // The box: four meks at the corners, 2-hex spacing.
-        java.util.List<Entity> lance = java.util.List.of(
+        List<Entity> lance = List.of(
               groundMek(new Coords(20, 20)), groundMek(new Coords(22, 20)),
               groundMek(new Coords(20, 22)), groundMek(new Coords(22, 22)));
 
-        megamek.common.equipment.BombMounted cluster = mock(megamek.common.equipment.BombMounted.class);
-        megamek.common.equipment.enums.BombType clusterType =
-              mock(megamek.common.equipment.enums.BombType.class);
+        BombMounted cluster = mock(BombMounted.class);
+        BombType clusterType =
+              mock(BombType.class);
         when(clusterType.getBombType())
-              .thenReturn(megamek.common.equipment.enums.BombType.BombTypeEnum.CLUSTER);
+              .thenReturn(BombType.BombTypeEnum.CLUSTER);
         when(cluster.getType()).thenReturn(clusterType);
 
         // Run A: the line crosses only a corner mek's hex - one target in the footprint.
         MovePath cornerRun = mock(MovePath.class);
         AeroSpaceFighter bomber = strikeFighterOver(
-              java.util.Set.of(new Coords(20, 19), new Coords(20, 20)), 5, cornerRun);
-        when(bomber.getBombs(megamek.common.equipment.AmmoType.F_GROUND_BOMB))
-              .thenReturn(new java.util.ArrayList<>(java.util.List.of(cluster)));
-        when(bomber.getWeaponList()).thenReturn(new java.util.ArrayList<>());
+              Set.of(new Coords(20, 19), new Coords(20, 20)), 5, cornerRun);
+        when(bomber.getBombs(AmmoType.F_GROUND_BOMB))
+              .thenReturn(new ArrayList<>(List.of(cluster)));
+        when(bomber.getWeaponList()).thenReturn(new ArrayList<>());
         ranker.lastPostAttackAltitudeForTest(5);
         ranker.scoreAttackRuns(cornerRun, game, lance, AerospaceVenue.GROUND_MAP);
         double cornerCredit = ranker.lastAttackRunCreditForTest();
@@ -550,7 +562,7 @@ class AerospacePathRankerTest {
         // front meks. Same bomb, same bomber, better geometry.
         ranker.resetGroundCountersForTest();
         MovePath seamRun = mock(MovePath.class);
-        strikeFighterOver(java.util.Set.of(new Coords(21, 19), new Coords(21, 20)), 5, seamRun);
+        strikeFighterOver(Set.of(new Coords(21, 19), new Coords(21, 20)), 5, seamRun);
         when(seamRun.getEntity()).thenReturn(bomber);
         ranker.lastPostAttackAltitudeForTest(5);
         ranker.scoreAttackRuns(seamRun, game, lance, AerospaceVenue.GROUND_MAP);
@@ -611,12 +623,12 @@ class AerospacePathRankerTest {
         return mek;
     }
 
-    private AeroSpaceFighter strikeFighterOver(java.util.Set<Coords> flownHexes, int finalAltitude,
+    private AeroSpaceFighter strikeFighterOver(Set<Coords> flownHexes, int finalAltitude,
           MovePath path) {
         AeroSpaceFighter fighter = mock(AeroSpaceFighter.class);
         when(fighter.getBoardId()).thenReturn(0);
-        when(fighter.getBombs(megamek.common.equipment.AmmoType.F_GROUND_BOMB))
-              .thenReturn(new java.util.ArrayList<>());
+        when(fighter.getBombs(AmmoType.F_GROUND_BOMB))
+              .thenReturn(new ArrayList<>());
         when(path.getEntity()).thenReturn(fighter);
         when(path.getFinalAltitude()).thenReturn(finalAltitude);
         when(path.getCoordsSet()).thenReturn(flownHexes);
@@ -653,19 +665,19 @@ class AerospacePathRankerTest {
         Entity mek = groundMek(mekHex);
 
         MovePath overflight = mock(MovePath.class);
-        AeroSpaceFighter fighter = strikeFighterOver(java.util.Set.of(new Coords(19, 20), mekHex), 4,
+        AeroSpaceFighter fighter = strikeFighterOver(Set.of(new Coords(19, 20), mekHex), 4,
               overflight);
         // Guns that can deliver at close range: use the ranker's own damage table via a real value.
-        when(fighter.getWeaponList()).thenReturn(new java.util.ArrayList<>());
+        when(fighter.getWeaponList()).thenReturn(new ArrayList<>());
 
-        ranker.scoreAttackRuns(overflight, game, java.util.List.of(mek), AerospaceVenue.GROUND_MAP);
+        ranker.scoreAttackRuns(overflight, game, List.of(mek), AerospaceVenue.GROUND_MAP);
         int overflownInWindow = ranker.lastOverflownTargets;
 
         ranker.lastGroundTargets = 0;
         ranker.lastOverflownTargets = 0;
         MovePath tooHigh = mock(MovePath.class);
-        strikeFighterOver(java.util.Set.of(new Coords(19, 20), mekHex), 9, tooHigh);
-        ranker.scoreAttackRuns(tooHigh, game, java.util.List.of(mek), AerospaceVenue.GROUND_MAP);
+        strikeFighterOver(Set.of(new Coords(19, 20), mekHex), 9, tooHigh);
+        ranker.scoreAttackRuns(tooHigh, game, List.of(mek), AerospaceVenue.GROUND_MAP);
         int overflownTooHigh = ranker.lastOverflownTargets;
 
         assertEquals(1, overflownInWindow, "over the mek at altitude 4, the run is on");
@@ -684,12 +696,12 @@ class AerospacePathRankerTest {
         Entity mek = groundMek(mekHex);
 
         MovePath path = mock(MovePath.class);
-        AeroSpaceFighter fighter = strikeFighterOver(java.util.Set.of(new Coords(5, 5)), 5, path);
-        when(fighter.getWeaponList()).thenReturn(new java.util.ArrayList<>());
+        AeroSpaceFighter fighter = strikeFighterOver(Set.of(new Coords(5, 5)), 5, path);
+        when(fighter.getWeaponList()).thenReturn(new ArrayList<>());
         when(path.getFinalVelocity()).thenReturn(3);
         when(path.getGame()).thenReturn(game);
 
-        ranker.scoreAttackRuns(path, game, java.util.List.of(mek), AerospaceVenue.GROUND_MAP);
+        ranker.scoreAttackRuns(path, game, List.of(mek), AerospaceVenue.GROUND_MAP);
 
         assertTrue(ranker.lastGroundTargets > 0, "the mek must register as a ground target");
         // The penalty itself scales with the fighter's close-range damage, which is zero for this
@@ -783,32 +795,32 @@ class AerospacePathRankerTest {
     @Test
     void groundAttackThreatIsBombsPlusGunsPerTurn() {
         Game game = mock(Game.class);
-        AerospacePathRanker spyRanker = org.mockito.Mockito.spy(ranker);
+        AerospacePathRanker spyRanker = Mockito.spy(ranker);
         // The range-bracket helpers read game options the mock does not carry; both are incidental
         // to what this test pins (the bombs + guns sum), so stub them alongside the gun estimate.
-        org.mockito.Mockito.doReturn(false).when(spyRanker).isExtremeRange(game);
-        org.mockito.Mockito.doReturn(false).when(spyRanker).isLosRange(game);
-        org.mockito.Mockito.doReturn(12.0).when(spyRanker)
-              .getMaxDamageAtRange(org.mockito.Mockito.any(Entity.class),
-                    org.mockito.Mockito.anyInt(),
-                    org.mockito.Mockito.anyBoolean(), org.mockito.Mockito.anyBoolean());
+        Mockito.doReturn(false).when(spyRanker).isExtremeRange(game);
+        Mockito.doReturn(false).when(spyRanker).isLosRange(game);
+        Mockito.doReturn(12.0).when(spyRanker)
+              .getMaxDamageAtRange(Mockito.any(Entity.class),
+                    Mockito.anyInt(),
+                    Mockito.anyBoolean(), Mockito.anyBoolean());
 
-        megamek.common.equipment.enums.BombType heType =
-              mock(megamek.common.equipment.enums.BombType.class);
+        BombType heType =
+              mock(BombType.class);
         when(heType.getDamagePerShot()).thenReturn(10);
-        megamek.common.equipment.BombMounted bombOne =
-              mock(megamek.common.equipment.BombMounted.class);
+        BombMounted bombOne =
+              mock(BombMounted.class);
         when(bombOne.getType()).thenReturn(heType);
-        megamek.common.equipment.BombMounted bombTwo =
-              mock(megamek.common.equipment.BombMounted.class);
+        BombMounted bombTwo =
+              mock(BombMounted.class);
         when(bombTwo.getType()).thenReturn(heType);
 
         Entity ladenBomber = mock(Entity.class);
-        when(ladenBomber.getBombs(megamek.common.equipment.AmmoType.F_GROUND_BOMB))
-              .thenReturn(new java.util.ArrayList<>(java.util.List.of(bombOne, bombTwo)));
+        when(ladenBomber.getBombs(AmmoType.F_GROUND_BOMB))
+              .thenReturn(new ArrayList<>(List.of(bombOne, bombTwo)));
         Entity emptyRacks = mock(Entity.class);
-        when(emptyRacks.getBombs(megamek.common.equipment.AmmoType.F_GROUND_BOMB))
-              .thenReturn(new java.util.ArrayList<>());
+        when(emptyRacks.getBombs(AmmoType.F_GROUND_BOMB))
+              .thenReturn(new ArrayList<>());
 
         assertEquals(32.0, spyRanker.groundAttackThreatPerTurn(ladenBomber, game), 0.001,
               "two ten-point bombs plus twelve points of guns is a 32-point threat");
@@ -880,14 +892,14 @@ class AerospacePathRankerTest {
     @Test
     void anAsternRollInOutbidsAHeadOnPassOverTheSameTarget() {
         assertEquals(AerospacePathRanker.REAR_APPROACH_MULTIPLIER,
-              AerospacePathRanker.approachMultiplier(megamek.common.ToHitData.SIDE_REAR), 0.001);
+              AerospacePathRanker.approachMultiplier(ToHitData.SIDE_REAR), 0.001);
         assertEquals(AerospacePathRanker.REAR_APPROACH_MULTIPLIER,
-              AerospacePathRanker.approachMultiplier(megamek.common.ToHitData.SIDE_REAR_LEFT), 0.001,
+              AerospacePathRanker.approachMultiplier(ToHitData.SIDE_REAR_LEFT), 0.001,
               "the rear quarter arcs price as rear");
         assertEquals(AerospacePathRanker.SIDE_APPROACH_MULTIPLIER,
-              AerospacePathRanker.approachMultiplier(megamek.common.ToHitData.SIDE_LEFT), 0.001);
+              AerospacePathRanker.approachMultiplier(ToHitData.SIDE_LEFT), 0.001);
         assertEquals(1.0,
-              AerospacePathRanker.approachMultiplier(megamek.common.ToHitData.SIDE_FRONT), 0.001,
+              AerospacePathRanker.approachMultiplier(ToHitData.SIDE_FRONT), 0.001,
               "a head-on pass earns no premium");
 
         // And through the full attack-run scoring: identical gun runs over the same mek, one
@@ -897,8 +909,8 @@ class AerospacePathRankerTest {
         Coords fromBehind = new Coords(20, 21);
         Coords fromAhead = new Coords(20, 19);
         Entity mek = groundMek(mekHex);
-        when(mek.sideTable(fromBehind)).thenReturn(megamek.common.ToHitData.SIDE_REAR);
-        when(mek.sideTable(fromAhead)).thenReturn(megamek.common.ToHitData.SIDE_FRONT);
+        when(mek.sideTable(fromBehind)).thenReturn(ToHitData.SIDE_REAR);
+        when(mek.sideTable(fromAhead)).thenReturn(ToHitData.SIDE_FRONT);
 
         double asternCredit = gunRunCredit(game, mek, fromBehind, mekHex);
         double headOnCredit = gunRunCredit(game, mek, fromAhead, mekHex);
@@ -911,26 +923,26 @@ class AerospacePathRankerTest {
     private double gunRunCredit(Game game, Entity mek, Coords entryHex, Coords mekHex) {
         MovePath run = mock(MovePath.class);
         AeroSpaceFighter fighter = strikeFighterOver(
-              new java.util.LinkedHashSet<>(java.util.List.of(entryHex, mekHex)), 3, run);
-        when(fighter.getWeaponList()).thenReturn(new java.util.ArrayList<>());
-        java.util.Vector<megamek.common.moves.MoveStep> steps = new java.util.Vector<>();
-        for (Coords position : java.util.List.of(entryHex, mekHex)) {
-            megamek.common.moves.MoveStep step = mock(megamek.common.moves.MoveStep.class);
+              new LinkedHashSet<>(List.of(entryHex, mekHex)), 3, run);
+        when(fighter.getWeaponList()).thenReturn(new ArrayList<>());
+        Vector<MoveStep> steps = new Vector<>();
+        for (Coords position : List.of(entryHex, mekHex)) {
+            MoveStep step = mock(MoveStep.class);
             when(step.getPosition()).thenReturn(position);
             steps.add(step);
         }
         when(run.getStepVector()).thenReturn(steps);
 
-        AerospacePathRanker spyRanker = org.mockito.Mockito.spy(ranker);
-        org.mockito.Mockito.doReturn(false).when(spyRanker).isExtremeRange(game);
-        org.mockito.Mockito.doReturn(false).when(spyRanker).isLosRange(game);
-        org.mockito.Mockito.doReturn(10.0).when(spyRanker)
-              .getMaxDamageAtRange(org.mockito.Mockito.any(Entity.class),
-                    org.mockito.Mockito.anyInt(),
-                    org.mockito.Mockito.anyBoolean(), org.mockito.Mockito.anyBoolean());
+        AerospacePathRanker spyRanker = Mockito.spy(ranker);
+        Mockito.doReturn(false).when(spyRanker).isExtremeRange(game);
+        Mockito.doReturn(false).when(spyRanker).isLosRange(game);
+        Mockito.doReturn(10.0).when(spyRanker)
+              .getMaxDamageAtRange(Mockito.any(Entity.class),
+                    Mockito.anyInt(),
+                    Mockito.anyBoolean(), Mockito.anyBoolean());
         spyRanker.resetGroundCountersForTest();
         spyRanker.lastPostAttackAltitudeForTest(3);
-        spyRanker.scoreAttackRuns(run, game, java.util.List.of(mek), AerospaceVenue.GROUND_MAP);
+        spyRanker.scoreAttackRuns(run, game, List.of(mek), AerospaceVenue.GROUND_MAP);
         return spyRanker.lastAttackRunCreditForTest();
     }
 
@@ -942,21 +954,21 @@ class AerospacePathRankerTest {
     @Test
     void strafingWindowsAreStraightConsecutiveAndAtMostFive() {
         // A straight six-hex column: windows of length 1-5 exist, no window of 6.
-        java.util.List<Coords> straight = new java.util.ArrayList<>();
+        List<Coords> straight = new ArrayList<>();
         for (int y = 10; y < 16; y++) {
             straight.add(new Coords(20, y));
         }
-        java.util.List<java.util.List<Coords>> windows = AerospacePathRanker.straightWindows(straight, 5);
+        List<List<Coords>> windows = AerospacePathRanker.straightWindows(straight, 5);
         int longest = 0;
-        for (java.util.List<Coords> window : windows) {
+        for (List<Coords> window : windows) {
             longest = Math.max(longest, window.size());
         }
         assertEquals(5, longest, "a six-hex straight line caps at the five-hex window");
 
         // A dogleg: 3 hexes south then a bend. No straight window crosses the bend.
-        java.util.List<Coords> dogleg = java.util.List.of(new Coords(20, 10), new Coords(20, 11),
+        List<Coords> dogleg = List.of(new Coords(20, 10), new Coords(20, 11),
               new Coords(20, 12), new Coords(21, 12));
-        for (java.util.List<Coords> window : AerospacePathRanker.straightWindows(dogleg, 5)) {
+        for (List<Coords> window : AerospacePathRanker.straightWindows(dogleg, 5)) {
             assertTrue(window.size() <= 3
                         || !(window.contains(new Coords(20, 10)) && window.contains(new Coords(21, 12))),
                   "no straight window may span the bend");
@@ -973,45 +985,45 @@ class AerospacePathRankerTest {
     void aStrafeOverTheColumnOutbidsAStrikeOnOneMek() {
         Game game = groundGame();
         // Wasp - gap - Dervish - gap - BattleMaster, walking a column at x=20.
-        java.util.List<Coords> line = new java.util.ArrayList<>();
+        List<Coords> line = new ArrayList<>();
         for (int y = 9; y < 16; y++) {
             line.add(new Coords(20, y));
         }
-        java.util.List<Entity> column = new java.util.ArrayList<>();
+        List<Entity> column = new ArrayList<>();
         for (int y : new int[] { 10, 12, 14 }) {
             Entity mek = groundMek(new Coords(20, y));
-            when(mek.sideTable(org.mockito.Mockito.any(Coords.class)))
-                  .thenReturn(megamek.common.ToHitData.SIDE_FRONT);
+            when(mek.sideTable(Mockito.any(Coords.class)))
+                  .thenReturn(ToHitData.SIDE_FRONT);
             column.add(mek);
         }
         MovePath run = mock(MovePath.class);
-        AeroSpaceFighter fighter = strikeFighterOver(new java.util.LinkedHashSet<>(line), 3, run);
-        java.util.Vector<megamek.common.moves.MoveStep> steps = new java.util.Vector<>();
+        AeroSpaceFighter fighter = strikeFighterOver(new LinkedHashSet<>(line), 3, run);
+        Vector<MoveStep> steps = new Vector<>();
         for (Coords position : line) {
-            megamek.common.moves.MoveStep step = mock(megamek.common.moves.MoveStep.class);
+            MoveStep step = mock(MoveStep.class);
             when(step.getPosition()).thenReturn(position);
             steps.add(step);
         }
         when(run.getStepVector()).thenReturn(steps);
         // A 10-damage strafe-eligible laser battery: the same guns price the strike.
-        megamek.common.equipment.WeaponType laserType = mock(megamek.common.equipment.WeaponType.class);
-        when(laserType.hasFlag(megamek.common.equipment.WeaponType.F_DIRECT_FIRE)).thenReturn(true);
-        when(laserType.hasFlag(megamek.common.equipment.WeaponType.F_LASER)).thenReturn(true);
+        WeaponType laserType = mock(WeaponType.class);
+        when(laserType.hasFlag(WeaponType.F_DIRECT_FIRE)).thenReturn(true);
+        when(laserType.hasFlag(WeaponType.F_LASER)).thenReturn(true);
         when(laserType.getDamage()).thenReturn(10);
-        megamek.common.equipment.WeaponMounted laser = mock(megamek.common.equipment.WeaponMounted.class);
+        WeaponMounted laser = mock(WeaponMounted.class);
         when(laser.canFire()).thenReturn(true);
         when(laser.isRearMounted()).thenReturn(false);
         when(laser.getLocation()).thenReturn(1);
         when(laser.getType()).thenReturn(laserType);
-        when(fighter.getWeaponList()).thenReturn(new java.util.ArrayList<>(java.util.List.of(laser)));
+        when(fighter.getWeaponList()).thenReturn(new ArrayList<>(List.of(laser)));
 
-        AerospacePathRanker spyRanker = org.mockito.Mockito.spy(ranker);
-        org.mockito.Mockito.doReturn(false).when(spyRanker).isExtremeRange(game);
-        org.mockito.Mockito.doReturn(false).when(spyRanker).isLosRange(game);
-        org.mockito.Mockito.doReturn(10.0).when(spyRanker)
-              .getMaxDamageAtRange(org.mockito.Mockito.any(Entity.class),
-                    org.mockito.Mockito.anyInt(),
-                    org.mockito.Mockito.anyBoolean(), org.mockito.Mockito.anyBoolean());
+        AerospacePathRanker spyRanker = Mockito.spy(ranker);
+        Mockito.doReturn(false).when(spyRanker).isExtremeRange(game);
+        Mockito.doReturn(false).when(spyRanker).isLosRange(game);
+        Mockito.doReturn(10.0).when(spyRanker)
+              .getMaxDamageAtRange(Mockito.any(Entity.class),
+                    Mockito.anyInt(),
+                    Mockito.anyBoolean(), Mockito.anyBoolean());
         spyRanker.resetGroundCountersForTest();
         spyRanker.lastPostAttackAltitudeForTest(3);
         spyRanker.scoreAttackRuns(run, game, column, AerospaceVenue.GROUND_MAP);
@@ -1038,19 +1050,19 @@ class AerospacePathRankerTest {
         when(crew.isAirborne()).thenReturn(false);
 
         MovePath run = mock(MovePath.class);
-        AeroSpaceFighter fighter = strikeFighterOver(java.util.Set.of(crewHex), 3, run);
-        when(fighter.getWeaponList()).thenReturn(new java.util.ArrayList<>());
+        AeroSpaceFighter fighter = strikeFighterOver(Set.of(crewHex), 3, run);
+        when(fighter.getWeaponList()).thenReturn(new ArrayList<>());
 
-        AerospacePathRanker spyRanker = org.mockito.Mockito.spy(ranker);
-        org.mockito.Mockito.doReturn(false).when(spyRanker).isExtremeRange(game);
-        org.mockito.Mockito.doReturn(false).when(spyRanker).isLosRange(game);
-        org.mockito.Mockito.doReturn(10.0).when(spyRanker)
-              .getMaxDamageAtRange(org.mockito.Mockito.any(Entity.class),
-                    org.mockito.Mockito.anyInt(),
-                    org.mockito.Mockito.anyBoolean(), org.mockito.Mockito.anyBoolean());
+        AerospacePathRanker spyRanker = Mockito.spy(ranker);
+        Mockito.doReturn(false).when(spyRanker).isExtremeRange(game);
+        Mockito.doReturn(false).when(spyRanker).isLosRange(game);
+        Mockito.doReturn(10.0).when(spyRanker)
+              .getMaxDamageAtRange(Mockito.any(Entity.class),
+                    Mockito.anyInt(),
+                    Mockito.anyBoolean(), Mockito.anyBoolean());
         spyRanker.resetGroundCountersForTest();
         spyRanker.lastPostAttackAltitudeForTest(3);
-        spyRanker.scoreAttackRuns(run, game, java.util.List.of(crew), AerospaceVenue.GROUND_MAP);
+        spyRanker.scoreAttackRuns(run, game, List.of(crew), AerospaceVenue.GROUND_MAP);
 
         assertEquals(0.0, spyRanker.lastAttackRunCreditForTest(), 0.001,
               "a crash-site pilot the guns refuse to shoot must earn the movement side nothing");
@@ -1073,19 +1085,19 @@ class AerospacePathRankerTest {
         when(crashed.isAirborne()).thenReturn(false);
 
         MovePath run = mock(MovePath.class);
-        AeroSpaceFighter fighter = strikeFighterOver(java.util.Set.of(crashSite), 3, run);
-        when(fighter.getWeaponList()).thenReturn(new java.util.ArrayList<>());
+        AeroSpaceFighter fighter = strikeFighterOver(Set.of(crashSite), 3, run);
+        when(fighter.getWeaponList()).thenReturn(new ArrayList<>());
 
-        AerospacePathRanker spyRanker = org.mockito.Mockito.spy(ranker);
-        org.mockito.Mockito.doReturn(false).when(spyRanker).isExtremeRange(game);
-        org.mockito.Mockito.doReturn(false).when(spyRanker).isLosRange(game);
-        org.mockito.Mockito.doReturn(10.0).when(spyRanker)
-              .getMaxDamageAtRange(org.mockito.Mockito.any(Entity.class),
-                    org.mockito.Mockito.anyInt(),
-                    org.mockito.Mockito.anyBoolean(), org.mockito.Mockito.anyBoolean());
+        AerospacePathRanker spyRanker = Mockito.spy(ranker);
+        Mockito.doReturn(false).when(spyRanker).isExtremeRange(game);
+        Mockito.doReturn(false).when(spyRanker).isLosRange(game);
+        Mockito.doReturn(10.0).when(spyRanker)
+              .getMaxDamageAtRange(Mockito.any(Entity.class),
+                    Mockito.anyInt(),
+                    Mockito.anyBoolean(), Mockito.anyBoolean());
         spyRanker.resetGroundCountersForTest();
         spyRanker.lastPostAttackAltitudeForTest(3);
-        spyRanker.scoreAttackRuns(run, game, java.util.List.of(crashed), AerospaceVenue.GROUND_MAP);
+        spyRanker.scoreAttackRuns(run, game, List.of(crashed), AerospaceVenue.GROUND_MAP);
 
         assertTrue(spyRanker.lastAttackRunCreditForTest() > 0,
               "a helpless crashed fighter under the flown line must earn the attack-run credit");
@@ -1094,18 +1106,18 @@ class AerospacePathRankerTest {
     /** TW p.243's weapon clause, mirrored: energy yes, ammo no. */
     @Test
     void onlyDirectFireEnergyWeaponsAreStrafeEligible() {
-        megamek.common.equipment.WeaponType laser = mock(megamek.common.equipment.WeaponType.class);
-        when(laser.hasFlag(megamek.common.equipment.WeaponType.F_DIRECT_FIRE)).thenReturn(true);
-        when(laser.hasFlag(megamek.common.equipment.WeaponType.F_LASER)).thenReturn(true);
+        WeaponType laser = mock(WeaponType.class);
+        when(laser.hasFlag(WeaponType.F_DIRECT_FIRE)).thenReturn(true);
+        when(laser.hasFlag(WeaponType.F_LASER)).thenReturn(true);
         assertTrue(AerospacePathRanker.isStrafeEligible(laser), "a direct-fire laser strafes");
 
-        megamek.common.equipment.WeaponType autocannon = mock(megamek.common.equipment.WeaponType.class);
-        when(autocannon.hasFlag(megamek.common.equipment.WeaponType.F_DIRECT_FIRE)).thenReturn(true);
+        WeaponType autocannon = mock(WeaponType.class);
+        when(autocannon.hasFlag(WeaponType.F_DIRECT_FIRE)).thenReturn(true);
         assertFalse(AerospacePathRanker.isStrafeEligible(autocannon),
               "an autocannon needs ammo and may not strafe");
 
-        megamek.common.equipment.WeaponType flamer = mock(megamek.common.equipment.WeaponType.class);
-        when(flamer.hasFlag(megamek.common.equipment.WeaponType.F_FLAMER)).thenReturn(true);
+        WeaponType flamer = mock(WeaponType.class);
+        when(flamer.hasFlag(WeaponType.F_FLAMER)).thenReturn(true);
         assertTrue(AerospacePathRanker.isStrafeEligible(flamer), "flamers are in per TW p.243");
     }
 

@@ -48,6 +48,8 @@ import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
+import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.units.IAero;
 import megamek.logging.MMLogger;
 
@@ -422,16 +424,16 @@ public class AeroGroundDoctrinePathFinder extends AeroGroundPathFinder {
      * {@code AerospacePathRanker.isStrafeEligible} - the server is the canon both copy.
      */
     private static boolean hasStrafeEligibleGuns(Entity mover) {
-        for (megamek.common.equipment.WeaponMounted weapon : mover.getWeaponList()) {
+        for (WeaponMounted weapon : mover.getWeaponList()) {
             if (!weapon.canFire() || weapon.isRearMounted()
-                  || (weapon.getLocation() == megamek.common.units.Aero.LOC_AFT)) {
+                  || (weapon.getLocation() == Aero.LOC_AFT)) {
                 continue;
             }
-            megamek.common.equipment.WeaponType weaponType = weapon.getType();
-            boolean directFireEnergy = (weaponType.hasFlag(megamek.common.equipment.WeaponType.F_DIRECT_FIRE)
-                  && (weaponType.hasFlag(megamek.common.equipment.WeaponType.F_LASER)
-                        || weaponType.hasFlag(megamek.common.equipment.WeaponType.F_PPC)))
-                  || weaponType.hasFlag(megamek.common.equipment.WeaponType.F_FLAMER);
+            WeaponType weaponType = weapon.getType();
+            boolean directFireEnergy = (weaponType.hasFlag(WeaponType.F_DIRECT_FIRE)
+                  && (weaponType.hasFlag(WeaponType.F_LASER)
+                        || weaponType.hasFlag(WeaponType.F_PPC)))
+                  || weaponType.hasFlag(WeaponType.F_FLAMER);
             if (directFireEnergy) {
                 return true;
             }

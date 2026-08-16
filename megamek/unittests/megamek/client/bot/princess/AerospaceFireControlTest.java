@@ -35,6 +35,7 @@ package megamek.client.bot.princess;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import megamek.common.Hex;
 import megamek.common.ToHitData;
@@ -42,6 +43,11 @@ import megamek.common.board.Board;
 import megamek.common.board.BoardType;
 import megamek.common.board.Coords;
 import megamek.common.equipment.WeaponMounted;
+import org.mockito.Mockito;
+import java.util.List;
+import megamek.common.equipment.enums.BombType;
+import megamek.common.equipment.BombLoadout;
+import megamek.common.equipment.BombMounted;
 import megamek.common.game.Game;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.AeroSpaceFighter;
@@ -180,8 +186,8 @@ class AerospaceFireControlTest {
      */
     @Test
     void salvoIsSizedToTheVictimAndChosenByType() {
-        megamek.common.equipment.BombLoadout tenHE = new megamek.common.equipment.BombLoadout();
-        tenHE.addBombs(megamek.common.equipment.enums.BombType.BombTypeEnum.HE, 10);
+        BombLoadout tenHE = new BombLoadout();
+        tenHE.addBombs(BombType.BombTypeEnum.HE, 10);
         assertEquals(7, AerospaceFireControl.rationSelection(tenHE, 0.77, 50).getTotalBombs(),
               "a light mek asks for a fraction of the rack");
         assertEquals(10, AerospaceFireControl.rationSelection(tenHE, 0.77, 300).getTotalBombs(),
@@ -189,20 +195,20 @@ class AerospaceFireControlTest {
         assertEquals(1, AerospaceFireControl.rationSelection(tenHE, 0.95, 1).getTotalBombs(),
               "never fewer than one damaging bomb");
 
-        megamek.common.equipment.BombLoadout mixed = new megamek.common.equipment.BombLoadout();
-        mixed.addBombs(megamek.common.equipment.enums.BombType.BombTypeEnum.HE, 5);
-        mixed.addBombs(megamek.common.equipment.enums.BombType.BombTypeEnum.CLUSTER, 5);
-        megamek.common.equipment.BombLoadout pick = AerospaceFireControl.rationSelection(mixed, 0.8, 30);
-        assertEquals(4, pick.getCount(megamek.common.equipment.enums.BombType.BombTypeEnum.HE),
+        BombLoadout mixed = new BombLoadout();
+        mixed.addBombs(BombType.BombTypeEnum.HE, 5);
+        mixed.addBombs(BombType.BombTypeEnum.CLUSTER, 5);
+        BombLoadout pick = AerospaceFireControl.rationSelection(mixed, 0.8, 30);
+        assertEquals(4, pick.getCount(BombType.BombTypeEnum.HE),
               "the heavy ordnance funds the kill first");
-        assertEquals(0, pick.getCount(megamek.common.equipment.enums.BombType.BombTypeEnum.CLUSTER),
+        assertEquals(0, pick.getCount(BombType.BombTypeEnum.CLUSTER),
               "the cluster bombs stay racked for softer work");
 
-        megamek.common.equipment.BombLoadout withTag = new megamek.common.equipment.BombLoadout();
-        withTag.addBombs(megamek.common.equipment.enums.BombType.BombTypeEnum.TAG, 2);
-        withTag.addBombs(megamek.common.equipment.enums.BombType.BombTypeEnum.HE, 2);
+        BombLoadout withTag = new BombLoadout();
+        withTag.addBombs(BombType.BombTypeEnum.TAG, 2);
+        withTag.addBombs(BombType.BombTypeEnum.HE, 2);
         assertEquals(0, AerospaceFireControl.rationSelection(withTag, 0.8, 100)
-                    .getCount(megamek.common.equipment.enums.BombType.BombTypeEnum.TAG),
+                    .getCount(BombType.BombTypeEnum.TAG),
               "zero-damage ordnance is never released as generic tonnage");
     }
 
@@ -221,7 +227,7 @@ class AerospaceFireControlTest {
         Entity left = groundMek(setup.game(), 10, new Coords(20, 20));
         Entity right = groundMek(setup.game(), 11, new Coords(22, 20));
         Entity distant = groundMek(setup.game(), 12, new Coords(30, 30));
-        java.util.List<Entity> enemies = java.util.List.of(left, right, distant);
+        List<Entity> enemies = List.of(left, right, distant);
         left.initializeInternal(10, megamek.common.units.Mek.LOC_CENTER_TORSO);
         right.initializeInternal(6, megamek.common.units.Mek.LOC_CENTER_TORSO);
         int leftHitPoints = left.getTotalArmor() + left.getTotalInternal();
@@ -229,32 +235,32 @@ class AerospaceFireControlTest {
         assertTrue((leftHitPoints > 0) && (leftHitPoints != rightHitPoints),
               "fixture meks need distinct nonzero hit points or the sums prove nothing");
 
-        megamek.common.equipment.BombMounted cluster =
-              mock(megamek.common.equipment.BombMounted.class);
-        megamek.common.equipment.enums.BombType clusterType =
-              mock(megamek.common.equipment.enums.BombType.class);
-        org.mockito.Mockito.when(clusterType.getBombType())
-              .thenReturn(megamek.common.equipment.enums.BombType.BombTypeEnum.CLUSTER);
-        org.mockito.Mockito.when(cluster.getType()).thenReturn(clusterType);
+        BombMounted cluster =
+              mock(BombMounted.class);
+        BombType clusterType =
+              mock(BombType.class);
+        when(clusterType.getBombType())
+              .thenReturn(BombType.BombTypeEnum.CLUSTER);
+        when(cluster.getType()).thenReturn(clusterType);
 
         assertEquals(leftHitPoints + rightHitPoints, AerospaceFireControl.footprintHitPoints(
-                    java.util.List.of(cluster), seam, enemies),
+                    List.of(cluster), seam, enemies),
               "cluster rings reach both flanking meks and nothing else");
 
-        megamek.common.equipment.BombMounted highExplosive =
-              mock(megamek.common.equipment.BombMounted.class);
-        megamek.common.equipment.enums.BombType heType =
-              mock(megamek.common.equipment.enums.BombType.class);
-        org.mockito.Mockito.when(heType.getBombType())
-              .thenReturn(megamek.common.equipment.enums.BombType.BombTypeEnum.HE);
-        org.mockito.Mockito.when(heType.getDamagePerShot()).thenReturn(10);
-        org.mockito.Mockito.when(highExplosive.getType()).thenReturn(heType);
+        BombMounted highExplosive =
+              mock(BombMounted.class);
+        BombType heType =
+              mock(BombType.class);
+        when(heType.getBombType())
+              .thenReturn(BombType.BombTypeEnum.HE);
+        when(heType.getDamagePerShot()).thenReturn(10);
+        when(highExplosive.getType()).thenReturn(heType);
 
         assertEquals(0, AerospaceFireControl.footprintHitPoints(
-                    java.util.List.of(highExplosive), seam, enemies),
+                    List.of(highExplosive), seam, enemies),
               "HE on an empty seam hex funds nothing - the drop stays minimal");
         assertEquals(leftHitPoints, AerospaceFireControl.footprintHitPoints(
-                    java.util.List.of(highExplosive), left.getPosition(), enemies),
+                    List.of(highExplosive), left.getPosition(), enemies),
               "HE on an occupied hex funds exactly that one victim");
     }
 

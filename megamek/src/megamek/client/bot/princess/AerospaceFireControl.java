@@ -54,6 +54,8 @@ import megamek.common.rolls.TargetRoll;
 import java.util.Map;
 
 import megamek.common.units.Entity;
+import megamek.common.units.EjectedCrew;
+import megamek.common.units.Aero;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
@@ -206,7 +208,7 @@ public class AerospaceFireControl extends FireControl {
         List<WeaponMounted> strafeWeapons = new ArrayList<>();
         for (WeaponMounted weapon : shooter.getWeaponList()) {
             if (weapon.canFire() && !weapon.isRearMounted()
-                  && (weapon.getLocation() != megamek.common.units.Aero.LOC_AFT)
+                  && (weapon.getLocation() != Aero.LOC_AFT)
                   && AerospacePathRanker.isStrafeEligible(weapon.getType())) {
                 strafeWeapons.add(weapon);
             }
@@ -270,7 +272,7 @@ public class AerospaceFireControl extends FireControl {
             for (Entity unit : game.getEntitiesVector(hex, shooter.getPassedThroughBoardId())) {
                 if (unit.getOwner().isEnemyOf(shooter.getOwner()) && !unit.isAirborne()
                       && !unit.isDestroyed()
-                      && !(unit instanceof megamek.common.units.EjectedCrew)
+                      && !(unit instanceof EjectedCrew)
                       && !((unit instanceof Infantry) && Compute.isInBuilding(game, unit))) {
                     victims.add(unit);
                 }
@@ -300,7 +302,7 @@ public class AerospaceFireControl extends FireControl {
             // counting their hit points here would misprice drops (and the ranker excludes them
             // from attack runs for the same both-halves reason).
             if (enemy.getOwner().isEnemyOf(shooter.getOwner()) && !enemy.isAirborne()
-                  && !(enemy instanceof megamek.common.units.EjectedCrew)
+                  && !(enemy instanceof EjectedCrew)
                   && (enemy.getPosition() != null) && (enemy.getBoardId() == shooter.getBoardId())
                   && !enemy.isDestroyed()) {
                 enemies.add(enemy);
@@ -438,7 +440,7 @@ public class AerospaceFireControl extends FireControl {
             }
             int payloadDamage = 0;
             for (BombLoadout loadout : info.getAction().getBombPayloads().values()) {
-                for (java.util.Map.Entry<BombType.BombTypeEnum, Integer> entry : loadout.entrySet()) {
+                for (Map.Entry<BombType.BombTypeEnum, Integer> entry : loadout.entrySet()) {
                     released += entry.getValue();
                     payloadDamage += BombType.createBombByType(entry.getKey()).getDamagePerShot()
                           * entry.getValue();
@@ -504,7 +506,7 @@ public class AerospaceFireControl extends FireControl {
             // Combine the internal and external racks, choose type-aware, then write back per rack.
             BombLoadout combined = new BombLoadout();
             for (BombLoadout loadout : payloads.values()) {
-                for (java.util.Map.Entry<BombType.BombTypeEnum, Integer> entry : loadout.entrySet()) {
+                for (Map.Entry<BombType.BombTypeEnum, Integer> entry : loadout.entrySet()) {
                     combined.addBombs(entry.getKey(), entry.getValue());
                 }
             }
@@ -515,7 +517,7 @@ public class AerospaceFireControl extends FireControl {
                   info.getProbabilityToHit(), effectiveHitPoints);
             int released = selection.getTotalBombs();
             for (BombLoadout loadout : payloads.values()) {
-                for (java.util.Map.Entry<BombType.BombTypeEnum, Integer> entry : loadout.entrySet()) {
+                for (Map.Entry<BombType.BombTypeEnum, Integer> entry : loadout.entrySet()) {
                     int grant = Math.min(entry.getValue(), selection.getCount(entry.getKey()));
                     selection.addBombs(entry.getKey(), -grant);
                     entry.setValue(grant);
@@ -537,14 +539,14 @@ public class AerospaceFireControl extends FireControl {
      */
     static BombLoadout rationSelection(BombLoadout available, double hitChance, int effectiveHitPoints) {
         double odds = Math.max(0.05, hitChance);
-        List<java.util.Map.Entry<BombType.BombTypeEnum, Integer>> byDamage =
+        List<Map.Entry<BombType.BombTypeEnum, Integer>> byDamage =
               new ArrayList<>(available.entrySet());
         byDamage.sort((a, b) -> Integer.compare(
               BombType.createBombByType(b.getKey()).getDamagePerShot(),
               BombType.createBombByType(a.getKey()).getDamagePerShot()));
         BombLoadout selection = new BombLoadout();
         double funded = 0;
-        for (java.util.Map.Entry<BombType.BombTypeEnum, Integer> entry : byDamage) {
+        for (Map.Entry<BombType.BombTypeEnum, Integer> entry : byDamage) {
             int perBomb = BombType.createBombByType(entry.getKey()).getDamagePerShot();
             if (perBomb <= 0) {
                 continue;

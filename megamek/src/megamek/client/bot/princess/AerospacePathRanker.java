@@ -35,6 +35,14 @@ package megamek.client.bot.princess;
 import java.util.ArrayList;
 import java.util.HashMap;
 import megamek.common.ToHitData;
+import java.util.TreeSet;
+import megamek.logging.MMLogger;
+import megamek.common.units.EjectedCrew;
+import megamek.common.weapons.bayWeapons.PulseLaserBayWeapon;
+import megamek.common.weapons.bayWeapons.PPCBayWeapon;
+import megamek.common.weapons.bayWeapons.LaserBayWeapon;
+import megamek.common.equipment.WeaponType;
+import megamek.common.units.Aero;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -440,9 +448,9 @@ public class AerospacePathRanker extends BasicPathRanker {
      * aero turn, greppable by DEBRIEF. Every engagement gets its debrief, and the data is the story.</p>
      */
     @Override
-    public java.util.TreeSet<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange,
+    public TreeSet<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange,
           double fallTolerance, List<Entity> enemies, List<Entity> friends) {
-        java.util.TreeSet<RankedPath> ranked = super.rankPaths(movePaths, game, maxRange, fallTolerance,
+        TreeSet<RankedPath> ranked = super.rankPaths(movePaths, game, maxRange, fallTolerance,
               enemies, friends);
         // An overflight attack IS expected damage. The base ranker's damage estimate is pose-based
         // (shots from the final hex), so a strafe or bombing run that ends past its targets reads
@@ -464,10 +472,10 @@ public class AerospacePathRanker extends BasicPathRanker {
         return ranked;
     }
 
-    private static final megamek.logging.MMLogger DEBRIEF_LOGGER =
-          megamek.logging.MMLogger.create(AerospacePathRanker.class);
+    private static final MMLogger DEBRIEF_LOGGER =
+          MMLogger.create(AerospacePathRanker.class);
 
-    private void logDebrief(java.util.TreeSet<RankedPath> ranked) {
+    private void logDebrief(TreeSet<RankedPath> ranked) {
         if (ranked.isEmpty()) {
             return;
         }
@@ -1233,7 +1241,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         if (path.getStepVector() == null) {
             return line;
         }
-        for (megamek.common.moves.MoveStep step : path.getStepVector()) {
+        for (MoveStep step : path.getStepVector()) {
             Coords position = step.getPosition();
             if ((position != null) && (line.isEmpty() || !line.getLast().equals(position))) {
                 line.add(position);
@@ -1275,7 +1283,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         double total = 0;
         for (WeaponMounted weapon : mover.getWeaponList()) {
             if (weapon.canFire() && !weapon.isRearMounted()
-                  && (weapon.getLocation() != megamek.common.units.Aero.LOC_AFT)
+                  && (weapon.getLocation() != Aero.LOC_AFT)
                   && isStrafeEligible(weapon.getType())) {
                 total += weapon.getType().getDamage();
             }
@@ -1284,14 +1292,14 @@ public class AerospacePathRanker extends BasicPathRanker {
     }
 
     /** The TW p.243 weapon test: direct-fire lasers and PPCs, flamers, and energy bays. */
-    static boolean isStrafeEligible(megamek.common.equipment.WeaponType weaponType) {
-        boolean directFireEnergy = (weaponType.hasFlag(megamek.common.equipment.WeaponType.F_DIRECT_FIRE)
-              && (weaponType.hasFlag(megamek.common.equipment.WeaponType.F_LASER)
-                    || weaponType.hasFlag(megamek.common.equipment.WeaponType.F_PPC)))
-              || weaponType.hasFlag(megamek.common.equipment.WeaponType.F_FLAMER);
-        boolean energyBay = (weaponType instanceof megamek.common.weapons.bayWeapons.LaserBayWeapon)
-              || (weaponType instanceof megamek.common.weapons.bayWeapons.PPCBayWeapon)
-              || (weaponType instanceof megamek.common.weapons.bayWeapons.PulseLaserBayWeapon);
+    static boolean isStrafeEligible(WeaponType weaponType) {
+        boolean directFireEnergy = (weaponType.hasFlag(WeaponType.F_DIRECT_FIRE)
+              && (weaponType.hasFlag(WeaponType.F_LASER)
+                    || weaponType.hasFlag(WeaponType.F_PPC)))
+              || weaponType.hasFlag(WeaponType.F_FLAMER);
+        boolean energyBay = (weaponType instanceof LaserBayWeapon)
+              || (weaponType instanceof PPCBayWeapon)
+              || (weaponType instanceof PulseLaserBayWeapon);
         return directFireEnergy || energyBay;
     }
 
@@ -1315,7 +1323,7 @@ public class AerospacePathRanker extends BasicPathRanker {
         // while live enemy fighters flew unchallenged (the 47-round game of 2026-08-15). The two
         // halves must agree on what a target is.
         return !enemy.isAirborne()
-              && !(enemy instanceof megamek.common.units.EjectedCrew)
+              && !(enemy instanceof EjectedCrew)
               && (enemy.getPosition() != null)
               && (enemy.getBoardId() == mover.getBoardId())
               && !enemy.isOffBoard()

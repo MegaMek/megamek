@@ -38,6 +38,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.Vector;
 
 import megamek.common.Hex;
@@ -176,6 +177,7 @@ public class LRMHandlerSemiGuidedTest {
 
         AmmoType ammoType = mock(AmmoType.class);
         doReturn(AmmoType.AmmoTypeEnum.LRM).when(ammoType).getAmmoType();
+        doReturn(EnumSet.of(AmmoType.Munitions.M_SEMIGUIDED)).when(ammoType).getMunitionType();
         AmmoMounted ammo = mock(AmmoMounted.class);
         doReturn(ammoType).when(ammo).getType();
         doReturn(12).when(ammo).getUsableShotsLeft();

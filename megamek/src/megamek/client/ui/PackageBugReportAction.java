@@ -34,7 +34,6 @@
 package megamek.client.ui;
 
 import java.awt.Component;
-import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -62,6 +61,7 @@ import megamek.client.ui.util.UIUtil;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BugReportBundle;
+import megamek.common.util.IssueReportUrl;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
@@ -314,39 +314,35 @@ public class PackageBugReportAction extends AbstractAction {
             }
             message.append("</ul>");
         }
+        message.append("<p>").append(I18N.get("package.result.next")).append("</p>");
         message.append("</body></html>");
 
-        Object[] options = { I18N.get("package.result.openFolder"), I18N.get("package.result.copyFile"),
+        Object[] options = { I18N.get("mm.text"), I18N.get("package.result.copyFile"),
                              I18N.get("package.result.close") };
         int choice = JOptionPane.showOptionDialog(parent, message.toString(), I18N.get("package.result.title"),
               JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
         if (choice == 0) {
-            openContainingFolder(result.archiveFile());
+            openIssueForm(result.archiveFile());
         } else if (choice == 1) {
             copyToClipboard(result.archiveFile());
         }
     }
 
     /**
-     * Opens the folder holding the archive in the system file manager.
+     * Opens the MegaMek issue form, with the archive already on the clipboard.
      *
-     * <p>{@code Desktop.browseFileDirectory} would select the file itself, but it throws
-     * {@link UnsupportedOperationException} on Windows, so the containing folder is opened instead.</p>
+     * <p>The archive is copied without being asked for because this button closes the dialog, which would otherwise
+     * leave the player at the GitHub upload box with the file still sitting in a folder they would have to go and
+     * find. Pasting is then the whole of the remaining work.</p>
      *
-     * @param archiveFile the archive whose folder should be shown
+     * @param archiveFile the archive the player has just built
      */
-    private static void openContainingFolder(File archiveFile) {
-        File containingFolder = archiveFile.getParentFile();
-        if ((containingFolder == null) || !Desktop.isDesktopSupported()) {
-            LOGGER.warn("[BugReport] Cannot open the containing folder on this platform");
-            return;
-        }
-        try {
-            Desktop.getDesktop().open(containingFolder);
-        } catch (Exception exception) {
-            LOGGER.error(exception, "[BugReport] Could not open {}", containingFolder.getPath());
-        }
+    private static void openIssueForm(File archiveFile) {
+        copyToClipboard(archiveFile);
+        String issueFormUrl = IssueReportUrl.forIssueForm(IssueReportUrl.MEGAMEK_ISSUES_URL, archiveFile.getName());
+        LOGGER.info("[BugReport] Opening the issue form for {}", archiveFile.getName());
+        UIUtil.browse(issueFormUrl);
     }
 
     /**

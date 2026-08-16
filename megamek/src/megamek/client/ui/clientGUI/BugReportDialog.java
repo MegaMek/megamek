@@ -86,9 +86,6 @@ public class BugReportDialog {
     /** How much larger the reporting button's text is than the text on the buttons around it. */
     private static final float REPORT_BUTTON_FONT_FACTOR = 1.4f;
 
-    private static final String REPORT_LINK_MM = "https://github.com/MegaMek/megamek/issues/new/choose";
-    private static final String REPORT_LINK_MML = "https://github.com/MegaMek/megameklab/issues/new/choose";
-    private static final String REPORT_LINK_MHQ = "https://github.com/MegaMek/mekhq/issues/new/choose";
     private static final String REPORT_LINK_MM_DATA = "https://github.com/MegaMek/mm-data/issues/new";
 
     private final Window parent;
@@ -168,6 +165,16 @@ public class BugReportDialog {
     }
 
     /**
+     * @param labelKey  the message key holding the button's label
+     * @param issuesUrl the repository's plain issue link, shown in the tooltip
+     *
+     * @return a button opening that repository's issue form with the environment fields already filled in
+     */
+    private static UrlButton prefilledIssueButton(String labelKey, String issuesUrl) {
+        return new UrlButton(I18N.get(labelKey), IssueReportUrl.forIssueForm(issuesUrl, null), issuesUrl);
+    }
+
+    /**
      * Lays the buttons out in the order the instructions above them ask the player to use: gather the files first,
      * then go to the repository the problem belongs to.
      */
@@ -188,12 +195,9 @@ public class BugReportDialog {
         // The three repositories that use the suite bug report template get their environment fields filled in for
         // the player; mm-data has no such template, so its link is left alone.
         JPanel repositoryRow = new JPanel();
-        repositoryRow.add(new UrlButton(I18N.get("mm.text"), IssueReportUrl.forIssueForm(REPORT_LINK_MM, null),
-              REPORT_LINK_MM));
-        repositoryRow.add(new UrlButton(I18N.get("mml.text"), IssueReportUrl.forIssueForm(REPORT_LINK_MML, null),
-              REPORT_LINK_MML));
-        repositoryRow.add(new UrlButton(I18N.get("mhq.text"), IssueReportUrl.forIssueForm(REPORT_LINK_MHQ, null),
-              REPORT_LINK_MHQ));
+        repositoryRow.add(prefilledIssueButton("mm.text", IssueReportUrl.MEGAMEK_ISSUES_URL));
+        repositoryRow.add(prefilledIssueButton("mml.text", IssueReportUrl.MEGAMEKLAB_ISSUES_URL));
+        repositoryRow.add(prefilledIssueButton("mhq.text", IssueReportUrl.MEKHQ_ISSUES_URL));
         repositoryRow.add(new UrlButton(I18N.get("mmData.text"), REPORT_LINK_MM_DATA));
 
         JComponent rootPanel = new JPanel(new GridLayout(3, 1, 0, 8));

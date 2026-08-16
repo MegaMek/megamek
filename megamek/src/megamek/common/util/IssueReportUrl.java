@@ -84,6 +84,11 @@ public final class IssueReportUrl {
     /** Kept well inside what browsers and GitHub accept, so a long note can never break the link. */
     private static final int MAX_URL_LENGTH = 6000;
 
+    /** The issue links of the three repositories that share the suite bug report template. */
+    public static final String MEGAMEK_ISSUES_URL = "https://github.com/MegaMek/megamek/issues/new/choose";
+    public static final String MEGAMEKLAB_ISSUES_URL = "https://github.com/MegaMek/megameklab/issues/new/choose";
+    public static final String MEKHQ_ISSUES_URL = "https://github.com/MegaMek/mekhq/issues/new/choose";
+
     private IssueReportUrl() {}
 
     /**

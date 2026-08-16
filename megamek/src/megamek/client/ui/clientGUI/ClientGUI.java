@@ -826,6 +826,7 @@ public class ClientGUI extends AbstractClientGUI
     protected void initializeFrame() {
         super.initializeFrame();
         menuBar = CommonMenuBar.getMenuBarForGame();
+        menuBar.setClientSupplier(() -> client);
         frame.setJMenuBar(menuBar);
     }
 
@@ -988,6 +989,7 @@ public class ClientGUI extends AbstractClientGUI
     @Override
     public void initialize() {
         menuBar = CommonMenuBar.getMenuBarForGame();
+        menuBar.setClientSupplier(() -> client);
         frame.setJMenuBar(menuBar);
         initializeFrame();
         super.initialize();

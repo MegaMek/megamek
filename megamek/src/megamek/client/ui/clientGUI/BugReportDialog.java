@@ -33,6 +33,7 @@
 
 package megamek.client.ui.clientGUI;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -40,11 +41,13 @@ import java.awt.GridLayout;
 import java.awt.Window;
 import java.util.function.Supplier;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 import megamek.MMConstants;
 import megamek.client.Client;
@@ -59,6 +62,9 @@ public class BugReportDialog {
 
     private static final int UNSCALED_WIDTH = 600;
     private static final BugReportMessages I18N = new BugReportMessages();
+
+    /** Hazard yellow, for the border that marks out the reporting buttons. */
+    private static final Color ATTENTION_COLOR = new Color(255, 204, 0);
 
     private static final String REPORT_LINK_MM = "https://github.com/MegaMek/megamek/issues/new/choose";
     private static final String REPORT_LINK_MML = "https://github.com/MegaMek/megameklab/issues/new/choose";
@@ -123,6 +129,23 @@ public class BugReportDialog {
     }
 
     /**
+     * A border that makes a reporting button impossible to miss among its neighbours.
+     *
+     * <p>The button is the one thing on screen a player needs to find at the moment something has gone wrong, and it
+     * competes for attention with a board full of units. Hazard colours - a yellow line held inside a black one -
+     * separate it from the ordinary controls without depending on the skin in use.</p>
+     *
+     * @return the border, sized for the player's GUI scale
+     */
+    public static Border attentionBorder() {
+        int outerThickness = UIUtil.scaleForGUI(1);
+        int innerThickness = UIUtil.scaleForGUI(2);
+        return BorderFactory.createCompoundBorder(
+              BorderFactory.createLineBorder(Color.BLACK, outerThickness),
+              BorderFactory.createLineBorder(ATTENTION_COLOR, innerThickness));
+    }
+
+    /**
      * Lays the buttons out in the order the instructions above them ask the player to use: gather the files first,
      * then go to the repository the problem belongs to.
      */
@@ -132,9 +155,13 @@ public class BugReportDialog {
 
         JPanel gatherFilesRow = new JPanel();
         if (packageBugReportAction != null) {
-            gatherFilesRow.add(new JButton(packageBugReportAction));
-        }
-        if (copySystemDataAction != null) {
+            JButton packageButton = new JButton(packageBugReportAction);
+            packageButton.setBorder(attentionBorder());
+            gatherFilesRow.add(packageButton);
+        } else if (copySystemDataAction != null) {
+            // Only worth offering where nothing gathers the files automatically: the archive carries a
+            // system-info.txt and the repository buttons fill the same details into the issue form. MegaMekLab and
+            // MekHQ reach this dialog without a packaging action, and the Help menu keeps the item in its own right.
             gatherFilesRow.add(new JButton(copySystemDataAction));
         }
 

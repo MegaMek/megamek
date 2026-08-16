@@ -3885,7 +3885,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 2;
         misc.criticalSlots = 3;
         misc.cost = 50000;
-        misc.flags = misc.flags.or(F_MEK_EQUIPMENT, MiscTypeFlag.S_SHIELD_SMALL);
+        misc.flags = misc.flags.or(F_SHIELD, F_MEK_EQUIPMENT, MiscTypeFlag.S_SHIELD_SMALL);
         misc.bv = 50;
         misc.setInstantModeSwitch(true);
         String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
@@ -3917,7 +3917,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 4;
         misc.criticalSlots = 5;
         misc.cost = 100000;
-        misc.flags = misc.flags.or(F_MEK_EQUIPMENT, MiscTypeFlag.S_SHIELD_MEDIUM);
+        misc.flags = misc.flags.or(F_SHIELD, F_MEK_EQUIPMENT, MiscTypeFlag.S_SHIELD_MEDIUM);
         misc.bv = 135;
         misc.setInstantModeSwitch(true);
         String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };

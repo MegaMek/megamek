@@ -183,7 +183,10 @@ public class Caspar extends Princess {
         if (!groundOrderPermitsTakeoff(entity.isFighter(), getAerospaceGroundOrder())) {
             // A DropShip or small craft on the ground may be doing its job - cargo, fortress fire
             // support - so it moves between domains only on a player order. Fighters need no
-            // orders; a grounded fighter's job is always to get back up.
+            // orders; a grounded fighter's job is always to get back up. Debug so the decision
+            // tree is never silent: holding is a choice, not an omission (live Union game).
+            LOGGER.debug("TAKEOFF {}: holding domain per {} order", entity.getDisplayName(),
+                  getAerospaceGroundOrder());
             return null;
         }
         if ((entity instanceof Dropship) && adjacentFriendlyGroundUnit(entity)) {

@@ -736,6 +736,10 @@ public abstract class BotClient extends Client {
                 case OFFBOARD_REPORT:
                 case FIRING_REPORT:
                 case PHYSICAL_REPORT:
+                    // Sender half of the done ledger (server logs the receive): if a hang shows the
+                    // server waiting on this bot and this line IS present, the ack was lost in
+                    // flight; if the line is absent, changePhase never ran for the phase.
+                    LOGGER.info("[DoneLedger] {}: sending done for {}", getName(), phase);
                     sendDone(true);
                     break;
                 case VICTORY:

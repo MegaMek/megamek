@@ -59,7 +59,12 @@ class ScenarioBombLoadingTest {
         assertTrue(scenarioFile.exists(), "test scenario must exist: " + scenarioFile.getAbsolutePath());
 
         Scenario scenario = new ScenarioLoader(scenarioFile).load();
-        Game game = (Game) scenario.createGame();
+        // assertDoesNotThrow surfaces the cause message: createGame resolves boards and units, and
+        // in CI those come only from testresources - a bare IllegalArgumentException here cost two
+        // rounds of CI archaeology before the missing unit files were named.
+        Game game = org.junit.jupiter.api.Assertions.assertDoesNotThrow(
+              () -> (Game) scenario.createGame(),
+              "scenario failed to load - a board or unit is missing from testresources/data");
 
         boolean sawBomber = false;
         for (Entity entity : game.getEntitiesVector()) {

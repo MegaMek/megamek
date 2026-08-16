@@ -960,13 +960,13 @@ public class AerospacePathRanker extends BasicPathRanker {
         // odds. The best aim point is a search over the line, not a lookup of enemy positions.
         double bombRun = 0;
         if (inDiveBombWindow) {
-            List<BombMounted> groundBombs = mover.getBombs(AmmoType.F_GROUND_BOMB);
+            double[] blastProfile = bombRingProfile(mover.getBombs(AmmoType.F_GROUND_BOMB));
             for (Coords aimPoint : flownLine) {
                 double footprint = 0;
                 for (Entity target : targets) {
                     int ring = aimPoint.distance(target.getPosition());
-                    for (BombMounted bomb : groundBombs) {
-                        footprint += bombRingDamage(bomb, ring);
+                    if (ring <= MAXIMUM_BLAST_RING) {
+                        footprint += blastProfile[ring];
                     }
                 }
                 bombRun = Math.max(bombRun, footprint);
@@ -1301,6 +1301,27 @@ public class AerospacePathRanker extends BasicPathRanker {
               || (weaponType instanceof PPCBayWeapon)
               || (weaponType instanceof PulseLaserBayWeapon);
         return directFireEnergy || energyBay;
+    }
+
+    /** Blast rings never reach past three hexes (FAE_LARGE); the profile array is index-by-ring. */
+    static final int MAXIMUM_BLAST_RING = 3;
+
+    /**
+     * The payload's blast profile, computed once: summed damage per ring across every bomb aboard.
+     * Collapses the bombs dimension out of every footprint search - the flown-line x targets x
+     * bombs triple loop the review flagged becomes flown-line x targets with an O(1) ring lookup
+     * (IllianiBird, PR #8728).
+     *
+     * @return damage at ring 0..{@link #MAXIMUM_BLAST_RING}; rings beyond the array are zero
+     */
+    static double[] bombRingProfile(List<BombMounted> groundBombs) {
+        double[] profile = new double[MAXIMUM_BLAST_RING + 1];
+        for (BombMounted bomb : groundBombs) {
+            for (int ring = 0; ring <= MAXIMUM_BLAST_RING; ring++) {
+                profile[ring] += bombRingDamage(bomb, ring);
+            }
+        }
+        return profile;
     }
 
     /** The summed damage of every ground bomb aboard - the payload one full dive-bomb pass can deliver. */

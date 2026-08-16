@@ -193,16 +193,25 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
      *
      * @return the condition name, or {@code ACTIVE} when the unit has not been removed
      */
+    static final String REMOVAL_IN_RETREAT = "IN_RETREAT";
+    static final String REMOVAL_PUSHED = "PUSHED";
+    static final String REMOVAL_CAPTURED = "CAPTURED";
+    static final String REMOVAL_SALVAGEABLE = "SALVAGEABLE";
+    static final String REMOVAL_EJECTED = "EJECTED";
+    static final String REMOVAL_DEVASTATED = "DEVASTATED";
+    static final String REMOVAL_NEVER_JOINED = "NEVER_JOINED";
+    static final String REMOVAL_ACTIVE = "ACTIVE";
+
     private static String removalConditionName(int removalCondition) {
         return switch (removalCondition) {
-            case IEntityRemovalConditions.REMOVE_IN_RETREAT -> "IN_RETREAT";
-            case IEntityRemovalConditions.REMOVE_PUSHED -> "PUSHED";
-            case IEntityRemovalConditions.REMOVE_CAPTURED -> "CAPTURED";
-            case IEntityRemovalConditions.REMOVE_SALVAGEABLE -> "SALVAGEABLE";
-            case IEntityRemovalConditions.REMOVE_EJECTED -> "EJECTED";
-            case IEntityRemovalConditions.REMOVE_DEVASTATED -> "DEVASTATED";
-            case IEntityRemovalConditions.REMOVE_NEVER_JOINED -> "NEVER_JOINED";
-            default -> "ACTIVE";
+            case IEntityRemovalConditions.REMOVE_IN_RETREAT -> REMOVAL_IN_RETREAT;
+            case IEntityRemovalConditions.REMOVE_PUSHED -> REMOVAL_PUSHED;
+            case IEntityRemovalConditions.REMOVE_CAPTURED -> REMOVAL_CAPTURED;
+            case IEntityRemovalConditions.REMOVE_SALVAGEABLE -> REMOVAL_SALVAGEABLE;
+            case IEntityRemovalConditions.REMOVE_EJECTED -> REMOVAL_EJECTED;
+            case IEntityRemovalConditions.REMOVE_DEVASTATED -> REMOVAL_DEVASTATED;
+            case IEntityRemovalConditions.REMOVE_NEVER_JOINED -> REMOVAL_NEVER_JOINED;
+            default -> REMOVAL_ACTIVE;
         };
     }
 }

@@ -43,6 +43,7 @@ import megamek.client.bot.princess.MutualSupportDeployment;
 import megamek.client.bot.princess.MutualSupportPathRanker;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.client.bot.princess.Princess;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
@@ -175,7 +176,7 @@ public class Caspar extends Princess {
         return super.continueMovementFor(entity);
     }
 
-    private MovePath buildTakeoffPath(final Entity entity) {
+    private @Nullable MovePath buildTakeoffPath(final Entity entity) {
         if (!(entity instanceof IAero aero) || !entity.isAero() || entity.isAirborne()
               || entity.isShutDown() || (entity.getPosition() == null)) {
             return null;
@@ -246,7 +247,7 @@ public class Caspar extends Princess {
      * capability, and clear ground below. No approach doctrine yet (the ship does not deliberately
      * descend to reach the window); that ships with the landing doctrine block.
      */
-    private MovePath buildLandingPath(final Entity entity) {
+    private @Nullable MovePath buildLandingPath(final Entity entity) {
         if (!(entity instanceof IAero aero) || !entity.isAero() || !entity.isAirborne()
               || (entity.getPosition() == null)
               || !groundOrderRequestsLanding(entity.isFighter(), getAerospaceGroundOrder())) {

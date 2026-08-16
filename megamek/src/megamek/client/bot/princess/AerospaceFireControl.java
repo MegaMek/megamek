@@ -174,6 +174,7 @@ public class AerospaceFireControl extends FireControl {
      * half for the bot.
      */
     @Override
+    @Nullable
     FiringPlan getBestFiringPlan(final Entity shooter, final IHonorUtil honorUtil, final Game game,
           final Map<WeaponMounted, Double> ammoConservation) {
         FiringPlan best = super.getBestFiringPlan(shooter, honorUtil, game, ammoConservation);
@@ -196,8 +197,9 @@ public class AerospaceFireControl extends FireControl {
      * however many targets its run crosses. Nap-of-the-earth strafing is deliberately out of this
      * first pass - the +2 and its dead-zone rules make altitude 2-3 the honest window.
      *
-     * @return the strafe plan, empty when no legal run covers anyone
+     * @return the strafe plan, or {@code null} when no legal run covers anyone
      */
+    @Nullable
     FiringPlan getStrafePlan(final Entity shooter, final Game game) {
         if (!shooter.isAero() || !shooter.isAirborne() || shooter.isSpheroid()
               || (shooter.getAltitude() < 2) || (shooter.getAltitude() > 3)) {
@@ -218,9 +220,21 @@ public class AerospaceFireControl extends FireControl {
             return null;
         }
         List<Coords> flownLine = new ArrayList<>(shooter.getPassedThrough());
+        // One entity lookup per flown hex; windows then read the map instead of re-querying the
+        // game per window (the review's per-window cost question - IllianiBird, PR #8728).
+        Map<Coords, List<Entity>> victimsByHex = new HashMap<>();
+        for (Coords hex : flownLine) {
+            List<Entity> victims = strafeVictims(shooter, game, List.of(hex));
+            if (!victims.isEmpty()) {
+                victimsByHex.put(hex, victims);
+            }
+        }
         List<Entity> bestVictims = List.of();
         for (List<Coords> window : AerospacePathRanker.straightWindows(flownLine, 5)) {
-            List<Entity> victims = strafeVictims(shooter, game, window);
+            List<Entity> victims = new ArrayList<>();
+            for (Coords hex : window) {
+                victims.addAll(victimsByHex.getOrDefault(hex, List.of()));
+            }
             if (victims.size() > bestVictims.size()) {
                 bestVictims = victims;
             }
@@ -411,6 +425,8 @@ public class AerospaceFireControl extends FireControl {
         double honestDamage = Math.max(stockExpectedDamage, payloadExpectedDamage);
         double cappedDamage = Math.min(honestDamage, effectiveHitPoints);
         double killFraction = cappedDamage / effectiveHitPoints;
+        // BV/1000 normalizes battle value into utility-scale units: a full kill of a 1,000-BV
+        // target earns exactly BOMB_KILL_UTILITY points, a 2,000-BV target twice that.
         double killCredit = BOMB_KILL_UTILITY * killFraction * killFraction
               * (targetBattleValue / 1000.0);
         double opportunityCost = otherBombTargetsRemain
@@ -465,13 +481,11 @@ public class AerospaceFireControl extends FireControl {
     static List<Entity> enemiesUnderFootprint(List<BombMounted> groundBombs, Coords aimPoint,
           List<Entity> enemies) {
         List<Entity> underFootprint = new ArrayList<>();
+        double[] blastProfile = AerospacePathRanker.bombRingProfile(groundBombs);
         for (Entity enemy : enemies) {
             int ring = aimPoint.distance(enemy.getPosition());
-            for (BombMounted bomb : groundBombs) {
-                if (AerospacePathRanker.bombRingDamage(bomb, ring) > 0) {
-                    underFootprint.add(enemy);
-                    break;
-                }
+            if ((ring <= AerospacePathRanker.MAXIMUM_BLAST_RING) && (blastProfile[ring] > 0)) {
+                underFootprint.add(enemy);
             }
         }
         return underFootprint;
@@ -568,7 +582,7 @@ public class AerospaceFireControl extends FireControl {
      * move's own hexes ({@link Entity#getPassedThrough}) in preference to the planning-time path,
      * because at firing time the flown line is a fact.
      */
-    private Coords bestFootprintAimHex(Entity shooter, MovePath flightPath, Game game) {
+    private @Nullable Coords bestFootprintAimHex(Entity shooter, MovePath flightPath, Game game) {
         // The candidate path FIRST: during movement-phase plan evaluation, getPassedThrough() is the
         // PREVIOUS round's flown line, so preferring it priced candidate paths' bombing utility
         // against stale hexes. At actual firing time the callers pass a null flightPath and the
@@ -595,12 +609,15 @@ public class AerospaceFireControl extends FireControl {
         }
         Coords bestAimHex = null;
         double bestFootprint = 0;
+        // Blast profile computed once; the former line x targets x bombs triple loop is now
+        // line x targets with an O(1) ring lookup (IllianiBird, PR #8728).
+        double[] blastProfile = AerospacePathRanker.bombRingProfile(groundBombs);
         for (Coords aimPoint : flownLine) {
             double footprint = 0;
             for (Entity target : targets) {
                 int ring = aimPoint.distance(target.getPosition());
-                for (BombMounted bomb : groundBombs) {
-                    footprint += AerospacePathRanker.bombRingDamage(bomb, ring);
+                if (ring <= AerospacePathRanker.MAXIMUM_BLAST_RING) {
+                    footprint += blastProfile[ring];
                 }
             }
             if (footprint > bestFootprint) {

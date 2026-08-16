@@ -35,4 +35,13 @@ package megamek.common.rules;
 
 
 public abstract class RulesArtillery {
+
+    /**
+     * Determine correct base mods for artillery fire
+     * @param distance  range from attacker to target in hexes
+     * @param direct    direct fire, otherwise indirect fire
+     * @param flak      direct fire against airborne ground or ASF target if true
+     * @return base Artillery attack mod
+     */
+    public abstract int computeArtilleryBaseMod(int distance, boolean direct, boolean flak);
 }

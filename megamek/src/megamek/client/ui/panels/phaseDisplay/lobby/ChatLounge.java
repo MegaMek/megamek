@@ -532,9 +532,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         CamoChooserDialog ccd = new CamoChooserDialog(clientgui.getFrame(), player.getCamouflage());
         try {
             java.util.List<Entity> playerEntities = game().getPlayerEntities(player, false);
-            if (!playerEntities.isEmpty()) {
-                ccd.setDisplayedEntity(CollectionUtil.anyOneElement(playerEntities));
-            }
+            ccd.setDisplayedEntities(playerEntities);
             // If the dialog was canceled or nothing selected, do nothing
             if (!ccd.showDialog().isConfirmed()) {
                 return;
@@ -1499,7 +1497,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         java.util.List<Integer> enIds = getSelectedEntities().stream().map(Entity::getId).toList();
         mekModel.clearData();
         ArrayList<Entity> allEntities = new ArrayList<>(clientgui.getClient().getEntitiesVector());
-        allEntities.sort(activeSorter);
+        // Whatever the player is sorting by, a train stays together: the choice is applied to the tractor and its
+        // trailers follow it. Sorting by tonnage would otherwise strand a 10 ton carriage far from its tractor.
+        allEntities.sort(MekTableSorter.keepingCarriedUnitsTogether(activeSorter));
 
         boolean localUnits = false;
         var opts = clientgui.getClient().getGame().getOptions();
@@ -1698,7 +1698,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         if (trailer.getTowedBy() == Entity.NONE) {
             return;
         }
-        Entity tractor = game().getEntity(trailer.getTowedBy());
+        // Detaching mid-train affects the whole train, so work from the tractor heading it rather than from the
+        // trailer immediately in front, which would leave the rest of the train out of the update.
+        Entity tractor = game().getEntity(trailer.getTractor());
         disconnectTrain(tractor, trailer, updateCandidates);
     }
 
@@ -1726,7 +1728,15 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     private void disconnectTrain(Entity tractor, Entity trailer, Collection<Entity> updateCandidates) {
         if (tractor != null && trailer != null) {
-            List<Integer> otherTowedUnitIds = tractor.getAllTowedUnits();
+            // An off board train stays hooked up. There is no board position to drop a trailer at, and the train is
+            // the only thing holding the trailer's place off the map edge.
+            if (tractor.isOffBoard() || trailer.isOffBoard()) {
+                LobbyErrors.showNoDetachOffBoard(clientgui.getFrame());
+                return;
+            }
+            // Copy the ids: disconnectUnit drops the detached trailers from this list as it works, and walking
+            // the live view afterwards fails with a ConcurrentModificationException.
+            List<Integer> otherTowedUnitIds = new ArrayList<>(tractor.getAllTowedUnits());
             tractor.disconnectUnit(trailer.getId());
             updateCandidates.add(trailer);
             updateCandidates.add(tractor);
@@ -2491,7 +2501,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         var bcd = new BotConfigDialog(clientgui.getFrame(),
               bot.getLocalPlayer().getName(),
               bot.getBehaviorSettings(),
-              clientgui);
+              clientgui,
+              bot.getAIType());
         bcd.setVisible(true);
         if (bcd.getResult() == DialogResult.CONFIRMED) {
             bot.setBehaviorSettings(bcd.getBehaviorSettings());

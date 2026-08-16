@@ -29,7 +29,8 @@
     </factions>
     <units>
         <chassis name='Archer' unitType='Mek'>
-            <availability>LA:6</availability>
+            <!-- MRG:6 is the non-zero far end of the interpolation the 3050 bucket's MRG:0 is tested against. -->
+            <availability>LA:6,MRG:6</availability>
             <model name='ARC-2R'>
                 <roles>fire_support</roles>
                 <availability>General:6</availability>

@@ -33,8 +33,6 @@
  */
 package megamek.client.ui.dialogs.buttonDialogs;
 
-import static java.util.stream.Collectors.toList;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -50,10 +48,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
-import java.util.stream.Stream;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
@@ -578,7 +578,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     /** Shortest and longest display/spacing time the toast spinners allow, in seconds. */
     private static final int MIN_TOAST_SECONDS = 1;
     private static final int MAX_TOAST_SECONDS = 10;
-      private static final int BUTTON_GAP = 8;
+            private static final int BUTTON_GAP = 8;
     /** Wrap width for the multi-line warning under the toast on/off checkbox, before GUI scaling. */
     private static final int TOAST_WARNING_WIDTH_PX = 480;
 
@@ -654,52 +654,73 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         List<CommonSettingsPane.OptionPage> pages = new ArrayList<>();
 
         CommonSettingsPane.SectionedContent main = sectionedContent(getSettingsPanel(), "main");
-        pages.add(optionPage("main.application", path("main", "main.application"), main,
-              section("main.locale", 0), section("main.scale", 1), section("main.userFiles", 2),
-              section("main.mml", 3), section("main.theme", 4)));
-        pages.add(optionPage("main.colours", path("main", "main.colours"), main,
-              section("main.statusColours", 5), section("main.unitColours", 6), section("main.playerColours", 7)));
-        pages.add(optionPage("main.behavior", path("main", "main.behavior"), main,
-              section("main.interface", 8), section("main.units", 9), section("main.logging", 10),
-              section("main.privacy", 11)));
+        addMappedPages(pages, "main", main,
+              optionPage("main.application", path("main", "main.application"), main,
+                    section("main.locale", 0), section("main.scale", 1), section("main.userFiles", 2),
+                    section("main.mml", 3), section("main.theme", 4)),
+              optionPage("main.colours", path("main", "main.colours"), main,
+                    section("main.statusColours", 5), section("main.unitColours", 6),
+                    section("main.playerColours", 7)),
+              optionPage("main.behavior", path("main", "main.behavior"), main,
+                    section("main.interface", 8), section("main.units", 9), section("main.logging", 10),
+                    section("main.privacy", 11)));
 
-        pages.add(optionPage("audio", path("audio"), sectionedContent(getAudioPanel(), "audio"),
-              section("audio.volume", 0), section("audio.chat", 1), section("audio.myTurn", 2),
-              section("audio.otherTurns", 3)));
+        CommonSettingsPane.SectionedContent audio = sectionedContent(getAudioPanel(), "audio");
+        addMappedPages(pages, "audio", audio,
+              optionPage("audio", path("audio"), audio,
+                    section("audio.volume", 0), section("audio.chat", 1), section("audio.myTurn", 2),
+                    section("audio.otherTurns", 3)));
         pages.add(optionPage("keyBinds", path("keyBinds"), getKeyBindSections()));
 
         CommonSettingsPane.SectionedContent gameBoard = sectionedContent(getGameBoardPanel(), "gameBoard");
-        pages.add(optionPage("gameBoard.general", path("gameBoard", "gameBoard.general"), gameBoard,
-              section("gameBoard.tileset", 0), section("gameBoard.nags", 1), section("gameBoard.actions", 2),
-              section("gameBoard.controls", 3), section("gameBoard.pathfinder", 4),
-              section("gameBoard.units", 5)));
-        pages.add(optionPage("gameBoard.appearance", path("gameBoard", "gameBoard.appearance"), gameBoard,
-              section("gameBoard.rendering", 6), section("gameBoard.indicators", 7),
-              section("gameBoard.movement", 8), section("gameBoard.fire", 9)));
-        pages.add(optionPage("gameBoard.fov", path("gameBoard", "gameBoard.fov"), gameBoard,
-              section("gameBoard.fovInside", 10), section("gameBoard.fovOutside", 11)));
+        addMappedPages(pages, "gameBoard", gameBoard,
+              optionPage("gameBoard.general", path("gameBoard", "gameBoard.general"), gameBoard,
+                    section("gameBoard.tileset", 0), section("gameBoard.nags", 1), section("gameBoard.actions", 2),
+                    section("gameBoard.controls", 3), section("gameBoard.pathfinder", 4),
+                    section("gameBoard.units", 5)),
+              optionPage("gameBoard.appearance", path("gameBoard", "gameBoard.appearance"), gameBoard,
+                    section("gameBoard.rendering", 6), section("gameBoard.indicators", 7),
+                    section("gameBoard.movement", 8), section("gameBoard.fire", 9)),
+              optionPage("gameBoard.fov", path("gameBoard", "gameBoard.fov"), gameBoard,
+                    section("gameBoard.fovInside", 10), section("gameBoard.fovOutside", 11)));
 
         CommonSettingsPane.SectionedContent unitDisplay = sectionedContent(getUnitDisplayPanel(), "unitDisplay");
-        pages.add(optionPage("unitDisplay.tooltips", path("unitDisplay", "unitDisplay.tooltips"), unitDisplay,
-              section("unitDisplay.tooltip", 0), section("unitDisplay.armor", 1)));
-        pages.add(optionPage("unitDisplay.interface", path("unitDisplay", "unitDisplay.interface"), unitDisplay,
-              section("unitDisplay.heat", 2), section("unitDisplay.order", 3),
-              section("unitDisplay.weapons", 4), section("unitDisplay.fonts", 5)));
+        addMappedPages(pages, "unitDisplay", unitDisplay,
+              optionPage("unitDisplay.tooltips", path("unitDisplay", "unitDisplay.tooltips"), unitDisplay,
+                    section("unitDisplay.tooltip", 0), section("unitDisplay.armor", 1)),
+              optionPage("unitDisplay.interface", path("unitDisplay", "unitDisplay.interface"), unitDisplay,
+                    section("unitDisplay.heat", 2), section("unitDisplay.order", 3),
+                    section("unitDisplay.weapons", 4), section("unitDisplay.fonts", 5)));
 
-        pages.add(optionPage("miniMap", path("miniMap"), sectionedContent(getMiniMapPanel(), "miniMap"),
-              section("miniMap.theme", 0), section("miniMap.display", 1)));
-        pages.add(optionPage("report", path("report"), sectionedContent(getReportPanel(), "report"),
-              section("report.appearance", 0), section("report.content", 1), section("report.filter", 2)));
-        pages.add(optionPage("overlays", path("overlays"), sectionedContent(getOverlaysPanel(), "overlays"),
-              section("overlays.overview", 0), section("overlays.planetary", 1), section("overlays.toasts", 2),
-              section("overlays.trace", 3)));
+        CommonSettingsPane.SectionedContent miniMap = sectionedContent(getMiniMapPanel(), "miniMap");
+        addMappedPages(pages, "miniMap", miniMap,
+              optionPage("miniMap", path("miniMap"), miniMap,
+                    section("miniMap.theme", 0), section("miniMap.display", 1)));
+
+        CommonSettingsPane.SectionedContent report = sectionedContent(getReportPanel(), "report");
+        addMappedPages(pages, "report", report,
+              optionPage("report", path("report"), report,
+                    section("report.appearance", 0), section("report.content", 1), section("report.filter", 2)));
+
+        CommonSettingsPane.SectionedContent overlays = sectionedContent(getOverlaysPanel(), "overlays");
+        addMappedPages(pages, "overlays", overlays,
+              optionPage("overlays", path("overlays"), overlays,
+                    section("overlays.overview", 0), section("overlays.planetary", 1),
+                    section("overlays.toasts", 2), section("overlays.trace", 3)));
         pages.add(optionPage("buttonOrder", path("buttonOrder"), getButtonOrderSections()));
-        pages.add(optionPage("autoDisplay", path("autoDisplay"), sectionedContent(getPhasePanel(), "autoDisplay"),
-              section("autoDisplay.unit", 0), section("autoDisplay.minimap", 1), section("autoDisplay.report", 2),
-              section("autoDisplay.players", 3), section("autoDisplay.force", 4), section("autoDisplay.bots", 5),
-              section("autoDisplay.tabs", 6)));
-        pages.add(optionPage("aiDisplay", path("aiDisplay"), sectionedContent(aiDisplayPanel(), "aiDisplay"),
-              section("aiDisplay.resolve", 0), section("aiDisplay.bot", 1)));
+
+        CommonSettingsPane.SectionedContent autoDisplay = sectionedContent(getPhasePanel(), "autoDisplay");
+        addMappedPages(pages, "autoDisplay", autoDisplay,
+              optionPage("autoDisplay", path("autoDisplay"), autoDisplay,
+                    section("autoDisplay.unit", 0), section("autoDisplay.minimap", 1),
+                    section("autoDisplay.report", 2), section("autoDisplay.players", 3),
+                    section("autoDisplay.force", 4), section("autoDisplay.bots", 5),
+                    section("autoDisplay.tabs", 6)));
+
+        CommonSettingsPane.SectionedContent aiDisplay = sectionedContent(aiDisplayPanel(), "aiDisplay");
+        addMappedPages(pages, "aiDisplay", aiDisplay,
+              optionPage("aiDisplay", path("aiDisplay"), aiDisplay,
+                    section("aiDisplay.resolve", 0), section("aiDisplay.bot", 1)));
         pages.add(optionPage("advanced", path("advanced"), List.of(
               optionSection("advanced.settings", getAdvancedSettingsPanel(), true))));
 
@@ -725,6 +746,22 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private CommonSettingsPane.OptionPage optionPage(String id, List<String> path,
           List<CommonSettingsPane.OptionSection> sections) {
         return new CommonSettingsPane.OptionPage(id, path, id.replace(".", ""), sections);
+    }
+
+    static void addMappedPages(List<CommonSettingsPane.OptionPage> pages, String contentId,
+          CommonSettingsPane.SectionedContent content, CommonSettingsPane.OptionPage... mappedPages) {
+        List<JComponent> mappedGroups = Arrays.stream(mappedPages)
+              .flatMap(page -> Objects.requireNonNull(page).sections().stream())
+              .map(section -> Objects.requireNonNull(section).content())
+              .toList();
+        boolean mappedExactlyOnce = mappedGroups.size() == content.groups().size()
+              && content.groups().stream().allMatch(group -> mappedGroups.stream()
+                    .filter(mappedGroup -> mappedGroup == group)
+                    .count() == 1);
+        if (!mappedExactlyOnce) {
+            throw new IllegalArgumentException("Every section for " + contentId + " must be mapped exactly once");
+        }
+        pages.addAll(List.of(mappedPages));
     }
 
     private CommonSettingsPane.OptionSection optionSection(String id, JComponent content, boolean advanced) {
@@ -2449,6 +2486,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         row.add(new SettingsSectionBreak());
         comps.add(row);
     }
+
     private void addSpacer(List<List<Component>> comps, int height) {
         List<Component> row = new ArrayList<>();
         row.add(Box.createVerticalStrut(height));
@@ -3477,9 +3515,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         String option = "Advanced" + advancedKeys.getModel().getElementAt(advancedKeyIndex).option;
         savedAdvancedOpt.put(option, guip.getString(option));
         guip.setValue(option, advancedValue.getText());
-      }
+            }
 
-      private List<CommonSettingsPane.OptionSection> getKeyBindSections() {
+            private List<CommonSettingsPane.OptionSection> getKeyBindSections() {
         List<JComponent> content = getKeyBindSectionContent();
         return List.of(
               optionSection("keyBinds.defaults", content.get(0), false),
@@ -3663,7 +3701,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             key.setFocusTraversalKeysEnabled(false);
         }
         markDuplicateBinds();
-      return List.of(topPanel, tabChoice, keyBinds);
+                        return List.of(topPanel, tabChoice, keyBinds);
     }
 
     private JComboBox<String> createHideShowComboBox(int i) {
@@ -4015,7 +4053,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     static JPanel createSettingsPanel(List<List<Component>> comps) {
         List<ColourSelectorButton> colourButtons = new ArrayList<>();
         for (List<Component> row : comps) {
-            row.forEach(component -> collectColourButtons(component, colourButtons));
+                  row.forEach(component -> collectColourButtons(component, colourButtons));
         }
         setUniformWidth(colourButtons);
 
@@ -4109,27 +4147,31 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         panel.addFullWidthComponent(rowPanel(components));
     }
 
-    private static void collectColourButtons(Component component, List<ColourSelectorButton> colourButtons) {
-        if (component instanceof ColourSelectorButton button) {
-            button.setHorizontalAlignment(SwingConstants.LEFT);
-            colourButtons.add(button);
-        }
-        if (component instanceof Container container) {
-            for (Component child : container.getComponents()) {
-                collectColourButtons(child, colourButtons);
+      private static void collectColourButtons(Component component, List<ColourSelectorButton> colourButtons) {
+            if (component instanceof ColourSelectorButton button) {
+                  button.setHorizontalAlignment(SwingConstants.LEFT);
+                  colourButtons.add(button);
             }
-        }
-    }
+            if (component instanceof CommonSettingsPane.SectionedContent) {
+                  return;
+            }
+            if (component instanceof Container container) {
+                  for (Component child : container.getComponents()) {
+                        collectColourButtons(child, colourButtons);
+                  }
+            }
+      }
 
     private static void setUniformWidth(List<? extends JComponent> components) {
         int width = components.stream()
-              .map(JComponent::getPreferredSize)
+                    .map(component -> Objects.requireNonNull(component).getPreferredSize())
               .mapToInt(dimension -> dimension.width)
               .max()
               .orElse(0);
         for (JComponent component : components) {
-            Dimension preferred = component.getPreferredSize();
-            component.setPreferredSize(new Dimension(width, preferred.height));
+                  JComponent nonNullComponent = Objects.requireNonNull(component);
+                  Dimension preferred = nonNullComponent.getPreferredSize();
+                  nonNullComponent.setPreferredSize(new Dimension(width, preferred.height));
         }
     }
 
@@ -4254,13 +4296,43 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             logger.warn("Path {} does not exist.", path);
             return new ArrayList<>();
         }
-        try (Stream<Path> entries = Files.walk(path.toPath())) {
-            return entries.map(Objects::toString).filter(name -> name.endsWith(fileEnding)).collect(toList());
+            List<String> result = new ArrayList<>();
+            try {
+                  Files.walkFileTree(path.toPath(), filteredFileVisitor(fileEnding, result));
         } catch (IOException e) {
-            logger.warn("Error while reading {} files from {}", fileEnding, path);
-            return new ArrayList<>();
+                  logger.warn(e, "Error while reading {} files from {}", fileEnding, path);
         }
-    }
+            return result;
+      }
+
+      static SimpleFileVisitor<Path> filteredFileVisitor(String fileEnding, List<String> result) {
+            return new SimpleFileVisitor<>() {
+                  @Override
+                  public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
+                        if (file.toString().endsWith(fileEnding)) {
+                              result.add(file.toString());
+                        }
+                        return FileVisitResult.CONTINUE;
+                  }
+
+                  @Override
+                  public FileVisitResult visitFileFailed(Path file, IOException exception) {
+                        logger.warn(exception, "Unable to access {} while searching for {} files; skipping it.", file,
+                                fileEnding);
+                        return FileVisitResult.CONTINUE;
+                  }
+
+                  @Override
+                  public FileVisitResult postVisitDirectory(Path directory, IOException exception) {
+                        if (exception != null) {
+                              logger.warn(exception,
+                                      "Unable to finish reading {} while searching for {} files; skipping it.", directory,
+                                      fileEnding);
+                        }
+                        return FileVisitResult.CONTINUE;
+                  }
+            };
+      }
 
     /**
      * Shows a file chooser for selecting a user directory and sets the given text field to the result if one was

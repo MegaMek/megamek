@@ -265,6 +265,9 @@ public class Princess extends BotClient {
         // and it will stay up-to date.
         precognition = new Precognition(this);
         precognitionThread = new Thread(precognition, "Princess-precognition (" + getName() + ")");
+        // Precognition is a pure look-ahead cache with no state worth preserving, so it must never be the reason a
+        // process stays alive. die() interrupts it in the normal case; this covers a bot that was dropped without one.
+        precognitionThread.setDaemon(true);
     }
 
     /**
@@ -987,7 +990,8 @@ public class Princess extends BotClient {
 
         // if we are using forced withdrawal, and the entity being considered is crippled
         // we will opt to not re-deploy the entity
-        if (getForcedWithdrawal() && getEntity(entityNum).isCrippled()) {
+        // isCrippled(true) to match the other withdrawal predicates: crew-crippled Meks withdraw too
+        if (getForcedWithdrawal() && getEntity(entityNum).isCrippled(true)) {
             LOGGER.info("Declining to deploy crippled unit: {}. Removing unit.", getEntity(entityNum).getChassis());
             sendDeleteEntity(entityNum);
             return;
@@ -1238,6 +1242,22 @@ public class Princess extends BotClient {
      *     </li>
      * </ol>
      */
+    /**
+     * Orders the candidate deployment hexes that {@link #rankDeploymentCoords(Entity, List)} will scan.
+     *
+     * <p>This matters more than it looks. The candidate list arrives shuffled, and the scan below stops after roughly
+     * twenty entries, so whatever sits at the front of this list is very nearly the whole choice. Princess returns it
+     * unchanged: each unit is placed on terrain merit alone, with no regard for where the rest of the force went.</p>
+     *
+     * @param deployedUnit        the unit being placed
+     * @param possibleDeployCoords legal deployment hexes
+     *
+     * @return the hexes to scan, in the order to scan them
+     */
+    protected List<Coords> prioritizeDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
+        return possibleDeployCoords;
+    }
+
     protected Coords rankDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
         StringBuilder sb = null;
         if (LOGGER.isDebugEnabled()) {
@@ -1282,6 +1302,10 @@ public class Princess extends BotClient {
                   })
                   .toList();
         }
+
+        // Order the candidates before the capped scan below only looks at the first handful of them. Princess hands
+        // them back untouched, so each unit deploys on terrain alone; subclasses may reorder to keep a force together.
+        possibleDeployCoords = prioritizeDeploymentCoords(deployedUnit, possibleDeployCoords);
 
         // Sample LIMIT number of valid starting hexes, check accessibility and hazards within RADIUS
         int LIMIT = 20;
@@ -1404,8 +1428,9 @@ public class Princess extends BotClient {
             // If foregoing firing, unjam highest-damage weapons first, then turret
             boolean skipFiring = false;
 
-            // If my unit is forced to withdraw, don't fire unless I've been fired on.
-            if (getForcedWithdrawal() && shooter.isCrippled()) {
+            // If my unit is forced to withdraw, don't fire unless I've been fired on
+            // or I have no retreat path anyway.
+            if (getForcedWithdrawal() && shooter.isCrippled(true)) {
                 final StringBuilder msg = new StringBuilder(shooter.getDisplayName()).append(
                       " is crippled and withdrawing.");
                 try {
@@ -1414,6 +1439,8 @@ public class Princess extends BotClient {
                         skipFiring = true;
                     } else if (attackedWhileFleeing.contains(shooter.getId())) {
                         msg.append("\n\tBut I was fired on, so I will return fire.");
+                    } else if (hasNoRetreatPath(shooter)) {
+                        msg.append("\n\tBut I have no path to my retreat edge, so I will fight on.");
                     } else {
                         msg.append("\n\tI will not fire so long as I'm not fired on.");
                         skipFiring = true;
@@ -2671,14 +2698,17 @@ public class Princess extends BotClient {
             final Entity attacker = game.getFirstEntity(getMyTurn());
 
             // If my unit is forced to withdraw, don't attack unless I've been
-            // attacked.
-            if (getForcedWithdrawal() && attacker.isCrippled()) {
+            // attacked or I have no retreat path anyway.
+            if (getForcedWithdrawal() && attacker.isCrippled(true)) {
                 final StringBuilder msg = new StringBuilder(attacker.getDisplayName()).append(
                       " is crippled and withdrawing.");
                 if (attackedWhileFleeing.contains(attacker.getId())) {
                     msg.append("\n\tBut I was fired on, so I will hit back.");
+                } else if (hasNoRetreatPath(attacker)) {
+                    msg.append("\n\tBut I have no path to my retreat edge, so I will fight on.");
                 } else {
                     msg.append("\n\tI will not attack so long as I'm not fired on.");
+                    LOGGER.info(msg.toString());
                     return null;
                 }
                 LOGGER.info(msg.toString());
@@ -2925,7 +2955,19 @@ public class Princess extends BotClient {
     }
 
     boolean wantsToFallBack(final Entity entity) {
-        return (entity.isCrippled() && getForcedWithdrawal()) || getFallBack();
+        return (entity.isCrippled(true) && getForcedWithdrawal()) || getFallBack();
+    }
+
+    /**
+     * Returns {@code true} when the given unit is withdrawing but has no path to its retreat edge. A trapped
+     * unit cannot trade distance for safety, so it is allowed to fight instead of holding its fire.
+     *
+     * @param entity the withdrawing unit to check
+     *
+     * @return {@code true} when no route to the retreat edge exists for this unit
+     */
+    boolean hasNoRetreatPath(final Entity entity) {
+        return getUnitBehaviorTracker().getBehaviorType(entity, this) == BehaviorType.NoPathToDestination;
     }
 
     MoraleUtil getMoraleUtil() {
@@ -2963,7 +3005,9 @@ public class Princess extends BotClient {
         } else if (0 < getPathRanker(entity).distanceToHomeEdge(entity.getPosition(), entity.getBoardId(),
               getHomeEdge(entity), getGame())) {
             return false;
-        } else {return getFleeBoard() || entity.isCrippled() && getForcedWithdrawal();}
+        } else {
+            return getFleeBoard() || (entity.isCrippled(true) && getForcedWithdrawal());
+        }
     }
 
     boolean isImmobilized(final Entity mover) {
@@ -3065,7 +3109,8 @@ public class Princess extends BotClient {
                 String msg = entity.getDisplayName();
                 if (getFallBack()) {
                     msg += " is falling back.";
-                } else if (entity.isCrippled()) {
+                } else if (entity.isCrippled(true)) {
+                    // isCrippled(true) matches isFallingBack above, so a crew-crippled Mek gets a message too
                     msg += " is crippled and withdrawing.";
                 }
                 LOGGER.debug(msg);
@@ -3113,7 +3158,7 @@ public class Princess extends BotClient {
                   getMaxWeaponRange(entity),
                   fallTolerance,
                   getEnemyEntities(),
-                  getBehaviorSettings().isExclusiveHerding() ? getEntitiesOwned() : getFriendEntities());
+                  getBehaviorSettings().isExclusiveMutualSupport() ? getEntitiesOwned() : getFriendEntities());
 
             final long stop_time = java.lang.System.currentTimeMillis();
 
@@ -3603,6 +3648,19 @@ public class Princess extends BotClient {
     }
 
     /**
+     * Wiring seam for subclasses (CASPAR): replaces the registered path ranker of the given type, wiring the
+     * replacement to the precognition path enumerator the same way the stock rankers are wired. Call after
+     * {@code super.initializePathRankers()}.
+     *
+     * @param rankerType the ranker slot to replace
+     * @param pathRanker the replacement ranker
+     */
+    protected void registerPathRanker(PathRankerType rankerType, BasicPathRanker pathRanker) {
+        pathRanker.setPathEnumerator(precognition.getPathEnumerator());
+        pathRankers.put(rankerType, pathRanker);
+    }
+
+    /**
      * Reduce utility of TAGging something if we're already trying.  Update the utility if it's better, otherwise try to
      * dissuade the next attacker.
      */
@@ -3831,10 +3889,40 @@ public class Princess extends BotClient {
         // refreshCrippledUnits should happen after checkForDishonoredEnemies, since checkForDishonoredEnemies
         // wants to examine the units that were considered crippled at the *beginning* of the turn and were attacked.
         refreshCrippledUnits();
+        // updateReturnFirePermission wants the opposite: the freshly refreshed crippled set, so a unit
+        // crippled and attacked in the same turn may return fire next turn.
+        updateReturnFirePermission();
         setAMSModes();
         updateEnemyHeatMaps();
         updateFriendlyHeatMap();
         updateExperimentalFeatures();
+    }
+
+    /**
+     * Grants withdrawing units permission to return fire. A crippled unit under Forced Withdrawal holds its
+     * fire unless it has been attacked while fleeing. That permission used to be granted only by
+     * {@code checkForDishonoredEnemies}, which works with the crippled set as it stood at the start of the
+     * turn - so a unit crippled and attacked in the same turn gained permission only if an enemy attacked it
+     * again on a later turn. Bot opponents never do (their honor rules stop them from attacking crippled
+     * units), which left withdrawing units permanently unable to defend themselves.
+     *
+     * <p>This pass runs on the freshly refreshed crippled set instead: attacked this turn and crippled now
+     * means the unit may return fire from the next turn on. {@code checkForDishonoredEnemies} keeps its
+     * start-of-turn view, because an attacker should only be dishonored for shooting a unit that was already
+     * visibly crippled.</p>
+     */
+    private void updateReturnFirePermission() {
+        if (!getForcedWithdrawal()) {
+            return;
+        }
+        for (final Entity ownedEntity : getEntitiesOwned()) {
+            if (crippledUnits.contains(ownedEntity.getId()) && !ownedEntity.getAttackedByThisTurn().isEmpty()) {
+                if (attackedWhileFleeing.add(ownedEntity.getId())) {
+                    LOGGER.info("[ForcedWithdrawal] {} is crippled and was attacked this turn; may return fire "
+                          + "from now on.", ownedEntity.getDisplayName());
+                }
+            }
+        }
     }
 
     private void updateExperimentalFeatures() {
@@ -3881,7 +3969,7 @@ public class Princess extends BotClient {
     }
 
     public void sendPrincessSettings() {
-        send(new Packet(PacketCommand.PRINCESS_SETTINGS, behaviorSettings));
+        send(new Packet(PacketCommand.PRINCESS_SETTINGS, behaviorSettings, getAIType()));
     }
 
     @Override

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,6 +44,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.ChargeLevel;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -63,17 +64,17 @@ public class ISBombastLaser extends LaserWeapon {
     @Serial
     private static final long serialVersionUID = 3379805005243042138L;
 
+
     public ISBombastLaser() {
         super();
         name = "Bombast Laser";
         setInternalName(name);
         addLookupName("IS Bombast Laser");
         addLookupName("ISBombastLaser");
-        String[] modeStrings = { "Damage 12", "Damage 11", "Damage 10",
-                                 "Damage 9", "Damage 8", "Damage 7" };
+        String[] modeStrings = { "Damage 16", "Damage 12", "Damage 8" };
         setModes(modeStrings);
         heat = 12;
-        damage = 12;
+        damage = 16;
         shortRange = 5;
         mediumRange = 10;
         longRange = 15;
@@ -86,10 +87,10 @@ public class ISBombastLaser extends LaserWeapon {
         criticalSlots = 3;
         bv = 137;
         cost = 200000;
-        shortAV = 12;
-        medAV = 12;
+        shortAV = 16;
+        medAV = 16;
         maxRange = RANGE_MED;
-        flags = flags.or(F_BOMBAST_LASER).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_BOMBAST_LASER).or(F_ENERGY).or(F_HEAT_VARIABLE).andNot(F_PROTO_WEAPON);
         rulesRefs = "132, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.D)
@@ -117,11 +118,46 @@ public class ISBombastLaser extends LaserWeapon {
             LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
         }
         return null;
+    }
 
+    @Override
+    public int getToHitModifier(Mounted<?> mounted) {
+        int modifier = super.getToHitModifier(mounted);
+        if (mounted.getChargeState().equals(ChargeLevel.CHARGING)) {
+            return ToHitData.IMPOSSIBLE;
+        } else if (!mounted.getChargeState().equals(ChargeLevel.CHARGED)) {
+            switch (mounted.curMode().toString()) {
+                case "Damage 16":
+                    return modifier + 2;
+                case "Damage 12":
+                    return modifier + 1;
+            }
+        }
+        return modifier;
     }
 
     @Override
     public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 1.02 : 0;
+    }
+
+    /**
+     * A Bombast Laser is only explosive while it is holding a charge, so this needs a specific mount to answer for.
+     *
+     * @param mounted      the specific weapon mount to test, or {@code null} to ask about the weapon type in the
+     *                     abstract (as the AlphaStrike ENE conversion does)
+     * @param ignoreCharge unused for this weapon; the charge state is what decides the answer
+     *
+     * @return {@code true} if the given mount is currently carrying a charge that can detonate, otherwise {@code false}
+     */
+    @Override
+    public boolean isExplosive(@Nullable Mounted<?> mounted, boolean ignoreCharge) {
+        if (mounted == null || ignoreCharge) {
+            // No mount to inspect means no charge state to read, and an uncharged Bombast Laser is not explosive.
+            return false;
+        }
+        // Bombast laser is only explosive when charged.
+        return mounted.getChargeState().equals(ChargeLevel.CHARGED) &&
+              !mounted.isUsedThisRound();
     }
 }

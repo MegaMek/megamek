@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,8 +32,13 @@
  */
 package megamek.client.ui.panels.phaseDisplay.lobby.sorters;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
 import java.util.OptionalInt;
+import java.util.Set;
 
 import megamek.client.Client;
 import megamek.common.units.Entity;
@@ -60,6 +65,120 @@ public abstract class MekTableSorter implements Comparator<Entity> {
         this.displayName = displayName;
         this.columnIndex = columnIndex;
         this.sorting = sorting;
+    }
+
+    /** Guards against a malformed load looping forever when walking up to a unit's outermost carrier. */
+    private static final int MAX_CARRIER_DEPTH = 16;
+
+    /**
+     * Wraps a sorter so anything riding on another unit stays with it, whatever the sorter is ordering by.
+     * <p>
+     * A carrier and its load are one object on the board, so they should be one block in the list. Without this each
+     * unit is sorted on its own merits and drifts away from what it is riding on: sorting by tonnage puts a 10 ton
+     * carriage nowhere near the 75 ton tractor pulling it, and a DropShip nowhere near its JumpShip.
+     * </p>
+     * <p>
+     * The wrapped sorter is asked about the outermost carriers instead, so a whole stack sorts wherever its carrier
+     * would. Below that, units are ordered by where they sit in the stack: a carrier comes before the things it
+     * carries, and trailers follow their tractor in hitch order, which is the order they occupy hexes in.
+     * </p>
+     *
+     * @param baseSorter the sorter the player chose
+     *
+     * @return a sorter that applies the player's choice to whole carrier stacks
+     */
+    public static Comparator<Entity> keepingCarriedUnitsTogether(Comparator<Entity> baseSorter) {
+        return (a, b) -> {
+            List<Entity> pathA = carrierPath(a);
+            List<Entity> pathB = carrierPath(b);
+            Entity rootA = pathA.get(0);
+            Entity rootB = pathB.get(0);
+
+            if (rootA.getId() != rootB.getId()) {
+                int rootComparison = baseSorter.compare(rootA, rootB);
+
+                // The sorter sees no difference between these stacks. Returning zero would let a stable sort leave a
+                // load stranded on the far side of a unit the sorter considers identical, so break the tie on the
+                // carrier to keep each stack in one piece.
+                return (rootComparison != 0) ? rootComparison : (rootA.getId() - rootB.getId());
+            }
+
+            // The same stack. Walk down until the two part company.
+            int depth = 0;
+            while ((depth < pathA.size()) && (depth < pathB.size())
+                  && (pathA.get(depth).getId() == pathB.get(depth).getId())) {
+                depth++;
+            }
+
+            // One is carrying the other, directly or further down. The carrier is listed first.
+            if ((depth >= pathA.size()) || (depth >= pathB.size())) {
+                return pathA.size() - pathB.size();
+            }
+
+            return compareStackSiblings(pathA.get(depth), pathB.get(depth));
+        };
+    }
+
+    /**
+     * Orders two units riding on the same carrier. Trailers keep hitch order; anything else falls back to unit id so
+     * the result is stable.
+     */
+    private static int compareStackSiblings(Entity a, Entity b) {
+        int hitchOrderA = hitchOrder(a);
+        int hitchOrderB = hitchOrder(b);
+
+        if ((hitchOrderA != Entity.NONE) && (hitchOrderB != Entity.NONE)) {
+            return hitchOrderA - hitchOrderB;
+        }
+
+        return a.getId() - b.getId();
+    }
+
+    /** Where a trailer sits in its train, or {@link Entity#NONE} when the unit is not towed. */
+    private static int hitchOrder(Entity entity) {
+        if ((entity.getTractor() == Entity.NONE) || (entity.getGame() == null)) {
+            return Entity.NONE;
+        }
+
+        Entity tractor = entity.getGame().getEntity(entity.getTractor());
+        return (tractor == null) ? Entity.NONE : tractor.getAllTowedUnits().indexOf(entity.getId());
+    }
+
+    /**
+     * The chain of units from the outermost carrier down to this one, the unit itself last.
+     * <p>
+     * Carriage nests, so a Mek in a DropShip in a JumpShip yields all three. Towing does not nest, but a train can be
+     * carried, so both links are followed.
+     * </p>
+     */
+    private static List<Entity> carrierPath(Entity entity) {
+        List<Entity> path = new ArrayList<>();
+        Set<Integer> visited = new HashSet<>();
+        Entity current = entity;
+
+        while ((current != null) && visited.add(current.getId()) && (path.size() < MAX_CARRIER_DEPTH)) {
+            path.add(current);
+            current = carrierOf(current);
+        }
+
+        Collections.reverse(path);
+        return path;
+    }
+
+    /** The unit this one is riding on, whether carried in a bay or towed behind, or {@code null} when neither. */
+    private static Entity carrierOf(Entity entity) {
+        if (entity.getGame() == null) {
+            return null;
+        }
+
+        if (entity.getTransportId() != Entity.NONE) {
+            return entity.getGame().getEntity(entity.getTransportId());
+        }
+        if (entity.getTractor() != Entity.NONE) {
+            return entity.getGame().getEntity(entity.getTractor());
+        }
+
+        return null;
     }
 
     /**

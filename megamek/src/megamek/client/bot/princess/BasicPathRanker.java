@@ -49,6 +49,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Stream;
 
+import megamek.client.bot.Messages;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.bot.princess.coverage.Builder;
 import megamek.client.bot.princess.geometry.ConvexBoardArea;
@@ -56,12 +57,14 @@ import megamek.client.bot.princess.geometry.CoordFacingCombo;
 import megamek.client.bot.princess.geometry.HexLine;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
+import megamek.common.analysis.DamageProfile;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.Engine;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
@@ -94,7 +97,7 @@ import megamek.logging.MMLogger;
  *
  * <p>The ranker implements Princess's core movement decision-making logic for most ground units, calculating a final
  * utility score where higher values represent more desirable paths. The relative importance of different factors is
- * determined by the bot's behavior settings (aggression, bravery, herd mentality, etc.).</p>
+ * determined by the bot's behavior settings (aggression, bravery, mutual support, etc.).</p>
  *
  * <p>Path evaluation also considers terrain hazards like building collapses, water, magma, ice, swamp, and other that
  * could damage or immobilize the unit.</p>
@@ -108,6 +111,12 @@ public class BasicPathRanker extends PathRanker {
 
     // this is a value used to indicate how much we dis-value the unit being destroyed as a result of what it's doing
     private final int UNIT_DESTRUCTION_FACTOR = 1000;
+
+    // Utility weights for the non-damage consequences of physical attacks: an expected head hit also wounds
+    // the pilot (consciousness roll, cumulative death at six hits), and an expected critical can cripple out
+    // of proportion to its raw damage. Scaled against UNIT_DESTRUCTION_FACTOR (1000 = certain death).
+    private static final double PHYSICAL_PILOT_HIT_WEIGHT = 100.0;
+    private static final double PHYSICAL_CRIT_WEIGHT = 30.0;
 
     // penalty for ending a sprint inside enemy weapon range; a sprinting unit forfeits all of its attacks,
     // so this must outweigh the aggression/bravery incentives that would otherwise favor closing distance
@@ -136,6 +145,74 @@ public class BasicPathRanker extends PathRanker {
     // Per-spotter memory of the last priority target it positioned for, keyed by the spotter's entity id. Drives the
     // TAG-spotter positioning hysteresis so it keeps painting one high-value target instead of flipping each turn.
     private final Map<Integer, Integer> lastSpotterPriorityTarget = new HashMap<>();
+
+    // ----- Position discipline (shared by every bot; the terrain-doctrine mechanisms promoted from CASPAR) -----
+
+    /**
+     * Position discipline is dormant beyond this range: out of contact there is no exchange to hold and
+     * the force should move loose and fast.
+     */
+    protected static final int THREAT_CONTACT_RANGE = 15;
+
+    /**
+     * Reference movement rate that prices "one turn of advance" ({@code TEMPO_REFERENCE_MP * aggression}),
+     * the yardstick every position-discipline bound is measured against. At default aggression (2.5) a
+     * turn of advance is worth 37.5 - the same scale as the stock per-hex aggression gradient over a
+     * full move.
+     */
+    protected static final double TEMPO_REFERENCE_MP = 15.0;
+
+    /**
+     * The to-hit number the hit-chance-ratio discounts are priced at: gunnery 4 plus a typical spread of
+     * range and target modifiers. Only the RATIO of hit chances at this number matters - walking turns 8s
+     * into 9s whoever you are - so the midpoint stands in for every shooter without pretending the
+     * estimate knows its real to-hit.
+     */
+    protected static final int REPRESENTATIVE_TO_HIT = 8;
+
+    /**
+     * The indifference band: how much better a destination must score before leaving a held firing
+     * position is worth it. The ranker re-estimates every hex every round, and the estimate of the SAME
+     * hex moves round to round as enemies shift - measured on 30-game mirror runs, a unit standing still
+     * sees its own hex's score change by a median of about five points per round. A destination that beats
+     * the current hex by less than that is indistinguishable from the noise, and chasing it pays the
+     * attacker movement modifier for nothing. The margin is the measured median (estimate_wobble.py,
+     * re-measured whenever the estimators change), added to the stationary path's hold credit: real
+     * improvements - fresh cover against a new threat, a range advantage - typically score well past it
+     * and still win.
+     */
+    protected static final double ESTIMATE_NOISE_MARGIN = 5.0;
+
+    /**
+     * How much of a turn of advance the hold credit may reach under each posture: an attacking force
+     * keeps the credit modest so a good hex never outbids the advance, while a defending force holds
+     * harder. Both keep the credit below one turn of advance at default aggression; a final clamp in
+     * {@link #calculatePositionHoldMod} holds that bound across the whole aggression slider, where the
+     * fixed {@link #ESTIMATE_NOISE_MARGIN} would otherwise overtake the shrinking yardstick.
+     */
+    protected static final double HOLD_CREDIT_ATTACK_CAP_FACTOR = 0.4;
+    protected static final double HOLD_CREDIT_DEFEND_CAP_FACTOR = 0.8;
+
+    // Posture is a force-level call, made once per round and per board: every unit on a board moves under
+    // the same answer, and enemies on another board have no say in it.
+    private final Map<Integer, PostureResolver> postureResolverByBoard = new HashMap<>();
+    private final Map<Integer, CombatPosture> postureByBoard = new HashMap<>();
+    private int postureResolvedRound = -1;
+    private CombatPosture posture = CombatPosture.ATTACK;
+    private CombatPosture announcedPosture;
+    private double lastPositionQuality;
+    private double lastPositionHoldMod;
+
+    // Per-hex terrain labels, built once per board per round (fires burn woods away, buildings fall),
+    // then every path evaluation is one array lookup.
+    private final Map<Integer, HexPropertiesMap> hexPropertiesByBoard = new HashMap<>();
+    private int hexPropertiesRound = -1;
+
+    // Sustainable-output curves per unit, dry and standing in water, rebuilt per round (weapons and
+    // sinks get shot away). Keyed by unit id.
+    private final Map<Integer, DamageProfile> dryProfileByUnit = new HashMap<>();
+    private final Map<Integer, DamageProfile> waterProfileByUnit = new HashMap<>();
+    private int profileCacheRound = -1;
 
     public BasicPathRanker(Princess owningPrincess) {
         super(owningPrincess);
@@ -260,12 +337,12 @@ public class BasicPathRanker extends PathRanker {
             returnResponse.addToMyEstimatedDamage(getMaxDamageAtRange(path.getEntity(),
                   range,
                   useExtremeRange,
-                  useLOSRange) * damageDiscount);
+                  useLOSRange) * damageDiscount * attackerMovementDamageDiscount(path));
         }
 
         // in general, if an enemy can end its position in range, it can hit me
         returnResponse.addToEstimatedEnemyDamage(getMaxDamageAtRange(enemy, range, useExtremeRange, useLOSRange) *
-              damageDiscount);
+              damageDiscount * incomingFireTerrainDiscount(path));
 
         // It is especially embarrassing if the enemy can move behind or flank me and then kick me
         if (canFlankAndKick(enemy, behind, leftFlank, rightFlank, myFacing)) {
@@ -273,6 +350,146 @@ public class BasicPathRanker extends PathRanker {
         }
 
         return returnResponse;
+    }
+
+    /**
+     * How much of its raw damage-at-range a unit keeps after its own movement makes it a worse shot.
+     *
+     * <p>The unmoved-enemy estimate above is a range-table lookup with no to-hit roll in it, so the one
+     * certain cost of moving - the attacker movement modifier, +1 walked, +2 ran, +3 jumped - did not
+     * exist in it, and a short step read as free. This prices it back in as a hit-chance ratio at the
+     * {@link #REPRESENTATIVE_TO_HIT} midpoint: standing keeps everything, walking keeps about two-thirds,
+     * running two-fifths, a standard jump one-fifth. The modifier comes from the same engine call the
+     * server fires with ({@link Compute#getAttackerMovementModifier}), so infantry's exemption, the
+     * dual-cockpit dedicated gunner, and the jumping-jack abilities are all priced without naming them.</p>
+     *
+     * @param path the path being evaluated
+     *
+     * @return the fraction of the raw damage estimate the path's movement mode leaves the unit
+     */
+    protected double attackerMovementDamageDiscount(MovePath path) {
+        int attackerMovementModifier = Compute.getAttackerMovementModifier(path.getEntity().getGame(),
+              path.getEntity().getId(),
+              path.getLastStepMovementType()).getValue();
+        if (attackerMovementModifier <= 0) {
+            return 1.0;
+        }
+        if (attackerMovementModifier >= TargetRoll.AUTOMATIC_FAIL) {
+            // Sprinting: no attacks at all after this move. Unreachable from the current call site
+            // (sprint paths contribute no damage before the discount applies), but the sentinel is
+            // Integer.MAX_VALUE - 1 and must never reach the addition below.
+            return 0.0;
+        }
+        return Compute.oddsAbove(REPRESENTATIVE_TO_HIT + attackerMovementModifier)
+              / Compute.oddsAbove(REPRESENTATIVE_TO_HIT);
+    }
+
+    /**
+     * How much of an unmoved enemy's raw damage the terrain at this path's destination lets through.
+     *
+     * <p>The twin of {@link #attackerMovementDamageDiscount}: the raw damage-at-range estimate above has no
+     * to-hit roll, so the cover the destination hex gives - the woods and partial-cover modifiers the full
+     * fire-control guess prices against already-moved enemies - did not exist in it, and a covered hex and
+     * an open one read the same. This discounts that raw estimate by the hit-chance ratio the destination's
+     * cover implies, from the per-round {@link HexPropertiesMap} labels. Only cover a unit can FIGHT from
+     * is credited: woodline edges and partial cover count; deep woods - concealing but blind -
+     * deliberately do not, so the discount never coaxes a unit into ground it cannot shoot from.</p>
+     *
+     * @param path the path being evaluated
+     *
+     * @return the fraction of the raw enemy damage estimate the destination's cover lets through
+     */
+    protected double incomingFireTerrainDiscount(MovePath path) {
+        HexProperties properties = hexProperties(path.getEntity().getGame(), path.getFinalBoardId())
+              .at(path.getFinalCoords());
+        return incomingFireTerrainDiscount(properties);
+    }
+
+    /** The pure pricing: what fraction of incoming fire the cover modifiers let through. */
+    static double incomingFireTerrainDiscount(HexProperties properties) {
+        int coverModifiers = (properties.concealmentEdge() ? properties.concealment() : 0)
+              + (properties.partialCover() ? 1 : 0);
+        if (coverModifiers <= 0) {
+            return 1.0;
+        }
+        return Compute.oddsAbove(REPRESENTATIVE_TO_HIT + coverModifiers)
+              / Compute.oddsAbove(REPRESENTATIVE_TO_HIT);
+    }
+
+    /**
+     * The per-hex terrain labels for a board, computed once per round and shared by every path of every
+     * mover on it.
+     */
+    protected HexPropertiesMap hexProperties(Game game, int boardId) {
+        int round = game.getCurrentRound();
+        if (round != hexPropertiesRound) {
+            hexPropertiesRound = round;
+            hexPropertiesByBoard.clear();
+        }
+        return hexPropertiesByBoard.computeIfAbsent(boardId,
+              id -> HexPropertiesMap.of(game, game.getBoard(id), id));
+    }
+
+    /**
+     * The posture the force fights under this round on the given board, resolved once per round per board
+     * and shared by every unit there. Only units on that board have a say: entity lists are game-wide, and
+     * in a multi-board game mixing boards would make the closing rate meaningless. When the answer
+     * changes, the bot says so in the chat with its reason, so an observer can follow the force's intent
+     * without reading logs.
+     */
+    protected CombatPosture resolvePosture(Game game, int boardId) {
+        int round = game.getCurrentRound();
+        if (round != postureResolvedRound) {
+            if (round < postureResolvedRound) {
+                // The round going backwards means a new game on a reused bot client (a server reset
+                // keeps bots connected, and initialize() only runs once per client). The resolvers'
+                // closing-rate history and the announcement memory belong to the previous game.
+                postureResolverByBoard.clear();
+                announcedPosture = null;
+            }
+            postureResolvedRound = round;
+            postureByBoard.clear();
+        }
+        posture = postureByBoard.computeIfAbsent(boardId, id -> {
+            PostureResolver resolver = postureResolverByBoard.computeIfAbsent(id,
+                  newBoard -> new PostureResolver());
+            CombatPosture resolved = resolver.resolve(getOwner().getBehaviorSettings(), round,
+                  deployedPositions(getOwner().getEntitiesOwned(), id),
+                  deployedPositions(getOwner().getEnemyEntities(), id));
+            if (resolved != announcedPosture) {
+                announcedPosture = resolved;
+                getOwner().sendChat(Messages.getString("Princess.posture.announce",
+                      resolved, resolver.resolutionReason()));
+            }
+            return resolved;
+        });
+        return posture;
+    }
+
+    /** The positions of the given units that are deployed on the given board; the rest have no say. */
+    static List<Coords> deployedPositions(List<Entity> units, int boardId) {
+        List<Coords> positions = new ArrayList<>(units.size());
+        for (Entity unit : units) {
+            Coords position = unit.getPosition();
+            if ((null != position) && unit.isDeployed() && (unit.getBoardId() == boardId)) {
+                positions.add(position);
+            }
+        }
+        return positions;
+    }
+
+    /**
+     * Whether a unit has left the fighting line - pulling back under forced withdrawal, or ordered
+     * somewhere else entirely (a destination edge or a player waypoint). Such a unit earns no hold
+     * credit (it has somewhere to be, however good its current hex), and its say in where the
+     * formation's centre lies is sharply reduced - not removed, so the centre moves continuously as
+     * units leave the line (see {@code MutualSupportPathRanker}'s withdrawing centre weight).
+     */
+    protected boolean isWithdrawing(Entity unit) {
+        BehaviorType behaviorType = getOwner().getUnitBehaviorTracker().getBehaviorType(unit, getOwner());
+        return getOwner().isFallingBack(unit)
+              || behaviorType.equals(BehaviorType.ForcedWithdrawal)
+              || behaviorType.equals(BehaviorType.MoveToDestination);
     }
 
     @Override
@@ -355,26 +572,58 @@ public class BasicPathRanker extends PathRanker {
         return getFireControl(path.getEntity()).determineBestFiringPlan(guess).getUtility();
     }
 
-    double calculateKickDamagePotential(Entity enemy, MovePath path, Game game) {
+    /**
+     * Estimates the physical-attack threat an adjacent enemy Mek poses to the moving unit at the given path's
+     * end state: the better of its kick or its two-armed punch, valued as expected damage plus the expected
+     * cost of criticals, pilot hits, and outright kills. Which attack is better - and whether the head is even
+     * reachable - depends on the relative elevation: an enemy one level above resolves its kick on the punch
+     * table (head at 1 in 6), which is why standing below an adjacent enemy is far more dangerous than
+     * standing level with it.
+     *
+     * @param enemy the adjacent enemy Mek
+     * @param path  the path being evaluated for the moving unit
+     * @param game  the current game
+     *
+     * @return the expected utility cost of the enemy's best physical attack against the path's end position
+     */
+    double calculateEnemyPhysicalThreat(Entity enemy, MovePath path, Game game) {
         if (!(enemy instanceof Mek)) {
             return 0.0;
         }
 
-        // if they can kick me, and probably hit, they probably will.
-        PhysicalInfo theirKick = new PhysicalInfo(enemy,
-              null,
-              path.getEntity(),
-              new EntityState(path),
-              PhysicalAttackType.RIGHT_KICK,
-              game,
-              getOwner(),
-              true);
+        double kickThreat = physicalThreatValue(enemy, path, PhysicalAttackType.RIGHT_KICK, null, game);
+        double punchThreat = physicalThreatValue(enemy, path, PhysicalAttackType.LEFT_PUNCH, null, game)
+              + physicalThreatValue(enemy, path, PhysicalAttackType.RIGHT_PUNCH, null, game);
 
-        if (theirKick.getProbabilityToHit() <= 0.5) {
-            return 0.0;
+        // A physical weapon (hatchet, sword, club) replaces the punches or the kick in the physical phase;
+        // a Hatchetman's threat profile is its hatchet, not its fists.
+        double weaponThreat = 0.0;
+        for (MiscMounted club : enemy.getClubs()) {
+            weaponThreat = Math.max(weaponThreat,
+                  physicalThreatValue(enemy, path, PhysicalAttackType.WEAPON, club, game));
         }
 
-        return theirKick.getExpectedDamageOnHit() * theirKick.getProbabilityToHit();
+        // One physical attack per phase; assume the enemy picks its best option.
+        return Math.max(weaponThreat, Math.max(kickThreat, punchThreat));
+    }
+
+    /**
+     * Values one enemy physical attack against the moving unit's projected end state: expected damage plus
+     * weighted expected criticals, pilot hits, and kill probability. Unlike raw damage, this makes a
+     * head-capable attack (punch table) cost what it is actually worth - a 3-point head kick that risks
+     * knocking out or killing the pilot is not "3 damage".
+     */
+    private double physicalThreatValue(Entity enemy, MovePath path, PhysicalAttackType attackType,
+          @Nullable MiscMounted club, Game game) {
+        PhysicalInfo theirAttack = (club != null)
+              ? new PhysicalInfo(enemy, null, path.getEntity(), new EntityState(path), club, game, getOwner(), true)
+              : new PhysicalInfo(enemy, null, path.getEntity(), new EntityState(path), attackType, game,
+                    getOwner(), true);
+
+        return theirAttack.getExpectedDamage()
+              + (theirAttack.getExpectedCriticals() * PHYSICAL_CRIT_WEIGHT)
+              + (theirAttack.getExpectedPilotHits() * PHYSICAL_PILOT_HIT_WEIGHT)
+              + (theirAttack.getKillProbability() * UNIT_DESTRUCTION_FACTOR);
     }
 
     double calculateMyDamagePotential(MovePath path, Entity enemy, int distance, Game game) {
@@ -435,25 +684,49 @@ public class BasicPathRanker extends PathRanker {
         return myFiringPlan.getUtility();
     }
 
-    double calculateMyKickDamagePotential(MovePath path, Entity enemy, Game game) {
-        if (!(path.getEntity() instanceof Mek)) {
+    /**
+     * Estimates the physical damage the moving unit can deal from the given path's end state: the better of
+     * its kick or its two-armed punch, valued at plain expected damage. Deliberate asymmetry with
+     * {@link #calculateEnemyPhysicalThreat}: the crit, pilot-hit, and kill weightings apply only to physicals
+     * we might RECEIVE - they push units away from dangerous adjacency. Crediting our own attacks with those
+     * bonuses would inflate the bravery term and the close-range incentive and pull units toward point-blank
+     * range, where physicals are already strong.
+     *
+     * @param path  the path being evaluated
+     * @param enemy the adjacent enemy
+     * @param game  the current game
+     *
+     * @return the expected damage of the moving unit's best physical attack from the path's end position
+     */
+    double calculateMyPhysicalDamagePotential(MovePath path, Entity enemy, Game game) {
+        if (!(path.getEntity() instanceof Mek movingMek)) {
             return 0.0;
         }
 
-        PhysicalInfo myKick = new PhysicalInfo(path.getEntity(),
-              new EntityState(path),
-              enemy,
-              null,
-              PhysicalAttackType.RIGHT_KICK,
-              game,
-              getOwner(),
-              true);
+        double kickDamage = myPhysicalExpectedDamage(path, enemy, PhysicalAttackType.RIGHT_KICK, null, game);
+        double punchDamage = myPhysicalExpectedDamage(path, enemy, PhysicalAttackType.LEFT_PUNCH, null, game)
+              + myPhysicalExpectedDamage(path, enemy, PhysicalAttackType.RIGHT_PUNCH, null, game);
 
-        if (myKick.getProbabilityToHit() <= 0.5) {
-            return 0.0;
+        // A physical weapon replaces the punches or the kick; count our best single option.
+        double weaponDamage = 0.0;
+        for (MiscMounted club : movingMek.getClubs()) {
+            weaponDamage = Math.max(weaponDamage,
+                  myPhysicalExpectedDamage(path, enemy, PhysicalAttackType.WEAPON, club, game));
         }
 
-        return myKick.getExpectedDamageOnHit() * myKick.getProbabilityToHit();
+        return Math.max(weaponDamage, Math.max(kickDamage, punchDamage));
+    }
+
+    /** Expected damage of one of the moving unit's own physical attacks; see
+     * {@link #calculateMyPhysicalDamagePotential}. */
+    private double myPhysicalExpectedDamage(MovePath path, Entity enemy, PhysicalAttackType attackType,
+          @Nullable MiscMounted club, Game game) {
+        PhysicalInfo myAttack = (club != null)
+              ? new PhysicalInfo(path.getEntity(), new EntityState(path), enemy, null, club, game, getOwner(), true)
+              : new PhysicalInfo(path.getEntity(), new EntityState(path), enemy, null, attackType, game,
+                    getOwner(), true);
+
+        return myAttack.getExpectedDamage();
     }
 
     EntityEvaluationResponse evaluateMovedEnemy(Entity enemy, MovePath path, Game game) {
@@ -469,9 +742,9 @@ public class BasicPathRanker extends PathRanker {
               distance,
               game);
 
-        // if they can kick me, and probably hit, they probably will.
+        // if they can reach me with a physical attack, assume they will use their best one.
         if (distance <= 1) {
-            theirDamagePotential += calculateKickDamagePotential(enemy, path, game);
+            theirDamagePotential += calculateEnemyPhysicalThreat(enemy, path, game);
         }
 
         returnResponse.setEstimatedEnemyDamage(theirDamagePotential);
@@ -484,7 +757,7 @@ public class BasicPathRanker extends PathRanker {
 
             // How much physical damage can I do to them?
             if (distance <= 1) {
-                returnResponse.setMyEstimatedPhysicalDamage(calculateMyKickDamagePotential(path, enemy, game));
+                returnResponse.setMyEstimatedPhysicalDamage(calculateMyPhysicalDamagePotential(path, enemy, game));
             }
         }
 
@@ -692,6 +965,18 @@ public class BasicPathRanker extends PathRanker {
             distToEnemy = 2;
         }
 
+        // A laid defense does not pay tempo. Once the enemy is inside contact range and the force's
+        // posture is DEFEND, the enemy is coming to us: the closing charge that keeps an attack from
+        // dithering would here bleed the defender off its firing positions one hex at a time. Out of
+        // contact the charge stands, so a defending force still closes ranks toward its line. The gate
+        // reads the unit's CURRENT distance, not the path's, so every candidate path of the pass sees
+        // the same flat field.
+        if ((CombatPosture.DEFEND == resolvePosture(game, movingUnit.getBoardId()))
+              && (distanceToClosestEnemy(movingUnit, movingUnit.getPosition(), game)
+                    <= THREAT_CONTACT_RANGE)) {
+            return 0;
+        }
+
         double aggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
         double aggressionMod = distToEnemy * aggression;
         logger.trace("aggression mod [ -{} = {} * {}]", aggressionMod, distToEnemy, aggression);
@@ -757,7 +1042,7 @@ public class BasicPathRanker extends PathRanker {
     // ComputeToHitIsImpossible - so a tube must hold at least one hex beyond that (18+) to be able to fire at all.
     private static final int ARTILLERY_INDIRECT_MIN_RANGE = Board.DEFAULT_BOARD_HEIGHT + 1;
 
-    // How sharply a tube is pulled back once it is inside its minimum indirect range: steep, so it overrides the herd
+    // How sharply a tube is pulled back once it is inside its minimum indirect range: steep, so it overrides the form up
     // pull toward the advancing friendly line rather than drifting into a range from which it cannot fire.
     private static final double ARTILLERY_STANDOFF_URGENCY = 4.0;
 
@@ -767,7 +1052,7 @@ public class BasicPathRanker extends PathRanker {
 
     // Per-hex penalty that keeps a safely-positioned artillery tube in its current hex instead of shuffling sideways
     // (which gains it nothing and can incur attacker-movement firing penalties). Large enough to dominate the small
-    // movement/herding pull; the tube may still turn in place to face the enemy.
+    // movement/mutual-support pull; the tube may still turn in place to face the enemy.
     private static final double ARTILLERY_HOLD_STILL_WEIGHT = 100.0;
 
     // Penalty added to a TAG spotter's path when it jumps to a hex it could otherwise designate from. Jumping piles a
@@ -1018,7 +1303,7 @@ public class BasicPathRanker extends PathRanker {
      *
      * @param aggressionMod           the standoff aggression penalty for this path
      * @param holdingArtilleryInPlace {@code true} if the tube is holding position (skip the movement-TMM reward)
-     * @param standoffArtillery       {@code true} for the artillery-tube branch (ignores the herd pull, faces the
+     * @param standoffArtillery       {@code true} for the artillery-tube branch (ignores the mutual support pull, faces the
      *                                cluster)
      * @param branch                  the branch that fired (e.g. {@code TAG_DESIGNATE}, {@code FALL_BACK},
      *                                {@code none})
@@ -1059,7 +1344,7 @@ public class BasicPathRanker extends PathRanker {
           double braveryMod) {
         boolean holdingArtilleryInPlace = false;
         // True whenever this unit is being ranked by the artillery standoff branch (whether safely holding or falling
-        // back). Such a tube ignores the herd pull entirely so it never creeps toward the advancing friendly line.
+        // back). Such a tube ignores the mutual support pull entirely so it never creeps toward the advancing friendly line.
         boolean standoffArtillery = false;
         double aggressionMod;
         // Diagnostics for the artillery/TAG standoff decision, surfaced in the [Move] breakdown so a playtest can see
@@ -1082,7 +1367,7 @@ public class BasicPathRanker extends PathRanker {
                 // Position for a TAG shot on the PRIORITY target (the highest-value enemy, held across turns), not just
                 // any enemy. Every hex with line of sight + TAG range to it is acceptable (a designation ZONE, not a
                 // single ring); within the safe-and-accurate band [MIN_TAG_STANDOFF_DISTANCE, standoffDistance] the
-                // positioning penalty is flat, so survivability/herding choose the hex. A hex that cannot designate the
+                // positioning penalty is flat, so survivability/mutual-support choose the hex. A hex that cannot designate the
                 // priority target is penalized and pulled toward regaining line of sight on it.
                 int tagRange = maxOperationalTagRange(movingUnit);
                 double hyperAggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
@@ -1257,17 +1542,17 @@ public class BasicPathRanker extends PathRanker {
     }
 
     /**
-     * Calculates a herding modifier that penalizes paths taking the unit away from friendly forces.
+     * Calculates a mutual support modifier that penalizes paths taking the unit away from friendly forces.
      *
      * <p>This method implements the tactical preference for maintaining formation with friendly units based on:
      * <ul>
      *   <li>The distance from the path's final position to the center of friendly forces</li>
-     *   <li>The AI's configured herd mentality value</li>
+     *   <li>The AI's configured mutual support value</li>
      * </ul>
      *
-     * <p>The herding modifier follows this formula:
+     * <p>The mutual support modifier follows this formula:
      * <pre>
-     * herdingMod = distanceToFriends * herdMentalityValue
+     * mutualSupportMod = distanceToFriends * mutualSupportValue
      * </pre>
      *
      * <p>Since this value is subtracted in the final utility calculation, higher values represent
@@ -1277,20 +1562,20 @@ public class BasicPathRanker extends PathRanker {
      * @param friendsCoords The coordinate representing the center of friendly forces, or null if no friends
      * @param path          The movement path being evaluated
      *
-     * @return A herding modifier value (higher is worse) to be used in path ranking
+     * @return A mutual support modifier value (higher is worse) to be used in path ranking
      */
-    protected double calculateHerdingMod(Coords friendsCoords, MovePath path) {
+    protected double calculateMutualSupportMod(Coords friendsCoords, MovePath path) {
         if (friendsCoords == null) {
-            logger.trace(" herdingMod [-0 no friends]");
+            logger.trace(" mutualSupportMod [-0 no friends]");
             return 0;
         }
 
         double finalDistance = friendsCoords.distance(path.getFinalCoords());
-        double herding = getOwner().getBehaviorSettings().getHerdMentalityValue();
-        double herdingMod = finalDistance * herding;
+        double mutualSupportValue = getOwner().getBehaviorSettings().getMutualSupportValue();
+        double mutualSupportMod = finalDistance * mutualSupportValue;
 
-        logger.trace("herding mod [-{} = {} * {}]", herdingMod, finalDistance, herding);
-        return herdingMod;
+        logger.trace("mutual support mod [-{} = {} * {}]", mutualSupportMod, finalDistance, mutualSupportValue);
+        return mutualSupportMod;
     }
 
     /**
@@ -1384,6 +1669,21 @@ public class BasicPathRanker extends PathRanker {
                   selfPreservation);
             return selfPreservationMod;
         }
+
+        // A withdrawing unit with no reachable retreat edge still wants out of the fight: reward opening
+        // the range to the closest enemy. Without this, NoPathToDestination units got zero retreat pull
+        // and loitered in the engagement zone.
+        if ((behaviorType == BehaviorType.NoPathToDestination) && getOwner().wantsToFallBack(movingUnit)) {
+            double distanceToEnemy = distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game);
+            double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
+            double selfPreservationMod = -distanceToEnemy * selfPreservation;
+            logger.trace("self preservation mod (no retreat path) [{} = -{} * {}]",
+                  selfPreservationMod,
+                  distanceToEnemy,
+                  selfPreservation);
+            return selfPreservationMod;
+        }
+
         logger.trace("self preservation mod [0] - not moving nor forced to withdraw");
         return 0.0;
     }
@@ -1425,7 +1725,7 @@ public class BasicPathRanker extends PathRanker {
      *
      * <p>The utility score calculation combines several weighted factors:</p>
      * <pre>
-     *   utility = -fallMod + braveryMod - aggressionMod - herdingMod + movementMod
+     *   utility = -fallMod + braveryMod - aggressionMod - mutualSupportMod + movementMod
      *             - crowdingTolerance - facingMod - selfPreservationMod - (utility * offBoardMod)
      * </pre>
      *
@@ -1443,8 +1743,8 @@ public class BasicPathRanker extends PathRanker {
      *     <ul><li>Calculated as {@code distanceToEnemy * aggressionValue}</li>
      *         <li>Higher values = worse paths (too far from enemies when aggression is high)</li></ul>
      *   </li>
-     *   <li><strong>herdingMod</strong>: Penalty for moving away from friendly units
-     *     <ul><li>Calculated as {@code distanceToFriends * herdingValue}</li>
+     *   <li><strong>mutualSupportMod</strong>: Penalty for moving away from friendly units
+     *     <ul><li>Calculated as {@code distanceToFriends * mutualSupportValue}</li>
      *         <li>Higher values = worse paths (isolated from allies)</li></ul>
      *   </li>
      *   <li><strong>facingMod</strong>: Penalty for not facing toward enemies
@@ -1469,7 +1769,7 @@ public class BasicPathRanker extends PathRanker {
      *   </li>
      * </ul>
      *
-     * <p>The function uses behavior settings like bravery, aggression, and herd mentality to adjust
+     * <p>The function uses behavior settings like bravery, aggression, and mutual support to adjust
      * the relative importance of these factors based on the AI's configured personality.</p>
      *
      * @param path          The movement path to be evaluated
@@ -1592,7 +1892,7 @@ public class BasicPathRanker extends PathRanker {
         scores.put("braveryIndex", (double) getOwner().getBehaviorSettings().getBraveryIndex());
         scores.put("braveryMod", braveryMod);
         var isNotAirborne = !path.getEntity().isAirborneAeroOnGroundMap();
-        // The only critters not subject to aggression and herding mods are
+        // The only critters not subject to aggression and mutual support mods are
         // airborne aeros on ground maps, as they move incredibly fast.
         // The further I am from a target, the lower this path ranks
         // (weighted by Aggression slider).
@@ -1618,6 +1918,23 @@ public class BasicPathRanker extends PathRanker {
         StandoffEvaluation standoff = evaluateStandoff(movingUnit, path, pathCopy, game, enemies, isNotAirborne,
               standoffDistance, distToEnemy, distToCluster, braveryMod);
         double aggressionMod = standoff.aggressionMod();
+
+        // A unit with a movement mission has no business being pulled toward the enemy: kill the aggression
+        // pull (and, below, the closing incentive and mutual support pull) so the destination and
+        // self-preservation terms are what actually decide its path. Covers forced withdrawal, trapped
+        // withdrawers (NoPathToDestination while wanting to fall back), and units ORDERED somewhere -
+        // MoveToDestination, whether a flee edge or a player waypoint. Without the last one, an ordered
+        // retreat past a superior enemy loitered: the order registered but the closing pull and the
+        // exchange-priced terms vetoed every step of the route, and the unit crept in place all game
+        // (community game 2026-08-07, 395 MoveToDestination rows with near-zero net displacement).
+        BehaviorType moverBehavior = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner());
+        boolean withdrawing = (moverBehavior == BehaviorType.ForcedWithdrawal)
+              || (moverBehavior == BehaviorType.MoveToDestination)
+              || ((moverBehavior == BehaviorType.NoPathToDestination) && getOwner().wantsToFallBack(movingUnit));
+        if (withdrawing) {
+            aggressionMod = 0;
+        }
+        scores.put("withdrawing", withdrawing ? 1.0 : 0.0);
         boolean holdingArtilleryInPlace = standoff.holdingArtilleryInPlace();
         boolean standoffArtillery = standoff.standoffArtillery();
         String standoffBranch = standoff.branch();
@@ -1639,27 +1956,33 @@ public class BasicPathRanker extends PathRanker {
         scores.put("aggressionMod", aggressionMod);
 
         // Pull short-range gunners and melee brawlers toward contact. Standoff units (artillery tubes, TAG
-        // spotters) want to keep their distance, and a unit told to ignore its damage output has no reason to
-        // close, so neither gets the incentive.
-        boolean wantsToClose = (standoffDistance == 0) && !getOwner().getBehaviorSettings().isIgnoreDamageOutput();
+        // spotters) want to keep their distance, a unit told to ignore its damage output has no reason to
+        // close, and a withdrawing unit is trying to leave, so none of them get the incentive.
+        boolean wantsToClose = (standoffDistance == 0)
+              && !getOwner().getBehaviorSettings().isIgnoreDamageOutput()
+              && !withdrawing;
         double closeRangeIncentive = wantsToClose ? calculateCloseRangeIncentive(movingUnit, distToEnemy) : 0;
         scores.put("closeRangeIncentive", closeRangeIncentive);
 
         // The further I am from my teammates, the lower this path
-        // ranks (weighted by Herd Mentality).
+        // ranks (weighted by Mutual Support).
         // Standoff artillery (whether holding at range or falling back when the enemy breaches its standoff) ignores the
-        // herd pull, so it never gets dragged toward the advancing friendly line instead of keeping its distance.
-        double herdingMod = (isNotAirborne && !standoffArtillery)
-              ? calculateHerdingMod(friendsCoords, pathCopy)
+        // mutual support pull, so it never gets dragged toward the advancing friendly line instead of keeping its distance.
+        // Withdrawing units ignore it too - the form up center is the still-engaged friendly line they are leaving.
+        double mutualSupportMod = (isNotAirborne && !standoffArtillery && !withdrawing)
+              ? calculateMutualSupportMod(friendsCoords, pathCopy)
               : 0;
 
         // Movement is good, it gives defense and extends a player power in the game.
-        if (movingUnit.getPosition() != null && friendsCoords != null) {
-            scores.put("friendsDistance", (double) friendsCoords.distance(movingUnit.getPosition()));
-        }
-        scores.put("herdingValue", getOwner().getBehaviorSettings().getHerdMentalityValue());
-        scores.put("herdingIndex", (double) getOwner().getBehaviorSettings().getHerdMentalityIndex());
-        scores.put("herdingMod", herdingMod);
+        // Always recorded, even when there is no anchor: a score that appears for some paths and not others
+        // gives the log rows different widths and makes the whole file unparseable.
+        scores.put("friendsDistance",
+              (movingUnit.getPosition() != null && friendsCoords != null)
+                    ? (double) friendsCoords.distance(movingUnit.getPosition())
+                    : -1.0);
+        scores.put("mutualSupportValue", getOwner().getBehaviorSettings().getMutualSupportValue());
+        scores.put("mutualSupportIndex", (double) getOwner().getBehaviorSettings().getMutualSupportIndex());
+        scores.put("mutualSupportMod", mutualSupportMod);
 
         var movementModFormula = new StringBuilder(64);
 
@@ -1711,6 +2034,9 @@ public class BasicPathRanker extends PathRanker {
 
         double selfPreservationMod = calculateSelfPreservationMod(movingUnit, pathCopy, game);
 
+        double positionHoldMod = calculatePositionHoldMod(pathCopy, game, damageEstimate, expectedDamageTaken,
+              successProbability);
+
         StringBuilder sprintFormula = new StringBuilder(64);
         double sprintExposurePenalty = calculateSprintExposurePenalty(pathCopy, enemies, game, scores,
               sprintFormula);
@@ -1722,12 +2048,13 @@ public class BasicPathRanker extends PathRanker {
         utility += braveryMod;
         utility -= aggressionMod;
         utility += closeRangeIncentive;
-        utility -= herdingMod;
+        utility -= mutualSupportMod;
         utility += movementMod;
         utility -= crowdingTolerance;
         utility -= facingMod;
         utility -= selfPreservationMod;
         utility -= sprintExposurePenalty;
+        utility += positionHoldMod;
         utility -= utility * offBoardMod;
 
         formula.append("Calculation: {fall mod [")
@@ -1764,13 +2091,13 @@ public class BasicPathRanker extends PathRanker {
                   .append(" distToCluster=").append(LOG_DECIMAL.format(distToCluster))
                   .append(" losPriority=").append(losToPriority);
         }
-        formula.append("] - herdingMod [");
+        formula.append("] - mutualSupportMod [");
         if (friendsCoords != null) {
-            formula.append(LOG_DECIMAL.format(herdingMod))
+            formula.append(LOG_DECIMAL.format(mutualSupportMod))
                   .append(" = ")
                   .append(LOG_DECIMAL.format(friendsCoords.distance(path.getFinalCoords())))
                   .append(" * ")
-                  .append(LOG_DECIMAL.format(getOwner().getBehaviorSettings().getHerdMentalityValue()));
+                  .append(LOG_DECIMAL.format(getOwner().getBehaviorSettings().getMutualSupportValue()));
         } else {
             formula.append("0 no friends");
         }
@@ -1797,12 +2124,145 @@ public class BasicPathRanker extends PathRanker {
             formula.append(" - ").append(sprintFormula);
         }
 
+        if (positionHoldMod != 0.0) {
+            formula.append(" + positionHoldMod [").append(LOG_DECIMAL.format(positionHoldMod)).append("]");
+        }
+
         logger.trace("{}", formula);
+
+        scores.putAll(doctrineScores());
 
         RankedPath rankedPath = new RankedPath(utility, pathCopy, formula.toString());
         rankedPath.setExpectedDamage(damageEstimate.getMaximumDamageEstimate());
         rankedPath.getScores().putAll(scores);
         return rankedPath;
+    }
+
+    /**
+     * The reasoning behind a subclass's own modifiers, which becomes extra columns in the
+     * {@link megamek.client.bot.BotLogger} TSV.
+     *
+     * <p>The modifier values themselves are already recorded, but a number on its own only says how much a term
+     * weighed, not why. Answering "why did the bot do this" after the fact needs the inputs that produced it, and
+     * a subclass that replaces a modifier is the only thing that knows what those are. Anything left only in trace
+     * logging is effectively unavailable: it is off by default and rotates away within a minute of a company-scale
+     * game.</p>
+     *
+     * @return named values to record alongside the path's modifiers
+     */
+    protected Map<String, Double> doctrineScores() {
+        Map<String, Double> scores = new HashMap<>();
+        // Position persistence: the force-level posture this path was ranked under (CombatPosture
+        // ordinal: 0 attack, 1 defend), the exchange quality of the hex a stationary path holds, and what
+        // holding it was credited. Quality and credit are zero for any path that moved; reset at the top
+        // of calculatePositionHoldMod so no path inherits the previous path's figures.
+        scores.put("combatPosture", (double) posture.ordinal());
+        scores.put("positionQuality", lastPositionQuality);
+        scores.put("positionHoldMod", lastPositionHoldMod);
+        return scores;
+    }
+
+    /**
+     * Position persistence: a unit already standing on ground that gives a positive exchange earns credit
+     * for keeping it, so it stops shuffling between equivalent hexes for a movement modifier it does not
+     * need - the two-step that walks a firing line out of its positions.
+     *
+     * <p>Quality is the exchange the stationary path itself was just evaluated at - expected damage dealt,
+     * weighted by the chance of standing to deliver it, minus expected damage taken - raised by
+     * {@link #heatSinkSustainBoost} when the hex lets a hot unit sustain more. The exchange already
+     * appears once in the bravery term for every path equally; counting it again here, only for standing
+     * still, is the deliberate asymmetry that makes a good position sticky. Ground that gives nothing (or
+     * worse) holds nothing: the credit never anchors a unit in a losing exchange.</p>
+     *
+     * <p>Dormant outside {@link #THREAT_CONTACT_RANGE}: on the approach there is no exchange to hold and
+     * the force should move loose and fast. Withdrawing units are leaving, not holding. The credit is
+     * capped so it never exceeds one turn of advance, harder under DEFEND than ATTACK
+     * ({@link #HOLD_CREDIT_DEFEND_CAP_FACTOR}, {@link #HOLD_CREDIT_ATTACK_CAP_FACTOR}).</p>
+     *
+     * @param path                the path being ranked (a copy, safe to inspect)
+     * @param game                the current game
+     * @param damageEstimate      the damage this unit is estimated to deal from the path's destination
+     * @param expectedDamageTaken the damage it is estimated to take there, path hazards included
+     * @param successProbability  the chance the path completes without a failed piloting roll
+     *
+     * @return the utility credit, added to the path's utility
+     */
+    protected double calculatePositionHoldMod(MovePath path, Game game, FiringPhysicalDamage damageEstimate,
+          double expectedDamageTaken, double successProbability) {
+        // Reset first: these are recorded for every path, and an early exit must not leave the previous
+        // path's figures standing in the log.
+        lastPositionQuality = 0;
+        lastPositionHoldMod = 0;
+
+        Entity movingUnit = path.getEntity();
+        if ((path.getHexesMoved() > 0) || movingUnit.isAirborneAeroOnGroundMap() || isWithdrawing(movingUnit)) {
+            return 0;
+        }
+        if (distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game) > THREAT_CONTACT_RANGE) {
+            return 0;
+        }
+
+        double quality = (successProbability * damageEstimate.getMaximumDamageEstimate()
+              * heatSinkSustainBoost(movingUnit, game, path))
+              - expectedDamageTaken;
+        lastPositionQuality = quality;
+        if (quality <= 0) {
+            return 0;
+        }
+
+        double aggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
+        double capFactor = (CombatPosture.DEFEND == resolvePosture(game, movingUnit.getBoardId()))
+              ? HOLD_CREDIT_DEFEND_CAP_FACTOR
+              : HOLD_CREDIT_ATTACK_CAP_FACTOR;
+        // The noise margin sits outside the cap: it is estimator distrust, not position value. At default
+        // aggression the combined ceiling (cap + margin, 35 for a defender) sits below the 37.5-point
+        // turn of advance; at the low end of the slider the fixed margin would overtake the shrinking
+        // yardstick, so the final clamp keeps the Eisenhower governor true across the whole range: no
+        // position ever outbids the advance.
+        double turnOfAdvance = TEMPO_REFERENCE_MP * aggression;
+        double holdCredit = Math.min(
+              capFactor * Math.min(quality, turnOfAdvance) + ESTIMATE_NOISE_MARGIN,
+              turnOfAdvance);
+        lastPositionHoldMod = holdCredit;
+        return holdCredit;
+    }
+
+    /**
+     * Mechanism C1: how much a heat-sink hex raises this unit's sustainable output where it stands. The
+     * ratio of the sustained-damage curves at the fight's current range - standing in water versus dry -
+     * from the same {@link DamageProfile} data the analysis display shows. For a cool-running unit the
+     * curves are identical and the boost is 1; for a Mek whose guns outrun its dry sinks the water closes
+     * the gap between what it can fire once and what it can fire every round.
+     */
+    private double heatSinkSustainBoost(Entity movingUnit, Game game, MovePath path) {
+        if (!movingUnit.tracksHeat()) {
+            return 1.0;
+        }
+        HexProperties standingOn = hexProperties(game, path.getFinalBoardId()).at(path.getFinalCoords());
+        if (!standingOn.heatSink()) {
+            return 1.0;
+        }
+        int round = game.getCurrentRound();
+        if (round != profileCacheRound) {
+            profileCacheRound = round;
+            dryProfileByUnit.clear();
+            waterProfileByUnit.clear();
+        }
+        boolean extremeRange = isExtremeRange(game);
+        DamageProfile dryProfile = dryProfileByUnit.computeIfAbsent(movingUnit.getId(),
+              id -> DamageProfile.of(movingUnit, extremeRange));
+        DamageProfile waterProfile = waterProfileByUnit.computeIfAbsent(movingUnit.getId(),
+              id -> DamageProfile.of(movingUnit, extremeRange,
+                    (movingUnit.getCrew() != null) ? movingUnit.getCrew().getGunnery() : 4,
+                    movingUnit.getHeatCapacityWithWater()));
+        int range = Math.max(1, (int) Math.ceil(
+              distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game)));
+        double drySustained = dryProfile.sustainedDamage(range);
+        double waterSustained = waterProfile.sustainedDamage(range);
+        if ((drySustained <= 0) || (waterSustained <= drySustained)) {
+            return 1.0;
+        }
+        return waterSustained / drySustained;
     }
 
     protected boolean isLosRange(Game game) {
@@ -1969,7 +2429,7 @@ public class BasicPathRanker extends PathRanker {
         }
 
         var antiCrowdingFactor = (10.0 / (11 - antiCrowding));
-        final double herdingDistance = Math.ceil(antiCrowding * 1.3);
+        final double antiCrowdingDistance = Math.ceil(antiCrowding * 1.3);
         final double closingDistance = Math.ceil(Math.max(3.0, maxRange * 0.6));
 
         var crowdingFriends = getOwner().getFriendEntities()
@@ -1979,7 +2439,7 @@ public class BasicPathRanker extends PathRanker {
               .filter(Entity::isDeployed)
               .map(Entity::getPosition)
               .filter(Objects::nonNull)
-              .filter(c -> c.distance(movePath.getFinalCoords()) <= herdingDistance)
+              .filter(c -> c.distance(movePath.getFinalCoords()) <= antiCrowdingDistance)
               .count();
 
         var crowdingEnemies = enemies.stream()
@@ -2155,6 +2615,21 @@ public class BasicPathRanker extends PathRanker {
                   path,
                   game.getBoard(step.getBoardId()));
             previousCoords = coords;
+        }
+
+        // A path with no steps stays in its starting hex, and the loop above priced nothing for it:
+        // loitering in deep water was free while every path out paid its water hazard, so a submerged
+        // unit's ledger said stay, turn after turn. Price the water for the hex the unit stays in. The
+        // elevation check keeps this to units actually in the water - a stationary path reports MOVE_NONE,
+        // so a hovering VTOL would otherwise read as drowning.
+        if (null == previousCoords) {
+            Coords finalCoords = path.getFinalCoords();
+            Hex finalHex = (null == finalCoords) ? null : game.getBoard(path.getFinalBoardId()).getHex(finalCoords);
+            if ((null != finalHex) && finalHex.containsTerrain(Terrains.WATER)
+                  && !finalHex.containsTerrain(Terrains.ICE) && (movingUnit.getElevation() < 0)) {
+                totalHazard += waterHazard(movingUnit, finalHex, movingUnit.getElevation(),
+                      movingUnit.isProne(), true, null);
+            }
         }
         logger.trace("Total Hazard = {}", totalHazard);
         return totalHazard;
@@ -2333,6 +2808,26 @@ public class BasicPathRanker extends PathRanker {
     }
 
     private double calcWaterHazard(Entity movingUnit, Hex hex, MoveStep step, MovePath movePath) {
+        return waterHazard(movingUnit, hex, step.getElevation(), step.isProne(),
+              step.equals(movePath.getLastStep()), movePath);
+    }
+
+    /**
+     * Water hazard for a unit in the given pose in this hex.
+     *
+     * @param movingUnit the unit in the water
+     * @param hex        the water hex
+     * @param elevation  the unit's elevation in the hex
+     * @param prone      whether the unit is prone
+     * @param endsInHex  whether the unit ends its turn in this hex
+     * @param movePath   the path entering the hex, or {@code null} for a unit that is standing still. A unit
+     *                   that does not move makes no water-entry roll, so it runs no fall-contingent breach
+     *                   risk.
+     *
+     * @return the hazard value for being in this water hex in that pose
+     */
+    private double waterHazard(Entity movingUnit, Hex hex, int elevation, boolean prone, boolean endsInHex,
+          @Nullable MovePath movePath) {
         logger.trace("Checking Water ({}) for hazards.", hex.getCoords());
         // Puddles don't count.
         if (hex.depth() == 0) {
@@ -2366,7 +2861,7 @@ public class BasicPathRanker extends PathRanker {
         // 2. If unit elevation is equal to bridge elevation, skip.
         if (hex.containsTerrain(Terrains.BRIDGE_ELEV)) {
             int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
-            if (bridgeElevation == step.getElevation()) {
+            if (bridgeElevation == elevation) {
                 logger.trace("Bridge elevation matches unit elevation (0).");
                 return 0;
             }
@@ -2382,14 +2877,13 @@ public class BasicPathRanker extends PathRanker {
             return UNIT_DESTRUCTION_FACTOR;
         }
 
-        MoveStep lastStep = movePath.getLastStep();
         // Unsealed unit will drown.
         if (movingUnit instanceof Mek &&
               ((Mek) movingUnit).isIndustrial() &&
               !movingUnit.hasEnvironmentalSealing() &&
               (movingUnit.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) &&
               hex.depth() >= 1 &&
-              step.equals(lastStep)) {
+              endsInHex) {
             double destructionFactor = hex.depth() >= 2 ? UNIT_DESTRUCTION_FACTOR : UNIT_DESTRUCTION_FACTOR * 0.5d;
             logger.trace("Industrial Meks drown too ({}).", destructionFactor);
             return destructionFactor;
@@ -2403,7 +2897,7 @@ public class BasicPathRanker extends PathRanker {
         // Locations that submerge only when the unit is prone - notably the head and center torso in Depth 1
         // water - drown it only if it falls, so that catastrophic risk is weighted by the chance of failing
         // the water-entry piloting roll.
-        Set<Integer> submergedInCurrentPose = submergedLocations(movingUnit, hex, step.isProne());
+        Set<Integer> submergedInCurrentPose = submergedLocations(movingUnit, hex, prone);
         Set<Integer> submergedWhileProne = submergedLocations(movingUnit, hex, true);
 
         double hazardValue = 0;
@@ -2421,17 +2915,20 @@ public class BasicPathRanker extends PathRanker {
         }
 
         // Fall-contingent breaches: unarmored locations that submerge only if the unit falls prone. Compute
-        // the fall probability lazily so a fully-armored unit never triggers it.
-        double fallProbability = -1;
-        for (int location : submergedWhileProne) {
-            if (submergedInCurrentPose.contains(location) || (movingUnit.getArmor(location) > 0)) {
-                continue;
+        // the fall probability lazily so a fully-armored unit never triggers it. A unit standing still makes
+        // no water-entry roll, so there is nothing to fall from.
+        if (null != movePath) {
+            double fallProbability = -1;
+            for (int location : submergedWhileProne) {
+                if (submergedInCurrentPose.contains(location) || (movingUnit.getArmor(location) > 0)) {
+                    continue;
+                }
+                double breachWeight = breachConsequence(movingUnit, location);
+                if (fallProbability < 0) {
+                    fallProbability = waterEntryFallProbability(movingUnit, hex, movePath);
+                }
+                hazardValue += fallProbability * breachWeight;
             }
-            double breachWeight = breachConsequence(movingUnit, location);
-            if (fallProbability < 0) {
-                fallProbability = waterEntryFallProbability(movingUnit, hex, movePath);
-            }
-            hazardValue += fallProbability * breachWeight;
         }
 
         logger.trace("Water breach hazard {}.", hazardValue);

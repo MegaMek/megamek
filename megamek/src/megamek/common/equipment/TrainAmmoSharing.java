@@ -43,6 +43,7 @@ import megamek.common.units.Entity;
 /**
  * Stateless rules helper for ammunition shared along a tractor-and-trailer train. A unit may feed its weapons from the
  * ammo bins of the unit it tows and the unit towing it, so an ammo bin is not necessarily owned by the unit firing it.
+ * Sharing reaches one coupling in each direction and no further; see {@link #canShareAmmoWith} for the ruling.
  * <p>
  * This is the single definition of which units may supply each other. The client offers exactly this set in the ammo
  * dropdown and the server validates against it, so the two cannot drift apart.
@@ -88,6 +89,16 @@ public final class TrainAmmoSharing {
     /**
      * Whether one unit may fire another's ammo. The server must check this because the ammo bin named in an ammo
      * change packet arrives from the client.
+     * <p>
+     * Only the units on either side of a coupling share, not the whole train. Xotl ruled on this in the official
+     * rules Q&amp;A (battletech.com forums, topic 74296): "Only vehicles directly coupled can share ammo", and in a
+     * trailer-tractor-trailer arrangement "the tractor may pull from either trailer, but one trailer may not pull
+     * from the other".
+     * </p>
+     * This makes a Mobile Long Tom convoy weaker than its fluff: three carriages hold about 75 rounds between them,
+     * but the gun only ever reaches the 25 in the carriage hitched to it. That is the ruling, not an oversight. Do
+     * not widen this to the whole train on the strength of the convoy description or of TM's "Trailers act as part
+     * of the Tractor for movement, stacking and firing" - the Q&amp;A was asked about exactly this case.
      *
      * @param shooter     the unit firing the weapon
      * @param ammoCarrier the unit that owns the ammo bin
@@ -101,6 +112,38 @@ public final class TrainAmmoSharing {
         }
         int carrierId = ammoCarrier.getId();
         return (shooter.getTowedBy() == carrierId) || (shooter.getTowing() == carrierId);
+    }
+
+    /**
+     * Drops any weapon link pointing at ammo the unit may no longer fire, and reloads the weapon from a bin it may
+     * still use.
+     * <p>
+     * A weapon linked to a trailer's ammo bin keeps that link when the train uncouples, and the firing path never
+     * re-checks the coupling: {@code AmmoWeaponHandler.checkAmmo} takes whatever {@code getLinked} returns, and the
+     * server only consults {@link #canShareAmmoWith} when the player changes ammo. Left alone, a tractor goes on
+     * firing a detached trailer's ammo from any distance. Call this on every unit whose train membership changed.
+     * </p>
+     * The replacement is chosen before the stale link is cleared, so a unit that carries the same munition itself
+     * keeps firing that munition rather than falling back to whatever sits in its first bin.
+     *
+     * @param entity the unit whose weapon links should be re-checked
+     */
+    public static void dropUncoupledAmmoLinks(Entity entity) {
+        for (WeaponMounted weapon : entity.getTotalWeaponList()) {
+            if (!(weapon.getLinked() instanceof AmmoMounted linkedAmmo)) {
+                continue;
+            }
+            Entity ammoCarrier = linkedAmmo.getEntity();
+            if ((ammoCarrier == null) || canShareAmmoWith(entity, ammoCarrier)) {
+                continue;
+            }
+            entity.loadWeaponWithSameAmmo(weapon);
+            if (weapon.getLinked() == linkedAmmo) {
+                // Nothing legal to fall back on. Leaving the weapon unlinked is safe: the handler reloads it from
+                // this unit's own bins when it next fires.
+                weapon.setLinked(null);
+            }
+        }
     }
 
     /**

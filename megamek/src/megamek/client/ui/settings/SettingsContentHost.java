@@ -43,8 +43,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLayer;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
@@ -52,6 +55,7 @@ import javax.swing.Scrollable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.text.html.HTML;
 
 import org.apache.commons.text.StringEscapeUtils;
 
@@ -62,14 +66,17 @@ import megamek.common.ui.FastJScrollPane;
 /** Owns the central scrollable settings content and an optional sticky help panel. */
 public class SettingsContentHost extends JPanel {
     private static final int SCROLL_SPEED = 16;
+    private static final Pattern HTML_TAG_PATTERN = Pattern.compile("</?([A-Za-z][A-Za-z0-9]*)\\b[^<>]*>");
 
     private final JPanel contentPanel = new SettingsContentPanel();
     private final JScrollPane contentScrollPane;
+    private final SettingsSearchHighlightLayerUI searchHighlightLayerUI = new SettingsSearchHighlightLayerUI();
+    private final JLayer<JScrollPane> searchHighlightLayer;
     private final SettingsHelpPanel helpPanel;
     private final List<HelpBinding> activeHelpBindings = new ArrayList<>();
     private Component currentContent;
 
-    public SettingsContentHost(Component content, String helpTitle, boolean showHelpPanel) {
+    public SettingsContentHost(Component content, boolean showHelpPanel) {
         super(new BorderLayout());
         setName("settingsContentHost");
         contentPanel.setName("settingsContentPanel");
@@ -77,10 +84,19 @@ public class SettingsContentHost extends JPanel {
               ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
               ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         contentScrollPane.setName("settingsContentScrollPane");
-        helpPanel = new SettingsHelpPanel(helpTitle);
-        add(contentScrollPane, BorderLayout.CENTER);
+        contentScrollPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+        searchHighlightLayer = new JLayer<>(contentScrollPane, searchHighlightLayerUI);
+        searchHighlightLayer.setName("settingsSearchHighlightLayer");
+        helpPanel = new SettingsHelpPanel();
+        add(searchHighlightLayer, BorderLayout.CENTER);
         add(helpPanel, BorderLayout.SOUTH);
         setContent(content, showHelpPanel);
+    }
+
+    /** @deprecated settings help surfaces always use the shared localized title */
+    @Deprecated(since = "0.51.01", forRemoval = true)
+    public SettingsContentHost(Component content, String ignoredHelpTitle, boolean showHelpPanel) {
+        this(content, showHelpPanel);
     }
 
     public void setContent(Component content) {
@@ -109,8 +125,27 @@ public class SettingsContentHost extends JPanel {
         SwingUtilities.invokeLater(this::resetScrollPosition);
     }
 
+    /** Rebuilds contextual-help listeners after the current content's component hierarchy changes. */
+    public void refreshHelpBindings() {
+        unbindHelp();
+        helpPanel.clearHelpText();
+        if (helpPanel.isVisible() && currentContent != null) {
+            bindHelp(currentContent, null);
+        }
+    }
+
     public void resetScrollPosition() {
         contentScrollPane.getVerticalScrollBar().setValue(0);
+    }
+
+    /** Updates the non-mutating text highlights painted over the current settings content. */
+    public void setSearchFilter(String normalizedFilter) {
+        searchHighlightLayerUI.setFilter(normalizedFilter, searchHighlightLayer);
+    }
+
+    /** Exposes painted bounds for headless overlay tests. */
+    List<Rectangle> getSearchHighlightBounds() {
+        return searchHighlightLayerUI.highlightBounds(searchHighlightLayer);
     }
 
     /**
@@ -121,9 +156,28 @@ public class SettingsContentHost extends JPanel {
         if (helpText == null || helpText.isBlank()) {
             return;
         }
-        helpPanel.setHelpText(helpText.regionMatches(true, 0, "<html>", 0, "<html>".length())
+        boolean isHtmlDocument = helpText.regionMatches(true, 0, "<html>", 0, "<html>".length());
+        if (isHtmlDocument) {
+            helpPanel.setHelpText(helpText);
+            return;
+        }
+        String body = (containsHtmlTag(helpText)
               ? helpText
-              : "<html>" + StringEscapeUtils.escapeHtml4(helpText) + "</html>");
+              : StringEscapeUtils.escapeHtml4(helpText))
+              .replace("\r\n", "\n")
+              .replace('\r', '\n')
+              .replace("\n", "<br>");
+        helpPanel.setHelpText("<html>" + body + "</html>");
+    }
+
+    private static boolean containsHtmlTag(String text) {
+        var matcher = HTML_TAG_PATTERN.matcher(text);
+        while (matcher.find()) {
+            if (HTML.getTag(matcher.group(1).toLowerCase(Locale.ROOT)) != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Finds the nearest settings content host containing {@code component}. */
@@ -177,8 +231,7 @@ public class SettingsContentHost extends JPanel {
                         setHelpText(helpText);
                     }
                 };
-                boolean suppressTooltip = ownHelpText != null && !ownHelpText.isBlank()
-                      && swingComponent.getToolTipText() != null;
+                boolean suppressTooltip = swingComponent.getToolTipText() != null;
                 HelpBinding binding = new HelpBinding(swingComponent, swingComponent.getToolTipText(),
                       suppressTooltip, mouseListener, focusListener);
                 swingComponent.addMouseListener(binding.mouseListener());

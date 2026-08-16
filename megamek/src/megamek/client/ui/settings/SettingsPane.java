@@ -34,7 +34,7 @@ package megamek.client.ui.settings;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.util.ArrayList;
+import java.awt.Container;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -48,6 +48,7 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
 import megamek.client.ui.util.UIUtil;
+import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 /**
@@ -61,14 +62,16 @@ public class SettingsPane extends JPanel {
     private final List<SettingsRoute> routes;
     private final Map<String, Supplier<Component>> pageFactories;
     private final Map<String, Component> pageCache = new HashMap<>();
+    private final Map<String, List<Boolean>> expansionStateBeforeFilter = new HashMap<>();
     private final SettingsContentHost contentHost;
     private final SettingsNavigationPanel navigationPanel;
+    private SettingsRoute currentRoute;
     private boolean searchIndexInProgress;
     private boolean searchIndexComplete;
     private int searchIndexGeneration;
 
     public SettingsPane(List<SettingsRoute> routes, Map<String, Supplier<Component>> pageFactories,
-          SettingsNavigationText navigationText, String helpTitle) {
+            SettingsNavigationText navigationText) {
         super(new BorderLayout());
         setName("settingsPane");
         this.routes = List.copyOf(routes);
@@ -76,10 +79,12 @@ public class SettingsPane extends JPanel {
         validateConfiguration();
 
         SettingsRoute initialRoute = firstPageRoute();
+        currentRoute = initialRoute;
         Component initialContent = getPage(initialRoute);
-        contentHost = new SettingsContentHost(initialContent, helpTitle, initialRoute.shouldShowDetailsPanel());
+        contentHost = new SettingsContentHost(initialContent, initialRoute.shouldShowDetailsPanel());
         navigationPanel = new SettingsNavigationPanel(this.routes, this::selectedNavigationTarget, navigationText);
         navigationPanel.setSearchIndexInitializer(this::ensureSearchIndexBuilt);
+        navigationPanel.setFilterChangeListener(this::activeFilterChanged);
 
         int margin = UIUtil.scaleForGUI(CONTENT_MARGIN);
         setBorder(BorderFactory.createEmptyBorder(margin, margin, 0, margin));
@@ -89,6 +94,13 @@ public class SettingsPane extends JPanel {
         splitPane.setDividerLocation(UIUtil.scaleForGUI(SettingsNavigationPanel.DEFAULT_NAVIGATION_WIDTH));
         add(splitPane, BorderLayout.CENTER);
         navigationPanel.selectRoute(initialRoute);
+    }
+
+    /** @deprecated settings help surfaces always use the shared localized title */
+    @Deprecated(since = "0.51.01", forRemoval = true)
+    public SettingsPane(List<SettingsRoute> routes, Map<String, Supplier<Component>> pageFactories,
+          SettingsNavigationText navigationText, String ignoredHelpTitle) {
+        this(routes, pageFactories, navigationText);
     }
 
     /** Selects and displays a route programmatically. Parent routes without pages fall back to their first page. */
@@ -101,12 +113,25 @@ public class SettingsPane extends JPanel {
         navigationPanel.focusSearchField();
     }
 
-    public void setFilterText(String filterText) {
+    /** Sets the search field's display text; {@code null} clears it and matching uses its normalized form. */
+    public void setFilterText(@Nullable String filterText) {
         navigationPanel.setFilterText(filterText);
     }
 
+    /** @return the normalized active search filter */
     public String getActiveFilter() {
         return navigationPanel.getActiveFilter();
+    }
+
+    /** @return the search field's unmodified display text */
+    public String getFilterText() {
+        return navigationPanel.getFilterText();
+    }
+
+    /** Reapplies the current navigation filter after a page's searchable content changes. */
+    public void refreshFilter() {
+        navigationPanel.refreshFilter();
+        contentHost.refreshHelpBindings();
     }
 
     private void selectedNavigationTarget(SettingsRoute route) {
@@ -120,9 +145,66 @@ public class SettingsPane extends JPanel {
         if (page == null) {
             return false;
         }
+        currentRoute = effectiveRoute;
+        String activeFilter = navigationPanel.getActiveFilter();
+        applySettingsFilter(page, activeFilter);
         contentHost.setContent(page, effectiveRoute.shouldShowDetailsPanel());
-        expandSectionsForActiveFilter(effectiveRoute, page);
+        contentHost.setSearchFilter(activeFilter);
+        applyFilterExpansion(effectiveRoute, page, activeFilter);
         return true;
+    }
+
+    private void activeFilterChanged(String normalizedFilter) {
+        contentHost.setSearchFilter(normalizedFilter);
+        Component page = pageCache.get(currentRoute.getId());
+        if (page != null) {
+            applySettingsFilter(page, normalizedFilter);
+            contentHost.refreshHelpBindings();
+        }
+        if (normalizedFilter.isBlank()) {
+            restoreAllExpansionStates();
+            return;
+        }
+        if (page != null) {
+            applyFilterExpansion(currentRoute, page, normalizedFilter);
+        }
+    }
+
+    private static void applySettingsFilter(Component component, String normalizedFilter) {
+        if (component instanceof SettingsFilterable filterable) {
+            filterable.applySettingsFilter(normalizedFilter);
+        }
+        if (component instanceof Container container) {
+            for (Component child : container.getComponents()) {
+                applySettingsFilter(child, normalizedFilter);
+            }
+        }
+    }
+
+    private void applyFilterExpansion(SettingsRoute route, Component page, String normalizedFilter) {
+        if (normalizedFilter.isBlank()) {
+            return;
+        }
+        SettingsPagePanel pagePanel = SettingsContentHost.findPagePanel(page);
+        if (pagePanel == null) {
+            return;
+        }
+        expansionStateBeforeFilter.putIfAbsent(route.getId(), pagePanel.getSectionExpansionState());
+        pagePanel.restoreSectionExpansionState(expansionStateBeforeFilter.get(route.getId()));
+        if (route.matches(normalizedFilter)) {
+            expandSectionsForActiveFilter(route, page);
+        }
+    }
+
+    private void restoreAllExpansionStates() {
+        expansionStateBeforeFilter.forEach((routeId, expansionState) -> {
+            Component page = pageCache.get(routeId);
+            SettingsPagePanel pagePanel = page == null ? null : SettingsContentHost.findPagePanel(page);
+            if (pagePanel != null) {
+                pagePanel.restoreSectionExpansionState(expansionState);
+            }
+        });
+        expansionStateBeforeFilter.clear();
     }
 
     private void expandSectionsForActiveFilter(SettingsRoute route, Component page) {
@@ -146,10 +228,17 @@ public class SettingsPane extends JPanel {
         if (factory == null) {
             return null;
         }
-        Component page = pageCache.computeIfAbsent(route.getId(), id -> Objects.requireNonNull(factory.get()));
-        SettingsPagePanel pagePanel = SettingsContentHost.findPagePanel(page);
-        if (pagePanel != null && !pagePanel.getSectionSearchText().isBlank()) {
-            route.setSectionSearchText(pagePanel.getSectionSearchText());
+        Component page = pageCache.get(route.getId());
+        if (page == null) {
+            page = Objects.requireNonNull(factory.get());
+            pageCache.put(route.getId(), page);
+            SettingsPagePanel pagePanel = SettingsContentHost.findPagePanel(page);
+            if (pagePanel != null) {
+                String searchText = page instanceof SettingsFilterable
+                      ? pagePanel.getStructuralSearchText()
+                      : pagePanel.getPageSearchText();
+                route.setSectionSearchText(searchText);
+            }
         }
         return page;
     }

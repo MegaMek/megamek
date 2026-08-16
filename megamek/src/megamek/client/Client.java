@@ -52,6 +52,7 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 import megamek.MMConstants;
+import megamek.client.bot.AIType;
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerator;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -65,13 +66,7 @@ import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
 import megamek.common.TemporaryECMField;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.ClubAttackAction;
-import megamek.common.actions.DodgeAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.TorsoTwistAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
@@ -141,15 +136,38 @@ public class Client extends AbstractClient {
 
     // FIXME: Should ideally be located elsewhere; the client should handle data, not gfx or UI-related stuff:
     private TilesetManager tilesetManager;
+    /** Set once the tile set has failed to build, so it is not attempted again on every call. */
+    private boolean tilesetLoadFailed;
 
     public Client(String name, String host, int port) {
         super(name, host, port);
         setSkillGenerator(new ModifiedTotalWarfareSkillGenerator());
-        try {
-            tilesetManager = new TilesetManager(game);
-        } catch (IOException e) {
-            LOGGER.error(e, "Unknown Exception");
+    }
+
+    /**
+     * The tile set, built on first use rather than with the client.
+     *
+     * <p>Building one parses the whole hex tile set into thousands of template hexes and their terrain, which a
+     * client that never draws anything has no use for. Every client used to pay that at construction: headless
+     * runners, and every bot, since {@code BotClient} is a {@code Client} too. A batch playing many games in one
+     * process paid it once per client per game and kept the result alive, which is tens of megabytes a game
+     * retained for images nobody would ever ask for.</p>
+     *
+     * @return the tile set manager, or {@code null} if it cannot be built
+     */
+    private @Nullable TilesetManager tilesetManager() {
+        if ((tilesetManager == null) && !tilesetLoadFailed) {
+            try {
+                tilesetManager = new TilesetManager(game);
+            } catch (IOException exception) {
+                // Remember the failure. Building this used to be attempted once, in the constructor; retrying on
+                // every call would repeat expensive work and flood the log wherever the tile set is missing or
+                // corrupt, which is exactly where the client is least able to afford it.
+                tilesetLoadFailed = true;
+                LOGGER.error(exception, "Could not load the tile set; continuing without unit images");
+            }
         }
+        return tilesetManager;
     }
 
     @Override
@@ -244,7 +262,9 @@ public class Client extends AbstractClient {
         super.changePhase(phase);
         switch (phase) {
             case LOUNGE:
-                tilesetManager.reset();
+                if (tilesetManager != null) {
+                    tilesetManager.reset();
+                }
             case DEPLOYMENT:
             case TARGETING:
             case MOVEMENT:
@@ -551,6 +571,17 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.ENTITY_TOW, id, tractorId));
     }
 
+    /**
+     * Sends a "build train" packet, connecting a tractor and several trailers in one operation. The server validates
+     * the whole chain and applies it in full or not at all, so a rejected request leaves every unit unattached.
+     *
+     * @param tractorId  the powered tractor that will head the train
+     * @param trailerIds the trailers to hitch behind it, ordered front to back
+     */
+    public void sendBuildTrain(int tractorId, List<Integer> trailerIds) {
+        send(new Packet(PacketCommand.ENTITY_BUILD_TRAIN, tractorId, new ArrayList<>(trailerIds)));
+    }
+
     public void sendExplodeBuilding(DemolitionCharge charge) {
         send(new Packet(PacketCommand.BLDG_EXPLODE, charge));
     }
@@ -844,7 +875,24 @@ public class Client extends AbstractClient {
                 if (!isCharge) {
                     game.addAction(entityAction);
                 } else {
-                    game.addCharge((AttackAction) entityAction);
+                    // This should work for Charge, DFA, and RAM attacks.
+                    if (entityAction instanceof DisplacementAttackAction) {
+                        Entity chargingUnit = game.getEntity(entityAction.getEntityId());
+                        if (chargingUnit != null) {
+                            chargingUnit.setDisplacementAttack((DisplacementAttackAction) entityAction);
+                        }
+                        game.addDisplacementAttack((AttackAction) entityAction);
+                    }
+                    if (entityAction instanceof RamAttackAction) {
+                        Entity rammingUnit = game.getEntity(entityAction.getEntityId());
+                        if (rammingUnit != null) {
+                            rammingUnit.setRamming(true);
+                        }
+                        game.addRam((AttackAction) entityAction);
+                    }
+                    if (entityAction instanceof TeleMissileAttackAction) {
+                        game.addTeleMissileAttack((AttackAction) entityAction);
+                    }
                 }
             }
         }
@@ -973,12 +1021,13 @@ public class Client extends AbstractClient {
      * Gets the current mek image
      */
     private Image getTargetImage(Entity e) {
-        if (tilesetManager == null) {
+        TilesetManager tileset = tilesetManager();
+        if (tileset == null) {
             return null;
         } else if (e.isDestroyed()) {
-            return tilesetManager.wreckMarkerFor(e, -1);
+            return tileset.wreckMarkerFor(e, -1);
         } else {
-            return tilesetManager.imageFor(e);
+            return tileset.imageFor(e);
         }
     }
 
@@ -1059,6 +1108,17 @@ public class Client extends AbstractClient {
                     break;
                 case PRINCESS_SETTINGS:
                     game.setBotSettings(packet.getStringWIthBehaviorSettingsMap(0));
+                    // Which AI each bot was rides along, so a loaded game restores the same kind of bot.
+                    if (packet.getObject(1) instanceof Map<?, ?> typesByName) {
+                        Map<String, AIType> botTypes = new HashMap<>();
+                        for (Map.Entry<?, ?> entry : typesByName.entrySet()) {
+                            if ((entry.getKey() instanceof String botName)
+                                  && (entry.getValue() instanceof AIType aiType)) {
+                                botTypes.put(botName, aiType);
+                            }
+                        }
+                        game.setBotTypes(botTypes);
+                    }
                     break;
                 case ENTITY_UPDATE:
                     receiveEntityUpdate(packet);
@@ -1329,6 +1389,7 @@ public class Client extends AbstractClient {
                         switch (cfrType) {
                             case CFR_DOMINO_EFFECT:
                                 cfrEvt.setEntityId(packet.getIntValue(1));
+                                cfrEvt.setDirection(packet.getIntValue(2));
                                 break;
                             case CFR_AMS_ASSIGN:
                                 cfrEvt.setEntityId(packet.getIntValue(1));
@@ -1537,6 +1598,13 @@ public class Client extends AbstractClient {
      */
     public void sendModeChange(int nEntity, int nEquip, int nMode) {
         send(new Packet(PacketCommand.ENTITY_MODE_CHANGE, nEntity, nEquip, nMode));
+    }
+
+    /**
+     * Send charge-change data to the server
+     */
+    public void sendChargeLevelChange(int nEntity, int nEquip, int nChargeLevel) {
+        send(new Packet(PacketCommand.ENTITY_CHARGE_CHANGE, nEntity, nEquip, nChargeLevel));
     }
 
     /**

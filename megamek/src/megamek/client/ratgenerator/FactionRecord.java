@@ -76,6 +76,7 @@ public class FactionRecord {
     private boolean minor;
     private boolean clan;
     private boolean periphery;
+    private boolean subunit;
     private String name;
     private final TreeMap<Integer, String> altNames;
     private final TreeMap<Integer, String> aliases;
@@ -146,6 +147,7 @@ public class FactionRecord {
         setMinor(faction2.isMinorPower());
         setClan(faction2.isClan());
         setPeriphery(faction2.isPeriphery());
+        setSubunit(faction2.isSubunit());
         setParentFactions(String.join(",", faction2.getFallBackFactions()));
         setRatings(String.join(",", faction2.getRatingLevels()));
         List<String> dateRanges = new ArrayList<>(faction2.getYearsActive().stream().map(DateRange::toString).toList());
@@ -195,6 +197,23 @@ public class FactionRecord {
 
     public void setClan(boolean clan) {
         this.clan = clan;
+    }
+
+    /**
+     * Returns whether this record is a subordinate formation declared inside another command's file, such as an
+     * individual regiment of the St. Ives Lancers, rather than a command in its own right.
+     *
+     * <p>Subunits are fully generatable, but callers that offer a choice of whole commands should leave them out -
+     * otherwise a single faction's sub-faction list grows by every regiment of every command it owns.</p>
+     *
+     * @return {@code true} if this record came from another command's subunit declaration
+     */
+    public boolean isSubunit() {
+        return subunit;
+    }
+
+    public void setSubunit(boolean subunit) {
+        this.subunit = subunit;
     }
 
     public boolean isPeriphery() {
@@ -429,13 +448,53 @@ public class FactionRecord {
         salvage.get(era).remove(faction);
     }
 
-    public Integer getPctTech(TechCategory category, int era, int rating) {
-        if (!pctTech.containsKey(category) || !pctTech.get(category).containsKey(era)
-              || pctTech.get(category).get(era).isEmpty()
-              || pctTech.get(category).get(era).size() <= rating) {
+    /**
+     * Get the C/SL/O percentage this faction declares for the given rating, without consulting parent factions.
+     *
+     * @param category the category (Clan, SL/advanced IS, Omni) and unit type to look up
+     * @param era      the year for which the percentage was recorded
+     * @param rating   equipment rating expressed in this faction's rating level system, typically F (0) to A (4)
+     *
+     * @return the declared percentage, or {@code null} if this faction records none for that category and era
+     */
+    public @Nullable Integer getPctTech(TechCategory category, int era, int rating) {
+        Map<Integer, ArrayList<Integer>> percentagesByEra = pctTech.get(category);
+        if (percentagesByEra == null) {
             return null;
         }
-        return pctTech.get(category).get(era).get(rating);
+        List<Integer> percentagesByRating = percentagesByEra.get(era);
+        if ((percentagesByRating == null) || percentagesByRating.isEmpty()) {
+            return null;
+        }
+        int percentageIndex = pctTechIndex(rating);
+        if ((percentageIndex < 0) || (percentageIndex >= percentagesByRating.size())) {
+            return null;
+        }
+        return percentagesByRating.get(percentageIndex);
+    }
+
+    /**
+     * Translates an equipment rating into a position within this faction's C/SL/O percentage lists.
+     *
+     * <p>Those lists hold one value per rating level the faction itself declares, so the position is normally the
+     * rating itself. A faction that declares exactly one rating level is the documented special case: it is a
+     * subcommand locked to that one rating within its parent's system, and the caller's rating is a position in the
+     * <em>parent's</em> larger system rather than in this faction's single-entry lists. Indexing the lists with it
+     * would miss every time and silently hand the lookup off to the parent faction, discarding the subcommand's own
+     * declared percentages.</p>
+     *
+     * <p>That one declared value is the faction's percentage whatever rating is asked about, so the single-level case
+     * deliberately also covers the {@code -1} a caller passes to mean "this faction applies no rating adjustments".
+     * Returning nothing for {@code -1} instead would send the lookup to the parent faction, which is the very
+     * substitution this translation exists to prevent. A faction with a full rating system has no single value to
+     * fall back on, so {@code -1} stays out of range for it and reads as absent.</p>
+     *
+     * @param rating equipment rating as supplied by the caller
+     *
+     * @return the index to read from this faction's percentage lists
+     */
+    private int pctTechIndex(int rating) {
+        return (ratingLevels.size() == 1) ? 0 : rating;
     }
 
     /**

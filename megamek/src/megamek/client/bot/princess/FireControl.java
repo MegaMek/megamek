@@ -46,6 +46,7 @@ import megamek.common.Player;
 import megamek.common.RangeType;
 import megamek.common.TargetRollModifier;
 import megamek.common.ToHitData;
+import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.RepairWeaponMalfunctionAction;
@@ -65,7 +66,6 @@ import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.game.Game;
-import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
@@ -73,6 +73,8 @@ import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.planetaryConditions.IlluminationLevel;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.core.CoreRulesManager;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.*;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.StopSwarmAttack;
@@ -163,6 +165,8 @@ public class FireControl {
           "target elevation not in range");
     static final TargetRollModifier TH_PHY_P_TAR_PRONE = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
           "can't punch while prone");
+    static final TargetRollModifier TH_PHY_NO_CLUB = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+          "no physical weapon given");
     static final TargetRollModifier TH_PHY_P_TAR_INF = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
           "can't punch infantry");
     static final TargetRollModifier TH_PHY_P_NO_ARM = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "Your arm's off!");
@@ -203,7 +207,6 @@ public class FireControl {
     static final TargetRollModifier TH_WEAPON_FLAK_HAG = new TargetRollModifier(-3,
           "HAG Flak vs airborne target");
     static final TargetRollModifier TH_APOLLO = new TargetRollModifier(-1, "Apollo FCS");
-    static final TargetRollModifier TH_AP_AMMO = new TargetRollModifier(1, "armor-piercing ammo");
     static final TargetRollModifier TH_WEAPON_NO_ARC = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "not in arc");
     static final TargetRollModifier TH_INF_ZERO_RNG = new TargetRollModifier(TargetRoll.AUTOMATIC_FAIL,
           "non-infantry shooting with zero range");
@@ -393,7 +396,7 @@ public class FireControl {
         if (shooterState.isProne()) {
             toHitData.addModifier(TH_ATT_PRONE);
         }
-        if (targetState.isImmobile() && !target.isHexBeingBombed()) {
+        if (targetState.isImmobile() && !(target.isHexBeingBombed() || target.getTargetType() == Targetable.TYPE_SATURATION)) {
             toHitData.addModifier(TH_TAR_IMMOBILE);
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL)
@@ -505,8 +508,33 @@ public class FireControl {
           @Nullable EntityState targetState,
           final PhysicalAttackType attackType,
           final Game game) {
+        return guessToHitModifierPhysical(shooter, shooterState, target, targetState, attackType, null, game);
+    }
 
-        // todo weapons, frenzy (pg 144) & vehicle charges.
+    /**
+     * Makes a rather poor guess as to what the to hit modifier will be with a physical attack. This overload
+     * also covers physical-weapon (club/hatchet/sword) attacks, for which the mounted weapon must be given.
+     *
+     * @param shooter      The unit doing the attacking.
+     * @param shooterState The state of the unit doing the attacking.
+     * @param target       Who is being attacked.
+     * @param targetState  The state of the target.
+     * @param attackType   The type of physical attack being made.
+     * @param club         The physical weapon being swung; required for {@link PhysicalAttackType#WEAPON},
+     *                     ignored otherwise.
+     * @param game         The current {@link Game}
+     *
+     * @return The estimated to hit modifiers.
+     */
+    ToHitData guessToHitModifierPhysical(final Entity shooter,
+          @Nullable EntityState shooterState,
+          final Targetable target,
+          @Nullable EntityState targetState,
+          final PhysicalAttackType attackType,
+          @Nullable final MiscMounted club,
+          final Game game) {
+
+        // todo frenzy (pg 144) & vehicle charges.
         // todo heat mods to piloting?
 
         if (!(shooter instanceof Mek shooterMek)) {
@@ -547,13 +575,18 @@ public class FireControl {
             return new ToHitData(TH_PHY_NOT_IN_ARC);
         }
 
-        // Check elevation difference.
+        // Check elevation difference. Use the (possibly hypothetical) state elevations and stances, not the
+        // entities' current ones: a path can end on a different level, or in a different stance, than the
+        // unit is in now.
         final Hex attackerHex = game.getBoard(target).getHex(shooterState.getPosition());
         final Hex targetHex = game.getBoard(target).getHex(targetState.getPosition());
-        final int attackerElevation = shooter.getElevation() + attackerHex.getLevel();
-        final int attackerHeight = shooter.relHeight() + attackerHex.getLevel();
-        final int targetElevation = target.getElevation() + targetHex.getLevel();
-        final int targetHeight = targetElevation + target.getHeight();
+        final int attackerElevation = shooterState.getElevation() + attackerHex.getLevel();
+        final int attackerHeight = attackerElevation
+              + PhysicalHitTable.projectedHeight(shooterMek, shooterState.isProne());
+        final int targetElevation = targetState.getElevation() + targetHex.getLevel();
+        final int targetHeight = targetElevation + ((target instanceof Entity targetEntity)
+              ? PhysicalHitTable.projectedHeight(targetEntity, targetState.isProne())
+              : target.getHeight());
         if (attackType.isPunch()) {
             if (shooter.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
                 return new ToHitData(TH_PHY_P_NO_ARMS_QUIRK);
@@ -587,6 +620,30 @@ public class FireControl {
             }
             if (!shooter.hasWorkingSystem(Mek.ACTUATOR_HAND, armLocation)) {
                 toHitData.addModifier(TH_PHY_P_HAND);
+            }
+        } else if (PhysicalAttackType.WEAPON == attackType) {
+            if (club == null) {
+                return new ToHitData(TH_PHY_NO_CLUB);
+            }
+            // Reach approximated like a punch: the weapon is swung by the arms.
+            if ((attackerHeight < targetElevation) || (attackerHeight > targetHeight)) {
+                return new ToHitData(TH_PHY_TOO_MUCH_ELEVATION);
+            }
+            if (shooterState.isProne()) {
+                return new ToHitData(TH_PHY_P_TAR_PRONE);
+            }
+
+            toHitData.addModifier(shooter.getCrew().getPiloting(), TH_PHY_BASE);
+            toHitData.addModifier(ClubAttackAction.getHitModFor(club.getType()), club.getName());
+            // Damaged arm actuators penalize the swing when the weapon is arm-mounted.
+            int clubLocation = club.getLocation();
+            if ((Mek.LOC_LEFT_ARM == clubLocation) || (Mek.LOC_RIGHT_ARM == clubLocation)) {
+                if (!shooter.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, clubLocation)) {
+                    toHitData.addModifier(TH_PHY_P_UPPER_ARM);
+                }
+                if (!shooter.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, clubLocation)) {
+                    toHitData.addModifier(TH_PHY_P_LOWER_ARM);
+                }
             }
         } else { // assuming kick
 
@@ -862,8 +919,23 @@ public class FireControl {
                 distance += 2 * target.getAltitude();
             }
         }
+        // Water restricts fire in both directions, and a weapon that can fire underwater does so with a
+        // shortened range table (TW p.107-109). The server enforces this from the shooter's real location
+        // status; the estimate has to predict it from the hypothetical position, or every submerged hex
+        // looks like a full-strength firing position.
+        final Hex shooterHex = game.getBoard(shooter).getHex(shooterState.getPosition());
+        final Hex targetHex = game.getBoard(target).getHex(targetState.getPosition());
+        final UnderwaterFire waterFire = UnderwaterFire.check(shooter, shooterState, shooterHex,
+              target, targetState, targetHex, weapon, firingAmmo);
+        if (null != waterFire.blocked()) {
+            return new ToHitData(waterFire.blocked());
+        }
+        final int[] weaponRanges = (null != waterFire.underwaterRanges())
+              ? waterFire.underwaterRanges()
+              : weaponType.getRanges(weapon, ammo);
+
         // BayWeapons do range differently
-        int range = RangeType.rangeBracket(distance, weaponType.getRanges(weapon, ammo),
+        int range = RangeType.rangeBracket(distance, weaponRanges,
               game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE),
               game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE));
         if (RangeType.RANGE_OUT == range) {
@@ -909,7 +981,6 @@ public class FireControl {
               targetState.getPosition(), false);
 
         // water is a separate los effect
-        final Hex targetHex = game.getBoard(target).getHex(targetState.getPosition());
         Entity targetEntity = null;
         if (target instanceof Entity) {
             targetEntity = (Entity) target;
@@ -964,7 +1035,7 @@ public class FireControl {
             toHit.append(getInfantryRangeMods(distance, (InfantryWeapon) weapon.getType(),
                   shooter instanceof ConvInfantry infantry ? infantry.getSecondaryWeapon() : null,
                   shooter instanceof ConvInfantry infantry ? infantry.getDisposableWeapon() : null,
-                  ILocationExposureStatus.WET == shooter.getLocationStatus(weapon.getLocation())));
+                  UnderwaterFire.isWeaponUnderwater(shooter, shooterState, shooterHex, weapon)));
         }
 
         // let us not forget about heat
@@ -1023,12 +1094,11 @@ public class FireControl {
                 case null, default -> false;
             };
             boolean isArmorPiercingMunition =
-                  munitionTypes.contains(AmmoType.Munitions.M_ARMOR_PIERCING)
-                        || munitionTypes.contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST);
-            boolean isArmorPiercingPenaltyInEffect =
-                  !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
+                  munitionTypes.contains(AmmoType.Munitions.M_ARMOR_PIERCING);
+            boolean isArmorPiercingPenaltyInEffect = (Game.rulesManager instanceof TWRulesManager);
             if (isAutocannonAmmo && isArmorPiercingMunition && isArmorPiercingPenaltyInEffect) {
-                toHit.addModifier(TH_AP_AMMO);
+                TargetRollModifier thAPAmmo = new TargetRollModifier(Game.rulesManager.getRulesAmmo().armorPiercingAttackMod(),"armor-piercing ammo");
+                toHit.addModifier(thAPAmmo);
             }
             // Air-defense Arrow IV handling; can only fire at airborne targets
             if (munitionTypes.contains(AmmoType.Munitions.M_ADA)) {

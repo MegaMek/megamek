@@ -36,13 +36,16 @@ import static megamek.client.ui.util.FlatLafStyleBuilder.setFontScaling;
 import static megamek.client.ui.util.FontHandler.symbolIcon;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 import javax.swing.BorderFactory;
@@ -72,8 +75,11 @@ public class SettingsPagePanel extends JPanel {
 
     private final JPanel pageBody;
     private final boolean showDetailsPanel;
-    private final String sectionSearchText;
+    private final String bodySearchText;
+    private final String pageSearchText;
+    private final String structuralSearchText;
     private final List<SearchableSection> searchableSections;
+    private final Map<Component, CollapsibleSectionPanel> sectionsByContent = new IdentityHashMap<>();
     private final int maximumPageWidth;
 
     private SettingsPagePanel(Builder builder) {
@@ -89,23 +95,42 @@ public class SettingsPagePanel extends JPanel {
         List<Object> renderItems = new ArrayList<>();
         List<CollapsibleSectionPanel> sections = new ArrayList<>();
         List<SearchableSection> searchable = new ArrayList<>();
-        StringBuilder allSectionText = new StringBuilder();
+        StringBuilder allBodyText = new StringBuilder();
+        StringBuilder allStructuralBodyText = new StringBuilder();
         for (Object bodyItem : builder.bodyItems) {
             if (bodyItem instanceof Section definition) {
                 CollapsibleSectionPanel section = createSection(builder, definition);
                 sections.add(section);
+                sectionsByContent.put(definition.content, section);
                 renderItems.add(section);
                 String text = sectionSearchText(builder.textProvider, definition);
                 searchable.add(new SearchableSection(section, text));
                 if (!text.isBlank()) {
-                    allSectionText.append(' ').append(text);
+                    allBodyText.append(' ').append(text);
                 }
+                appendSearchText(allStructuralBodyText, sectionMetadataSearchText(builder.textProvider, definition));
             } else if (bodyItem instanceof JComponent component) {
                 renderItems.add(component);
+                String text = SettingsSearchText.collect(component);
+                if (!text.isBlank()) {
+                    allBodyText.append(' ').append(text);
+                }
             }
         }
         searchableSections = List.copyOf(searchable);
-        sectionSearchText = allSectionText.toString().trim();
+        bodySearchText = allBodyText.toString().trim();
+        StringBuilder allPageText = new StringBuilder();
+        appendSearchText(allPageText, headerSearchText(builder));
+        appendSearchText(allPageText, introSearchText(builder));
+        appendSearchText(allPageText, bodySearchText);
+        appendSearchText(allPageText, quoteSearchText(builder));
+        pageSearchText = allPageText.toString();
+        StringBuilder allStructuralText = new StringBuilder();
+        appendSearchText(allStructuralText, headerSearchText(builder));
+        appendSearchText(allStructuralText, introSearchText(builder));
+        appendSearchText(allStructuralText, allStructuralBodyText.toString());
+        appendSearchText(allStructuralText, quoteSearchText(builder));
+        structuralSearchText = allStructuralText.toString();
 
         JPanel sectionControls = createSectionControls(sections);
         int minimumSectionStackWidth = sections.isEmpty() && !builder.standardContentWidth
@@ -137,7 +162,18 @@ public class SettingsPagePanel extends JPanel {
     }
 
     public String getSectionSearchText() {
-        return sectionSearchText;
+        return bodySearchText;
+    }
+
+    public String getPageSearchText() {
+        return pageSearchText;
+    }
+
+    /**
+     * @return page chrome plus section titles, summaries, and aliases, excluding mutable section content
+     */
+    public String getStructuralSearchText() {
+        return structuralSearchText;
     }
 
     /** Expands matching sections and collapses the others, leaving the page unchanged when nothing matches. */
@@ -158,11 +194,38 @@ public class SettingsPagePanel extends JPanel {
     }
 
     public void expandAllSections() {
+        setExpanded(true, sectionPanels());
+    }
+
+    public void collapseAllSections() {
+        setExpanded(false, sectionPanels());
+    }
+
+    /** Sets the visibility of the section containing the given content component. */
+    public void setSectionVisible(Component content, boolean visible) {
+        CollapsibleSectionPanel section = sectionsByContent.get(content);
+        if (section != null) {
+            section.setVisible(visible);
+        }
+    }
+
+    private List<CollapsibleSectionPanel> sectionPanels() {
         List<CollapsibleSectionPanel> sections = new ArrayList<>();
         for (SearchableSection section : searchableSections) {
             sections.add(section.panel());
         }
-        setExpanded(true, sections);
+        return sections;
+    }
+
+    List<Boolean> getSectionExpansionState() {
+        return searchableSections.stream().map(section -> section.panel().isExpanded()).toList();
+    }
+
+    void restoreSectionExpansionState(List<Boolean> expansionState) {
+        int count = Math.min(searchableSections.size(), expansionState.size());
+        for (int index = 0; index < count; index++) {
+            searchableSections.get(index).panel().setExpanded(expansionState.get(index));
+        }
     }
 
     @Override
@@ -310,9 +373,55 @@ public class SettingsPagePanel extends JPanel {
     }
 
     private static String sectionSearchText(SettingsTextProvider textProvider, Section definition) {
-        String title = definition.literal ? definition.title : textProvider.getText(definition.title);
-        String summary = sectionSummary(textProvider, definition);
-        return (title + ' ' + summary + ' ' + String.join(" ", definition.searchAliases)).trim();
+        String metadata = sectionMetadataSearchText(textProvider, definition);
+        String contentText = SettingsSearchText.collect(definition.content);
+        return (metadata + ' ' + contentText).trim();
+    }
+
+    private static String sectionMetadataSearchText(SettingsTextProvider textProvider, Section definition) {
+        String title = SettingsSearchText.renderedText(
+              definition.literal ? definition.title : textProvider.getText(definition.title));
+        String summary = SettingsSearchText.renderedText(sectionSummary(textProvider, definition));
+        return (title + ' ' + summary + ' '
+              + String.join(" ", definition.searchAliases)).trim();
+    }
+
+    private static String headerSearchText(Builder builder) {
+        if (builder.headerComponent != null) {
+            return SettingsSearchText.collect(builder.headerComponent);
+        }
+        StringBuilder text = new StringBuilder(SettingsSearchText.renderedText(
+              builder.textProvider.getText(builder.headerTextKey)));
+        if (builder.headerBodyTextKey != null) {
+            appendSearchText(text, SettingsSearchText.renderedText(
+                  builder.textProvider.getText(builder.headerBodyTextKey)));
+        }
+        return text.toString();
+    }
+
+    private static String introSearchText(Builder builder) {
+        if (builder.introComponent != null) {
+            return SettingsSearchText.collect(builder.introComponent);
+        }
+        return builder.introTextKey == null
+              ? ""
+              : SettingsSearchText.renderedText(builder.textProvider.getText(builder.introTextKey));
+    }
+
+    private static String quoteSearchText(Builder builder) {
+        return builder.quoteTextKey == null || !builder.textProvider.containsKey(builder.quoteTextKey)
+              ? ""
+              : SettingsSearchText.renderedText(builder.textProvider.getText(builder.quoteTextKey));
+    }
+
+    private static void appendSearchText(StringBuilder destination, String text) {
+        if (text == null || text.isBlank()) {
+            return;
+        }
+        if (!destination.isEmpty()) {
+            destination.append(' ');
+        }
+        destination.append(text.trim());
     }
 
     private static String sectionSummary(SettingsTextProvider textProvider, Section definition) {

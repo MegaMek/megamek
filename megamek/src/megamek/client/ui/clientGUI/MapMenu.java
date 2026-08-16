@@ -60,7 +60,6 @@ import megamek.client.bot.princess.ChatCommands;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
-import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.client.ui.dialogs.NoteDialog;
 import megamek.client.ui.dialogs.TurretFacingDialog;
 import megamek.client.ui.dialogs.UnitEditorDialog;
@@ -97,9 +96,9 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
-import megamek.server.commands.*;
 
 /**
  * Context menu for the board.
@@ -173,11 +172,11 @@ public class MapMenu extends JPopupMenu {
                     addIfNotEmpty(createPhysicalMenu(true));
                     removeSeparatorIfLast();
 
-                } else if ((currentPanel instanceof FiringDisplay)) {
+                } else if ((currentPanel instanceof FiringDisplay firingDisplay)) {
                     if (getComponentCount() > 0) {
                         addSeparator();
                     }
-                    addIfNotEmpty(createWeaponsFireMenu());
+                    addIfNotEmpty(createWeaponsFireMenu(firingDisplay));
                     addIfNotEmpty(createModeMenu());
                     addIfNotEmpty(createTorsoTwistMenu());
                     addIfNotEmpty(createRotateTurretMenu());
@@ -482,7 +481,7 @@ public class MapMenu extends JPopupMenu {
         menu.add(createCautionMenu(bot));
         menu.add(createAvoidMenu(bot));
         menu.add(createAggressionMenu(bot));
-        menu.add(createHerdingMenu(bot));
+        menu.add(createMutualSupportMenu(bot));
         menu.add(createBraveryMenu(bot));
         return menu;
     }
@@ -510,8 +509,8 @@ public class MapMenu extends JPopupMenu {
         return menu;
     }
 
-    JMenu createHerdingMenu(Player bot) {
-        return createBehaviorAdjustmentMenu(bot, "Bot.commands.herding", ChatCommands.HERDING);
+    JMenu createMutualSupportMenu(Player bot) {
+        return createBehaviorAdjustmentMenu(bot, "Bot.commands.mutualSupport", ChatCommands.MUTUAL_SUPPORT);
     }
 
     JMenu createBraveryMenu(Player bot) {
@@ -731,7 +730,7 @@ public class MapMenu extends JPopupMenu {
             // owner change. So the map menu only opens that dialog per unit, and otherwise offers the hex and board
             // tools; the old per-unit destroy, rescue and traitor submenus have moved into the dialog.
             JMenu dmgMenu = new JMenu(Messages.getString("Gamemaster.EditDamage"));
-            JMenu specialCommandsMenu = createGMSpecialCommandsMenu();
+            JMenu specialCommandsMenu = GameMasterCommandMenu.createSpecialCommandsMenu(gui, coords);
 
             var entities = client.getGame().getEntitiesVector(coords);
 
@@ -746,33 +745,6 @@ public class MapMenu extends JPopupMenu {
         }
         return menu;
     }
-
-    /**
-     * Create a menu for special commands for the GM
-     *
-     * @return the menu
-     */
-    private JMenu createGMSpecialCommandsMenu() {
-        JMenu menu = new JMenu(Messages.getString("Gamemaster.SpecialCommands"));
-        // Change Unit Ownership, Destroy Unit and Rescue Unit live in the Edit Damage dialog now, not here. What is
-        // left is the hex and board tools, which act on the map rather than a single unit.
-        List.of(new ChangeWeatherCommand(null, null),
-              new DisasterCommand(null, null),
-              new FirefightCommand(null, null),
-              new FirestarterCommand(null, null),
-              new FirestormCommand(null, null),
-              new NoFiresCommand(null, null),
-              new OrbitalBombardmentCommand(null, null),
-              new RemoveSmokeCommand(null, null),
-              new SkillModifierCommand(null, null)).forEach(cmd -> {
-            JMenuItem item = new JMenuItem(cmd.getLongName());
-            item.addActionListener(evt -> new ClientCommandDialog(gui.getFrame(), gui, cmd, coords).setVisible(true));
-            menu.add(item);
-        });
-
-        return menu;
-    }
-
 
     JMenuItem createUnitEditorMenuItem(Entity entity) {
         JMenuItem item = new JMenuItem(entity.getDisplayName());
@@ -1066,7 +1038,7 @@ public class MapMenu extends JPopupMenu {
         return menu;
     }
 
-    private JMenu createWeaponsFireMenu() {
+    private JMenu createWeaponsFireMenu(FiringDisplay firingDisplay) {
         JMenu menu = new JMenu("Weapons");
 
         // Hidden entities are not allowed to shoot without being revealed
@@ -1075,7 +1047,7 @@ public class MapMenu extends JPopupMenu {
             return menu;
         }
 
-        menu.add(createFireJMenuItem());
+        menu.add(createFireJMenuItem(firingDisplay));
         menu.add(createSkipJMenuItem());
         menu.add(createAlphaStrikeJMenuItem());
 
@@ -1163,13 +1135,34 @@ public class MapMenu extends JPopupMenu {
         return item;
     }
 
-    private JMenuItem createFireJMenuItem() {
+    /**
+     * Creates the "Fire" item, which declares an attack with the weapon currently selected in the unit display.
+     * <p>
+     * The item is enabled only when {@link FiringDisplay#isFireAllowed()} is {@code true}, so that it refuses exactly
+     * what the Fire button refuses. Without that gate the menu can declare attacks the rules forbid, such as a Swarm
+     * or Leg Attack by a conventional infantry platoon that has already fired its primary weapons; the server then
+     * rejects both attacks and the platoon does nothing at all (issue #8626). As with the Fire button, the reason for
+     * a refusal is the to-hit text in the unit display.
+     *
+     * @param firingDisplay the firing phase display that owns the attack declaration and its legality gate
+     *
+     * @return the "Fire" menu item
+     */
+    private JMenuItem createFireJMenuItem(FiringDisplay firingDisplay) {
         JMenuItem item = new JMenuItem("Fire");
-        item.addActionListener(evt -> {
+
+        boolean isFireAllowed = firingDisplay.isFireAllowed();
+        item.setEnabled(isFireAllowed);
+        if (!isFireAllowed) {
+            logger.debug("[MapMenu] Fire item disabled for {}: the Fire button is not currently enabled; "
+                  + "the unit display's to-hit line states the reason", myEntity.getShortName());
+        }
+
+        item.addActionListener(event -> {
             try {
-                ((FiringDisplay) currentPanel).fire();
-            } catch (Exception ex) {
-                logger.error(ex, "");
+                firingDisplay.fire();
+            } catch (Exception exception) {
+                logger.error(exception, "");
             }
         });
 
@@ -1470,7 +1463,10 @@ public class MapMenu extends JPopupMenu {
             } else {
                 if ((hasAmmoType(AmmoType.AmmoTypeEnum.LRM)
                       || hasAmmoType(AmmoType.AmmoTypeEnum.LRM_IMP)
-                      || hasAmmoType(AmmoType.AmmoTypeEnum.MML))
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.MML)
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.TBOLT_10)
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.TBOLT_15)
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.TBOLT_20))
                       && (hasMunitionType(AmmoType.Munitions.M_FASCAM)
                       || hasMunitionType(AmmoType.Munitions.M_THUNDER)
                       || hasMunitionType(AmmoType.Munitions.M_THUNDER_ACTIVE)
@@ -1486,6 +1482,10 @@ public class MapMenu extends JPopupMenu {
 
                 if (hasAmmoType(AmmoType.AmmoTypeEnum.BA_MICRO_BOMB)) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_BOMB)));
+                }
+                
+                if (hasWeaponFlag(WeaponType.F_MRM) && myEntity.hasMisc(MiscType.F_APOLLO) && Game.rulesManager.getRulesWeapons().getApolloSaturationMode()) {
+                    menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_SATURATION)));
                 }
 
                 if (hasWeaponFlag(WeaponType.F_DIVE_BOMB)

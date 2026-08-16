@@ -224,6 +224,10 @@ class WeaponListModel extends AbstractListModel<String> {
                 wn.append(')');
             }
         }
+        if (mounted.getType().hasFlag(WeaponType.F_BOMBAST_LASER)) {
+            wn.append(' ');
+            wn.append(mounted.getChargeState().getDescription());
+        }
         if ((game != null)
               && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CALLED_SHOTS)) {
             wn.append(' ');

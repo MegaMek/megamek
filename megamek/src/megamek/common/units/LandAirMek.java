@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2012-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -1604,12 +1604,6 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                 case 12:
                     return new HitData(LOC_LEFT_TORSO, false, HitData.EFFECT_NONE);
             }
-        }
-
-        boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
-
-        if (playtestLocations && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)) {
-            return getPlaytestSideLocation(table, side, LosEffects.COVER_NONE);
         }
 
         if (side == ToHitData.SIDE_FRONT) {

@@ -65,6 +65,7 @@ import megamek.common.equipment.*;
 import megamek.common.equipment.enums.FuelType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
@@ -435,25 +436,28 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
             mp = applyGravityEffectsOnMP(mp);
         }
 
-        // If the unit is towing trailers, adjust its walkMP, TW p205
+        // If the unit is towing trailers, the load slows it down (TM, Tractors).
         if (!mpCalculationSetting.ignoreCargo() && (null != game) && !getAllTowedUnits().isEmpty()) {
-            double trainWeight = getWeight();
-            int lowestSuspensionFactor = getSuspensionFactor();
-            // Add up the trailers
+            double trailerWeight = 0;
             for (int id : getAllTowedUnits()) {
-                Entity tr = game.getEntity(id);
-                if (tr == null) {
-                    // this isn't supposed to happen, but it can in rare cases when tr is destroyed
+                Entity towedUnit = game.getEntity(id);
+                if (towedUnit == null) {
+                    // this isn't supposed to happen, but it can in rare cases when the trailer is destroyed
                     continue;
                 }
-                if (tr instanceof Tank tankTrailer) {
-                    if (tankTrailer.getSuspensionFactor() < lowestSuspensionFactor) {
-                        lowestSuspensionFactor = tankTrailer.getSuspensionFactor();
-                    }
-                }
-                trainWeight += tr.getWeight();
+                trailerWeight += towedUnit.getWeight();
             }
-            mp = (int) ((getEngine().getRating() + lowestSuspensionFactor) / trainWeight);
+
+            // "if the Trailers weigh up to a quarter of the Tractor's own weight, the Tractor must subtract 3 from
+            // its Cruising MP or half of its Cruising MP (round down), whichever is less. If the Trailers weigh more
+            // than a quarter of the Tractor's tonnage, the Tractor may only move at half its Cruising MP (round
+            // down)." Flank MP follows from the reduced Cruising MP in getRunMP, which already rounds .5 up.
+            int halvedCruisingMP = (int) Math.floor(mp / 2.0);
+            if (trailerWeight > (getWeight() / 4.0)) {
+                mp = halvedCruisingMP;
+            } else {
+                mp -= Math.min(3, halvedCruisingMP);
+            }
         }
 
         // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules)
@@ -1284,9 +1288,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-            int roll = Compute.d6(2);
-
-            if ((5 < roll) && (roll < 9)) {
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation()) {
                 rv = new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
                 bHitAimed = true;
             }

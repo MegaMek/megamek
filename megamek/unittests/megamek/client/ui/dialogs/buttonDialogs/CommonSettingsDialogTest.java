@@ -34,11 +34,14 @@ package megamek.client.ui.dialogs.buttonDialogs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -48,6 +51,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.buttons.ColourSelectorButton;
+import megamek.client.ui.panels.CommonSettingsPane;
 import org.junit.jupiter.api.Test;
 
 class CommonSettingsDialogTest {
@@ -94,6 +98,35 @@ class CommonSettingsDialogTest {
         assertEquals(0, constraints.gridx);
         assertEquals(2, constraints.gridwidth);
         assertEquals(GridBagConstraints.HORIZONTAL, constraints.fill);
+    }
+
+    @Test
+    void leavesNestedColourButtonWidthsIndependent() {
+        ColourSelectorButton nestedButton = new ColourSelectorButton("");
+        JPanel nestedPanel = CommonSettingsDialog.createSettingsPanel(List.of(row(nestedButton)));
+        int nestedWidth = nestedButton.getPreferredSize().width;
+
+        ColourSelectorButton wideButton = new ColourSelectorButton("Wide");
+        Dimension wideSize = wideButton.getPreferredSize();
+        wideButton.setPreferredSize(new Dimension(nestedWidth + 100, wideSize.height));
+
+        CommonSettingsDialog.createSettingsPanel(List.of(row(wideButton), row(nestedPanel)));
+
+        assertEquals(nestedWidth, nestedButton.getPreferredSize().width);
+    }
+
+    @Test
+    void rejectsUnmappedSettingsGroups() {
+        JPanel firstGroup = new JPanel();
+        JPanel omittedGroup = new JPanel();
+        CommonSettingsPane.SectionedContent content = new CommonSettingsPane.SectionedContent(
+              List.of(firstGroup, omittedGroup));
+        CommonSettingsPane.OptionPage incompletePage = new CommonSettingsPane.OptionPage(
+              "test", List.of("Test"), "Test", List.of(new CommonSettingsPane.OptionSection(
+                    "first", "First", "First group", firstGroup, false)));
+
+        assertThrows(IllegalArgumentException.class,
+              () -> CommonSettingsDialog.addMappedPages(new ArrayList<>(), "test", content, incompletePage));
     }
 
     private static List<Component> row(Component... components) {

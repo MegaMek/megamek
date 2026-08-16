@@ -137,7 +137,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         FIRE_ACTIVATE_SPA("fireActivateSPA"),
         FIRE_RHS("fireRHS"),
         FIRE_SUICIDE_IMPLANTS("fireSuicideImplants"),
-        FIRE_MORE("fireMore");
+        FIRE_MORE("fireMore"),
+        FIRE_CHARGE("fireCharge");
 
         final String cmd;
 
@@ -330,7 +331,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     }
 
     private boolean shouldPerformFireKeyCommand() {
-        return shouldReceiveKeyCommands() && buttons.get(FiringCommand.FIRE_FIRE).isEnabled();
+        return shouldReceiveKeyCommands() && isFireAllowed();
     }
 
     /**
@@ -697,6 +698,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         setFireClearWeaponJamEnabled(false);
         setFireExtinguishEnabled(false);
         setStrafeEnabled(false);
+        setFireChargeLevelEnabled(false);
     }
 
     /**
@@ -739,6 +741,32 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                   weaponMounted.pendingMode().getDisplayableName(true)));
         }
 
+        updateTarget();
+        clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
+        clientgui.getUnitDisplay().wPan.selectWeapon(weaponMounted);
+    }
+
+    /**
+     * Charge Mode - Adds a Charge Mode Change to the current Attack Action
+     */
+    protected void changeChargeLevel() {
+        WeaponMounted weaponMounted = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+
+        // Do nothing we have no unit selected or no weapon selected or if the weapon is not a bombast laser
+        if (currentEntity() == null || weaponMounted == null || !weaponMounted.getType().hasFlag(WeaponType.F_BOMBAST_LASER)) {
+            return;
+        }
+        
+        // send change to the server
+        int nChargeLevel = weaponMounted.switchChargeLevel();
+        
+        clientgui.getClient().sendChargeLevelChange(weaponMounted.getEntity().getId(), weaponMounted.getEquipmentNum(),
+              nChargeLevel);
+
+        // notify the player
+        clientgui.systemMessage(Messages.getString("FiringDisplay.switched", weaponMounted.getName(),
+                  weaponMounted.getChargeState().getDescription()));
+        
         updateTarget();
         clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
         clientgui.getUnitDisplay().wPan.selectWeapon(weaponMounted);
@@ -1863,6 +1891,14 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             setFireModeEnabled(false);
         }
 
+        WeaponMounted wm = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        if ((clientgui.getDisplayedUnit() !=null) && (wm != null) && clientgui.getDisplayedUnit().equals(attacker) &&
+            wm.getType().hasFlag(WeaponType.F_BOMBAST_LASER)) {
+            setFireChargeLevelEnabled(true);
+        } else {
+            setFireChargeLevelEnabled(false);
+        }
+        
         updateSearchlight();
         updateRHS();
         updateActivateSPA();
@@ -2147,6 +2183,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             // Fire Mode - More Fire Mode button handling - Rasia
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_MODE.getCmd())) {
             changeMode(true);
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_CHARGE.getCmd())) {
+            changeChargeLevel();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_CALLED.getCmd())) {
             changeCalled();
         } else if (("changeSinks".equalsIgnoreCase(ev.getActionCommand()))
@@ -2409,6 +2447,22 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FIRE.getCmd(), enabled);
     }
 
+    /**
+     * Returns whether an attack may currently be declared with the selected weapon against the current target. This is
+     * the gate the Fire button itself uses; {@link #updateTarget()} recomputes it whenever the target, the selected
+     * weapon or the attacker's state changes, and the reason for a refusal is shown as the to-hit text in the unit
+     * display.
+     * <p>
+     * Every other way of firing - the hotkey and the board's right-click menu - must respect this gate. Bypassing it
+     * declares attacks the rules forbid, such as a conventional infantry platoon adding a Swarm or Leg Attack after it
+     * has already fired its primary weapons, which makes the server reject both attacks.
+     *
+     * @return {@code true} if firing the selected weapon is currently allowed
+     */
+    public boolean isFireAllowed() {
+        return buttons.get(FiringCommand.FIRE_FIRE).isEnabled();
+    }
+
     protected void setTwistEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_TWIST).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_TWIST.getCmd(), enabled);
@@ -2471,6 +2525,11 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     protected void setFireModeEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_MODE).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_MODE.getCmd(), enabled);
+    }
+
+    protected void setFireChargeLevelEnabled(boolean enabled) {
+        buttons.get(FiringCommand.FIRE_CHARGE).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_CHARGE.getCmd(), enabled);
     }
 
     /**

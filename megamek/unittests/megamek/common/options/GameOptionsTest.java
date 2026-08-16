@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,6 +35,7 @@ package megamek.common.options;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -133,5 +134,17 @@ class GameOptionsTest {
 
             count++;
         }
+    }
+
+    @Test
+    void rulesSystemReplacesLegacyPlaytestOptions() {
+        IOption rulesSystem = testMe.getOption(OptionsConstants.RULES_SYSTEM);
+
+        assertEquals(IOption.CHOICE, rulesSystem.getType());
+        assertEquals(OptionsConstants.RULES_CORE, rulesSystem.stringValue());
+        assertNull(testMe.getOption("twrules"));
+        assertNull(testMe.getOption("playtest_1"));
+        assertNull(testMe.getOption("playtest_2"));
+        assertNull(testMe.getOption("playtest_3"));
     }
 }

@@ -698,6 +698,7 @@ public class RATGenerator {
 
         // Iterate through all available chassis
         double chassisWeightTotal = 0.0;
+        int chassisExcludedByZeroAvailability = 0;
         for (String chassisKey : chassisIndex.get(currentEra).keySet()) {
             ChassisRecord curChassis = chassis.get(chassisKey);
             if (curChassis == null) {
@@ -740,6 +741,16 @@ public class RATGenerator {
             AvailabilityRating chassisAvRating = findChassisAvailabilityRecord(currentEra,
                   chassisKey, fRec, year);
             if (chassisAvRating == null) {
+                continue;
+            }
+
+            // An availability of zero means the faction does not field this chassis, even when a parent faction
+            // does (see docs/Customization/RAT and Force Generator Stuff/rat-generator.txt). It has to be honoured
+            // before the interpolation below, which would otherwise pull the zero up towards a non-zero value in
+            // the next era and put the chassis back in the table. The model loop applies the same rule in
+            // ChassisRecord.totalModelWeight.
+            if (chassisAvRating.getAvailability() <= 0) {
+                chassisExcludedByZeroAvailability++;
                 continue;
             }
 
@@ -830,6 +841,11 @@ public class RATGenerator {
                 }
 
             }
+        }
+
+        if (chassisExcludedByZeroAvailability > 0) {
+            LOGGER.debug("[ForceGen][Availability] {} chassis excluded for {} in era {}: availability of zero",
+                  chassisExcludedByZeroAvailability, fRec.getKey(), currentEra);
         }
 
         if (unitWeights.isEmpty() || chassisWeightTotal == 0.0) {

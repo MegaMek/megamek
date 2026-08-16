@@ -82,6 +82,7 @@ public class SettingsNavigationPanel extends JPanel {
     private SettingsRoute currentRoute;
     private boolean syncingSelection;
     private Runnable searchIndexInitializer;
+    private Consumer<String> filterChangeListener = filter -> { };
 
     public SettingsNavigationPanel(List<SettingsRoute> routes, Consumer<SettingsRoute> routeSelectionListener,
           SettingsNavigationText text) {
@@ -233,15 +234,26 @@ public class SettingsNavigationPanel extends JPanel {
         searchIndexInitializer = initializer;
     }
 
+    public void setFilterChangeListener(@Nullable Consumer<String> listener) {
+        filterChangeListener = listener == null ? filter -> { } : listener;
+    }
+
     public void refreshFilter() {
         buildNavigationTree(filterField.getText());
     }
 
+    /** @return the normalized active search filter */
     public String getActiveFilter() {
         return SettingsRoute.normalizeSearchText(filterField.getText());
     }
 
-    public void setFilterText(String filterText) {
+    /** @return the search field's unmodified display text */
+    public String getFilterText() {
+        return filterField.getText();
+    }
+
+    /** Sets the search field's display text; {@code null} clears it and listeners receive its normalized form. */
+    public void setFilterText(@Nullable String filterText) {
         filterField.setText(Objects.requireNonNullElse(filterText, ""));
     }
 
@@ -255,6 +267,7 @@ public class SettingsNavigationPanel extends JPanel {
             searchIndexInitializer.run();
         }
         buildNavigationTree(filterField.getText());
+        filterChangeListener.accept(getActiveFilter());
     }
 
     private void buildNavigationTree(String filterText) {

@@ -78,6 +78,8 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -110,6 +112,17 @@ public abstract class BotClient extends Client {
 
     public static final int BOT_TURN_RETRY_COUNT = 3;
 
+    /**
+     * Which AI implementation this bot is. Reported to the server alongside the bot's settings so a savegame
+     * remembers what kind of bot held each seat, and shown by the bot config dialog so it tells the truth
+     * about a running bot instead of assuming Princess. Subclasses that are their own AI type override this.
+     *
+     * @return this bot's {@link AIType}
+     */
+    public AIType getAIType() {
+        return AIType.PRINCESS;
+    }
+
     private List<Entity> currentTurnEnemyEntities;
     private List<Entity> currentTurnFriendlyEntities;
 
@@ -124,6 +137,14 @@ public abstract class BotClient extends Client {
 
     // Let bots remember whether they've rerolled an initiative roll this round
     protected boolean rerolledInitiative = false;
+
+    /**
+     * Tractors this bot has already asked the server to build a train for. Lobby updates arrive one unit at a time,
+     * so without this a batch of units would send the same build request several times over before the first reply
+     * came back. Cleared when the lobby is left.
+     */
+    /** The trailer list last requested for each tractor, so an unchanged plan is not asked for twice. */
+    private final Map<Integer, List<Integer>> requestedTrains = new HashMap<>();
 
     /**
      * The bot's personality/configuration state. Held on {@link BotClient} because it is generic bot-personality state
@@ -189,9 +210,22 @@ public abstract class BotClient extends Client {
             }
 
             @Override
+            public void gameEntityNew(GameEntityNewEvent e) {
+                connectOwnTrains();
+            }
+
+            @Override
+            public void gameEntityChange(GameEntityChangeEvent e) {
+                connectOwnTrains();
+            }
+
+            @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 calculatedTurnThisPhase = false;
                 rerolledInitiative = false;
+                if (!getGame().getPhase().isLounge()) {
+                    requestedTrains.clear();
+                }
                 if (e.getOldPhase().isSimultaneous(getGame())) {
                     LOGGER.info("{}: Calculated {} / {} turns for phase {}",
                           getName(),
@@ -228,9 +262,9 @@ public abstract class BotClient extends Client {
                         // essentially same as if the auto_ams option was on
                         waa = Compute.getHighestExpectedDamage(game, evt.getWAAs(), true);
 
-                        // Add second weapon attack counter for the bot when playtest 3 is active
+                        // If AMS can make multiple attacks
                         WeaponAttackAction secondWaa = null;
-                        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                        if (Game.rulesManager.getRulesEquipment().getAMSMultiShot()) {
                             secondWaa = Compute.getSecondHighestExpectedDamage(game, evt.getWAAs(), true);
                         }
 
@@ -551,6 +585,64 @@ public abstract class BotClient extends Client {
         }
 
         return currentTurnFriendlyEntities;
+    }
+
+    /**
+     * Hitches up any trailers this bot owns that are not part of a train yet.
+     * <p>
+     * A bot cannot use the lobby's "Connect as Train" action, so a trailer handed to one would otherwise sit there
+     * with no engine and no tractor, unable to move for the whole game. Runs whenever the lobby tells us a unit was
+     * added or changed, so it does not matter how the units arrived: assigned one at a time, assigned as a force, or
+     * loaded from a file straight onto this bot.
+     * </p>
+     * <p>
+     * The request sent is the same one a human client sends, so the server validates it exactly as it would a
+     * player's, and a train that cannot legally be built is refused rather than half-applied.
+     * </p>
+     */
+    /**
+     * Decides whether a planned train still needs to be requested, and records it when it does.
+     * <p>
+     * The server's reply to a build request arrives as another lobby update, which asks for the plans again, so
+     * repeating an identical request would loop. The guard is the trailer list rather than the tractor id: a tractor
+     * handed more trailers after its first request produces a different list, so it is asked again with the longer
+     * plan instead of being suppressed for the rest of the lobby.
+     * </p>
+     *
+     * @param requestedTrains  the trailer list last requested for each tractor, updated in place
+     * @param tractorId        the tractor heading the planned train
+     * @param plannedTrailers  the trailers to hitch behind it, in order
+     *
+     * @return {@code true} when this plan has not been requested yet and the caller should send it
+     */
+    static boolean recordTrainRequest(Map<Integer, List<Integer>> requestedTrains, int tractorId,
+          List<Integer> plannedTrailers) {
+        if (plannedTrailers.equals(requestedTrains.get(tractorId))) {
+            return false;
+        }
+        requestedTrains.put(tractorId, List.copyOf(plannedTrailers));
+        return true;
+    }
+
+    protected void connectOwnTrains() {
+        if (!getGame().getPhase().isLounge()) {
+            return;
+        }
+
+        Map<Integer, List<Integer>> plannedTrains = BotTrainPlanner.planTrains(getGame(), localPlayerNumber);
+
+        for (Map.Entry<Integer, List<Integer>> plannedTrain : plannedTrains.entrySet()) {
+            if (!recordTrainRequest(requestedTrains, plannedTrain.getKey(), plannedTrain.getValue())) {
+                continue;
+            }
+
+            Entity tractor = getGame().getEntity(plannedTrain.getKey());
+            LOGGER.info("[Train] {} connecting {} + {} trailer(s)",
+                  getName(),
+                  (tractor == null) ? plannedTrain.getKey() : tractor.getDisplayName(),
+                  plannedTrain.getValue().size());
+            sendBuildTrain(plannedTrain.getKey(), plannedTrain.getValue());
+        }
     }
 
     // TODO: move initMovement to be called on phase end

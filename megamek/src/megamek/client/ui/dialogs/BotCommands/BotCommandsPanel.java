@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,7 +33,6 @@
 
 package megamek.client.ui.dialogs.BotCommands;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -52,7 +51,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.UIManager;
 
 import megamek.client.AbstractClient;
 import megamek.client.bot.princess.ArtilleryCommandAndControl.ArtilleryOrder;
@@ -60,6 +58,7 @@ import megamek.client.bot.princess.ArtilleryCommandAndControl.SpecialAmmo;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.ChatCommands;
+import megamek.client.bot.princess.CombatPosture;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.audio.AudioService;
@@ -187,7 +186,7 @@ public class BotCommandsPanel extends JPanel {
 
     private void initialize() {
         applyLayout(false);
-        applyTopBarBackground();
+        UIUtil.applyTopBarBackground(this);
         var retreat = createButton("Retreat");
         pauseContinue = createButton("PauseGame");
         var maneuver = createButton("Maneuver");
@@ -217,8 +216,9 @@ public class BotCommandsPanel extends JPanel {
         this.add(priorityTarget);
         this.add(ignoreTarget);
         this.add(waypoints);
-        this.add(miscButton);
-        // the misc button only becomes visible once a caller configures it (e.g. as Request Victory)
+        // The misc button is only added to the panel once a caller configures it (e.g. as Request Victory). It is left
+        // out until then because GridLayout reserves a cell for a child even while that child is invisible, which would
+        // leave an empty gap at the end of the strip in the GUIs that never configure it.
         miscButton.setEnabled(false);
         miscButton.setVisible(false);
         if (controller != null) {
@@ -274,6 +274,9 @@ public class BotCommandsPanel extends JPanel {
         this.miscButton.addActionListener(miscButtonActionListener);
         this.miscButton.setEnabled(true);
         this.miscButton.setVisible(true);
+        this.add(miscButton);
+        this.revalidate();
+        this.repaint();
     }
 
     /**
@@ -287,7 +290,8 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
-     * Clears the misc button, removing any text, tooltip, and action listener and disabling it.
+     * Clears the misc button, removing any text, tooltip, and action listener, disabling it and taking it back out of
+     * the panel so that it does not leave an empty cell behind.
      */
     public void clearMiscButton() {
         this.miscButton.setText("");
@@ -298,6 +302,9 @@ public class BotCommandsPanel extends JPanel {
         }
         this.miscButton.setEnabled(false);
         this.miscButton.setVisible(false);
+        this.remove(miscButton);
+        this.revalidate();
+        this.repaint();
     }
 
     private Collection<Player> getBotPlayersUnderYourCommand() {
@@ -338,19 +345,6 @@ public class BotCommandsPanel extends JPanel {
         } catch (Exception exception) {
             LOGGER.error(exception, "[BotPanel] Failed to build the {} popup", button.getText());
         }
-    }
-
-    /**
-     * Sets the panel background to the top menu bar color so the docked strip blends with the bar above it. Falls back
-     * to the generic control color when the theme does not define a menu bar background.
-     */
-    private void applyTopBarBackground() {
-        Color barBackground = UIManager.getColor("MenuBar.background");
-        if (barBackground == null) {
-            barBackground = UIManager.getColor("control");
-        }
-        setOpaque(true);
-        setBackground(barBackground);
     }
 
     private JPopupMenu createSelectBehaviorPopup() {
@@ -486,6 +480,8 @@ public class BotCommandsPanel extends JPanel {
 
     private JPopupMenu createManeuverPopup() {
         return createBotFirstPopup((botMenu, botPlayer) -> {
+            botMenu.add(createPostureMenu(botPlayer));
+            botMenu.addSeparator();
             addBotAction(botMenu, botPlayer, "AlphaStrike", this::alphaStrikeManeuver);
             addBotAction(botMenu, botPlayer, "NoPrisoners", this::noPrisonersManeuver);
             addBotAction(botMenu, botPlayer, "StayAtRange", this::stayAtRangeManeuver);
@@ -504,6 +500,28 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
+     * Creates the combat posture menu for one bot: Attack, Defend, or Auto.
+     *
+     * @param botPlayer The bot the posture will be applied to
+     *
+     * @return The created menu
+     */
+    private JMenu createPostureMenu(Player botPlayer) {
+        JMenu menu = new JMenu(Messages.getString("BotCommandPanel.Posture.title"));
+        menu.setToolTipText(Messages.getString("BotCommandPanel.Posture.tooltip"));
+        for (CombatPosture posture : CombatPosture.values()) {
+            JMenuItem postureItem = new JMenuItem(posture.toString());
+            postureItem.setToolTipText(Messages.getString("BotCommandPanel.Posture." + posture.name() + ".tooltip"));
+            postureItem.addActionListener(event -> {
+                sendChatCommand(botPlayer, ChatCommands.POSTURE, posture.name());
+                acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.posture", posture));
+            });
+            menu.add(postureItem);
+        }
+        return menu;
+    }
+
+    /**
      * Creates the fine-tuning menu for one bot, which exposes the five behavior dials the maneuver presets are built
      * from so each can be set directly.
      *
@@ -517,7 +535,7 @@ public class BotCommandsPanel extends JPanel {
         menu.add(createBehaviorDialMenu(botPlayer, "Bot.commands.caution", ChatCommands.CAUTION));
         menu.add(createBehaviorDialMenu(botPlayer, "Bot.commands.avoid", ChatCommands.AVOID));
         menu.add(createBehaviorDialMenu(botPlayer, "Bot.commands.aggression", ChatCommands.AGGRESSION));
-        menu.add(createBehaviorDialMenu(botPlayer, "Bot.commands.herding", ChatCommands.HERDING));
+        menu.add(createBehaviorDialMenu(botPlayer, "Bot.commands.mutualSupport", ChatCommands.MUTUAL_SUPPORT));
         menu.add(createBehaviorDialMenu(botPlayer, "Bot.commands.bravery", ChatCommands.BRAVERY));
         return menu;
     }
@@ -733,7 +751,7 @@ public class BotCommandsPanel extends JPanel {
     }
 
     private void setHerdMentality(Player botPlayer, int value) {
-        sendChatCommand(botPlayer, ChatCommands.HERDING, value);
+        sendChatCommand(botPlayer, ChatCommands.MUTUAL_SUPPORT, value);
     }
 
     private void setBravery(Player botPlayer, int value) {

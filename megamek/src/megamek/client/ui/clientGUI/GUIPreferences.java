@@ -187,6 +187,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public static final String CUSTOM_UNIT_HEIGHT = "CustomUnitDialogSizeHeight";
     public static final String CUSTOM_UNIT_WIDTH = "CustomUnitDialogSizeWidth";
+    public static final String SHOW_UNIMPLEMENTED_SPAS = "ShowUnimplementedSpas";
+    public static final String SHOW_UNIMPLEMENTED_QUIRKS = "ShowUnimplementedQuirks";
 
     public static final String FORCE_DISPLAY_POS_X = "ForceDisplayPosX";
     public static final String FORCE_DISPLAY_POS_Y = "ForceDisplayPosY";
@@ -426,6 +428,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String RND_ARMY_POS_X = "RndArmyPosX";
     public static final String RND_ARMY_POS_Y = "RndArmyPosY";
     public static final String RND_ARMY_SPLIT_POS = "RndArmySplitPos";
+    // The army generator's last-used settings, restored when the dialog reopens. The year is
+    // deliberately absent: it follows the game options and is re-read every time the dialog opens.
+    public static final String RND_ARMY_LAST_FACTION = "RndArmyLastFaction";
+    public static final String RND_ARMY_LAST_SUB_FACTION = "RndArmyLastSubFaction";
+    public static final String RND_ARMY_LAST_UNIT_TYPE = "RndArmyLastUnitType";
+    public static final String RND_ARMY_LAST_RATING = "RndArmyLastRating";
+    public static final String RND_ARMY_LAST_UNIT_COUNT = "RndArmyLastUnitCount";
+    public static final String RND_ARMY_LAST_TAB = "RndArmyLastTab";
     public static final String RND_MAP_POS_X = "RndMapPosX";
     public static final String RND_MAP_POS_Y = "RndMapPosY";
     public static final String RND_MAP_SIZE_HEIGHT = "RndMapSizeHeight";
@@ -690,6 +700,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
         store.setDefault(CUSTOM_UNIT_HEIGHT, 400);
         store.setDefault(CUSTOM_UNIT_WIDTH, 600);
+        store.setDefault(SHOW_UNIMPLEMENTED_SPAS, false);
+        store.setDefault(SHOW_UNIMPLEMENTED_QUIRKS, false);
 
         store.setDefault(FORCE_DISPLAY_AUTO_DISPLAY_REPORT_PHASE, 2);
         store.setDefault(FORCE_DISPLAY_AUTO_DISPLAY_NON_REPORT_PHASE, 2);
@@ -699,7 +711,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         // is force-hidden on every phase change; 2 (= MANUAL) leaves it as the player set it
         store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE, 2);
         store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE, 2);
-        store.setDefault(BOT_COMMANDS_ENABLED, false);
+        store.setDefault(BOT_COMMANDS_ENABLED, true);
         store.setDefault(FORCE_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(FORCE_DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(FORCE_DISPLAY_BTN_ID, true);
@@ -821,6 +833,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(RND_ARMY_POS_X, 200);
         store.setDefault(RND_ARMY_POS_Y, 200);
         store.setDefault(RND_ARMY_SPLIT_POS, 300);
+        store.setDefault(RND_ARMY_LAST_FACTION, "");
+        store.setDefault(RND_ARMY_LAST_SUB_FACTION, "");
+        store.setDefault(RND_ARMY_LAST_UNIT_TYPE, "");
+        store.setDefault(RND_ARMY_LAST_RATING, "");
+        store.setDefault(RND_ARMY_LAST_UNIT_COUNT, "");
+        store.setDefault(RND_ARMY_LAST_TAB, "");
 
         store.setDefault(MINI_MAP_COLOURS, "defaultminimap.txt");
         store.setDefault(MINI_MAP_ENABLED, true);
@@ -1034,6 +1052,16 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getCustomUnitWidth() {
         return store.getInt(CUSTOM_UNIT_WIDTH);
+    }
+
+    /** @return whether the pilot options list also shows the CamOps SPAs MegaMek does not implement */
+    public boolean getShowUnimplementedSpas() {
+        return store.getBoolean(SHOW_UNIMPLEMENTED_SPAS);
+    }
+
+    /** @return whether the quirks list also shows the quirks MegaMek will not act on */
+    public boolean getShowUnimplementedQuirks() {
+        return store.getBoolean(SHOW_UNIMPLEMENTED_QUIRKS);
     }
 
     public int getForceDisplayPosX() {
@@ -1937,6 +1965,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(CUSTOM_UNIT_WIDTH, state);
     }
 
+    public void setShowUnimplementedSpas(boolean state) {
+        store.setValue(SHOW_UNIMPLEMENTED_SPAS, state);
+    }
+
+    public void setShowUnimplementedQuirks(boolean state) {
+        store.setValue(SHOW_UNIMPLEMENTED_QUIRKS, state);
+    }
+
     public void setForceDisplayPosX(int i) {
         store.setValue(FORCE_DISPLAY_POS_X, i);
     }
@@ -2775,6 +2811,31 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public String getRATSelectedRAT() {
         return store.getString(RAT_SELECTED_RAT);
+    }
+
+    public void setRATSelectedRAT(String selectedRat) {
+        store.setValue(RAT_SELECTED_RAT, selectedRat);
+    }
+
+    /**
+     * The army generator's last-used settings, so the dialog reopens on the choices the player made
+     * rather than resetting to nothing. Stored as strings because the values are faction keys, rating
+     * codes and echelon codes rather than numbers.
+     *
+     * @param key   the setting name, from the {@code RND_ARMY_LAST_*} constants
+     * @param value the value to remember
+     */
+    public void setRandomArmySetting(String key, String value) {
+        store.setValue(key, value);
+    }
+
+    /**
+     * @param key the setting name, from the {@code RND_ARMY_LAST_*} constants
+     *
+     * @return the remembered value, blank when the player has not chosen one yet
+     */
+    public String getRandomArmySetting(String key) {
+        return store.getString(key);
     }
 
     public void setBoardEdRndStart(boolean b) {

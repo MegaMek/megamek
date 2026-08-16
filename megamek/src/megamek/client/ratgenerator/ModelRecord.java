@@ -681,7 +681,7 @@ public class ModelRecord extends AbstractUnitRecord {
                       eq.hasFlag((MiscType.F_MASC))) {
                     losTech = true;
                 }
-                if (eq.hasFlag(MiscType.F_CLUB)) {
+                if (eq.hasFlag(MiscType.F_CLUB) || eq.hasFlag(MiscType.F_SHIELD)) {
                     shortRangeBV += unitData.getTons() * 0.3;
                     totalWeaponBV += unitData.getTons() * 0.3;
                 }
@@ -1095,7 +1095,10 @@ public class ModelRecord extends AbstractUnitRecord {
             }
         } else if (checkWeapon instanceof CLBAMGBearhunterSuperheavy) {
             return extremelyEffective;
-        } else if (checkWeapon instanceof ISPlasmaRifle || checkWeapon instanceof ISLightPlasmaRifle || checkWeapon instanceof ISHeavyPlasmaRifle ||
+        } else if (checkWeapon instanceof ISPlasmaRifle
+              || checkWeapon instanceof ISLightPlasmaRifle
+              || checkWeapon instanceof ISHeavyPlasmaRifle
+              ||
               checkWeapon instanceof CLPlasmaCannon) {
             return veryEffective;
         } else if (checkWeapon instanceof ISPulseLaserSmall ||

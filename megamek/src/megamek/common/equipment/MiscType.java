@@ -99,6 +99,7 @@ public class MiscType extends EquipmentType {
     public static final MiscTypeFlag F_AP_POD = MiscTypeFlag.F_AP_POD;
     public static final MiscTypeFlag F_SEARCHLIGHT = MiscTypeFlag.F_SEARCHLIGHT;
     public static final MiscTypeFlag F_CLUB = MiscTypeFlag.F_CLUB;
+    public static final MiscTypeFlag F_SHIELD = MiscTypeFlag.F_SHIELD;
     public static final MiscTypeFlag F_HAND_WEAPON = MiscTypeFlag.F_HAND_WEAPON;
     public static final MiscTypeFlag F_COWL = MiscTypeFlag.F_COWL;
     public static final MiscTypeFlag F_JUMP_BOOSTER = MiscTypeFlag.F_JUMP_BOOSTER;
@@ -395,13 +396,7 @@ public class MiscType extends EquipmentType {
     public boolean isBoobyTrap() {
         return hasFlag(F_BOOBY_TRAP);
     }
-
-    public boolean isShield() {
-        return hasAnyFlag(MiscTypeFlag.S_SHIELD_LARGE,
-              MiscTypeFlag.S_SHIELD_MEDIUM,
-              MiscTypeFlag.S_SHIELD_SMALL);
-    }
-
+    
     public boolean isVibroblade() {
         return hasFlag(F_CLUB)
               && hasAnyFlag(
@@ -3954,7 +3949,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 6;
         misc.criticalSlots = 7;
         misc.cost = 300000;
-        misc.flags = misc.flags.or(F_MEK_EQUIPMENT, MiscTypeFlag.S_SHIELD_LARGE);
+        misc.flags = misc.flags.or(F_SHIELD, F_MEK_EQUIPMENT, MiscTypeFlag.S_SHIELD_LARGE);
         misc.bv = 263;
         misc.setInstantModeSwitch(true);
         String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };

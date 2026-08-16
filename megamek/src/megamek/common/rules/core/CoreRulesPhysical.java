@@ -74,7 +74,7 @@ public class CoreRulesPhysical extends RulesPhysical {
 
                 Mounted<?> m = cs.getMount();
                 EquipmentType type = m.getType();
-                if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
+                if (type instanceof MiscType && type.hasFlag(MiscType.F_SHIELD)) {
                     if ((((MiscMounted) m).getDamageAbsorption(entity, armLoc) > 0)
                           && (((MiscMounted) m).getCurrentDamageCapacity(entity, armLoc) > 0)) {
                         if (type.hasFlag(MiscTypeFlag.S_SHIELD_LARGE)) {
@@ -174,7 +174,7 @@ public class CoreRulesPhysical extends RulesPhysical {
             for (MiscMounted m : attackingEntity.getMisc()) {
                 MiscType type = m.getType();
                 if (m.getLocation() == armLoc
-                      && type.isShield()
+                      && type.hasFlag(MiscType.F_SHIELD)
                       && !m.isInoperable()
                       && m.getCurrentDamageCapacity(attackingEntity, armLoc) > 0
                       && m.curMode().equals(MiscType.S_ACTIVE_SHIELD)) {

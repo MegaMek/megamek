@@ -403,8 +403,8 @@ public class CustomMekDialog extends AbstractButtonDialog
     }
 
     /**
-     * Finishes one pilot option row built by {@link PilotOptionsPanel}: populates choice values and attaches the
-     * inline prosthetic controls. Passed to the panel as its {@link PilotOptionsPanel.OptionRowConfigurator}.
+     * Finishes one pilot option row built by {@link PilotOptionsPanel}: populates choice values and attaches the inline
+     * prosthetic controls. Passed to the panel as its {@link PilotOptionsPanel.OptionRowConfigurator}.
      */
     private void configureOptionRow(IOption option, DialogOptionComponentYPanel optionComp) {
         Entity entity = entities.getFirst();
@@ -1176,8 +1176,8 @@ public class CustomMekDialog extends AbstractButtonDialog
      * Returns true when this unit, or anything it tows, carries a weapon that can be fired from off board.
      * <p>
      * A train acts as one unit for firing (TM, Trailers), so a tractor with no artillery of its own still belongs off
-     * board when it is pulling a gun trailer. Without this a Prime Mover towing a Gun Trailer could never put that
-     * gun off board, because the tractor alone would not qualify.
+     * board when it is pulling a gun trailer. Without this a Prime Mover towing a Gun Trailer could never put that gun
+     * off board, because the tractor alone would not qualify.
      * </p>
      */
     private boolean trainCarriesArtillery(Entity entity) {
@@ -2176,7 +2176,7 @@ public class CustomMekDialog extends AbstractButtonDialog
         }
         // Also need to consider melee weapons
         for (Mounted<?> m : entity.getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_CLUB)) {
+            if (m.getType().hasFlag(MiscType.F_CLUB) || m.getType().hasFlag(MiscType.F_SHIELD)) {
                 h_wpnQuirks.put(entity.getEquipmentNum(m), m.getQuirks());
             }
         }
@@ -2441,9 +2441,9 @@ public class CustomMekDialog extends AbstractButtonDialog
     }
 
     /**
-     * A scroll pane view that reflows to the viewport width instead of forcing horizontal scrolling - the wide
-     * option groups then squeeze their columns rather than pushing the whole tab sideways. Height stays free so
-     * vertical scrolling works as usual.
+     * A scroll pane view that reflows to the viewport width instead of forcing horizontal scrolling - the wide option
+     * groups then squeeze their columns rather than pushing the whole tab sideways. Height stays free so vertical
+     * scrolling works as usual.
      */
     private static class WidthTrackingPanel extends JPanel implements Scrollable {
         @Serial

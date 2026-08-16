@@ -119,6 +119,7 @@ public enum MiscTypeFlag implements EquipmentFlag {
     F_MINESWEEPER,
 
     F_AP_POD,
+    F_PHYSICAL_WEAPON,
     F_CLUB,
     F_HAND_WEAPON,
     F_COWL,
@@ -127,6 +128,7 @@ public enum MiscTypeFlag implements EquipmentFlag {
     F_TALON,
     F_SPIKES,
     F_COMMUNICATIONS,
+    F_SHIELD,
 
     F_PPC_CAPACITOR,
 

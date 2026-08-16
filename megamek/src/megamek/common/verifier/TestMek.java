@@ -592,7 +592,9 @@ public class TestMek extends TestEntity {
             boolean structureUsesSlots = structure != null && structure.getNumCriticalSlots(mek) > 0;
 
             int actualStructureCrits = countInternalStructureCriticalSlots(mek, location);
-            int actualMatchingStructureCrits = structure == null ? 0 : mek.getNumberOfCriticalSlots(structure, location);
+            int actualMatchingStructureCrits = structure == null ?
+                  0 :
+                  mek.getNumberOfCriticalSlots(structure, location);
             boolean hasOnlyMatchingStructureCrits = actualStructureCrits == actualMatchingStructureCrits;
 
             boolean validStructureCrits = structureUsesSlots
@@ -688,7 +690,7 @@ public class TestMek extends TestEntity {
                 }
 
             } else if ((mek.getOArmor(loc) + (mek.hasRearArmor(loc) ? mek
-                                                                      .getOArmor(loc, true) : 0)) > (2
+                  .getOArmor(loc, true) : 0)) > (2
                   * mek.getOInternal(loc))) {
                 buff.append(printArmorLocation(loc))
                       .append(printArmorLocProp(loc,
@@ -874,10 +876,7 @@ public class TestMek extends TestEntity {
             hasMekJumpBooster |= m.is(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER);
             hasPartialWing |= m.getType().hasFlag(MiscType.F_PARTIAL_WING);
 
-            if (m.getType().hasFlag(MiscType.F_CLUB) &&
-                  (m.getType().hasAnyFlag(MiscTypeFlag.S_SHIELD_SMALL,
-                        MiscTypeFlag.S_SHIELD_MEDIUM,
-                        MiscTypeFlag.S_SHIELD_LARGE))) {
+            if (m.getType().hasFlag(MiscType.F_SHIELD)) {
                 if (shieldLocations.contains(m.getLocation())) {
                     illegal = true;
                     buff.append("Only one shield can be mounted in a location.\n");
@@ -1038,7 +1037,7 @@ public class TestMek extends TestEntity {
                     illegal = true;
                 }
                 for (int loc = 0; loc < mek.locations(); loc++) {
-                    if (!mek.locationIsTorso(loc)) continue;
+                    if (!mek.locationIsTorso(loc)) {continue;}
                     if (!mek.hasReinforcedStructure(loc)) {
                         illegal = true;
                         buff.append(misc.getName()).append(" requires reinforced structure in each torso location.\n");
@@ -1264,7 +1263,7 @@ public class TestMek extends TestEntity {
                 illegal = true;
             }
             EquipmentType structure = EquipmentType.getStructureFromName(EquipmentType.getStructureTypeName(
-                mek.getStructureType(), mek.isClan()));
+                  mek.getStructureType(), mek.isClan()));
             if (structure.getNumCriticalSlots(mek) > 0) {
                 buff.append("LAMs may not use ").append(structure.getName()).append("\n");
                 illegal = true;
@@ -1279,7 +1278,7 @@ public class TestMek extends TestEntity {
                     buff.append("LAMs cannot use hardened armor.\n");
                     illegal = true;
                 } else {
-                      final EquipmentType eq = EquipmentType.getArmorFromName(EquipmentType.getArmorTypeName(at,
+                    final EquipmentType eq = EquipmentType.getArmorFromName(EquipmentType.getArmorTypeName(at,
                           mek.isClan()));
                     if (eq != null && eq.getNumCriticalSlots(mek) > 0) {
                         buff.append("LAMs cannot use ").append(eq.getName()).append("\n");
@@ -1331,7 +1330,7 @@ public class TestMek extends TestEntity {
                     buff.append("LAMs cannot mount heavy gauss rifles.\n");
                     illegal = true;
                 } else if ((m.getType() instanceof MiscType)
-                      && m.getType().hasFlag(MiscType.F_CLUB)) {
+                      && (m.getType().hasFlag(MiscType.F_CLUB) || m.getType().hasFlag(MiscType.F_SHIELD))) {
                     buff.append("LAMs cannot be constructed with physical weapons.\n");
                     illegal = true;
                 } else if (m.getType().isSpreadable()) {
@@ -1660,10 +1659,10 @@ public class TestMek extends TestEntity {
                     return false;
                 }
             }
-            if (eq.hasFlag(MiscType.F_CLUB) && (eq.hasAnyFlag(MiscTypeFlag.S_HATCHET, MiscTypeFlag.S_SWORD,
+            if (((eq.hasFlag(MiscType.F_CLUB) && (eq.hasAnyFlag(MiscTypeFlag.S_HATCHET, MiscTypeFlag.S_SWORD,
                   MiscTypeFlag.S_CHAIN_WHIP, MiscTypeFlag.S_FLAIL, MiscTypeFlag.S_LANCE, MiscTypeFlag.S_WRECKING_BALL,
                   MiscTypeFlag.S_MACE, MiscTypeFlag.S_RETRACTABLE_BLADE)
-                  || ((MiscType) eq).isShield() || ((MiscType) eq).isVibroblade())
+                  || ((MiscType) eq).isVibroblade())) || eq.hasFlag(MiscType.F_SHIELD))
                   && (mek.entityIsQuad() || ((location != Mek.LOC_LEFT_ARM) && (location != Mek.LOC_RIGHT_ARM)))) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in an arm.\n");

@@ -324,7 +324,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         MegaMekButton reportBugButton = new MegaMekButton(
               "<html><b>" + BUG_REPORT_I18N.get("package.reportBug") + "</b></html>",
               SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-        reportBugButton.setBorder(BugReportDialog.attentionBorder());
         reportBugButton.setToolTipText(BUG_REPORT_I18N.get("package.reportBug.tooltip"));
         reportBugButton.addActionListener(event -> BugReportDialog.showWithGameTools(clientGUI.getFrame(),
               this::totalWarfareClient));

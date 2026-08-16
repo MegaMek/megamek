@@ -33,14 +33,22 @@
 
 package megamek.client.ui.clientGUI;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Window;
+import java.awt.geom.Area;
 import java.util.function.Supplier;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -49,7 +57,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
+import javax.swing.border.AbstractBorder;
 
 import megamek.MMConstants;
 import megamek.client.Client;
@@ -65,8 +73,12 @@ public class BugReportDialog {
     private static final int UNSCALED_WIDTH = 600;
     private static final BugReportMessages I18N = new BugReportMessages();
 
-    /** Hazard yellow, for the border that marks out the reporting buttons. */
-    private static final Color ATTENTION_COLOR = new Color(255, 204, 0);
+    /** Hazard colours for the striped border around the reporting button. */
+    private static final Color HAZARD_YELLOW = new Color(255, 204, 0);
+    private static final Color HAZARD_RED = new Color(204, 34, 34);
+
+    /** Breathing room between the striped border and the button text. */
+    private static final int HAZARD_PADDING = 4;
 
     private static final int UNSCALED_REPORT_BUTTON_WIDTH = 260;
     private static final int UNSCALED_REPORT_BUTTON_HEIGHT = 48;
@@ -137,24 +149,7 @@ public class BugReportDialog {
     }
 
     /**
-     * A border that makes a reporting button impossible to miss among its neighbours.
-     *
-     * <p>The button is the one thing on screen a player needs to find at the moment something has gone wrong, and it
-     * competes for attention with a board full of units. Hazard colours - a yellow line held inside a black one -
-     * separate it from the ordinary controls without depending on the skin in use.</p>
-     *
-     * @return the border, sized for the player's GUI scale
-     */
-    public static Border attentionBorder() {
-        int outerThickness = UIUtil.scaleForGUI(1);
-        int innerThickness = UIUtil.scaleForGUI(2);
-        return BorderFactory.createCompoundBorder(
-              BorderFactory.createLineBorder(Color.BLACK, outerThickness),
-              BorderFactory.createLineBorder(ATTENTION_COLOR, innerThickness));
-    }
-
-    /**
-     * Creates the button that does the actual work, sized and coloured so that it reads as the main thing to press.
+     * Creates the button that does the actual work, sized and marked so that it reads as the main thing to press.
      *
      * <p>It shares the dialog with nine other buttons, all of which merely open a link, so at the default size it
      * looked like one option among many rather than the step the instructions above it begin with.</p>
@@ -163,7 +158,8 @@ public class BugReportDialog {
      */
     private JButton createReportButton() {
         JButton reportButton = new JButton(packageBugReportAction);
-        reportButton.setBorder(attentionBorder());
+        reportButton.setBorder(BorderFactory.createCompoundBorder(new HazardStripeBorder(),
+              BorderFactory.createEmptyBorder(HAZARD_PADDING, HAZARD_PADDING, HAZARD_PADDING, HAZARD_PADDING)));
         reportButton.setFont(reportButton.getFont().deriveFont(Font.BOLD,
               reportButton.getFont().getSize2D() * REPORT_BUTTON_FONT_FACTOR));
         reportButton.setPreferredSize(new Dimension(UIUtil.scaleForGUI(UNSCALED_REPORT_BUTTON_WIDTH),
@@ -205,6 +201,52 @@ public class BugReportDialog {
         rootPanel.add(gatherFilesRow);
         rootPanel.add(repositoryRow);
         return rootPanel;
+    }
+
+    /**
+     * A border of diagonal yellow and red stripes, in the manner of hazard tape.
+     *
+     * <p>Used on the one button in this dialog that does something rather than opening a link, so that a player
+     * skimming ten similar-looking buttons cannot miss which one starts the job.</p>
+     */
+    private static class HazardStripeBorder extends AbstractBorder {
+
+        private final int thickness = UIUtil.scaleForGUI(5);
+
+        @Override
+        public void paintBorder(Component component, Graphics graphics, int x, int y, int width, int height) {
+            Graphics2D stripeGraphics = (Graphics2D) graphics.create();
+            try {
+                Area frame = new Area(new Rectangle(x, y, width, height));
+                frame.subtract(new Area(new Rectangle(x + thickness, y + thickness,
+                      width - (2 * thickness), height - (2 * thickness))));
+                stripeGraphics.clip(frame);
+                stripeGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                stripeGraphics.setColor(HAZARD_YELLOW);
+                stripeGraphics.fillRect(x, y, width, height);
+
+                // Diagonals are drawn from off the left edge so that the stripes carry across the whole frame.
+                stripeGraphics.setColor(HAZARD_RED);
+                stripeGraphics.setStroke(new BasicStroke(thickness));
+                for (int offset = -height; offset < width; offset += thickness * 2) {
+                    stripeGraphics.drawLine(x + offset, y + height, x + offset + height, y);
+                }
+            } finally {
+                stripeGraphics.dispose();
+            }
+        }
+
+        @Override
+        public Insets getBorderInsets(Component component) {
+            return new Insets(thickness, thickness, thickness, thickness);
+        }
+
+        @Override
+        public Insets getBorderInsets(Component component, Insets insets) {
+            insets.set(thickness, thickness, thickness, thickness);
+            return insets;
+        }
     }
 
     private static class UrlButton extends JButton {

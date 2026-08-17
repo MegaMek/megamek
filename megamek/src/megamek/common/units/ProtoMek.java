@@ -888,7 +888,7 @@ public class ProtoMek extends Entity {
         // Only activate when neural interface rules are enabled; lock mode to prevent UI toggle
         if ((mounted.getType() instanceof MiscType) &&
               mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
-            mounted.setMode(isNeuralInterfaceEnabled() ? 1 : 0);
+            mounted.setMode(isNeuralInterfaceEnabled() ? MiscType.MODE_EI_ON : Mounted.MODE_OFF);
             mounted.setModeSwitchable(false);
         }
     }

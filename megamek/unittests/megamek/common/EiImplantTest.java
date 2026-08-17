@@ -45,6 +45,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.Sensor;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.BipedMek;
@@ -535,6 +536,29 @@ public class EiImplantTest {
             assertFalse(mek.isEiShutdown(),
                   "The EI Interface is not an instant mode switch, so shutting it down only queues a pending mode; "
                         + "per IO p.69 the shutdown happens in the End Phase");
+        }
+
+        @Test
+        @DisplayName("ProtoMek EI Interface is mounted running and locked against switching")
+        void protoMekEiInterfaceIsMountedRunningAndLocked() throws LocationFullException {
+            enablePilotOnly();
+            ProtoMek proto = createProtoMek();
+            proto.addEquipment((MiscType) EquipmentType.get("EIInterface"), ProtoMek.LOC_BODY);
+
+            MiscMounted eiInterface = proto.getMisc()
+                  .stream()
+                  .filter(mounted -> mounted.getType().hasFlag(MiscType.F_EI_INTERFACE))
+                  .findFirst()
+                  .orElseThrow();
+
+            assertEquals(MiscType.MODE_EI_ON, eiInterface.curMode().getName(),
+                  "A ProtoMek mounts its built-in EI Interface already running when the rules are enabled");
+            // Mounting must not leave a switch queued: setMode is not instant, so a mode set by index would look
+            // correct right now and only flip the interface off once the round rolled over.
+            assertEquals(MiscType.MODE_EI_ON, eiInterface.modeNextRound().getName(),
+                  "Mounting the interface must not queue a switch away from the running mode");
+            assertFalse(eiInterface.isModeSwitchable(),
+                  "ProtoMeks cannot shut EI down (IO:AE p.69), so the mode must be locked against the UI");
         }
 
         @Test

@@ -277,8 +277,8 @@ public class EiImplantTest {
                   "Running EI should read as a state");
             assertEquals("Disengage Enhanced Imaging", offMode.getActionName(eiInterface),
                   "Choosing to stop EI should read as an instruction");
-            assertEquals("Off", offMode.getStateName(eiInterface),
-                  "Shut down EI keeps the plain Off state label");
+            assertEquals("Enhanced Imaging Disengaged", offMode.getStateName(eiInterface),
+                  "Shut down EI should read as a state");
         }
 
         @Test

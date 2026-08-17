@@ -578,7 +578,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     /** Shortest and longest display/spacing time the toast spinners allow, in seconds. */
     private static final int MIN_TOAST_SECONDS = 1;
     private static final int MAX_TOAST_SECONDS = 10;
-            private static final int BUTTON_GAP = 8;
+    private static final int BUTTON_GAP = 8;
     /** Wrap width for the multi-line warning under the toast on/off checkbox, before GUI scaling. */
     private static final int TOAST_WARNING_WIDTH_PX = 480;
 
@@ -4053,7 +4053,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     static JPanel createSettingsPanel(List<List<Component>> comps) {
         List<ColourSelectorButton> colourButtons = new ArrayList<>();
         for (List<Component> row : comps) {
-                  row.forEach(component -> collectColourButtons(component, colourButtons));
+            row.forEach(component -> collectColourButtons(component, colourButtons));
         }
         setUniformWidth(colourButtons);
 
@@ -4147,31 +4147,31 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         panel.addFullWidthComponent(rowPanel(components));
     }
 
-      private static void collectColourButtons(Component component, List<ColourSelectorButton> colourButtons) {
-            if (component instanceof ColourSelectorButton button) {
-                  button.setHorizontalAlignment(SwingConstants.LEFT);
-                  colourButtons.add(button);
+    private static void collectColourButtons(Component component, List<ColourSelectorButton> colourButtons) {
+        if (component instanceof ColourSelectorButton button) {
+            button.setHorizontalAlignment(SwingConstants.LEFT);
+            colourButtons.add(button);
+        }
+        if (component instanceof CommonSettingsPane.SectionedContent) {
+            return;
+        }
+        if (component instanceof Container container) {
+            for (Component child : container.getComponents()) {
+                collectColourButtons(child, colourButtons);
             }
-            if (component instanceof CommonSettingsPane.SectionedContent) {
-                  return;
-            }
-            if (component instanceof Container container) {
-                  for (Component child : container.getComponents()) {
-                        collectColourButtons(child, colourButtons);
-                  }
-            }
-      }
+        }
+    }
 
     private static void setUniformWidth(List<? extends JComponent> components) {
         int width = components.stream()
-                    .map(component -> Objects.requireNonNull(component).getPreferredSize())
+              .map(component -> Objects.requireNonNull(component).getPreferredSize())
               .mapToInt(dimension -> dimension.width)
               .max()
               .orElse(0);
         for (JComponent component : components) {
-                  JComponent nonNullComponent = Objects.requireNonNull(component);
-                  Dimension preferred = nonNullComponent.getPreferredSize();
-                  nonNullComponent.setPreferredSize(new Dimension(width, preferred.height));
+            JComponent nonNullComponent = Objects.requireNonNull(component);
+            Dimension preferred = nonNullComponent.getPreferredSize();
+            nonNullComponent.setPreferredSize(new Dimension(width, preferred.height));
         }
     }
 

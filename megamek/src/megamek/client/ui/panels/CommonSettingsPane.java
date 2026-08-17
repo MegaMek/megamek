@@ -123,14 +123,14 @@ public class CommonSettingsPane extends JPanel {
               getString("CommonSettingsDialog.SearchMatches"),
               getString("SettingsPagePanel.expandAll.text"),
               getString("SettingsPagePanel.collapseAll.text"));
-                settingsPane = new SettingsPane(routes, pageFactories, navigationText);
+        settingsPane = new SettingsPane(routes, pageFactories, navigationText);
         add(settingsPane, BorderLayout.CENTER);
     }
 
     private static SettingsPagePanel createPage(OptionPage page) {
         Icon icon = pageIcon(page.id());
         SettingsPagePanel.Builder builder = SettingsPagePanel.builder(page.pageName(), TEXT,
-                    "CommonSettingsDialog.title", icon)
+              "CommonSettingsDialog.title", icon)
               .header(new SettingsHeaderPanel(page.pageName(), page.path().getLast(), icon))
               .showDetailsPanel(page.sections().stream().anyMatch(section -> containsHelpText(section.content())))
               .sectionsExpandedByDefault(page.sections().size() == 1)

@@ -188,9 +188,8 @@ public class AeroGroundDoctrinePathFinder extends AeroGroundPathFinder {
         }
 
         // Split-S: 2 thrust, +2 control - down two altitudes, any facing, velocity up one. Offensive only:
-        // dive out of the dead zone onto an enemy below. Guarded to keep two levels of air below, because
-        // the engine's own legality check reads (altitude + 2) > ceiling, which permits a Split-S from
-        // altitude 2 straight into the ground.
+        // dive out of the dead zone onto an enemy below. The altitude guard matches the engine legality
+        // check (must end above the ground after dropping 2), kept explicit here as defense-in-depth.
         if (canPerform(ManeuverType.MAN_SPLIT_S, velocity, altitude, board, start)
               && (altitude - 2 >= AerospaceGeometry.MINIMUM_ALTITUDE)
               && (2 <= maxThrust)) {

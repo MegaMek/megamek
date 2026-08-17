@@ -1,10 +1,19 @@
-<!-- TITLE: start with "Fix:" for a bug fix, or "PR:" for a feature or improvement.
-     Release notes are generated automatically from PR titles. -->
+<!-- TITLE: include the issue number, and start with "Fix" for a bug fix or "Close" for
+     anything else:
+
+         Fix #1234: Cheese has the wrong colour gradient
+         Close #1234: Added 6 new cheese gradients
+
+     More than one issue is fine: "Close #111, #5329: Added unit history tracking".
+     Release notes are generated automatically from pull request titles, so the title is
+     what players end up reading. -->
 
 ## What this changes
 
 <!-- The effect someone actually sees, in plain language. One or two sentences is fine. -->
 
+<!-- Keep this line as well as the number in the title. GitHub only closes an issue from a
+     keyword in the description - a number in the title alone does not close anything. -->
 Fixes #
 
 ## Testing

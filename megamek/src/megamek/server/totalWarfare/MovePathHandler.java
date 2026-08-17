@@ -268,6 +268,23 @@ class MovePathHandler extends AbstractTWRuleHandler {
         addReport(elevatorReport);
     }
 
+    /**
+     * VTOL-capable creatures must spend 1 MP per turn, even if remaining stationary (TW p.54). An airborne
+     * beast-mounted platoon (e.g. Branth) that holds its hex therefore still counts as having walked: its movement
+     * type becomes {@link EntityMovementType#MOVE_VTOL_WALK} and it records 1 MP spent.
+     *
+     * @param entity the entity whose movement was just processed
+     *
+     * @return {@code true} if the entity is airborne VTOL beast-mounted infantry that did not move this turn
+     */
+    static boolean mustSpendStationaryFlightMP(Entity entity) {
+        return (entity instanceof ConvInfantry beastInfantry)
+              && (beastInfantry.getMount() != null)
+              && beastInfantry.getMount().movementMode().isVTOL()
+              && entity.isAirborneVTOLorWIGE()
+              && (entity.moved == EntityMovementType.MOVE_NONE);
+    }
+
     void processMovement() {
         // TacOps Climbing: check if a climbing/dangling entity lost its climbing ability
         // due to actuator damage since last turn (TO:AR p.20)
@@ -1061,6 +1078,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
         } else {
             entity.underwaterRounds = 0;
+        }
+        if (mustSpendStationaryFlightMP(entity)) {
+            entity.moved = EntityMovementType.MOVE_VTOL_WALK;
+            entity.mpUsed = Math.max(entity.mpUsed, 1);
         }
         entity.setClimbMode(curClimbMode);
         if (!sideslipped && !fellDuringMovement && !crashedDuringMovement

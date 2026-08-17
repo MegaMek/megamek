@@ -1842,9 +1842,13 @@ public class ConvInfantry extends Infantry {
                       !getMovementMode().isUMUInfantry() &&
                       !getMovementMode().isSubmarine() &&
                       !getMovementMode().isVTOL();
-            } else {
-                return hex.terrainLevel(Terrains.WATER) > mount.maxWaterDepth();
             }
+            // A flying mount above the surface is not in the water; only a beast at or below the
+            // surface is bound by its maximum water depth (TW p.54 VTOL movement, TO:AUE p.106)
+            if (currElevation > 0) {
+                return false;
+            }
+            return hex.terrainLevel(Terrains.WATER) > mount.maxWaterDepth();
         }
         return false;
     }

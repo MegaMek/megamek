@@ -269,9 +269,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * VTOL-capable creatures must spend 1 MP per turn, even if remaining stationary (TW p.54). An airborne
-     * beast-mounted platoon (e.g. Branth) that holds its hex therefore still counts as having walked: its movement
-     * type becomes {@link EntityMovementType#MOVE_VTOL_WALK} and it records 1 MP spent.
+     * Checks whether the TW p.54 rule applies that VTOL-capable creatures must spend 1 MP per turn, even if
+     * remaining stationary. This is a pure check with no side effects: when it returns {@code true}, the caller
+     * ({@code processMovement()}) converts the entity's movement type to
+     * {@link EntityMovementType#MOVE_VTOL_WALK} and records 1 MP spent, so an airborne beast-mounted platoon
+     * (e.g. Branth) that holds its hex still counts as having walked.
      *
      * @param entity the entity whose movement was just processed
      *

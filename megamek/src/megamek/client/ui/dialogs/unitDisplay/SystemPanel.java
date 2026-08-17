@@ -523,7 +523,7 @@ class SystemPanel extends PicMap
                 sb.append(')');
             }
 
-            if (!m.pendingMode().equals("None")) {
+            if (!m.pendingMode().equals(Mounted.MODE_NONE)) {
                 sb.append(" (next turn, ");
                 sb.append(m.pendingMode().getStateName(m.getType()));
                 sb.append(')');

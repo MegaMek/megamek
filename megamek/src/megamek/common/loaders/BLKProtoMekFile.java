@@ -154,7 +154,7 @@ public class BLKProtoMekFile extends BLKFile implements IMekLoader {
         for (Mounted<?> eiInterface : t.getEquipment()) {
             if ((eiInterface.getType() instanceof MiscType)
                   && eiInterface.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
-                eiInterface.setMode(Mounted.MODE_OFF);
+                eiInterface.setModeImmediately(Mounted.MODE_OFF);
                 break;
             }
         }

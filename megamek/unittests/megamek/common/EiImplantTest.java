@@ -211,6 +211,17 @@ public class EiImplantTest {
     }
 
     /**
+     * Returns the ProtoMek's built-in EI Interface mount.
+     */
+    private MiscMounted protoMekEiInterface(ProtoMek proto) {
+        return proto.getMisc()
+              .stream()
+              .filter(mounted -> mounted.getType().hasFlag(MiscType.F_EI_INTERFACE))
+              .findFirst()
+              .orElseThrow();
+    }
+
+    /**
      * Creates a ProtoMek for testing.
      */
     private ProtoMek createProtoMek() {
@@ -538,6 +549,39 @@ public class EiImplantTest {
                         + "per IO p.69 the shutdown happens in the End Phase");
         }
 
+
+        @Test
+        @DisplayName("ProtoMek EI Interface reflects a disabled neural interface option at once")
+        void protoMekEiInterfaceReflectsDisabledOptionAtOnce() throws LocationFullException {
+            // Neural interface rules left Off, which is the default
+            ProtoMek proto = createProtoMek();
+            proto.addEquipment((MiscType) EquipmentType.get("EIInterface"), ProtoMek.LOC_BODY);
+
+            MiscMounted eiInterface = protoMekEiInterface(proto);
+
+            // Mounting has to settle the mode outright. A queued switch would leave the interface reading as
+            // running until some later round applied it, which for a built-in system nobody can switch is just wrong.
+            assertEquals(Mounted.MODE_OFF, eiInterface.curMode().getName(),
+                  "With the rules disabled the built-in interface must read as shut down straight away");
+            assertEquals(Mounted.MODE_OFF, eiInterface.modeNextRound().getName(),
+                  "Mounting must not leave a switch queued against the shut down mode");
+        }
+
+        @Test
+        @DisplayName("Enabling the neural interface option engages a ProtoMek interface at once")
+        void enablingNeuralInterfaceOptionEngagesProtoMekInterfaceAtOnce() throws LocationFullException {
+            ProtoMek proto = createProtoMek();
+            proto.addEquipment((MiscType) EquipmentType.get("EIInterface"), ProtoMek.LOC_BODY);
+            assertEquals(Mounted.MODE_OFF, protoMekEiInterface(proto).curMode().getName(),
+                  "Test setup: the interface starts shut down while the rules are off");
+
+            enablePilotOnly();
+            proto.setGameOptions();
+
+            assertEquals(MiscType.MODE_EI_ON, protoMekEiInterface(proto).curMode().getName(),
+                  "Applying the game options must engage the interface straight away, not queue it for a later round");
+        }
+
         @Test
         @DisplayName("ProtoMek EI Interface is mounted running and locked against switching")
         void protoMekEiInterfaceIsMountedRunningAndLocked() throws LocationFullException {
@@ -545,11 +589,7 @@ public class EiImplantTest {
             ProtoMek proto = createProtoMek();
             proto.addEquipment((MiscType) EquipmentType.get("EIInterface"), ProtoMek.LOC_BODY);
 
-            MiscMounted eiInterface = proto.getMisc()
-                  .stream()
-                  .filter(mounted -> mounted.getType().hasFlag(MiscType.F_EI_INTERFACE))
-                  .findFirst()
-                  .orElseThrow();
+            MiscMounted eiInterface = protoMekEiInterface(proto);
 
             assertEquals(MiscType.MODE_EI_ON, eiInterface.curMode().getName(),
                   "A ProtoMek mounts its built-in EI Interface already running when the rules are enabled");

@@ -219,7 +219,7 @@ class WeaponListModel extends AbstractListModel<String> {
 
             // Describes what the weapon is set to, and what it will be set to, so both take the state label
             wn.append(mounted.curMode().getStateName(mounted.getType()));
-            if (!mounted.pendingMode().equals("None")) {
+            if (!mounted.pendingMode().equals(Mounted.MODE_NONE)) {
                 wn.append(" (next turn, ");
                 wn.append(mounted.pendingMode().getStateName(mounted.getType()));
                 wn.append(')');

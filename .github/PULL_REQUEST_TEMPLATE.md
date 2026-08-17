@@ -42,5 +42,21 @@ Fixes #
 - [ ] Every file in the diff has a deliberate change (no stray formatting, no unrelated files)
 - [ ] Tests added or updated, if this implements a rule or changes game state
 - [ ] Javadoc literals use `{@code true}` / `{@code null}` rather than bare or quoted text
-- [ ] If AI tools were used, the **AI Assisted Development** label is applied, and I can explain and have
-      verified the result ([AI tool guidelines](https://github.com/MegaMek/megamek/wiki/Guidelines-for-Developer%E2%80%90Led-AI-Tool-Usage-in-MegaMek))
+- [ ] Dev team only: if AI tools were used, the **AI Assisted Development** label is applied, and I can
+      explain and have verified the result
+
+<!-- ABOUT THAT LAST BOX, IF YOU ARE NOT ON THE DEV TEAM:
+
+     Only active members of the dev team may use AI tools on contributions. That is not a judgement
+     on your work. A developer carries the history of why the codebase is the way it is, and an AI
+     tool starts without any of it every single session - the developer is what makes the difference.
+
+     Contributions you have written yourself are very welcome, and you do not need to be on the dev
+     team to send one:
+     https://github.com/MegaMek/megamek/wiki/Creating-a-Pull-Request-%28PR%29-as-an-Outside-Contributor
+
+     Generative AI art is never accepted, from anyone. A pull request containing it will be rejected.
+
+     Full policy:
+     https://github.com/MegaMek/megamek/wiki/Guidelines-for-Developer%E2%80%90Led-AI-Tool-Usage-in-MegaMek -->
+

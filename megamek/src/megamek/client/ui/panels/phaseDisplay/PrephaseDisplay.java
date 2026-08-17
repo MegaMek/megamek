@@ -369,12 +369,14 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
 
         setupButtonPanel();
         refreshButtons();
+        startTimer();
     }
 
     /**
      * Does end turn stuff.
      */
     private void endMyTurn() {
+        stopTimer();
         cen = Entity.NONE;
         ghostTargetMode = false;
         ghostTargetConfirmation = null;

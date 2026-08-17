@@ -287,6 +287,24 @@ public class BasicPathRanker extends PathRanker {
     }
 
     /**
+     * Doctrine seam for atmospheric aerospace movement, overridden by CASPAR's aerospace ranker.
+     *
+     * <p>Returns 0 here, so the stock utility total is exactly what it was before this seam existed. It is a
+     * seam rather than a term because none of the modifiers above has any concept of altitude: they price
+     * distance, facing and cover on a flat board, while what decides an air-to-air engagement is whether the
+     * two units are close enough in altitude to shoot at all (TW p.241).</p>
+     *
+     * @param path    the path being ranked
+     * @param game    the current game
+     * @param enemies the enemies being weighed against this path
+     *
+     * @return the doctrine adjustment to this path's utility, 0 in the stock ranker
+     */
+    protected double calculateAerospaceMod(MovePath path, Game game, List<Entity> enemies) {
+        return 0;
+    }
+
+    /**
      * Guesses a number of things about an enemy that has not yet moved
      * TODO estimated damage is sloppy. Improve for missile attacks, gun skill, and
      * range
@@ -464,6 +482,21 @@ public class BasicPathRanker extends PathRanker {
             return resolved;
         });
         return posture;
+    }
+
+    /**
+     * The posture already resolved for this board this round, without resolving one if none has been.
+     *
+     * <p>Deliberately does not call {@link #resolvePosture}: that announces the force's intent in the chat
+     * when it changes, so resolving merely to write a log line would make the bot say things it had not
+     * otherwise decided.</p>
+     */
+    @Override
+    protected @Nullable CombatPosture resolvedPostureFor(Game game, int boardId) {
+        if (game.getCurrentRound() != postureResolvedRound) {
+            return null;
+        }
+        return postureByBoard.get(boardId);
     }
 
     /** The positions of the given units that are deployed on the given board; the rest have no say. */
@@ -2043,6 +2076,8 @@ public class BasicPathRanker extends PathRanker {
         scores.put("sprintExposurePenalty", sprintExposurePenalty);
 
         double offBoardMod = calculateOffBoardMod(pathCopy);
+        // Atmospheric aerospace doctrine. Zero in the stock ranker, so Princess's total is unchanged.
+        double aerospaceMod = calculateAerospaceMod(pathCopy, game, enemies);
         // if we're an aircraft, we want to devalue paths that will force us off the board on the subsequent turn.
         double utility = -fallMod;
         utility += braveryMod;
@@ -2055,6 +2090,7 @@ public class BasicPathRanker extends PathRanker {
         utility -= selfPreservationMod;
         utility -= sprintExposurePenalty;
         utility += positionHoldMod;
+        utility += aerospaceMod;
         utility -= utility * offBoardMod;
 
         formula.append("Calculation: {fall mod [")

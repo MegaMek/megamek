@@ -105,7 +105,7 @@ public class TestSmallCraft extends TestAero {
      * @return The total number of armor points allowed to the vessel
      */
     public static int maxArmorPoints(SmallCraft vessel) {
-        double pointsPerTon = ArmorType.forEntity(vessel).getPointsPerTon();
+        double pointsPerTon = ArmorType.forEntity(vessel).getPointsPerTon(vessel);
         int baseArmor = (int) (pointsPerTon * maxArmorWeight(vessel) + getSIBonusArmorPoints(vessel));
         if (vessel.isPrimitive()) {
             return (int) (baseArmor * 0.66);

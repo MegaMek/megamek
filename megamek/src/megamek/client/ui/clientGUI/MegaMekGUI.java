@@ -82,6 +82,7 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.BotFactory;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.ui.swing.BotGUI;
+import megamek.client.ui.BugReportMessages;
 import megamek.client.ui.Messages;
 import megamek.client.ui.boardeditor.BoardEditorPanel;
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
@@ -275,6 +276,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         CommonMenuBar menuBar = CommonMenuBar.getMenuBarForMainMenu();
         menuBar.addActionListener(actionListener);
         frame.setJMenuBar(menuBar);
+        installBugReportButtonOnErrorDialogs();
         showMainMenu();
 
         // set visible on middle of screen
@@ -289,6 +291,33 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (show) {
             LicensingDialog.showIfNeeded(frame);
         }
+    }
+
+    /**
+     * Puts a "Report a Bug" button on every error dialog the program raises, including the one shown for an uncaught
+     * exception.
+     *
+     * <p>A crash report is worth most at the moment it happens, while the player still knows what they were doing and
+     * before the logs are overwritten by the next run. Offering the reporting tools on the dialog itself saves them
+     * having to find the Help menu afterwards - and after an uncaught exception, the rest of the interface may not be
+     * usable anyway.</p>
+     *
+     * <p>The current client is resolved when the button is pressed, so a crash during a game can still package the
+     * game up, while a crash at the main menu quietly produces a logs-only archive.</p>
+     */
+    private void installBugReportButtonOnErrorDialogs() {
+        MMLogger.setErrorDialogButton(new MMLogger.ErrorDialogButton(
+              new BugReportMessages().get("package.reportBug"),
+              Messages.getString("Okay"),
+              () -> BugReportDialog.showWithGameTools(frame, this::currentTotalWarfareClient)));
+    }
+
+    /**
+     * @return the running client when it is a Total Warfare client the bug report packager can save, otherwise
+     *       {@code null}; other client types have no save the packager understands
+     */
+    private @Nullable Client currentTotalWarfareClient() {
+        return (client instanceof Client totalWarfareClient) ? totalWarfareClient : null;
     }
 
     public void createController() {
@@ -1678,7 +1707,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // just to free some memory
         client = null;
         System.gc();
-        System.runFinalization();
     }
 
     private final ActionListener actionListener = ev -> {

@@ -52,9 +52,9 @@ import org.junit.jupiter.api.Test;
 class SpaCatalogTest {
 
     private static final int BOOK_SPA_COUNT = 55;
-    private static final int FULL_COUNT = 12;
+    private static final int FULL_COUNT = 13;
     private static final int FULL_MINOR_GAPS_COUNT = 4;
-    private static final int PARTIAL_COUNT = 18;
+    private static final int PARTIAL_COUNT = 17;
     private static final int NOT_IMPLEMENTED_COUNT = 21;
 
     private static long countWithStatus(SpaImplementationStatus status) {

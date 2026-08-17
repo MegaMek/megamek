@@ -63,21 +63,11 @@ import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.Configuration;
 import megamek.common.CriticalSlot;
 import megamek.common.battleArmor.BattleArmor;
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.BridgeLayerState;
-import megamek.common.equipment.EquipmentActivation;
-import megamek.common.equipment.EquipmentMode;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.GunEmplacement;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.*;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
-import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
@@ -538,7 +528,7 @@ class SystemPanel extends PicMap
                 sb.append(')');
             }
 
-            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().isShield()) {
+            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().hasFlag(MiscType.F_SHIELD)) {
                 sb.append(" ").append(((MiscMounted) m).getDamageAbsorption(en, m.getLocation())).append('/')
                       .append(((MiscMounted) m).getCurrentDamageCapacity(en, m.getLocation())).append(')');
             }
@@ -585,7 +575,7 @@ class SystemPanel extends PicMap
                         }
 
                         if ((m.getType() instanceof MiscType)
-                              && ((MiscType) m.getType()).isShield()
+                              && ((MiscType) m.getType()).hasFlag(MiscType.F_SHIELD)
                               && !Game.rulesManager.getRulesPhysical().phaseChangeShield()
                               && !clientgui.getClient().getGame().getPhase().isFiring()) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.ShieldModePhase"));
@@ -957,7 +947,8 @@ class SystemPanel extends PicMap
                               || mountedType.hasFlag(MiscType.F_CHAMELEON_SHIELD)
                               || mountedType.hasFlag(MiscType.F_VOID_SIG)
                               || mountedType.hasFlag(MiscType.F_NULL_SIG))
-                              && Game.rulesManager.getRulesEquipment().blueShieldStealth(mounted.getEntity().hasActiveBlueShield())) {
+                              && Game.rulesManager.getRulesEquipment()
+                              .blueShieldStealth(mounted.getEntity().hasActiveBlueShield())) {
                             continue;
                         }
                         // Mirror case. If Stealth is active, Blue Shield can't be turned on.

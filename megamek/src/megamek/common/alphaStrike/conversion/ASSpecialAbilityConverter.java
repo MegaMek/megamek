@@ -237,9 +237,9 @@ public class ASSpecialAbilityConverter {
                   MiscTypeFlag.S_BUZZSAW, MiscTypeFlag.S_RETRACTABLE_BLADE))) {
                 assign(misc, SAW);
             }
-            if (miscType.isShield()) {
-                assign(misc, SHLD);
-            }
+        } else if (miscType.hasFlag(F_SHIELD)) {
+            assign(misc, MEL);
+            assign(misc, SHLD);
         } else if (miscType.hasFlag(F_SPIKES)) {
             assign(misc, MEL);
         } else if (miscType.hasFlag(F_FIRE_RESISTANT)) {

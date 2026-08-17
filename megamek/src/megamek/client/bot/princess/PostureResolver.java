@@ -107,6 +107,28 @@ public class PostureResolver {
      */
     public CombatPosture resolve(BehaviorSettings settings, int round,
           List<Coords> ownPositions, List<Coords> enemyPositions) {
+        return resolve(settings, round, ownPositions, enemyPositions, 1);
+    }
+
+    /**
+     * The posture the force fights under this round, measured at a given map scale.
+     *
+     * <p>The closing thresholds are written in engagement hexes a round, which for ground units is simply map
+     * hexes. Aerospace units over a ground mapsheet are the exception: a hex there is 30 metres against the
+     * 500 of the low-altitude map the aircraft is really flying on (TW p.91), so one velocity point carries it
+     * sixteen hexes and a Mek-scale rate of half a hex a round says nothing at all. Dividing by the scale puts
+     * both on the same footing, so the doctrine reads the same whatever is flying it.</p>
+     *
+     * @param settings              the bot's behavior settings; an explicit posture is simply obeyed
+     * @param round                 the current game round
+     * @param ownPositions          positions of the bot's own deployed units
+     * @param enemyPositions        positions of the enemy units the bot knows about
+     * @param hexesPerEngagementHex map hexes that make up one hex at the scale the fight is fought on
+     *
+     * @return {@link CombatPosture#ATTACK} or {@link CombatPosture#DEFEND}, never {@link CombatPosture#AUTO}
+     */
+    public CombatPosture resolve(BehaviorSettings settings, int round,
+          List<Coords> ownPositions, List<Coords> enemyPositions, int hexesPerEngagementHex) {
         CombatPosture explicitPosture = settings.getCombatPosture();
         if (CombatPosture.AUTO != explicitPosture) {
             // Obeyed immediately, not cached: a commander's mid-round order applies to every unit that has
@@ -122,12 +144,13 @@ public class PostureResolver {
             return resolvedPosture;
         }
         resolvedRound = round;
-        resolvedPosture = resolveAuto(settings, round, ownPositions, enemyPositions);
+        resolvedPosture = resolveAuto(settings, round, ownPositions, enemyPositions,
+              Math.max(1, hexesPerEngagementHex));
         return resolvedPosture;
     }
 
     private CombatPosture resolveAuto(BehaviorSettings settings, int round,
-          List<Coords> ownPositions, List<Coords> enemyPositions) {
+          List<Coords> ownPositions, List<Coords> enemyPositions, int hexesPerEngagementHex) {
         // A flee order with a destination edge is a movement mission: the force is going somewhere
         // whatever the enemy does. Both halves are required, matching the engine's own MoveToDestination
         // condition in UnitBehavior: the config dialog stores the flee-edge dropdown even when fleeing is
@@ -159,7 +182,8 @@ public class PostureResolver {
         }
 
         double baselineDistance = meanEnemyDistanceByRound.get(baselineRound);
-        double closingPerRound = (baselineDistance - meanDistance) / (round - baselineRound);
+        double closingPerRound = (baselineDistance - meanDistance)
+              / (double) (round - baselineRound) / hexesPerEngagementHex;
 
         // Entering and leaving the defensive are different decisions (hysteresis): during a mutual
         // approach the measured closing rate hovers around any single threshold and the posture would

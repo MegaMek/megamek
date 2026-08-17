@@ -414,8 +414,10 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
                 targetPos = scatterMethod.omnidirectional(originalPosition, toHit.getMoS(), scatterReduction).landing();
                 if (game.getBoard().contains(targetPos)) {
                     targets.add(targetPos);
-                    // The bay scatters each weapon separately; draw the drift line to the first on-board impact.
-                    if (bayMissMarker.getDriftHex() == null) {
+                    // The bay scatters each weapon separately; draw the drift line to the first on-board impact that
+                    // actually drifted, since a shot that came to rest on the target hex has no line to draw.
+                    boolean driftedOffTarget = !targetPos.equals(originalPosition);
+                    if ((bayMissMarker.getDriftHex() == null) && driftedOffTarget) {
                         bayMissMarker.setDriftHex(targetPos);
                     }
                     targetHex = game.getBoard().getHex(targetPos);

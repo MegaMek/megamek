@@ -2788,8 +2788,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         int roll;
 
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-            if (Game.rulesManager.getRulesTarget().checkAimedLocation())
-            {
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation()) {
                 return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
         }
@@ -4117,7 +4116,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                 roll.addModifier(1, "Mismatched Legs from different Meks");
             }
         }
-        
+
         // gyro hit?
         int gyroHits = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
               Mek.LOC_CENTER_TORSO);
@@ -4129,7 +4128,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             } else {
                 gyroMessage = Messages.getString("PilotingRoll.Gyro.Gyro");
             }
-            gyroMessage += " " + String.valueOf(gyroHits) + " " + Messages.getString("PilotingRoll.Gyro.Damaged"); 
+            gyroMessage += " " + String.valueOf(gyroHits) + " " + Messages.getString("PilotingRoll.Gyro.Damaged");
             roll.addModifier(Game.rulesManager.getRulesPSR().getGyroModifier(gyroHits, getGyroType()), gyroMessage);
         }
 
@@ -4211,8 +4210,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     @Override
     public int getMaxElevationChange() {
-        return (movementMode.isTracked() || movementMode.isWiGE() || Game.rulesManager.getRulesMovement().reduceMaxElevation(this))  
-              ? 1 
+        return (movementMode.isTracked() || movementMode.isWiGE() || Game.rulesManager.getRulesMovement()
+              .reduceMaxElevation(this))
+              ? 1
               : 2;
     }
 
@@ -6134,7 +6134,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             }
 
             Mounted<?> m = cs.getMount();
-            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().isShield()) {
+            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().hasFlag(MiscType.F_SHIELD)) {
                 rate -= ((MiscMounted) m).getDamageAbsorption(this, m.getLocation());
                 ((MiscMounted) m).takeDamage(1);
                 return Math.max(0, rate);
@@ -6236,8 +6236,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         if (game != null && locationIsLeg(loc) && canFall()) {
             game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL,
                   Game.rulesManager.getRulesPSR().getLegDestroyedModifier(),
-                  "leg " 
-                  + "destroyed"));
+                  "leg "
+                        + "destroyed"));
         }
     }
 
@@ -6949,7 +6949,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         // certainly isn't leaving that hex under its own power anymore.
 
         int hitsToDestroyGyro = Game.rulesManager.getRulesEquipment().hitsToDestroyGyro(gyroType);
-        
+
         return getGyroHits() >= hitsToDestroyGyro;
     }
 

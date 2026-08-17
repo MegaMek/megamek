@@ -61,7 +61,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class ASSpecialAbilityConverterTest {
-
+    
+    private RulesManager previousRulesManager;
+    @org.junit.jupiter.api.BeforeAll
+    static void initializeEquipment() {
+        megamek.common.equipment.EquipmentType.initializeTypes();
+    }
     private RulesManager previousRulesManager;
 
     @BeforeEach

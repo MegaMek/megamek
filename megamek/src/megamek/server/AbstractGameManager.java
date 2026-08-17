@@ -158,11 +158,17 @@ public abstract class AbstractGameManager implements IGameManager {
     protected void checkReady() {
         for (Player player : getGame().getPlayersList()) {
             if (!player.isGhost() && !player.isObserver() && !player.isDone()) {
+                // The other half of the done ledger: when the game does not advance, say exactly
+                // who it is waiting on. A report-phase hang otherwise looks like every other kind
+                // of silence.
+                logger.info("[DoneLedger] phase {} not advancing: waiting on {}",
+                      getGame().getPhase(), player.getName());
                 return;
             }
         }
 
         if (!getGame().getPhase().usesTurns() && !isEmptyLobby()) {
+            logger.info("[DoneLedger] phase {} all players done - advancing", getGame().getPhase());
             endCurrentPhase();
         }
     }
@@ -189,6 +195,11 @@ public abstract class AbstractGameManager implements IGameManager {
         Player player = getGame().getPlayer(connIndex);
         if (null != player) {
             player.setDone(ready);
+            // The done ledger: two multi-hour hangs (2026-08-14/15) ended at "a done-ack vanished
+            // in a report phase" with nothing recorded on either side. One line per ack makes the
+            // next occurrence name itself.
+            logger.info("[DoneLedger] {} done={} in phase {}", player.getName(), ready,
+                  getGame().getPhase());
         } else {
             logger.error("Tried to set done status of non-existent player!");
         }

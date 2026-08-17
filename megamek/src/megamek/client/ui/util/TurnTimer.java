@@ -168,6 +168,7 @@ public class TurnTimer {
             case MOVEMENT:
                 timerLimit = options.getOption(OptionsConstants.BASE_TURN_TIMER_MOVEMENT).intValue();
                 break;
+            case PRE_FIRING:
             case FIRING:
                 timerLimit = options.getOption(OptionsConstants.BASE_TURN_TIMER_FIRING).intValue();
                 break;

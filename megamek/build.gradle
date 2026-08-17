@@ -471,6 +471,55 @@ assembleDist {
     dependsOn distTar
 }
 
+// The ordinary release is cut with MekHQ's buildAllPackages, which pulls MegaMek and MegaMekLab in as
+// included builds and ships all three together. A MegaMek-only release has no such task, so the steps
+// below - clean slate, package, then check nothing local rode along - are the same procedure reduced to
+// this one repository.
+tasks.register('buildMegaMekPackage') {
+    description = 'Builds the MegaMek-only release package. Use this in place of MekHQ buildAllPackages when ' +
+            'MegaMek ships on its own.'
+    group = 'distribution'
+
+    dependsOn clean
+    dependsOn assembleDist
+
+    doLast {
+        File releasePackage = layout.buildDirectory
+                .file("distributions/MegaMek-${project.version}.tar.gz")
+                .get()
+                .asFile
+
+        if (!releasePackage.exists()) {
+            throw new GradleException("Expected release package ${releasePackage} was not produced.")
+        }
+
+        // Step 6 of the release procedure: a developer's own settings must never ship inside the archive.
+        List<String> forbiddenFileNames = ['clientsettings.xml', 'gameoptions.xml', 'mm.preferences',
+                                           'mml.preferences', 'mhq.preferences', 'megameklab.properties',
+                                           'megameklab.properties.bak']
+        List<String> foundFileNames = []
+        tarTree(resources.gzip(releasePackage))
+                .matching { forbiddenFileNames.each { forbiddenFileName -> include "**/${forbiddenFileName}" } }
+                .visit { fileVisitDetails ->
+                    if (!fileVisitDetails.directory) {
+                        foundFileNames.add(fileVisitDetails.path)
+                    }
+                }
+
+        if (!foundFileNames.isEmpty()) {
+            throw new GradleException('Release package contains files that must not ship: '
+                    + foundFileNames.join(', '))
+        }
+
+        logger.lifecycle("[Release] MegaMek ${project.version} packaged at ${releasePackage}")
+        logger.lifecycle("[Release] Size: ${(releasePackage.length() / (1024 * 1024)).round(1)} MB")
+    }
+}
+
+// Without this, a clean slate is not guaranteed: dependsOn does not order its own dependencies, so clean
+// could run after the package was built and delete it.
+assembleDist.mustRunAfter clean
+
 test {
     useJUnitPlatform {
         excludeTags 'on-demand'

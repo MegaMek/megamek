@@ -37,7 +37,6 @@ import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
-import megamek.common.actions.KickAttackAction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.BuildingType;
@@ -46,7 +45,6 @@ import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.rolls.Roll;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesPhysical;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
@@ -61,18 +59,18 @@ public class TWRulesPhysical extends RulesPhysical {
      *
      * @param entity the entity attacking
      * @param armLoc the arm location with the shield
+     *
      * @return the damage boost from the shield
      */
     @Override
-    public int getShieldDamageBoost(Entity entity, int armLoc) { return 0; }
+    public int getShieldDamageBoost(Entity entity, int armLoc) {return 0;}
 
     /**
-     * What is the to-hit modifier for attacking when there is a shield on the arm.
-     * Shields make it harder to shoot
+     * What is the to-hit modifier for attacking when there is a shield on the arm. Shields make it harder to shoot
      *
-     * @param toHit the to-hit data to modify
+     * @param toHit    the to-hit data to modify
      * @param attacker the attacking entity
-     * @param weapon the mounted weapon being used
+     * @param weapon   the mounted weapon being used
      */
     @Override
     public void getShieldToHitModifier(ToHitData toHit, Entity attacker, Mounted<?> weapon) {
@@ -90,32 +88,32 @@ public class TWRulesPhysical extends RulesPhysical {
      * @return the claw to-hit modifier
      */
     @Override
-    public int getClawToHitModifier() { return 1; }
-    
+    public int getClawToHitModifier() {return 1;}
+
     /**
      * Should the shield reset with phase change. No
      *
      * @return true if the shield resets with phase change
      */
     @Override
-    public boolean phaseChangeShield() { return false; }
+    public boolean phaseChangeShield() {return false;}
 
     /**
-     * Can retractable blades be used during punch attacks?
-     * Only if the TO option is enabled
+     * Can retractable blades be used during punch attacks? Only if the TO option is enabled
      *
      * @param toRetractableBlade true if checking for retractable blade use
+     *
      * @return true if retractable blades can be used
      */
     @Override
     public boolean retractableBladeArmCheck(boolean toRetractableBlade) {
-        if (toRetractableBlade) { return true; }
+        if (toRetractableBlade) {return true;}
         return false;
     }
 
     /**
-     * Does a retractable blade break when used during the punch attack.
-     * Retractable blades in punch break on a 2d6 roll of 10+
+     * Does a retractable blade break when used during the punch attack. Retractable blades in punch break on a 2d6 roll
+     * of 10+
      *
      * @return true if the retractable blade breaks
      */
@@ -130,7 +128,7 @@ public class TWRulesPhysical extends RulesPhysical {
      * @return true if a missed mace causes a piloting skill roll
      */
     @Override
-    public boolean getMaceMissedPSR() { return true; }
+    public boolean getMaceMissedPSR() {return true;}
 
     /**
      * What is the target number for a lance to do internal damage? 10+
@@ -138,7 +136,15 @@ public class TWRulesPhysical extends RulesPhysical {
      * @return the target number
      */
     @Override
-    public int getLanceTarget() { return 10; }
+    public int getLanceTarget() {return 10;}
+
+    /**
+     * {@inheritDoc} lances are +1 to hit
+     */
+    @Override
+    public int getLanceToHitModifier() {
+        return 1;
+    }
 
     /**
      * Lance doesn't do anything special on a charge
@@ -146,12 +152,13 @@ public class TWRulesPhysical extends RulesPhysical {
      * @return true if the lance has special charge effects
      */
     @Override
-    public boolean isLanceCharging() { return false; }
+    public boolean isLanceCharging() {return false;}
 
     /**
      * Does a shield do anything in a charge? No.
      *
      * @param attackingEntity the entity performing the charge
+     *
      * @return the hit data from shield charge damage, or null if no shield damage
      */
     @Override
@@ -160,11 +167,11 @@ public class TWRulesPhysical extends RulesPhysical {
     }
 
     /**
-     * Do the spikes break?
-     * Spikes break on a 2d6 roll of 9+
+     * Do the spikes break? Spikes break on a 2d6 roll of 9+
      *
      * @param entity the entity with spikes
-     * @param loc the location being checked
+     * @param loc    the location being checked
+     *
      * @return a report of whether spikes broke
      */
     @Override
@@ -195,6 +202,7 @@ public class TWRulesPhysical extends RulesPhysical {
      * Any talons create a damage boost on dfa
      *
      * @param entity the entity to check
+     *
      * @return true if the entity has talons
      */
     @Override
@@ -219,31 +227,30 @@ public class TWRulesPhysical extends RulesPhysical {
     }
 
     /**
-     * What is the kick modifier?
-     * -2 to hit
+     * What is the kick modifier? -2 to hit
      *
      * @return the kick modifier
      */
     @Override
-    public int getKickModifier() { return -2; }
+    public int getKickModifier() {return -2;}
 
     /**
-     * Do we have a modifier for punching?
-     * No, 0 modifier
+     * Do we have a modifier for punching? No, 0 modifier
      *
      * @return the punch modifier
      */
     @Override
-    public int getPunchModifier() { return 0;}
+    public int getPunchModifier() {return 0;}
 
     /**
      * What is the damage of the charge?
      *
-     * @param entity the attacking entity
-     * @param target the target entity
-     * @param tacOps true if using tactical operations rules
-     * @param mos the margin of success
+     * @param entity     the attacking entity
+     * @param target     the target entity
+     * @param tacOps     true if using tactical operations rules
+     * @param mos        the margin of success
      * @param hexesMoved the number of hexes moved in the charge
+     *
      * @return the charge damage
      */
     @Override
@@ -270,10 +277,11 @@ public class TWRulesPhysical extends RulesPhysical {
     /**
      * How much damage does the charge attacker take.
      *
-     * @param entity the attacking entity
+     * @param entity                the attacking entity
      * @param effectiveTargetWeight the effective weight of the target
-     * @param tacOps true if using tactical operations rules
-     * @param distance the distance traveled in the charge
+     * @param tacOps                true if using tactical operations rules
+     * @param distance              the distance traveled in the charge
+     *
      * @return the damage taken by the attacker
      */
     @Override
@@ -288,14 +296,15 @@ public class TWRulesPhysical extends RulesPhysical {
                         / (effectiveTargetWeight + entity.getWeight())) / 10);
         }
     }
-    
+
     /**
      * Missed charges, the attacker ends up on one side or the other of the target
      *
-     * @param game the game instance
-     * @param entityId the ID of the charging entity
-     * @param src the source coordinates
+     * @param game      the game instance
+     * @param entityId  the ID of the charging entity
+     * @param src       the source coordinates
      * @param direction the direction of the charge
+     *
      * @return the final coordinates after a missed charge
      */
     @Override
@@ -340,12 +349,12 @@ public class TWRulesPhysical extends RulesPhysical {
     }
 
     /**
-     * Can you club a prone target?
-     * Prone 'Mechs can only be clubbed if they are one level higher than the attacker
-     * See BMM 7th Printing, Physical Attacks and Prone 'Mechs
+     * Can you club a prone target? Prone 'Mechs can only be clubbed if they are one level higher than the attacker See
+     * BMM 7th Printing, Physical Attacks and Prone 'Mechs
      *
-     * @param targetElevation the elevation of the target
+     * @param targetElevation   the elevation of the target
      * @param attackerElevation the elevation of the attacker
+     *
      * @return true if the target cannot be clubbed while prone
      */
     @Override
@@ -360,8 +369,9 @@ public class TWRulesPhysical extends RulesPhysical {
      * For Charge/DFA, get the pilot difference modifier and ignore immobile.
      *
      * @param attackerPiloting the piloting skill of the attacking pilot
-     * @param targetPiloting the piloting skill of the defending pilot
-     * @param immobile true if one of the entities is immobile
+     * @param targetPiloting   the piloting skill of the defending pilot
+     * @param immobile         true if one of the entities is immobile
+     *
      * @return the pilot difference modifier
      */
     @Override
@@ -375,13 +385,13 @@ public class TWRulesPhysical extends RulesPhysical {
      * @return always returns false
      */
     @Override
-    public boolean canChargeCancel() { return false; }
+    public boolean canChargeCancel() {return false;}
 
     /**
-     * Get the right table for falls from above.
-     * They always hit the punch table
+     * Get the right table for falls from above. They always hit the punch table
      *
      * @param affaTarget the entity that is the target of a fall from above
+     *
      * @return the hit data for fall from above
      */
     @Override
@@ -392,6 +402,7 @@ public class TWRulesPhysical extends RulesPhysical {
 
     /**
      * We can only find clubs in the rubble of medium buildings or higher
+     *
      * @return building medium type value
      */
     @Override

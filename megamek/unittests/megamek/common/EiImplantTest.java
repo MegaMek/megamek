@@ -258,7 +258,7 @@ public class EiImplantTest {
             // facing label has to read as a state, because the unit display shows it as "(<mode>)" and
             // "(next turn, <mode>)". A missing or mis-escaped bundle key silently falls back to the internal name,
             // which is what this pins down.
-            assertEquals("Enhanced Imaging Initiated",
+            assertEquals("Enhanced Imaging Engaged",
                   EquipmentMode.getMode(MiscType.MODE_EI_ON).getDisplayableName(),
                   "The EI running mode must resolve to its localized state-form name, not the internal name");
         }
@@ -271,9 +271,9 @@ public class EiImplantTest {
             EquipmentMode runningMode = EquipmentMode.getMode(MiscType.MODE_EI_ON);
             EquipmentMode offMode = EquipmentMode.getMode(Mounted.MODE_OFF);
 
-            assertEquals("Initiate Enhanced Imaging", runningMode.getActionName(eiInterface),
+            assertEquals("Engage Enhanced Imaging", runningMode.getActionName(eiInterface),
                   "Choosing to start EI should read as an instruction");
-            assertEquals("Enhanced Imaging Initiated", runningMode.getStateName(eiInterface),
+            assertEquals("Enhanced Imaging Engaged", runningMode.getStateName(eiInterface),
                   "Running EI should read as a state");
             assertEquals("Disengage Enhanced Imaging", offMode.getActionName(eiInterface),
                   "Choosing to stop EI should read as an instruction");

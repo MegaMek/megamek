@@ -123,7 +123,7 @@ public class EquipmentMode {
     /**
      * Returns the label to show when this mode is what the equipment currently is, or is about to become. Some systems
      * read naturally as a command when offered as a choice but not as a description of a state - Enhanced Imaging is
-     * selected with "Initiate Enhanced Imaging" but, once running, is described as "Enhanced Imaging Initiated".
+     * selected with "Engage Enhanced Imaging" but, once running, is described as "Enhanced Imaging Engaged".
      *
      * @param equipmentType the equipment the mode belongs to, or {@code null} when the caller has no equipment context
      *

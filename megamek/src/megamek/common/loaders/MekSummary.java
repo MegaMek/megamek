@@ -88,7 +88,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
      * </p>
      */
     @Serial
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 1L;
 
     private static final MMLogger logger = MMLogger.create(MekSummary.class);
 
@@ -186,6 +186,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private int productionDate;
     private int commonDate;
     private int techExtinctionDate;
+    private int reintroductionDate;
     private String extinctRange;
     private boolean canon;
     private boolean patchwork;
@@ -873,6 +874,19 @@ public class MekSummary implements Serializable, ASCardDisplayable {
 
     public void setExtinctionDate(int extinctionDate) {
         this.techExtinctionDate = extinctionDate;
+    }
+
+    /**
+     * @return the year this unit returned to production after going extinct, or {@code ITechnology.DATE_NONE} if it
+     *       never went extinct or never returned. A cache written before this field existed deserializes it as 0;
+     *       callers should treat any non-positive value as "no date".
+     */
+    public int getReintroductionDate() {
+        return reintroductionDate;
+    }
+
+    public void setReintroductionDate(int reintroductionDate) {
+        this.reintroductionDate = reintroductionDate;
     }
 
     public String getLevel(int year) {

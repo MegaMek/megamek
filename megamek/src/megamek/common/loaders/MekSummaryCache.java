@@ -876,6 +876,7 @@ public class MekSummaryCache {
         ms.setProductionDate(e.getProductionDate());
         ms.setCommonDate(e.getCommonDate());
         ms.setExtinctionDate(e.getExtinctionDate());
+        ms.setReintroductionDate(e.getReintroductionDate());
         ms.setExtinctRange(e.getExtinctionRange());
         ms.setForceGeneratorAvailability(e.getForceGeneratorAvailability());
         ms.setMissionRoles(e.getMissionRoles());

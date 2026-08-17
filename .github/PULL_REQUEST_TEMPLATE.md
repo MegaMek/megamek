@@ -13,7 +13,18 @@
 <!-- The effect someone actually sees, in plain language. One or two sentences is fine. -->
 
 <!-- Keep this line as well as the number in the title. GitHub only closes an issue from a
-     keyword in the description - a number in the title alone does not close anything. -->
+     keyword in the description - a number in the title alone does not close anything.
+
+     Any of these close an issue when this merges:
+         Close / Closes / Closed
+         Fix / Fixes / Fixed
+         Resolve / Resolves / Resolved
+
+     Closing more than one needs the keyword repeated in front of each number:
+         Fixes #1234, fixes #5678          closes both
+         Fixes #1234, #5678                closes only #1234
+
+     For an issue in another repository, qualify it: Fixes MegaMek/mekhq#1234 -->
 Fixes #
 
 ## Testing

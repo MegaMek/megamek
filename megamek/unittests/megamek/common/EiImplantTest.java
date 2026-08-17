@@ -264,6 +264,41 @@ public class EiImplantTest {
         }
 
         @Test
+        @DisplayName("EI Interface modes read as instructions when offered and as states when reached")
+        void eiInterfaceModesReadAsInstructionsWhenOfferedAndStatesWhenReached() {
+            EquipmentType eiInterface = EquipmentType.get("EIInterface");
+            assertNotNull(eiInterface, "EI Interface should exist");
+            EquipmentMode runningMode = EquipmentMode.getMode(MiscType.MODE_EI_ON);
+            EquipmentMode offMode = EquipmentMode.getMode(Mounted.MODE_OFF);
+
+            assertEquals("Initiate Enhanced Imaging", runningMode.getActionName(eiInterface),
+                  "Choosing to start EI should read as an instruction");
+            assertEquals("Enhanced Imaging Initiated", runningMode.getStateName(eiInterface),
+                  "Running EI should read as a state");
+            assertEquals("Disengage Enhanced Imaging", offMode.getActionName(eiInterface),
+                  "Choosing to stop EI should read as an instruction");
+            assertEquals("Off", offMode.getStateName(eiInterface),
+                  "Shut down EI keeps the plain Off state label");
+        }
+
+        @Test
+        @DisplayName("Equipment without its own mode labels is unaffected")
+        void equipmentWithoutOwnModeLabelsIsUnaffected() {
+            // The Off mode name is shared by many unrelated systems, so scoping the labels by equipment must leave
+            // every other user of it showing exactly what it showed before.
+            EquipmentType activeProbe = EquipmentType.get("BeagleActiveProbe");
+            assertNotNull(activeProbe, "Beagle Active Probe should exist");
+            EquipmentMode offMode = EquipmentMode.getMode(Mounted.MODE_OFF);
+
+            assertEquals(offMode.getDisplayableName(), offMode.getActionName(activeProbe),
+                  "Equipment with no action label defined falls back to the plain mode name");
+            assertEquals(offMode.getDisplayableName(), offMode.getStateName(activeProbe),
+                  "Equipment with no state label defined falls back to the plain mode name");
+            assertEquals(offMode.getDisplayableName(), offMode.getStateName(null),
+                  "A missing equipment context falls back to the plain mode name");
+        }
+
+        @Test
         @DisplayName("EI Interface is zero weight")
         void eiInterfaceIsZeroWeight() {
             EquipmentType eiInterface = EquipmentType.get("EIInterface");

@@ -536,8 +536,9 @@ public class ASSpecialAbilityConverter {
         }
         // Alpha Strike does not use conditional explosiveness. PPCs, PPC capacitors, and Bombast Lasers do not prevent
         // ENE.
-        if ((equipment.getType().hasFlag(WeaponType.F_PPC)) || equipment.getType().hasFlag(F_PPC_CAPACITOR)
-              || equipment.getType().hasFlag(WeaponType.F_BOMBAST_LASER)) {
+        if (equipment.getType() instanceof WeaponType &&
+            (equipment.getType().hasFlag(WeaponType.F_PPC) || equipment.getType().hasFlag(F_PPC_CAPACITOR)
+              || equipment.getType().hasFlag(WeaponType.F_BOMBAST_LASER))) {
             return false;
         }
         // One shot weapons internally have normal ammo allocated to them which must

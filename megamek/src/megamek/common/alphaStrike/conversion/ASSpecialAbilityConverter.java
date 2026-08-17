@@ -61,6 +61,7 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.Sensor;
 import megamek.common.equipment.Transporter;
+import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -532,6 +533,12 @@ public class ASSpecialAbilityConverter {
         // p.109
         if ((equipment.getType() instanceof MiscType) && equipment.getType().hasFlag(F_BOOBY_TRAP)) {
             return true;
+        }
+        // Alpha Strike does not use conditional explosiveness. PPCs, PPC capacitors, and Bombast Lasers do not prevent
+        // ENE.
+        if ((equipment.getType().hasFlag(WeaponType.F_PPC)) || equipment.getType().hasFlag(F_PPC_CAPACITOR)
+              || equipment.getType().hasFlag(WeaponType.F_BOMBAST_LASER)) {
+            return false;
         }
         // One shot weapons internally have normal ammo allocated to them which must
         // be disqualified as explosive; such ammo has no location

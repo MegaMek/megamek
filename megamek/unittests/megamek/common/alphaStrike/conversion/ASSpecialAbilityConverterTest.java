@@ -67,7 +67,6 @@ class ASSpecialAbilityConverterTest {
     static void initializeEquipment() {
         megamek.common.equipment.EquipmentType.initializeTypes();
     }
-    private RulesManager previousRulesManager;
 
     @BeforeEach
     void useCoreRules() {

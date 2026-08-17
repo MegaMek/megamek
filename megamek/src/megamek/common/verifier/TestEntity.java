@@ -1436,9 +1436,9 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     /**
-      * Compares intro dates of all components to the unit intro year (or game year if available). If the unit has an
-      * explicit original build year, that year is also accepted for components retained from the original build. The
-      * current/refit year used for comparison is determined in order of priority:
+     * Compares intro dates of all components to the unit intro year (or game year if available). If the unit has an
+     * explicit original build year, that year is also accepted for components retained from the original build. The
+     * current/refit year used for comparison is determined in order of priority:
      * <ol>
      *   <li>If {@link #setGameYear(int)} was called with a value > 0, use that year</li>
      *   <li>Otherwise, use {@link Entity#getTechLevelYear()} which returns the game's ALLOWED_YEAR
@@ -1700,7 +1700,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (m.getType().hasFlag(MiscType.F_LIFT_HOIST)) {
                 liftHoists++;
             } else if ((m.getLocation() > 0)
-                  && ((m.getType().hasFlag(MiscType.F_CLUB) && !((MiscType) m.getType()).isShield())
+                  && (m.getType().hasFlag(MiscType.F_CLUB)
                   || m.getType().hasFlag(MiscType.F_BULLDOZER)
                   || m.getType().hasFlag(MiscType.F_HAND_WEAPON))) {
                 physicalWeaponsByLocation.computeIfAbsent(m.getLocation(), ArrayList::new).add(m.getType());

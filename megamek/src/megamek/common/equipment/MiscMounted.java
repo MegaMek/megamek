@@ -76,7 +76,7 @@ public class MiscMounted extends Mounted<MiscType> {
         if (type.hasFlag(MiscType.F_SENSOR_DISPENSER)) {
             setShotsLeft(type.hasFlag(MiscType.F_BA_EQUIPMENT) ? 6 : 30);
         }
-        if (((type.isShield() || type.hasFlag(MiscType.F_MODULAR_ARMOR)))) {
+        if (((type.hasFlag(MiscType.F_SHIELD) || type.hasFlag(MiscType.F_MODULAR_ARMOR)))) {
             baseDamageAbsorptionRate = type.getBaseDamageAbsorptionRate();
             baseDamageCapacity = type.getBaseDamageCapacity();
         }
@@ -145,7 +145,7 @@ public class MiscMounted extends Mounted<MiscType> {
 
             Mounted<?> m = cs.getMount();
             EquipmentType type = m.getType();
-            if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
+            if (type.hasFlag(MiscType.F_SHIELD)) {
                 if (cs.isDamaged()) {
                     base--;
                 }
@@ -205,7 +205,7 @@ public class MiscMounted extends Mounted<MiscType> {
 
             Mounted<?> m = cs.getMount();
             EquipmentType type = m.getType();
-            if ((type instanceof MiscType) && ((MiscType) type).isShield()) {
+            if (type.hasFlag(MiscType.F_SHIELD)) {
                 if (cs.isDamaged()) {
                     base -= 5;
                 }

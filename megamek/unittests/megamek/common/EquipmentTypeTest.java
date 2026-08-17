@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.StructureType;
 import megamek.common.weapons.bayWeapons.TeleOperatedMissileBayWeapon;
 import org.junit.jupiter.api.Test;
@@ -118,6 +119,13 @@ class EquipmentTypeTest {
         assertEquals(prototypeFerroAluminum, EquipmentType.getArmorFromName("IS Ferro-Alum Armor Prototype"));
         assertEquals(prototypeFerroAluminum, EquipmentType.getArmorFromName(" prototype ferro-aluminum "));
         assertNull(EquipmentType.getArmorFromName("Unknown Armor Type"));
+    }
+
+    @Test
+    void allShieldSizesHaveShieldFlag() {
+        assertTrue(MiscType.createISSmallShield().hasFlag(MiscType.F_SHIELD));
+        assertTrue(MiscType.createISMediumShield().hasFlag(MiscType.F_SHIELD));
+        assertTrue(MiscType.createISLargeShield().hasFlag(MiscType.F_SHIELD));
     }
 
     private static class EquipmentTypeWithInheritedLookupNames extends EquipmentType {

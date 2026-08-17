@@ -133,16 +133,4 @@ public class CoreRulesAmmo extends RulesAmmo {
         }
         return 0;
     }
-
-    /**
-     * {@inheritDoc}
-     * <p>
-     * In core, we still apply the modifier. core p.70
-     *
-     * @return false
-     */
-    @Override
-    public boolean sgIndirectModIgnore() {
-        return false;
-    }
 }

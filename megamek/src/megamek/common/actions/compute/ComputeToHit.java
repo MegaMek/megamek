@@ -1683,19 +1683,14 @@ public class ComputeToHit {
         // own
         if (isIndirect) {
             // semi guided ammo negates this modifier, if TAG succeeded
-            if ((ammoType != null)
-                  &&
+            if ((ammoType != null) && munition.contains(AmmoType.Munitions.M_SEMIGUIDED) &&
+                  (Compute.isTargetTagged(target, game)) &&
                   ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
-                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR))
-                  &&
-                  (munition.contains(AmmoType.Munitions.M_SEMIGUIDED))
-                  && Game.rulesManager.getRulesAmmo().sgIndirectModIgnore()) {
-
+                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR))) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SemiGuidedIndirect"));
-
             } else if (!narcSpotter && (spotter != null)) {
                 // Unless the target has been tagged, or the spotter has an active command
                 // console

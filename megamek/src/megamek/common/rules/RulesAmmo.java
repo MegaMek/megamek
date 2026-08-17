@@ -120,13 +120,4 @@ public abstract class RulesAmmo {
         armorPiercingAttackMod(AmmoType.AmmoTypeEnum.AC, toHit, true);
         return toHit.getValue();
     }
-
-    /**
-     * Does semi-guided ignore the +1 indirect modifier?
-     *
-     * @return Default True
-     */
-    public boolean sgIndirectModIgnore() {
-        return true;
-    }
 }

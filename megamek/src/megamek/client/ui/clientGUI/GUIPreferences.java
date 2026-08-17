@@ -712,7 +712,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         // is force-hidden on every phase change; 2 (= MANUAL) leaves it as the player set it
         store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE, 2);
         store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE, 2);
-        store.setDefault(BOT_COMMANDS_ENABLED, false);
+        store.setDefault(BOT_COMMANDS_ENABLED, true);
         store.setDefault(FORCE_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(FORCE_DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(FORCE_DISPLAY_BTN_ID, true);

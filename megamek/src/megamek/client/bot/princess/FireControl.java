@@ -261,7 +261,15 @@ public class FireControl {
     public enum FireControlType {
         Basic,
         Infantry,
-        MultiTarget
+        MultiTarget,
+        /**
+         * Airborne aerospace units firing in an atmosphere, where the dead zone can make a shot illegal on
+         * geometry alone.
+         *
+         * <p>Princess registers its ordinary {@link FireControl} here, so this slot changes nothing for it;
+         * the slot exists so that CASPAR can replace atmospheric aerospace gunnery on its own.</p>
+         */
+        Aerospace
     }
 
     protected final Princess owner;
@@ -834,6 +842,42 @@ public class FireControl {
      *
      * @return The to hit modifiers for the given weapon firing at the given target as a {@link ToHitData} object.
      */
+    /**
+     * The range this guessed shot is resolved at, from a hypothetical shooter pose.
+     *
+     * <p>Its own method so that CASPAR's aerospace gunnery can replace it without reproducing the rest of
+     * the to-hit guess. The stock behaviour is unchanged.</p>
+     *
+     * @param shooter      the unit doing the shooting
+     * @param shooterState the pose the shooter would be firing from
+     * @param target       the unit being fired on
+     * @param targetState  the pose the target would be in
+     * @param game         the current game
+     *
+     * @return the range to look up on the weapon's range brackets
+     */
+    protected int guessDistance(final Entity shooter, final EntityState shooterState, final Targetable target,
+          final EntityState targetState, final Game game) {
+        int distance = shooterState.getPosition().distance(targetState.getPosition());
+        if (shooterState.isAirborne() && targetState.isAirborne() && game.getBoard(target).isGround()) {
+            // Aerospace firing at each on the ground map have immense range.
+            distance /= 16;
+        }
+
+        // Ground units attacking airborne aero considerations.
+        if (targetState.isAirborneAero() && !shooterState.isAero()) {
+
+            // If the aero is attacking me, there is no range.
+            if (target.getId() == shooter.getId()) {
+                distance = 0;
+            } else {
+                // Take into account altitude.
+                distance += 2 * target.getAltitude();
+            }
+        }
+        return distance;
+    }
+
     ToHitData guessToHitModifierForWeapon(final Entity shooter,
           @Nullable EntityState shooterState,
           final Targetable target,
@@ -902,23 +946,7 @@ public class FireControl {
         }
 
         // Check range.
-        int distance = shooterState.getPosition().distance(targetState.getPosition());
-        if (shooterState.isAirborne() && targetState.isAirborne() && game.getBoard(target).isGround()) {
-            // Aerospace firing at each on the ground map have immense range.
-            distance /= 16;
-        }
-
-        // Ground units attacking airborne aero considerations.
-        if (targetState.isAirborneAero() && !shooterState.isAero()) {
-
-            // If the aero is attacking me, there is no range.
-            if (target.getId() == shooter.getId()) {
-                distance = 0;
-            } else {
-                // Take into account altitude.
-                distance += 2 * target.getAltitude();
-            }
-        }
+        int distance = guessDistance(shooter, shooterState, target, targetState, game);
         // Water restricts fire in both directions, and a weapon that can fire underwater does so with a
         // shortened range table (TW p.107-109). The server enforces this from the shooter's real location
         // status; the estimate has to predict it from the hypothetical position, or every submerged hex

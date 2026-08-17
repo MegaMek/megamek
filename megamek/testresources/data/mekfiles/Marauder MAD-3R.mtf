@@ -1,0 +1,202 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+uuid:019f583e-c26b-73cd-8e73-6ad0f44f68d2
+generator:MegaMek Suite 0.51.01 on 2026-07-12
+chassis:Marauder
+model:MAD-3R
+mul id:2038
+
+Config:Biped
+techbase:Inner Sphere
+era:2819
+source:TR:3039
+published:RSFP:Wave 1,RS:Gothic
+rules level:1
+role:Sniper
+
+quirk:low_profile
+quirk:command_mech
+quirk:directional_torso_mount:RT
+quirk:hyper_actuator
+weaponquirk:exposed_linkage:RT:0:Autocannon/5
+
+mass:75
+engine:300 Fusion Engine
+structure:IS Standard
+myomer:Standard
+
+heat sinks:16 Single
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:17
+RT armor:17
+CT armor:35
+HD armor:9
+LL armor:18
+RL armor:18
+RTL armor:8
+RTR armor:8
+RTC armor:10
+
+Weapons:5
+PPC, Left Arm
+Medium Laser, Left Arm
+PPC, Right Arm
+Medium Laser, Right Arm
+AC/5, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+PPC
+PPC
+PPC
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+PPC
+PPC
+PPC
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+IS Ammo AC/5
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:<p>The Marauder was first designed by General Motors in 2612 as an attack and direct fire support BattleMech intended to usher in a new generation of heavy 'Mechs for the Star League Defense Force. Weighing seventy-five tons, the design quickly became one of the most recognizable and feared chassis on the battlefield, outclassed in raw power only by larger assault 'Mechs such as the Stalker and BattleMaster. During the Star League era, the Marauder's tremendous firepower and advanced electronics made it a favorite of the Gunslinger Program and endeared it to battalion and regimental commanders across the SLDF. When the Succession Wars shattered the technological base of the Inner Sphere, the Marauder endured as a devastating shock unit, with massed formations proving capable of breaking through even well-prepared defensive lines. Production spread across multiple manufacturers and nations, ensuring the design's survival through centuries of conflict, while repeated waves of technological recovery have kept the Marauder competitive well beyond what its original designers could have imagined.</p>
+
+capabilities:<p>The Marauder's armament centers on a pair of Magna Hellstar particle projector cannons mounted in armored gauntlets, supplemented by a dorsal-mounted General Motors Whirlwind autocannon. All three primary weapons share similar range profiles, allowing a skilled MechWarrior to concentrate devastating fire at long range. The arm pods utilize versatile ball-and-socket joints that provide superior traverse rates and fields of fire compared to more conventional mounting systems, while the durable construction of the Hellstar housings permits effective hand-to-hand combat when engagements close to point-blank range. A pair of Magna Mk II medium lasers in the arm pods provide additional close-range defense.</p><p>The Marauder's distinctive silhouette, once unique among BattleMechs, makes it a harder target than more humanoid designs. Eleven and a half tons of Valiant Lamellor armor provide solid protection, while a Vlar 300 fusion engine drives the seventy-five-ton chassis to a respectable cruising speed. However, the design is not without notable weaknesses. The autocannon's connection to the main chassis is tenuous and vulnerable to damage, while the waist rotation rings linking the upper body to the leg assemblies represent another structural concern. The powerful Dalban HiRez tracking system, positioned in the forward section, is also known to impede the pilot's direct field of view.</p>
+
+deployment:<p>The definitive Succession Wars-era Marauder, this variant entered production in 2819 as a simplified version of the original design that could be manufactured with degraded industrial capacity. Stripped of the Royal variant's advanced features but retaining the proven weapons layout of twin PPCs, an autocannon/5, and paired medium lasers, the 3R became one of the most widely produced and recognized heavy BattleMechs in the Inner Sphere. Manufactured across multiple factories by General Motors, Bowie Industries, Independence Weaponry, and various Periphery producers, the 3R served with virtually every major military power and countless mercenary commands, cementing the Marauder's legendary reputation.</p>
+
+history:<p>The Marauder first entered service with the Star League Defense Force in 2612, where it rapidly gained a reputation as one of the premier heavy 'Mechs in the Inner Sphere. Royal SLDF brigades fielded the original MAD-1R with its ferro-fibrous armor and CASE-protected ammunition stores, later upgrading to the MAD-2R with extended-range particle cannons and double heat sinks by 2760. The design became synonymous with the Gunslinger Program, and its advanced electronics package made it a natural choice for senior officers commanding battalion and regimental formations.</p><p>The Succession Wars tested the Marauder's reputation and proved it well-deserved. As the Inner Sphere tore itself apart, the rarity of the design forced commanders to pair their Marauders with similar heavy 'Mechs such as the Warhammer and Thunderbolt to form effective strike lances. House Liao fielded only several hundred Marauders total by 2828, a scarcity reflected across every Great House. Each Successor State developed its own variant to address specific doctrinal needs and manufacturing constraints: House Davion introduced the MAD-3D in 2834, eliminating ammunition dependency by replacing the autocannon with a large laser; House Liao fielded the MAD-3L in 2905, swapping one PPC for a large laser to reduce heat; and the Free Worlds League produced the MAD-3M in 2873, replacing both PPCs with large lasers to leverage their domestic manufacturing strengths. Salvage culture during the late Third Succession War even spawned the MAD-3V, which incorporated components from destroyed Von Luckner tanks.</p><p>The recovery of the Helm Memory Core triggered a renaissance for the Marauder. House Davion rushed an upgraded variant into production, but their eagerness backfired when House Kurita captured Quentin and its Marauder factory during the War of 3039. The Federated Commonwealth responded with a second upgraded design, while Bowie Industries on Carlisle developed their own variant after the Draconis Combine captured plans for the Davion model. Multiple lostech-inspired variants reached the frontlines in time for the Clan Invasion, where the Marauder continued to prove its worth against technologically superior opponents.</p><p>A second revitalization came at the hands of the Capellan Confederation, which had never before produced the design. Chancellor Sun-Tzu Liao personally negotiated the acquisition of manufacturing rights from General Motors on behalf of Ceres Metals Industries, resulting in the stealth-armored MAD-5L and later the plasma rifle-equipped MAD-6L. During the Jihad, Word of Blake-influenced designs complicated the Marauder's production arena, with Ibuki Robotics leveraging captured technology from Vicore Industries to produce the MAD-9W2, a design that proved popular across multiple militaries despite lingering Blakist stigma.</p><p>The Marauder's battlefield legacy spans centuries of engagements. During the Jade Falcon invasion of Trell I in 3050, Marauders of the Twelfth Donegal Guards engaged the elite Falcon Guards in desperate defensive actions through mountain passes, while on Yed Posterior in 3137, Republic militia employed a pair of MAD-7C Marauders with C3 and ECM capabilities to wage a devastating guerrilla campaign against Clan Wolf invaders. From the Star League's golden age through the fires of the Jihad and beyond, the Marauder has earned its place as one of the most enduring and respected BattleMech designs ever produced.</p>
+
+manufacturer:Bowie Industries|General Motors|Independence Weaponry|Pinard Protectorates Limited|Taurus Territorial Industries|Vandenberg Mechanized Industries
+
+primaryfactory:Carlisle|Kathil|Quentin|Pinard|Taurus|New Vandenberg
+
+fluffdate:2026-02-28 17:47:08
+
+systemmanufacturer:CHASSIS:GM
+systemmode:CHASSIS:GM Marauder
+systemmanufacturer:ENGINE:Vlar
+systemmode:ENGINE:300
+systemmanufacturer:ARMOR:Valiant
+systemmode:ARMOR:Lamellor
+systemmanufacturer:COMMUNICATIONS:Dalban Micronics
+systemmode:COMMUNICATIONS:Dalban Micronics
+systemmanufacturer:TARGETING:Dalban
+systemmode:TARGETING:HiRez

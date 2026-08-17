@@ -36,6 +36,7 @@ package megamek;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterEach;
@@ -231,6 +232,24 @@ class VersionTest {
         ordinaryVersion.setRevision(-1);
         assertFalse(ordinaryVersion.hasRevision());
         assertEquals(Version.NO_REVISION, ordinaryVersion.getRevision());
+    }
+
+    @Test
+    void absentOptionalEntryYieldsNothing() {
+        assertNull(Version.normalizeOptionalEntry(null));
+    }
+
+    @Test
+    void blankOptionalEntryYieldsNothing() {
+        // A notes entry left in place but emptied out must read as "no note" rather than as an empty line on the
+        // main menu.
+        assertNull(Version.normalizeOptionalEntry(""));
+        assertNull(Version.normalizeOptionalEntry("   "));
+    }
+
+    @Test
+    void optionalEntryIsTrimmed() {
+        assertEquals("Development build", Version.normalizeOptionalEntry("  Development build  "));
     }
 
     /**

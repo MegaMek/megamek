@@ -1347,6 +1347,7 @@ public class Client extends AbstractClient {
                         try {
                             if (!sDir.mkdir()) {
                                 LOGGER.error("Failed to create savegames directory.");
+                                fireSaveCompleted(null);
                                 return true;
                             }
                         } catch (Exception ex) {
@@ -1367,6 +1368,10 @@ public class Client extends AbstractClient {
                         LOGGER.error(ex, "Unable to save file {}", sFinalFile);
                     }
                     setAwaitingSave(false);
+                    // Report the file only if it actually made it to disk; a failed or partial write must not be
+                    // handed to a waiting caller as though it succeeded.
+                    File savedFile = new File(localFile);
+                    fireSaveCompleted(savedFile.isFile() ? savedFile : null);
                     break;
                 case LOAD_SAVEGAME:
                     String loadFile = packet.getStringValue(0);

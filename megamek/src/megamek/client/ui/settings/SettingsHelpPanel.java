@@ -51,13 +51,14 @@ import megamek.common.ui.FastJScrollPane;
 
 /** Sticky contextual help surface for a settings content host. */
 public class SettingsHelpPanel extends JPanel {
+    private static final String TITLE_KEY = "SettingsHelpPanel.title";
     private static final int HELP_PANEL_HEIGHT = 120;
     private static final int HELP_TEXT_VERTICAL_PADDING = 4;
     private static final int HELP_TEXT_HORIZONTAL_PADDING = 8;
 
     private final JEditorPane helpTextPane = new JEditorPane();
 
-    public SettingsHelpPanel(String title) {
+    public SettingsHelpPanel() {
         super(new BorderLayout());
         setName("settingsHelpPanel");
         Border frameBorder = UIManager.getBorder("ScrollPane.border");
@@ -65,7 +66,7 @@ public class SettingsHelpPanel extends JPanel {
             frameBorder = BorderFactory.createLineBorder(UIManager.getColor("Component.borderColor"),
                   UIUtil.scaleForGUI(1));
         }
-        setBorder(new FlushTitledBorder(frameBorder, title));
+        setBorder(new FlushTitledBorder(frameBorder, SettingsTextProvider.megaMek().getText(TITLE_KEY)));
 
         helpTextPane.setName("settingsHelpText");
         helpTextPane.setContentType("text/html");
@@ -86,6 +87,12 @@ public class SettingsHelpPanel extends JPanel {
         scrollPane.getViewport().setOpaque(false);
         add(scrollPane, BorderLayout.CENTER);
         clearHelpText();
+    }
+
+    /** @deprecated settings help surfaces always use the shared localized title */
+    @Deprecated(since = "0.51.01", forRemoval = true)
+    public SettingsHelpPanel(String ignoredTitle) {
+        this();
     }
 
     public void setHelpText(String helpText) {

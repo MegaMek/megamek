@@ -70,7 +70,15 @@ import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.*;
+import megamek.common.AtmosphericLandingMovePath;
+import megamek.common.Hex;
+import megamek.common.IndustrialElevator;
+import megamek.common.LandingDirection;
+import megamek.common.ManeuverType;
+import megamek.common.OffBoardDirection;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.ToHitData;
 import megamek.common.actions.AirMekRamAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
@@ -2770,20 +2778,24 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         if (currentlySelectedEntity.hasShield()) {
                             boolean hasLance = false;
                             for (MiscMounted getClub : currentlySelectedEntity.getClubs()) {
-                                if (getClub.getType().hasFlag(MiscTypeFlag.S_LANCE) && !getClub.isDestroyed() && !getClub.isBreached() && !getClub.isMissing()) {
+                                if (getClub.getType().hasFlag(MiscTypeFlag.S_LANCE)
+                                      && !getClub.isDestroyed()
+                                      && !getClub.isBreached()
+                                      && !getClub.isMissing()) {
                                     hasLance = true;
                                 }
                             }
                             // No shield up when a lance is present
                             if (!hasLance) {
                                 // Do we want to raise the shield?
-                                if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.ChargeDialog.RaiseShield"),
+                                if (clientgui.doYesNoDialog(Messages.getString(
+                                            "MovementDisplay.ChargeDialog.RaiseShield"),
                                       Messages.getString("MovementDisplay.ChargeDialog.ShieldMessage"))) {
                                     for (MiscMounted m : currentlySelectedEntity.getMisc()) {
                                         MiscType type = m.getType();
                                         if (((m.getLocation() == Mek.LOC_LEFT_ARM) || (m.getLocation()
                                               == Mek.LOC_RIGHT_ARM))
-                                              && type.isShield()
+                                              && type.hasFlag(MiscType.F_SHIELD)
                                               && !m.isInoperable()
                                               && (currentlySelectedEntity.getInternal(m.getLocation()) > 0)) {
                                             // Only one shield needs to be raised
@@ -2848,10 +2860,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         // Calculate piloting roll to stay standing after DFA
                         PilotingRollData pilotRoll = currentlySelectedEntity.getBasePilotingRoll(
                               EntityMovementType.MOVE_JUMP);
-                        pilotRoll.addModifier(Game.rulesManager.getRulesPSR().getSuccessfulDFAModifier(), Messages.getString(
-                              "MovementDisplay" 
-                              + ".DFADialog" 
-                              + ".dfaModifier"));
+                        pilotRoll.addModifier(Game.rulesManager.getRulesPSR().getSuccessfulDFAModifier(),
+                              Messages.getString(
+                                    "MovementDisplay"
+                                          + ".DFADialog"
+                                          + ".dfaModifier"));
 
                         // Warn if this DFA would dishonor the player in the eyes of a Forced Withdrawal bot.
                         if (needNagForDishonor()

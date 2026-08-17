@@ -45,8 +45,34 @@ import javax.swing.SwingConstants;
 import megamek.client.ui.util.UIUtil;
 
 /**
- * A compact, vertically stacked form panel for settings pages. All add methods share one row counter, allowing
- * labelled rows, full-width controls, and grids to be interleaved while preserving call order.
+ * A compact, vertically stacked form panel for settings pages. All add methods share one row counter, so rows and
+ * grids can be interleaved while preserving call order.
+ *
+ * <p>Choose an add method according to what one visual cell represents:</p>
+ * <ul>
+ *   <li>{@link #addCheckBox(JCheckBox)} for one standalone checkbox.</li>
+ *   <li>{@link #addCheckBoxGrid(int, JCheckBox...)} for several checkboxes arranged across each row.</li>
+ *   <li>{@link #addRow(JComponent, JComponent)} for one {@code label | control} setting.</li>
+ *   <li>{@link #addRowGrid(int, JComponent...)} for several {@code label | control} settings per row.</li>
+ *   <li>{@link #addComponentGrid(int, JComponent...)} for arbitrary cells that keep their natural widths.</li>
+ *   <li>{@link #addEqualWidthComponentGrid(int, JComponent...)} when every cell is a complete setting or composite
+ *       panel and all cells must have the same width.</li>
+ *   <li>{@link #addFullWidthComponent(JComponent)} for content that must span the complete form.</li>
+ * </ul>
+ *
+ * <p>The common two-column layouts are:</p>
+ * <pre>{@code
+ * addCheckBoxGrid(2):            [checkbox + text] | [checkbox + text]
+ * addRow:                        label             | control
+ * addRowGrid(2):                 label | control   | label | control
+ * addEqualWidthComponentGrid(2): [complete option] | [complete option]
+ * addFullWidthComponent:         [             full-width content             ]
+ * }</pre>
+ *
+ * <p>A Swing {@link JCheckBox} already contains its box and text; it is one component. A composite option panel can
+ * similarly contain a label and control while remaining one component from this form's perspective. Prefer
+ * {@code addRow} or {@code addRowGrid} for separately constructed labels and controls because those methods associate
+ * {@link JLabel labels} with their controls for accessibility.</p>
  */
 public class SettingsFormPanel extends JPanel {
     public static final int DEFAULT_LABEL_WIDTH = 300;
@@ -76,7 +102,20 @@ public class SettingsFormPanel extends JPanel {
         setLayout(new GridBagLayout());
     }
 
-    /** Adds one left-aligned checkbox followed by a horizontal filler. */
+    /** Removes all form content and resets row placement for rebuilding the form. */
+    public void clear() {
+        removeAll();
+        row = 0;
+    }
+
+    /**
+     * Adds one left-aligned checkbox on its own row, spanning the form's two base columns.
+     *
+     * <p>Use this for an isolated boolean setting. For consecutive boolean settings, prefer
+     * {@link #addCheckBoxGrid(int, JCheckBox...)}.</p>
+     *
+     * @param checkBox checkbox whose text serves as its visible label
+     */
     public void addCheckBox(JCheckBox checkBox) {
         alignCheckBoxToStart(checkBox);
         int currentRow = row++;
@@ -92,7 +131,14 @@ public class SettingsFormPanel extends JPanel {
         addTrailingFiller(currentRow, 2);
     }
 
-    /** Adds a component that spans and fills both form columns. */
+    /**
+     * Adds one component that spans both base columns and stretches horizontally.
+     *
+     * <p>Use this for controls that genuinely need the section width, such as sliders, lists, warnings, custom panels,
+     * or drag-and-drop content. Do not use it merely to place a normal checkbox or label/control setting.</p>
+     *
+     * @param component content that should occupy the full form width
+     */
     public void addFullWidthComponent(JComponent component) {
         GridBagConstraints layout = new GridBagConstraints();
         layout.gridx = 0;
@@ -105,7 +151,18 @@ public class SettingsFormPanel extends JPanel {
         add(component, layout);
     }
 
-    /** Adds components in row-major order using {@code columnCount} columns. */
+    /**
+     * Adds arbitrary components in row-major order while retaining each component's natural preferred width.
+     *
+     * <p>Use this for mixed controls whose cells should not be forced to the same width, such as a checkbox paired with
+     * a color button. With one column, each component becomes a full-width row. When a label width is configured, the
+     * first column receives that minimum width, but the remaining columns retain their natural widths.</p>
+     *
+     * @param columnCount number of components per row
+     * @param components  components to place in row-major order
+     *
+     * @see #addEqualWidthComponentGrid(int, JComponent...)
+     */
     public void addComponentGrid(int columnCount, JComponent... components) {
         if (columnCount <= 1) {
             for (JComponent component : components) {
@@ -124,7 +181,73 @@ public class SettingsFormPanel extends JPanel {
         finishGrid(firstRow, components.length, columnCount);
     }
 
-    /** Adds left-aligned checkboxes in row-major order using {@code columnCount} columns. */
+    /**
+     * Adds arbitrary components in row-major order after assigning every component the same preferred width.
+     *
+     * <p>Use this when each component is one complete setting or composite option panel and the visual columns must be
+     * equal. A configured label width becomes the shared preferred cell width, allowing grids in separate sections to
+     * align without a long option widening only its own section. Without a configured label width, the widest component
+     * determines the shared width. Every column receives equal layout weight and divides any extra available width.
+     * This method changes the supplied components' preferred widths. Callers must wrap or otherwise adapt content that
+     * is naturally wider than one configured cell. For separate label/control pairs, use
+     * {@link #addRowGrid(int, JComponent...)}.</p>
+     *
+     * @param columnCount number of equal-width components per row
+     * @param components  complete settings or composite panels to place in row-major order
+     */
+    public void addEqualWidthComponentGrid(int columnCount, JComponent... components) {
+        if (columnCount <= 1) {
+            addComponentGrid(columnCount, components);
+            return;
+        }
+
+        int cellWidth = setUniformPreferredWidth(components);
+        int rowCount = (components.length + columnCount - 1) / columnCount;
+        int firstRow = row;
+        for (int index = 0; index < rowCount * columnCount; index++) {
+            int column = index % columnCount;
+            JComponent component = index < components.length
+                  ? components[index]
+                  : equalWidthFiller(cellWidth);
+            GridBagConstraints layout = gridCellConstraints(firstRow + index / columnCount, column, columnCount);
+            layout.weightx = 1.0;
+            layout.fill = GridBagConstraints.HORIZONTAL;
+            add(component, layout);
+        }
+        row += rowCount;
+    }
+
+    private int setUniformPreferredWidth(JComponent... components) {
+        int width = UIUtil.scaleForGUI(labelWidth);
+        if (width == 0) {
+            for (JComponent component : components) {
+                width = Math.max(width, component.getPreferredSize().width);
+            }
+        }
+        for (JComponent component : components) {
+            Dimension preferredSize = component.getPreferredSize();
+            component.setPreferredSize(new Dimension(width, preferredSize.height));
+        }
+        return width;
+    }
+
+    private JPanel equalWidthFiller(int width) {
+        JPanel filler = new JPanel();
+        filler.setOpaque(false);
+        filler.setPreferredSize(new Dimension(width, 0));
+        return filler;
+    }
+
+    /**
+     * Adds left-aligned checkboxes in row-major order.
+     *
+     * <p>Use this for a homogeneous group of boolean settings. Each checkbox, including its text, is one cell. This
+     * method applies checkbox-specific alignment but does not force every checkbox to the same preferred width; use
+     * {@link #addEqualWidthComponentGrid(int, JComponent...)} for equal-width composite option cells.</p>
+     *
+     * @param columnCount number of checkboxes per row
+     * @param checkBoxes  checkboxes to place in row-major order
+     */
     public void addCheckBoxGrid(int columnCount, JCheckBox... checkBoxes) {
         if (columnCount <= 1) {
             for (JCheckBox checkBox : checkBoxes) {
@@ -144,7 +267,20 @@ public class SettingsFormPanel extends JPanel {
         finishGrid(firstRow, checkBoxes.length, columnCount);
     }
 
-    /** Adds a label and a horizontally stretched control. */
+    /**
+     * Adds one setting as a label in the first base column and a horizontally stretched control in the second.
+     *
+     * <pre>{@code
+     * label | control
+     * }</pre>
+     *
+     * <p>Use this for one conventional form field. If {@code label} is a {@link JLabel}, it is associated with the
+     * control through {@link JLabel#setLabelFor(java.awt.Component)}. Use {@link #addRowGrid(int, JComponent...)} when
+     * several label/control settings should share one visual row.</p>
+     *
+     * @param label   visible label or other label component
+     * @param control component edited or selected by the user
+     */
     public void addRow(JComponent label, JComponent control) {
         associateLabel(label, control);
         setMinimumLabelWidth(label);
@@ -171,8 +307,20 @@ public class SettingsFormPanel extends JPanel {
     }
 
     /**
-     * Adds alternating label/control components as a grid of {@code pairsPerRow} pairs per row. An unmatched final
-     * component is ignored.
+     * Adds alternating label/control components with several complete pairs per visual row.
+     *
+     * <pre>{@code
+     * addRowGrid(2, label1, control1, label2, control2):
+     * label1 | control1 | label2 | control2
+     * }</pre>
+     *
+     * <p>Use this for manually constructed fields that need aligned labels, separate control widths, and label/control
+     * accessibility associations. This differs from {@link #addEqualWidthComponentGrid(int, JComponent...)}: one
+     * setting here consumes two internal grid columns, while one equal-width component-grid cell is already a complete
+     * setting. An unmatched final component is ignored.</p>
+     *
+     * @param pairsPerRow     number of complete label/control settings per visual row
+     * @param labelsAndControls alternating label, control, label, control components
      */
     public void addRowGrid(int pairsPerRow, JComponent... labelsAndControls) {
         if (pairsPerRow <= 1) {

@@ -55,6 +55,7 @@ public class EntityState {
     private int secondaryFacing; // to account for torso twists
     private int heat;
     private final int elevation;
+    private final int altitude;
     private final int hexesMoved;
     private final boolean prone;
     private final boolean immobile;
@@ -73,6 +74,7 @@ public class EntityState {
         position = target.getPosition();
         facing = 0;
         elevation = target.getElevation();
+        altitude = target.getAltitude();
         hexesMoved = 0;
         heat = 0;
         prone = false;
@@ -90,6 +92,7 @@ public class EntityState {
         position = entity.getPosition();
         facing = entity.getFacing();
         elevation = entity.getElevation();
+        altitude = entity.getAltitude();
         hexesMoved = entity.delta_distance;
         heat = entity.heat;
         prone = entity.isProne() || entity.isHullDown();
@@ -111,6 +114,7 @@ public class EntityState {
         position = path.getFinalCoords();
         facing = path.getFinalFacing();
         elevation = path.getFinalElevation();
+        altitude = path.getFinalAltitude();
         hexesMoved = path.getHexesMoved();
         heat = path.getEntity().heat;
 
@@ -156,6 +160,20 @@ public class EntityState {
      */
     public int getElevation() {
         return elevation;
+    }
+
+    /**
+     * Returns the altitude this state describes: the unit's current altitude, or the final altitude of the
+     * move path this state was built from.
+     *
+     * <p>Distinct from {@link #getElevation()}, and the one that matters for aerospace. Aerospace units
+     * <i>"never use elevations"</i> even when flying directly over a ground mapsheet (TW p.91), so any
+     * air-to-air geometry - range, and the dead zone above all - is measured with this.</p>
+     *
+     * @return the altitude
+     */
+    public int getAltitude() {
+        return altitude;
     }
 
     public int getFacing() {

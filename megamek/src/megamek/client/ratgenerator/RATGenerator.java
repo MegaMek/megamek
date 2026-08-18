@@ -169,12 +169,13 @@ public class RATGenerator {
         chassisIndex.clear();
         modelIndex.clear();
         eraSet.clear();
-        initialized = false;
-        // Stay marked as initializing for the duration of the reload. getInstance() starts a loader thread whenever
-        // it finds both flags clear, and one started partway through a reload runs its own initialize() as soon as
-        // this one releases the lock. That second pass rebuilds every faction record but skips the era files, which
-        // are marked loaded by then, so the reloaded era parameters are replaced by empty ones.
+        // Stay marked as initializing for the duration of the reload, and set that before clearing initialized so the
+        // two flags are never both clear. getInstance() starts a loader thread whenever it finds them both clear, and
+        // one started partway through a reload runs its own initialize() as soon as this one releases the lock. That
+        // second pass rebuilds every faction record but skips the era files, which are marked loaded by then, so the
+        // reloaded era parameters are replaced by empty ones.
         initializing = true;
+        initialized = false;
         initialize(dir);
     }
 

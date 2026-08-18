@@ -52,7 +52,7 @@ import org.junit.jupiter.api.Test;
  * <p>It used to be looked up directly in the faction map, which by design holds no alias keys, so every block written
  * under a retired code was dropped with an error and the faction silently fell back on its parent's tech mix. Clan
  * Goliath Scorpion is the live case: it absorbed the Escorpion Imperio and the Scorpion Empire, and its blocks from
- * 3082 on are still keyed {@code CEI} and then {@code SE}, so it had no tuning of its own for six era buckets.</p>
+ * 3082 on are still keyed {@code CEI} and then {@code SE}, so it had no tuning of its own for seven era buckets.</p>
  *
  * <p>The test data mirrors both shapes the shipped files take. Era 3050 holds only the retired code, as 3082 through
  * 3160 do. Era 3060 holds the surviving and the retired code together, as 3078 and 3131 do.</p>

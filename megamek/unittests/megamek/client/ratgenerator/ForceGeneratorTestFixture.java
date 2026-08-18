@@ -70,6 +70,9 @@ final class ForceGeneratorTestFixture {
      */
     private static final List<String> CANON_TEST_UNITS = List.of("Archer ARC-2R", "Atlas AS7-D");
 
+    /** Generous enough for a cold CI machine building the unit cache, short enough not to stall a run. */
+    private static final long BACKGROUND_LOAD_TIMEOUT_MILLIS = 120_000;
+
     private ForceGeneratorTestFixture() {
     }
 
@@ -120,12 +123,21 @@ final class ForceGeneratorTestFixture {
      * tests never notice, but every faction's era parameters - its Clan, Star League and Omni percentages, margins
      * and salvage - are lost, and the records handed back are not the ones the era files loaded into.</p>
      *
+     * <p>Bounded, because a load that fails without ever setting the flag would otherwise hang the whole test run
+     * rather than fail one class.</p>
+     *
      * @param ratGenerator the Force Generator to wait on
      *
-     * @throws InterruptedException if the wait is interrupted
+     * @throws InterruptedException  if the wait is interrupted
+     * @throws IllegalStateException if the load has not finished within {@link #BACKGROUND_LOAD_TIMEOUT_MILLIS}
      */
     private static void waitForBackgroundLoad(RATGenerator ratGenerator) throws InterruptedException {
+        long giveUpAt = System.currentTimeMillis() + BACKGROUND_LOAD_TIMEOUT_MILLIS;
         while (!ratGenerator.isInitialized()) {
+            if (System.currentTimeMillis() >= giveUpAt) {
+                throw new IllegalStateException("Force Generator did not finish loading within "
+                      + BACKGROUND_LOAD_TIMEOUT_MILLIS + " ms; check the log for a load failure");
+            }
             Thread.sleep(50);
         }
     }

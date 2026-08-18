@@ -59,8 +59,7 @@ public class ISLRM2 extends LRMWeapon {
         rackSize = 2;
         minimumRange = 6;
         bv = 20;
-        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)

@@ -69,8 +69,7 @@ public class CLRAC10 extends RACWeapon {
         this.criticalSlots = 7;
         this.bv = 617;
         this.cost = 640000;
-        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

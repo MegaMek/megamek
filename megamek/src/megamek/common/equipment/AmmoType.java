@@ -12641,8 +12641,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 55000;
         ammo.capital = true;
         ammo.flags = ammo.flags.or(F_CAP_MISSILE);
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -15279,8 +15278,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.cost = 0;
         ammo.tonnage = 0;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -15336,8 +15334,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 7;
         ammo.bv = 22;
         ammo.cost = 8500;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
               .setUnofficial(true)
               .setTechRating(TechRating.C)
@@ -15366,8 +15363,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 40;
         ammo.bv = 5;
         ammo.cost = 3000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -15395,8 +15391,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 16;
         ammo.bv = 11;
         ammo.cost = 15000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -15424,8 +15419,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 26;
         ammo.cost = 30000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -15456,8 +15450,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 40;
         ammo.bv = 5;
         ammo.cost = 4950;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -15488,8 +15481,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 16;
         ammo.bv = 11;
         ammo.cost = 25000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -15520,8 +15512,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 26;
         ammo.cost = 51000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -15548,8 +15539,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 8;
         ammo.cost = 2000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -15576,8 +15566,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 31;
         ammo.cost = 15000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -15604,8 +15593,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 42;
         ammo.cost = 30000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -15631,8 +15619,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 37;
         ammo.cost = 30000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS).setUnofficial(true);
         ammo.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3067);
         ammo.techAdvancement.setTechRating(TechRating.E);
@@ -15656,8 +15643,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 59;
         ammo.cost = 80000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS).setUnofficial(true);
         ammo.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3067);
         ammo.techAdvancement.setTechRating(TechRating.E);
@@ -15682,8 +15668,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 74;
         ammo.cost = 16000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -15710,8 +15695,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 118;
         ammo.cost = 24000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -15793,8 +15777,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 51;
         ammo.cost = 20000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -15821,8 +15804,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 21;
         ammo.cost = 12000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
               .setUnofficial(true)
               .setTechRating(TechRating.C)
@@ -15850,8 +15832,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 22;
         ammo.bv = 12;
         ammo.cost = 1000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -15878,8 +15859,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 11;
         ammo.bv = 22;
         ammo.cost = 1000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -15906,8 +15886,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 7;
         ammo.bv = 40;
         ammo.cost = 1000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -15934,8 +15913,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 53;
         ammo.cost = 1000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)

@@ -34,7 +34,6 @@ package megamek.common.weapons.infantry.prosthetic;
 
 import java.io.Serial;
 
-import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -65,8 +64,7 @@ public class InfantryProstheticRumalGarroteWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.14;
         infantryRange = 0;
-        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        rulesRefs = rulesRefs();
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

@@ -279,11 +279,6 @@ public class EquipmentType implements ITechnology {
         return Arrays.stream(pages).map(page -> new RulesRef(book, page)).toList();
     }
 
-    /** Creates an immutable rule-reference list for a single sourcebook page, including a null page. */
-    protected static List<RulesRef> rulesRefs(SourceBookCode book, Integer page) {
-        return List.of(new RulesRef(book, page));
-    }
-
     /** Creates an immutable rule-reference list, including an empty list when no references are supplied. */
     protected static List<RulesRef> rulesRefs(RulesRef... references) {
         return List.of(references);

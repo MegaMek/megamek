@@ -38,6 +38,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import megamek.common.weapons.lrms.innerSphere.ISLRM15;
 import org.junit.jupiter.api.Test;
 
 class RulesRefTest {
@@ -55,7 +56,7 @@ class RulesRefTest {
     void serializesMissingPageAsNull() throws JsonProcessingException {
         RulesRef rulesRef = new RulesRef(SourceBookCode.SHRAPNEL_5, null);
 
-        assertEquals("{\"book\":\"Shrapnel #5\",\"page\":null}", objectMapper.writeValueAsString(rulesRef));
+        assertEquals("{\"book\":\"Shrap05\",\"page\":null}", objectMapper.writeValueAsString(rulesRef));
     }
 
     @Test
@@ -80,5 +81,22 @@ class RulesRefTest {
         assertEquals(
               java.util.Map.of("book", "TO:AUE", "page", 121),
               new RulesRef(SourceBookCode.TO_AUE, 121).toYamlData());
+    }
+
+    @Test
+    void equipmentYamlDataExportsEachReferenceAsBookAndPage() {
+        Object exportedRulesRefs = new MultiReferenceEquipment().getYamlData().get("rulesRefs");
+
+        assertEquals(List.of(
+              java.util.Map.of("book", "TO:AUE", "page", 121),
+              java.util.Map.of("book", "Core", "page", 111)), exportedRulesRefs);
+    }
+
+    private static final class MultiReferenceEquipment extends ISLRM15 {
+        private MultiReferenceEquipment() {
+            rulesRefs = rulesRefs(
+                  new RulesRef(SourceBookCode.TO_AUE, 121),
+                  new RulesRef(SourceBookCode.CORE, 111));
+        }
     }
 }

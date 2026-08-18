@@ -74,8 +74,7 @@ public class ISKinsSlaughterPPC extends PPCWeapon {
         // Since this is a SL Era ER PPC variant mentioned in Spartan Fluff
         // This weapons was actually blended into IO's Enhanced PPC and should be considered non-canon
         // for IS factions
-        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         flags = flags.or(F_PPC_CAPACITOR_COMPATIBLE);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)

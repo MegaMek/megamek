@@ -5506,8 +5506,7 @@ public class MiscType extends EquipmentType {
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
         // Since its Tactical Handbook Using TO Values
-        misc.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        misc.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -5797,8 +5796,7 @@ public class MiscType extends EquipmentType {
         // Every mode switch here is declared now and takes effect in the End Phase, deactivation
         // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        misc.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)

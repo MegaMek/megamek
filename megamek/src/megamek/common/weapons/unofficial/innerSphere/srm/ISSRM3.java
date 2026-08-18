@@ -63,8 +63,7 @@ public class ISSRM3 extends SRMWeapon {
         extremeRange = 12;
         bv = 30;
         flags = flags.or(F_NO_FIRES);
-        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)

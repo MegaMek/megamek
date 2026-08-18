@@ -75,8 +75,7 @@ public class CapMissKrakenWeapon extends CapitalMissileWeapon {
         this.extAV = 10;
         this.missileArmor = 100;
         this.maxRange = RANGE_EXT;
-        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)

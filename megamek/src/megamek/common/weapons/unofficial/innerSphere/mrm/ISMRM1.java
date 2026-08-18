@@ -62,8 +62,7 @@ public class ISMRM1 extends MRMWeapon {
         this.longRange = 15;
         this.extremeRange = 16;
         this.bv = 9;
-        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)

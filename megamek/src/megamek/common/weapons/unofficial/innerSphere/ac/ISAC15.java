@@ -77,8 +77,7 @@ public class ISAC15 extends ACWeapon {
         maxRange = RANGE_MED;
         explosionDamage = damage;
         // This being an official Weapon I'm using the AC20 information
-        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.ALL)
               .setUnofficial(true)
               .setTechRating(TechRating.C)

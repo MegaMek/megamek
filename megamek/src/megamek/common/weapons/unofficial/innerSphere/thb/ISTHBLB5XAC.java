@@ -75,8 +75,7 @@ public class ISTHBLB5XAC extends LBXACWeapon {
         this.bv = 85;
         this.cost = 300000;
         // Since this are the Tactical Handbook Weapons I'm using the TM Stats.
-        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)

@@ -81,8 +81,7 @@ public class ISAC10i extends ACWeapon {
         ammoType = AmmoType.AmmoTypeEnum.ACi;
         atClass = CLASS_AC;
         // Since this is an unofficial Weapon I'm using the Normal AC10 Stats
-        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.ALL)
               .setUnofficial(true)
               .setTechRating(TechRating.C)

@@ -86,8 +86,7 @@ public class ISGAC8 extends ACWeapon {
         ammoType = AmmoType.AmmoTypeEnum.AC;
         atClass = CLASS_AC;
         // Going to Assume these are like IS RACs
-        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)

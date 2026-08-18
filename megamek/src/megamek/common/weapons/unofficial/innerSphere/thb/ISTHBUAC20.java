@@ -70,8 +70,7 @@ public class ISTHBUAC20 extends UACWeapon {
         bv = 335;
         cost = 600000;
         // Since this are the Tactical Handbook Weapons I'm using the TM Stats.
-        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)

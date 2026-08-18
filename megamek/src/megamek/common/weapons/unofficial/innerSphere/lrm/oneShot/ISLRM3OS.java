@@ -58,8 +58,7 @@ public class ISLRM3OS extends LRMWeapon {
         minimumRange = 6;
         bv = 6;
         flags = flags.or(F_ONE_SHOT);
-        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)

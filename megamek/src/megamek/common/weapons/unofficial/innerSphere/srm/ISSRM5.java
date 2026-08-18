@@ -67,8 +67,7 @@ public class ISSRM5 extends SRMWeapon {
               .andNot(F_BA_WEAPON)
               .andNot(F_MEK_WEAPON)
               .andNot(F_TANK_WEAPON);
-        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)

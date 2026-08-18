@@ -70,8 +70,7 @@ public class ISLAC10 extends LACWeapon {
         bv = 74;
         cost = 225000;
         explosionDamage = damage;
-        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)

@@ -71,8 +71,7 @@ public class ISRailGun extends GaussWeapon {
         this.cost = 300000;
         this.explosionDamage = 20;
         // This appears to be like the Heavy Gauss using those stats.
-        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)

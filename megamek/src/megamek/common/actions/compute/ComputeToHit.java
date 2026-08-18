@@ -1693,7 +1693,6 @@ public class ComputeToHit {
                   bSemiGuided &&
                   (Compute.isTargetTagged(target, game))) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SemiGuidedIndirect"));
-
             } else if (!narcSpotter && (spotter != null)) {
                 // Unless the target has been tagged, or the spotter has an active command
                 // console
@@ -1743,7 +1742,7 @@ public class ComputeToHit {
         if (entityTarget != null && ammoType != null) {
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE) && (entityTarget.isNarcedBy(
                   ae.getOwner().getTeam()) || entityTarget
-                  .isINarcedBy(ae.getOwner().getTeam())) && !isTargetECMAffected) {
+                  .isINarcedBy(ae.getOwner().getTeam())) && !isTargetECMAffected && !isIndirect) {
                 Game.rulesManager.getRulesAmmo().narcHomingTarget(toHit);
             }
         }

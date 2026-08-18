@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -229,7 +229,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         add(new JLabel(Messages.getString("ForceGeneratorDialog.unitType")), gbc);
         cbUnitType = new JComboBox<>();
         cbUnitType.setRenderer(new CBRenderer<>(Messages.getString("ForceGeneratorDialog.combined"),
-              UnitType::getTypeName));
+              UnitType::getTypeDisplayableName));
         gbc.gridx = 1;
         gbc.gridy = y;
         add(cbUnitType, gbc);
@@ -778,7 +778,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             if (asPercent) {
                 int typeTotal = row[0][0] + row[1][0] + row[2][0] + row[3][0];
                 summaryModel.addRow(new Object[] {
-                      UnitType.getTypeName(entry.getKey()),
+                      UnitType.getTypeDisplayableName(entry.getKey()),
                       formatSummaryPercent(row[0][0], typeTotal),
                       formatSummaryPercent(row[1][0], typeTotal),
                       formatSummaryPercent(row[2][0], typeTotal),
@@ -786,7 +786,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 });
             } else {
                 summaryModel.addRow(new Object[] {
-                      UnitType.getTypeName(entry.getKey()),
+                      UnitType.getTypeDisplayableName(entry.getKey()),
                       formatSummaryCell(row[0], isBA),
                       formatSummaryCell(row[1], isBA),
                       formatSummaryCell(row[2], isBA),
@@ -900,8 +900,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                             hasCurrent = true;
                         }
                     } else {
-                        cbUnitType.addItem(AbstractUnitRecord.parseUnitType(unitType));
-                        if (currentType != null && UnitType.getTypeDisplayableName(currentType).equals(unitType)) {
+                        int unitTypeCode = AbstractUnitRecord.parseUnitType(unitType);
+                        cbUnitType.addItem(unitTypeCode);
+                        if ((currentType != null) && (currentType == unitTypeCode)) {
                             hasCurrent = true;
                         }
                     }

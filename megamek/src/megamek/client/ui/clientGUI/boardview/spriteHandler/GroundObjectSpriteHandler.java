@@ -32,14 +32,19 @@
  */
 package megamek.client.ui.clientGUI.boardview.spriteHandler;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.Map;
 
 import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.GroundObjectSprite;
+import megamek.client.ui.clientGUI.boardview.sprite.HexFlagSprite;
+import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
+import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
 
@@ -61,16 +66,39 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
         }
         currentGroundObjectList = objectCoordList;
         if (currentGroundObjectList != null) {
+            BoardView boardView = (BoardView) clientGUI.boardViews().getFirst();
             for (Coords coords : currentGroundObjectList.keySet()) {
                 for (ICarryable groundObject : currentGroundObjectList.get(coords)) {
-                    GroundObjectSprite gos = new GroundObjectSprite((BoardView) clientGUI.boardViews().getFirst(),
-                          coords);
-                    currentSprites.add(gos);
+                    currentSprites.add(spriteFor(groundObject, coords, boardView));
                 }
             }
         }
 
         clientGUI.boardViews().getFirst().addSprites(currentSprites);
+    }
+
+    /**
+     * @param groundObject the ground object to create a sprite for
+     * @param coords       the hex the ground object is in
+     * @param boardView    the board view the sprite is displayed on
+     *
+     * @return a flag in the owning player's color for an objective marker, otherwise the generic cargo sprite
+     */
+    private Sprite spriteFor(ICarryable groundObject, Coords coords, BoardView boardView) {
+        if (groundObject instanceof ObjectiveMarker marker) {
+            return new HexFlagSprite(boardView, coords, ownerColor(marker));
+        }
+        return new GroundObjectSprite(boardView, coords);
+    }
+
+    /**
+     * @param marker the objective marker to color
+     *
+     * @return the owning player's color, or yellow when the owner is unknown to this client
+     */
+    private Color ownerColor(ObjectiveMarker marker) {
+        Player owner = game.getPlayer(marker.getOwnerId());
+        return (owner != null) ? owner.getColour().getColour() : Color.YELLOW;
     }
 
     @Override

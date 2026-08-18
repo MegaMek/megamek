@@ -110,8 +110,11 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.IMapSettingsObserver;
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.RulerDialog;
+import megamek.client.ui.clientGUI.boardview.sprite.HexFlagSprite;
 import megamek.client.ui.clientGUI.boardview.toolTip.TWBoardViewTooltip;
 import megamek.client.ui.dialogs.InformDialog;
 import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
@@ -142,9 +145,12 @@ import megamek.common.annotations.Nullable;
 import megamek.common.autoResolve.converter.MMSetupForces;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
+import megamek.common.board.Coords;
 import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.BombLoadout;
+import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
@@ -315,6 +321,9 @@ public class ChatLounge extends AbstractPhaseDisplay
     private transient BoardView previewBV;
     Dimension currentMapButtonSize = new Dimension(0, 0);
     private final JCheckBox showPlayerDeployment = new JCheckBox(Messages.getString("ChatLounge.showPlayerDeployment"));
+    private final JCheckBox designateVictoryHexes =
+          new JCheckBox(Messages.getString("ChatLounge.designateVictoryHexes"));
+    private final List<HexFlagSprite> previewFlagSprites = new ArrayList<>();
 
     private final ArrayList<String> invalidBoards = new ArrayList<>();
     private final ArrayList<String> serverBoards = new ArrayList<>();
@@ -983,11 +992,26 @@ public class ChatLounge extends AbstractPhaseDisplay
             showPlayerDeployment.setSelected(true);
             showPlayerDeployment.addActionListener(e -> previewGameBoard());
 
+            designateVictoryHexes.setToolTipText(Messages.getString("ChatLounge.designateVictoryHexes.tooltip"));
+            previewBV.addBoardViewListener(new BoardViewListenerAdapter() {
+                @Override
+                public void hexMoused(BoardViewEvent event) {
+                    boolean isDesignationClick = designateVictoryHexes.isSelected()
+                          && (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED)
+                          && (event.getButton() == MouseEvent.BUTTON1)
+                          && (event.getCoords() != null);
+                    if (isDesignationClick) {
+                        toggleVictoryHexDesignation(event.getCoords());
+                    }
+                }
+            });
+
             JButton previewSaveAs = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoardSaveAs"));
             previewSaveAs.addActionListener(e -> clientgui.boardSaveAs(boardPreviewGame));
 
             JPanel previewSettingsPanel = new JPanel(new FlowLayout());
             previewSettingsPanel.add(showPlayerDeployment);
+            previewSettingsPanel.add(designateVictoryHexes);
             previewSettingsPanel.add(previewSaveAs);
 
             Box previewPanel = Box.createVerticalBox();
@@ -1466,7 +1490,79 @@ public class ChatLounge extends AbstractPhaseDisplay
         for (Player player : game().getPlayersList()) {
             boardPreviewGame.setPlayer(player.getId(), player.copy());
         }
+        refreshPreviewFlagSprites();
         boardPreviewW.setVisible(true);
+    }
+
+    /**
+     * Adds or removes a victory hex designation at the given hex of the lobby board preview. Clicking an empty hex
+     * designates it: an {@link ObjectiveMarker} carrying the position is added to the local player's
+     * ground-objects-to-place list and sent to the server, so every player sees the flag and the marker is placed on
+     * the board when the game starts. Clicking a hex the local player already designated removes the designation
+     * again. A hex designated by another player is left alone - only that player can remove it.
+     *
+     * @param coords the clicked hex
+     */
+    private void toggleVictoryHexDesignation(Coords coords) {
+        Player localPlayer = client().getLocalPlayer();
+        ObjectiveMarker existingMarker = findDesignatedMarkerAt(coords);
+        if (existingMarker != null) {
+            if (existingMarker.getOwnerId() != localPlayer.getId()) {
+                LOGGER.debug("[VictoryHex] {} is already designated by player ID {} - only they can remove it",
+                      coords.getBoardNum(), existingMarker.getOwnerId());
+                return;
+            }
+            localPlayer.getGroundObjectsToPlace().remove(existingMarker);
+            LOGGER.info("[VictoryHex] Removed the victory hex designation at {}", coords.getBoardNum());
+        } else {
+            ObjectiveMarker marker = new ObjectiveMarker();
+            marker.setName(Messages.getString("ChatLounge.victoryHexName", coords.getBoardNum()));
+            marker.setOwnerId(localPlayer.getId());
+            marker.setLobbyPosition(coords);
+            localPlayer.getGroundObjectsToPlace().add(marker);
+            LOGGER.info("[VictoryHex] Designated {} as a victory hex", coords.getBoardNum());
+        }
+        client().sendPlayerInfo();
+        refreshPreviewFlagSprites();
+    }
+
+    /**
+     * @param coords the hex to check
+     *
+     * @return the objective marker any player has designated at the given hex (looking through every player's
+     *       ground-objects-to-place list), or {@code null} when the hex is not designated
+     */
+    private @Nullable ObjectiveMarker findDesignatedMarkerAt(Coords coords) {
+        for (Player player : game().getPlayersList()) {
+            for (ICarryable groundObject : player.getGroundObjectsToPlace()) {
+                if ((groundObject instanceof ObjectiveMarker marker) && coords.equals(marker.getLobbyPosition())) {
+                    return marker;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Rebuilds the victory hex flags shown on the lobby board preview from every player's designated hexes. Each flag
+     * is drawn in its owning player's color. Called when the preview is (re)built, when a designation is toggled
+     * locally and when a player update arrives from the server (which is how other players' designations show up).
+     */
+    private void refreshPreviewFlagSprites() {
+        if (previewBV == null) {
+            return;
+        }
+        previewBV.removeSprites(previewFlagSprites);
+        previewFlagSprites.clear();
+        for (Player player : game().getPlayersList()) {
+            for (ICarryable groundObject : player.getGroundObjectsToPlace()) {
+                if ((groundObject instanceof ObjectiveMarker marker) && (marker.getLobbyPosition() != null)) {
+                    previewFlagSprites.add(new HexFlagSprite(previewBV, marker.getLobbyPosition(),
+                          player.getColour().getColour()));
+                }
+            }
+        }
+        previewBV.addSprites(previewFlagSprites);
     }
 
     /**
@@ -1948,6 +2044,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         refreshGameMasterButton();
         refreshEntities();
         panTeamOverview.refreshData();
+        // another player may have designated or removed a victory hex - update the preview flags
+        refreshPreviewFlagSprites();
     }
 
     @Override

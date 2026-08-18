@@ -4544,7 +4544,7 @@ public class AmmoType extends EquipmentType {
      * ammo.addLookupName("CL Ammo Sniper Cannon");
      * ammo.addLookupName("CL Sniper Cannon Ammo"); ammo.damagePerShot = 1;
      * ammo.rackSize = 10; ammo.ammoType = AmmoTypeEnum.SNIPER_CANNON; ammo.shots =
-     * 10; ammo.bv = 10; ammo.cost = 15000; ammo.rulesRefs = "285, TO";
+     * 10; ammo.bv = 10; ammo.cost = 15000;
      *
      * ammo.techAdvancement.setTechBase(TechBase.CLAN);
      * ammo.techAdvancement.setClanAdvancement(3032, 3072, DATE_NONE);
@@ -4600,7 +4600,7 @@ public class AmmoType extends EquipmentType {
      * ammo.addLookupName("CL Ammo Thumper Cannon");
      * ammo.addLookupName("CL Thumper Cannon Ammo"); ammo.damagePerShot = 1;
      * ammo.rackSize = 5; ammo.ammoType = AmmoTypeEnum.THUMPER_CANNON; ammo.shots =
-     * 20; ammo.bv = 5; ammo.cost = 10000; ammo.rulesRefs = "285, TO";
+     * 20; ammo.bv = 5; ammo.cost = 10000;
      *
      * ammo.techAdvancement.setTechBase(TechBase.CLAN);
      * ammo.techAdvancement.setClanAdvancement(3032, 3072, DATE_NONE);

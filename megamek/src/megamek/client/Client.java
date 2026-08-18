@@ -1474,7 +1474,7 @@ public class Client extends AbstractClient {
               && (botPlayerId != localPlayerId)
               && game.isPlayerDishonoredBy(botPlayerId, localPlayerId)) {
             Player bot = game.getPlayer(botPlayerId);
-            String botName = (bot != null) ? bot.getName() : "";
+            String botName = (bot != null) ? bot.getName() : Messages.getString("HonorNag.unknownBot");
             game.fireGameEvent(new GameToastEvent(this, GameToastEvent.Level.GAMEMASTER,
                   Messages.getString("HonorNag.dishonoredToast", botName), Entity.NONE));
         }

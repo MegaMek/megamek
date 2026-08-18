@@ -102,10 +102,32 @@ final class ForceGeneratorTestFixture {
         }
 
         RATGenerator ratGenerator = RATGenerator.getInstance();
+        waitForBackgroundLoad(ratGenerator);
         ratGenerator.reloadFromDir(Configuration.forceGeneratorDir());
         ratGenerator.loadYear(era);
 
         return ratGenerator;
+    }
+
+    /**
+     * Waits for the background load started by {@link RATGenerator#getInstance()} to finish before the caller reloads
+     * from the test directory.
+     *
+     * <p>The first call to {@code getInstance()} in the test JVM spawns a loader thread. Reloading while it is still
+     * running leaves the two loads interleaved: the reload rebuilds the faction records and fills in their era
+     * parameters, then the background load rebuilds the records a second time and skips the era files, because the
+     * eras are marked loaded by then. The faction list and the unit availability indexes come out intact, so most
+     * tests never notice, but every faction's era parameters - its Clan, Star League and Omni percentages, margins
+     * and salvage - are lost, and the records handed back are not the ones the era files loaded into.</p>
+     *
+     * @param ratGenerator the Force Generator to wait on
+     *
+     * @throws InterruptedException if the wait is interrupted
+     */
+    private static void waitForBackgroundLoad(RATGenerator ratGenerator) throws InterruptedException {
+        while (!ratGenerator.isInitialized()) {
+            Thread.sleep(50);
+        }
     }
 
     /**

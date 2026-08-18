@@ -999,11 +999,11 @@ public class ChatLounge extends AbstractPhaseDisplay
             previewBV.addBoardViewListener(new BoardViewListenerAdapter() {
                 @Override
                 public void hexMoused(BoardViewEvent event) {
-                    boolean isDesignationClick = designateVictoryHexes.isSelected()
-                          && (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED)
+                    boolean isDesignationModeOn = designateVictoryHexes.isSelected();
+                    boolean isLeftClickOnHex = (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED)
                           && (event.getButton() == MouseEvent.BUTTON1)
                           && (event.getCoords() != null);
-                    if (isDesignationClick) {
+                    if (isDesignationModeOn && isLeftClickOnHex) {
                         toggleVictoryHexDesignation(event.getCoords());
                     }
                 }

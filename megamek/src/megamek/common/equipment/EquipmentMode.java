@@ -38,6 +38,7 @@ package megamek.common.equipment;
 import java.util.Hashtable;
 import java.util.Objects;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.weapons.Weapon;
 
 /**
@@ -61,6 +62,16 @@ public class EquipmentMode {
      * Hash of all modes
      */
     protected static Hashtable<String, EquipmentMode> modesHash = new Hashtable<>();
+
+    /**
+     * Bundle key suffix for the label used when a mode describes what the equipment currently is.
+     */
+    private static final String STATE_NAME_SUFFIX = ".state";
+
+    /**
+     * Bundle key suffix for the label used when a mode is offered as a change the player can select.
+     */
+    private static final String ACTION_NAME_SUFFIX = ".action";
 
     /**
      * Unique internal mode identifier. Used as the part of the key to look for the displayable name presented to user.
@@ -107,6 +118,56 @@ public class EquipmentMode {
         } else {
             return name;
         }
+    }
+
+    /**
+     * Returns the label to show when this mode is what the equipment currently is, or is about to become. Some systems
+     * read naturally as a command when offered as a choice but not as a description of a state - Enhanced Imaging is
+     * selected with "Engage Enhanced Imaging" but, once running, is described as "Enhanced Imaging Engaged".
+     *
+     * @param equipmentType the equipment the mode belongs to, or {@code null} when the caller has no equipment context
+     *
+     * @return the state label, falling back to {@link #getDisplayableName()} when no state label is defined
+     *
+     * @see #getActionName(EquipmentType)
+     */
+    public String getStateName(@Nullable EquipmentType equipmentType) {
+        return getContextualName(equipmentType, STATE_NAME_SUFFIX);
+    }
+
+    /**
+     * Returns the label to show when this mode is offered to the player as a change they can make, such as an entry in
+     * the unit display's mode dropdown.
+     *
+     * @param equipmentType the equipment the mode belongs to, or {@code null} when the caller has no equipment context
+     *
+     * @return the action label, falling back to {@link #getDisplayableName()} when no action label is defined
+     *
+     * @see #getStateName(EquipmentType)
+     */
+    public String getActionName(@Nullable EquipmentType equipmentType) {
+        return getContextualName(equipmentType, ACTION_NAME_SUFFIX);
+    }
+
+    /**
+     * Looks up an equipment-specific label for this mode. The keys are scoped by equipment because mode names such as
+     * {@link Mounted#MODE_OFF} are shared by many unrelated systems and must keep their plain label everywhere they
+     * have not been given one of their own.
+     *
+     * @param equipmentType the equipment the mode belongs to, or {@code null}
+     * @param keySuffix     {@link #STATE_NAME_SUFFIX} or {@link #ACTION_NAME_SUFFIX}
+     *
+     * @return the scoped label, or {@link #getDisplayableName()} when none is defined
+     */
+    private String getContextualName(@Nullable EquipmentType equipmentType, String keySuffix) {
+        if (equipmentType != null) {
+            String contextualName = EquipmentMessages.getString(
+                  "EquipmentMode." + equipmentType.getInternalName() + "." + name + keySuffix);
+            if ((contextualName != null) && !contextualName.isBlank()) {
+                return contextualName;
+            }
+        }
+        return getDisplayableName();
     }
 
     /**

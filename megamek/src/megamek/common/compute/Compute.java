@@ -2692,16 +2692,13 @@ public class Compute {
 
         // Secondary target default value
         int mod = 1;
-
         // Check for secondary arc and change as needed
         if (!curInFrontArc && !(attacker instanceof BattleArmor)) {
             mod = Game.rulesManager.getRulesTarget().getSecondaryArcModifier();
         }
-        
         if (attacker.hasAbility(OptionsConstants.GUNNERY_MULTI_TASKER)) {
             mod--;
         }
-
         return new ToHitData(mod, "secondary target modifier");
     }
 

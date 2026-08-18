@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2023-2026 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -143,5 +143,10 @@ public class AeroSpaceFighter extends Aero {
     @Override
     public int getRecoveryTime() {
         return 60;
+    }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return true;
     }
 }

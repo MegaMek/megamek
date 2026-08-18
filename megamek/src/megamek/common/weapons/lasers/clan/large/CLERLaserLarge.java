@@ -36,6 +36,7 @@ package megamek.common.weapons.lasers.clan.large;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -75,7 +76,7 @@ public class CLERLaserLarge extends LaserWeapon {
         longAV = 10;
         extAV = 10;
         maxRange = RANGE_EXT;
-        rulesRefs = "226, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 226);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

@@ -36,6 +36,7 @@ package megamek.common.weapons.lrms.innerSphere.torpedo;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -69,7 +70,7 @@ public class ISLRT20 extends LRTWeapon {
         this.criticalSlots = 5;
         this.bv = 181;
         this.cost = 250000;
-        rulesRefs = "230, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 230);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

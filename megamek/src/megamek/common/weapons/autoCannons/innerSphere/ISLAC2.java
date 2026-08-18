@@ -36,6 +36,7 @@ package megamek.common.weapons.autoCannons.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -72,7 +73,7 @@ public class ISLAC2 extends LACWeapon {
         maxRange = RANGE_MED;
         shortAV = 2;
         medAV = 2;
-        rulesRefs = "207, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 207);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

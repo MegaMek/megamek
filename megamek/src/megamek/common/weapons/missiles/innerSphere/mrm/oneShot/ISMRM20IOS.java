@@ -36,6 +36,7 @@ package megamek.common.weapons.missiles.innerSphere.mrm.oneShot;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -78,7 +79,7 @@ public class ISMRM20IOS extends MRMWeapon {
         shortAV = 12;
         medAV = 12;
         maxRange = RANGE_MED;
-        rulesRefs = "139, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 139);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

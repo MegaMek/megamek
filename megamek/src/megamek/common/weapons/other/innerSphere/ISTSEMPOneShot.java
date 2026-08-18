@@ -36,6 +36,7 @@ package megamek.common.weapons.other.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -58,7 +59,7 @@ public class ISTSEMPOneShot extends TSEMPWeapon {
         addLookupName("ISTSEMPOS");
         tonnage = 4;
         criticalSlots = 3;
-        rulesRefs = "84, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 84);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false).setUnofficial(false)

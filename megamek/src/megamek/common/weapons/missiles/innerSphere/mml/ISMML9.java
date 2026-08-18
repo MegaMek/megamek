@@ -39,6 +39,7 @@ import static megamek.common.equipment.MountedHelper.isArtemisProto;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
@@ -77,7 +78,7 @@ public class ISMML9 extends MMLWeapon {
         medAV = 5;
         longAV = 5;
         maxRange = RANGE_LONG;
-        rulesRefs = "229, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 229);
         // March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)

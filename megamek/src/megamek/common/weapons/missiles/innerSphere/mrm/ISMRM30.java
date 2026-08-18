@@ -36,6 +36,7 @@ package megamek.common.weapons.missiles.innerSphere.mrm;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -77,7 +78,7 @@ public class ISMRM30 extends MRMWeapon {
         this.shortAV = 18;
         this.medAV = 18;
         this.maxRange = RANGE_MED;
-        rulesRefs = "229, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 229);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
 import megamek.common.enums.AvailabilityValue;
@@ -340,7 +341,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 57;
         bomb.cost = 9000;
-        bomb.rulesRefs = "169, TO:AUE";
+        bomb.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 169);
         bomb.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -372,7 +373,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 114;
         bomb.cost = 15000;
-        bomb.rulesRefs = "170, TO:AUE";
+        bomb.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 170);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         bomb.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
@@ -403,7 +404,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 75;
         bomb.cost = 20000;
-        bomb.rulesRefs = "170, TO:AUE";
+        bomb.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 170);
         bomb.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -438,7 +439,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 30;
         bomb.cost = 3000;
-        bomb.rulesRefs = "171, TO:AUE";
+        bomb.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 171);
         bomb.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -473,7 +474,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 34;
         bomb.cost = 2000;
-        bomb.rulesRefs = "171, TO:AUE";
+        bomb.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 171);
         bomb.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -505,7 +506,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 13;
         bomb.cost = 8000;
-        bomb.rulesRefs = "246, TW";
+        bomb.rulesRefs = rulesRefs(SourceBookCode.TW, 246);
         bomb.techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(false).setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
@@ -533,7 +534,7 @@ public class BombType extends AmmoType {
         bomb.bv = 37;
         bomb.cost = 18000;
         bomb.tonnage = .5;
-        bomb.rulesRefs = "159, IO:AE";
+        bomb.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 159);
         bomb.techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(false).setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
@@ -561,7 +562,7 @@ public class BombType extends AmmoType {
         bomb.bv = 63;
         bomb.cost = 35000;
         bomb.tonnage = 1.0;
-        bomb.rulesRefs = "159, IO:AE";
+        bomb.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 159);
         bomb.techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(false).setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
@@ -587,7 +588,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 12;
         bomb.cost = 5000;
-        bomb.rulesRefs = "246, TW";
+        bomb.rulesRefs = rulesRefs(SourceBookCode.TW, 246);
         bomb.techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(false).setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
@@ -613,7 +614,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 16;
         bomb.cost = 6000;
-        bomb.rulesRefs = "171, TO:AUE";
+        bomb.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 171);
         bomb.techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(false).setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
@@ -642,7 +643,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 20;
         bomb.cost = 10000;
-        bomb.rulesRefs = "247, TW";
+        bomb.rulesRefs = rulesRefs(SourceBookCode.TW, 247);
         // Tech Progression adjusted to match future errata. While called Laser-Guided this is aligned
         // with TAG for progression once TAG is common.
         bomb.techAdvancement.setTechBase(TechBase.ALL)
@@ -675,7 +676,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 17;
         bomb.cost = 6000;
-        bomb.rulesRefs = "171, TO:AUE";
+        bomb.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 171);
         bomb.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -705,7 +706,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 18;
         bomb.cost = 15000;
-        bomb.rulesRefs = "229, TM";
+        bomb.rulesRefs = rulesRefs(SourceBookCode.TM, 229);
         bomb.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3055, 3064, 3067)
               .setTechRating(TechRating.B)
@@ -728,7 +729,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 15;
         bomb.cost = 15000;
-        bomb.rulesRefs = "67, IO:AE";
+        bomb.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 67);
         bomb.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -761,7 +762,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 50000;
-        bomb.rulesRefs = "238, TM";
+        bomb.rulesRefs = rulesRefs(SourceBookCode.TM, 238);
         bomb.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -794,7 +795,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 112;
         bomb.cost = 12000;
-        bomb.rulesRefs = "172, TO:AUE";
+        bomb.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 172);
         bomb.techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(false).setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
@@ -823,7 +824,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 10;
         bomb.cost = 7000;
-        bomb.rulesRefs = "172, TO:AUE";
+        bomb.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 172);
         bomb.techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(false).setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)

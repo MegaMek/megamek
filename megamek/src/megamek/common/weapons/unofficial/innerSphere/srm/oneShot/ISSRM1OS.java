@@ -36,6 +36,7 @@ package megamek.common.weapons.unofficial.innerSphere.srm.oneShot;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -60,7 +61,8 @@ public class ISSRM1OS extends SRMWeapon {
         extremeRange = 12;
         bv = 3;
         flags = flags.or(F_NO_FIRES).or(F_ONE_SHOT);
-        rulesRefs = "Unofficial";
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
+;
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)

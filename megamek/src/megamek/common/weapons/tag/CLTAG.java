@@ -36,6 +36,7 @@ package megamek.common.weapons.tag;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -67,7 +68,7 @@ public class CLTAG extends TAGWeapon {
         extremeRange = 18;
         bv = 0;
         cost = 50000;
-        rulesRefs = "238, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 238);
         flags = flags.or(F_AERO_WEAPON).or(F_PROTO_WEAPON).andNot(F_BA_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

@@ -36,6 +36,7 @@ package megamek.common.weapons.srms.clan.torpedo;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -74,7 +75,7 @@ public class CLSRT4 extends SRTWeapon {
         bv = 39;
         flags = flags.or(F_NO_FIRES);
         cost = 60000;
-        rulesRefs = "230, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 230);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

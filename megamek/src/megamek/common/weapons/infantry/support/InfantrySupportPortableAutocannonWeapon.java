@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -78,7 +79,7 @@ public class InfantrySupportPortableAutocannonWeapon extends InfantryWeapon {
         ammoCost = 150;
         shots = 200;
         bursts = 8;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(2100, 2255, 2300, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)

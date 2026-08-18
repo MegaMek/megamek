@@ -37,6 +37,7 @@ package megamek.common.weapons.infantry.laser.rifle;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -65,7 +66,7 @@ public class InfantryLaserRifleDarkLightCLLight extends InfantryWeapon {
         shots = 10;
         bursts = 1;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        rulesRefs = "Shrapnel #9";
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_9);
 
         techAdvancement
               .setTechBase(TechBase.IS)

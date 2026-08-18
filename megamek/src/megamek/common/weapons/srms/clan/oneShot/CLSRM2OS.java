@@ -36,6 +36,7 @@ package megamek.common.weapons.srms.clan.oneShot;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -76,7 +77,7 @@ public class CLSRM2OS extends SRMWeapon {
         cost = 5000;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        rulesRefs = "228, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 228);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

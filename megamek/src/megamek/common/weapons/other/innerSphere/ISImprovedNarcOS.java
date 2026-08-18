@@ -36,6 +36,7 @@ package megamek.common.weapons.other.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -69,7 +70,7 @@ public class ISImprovedNarcOS extends NarcWeapon {
         bv = 15;
         flags = flags.or(F_ONE_SHOT).andNot(F_PROTO_WEAPON);
         cost = 250000;
-        rulesRefs = "232, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 232);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

@@ -36,6 +36,7 @@ package megamek.common.weapons.defensivePods;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -55,7 +56,7 @@ public class ISMPod extends MPodWeapon {
         setInternalName("ISMPod");
         addLookupName("ISM-Pod");
 
-        rulesRefs = "143, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 143);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

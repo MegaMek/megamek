@@ -36,6 +36,7 @@ package megamek.common.weapons.lrms.clan.torpedo;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -67,7 +68,7 @@ public class CLLRT15 extends LRTWeapon {
         this.criticalSlots = 2;
         this.bv = 164;
         this.cost = 175000;
-        rulesRefs = "230, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 230);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

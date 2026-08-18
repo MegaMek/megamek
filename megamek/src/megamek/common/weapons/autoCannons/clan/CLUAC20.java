@@ -36,6 +36,7 @@ package megamek.common.weapons.autoCannons.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -71,7 +72,7 @@ public class CLUAC20 extends UACWeapon {
         medAV = 30;
         maxRange = RANGE_MED;
         explosionDamage = damage;
-        rulesRefs = "208, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 208);
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

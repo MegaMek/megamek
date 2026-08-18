@@ -36,6 +36,7 @@ package megamek.common.weapons.srms.innerSphere.torpedo;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -67,7 +68,7 @@ public class ISSRT2 extends SRTWeapon {
         bv = 21;
         flags = flags.or(F_NO_FIRES);
         cost = 10000;
-        rulesRefs = "230, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 230);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

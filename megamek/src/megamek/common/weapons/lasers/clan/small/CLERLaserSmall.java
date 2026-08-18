@@ -36,6 +36,7 @@ package megamek.common.weapons.lasers.clan.small;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -73,7 +74,7 @@ public class CLERLaserSmall extends LaserWeapon {
         cost = 11250;
         shortAV = 5;
         maxRange = RANGE_SHORT;
-        rulesRefs = "226, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 226);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

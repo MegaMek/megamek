@@ -36,6 +36,7 @@ package megamek.common.weapons.lasers.clan.large;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -77,7 +78,7 @@ public class CLERPulseLaserLarge extends PulseLaserWeapon {
         criticalSlots = 3;
         bv = 272;
         cost = 400000;
-        rulesRefs = "132, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 132);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)

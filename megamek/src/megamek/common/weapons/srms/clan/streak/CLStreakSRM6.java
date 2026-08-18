@@ -35,6 +35,7 @@ package megamek.common.weapons.srms.clan.streak;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -74,7 +75,7 @@ public class CLStreakSRM6 extends StreakSRMWeapon {
         this.shortAV = 12;
         this.medAV = 12;
         this.maxRange = RANGE_MED;
-        rulesRefs = "230, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 230);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

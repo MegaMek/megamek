@@ -36,6 +36,7 @@ package megamek.common.weapons.other.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -65,7 +66,7 @@ public class ISFluidGun extends FluidGunWeapon {
         svSlots = 1;
         tonnage = 2;
         cost = 35000;
-        rulesRefs = "125, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 125);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         // December 2021 - CGL requested we move this to Advanced.
         techAdvancement.setTechBase(TechBase.IS)

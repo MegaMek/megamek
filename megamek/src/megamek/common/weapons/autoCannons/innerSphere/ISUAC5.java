@@ -36,6 +36,7 @@ package megamek.common.weapons.autoCannons.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -72,7 +73,7 @@ public class ISUAC5 extends UACWeapon {
         medAV = 7;
         longAV = 7;
         maxRange = RANGE_LONG;
-        rulesRefs = "208, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 208);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

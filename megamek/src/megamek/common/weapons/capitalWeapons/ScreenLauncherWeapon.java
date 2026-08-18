@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -82,7 +83,7 @@ public class ScreenLauncherWeapon extends AmmoWeapon {
         // See: https://battletech.com/forums/index.php?topic=77239
         this.capital = false;
         this.atClass = CLASS_SCREEN;
-        rulesRefs = "237, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 237);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

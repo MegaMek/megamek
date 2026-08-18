@@ -36,6 +36,7 @@ package megamek.common.weapons.autoCannons.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -72,7 +73,7 @@ public class CLLB20XAC extends LBXACWeapon {
         shortAV = getBaseAeroDamage();
         medAV = shortAV;
         maxRange = RANGE_MED;
-        rulesRefs = "207, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 207);
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

@@ -36,6 +36,7 @@ package megamek.common.weapons.unofficial.innerSphere.ac;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -85,7 +86,8 @@ public class ISGAC8 extends ACWeapon {
         ammoType = AmmoType.AmmoTypeEnum.AC;
         atClass = CLASS_AC;
         // Going to Assume these are like IS RACs
-        rulesRefs = "Unofficial";
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
+;
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)

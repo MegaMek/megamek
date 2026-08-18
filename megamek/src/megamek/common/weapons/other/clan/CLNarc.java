@@ -36,6 +36,7 @@ package megamek.common.weapons.other.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -66,7 +67,7 @@ public class CLNarc extends NarcWeapon {
         this.criticalSlots = 1;
         this.bv = 30;
         this.cost = 100000;
-        rulesRefs = "232, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 232);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

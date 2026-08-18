@@ -36,6 +36,7 @@ package megamek.common.weapons.capitalWeapons;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -77,7 +78,7 @@ public class CapMissTeleKillerWhaleWeapon extends CapitalMissileWeapon {
         this.extAV = 4;
         this.missileArmor = 40;
         this.maxRange = RANGE_EXT;
-        rulesRefs = "210, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 210);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

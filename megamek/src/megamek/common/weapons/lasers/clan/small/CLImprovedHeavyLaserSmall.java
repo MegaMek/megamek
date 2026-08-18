@@ -36,6 +36,7 @@ package megamek.common.weapons.lasers.clan.small;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -77,7 +78,7 @@ public class CLImprovedHeavyLaserSmall extends ImprovedHeavyLaserWeapon {
         maxRange = RANGE_SHORT;
         explosionDamage = 3;
         explosive = true;
-        rulesRefs = "133, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 133);
         flags = flags.or(S_IMPROVED);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)

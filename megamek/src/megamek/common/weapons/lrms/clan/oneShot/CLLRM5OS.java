@@ -36,6 +36,7 @@ package megamek.common.weapons.lrms.clan.oneShot;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -68,7 +69,7 @@ public class CLLRM5OS extends LRMWeapon {
         medAV = 3;
         longAV = 3;
         maxRange = RANGE_LONG;
-        rulesRefs = "228, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 228);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

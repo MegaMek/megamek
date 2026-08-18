@@ -36,6 +36,7 @@ package megamek.common.weapons.lrms.clan.streak.oneShot;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -81,7 +82,7 @@ public class CLStreakLRM20OS extends StreakLRMWeapon {
         maxRange = RANGE_LONG;
         // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         //But LRM Tech Base and Avail Ratings.
-        rulesRefs = "139, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 139);
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3057, 3079, 3088).setClanApproximate(false, true, false)

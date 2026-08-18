@@ -36,6 +36,7 @@ package megamek.common.weapons.lasers.innerSphere.large;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
@@ -81,7 +82,7 @@ public class ISVariableSpeedPulseLaserLarge extends VariableSpeedPulseLaserWeapo
         shortAV = 10;
         medAV = 7;
         maxRange = RANGE_MED;
-        rulesRefs = "133, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 133);
         //Nov 22 - CGL requested we move to Standard for Simple Tech Level
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)

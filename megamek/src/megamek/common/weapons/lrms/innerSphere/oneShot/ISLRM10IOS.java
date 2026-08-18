@@ -36,6 +36,7 @@ package megamek.common.weapons.lrms.innerSphere.oneShot;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -68,7 +69,7 @@ public class ISLRM10IOS extends LRMWeapon {
         medAV = 6;
         longAV = 6;
         maxRange = RANGE_LONG;
-        rulesRefs = "139, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 139);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

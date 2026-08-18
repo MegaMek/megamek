@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -77,7 +78,7 @@ public class InfantrySupportOneShotMRMWeapon extends InfantryWeapon {
         ammoWeight = 0.005;
         ammoCost = 21;
         shots = 1;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3063, 3065, 3075, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.DC)
               .setProductionFactions(Faction.DC).setTechRating(TechRating.D)

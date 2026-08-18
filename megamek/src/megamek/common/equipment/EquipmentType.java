@@ -37,7 +37,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import megamek.common.RangeType;
+import megamek.common.RulesRef;
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.TechAdvancement;
 import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.TechConstants;
@@ -208,10 +210,9 @@ public class EquipmentType implements ITechnology {
     protected static Hashtable<String, EquipmentType> lookupHash;
     private static Map<String, Set<EquipmentType>> lookupCollisions = new TreeMap<>();
 
-    /**
-     * Keeps track of page numbers for rules references.
-     */
-    protected String rulesRefs = "";
+    /** Structured sourcebook and page references for this equipment type. */
+    protected List<RulesRef> rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
+;
 
     /** Creates new EquipmentType */
     public EquipmentType() {
@@ -262,8 +263,26 @@ public class EquipmentType implements ITechnology {
         return internalName;
     }
 
-    public String getRulesRefs() {
+    public List<RulesRef> getRulesRefs() {
         return rulesRefs;
+    }
+
+    /**
+     * Creates an immutable rule-reference list for one sourcebook. Passing no pages creates one reference with a null
+     * page; passing multiple pages creates one reference per page.
+     */
+    protected static List<RulesRef> rulesRefs(SourceBookCode book, Integer... pages) {
+        Objects.requireNonNull(book, "book");
+        Objects.requireNonNull(pages, "pages");
+        if (pages.length == 0) {
+            return List.of(new RulesRef(book, null));
+        }
+        return Arrays.stream(pages).map(page -> new RulesRef(book, page)).toList();
+    }
+
+    /** Creates an immutable rule-reference list, including an empty list when no references are supplied. */
+    protected static List<RulesRef> rulesRefs(RulesRef... references) {
+        return List.of(references);
     }
 
     public Map<Integer, Integer> getTechLevels() {

@@ -36,6 +36,7 @@ package megamek.common.weapons.autoCannons.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -74,7 +75,7 @@ public class ISLB5XAC extends LBXACWeapon {
         medAV = shortAV;
         longAV = shortAV;
         maxRange = RANGE_LONG;
-        rulesRefs = "207, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 207);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

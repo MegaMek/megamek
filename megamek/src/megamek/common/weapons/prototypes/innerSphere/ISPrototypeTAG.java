@@ -36,6 +36,7 @@ package megamek.common.weapons.prototypes.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -69,7 +70,7 @@ public class ISPrototypeTAG extends TAGWeapon {
         extremeRange = 18;
         bv = 0;
         cost = 150000;
-        rulesRefs = "67, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 67);
         flags = flags.or(F_PROTOTYPE);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)

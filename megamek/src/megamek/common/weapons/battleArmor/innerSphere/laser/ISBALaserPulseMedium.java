@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.innerSphere.laser;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -78,7 +79,7 @@ public class ISBALaserPulseMedium extends PulseLaserWeapon {
               .andNot(F_PROTO_WEAPON);
         shortAV = 6;
         maxRange = RANGE_SHORT;
-        rulesRefs = "258, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 258);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

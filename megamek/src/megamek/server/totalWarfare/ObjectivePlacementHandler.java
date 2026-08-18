@@ -33,6 +33,7 @@
 package megamek.server.totalWarfare;
 
 import java.util.List;
+import java.util.Map;
 
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
@@ -93,6 +94,39 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
         }
         if (anyPlaced) {
             gameManager.sendGroundObjectUpdate();
+        }
+    }
+
+    /**
+     * Returns every objective marker on the board to its owner's ground-objects-to-place list, restoring the board
+     * position as the marker's lobby position. Called when the game is reset back to the lobby, before the game
+     * (and with it the ground object map) is cleared - without this, returning to the lobby would silently lose all
+     * designated victory hexes. The reset then sends player updates to every client, so the restored designations
+     * show up in everyone's lobby board preview again. A marker whose owner no longer exists is dropped with a
+     * logged warning.
+     */
+    void returnObjectivesToLobby() {
+        int returnedCount = 0;
+        for (Map.Entry<Coords, List<ICarryable>> hexObjects : getGame().getGroundObjects().entrySet()) {
+            for (ICarryable groundObject : hexObjects.getValue()) {
+                if (!(groundObject instanceof ObjectiveMarker marker)) {
+                    continue;
+                }
+                Player owner = getGame().getPlayer(marker.getOwnerId());
+                if (owner == null) {
+                    LOGGER.warn("[Objective] {} at {} has no owner (player ID {}) - dropped on the reset "
+                          + "to the lobby", marker.generalName(), hexObjects.getKey(), marker.getOwnerId());
+                    continue;
+                }
+                marker.setLobbyPosition(hexObjects.getKey());
+                owner.getGroundObjectsToPlace().add(marker);
+                returnedCount++;
+                LOGGER.debug("[Objective] Returned {} at {} to the lobby designations of {}",
+                      marker.generalName(), hexObjects.getKey(), owner);
+            }
+        }
+        if (returnedCount > 0) {
+            LOGGER.info("[Objective] Returned {} objective marker(s) to the lobby on the game reset", returnedCount);
         }
     }
 

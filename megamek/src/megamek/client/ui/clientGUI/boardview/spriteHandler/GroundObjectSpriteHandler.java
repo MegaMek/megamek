@@ -47,8 +47,11 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
+import megamek.logging.MMLogger;
 
 public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
+
+    private static final MMLogger LOGGER = MMLogger.create(GroundObjectSpriteHandler.class);
 
     // Cache the ground object list as it does not change very often
     private Map<Coords, List<ICarryable>> currentGroundObjectList;
@@ -65,16 +68,22 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
             return;
         }
         currentGroundObjectList = objectCoordList;
+        int flagCount = 0;
         if (currentGroundObjectList != null) {
             BoardView boardView = (BoardView) clientGUI.boardViews().getFirst();
             for (Coords coords : currentGroundObjectList.keySet()) {
                 for (ICarryable groundObject : currentGroundObjectList.get(coords)) {
+                    if (groundObject instanceof ObjectiveMarker) {
+                        flagCount++;
+                    }
                     currentSprites.add(spriteFor(groundObject, coords, boardView));
                 }
             }
         }
 
         clientGUI.boardViews().getFirst().addSprites(currentSprites);
+        LOGGER.debug("[VictoryHex] Board shows {} ground object sprite(s), {} of them objective flag(s)",
+              currentSprites.size(), flagCount);
     }
 
     /**

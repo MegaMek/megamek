@@ -156,6 +156,51 @@ class ObjectivePlacementHandlerTest {
         verify(gameManager, never()).sendGroundObjectUpdate();
     }
 
+    @Test
+    void testResetReturnsPlacedMarkersToTheirOwners() {
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        when(game.getPlayer(0)).thenReturn(alice);
+        when(game.getPlayer(1)).thenReturn(bob);
+        ObjectiveMarker aliceMarker = markerFor(alice, null);
+        ObjectiveMarker bobMarker = markerFor(bob, null);
+        groundMap.put(new Coords(2, 2), new ArrayList<>(List.of(aliceMarker)));
+        groundMap.put(new Coords(7, 7), new ArrayList<>(List.of(bobMarker)));
+
+        handler.returnObjectivesToLobby();
+
+        assertTrue(alice.getGroundObjectsToPlace().contains(aliceMarker));
+        assertEquals(new Coords(2, 2), aliceMarker.getLobbyPosition());
+        assertTrue(bob.getGroundObjectsToPlace().contains(bobMarker));
+        assertEquals(new Coords(7, 7), bobMarker.getLobbyPosition());
+    }
+
+    @Test
+    void testResetDropsMarkerOfMissingOwner() {
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        ObjectiveMarker orphanedMarker = new ObjectiveMarker();
+        orphanedMarker.setName("Objective");
+        orphanedMarker.setOwnerId(99);
+        groundMap.put(new Coords(3, 3), new ArrayList<>(List.of(orphanedMarker)));
+
+        handler.returnObjectivesToLobby();
+
+        assertTrue(alice.getGroundObjectsToPlace().isEmpty());
+        assertTrue(bob.getGroundObjectsToPlace().isEmpty());
+    }
+
+    @Test
+    void testResetLeavesPlainCarryablesOnTheGround() {
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        when(game.getPlayer(0)).thenReturn(alice);
+        ICarryable briefcase = mock(ICarryable.class);
+        groundMap.put(new Coords(5, 5), new ArrayList<>(List.of(briefcase)));
+
+        handler.returnObjectivesToLobby();
+
+        assertTrue(alice.getGroundObjectsToPlace().isEmpty());
+        assertTrue(bob.getGroundObjectsToPlace().isEmpty());
+    }
+
     private ObjectiveMarker markerFor(Player owner, Coords lobbyPosition) {
         ObjectiveMarker marker = new ObjectiveMarker();
         marker.setName("Objective");
@@ -166,6 +211,7 @@ class ObjectivePlacementHandlerTest {
 
     private Map<Coords, List<ICarryable>> installRealGroundObjectMap() {
         Map<Coords, List<ICarryable>> groundMap = new HashMap<>();
+        when(game.getGroundObjects()).thenReturn(groundMap);
         when(game.getGroundObjects(any(Coords.class))).thenAnswer(invocation ->
               groundMap.getOrDefault(invocation.getArgument(0), new ArrayList<>()));
         doAnswer(invocation -> {

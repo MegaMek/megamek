@@ -1550,6 +1550,7 @@ public class ChatLounge extends AbstractPhaseDisplay
      */
     private void refreshPreviewFlagSprites() {
         if (previewBV == null) {
+            // the board preview window has not been built yet - it draws the flags when it opens
             return;
         }
         previewBV.removeSprites(previewFlagSprites);
@@ -1563,6 +1564,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             }
         }
         previewBV.addSprites(previewFlagSprites);
+        LOGGER.debug("[VictoryHex] Board preview shows {} victory hex flag(s)", previewFlagSprites.size());
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -87,7 +87,8 @@ class ManeuverChoiceDialogTest {
     void testAllManeuversHaveTooltips() {
         // Test that all maneuvers have valid tooltips
         for (int type = 0; type < ManeuverType.MAN_SIZE; type++) {
-            String tooltip = ManeuverType.getManeuverTooltip(type, true, TEST_VELOCITY, TEST_ALTITUDE, false);
+            String tooltip = ManeuverType.getManeuverTooltip(type, true, TEST_VELOCITY, TEST_ALTITUDE,
+                  TEST_CEILING, false);
             assertNotNull(tooltip, ManeuverType.getTypeName(type) + " tooltip should not be null");
             assertFalse(tooltip.isEmpty(), ManeuverType.getTypeName(type) + " tooltip should not be empty");
             assertTrue(tooltip.contains("<HTML>"),
@@ -114,6 +115,8 @@ class ManeuverChoiceDialogTest {
               "Current value format should exist");
         assertResourceExists("ManeuverChoiceDialog.currentValues",
               "Current values (plural) format should exist");
+        assertResourceExists("ManeuverChoiceDialog.currentAltitude",
+              "Current altitude format should exist");
         assertResourceExists("ManeuverChoiceDialog.notVSTOL",
               "Not VSTOL message should exist");
     }
@@ -273,6 +276,7 @@ class ManeuverChoiceDialogTest {
               true,
               TEST_VELOCITY,
               TEST_ALTITUDE,
+              TEST_CEILING,
               false);
         assertTrue(loopTooltip.contains("Thrust Cost") || loopTooltip.contains("thrust"),
               "Loop tooltip should contain thrust cost information");
@@ -282,6 +286,7 @@ class ManeuverChoiceDialogTest {
               true,
               TEST_VELOCITY,
               TEST_ALTITUDE,
+              TEST_CEILING,
               false);
         assertTrue(hammerheadTooltip5.contains("5"),
               "Hammerhead tooltip at velocity 5 should show cost of 5");
@@ -290,6 +295,7 @@ class ManeuverChoiceDialogTest {
               true,
               10,
               TEST_ALTITUDE,
+              TEST_CEILING,
               false);
         assertTrue(hammerheadTooltip10.contains("10"),
               "Hammerhead tooltip at velocity 10 should show cost of 10");
@@ -299,11 +305,13 @@ class ManeuverChoiceDialogTest {
               true,
               TEST_VELOCITY,
               TEST_ALTITUDE,
+              TEST_CEILING,
               false);
         assertTrue(viffTooltip5.contains("7"),
               "VIFF tooltip at velocity 5 should show cost of 7 (velocity + 2)");
 
-        String viffTooltip10 = ManeuverType.getManeuverTooltip(ManeuverType.MAN_VIFF, true, 10, TEST_ALTITUDE, false);
+        String viffTooltip10 = ManeuverType.getManeuverTooltip(ManeuverType.MAN_VIFF, true, 10, TEST_ALTITUDE,
+              TEST_CEILING, false);
         assertTrue(viffTooltip10.contains("12"),
               "VIFF tooltip at velocity 10 should show cost of 12 (velocity + 2)");
     }
@@ -318,6 +326,7 @@ class ManeuverChoiceDialogTest {
               true,
               TEST_VELOCITY,
               TEST_ALTITUDE,
+              TEST_CEILING,
               false);
         assertTrue(loopTooltip.contains("Control") || loopTooltip.contains("Mod"),
               "Loop tooltip should contain control modifier information");
@@ -327,6 +336,7 @@ class ManeuverChoiceDialogTest {
               true,
               TEST_VELOCITY,
               TEST_ALTITUDE,
+              TEST_CEILING,
               false);
         assertTrue(sideSlipNonVSTOL.contains("+0") || sideSlipNonVSTOL.contains("0"),
               "Side Slip tooltip for non-VSTOL should show +0 modifier");
@@ -335,6 +345,7 @@ class ManeuverChoiceDialogTest {
               true,
               TEST_VELOCITY,
               TEST_ALTITUDE,
+              TEST_CEILING,
               true);
         assertTrue(sideSlipVSTOL.contains("-1"),
               "Side Slip tooltip for VSTOL should show -1 modifier");
@@ -344,6 +355,7 @@ class ManeuverChoiceDialogTest {
               true,
               TEST_VELOCITY,
               TEST_ALTITUDE,
+              TEST_CEILING,
               false);
         assertTrue(hammerheadTooltip.contains("3") || hammerheadTooltip.contains("+3"),
               "Hammerhead tooltip should show +3 control modifier");
@@ -352,9 +364,26 @@ class ManeuverChoiceDialogTest {
               true,
               TEST_VELOCITY,
               TEST_ALTITUDE,
+              TEST_CEILING,
               false);
         assertTrue(halfRollTooltip.contains("-1"),
               "Half Roll tooltip should show -1 control modifier");
+    }
+
+    /**
+     * Test that an unavailable Split-S tooltip explains itself by showing the current altitude (issue #8699).
+     */
+    @Test
+    void testSplitSTooltipShowsAltitudeWhenUnavailable() {
+        // Altitude 2 over a ground map (ceiling 0): a Split-S would end in the ground
+        String splitSTooltip = ManeuverType.getManeuverTooltip(ManeuverType.MAN_SPLIT_S,
+              false,
+              TEST_VELOCITY,
+              2,
+              0,
+              false);
+        assertTrue(splitSTooltip.contains("Altitude: 2"),
+              "Unavailable Split-S tooltip should show the current altitude");
     }
 
     /**

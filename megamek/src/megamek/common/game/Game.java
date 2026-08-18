@@ -249,6 +249,17 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private Map<String, AIType> botTypes = new HashMap<>();
 
     /**
+     * For each bot player (keyed by player ID), the set of player IDs that bot currently considers dishonored. Reported
+     * by Princess bots through {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED} and relayed to all
+     * clients, so a human client can warn before an action that would newly dishonor them without guessing at a remote
+     * bot's honor state. Transient, ephemeral battle state; not part of savegames.
+     *
+     * <p>Concurrent because it is written on the packet-handling thread and read on the EDT during turn commit. The
+     * inner sets are always replaced wholesale (never mutated in place), so a reader safely sees a consistent set.</p>
+     */
+    private transient Map<Integer, Set<Integer>> dishonoredPlayersByBot = new ConcurrentHashMap<>();
+
+    /**
      * Constructor
      */
     public Game() {
@@ -3908,6 +3919,56 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     public void setBotSettings(Map<String, BehaviorSettings> botSettings) {
         this.botSettings = botSettings;
+    }
+
+    /**
+     * Records the set of players the given bot player currently considers dishonored, as reported through
+     * {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED}.
+     *
+     * @param botPlayerId         the reporting bot's player ID
+     * @param dishonoredPlayerIds the player IDs that bot considers dishonored
+     */
+    public void setDishonoredPlayers(int botPlayerId, Collection<Integer> dishonoredPlayerIds) {
+        ensureDishonoredPlayers().put(botPlayerId, new HashSet<>(dishonoredPlayerIds));
+    }
+
+    /**
+     * Adds a single player to the set the given bot player considers dishonored. Used to optimistically record a
+     * dishonoring action the moment the local player commits it, so the same turn's later actions are not re-warned
+     * before the bot's authoritative {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED} report arrives
+     * (that report then replaces this set wholesale). Replaces the inner set rather than mutating it in place, keeping
+     * the wholesale-replacement invariant that lets {@link #isPlayerDishonoredBy} read without locking.
+     *
+     * @param botPlayerId the bot player that now holds a grudge
+     * @param playerId    the player it now considers dishonored
+     */
+    public void addDishonoredPlayer(int botPlayerId, int playerId) {
+        Map<Integer, Set<Integer>> byBot = ensureDishonoredPlayers();
+        Set<Integer> current = byBot.get(botPlayerId);
+        Set<Integer> updated = (current == null) ? new HashSet<>() : new HashSet<>(current);
+        updated.add(playerId);
+        byBot.put(botPlayerId, updated);
+    }
+
+    /**
+     * @param botPlayerId the bot player whose honor opinion is being queried
+     * @param playerId    the player who may be dishonored
+     *
+     * @return true if the bot with player ID {@code botPlayerId} currently considers {@code playerId} dishonored, as
+     *       last reported via {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED}. False if that bot has
+     *       not reported (e.g. it is not a Princess bot, or the report has not arrived yet).
+     */
+    public boolean isPlayerDishonoredBy(int botPlayerId, int playerId) {
+        Set<Integer> dishonored = ensureDishonoredPlayers().get(botPlayerId);
+        return (dishonored != null) && dishonored.contains(playerId);
+    }
+
+    private Map<Integer, Set<Integer>> ensureDishonoredPlayers() {
+        if (dishonoredPlayersByBot == null) {
+            // Transient field is null after deserialization of a savegame.
+            dishonoredPlayersByBot = new ConcurrentHashMap<>();
+        }
+        return dishonoredPlayersByBot;
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -62,6 +62,7 @@ public class BloodFeudCommand implements ChatCommand {
         Player player = princess.getGame().getPlayer(playerArg.getValue());
         if (player != null) {
             princess.getHonorUtil().setEnemyDishonored(playerArg.getValue());
+            princess.sendDishonoredData();
             princess.sendChat(Messages.getString("Princess.command.bloodFeud.playerAdded", playerArg.getValue()));
         } else {
             princess.sendChat(Messages.getString("Princess.command.bloodFeud.playerNotFound", playerArg.getValue()));

@@ -1008,6 +1008,15 @@ public class TWGameManager extends AbstractGameManager {
                         }
                     }
                     break;
+                case PRINCESS_DISHONORED:
+                    // Only bots report dishonor, and only a list of player IDs is worth relaying; anything else is a
+                    // client sending a packet it has no business sending, so drop it rather than pass it on.
+                    if ((player != null) && player.isBot() && (packet.getObject(0) instanceof List<?>)) {
+                        // Relay this bot's dishonored-players list to all clients, tagged with the bot's player ID, so
+                        // clients can warn a human before an action that would newly dishonor them.
+                        send(new Packet(PacketCommand.PRINCESS_DISHONORED, player.getId(), packet.getObject(0)));
+                    }
+                    break;
                 case REROLL_INITIATIVE:
                     receiveInitiativeRerollRequest(packet, connId);
                     break;

@@ -69,9 +69,13 @@ class UnitTypeNameParsingTest {
      */
     @Test
     void displayableNameIsNotAlwaysTheInternalName() {
-        assertNotEquals(UnitType.getTypeName(UnitType.DROPSHIP),
-              UnitType.getTypeDisplayableName(UnitType.DROPSHIP));
-        assertNotEquals(UnitType.getTypeName(UnitType.BATTLE_ARMOR),
-              UnitType.getTypeDisplayableName(UnitType.BATTLE_ARMOR));
+        int[] unitTypesShownUnderADifferentName = { UnitType.DROPSHIP, UnitType.BATTLE_ARMOR,
+                                                    UnitType.AEROSPACE_FIGHTER };
+        for (int unitType : unitTypesShownUnderADifferentName) {
+            assertNotEquals(UnitType.getTypeName(unitType), UnitType.getTypeDisplayableName(unitType),
+                  "Unit type " + unitType + " is one of the types whose displayed name differs from "
+                        + "the name in the ruleset files, which is why the force generator compares "
+                        + "unit type codes instead of names.");
+        }
     }
 }

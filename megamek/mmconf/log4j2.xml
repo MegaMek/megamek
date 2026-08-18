@@ -294,6 +294,20 @@
               <AppenderRef ref="MegaMekLog" />
           </Logger>
         -->
+        <!--
+          Victory hex designation diagnostics, silent by default (parent "megamek" logger at info). Lobby
+          lines are tagged [VictoryHex] (designating/removing a hex in the board preview, how many flags the
+          preview and the in-game board draw), server lines [Objective] (markers placed at game start,
+          off-board or stacked markers left unplaced, markers returned to the lobby on a game reset).
+          Uncomment to diagnose "why don't I see a flag" - the flag counts show whether the designation ever
+          arrived, separating a transport problem from a rendering one; leave commented for normal play.
+
+          <Logger name="megamek.feature.VictoryHex" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
         <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

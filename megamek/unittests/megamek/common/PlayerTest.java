@@ -33,8 +33,12 @@
 package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.client.ui.util.PlayerColour;
+import megamek.common.board.Coords;
+import megamek.common.equipment.ObjectiveMarker;
 import org.junit.jupiter.api.Test;
 
 class PlayerTest {
@@ -52,5 +56,24 @@ class PlayerTest {
         Player player = new Player(1, playerName);
         player.setColour(PlayerColour.FUCHSIA);
         assertEquals("<B><font color='f000f0'>" + playerName + "</font></B>", player.getColorForPlayer());
+    }
+
+    @Test
+    void testCopyCarriesGroundObjectsToPlace() {
+        // player updates sent to other clients are redacted copies - if the copy loses the ground objects,
+        // designated victory hexes never show up for anyone but their owner
+        Player player = new Player(0, "Test Player 3");
+        ObjectiveMarker marker = new ObjectiveMarker();
+        marker.setName("Objective 0512");
+        marker.setOwnerId(0);
+        marker.setLobbyPosition(new Coords(4, 11));
+        player.getGroundObjectsToPlace().add(marker);
+
+        Player copy = player.copy();
+
+        assertTrue(copy.getGroundObjectsToPlace().contains(marker));
+        // the copied list must be independent of the original
+        copy.getGroundObjectsToPlace().clear();
+        assertFalse(player.getGroundObjectsToPlace().isEmpty());
     }
 }

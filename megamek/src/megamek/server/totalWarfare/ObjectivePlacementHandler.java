@@ -53,7 +53,8 @@ import megamek.logging.MMLogger;
  */
 class ObjectivePlacementHandler extends AbstractTWRuleHandler {
 
-    private static final MMLogger LOGGER = MMLogger.create(ObjectivePlacementHandler.class);
+    /** Feature logger for the victory hex designation diagnostics; enabled via the log4j2.xml VictoryHex block. */
+    private static final MMLogger VICTORY_HEX_LOGGER = MMLogger.create("megamek.feature.VictoryHex");
 
     ObjectivePlacementHandler(TWGameManager gameManager) {
         super(gameManager);
@@ -74,12 +75,12 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
                 }
                 Coords position = marker.getLobbyPosition();
                 if ((board == null) || !board.contains(position)) {
-                    LOGGER.warn("[Objective] {} of {} has the off-board lobby position {} - not placed, it can "
+                    VICTORY_HEX_LOGGER.warn("[Objective] {} of {} has the off-board lobby position {} - not placed, it can "
                           + "be placed during the Deploy Minefields phase", marker.generalName(), player, position);
                     continue;
                 }
                 if (findOtherObjectiveAt(position, marker) != null) {
-                    LOGGER.warn("[Objective] {} of {} cannot be placed at {} - only one objective can be in a "
+                    VICTORY_HEX_LOGGER.warn("[Objective] {} of {} cannot be placed at {} - only one objective can be in a "
                           + "single hex; it can be placed during the Deploy Minefields phase",
                           marker.generalName(), player, position);
                     continue;
@@ -88,7 +89,7 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
                 marker.setLobbyPosition(null);
                 getGame().placeGroundObject(position, marker);
                 anyPlaced = true;
-                LOGGER.info("[Objective] Placed lobby objective {} (owner ID {}, radius {}) at {}",
+                VICTORY_HEX_LOGGER.info("[Objective] Placed lobby objective {} (owner ID {}, radius {}) at {}",
                       marker.generalName(), marker.getOwnerId(), marker.getControlRadius(), position);
             }
         }
@@ -114,19 +115,20 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
                 }
                 Player owner = getGame().getPlayer(marker.getOwnerId());
                 if (owner == null) {
-                    LOGGER.warn("[Objective] {} at {} has no owner (player ID {}) - dropped on the reset "
+                    VICTORY_HEX_LOGGER.warn("[Objective] {} at {} has no owner (player ID {}) - dropped on the reset "
                           + "to the lobby", marker.generalName(), hexObjects.getKey(), marker.getOwnerId());
                     continue;
                 }
                 marker.setLobbyPosition(hexObjects.getKey());
                 owner.getGroundObjectsToPlace().add(marker);
                 returnedCount++;
-                LOGGER.debug("[Objective] Returned {} at {} to the lobby designations of {}",
+                VICTORY_HEX_LOGGER.debug("[Objective] Returned {} at {} to the lobby designations of {}",
                       marker.generalName(), hexObjects.getKey(), owner);
             }
         }
         if (returnedCount > 0) {
-            LOGGER.info("[Objective] Returned {} objective marker(s) to the lobby on the game reset", returnedCount);
+            VICTORY_HEX_LOGGER.info("[Objective] Returned {} objective marker(s) to the lobby on the game reset",
+                  returnedCount);
         }
     }
 

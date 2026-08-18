@@ -51,7 +51,8 @@ import megamek.logging.MMLogger;
 
 public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
 
-    private static final MMLogger LOGGER = MMLogger.create(GroundObjectSpriteHandler.class);
+    /** Feature logger for the victory hex designation diagnostics; enabled via the log4j2.xml VictoryHex block. */
+    private static final MMLogger VICTORY_HEX_LOGGER = MMLogger.create("megamek.feature.VictoryHex");
 
     // Cache the ground object list as it does not change very often
     private Map<Coords, List<ICarryable>> currentGroundObjectList;
@@ -82,7 +83,7 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
         }
 
         clientGUI.boardViews().getFirst().addSprites(currentSprites);
-        LOGGER.debug("[VictoryHex] Board shows {} ground object sprite(s), {} of them objective flag(s)",
+        VICTORY_HEX_LOGGER.debug("[VictoryHex] Board shows {} ground object sprite(s), {} of them objective flag(s)",
               currentSprites.size(), flagCount);
     }
 

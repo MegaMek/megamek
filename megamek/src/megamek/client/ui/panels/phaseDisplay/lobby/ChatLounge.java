@@ -190,6 +190,9 @@ public class ChatLounge extends AbstractPhaseDisplay
       implements ListSelectionListener, IMapSettingsObserver, IPreferenceChangeListener {
     private static final MMLogger LOGGER = MMLogger.create(ChatLounge.class);
 
+    /** Feature logger for the victory hex designation diagnostics; enabled via the log4j2.xml VictoryHex block. */
+    private static final MMLogger VICTORY_HEX_LOGGER = MMLogger.create("megamek.feature.VictoryHex");
+
     @Serial
     private static final long serialVersionUID = 1454736776730903786L;
 
@@ -1508,19 +1511,19 @@ public class ChatLounge extends AbstractPhaseDisplay
         ObjectiveMarker existingMarker = findDesignatedMarkerAt(coords);
         if (existingMarker != null) {
             if (existingMarker.getOwnerId() != localPlayer.getId()) {
-                LOGGER.debug("[VictoryHex] {} is already designated by player ID {} - only they can remove it",
+                VICTORY_HEX_LOGGER.debug("[VictoryHex] {} is already designated by player ID {} - only they can remove it",
                       coords.getBoardNum(), existingMarker.getOwnerId());
                 return;
             }
             localPlayer.getGroundObjectsToPlace().remove(existingMarker);
-            LOGGER.info("[VictoryHex] Removed the victory hex designation at {}", coords.getBoardNum());
+            VICTORY_HEX_LOGGER.info("[VictoryHex] Removed the victory hex designation at {}", coords.getBoardNum());
         } else {
             ObjectiveMarker marker = new ObjectiveMarker();
             marker.setName(Messages.getString("ChatLounge.victoryHexName", coords.getBoardNum()));
             marker.setOwnerId(localPlayer.getId());
             marker.setLobbyPosition(coords);
             localPlayer.getGroundObjectsToPlace().add(marker);
-            LOGGER.info("[VictoryHex] Designated {} as a victory hex", coords.getBoardNum());
+            VICTORY_HEX_LOGGER.info("[VictoryHex] Designated {} as a victory hex", coords.getBoardNum());
         }
         client().sendPlayerInfo();
         refreshPreviewFlagSprites();
@@ -1564,7 +1567,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             }
         }
         previewBV.addSprites(previewFlagSprites);
-        LOGGER.debug("[VictoryHex] Board preview shows {} victory hex flag(s)", previewFlagSprites.size());
+        VICTORY_HEX_LOGGER.debug("[VictoryHex] Board preview shows {} victory hex flag(s)", previewFlagSprites.size());
     }
 
     /**

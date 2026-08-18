@@ -69,7 +69,7 @@ public class InfantrySupportWireGuidedMissileWeapon extends InfantryWeapon {
         ammoWeight = 0.022;
         ammoCost = 2500;
         shots = 1;
-        rulesRefs = "195, AToW-C";
+        rulesRefs = "195, AToW Companion";
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)

@@ -1913,7 +1913,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_JUMP_JET, F_MEK_EQUIPMENT, MiscTypeFlag.S_IMPROVED,
               MiscTypeFlag.S_PROTOTYPE);
         misc.bv = 0;
-        misc.rulesRefs = "17,XTRO:SW1";
+        misc.rulesRefs = "97,IO:AE";
         // Not included in IO Progression data based on original source.
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3020, DATE_NONE, DATE_NONE, 3069)
@@ -1930,13 +1930,14 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = "Primitive Prototype Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.PROTOTYPE_JUMP_JET);
-        misc.shortName = "Proto. Jump Jet";
+        misc.shortName = "Primitive Proto. Jump Jet";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 1;
         misc.tankSlots = 0;
         misc.flags = misc.flags.or(F_JUMP_JET, F_MEK_EQUIPMENT, MiscTypeFlag.S_PROTOTYPE);
         misc.bv = 0;
         misc.industrial = true;
+        misc.rulesRefs = "114, IO:AE";
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(2464, DATE_NONE, DATE_NONE, 2471, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
@@ -2160,7 +2161,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_CHAIN_DRAPE, configurationFlag, F_MEK_EQUIPMENT);
         // Arcade Ops: UrbanFest
-        misc.rulesRefs = "16, UF";
+        misc.rulesRefs = "16, PS:AO-UrbanFest";
         // No information about this is provided so we fill in essentially "blank" data
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL)
@@ -2240,7 +2241,7 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_PROTOMEK_EQUIPMENT, F_PARTIAL_WING);
 
-        misc.rulesRefs = "192, TO:AUE (4th-7th)";
+        misc.rulesRefs = "105, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
@@ -3339,14 +3340,14 @@ public class MiscType extends EquipmentType {
     public static MiscType createISSLDFInfArmor() {
         MiscType misc = new MiscType();
 
-        // Stats converted from ATOW
+        // Stats converted from AToW
         misc.name = "SLDF Infantry Kit";
         misc.setInternalName(misc.name);
         misc.addLookupName("SLDFKit");
         misc.damageDivisor = 2.0;
         misc.cost = 5000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "195, AToW-C";
+        misc.rulesRefs = "195, AToW Companion";
         // Kit never really goes extinct but should be very rare.
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.E)
@@ -3431,7 +3432,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 500;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "195, ATOW-C";
+        misc.rulesRefs = "195, AToW Companion";
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.E)
@@ -3452,7 +3453,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 750;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_ENCUMBERING);
-        misc.rulesRefs = "195, ATOW-C";
+        misc.rulesRefs = "195, AToW Companion";
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.E)
@@ -4705,11 +4706,11 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 0;
         misc.cost = 250000;
         misc.hittable = false;
-        // Available for BM, IM, BA, CV, SV, AF, CF per IO p.83
+        // Available for BM, IM, BA, CV, SV, AF, CF per IO:AE p.62
         misc.flags = misc.flags.or(F_MEK_EQUIPMENT, F_DNI_COCKPIT_MOD, F_BA_EQUIPMENT,
               F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT, F_FIGHTER_EQUIPMENT);
 
-        misc.rulesRefs = "83, IO";
+        misc.rulesRefs = "62, IO:AE";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -4724,7 +4725,7 @@ public class MiscType extends EquipmentType {
     }
 
     /**
-     * Creates the Damage Interrupt Circuit cockpit modification (IO p.39). When working, reduces internal explosion
+     * Creates the Damage Interrupt Circuit cockpit modification (IO:AE p.62). When working, reduces internal explosion
      * pilot damage from 2 to 1. Disabled by Life Support critical hit or any hit rolling "2" on the hit location table.
      * When disabled, adds +1 to all PSR until repaired.
      */
@@ -4735,11 +4736,11 @@ public class MiscType extends EquipmentType {
 
         misc.tonnage = 0;
         misc.criticalSlots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE; // 150 C-bills per pilot seat (IO p.39)
+        misc.cost = EquipmentType.COST_VARIABLE; // 150 C-bills per pilot seat (IO:AE p.62)
         misc.hittable = false;
         misc.flags = misc.flags.or(F_MEK_EQUIPMENT, F_DAMAGE_INTERRUPT_CIRCUIT);
 
-        misc.rulesRefs = "39, IO";
+        misc.rulesRefs = "62, IO:AE";
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5950,7 +5951,7 @@ public class MiscType extends EquipmentType {
               F_BA_EQUIPMENT,
               F_PROTOMEK_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "69, IO";
+        misc.rulesRefs = "69, IO:AE";
         // EI modes: On enables all EI benefits including aimed shots, Off disables EI completely. The running mode is
         // listed first so that it is the default: a newly mounted interface takes mode index 0, and per IO p.69 EI is
         // running unless the pilot deliberately shuts it down during the End Phase.
@@ -11874,7 +11875,7 @@ public class MiscType extends EquipmentType {
         misc.bv = BV_VARIABLE;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_RAM_PLATE, F_MEK_EQUIPMENT);
-        misc.rulesRefs = "?";
+        misc.rulesRefs = "30, OTP:HC";
 
         // Not yet published
         misc.techAdvancement.setTechBase(TechBase.ALL)

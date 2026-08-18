@@ -67,7 +67,7 @@ public class InfantryPistolVintageWeapon extends InfantryWeapon {
         ammoWeight = 0.00006;
         ammoCost = 12;
         shots = 9;
-        rulesRefs = "195, AToW-C";
+        rulesRefs = "195, AToW Companion";
         techAdvancement.setTechBase(TechBase.ALL)
               .setAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
               .setApproximate(false, false, false, false, false)

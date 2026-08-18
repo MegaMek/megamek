@@ -75,7 +75,7 @@ public class InfantryShotgunBuccaneerGelGunWeapon extends InfantryWeapon {
         ammoWeight = 0.00085;
         ammoCost = 20;
         shots = 15;
-        rulesRefs = "269, ATOW";
+        rulesRefs = "269, AToW";
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3030, 3035, 3057, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.FW)

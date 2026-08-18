@@ -74,7 +74,7 @@ public class InfantryPistolAutoPistolNissanWeapon extends InfantryWeapon {
         ammoWeight = 0.00016;
         ammoCost = 3;
         shots = 8;
-        rulesRefs = "176,HBHK";
+        rulesRefs = "176,HB:HK";
         techAdvancement.setTechBase(TechBase.IS);
         techAdvancement.setISAdvancement(2600, 2620, 2630);
         techAdvancement.setTechRating(TechRating.C);

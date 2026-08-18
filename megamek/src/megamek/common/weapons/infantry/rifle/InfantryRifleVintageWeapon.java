@@ -68,7 +68,7 @@ public class InfantryRifleVintageWeapon extends InfantryWeapon {
         ammoCost = 40;
         shots = 30;
         bursts = 3;
-        rulesRefs = "195, AToW-C";
+        rulesRefs = "195, AToW Companion";
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

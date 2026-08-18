@@ -65,7 +65,7 @@ public class InfantryArchaicBladeArchaicSwordWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.04;
         infantryRange = 0;
-        rulesRefs = "195, ATOW-C";
+        rulesRefs = "195, AToW Companion";
         techAdvancement.setTechBase(TechBase.ALL).setAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
               .setApproximate(false, false, false, false, false).setTechRating(TechRating.A)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.B);

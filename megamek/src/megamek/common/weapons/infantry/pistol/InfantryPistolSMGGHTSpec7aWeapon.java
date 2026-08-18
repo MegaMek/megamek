@@ -67,7 +67,7 @@ public class InfantryPistolSMGGHTSpec7aWeapon extends InfantryWeapon {
         ammoCost = 25;
         shots = 7;
         bursts = 1;
-        rulesRefs = "176,HBHK";
+        rulesRefs = "176,HB:HK";
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(DATE_NONE, DATE_NONE, 2950, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.DC)

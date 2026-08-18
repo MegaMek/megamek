@@ -74,7 +74,7 @@ public class InfantrySniperStalkerWeapon extends InfantryWeapon {
         ammoCost = 6;
         shots = 9;
         damage = 1;
-        rulesRefs = " HBHL, 147";
+        rulesRefs = " HB:HL, 147";
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false).setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D);

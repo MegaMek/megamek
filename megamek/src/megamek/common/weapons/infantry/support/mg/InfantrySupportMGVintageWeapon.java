@@ -68,7 +68,7 @@ public class InfantrySupportMGVintageWeapon extends InfantryWeapon {
         ammoCost = 150;
         shots = 90;
         bursts = 9;
-        rulesRefs = "195, AToW-C";
+        rulesRefs = "195, AToW Companion";
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

@@ -68,7 +68,7 @@ public class InfantrySupportSnubNoseSupportPPCWeapon extends InfantryWeapon {
         crew = 3;
         ammoWeight = 0.025;
         shots = 150;
-        rulesRefs = "176, AToW-C";
+        rulesRefs = "176, AToW Companion";
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3075, 3082, 3090, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.DC)

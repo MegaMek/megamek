@@ -68,7 +68,7 @@ public class InfantryRifleVSPLaserWeapon extends InfantryWeapon {
         ammoWeight = 0.0003;
         shots = 6;
         bursts = 1;
-        rulesRefs = "195, AToW-C";
+        rulesRefs = "195, AToW Companion";
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3075, 3077, 3085, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.FS)

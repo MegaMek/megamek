@@ -78,7 +78,7 @@ public class InfantrySupportMagPulseHarpoonWeapon extends InfantryWeapon {
         ammoCost = 1000;
         shots = 1;
         tonnage = .095;
-        rulesRefs = "176, AToW-C";
+        rulesRefs = "176, AToW Companion";
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3070, 3079, 3100, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.FW)

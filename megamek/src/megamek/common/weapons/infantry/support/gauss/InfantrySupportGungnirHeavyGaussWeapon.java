@@ -70,7 +70,7 @@ public class InfantrySupportGungnirHeavyGaussWeapon extends InfantryWeapon {
         ammoCost = 50;
         shots = 10;
         tonnage = .060;
-        rulesRefs = "176, AToW-C";
+        rulesRefs = "176, AToW Companion";
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3074, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.LC)

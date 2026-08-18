@@ -69,7 +69,7 @@ public class InfantrySupportVintageMiniGunWeapon extends InfantryWeapon {
         ammoCost = 600;
         shots = 500;
         bursts = 10;
-        rulesRefs = "195, AToW-C";
+        rulesRefs = "195, AToW Companion";
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

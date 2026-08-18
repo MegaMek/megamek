@@ -47,6 +47,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import java.util.List;
+
 import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
@@ -202,5 +204,19 @@ class ObjectiveMarkerTest {
         // a game master sees every side
         assertTrue(ObjectiveMarker.isDesignationVisibleTo(owner, gameMaster));
         assertTrue(ObjectiveMarker.isDesignationVisibleTo(unteamed, gameMaster));
+    }
+
+    @Test
+    void testClaimDesignationsForcesTheListOwner() {
+        // the server claims received markers for the player whose list carried them, so a modified
+        // client cannot spoof another player as the owner of a designation
+        ObjectiveMarker spoofedMarker = new ObjectiveMarker();
+        spoofedMarker.setOwnerId(7);
+        ICarryable briefcase = mock(ICarryable.class);
+
+        ObjectiveMarker.claimDesignations(List.of(spoofedMarker, briefcase), 2);
+
+        assertEquals(2, spoofedMarker.getOwnerId());
+        verify(briefcase, never()).setOwnerId(2);
     }
 }

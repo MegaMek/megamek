@@ -34,6 +34,7 @@
 package megamek.common.equipment;
 
 import java.io.Serial;
+import java.util.List;
 
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
@@ -111,6 +112,25 @@ public class ObjectiveMarker extends GroundObject {
      */
     public static boolean isDesignationVisibleTo(Player owner, Player viewer) {
         return viewer.isGameMaster() || !viewer.isEnemyOf(owner);
+    }
+
+    /**
+     * Claims every objective marker in the given carryables list for the given player. The server calls this when it
+     * receives a player's ground-objects-to-place list, so a marker's owner is always the player whose list carried
+     * it - the owner drives the flag's color, who may see the designation and who it returns to on a game reset, so
+     * it must not be spoofable by a modified client. Authoring markers for another side (a game master setting up
+     * every player's objectives) will arrive later as a separate, permission-checked pathway. Non-marker carryables
+     * are left untouched.
+     *
+     * @param groundObjects the ground-objects-to-place list to claim the markers of
+     * @param ownerId       the id of the player whose list it is
+     */
+    public static void claimDesignations(List<ICarryable> groundObjects, int ownerId) {
+        for (ICarryable groundObject : groundObjects) {
+            if (groundObject instanceof ObjectiveMarker marker) {
+                marker.setOwnerId(ownerId);
+            }
+        }
     }
 
     /** @return The control radius of this objective in hexes (0 = only the objective's own hex) */

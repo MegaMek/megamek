@@ -638,6 +638,9 @@ public class Server implements Runnable {
             gamePlayer.setConstantInitBonus(player.getConstantInitBonus());
             gamePlayer.setEmail(player.getEmail());
             gamePlayer.setGroundObjectsToPlace(new ArrayList<>(player.getGroundObjectsToPlace()));
+            // the owner of a victory hex designation drives its color, visibility and reset return, so it
+            // is always the player whose list carried it - never a client-supplied value
+            ObjectiveMarker.claimDesignations(gamePlayer.getGroundObjectsToPlace(), gamePlayer.getId());
         }
     }
 
@@ -1216,9 +1219,11 @@ public class Server implements Runnable {
         Player recipient = getGame().getPlayer(recipientConnectionId);
         boolean designationsVisible = (recipient != null)
               && ObjectiveMarker.isDesignationVisibleTo(player, recipient);
-        if (!designationsVisible) {
-            destPlayer.getGroundObjectsToPlace().removeIf(carryable -> carryable instanceof ObjectiveMarker);
-        }
+        // a player's other carryables-to-place (briefcases etc.) were never sent to other players before
+        // the ground objects rode the player copy - keep them private: the copy carries only the victory
+        // hex designations the recipient is allowed to see
+        destPlayer.getGroundObjectsToPlace().removeIf(carryable ->
+              !(carryable instanceof ObjectiveMarker) || !designationsVisible);
         return destPlayer;
     }
 

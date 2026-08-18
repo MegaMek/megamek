@@ -32,46 +32,48 @@
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Path2D;
 
 import megamek.client.ui.clientGUI.boardview.BoardView;
-import megamek.client.ui.tileset.HexTileset;
-import megamek.client.ui.util.FontHandler;
-import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.board.Coords;
 
 /**
- * Marks a hex with a flag symbol. Used for hexes designated as objectives / victory hexes, drawn in the owning
- * player's color so each side can tell whose designation it is. The flag is a Material Symbols glyph, so it scales
- * cleanly with the board zoom and needs no image file.
+ * Marks a hex with a flag symbol. Used for hexes designated as objectives / victory hexes, with the banner filled in
+ * the owning player's color so each side can tell whose designation it is. The flag is drawn as a plain Java2D shape
+ * (a dark pole with a solidly filled, outlined banner), so it stays clearly visible on any terrain, scales cleanly
+ * with the board zoom and needs no image file. (The bundled Material Symbols font only renders its outlined
+ * variants, which playtesting showed are too faint to spot on the board.)
  */
 public class HexFlagSprite extends HexSprite {
 
-    /** The Material Symbols code point for the filled flag glyph. */
-    private static final String FLAG_GLYPH = "\ue153";
+    // flag geometry in unscaled hex coordinates (a hex image is 84 x 72)
+    private static final int POLE_X = 32;
+    private static final int POLE_TOP_Y = 16;
+    private static final int POLE_BOTTOM_Y = 56;
+    private static final int BANNER_RIGHT_X = 58;
+    private static final int BANNER_BOTTOM_Y = 32;
 
-    private static final int TEXT_SIZE = HexTileset.HEX_H / 2;
-    private static final Color OUTLINE_COLOR = new Color(40, 40, 40, 200);
+    private static final Color POLE_COLOR = new Color(40, 40, 40, 230);
+    private static final Color OUTLINE_COLOR = new Color(40, 40, 40, 220);
+    private static final BasicStroke POLE_STROKE =
+          new BasicStroke(3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+    private static final BasicStroke OUTLINE_STROKE =
+          new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
-    private static final int HEX_CENTER_X = HexTileset.HEX_W / 2;
-    private static final int HEX_CENTER_Y = HexTileset.HEX_H / 2;
-
-    private final StringDrawer flagWriter;
+    private final Color flagColor;
 
     /**
      * @param boardView the board view this sprite is displayed on
      * @param location  the hex to mark with the flag
-     * @param flagColor the color of the flag, usually the owning player's color
+     * @param flagColor the fill color of the flag's banner, usually the owning player's color
      */
     public HexFlagSprite(BoardView boardView, Coords location, Color flagColor) {
         super(boardView, location);
-        flagWriter = new StringDrawer(FLAG_GLYPH)
-              .at(HEX_CENTER_X, HEX_CENTER_Y)
-              .color(flagColor)
-              .fontSize(TEXT_SIZE)
-              .absoluteCenter().outline(OUTLINE_COLOR, 2.5f);
+        this.flagColor = flagColor;
     }
 
     @Override
@@ -81,8 +83,25 @@ public class HexFlagSprite extends HexSprite {
         Graphics2D graph = (Graphics2D) image.getGraphics();
         UIUtil.setHighQualityRendering(graph);
         graph.scale(bv.getScale(), bv.getScale());
-        graph.setFont(FontHandler.symbolFont());
-        flagWriter.draw(graph);
+
+        // banner: solidly filled in the player color, dark outline for contrast on light terrain
+        Path2D.Float banner = new Path2D.Float();
+        banner.moveTo(POLE_X + 1, POLE_TOP_Y);
+        banner.lineTo(BANNER_RIGHT_X, POLE_TOP_Y + 2);
+        banner.lineTo(BANNER_RIGHT_X, BANNER_BOTTOM_Y - 2);
+        banner.lineTo(POLE_X + 1, BANNER_BOTTOM_Y);
+        banner.closePath();
+        graph.setColor(flagColor);
+        graph.fill(banner);
+        graph.setColor(OUTLINE_COLOR);
+        graph.setStroke(OUTLINE_STROKE);
+        graph.draw(banner);
+
+        // pole: a thick dark line the banner hangs from
+        graph.setColor(POLE_COLOR);
+        graph.setStroke(POLE_STROKE);
+        graph.drawLine(POLE_X, POLE_TOP_Y, POLE_X, POLE_BOTTOM_Y);
+
         graph.dispose();
     }
 

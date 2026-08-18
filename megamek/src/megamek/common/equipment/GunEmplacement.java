@@ -1,7 +1,7 @@
 /*
    Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2005 Mike Gratton <mike@vee.net>
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -444,5 +444,10 @@ public class GunEmplacement extends Tank {
     @Override
     public boolean isBuildingEntityOrGunEmplacement() {
         return true;
+    }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return false;
     }
 }

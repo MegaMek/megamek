@@ -1381,7 +1381,7 @@ public class EquipmentType implements ITechnology {
 
         YamlEncDec.addPropIfNotEmpty(data, "shortName", shortName);
         YamlEncDec.addPropIfNotEmpty(data, "sortingName", sortingName);
-        YamlEncDec.addPropIfNotEmpty(data, "rulesRefs", rulesRefs);
+        YamlEncDec.addPropIfNotEmpty(data, "rulesRefs", rulesRefs.stream().map(RulesRef::toYamlData).toList());
 
         addAliases(data);
     }

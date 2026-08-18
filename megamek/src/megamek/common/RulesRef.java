@@ -33,6 +33,8 @@
 package megamek.common;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -65,6 +67,16 @@ public record RulesRef(SourceBookCode book, Integer page) {
     public static String formatForDisplay(Collection<RulesRef> references) {
         Objects.requireNonNull(references, "references");
         return references.stream().map(RulesRef::toDisplayString).collect(Collectors.joining("; "));
+    }
+
+    /**
+     * @return serializer-independent structured export data using the sourcebook abbreviation, not the enum name.
+     */
+    public Map<String, Object> toYamlData() {
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("book", book.getAbbrev());
+        data.put("page", page);
+        return data;
     }
 
     @Override

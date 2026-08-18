@@ -74,4 +74,11 @@ class RulesRefTest {
         assertEquals("TM, 205; Core, 111; Gothic", RulesRef.formatForDisplay(references));
         assertEquals("", RulesRef.formatForDisplay(List.of()));
     }
+
+    @Test
+    void exportsTheSourcebookAbbreviationInsteadOfTheEnumName() {
+        assertEquals(
+              java.util.Map.of("book", "TO:AUE", "page", 121),
+              new RulesRef(SourceBookCode.TO_AUE, 121).toYamlData());
+    }
 }

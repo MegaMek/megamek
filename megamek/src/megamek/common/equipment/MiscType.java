@@ -72,6 +72,13 @@ public class MiscType extends EquipmentType {
      */
     public static final String MODE_ECM = "ECM";
 
+    /**
+     * Internal (non-localized) name of the running mode of an Enhanced Imaging Interface, paired with
+     * {@link Mounted#MODE_OFF}. Per IO p.69 EI runs unless the pilot deliberately shuts it down, so this is the
+     * interface's default mode.
+     */
+    public static final String MODE_EI_ON = "Initiate enhanced imaging";
+
     // equipment flags (okay, like every type of equipment has its own flag)
     public static final MiscTypeFlag F_HEAT_SINK = MiscTypeFlag.F_HEAT_SINK;
     public static final MiscTypeFlag F_DOUBLE_HEAT_SINK = MiscTypeFlag.F_DOUBLE_HEAT_SINK;
@@ -1844,7 +1851,6 @@ public class MiscType extends EquipmentType {
     // Advanced Mek/ProtoMek/Vehicular Motive Systems
     public static MiscType createJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.JUMP_JET);
         misc.addLookupName("JumpJet");
@@ -1853,6 +1859,7 @@ public class MiscType extends EquipmentType {
         misc.tankSlots = 0;
         misc.flags = misc.flags.or(F_JUMP_JET, F_MEK_EQUIPMENT, MiscTypeFlag.S_STANDARD);
         misc.bv = 0;
+        misc.industrial = true;
         misc.rulesRefs = "225, TM";
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(2464, 2471, 2500, DATE_NONE, DATE_NONE)
@@ -1869,7 +1876,6 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createImprovedJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Improved Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.IMPROVED_JUMP_JET);
         misc.addLookupName("IS Improved Jump Jet");
@@ -1897,10 +1903,9 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISPrototypeImprovedJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Prototype Improved Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.PROTOTYPE_IMPROVED_JJ);
-        misc.shortName = "Prototype Imp. Jump Jet";
+        misc.shortName = "Proto. Imp. Jump Jet";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 1;
         misc.tankSlots = 0;
@@ -1923,15 +1928,15 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISPrototypeJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Primitive Prototype Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.PROTOTYPE_JUMP_JET);
-        misc.shortName = "Prototype Jump Jet";
+        misc.shortName = "Proto. Jump Jet";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 1;
         misc.tankSlots = 0;
         misc.flags = misc.flags.or(F_JUMP_JET, F_MEK_EQUIPMENT, MiscTypeFlag.S_PROTOTYPE);
         misc.bv = 0;
+        misc.industrial = true;
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(2464, DATE_NONE, DATE_NONE, 2471, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
@@ -1947,7 +1952,6 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createVehicularJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.VEHICLE_JUMP_JET);
         misc.addLookupName("VJJ");
@@ -1970,7 +1974,6 @@ public class MiscType extends EquipmentType {
     }
 
     // TODO Protomek Jump Jets See IO, pg 35
-
     public static MiscType createProtomekJumpJet() {
         MiscType misc = new MiscType();
         misc.name = "Jump Jet";
@@ -2264,6 +2267,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 1;
         misc.flags = misc.flags.or(F_UMU, F_MEK_EQUIPMENT);
         misc.bv = 0;
+        misc.industrial = true;
         misc.rulesRefs = "107, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
@@ -5947,8 +5951,10 @@ public class MiscType extends EquipmentType {
               F_PROTOMEK_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "69, IO";
-        // EI modes: Off disables EI completely, On enables all EI benefits including aimed shots
-        String[] modes = { "Off", "Initiate enhanced imaging" };
+        // EI modes: On enables all EI benefits including aimed shots, Off disables EI completely. The running mode is
+        // listed first so that it is the default: a newly mounted interface takes mode index 0, and per IO p.69 EI is
+        // running unless the pilot deliberately shuts it down during the End Phase.
+        String[] modes = { MODE_EI_ON, Mounted.MODE_OFF };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
         // EI Interface introduced 3040 by Clan Smoke Jaguar, per IO p.69

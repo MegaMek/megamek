@@ -3505,6 +3505,8 @@ public class Princess extends BotClient {
             }
         } finally {
             LOGGER.info(msg.toString());
+            // Keep clients informed of this bot's honor state (covers pirates and the forced-withdrawal-off case too).
+            sendDishonoredData();
         }
     }
 
@@ -4069,6 +4071,29 @@ public class Princess extends BotClient {
 
     public void sendPrincessSettings() {
         send(new Packet(PacketCommand.PRINCESS_SETTINGS, behaviorSettings, getAIType()));
+    }
+
+    /**
+     * Reports to the server which players this bot currently considers dishonored, so that clients can warn a human
+     * player before committing an action that would newly dishonor them. The reported set is fully resolved - it
+     * already accounts for pirates having no honor to give - so a receiving client only needs a membership test.
+     */
+    public void sendDishonoredData() {
+        send(new Packet(PacketCommand.PRINCESS_DISHONORED, resolveDishonoredPlayerIds()));
+    }
+
+    /**
+     * @return the player IDs this bot currently considers dishonored, fully resolved so that pirates (which have no
+     *       honor to give) report every player. Package-visible for testing.
+     */
+    List<Integer> resolveDishonoredPlayerIds() {
+        List<Integer> dishonoredPlayerIds = new ArrayList<>();
+        for (Player player : getGame().getPlayersList()) {
+            if (getHonorUtil().isEnemyDishonored(player.getId())) {
+                dishonoredPlayerIds.add(player.getId());
+            }
+        }
+        return dishonoredPlayerIds;
     }
 
     @Override

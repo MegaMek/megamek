@@ -2029,9 +2029,9 @@ public class CustomMekDialog extends AbstractButtonDialog
                 EquipmentType eiType = EquipmentType.get("EIInterface");
                 if (eiType != null) {
                     Mounted<?> eiMounted = entity.addEquipment(eiType, Entity.LOC_NONE);
-                    // Set EI to "On" mode by default - pilot got the implant to use it
-                    // Mode 1 is "Initiate enhanced imaging" (On)
-                    eiMounted.setMode(1);
+                    // Set EI to running mode - the pilot got the implant in order to use it. This matches the
+                    // equipment's own default and is stated explicitly so the intent survives future mode changes.
+                    eiMounted.setMode(MiscType.MODE_EI_ON);
                 }
             } catch (LocationFullException e) {
                 // Should not happen for 0-slot equipment

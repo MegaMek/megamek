@@ -2642,6 +2642,18 @@ public class MovementDisplay extends ActionPhaseDisplay {
                           cmd.getHexesMoved(),
                           targetAero.getCurrentVelocity());
 
+                    // Warn if this ram would dishonor the player in the eyes of a Forced Withdrawal bot.
+                    if (needNagForDishonor()
+                          && HonorNagHelper.wouldBeDishonored(game, currentlySelectedEntity, target)) {
+                        if (checkNagForDishonor(Messages.getString("HonorNag.title"),
+                              Messages.getString("HonorNag.message"))) {
+                            clear();
+                            return;
+                        }
+                        // Player accepted; remember it so the rest of this turn isn't re-warned.
+                        HonorNagHelper.recordDishonor(game, currentlySelectedEntity, target);
+                    }
+
                     // Ask the player if they want to charge.
                     if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.RamDialog.title",
                                 target.getDisplayName()),
@@ -2740,6 +2752,18 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         title = "MovementDisplay.AirMekRamDialog.title";
                         msg = "MovementDisplay.AirMekRamDialog.message";
                     }
+                    // Warn if this charge would dishonor the player in the eyes of a Forced Withdrawal bot.
+                    if (needNagForDishonor()
+                          && HonorNagHelper.wouldBeDishonored(game, currentlySelectedEntity, target)) {
+                        if (checkNagForDishonor(Messages.getString("HonorNag.title"),
+                              Messages.getString("HonorNag.message"))) {
+                            clear();
+                            return;
+                        }
+                        // Player accepted; remember it so the rest of this turn isn't re-warned.
+                        HonorNagHelper.recordDishonor(game, currentlySelectedEntity, target);
+                    }
+
                     // Ask the player if they want to charge.
                     if (clientgui.doYesNoDialog(Messages.getString(title, target.getDisplayName()),
                           Messages.getString(msg,
@@ -2841,6 +2865,18 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                     "MovementDisplay"
                                           + ".DFADialog"
                                           + ".dfaModifier"));
+
+                        // Warn if this DFA would dishonor the player in the eyes of a Forced Withdrawal bot.
+                        if (needNagForDishonor()
+                              && HonorNagHelper.wouldBeDishonored(game, currentlySelectedEntity, target)) {
+                            if (checkNagForDishonor(Messages.getString("HonorNag.title"),
+                                  Messages.getString("HonorNag.message"))) {
+                                clear();
+                                return;
+                            }
+                            // Player accepted; remember it so the rest of this turn isn't re-warned.
+                            HonorNagHelper.recordDishonor(game, currentlySelectedEntity, target);
+                        }
 
                         if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.DFADialog.title",
                                     target.getDisplayName()),

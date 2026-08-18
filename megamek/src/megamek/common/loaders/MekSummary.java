@@ -79,12 +79,12 @@ import megamek.logging.MMLogger;
  */
 public class MekSummary implements Serializable, ASCardDisplayable {
     /**
-     * This class had no explicit serialVersionUID, so the JVM computed one from the field list. That meant every
-     * change to the fields silently invalidated units.cache, and this release changes them again, so one more rebuild
-     * happens on first run. {@code MekSummaryCache} catches the failure and rescans, so it heals itself.
+     * This class had no explicit serialVersionUID, so the JVM computed one from the field list. That meant every change
+     * to the fields silently invalidated units.cache, and this release changes them again, so one more rebuild happens
+     * on first run. {@code MekSummaryCache} catches the failure and rescans, so it heals itself.
      * <p>
-     * Pinning it stops the next field addition from doing the same. Bump it only for a change that genuinely cannot
-     * be read back, and expect a full cache rebuild when you do.
+     * Pinning it stops the next field addition from doing the same. Bump it only for a change that genuinely cannot be
+     * read back, and expect a full cache rebuild when you do.
      * </p>
      */
     @Serial
@@ -166,8 +166,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private int bfsBsp;
     /** The recognized Specials present on the Asset, for presence filtering. */
     private List<BFSSpecialType> bfsSpecials = new ArrayList<>();
-    /** The full Specials present on the Asset, retaining parameter values (for example {@code ECM4},
-     * {@code Artillery (LT)}), for value-based filtering. */
+    /**
+     * The full Specials present on the Asset, retaining parameter values (for example {@code ECM4},
+     * {@code Artillery (LT)}), for value-based filtering.
+     */
     private List<BFSSpecial> bfsSpecialDetails = new ArrayList<>();
 
     /** The full cost of the unit (including ammo). */
@@ -180,6 +182,11 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private String level;
     private int advTechYear; // year after which the unit is advanced level
     private int stdTechYear; // year after which the unit is standard level
+    private int prototypeDate;
+    private int productionDate;
+    private int commonDate;
+    private int techExtinctionDate;
+    private int reintroductionDate;
     private String extinctRange;
     private boolean canon;
     private boolean patchwork;
@@ -190,6 +197,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private boolean doomedInExtremeTemp;
     private boolean doomedInVacuum;
     private boolean clan;
+    private boolean mixedTech;
     private boolean support;
     private int walkMp;
     private int runMp;
@@ -836,6 +844,51 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         return stdTechYear;
     }
 
+    public int getPrototypeDate() {
+        return prototypeDate;
+    }
+
+    public void setPrototypeDate(int prototypeDate) {
+        this.prototypeDate = prototypeDate;
+    }
+
+    public int getProductionDate() {
+        return productionDate;
+    }
+
+    public void setProductionDate(int productionDate) {
+        this.productionDate = productionDate;
+    }
+
+    public int getCommonDate() {
+        return commonDate;
+    }
+
+    public void setCommonDate(int commonDate) {
+        this.commonDate = commonDate;
+    }
+
+    public int getExtinctionDate() {
+        return techExtinctionDate;
+    }
+
+    public void setExtinctionDate(int extinctionDate) {
+        this.techExtinctionDate = extinctionDate;
+    }
+
+    /**
+     * @return the year this unit returned to production after going extinct, or {@code ITechnology.DATE_NONE} if it
+     *       never went extinct or never returned. A cache written before this field existed deserializes it as 0;
+     *       callers should treat any non-positive value as "no date".
+     */
+    public int getReintroductionDate() {
+        return reintroductionDate;
+    }
+
+    public void setReintroductionDate(int reintroductionDate) {
+        this.reintroductionDate = reintroductionDate;
+    }
+
     public String getLevel(int year) {
         if (level.equals("F")) {
             return level;
@@ -1302,6 +1355,14 @@ public class MekSummary implements Serializable, ASCardDisplayable {
 
     public void setClan(boolean clan) {
         this.clan = clan;
+    }
+
+    public boolean isMixedTech() {
+        return mixedTech;
+    }
+
+    public void setMixedTech(boolean mixedTech) {
+        this.mixedTech = mixedTech;
     }
 
     public void setSupport(boolean support) {

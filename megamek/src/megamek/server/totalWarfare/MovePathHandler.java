@@ -268,6 +268,25 @@ class MovePathHandler extends AbstractTWRuleHandler {
         addReport(elevatorReport);
     }
 
+    /**
+     * Checks whether the TW p.54 rule applies that VTOL-capable creatures must spend 1 MP per turn, even if
+     * remaining stationary. This is a pure check with no side effects: when it returns {@code true}, the caller
+     * ({@code processMovement()}) converts the entity's movement type to
+     * {@link EntityMovementType#MOVE_VTOL_WALK} and records 1 MP spent, so an airborne beast-mounted platoon
+     * (e.g. Branth) that holds its hex still counts as having walked.
+     *
+     * @param entity the entity whose movement was just processed
+     *
+     * @return {@code true} if the entity is airborne VTOL beast-mounted infantry that did not move this turn
+     */
+    static boolean mustSpendStationaryFlightMP(Entity entity) {
+        return (entity instanceof ConvInfantry beastInfantry)
+              && (beastInfantry.getMount() != null)
+              && beastInfantry.getMount().movementMode().isVTOL()
+              && entity.isAirborneVTOLorWIGE()
+              && (entity.moved == EntityMovementType.MOVE_NONE);
+    }
+
     void processMovement() {
         // TacOps Climbing: check if a climbing/dangling entity lost its climbing ability
         // due to actuator damage since last turn (TO:AR p.20)
@@ -1062,6 +1081,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
         } else {
             entity.underwaterRounds = 0;
         }
+        if (mustSpendStationaryFlightMP(entity)) {
+            entity.moved = EntityMovementType.MOVE_VTOL_WALK;
+            entity.mpUsed = Math.max(entity.mpUsed, 1);
+        }
         entity.setClimbMode(curClimbMode);
         if (!sideslipped && !fellDuringMovement && !crashedDuringMovement
               && (entity.getMovementMode() == EntityMovementMode.VTOL)) {
@@ -1091,17 +1114,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
 
         // if we ran with destroyed hip or gyro, we need a psr
-        MoveStep lastStep = md.getLastStep();
-        if (lastStep != null) {
-            rollTarget = entity.checkRunningWithDamage(overallMoveType, lastStep.getDistance());
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
-                gameManager.doSkillCheckInPlace(entity, rollTarget);
-            }
-        } else {
-            logger.error("Unexpected null last step! Entity: {}; MoveType: {}; md: {}", entity.getId(),
-                  overallMoveType, md);
+        rollTarget = entity.checkRunningWithDamage(overallMoveType, md.getHexesMoved());
+        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
+            gameManager.doSkillCheckInPlace(entity, rollTarget);
         }
-        
+
         // if we moved a hex with a destroyed leg, but it was not a run
         rollTarget = Game.rulesManager.getRulesPSR().checkWalkWithLegDestroyed(entity,
               overallMoveType, md.getHexesMoved());

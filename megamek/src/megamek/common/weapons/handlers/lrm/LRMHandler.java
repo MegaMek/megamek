@@ -350,9 +350,11 @@ public class LRMHandler extends MissileWeaponHandler {
                         nMissilesModifier += 2;
                     }
                 }
-            } else if (isSemiGuidedMissileAmmo(ammoType)) {
-                nMissilesModifier += getSemiGuidedClusterModifier();
             }
+        }
+
+        if (isSemiGuidedMissileAmmo(ammoType)) {
+            nMissilesModifier += getSemiGuidedClusterModifier();
         }
 
         // add AMS mods

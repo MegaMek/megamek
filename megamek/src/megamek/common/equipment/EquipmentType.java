@@ -211,8 +211,7 @@ public class EquipmentType implements ITechnology {
     private static Map<String, Set<EquipmentType>> lookupCollisions = new TreeMap<>();
 
     /** Structured sourcebook and page references for this equipment type. */
-    protected List<RulesRef> rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL, null);
-;
+    protected List<RulesRef> rulesRefs = rulesRefs();
 
     /** Creates new EquipmentType */
     public EquipmentType() {
@@ -278,6 +277,11 @@ public class EquipmentType implements ITechnology {
             return List.of(new RulesRef(book, null));
         }
         return Arrays.stream(pages).map(page -> new RulesRef(book, page)).toList();
+    }
+
+    /** Creates an immutable rule-reference list for a single sourcebook page, including a null page. */
+    protected static List<RulesRef> rulesRefs(SourceBookCode book, Integer page) {
+        return List.of(new RulesRef(book, page));
     }
 
     /** Creates an immutable rule-reference list, including an empty list when no references are supplied. */

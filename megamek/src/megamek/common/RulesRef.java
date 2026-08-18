@@ -32,7 +32,9 @@
  */
 package megamek.common;
 
+import java.util.Collection;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -49,6 +51,20 @@ public record RulesRef(SourceBookCode book, Integer page) {
         if ((page != null) && (page < 1)) {
             throw new IllegalArgumentException("page must be positive");
         }
+    }
+
+    /**
+     * @return this reference formatted for display as {@code abbrev, page}, or only {@code abbrev} when its page is
+     *       unknown.
+     */
+    public String toDisplayString() {
+        return page == null ? book.getAbbrev() : book.getAbbrev() + ", " + page;
+    }
+
+    /** Formats references for display, separated by semicolons. */
+    public static String formatForDisplay(Collection<RulesRef> references) {
+        Objects.requireNonNull(references, "references");
+        return references.stream().map(RulesRef::toDisplayString).collect(Collectors.joining("; "));
     }
 
     @Override

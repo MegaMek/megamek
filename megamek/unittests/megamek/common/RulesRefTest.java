@@ -34,6 +34,8 @@ package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -60,5 +62,16 @@ class RulesRefTest {
     void formatsAReferenceForTextExports() {
         assertEquals("205, TM", new RulesRef(SourceBookCode.TM, 205).toString());
         assertEquals("Gothic", new RulesRef(SourceBookCode.GOTHIC, null).toString());
+    }
+
+    @Test
+    void formatsReferencesForDisplay() {
+        List<RulesRef> references = List.of(
+              new RulesRef(SourceBookCode.TM, 205),
+              new RulesRef(SourceBookCode.CORE, 111),
+              new RulesRef(SourceBookCode.GOTHIC, null));
+
+        assertEquals("TM, 205; Core, 111; Gothic", RulesRef.formatForDisplay(references));
+        assertEquals("", RulesRef.formatForDisplay(List.of()));
     }
 }

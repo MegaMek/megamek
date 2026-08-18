@@ -35,6 +35,7 @@ package megamek.common.equipment;
 
 import java.io.Serial;
 
+import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.moves.MoveStep;
@@ -94,6 +95,22 @@ public class ObjectiveMarker extends GroundObject {
         // RAW (Objectives - Buildings): objectives are destroyed with their building unless the mission
         // states that objectives cannot be destroyed - scenario files opt out with "destructible: false"
         setInvulnerable(false);
+    }
+
+    /**
+     * Tells whether a viewer is allowed to see a lobby objective designation of the given owner. Victory hex
+     * designations are part of a side's mission plan: the owner and their teammates see them, a game master sees
+     * every side's, and everyone else does not - the server strips them from the player data it sends to clients
+     * that may not see them. (Unteamed players are their own side, so two unteamed players never see each
+     * other's.)
+     *
+     * @param owner  the player owning the designation
+     * @param viewer the player looking at the board
+     *
+     * @return {@code true} when the viewer may see the owner's designations
+     */
+    public static boolean isDesignationVisibleTo(Player owner, Player viewer) {
+        return viewer.isGameMaster() || !viewer.isEnemyOf(owner);
     }
 
     /** @return The control radius of this objective in hexes (0 = only the objective's own hex) */

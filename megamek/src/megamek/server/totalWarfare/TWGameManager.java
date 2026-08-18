@@ -652,7 +652,9 @@ public class TWGameManager extends AbstractGameManager {
 
     public void setGameMaster(Player player, boolean gameMaster) {
         player.setGameMaster(gameMaster);
-        transmitPlayerUpdate(player);
+        // a game master sees every side's victory hex designations - re-send everyone so a new game
+        // master receives the designations that were stripped before
+        transmitAllPlayerUpdates();
         sendServerChat(player.getName() + " set GameMaster: " + player.getGameMaster());
     }
 
@@ -713,7 +715,8 @@ public class TWGameManager extends AbstractGameManager {
     void changePlayerTeams(TeamChangeRequest teamChangeRequest) {
         teamChangeRequest.player().setTeam(teamChangeRequest.teamID());
         getGame().setupTeams();
-        transmitPlayerUpdate(teamChangeRequest.player());
+        // a team change alters who may see whose victory hex designations - re-send everyone
+        transmitAllPlayerUpdates();
         String teamString = "Team " + teamChangeRequest.teamID() + "!";
         if (teamChangeRequest.teamID() == Player.TEAM_UNASSIGNED) {
             teamString = " unassigned!";

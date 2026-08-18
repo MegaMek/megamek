@@ -1500,9 +1500,11 @@ public class ChatLounge extends AbstractPhaseDisplay
     /**
      * Adds or removes a victory hex designation at the given hex of the lobby board preview. Clicking an empty hex
      * designates it: an {@link ObjectiveMarker} carrying the position is added to the local player's
-     * ground-objects-to-place list and sent to the server, so every player sees the flag and the marker is placed on
-     * the board when the game starts. Clicking a hex the local player already designated removes the designation
-     * again. A hex designated by another player is left alone - only that player can remove it.
+     * ground-objects-to-place list and sent to the server, and the marker is placed on the board when the game
+     * starts. Designations are a side's mission plan: the server sends them only to the owner's teammates and to a
+     * game master (see {@link ObjectiveMarker#isDesignationVisibleTo}), so opposing players do not see the flag.
+     * Clicking a hex the local player already designated removes the designation again. A hex designated by a
+     * teammate is left alone - only the designating player can remove it.
      *
      * @param coords the clicked hex
      */
@@ -1547,9 +1549,11 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     /**
-     * Rebuilds the victory hex flags shown on the lobby board preview from every player's designated hexes. Each flag
-     * is drawn in its owning player's color. Called when the preview is (re)built, when a designation is toggled
-     * locally and when a player update arrives from the server (which is how other players' designations show up).
+     * Rebuilds the victory hex flags shown on the lobby board preview from every designation this client knows of -
+     * the server only sends this player the designations they may see (their own side's, or every side's for a game
+     * master). Each flag is drawn in its owning player's color. Called when the preview is (re)built, when a
+     * designation is toggled locally and when a player update arrives from the server (which is how teammates'
+     * designations show up).
      */
     private void refreshPreviewFlagSprites() {
         if (previewBV == null) {

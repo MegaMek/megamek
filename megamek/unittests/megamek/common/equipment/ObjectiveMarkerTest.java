@@ -47,6 +47,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.moves.MoveStep;
@@ -174,5 +175,32 @@ class ObjectiveMarkerTest {
         assertEquals(4, restoredMarker.getControllingTeam());
         assertEquals(ObjectiveMarker.NO_CONTROLLER, restoredMarker.getControllingPlayerId());
         assertEquals(new Coords(7, 9), restoredMarker.getLobbyPosition());
+    }
+
+    @Test
+    void testDesignationVisibility() {
+        Player owner = new Player(0, "Alice");
+        owner.setTeam(1);
+        Player teammate = new Player(1, "Bob");
+        teammate.setTeam(1);
+        Player enemy = new Player(2, "Craig");
+        enemy.setTeam(2);
+        Player unteamed = new Player(3, "Dana");
+        unteamed.setTeam(Player.TEAM_NONE);
+        Player gameMaster = new Player(4, "Erin");
+        gameMaster.setTeam(2);
+        gameMaster.setGameMaster(true);
+
+        // the owner and their teammates see the designation, an enemy team does not
+        assertTrue(ObjectiveMarker.isDesignationVisibleTo(owner, owner));
+        assertTrue(ObjectiveMarker.isDesignationVisibleTo(owner, teammate));
+        assertFalse(ObjectiveMarker.isDesignationVisibleTo(owner, enemy));
+        // an unteamed player is their own side: sees only their own
+        assertFalse(ObjectiveMarker.isDesignationVisibleTo(owner, unteamed));
+        assertTrue(ObjectiveMarker.isDesignationVisibleTo(unteamed, unteamed));
+        assertFalse(ObjectiveMarker.isDesignationVisibleTo(unteamed, owner));
+        // a game master sees every side
+        assertTrue(ObjectiveMarker.isDesignationVisibleTo(owner, gameMaster));
+        assertTrue(ObjectiveMarker.isDesignationVisibleTo(unteamed, gameMaster));
     }
 }

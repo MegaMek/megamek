@@ -1844,7 +1844,6 @@ public class MiscType extends EquipmentType {
     // Advanced Mek/ProtoMek/Vehicular Motive Systems
     public static MiscType createJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.JUMP_JET);
         misc.addLookupName("JumpJet");
@@ -1853,6 +1852,7 @@ public class MiscType extends EquipmentType {
         misc.tankSlots = 0;
         misc.flags = misc.flags.or(F_JUMP_JET, F_MEK_EQUIPMENT, MiscTypeFlag.S_STANDARD);
         misc.bv = 0;
+        misc.industrial = true;
         misc.rulesRefs = "225, TM";
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(2464, 2471, 2500, DATE_NONE, DATE_NONE)
@@ -1869,7 +1869,6 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createImprovedJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Improved Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.IMPROVED_JUMP_JET);
         misc.addLookupName("IS Improved Jump Jet");
@@ -1897,10 +1896,9 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISPrototypeImprovedJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Prototype Improved Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.PROTOTYPE_IMPROVED_JJ);
-        misc.shortName = "Prototype Imp. Jump Jet";
+        misc.shortName = "Proto. Imp. Jump Jet";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 1;
         misc.tankSlots = 0;
@@ -1923,15 +1921,15 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISPrototypeJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Primitive Prototype Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.PROTOTYPE_JUMP_JET);
-        misc.shortName = "Prototype Jump Jet";
+        misc.shortName = "Proto. Jump Jet";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 1;
         misc.tankSlots = 0;
         misc.flags = misc.flags.or(F_JUMP_JET, F_MEK_EQUIPMENT, MiscTypeFlag.S_PROTOTYPE);
         misc.bv = 0;
+        misc.industrial = true;
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(2464, DATE_NONE, DATE_NONE, 2471, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
@@ -1947,7 +1945,6 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createVehicularJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.VEHICLE_JUMP_JET);
         misc.addLookupName("VJJ");
@@ -1970,7 +1967,6 @@ public class MiscType extends EquipmentType {
     }
 
     // TODO Protomek Jump Jets See IO, pg 35
-
     public static MiscType createProtomekJumpJet() {
         MiscType misc = new MiscType();
         misc.name = "Jump Jet";
@@ -2264,6 +2260,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 1;
         misc.flags = misc.flags.or(F_UMU, F_MEK_EQUIPMENT);
         misc.bv = 0;
+        misc.industrial = true;
         misc.rulesRefs = "107, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)

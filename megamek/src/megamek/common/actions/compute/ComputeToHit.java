@@ -394,12 +394,7 @@ public class ComputeToHit {
             }
             if ((spotter == null) &&
                   (ammoType != null) &&
-                  ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
-                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) &&
-                  (munition.contains(AmmoType.Munitions.M_SEMIGUIDED))) {
+                  bSemiGuided) {
                 for (TagInfo ti : game.getTagInfo()) {
                     if (target.getId() == ti.target.getId()) {
                         spotter = game.getEntity(ti.attackerId);
@@ -1682,14 +1677,21 @@ public class ComputeToHit {
         // Indirect fire suffers a +1 penalty if the spotter is making attacks of its
         // own
         if (isIndirect) {
-            // semi guided ammo negates this modifier, if TAG succeeded
-            if ((ammoType != null) && munition.contains(AmmoType.Munitions.M_SEMIGUIDED) &&
-                  (Compute.isTargetTagged(target, game)) &&
+            boolean bSemiGuided = ((ammoType != null) &&
                   ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
-                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR))) {
+                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR) ||
+                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_5) ||
+                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_10) ||
+                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_15) ||
+                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_20)) &&
+                  (munition.contains(AmmoType.Munitions.M_SEMIGUIDED)));
+            // semi guided ammo negates this modifier, if TAG succeeded
+            if ((ammoType != null) &&
+                  bSemiGuided &&
+                  (Compute.isTargetTagged(target, game))) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SemiGuidedIndirect"));
             } else if (!narcSpotter && (spotter != null)) {
                 // Unless the target has been tagged, or the spotter has an active command

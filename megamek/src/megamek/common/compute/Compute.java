@@ -200,7 +200,7 @@ public class Compute {
     public static int d6(int dice) {
         return rollD6(dice).getIntValue();
     }
-        
+
     /**
      * Wrapper to random#d6(n)
      */
@@ -221,7 +221,7 @@ public class Compute {
         }
         return roll;
     }
-    
+
     /**
      * Wrapper to random#d6(n)
      */
@@ -844,7 +844,8 @@ public class Compute {
               || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
               && (destHex.terrainLevel(Terrains.WATER) > 0)
               && !isPavementStep
-              && Game.rulesManager.getRulesMovement().isMoveIntoWaterDangerous(movementType, entity.getMovementMode())) {
+              && Game.rulesManager.getRulesMovement()
+              .isMoveIntoWaterDangerous(movementType, entity.getMovementMode())) {
             return true;
         }
 
@@ -1238,10 +1239,9 @@ public class Compute {
 
     /**
      * Gets the ToHitData associated with firing at an immobile target. Returns null if target isn't.
-     *
-     * Note: all Ranged attack calls *must* go through *.addImmobileMod() or we may get
-     * illegal -4 mods.
-     * Currently this is the case; all other attack types go through the above simplified method.
+     * <p>
+     * Note: all Ranged attack calls *must* go through *.addImmobileMod() or we may get illegal -4 mods. Currently this
+     * is the case; all other attack types go through the above simplified method.
      *
      * @param target     The target being considered for firing
      * @param aimingAt   The location of the unit being aimed at
@@ -1549,7 +1549,7 @@ public class Compute {
         }
 
         int c3dist = Compute.effectiveDistance(game, c3spotter, target, false);
-        
+
         int c3ecmDist = Compute.effectiveDistance(game, c3spotterWithECM, target, false);
 
         // C3 can't benefit from LOS range.
@@ -1576,7 +1576,7 @@ public class Compute {
         } else {
             usingRange = range;
         }
-        
+
         // add range modifier, C3 can't be used with LOS Range
         if (((usingRange == range) && !usingC3) || (range == RangeType.RANGE_LOS) || (attackingEntity.hasNavalC3()
               && !nc3EnergyGuided)) {
@@ -2690,11 +2690,14 @@ public class Compute {
                   "Can't target unit with active stealth armor as a secondary target");
         }
 
-        int mod = Game.rulesManager.getRulesTarget().getSecondaryArcModifier();
-        if (curInFrontArc || (attacker instanceof BattleArmor)) {
-            mod--;
-        }
+        // Secondary target default value
+        int mod = 1;
 
+        // Check for secondary arc and change as needed
+        if (!curInFrontArc && !(attacker instanceof BattleArmor)) {
+            mod = Game.rulesManager.getRulesTarget().getSecondaryArcModifier();
+        }
+        
         if (attacker.hasAbility(OptionsConstants.GUNNERY_MULTI_TASKER)) {
             mod--;
         }
@@ -3338,8 +3341,8 @@ public class Compute {
     }
 
     /**
-     * Returns the weapon attack out of a list that has the second highest expected damage
-     * used for engaging multiple salvos
+     * Returns the weapon attack out of a list that has the second highest expected damage used for engaging multiple
+     * salvos
      */
     public static WeaponAttackAction getSecondHighestExpectedDamage(Game g,
           List<WeaponAttackAction> vAttacks, boolean assumeHit) {
@@ -6397,14 +6400,12 @@ public class Compute {
     }
 
     /**
-     * Scatters from a hex in a random direction, rolling 1d6 to pick one of the six straight-line
-     * directions.
+     * Scatters from a hex in a random direction, rolling 1d6 to pick one of the six straight-line directions.
      *
      * @param coords the <code>Coords</code> to scatter from
-     * @param margin the scatter distance in hexes; its magnitude is used, so a negative value (such
-     *               as a negative margin of failure) scatters the same distance as its positive
-     *               counterpart. Callers may also pass a fixed distance unrelated to a margin of
-     *               failure.
+     * @param margin the scatter distance in hexes; its magnitude is used, so a negative value (such as a negative
+     *               margin of failure) scatters the same distance as its positive counterpart. Callers may also pass a
+     *               fixed distance unrelated to a margin of failure.
      *
      * @return the <code>Coords</code> scattered to
      */
@@ -7343,7 +7344,9 @@ public class Compute {
 
     /**
      * Returns the number of required gunners for an entity.
+     *
      * @param entity The entity
+     *
      * @return The number of required gunners
      */
     public static int getTotalGunnerNeeds(Entity entity) {
@@ -7369,11 +7372,12 @@ public class Compute {
     }
 
     /**
-     * Returns the number of required gunners for a small craft/jumpship.
-     * One gunner is required for each capital weapon and each six standard scale weapons, rounding up.
-     * Each Mass Driver requires 10 gunners (TO: AU&amp;E 6th ed, p 134).
-     * Each Screen Launcher requires 1 gunner (TM 6th ed, p 237).
+     * Returns the number of required gunners for a small craft/jumpship. One gunner is required for each capital weapon
+     * and each six standard scale weapons, rounding up. Each Mass Driver requires 10 gunners (TO: AU&amp;E 6th ed, p
+     * 134). Each Screen Launcher requires 1 gunner (TM 6th ed, p 237).
+     *
      * @param entity The small craft/jumpship
+     *
      * @return The number of required gunners
      */
     private static int getSmallCraftJumpshipGunnerNeeds(Entity entity) {

@@ -39,14 +39,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.Sensor;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
+import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.ProtoMek;
 import org.junit.jupiter.api.BeforeAll;
@@ -186,6 +191,37 @@ public class EiImplantTest {
     }
 
     /**
+     * Switches the EI Interface equipment of the given entity to the named mode and applies it immediately.
+     *
+     * <p>The EI Interface is not an instant mode switch - per IO p.69 it is shut down during the End Phase - so
+     * {@link Mounted#setMode(String)} only queues the change. Advancing the mount a round applies the pending mode,
+     * which is what the server does between turns.</p>
+     *
+     * @param entity   the entity whose EI Interface should be switched
+     * @param modeName {@link Mounted#MODE_OFF} or {@link MiscType#MODE_EI_ON}
+     */
+    private void setEiInterfaceMode(Entity entity, String modeName) {
+        for (MiscMounted eiInterface : entity.getMisc()) {
+            if (eiInterface.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                eiInterface.setMode(modeName);
+                eiInterface.newRound(1);
+                return;
+            }
+        }
+    }
+
+    /**
+     * Returns the ProtoMek's built-in EI Interface mount.
+     */
+    private MiscMounted protoMekEiInterface(ProtoMek proto) {
+        return proto.getMisc()
+              .stream()
+              .filter(mounted -> mounted.getType().hasFlag(MiscType.F_EI_INTERFACE))
+              .findFirst()
+              .orElseThrow();
+    }
+
+    /**
      * Creates a ProtoMek for testing.
      */
     private ProtoMek createProtoMek() {
@@ -225,6 +261,53 @@ public class EiImplantTest {
             MiscType miscType = (MiscType) eiInterface;
             assertTrue(miscType.hasFlag(MiscType.F_EI_INTERFACE),
                   "EI Interface should have F_EI_INTERFACE flag");
+        }
+
+        @Test
+        @DisplayName("EI Interface running mode has a state-form display name")
+        void eiInterfaceRunningModeHasStateFormDisplayName() {
+            // The internal mode name is the imperative from the cartoon and is what MUL files persist. The player
+            // facing label has to read as a state, because the unit display shows it as "(<mode>)" and
+            // "(next turn, <mode>)". A missing or mis-escaped bundle key silently falls back to the internal name,
+            // which is what this pins down.
+            assertEquals("Enhanced Imaging Engaged",
+                  EquipmentMode.getMode(MiscType.MODE_EI_ON).getDisplayableName(),
+                  "The EI running mode must resolve to its localized state-form name, not the internal name");
+        }
+
+        @Test
+        @DisplayName("EI Interface modes read as instructions when offered and as states when reached")
+        void eiInterfaceModesReadAsInstructionsWhenOfferedAndStatesWhenReached() {
+            EquipmentType eiInterface = EquipmentType.get("EIInterface");
+            assertNotNull(eiInterface, "EI Interface should exist");
+            EquipmentMode runningMode = EquipmentMode.getMode(MiscType.MODE_EI_ON);
+            EquipmentMode offMode = EquipmentMode.getMode(Mounted.MODE_OFF);
+
+            assertEquals("Engage Enhanced Imaging", runningMode.getActionName(eiInterface),
+                  "Choosing to start EI should read as an instruction");
+            assertEquals("Enhanced Imaging Engaged", runningMode.getStateName(eiInterface),
+                  "Running EI should read as a state");
+            assertEquals("Disengage Enhanced Imaging", offMode.getActionName(eiInterface),
+                  "Choosing to stop EI should read as an instruction");
+            assertEquals("Enhanced Imaging Disengaged", offMode.getStateName(eiInterface),
+                  "Shut down EI should read as a state");
+        }
+
+        @Test
+        @DisplayName("Equipment without its own mode labels is unaffected")
+        void equipmentWithoutOwnModeLabelsIsUnaffected() {
+            // The Off mode name is shared by many unrelated systems, so scoping the labels by equipment must leave
+            // every other user of it showing exactly what it showed before.
+            EquipmentType activeProbe = EquipmentType.get("BeagleActiveProbe");
+            assertNotNull(activeProbe, "Beagle Active Probe should exist");
+            EquipmentMode offMode = EquipmentMode.getMode(Mounted.MODE_OFF);
+
+            assertEquals(offMode.getDisplayableName(), offMode.getActionName(activeProbe),
+                  "Equipment with no action label defined falls back to the plain mode name");
+            assertEquals(offMode.getDisplayableName(), offMode.getStateName(activeProbe),
+                  "Equipment with no state label defined falls back to the plain mode name");
+            assertEquals(offMode.getDisplayableName(), offMode.getStateName(null),
+                  "A missing equipment context falls back to the plain mode name");
         }
 
         @Test
@@ -376,6 +459,159 @@ public class EiImplantTest {
             ProtoMek proto = createProtoMek();
             assertFalse(proto.isEiShutdown(),
                   "EI should not be shutdown by default");
+        }
+    }
+
+    /**
+     * Regression tests for issue #8718: a pilot who shut Enhanced Imaging down still took feedback damage on internal
+     * structure hits, because the shutdown check was only reached in Full Tracking mode.
+     *
+     * <p>Per IO p.69 a shut down EI interface "will deactivate the system's benefits, but will also protect the pilot
+     * from the negative effects of EI use in combat" - there is no mode in which shutting EI down should be
+     * ignored.</p>
+     */
+    @Nested
+    @DisplayName("EI Shutdown Suppression Tests (issue #8718)")
+    class EiShutdownSuppressionTests {
+
+        @Test
+        @DisplayName("Shut down EI suppresses active EI in Pilot Abilities Only mode")
+        void shutDownEiSuppressesActiveEiInPilotOnlyMode() {
+            enablePilotOnly();
+            BipedMek mek = createMek(true, true);
+            setEiInterfaceMode(mek, MiscType.MODE_EI_ON);
+            assertTrue(mek.hasActiveEiCockpit(), "Test setup: EI should be active before it is shut down");
+
+            setEiInterfaceMode(mek, Mounted.MODE_OFF);
+
+            assertFalse(mek.hasActiveEiCockpit(),
+                  "A shut down EI Interface must suppress EI in Pilot Abilities Only mode (IO p.69)");
+        }
+
+        @Test
+        @DisplayName("Shut down EI suppresses active EI in Full Tracking mode")
+        void shutDownEiSuppressesActiveEiInFullTrackingMode() {
+            enableFullTracking();
+            BipedMek mek = createMek(true, true);
+            setEiInterfaceMode(mek, MiscType.MODE_EI_ON);
+            assertTrue(mek.hasActiveEiCockpit(), "Test setup: EI should be active before it is shut down");
+
+            setEiInterfaceMode(mek, Mounted.MODE_OFF);
+
+            assertFalse(mek.hasActiveEiCockpit(),
+                  "A shut down EI Interface must suppress EI in Full Tracking mode (IO p.69)");
+        }
+
+        @Test
+        @DisplayName("Running EI stays active in Pilot Abilities Only mode")
+        void runningEiStaysActiveInPilotOnlyMode() {
+            enablePilotOnly();
+            BipedMek mek = createMek(true, true);
+            setEiInterfaceMode(mek, MiscType.MODE_EI_ON);
+
+            assertTrue(mek.hasActiveEiCockpit(),
+                  "A running EI Interface must still provide EI in Pilot Abilities Only mode");
+        }
+
+        @Test
+        @DisplayName("Restarting EI restores active EI in Pilot Abilities Only mode")
+        void restartingEiRestoresActiveEiInPilotOnlyMode() {
+            enablePilotOnly();
+            BipedMek mek = createMek(true, true);
+            setEiInterfaceMode(mek, Mounted.MODE_OFF);
+            assertFalse(mek.hasActiveEiCockpit(), "Test setup: EI should be suppressed while shut down");
+
+            setEiInterfaceMode(mek, MiscType.MODE_EI_ON);
+
+            assertTrue(mek.hasActiveEiCockpit(), "Restarting the EI Interface must restore EI benefits");
+        }
+
+        @Test
+        @DisplayName("Implant without EI Interface hardware is unaffected by the shutdown check")
+        void implantWithoutInterfaceIsUnaffectedByShutdownCheck() {
+            enablePilotOnly();
+            BipedMek mek = createMek(false, true);
+
+            assertTrue(mek.hasActiveEiCockpit(),
+                  "Pilot Abilities Only mode grants EI from the implant alone when no hardware is installed");
+        }
+
+        @Test
+        @DisplayName("Shutting EI down is deferred until the round rolls over")
+        void shuttingEiDownIsDeferredUntilRoundRollsOver() {
+            enablePilotOnly();
+            BipedMek mek = createMek(true, true);
+
+            mek.setEiShutdown(true);
+
+            assertFalse(mek.isEiShutdown(),
+                  "The EI Interface is not an instant mode switch, so shutting it down only queues a pending mode; "
+                        + "per IO p.69 the shutdown happens in the End Phase");
+        }
+
+
+        @Test
+        @DisplayName("ProtoMek EI Interface reflects a disabled neural interface option at once")
+        void protoMekEiInterfaceReflectsDisabledOptionAtOnce() throws LocationFullException {
+            // Neural interface rules left Off, which is the default
+            ProtoMek proto = createProtoMek();
+            proto.addEquipment((MiscType) EquipmentType.get("EIInterface"), ProtoMek.LOC_BODY);
+
+            MiscMounted eiInterface = protoMekEiInterface(proto);
+
+            // Mounting has to settle the mode outright. A queued switch would leave the interface reading as
+            // running until some later round applied it, which for a built-in system nobody can switch is just wrong.
+            assertEquals(Mounted.MODE_OFF, eiInterface.curMode().getName(),
+                  "With the rules disabled the built-in interface must read as shut down straight away");
+            assertEquals(Mounted.MODE_OFF, eiInterface.modeNextRound().getName(),
+                  "Mounting must not leave a switch queued against the shut down mode");
+        }
+
+        @Test
+        @DisplayName("Enabling the neural interface option engages a ProtoMek interface at once")
+        void enablingNeuralInterfaceOptionEngagesProtoMekInterfaceAtOnce() throws LocationFullException {
+            ProtoMek proto = createProtoMek();
+            proto.addEquipment((MiscType) EquipmentType.get("EIInterface"), ProtoMek.LOC_BODY);
+            assertEquals(Mounted.MODE_OFF, protoMekEiInterface(proto).curMode().getName(),
+                  "Test setup: the interface starts shut down while the rules are off");
+
+            enablePilotOnly();
+            proto.setGameOptions();
+
+            assertEquals(MiscType.MODE_EI_ON, protoMekEiInterface(proto).curMode().getName(),
+                  "Applying the game options must engage the interface straight away, not queue it for a later round");
+        }
+
+        @Test
+        @DisplayName("ProtoMek EI Interface is mounted running and locked against switching")
+        void protoMekEiInterfaceIsMountedRunningAndLocked() throws LocationFullException {
+            enablePilotOnly();
+            ProtoMek proto = createProtoMek();
+            proto.addEquipment((MiscType) EquipmentType.get("EIInterface"), ProtoMek.LOC_BODY);
+
+            MiscMounted eiInterface = protoMekEiInterface(proto);
+
+            assertEquals(MiscType.MODE_EI_ON, eiInterface.curMode().getName(),
+                  "A ProtoMek mounts its built-in EI Interface already running when the rules are enabled");
+            // Mounting must not leave a switch queued: setMode is not instant, so a mode set by index would look
+            // correct right now and only flip the interface off once the round rolled over.
+            assertEquals(MiscType.MODE_EI_ON, eiInterface.modeNextRound().getName(),
+                  "Mounting the interface must not queue a switch away from the running mode");
+            assertFalse(eiInterface.isModeSwitchable(),
+                  "ProtoMeks cannot shut EI down (IO:AE p.69), so the mode must be locked against the UI");
+        }
+
+        @Test
+        @DisplayName("EI Interface added without an explicit mode starts running")
+        void eiInterfaceAddedWithoutExplicitModeStartsRunning() {
+            enablePilotOnly();
+            BipedMek mek = createMek(true, true);
+
+            assertFalse(mek.isEiShutdown(),
+                  "A newly mounted EI Interface takes mode index 0, which must be the running mode - EI runs unless "
+                        + "the pilot deliberately shuts it down (IO p.69)");
+            assertTrue(mek.hasActiveEiCockpit(),
+                  "A newly mounted EI Interface must provide EI without any explicit mode change");
         }
     }
 

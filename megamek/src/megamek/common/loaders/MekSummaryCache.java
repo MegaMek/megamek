@@ -772,8 +772,8 @@ public class MekSummaryCache {
     }
 
     /**
-     * Builds a fully populated {@link MekSummary} from a standalone unit file, without requiring the entire unit
-     * cache to be loaded. The unit does not need to be part of the official cache.
+     * Builds a fully populated {@link MekSummary} from a standalone unit file, without requiring the entire unit cache
+     * to be loaded. The unit does not need to be part of the official cache.
      *
      * <p>This is intended for tooling (such as the SVG mass printer) that needs to process arbitrary or custom
      * {@code .blk}/{@code .mtf} files.</p>
@@ -872,6 +872,11 @@ public class MekSummaryCache {
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
         ms.setAdvancedYear(e.getProductionDate(e.isClan()));
         ms.setStandardYear(e.getCommonDate(e.isClan()));
+        ms.setPrototypeDate(e.getPrototypeDate());
+        ms.setProductionDate(e.getProductionDate());
+        ms.setCommonDate(e.getCommonDate());
+        ms.setExtinctionDate(e.getExtinctionDate());
+        ms.setReintroductionDate(e.getReintroductionDate());
         ms.setExtinctRange(e.getExtinctionRange());
         ms.setForceGeneratorAvailability(e.getForceGeneratorAvailability());
         ms.setMissionRoles(e.getMissionRoles());
@@ -884,6 +889,7 @@ public class MekSummaryCache {
         ms.setJumpMp(e.getAnyTypeMaxJumpMP());
         ms.setMoveMode(e.getMovementMode());
         ms.setClan(e.isClan());
+        ms.setMixedTech(e.isMixedTech());
         if (e.isSupportVehicle()) {
             ms.setSupport(true);
         }

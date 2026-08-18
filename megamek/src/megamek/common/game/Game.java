@@ -241,10 +241,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private Map<String, BehaviorSettings> botSettings = new HashMap<>();
 
     /**
-     * Which AI implementation the most recent bot connected under each name was, alongside {@link #botSettings}.
-     * Rides the savegame so a loaded game can restore each seat with the same kind of bot it held, rather than
-     * guessing. Absent ({@code null}) in games saved before this was recorded - read it through
-     * {@link #getBotTypes()}, which heals that.
+     * Which AI implementation the most recent bot connected under each name was, alongside {@link #botSettings}. Rides
+     * the savegame so a loaded game can restore each seat with the same kind of bot it held, rather than guessing.
+     * Absent ({@code null}) in games saved before this was recorded - read it through {@link #getBotTypes()}, which
+     * heals that.
      */
     private Map<String, AIType> botTypes = new HashMap<>();
 
@@ -338,7 +338,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             rulesManager = new CoreRulesManager();
         }
     }
-    
+
     /**
      * Returns the map of hex locations being cleared by saws to turns remaining. Used by the board view to render cut
      * indicators and tooltips.
@@ -516,7 +516,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 initializeRulesManager(OptionsConstants.RULES_CORE);
             } else if (!rules_system.stringValue().equals(loadedOption)) {
                 initializeRulesManager(rules_system.stringValue());
-            } 
+            }
             processGameEvent(new GameSettingsChangeEvent(this));
         }
     }
@@ -644,7 +644,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                       (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
                       (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
                       (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
-                      (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) {
+                      (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR) ||
+                      (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_5) ||
+                      (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_10) ||
+                      (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_15) ||
+                      (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_20)) {
                     return true;
                 }
 
@@ -1391,7 +1395,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 case Targetable.TYPE_HEX_CLEAR, Targetable.TYPE_HEX_IGNITE, Targetable.TYPE_HEX_BOMB,
                      Targetable.TYPE_MINEFIELD_DELIVER, Targetable.TYPE_FLARE_DELIVER, Targetable.TYPE_HEX_EXTINGUISH,
                      Targetable.TYPE_HEX_ARTILLERY, Targetable.TYPE_HEX_SCREEN, Targetable.TYPE_HEX_AERO_BOMB,
-                     Targetable.TYPE_SATURATION, Targetable.TYPE_HEX_TAG -> new HexTarget(HexTarget.idToLocation(targetId), targetType);
+                     Targetable.TYPE_SATURATION, Targetable.TYPE_HEX_TAG ->
+                      new HexTarget(HexTarget.idToLocation(targetId), targetType);
 
                 case Targetable.TYPE_FUEL_TANK, Targetable.TYPE_FUEL_TANK_IGNITE, Targetable.TYPE_BUILDING,
                      Targetable.TYPE_BLDG_IGNITE, Targetable.TYPE_BLDG_TAG -> {
@@ -2659,6 +2664,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * Remove displacement attacks that were added previously
+     *
      * @param ea
      */
     public void removeDisplacementAttack(AttackAction ea) {
@@ -2726,12 +2732,12 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
         if (pendingDisplacementAttacks == null) {
             pendingDisplacementAttacks = new Vector<>();
-        } 
-        if (!pendingDisplacementAttacks.isEmpty()){
+        }
+        if (!pendingDisplacementAttacks.isEmpty()) {
             // Reverse traverse the pendingDisplacementAttacks, otherwise when we remove things, it causes problems
-            for (int attack = (pendingDisplacementAttacks.size()-1); attack >= 0; attack--) {
+            for (int attack = (pendingDisplacementAttacks.size() - 1); attack >= 0; attack--) {
                 AttackAction pendingAttack = pendingDisplacementAttacks.get(attack);
-                if (pendingAttack == null) { continue; }
+                if (pendingAttack == null) {continue;}
                 if (pendingAttack instanceof RamAttackAction) {
                     addRam(pendingAttack);
                     pendingDisplacementAttacks.remove(attack);
@@ -2742,7 +2748,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             }
         }
     }
-    
+
     /**
      * Adds a pending ramming attack to the list for this phase.
      *
@@ -2813,7 +2819,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public ArrayList<PilotingRollData> getPSRsForEntity(Entity entity) {
         ArrayList<PilotingRollData> rollsForEntity = new ArrayList<>();
-        
+
         for (PilotingRollData psr : pilotingRolls) {
             if (psr.getEntityId() == entity.getId()) {
                 rollsForEntity.add(psr);
@@ -2821,11 +2827,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
         return rollsForEntity;
     }
-        
+
     public void removePSRsByArray(ArrayList<PilotingRollData> psrList) {
         pilotingRolls.removeAll(psrList);
     }
-    
+
     /**
      * Resets the PSR list for a given entity.
      */
@@ -3966,9 +3972,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * @return which AI implementation the most recent bot connected under each player name was, as an
-     *       unmodifiable view; never {@code null} - games saved before the types were recorded read as an
-     *       empty map. Record entries through {@link #recordBotType(String, AIType)}.
+     * @return which AI implementation the most recent bot connected under each player name was, as an unmodifiable
+     *       view; never {@code null} - games saved before the types were recorded read as an empty map. Record entries
+     *       through {@link #recordBotType(String, AIType)}.
      */
     public Map<String, AIType> getBotTypes() {
         return Collections.unmodifiableMap(ensureBotTypes());

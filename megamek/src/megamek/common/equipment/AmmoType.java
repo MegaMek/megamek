@@ -707,7 +707,7 @@ public class AmmoType extends EquipmentType {
           Munitions.M_FOLLOW_THE_LEADER,
           new TechAdvancement(TechBase.IS).setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
-                .setISAdvancement(2750, DATE_NONE, DATE_NONE, 2770, DATE_NONE)
+                .setISAdvancement(2750, DATE_NONE, DATE_NONE, 2770, 3046)
                 .setISApproximate(true, false, false, true, false)
                 .setPrototypeFactions(Faction.TH)
                 .setReintroductionFactions(Faction.FS, Faction.LC)
@@ -3932,10 +3932,10 @@ public class AmmoType extends EquipmentType {
 
     /**
      * Create a new techAdvancement that uses: 1. the more restrictive tech base 2. the more-restrictive of all faction
-     * tech advancements 3. the later of all intro dates, 4. the earlier of all extinction dates, 5. the smaller of all
-     * prototype / production / reintroduction faction lists, 6. the greater of all extinction faction lists, 7. the
-     * higher static tech level, 8. the rarer availability level 9. the higher TechRating score given two other
-     * TechAdvancements.
+     * tech advancements 3. the later of all intro dates, 4. the earlier of all extinction dates, 5. the later of all
+     * reintroduction dates, 6. the smaller of all prototype / production / reintroduction faction lists, 7. the
+     * greater of all extinction faction lists, 8. the higher static tech level, 9. the rarer availability level 10.
+     * the higher TechRating score given two other TechAdvancements.
      *
      * @param base TechAdvancement of base ammo type being modified
      * @param mod  TechAdvancement of the mod/mutator; currently only Incendiary
@@ -3954,8 +3954,7 @@ public class AmmoType extends EquipmentType {
         // Advancement - later takes precendent except for extinction, but -1 trumps all
         for (AdvancementPhase phase : List.of(AdvancementPhase.PROTOTYPE,
               AdvancementPhase.PRODUCTION,
-              AdvancementPhase.COMMON,
-              AdvancementPhase.REINTRODUCED)) {
+              AdvancementPhase.COMMON)) {
             combination.setISAdvancement(phase,
                   laterOrUnsetYear(base.getISAdvancement(phase), mod.getISAdvancement(phase)));
             combination.setISApproximate(phase, (base.getISApproximate(phase) || mod.getISApproximate(phase)));
@@ -3965,13 +3964,31 @@ public class AmmoType extends EquipmentType {
         }
 
         // Extinction dates: earlier non-"-1" value wins
-        AdvancementPhase phase = AdvancementPhase.EXTINCT;
-        combination.setISAdvancement(phase, earlierNotUnsetYear(base.getISAdvancement(phase),
-              mod.getISAdvancement(phase)));
-        combination.setISApproximate(phase, (base.getISApproximate(phase) || mod.getISApproximate(phase)));
-        combination.setClanAdvancement(phase, earlierNotUnsetYear(base.getClanAdvancement(phase),
-              mod.getClanAdvancement(phase)));
-        combination.setClanApproximate(phase, (base.getClanApproximate(phase) || mod.getClanApproximate(phase)));
+        AdvancementPhase extinctionPhase = AdvancementPhase.EXTINCT;
+        combination.setISAdvancement(extinctionPhase, earlierNotUnsetYear(base.getISAdvancement(extinctionPhase),
+              mod.getISAdvancement(extinctionPhase)));
+        combination.setISApproximate(extinctionPhase,
+              (base.getISApproximate(extinctionPhase) || mod.getISApproximate(extinctionPhase)));
+        combination.setClanAdvancement(extinctionPhase, earlierNotUnsetYear(base.getClanAdvancement(extinctionPhase),
+              mod.getClanAdvancement(extinctionPhase)));
+        combination.setClanApproximate(extinctionPhase,
+              (base.getClanApproximate(extinctionPhase) || mod.getClanApproximate(extinctionPhase)));
+
+        // Reintroduction dates: later non-"-1" value wins. This has to follow the same "a set date wins over an
+        // unset one" rule as extinction above: the combination inherits an extinction date from whichever side went
+        // extinct, so it must inherit that side's reintroduction date too, or the combined munition would stay
+        // extinct forever.
+        AdvancementPhase reintroductionPhase = AdvancementPhase.REINTRODUCED;
+        combination.setISAdvancement(reintroductionPhase,
+              laterNotUnsetYear(base.getISAdvancement(reintroductionPhase),
+                    mod.getISAdvancement(reintroductionPhase)));
+        combination.setISApproximate(reintroductionPhase,
+              (base.getISApproximate(reintroductionPhase) || mod.getISApproximate(reintroductionPhase)));
+        combination.setClanAdvancement(reintroductionPhase,
+              laterNotUnsetYear(base.getClanAdvancement(reintroductionPhase),
+                    mod.getClanAdvancement(reintroductionPhase)));
+        combination.setClanApproximate(reintroductionPhase,
+              (base.getClanApproximate(reintroductionPhase) || mod.getClanApproximate(reintroductionPhase)));
 
         // Faction lists - eugh.
         Set<Faction> bProto = base.getPrototypeFactions();
@@ -4038,6 +4055,24 @@ public class AmmoType extends EquipmentType {
             }
         }
         return left;
+    }
+
+    /**
+     * Determine the later of two years for purposes of setting the reintroduction year of modified munitions.
+     *
+     * @param left  Left year
+     * @param right Right year
+     *
+     * @return Higher year that is not {@code DATE_NONE}, that is, the unset value of -1, or -1 if both are unset.
+     */
+    private static int laterNotUnsetYear(int left, int right) {
+        if (left == DATE_NONE) {
+            return right;
+        } else if (right == DATE_NONE) {
+            return left;
+        } else {
+            return Math.max(left, right);
+        }
     }
 
     /**

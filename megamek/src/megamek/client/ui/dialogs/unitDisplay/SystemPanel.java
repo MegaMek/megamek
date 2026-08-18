@@ -516,15 +516,16 @@ class SystemPanel extends PicMap
         }
 
         if (m.hasModes()) {
-            if (!m.curMode().getDisplayableName().isEmpty()) {
+            // Both of these describe what the equipment is or is about to be, so they take the state label
+            if (!m.curMode().getStateName(m.getType()).isEmpty()) {
                 sb.append(" (");
-                sb.append(m.curMode().getDisplayableName());
+                sb.append(m.curMode().getStateName(m.getType()));
                 sb.append(')');
             }
 
-            if (!m.pendingMode().equals("None")) {
+            if (!m.pendingMode().equals(Mounted.MODE_NONE)) {
                 sb.append(" (next turn, ");
-                sb.append(m.pendingMode().getDisplayableName());
+                sb.append(m.pendingMode().getStateName(m.getType()));
                 sb.append(')');
             }
 
@@ -611,16 +612,18 @@ class SystemPanel extends PicMap
                         clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);
 
                         // notify the player
+                        // These report the state the equipment has reached, or will reach, so they take the
+                        // state label rather than the label the player picked from the dropdown
                         if (m.canInstantSwitch(nMode)) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.switched",
-                                  m.getName(), m.curMode().getDisplayableName()));
+                                  m.getName(), m.curMode().getStateName(m.getType())));
                             clientgui.addToast(ToastLevel.INFO,
-                                  m.getName() + ": " + m.curMode().getDisplayableName(), en);
+                                  m.getName() + ": " + m.curMode().getStateName(m.getType()), en);
                             int weapon = this.unitDisplayPanel.wPan.getSelectedWeaponNum();
                             this.unitDisplayPanel.wPan.displayMek(en);
                             this.unitDisplayPanel.wPan.selectWeapon(weapon);
                         } else {
-                            String pendingModeName = m.pendingMode().getDisplayableName();
+                            String pendingModeName = m.pendingMode().getStateName(m.getType());
                             if (clientgui.getClient().getGame().getPhase().isDeployment()) {
                                 clientgui.systemMessage(Messages.getString("MekDisplay.willSwitchAtStart",
                                       m.getName(), pendingModeName));
@@ -911,6 +914,11 @@ class SystemPanel extends PicMap
                     // getModesCount() to report a merged primary+secondary list that can be longer than
                     // the type's, which would index past the end.
                     int visibleModeCount = mountedType.getModesCount(mounted);
+                    // A queued switch is what the combo shows as selected, so that is the mode described as
+                    // the equipment's state; without one it is simply the current mode.
+                    EquipmentMode selectedMode = mounted.pendingMode().equals(Mounted.MODE_NONE)
+                          ? mounted.curMode()
+                          : mounted.pendingMode();
                     for (int modeIndex = 0; modeIndex < visibleModeCount; modeIndex++) {
                         EquipmentMode equipmentMode = mountedType.getMode(modeIndex);
                         // Hack to prevent showing an option that is disabled by the server, but would
@@ -962,19 +970,19 @@ class SystemPanel extends PicMap
                               && Game.rulesManager.getRulesEquipment().blueShieldStealth()) {
                             continue;
                         }
-                        m_chMode.addItem(equipmentMode.getDisplayableName());
+                        // The mode the combo will end up selected on describes the equipment's state; every
+                        // other entry is a change the player can make, and reads as an instruction.
+                        if (equipmentMode.equals(selectedMode)) {
+                            m_chMode.addItem(equipmentMode.getStateName(mountedType));
+                        } else {
+                            m_chMode.addItem(equipmentMode.getActionName(mountedType));
+                        }
                     }
                     if (m_chMode.getModel().getSize() <= 1) {
                         m_chMode.removeAllItems();
                         m_chMode.setEnabled(false);
                     } else {
-                        if (mounted.pendingMode().equals("None")) {
-                            m_chMode.setSelectedItem(mounted.curMode()
-                                  .getDisplayableName());
-                        } else {
-                            m_chMode.setSelectedItem(mounted.pendingMode()
-                                  .getDisplayableName());
-                        }
+                        m_chMode.setSelectedItem(selectedMode.getStateName(mountedType));
                     }
                 }
                 // Note: EI Interface modes are now controlled via the EI Interface equipment, not cockpit

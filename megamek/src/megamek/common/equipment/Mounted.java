@@ -449,6 +449,31 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
+     * Sets the equipment mode at once, without the queued switch that {@link #setMode(String)} uses for equipment
+     * whose mode changes only take effect at the start of the next round.
+     *
+     * <p>This is for setting up equipment rather than for changing it in play: loading a unit, or deriving the mode
+     * of a built-in system from the game options. In those cases there is no turn boundary for a pending switch to
+     * cross, so queueing one would leave the equipment reporting the wrong mode until a round happened to tick over.
+     * A mode the player chooses during a game must still go through {@link #setMode(String)} so the delay the rules
+     * call for is applied.</p>
+     *
+     * @param newMode the name of the desired new mode
+     *
+     * @return the new mode number on success, {@code -1} if this equipment has no mode of that name
+     */
+    public int setModeImmediately(String newMode) {
+        for (int modeIndex = 0, modeCount = getModesCount(); modeIndex < modeCount; modeIndex++) {
+            if (getMode(modeIndex).equals(newMode)) {
+                mode = modeIndex;
+                pendingMode = -1;
+                return modeIndex;
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Sets the equipment mode to the mode denoted by the given mode number
      * TODO: Refactor so the equipment knows the phase they can be armed/disarmed
      *

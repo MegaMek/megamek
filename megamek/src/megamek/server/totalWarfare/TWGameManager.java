@@ -27910,6 +27910,9 @@ public class TWGameManager extends AbstractGameManager {
                   option.getValue().toString() +
                   '.';
             sendServerChat(message);
+            // also log it: the chat is not in megamek.log, and "why is this option not set" is a
+            // recurring playtest question
+            LOGGER.info("[GameOptions] {} set {} = {}", player, option.getName(), option.getValue());
             originalOption.setValue(option.getValue());
             changed++;
         }

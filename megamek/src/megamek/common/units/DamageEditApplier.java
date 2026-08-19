@@ -38,7 +38,9 @@ import megamek.common.CriticalSlot;
 import megamek.common.bays.ASFBay;
 import megamek.common.bays.Bay;
 import megamek.common.bays.SmallCraftBay;
+import megamek.common.enums.ChargeLevel;
 import megamek.common.equipment.DockingCollar;
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.IArmorState;
@@ -423,6 +425,7 @@ public class DamageEditApplier {
         applyHeat();
         applyAmmoShots();
         applyEquipmentSettings();
+        applyEquipmentActivation();
         applyStatus();
         logAppliedEdits();
     }
@@ -452,6 +455,60 @@ public class DamageEditApplier {
             }
         }
     }
+
+    /**
+     * Applies the gamemaster's equipment mode changes: the chosen mode of any equipment with modes (an On/Off
+     * switch and a full mode chooser both arrive here as a mode name), and Charged/Empty for bombast lasers and
+     * PPC capacitors. A gamemaster's change takes effect at once instead of waiting for the End Phase the way a
+     * player's declared switch does, so it uses the immediate mode setter. Equipment whose chosen mode matches its
+     * current mode is left alone, so a player's pending mode change on untouched equipment survives the edit.
+     */
+    private void applyEquipmentActivation() {
+        boolean ecmSwitchedOff = false;
+        for (Map.Entry<Integer, String> equipmentMode : spec.equipmentMode.entrySet()) {
+            Mounted<?> mounted = entity.getEquipment(equipmentMode.getKey());
+            if (mounted == null) {
+                continue;
+            }
+            String chosenMode = equipmentMode.getValue();
+            if (mounted.curMode().getName().equals(chosenMode)) {
+                continue;
+            }
+            mounted.setModeImmediately(chosenMode);
+            if (chosenMode.equals(Mounted.MODE_OFF)
+                  && (mounted.getType() instanceof MiscType miscType) && miscType.hasFlag(MiscType.F_ECM)) {
+                ecmSwitchedOff = true;
+            }
+        }
+        for (Map.Entry<Integer, Boolean> charged : spec.equipmentCharged.entrySet()) {
+            Mounted<?> mounted = entity.getEquipment(charged.getKey());
+            if (mounted == null) {
+                continue;
+            }
+            boolean charge = charged.getValue();
+            if (mounted.getType() instanceof MiscType) {
+                // a PPC capacitor: its charge is its mode, and "Charge" as the current mode means fully charged
+                boolean isCharged = mounted.curMode().equals(Mounted.MODE_CAPACITOR_CHARGE);
+                if (charge != isCharged) {
+                    mounted.setModeImmediately(charge ? Mounted.MODE_CAPACITOR_CHARGE : Mounted.MODE_OFF);
+                }
+            } else {
+                // a bombast laser: its charge is its own state, and only a full charge lets it fire
+                boolean isCharged = mounted.getChargeState() == ChargeLevel.CHARGED;
+                if (charge != isCharged) {
+                    mounted.setChargeState(charge ? ChargeLevel.CHARGED : ChargeLevel.CHARGE_NONE);
+                }
+            }
+        }
+        if (ecmSwitchedOff && !EquipmentActivation.hasEcmAvailableForStealth(entity)
+              && EquipmentActivation.isStealthOnOrActivating(entity)) {
+            // stealth armor cannot run without an operating ECM: switching the last ECM off takes stealth with it
+            for (MiscMounted stealth : entity.getMiscEquipment(MiscType.F_STEALTH)) {
+                stealth.setModeImmediately(Mounted.MODE_OFF);
+            }
+        }
+    }
+
 
     /**
      * Logs what the spec wrote onto the unit, and on which side it was applied: on the server this is the edit

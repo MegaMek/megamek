@@ -647,30 +647,43 @@ public class UnitDamagePanelBuilder {
     }
 
     /**
-     * Whether the gamemaster switches this equipment with the two-state On/Off button: it has exactly two modes of
-     * which one is {@code "Off"}, or it is a gauss rifle with its powered up/down pair. Equipment with more modes
-     * (an ECM suite with the ECCM option on, for example) gets the mode chooser instead. Stealth armor also
-     * carries an On/Off pair but is excluded here, because the editor's Stealth condition checkbox already owns
-     * that state.
+     * The modes the mount actually offers in this game. The type-level mode lists already follow the game
+     * options ({@code adaptToGameOptions}, {@code Entity#setGameOptions}), so a mode belonging to a disabled
+     * optional rule is not in them; the per-mount count on top of that filters modes that need linked equipment,
+     * such as the "Pulse ..." laser modes that require a RISC Laser Pulse Module. The loops below must index the
+     * type's mode list with this count, exactly like the unit display's Systems tab does.
+     */
+    private int availableModeCount(Mounted<?> mounted) {
+        return mounted.getType().getModesCount(mounted);
+    }
+
+    /**
+     * Whether the gamemaster switches this equipment with the two-state On/Off button: its mode is not locked by
+     * a rule, and it has exactly two available modes of which one is {@code "Off"} (or a gauss rifle's powered
+     * up/down pair). Equipment with more modes (an ECM suite with the ECCM option on, for example) gets the mode
+     * chooser instead. Stealth armor also carries an On/Off pair but is excluded here, because the editor's
+     * Stealth condition checkbox already owns that state.
      */
     private boolean isOnOffSwitchable(Mounted<?> mounted) {
-        if (isStealthArmor(mounted)) {
+        if (!mounted.isModeSwitchable() || isStealthArmor(mounted)) {
             return false;
         }
-        return (mounted.getModesCount() == 2)
+        return (availableModeCount(mounted) == 2)
               && ((offModeName(mounted) != null));
     }
 
     /**
      * Whether the gamemaster chooses this equipment's mode from a dropdown of all its modes: any other equipment
-     * with at least two modes. Ammo is excluded - its only mode is hot-loading, which the hot-load checkbox owns -
-     * and so is stealth armor, owned by the Stealth condition checkbox.
+     * with at least two available modes whose mode is not locked by a rule ({@link Mounted#isModeSwitchable()} -
+     * an aero's rotary autocannon is forced to 6-shot, a ProtoMek's EI Interface follows its game option). Ammo
+     * is excluded - its only mode is hot-loading, which the hot-load checkbox owns - and so is stealth armor,
+     * owned by the Stealth condition checkbox.
      */
     private boolean offersModeChooser(Mounted<?> mounted) {
-        if ((mounted instanceof AmmoMounted) || isStealthArmor(mounted)) {
+        if (!mounted.isModeSwitchable() || (mounted instanceof AmmoMounted) || isStealthArmor(mounted)) {
             return false;
         }
-        return mounted.getModesCount() >= 2;
+        return availableModeCount(mounted) >= 2;
     }
 
     /** Whether this equipment is a stealth armor system, whose state the Stealth condition checkbox owns. */
@@ -708,7 +721,7 @@ public class UnitDamagePanelBuilder {
     private JComponent withOnOffToggle(int equipmentNumber, Mounted<?> mounted, JComponent control) {
         String offMode = offModeName(mounted);
         String activeMode = offMode;
-        for (int modeIndex = 0; modeIndex < mounted.getModesCount(); modeIndex++) {
+        for (int modeIndex = 0; modeIndex < availableModeCount(mounted); modeIndex++) {
             String modeName = mounted.getType().getMode(modeIndex).getName();
             if (!modeName.equals(offMode)) {
                 activeMode = modeName;
@@ -734,7 +747,7 @@ public class UnitDamagePanelBuilder {
     /** Appends a dropdown of all the equipment's modes to its row, preselected with its current mode. */
     private JComponent withModeChooser(int equipmentNumber, Mounted<?> mounted, JComponent control) {
         JComboBox<EquipmentMode> modeChooser = new JComboBox<>();
-        for (int modeIndex = 0; modeIndex < mounted.getModesCount(); modeIndex++) {
+        for (int modeIndex = 0; modeIndex < availableModeCount(mounted); modeIndex++) {
             modeChooser.addItem(mounted.getType().getMode(modeIndex));
         }
         modeChooser.setSelectedItem(mounted.curMode());

@@ -343,6 +343,18 @@ class DamageEditApplierTest {
     }
 
     @Test
+    void rulesLockedModeStaysLockedEvenForTheGamemaster() throws LocationFullException {
+        BipedMek bipedMek = new BipedMek();
+        Mounted<?> ecm = addEquipment(bipedMek, "ISGuardianECMSuite", Mek.LOC_RIGHT_TORSO);
+        // the per-mount lock the rules use, e.g. an aero's rotary autocannon forced to 6-shot
+        ecm.setModeSwitchable(false);
+
+        applyModeSwitch(bipedMek, bipedMek.getEquipmentNum(ecm), Mounted.MODE_OFF);
+
+        assertFalse(ecm.isModeTurnedOff(), "A rules-locked mode is not switchable, even by the gamemaster");
+    }
+
+    @Test
     void multiModeEquipmentTakesAnyOfItsModes() throws LocationFullException {
         BipedMek bipedMek = new BipedMek();
         Mounted<?> shield = addEquipment(bipedMek, "ISMediumShield", Mek.LOC_LEFT_ARM);

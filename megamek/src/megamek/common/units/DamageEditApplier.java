@@ -474,6 +474,11 @@ public class DamageEditApplier {
             if (mounted.curMode().getName().equals(chosenMode)) {
                 continue;
             }
+            // a rules-locked mode stays locked even for the gamemaster: an aero's rotary autocannon is forced
+            // to 6-shot, a ProtoMek's EI Interface follows its game option
+            if (!mounted.isModeSwitchable()) {
+                continue;
+            }
             mounted.setModeImmediately(chosenMode);
             if (chosenMode.equals(Mounted.MODE_OFF)
                   && (mounted.getType() instanceof MiscType miscType) && miscType.hasFlag(MiscType.F_ECM)) {

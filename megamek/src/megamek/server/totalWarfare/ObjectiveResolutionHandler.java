@@ -119,7 +119,7 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         if (!getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
             // markers can be placed without opting into objective scoring - without this gate, the
             // victory points awarded here would decide the winner of a game that never enabled them
-            LOGGER.debug("[Objective] {} objective marker(s) on the board, but the use_objectives victory "
+            LOGGER.info("[Objective] {} objective marker(s) on the board, but the use_objectives victory "
                   + "option is off - no control resolution or scoring", allObjectives.size());
             return;
         }

@@ -116,6 +116,7 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.RulerDialog;
 import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.HexFlagSprite;
+import megamek.client.ui.clientGUI.boardview.spriteHandler.GroundObjectSpriteHandler;
 import megamek.client.ui.clientGUI.boardview.toolTip.TWBoardViewTooltip;
 import megamek.client.ui.dialogs.InformDialog;
 import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
@@ -141,7 +142,6 @@ import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.client.ui.widget.SkinSpecification;
 import megamek.common.Configuration;
 import megamek.common.Player;
-import megamek.common.RangeType;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.autoResolve.converter.MMSetupForces;
@@ -153,7 +153,6 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
-import megamek.common.hexArea.CircleHexArea;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
@@ -331,8 +330,6 @@ public class ChatLounge extends AbstractPhaseDisplay
           new JCheckBox(Messages.getString("ChatLounge.designateVictoryHexes"));
     private final List<HexFlagSprite> previewFlagSprites = new ArrayList<>();
     private final List<FieldOfFireSprite> previewRadiusSprites = new ArrayList<>();
-    /** All six borders of a hex, for the filled control-radius highlight sprites. */
-    private static final int ALL_HEX_BORDERS = 63;
 
     private final ArrayList<String> invalidBoards = new ArrayList<>();
     private final ArrayList<String> serverBoards = new ArrayList<>();
@@ -1635,25 +1632,15 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     /**
-     * Adds the filled-hex highlight of a flag's control radius to the preview (the flag's hex and every hex
-     * within the radius), so the area an objective will cover is visible while setting it up. Flags with the
-     * default radius 0 draw no highlight - the flag itself already marks the single hex.
+     * Adds the outline of a flag's control zone to the preview - the zone's perimeter hex sides are highlighted,
+     * the same way the zone is drawn on the in-game board - so the area an objective will cover is visible while
+     * setting it up. Flags with the default radius 0 draw no outline - the flag itself already marks the hex.
      *
      * @param marker the designated marker to highlight
      */
     private void addRadiusSprites(ObjectiveMarker marker) {
-        if (marker.getControlRadius() == 0) {
-            return;
-        }
-        Board previewBoard = boardPreviewGame.getBoard();
-        if ((previewBoard == null) || (previewBoard.getWidth() == 0)) {
-            return;
-        }
-        for (Coords radiusHex : new CircleHexArea(marker.getLobbyPosition(), marker.getControlRadius())
-              .getCoords(previewBoard)) {
-            previewRadiusSprites.add(new FieldOfFireSprite(previewBV, RangeType.RANGE_MEDIUM, radiusHex,
-                  ALL_HEX_BORDERS));
-        }
+        previewRadiusSprites.addAll(GroundObjectSpriteHandler.zoneOutlineSprites(previewBV,
+              boardPreviewGame.getBoard(), marker.getLobbyPosition(), marker.getControlRadius()));
     }
 
     /**

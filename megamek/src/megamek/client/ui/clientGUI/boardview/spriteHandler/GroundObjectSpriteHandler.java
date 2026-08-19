@@ -33,15 +33,20 @@
 package megamek.client.ui.clientGUI.boardview.spriteHandler;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.GroundObjectSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.HexFlagSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
 import megamek.common.Player;
+import megamek.common.annotations.Nullable;
+import megamek.common.RangeType;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
@@ -74,8 +79,10 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
             BoardView boardView = (BoardView) clientGUI.boardViews().getFirst();
             for (Coords coords : currentGroundObjectList.keySet()) {
                 for (ICarryable groundObject : currentGroundObjectList.get(coords)) {
-                    if (groundObject instanceof ObjectiveMarker) {
+                    if (groundObject instanceof ObjectiveMarker marker) {
                         flagCount++;
+                        currentSprites.addAll(zoneOutlineSprites(boardView, game.getBoard(), coords,
+                              marker.getControlRadius()));
                     }
                     currentSprites.add(spriteFor(groundObject, coords, boardView));
                 }
@@ -85,6 +92,43 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
         clientGUI.boardViews().getFirst().addSprites(currentSprites);
         VICTORY_HEX_LOGGER.debug("[VictoryHex] Board shows {} ground object sprite(s), {} of them objective flag(s)",
               currentSprites.size(), flagCount);
+    }
+
+    /**
+     * Builds the outline of an objective's control zone: every hex within the given radius of the center whose
+     * edges facing hexes outside the zone are highlighted, so the zone's perimeter is drawn on the board without
+     * filling it. A radius of 0 draws nothing - the flag itself already marks the single hex.
+     *
+     * @param boardView the board view the sprites are displayed on
+     * @param board     the game board, for the zone's edge at the board border; may be {@code null} pre-board
+     * @param center    the objective's hex
+     * @param radius    the control radius in hexes
+     *
+     * @return the perimeter sprites of the zone, empty for radius 0
+     */
+    public static List<FieldOfFireSprite> zoneOutlineSprites(BoardView boardView, @Nullable Board board,
+          Coords center, int radius) {
+        List<FieldOfFireSprite> outlineSprites = new ArrayList<>();
+        if ((radius <= 0) || (board == null) || (board.getWidth() == 0)) {
+            return outlineSprites;
+        }
+        for (Coords zoneHex : center.allAtDistanceOrLess(radius)) {
+            if (!board.contains(zoneHex)) {
+                continue;
+            }
+            int outsideEdges = 0;
+            for (int direction = 0; direction < 6; direction++) {
+                Coords neighbor = zoneHex.translated(direction);
+                boolean neighborOutsideZone = (center.distance(neighbor) > radius) || !board.contains(neighbor);
+                if (neighborOutsideZone) {
+                    outsideEdges |= (1 << direction);
+                }
+            }
+            if (outsideEdges != 0) {
+                outlineSprites.add(new FieldOfFireSprite(boardView, RangeType.RANGE_MEDIUM, zoneHex, outsideEdges));
+            }
+        }
+        return outlineSprites;
     }
 
     /**

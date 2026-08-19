@@ -668,8 +668,7 @@ public class UnitDamagePanelBuilder {
         if (!mounted.isModeSwitchable() || isStealthArmor(mounted)) {
             return false;
         }
-        return (availableModeCount(mounted) == 2)
-              && ((offModeName(mounted) != null));
+        return (availableModeCount(mounted) == 2) && (offModeName(mounted) != null);
     }
 
     /**
@@ -714,8 +713,9 @@ public class UnitDamagePanelBuilder {
     }
 
     /**
-     * Appends a green/red Turn ON / Turn OFF button to a two-mode equipment's row, prefilled with the equipment's
-     * current state. The button remembers which mode each of its states stands for, so reading it back needs no
+     * Appends the green/red state button to a two-mode equipment's row: it names the equipment's current state
+     * ({@code ON}/{@code OFF}) and, once clicked, the change OK will apply ({@code Turning ON}/{@code Turning
+     * OFF}). The button remembers which mode each of its states stands for, so reading it back needs no
      * re-derivation.
      */
     private JComponent withOnOffToggle(int equipmentNumber, Mounted<?> mounted, JComponent control) {

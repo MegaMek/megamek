@@ -97,6 +97,10 @@ public class UnitDamageControls {
     /**
      * A two-state equipment mode switch: the toggle button and the internal mode name each of its states stands
      * for, so the chosen mode can be read back without re-deriving which mode was which.
+     *
+     * @param toggle         the button in the editor row
+     * @param selectedMode   the internal mode name the selected state stands for (the active mode)
+     * @param unselectedMode the internal mode name the unselected state stands for (the off mode)
      */
     public record ModeSwitch(StateToggleButton toggle, String selectedMode, String unselectedMode) {
         /** The internal name of the mode the switch currently stands on. */

@@ -477,8 +477,12 @@ public class DamageEditApplier {
             // a rules-locked mode stays locked even for the gamemaster: an aero's rotary autocannon is forced
             // to 6-shot, a ProtoMek's EI Interface follows its game option
             if (!mounted.isModeSwitchable()) {
+                LOGGER.info("[EquipOff] GM edit refused: {} on {} is rules-locked, mode stays {}",
+                      mounted.getName(), entity.getDisplayName(), mounted.curMode().getName());
                 continue;
             }
+            LOGGER.info("[EquipOff] GM edit: {} on {} switched from mode {} to {}",
+                  mounted.getName(), entity.getDisplayName(), mounted.curMode().getName(), chosenMode);
             mounted.setModeImmediately(chosenMode);
             if (chosenMode.equals(Mounted.MODE_OFF)
                   && (mounted.getType() instanceof MiscType miscType) && miscType.hasFlag(MiscType.F_ECM)) {
@@ -495,12 +499,16 @@ public class DamageEditApplier {
                 // a PPC capacitor: its charge is its mode, and "Charge" as the current mode means fully charged
                 boolean isCharged = mounted.curMode().equals(Mounted.MODE_CAPACITOR_CHARGE);
                 if (charge != isCharged) {
+                    LOGGER.info("[EquipOff] GM edit: capacitor {} on {} set to {}",
+                          mounted.getName(), entity.getDisplayName(), charge ? "charged" : "empty");
                     mounted.setModeImmediately(charge ? Mounted.MODE_CAPACITOR_CHARGE : Mounted.MODE_OFF);
                 }
             } else {
                 // a bombast laser: its charge is its own state, and only a full charge lets it fire
                 boolean isCharged = mounted.getChargeState() == ChargeLevel.CHARGED;
                 if (charge != isCharged) {
+                    LOGGER.info("[EquipOff] GM edit: {} on {} set to {}",
+                          mounted.getName(), entity.getDisplayName(), charge ? "charged" : "empty");
                     mounted.setChargeState(charge ? ChargeLevel.CHARGED : ChargeLevel.CHARGE_NONE);
                 }
             }
@@ -508,12 +516,13 @@ public class DamageEditApplier {
         if (ecmSwitchedOff && !EquipmentActivation.hasEcmAvailableForStealth(entity)
               && EquipmentActivation.isStealthOnOrActivating(entity)) {
             // stealth armor cannot run without an operating ECM: switching the last ECM off takes stealth with it
+            LOGGER.info("[EquipOff] GM edit: last ECM on {} switched off, stealth armor goes down with it",
+                  entity.getDisplayName());
             for (MiscMounted stealth : entity.getMiscEquipment(MiscType.F_STEALTH)) {
                 stealth.setModeImmediately(Mounted.MODE_OFF);
             }
         }
     }
-
 
     /**
      * Logs what the spec wrote onto the unit, and on which side it was applied: on the server this is the edit

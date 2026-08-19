@@ -471,7 +471,8 @@ public class DamageEditApplier {
                 continue;
             }
             String chosenMode = equipmentMode.getValue();
-            if (mounted.curMode().getName().equals(chosenMode)) {
+            // the spec is network input, so a broken client may send a null mode name
+            if ((chosenMode == null) || mounted.curMode().getName().equals(chosenMode)) {
                 continue;
             }
             // a rules-locked mode stays locked even for the gamemaster: an aero's rotary autocannon is forced
@@ -481,9 +482,14 @@ public class DamageEditApplier {
                       mounted.getName(), entity.getDisplayName(), mounted.curMode().getName());
                 continue;
             }
+            String previousMode = mounted.curMode().getName();
+            if (mounted.setModeImmediately(chosenMode) < 0) {
+                LOGGER.warn("[EquipOff] GM edit refused: {} on {} has no mode named {}",
+                      mounted.getName(), entity.getDisplayName(), chosenMode);
+                continue;
+            }
             LOGGER.info("[EquipOff] GM edit: {} on {} switched from mode {} to {}",
-                  mounted.getName(), entity.getDisplayName(), mounted.curMode().getName(), chosenMode);
-            mounted.setModeImmediately(chosenMode);
+                  mounted.getName(), entity.getDisplayName(), previousMode, chosenMode);
             if (chosenMode.equals(Mounted.MODE_OFF)
                   && (mounted.getType() instanceof MiscType miscType) && miscType.hasFlag(MiscType.F_ECM)) {
                 ecmSwitchedOff = true;
@@ -491,7 +497,8 @@ public class DamageEditApplier {
         }
         for (Map.Entry<Integer, Boolean> charged : spec.equipmentCharged.entrySet()) {
             Mounted<?> mounted = entity.getEquipment(charged.getKey());
-            if (mounted == null) {
+            // the spec is network input, so a broken client may send a null charge state
+            if ((mounted == null) || (charged.getValue() == null)) {
                 continue;
             }
             boolean charge = charged.getValue();

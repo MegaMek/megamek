@@ -355,6 +355,37 @@ class DamageEditApplierTest {
     }
 
     @Test
+    void brokenSpecValuesFromTheNetworkAreIgnored() throws LocationFullException {
+        BipedMek bipedMek = new BipedMek();
+        Mounted<?> ecm = addEquipment(bipedMek, "ISGuardianECMSuite", Mek.LOC_RIGHT_TORSO);
+        Mounted<?> bombastLaser = addEquipment(bipedMek, "ISBombastLaser", Mek.LOC_RIGHT_ARM);
+
+        // the spec travels in a packet, so a broken client may fill its maps with nulls
+        DamageEditSpec brokenSpec = new DamageEditSpec();
+        brokenSpec.entityId = bipedMek.getId();
+        brokenSpec.equipmentMode.put(bipedMek.getEquipmentNum(ecm), null);
+        brokenSpec.equipmentCharged.put(bipedMek.getEquipmentNum(bombastLaser), null);
+        new DamageEditApplier(bipedMek, brokenSpec).applyToEntity();
+
+        assertTrue(bipedMek.hasActiveECM(), "A null mode name is ignored, not applied or crashed on");
+        assertEquals(ChargeLevel.CHARGE_NONE, bombastLaser.getChargeState(), "A null charge state is ignored");
+    }
+
+    @Test
+    void unknownModeNameChangesNothing() throws LocationFullException {
+        BipedMek bipedMek = new BipedMek();
+        Mounted<?> ecm = addEquipment(bipedMek, "ISGuardianECMSuite", Mek.LOC_RIGHT_TORSO);
+        Mounted<?> stealth = addEquipment(bipedMek, "IS Stealth", Mek.LOC_LEFT_TORSO);
+        stealth.setModeImmediately(Mounted.MODE_ON);
+
+        applyModeSwitch(bipedMek, bipedMek.getEquipmentNum(ecm), "No Such Mode");
+
+        assertEquals(MiscType.MODE_ECM, ecm.curMode().getName(), "An unknown mode name changes nothing");
+        assertEquals(Mounted.MODE_ON, stealth.curMode().getName(),
+              "A failed switch must not trigger the ECM/stealth follow-up");
+    }
+
+    @Test
     void multiModeEquipmentTakesAnyOfItsModes() throws LocationFullException {
         BipedMek bipedMek = new BipedMek();
         Mounted<?> shield = addEquipment(bipedMek, "ISMediumShield", Mek.LOC_LEFT_ARM);

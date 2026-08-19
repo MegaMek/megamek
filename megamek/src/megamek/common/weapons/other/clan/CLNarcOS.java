@@ -68,7 +68,12 @@ public class CLNarcOS extends NarcWeapon {
         flags = flags.or(F_ONE_SHOT).andNot(F_PROTO_WEAPON);
         bv = 6;
         cost = 100000;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 232);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 232),
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 182),
+              rulesRef(SourceBookCode.TW, 113)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

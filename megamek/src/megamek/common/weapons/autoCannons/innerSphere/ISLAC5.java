@@ -73,7 +73,12 @@ public class ISLAC5 extends LACWeapon {
         maxRange = RANGE_MED;
         shortAV = 5;
         medAV = 5;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 207);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 207),
+              rulesRef(SourceBookCode.BMM, 98),
+              rulesRef(SourceBookCode.CORE, 183),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

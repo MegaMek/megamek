@@ -69,7 +69,11 @@ public class CLLRT10IOS extends LRTWeapon {
         bv = 22;
         flags = flags.or(F_ONE_SHOT).andNot(F_PROTO_WEAPON);
         cost = 80000;
-        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 139);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 139),
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 182)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

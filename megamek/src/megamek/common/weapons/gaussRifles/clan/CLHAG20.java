@@ -74,7 +74,12 @@ public class CLHAG20 extends HAGWeapon {
         longAV = 12;
         maxRange = RANGE_LONG;
         explosionDamage = rackSize / 2;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 219);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 219),
+              rulesRef(SourceBookCode.BMM, 100),
+              rulesRef(SourceBookCode.CORE, 184),
+              rulesRef(SourceBookCode.TW, 304)
+        );
         //Jan 22 - Errata issued by CGL (Greekfire) for HAGs        
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

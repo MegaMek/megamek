@@ -75,7 +75,11 @@ public class CLProtoMekAC4 extends ProtoMekACWeapon {
         longAV = 4;
         maxRange = RANGE_MED;
         explosionDamage = damage;
-        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 98);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 98),
+              rulesRef(SourceBookCode.BMM, 98),
+              rulesRef(SourceBookCode.CORE, 183)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)

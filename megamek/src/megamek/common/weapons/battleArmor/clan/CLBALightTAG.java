@@ -76,7 +76,10 @@ public class CLBALightTAG extends TAGWeapon {
               .andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON)
               .andNot(F_PROTO_WEAPON);
-        rulesRefs = rulesRefs(SourceBookCode.TM, 270);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 270),
+              rulesRef(SourceBookCode.TW, 229)
+        );
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

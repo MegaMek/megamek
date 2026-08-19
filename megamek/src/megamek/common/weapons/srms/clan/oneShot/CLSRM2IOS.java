@@ -71,7 +71,11 @@ public class CLSRM2IOS extends SRMWeapon {
         cost = 8000;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 139);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 139),
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 182)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

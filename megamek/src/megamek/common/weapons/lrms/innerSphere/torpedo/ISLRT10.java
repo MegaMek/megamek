@@ -70,7 +70,12 @@ public class ISLRT10 extends LRTWeapon {
         this.criticalSlots = 2;
         this.bv = 90;
         this.cost = 100000;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 230);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 230),
+              rulesRef(SourceBookCode.BMM, 104),
+              rulesRef(SourceBookCode.CORE, 187),
+              rulesRef(SourceBookCode.TW, 138)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

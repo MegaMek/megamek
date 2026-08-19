@@ -73,7 +73,12 @@ public class CLLB10XAC extends LBXACWeapon {
         shortAV = getBaseAeroDamage();
         this.medAV = this.shortAV;
         this.maxRange = RANGE_MED;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 207);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 207),
+              rulesRef(SourceBookCode.BMM, 98),
+              rulesRef(SourceBookCode.CORE, 183),
+              rulesRef(SourceBookCode.TW, 304)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setTechRating(TechRating.F)

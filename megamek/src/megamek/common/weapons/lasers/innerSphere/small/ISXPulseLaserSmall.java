@@ -79,7 +79,11 @@ public class ISXPulseLaserSmall extends PulseLaserWeapon {
         shortAV = 3;
         cost = 31000;
         flags = flags.or(F_BURST_FIRE).andNot(F_PROTO_WEAPON);
-        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 133);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 133),
+              rulesRef(SourceBookCode.BMM, 101),
+              rulesRef(SourceBookCode.CORE, 185)
+        );
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)

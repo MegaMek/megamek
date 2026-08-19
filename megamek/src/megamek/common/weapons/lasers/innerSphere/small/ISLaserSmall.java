@@ -79,7 +79,12 @@ public class ISLaserSmall extends LaserWeapon {
         shortAV = 3;
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 227);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 227),
+              rulesRef(SourceBookCode.BMM, 100),
+              rulesRef(SourceBookCode.CORE, 184),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(true)
               .setUnofficial(false)

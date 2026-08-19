@@ -70,7 +70,12 @@ public class ISStreakSRM2 extends StreakSRMWeapon {
         cost = 15000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 230);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 230),
+              rulesRef(SourceBookCode.BMM, 104),
+              rulesRef(SourceBookCode.CORE, 187),
+              rulesRef(SourceBookCode.TW, 138)
+        );
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)

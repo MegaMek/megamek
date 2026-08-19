@@ -78,7 +78,12 @@ public class CLPulseLaserSmall extends PulseLaserWeapon {
         shortAV = 3;
         maxRange = RANGE_SHORT;
         flags = flags.or(F_BURST_FIRE);
-        rulesRefs = rulesRefs(SourceBookCode.TM, 226);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 226),
+              rulesRef(SourceBookCode.BMM, 101),
+              rulesRef(SourceBookCode.CORE, 185),
+              rulesRef(SourceBookCode.TW, 304)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

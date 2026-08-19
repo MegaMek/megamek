@@ -79,7 +79,11 @@ public abstract class ArrowIV extends ArtilleryWeapon {
         cost = 450000;
         this.flags = flags.or(F_MISSILE).or(F_ARROW_IV);
         this.missileArmor = 20;
-        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 96);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 96),
+              rulesRef(SourceBookCode.BMM, 97),
+              rulesRef(SourceBookCode.CORE, 182)
+        );
     }
 
     @Override

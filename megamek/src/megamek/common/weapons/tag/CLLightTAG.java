@@ -69,7 +69,12 @@ public class CLLightTAG extends TAGWeapon {
         bv = 0;
         cost = 40000;
         flags = flags.or(F_AERO_WEAPON).or(F_PROTO_WEAPON).andNot(F_BA_WEAPON);
-        rulesRefs = rulesRefs(SourceBookCode.TM, 238);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 238),
+              rulesRef(SourceBookCode.BMM, 114),
+              rulesRef(SourceBookCode.CORE, 200),
+              rulesRef(SourceBookCode.TW, 304)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

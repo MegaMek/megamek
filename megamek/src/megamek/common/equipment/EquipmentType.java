@@ -266,6 +266,16 @@ public class EquipmentType implements ITechnology {
         return rulesRefs;
     }
 
+    /** Creates one rule reference for use in a multi-source {@link #rulesRefs(RulesRef...)} call. */
+    protected static RulesRef rulesRef(SourceBookCode book, Integer page) {
+        return new RulesRef(Objects.requireNonNull(book, "book"), page);
+    }
+
+    /** Creates one page-less rule reference for use in a multi-source {@link #rulesRefs(RulesRef...)} call. */
+    protected static RulesRef rulesRef(SourceBookCode book) {
+        return rulesRef(book, null);
+    }
+
     /**
      * Creates an immutable rule-reference list for one sourcebook. Passing no pages creates one reference with a null
      * page; passing multiple pages creates one reference per page.
@@ -274,14 +284,23 @@ public class EquipmentType implements ITechnology {
         Objects.requireNonNull(book, "book");
         Objects.requireNonNull(pages, "pages");
         if (pages.length == 0) {
-            return List.of(new RulesRef(book, null));
+            return List.of(rulesRef(book));
         }
-        return Arrays.stream(pages).map(page -> new RulesRef(book, page)).toList();
+        return Arrays.stream(pages).map(page -> rulesRef(book, page)).toList();
     }
 
     /** Creates an immutable rule-reference list, including an empty list when no references are supplied. */
     protected static List<RulesRef> rulesRefs(RulesRef... references) {
         return List.of(references);
+    }
+
+    /** Adds references to an existing list, preserving order and removing exact duplicates. */
+    protected static List<RulesRef> rulesRefs(List<RulesRef> existing, RulesRef... additions) {
+        Objects.requireNonNull(existing, "existing");
+        Objects.requireNonNull(additions, "additions");
+        Set<RulesRef> result = new LinkedHashSet<>(existing);
+        result.addAll(Arrays.asList(additions));
+        return List.copyOf(result);
     }
 
     public Map<Integer, Integer> getTechLevels() {

@@ -67,7 +67,12 @@ public class ISTAG extends TAGWeapon {
         extremeRange = 18;
         bv = 0;
         cost = 50000;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 238);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 238),
+              rulesRef(SourceBookCode.BMM, 113),
+              rulesRef(SourceBookCode.CORE, 200),
+              rulesRef(SourceBookCode.TW, 142)
+        );
         flags = flags.andNot(F_PROTO_WEAPON).andNot(F_BA_WEAPON);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)

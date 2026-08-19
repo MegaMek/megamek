@@ -77,7 +77,12 @@ public class CLUAC2 extends UACWeapon {
         extAV = 3;
         maxRange = RANGE_EXT;
         explosionDamage = damage;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 208);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 208),
+              rulesRef(SourceBookCode.BMM, 99),
+              rulesRef(SourceBookCode.CORE, 183),
+              rulesRef(SourceBookCode.TW, 304)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

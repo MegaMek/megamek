@@ -78,7 +78,12 @@ public class ISC3M extends TAGWeapon {
         mediumRange = 9;
         longRange = 15;
         extremeRange = 18;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 209);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 209),
+              rulesRef(SourceBookCode.BMM, 110),
+              rulesRef(SourceBookCode.CORE, 198),
+              rulesRef(SourceBookCode.TW, 131)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

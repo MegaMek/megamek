@@ -78,7 +78,12 @@ public class CLATM6 extends ATMWeapon {
         shortAV = 8;
         medAV = 8;
         maxRange = RANGE_MED;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 229);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 229),
+              rulesRef(SourceBookCode.BMM, 102),
+              rulesRef(SourceBookCode.CORE, 186),
+              rulesRef(SourceBookCode.TW, 138)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

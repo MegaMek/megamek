@@ -69,7 +69,13 @@ public class ISImprovedNarc extends NarcWeapon {
         criticalSlots = 3;
         bv = 75;
         cost = 250000;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 232);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 232),
+              rulesRef(SourceBookCode.BMM, 104),
+              rulesRef(SourceBookCode.BMM, 108),
+              rulesRef(SourceBookCode.CORE, 188),
+              rulesRef(SourceBookCode.TW, 138)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

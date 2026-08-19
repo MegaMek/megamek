@@ -77,7 +77,12 @@ public class CLHeavyLaserMedium extends LaserWeapon {
         shortAV = 10;
         maxRange = RANGE_SHORT;
         flags = flags.or(WeaponTypeFlag.HEAVY_LASER);
-        rulesRefs = rulesRefs(SourceBookCode.TM, 226);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 226),
+              rulesRef(SourceBookCode.BMM, 101),
+              rulesRef(SourceBookCode.CORE, 185),
+              rulesRef(SourceBookCode.TW, 304)
+        );
         //Jan 22 - Errata issued by CGL (Greekfire) for Heavy Lasers
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

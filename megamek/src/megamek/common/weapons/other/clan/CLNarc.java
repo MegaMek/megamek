@@ -67,7 +67,13 @@ public class CLNarc extends NarcWeapon {
         this.criticalSlots = 1;
         this.bv = 30;
         this.cost = 100000;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 232);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 232),
+              rulesRef(SourceBookCode.BMM, 104),
+              rulesRef(SourceBookCode.BMM, 108),
+              rulesRef(SourceBookCode.CORE, 188),
+              rulesRef(SourceBookCode.TW, 138)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

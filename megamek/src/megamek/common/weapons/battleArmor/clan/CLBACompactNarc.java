@@ -74,7 +74,10 @@ public class CLBACompactNarc extends NarcWeapon {
         tonnage = .15;
         criticalSlots = 1;
         cost = 15000;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 263);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 263),
+              rulesRef(SourceBookCode.TW, 305)
+        );
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

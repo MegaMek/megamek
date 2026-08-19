@@ -80,7 +80,12 @@ public class ISAMS extends AmmoWeapon {
         setInstantModeSwitch(false);
         cost = 100000;
         atClass = CLASS_AMS;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 204);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 204),
+              rulesRef(SourceBookCode.BMM, 118),
+              rulesRef(SourceBookCode.CORE, 206),
+              rulesRef(SourceBookCode.TW, 129)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)

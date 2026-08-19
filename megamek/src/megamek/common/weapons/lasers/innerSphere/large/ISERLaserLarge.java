@@ -75,7 +75,12 @@ public class ISERLaserLarge extends LaserWeapon {
         medAV = 8;
         longAV = 8;
         maxRange = RANGE_LONG;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 226);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 226),
+              rulesRef(SourceBookCode.BMM, 101),
+              rulesRef(SourceBookCode.CORE, 185),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

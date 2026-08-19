@@ -74,7 +74,12 @@ public class ISERLaserMedium extends LaserWeapon {
         shortAV = 5;
         medAV = 5;
         maxRange = RANGE_MED;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 226);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 226),
+              rulesRef(SourceBookCode.BMM, 101),
+              rulesRef(SourceBookCode.CORE, 185),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         // December 2021 - Errata request to change common date
         techAdvancement.setTechBase(TechBase.IS)

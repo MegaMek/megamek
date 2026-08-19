@@ -71,7 +71,12 @@ public class ISUAC10 extends UACWeapon {
         this.medAV = 15;
         this.maxRange = RANGE_MED;
         this.explosionDamage = damage;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 208);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 208),
+              rulesRef(SourceBookCode.BMM, 99),
+              rulesRef(SourceBookCode.CORE, 183),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

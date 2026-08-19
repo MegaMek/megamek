@@ -72,7 +72,12 @@ public class ISLB20XAC extends LBXACWeapon {
         shortAV = getBaseAeroDamage();
         medAV = shortAV;
         maxRange = RANGE_MED;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 207);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 207),
+              rulesRef(SourceBookCode.BMM, 98),
+              rulesRef(SourceBookCode.CORE, 183),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

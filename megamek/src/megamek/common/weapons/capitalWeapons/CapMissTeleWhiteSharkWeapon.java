@@ -78,7 +78,10 @@ public class CapMissTeleWhiteSharkWeapon extends CapitalMissileWeapon {
         this.extAV = 3;
         this.missileArmor = 30;
         this.maxRange = RANGE_EXT;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 210);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 210),
+              rulesRef(SourceBookCode.TW, 251)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

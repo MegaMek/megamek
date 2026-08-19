@@ -73,7 +73,12 @@ public class ISUAC5 extends UACWeapon {
         medAV = 7;
         longAV = 7;
         maxRange = RANGE_LONG;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 208);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 208),
+              rulesRef(SourceBookCode.BMM, 99),
+              rulesRef(SourceBookCode.CORE, 183),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

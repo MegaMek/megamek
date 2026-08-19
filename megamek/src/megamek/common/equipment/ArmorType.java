@@ -396,7 +396,12 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         armor.bv = 0;
-        armor.rulesRefs = rulesRefs(SourceBookCode.TM, 205);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 205),
+              rulesRef(SourceBookCode.BMM, 114),
+              rulesRef(SourceBookCode.TW, 135),
+              rulesRef(SourceBookCode.CORE, 201)
+        );
         armor.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
@@ -429,7 +434,12 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         armor.bv = 0;
-        armor.rulesRefs = rulesRefs(SourceBookCode.TM, 205);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 205),
+              rulesRef(SourceBookCode.BMM, 114),
+              rulesRef(SourceBookCode.TW, 135),
+              rulesRef(SourceBookCode.CORE, 201)
+        );
         armor.techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
               .setClanAdvancement(2820, 2825, 2830, DATE_NONE, DATE_NONE)
@@ -456,7 +466,12 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsMekSV = 1;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_LIGHT_FERRO).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.TM, 205);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 205),
+              rulesRef(SourceBookCode.BMM, 114),
+              rulesRef(SourceBookCode.TW, 135),
+              rulesRef(SourceBookCode.CORE, 201)
+        );
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3067, 3070, DATE_NONE, DATE_NONE)
@@ -482,7 +497,12 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsMekSV = 3;
         armor.patchworkSlotsCVFtr = 2;
         armor.flags = armor.flags.or(F_HEAVY_FERRO).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.TM, 205);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 205),
+              rulesRef(SourceBookCode.BMM, 114),
+              rulesRef(SourceBookCode.TW, 135),
+              rulesRef(SourceBookCode.CORE, 201)
+        );
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3056, 3069, 3070, DATE_NONE, DATE_NONE)
@@ -783,7 +803,10 @@ public class ArmorType extends MiscType {
         armor.flags = armor.flags.or(F_REACTIVE).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
               .or(F_SUPPORT_TANK_EQUIPMENT);
         armor.bv = 0;
-        armor.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 94);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 94),
+              rulesRef(SourceBookCode.CORE, 202)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
@@ -812,7 +835,10 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REACTIVE).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
               .or(F_SUPPORT_TANK_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 94);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 94),
+              rulesRef(SourceBookCode.CORE, 202)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
@@ -841,7 +867,11 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REFLECTIVE).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
               .or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 93);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 93),
+              rulesRef(SourceBookCode.BMM, 114),
+              rulesRef(SourceBookCode.CORE, 202)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
@@ -870,7 +900,11 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REFLECTIVE).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
               .or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 93);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 93),
+              rulesRef(SourceBookCode.BMM, 114),
+              rulesRef(SourceBookCode.CORE, 202)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
@@ -893,7 +927,11 @@ public class ArmorType extends MiscType {
         armor.criticalSlots = 0;
         armor.tankSlots = 1;
         armor.flags = armor.flags.or(F_HARDENED_ARMOR).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 93);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 93),
+              rulesRef(SourceBookCode.BMM, 114),
+              rulesRef(SourceBookCode.CORE, 202)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
@@ -927,7 +965,13 @@ public class ArmorType extends MiscType {
         armor.setModes(saModes);
         armor.setInstantModeSwitch(false);
         armor.bv = 0;
-        armor.rulesRefs = rulesRefs(SourceBookCode.TM, 206);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 206),
+              rulesRef(SourceBookCode.BMM, 115),
+              rulesRef(SourceBookCode.CORE, 202),
+              rulesRef(SourceBookCode.CORE, 209),
+              rulesRef(SourceBookCode.TW, 142)
+        );
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3051, 3063, 3072, DATE_NONE, DATE_NONE)
@@ -983,7 +1027,11 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsMekSV = 2;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_FERRO_LAMELLOR).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 92);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 92),
+              rulesRef(SourceBookCode.BMM, 114),
+              rulesRef(SourceBookCode.CORE, 202)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
@@ -1007,7 +1055,10 @@ public class ArmorType extends MiscType {
         armor.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         armor.patchworkSlotsMekSV = 1;
         armor.flags = armor.flags.or(F_HEAT_DISSIPATING).or(F_MEK_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 81);
+        armor.rulesRefs = rulesRefs(
+            rulesRef(SourceBookCode.IO_AE, 81),
+            rulesRef(SourceBookCode.CORE, 202)
+            );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.ALL).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
@@ -1033,7 +1084,10 @@ public class ArmorType extends MiscType {
         armor.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         armor.patchworkSlotsMekSV = 2;
         armor.flags = armor.flags.or(F_IMPACT_RESISTANT).or(F_MEK_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 81);
+        armor.rulesRefs = rulesRefs(
+            rulesRef(SourceBookCode.IO_AE, 81),
+            rulesRef(SourceBookCode.CORE, 202)
+            );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
@@ -1061,7 +1115,10 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_ANTI_PENETRATIVE_ABLATIVE).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT)
               .or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 80);
+                armor.rulesRefs = rulesRefs(
+            rulesRef(SourceBookCode.IO_AE, 80),
+            rulesRef(SourceBookCode.CORE, 201)
+            );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
@@ -1090,7 +1147,10 @@ public class ArmorType extends MiscType {
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_BALLISTIC_REINFORCED).or(F_MEK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
               .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 81);
+        armor.rulesRefs = rulesRefs(
+            rulesRef(SourceBookCode.IO_AE, 81),
+            rulesRef(SourceBookCode.CORE, 201)
+            );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
@@ -1461,7 +1521,10 @@ public class ArmorType extends MiscType {
         armor.cost = 10000.0;
         armor.criticalSlots = 5;
         armor.flags = armor.flags.or(F_FIRE_RESISTANT).or(F_BA_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.TM, 253);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 253),
+              rulesRef(SourceBookCode.TW, 228)
+        );
         armor.techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(3052, 3058, 3065)
               .setClanApproximate(true, false, false).setPrototypeFactions(Faction.CFM)
               .setProductionFactions(Faction.CFM).setTechRating(TechRating.F)
@@ -1483,7 +1546,10 @@ public class ArmorType extends MiscType {
         armor.cost = 50000.0;
         armor.criticalSlots = 4;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.TM, 252);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 252),
+              rulesRef(SourceBookCode.TW, 228)
+        );
         armor.techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3050, 3052, 3054, 3055, DATE_NONE)
               .setISApproximate(false, false, false, false, false).setPrototypeFactions(Faction.FS, Faction.LC)
               .setProductionFactions(Faction.FS, Faction.LC).setTechRating(TechRating.E)
@@ -1504,7 +1570,10 @@ public class ArmorType extends MiscType {
         armor.cost = 12000.0;
         armor.criticalSlots = 3;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.TM, 252);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 252),
+              rulesRef(SourceBookCode.TW, 228)
+        );
         armor.techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2700, 2710, 3054, 2770, 3052)
               .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.DC).setTechRating(TechRating.E)
@@ -1525,7 +1594,10 @@ public class ArmorType extends MiscType {
         armor.cost = 12000.0;
         armor.criticalSlots = 3;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.TM, 252);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 252),
+              rulesRef(SourceBookCode.TW, 228)
+        );
         armor.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(DATE_NONE, DATE_NONE, 3054).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D);
@@ -1546,7 +1618,10 @@ public class ArmorType extends MiscType {
         armor.cost = 15000.0;
         armor.criticalSlots = 4;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.TM, 252);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 252),
+              rulesRef(SourceBookCode.TW, 228)
+        );
         armor.techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2710, 2720, 3055, 2770, 3053)
               .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH).setReintroductionFactions(Faction.DC).setTechRating(TechRating.E)
@@ -1568,7 +1643,10 @@ public class ArmorType extends MiscType {
         armor.cost = 15000.0;
         armor.criticalSlots = 4;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.TM, 252);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 252),
+              rulesRef(SourceBookCode.TW, 228)
+        );
         armor.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(DATE_NONE, DATE_NONE, 3055).setPrototypeFactions(Faction.TH)
               .setTechRating(TechRating.E)
@@ -1589,7 +1667,10 @@ public class ArmorType extends MiscType {
         armor.cost = 20000.0;
         armor.criticalSlots = 5;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.TM, 252);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 252),
+              rulesRef(SourceBookCode.TW, 228)
+        );
 
         armor.techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3055, 3057, 3059)
               .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.FW, Faction.WB)
@@ -1611,7 +1692,10 @@ public class ArmorType extends MiscType {
         armor.cost = 20000.0;
         armor.criticalSlots = 5;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.TM, 252);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 252),
+              rulesRef(SourceBookCode.TW, 228)
+        );
 
         armor.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(DATE_NONE, 3058, 3059)
@@ -1633,7 +1717,10 @@ public class ArmorType extends MiscType {
         armor.cost = 15000.0;
         armor.criticalSlots = 7;
         armor.flags = armor.flags.or(F_STEALTH).or(F_VISUAL_CAMO).or(F_BA_EQUIPMENT);
-        armor.rulesRefs = rulesRefs(SourceBookCode.TM, 253);
+        armor.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 253),
+              rulesRef(SourceBookCode.TW, 228)
+        );
         armor.techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3058, 3061, 3065, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CS, Faction.WB)
               .setProductionFactions(Faction.WB).setTechRating(TechRating.E)

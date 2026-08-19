@@ -84,7 +84,11 @@ public class ISLaserAMS extends LaserWeapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 225000;
-        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 134);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 134),
+              rulesRef(SourceBookCode.BMM, 118),
+              rulesRef(SourceBookCode.CORE, 206)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)

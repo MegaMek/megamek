@@ -76,7 +76,12 @@ public class CLAPGaussRifle extends GaussWeapon {
         maxRange = RANGE_SHORT;
         this.atClass = CLASS_POINT_DEFENSE;
         explosionDamage = 3;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 218);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 218),
+              rulesRef(SourceBookCode.BMM, 99),
+              rulesRef(SourceBookCode.CORE, 184),
+              rulesRef(SourceBookCode.TW, 135)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

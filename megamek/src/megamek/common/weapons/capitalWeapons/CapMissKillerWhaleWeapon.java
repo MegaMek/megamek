@@ -75,7 +75,10 @@ public class CapMissKillerWhaleWeapon extends CapitalMissileWeapon {
         this.extAV = 4;
         this.missileArmor = 40;
         this.maxRange = RANGE_EXT;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 210);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 210),
+              rulesRef(SourceBookCode.TW, 304)
+        );
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

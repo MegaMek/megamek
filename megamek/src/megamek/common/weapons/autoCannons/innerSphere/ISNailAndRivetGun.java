@@ -65,7 +65,10 @@ public class ISNailAndRivetGun extends NailRivetGunWeapon {
         addLookupName("CLRivet Gun");
         addLookupName("CLNailRivetGun");
         addLookupName("Nail Gun");
-        rulesRefs = rulesRefs(SourceBookCode.TM, 246);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 246),
+              rulesRef(SourceBookCode.TW, 138)
+        );
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

@@ -77,7 +77,11 @@ public class ISXPulseLaserLarge extends PulseLaserWeapon {
         maxRange = RANGE_MED;
         shortAV = 9;
         medAV = 9;
-        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 133);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 133),
+              rulesRef(SourceBookCode.BMM, 101),
+              rulesRef(SourceBookCode.CORE, 185)
+        );
         flags = flags.andNot(F_PROTO_WEAPON);
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)

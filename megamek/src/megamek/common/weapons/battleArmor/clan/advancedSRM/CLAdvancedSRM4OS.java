@@ -70,7 +70,10 @@ public class CLAdvancedSRM4OS extends AdvancedSRMWeapon {
         tonnage = 0.135;
         criticalSlots = 4;
         cost = 30000;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 261);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 261),
+              rulesRef(SourceBookCode.TW, 305)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

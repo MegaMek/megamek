@@ -78,7 +78,11 @@ public class CLImprovedHeavyLaserLarge extends ImprovedHeavyLaserWeapon {
         maxRange = RANGE_MED;
         explosionDamage = 8;
         explosive = true;
-        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 133);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 133),
+              rulesRef(SourceBookCode.BMM, 101),
+              rulesRef(SourceBookCode.CORE, 185)
+        );
         flags = flags.or(S_IMPROVED);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)

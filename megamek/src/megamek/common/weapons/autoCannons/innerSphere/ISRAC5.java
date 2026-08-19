@@ -73,7 +73,12 @@ public class ISRAC5 extends RACWeapon {
         this.medAV = 20;
         this.maxRange = RANGE_MED;
         this.explosionDamage = damage;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 207);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 207),
+              rulesRef(SourceBookCode.BMM, 98),
+              rulesRef(SourceBookCode.CORE, 183),
+              rulesRef(SourceBookCode.TW, 140)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setStaticTechLevel(SimpleTechLevel.STANDARD)
               .setTechRating(TechRating.E)

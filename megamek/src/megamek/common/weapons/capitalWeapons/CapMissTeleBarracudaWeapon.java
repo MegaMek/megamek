@@ -79,7 +79,10 @@ public class CapMissTeleBarracudaWeapon extends CapitalMissileWeapon {
         this.missileArmor = 20;
         this.maxRange = RANGE_EXT;
         this.toHitModifier = -2;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 210);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 210),
+              rulesRef(SourceBookCode.TW, 251)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

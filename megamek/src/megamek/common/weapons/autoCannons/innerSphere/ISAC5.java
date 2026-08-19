@@ -78,7 +78,12 @@ public class ISAC5 extends ACWeapon {
         medAV = 5;
         maxRange = RANGE_MED;
         explosionDamage = damage;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 208);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 208),
+              rulesRef(SourceBookCode.BMM, 98),
+              rulesRef(SourceBookCode.CORE, 182),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(true).setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2240, 2250, 2255, DATE_NONE, DATE_NONE)

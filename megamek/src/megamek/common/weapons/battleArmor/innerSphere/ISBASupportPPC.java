@@ -72,7 +72,10 @@ public class ISBASupportPPC extends PPCWeapon {
               .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         bv = 14;
         cost = 14000;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 267);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 267),
+              rulesRef(SourceBookCode.TW, 305)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3046, 3053, 3056).setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C);

@@ -83,7 +83,10 @@ public class CLBAMortarLight extends Weapon {
         criticalSlots = 2;
         flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON).or(F_MORTAR_TYPE_INDIRECT).or(F_INDIRECT_FIRE)
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        rulesRefs = rulesRefs(SourceBookCode.TM, 263);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 263),
+              rulesRef(SourceBookCode.TW, 305)
+        );
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

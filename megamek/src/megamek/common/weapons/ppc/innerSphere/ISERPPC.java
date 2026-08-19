@@ -77,7 +77,13 @@ public class ISERPPC extends PPCWeapon {
         maxRange = RANGE_LONG;
         // with a capacitor
         explosive = true;
-        rulesRefs = rulesRefs(SourceBookCode.TM, 234);
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 234),
+              rulesRef(SourceBookCode.BMM, 105),
+              rulesRef(SourceBookCode.CORE, 188),
+              rulesRef(SourceBookCode.TW, 303),
+              rulesRef(SourceBookCode.TW, 304)
+        );
         flags = flags.or(F_PPC_CAPACITOR_COMPATIBLE);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)

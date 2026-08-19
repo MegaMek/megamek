@@ -110,6 +110,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.IMapSettingsObserver;
+import megamek.MegaMek;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.clientGUI.boardview.BoardView;
@@ -136,6 +137,7 @@ import megamek.client.ui.panels.phaseDisplay.AbstractPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.lobby.PlayerTable.PlayerTableModel;
 import megamek.client.ui.panels.phaseDisplay.lobby.sorters.*;
 import megamek.client.ui.util.ScalingPopup;
+import megamek.client.ui.preferences.JWindowPreference;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedXPanel;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
@@ -1030,6 +1032,15 @@ public class ChatLounge extends AbstractPhaseDisplay
             previewPanel.add(previewBV.getComponent(true));
             boardPreviewW.add(previewPanel);
             boardPreviewW.setSize(clientgui.getFrame().getWidth() / 2, clientgui.getFrame().getHeight() / 2);
+            // remember the preview window's size and position between sessions, like the standard dialogs do
+            // (the preferences are written when MegaMek exits normally)
+            boardPreviewW.setName("BoardPreviewDialog");
+            try {
+                MegaMek.getMMPreferences().forClass(ChatLounge.class)
+                      .manage(new JWindowPreference(boardPreviewW));
+            } catch (Exception exception) {
+                LOGGER.warn(exception, "Could not set up size/position memory for the board preview window");
+            }
 
             String closeAction = "closeAction";
             final KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);

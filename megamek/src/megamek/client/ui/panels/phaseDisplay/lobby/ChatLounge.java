@@ -114,6 +114,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.RulerDialog;
+import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.HexFlagSprite;
 import megamek.client.ui.clientGUI.boardview.toolTip.TWBoardViewTooltip;
 import megamek.client.ui.dialogs.InformDialog;
@@ -140,6 +141,7 @@ import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.client.ui.widget.SkinSpecification;
 import megamek.common.Configuration;
 import megamek.common.Player;
+import megamek.common.RangeType;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.autoResolve.converter.MMSetupForces;
@@ -151,6 +153,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
+import megamek.common.hexArea.CircleHexArea;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
@@ -327,6 +330,9 @@ public class ChatLounge extends AbstractPhaseDisplay
     private final JCheckBox designateVictoryHexes =
           new JCheckBox(Messages.getString("ChatLounge.designateVictoryHexes"));
     private final List<HexFlagSprite> previewFlagSprites = new ArrayList<>();
+    private final List<FieldOfFireSprite> previewRadiusSprites = new ArrayList<>();
+    /** All six borders of a hex, for the filled control-radius highlight sprites. */
+    private static final int ALL_HEX_BORDERS = 63;
 
     private final ArrayList<String> invalidBoards = new ArrayList<>();
     private final ArrayList<String> serverBoards = new ArrayList<>();
@@ -1000,11 +1006,16 @@ public class ChatLounge extends AbstractPhaseDisplay
                 @Override
                 public void hexMoused(BoardViewEvent event) {
                     boolean isDesignationModeOn = designateVictoryHexes.isSelected();
-                    boolean isLeftClickOnHex = (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED)
-                          && (event.getButton() == MouseEvent.BUTTON1)
+                    boolean isClickOnHex = (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED)
                           && (event.getCoords() != null);
-                    if (isDesignationModeOn && isLeftClickOnHex) {
+                    if (!isDesignationModeOn || !isClickOnHex) {
+                        return;
+                    }
+                    // left-click places or removes a flag; right-click on one of your flags edits its details
+                    if (event.getButton() == MouseEvent.BUTTON1) {
                         toggleVictoryHexDesignation(event.getCoords());
+                    } else if (event.getButton() == MouseEvent.BUTTON3) {
+                        editVictoryHexProperties(event.getCoords());
                     }
                 }
             });
@@ -1549,6 +1560,50 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     /**
+     * Opens the properties dialog for the victory hex flag at the given hex: its control radius and victory point
+     * value. Only the designating player can edit a flag, so a hex without one of the local player's flags does
+     * nothing. Changes are sent to the server like the designation itself, so everyone allowed to see the flag
+     * also sees its control radius.
+     *
+     * @param coords the right-clicked hex
+     */
+    private void editVictoryHexProperties(Coords coords) {
+        ObjectiveMarker marker = findDesignatedMarkerAt(coords);
+        if (marker == null) {
+            VICTORY_HEX_LOGGER.debug("[VictoryHex] {} holds no designation - nothing to edit", coords.getBoardNum());
+            return;
+        }
+        if (marker.getOwnerId() != client().getLocalPlayer().getId()) {
+            VICTORY_HEX_LOGGER.debug("[VictoryHex] {} is designated by player ID {} - only they can edit it",
+                  coords.getBoardNum(), marker.getOwnerId());
+            return;
+        }
+
+        JSpinner radiusSpinner = new JSpinner(
+              new SpinnerNumberModel(marker.getControlRadius(), 0, ObjectiveMarker.MAX_CONTROL_RADIUS, 1));
+        JSpinner victoryPointSpinner = new JSpinner(
+              new SpinnerNumberModel(marker.getVictoryPointValue(), 1, 99, 1));
+        JPanel propertiesPanel = new JPanel(new GridLayout(2, 2));
+        propertiesPanel.add(new JLabel(Messages.getString("ChatLounge.victoryHex.radius")));
+        propertiesPanel.add(radiusSpinner);
+        propertiesPanel.add(new JLabel(Messages.getString("ChatLounge.victoryHex.victoryPoints")));
+        propertiesPanel.add(victoryPointSpinner);
+
+        int result = JOptionPane.showConfirmDialog(clientgui.getFrame(), propertiesPanel,
+              Messages.getString("ChatLounge.victoryHex.title", marker.generalName()),
+              JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result != JOptionPane.OK_OPTION) {
+            return;
+        }
+        marker.setControlRadius((Integer) radiusSpinner.getValue());
+        marker.setVictoryPointValue((Integer) victoryPointSpinner.getValue());
+        VICTORY_HEX_LOGGER.info("[VictoryHex] {} now has control radius {} and is worth {} victory point(s)",
+              coords.getBoardNum(), marker.getControlRadius(), marker.getVictoryPointValue());
+        client().sendPlayerInfo();
+        refreshPreviewFlagSprites();
+    }
+
+    /**
      * Rebuilds the victory hex flags shown on the lobby board preview from every designation this client knows of -
      * the server only sends this player the designations they may see (their own side's, or every side's for a game
      * master). Each flag is drawn in its owning player's color. Called when the preview is (re)built, when a
@@ -1562,16 +1617,43 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
         previewBV.removeSprites(previewFlagSprites);
         previewFlagSprites.clear();
+        previewBV.removeSprites(previewRadiusSprites);
+        previewRadiusSprites.clear();
         for (Player player : game().getPlayersList()) {
             for (ICarryable groundObject : player.getGroundObjectsToPlace()) {
                 if ((groundObject instanceof ObjectiveMarker marker) && (marker.getLobbyPosition() != null)) {
                     previewFlagSprites.add(new HexFlagSprite(previewBV, marker.getLobbyPosition(),
                           player.getColour().getColour()));
+                    addRadiusSprites(marker);
                 }
             }
         }
         previewBV.addSprites(previewFlagSprites);
-        VICTORY_HEX_LOGGER.debug("[VictoryHex] Board preview shows {} victory hex flag(s)", previewFlagSprites.size());
+        previewBV.addSprites(previewRadiusSprites);
+        VICTORY_HEX_LOGGER.debug("[VictoryHex] Board preview shows {} victory hex flag(s) and {} radius hex(es)",
+              previewFlagSprites.size(), previewRadiusSprites.size());
+    }
+
+    /**
+     * Adds the filled-hex highlight of a flag's control radius to the preview (the flag's hex and every hex
+     * within the radius), so the area an objective will cover is visible while setting it up. Flags with the
+     * default radius 0 draw no highlight - the flag itself already marks the single hex.
+     *
+     * @param marker the designated marker to highlight
+     */
+    private void addRadiusSprites(ObjectiveMarker marker) {
+        if (marker.getControlRadius() == 0) {
+            return;
+        }
+        Board previewBoard = boardPreviewGame.getBoard();
+        if ((previewBoard == null) || (previewBoard.getWidth() == 0)) {
+            return;
+        }
+        for (Coords radiusHex : new CircleHexArea(marker.getLobbyPosition(), marker.getControlRadius())
+              .getCoords(previewBoard)) {
+            previewRadiusSprites.add(new FieldOfFireSprite(previewBV, RangeType.RANGE_MEDIUM, radiusHex,
+                  ALL_HEX_BORDERS));
+        }
     }
 
     /**

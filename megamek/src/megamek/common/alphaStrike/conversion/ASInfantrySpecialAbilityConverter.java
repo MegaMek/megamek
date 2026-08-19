@@ -71,7 +71,7 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
     protected void processMiscMounted(Mounted<?> misc) {
         super.processMiscMounted(misc);
 
-        if (entity instanceof BattleArmor) {
+        if (entity instanceof Infantry) {
             if ((misc.getType().hasFlag(MiscType.F_VISUAL_CAMO)
                     && !misc.getType().getName().equals(BattleArmor.MIMETIC_ARMOR))
                     || (misc.getType().hasFlag(MiscType.F_ARMOR_KIT)

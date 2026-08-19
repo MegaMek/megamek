@@ -32,9 +32,10 @@
  */
 package megamek.common.compute;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -42,15 +43,10 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.CalledShot;
-import megamek.common.Player;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
-import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
@@ -68,11 +64,8 @@ public class ComputeSecondaryTargetModTest {
 
     private Game testGame = new Game();
     private List<Entity> gameEntities = new ArrayList<>();
+    private Entity attacker;
     private Crew mockCrew;
-    private AmmoMounted mockAmmo;
-    private WeaponType mockWeaponType;
-    private WeaponMounted mockWeapon;
-    private WeaponMounted mockWeaponEquipment;
     private CrewType mockCrewType;
     private PilotOptions mockPilotOptions;
 
@@ -83,42 +76,13 @@ public class ComputeSecondaryTargetModTest {
 
     @BeforeEach
     void setUp() {
-        Player mockPlayer = mock(Player.class);
-
-        Mek attacker = createMek(1, new Coords(0, 3));
+        attacker = createMek(1, new Coords(0, 3));
         attacker.setFacing(2);
-        Mek targetFront = createMek(2, new Coords(0, 5));
+        attacker.setSecondaryFacing(2, false);
+        Mek targetFront = createMek(2, new Coords(1, 3));
         Mek targetFrontTwo = createMek(3, new Coords(1, 4));
-        Mek targetSecondaryArc = createMek(4, new Coords(1, 2));
+        Mek targetSecondaryArc = createMek(4, new Coords(-1, 2));
         testGame.addEntities(gameEntities);
-        // Mock Ammo
-        mockAmmo = mock(AmmoMounted.class);
-        when(mockAmmo.canFire()).thenReturn(true);
-        when(mockAmmo.hasUsableShotsLeft()).thenReturn(true);
-        when(mockAmmo.getUsableShotsLeft()).thenReturn(10);
-
-        // Mock Weapon Type
-        mockWeaponType = mock(WeaponType.class);
-        when(mockWeaponType.getName()).thenReturn("Mock Weapon Type");
-        when(mockWeaponType.getInternalName()).thenReturn("Mock Internal Weapon Type");
-        when(mockWeaponType.getDamage()).thenReturn(5);
-        mockWeaponType.setShortRange(3);
-        mockWeaponType.setMediumRange(10);
-        mockWeaponType.setLongRange(20);
-        when(mockWeaponType.getMaxRange()).thenReturn(20);
-        when(mockWeaponType.getMaxRange(any(), any())).thenReturn(20);
-        when(mockWeaponType.getRanges(any(), any())).thenReturn(new int[] { 0, 3, 10, 20, 20 });
-        when(mockWeaponType.getWRanges()).thenReturn(new int[] { 0, 3, 10, 20, 20 });
-        when(mockWeaponType.getATRanges()).thenReturn(new int[] { 0, 3, 10, 20, 20 });
-
-        // Mock Weapon
-        mockWeapon = mock(WeaponMounted.class);
-        mockWeaponEquipment = mockWeapon;
-        when(mockWeapon.getType()).thenReturn(mockWeaponType);
-        when(mockWeapon.getLinkedAmmo()).thenReturn(mockAmmo);
-        when(mockWeapon.canFire()).thenReturn(true);
-        when(mockWeapon.canFire(anyBoolean(), anyBoolean())).thenReturn(true);
-        when(mockWeapon.getCalledShot()).thenReturn(new CalledShot());
 
         // Mock Crew Type
         mockCrewType = mock(CrewType.class);
@@ -133,7 +97,7 @@ public class ComputeSecondaryTargetModTest {
         when(mockCrew.isActive()).thenReturn(true);
         when(mockCrew.getCrewType()).thenReturn(mockCrewType);
         when(mockCrew.getOptions()).thenReturn(mockPilotOptions);
-        testGame.addAction(new WeaponAttackAction(1, 2, 1));
+        testGame.addAction(new WeaponAttackAction(1, 1, 1));
         testGame.addAction(new WeaponAttackAction(1, 2, 2));
         testGame.addAction(new WeaponAttackAction(1, 3, 3));
         testGame.addAction(new WeaponAttackAction(1, 4, 4));
@@ -149,31 +113,48 @@ public class ComputeSecondaryTargetModTest {
         return mek;
     }
 
+    private boolean inForwardArc(Entity target) {
+        return ComputeArc.isInArc(attacker.getPosition(),
+              attacker.getSecondaryFacing(),
+              target,
+              attacker.getForwardArc());
+    }
+
+    @Test
+    void boardLayoutPutsTargetsInTheExpectedArcs() {
+        assertEquals(2, attacker.getSecondaryFacing(), "attacker secondary facing");
+        assertTrue(inForwardArc(testGame.getEntity(2)), "primary target should be in the forward arc");
+        assertTrue(inForwardArc(testGame.getEntity(3)), "secondaryInArc should be in the forward arc");
+        assertFalse(inForwardArc(testGame.getEntity(4)), "secondaryOutsideArc should be outside the forward arc");
+    }
+
     @Test
     void secondaryTargetModifierWithCore() {
         testGame.initializeRulesManager(OptionsConstants.RULES_CORE);
         ToHitData toHit = Compute.getSecondaryTargetMod(testGame, gameEntities.get(0), gameEntities.get(2));
-        assertSame(toHit.getValue(), 1);
+        assertNotNull(toHit, "Expected a secondary target modifier for entity " + gameEntities.get(2).getId()
+              + "; a null means the method treated it as the primary target instead");
+        assertEquals(1, toHit.getValue());
     }
 
     @Test
     void secondaryTargetModifierWithTW() throws LocationFullException {
         testGame.initializeRulesManager(OptionsConstants.RULES_TW);
         ToHitData toHit = Compute.getSecondaryTargetMod(testGame, gameEntities.get(0), gameEntities.get(2));
-        assertSame(toHit.getValue(), 1);
+        assertEquals(1, toHit.getValue());
     }
 
     @Test
     void secondaryArcTargetModifierWithCore() throws LocationFullException {
         testGame.initializeRulesManager(OptionsConstants.RULES_CORE);
         ToHitData toHit = Compute.getSecondaryTargetMod(testGame, gameEntities.get(0), gameEntities.get(3));
-        assertSame(toHit.getValue(), 1);
+        assertEquals(1, toHit.getValue());
     }
 
     @Test
     void secondaryArcTargetModifierWithTW() throws LocationFullException {
         testGame.initializeRulesManager(OptionsConstants.RULES_TW);
         ToHitData toHit = Compute.getSecondaryTargetMod(testGame, gameEntities.get(0), gameEntities.get(3));
-        assertSame(toHit.getValue(), 2);
+        assertEquals(2, toHit.getValue());
     }
 }

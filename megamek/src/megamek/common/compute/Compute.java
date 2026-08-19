@@ -2691,7 +2691,7 @@ public class Compute {
         }
 
         // Secondary target default value
-        int mod = 1;
+        int mod = Game.rulesManager.getRulesTarget().getSecondaryTargetModifier();
         // Check for secondary arc and change as needed
         if (!curInFrontArc && !(attacker instanceof BattleArmor)) {
             mod = Game.rulesManager.getRulesTarget().getSecondaryArcModifier();

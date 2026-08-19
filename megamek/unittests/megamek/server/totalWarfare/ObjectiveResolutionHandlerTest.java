@@ -36,14 +36,12 @@ package megamek.server.totalWarfare;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 import megamek.common.Player;
 import megamek.common.board.Coords;
@@ -52,7 +50,6 @@ import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.server.totalWarfare.ObjectiveResolutionHandler.PlacedObjective;
@@ -90,6 +87,8 @@ class ObjectiveResolutionHandlerTest {
         teamTwoPlayer = new Player(1, "Bob");
         teamTwoPlayer.setTeam(2);
         gameOptions = new GameOptions();
+        // objective scoring is opt-in; the End Phase resolution tests exercise it enabled
+        gameOptions.getOption(OptionsConstants.VICTORY_USE_OBJECTIVES).setValue(true);
         when(game.getPlayer(0)).thenReturn(teamOnePlayer);
         when(game.getPlayer(1)).thenReturn(teamTwoPlayer);
         when(game.getOptions()).thenReturn(gameOptions);
@@ -340,6 +339,25 @@ class ObjectiveResolutionHandlerTest {
     }
 
     // --- End-to-end End Phase resolution ---
+
+    @Test
+    void testNoResolutionWhenObjectiveScoringIsOff() {
+        // markers can be placed without opting into objective scoring: with the option off, no control is
+        // resolved and no victory points are awarded, so they cannot decide the winner of the game
+        gameOptions.getOption(OptionsConstants.VICTORY_USE_OBJECTIVES).setValue(false);
+        Coords position = new Coords(2, 2);
+        PlacedObjective objective = objectiveAt(position, 1, teamOnePlayer);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(position, new ArrayList<>(List.of(objective.marker())));
+        List<Entity> entities = List.of(groundUnit(teamOnePlayer, position));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        when(game.getEntitiesVector()).thenReturn(entities);
+
+        handler.resolveObjectives();
+
+        assertNull(VictoryPointTracker.findTracker(game.getVictoryContext()));
+        assertEquals(ObjectiveMarker.NO_CONTROLLER, objective.marker().getControllingTeam());
+    }
 
     @Test
     void testResolveObjectivesAwardsIntoGameTracker() {

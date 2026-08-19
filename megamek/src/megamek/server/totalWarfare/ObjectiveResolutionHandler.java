@@ -46,6 +46,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 import megamek.server.victory.VictoryPointTracker;
@@ -107,11 +108,19 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     /**
      * Resolves objectives for the current End Phase: determines the controller of every scorable objective marker,
      * reports the results and awards Victory Points per the standard control scoring. Does nothing when the game
-     * has no objective markers.
+     * has no objective markers or the {@link OptionsConstants#VICTORY_USE_OBJECTIVES} victory option is off -
+     * markers can be placed without opting into objective scoring.
      */
     void resolveObjectives() {
         List<PlacedObjective> allObjectives = findAllObjectives();
         if (allObjectives.isEmpty()) {
+            return;
+        }
+        if (!getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
+            // markers can be placed without opting into objective scoring - without this gate, the
+            // victory points awarded here would decide the winner of a game that never enabled them
+            LOGGER.debug("[Objective] {} objective marker(s) on the board, but the use_objectives victory "
+                  + "option is off - no control resolution or scoring", allObjectives.size());
             return;
         }
 

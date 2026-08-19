@@ -40,7 +40,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.HashMap;
 
 import megamek.common.Player;
-import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.server.scriptedEvents.GameEndTriggeredEvent;

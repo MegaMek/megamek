@@ -34,6 +34,7 @@ package megamek.client.ui.buttons;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import javax.swing.JToggleButton;
 
 import megamek.common.annotations.Nullable;
@@ -94,9 +95,26 @@ public class StateToggleButton extends JToggleButton {
         this.unselectedColor = unselectedColor;
         this.initialSelected = selected;
         setSelected(selected);
-        lockSizeToWidestText();
         showState();
         addItemListener(event -> showState());
+    }
+
+    /**
+     * Reports the size the widest of the four state texts needs, measured with the current font - so the button
+     * fits every text it can show and toggling never resizes or clips it, whatever the GUI scale or look and feel
+     * set the font to after construction.
+     */
+    @Override
+    public Dimension getPreferredSize() {
+        Dimension preferredSize = super.getPreferredSize();
+        FontMetrics fontMetrics = getFontMetrics(getFont());
+        int widestText = 0;
+        for (String stateText : new String[] { selectedText, unselectedText, turningSelectedText,
+              turningUnselectedText }) {
+            widestText = Math.max(widestText, fontMetrics.stringWidth(stateText));
+        }
+        int currentText = fontMetrics.stringWidth(getText());
+        return new Dimension(preferredSize.width - currentText + widestText, preferredSize.height);
     }
 
     /**
@@ -116,20 +134,4 @@ public class StateToggleButton extends JToggleButton {
         }
     }
 
-    /**
-     * Fixes the button's preferred size to fit the widest of its state texts, so that toggling it does not resize
-     * it. The size is derived from the current font, so it follows the GUI scale.
-     */
-    private void lockSizeToWidestText() {
-        int widest = 0;
-        int tallest = 0;
-        for (String stateText : new String[] { selectedText, unselectedText, turningSelectedText,
-              turningUnselectedText }) {
-            setText(stateText);
-            Dimension stateSize = getPreferredSize();
-            widest = Math.max(widest, stateSize.width);
-            tallest = Math.max(tallest, stateSize.height);
-        }
-        setPreferredSize(new Dimension(widest, tallest));
-    }
 }

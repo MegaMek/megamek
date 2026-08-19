@@ -733,7 +733,7 @@ public class UnitDamagePanelBuilder {
               Messages.getString("UnitEditorDialog.equipOff"),
               Messages.getString("UnitEditorDialog.equipTurningOn"),
               Messages.getString("UnitEditorDialog.equipTurningOff"), isOn,
-              UIUtil.uiLightGreen(), UIUtil.uiLightRed());
+              UIUtil.uiGreen(), UIUtil.uiLightRed());
         toggle.setToolTipText(UIUtil.formatSideTooltip(
               Messages.getString("UnitEditorDialog.equipOnOff.tooltip")));
         controls.equipmentOnOff.put(equipmentNumber, new UnitDamageControls.ModeSwitch(toggle, activeMode, offMode));
@@ -785,7 +785,7 @@ public class UnitDamagePanelBuilder {
               Messages.getString("UnitEditorDialog.equipEmpty"),
               Messages.getString("UnitEditorDialog.equipCharging"),
               Messages.getString("UnitEditorDialog.equipEmptying"), isCharged,
-              UIUtil.uiLightGreen(), UIUtil.uiLightRed());
+              UIUtil.uiGreen(), UIUtil.uiLightRed());
         toggle.setToolTipText(UIUtil.formatSideTooltip(
               Messages.getString("UnitEditorDialog.equipCharge.tooltip")));
         controls.equipmentCharged.put(equipmentNumber, toggle);

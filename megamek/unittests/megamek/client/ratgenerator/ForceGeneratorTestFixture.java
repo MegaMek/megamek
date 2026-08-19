@@ -36,6 +36,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Vector;
+import java.util.function.BooleanSupplier;
 
 import megamek.common.Configuration;
 import megamek.common.loaders.MekFileParser;
@@ -71,7 +72,7 @@ final class ForceGeneratorTestFixture {
     private static final List<String> CANON_TEST_UNITS = List.of("Archer ARC-2R", "Atlas AS7-D");
 
     /** Generous enough for a cold CI machine building the unit cache, short enough not to stall a run. */
-    private static final long BACKGROUND_LOAD_TIMEOUT_MILLIS = 120_000;
+    private static final long LOAD_TIMEOUT_MILLIS = 120_000;
 
     private ForceGeneratorTestFixture() {
     }
@@ -100,9 +101,7 @@ final class ForceGeneratorTestFixture {
         // Drop any cache another test class already built, so the test units are the ones that load
         resetMekSummaryCache();
         MekSummaryCache mekSummaryCache = MekSummaryCache.getInstance();
-        while (!mekSummaryCache.isInitialized()) {
-            Thread.sleep(50);
-        }
+        waitForLoad("Unit cache", mekSummaryCache::isInitialized);
 
         RATGenerator ratGenerator = RATGenerator.getInstance();
         waitForBackgroundLoad(ratGenerator);
@@ -123,20 +122,33 @@ final class ForceGeneratorTestFixture {
      * tests never notice, but every faction's era parameters - its Clan, Star League and Omni percentages, margins
      * and salvage - are lost, and the records handed back are not the ones the era files loaded into.</p>
      *
-     * <p>Bounded, because a load that fails without ever setting the flag would otherwise hang the whole test run
-     * rather than fail one class.</p>
-     *
      * @param ratGenerator the Force Generator to wait on
      *
      * @throws InterruptedException  if the wait is interrupted
-     * @throws IllegalStateException if the load has not finished within {@link #BACKGROUND_LOAD_TIMEOUT_MILLIS}
+     * @throws IllegalStateException if the load has not finished within {@link #LOAD_TIMEOUT_MILLIS}
      */
     private static void waitForBackgroundLoad(RATGenerator ratGenerator) throws InterruptedException {
-        long giveUpAt = System.currentTimeMillis() + BACKGROUND_LOAD_TIMEOUT_MILLIS;
-        while (!ratGenerator.isInitialized()) {
+        waitForLoad("Force Generator", ratGenerator::isInitialized);
+    }
+
+    /**
+     * Waits for an asynchronous load to report itself finished, giving up after {@link #LOAD_TIMEOUT_MILLIS}.
+     *
+     * <p>Bounded on purpose. Both singletons this fixture waits on load on their own threads, and one that fails
+     * without ever setting its flag would otherwise stall the whole test run instead of failing a single class.</p>
+     *
+     * @param whatIsLoading name of the thing being waited on, used in the failure message
+     * @param isLoaded      reports whether the load has finished
+     *
+     * @throws InterruptedException  if the wait is interrupted
+     * @throws IllegalStateException if the load has not finished in time
+     */
+    private static void waitForLoad(String whatIsLoading, BooleanSupplier isLoaded) throws InterruptedException {
+        long giveUpAt = System.currentTimeMillis() + LOAD_TIMEOUT_MILLIS;
+        while (!isLoaded.getAsBoolean()) {
             if (System.currentTimeMillis() >= giveUpAt) {
-                throw new IllegalStateException("Force Generator did not finish loading within "
-                      + BACKGROUND_LOAD_TIMEOUT_MILLIS + " ms; check the log for a load failure");
+                throw new IllegalStateException(whatIsLoading + " did not finish loading within "
+                      + LOAD_TIMEOUT_MILLIS + " ms; check the log for a load failure");
             }
             Thread.sleep(50);
         }

@@ -59,6 +59,7 @@ public enum SourceBookCode {
     TO_AR("TO:AR"),
     TO_AUE("TO:AUE"),
     TW("TW"),
+    BMM("BMM"),
     UNOFFICIAL("Unofficial");
 
     private final String abbrev;

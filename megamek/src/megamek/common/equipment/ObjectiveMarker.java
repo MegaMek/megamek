@@ -328,6 +328,19 @@ public class ObjectiveMarker extends GroundObject {
     }
 
     /**
+     * Copies the player-set designation settings - control radius, victory point value and the scoring scheme -
+     * from another marker onto this one. Used when an edit was made on a marker instance that a concurrent player
+     * update has since replaced: the edit is re-applied to the live instance so no setting is silently lost.
+     *
+     * @param other the marker holding the settings to copy
+     */
+    public void copyDesignationSettingsFrom(ObjectiveMarker other) {
+        setControlRadius(other.getControlRadius());
+        setVictoryPointValue(other.getVictoryPointValue());
+        setScoringScheme(other.getScoringScheme());
+    }
+
+    /**
      * Only Mobile Objectives can be picked up and carried (Mobile Objectives variant); other objective counters are
      * static. A destroyed counter cannot be picked up.
      *

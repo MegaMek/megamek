@@ -1590,6 +1590,14 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
         VictoryHexPropertiesPane.Result result = VictoryHexPropertiesPane.edit(clientgui.getFrame(), marker);
+        // a player update may have replaced the player objects while the modal editor was open; re-apply
+        // the edits to the live marker instance so they are not silently lost
+        ObjectiveMarker liveMarker = findDesignatedMarkerAt(coords);
+        if ((liveMarker != null) && (liveMarker != marker)
+              && (result == VictoryHexPropertiesPane.Result.SAVED)) {
+            liveMarker.copyDesignationSettingsFrom(marker);
+            marker = liveMarker;
+        }
         switch (result) {
             case SAVED -> VICTORY_HEX_LOGGER.info(
                   "[VictoryHex] {} updated: radius {}, {} VP, {} scheme (threshold {}, rate {}, {})",

@@ -50,6 +50,7 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 
 import megamek.common.Player;
+import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.moves.MoveStep;
@@ -218,5 +219,34 @@ class ObjectiveMarkerTest {
 
         assertEquals(2, spoofedMarker.getOwnerId());
         verify(briefcase, never()).setOwnerId(2);
+    }
+
+    @Test
+    void testScoringSchemeSurvivesSerialization() throws Exception {
+        // the scheme rides the marker over the wire and into save games - its setup AND its counter state
+        // must survive a serialization round trip
+        ObjectiveMarker marker = new ObjectiveMarker();
+        marker.setName("Hold Point");
+        ObjectiveScoringScheme scheme = ObjectiveScoringScheme.hold(5, HoldCounting.CUMULATIVE);
+        scheme.setHeldTurns(2, ObjectiveScoringScheme.NO_SIDE, 3);
+        scheme.setSecuredBy(ObjectiveScoringScheme.NO_SIDE, ObjectiveScoringScheme.NO_SIDE);
+        marker.setScoringScheme(scheme);
+
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        try (ObjectOutputStream objectOutput = new ObjectOutputStream(byteStream)) {
+            objectOutput.writeObject(marker);
+        }
+        ObjectiveMarker restored;
+        try (ObjectInputStream objectInput = new ObjectInputStream(
+              new ByteArrayInputStream(byteStream.toByteArray()))) {
+            restored = (ObjectiveMarker) objectInput.readObject();
+        }
+
+        ObjectiveScoringScheme restoredScheme = restored.getScoringScheme();
+        assertEquals(ObjectiveScoringScheme.SchemePreset.HOLD, restoredScheme.getPreset());
+        assertEquals(5, restoredScheme.getThreshold());
+        assertEquals(HoldCounting.CUMULATIVE, restoredScheme.getHoldCounting());
+        assertEquals(3, restoredScheme.getHeldTurns(2, ObjectiveScoringScheme.NO_SIDE));
+        assertFalse(restoredScheme.isDecided());
     }
 }

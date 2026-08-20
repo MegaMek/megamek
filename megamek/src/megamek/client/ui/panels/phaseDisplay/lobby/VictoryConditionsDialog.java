@@ -223,6 +223,13 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         if (result == VictoryHexPropertiesPane.Result.CANCELLED) {
             return;
         }
+        // a player update may have replaced the player objects while the modal editor was open
+        ObjectiveMarker liveAfterEdit = findLiveMarker(marker);
+        if ((liveAfterEdit != null) && (liveAfterEdit != marker)
+              && (result == VictoryHexPropertiesPane.Result.SAVED)) {
+            liveAfterEdit.copyDesignationSettingsFrom(marker);
+            marker = liveAfterEdit;
+        }
         if (result == VictoryHexPropertiesPane.Result.REMOVED) {
             localPlayer.getGroundObjectsToPlace().remove(marker);
         }

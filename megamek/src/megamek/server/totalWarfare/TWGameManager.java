@@ -2982,6 +2982,28 @@ public class TWGameManager extends AbstractGameManager {
         for (Entity entity : game.inGameTWEntities()) {
             if (entity.isSelectableThisTurn()) {
                 final Player player = entity.getOwner();
+                boolean includeInPhase = true;
+                int deploymentRound = entity.getDeployRound();
+                if (game.getPhase().isDeployment()) {
+                    // This is pre-deployment
+                    int startingPos = entity.getOwner().getStartingPos();
+                    // if the deployment round is pre-game, or they are in a start any or start center position, 
+                    // allow deployment, but not if it is already deployed.
+                    if (deploymentRound >= 0
+                          || !(Board.START_ANY == startingPos || Board.START_CENTER == startingPos)
+                          || entity.isDeployed()) {
+                        includeInPhase = false;
+                    }
+                }
+                // Do not include immobile entities in movement or init
+                if (game.getPhase().isMovement() || game.getPhase().isInitiative()) {
+                    if (entity.isImmobile()) {
+                        includeInPhase = false;
+                    }
+                }
+                if (!includeInPhase && Game.rulesManager.getRulesGame().walkOnInitiative()) {
+                    break;
+                }
                 if ((entity instanceof SpaceStation) &&
                       (game.getPhase().isMovement() || game.getPhase().isDeployment())) {
                     player.incrementSpaceStationTurns();
@@ -10015,9 +10037,9 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Announces a strafing run the moment it is declared: one report line and its kill-feed toast,
-     * nothing more. Without it the run only surfaces as a burst of unexplained attack lines in the
-     * end-of-phase report - the same reads-as-a-bug problem the maneuver announcement solved.
+     * Announces a strafing run the moment it is declared: one report line and its kill-feed toast, nothing more.
+     * Without it the run only surfaces as a burst of unexplained attack lines in the end-of-phase report - the same
+     * reads-as-a-bug problem the maneuver announcement solved.
      */
     private void announceStrafingRun(Entity entity, List<EntityAction> entityActions) {
         if (entityActions == null) {
@@ -28007,10 +28029,10 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Sends the given reports to every player as an immediate special-report packet (surfaced client-side as a
-     * kill-feed toast), respecting double blind: with double blind on, each player receives only the reports they
-     * are entitled to see; otherwise the packet is broadcast unfiltered. Use this instead of broadcasting
-     * {@link #createSpecialReportPacket(Vector)} whenever the reports concern a unit that might be hidden from
-     * some players.
+     * kill-feed toast), respecting double blind: with double blind on, each player receives only the reports they are
+     * entitled to see; otherwise the packet is broadcast unfiltered. Use this instead of broadcasting
+     * {@link #createSpecialReportPacket(Vector)} whenever the reports concern a unit that might be hidden from some
+     * players.
      *
      * @param reports the specific reports to push immediately; they are not added to the phase report here
      */

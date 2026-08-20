@@ -1086,7 +1086,7 @@ public abstract class Entity extends TurnOrdered
     private boolean hasFleeZone = false;
     private HexArea fleeZone = HexArea.EMPTY_AREA;
 
-     /**
+    /**
      * Generates a new, blank, entity.
      */
     public Entity() {
@@ -8372,10 +8372,10 @@ public abstract class Entity extends TurnOrdered
               canFall() &&
               moveType != EntityMovementType.MOVE_VTOL_WALK &&
               moveType != EntityMovementType.MOVE_VTOL_RUN) {
-                return new PilotingRollData(entityId,
-                      TargetRoll.AUTOMATIC_FAIL,
-                      Game.rulesManager.getRulesPilot().getSeatbeltGyroModifier(getCrew().getPiloting()),
-                      "Gyro destroyed");
+            return new PilotingRollData(entityId,
+                  TargetRoll.AUTOMATIC_FAIL,
+                  Game.rulesManager.getRulesPilot().getSeatbeltGyroModifier(getCrew().getPiloting()),
+                  "Gyro destroyed");
         }
 
         // both legs present?
@@ -8383,16 +8383,16 @@ public abstract class Entity extends TurnOrdered
               (((BipedMek) this).countBadLegs() == 2) &&
               (moveType != EntityMovementType.MOVE_VTOL_WALK) &&
               (moveType != EntityMovementType.MOVE_VTOL_RUN)) {
-                return new PilotingRollData(entityId,
-                      TargetRoll.AUTOMATIC_FAIL,
-                      Game.rulesManager.getRulesPilot().getSeatbeltLegModifier(getCrew().getPiloting(), 2),
-                      "Both legs destroyed");
+            return new PilotingRollData(entityId,
+                  TargetRoll.AUTOMATIC_FAIL,
+                  Game.rulesManager.getRulesPilot().getSeatbeltLegModifier(getCrew().getPiloting(), 2),
+                  "Both legs destroyed");
         } else if (this instanceof QuadMek) {
             if (((QuadMek) this).countBadLegs() >= 3) {
-                   return new PilotingRollData(entityId,
-                          TargetRoll.AUTOMATIC_FAIL,
-                         Game.rulesManager.getRulesPilot().getSeatbeltLegModifier(getCrew().getPiloting(),
-                               ((Mek) this).countBadLegs()), "legs destroyed");
+                return new PilotingRollData(entityId,
+                      TargetRoll.AUTOMATIC_FAIL,
+                      Game.rulesManager.getRulesPilot().getSeatbeltLegModifier(getCrew().getPiloting(),
+                            ((Mek) this).countBadLegs()), "legs destroyed");
             }
         }
         // entity shut down?
@@ -8779,10 +8779,10 @@ public abstract class Entity extends TurnOrdered
         int badLegs = 0;
         int legLocations = 0;
         for (int loc = 0; loc < locations(); loc++) {
-            if (locationIsLeg(loc) ) {
+            if (locationIsLeg(loc)) {
                 if (isLocationBad(loc)) {
                     badLegs++;
-                    }
+                }
                 legLocations++;
             }
         }
@@ -8804,7 +8804,8 @@ public abstract class Entity extends TurnOrdered
         int gyroModifier = Game.rulesManager.getRulesPSR().getGyroJumpModifier(gyroHits, getGyroType());
 
         // Heavy-duty gyro does not force PSR until second hit (Only under Total Warfare)
-        if ((getGyroType() == Mek.GYRO_HEAVY_DUTY || getGyroType() == Mek.GYRO_SUPERHEAVY) && Game.rulesManager instanceof TWRulesManager) {
+        if ((getGyroType() == Mek.GYRO_HEAVY_DUTY || getGyroType() == Mek.GYRO_SUPERHEAVY)
+              && Game.rulesManager instanceof TWRulesManager) {
             gyroHits--;
         }
 
@@ -9109,7 +9110,8 @@ public abstract class Entity extends TurnOrdered
             mod = 1;
         }
 
-        if (waterLevel >=1 && overallMoveType == EntityMovementType.MOVE_RUN && !Game.rulesManager.getRulesMovement().cannotRunInWater(movementMode, false)) {
+        if (waterLevel >= 1 && overallMoveType == EntityMovementType.MOVE_RUN && !Game.rulesManager.getRulesMovement()
+              .cannotRunInWater(movementMode, false)) {
             roll.append(new PilotingRollData(getId(), 0, "entering Depth " + waterLevel + " Water"));
         }
 
@@ -9119,7 +9121,7 @@ public abstract class Entity extends TurnOrdered
             roll.append(new PilotingRollData(getId(), -1, "Frogman"));
         }
         if (waterLevel > 0) {
-            if(!Game.rulesManager.getRulesPSR().psrForWaterEntry(overallMoveType)) {
+            if (!Game.rulesManager.getRulesPSR().psrForWaterEntry(overallMoveType)) {
                 roll.addModifier(TargetRoll.CHECK_FALSE, "No roll required for walk");
             } else {
                 roll.append(new PilotingRollData(getId(), mod, "entering Depth " + waterLevel + " Water"));
@@ -11241,7 +11243,13 @@ public abstract class Entity extends TurnOrdered
             if (!isDeployed() && phase.isSetArtilleryAutoHitHexes() && isEligibleForArtyAutoHitHexes()) {
                 LOGGER.debug("Artillery Units Present and Advanced PreDesignate option enabled");
             } else {
-                return false;
+                if (Game.rulesManager.getRulesGame().walkOnInitiative()) {
+                    if (!(phase.isMovement() && !isDeployed() && deployRound <= getGame().getCurrentRound())) {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
             }
         }
 
@@ -11453,7 +11461,7 @@ public abstract class Entity extends TurnOrdered
               isDropping() ||
               isBracing()) {
             if (isCharging() && Game.rulesManager.getRulesPhysical().canChargeCancel()
-                && getDisplacementAttack() instanceof ChargeAttackAction) {
+                  && getDisplacementAttack() instanceof ChargeAttackAction) {
                 ChargeAttackAction chargeAttack = (ChargeAttackAction) getDisplacementAttack();
                 if (!(chargeAttack.getTarget(game) instanceof Entity target)) {
                     return false;
@@ -15340,7 +15348,7 @@ public abstract class Entity extends TurnOrdered
                     // Only set this if they have C3 Boosted
                     c3BoostedMultiplier = 0.05;
                 }
-                if (numberOfC3Members > 1 && numberOfC3Members <=8) {
+                if (numberOfC3Members > 1 && numberOfC3Members <= 8) {
                     returnBV = (int) Math.round(baseBV * ((multiplier * numberOfC3Members) + c3BoostedMultiplier));
                 } else if (numberOfC3Members > 8) {
                     returnBV = (int) Math.round(baseBV * ((multiplier * 8) + c3BoostedMultiplier));
@@ -15352,7 +15360,7 @@ public abstract class Entity extends TurnOrdered
                         novaMembers++;
                     }
                 }
-                if (novaMembers > 1 && novaMembers <=7) {
+                if (novaMembers > 1 && novaMembers <= 7) {
                     returnBV = (int) Math.round(baseBV * (multiplier * novaMembers));
                 } else if (novaMembers > 7) {
                     // IO: Alternate Eras p.183: Nova CEWS BV bonus capped at 35% of unit's base BV
@@ -15575,7 +15583,7 @@ public abstract class Entity extends TurnOrdered
     /** @return Target number taking into account game options */
     private int getMASCorSuperchargerTarget(int nLevel) {
         if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED)
-        && Game.rulesManager instanceof TWRulesManager) {
+              && Game.rulesManager instanceof TWRulesManager) {
             return ALTERNATE_MASC_FAILURE_ENHANCED[nLevel];
         } else if (game != null && gameOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC)
               && Game.rulesManager instanceof TWRulesManager) {

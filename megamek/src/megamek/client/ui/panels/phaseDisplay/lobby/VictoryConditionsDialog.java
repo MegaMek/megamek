@@ -62,6 +62,7 @@ import megamek.client.ui.panels.DialogOptionComponentYPanel;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.common.Player;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.options.BasicOption;
@@ -178,8 +179,12 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         return result;
     }
 
-    /** Rebuilds the control point list from every designation this client may see. */
-    private void refreshControlPoints() {
+    /**
+     * Rebuilds the control point list from every designation this client may see. Also called from the lobby
+     * when a player update arrives, because the server's echo of any designation change replaces the player
+     * objects - the previously listed markers become detached stale copies.
+     */
+    public void refreshControlPoints() {
         controlPointsModel.clear();
         for (Player player : clientGui.getClient().getGame().getPlayersList()) {
             for (ICarryable groundObject : player.getGroundObjectsToPlace()) {
@@ -195,8 +200,15 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
      * edited; the list still shows the teammates' points for the mission overview.
      */
     private void editSelectedControlPoint() {
-        ObjectiveMarker marker = controlPointsList.getSelectedValue();
+        ObjectiveMarker selectedMarker = controlPointsList.getSelectedValue();
+        if (selectedMarker == null) {
+            return;
+        }
+        // the selected row may be a stale copy from before a player update replaced the player objects -
+        // re-resolve the live marker by its stable identity (owner and hex) so edits land on the real one
+        ObjectiveMarker marker = findLiveMarker(selectedMarker);
         if (marker == null) {
+            refreshControlPoints();
             return;
         }
         Player localPlayer = clientGui.getClient().getLocalPlayer();
@@ -216,6 +228,27 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         }
         clientGui.getClient().sendPlayerInfo();
         refreshControlPoints();
+    }
+
+    /**
+     * @param staleMarker a possibly detached marker from the list model
+     *
+     * @return the live marker with the same owner and lobby position from the current player lists, or
+     *       {@code null} when no such designation exists anymore
+     */
+    private @Nullable ObjectiveMarker findLiveMarker(ObjectiveMarker staleMarker) {
+        for (Player player : clientGui.getClient().getGame().getPlayersList()) {
+            for (ICarryable groundObject : player.getGroundObjectsToPlace()) {
+                boolean sameIdentity = (groundObject instanceof ObjectiveMarker marker)
+                      && (marker.getOwnerId() == staleMarker.getOwnerId())
+                      && (marker.getLobbyPosition() != null)
+                      && marker.getLobbyPosition().equals(staleMarker.getLobbyPosition());
+                if (sameIdentity) {
+                    return (ObjectiveMarker) groundObject;
+                }
+            }
+        }
+        return null;
     }
 
     /** @return The text entered in the server password field; the server checks it only when it has a password */

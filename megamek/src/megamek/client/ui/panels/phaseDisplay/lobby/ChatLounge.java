@@ -2133,6 +2133,10 @@ public class ChatLounge extends AbstractPhaseDisplay
         panTeamOverview.refreshData();
         // another player may have designated or removed a victory hex - update the preview flags
         refreshPreviewFlagSprites();
+        // the update replaced the player objects, so the dialog's listed markers are stale copies now
+        if (victoryConditionsDialog != null) {
+            victoryConditionsDialog.refreshControlPoints();
+        }
     }
 
     @Override

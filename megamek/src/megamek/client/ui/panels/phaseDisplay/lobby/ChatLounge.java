@@ -1521,13 +1521,13 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     /**
-     * Adds or removes a victory hex designation at the given hex of the lobby board preview. Clicking an empty hex
-     * designates it: an {@link ObjectiveMarker} carrying the position is added to the local player's
-     * ground-objects-to-place list and sent to the server, and the marker is placed on the board when the game
-     * starts. Designations are a side's mission plan: the server sends them only to the owner's teammates and to a
-     * game master (see {@link ObjectiveMarker#isDesignationVisibleTo}), so opposing players do not see the flag.
-     * Clicking a hex the local player already designated removes the designation again. A hex designated by a
-     * teammate is left alone - only the designating player can remove it.
+     * Handles a designation click at the given hex of the lobby board preview. Clicking an empty hex designates
+     * it: an {@link ObjectiveMarker} carrying the position is added to the local player's ground-objects-to-place
+     * list and sent to the server, and the marker is placed on the board when the game starts. Designations are a
+     * side's mission plan: the server sends them only to the owner's teammates and to a game master (see
+     * {@link ObjectiveMarker#isDesignationVisibleTo}), so opposing players do not see the flag. Clicking one of
+     * the local player's own flags opens its properties dialog, where the flag can also be removed - removal is a
+     * deliberate button there, never a bare click. A teammate's flag is left alone.
      *
      * @param coords the clicked hex
      */
@@ -1540,16 +1540,17 @@ public class ChatLounge extends AbstractPhaseDisplay
                       coords.getBoardNum(), existingMarker.getOwnerId());
                 return;
             }
-            localPlayer.getGroundObjectsToPlace().remove(existingMarker);
-            VICTORY_HEX_LOGGER.info("[VictoryHex] Removed the victory hex designation at {}", coords.getBoardNum());
-        } else {
-            ObjectiveMarker marker = new ObjectiveMarker();
-            marker.setName(Messages.getString("ChatLounge.victoryHexName", coords.getBoardNum()));
-            marker.setOwnerId(localPlayer.getId());
-            marker.setLobbyPosition(coords);
-            localPlayer.getGroundObjectsToPlace().add(marker);
-            VICTORY_HEX_LOGGER.info("[VictoryHex] Designated {} as a victory hex", coords.getBoardNum());
+            // clicking your own flag opens its properties; removal is a deliberate button in there, so a
+            // stray click cannot silently destroy a configured point
+            editVictoryHexProperties(coords);
+            return;
         }
+        ObjectiveMarker marker = new ObjectiveMarker();
+        marker.setName(Messages.getString("ChatLounge.victoryHexName", coords.getBoardNum()));
+        marker.setOwnerId(localPlayer.getId());
+        marker.setLobbyPosition(coords);
+        localPlayer.getGroundObjectsToPlace().add(marker);
+        VICTORY_HEX_LOGGER.info("[VictoryHex] Designated {} as a victory hex", coords.getBoardNum());
         client().sendPlayerInfo();
         refreshPreviewFlagSprites();
     }
@@ -1669,10 +1670,22 @@ public class ChatLounge extends AbstractPhaseDisplay
         propertiesPanel.add(rateLabel);
         propertiesPanel.add(rateSpinner);
 
-        int result = JOptionPane.showConfirmDialog(clientgui.getFrame(), propertiesPanel,
+        String okLabel = Messages.getString("Okay");
+        String removeLabel = Messages.getString("ChatLounge.victoryHex.remove");
+        String cancelLabel = Messages.getString("Cancel");
+        Object[] dialogOptions = { okLabel, removeLabel, cancelLabel };
+        int result = JOptionPane.showOptionDialog(clientgui.getFrame(), propertiesPanel,
               Messages.getString("ChatLounge.victoryHex.title", marker.generalName()),
-              JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        if (result != JOptionPane.OK_OPTION) {
+              JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, dialogOptions, okLabel);
+        if (result == 1) {
+            client().getLocalPlayer().getGroundObjectsToPlace().remove(marker);
+            VICTORY_HEX_LOGGER.info("[VictoryHex] Removed the victory hex designation at {}",
+                  coords.getBoardNum());
+            client().sendPlayerInfo();
+            refreshPreviewFlagSprites();
+            return;
+        }
+        if (result != 0) {
             return;
         }
         marker.setControlRadius((Integer) radiusSpinner.getValue());

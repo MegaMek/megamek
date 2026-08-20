@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -84,6 +85,9 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     private static final int REPORT_POINT_SECURED = 7133;
     private static final int REPORT_POINT_FELL = 7134;
     private static final int REPORT_POINT_CAPTURED = 7135;
+    private static final int REPORT_HOLD_PROGRESS = 7136;
+    private static final int REPORT_GRIP_DRAINED = 7137;
+    private static final int REPORT_CAPTURE_PROGRESS = 7138;
 
     /**
      * A scoring side. Normally this is a team; a player that is not on any team forms its own side.
@@ -191,6 +195,14 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         LOGGER.debug("[Objective] {} at {}: {} has held for {} of {} turn(s) ({})",
               objective.marker().generalName(), objective.position(), displayName(controller), heldTurns,
               scheme.getThreshold(), scheme.getHoldCounting());
+        if (heldTurns < scheme.getThreshold()) {
+            Report report = new Report(REPORT_HOLD_PROGRESS, Report.PUBLIC);
+            report.add(displayName(controller));
+            report.add(objective.marker().generalName());
+            report.add(heldTurns);
+            report.add(scheme.getThreshold());
+            addReport(report);
+        }
         if (heldTurns >= scheme.getThreshold()) {
             decidePoint(objective, controller, tracker, REPORT_POINT_SECURED);
         }
@@ -219,6 +231,11 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
               objective.marker().generalName(), objective.position(), scheme.getDefendGrip(),
               scheme.getThreshold());
         if (scheme.getDefendGrip() > 0) {
+            Report report = new Report(REPORT_GRIP_DRAINED, Report.PUBLIC);
+            report.add(objective.marker().generalName());
+            report.add(scheme.getDefendGrip());
+            report.add(scheme.getThreshold());
+            addReport(report);
             return;
         }
         Side taker = null;
@@ -266,6 +283,14 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         LOGGER.debug("[Objective] {} at {}: {} pushes the capture progress to {} of {}",
               objective.marker().generalName(), objective.position(), displayName(controller), progress,
               scheme.getThreshold());
+        if (progress < scheme.getThreshold()) {
+            Report report = new Report(REPORT_CAPTURE_PROGRESS, Report.PUBLIC);
+            report.add(displayName(controller));
+            report.add(objective.marker().generalName());
+            report.add(progress);
+            report.add(scheme.getThreshold());
+            addReport(report);
+        }
         if (progress >= scheme.getThreshold()) {
             decidePoint(objective, controller, tracker, REPORT_POINT_CAPTURED);
         }
@@ -581,13 +606,18 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     }
 
     private void reportObjectiveControl(PlacedObjective objective, @Nullable Side controller) {
+        // the control line names the kind of point, so a Defend point reads as one in the round report
+        String schemeWord = Messages.getString("ChatLounge.victoryHex.word."
+              + objective.marker().getScoringScheme().getPreset().name().toLowerCase(Locale.ROOT));
         Report report;
         if (controller == null) {
             report = new Report(REPORT_OBJECTIVE_UNCONTROLLED, Report.PUBLIC);
+            report.add(schemeWord);
             report.add(objective.marker().generalName());
             report.add(objective.position().toFriendlyString());
         } else {
             report = new Report(REPORT_OBJECTIVE_CONTROLLED, Report.PUBLIC);
+            report.add(schemeWord);
             report.add(objective.marker().generalName());
             report.add(objective.position().toFriendlyString());
             report.add(displayName(controller));

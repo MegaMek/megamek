@@ -89,8 +89,10 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
                 marker.setLobbyPosition(null);
                 getGame().placeGroundObject(position, marker);
                 anyPlaced = true;
-                VICTORY_HEX_LOGGER.info("[Objective] Placed lobby objective {} (owner ID {}, radius {}) at {}",
-                      marker.generalName(), marker.getOwnerId(), marker.getControlRadius(), position);
+                VICTORY_HEX_LOGGER.info(
+                      "[Objective] Placed lobby objective {} (owner ID {}, radius {}, {} scheme) at {}",
+                      marker.generalName(), marker.getOwnerId(), marker.getControlRadius(),
+                      marker.getScoringScheme().getPreset(), position);
             }
         }
         if (anyPlaced) {

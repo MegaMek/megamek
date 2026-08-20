@@ -90,7 +90,8 @@ public class CLLightMGA extends AmmoWeapon {
         instantModeSwitch = false;
         rulesRefs = rulesRefs(
               rulesRef(SourceBookCode.TM, 228),
-              rulesRef(SourceBookCode.TW, 137)
+              rulesRef(SourceBookCode.TW, 137),
+              rulesRef(SourceBookCode.CORE, 185)
         );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

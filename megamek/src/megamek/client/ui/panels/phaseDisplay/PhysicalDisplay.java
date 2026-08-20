@@ -55,13 +55,11 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
-import megamek.client.ui.dialogs.phaseDisplay.AimedShotDialog;
 import megamek.client.ui.dialogs.phaseDisplay.CalledBlowDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
-import megamek.client.ui.widget.IndexedRadioButton;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
 import megamek.common.Hex;
@@ -73,7 +71,6 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
-import megamek.common.enums.AimingMode;
 import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
@@ -182,9 +179,14 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                 case PHYSICAL_PUNCH -> "<BR>&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_PUNCH);
                 case PHYSICAL_KICK -> "<BR>&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_KICK);
                 case PHYSICAL_PUSH -> "<BR>&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.PHYS_PUSH);
-                case PHYSICAL_TWIST ->
-                    "<BR>&nbsp;&nbsp;" + Messages.getString("Left") + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_LEFT)
-                    + "&nbsp;&nbsp;" + Messages.getString("Right") + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_RIGHT);
+                case PHYSICAL_TWIST -> "<BR>&nbsp;&nbsp;"
+                      + Messages.getString("Left")
+                      + ": "
+                      + KeyCommandBind.getDesc(KeyCommandBind.TWIST_LEFT)
+                      + "&nbsp;&nbsp;"
+                      + Messages.getString("Right")
+                      + ": "
+                      + KeyCommandBind.getDesc(KeyCommandBind.TWIST_RIGHT);
                 default -> "";
             };
         }
@@ -654,6 +656,17 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                     return true;
                 }
             }
+        }
+
+        if (needNagForDishonor() && HonorNagHelper.wouldBeDishonored(game, attacks)) {
+            // confirm this action
+            String title = Messages.getString("HonorNag.title");
+            String body = Messages.getString("HonorNag.message");
+            if (checkNagForDishonor(title, body)) {
+                return true;
+            }
+            // Player accepted; remember it so the rest of this turn isn't re-warned before the bot's report arrives.
+            HonorNagHelper.recordDishonor(game, attacks);
         }
 
         return currentEntity() == null;
@@ -1219,8 +1232,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     /**
      * @param club the physical weapon being swung
      *
-     * @return {@code true} when the weapon's blow may be aimed at the punch or kick location table as a
-     *       called blow (assuming S7 vibroswords count as swords and maces count as hatchets)
+     * @return {@code true} when the weapon's blow may be aimed at the punch or kick location table as a called blow
+     *       (assuming S7 vibroswords count as swords and maces count as hatchets)
      */
     private boolean isAimablePhysicalWeapon(MiscMounted club) {
         return club.getType().hasAnyFlag(MiscTypeFlag.S_SWORD,
@@ -1231,24 +1244,20 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
               MiscTypeFlag.S_MACE,
               MiscTypeFlag.S_LANCE,
               MiscTypeFlag.S_CHAIN_WHIP,
-              MiscTypeFlag.S_RETRACTABLE_BLADE,
-              MiscTypeFlag.S_SHIELD_LARGE,
-              MiscTypeFlag.S_SHIELD_MEDIUM,
-              MiscTypeFlag.S_SHIELD_SMALL);
+              MiscTypeFlag.S_RETRACTABLE_BLADE);
     }
 
     /**
-     * Asks the player whether to aim the physical weapon blow high (punch location table) or low (kick
-     * location table) as a called blow, or leave it uncalled. The question is only asked when the choice
-     * actually applies: the weapon must be aimable, the attack possible, both units Meks at the same
-     * elevation, and the {@code clubs_punch} option off (that option selects the table from the elevation
-     * difference instead, ignoring any called blow).
+     * Asks the player whether to aim the physical weapon blow high (punch location table) or low (kick location table)
+     * as a called blow, or leave it uncalled. The question is only asked when the choice actually applies: the weapon
+     * must be aimable, the attack possible, both units Meks at the same elevation, and the {@code clubs_punch} option
+     * off (that option selects the table from the elevation difference instead, ignoring any called blow).
      *
      * @param attacker the attacking entity
      * @param club     the physical weapon being swung
      *
-     * @return the chosen hit table ({@code ToHitData.HIT_NORMAL}, {@code HIT_PUNCH} or {@code HIT_KICK}),
-     *       or {@code CALLED_BLOW_CANCELLED} when the player cancelled the attack
+     * @return the chosen hit table ({@code ToHitData.HIT_NORMAL}, {@code HIT_PUNCH} or {@code HIT_KICK}), or
+     *       {@code CALLED_BLOW_CANCELLED} when the player cancelled the attack
      */
     private int chooseCalledBlowTable(Entity attacker, MiscMounted club) {
         if (!isAimablePhysicalWeapon(club)) {
@@ -1928,7 +1937,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                     }
                 }
                 setClubEnabled(canClub);
-                
+
                 // Thrash at infantry?
                 ToHitData thrash = new ThrashAttackAction(currentEntity, target)
                       .toHit(game);
@@ -2416,14 +2425,15 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         buttons.get(PhysicalCommand.PHYSICAL_TWIST).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(PhysicalCommand.PHYSICAL_TWIST.getCmd(), enabled);
     }
-    
+
     /**
-     * Helper method that allows us to get the list of iNarc pods in a given attacker's Coords,
-     * used by PhysicalDisplay and the MapMenu right-click menu.
+     * Helper method that allows us to get the list of iNarc pods in a given attacker's Coords, used by PhysicalDisplay
+     * and the MapMenu right-click menu.
      *
-     * @param attacker  Should be the current entity for whom we're building attack data.
-     * @param pos       Coords of the hex to check; may not be the same as attacker.getPosition()
-     * @return          List of Targetables containing co-located iNarc pods
+     * @param attacker Should be the current entity for whom we're building attack data.
+     * @param pos      Coords of the hex to check; may not be the same as attacker.getPosition()
+     *
+     * @return List of Targetables containing co-located iNarc pods
      */
     public static List<Targetable> getINarcPods(Entity attacker, Coords pos) {
         List<Targetable> targets = new ArrayList<>();

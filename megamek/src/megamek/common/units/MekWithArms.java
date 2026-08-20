@@ -126,7 +126,7 @@ public abstract class MekWithArms extends Mek {
         for (MiscMounted m : getMisc()) {
             MiscType type = m.getType();
             if (((m.getLocation() == Mek.LOC_LEFT_ARM) || (m.getLocation() == Mek.LOC_RIGHT_ARM))
-                  && type.isShield()
+                  && type.hasFlag(MiscType.F_SHIELD)
                   && !m.isInoperable()
                   && (getInternal(m.getLocation()) > 0)) {
                 for (int slot = 0; slot < getNumberOfCriticalSlots(m.getLocation()); slot++) {
@@ -277,7 +277,7 @@ public abstract class MekWithArms extends Mek {
 
         for (MiscMounted misc : getMisc()) {
             MiscType type = misc.getType();
-            if (type.hasFlag(MiscType.F_CLUB) && (type.hasFlag(shieldSize))) {
+            if (type.hasFlag(MiscType.F_SHIELD) && type.hasFlag(shieldSize)) {
                 // ok so we have a shield of certain size. know which arm is it.
                 if (misc.getLocation() == Mek.LOC_RIGHT_ARM) {
                     raShield = 1;
@@ -311,7 +311,7 @@ public abstract class MekWithArms extends Mek {
             }
 
             Mounted<?> m = cs.getMount();
-            if ((m instanceof MiscMounted miscMounted) && miscMounted.getType().isShield()
+            if ((m instanceof MiscMounted miscMounted) && miscMounted.getType().hasFlag(MiscType.F_SHIELD)
                   && m.curMode().equals(MiscType.S_ACTIVE_SHIELD)) {
                 return miscMounted.getCurrentDamageCapacity(this, m.getLocation()) > 0;
             }
@@ -354,7 +354,7 @@ public abstract class MekWithArms extends Mek {
             }
 
             Mounted<?> m = cs.getMount();
-            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().isShield()
+            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().hasFlag(MiscType.F_SHIELD)
                   && m.curMode().equals(MiscType.S_PASSIVE_SHIELD)) {
                 return ((MiscMounted) m).getCurrentDamageCapacity(this, m.getLocation()) > 0;
             }
@@ -386,7 +386,7 @@ public abstract class MekWithArms extends Mek {
 
             Mounted<?> m = cs.getMount();
             if ((m instanceof MiscMounted)
-                  && ((MiscMounted) m).getType().isShield()
+                  && ((MiscMounted) m).getType().hasFlag(MiscType.F_SHIELD)
                   && (m.curMode().equals(MiscType.S_NO_SHIELD)
                   || isShutDown() ||
                   // if he has a shield and the mek is SD or pilot

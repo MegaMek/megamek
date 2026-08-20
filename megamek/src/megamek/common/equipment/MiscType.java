@@ -72,6 +72,13 @@ public class MiscType extends EquipmentType {
      */
     public static final String MODE_ECM = "ECM";
 
+    /**
+     * Internal (non-localized) name of the running mode of an Enhanced Imaging Interface, paired with
+     * {@link Mounted#MODE_OFF}. Per IO p.69 EI runs unless the pilot deliberately shuts it down, so this is the
+     * interface's default mode.
+     */
+    public static final String MODE_EI_ON = "Initiate enhanced imaging";
+
     // equipment flags (okay, like every type of equipment has its own flag)
     public static final MiscTypeFlag F_HEAT_SINK = MiscTypeFlag.F_HEAT_SINK;
     public static final MiscTypeFlag F_DOUBLE_HEAT_SINK = MiscTypeFlag.F_DOUBLE_HEAT_SINK;
@@ -99,6 +106,7 @@ public class MiscType extends EquipmentType {
     public static final MiscTypeFlag F_AP_POD = MiscTypeFlag.F_AP_POD;
     public static final MiscTypeFlag F_SEARCHLIGHT = MiscTypeFlag.F_SEARCHLIGHT;
     public static final MiscTypeFlag F_CLUB = MiscTypeFlag.F_CLUB;
+    public static final MiscTypeFlag F_SHIELD = MiscTypeFlag.F_SHIELD;
     public static final MiscTypeFlag F_HAND_WEAPON = MiscTypeFlag.F_HAND_WEAPON;
     public static final MiscTypeFlag F_COWL = MiscTypeFlag.F_COWL;
     public static final MiscTypeFlag F_JUMP_BOOSTER = MiscTypeFlag.F_JUMP_BOOSTER;
@@ -107,6 +115,7 @@ public class MiscType extends EquipmentType {
     public static final MiscTypeFlag F_BA_VTOL = MiscTypeFlag.F_BA_VTOL;
     public static final MiscTypeFlag F_SPIKES = MiscTypeFlag.F_SPIKES;
     public static final MiscTypeFlag F_COMMUNICATIONS = MiscTypeFlag.F_COMMUNICATIONS;
+    public static final MiscTypeFlag F_PHYSICAL_WEAPON = MiscTypeFlag.F_PHYSICAL_WEAPON;
     public static final MiscTypeFlag F_PPC_CAPACITOR = MiscTypeFlag.F_PPC_CAPACITOR;
     public static final MiscTypeFlag F_REFLECTIVE = MiscTypeFlag.F_REFLECTIVE;
     public static final MiscTypeFlag F_REACTIVE = MiscTypeFlag.F_REACTIVE;
@@ -395,13 +404,7 @@ public class MiscType extends EquipmentType {
     public boolean isBoobyTrap() {
         return hasFlag(F_BOOBY_TRAP);
     }
-
-    public boolean isShield() {
-        return hasFlag(F_CLUB) && hasAnyFlag(MiscTypeFlag.S_SHIELD_LARGE,
-              MiscTypeFlag.S_SHIELD_MEDIUM,
-              MiscTypeFlag.S_SHIELD_SMALL);
-    }
-
+    
     public boolean isVibroblade() {
         return hasFlag(F_CLUB)
               && hasAnyFlag(
@@ -1848,7 +1851,6 @@ public class MiscType extends EquipmentType {
     // Advanced Mek/ProtoMek/Vehicular Motive Systems
     public static MiscType createJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.JUMP_JET);
         misc.addLookupName("JumpJet");
@@ -1857,6 +1859,7 @@ public class MiscType extends EquipmentType {
         misc.tankSlots = 0;
         misc.flags = misc.flags.or(F_JUMP_JET, F_MEK_EQUIPMENT, MiscTypeFlag.S_STANDARD);
         misc.bv = 0;
+        misc.industrial = true;
         misc.rulesRefs = "225, TM";
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(2464, 2471, 2500, DATE_NONE, DATE_NONE)
@@ -1873,7 +1876,6 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createImprovedJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Improved Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.IMPROVED_JUMP_JET);
         misc.addLookupName("IS Improved Jump Jet");
@@ -1901,10 +1903,9 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISPrototypeImprovedJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Prototype Improved Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.PROTOTYPE_IMPROVED_JJ);
-        misc.shortName = "Prototype Imp. Jump Jet";
+        misc.shortName = "Proto. Imp. Jump Jet";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 1;
         misc.tankSlots = 0;
@@ -1927,15 +1928,15 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISPrototypeJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Primitive Prototype Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.PROTOTYPE_JUMP_JET);
-        misc.shortName = "Prototype Jump Jet";
+        misc.shortName = "Proto. Jump Jet";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 1;
         misc.tankSlots = 0;
         misc.flags = misc.flags.or(F_JUMP_JET, F_MEK_EQUIPMENT, MiscTypeFlag.S_PROTOTYPE);
         misc.bv = 0;
+        misc.industrial = true;
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(2464, DATE_NONE, DATE_NONE, 2471, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
@@ -1951,7 +1952,6 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createVehicularJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.VEHICLE_JUMP_JET);
         misc.addLookupName("VJJ");
@@ -1974,7 +1974,6 @@ public class MiscType extends EquipmentType {
     }
 
     // TODO Protomek Jump Jets See IO, pg 35
-
     public static MiscType createProtomekJumpJet() {
         MiscType misc = new MiscType();
         misc.name = "Jump Jet";
@@ -2268,6 +2267,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 1;
         misc.flags = misc.flags.or(F_UMU, F_MEK_EQUIPMENT);
         misc.bv = 0;
+        misc.industrial = true;
         misc.rulesRefs = "107, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
@@ -3702,7 +3702,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 3;
         misc.criticalSlots = 2;
         misc.cost = 120000;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_CHAIN_WHIP).andNot(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_CHAIN_WHIP).andNot(F_FIGHTER_EQUIPMENT);
         misc.toHitModifier = -2;
         misc.bv = 5.175;
         misc.rulesRefs = "100, TO:AUE";
@@ -3729,9 +3729,9 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_HAND_WEAPON, F_MEK_EQUIPMENT, MiscTypeFlag.S_CLAW);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_HAND_WEAPON, F_MEK_EQUIPMENT, MiscTypeFlag.S_CLAW);
         misc.bv = BV_VARIABLE;
-        misc.toHitModifier = 1;
+        misc.toHitModifier = 0;
         misc.rulesRefs = "101, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
@@ -3757,7 +3757,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 5;
         misc.criticalSlots = 4;
         misc.cost = 110000;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_FLAIL);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_FLAIL);
         misc.bv = 11;
         misc.rulesRefs = "101, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
@@ -3782,7 +3782,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_HATCHET);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_HATCHET);
         misc.toHitModifier = -1;
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "220, TM";
@@ -3806,7 +3806,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_LANCE);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_LANCE);
         misc.toHitModifier = 1;
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "102, TO:AUE";
@@ -3833,7 +3833,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.cost = 130000;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_MACE).andNot(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_MACE).andNot(F_FIGHTER_EQUIPMENT);
         misc.toHitModifier = 1;
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "102, TO:AUE";
@@ -3860,7 +3860,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.cost = COST_VARIABLE;
         misc.flags =
-              misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_RETRACTABLE_BLADE).andNot(F_FIGHTER_EQUIPMENT);
+              misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_RETRACTABLE_BLADE).andNot(F_FIGHTER_EQUIPMENT);
         misc.toHitModifier = -2;
         misc.bv = BV_VARIABLE;
         misc.setInstantModeSwitch(true);
@@ -3890,7 +3890,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 2;
         misc.criticalSlots = 3;
         misc.cost = 50000;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_SHIELD_SMALL);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_SHIELD, F_MEK_EQUIPMENT, MiscTypeFlag.S_SHIELD_SMALL);
         misc.bv = 50;
         misc.setInstantModeSwitch(true);
         String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
@@ -3922,7 +3922,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 4;
         misc.criticalSlots = 5;
         misc.cost = 100000;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_SHIELD_MEDIUM);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_SHIELD, F_MEK_EQUIPMENT, MiscTypeFlag.S_SHIELD_MEDIUM);
         misc.bv = 135;
         misc.setInstantModeSwitch(true);
         String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
@@ -3954,7 +3954,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 6;
         misc.criticalSlots = 7;
         misc.cost = 300000;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_SHIELD_LARGE);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_SHIELD, F_MEK_EQUIPMENT, MiscTypeFlag.S_SHIELD_LARGE);
         misc.bv = 263;
         misc.setInstantModeSwitch(true);
         String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
@@ -3984,7 +3984,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5;
         misc.criticalSlots = 1;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_SPIKES, F_MEK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_SPIKES, F_MEK_EQUIPMENT);
         misc.bv = 4;
         misc.rulesRefs = "103, TO:AUE";
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -4007,7 +4007,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_SWORD).andNot(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_SWORD).andNot(F_FIGHTER_EQUIPMENT);
         misc.toHitModifier = -2;
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "237, TM";
@@ -4031,7 +4031,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.spreadable = true;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_TALON, F_MEK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_TALON, F_MEK_EQUIPMENT);
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "103, TO:AUE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
@@ -4057,7 +4057,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 3;
         misc.criticalSlots = 1;
         misc.cost = 150000;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_VIBRO_SMALL);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_VIBRO_SMALL);
         misc.toHitModifier = -2;
         misc.bv = 12;
         misc.setInstantModeSwitch(true);
@@ -4087,7 +4087,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 5;
         misc.criticalSlots = 2;
         misc.cost = 400000;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_VIBRO_MEDIUM);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_VIBRO_MEDIUM);
         misc.toHitModifier = -2;
         misc.bv = 17;
         misc.setInstantModeSwitch(true);
@@ -4118,7 +4118,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 7;
         misc.criticalSlots = 4;
         misc.cost = 750000;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_VIBRO_LARGE);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_VIBRO_LARGE);
         misc.toHitModifier = -2;
         misc.bv = 24;
         misc.setInstantModeSwitch(true);
@@ -4147,7 +4147,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentTypeLookup.TREE_CLUB);
         misc.tonnage = 0;
         misc.criticalSlots = 0;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_TREE_CLUB, MiscTypeFlag.S_CLUB);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_TREE_CLUB, MiscTypeFlag.S_CLUB);
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TechBase.ALL);
@@ -4167,7 +4167,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentTypeLookup.GIRDER_CLUB);
         misc.tonnage = 0;
         misc.criticalSlots = 0;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_CLUB);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_CLUB);
         misc.bv = 0;
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
@@ -4186,7 +4186,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentTypeLookup.LIMB_CLUB);
         misc.tonnage = 0;
         misc.criticalSlots = 0;
-        misc.flags = misc.flags.or(F_CLUB, MiscTypeFlag.S_CLUB);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, MiscTypeFlag.S_CLUB);
         misc.bv = 0;
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
@@ -5951,8 +5951,10 @@ public class MiscType extends EquipmentType {
               F_PROTOMEK_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "69, IO";
-        // EI modes: Off disables EI completely, On enables all EI benefits including aimed shots
-        String[] modes = { "Off", "Initiate enhanced imaging" };
+        // EI modes: On enables all EI benefits including aimed shots, Off disables EI completely. The running mode is
+        // listed first so that it is the default: a newly mounted interface takes mode index 0, and per IO p.69 EI is
+        // running unless the pilot deliberately shuts it down during the End Phase.
+        String[] modes = { MODE_EI_ON, Mounted.MODE_OFF };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
         // EI Interface introduced 3040 by Clan Smoke Jaguar, per IO p.69
@@ -6804,7 +6806,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 6;
         misc.svSlots = 1;
         misc.cost = 50000;
-        misc.flags = misc.flags.or(F_CLUB,
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB,
                     F_MEK_EQUIPMENT,
                     F_TANK_EQUIPMENT,
                     F_SUPPORT_TANK_EQUIPMENT,
@@ -6933,7 +6935,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 5;
         misc.svSlots = 1;
         misc.cost = 100000;
-        misc.flags = misc.flags.or(F_CLUB,
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB,
                     F_MEK_EQUIPMENT,
                     F_TANK_EQUIPMENT,
                     F_SUPPORT_TANK_EQUIPMENT,
@@ -6963,7 +6965,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 4;
         misc.svSlots = 1;
         misc.cost = 75000;
-        misc.flags = misc.flags.or(F_CLUB,
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB,
                     F_MEK_EQUIPMENT,
                     F_TANK_EQUIPMENT,
                     F_SUPPORT_TANK_EQUIPMENT,
@@ -6993,7 +6995,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 7;
         misc.svSlots = 1;
         misc.cost = 100000;
-        misc.flags = misc.flags.or(F_CLUB,
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB,
                     F_MEK_EQUIPMENT,
                     F_TANK_EQUIPMENT,
                     F_SUPPORT_TANK_EQUIPMENT,
@@ -7025,7 +7027,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 4;
         misc.criticalSlots = 2;
         misc.cost = 100000;// From the Ask the Writer Forum
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_BUZZSAW);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_BUZZSAW);
         misc.bv = 67;// From the Ask the Writer Forum
         // Assuming this is a variant of the Dual Saw
         misc.rulesRefs = "243, TM";
@@ -7231,7 +7233,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 8;
         misc.svSlots = 1;
         misc.cost = 100000;
-        misc.flags = misc.flags.or(F_CLUB,
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB,
                     F_MEK_EQUIPMENT,
                     F_TANK_EQUIPMENT,
                     F_SUPPORT_TANK_EQUIPMENT,
@@ -7346,7 +7348,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 3.0;
         misc.criticalSlots = 4;
         misc.svSlots = 1;
-        misc.flags = misc.flags.or(F_CLUB,
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB,
               F_MEK_EQUIPMENT,
               F_TANK_EQUIPMENT,
               F_SUPPORT_TANK_EQUIPMENT,
@@ -7405,7 +7407,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 5;
         misc.svSlots = 1;
         misc.cost = 100000;
-        misc.flags = misc.flags.or(F_CLUB,
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB,
                     F_MEK_EQUIPMENT,
                     F_TANK_EQUIPMENT,
                     F_SUPPORT_TANK_EQUIPMENT,
@@ -7459,7 +7461,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 2;
         misc.criticalSlots = 1;
         misc.cost = 75000;
-        misc.flags = misc.flags.or(F_CLUB,
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB,
                     F_MEK_EQUIPMENT,
                     F_TANK_EQUIPMENT,
                     F_SUPPORT_TANK_EQUIPMENT,
@@ -7492,7 +7494,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 5;
         misc.svSlots = 1;
         misc.cost = 110000;
-        misc.flags = misc.flags.or(F_CLUB,
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB,
               F_MEK_EQUIPMENT,
               F_TANK_EQUIPMENT,
               F_SUPPORT_TANK_EQUIPMENT,

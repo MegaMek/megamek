@@ -41,15 +41,22 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
-import megamek.common.moves.ClimbingHelper;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.moves.ClimbingHelper;
 import megamek.common.options.OptionsConstants;
-import megamek.common.units.*;
+import megamek.common.units.ConvInfantry;
+import megamek.common.units.Entity;
+import megamek.common.units.IAero;
+import megamek.common.units.Infantry;
+import megamek.common.units.InfantryMount;
+import megamek.common.units.MekWarrior;
+import megamek.common.units.SmallCraft;
+import megamek.common.units.Targetable;
 
 public class ComputeTargetToHitMods {
 
@@ -86,7 +93,7 @@ public class ComputeTargetToHitMods {
           WeaponMounted weapon, AmmoType ammoType, EnumSet<AmmoType.Munitions> munition, boolean isArtilleryDirect,
           boolean isArtilleryIndirect, boolean isAttackerInfantry, boolean exchangeSwarmTarget, boolean isIndirect,
           boolean isPointBlankShot, boolean usesAmmo) {
-    
+
         if (attacker == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
             return toHit;
@@ -176,7 +183,9 @@ public class ComputeTargetToHitMods {
                       && (entityTarget.getTaggedBy() != WeaponAttackAction.UNASSIGNED)
                       && (ammoType != null)
                       && ammoType.getAmmoType().isAnyOf(AmmoType.AmmoTypeEnum.LRM, AmmoType.AmmoTypeEnum.LRM_IMP,
-                      AmmoType.AmmoTypeEnum.MML, AmmoType.AmmoTypeEnum.NLRM, AmmoType.AmmoTypeEnum.MEK_MORTAR)
+                      AmmoType.AmmoTypeEnum.MML, AmmoType.AmmoTypeEnum.NLRM, AmmoType.AmmoTypeEnum.MEK_MORTAR,
+                      AmmoType.AmmoTypeEnum.TBOLT_5, AmmoType.AmmoTypeEnum.TBOLT_10, AmmoType.AmmoTypeEnum.TBOLT_15,
+                      AmmoType.AmmoTypeEnum.TBOLT_10)
                       && munition.contains(AmmoType.Munitions.M_SEMIGUIDED);
 
                 if (!attacker.isConventionalInfantry() && !hasActiveProbeImmunity) {
@@ -387,7 +396,7 @@ public class ComputeTargetToHitMods {
 
         return toHit;
     }
-    
+
     private static boolean createsSensorShadow(Entity target, Entity other) {
         return !other.isEnemyOf(target)
               && other.isLargeCraft()

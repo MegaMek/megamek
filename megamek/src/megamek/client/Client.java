@@ -55,6 +55,7 @@ import megamek.MMConstants;
 import megamek.client.bot.AIType;
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerator;
+import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.tileset.TilesetManager;
@@ -82,6 +83,7 @@ import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePollEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.GameToastEvent;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
@@ -148,10 +150,10 @@ public class Client extends AbstractClient {
      * The tile set, built on first use rather than with the client.
      *
      * <p>Building one parses the whole hex tile set into thousands of template hexes and their terrain, which a
-     * client that never draws anything has no use for. Every client used to pay that at construction: headless
-     * runners, and every bot, since {@code BotClient} is a {@code Client} too. A batch playing many games in one
-     * process paid it once per client per game and kept the result alive, which is tens of megabytes a game
-     * retained for images nobody would ever ask for.</p>
+     * client that never draws anything has no use for. Every client used to pay that at construction: headless runners,
+     * and every bot, since {@code BotClient} is a {@code Client} too. A batch playing many games in one process paid it
+     * once per client per game and kept the result alive, which is tens of megabytes a game retained for images nobody
+     * would ever ask for.</p>
      *
      * @return the tile set manager, or {@code null} if it cannot be built
      */
@@ -411,8 +413,8 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Asks the server to build the game board from the current map settings and broadcast it to all clients while
-     * still in the lobby, so that all players can see the battlefield that will actually be played.
+     * Asks the server to build the game board from the current map settings and broadcast it to all clients while still
+     * in the lobby, so that all players can see the battlefield that will actually be played.
      */
     public void sendLobbyBoardGenerationRequest() {
         send(new Packet(PacketCommand.LOBBY_GENERATE_BOARD));
@@ -1120,6 +1122,11 @@ public class Client extends AbstractClient {
                         game.setBotTypes(botTypes);
                     }
                     break;
+                case PRINCESS_DISHONORED:
+                    // A bot reported (via the server) which players it now considers dishonored; remember it so the
+                    // dishonor warning can be suppressed once a bot already holds a grudge.
+                    receivePrincessDishonored(packet);
+                    break;
                 case ENTITY_UPDATE:
                     receiveEntityUpdate(packet);
                     break;
@@ -1340,6 +1347,7 @@ public class Client extends AbstractClient {
                         try {
                             if (!sDir.mkdir()) {
                                 LOGGER.error("Failed to create savegames directory.");
+                                fireSaveCompleted(null);
                                 return true;
                             }
                         } catch (Exception ex) {
@@ -1360,6 +1368,10 @@ public class Client extends AbstractClient {
                         LOGGER.error(ex, "Unable to save file {}", sFinalFile);
                     }
                     setAwaitingSave(false);
+                    // Report the file only if it actually made it to disk; a failed or partial write must not be
+                    // handed to a waiting caller as though it succeeded.
+                    File savedFile = new File(localFile);
+                    fireSaveCompleted(savedFile.isFile() ? savedFile : null);
                     break;
                 case LOAD_SAVEGAME:
                     String loadFile = packet.getStringValue(0);
@@ -1431,6 +1443,40 @@ public class Client extends AbstractClient {
         } catch (InvalidPacketDataException e) {
             LOGGER.error("Invalid packet data:", e);
             return false;
+        }
+    }
+
+    /**
+     * Receives a bot's dishonored-players report, records it, and - the first time an enemy bot marks the local player
+     * dishonored - shows the player a toast so they know the bot's units will no longer show theirs mercy.
+     *
+     * <p>The notice is skipped when the player had already been flagged for this bot, so a player who confirmed the
+     * pre-attack nag (which optimistically records the dishonor) does not get a redundant second notice. A player who
+     * disabled that nag, or who was dishonored by a bot command such as blood-feud, is still told here.</p>
+     *
+     * @param packet the received {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED} packet
+     */
+    protected void receivePrincessDishonored(Packet packet) throws InvalidPacketDataException {
+        int botPlayerId = packet.getIntValue(0);
+        List<Integer> dishonoredPlayerIds = packet.getIntList(1);
+        Player localPlayer = getLocalPlayer();
+
+        if (localPlayer == null) {
+            game.setDishonoredPlayers(botPlayerId, dishonoredPlayerIds);
+            return;
+        }
+
+        int localPlayerId = localPlayer.getId();
+        boolean wasDishonored = game.isPlayerDishonoredBy(botPlayerId, localPlayerId);
+        game.setDishonoredPlayers(botPlayerId, dishonoredPlayerIds);
+
+        if (!wasDishonored
+              && (botPlayerId != localPlayerId)
+              && game.isPlayerDishonoredBy(botPlayerId, localPlayerId)) {
+            Player bot = game.getPlayer(botPlayerId);
+            String botName = (bot != null) ? bot.getName() : Messages.getString("HonorNag.unknownBot");
+            game.fireGameEvent(new GameToastEvent(this, GameToastEvent.Level.GAMEMASTER,
+                  Messages.getString("HonorNag.dishonoredToast", botName), Entity.NONE));
         }
     }
 

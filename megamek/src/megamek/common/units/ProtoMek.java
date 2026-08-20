@@ -888,7 +888,7 @@ public class ProtoMek extends Entity {
         // Only activate when neural interface rules are enabled; lock mode to prevent UI toggle
         if ((mounted.getType() instanceof MiscType) &&
               mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
-            mounted.setMode(isNeuralInterfaceEnabled() ? 1 : 0);
+            mounted.setModeImmediately(isNeuralInterfaceEnabled() ? MiscType.MODE_EI_ON : Mounted.MODE_OFF);
             mounted.setModeSwitchable(false);
         }
     }
@@ -1045,9 +1045,9 @@ public class ProtoMek extends Entity {
         super.setGameOptions();
         // Update EI Interface equipment mode based on neural interface game option
         boolean eiEnabled = isNeuralInterfaceEnabled();
-        for (Mounted<?> m : getEquipment()) {
-            if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
-                m.setMode(eiEnabled ? 1 : 0);
+        for (Mounted<?> eiInterface : getEquipment()) {
+            if ((eiInterface.getType() instanceof MiscType) && eiInterface.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                eiInterface.setModeImmediately(eiEnabled ? MiscType.MODE_EI_ON : Mounted.MODE_OFF);
                 break;
             }
         }
@@ -1488,5 +1488,10 @@ public class ProtoMek extends Entity {
     @Override
     public int getRecoveryTime() {
         return 20;
+    }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return true;
     }
 }

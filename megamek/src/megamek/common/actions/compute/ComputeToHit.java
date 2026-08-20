@@ -45,7 +45,6 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeECM;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.enums.AimingMode;
-import megamek.common.enums.ChargeLevel;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.HandheldWeapon;
@@ -73,7 +72,6 @@ import megamek.common.weapons.battleArmor.clan.CLBALBX;
 import megamek.common.weapons.bayWeapons.ScreenLauncherBayWeapon;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.common.weapons.handlers.ARADEquipmentDetector;
-import megamek.common.weapons.lasers.innerSphere.ISBombastLaser;
 import megamek.common.weapons.lrms.LRTWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
 import megamek.logging.MMLogger;
@@ -396,12 +394,7 @@ public class ComputeToHit {
             }
             if ((spotter == null) &&
                   (ammoType != null) &&
-                  ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
-                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) &&
-                  (munition.contains(AmmoType.Munitions.M_SEMIGUIDED))) {
+                  bSemiGuided) {
                 for (TagInfo ti : game.getTagInfo()) {
                     if (target.getId() == ti.target.getId()) {
                         spotter = game.getEntity(ti.attackerId);
@@ -930,7 +923,7 @@ public class ComputeToHit {
         if (bApollo) {
             toHit.addModifier(Game.rulesManager.getRulesWeapons().getApolloToHit(), Messages.getString(
                   "WeaponAttackAction"
-                  + ".ApolloFcs"));
+                        + ".ApolloFcs"));
         }
 
         // add Artemis V bonus
@@ -1684,19 +1677,22 @@ public class ComputeToHit {
         // Indirect fire suffers a +1 penalty if the spotter is making attacks of its
         // own
         if (isIndirect) {
-            // semi guided ammo negates this modifier, if TAG succeeded
-            if ((ammoType != null) &&
+            boolean bSemiGuided = ((ammoType != null) &&
                   ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
-                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) &&
-                  (munition.contains(AmmoType.Munitions.M_SEMIGUIDED)) &&
+                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR) ||
+                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_5) ||
+                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_10) ||
+                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_15) ||
+                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_20)) &&
+                  (munition.contains(AmmoType.Munitions.M_SEMIGUIDED)));
+            // semi guided ammo negates this modifier, if TAG succeeded
+            if ((ammoType != null) &&
+                  bSemiGuided &&
                   (Compute.isTargetTagged(target, game))) {
-
-
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SemiGuidedIndirect"));
-
             } else if (!narcSpotter && (spotter != null)) {
                 // Unless the target has been tagged, or the spotter has an active command
                 // console
@@ -1746,7 +1742,7 @@ public class ComputeToHit {
         if (entityTarget != null && ammoType != null) {
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE) && (entityTarget.isNarcedBy(
                   ae.getOwner().getTeam()) || entityTarget
-                  .isINarcedBy(ae.getOwner().getTeam())) && !isTargetECMAffected) {
+                  .isINarcedBy(ae.getOwner().getTeam())) && !isTargetECMAffected && !isIndirect) {
                 Game.rulesManager.getRulesAmmo().narcHomingTarget(toHit);
             }
         }
@@ -1914,7 +1910,7 @@ public class ComputeToHit {
                     toHit.addModifier(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.FlakIndirect"));
                     return toHit;
                 }
-                baseMod = Game.rulesManager.getRulesArtillery().computeArtilleryBaseMod(17,true,true);
+                baseMod = Game.rulesManager.getRulesArtillery().computeArtilleryBaseMod(17, true, true);
                 toHit.addModifier(baseMod, Messages.getString("WeaponAttackAction.ArtyFlak"));
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
                 if (te.getAltitude() > 3) {
@@ -1931,7 +1927,7 @@ public class ComputeToHit {
         }
 
         // All other direct fire artillery attacks (attacker movement modifier already appended above)
-        baseMod = Game.rulesManager.getRulesArtillery().computeArtilleryBaseMod(17,true,false);
+        baseMod = Game.rulesManager.getRulesArtillery().computeArtilleryBaseMod(17, true, false);
         toHit.addModifier(baseMod, Messages.getString("WeaponAttackAction.DirectArty"));
         // without LOS, it is a short-range indirect attack that ignores LOS modifiers, TO:AR p.153
         if (!losMods.cannotSucceed()) {
@@ -1975,7 +1971,8 @@ public class ComputeToHit {
 
         // See MegaMek/megamek#5168
         int mod =
-              Game.rulesManager.getRulesArtillery().computeArtilleryBaseMod(ae.getPosition().distance(target.getPosition()), false, false);
+              Game.rulesManager.getRulesArtillery()
+                    .computeArtilleryBaseMod(ae.getPosition().distance(target.getPosition()), false, false);
         if (ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
             mod--;
         }

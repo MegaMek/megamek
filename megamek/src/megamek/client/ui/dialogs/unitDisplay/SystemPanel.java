@@ -63,21 +63,11 @@ import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.Configuration;
 import megamek.common.CriticalSlot;
 import megamek.common.battleArmor.BattleArmor;
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.BridgeLayerState;
-import megamek.common.equipment.EquipmentActivation;
-import megamek.common.equipment.EquipmentMode;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.GunEmplacement;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.*;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
-import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
@@ -526,19 +516,20 @@ class SystemPanel extends PicMap
         }
 
         if (m.hasModes()) {
-            if (!m.curMode().getDisplayableName().isEmpty()) {
+            // Both of these describe what the equipment is or is about to be, so they take the state label
+            if (!m.curMode().getStateName(m.getType()).isEmpty()) {
                 sb.append(" (");
-                sb.append(m.curMode().getDisplayableName());
+                sb.append(m.curMode().getStateName(m.getType()));
                 sb.append(')');
             }
 
-            if (!m.pendingMode().equals("None")) {
+            if (!m.pendingMode().equals(Mounted.MODE_NONE)) {
                 sb.append(" (next turn, ");
-                sb.append(m.pendingMode().getDisplayableName());
+                sb.append(m.pendingMode().getStateName(m.getType()));
                 sb.append(')');
             }
 
-            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().isShield()) {
+            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().hasFlag(MiscType.F_SHIELD)) {
                 sb.append(" ").append(((MiscMounted) m).getDamageAbsorption(en, m.getLocation())).append('/')
                       .append(((MiscMounted) m).getCurrentDamageCapacity(en, m.getLocation())).append(')');
             }
@@ -585,7 +576,7 @@ class SystemPanel extends PicMap
                         }
 
                         if ((m.getType() instanceof MiscType)
-                              && ((MiscType) m.getType()).isShield()
+                              && ((MiscType) m.getType()).hasFlag(MiscType.F_SHIELD)
                               && !Game.rulesManager.getRulesPhysical().phaseChangeShield()
                               && !clientgui.getClient().getGame().getPhase().isFiring()) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.ShieldModePhase"));
@@ -621,16 +612,18 @@ class SystemPanel extends PicMap
                         clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);
 
                         // notify the player
+                        // These report the state the equipment has reached, or will reach, so they take the
+                        // state label rather than the label the player picked from the dropdown
                         if (m.canInstantSwitch(nMode)) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.switched",
-                                  m.getName(), m.curMode().getDisplayableName()));
+                                  m.getName(), m.curMode().getStateName(m.getType())));
                             clientgui.addToast(ToastLevel.INFO,
-                                  m.getName() + ": " + m.curMode().getDisplayableName(), en);
+                                  m.getName() + ": " + m.curMode().getStateName(m.getType()), en);
                             int weapon = this.unitDisplayPanel.wPan.getSelectedWeaponNum();
                             this.unitDisplayPanel.wPan.displayMek(en);
                             this.unitDisplayPanel.wPan.selectWeapon(weapon);
                         } else {
-                            String pendingModeName = m.pendingMode().getDisplayableName();
+                            String pendingModeName = m.pendingMode().getStateName(m.getType());
                             if (clientgui.getClient().getGame().getPhase().isDeployment()) {
                                 clientgui.systemMessage(Messages.getString("MekDisplay.willSwitchAtStart",
                                       m.getName(), pendingModeName));
@@ -921,6 +914,11 @@ class SystemPanel extends PicMap
                     // getModesCount() to report a merged primary+secondary list that can be longer than
                     // the type's, which would index past the end.
                     int visibleModeCount = mountedType.getModesCount(mounted);
+                    // A queued switch is what the combo shows as selected, so that is the mode described as
+                    // the equipment's state; without one it is simply the current mode.
+                    EquipmentMode selectedMode = mounted.pendingMode().equals(Mounted.MODE_NONE)
+                          ? mounted.curMode()
+                          : mounted.pendingMode();
                     for (int modeIndex = 0; modeIndex < visibleModeCount; modeIndex++) {
                         EquipmentMode equipmentMode = mountedType.getMode(modeIndex);
                         // Hack to prevent showing an option that is disabled by the server, but would
@@ -957,7 +955,8 @@ class SystemPanel extends PicMap
                               || mountedType.hasFlag(MiscType.F_CHAMELEON_SHIELD)
                               || mountedType.hasFlag(MiscType.F_VOID_SIG)
                               || mountedType.hasFlag(MiscType.F_NULL_SIG))
-                              && Game.rulesManager.getRulesEquipment().blueShieldStealth(mounted.getEntity().hasActiveBlueShield())) {
+                              && Game.rulesManager.getRulesEquipment()
+                              .blueShieldStealth(mounted.getEntity().hasActiveBlueShield())) {
                             continue;
                         }
                         // Mirror case. If Stealth is active, Blue Shield can't be turned on.
@@ -971,19 +970,19 @@ class SystemPanel extends PicMap
                               && Game.rulesManager.getRulesEquipment().blueShieldStealth()) {
                             continue;
                         }
-                        m_chMode.addItem(equipmentMode.getDisplayableName());
+                        // The mode the combo will end up selected on describes the equipment's state; every
+                        // other entry is a change the player can make, and reads as an instruction.
+                        if (equipmentMode.equals(selectedMode)) {
+                            m_chMode.addItem(equipmentMode.getStateName(mountedType));
+                        } else {
+                            m_chMode.addItem(equipmentMode.getActionName(mountedType));
+                        }
                     }
                     if (m_chMode.getModel().getSize() <= 1) {
                         m_chMode.removeAllItems();
                         m_chMode.setEnabled(false);
                     } else {
-                        if (mounted.pendingMode().equals("None")) {
-                            m_chMode.setSelectedItem(mounted.curMode()
-                                  .getDisplayableName());
-                        } else {
-                            m_chMode.setSelectedItem(mounted.pendingMode()
-                                  .getDisplayableName());
-                        }
+                        m_chMode.setSelectedItem(selectedMode.getStateName(mountedType));
                     }
                 }
                 // Note: EI Interface modes are now controlled via the EI Interface equipment, not cockpit

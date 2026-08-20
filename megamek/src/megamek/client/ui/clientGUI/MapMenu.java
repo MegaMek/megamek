@@ -1797,10 +1797,12 @@ public class MapMenu extends JPopupMenu {
 
         EquipmentMode mode = mounted.getType().getMode(position);
 
+        // The starred entry is the mode the equipment is already in, so it is described as a state; the rest
+        // are changes the player can pick, and read as instructions.
         if (mode.equals(mounted.curMode())) {
-            item.setText("* " + mode.getDisplayableName());
+            item.setText("* " + mode.getStateName(mounted.getType()));
         } else {
-            item.setText(mode.getDisplayableName());
+            item.setText(mode.getActionName(mounted.getType()));
         }
         item.setActionCommand(Integer.toString(position));
         item.addActionListener(evt -> {

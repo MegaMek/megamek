@@ -330,6 +330,7 @@ public class Precognition implements Runnable {
                 case ILLEGAL_CLIENT_VERSION:
                 case LOCAL_PN:
                 case PRINCESS_SETTINGS:
+                case PRINCESS_DISHONORED:
                 case FORCE_UPDATE:
                 case FORCE_DELETE:
                 case SENDING_REPORTS_SPECIAL:

@@ -82,6 +82,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.player.GamePlayerChatEvent;
+import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.game.InitiativeRoll;
 import megamek.common.moves.MovePath;
@@ -90,6 +91,7 @@ import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
+import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.PathDecorator;
 import megamek.common.pathfinder.ShortestPathFinder;
@@ -205,6 +207,8 @@ public class Princess extends BotClient {
     private final ChatProcessor chatProcessor = new ChatProcessor();
     private boolean fleeBoard = false;
     private boolean holdPosition = false;
+    private AerospaceFocus aerospaceFocus = AerospaceFocus.AUTO;
+    private AerospaceGroundOrder aerospaceGroundOrder = AerospaceGroundOrder.AUTO;
     private boolean shootAndScoot = false;
     private Coords shootAndScootHex = null;
     private final Set<Integer> unitsScootingToHex = new HashSet<>();
@@ -306,9 +310,29 @@ public class Princess extends BotClient {
             return pathRankers.get(PathRankerType.NewtonianAerospace);
         } else if (behaviorSettings.isExperimental()) {
             return pathRankers.get(PathRankerType.Utility);
+        } else if (isAtmosphericAerospace(entity)) {
+            // Deliberately the last branch before the fallback: everything that reached a ranker before now
+            // still reaches the same one, and only what used to fall through to Basic arrives here. Princess
+            // registers its Basic ranker in this slot, so for Princess that fall-through is unchanged.
+            return pathRankers.get(PathRankerType.Aerospace);
         }
 
         return pathRankers.get(PathRankerType.Basic);
+    }
+
+    /**
+     * Whether this unit is flying under the atmospheric aerospace rules - over a ground mapsheet or on a
+     * low-altitude map.
+     *
+     * <p>Excludes space, which has no altitude and therefore no dead zone, and excludes vector movement,
+     * which {@link PathRankerType#NewtonianAerospace} already handles.</p>
+     *
+     * @param entity the unit to test
+     *
+     * @return {@code true} if the unit is an airborne aerospace unit in an atmosphere
+     */
+    protected boolean isAtmosphericAerospace(Entity entity) {
+        return entity.isAero() && entity.isAirborne() && !entity.isSpaceborne() && !game.useVectorMove();
     }
 
     IPathRanker getPathRanker(PathRankerType pathRankerType) {
@@ -446,6 +470,44 @@ public class Princess extends BotClient {
     public void setHoldPosition(final boolean holdPosition) {
         LOGGER.info("{}: setting hold position to {}", getName(), holdPosition);
         this.holdPosition = holdPosition;
+    }
+
+    /**
+     * @return the standing aerospace focus order, {@link AerospaceFocus#AUTO} when none has been given.
+     */
+    public AerospaceFocus getAerospaceFocus() {
+        return aerospaceFocus;
+    }
+
+    /**
+     * Sets the flight's standing order: press the air battle, support the ground force, or AUTO to let the doctrine
+     * weigh both halves itself. A battle order rather than saved configuration - it is not part of behavior settings
+     * and resets with the bot client.
+     *
+     * @param aerospaceFocus the focus to fly under
+     */
+    public void setAerospaceFocus(final AerospaceFocus aerospaceFocus) {
+        LOGGER.info("{}: setting aerospace focus to {}", getName(), aerospaceFocus);
+        this.aerospaceFocus = aerospaceFocus;
+    }
+
+    /**
+     * @return the standing ground-or-sky order for DropShips and small craft, {@link AerospaceGroundOrder#AUTO}
+     *       when none has been given.
+     */
+    public AerospaceGroundOrder getAerospaceGroundOrder() {
+        return aerospaceGroundOrder;
+    }
+
+    /**
+     * Orders the bot's DropShips and small craft to lift off, land, or hold their current domain. Fighters are
+     * unaffected. A battle order rather than saved configuration - it resets with the bot client.
+     *
+     * @param aerospaceGroundOrder the order to follow
+     */
+    public void setAerospaceGroundOrder(final AerospaceGroundOrder aerospaceGroundOrder) {
+        LOGGER.info("{}: setting aerospace ground order to {}", getName(), aerospaceGroundOrder);
+        this.aerospaceGroundOrder = aerospaceGroundOrder;
     }
 
     /**
@@ -883,6 +945,10 @@ public class Princess extends BotClient {
               entity.hasAbility(OptionsConstants.GUNNERY_MULTI_TASKER) ||
               entity.getCrew().getCrewType().getMaxPrimaryTargets() < 0) {
             return fireControls.get(FireControlType.MultiTarget);
+        } else if (isAtmosphericAerospace(entity)) {
+            // Last branch before the fallback, for the same reason as in getPathRanker: a multi-target aero
+            // crew keeps the fire control it already had, and only the Basic fall-through arrives here.
+            return fireControls.get(FireControlType.Aerospace);
         }
 
         return fireControls.get(FireControlType.Basic);
@@ -1796,7 +1862,7 @@ public class Princess extends BotClient {
      *
      * @return The movement index of this unit. May be positive or negative. Higher index values should move first.
      */
-    double calculateMoveIndex(final Entity entity, final StringBuilder msg) {
+    protected double calculateMoveIndex(final Entity entity, final StringBuilder msg) {
         final double PRIORITY_PRONE = 1.1;
         final double PRIORITY_TANK = 1.5;
         final double PRIORITY_BA = 2;
@@ -3439,6 +3505,8 @@ public class Princess extends BotClient {
             }
         } finally {
             LOGGER.info(msg.toString());
+            // Keep clients informed of this bot's honor state (covers pirates and the forced-withdrawal-off case too).
+            sendDishonoredData();
         }
     }
 
@@ -3614,12 +3682,26 @@ public class Princess extends BotClient {
 
         FireControl fireControl = new FireControl(this);
         fireControls.put(FireControlType.Basic, fireControl);
+        // The same object, not a second one: Princess resolves atmospheric aerospace gunnery to exactly the
+        // instance it always did. CASPAR replaces this slot alone.
+        fireControls.put(FireControlType.Aerospace, fireControl);
 
         InfantryFireControl infantryFireControl = new InfantryFireControl(this);
         fireControls.put(FireControlType.Infantry, infantryFireControl);
 
         MultiTargetFireControl multiTargetFireControl = new MultiTargetFireControl(this);
         fireControls.put(FireControlType.MultiTarget, multiTargetFireControl);
+    }
+
+    /**
+     * Wiring seam for subclasses (CASPAR): replaces the registered fire control of the given type. Call after
+     * {@code super.initializeFireControls()}. Mirrors {@link #registerPathRanker}.
+     *
+     * @param fireControlType the fire control slot to replace
+     * @param fireControl     the replacement fire control
+     */
+    protected void registerFireControl(FireControlType fireControlType, FireControl fireControl) {
+        fireControls.put(fireControlType, fireControl);
     }
 
     /**
@@ -3633,6 +3715,9 @@ public class Princess extends BotClient {
         BasicPathRanker basicPathRanker = new BasicPathRanker(this);
         basicPathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.Basic, basicPathRanker);
+        // The same object, not a second one: Princess resolves atmospheric aerospace movement to exactly the
+        // ranker it always did. CASPAR replaces this slot alone.
+        pathRankers.put(PathRankerType.Aerospace, basicPathRanker);
 
         InfantryPathRanker infantryPathRanker = new InfantryPathRanker(this);
         infantryPathRanker.setPathEnumerator(precognition.getPathEnumerator());
@@ -3658,6 +3743,22 @@ public class Princess extends BotClient {
     protected void registerPathRanker(PathRankerType rankerType, BasicPathRanker pathRanker) {
         pathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(rankerType, pathRanker);
+    }
+
+    /**
+     * Factory seam for subclasses (CASPAR): builds the path finder used for airborne aerodyne units flying
+     * over a ground mapsheet.
+     *
+     * <p>Unlike the low-altitude finder, the stock ground finder drives every path it generates to a single
+     * altitude, so a ranker never gets an altitude to choose between. Overriding this is the only way to put
+     * that choice back without changing what Princess generates.</p>
+     *
+     * @param game the current game
+     *
+     * @return the path finder to enumerate ground-mapsheet aerospace movement with
+     */
+    protected AeroGroundPathFinder aeroGroundPathFinder(Game game) {
+        return AeroGroundPathFinder.getInstance(game);
     }
 
     /**
@@ -3972,6 +4073,29 @@ public class Princess extends BotClient {
         send(new Packet(PacketCommand.PRINCESS_SETTINGS, behaviorSettings, getAIType()));
     }
 
+    /**
+     * Reports to the server which players this bot currently considers dishonored, so that clients can warn a human
+     * player before committing an action that would newly dishonor them. The reported set is fully resolved - it
+     * already accounts for pirates having no honor to give - so a receiving client only needs a membership test.
+     */
+    public void sendDishonoredData() {
+        send(new Packet(PacketCommand.PRINCESS_DISHONORED, resolveDishonoredPlayerIds()));
+    }
+
+    /**
+     * @return the player IDs this bot currently considers dishonored, fully resolved so that pirates (which have no
+     *       honor to give) report every player. Package-visible for testing.
+     */
+    List<Integer> resolveDishonoredPlayerIds() {
+        List<Integer> dishonoredPlayerIds = new ArrayList<>();
+        for (Player player : getGame().getPlayersList()) {
+            if (getHonorUtil().isEnemyDishonored(player.getId())) {
+                dishonoredPlayerIds.add(player.getId());
+            }
+        }
+        return dishonoredPlayerIds;
+    }
+
     @Override
     protected void sendBotSettingsToServer() {
         sendPrincessSettings();
@@ -4019,6 +4143,34 @@ public class Princess extends BotClient {
      * @return Altered move path
      */
     private MovePath performPathPostProcessing(MovePath path, double expectedDamage) {
+        // Everything below is an embellishment on a path that has already been chosen: evading, a searchlight,
+        // unloading, fleeing at the end. None of it is the move itself. Letting one of them throw used to cost
+        // the whole turn - the caller logs "MP is now null!", submits nothing, and the game waits for a bot
+        // that will never answer. That is not hypothetical: an ejected pilot mis-cast in evadeIfNotFiring hung
+        // a game this way (issue #8542), and Compute.isPilotingSkillNeeded still throws outright when the game
+        // has forgotten an entity mid-calculation, which the bot's own turn thread can race into.
+        //
+        // So an embellishment that fails now costs only itself. The path the ranker chose is still a legal,
+        // fully-formed move, and moving is always better than standing still because a searchlight failed.
+        try {
+            return embellishPath(path, expectedDamage);
+        } catch (Exception exception) {
+            LOGGER.error(exception, "Post-processing failed for " + path.getEntity().getDisplayName()
+                  + "; using the un-embellished path rather than losing the turn");
+            return path;
+        }
+    }
+
+    /**
+     * The optional extras applied to a path once it has been chosen: evading, searchlight, unloading, launching,
+     * abandoning, unjamming, aero flight-path fix-up, and fleeing.
+     *
+     * @param path           The move path to process
+     * @param expectedDamage The damage expected to be done by the unit as a result of the path
+     *
+     * @return Altered move path
+     */
+    private MovePath embellishPath(MovePath path, double expectedDamage) {
         MovePath retVal = path;
         // Guard on expectedDamage > 0, not >= 0: expected damage is never negative, so >= 0 was always true. That
         // left evadeIfNotFiring (which only evades when NOT able to inflict damage) permanently dead, and turned

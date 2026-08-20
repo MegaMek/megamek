@@ -391,6 +391,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String NAG_FOR_LAUNCH_DOORS = "NagForLaunchDoors";
     public static final String NAG_FOR_MECHANICAL_FALL_DAMAGE = "NagForMechanicalFallDamage";
     public static final String NAG_FOR_DOOMED = "NagForDoomed";
+    public static final String NAG_FOR_DISHONOR = "NagForDishonor";
     public static final String NAG_FOR_WIGE_LANDING = "NagForWiGELanding";
     public static final String NAG_FOR_ODD_SIZED_BOARD = "NagForOddSizedBoard";
     public static final String RULER_COLOR_1 = "RulerColor1";
@@ -711,7 +712,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         // is force-hidden on every phase change; 2 (= MANUAL) leaves it as the player set it
         store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE, 2);
         store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE, 2);
-        store.setDefault(BOT_COMMANDS_ENABLED, false);
+        store.setDefault(BOT_COMMANDS_ENABLED, true);
         store.setDefault(FORCE_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(FORCE_DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(FORCE_DISPLAY_BTN_ID, true);
@@ -911,6 +912,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(NAG_FOR_LAUNCH_DOORS, true);
         store.setDefault(NAG_FOR_MECHANICAL_FALL_DAMAGE, true);
         store.setDefault(NAG_FOR_DOOMED, true);
+        store.setDefault(NAG_FOR_DISHONOR, true);
         store.setDefault(NAG_FOR_WIGE_LANDING, true);
         store.setDefault(NAG_FOR_ODD_SIZED_BOARD, true);
 
@@ -1657,6 +1659,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getNagForOverheat() {
         return store.getBoolean(NAG_FOR_OVERHEAT);
+    }
+
+    public boolean getNagForDishonor() {
+        return store.getBoolean(NAG_FOR_DISHONOR);
     }
 
     public boolean getNagForLaunchDoors() {
@@ -2601,6 +2607,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setNagForOverheat(boolean b) {
         store.setValue(NAG_FOR_OVERHEAT, b);
+    }
+
+    public void setNagForDishonor(boolean b) {
+        store.setValue(NAG_FOR_DISHONOR, b);
     }
 
     public void setNagForLaunchDoors(boolean b) {

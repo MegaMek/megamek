@@ -132,8 +132,19 @@ public abstract class BotClient extends Client {
     /**
      * Keeps track of whether this client has started to calculate a turn this phase.
      */
-    boolean calculatedTurnThisPhase = false;
+    /**
+     * The turn index this bot last spawned a calculation for in the current phase, or -1. Replaces
+     * the old once-per-phase flag: the point is to suppress duplicate spawns for the SAME pending
+     * turn (in simultaneous phases every player's turn-end fires a turn-change event at everyone),
+     * never to suppress a genuinely new turn of ours.
+     */
+    int lastCalculatedTurnIndex = -1;
     int calculatedTurnsThisPhase = 0;
+
+    /** Test seam for the spawn decision: would a turn-change event at this turn index spawn a calc? */
+    boolean shouldSpawnForTest(int turnIndex) {
+        return turnIndex != lastCalculatedTurnIndex;
+    }
 
     // Let bots remember whether they've rerolled an initiative roll this round
     protected boolean rerolledInitiative = false;
@@ -164,8 +175,21 @@ public abstract class BotClient extends Client {
     public class CalculateBotTurn implements Runnable {
         @Override
         public void run() {
-            calculateMyTurn();
-            flushConn();
+            // Lifecycle bracket plus a Throwable net: a calc thread that dies uncaught leaves the
+            // server waiting on a move forever, with nothing in any log. Both freeze investigations
+            // needed exactly these lines.
+            LOGGER.info("{}: calc thread started for phase {}, turnIndex {}",
+                  getName(), getGame().getPhase(), game.getTurnIndex());
+            try {
+                calculateMyTurn();
+                flushConn();
+                LOGGER.info("{}: calc thread finished for phase {}, turnIndex {}",
+                      getName(), getGame().getPhase(), game.getTurnIndex());
+            } catch (Throwable t) {
+                LOGGER.error(t, getName() + ": calc thread DIED for phase " + getGame().getPhase()
+                      + ", turnIndex " + game.getTurnIndex()
+                      + " - the server is now waiting on a move this bot will never send");
+            }
         }
     }
 
@@ -184,16 +208,23 @@ public abstract class BotClient extends Client {
 
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
-                // On simultaneous phases, each player ending their turn will generate a turn
-                // change
-                // We want to ignore turns from other players and only listen to events we
-                // generated
-                boolean ignoreSimTurn = getGame().getPhase().isSimultaneous(getGame()) &&
-                      (e.getPreviousPlayerId() != localPlayerNumber) &&
-                      calculatedTurnThisPhase;
+                // In simultaneous phases every player's turn-end fires a turn-change event at every
+                // client, so the same pending turn can arrive several times. Suppress duplicates by
+                // turn INDEX, never by a once-per-phase flag: the old ignoreSimTurn guard skipped any
+                // turn that arrived after another player's event once this bot had calculated once,
+                // which silently dropped every second-and-later turn of a multi-unit bot - caught
+                // verbatim by this very log line ("myTurn true ... -> skipping") after ~50 corrupted
+                // benchmark games. A turn the server says is ours is ours.
+                boolean myTurn = isMyTurn();
+                boolean alreadySpawnedForThisTurn = (game.getTurnIndex() == lastCalculatedTurnIndex);
+                LOGGER.info("{}: turn change - phase {}, turnIndex {}, prevPlayer {}, me {}, "
+                            + "myTurn {}, alreadySpawnedForThisTurn {} -> {}",
+                      getName(), getGame().getPhase(), game.getTurnIndex(), e.getPreviousPlayerId(),
+                      localPlayerNumber, myTurn, alreadySpawnedForThisTurn,
+                      myTurn && !alreadySpawnedForThisTurn ? "SPAWNING calc thread" : "skipping");
 
-                if (isMyTurn() && !ignoreSimTurn) {
-                    calculatedTurnThisPhase = true;
+                if (myTurn && !alreadySpawnedForThisTurn) {
+                    lastCalculatedTurnIndex = game.getTurnIndex();
                     // Run bot's turn processing in a separate thread.
                     // So calling thread is free to process the other actions.
                     Thread worker = new Thread(new CalculateBotTurn(),
@@ -221,7 +252,9 @@ public abstract class BotClient extends Client {
 
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
-                calculatedTurnThisPhase = false;
+                LOGGER.info("{}: phase change {} -> {}, resetting lastCalculatedTurnIndex (was {})",
+                      getName(), e.getOldPhase(), e.getNewPhase(), lastCalculatedTurnIndex);
+                lastCalculatedTurnIndex = -1;
                 rerolledInitiative = false;
                 if (!getGame().getPhase().isLounge()) {
                     requestedTrains.clear();
@@ -659,22 +692,14 @@ public abstract class BotClient extends Client {
                     initialize();
                     break;
                 case MOVEMENT:
-                    /*
-                     * Do not uncomment this. It is so that bots stick around till end of game
-                     * for proper salvage. If the bot dies out here, the salvage for all but the
-                     * last bot disappears for some reason
-                     * if (game.getEntitiesOwnedBy(getLocalPlayer()) == 0) {
-                     * sendChat(Messages.getString("BotClient.HowAbout"));
-                     * die();
-                     * }
-                     */
-                    // if the game is not double blind and I can't see anyone
-                    // else on the board I should kill myself.
-                    if (!(game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) &&
-                          ((game.getEntitiesOwnedBy(getLocalPlayer()) - game.getNoOfEntities()) == 0)) {
-                        die();
-                    }
-
+                    // A bot never dismisses itself from a running game. There used to be two exit
+                    // rules here and both caused real harm: leaving when the bot had no units broke
+                    // salvage for every bot but the last, and leaving when the bot owned everything
+                    // visible ("no enemies left") hung the game whenever the last enemy was merely
+                    // off the board - an aerospace fighter that flies off returns some rounds later,
+                    // but the count could not see it, so the bot quit mid-game and the server waited
+                    // forever on its units. The victory check ends finished games; the VICTORY phase
+                    // below is where a bot says goodbye.
                     if (Compute.randomInt(4) == 1) {
                         String message = getRandomBotMessage();
                         if (message != null) {
@@ -711,6 +736,10 @@ public abstract class BotClient extends Client {
                 case OFFBOARD_REPORT:
                 case FIRING_REPORT:
                 case PHYSICAL_REPORT:
+                    // Sender half of the done ledger (server logs the receive): if a hang shows the
+                    // server waiting on this bot and this line IS present, the ack was lost in
+                    // flight; if the line is absent, changePhase never ran for the phase.
+                    LOGGER.info("[DoneLedger] {}: sending done for {}", getName(), phase);
                     sendDone(true);
                     break;
                 case VICTORY:
@@ -784,7 +813,7 @@ public abstract class BotClient extends Client {
         boolean success = false;
 
         while ((retryCount < BOT_TURN_RETRY_COUNT) && !success) {
-            success = calculateMyTurnWorker();
+            success = calculateMyTurnWorker(retryCount == (BOT_TURN_RETRY_COUNT - 1));
 
             if (!success) {
                 // if we fail, take a nap for 500-1500 milliseconds, then try again
@@ -805,6 +834,13 @@ public abstract class BotClient extends Client {
      * Worker function for a single attempt to calculate the bot's turn.
      */
     private synchronized boolean calculateMyTurnWorker() {
+        return calculateMyTurnWorker(false);
+    }
+
+    /**
+     * @param lastAttempt whether this is the final retry, after which the bot would otherwise fall silent
+     */
+    private synchronized boolean calculateMyTurnWorker(boolean lastAttempt) {
         // clear out transient data
         currentTurnEnemyEntities = null;
         currentTurnFriendlyEntities = null;
@@ -829,6 +865,18 @@ public abstract class BotClient extends Client {
                 // MP can be null due to various factors in pathing.  Avoid derailing the bot if so.
                 if (mp != null) {
                     moveEntity(mp.getEntity().getId(), mp);
+                } else if (lastAttempt && (moverId != -1) && (game.getEntity(moverId) != null)) {
+                    // Out of retries with a specific unit to move and still no path. The retries recompute
+                    // deterministically, so a unit whose candidate set is empty - a cornered fighter whose
+                    // every path leaves the board is the observed live case - returns null every time, and
+                    // a bot that then submits nothing hangs the game: the server waits forever on a turn
+                    // that is never answered. Submit an empty move instead. The server applies the mandatory
+                    // movement rules itself (an aero flies its committed velocity straight ahead, off the
+                    // edge under return flyovers if it must), which is the least-bad honest outcome and,
+                    // unlike silence, always ends the turn.
+                    LOGGER.warn("No path found for entity ID {} after {} attempts; submitting an empty move "
+                          + "so the turn is not lost", moverId, BOT_TURN_RETRY_COUNT);
+                    moveEntity(moverId, new MovePath(game, game.getEntity(moverId)));
                 } else {
                     // This attempt to calculate the turn failed, but we don't want to log
                     // an exception here.

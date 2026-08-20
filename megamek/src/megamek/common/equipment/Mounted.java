@@ -187,16 +187,16 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public static final int MINE_COMMAND_DETONATED = 5;
 
     /**
-     * Internal (non-localized) name of the generic "switched on" equipment mode used by equipment that can be
-     * activated and deactivated (activation/deactivation rules): active probes, C3 computers, heat sinks, improved
-     * heavy lasers and similar. Mode comparisons ({@link EquipmentMode#equals(String)}) always test this internal
-     * name; the localized text shown in the GUI comes from {@link EquipmentMode#getDisplayableName()}.
+     * Internal (non-localized) name of the generic "switched on" equipment mode used by equipment that can be activated
+     * and deactivated (activation/deactivation rules): active probes, C3 computers, heat sinks, improved heavy lasers
+     * and similar. Mode comparisons ({@link EquipmentMode#equals(String)}) always test this internal name; the
+     * localized text shown in the GUI comes from {@link EquipmentMode#getDisplayableName()}.
      */
     public static final String MODE_ON = "On";
 
     /**
-     * Internal (non-localized) name of the "switched off" equipment mode. Equipment in this mode provides none of
-     * its game effects until reactivated.
+     * Internal (non-localized) name of the "switched off" equipment mode. Equipment in this mode provides none of its
+     * game effects until reactivated.
      *
      * @see #MODE_ON
      */
@@ -289,8 +289,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * @return the equipment type of this mount, or {@code null} if it cannot be resolved - the mount was restored
-     *       (from a save or over the network) with an equipment name unknown to this version of MegaMek
+     * @return the equipment type of this mount, or {@code null} if it cannot be resolved - the mount was restored (from
+     *       a save or over the network) with an equipment name unknown to this version of MegaMek
      */
     @SuppressWarnings("unchecked")
     public @Nullable T getType() {
@@ -335,15 +335,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Dedicated logger name for equipment activation/deactivation diagnostics ([EquipOff] tag): mode-change
-     * reception and application, and rejected deactivations. A feature logger rather than a host-class logger so it
-     * can be enabled in log4j2.xml without the host classes' debug noise.
+     * Dedicated logger name for equipment activation/deactivation diagnostics ([EquipOff] tag): mode-change reception
+     * and application, and rejected deactivations. A feature logger rather than a host-class logger so it can be
+     * enabled in log4j2.xml without the host classes' debug noise.
      */
     public static final String EQUIP_OFF_DIAGNOSTIC_LOGGER = "megamek.feature.EquipOff";
 
     /**
-     * Returns whether the player has deactivated this equipment. Equipment that can be switched off (active probes,
-     * ECM suites, C3 computers, heat sinks, and similar items with an {@link #MODE_OFF} mode per the
+     * Returns whether the player has deactivated this equipment. Equipment that can be switched off (active probes, ECM
+     * suites, C3 computers, heat sinks, and similar items with an {@link #MODE_OFF} mode per the
      * activation/deactivation rules) provides none of its game effects while deactivated, but is otherwise undamaged
      * and can be reactivated.
      *
@@ -362,9 +362,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Returns whether this equipment will be deactivated next round - either a pending switch to {@link #MODE_OFF},
-     * or already {@link #MODE_OFF} with no pending switch away from it. Used to validate declarations that depend on
-     * other equipment operating next round (e.g. engaging stealth armor requires an ECM suite that will be running).
+     * Returns whether this equipment will be deactivated next round - either a pending switch to {@link #MODE_OFF}, or
+     * already {@link #MODE_OFF} with no pending switch away from it. Used to validate declarations that depend on other
+     * equipment operating next round (e.g. engaging stealth armor requires an ECM suite that will be running).
      *
      * @return {@code true} if this equipment has modes and its next-round mode is {@link #MODE_OFF}
      */
@@ -381,7 +381,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
         return type.getMode(pendingMode);
     }
-    
+
     /**
      * Switches the equipment mode to the next or previous available.
      *
@@ -443,6 +443,31 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             if (getMode(x).equals(newMode)) {
                 setMode(x);
                 return x;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Sets the equipment mode at once, without the queued switch that {@link #setMode(String)} uses for equipment
+     * whose mode changes only take effect at the start of the next round.
+     *
+     * <p>This is for setting up equipment rather than for changing it in play: loading a unit, or deriving the mode
+     * of a built-in system from the game options. In those cases there is no turn boundary for a pending switch to
+     * cross, so queueing one would leave the equipment reporting the wrong mode until a round happened to tick over.
+     * A mode the player chooses during a game must still go through {@link #setMode(String)} so the delay the rules
+     * call for is applied.</p>
+     *
+     * @param newMode the name of the desired new mode
+     *
+     * @return the new mode number on success, {@code -1} if this equipment has no mode of that name
+     */
+    public int setModeImmediately(String newMode) {
+        for (int modeIndex = 0, modeCount = getModesCount(); modeIndex < modeCount; modeIndex++) {
+            if (getMode(modeIndex).equals(newMode)) {
+                mode = modeIndex;
+                pendingMode = -1;
+                return modeIndex;
             }
         }
         return -1;
@@ -512,7 +537,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             mode = pendingMode;
             pendingMode = -1;
         }
-        
+
         if ((type != null) && (type instanceof WeaponType)) {
             if ((type.hasFlag(WeaponType.F_BOMBAST_LASER) && chargeState.equals(ChargeLevel.CHARGING))) {
                 setChargeState(ChargeLevel.CHARGED);
@@ -525,11 +550,11 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public void newPhase(GamePhase phase) {
 
         jammed = jammedThisPhase;
-        
-        if ((type instanceof MiscType) && ((MiscType) type).isShield() && Game.rulesManager.getRulesPhysical().phaseChangeShield() &&
-        !this.curMode().equals(MiscType.S_NO_SHIELD)) {
-            if (!this.getEntity().isCharging() || phase.isEnd())
-            {
+
+        if ((type instanceof MiscType) && type.hasFlag(MiscType.F_SHIELD) &&
+              Game.rulesManager.getRulesPhysical().phaseChangeShield() &&
+              !this.curMode().equals(MiscType.S_NO_SHIELD)) {
+            if (!this.getEntity().isCharging() || phase.isEnd()) {
                 this.setMode(MiscType.S_NO_SHIELD);
             }
         }
@@ -975,7 +1000,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public void setPendingDump(boolean b) {
         if (Game.rulesManager.getRulesGame().ammoDumping()) {
             m_bPendingDump = b;
-        } else  {
+        } else {
             m_bPendingDump = false;
         }
     }
@@ -987,7 +1012,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public void setDumping(boolean b) {
         if (Game.rulesManager.getRulesGame().ammoDumping()) {
             m_bDumping = b;
-        } else  {
+        } else {
             m_bDumping = false;
         }
     }
@@ -1373,7 +1398,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      *
      * @return {@code true} if the weapon is at least one of: destroyed, missing, breached, jammed, a detachable weapon
      *       no longer attached to its original battle armor, or simply out of ammo (includes discharged one-shot
-     *       weapons), {@code false} otherwise. A weapon bay is crippled only when every weapon it contains is crippled.
+     *       weapons), {@code false} otherwise. A weapon bay is crippled only when every weapon it contains is
+     *       crippled.
      */
     public boolean isCrippled() {
         /*
@@ -1672,9 +1698,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * @return {@code true} if this weapon is in the 3-point Directional Torso Mount, which operates as a full
-     *       360-degree turret. This version is available only to quad Meks (BMM p.83) - enforced here as well as
-     *       during construction so the 360-degree arc can never be granted to a biped. It is in effect when the
-     *       weapon carries the 360 weapon quirk, or its unit's 360 chassis quirk lists this weapon's location.
+     *       360-degree turret. This version is available only to quad Meks (BMM p.83) - enforced here as well as during
+     *       construction so the 360-degree arc can never be granted to a biped. It is in effect when the weapon carries
+     *       the 360 weapon quirk, or its unit's 360 chassis quirk lists this weapon's location.
      */
     public boolean hasDirectional360TorsoMount() {
         if (!(entity instanceof QuadMek)) {
@@ -1738,8 +1764,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * Builds a detailed one-line diagnostic of this weapon's Directional Torso Mount state (BMM p.83) for
-     * troubleshooting from the log. Reports every quirk source and the computed flags, so a playtest log can show why
-     * a weapon is (or is not) a flippable directional mount. Intended for log statements only, not the hot path.
+     * troubleshooting from the log. Reports every quirk source and the computed flags, so a playtest log can show why a
+     * weapon is (or is not) a flippable directional mount. Intended for log statements only, not the hot path.
      *
      * @return a human-readable description of the mount's quirk sources, flags and computed arc state
      */
@@ -1777,9 +1803,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * @return the Directional Torso Mount's current facing, as an offset (0-5) from the unit's (secondary) facing:
-     *       0 = forward, 3 = rear (BMM p.83). The 2-point version uses only 0 or 3; the 3-point quad turret may use
-     *       any of the six. Persists across rounds (unlike a torso twist).
+     * @return the Directional Torso Mount's current facing, as an offset (0-5) from the unit's (secondary) facing: 0 =
+     *       forward, 3 = rear (BMM p.83). The 2-point version uses only 0 or 3; the 3-point quad turret may use any of
+     *       the six. Persists across rounds (unlike a torso twist).
      */
     public int getDirectionalMountFacing() {
         return directionalMountFacing;
@@ -2157,7 +2183,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * @return True if this equipment counts for the size and weight of a Targeting Computer, and benefits from it in
-     * case of weapons.
+     *       case of weapons.
      *
      * @see EquipmentType#relevantToTargetingComputer()
      */
@@ -2167,12 +2193,14 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     /**
      * Gets the charge state of the weapon. This only currently applies to Bombast Lasers
+     *
      * @return
      */
-    public ChargeLevel getChargeState() { return chargeState; }
+    public ChargeLevel getChargeState() {return chargeState;}
 
     /**
      * Set the charge state of the weapon. This only currently applies to the Bombast Laser
+     *
      * @param setLevel
      */
     public void setChargeState(ChargeLevel setLevel) {

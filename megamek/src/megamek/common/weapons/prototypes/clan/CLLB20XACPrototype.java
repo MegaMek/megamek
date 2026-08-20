@@ -36,6 +36,7 @@ package megamek.common.weapons.prototypes.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
@@ -71,7 +72,7 @@ public class CLLB20XACPrototype extends CLLBXACPrototypeWeapon {
         shortAV = 20;
         medAV = 20;
         maxRange = RANGE_MED;
-        rulesRefs = "91, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 91);
         flags = flags.or(F_PROTOTYPE).andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

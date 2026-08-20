@@ -36,6 +36,7 @@ package megamek.common.weapons.srms.clan.streak;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -73,7 +74,10 @@ public class CLStreakSRM5 extends StreakSRMWeapon {
         // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         //But SRM Tech Base and Avail Ratings.
         cost = 75000;
-        rulesRefs = "230, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 230),
+              rulesRef(SourceBookCode.TW, 138)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

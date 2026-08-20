@@ -36,6 +36,7 @@ package megamek.common.weapons.capitalWeapons.naval;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -70,7 +71,7 @@ public class NPPCWeaponLight extends NPPCWeapon {
         medAV = 7;
         longAV = 7;
         maxRange = RANGE_LONG;
-        rulesRefs = "146, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 146);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

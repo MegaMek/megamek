@@ -36,6 +36,7 @@ package megamek.common.weapons.ppc.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -82,7 +83,12 @@ public class ISSnubNosePPC extends PPCWeapon {
         medAV = 8;
         // with a capacitor
         explosive = true;
-        rulesRefs = "234, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 234),
+              rulesRef(SourceBookCode.BMM, 105),
+              rulesRef(SourceBookCode.CORE, 188),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         flags = flags.or(F_PPC_CAPACITOR_COMPATIBLE);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)

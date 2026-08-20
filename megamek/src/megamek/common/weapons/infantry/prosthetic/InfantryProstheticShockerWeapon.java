@@ -36,6 +36,7 @@ package megamek.common.weapons.infantry.prosthetic;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -63,7 +64,7 @@ public class InfantryProstheticShockerWeapon extends InfantryWeapon {
         infantryDamage = 0.05;
         infantryRange = 0;
         // Rating and Dates not available below is compiled from various books
-        rulesRefs = "78, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 78);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

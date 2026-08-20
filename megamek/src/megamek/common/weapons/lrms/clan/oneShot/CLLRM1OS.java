@@ -36,6 +36,7 @@ package megamek.common.weapons.lrms.clan.oneShot;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -63,7 +64,7 @@ public class CLLRM1OS extends LRMWeapon {
         flags = flags.or(F_ONE_SHOT).andNot(F_PROTO_WEAPON);
         // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         // But LRM Tech Base and Avail Ratings.
-        rulesRefs = "231, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

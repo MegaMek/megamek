@@ -36,6 +36,7 @@ package megamek.common.weapons.bombs.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -86,7 +87,7 @@ public class CLAAAMissileWeapon extends ThunderboltWeapon {
         this.capital = false;
         this.missileArmor = 20;
         cost = 9000;
-        rulesRefs = "169, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 169);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

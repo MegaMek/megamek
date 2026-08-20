@@ -36,6 +36,7 @@ package megamek.common.weapons.infantry.support.gauss;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -70,7 +71,7 @@ public class InfantrySupportGungnirHeavyGaussWeapon extends InfantryWeapon {
         ammoCost = 50;
         shots = 10;
         tonnage = .060;
-        rulesRefs = "176, AToW-C";
+        rulesRefs = rulesRefs(SourceBookCode.ATOW_COMPANION, 176);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3074, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.LC)

@@ -36,6 +36,7 @@ package megamek.common.weapons.capitalWeapons.naval;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -70,7 +71,7 @@ public class NL45Weapon extends NLWeapon {
         this.longAV = 4.5;
         this.extAV = 4.5;
         this.maxRange = RANGE_EXT;
-        rulesRefs = "145, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 145);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

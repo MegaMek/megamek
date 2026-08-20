@@ -36,6 +36,7 @@ package megamek.common.weapons.autoCannons.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -72,7 +73,12 @@ public class ISRAC2 extends RACWeapon {
         this.medAV = 8;
         this.maxRange = RANGE_MED;
         this.explosionDamage = damage;
-        rulesRefs = "207, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 207),
+              rulesRef(SourceBookCode.BMM, 98),
+              rulesRef(SourceBookCode.CORE, 183),
+              rulesRef(SourceBookCode.TW, 140)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setStaticTechLevel(SimpleTechLevel.STANDARD)
               .setTechRating(TechRating.E)

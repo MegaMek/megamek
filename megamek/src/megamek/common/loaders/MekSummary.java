@@ -49,6 +49,7 @@ import java.util.stream.Collectors;
 
 import megamek.client.ui.Base64Image;
 import megamek.codeUtilities.StringUtility;
+import megamek.common.SourceBookCode;
 import megamek.common.TechConstants;
 import megamek.common.alphaStrike.ASArcSummary;
 import megamek.common.alphaStrike.ASCardDisplayable;
@@ -72,6 +73,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.ForceGeneratorAvailability;
 import megamek.common.units.UnitRole;
+import megamek.common.util.UnitRulesRefUtil;
 import megamek.logging.MMLogger;
 
 /**
@@ -88,10 +90,9 @@ public class MekSummary implements Serializable, ASCardDisplayable {
      * </p>
      */
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private static final MMLogger logger = MMLogger.create(MekSummary.class);
-
     private String name;
     private String chassis;
     private String clanChassisName;
@@ -275,6 +276,9 @@ public class MekSummary implements Serializable, ASCardDisplayable {
      * The number of times the piece of equipment in the corresponding equipmentNames list appears.
      */
     private Vector<Integer> equipmentQuantities;
+
+    /** Alternative sourcebook combinations that each cover every referenced component on this unit. */
+    private List<List<SourceBookCode>> rulesRefs = List.of();
 
     private String quirkNames;
     private String weaponQuirkNames;
@@ -1437,6 +1441,23 @@ public class MekSummary implements Serializable, ASCardDisplayable {
                 equipmentQuantities.set(index, equipmentQuantities.get(index) + 1);
             }
         }
+    }
+
+    /**
+     * Collects the rules references for all explicit equipment and intrinsic systems that provide structured reference
+     * data, then stores every inclusion-minimal sourcebook combination capable of covering the unit.
+     *
+     * @param entity the source unit
+     */
+    public void setRulesRefs(Entity entity) {
+        rulesRefs = UnitRulesRefUtil.collectRulesRefBuckets(entity);
+    }
+
+    /**
+     * @return alternative sourcebook combinations; owning every book in any one bucket covers this unit
+     */
+    public List<List<SourceBookCode>> getRulesRefs() {
+        return (rulesRefs == null) ? List.of() : rulesRefs;
     }
 
     public Vector<String> getEquipmentNames() {

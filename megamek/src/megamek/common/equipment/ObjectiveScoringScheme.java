@@ -268,6 +268,18 @@ public class ObjectiveScoringScheme implements Serializable {
         setSideValue(heldTurnsByTeam(), heldTurnsByPlayer(), team, playerId, turns);
     }
 
+    /** @return the highest held-turn count any side has on this point ({@code HOLD}) */
+    public int bestHeldTurns() {
+        int best = 0;
+        for (int turns : heldTurnsByTeam().values()) {
+            best = Math.max(best, turns);
+        }
+        for (int turns : heldTurnsByPlayer().values()) {
+            best = Math.max(best, turns);
+        }
+        return best;
+    }
+
     /** Resets every side's held-turn count to zero - the consecutive-counting reaction to a lost point. */
     public void resetAllHeldTurns() {
         heldTurnsByTeam().clear();
@@ -287,6 +299,18 @@ public class ObjectiveScoringScheme implements Serializable {
     /** Sets the capture progress of the given side (see {@link #getCaptureProgress(int, int)}). */
     public void setCaptureProgress(int team, int playerId, int progress) {
         setSideValue(captureProgressByTeam(), captureProgressByPlayer(), team, playerId, progress);
+    }
+
+    /** @return the highest capture progress any side has on this point ({@code CAPTURE}) */
+    public int bestCaptureProgress() {
+        int best = 0;
+        for (int progress : captureProgressByTeam().values()) {
+            best = Math.max(best, progress);
+        }
+        for (int progress : captureProgressByPlayer().values()) {
+            best = Math.max(best, progress);
+        }
+        return best;
     }
 
     /**

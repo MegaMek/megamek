@@ -111,8 +111,21 @@ public final class VictoryHexPropertiesPane {
         JLabel schemeDescription = new JLabel();
         Runnable refreshSchemeRows = () -> {
             SchemePreset preset = (SchemePreset) schemeCombo.getSelectedItem();
-            String presetDescription = Messages.getString("ChatLounge.victoryHex.describe."
-                  + preset.name().toLowerCase(Locale.ROOT));
+            // the description reflects the CONFIGURED point: the chosen mode and the actual numbers,
+            // not a generic text covering every possibility
+            Object threshold = thresholdSpinner.getValue();
+            Object rate = rateSpinner.getValue();
+            String presetDescription = switch (preset) {
+                case HOLD -> {
+                    HoldCounting counting = (HoldCounting) countingCombo.getSelectedItem();
+                    yield Messages.getString("ChatLounge.victoryHex.describe.hold."
+                          + counting.name().toLowerCase(Locale.ROOT), threshold);
+                }
+                case DEFEND -> Messages.getString("ChatLounge.victoryHex.describe.defend", threshold, rate);
+                case CAPTURE -> Messages.getString("ChatLounge.victoryHex.describe.capture", threshold, rate);
+                case STANDARD, RAID -> Messages.getString("ChatLounge.victoryHex.describe."
+                      + preset.name().toLowerCase(Locale.ROOT));
+            };
             schemeDescription.setText("<html><body style='width: 260px'>" + presetDescription
                   + "</body></html>");
             schemeCombo.setToolTipText(presetDescription);
@@ -146,6 +159,9 @@ public final class VictoryHexPropertiesPane {
             countingCombo.setVisible(usesCounting);
         };
         schemeCombo.addActionListener(event -> refreshSchemeRows.run());
+        countingCombo.addActionListener(event -> refreshSchemeRows.run());
+        thresholdSpinner.addChangeListener(event -> refreshSchemeRows.run());
+        rateSpinner.addChangeListener(event -> refreshSchemeRows.run());
         refreshSchemeRows.run();
 
         JPanel propertiesPanel = new JPanel(new GridLayout(0, 2));

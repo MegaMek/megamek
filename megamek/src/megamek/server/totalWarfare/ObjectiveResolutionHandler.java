@@ -88,6 +88,10 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     private static final int REPORT_HOLD_PROGRESS = 7136;
     private static final int REPORT_GRIP_DRAINED = 7137;
     private static final int REPORT_CAPTURE_PROGRESS = 7138;
+    private static final int REPORT_OBJECTIVE_CONTESTED = 7139;
+    private static final int REPORT_HOLD_STILL_REQUIRED = 7140;
+    private static final int REPORT_HOLD_BROKEN = 7141;
+    private static final int REPORT_CAPTURE_PUSHED_BACK = 7142;
 
     /**
      * A scoring side. Normally this is a team; a player that is not on any team forms its own side.
@@ -149,10 +153,12 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         VictoryPointTracker tracker = VictoryPointTracker.getTracker(getGame());
         List<ResolvedObjective> standardObjectives = new ArrayList<>();
         for (PlacedObjective objective : activeObjectives) {
-            Side controller = determineControllingSide(objective, entities);
+            Map<Side, Integer> presenceBySide = countEligiblePresence(objective, entities);
+            Side controller = leadingSide(objective, presenceBySide);
+            boolean contested = (controller == null) && !presenceBySide.isEmpty();
             Side owningSide = sideOfPlayerId(objective.marker().getOwnerId());
             storeControllerOnMarker(objective.marker(), controller);
-            reportObjectiveControl(objective, controller);
+            reportObjectiveControl(objective, controller, contested);
             switch (objective.marker().getScoringScheme().getPreset()) {
                 case STANDARD -> standardObjectives.add(new ResolvedObjective(objective, owningSide, controller));
                 case RAID -> { /* end-scored when the game ends; control is stored above for that */ }
@@ -179,9 +185,23 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         }
         if (controller == null) {
             if (scheme.getHoldCounting() == HoldCounting.CONSECUTIVE) {
+                int lostProgress = scheme.bestHeldTurns();
                 scheme.resetAllHeldTurns();
-                LOGGER.debug("[Objective] {} at {}: uncontrolled - consecutive hold counts reset",
-                      objective.marker().generalName(), objective.position());
+                if (lostProgress > 0) {
+                    // a player needs to know the streak died and what it costs: the full run is owed again
+                    Report report = new Report(REPORT_HOLD_BROKEN, Report.PUBLIC);
+                    report.add(objective.marker().generalName());
+                    report.add(scheme.getThreshold());
+                    addReport(report);
+                    LOGGER.debug("[Objective] {} at {}: the hold was broken - {} held turn(s) lost",
+                          objective.marker().generalName(), objective.position(), lostProgress);
+                }
+            } else if (scheme.bestHeldTurns() > 0) {
+                Report report = new Report(REPORT_HOLD_STILL_REQUIRED, Report.PUBLIC);
+                report.add(objective.marker().generalName());
+                report.add(scheme.bestHeldTurns());
+                report.add(scheme.getThreshold());
+                addReport(report);
             }
             return;
         }
@@ -201,6 +221,7 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             report.add(objective.marker().generalName());
             report.add(heldTurns);
             report.add(scheme.getThreshold());
+            report.add(scheme.getThreshold() - heldTurns);
             addReport(report);
         }
         if (heldTurns >= scheme.getThreshold()) {
@@ -270,9 +291,18 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             return;
         }
         if (controller.equals(owningSide)) {
+            int progressBeforePushback = scheme.bestCaptureProgress();
             scheme.pushBackAllCaptureProgress(scheme.getRatePerTurn());
             LOGGER.debug("[Objective] {} at {}: the owner holds the point - capture progress pushed back",
                   objective.marker().generalName(), objective.position());
+            if (progressBeforePushback > 0) {
+                Report report = new Report(REPORT_CAPTURE_PUSHED_BACK, Report.PUBLIC);
+                report.add(displayName(controller));
+                report.add(objective.marker().generalName());
+                report.add(scheme.bestCaptureProgress());
+                report.add(scheme.getThreshold());
+                addReport(report);
+            }
             return;
         }
         int sideTeam = controller.isTeam() ? controller.id() : ObjectiveScoringScheme.NO_SIDE;
@@ -423,17 +453,18 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
      */
     @Nullable
     Side determineControllingSide(PlacedObjective objective, List<Entity> entities) {
-        Map<Side, Integer> unitCountsBySide = new HashMap<>();
-        for (Entity entity : entities) {
-            if (!isEligibleToControl(entity, objective)) {
-                continue;
-            }
-            Side side = sideOfPlayer(entity.getOwner());
-            if (side != null) {
-                unitCountsBySide.merge(side, 1, Integer::sum);
-            }
-        }
+        return leadingSide(objective, countEligiblePresence(objective, entities));
+    }
 
+    /**
+     * @param objective       the objective being evaluated
+     * @param unitCountsBySide how many eligible units each side has in the objective's zone
+     *
+     * @return the side with strictly more eligible units than any other, or {@code null} when the zone is empty
+     *       or the leading counts are tied (a contested zone)
+     */
+    @Nullable
+    private Side leadingSide(PlacedObjective objective, Map<Side, Integer> unitCountsBySide) {
         Side leadingSide = null;
         int leadingCount = 0;
         boolean tie = false;
@@ -605,12 +636,19 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         }
     }
 
-    private void reportObjectiveControl(PlacedObjective objective, @Nullable Side controller) {
+    private void reportObjectiveControl(PlacedObjective objective, @Nullable Side controller,
+          boolean contested) {
         // the control line names the kind of point, so a Defend point reads as one in the round report
         String schemeWord = Messages.getString("ChatLounge.victoryHex.word."
               + objective.marker().getScoringScheme().getPreset().name().toLowerCase(Locale.ROOT));
         Report report;
-        if (controller == null) {
+        if (contested) {
+            // equal forces deadlock the zone: nothing gains, nothing is lost
+            report = new Report(REPORT_OBJECTIVE_CONTESTED, Report.PUBLIC);
+            report.add(schemeWord);
+            report.add(objective.marker().generalName());
+            report.add(objective.position().toFriendlyString());
+        } else if (controller == null) {
             report = new Report(REPORT_OBJECTIVE_UNCONTROLLED, Report.PUBLIC);
             report.add(schemeWord);
             report.add(objective.marker().generalName());

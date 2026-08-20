@@ -69,7 +69,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
-import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
 
@@ -167,6 +166,7 @@ public class MoveStep implements Serializable {
     private boolean isHittingDeck = false;
     private boolean isClearingRubble = false;
     private boolean isClimbing = false;
+    private boolean isDeploying = false;
     private int climbingTotalLevels = 0;
     private int climbingChargedLevels = 0;
     private boolean isTakingCover = false;
@@ -706,7 +706,7 @@ public class MoveStep implements Serializable {
         }
         // check for water
         if (Game.rulesManager.getRulesMovement().cannotRunInWater(entity.getMovementMode(),
-                                                                  cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
+              cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
               && !isPavementStep()
               && (destHex.terrainLevel(Terrains.WATER) > 0)
               && !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0))
@@ -3726,7 +3726,7 @@ public class MoveStep implements Serializable {
               (movementType == EntityMovementType.MOVE_VTOL_WALK) ||
               (movementType == EntityMovementType.MOVE_VTOL_RUN) ||
               (movementType == EntityMovementType.MOVE_VTOL_SPRINT);
-        
+
         if ((movementType != EntityMovementType.MOVE_JUMP) && !isVTOLFlight) {
             int maxDown = Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(srcHex, destHex,
                   entity.getMaxElevationDown(srcAlt));
@@ -3789,7 +3789,7 @@ public class MoveStep implements Serializable {
         boolean isDownCliff = !src.equals(dest) &&
               srcHex.hasCliffTopTowards(destHex) &&
               (stepHeight == -1 || stepHeight == -2);
-        
+
         // For vehicles exc. VTOL, WIGE, upward Sheer Cliffs is forbidden
         // QuadVees in vehicle mode drive as vehicles, IO p.133
         if ((vehicleAffectedByCliff || quadVeeVehicleMode) && isUpCliff && !isPavementStep) {
@@ -3859,7 +3859,7 @@ public class MoveStep implements Serializable {
               (movementType == EntityMovementType.MOVE_VTOL_RUN) ||
               (movementType == EntityMovementType.MOVE_VTOL_SPRINT)) &&
               Game.rulesManager.getRulesMovement().cannotRunInWater(nMove,
-                                                                    cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) &&
+                    cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) &&
               (destHex.terrainLevel(Terrains.WATER) > 0) &&
               !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0)) &&
               !dest.equals(entity.getPosition()) &&
@@ -4649,4 +4649,20 @@ public class MoveStep implements Serializable {
     public boolean isClimbMode() {
         return (type == MoveStepType.CLIMB_MODE_ON) || (type == MoveStepType.CLIMB_MODE_OFF);
     }
+
+    /**
+     * Set it is deployment
+     *
+     * @param isDeploying
+     */
+    public void setDeploying(boolean isDeploying) {
+        this.isDeploying = isDeploying;
+    }
+
+    /**
+     * get deployment state of this step
+     *
+     * @return isDeploying
+     */
+    public boolean isDeploying() {return isDeploying;}
 }

@@ -60,6 +60,8 @@ import megamek.server.totalWarfare.ObjectiveResolutionHandler.PlacedObjective;
 import megamek.server.totalWarfare.ObjectiveResolutionHandler.ResolvedObjective;
 import megamek.server.totalWarfare.ObjectiveResolutionHandler.Side;
 import megamek.server.victory.VictoryPointTracker;
+import megamek.server.victory.VictoryPointVictory;
+import megamek.server.victory.VictoryResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -660,5 +662,101 @@ class ObjectiveResolutionHandlerTest {
         VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
         assertTrue((tracker == null) || (tracker.getTeamVictoryPoints(1) == 0));
         assertEquals(1, holdObjective.marker().getScoringScheme().getHeldTurns(1, -1));
+    }
+
+    // --- Contested zones: one tie, three different consequences ---
+
+    @Test
+    void testContestedTieResetsConsecutiveHold() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.hold(2, HoldCounting.CONSECUTIVE),
+              teamTwoPlayer, position);
+        Entity holdingUnit = groundUnit(teamOnePlayer, position);
+        Entity contestingUnit = groundUnit(teamTwoPlayer, position);
+
+        resolveWith(holdingUnit);                       // 1 of 2 held
+        resolveWith(holdingUnit, contestingUnit);       // contested - the streak dies
+        resolveWith(holdingUnit);                       // back to 1 of 2
+        assertFalse(objective.marker().getScoringScheme().isDecided());
+        resolveWith(holdingUnit);
+
+        assertTrue(objective.marker().getScoringScheme().isDecided());
+    }
+
+    @Test
+    void testContestedTieStillDrainsDefendGrip() {
+        // Defend drains on PRESENCE: a contested zone still has intruders in it, so the grip bleeds
+        // even though neither side controls the zone
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.defend(2, 1), teamOnePlayer, position);
+        Entity defender = groundUnit(teamOnePlayer, position);
+        Entity raider = groundUnit(teamTwoPlayer, position);
+
+        resolveWith(defender, raider);
+        assertFalse(objective.marker().getScoringScheme().isDecided());
+        resolveWith(defender, raider);
+
+        // at zero the point falls to the only enemy side present, tie in CONTROL notwithstanding
+        assertTrue(objective.marker().getScoringScheme().isDecided());
+        assertEquals(2, objective.marker().getScoringScheme().getSecuredTeam());
+    }
+
+    @Test
+    void testContestedTieFreezesCaptureProgress() {
+        // Capture needs CONTROL: a contested zone moves the meter in neither direction
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.capture(2, 1), teamOnePlayer, position);
+        Entity attacker = groundUnit(teamTwoPlayer, position);
+        Entity defender = groundUnit(teamOnePlayer, position);
+
+        resolveWith(attacker);                          // progress 1 of 2
+        resolveWith(attacker, defender);                // contested - frozen
+        assertEquals(1, objective.marker().getScoringScheme()
+              .getCaptureProgress(2, ObjectiveScoringScheme.NO_SIDE));
+        resolveWith(attacker);                          // progress 2 - captured
+
+        assertTrue(objective.marker().getScoringScheme().isDecided());
+    }
+
+    // --- Each scheme resolves to a declared winner at game end ---
+
+    private VictoryResult gameEndResult() {
+        return new VictoryPointVictory().checkAtGameEnd(game, game.getVictoryContext());
+    }
+
+    @Test
+    void testSecuredHoldPointWinsTheGame() {
+        Coords position = new Coords(5, 5);
+        schemePoint(ObjectiveScoringScheme.hold(1, HoldCounting.CONSECUTIVE), teamTwoPlayer, position);
+        resolveWith(groundUnit(teamOnePlayer, position));
+
+        VictoryResult result = gameEndResult();
+
+        assertTrue(result.isVictory());
+        assertEquals(1, result.getWinningTeam());
+    }
+
+    @Test
+    void testFallenDefendPointWinsTheGameForTheTaker() {
+        Coords position = new Coords(5, 5);
+        schemePoint(ObjectiveScoringScheme.defend(1, 1), teamOnePlayer, position);
+        resolveWith(groundUnit(teamTwoPlayer, position));
+
+        VictoryResult result = gameEndResult();
+
+        assertTrue(result.isVictory());
+        assertEquals(2, result.getWinningTeam());
+    }
+
+    @Test
+    void testCapturedPointWinsTheGameForTheCaptor() {
+        Coords position = new Coords(5, 5);
+        schemePoint(ObjectiveScoringScheme.capture(1, 1), teamOnePlayer, position);
+        resolveWith(groundUnit(teamTwoPlayer, position));
+
+        VictoryResult result = gameEndResult();
+
+        assertTrue(result.isVictory());
+        assertEquals(2, result.getWinningTeam());
     }
 }

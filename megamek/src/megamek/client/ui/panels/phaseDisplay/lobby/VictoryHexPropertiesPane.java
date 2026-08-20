@@ -94,10 +94,16 @@ public final class VictoryHexPropertiesPane {
         JSpinner rateSpinner = new JSpinner(new SpinnerNumberModel(scheme.getRatePerTurn(), 1, 99, 1));
         JComboBox<HoldCounting> countingCombo = new JComboBox<>(HoldCounting.values());
         countingCombo.setSelectedItem(scheme.getHoldCounting());
-        countingCombo.setRenderer(new MessageKeyRenderer("ChatLounge.victoryHex.counting."));
+        countingCombo.setRenderer(new MessageKeyRenderer("ChatLounge.victoryHex.counting.", true));
         radiusSpinner.setToolTipText(Messages.getString("ChatLounge.victoryHex.radius.tooltip"));
         victoryPointSpinner.setToolTipText(Messages.getString("ChatLounge.victoryHex.victoryPoints.tooltip"));
-        countingCombo.setToolTipText(Messages.getString("ChatLounge.victoryHex.counting.tooltip"));
+        Runnable refreshCountingTooltip = () -> {
+            HoldCounting counting = (HoldCounting) countingCombo.getSelectedItem();
+            countingCombo.setToolTipText(Messages.getString("ChatLounge.victoryHex.counting."
+                  + counting.name().toLowerCase(Locale.ROOT) + ".tooltip"));
+        };
+        countingCombo.addActionListener(event -> refreshCountingTooltip.run());
+        refreshCountingTooltip.run();
 
         JLabel thresholdLabel = new JLabel();
         JLabel rateLabel = new JLabel();
@@ -209,12 +215,22 @@ public final class VictoryHexPropertiesPane {
         return description.toString();
     }
 
-    /** Renders an enum combo entry through a message key built from a prefix and the lower-case enum name. */
+    /**
+     * Renders an enum combo entry through a message key built from a prefix and the lower-case enum name. With
+     * {@code withItemTooltips}, each entry in the open list also shows its own tooltip from the same key plus
+     * {@code .tooltip}.
+     */
     private static class MessageKeyRenderer extends DefaultListCellRenderer {
         private final String keyPrefix;
+        private final boolean withItemTooltips;
 
         MessageKeyRenderer(String keyPrefix) {
+            this(keyPrefix, false);
+        }
+
+        MessageKeyRenderer(String keyPrefix, boolean withItemTooltips) {
             this.keyPrefix = keyPrefix;
+            this.withItemTooltips = withItemTooltips;
         }
 
         @Override
@@ -222,7 +238,11 @@ public final class VictoryHexPropertiesPane {
               boolean isSelected, boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             if (value instanceof Enum<?> enumValue) {
-                setText(Messages.getString(keyPrefix + enumValue.name().toLowerCase(Locale.ROOT)));
+                String key = keyPrefix + enumValue.name().toLowerCase(Locale.ROOT);
+                setText(Messages.getString(key));
+                if (withItemTooltips) {
+                    setToolTipText(Messages.getString(key + ".tooltip"));
+                }
             }
             return this;
         }

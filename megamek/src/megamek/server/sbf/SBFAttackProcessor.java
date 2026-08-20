@@ -33,9 +33,16 @@
 
 package megamek.server.sbf;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
+import megamek.common.Player;
 import megamek.common.actions.EntityAction;
+import megamek.common.actions.sbf.SBFStandardUnitAttack;
+import megamek.common.alphaStrike.ASRange;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFToHitData;
 import megamek.logging.MMLogger;
@@ -43,30 +50,81 @@ import megamek.logging.MMLogger;
 record SBFAttackProcessor(SBFGameManager gameManager) implements SBFGameManagerHelper {
     private static final MMLogger logger = MMLogger.create(SBFAttackProcessor.class);
 
-    void processAttacks(List<EntityAction> actions, SBFFormation formation) {
-        if (!validatePermitted(actions, formation)) {
-            return;
+    boolean processAttacks(List<EntityAction> submittedActions, SBFFormation formation) {
+        Optional<List<SBFStandardUnitAttack>> authoritativeActions = validateAndRebuild(submittedActions, formation);
+        if (authoritativeActions.isEmpty()) {
+            return false;
         }
 
-        actions.forEach(game()::addAction);
+        authoritativeActions.get().forEach(game()::addAction);
         formation.setDone(true);
         gameManager.sendUnitUpdate(formation);
         gameManager.sendPendingActions();
         gameManager.endCurrentTurn(formation);
+        return true;
     }
 
-    private boolean validatePermitted(List<EntityAction> actions, SBFFormation formation) {
+    private Optional<List<SBFStandardUnitAttack>> validateAndRebuild(List<EntityAction> submittedActions,
+          SBFFormation formation) {
         if (!game().getPhase().isFiring()) {
             logger.error("Server got attacks packet in wrong phase!");
-            return false;
+            return Optional.empty();
+        } else if (formation.hasSprintedThisTurn()) {
+            logger.error("Sprinted formation cannot attack!");
+            return Optional.empty();
         } else if (formation.isDone()) {
             logger.error("Formation already done!");
-            return false;
-        } else if (SBFToHitData.targetsOfFormation(formation, game()).size() > 2) {
-            logger.error("Formation targeting too many targets!");
-            return false;
+            return Optional.empty();
         }
 
-        return true;
+        Player actingPlayer = game().getPlayer(formation.getOwnerId());
+        if (actingPlayer == null) {
+            logger.error("Attacking formation has no owner!");
+            return Optional.empty();
+        }
+
+        Set<Integer> usedUnitNumbers = new HashSet<>();
+        game().getActionsVector().stream()
+              .filter(SBFStandardUnitAttack.class::isInstance)
+              .map(SBFStandardUnitAttack.class::cast)
+              .filter(action -> action.getEntityId() == formation.getId())
+              .map(SBFStandardUnitAttack::getUnitNumber)
+              .forEach(usedUnitNumbers::add);
+
+        Set<Integer> targetIds = new HashSet<>(SBFToHitData.targetsOfFormation(formation, game()));
+        List<SBFStandardUnitAttack> authoritativeActions = new ArrayList<>(submittedActions.size());
+        for (EntityAction submittedAction : submittedActions) {
+            if (!(submittedAction instanceof SBFStandardUnitAttack attack)
+                  || (attack.getEntityId() != formation.getId())
+                  || !attack.isDataValid(game())
+                  || !usedUnitNumbers.add(attack.getUnitNumber())) {
+                logger.error("Invalid or duplicate SBF standard attack submission!");
+                return Optional.empty();
+            }
+
+            SBFFormation target = game().getFormation(attack.getTargetId()).orElse(null);
+            if ((target == null) || (game().getPlayer(target.getOwnerId()) == null)
+                  || !game().areHostile(target, actingPlayer)
+                  || !game().isVisible(actingPlayer.getId(), target.getId())) {
+                logger.error("Invalid, friendly, or hidden SBF attack target!");
+                return Optional.empty();
+            }
+
+            Optional<ASRange> effectiveRange = SBFToHitData.effectiveRange(formation, target, attack.getRange());
+            if (effectiveRange.isEmpty()) {
+                logger.error("SBF standard attack has no legal range!");
+                return Optional.empty();
+            }
+
+            authoritativeActions.add(new SBFStandardUnitAttack(formation.getId(), attack.getUnitNumber(),
+                  target.getId(), effectiveRange.get()));
+            targetIds.add(target.getId());
+        }
+
+        if (targetIds.size() > 2) {
+            logger.error("Formation targeting too many targets!");
+            return Optional.empty();
+        }
+        return Optional.of(authoritativeActions);
     }
 }

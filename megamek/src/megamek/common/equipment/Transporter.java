@@ -94,6 +94,20 @@ public interface Transporter extends Serializable {
     boolean unload(Entity unit);
 
     /**
+     * Reverses a load that was staged for validation but never committed.
+     * <p>
+     * Implementations whose {@link #unload(Entity)} method consumes unload capacity or applies gameplay effects must
+     * override this method to avoid those effects.
+     *
+     * @param unit the unit whose staged load should be cancelled
+     *
+     * @return {@code true} when the staged unit was removed
+     */
+    default boolean cancelLoad(Entity unit) {
+        return unload(unit);
+    }
+
+    /**
      * @return the number of unused spaces in this transporter.
      */
     double getUnused();

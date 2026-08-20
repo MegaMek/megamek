@@ -36,9 +36,11 @@ package megamek.server.sbf;
 import static megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip.ownerColor;
 
 import java.util.List;
+import java.util.Optional;
 
 import megamek.common.actions.sbf.SBFStandardUnitAttack;
 import megamek.common.compute.Compute;
+import megamek.common.alphaStrike.ASRange;
 import megamek.common.rolls.Roll;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFFormationReportEntry;
@@ -93,7 +95,14 @@ public class SBFStandardUnitAttackHandler extends AbstractSBFActionHandler {
                     addReport(new SBFPublicReportEntry(2012));
                 } else {
                     addReport(new SBFPublicReportEntry(2013));
-                    int damage = attackingUnit.getCurrentDamage().getDamage(attack.getRange()).damage;
+                    Optional<ASRange> effectiveRange = SBFToHitData.effectiveRange(attacker, target,
+                          attack.getRange());
+                    if (effectiveRange.isEmpty()) {
+                        addReport(new SBFPublicReportEntry(3068));
+                        setFinished();
+                        return;
+                    }
+                    int damage = attackingUnit.getCurrentDamage().getDamage(effectiveRange.get()).damage;
                     if (damage > 0) {
                         int newArmor = targetUnit.getCurrentArmor() - damage;
                         addReport(new SBFPublicReportEntry(3100).add(damage).add(damage));

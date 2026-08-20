@@ -277,6 +277,27 @@ public abstract class AbstractGameManager implements IGameManager {
     }
 
     /**
+     * Reasserts the authoritative turn state to one Client without advancing the game. This is used after rejecting a
+     * stale or invalid turn submission so the Client can restore its controls instead of waiting for another packet.
+     *
+     * @param connId The connection to correct
+     */
+    protected void sendTurnCorrection(int connId) {
+        send(connId, packetHelper.createTurnListPacket());
+        send(connId, packetHelper.createTurnIndexPacket(connId));
+    }
+
+    /**
+     * Reasserts the authoritative phase and turn state to one Client without advancing the game.
+     *
+     * @param connId The connection to correct
+     */
+    protected void sendPhaseAndTurnCorrection(int connId) {
+        send(connId, packetHelper.createPhaseChangePacket());
+        sendTurnCorrection(connId);
+    }
+
+    /**
      * Increment's the server's game round and send it to all the clients
      */
     public void incrementAndSendGameRound() {

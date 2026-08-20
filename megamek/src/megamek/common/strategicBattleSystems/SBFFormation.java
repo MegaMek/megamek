@@ -103,6 +103,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     private BoardLocation position;
     private boolean isDone = false;
     private int jumpUsedThisTurn = 0;
+    private boolean sprintedThisTurn = false;
 
     public enum MoraleStatus {
         NORMAL, SHAKEN, UNSTEADY, BROKEN, ROUTED
@@ -505,7 +506,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     }
 
     public boolean isEligibleForPhase(GamePhase phase) {
-        return !isDone && switch (phase) {
+        return !isDone && !((phase == GamePhase.FIRING) && sprintedThisTurn) && switch (phase) {
             case PREMOVEMENT, PRE_FIRING -> isHidden;
             default -> isDeployed;
         };
@@ -525,6 +526,14 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
 
     public void setJumpUsedThisTurn(int jumpUsedThisTurn) {
         this.jumpUsedThisTurn = jumpUsedThisTurn;
+    }
+
+    public boolean hasSprintedThisTurn() {
+        return sprintedThisTurn;
+    }
+
+    public void setSprintedThisTurn(boolean sprintedThisTurn) {
+        this.sprintedThisTurn = sprintedThisTurn;
     }
 
     public boolean isShaken() {

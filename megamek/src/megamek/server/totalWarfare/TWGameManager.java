@@ -1271,7 +1271,42 @@ public class TWGameManager extends AbstractGameManager {
             }
         } catch (InvalidPacketDataException e) {
             LOGGER.error("Invalid packet data:", e);
+            correctInvalidPacket(connId, packet);
         }
+    }
+
+    private void correctInvalidPacket(int connId, Packet packet) {
+        Entity ownedEntity = null;
+        if ((packet.data().length > 0) && (packet.data()[0] instanceof Integer entityId)) {
+            Entity candidate = game.getEntity(entityId);
+            if ((candidate != null) && (candidate.getOwnerId() == connId)) {
+                ownedEntity = candidate;
+            }
+        }
+
+        switch (packet.command()) {
+            case ENTITY_MOVE -> sendTurnSubmissionCorrection(connId, ownedEntity,
+                  !game.getPhase().isMovement());
+            case ENTITY_DEPLOY, ENTITY_DEPLOY_UNLOAD -> sendTurnSubmissionCorrection(connId, ownedEntity,
+                  !game.getPhase().isDeployment());
+            case ENTITY_PREPHASE -> sendTurnSubmissionCorrection(connId, ownedEntity,
+                  !game.getPhase().isPreFiring() && !game.getPhase().isPremovement());
+            case ENTITY_ATTACK -> sendTurnSubmissionCorrection(connId, ownedEntity, !isAttackSubmissionPhase());
+            case ENTITY_MODE_CHANGE, ENTITY_SENSOR_CHANGE, ENTITY_SINKS_CHANGE, ENTITY_ACTIVATE_HIDDEN,
+                  ENTITY_NOVA_NETWORK_CHANGE, ENTITY_MOUNTED_FACING_CHANGE, ENTITY_CALLED_SHOT_CHANGE,
+                  ENTITY_SYSTEM_MODE_CHANGE, ENTITY_AMMO_CHANGE -> sendEntitySettingCorrection(connId, ownedEntity);
+            default -> {
+            }
+        }
+    }
+
+    private boolean isAttackSubmissionPhase() {
+        return game.getPhase().isFiring()
+              || game.getPhase().isPhysical()
+              || game.getPhase().isTargeting()
+              || game.getPhase().isOffboard()
+              || game.getPhase().isPreEndDeclarations()
+              || game.getPhase().isInfantryVsInfantryCombat();
     }
 
     /**
@@ -3508,24 +3543,6 @@ public class TWGameManager extends AbstractGameManager {
      * @param unit   - the <code>Entity</code> being loaded.
      */
     public void loadUnit(Entity loader, Entity unit, int bayNumber) {
-        // ProtoMeks share a single turn for a Point. When loading one we don't remove its turn unless it's the last
-        // unit in the Point to act.
-        int remainingProtoMeks = 0;
-        if (unit.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
-            remainingProtoMeks = game.getSelectedEntityCount(en -> en.hasETypeFlag(Entity.ETYPE_PROTOMEK) &&
-                  en.getId() != unit.getId() &&
-                  en.isSelectableThisTurn() &&
-                  en.getOwnerId() == unit.getOwnerId() &&
-                  en.getUnitNumber() == unit.getUnitNumber());
-        }
-
-        if (!getGame().getPhase().isLounge() && !unit.isDone() && (remainingProtoMeks == 0)) {
-            // Remove the *last* friendly turn (removing the *first* penalizes
-            // the opponent too much, and re-calculating moves is too hard).
-            game.removeTurnFor(unit);
-            send(packetHelper.createTurnListPacket());
-        }
-
         // Fighter Squadrons may become too big for the bay they're parked in
         if ((loader instanceof FighterSquadron) && (loader.getTransportId() != Entity.NONE)) {
             Entity carrier = game.getEntity(loader.getTransportId());
@@ -3569,6 +3586,28 @@ public class TWGameManager extends AbstractGameManager {
             sendServerChat(e.getMessage());
             return;
         }
+        completeUnitLoad(loader, unit);
+    }
+
+    private void completeUnitLoad(Entity loader, Entity unit) {
+        // ProtoMeks share a single turn for a Point. When loading one we don't remove its turn unless it's the last
+        // unit in the Point to act.
+        int remainingProtoMeks = 0;
+        if (unit.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
+            remainingProtoMeks = game.getSelectedEntityCount(en -> en.hasETypeFlag(Entity.ETYPE_PROTOMEK) &&
+                  en.getId() != unit.getId() &&
+                  en.isSelectableThisTurn() &&
+                  en.getOwnerId() == unit.getOwnerId() &&
+                  en.getUnitNumber() == unit.getUnitNumber());
+        }
+
+        if (!getGame().getPhase().isLounge() && !unit.isDone() && (remainingProtoMeks == 0)) {
+            // Remove the *last* friendly turn (removing the *first* penalizes
+            // the opponent too much, and re-calculating moves is too hard).
+            game.removeTurnFor(unit);
+            send(packetHelper.createTurnListPacket());
+        }
+
         // The loaded unit is being carried by the loader.
         unit.setTransportId(loader.getId());
 
@@ -3581,6 +3620,10 @@ public class TWGameManager extends AbstractGameManager {
         // Update the loaded unit.
         entityUpdate(unit.getId());
         entityUpdate(loader.getId());
+    }
+
+    void completeDeploymentLoads(Entity loader, List<Entity> units) {
+        units.forEach(unit -> completeUnitLoad(loader, unit));
     }
 
     /**
@@ -4316,6 +4359,7 @@ public class TWGameManager extends AbstractGameManager {
 
         if (entity == null) {
             LOGGER.error("Received packet with invalid entity");
+            sendTurnSubmissionCorrection(connId, null, false);
             return;
         }
 
@@ -4328,6 +4372,7 @@ public class TWGameManager extends AbstractGameManager {
             // is this the right phase?
             if (!getGame().getPhase().isMovement()) {
                 LOGGER.error("Server got movement packet in wrong phase");
+                sendTurnSubmissionCorrection(connId, entity, true);
                 return;
             }
 
@@ -4341,6 +4386,7 @@ public class TWGameManager extends AbstractGameManager {
                 LOGGER.error("error: server got invalid movement packet from connection {}, Entity: {}",
                       connId,
                       entity.getShortName());
+                sendTurnSubmissionCorrection(connId, entity, false);
                 return;
             }
 
@@ -9934,12 +9980,14 @@ public class TWGameManager extends AbstractGameManager {
 
         if (entity == null) {
             LOGGER.error("Received invalid entity from prephase packet");
+            sendTurnSubmissionCorrection(connId, null, false);
             return;
         }
 
         // is this the right phase?
         if (!getGame().getPhase().isPreFiring() && !getGame().getPhase().isPremovement()) {
             LOGGER.error("Server got Prephase packet in wrong phase {}", game.getPhase());
+            sendTurnSubmissionCorrection(connId, entity, true);
             return;
         }
 
@@ -9953,8 +10001,7 @@ public class TWGameManager extends AbstractGameManager {
                   connId,
                   entity.getShortName(),
                   ((turn == null) ? "null" : "invalid"));
-            send(connId, packetHelper.createTurnListPacket());
-            send(connId, packetHelper.createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.playerId()));
+            sendTurnSubmissionCorrection(connId, entity, false);
             return;
         }
 
@@ -9977,13 +10024,9 @@ public class TWGameManager extends AbstractGameManager {
         List<EntityAction> actionList = packet.getEntityActionList(1);
 
         // is this the right phase?
-        if (!getGame().getPhase().isFiring() &&
-              !getGame().getPhase().isPhysical() &&
-              !getGame().getPhase().isTargeting() &&
-              !getGame().getPhase().isOffboard() &&
-              !getGame().getPhase().isPreEndDeclarations() &&
-              !getGame().getPhase().isInfantryVsInfantryCombat()) {
+                if (!isAttackSubmissionPhase()) {
             LOGGER.error("Server got attack packet in wrong phase");
+                        sendTurnSubmissionCorrection(connId, entity, true);
             return;
         }
 
@@ -9997,8 +10040,7 @@ public class TWGameManager extends AbstractGameManager {
                   connId,
                   ((entity == null) ? "null" : entity.getShortName()),
                   ((turn == null) ? "null" : "invalid"));
-            send(connId, packetHelper.createTurnListPacket());
-            send(connId, packetHelper.createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.playerId()));
+            sendTurnSubmissionCorrection(connId, entity, false);
             return;
         }
 
@@ -27245,6 +27287,7 @@ public class TWGameManager extends AbstractGameManager {
         Mounted<?> mounted = entity.getEquipment(equipId);
 
         if (mounted == null) {
+            sendEntitySettingCorrection(connIndex, entity);
             return;
         }
 
@@ -27252,6 +27295,7 @@ public class TWGameManager extends AbstractGameManager {
         if (equipmentType == null) {
             EQUIP_OFF_LOGGER.debug("[EquipOff] {}: ignored mode change for equipment {} - its type cannot be resolved",
                   entity.getShortName(), equipId);
+            sendEntitySettingCorrection(connIndex, entity);
             return;
         }
 
@@ -27261,6 +27305,7 @@ public class TWGameManager extends AbstractGameManager {
             EQUIP_OFF_LOGGER.debug("[EquipOff] {}: rejected mode change - stealth armor is on or switching on",
                   entity.getShortName());
             sendServerChat(connIndex, message);
+            sendEntitySettingCorrection(connIndex, entity);
             return;
         }
 
@@ -27270,9 +27315,11 @@ public class TWGameManager extends AbstractGameManager {
             EQUIP_OFF_LOGGER.debug("[EquipOff] {}: rejected mode change - no ECM suite will be operating next round",
                   entity.getShortName());
             sendServerChat(connIndex, message);
+            sendEntitySettingCorrection(connIndex, entity);
             return;
         }
 
+        boolean accepted = false;
         try {
             if ((equipmentType instanceof MiscType miscType) && miscType.isBoobyTrap() && mode != 0
                   && entity.hasBoobyTrap()) {
@@ -27280,7 +27327,7 @@ public class TWGameManager extends AbstractGameManager {
                 entity.setBoobyTrapInitiated(true);
                 mounted.setMode(mode);
                 mounted.setModeSwitchable(false);
-                entityUpdate(entity.getId());
+                accepted = true;
             }
 
             // Check for BA dumping body mounted missile launchers
@@ -27293,15 +27340,19 @@ public class TWGameManager extends AbstractGameManager {
                   (mounted.getLinked().getUsableShotsLeft() > 0) &&
                   (mode <= 0)) {
                 mounted.setPendingDump(mode == -1);
+                accepted = true;
                 // a mode change for ammo means dumping or hot loading
             } else if ((equipmentType instanceof AmmoType) &&
                   !equipmentType.hasInstantModeSwitch() &&
                   (mode < 0 || mode == 0 && mounted.isPendingDump())) {
                 mounted.setPendingDump(mode == -1);
+                accepted = true;
             } else if ((equipmentType instanceof WeaponType) && mounted.isDWPMounted() && (mode <= 0)) {
                 mounted.setPendingDump(mode == -1);
+                accepted = true;
             } else {
                 if (mounted.setMode(mode)) {
+                    accepted = true;
                     EQUIP_OFF_LOGGER.debug("[EquipOff] {}: {} mode change to index {} received - "
                                 + "current mode now '{}', pending mode '{}'",
                           entity.getShortName(), mounted.getName(), mode, mounted.curMode().getName(),
@@ -27326,6 +27377,8 @@ public class TWGameManager extends AbstractGameManager {
                               " unable to compensate";
                         LOGGER.error(message);
                         sendServerChat(message);
+                    } else {
+                        accepted = true;
                     }
                 }
             }
@@ -27333,6 +27386,7 @@ public class TWGameManager extends AbstractGameManager {
         } catch (Exception exception) {
             LOGGER.error("", exception);
         }
+        completeEntitySetting(connIndex, entity, accepted);
     }
 
     /**
@@ -27386,9 +27440,14 @@ public class TWGameManager extends AbstractGameManager {
         int entityId = c.getIntValue(0);
         int sensorId = c.getIntValue(1);
         Entity e = game.getEntity(entityId);
-        if (e != null) {
+        if (e == null || e.getOwnerId() != connIndex) {
+            return;
+        }
+        boolean accepted = sensorId >= 0 && sensorId < e.getSensors().size();
+        if (accepted) {
             e.setNextSensor(e.getSensors().elementAt(sensorId));
         }
+        completeEntitySetting(connIndex, e, accepted);
     }
 
     /**
@@ -27401,9 +27460,14 @@ public class TWGameManager extends AbstractGameManager {
         int entityId = packet.getIntValue(0);
         int numSinks = packet.getIntValue(1);
         Entity entity = game.getEntity(entityId);
-        if ((entity instanceof ActiveHeatSinkController heatSinkController) && (connIndex == entity.getOwnerId())) {
+        if (entity == null || connIndex != entity.getOwnerId()) {
+            return;
+        }
+        boolean accepted = entity instanceof ActiveHeatSinkController;
+        if (entity instanceof ActiveHeatSinkController heatSinkController) {
             heatSinkController.setActiveSinksNextRound(numSinks);
         }
+        completeEntitySetting(connIndex, entity, accepted);
     }
 
     /**
@@ -27422,8 +27486,12 @@ public class TWGameManager extends AbstractGameManager {
                   activatingUnit.getOwnerId());
             return;
         }
+        if ((phase != GamePhase.UNKNOWN) && (phase != GamePhase.MOVEMENT) && (phase != GamePhase.FIRING)) {
+            sendEntitySettingCorrection(connIndex, activatingUnit);
+            return;
+        }
         activatingUnit.setHiddenActivationPhase(phase);
-        entityUpdate(entityId);
+        completeEntitySetting(connIndex, activatingUnit, true);
     }
 
     /**
@@ -27445,10 +27513,11 @@ public class TWGameManager extends AbstractGameManager {
      * @param connIndex the id for connection that received the packet.
      */
     private void receiveEntityNovaNetworkModeChange(Packet packet, int connIndex) throws InvalidPacketDataException {
+        Entity entity = null;
         try {
             int entityId = packet.getIntValue(0);
             String networkID = packet.getStringValue(1);
-            Entity entity = game.getEntity(entityId);
+            entity = game.getEntity(entityId);
 
             if (entity == null || entity.getOwner() != game.getPlayer(connIndex)) {
                 return;
@@ -27457,9 +27526,10 @@ public class TWGameManager extends AbstractGameManager {
             //  caught by both the isMemberOfNetwork test from the c3 module as well as by the clients possible input.
             entity.setNewRoundNovaNetworkString(networkID);
             // Trigger entity update to refresh BV display in lobby
-            entityUpdate(entityId);
+            completeEntitySetting(connIndex, entity, true);
         } catch (Exception ex) {
             LOGGER.error("", ex);
+            sendEntitySettingCorrection(connIndex, entity);
         }
     }
 
@@ -27471,23 +27541,30 @@ public class TWGameManager extends AbstractGameManager {
      * @param connIndex the id for connection that received the packet
      */
     private void receiveEntityVariableRangeModeChange(Packet packet, int connIndex) {
+        Entity entity = null;
         try {
             int entityId = packet.getIntValue(0);
             VariableRangeTargetingMode mode = (VariableRangeTargetingMode) packet.getObject(1);
-            Entity entity = game.getEntity(entityId);
+            entity = game.getEntity(entityId);
 
             if (entity == null || entity.getOwner() != game.getPlayer(connIndex)) {
                 return;
             }
 
             if (!entity.hasVariableRangeTargeting()) {
+                sendEntitySettingCorrection(connIndex, entity);
+                return;
+            }
+            if (mode == null) {
+                sendEntitySettingCorrection(connIndex, entity);
                 return;
             }
 
             entity.setPendingVariableRangeTargetingMode(mode);
-            entityUpdate(entityId);
+            completeEntitySetting(connIndex, entity, true);
         } catch (Exception ex) {
             LOGGER.error("Error processing Variable Range Targeting mode change", ex);
+            sendEntitySettingCorrection(connIndex, entity);
         }
     }
 
@@ -27577,6 +27654,11 @@ public class TWGameManager extends AbstractGameManager {
         Mounted<?> m = e.getEquipment(equipId);
 
         if (m == null) {
+            sendEntitySettingCorrection(connIndex, e);
+            return;
+        }
+        if ((facing < 0) || (facing > 5)) {
+            sendEntitySettingCorrection(connIndex, e);
             return;
         }
         // A Directional Torso Mount (BMM p.83) stores its facing separately and validates legal facings by mount type.
@@ -27585,6 +27667,7 @@ public class TWGameManager extends AbstractGameManager {
         } else {
             m.setFacing(facing);
         }
+        completeEntitySetting(connIndex, e, true);
     }
 
     /**
@@ -27604,9 +27687,11 @@ public class TWGameManager extends AbstractGameManager {
         Mounted<?> mounted = entity.getEquipment(equipId);
 
         if (mounted == null) {
+            sendEntitySettingCorrection(connIndex, entity);
             return;
         }
         mounted.getCalledShot().setCall(calledShot);
+        completeEntitySetting(connIndex, entity, true);
     }
 
     /**
@@ -27623,8 +27708,12 @@ public class TWGameManager extends AbstractGameManager {
         if (e == null || e.getOwner() != game.getPlayer(connIndex)) {
             return;
         }
-        if ((e instanceof Mek) && (equipId == Mek.SYSTEM_COCKPIT)) {
+        if ((e instanceof Mek) && (equipId == Mek.SYSTEM_COCKPIT)
+              && (mode >= Mek.COCKPIT_OFF) && (mode <= Mek.COCKPIT_AIMED_SHOT)) {
             ((Mek) e).setCockpitStatus(mode);
+            completeEntitySetting(connIndex, e, true);
+        } else {
+            sendEntitySettingCorrection(connIndex, e);
         }
     }
 
@@ -27648,8 +27737,8 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
         Player player = game.getPlayer(connIndex);
-        if ((null != player) && (shooter.getOwner() != player)) {
-            LOGGER.error("Player {} does not own the entity {}", player.getName(), shooter.getDisplayName());
+        if ((player == null) || (shooter.getOwner() != player)) {
+            LOGGER.error("Connection {} does not own the entity {}", connIndex, shooter.getDisplayName());
             return;
         }
 
@@ -27658,12 +27747,14 @@ public class TWGameManager extends AbstractGameManager {
         Entity ammoCarrier = (ammoCarrierId == entityId) ? shooter : game.getEntity(ammoCarrierId);
         if (null == ammoCarrier) {
             LOGGER.error("Could not find ammo carrier# {}", ammoCarrierId);
+            sendEntitySettingCorrection(connIndex, shooter);
             return;
         }
         if (!TrainAmmoSharing.canShareAmmoWith(shooter, ammoCarrier)) {
             LOGGER.error("Entity {} may not draw ammo from {}",
                   shooter.getDisplayName(),
                   ammoCarrier.getDisplayName());
+            sendEntitySettingCorrection(connIndex, shooter);
             return;
         }
 
@@ -27674,10 +27765,12 @@ public class TWGameManager extends AbstractGameManager {
         AmmoMounted oldAmmo = (weaponMounted == null) ? null : weaponMounted.getLinkedAmmo();
         if (null == selectedAmmo) {
             LOGGER.error("Entity {} does not have ammo #{}", ammoCarrier.getDisplayName(), ammoId);
+            sendEntitySettingCorrection(connIndex, shooter);
             return;
         }
         if (null == weaponMounted) {
             LOGGER.error("Entity {} does not have weapon #{}", shooter.getDisplayName(), weaponId);
+            sendEntitySettingCorrection(connIndex, shooter);
             return;
         }
         if (weaponMounted.getType().getAmmoType() == AmmoType.AmmoTypeEnum.NA) {
@@ -27685,6 +27778,7 @@ public class TWGameManager extends AbstractGameManager {
                   weaponId,
                   shooter.getDisplayName(),
                   weaponMounted.getName());
+            sendEntitySettingCorrection(connIndex, shooter);
             return;
         }
         if (weaponMounted.getType().hasFlag(WeaponType.F_ONE_SHOT) && !weaponMounted.getType()
@@ -27693,11 +27787,15 @@ public class TWGameManager extends AbstractGameManager {
                   weaponId,
                   shooter.getDisplayName(),
                   weaponMounted.getName());
+            sendEntitySettingCorrection(connIndex, shooter);
             return;
         }
 
         // Load the weapon.
-        shooter.loadWeapon(weaponMounted, selectedAmmo);
+        if (!shooter.loadWeapon(weaponMounted, selectedAmmo)) {
+            sendEntitySettingCorrection(connIndex, shooter);
+            return;
+        }
 
         // Report the change, if reason is provided and it's not already being used.
         if (reason != 0 && oldAmmo != selectedAmmo) {
@@ -27707,6 +27805,37 @@ public class TWGameManager extends AbstractGameManager {
             ammoChangeReport.add(selectedAmmo.getShortName());
             ammoChangeReport.add(ReportMessages.getString(String.valueOf(reason)));
             addReport(ammoChangeReport);
+        }
+        completeEntitySetting(connIndex, shooter, true);
+    }
+
+    /**
+     * Publishes an accepted setting change or rolls an optimistic Client change back to the authoritative entity.
+     */
+    private void completeEntitySetting(int connId, Entity entity, boolean accepted) {
+        if (accepted) {
+            entityUpdate(entity.getId());
+        } else {
+            sendEntitySettingCorrection(connId, entity);
+        }
+    }
+
+    private void sendEntitySettingCorrection(int connId, Entity entity) {
+        if ((entity != null) && (entity.getOwnerId() == connId)) {
+            send(connId, createEntityPacket(entity.getId(), null));
+        }
+    }
+
+    /**
+     * Corrects a Client after rejecting a turn submission. Only an entity owned by that connection is returned, so a
+     * malformed request cannot be used to disclose another player's unit in a double-blind game.
+     */
+    void sendTurnSubmissionCorrection(int connId, Entity entity, boolean includePhase) {
+        sendEntitySettingCorrection(connId, entity);
+        if (includePhase) {
+            sendPhaseAndTurnCorrection(connId);
+        } else {
+            sendTurnCorrection(connId);
         }
     }
 

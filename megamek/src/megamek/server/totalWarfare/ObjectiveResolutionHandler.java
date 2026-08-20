@@ -75,7 +75,8 @@ import megamek.server.victory.VictoryPointTracker;
  */
 class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
 
-    private static final MMLogger LOGGER = MMLogger.create(ObjectiveResolutionHandler.class);
+    /** Feature logger for the victory hex/objective diagnostics; enabled via the log4j2.xml VictoryHex block. */
+    private static final MMLogger LOGGER = MMLogger.create("megamek.feature.VictoryHex");
 
     private static final int REPORT_OBJECTIVE_CONTROLLED = 7117;
     private static final int REPORT_OBJECTIVE_UNCONTROLLED = 7118;
@@ -457,36 +458,36 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             return false;
         }
         // The unit is in range; log the excluded ones so a playtest can tell why a unit does not count.
-        // TRACE because this runs in a loop over all entities each End Phase.
+        // DEBUG is safe here: only in-range units reach these lines, so the volume stays bounded.
         if (entity.getTransportId() != Entity.NONE) {
-            LOGGER.trace("[Objective] {} does not count for {}: being transported",
+            LOGGER.debug("[Objective] {} does not count for {}: being transported",
                   entity.getShortName(), objective.marker().generalName());
             return false;
         }
         if (entity.isCrippled()) {
-            LOGGER.trace("[Objective] {} does not count for {}: crippled",
+            LOGGER.debug("[Objective] {} does not count for {}: crippled",
                   entity.getShortName(), objective.marker().generalName());
             return false;
         }
         if (entity.isProne()) {
-            LOGGER.trace("[Objective] {} does not count for {}: prone",
+            LOGGER.debug("[Objective] {} does not count for {}: prone",
                   entity.getShortName(), objective.marker().generalName());
             return false;
         }
         if (entity.isImmobile()) {
-            LOGGER.trace("[Objective] {} does not count for {}: immobile",
+            LOGGER.debug("[Objective] {} does not count for {}: immobile",
                   entity.getShortName(), objective.marker().generalName());
             return false;
         }
         if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
-            LOGGER.trace("[Objective] {} does not count for {}: flying units cannot control objectives",
+            LOGGER.debug("[Objective] {} does not count for {}: flying units cannot control objectives",
                   entity.getShortName(), objective.marker().generalName());
             return false;
         }
         if (entity.getMovementMode().isVTOL()) {
             // RAW (Control Radius - Assets): air and VTOL vehicle Assets can never control objectives,
             // even when landed
-            LOGGER.trace("[Objective] {} does not count for {}: VTOL units cannot control objectives",
+            LOGGER.debug("[Objective] {} does not count for {}: VTOL units cannot control objectives",
                   entity.getShortName(), objective.marker().generalName());
             return false;
         }

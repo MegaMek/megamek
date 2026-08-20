@@ -1008,6 +1008,13 @@ public class ChatLounge extends AbstractPhaseDisplay
                     boolean isDesignationModeOn = designateVictoryHexes.isSelected();
                     boolean isClickOnHex = (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED)
                           && (event.getCoords() != null);
+                    if (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
+                        // click-path diagnostics: a report of "clicking does nothing" names the failing gate
+                        VICTORY_HEX_LOGGER.debug("[VictoryHex] Preview click: button {}, {}, designation mode {}",
+                              event.getButton(),
+                              (event.getCoords() == null) ? "no hex" : event.getCoords().getBoardNum(),
+                              isDesignationModeOn ? "on" : "off");
+                    }
                     if (!isDesignationModeOn || !isClickOnHex) {
                         return;
                     }

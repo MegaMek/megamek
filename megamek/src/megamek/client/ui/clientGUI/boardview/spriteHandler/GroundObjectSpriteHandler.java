@@ -37,7 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.AbstractClientGUI;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.GroundObjectSprite;
@@ -52,9 +54,13 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.logging.MMLogger;
 
-public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
+public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements IPreferenceChangeListener {
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     /** Feature logger for the victory hex designation diagnostics; enabled via the log4j2.xml VictoryHex block. */
     private static final MMLogger VICTORY_HEX_LOGGER = MMLogger.create("megamek.feature.VictoryHex");
@@ -78,8 +84,9 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
         if (currentGroundObjectList != null) {
             BoardView boardView = (BoardView) clientGUI.boardViews().getFirst();
             for (Coords coords : currentGroundObjectList.keySet()) {
+                boolean showOverlays = GUIP.getShowObjectiveOverlays();
                 for (ICarryable groundObject : currentGroundObjectList.get(coords)) {
-                    if (groundObject instanceof ObjectiveMarker marker) {
+                    if ((groundObject instanceof ObjectiveMarker marker) && showOverlays) {
                         flagCount++;
                         currentSprites.addAll(zoneOutlineSprites(boardView, game.getBoard(), coords,
                               marker.getControlRadius()));
@@ -140,7 +147,11 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
      */
     private Sprite spriteFor(ICarryable groundObject, Coords coords, BoardView boardView) {
         if (groundObject instanceof ObjectiveMarker marker) {
-            return new HexFlagSprite(boardView, coords, ownerColor(marker));
+            String schemeWord = GUIP.getShowObjectiveOverlays()
+                  ? Messages.getString("ChatLounge.victoryHex.word."
+                        + marker.getScoringScheme().getPreset().name().toLowerCase(java.util.Locale.ROOT))
+                  : null;
+            return new HexFlagSprite(boardView, coords, ownerColor(marker), schemeWord);
         }
         return new GroundObjectSprite(boardView, coords);
     }
@@ -164,12 +175,21 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler {
     @Override
     public void initialize() {
         game.addGameListener(this);
+        GUIP.addPreferenceChangeListener(this);
     }
 
     @Override
     public void dispose() {
         clear();
         game.removeGameListener(this);
+        GUIP.removePreferenceChangeListener(this);
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent event) {
+        if (GUIPreferences.SHOW_OBJECTIVE_OVERLAYS.equals(event.getName())) {
+            setGroundObjectSprites(game.getGroundObjects());
+        }
     }
 
     @Override

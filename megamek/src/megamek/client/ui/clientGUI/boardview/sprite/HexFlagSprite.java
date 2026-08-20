@@ -38,7 +38,10 @@ import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 
 import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.tileset.HexTileset;
+import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 
 /**
@@ -64,7 +67,13 @@ public class HexFlagSprite extends HexSprite {
     private static final BasicStroke OUTLINE_STROKE =
           new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
+    private static final int LABEL_FONT_SIZE = 14;
+    private static final int LABEL_Y = 66;
+    private static final Color LABEL_COLOR = new Color(255, 255, 255, 230);
+
     private final Color flagColor;
+    // the one-word scheme label under the flag; null for no label (MM @Nullable is not applicable to fields)
+    private final String label;
 
     /**
      * @param boardView the board view this sprite is displayed on
@@ -72,8 +81,19 @@ public class HexFlagSprite extends HexSprite {
      * @param flagColor the fill color of the flag's banner, usually the owning player's color
      */
     public HexFlagSprite(BoardView boardView, Coords location, Color flagColor) {
+        this(boardView, location, flagColor, null);
+    }
+
+    /**
+     * @param boardView the board view this sprite is displayed on
+     * @param location  the hex to mark with the flag
+     * @param flagColor the fill color of the flag's banner, usually the owning player's color
+     * @param label     a short word drawn under the flag (the point's scheme), or {@code null} for none
+     */
+    public HexFlagSprite(BoardView boardView, Coords location, Color flagColor, @Nullable String label) {
         super(boardView, location);
         this.flagColor = flagColor;
+        this.label = label;
     }
 
     @Override
@@ -101,6 +121,16 @@ public class HexFlagSprite extends HexSprite {
         graph.setColor(POLE_COLOR);
         graph.setStroke(POLE_STROKE);
         graph.drawLine(POLE_X, POLE_TOP_Y, POLE_X, POLE_BOTTOM_Y);
+
+        if (label != null) {
+            // the point's scheme in one word under the flag, e.g. "Raid" or "Defend"
+            new StringDrawer(label)
+                  .at(HexTileset.HEX_W / 2, LABEL_Y)
+                  .color(LABEL_COLOR)
+                  .fontSize(LABEL_FONT_SIZE)
+                  .absoluteCenter().outline(OUTLINE_COLOR, 1.5f)
+                  .draw(graph);
+        }
 
         graph.dispose();
     }

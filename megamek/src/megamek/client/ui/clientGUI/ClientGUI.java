@@ -265,6 +265,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_TOGGLE_FOV_DARKEN = "viewToggleFovDarken";
     public static final String VIEW_TOGGLE_FOV_HIGHLIGHT = "viewToggleFovHighlight";
     public static final String VIEW_TOGGLE_FOV_SPOTTING = "viewToggleFovSpotting";
+    public static final String VIEW_TOGGLE_SHOW_OBJECTS = "viewToggleShowObjects";
     public static final String VIEW_TOGGLE_FIRING_SOLUTIONS = "viewToggleFiringSolutions";
     public static final String VIEW_TOGGLE_CF_WARNING = "viewToggleCFWarnings";
     public static final String VIEW_MOVE_ENV = "viewMovementEnvelope";
@@ -1559,6 +1560,10 @@ public class ClientGUI extends AbstractClientGUI
                 GUIP.setFovSpottingMode(!GUIP.getFovSpottingMode());
                 boardViews.get(0).refreshDisplayables();
                 ((BoardView) boardViews.get(0)).clearHexImageCache();
+                break;
+            case VIEW_TOGGLE_SHOW_OBJECTS:
+                // the ground object sprite handler listens for the preference change and re-renders
+                GUIP.setShowObjectiveOverlays(!GUIP.getShowObjectiveOverlays());
                 break;
             case VIEW_TOGGLE_FIRING_SOLUTIONS:
                 GUIP.setShowFiringSolutions(!GUIP.getShowFiringSolutions());

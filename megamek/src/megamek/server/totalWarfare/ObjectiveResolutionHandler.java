@@ -46,6 +46,9 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
+import megamek.common.equipment.ObjectiveScoringScheme;
+import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
+import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
@@ -75,6 +78,9 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     private static final int REPORT_OBJECTIVE_CONTROLLED = 7117;
     private static final int REPORT_OBJECTIVE_UNCONTROLLED = 7118;
     private static final int REPORT_OBJECTIVE_POINTS_AWARDED = 7119;
+    private static final int REPORT_POINT_SECURED = 7133;
+    private static final int REPORT_POINT_FELL = 7134;
+    private static final int REPORT_POINT_CAPTURED = 7135;
 
     /**
      * A scoring side. Normally this is a team; a player that is not on any team forms its own side.
@@ -133,15 +139,181 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         }
 
         List<Entity> entities = getGame().getEntitiesVector();
-        List<ResolvedObjective> resolvedObjectives = new ArrayList<>();
+        VictoryPointTracker tracker = VictoryPointTracker.getTracker(getGame());
+        List<ResolvedObjective> standardObjectives = new ArrayList<>();
         for (PlacedObjective objective : activeObjectives) {
             Side controller = determineControllingSide(objective, entities);
             Side owningSide = sideOfPlayerId(objective.marker().getOwnerId());
-            resolvedObjectives.add(new ResolvedObjective(objective, owningSide, controller));
             storeControllerOnMarker(objective.marker(), controller);
             reportObjectiveControl(objective, controller);
+            switch (objective.marker().getScoringScheme().getPreset()) {
+                case STANDARD -> standardObjectives.add(new ResolvedObjective(objective, owningSide, controller));
+                case RAID -> { /* end-scored when the game ends; control is stored above for that */ }
+                case HOLD -> resolveHoldCounter(objective, controller, tracker);
+                case DEFEND -> resolveDefendCounter(objective, owningSide, entities, tracker);
+                case CAPTURE -> resolveCaptureCounter(objective, controller, owningSide, tracker);
+            }
         }
-        awardStandardControlVictoryPoints(resolvedObjectives, VictoryPointTracker.getTracker(getGame()));
+        // the printed-rules pairing scoring runs over the STANDARD points only; the other presets carry
+        // their own counters and award their point value when they are decided
+        awardStandardControlVictoryPoints(standardObjectives, tracker);
+    }
+
+    /**
+     * Advances a {@code HOLD} point's held-turn counter: the controlling side's count grows each End Phase, and
+     * with consecutive counting a turn without control resets every count. Reaching the threshold secures the
+     * point for that side and awards the point's value once.
+     */
+    private void resolveHoldCounter(PlacedObjective objective, @Nullable Side controller,
+          VictoryPointTracker tracker) {
+        ObjectiveScoringScheme scheme = objective.marker().getScoringScheme();
+        if (scheme.isDecided()) {
+            return;
+        }
+        if (controller == null) {
+            if (scheme.getHoldCounting() == HoldCounting.CONSECUTIVE) {
+                scheme.resetAllHeldTurns();
+                LOGGER.debug("[Objective] {} at {}: uncontrolled - consecutive hold counts reset",
+                      objective.marker().generalName(), objective.position());
+            }
+            return;
+        }
+        int sideTeam = controller.isTeam() ? controller.id() : ObjectiveScoringScheme.NO_SIDE;
+        int sidePlayer = controller.isTeam() ? ObjectiveScoringScheme.NO_SIDE : controller.id();
+        int heldTurns = scheme.getHeldTurns(sideTeam, sidePlayer) + 1;
+        if (scheme.getHoldCounting() == HoldCounting.CONSECUTIVE) {
+            scheme.resetAllHeldTurns();
+        }
+        scheme.setHeldTurns(sideTeam, sidePlayer, heldTurns);
+        LOGGER.debug("[Objective] {} at {}: {} has held for {} of {} turn(s) ({})",
+              objective.marker().generalName(), objective.position(), displayName(controller), heldTurns,
+              scheme.getThreshold(), scheme.getHoldCounting());
+        if (heldTurns >= scheme.getThreshold()) {
+            decidePoint(objective, controller, tracker, REPORT_POINT_SECURED);
+        }
+    }
+
+    /**
+     * Advances a {@code DEFEND} point's grip: any End Phase with an enemy of the owner present in the zone drains
+     * it. At zero or below, the point falls to the enemy side with the most units present; a tie defers the fall
+     * to a later End Phase. The taker is awarded the point's value once.
+     */
+    private void resolveDefendCounter(PlacedObjective objective, @Nullable Side owningSide, List<Entity> entities,
+          VictoryPointTracker tracker) {
+        ObjectiveScoringScheme scheme = objective.marker().getScoringScheme();
+        if (scheme.isDecided()) {
+            return;
+        }
+        Map<Side, Integer> presenceBySide = countEligiblePresence(objective, entities);
+        if (owningSide != null) {
+            presenceBySide.remove(owningSide);
+        }
+        if (presenceBySide.isEmpty()) {
+            return;
+        }
+        scheme.setDefendGrip(scheme.getDefendGrip() - scheme.getRatePerTurn());
+        LOGGER.debug("[Objective] {} at {}: enemy presence drains the grip to {} of {}",
+              objective.marker().generalName(), objective.position(), scheme.getDefendGrip(),
+              scheme.getThreshold());
+        if (scheme.getDefendGrip() > 0) {
+            return;
+        }
+        Side taker = null;
+        int highestPresence = 0;
+        boolean tie = false;
+        for (Map.Entry<Side, Integer> presenceEntry : presenceBySide.entrySet()) {
+            if (presenceEntry.getValue() > highestPresence) {
+                taker = presenceEntry.getKey();
+                highestPresence = presenceEntry.getValue();
+                tie = false;
+            } else if (presenceEntry.getValue() == highestPresence) {
+                tie = true;
+            }
+        }
+        if (tie || (taker == null)) {
+            LOGGER.debug("[Objective] {} at {}: the grip is gone but the enemy presence is tied - the fall is "
+                  + "deferred until one side leads", objective.marker().generalName(), objective.position());
+            return;
+        }
+        decidePoint(objective, taker, tracker, REPORT_POINT_FELL);
+    }
+
+    /**
+     * Advances a {@code CAPTURE} point's progress meter: an enemy of the owner controlling the zone adds progress,
+     * the owner controlling it pushes every side's progress back (to a minimum of zero), and an uncontrolled turn
+     * changes nothing. Reaching the threshold captures the point for that side and awards its value once.
+     */
+    private void resolveCaptureCounter(PlacedObjective objective, @Nullable Side controller,
+          @Nullable Side owningSide, VictoryPointTracker tracker) {
+        ObjectiveScoringScheme scheme = objective.marker().getScoringScheme();
+        if (scheme.isDecided() || (controller == null)) {
+            return;
+        }
+        if (controller.equals(owningSide)) {
+            scheme.pushBackAllCaptureProgress(scheme.getRatePerTurn());
+            LOGGER.debug("[Objective] {} at {}: the owner holds the point - capture progress pushed back",
+                  objective.marker().generalName(), objective.position());
+            return;
+        }
+        int sideTeam = controller.isTeam() ? controller.id() : ObjectiveScoringScheme.NO_SIDE;
+        int sidePlayer = controller.isTeam() ? ObjectiveScoringScheme.NO_SIDE : controller.id();
+        int progress = Math.min(scheme.getThreshold(),
+              scheme.getCaptureProgress(sideTeam, sidePlayer) + scheme.getRatePerTurn());
+        scheme.setCaptureProgress(sideTeam, sidePlayer, progress);
+        LOGGER.debug("[Objective] {} at {}: {} pushes the capture progress to {} of {}",
+              objective.marker().generalName(), objective.position(), displayName(controller), progress,
+              scheme.getThreshold());
+        if (progress >= scheme.getThreshold()) {
+            decidePoint(objective, controller, tracker, REPORT_POINT_CAPTURED);
+        }
+    }
+
+    /**
+     * Marks a counter-driven point decided by the given side, awards the point's victory point value to it once,
+     * and reports the state change.
+     */
+    private void decidePoint(PlacedObjective objective, Side decidingSide, VictoryPointTracker tracker,
+          int reportId) {
+        ObjectiveScoringScheme scheme = objective.marker().getScoringScheme();
+        scheme.setSecuredBy(decidingSide.isTeam() ? decidingSide.id() : ObjectiveScoringScheme.NO_SIDE,
+              decidingSide.isTeam() ? ObjectiveScoringScheme.NO_SIDE : decidingSide.id());
+        int points = objective.marker().getVictoryPointValue();
+        if (!scheme.isVictoryPointsAwarded()) {
+            scheme.setVictoryPointsAwarded(true);
+            if (decidingSide.isTeam()) {
+                tracker.awardToTeam(decidingSide.id(), points, getGame().getCurrentRound(),
+                      "decided " + objective.marker().generalName());
+            } else {
+                tracker.awardToPlayer(decidingSide.id(), points, getGame().getCurrentRound(),
+                      "decided " + objective.marker().generalName());
+            }
+        }
+        Report report = new Report(reportId, Report.PUBLIC);
+        report.add(objective.marker().generalName());
+        report.add(objective.position().toFriendlyString());
+        report.add(displayName(decidingSide));
+        report.add(points);
+        addReport(report);
+        LOGGER.info("[Objective] {} at {} is decided by {} (+{} VP)", objective.marker().generalName(),
+              objective.position(), displayName(decidingSide), points);
+    }
+
+    /**
+     * @return how many eligible units each side has within the objective's control radius, using the same
+     *       eligibility rules as control (see {@link #isEligibleToControl(Entity, PlacedObjective)})
+     */
+    private Map<Side, Integer> countEligiblePresence(PlacedObjective objective, List<Entity> entities) {
+        Map<Side, Integer> presenceBySide = new HashMap<>();
+        for (Entity entity : entities) {
+            if (!isEligibleToControl(entity, objective)) {
+                continue;
+            }
+            Side side = sideOfPlayer(entity.getOwner());
+            if (side != null) {
+                presenceBySide.merge(side, 1, Integer::sum);
+            }
+        }
+        return presenceBySide;
     }
 
     /**

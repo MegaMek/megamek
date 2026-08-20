@@ -41,6 +41,8 @@ import java.util.HashMap;
 
 import megamek.common.Player;
 import megamek.common.game.Game;
+import megamek.common.equipment.ObjectiveMarker;
+import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.options.OptionsConstants;
 import megamek.server.scriptedEvents.GameEndTriggeredEvent;
 import megamek.server.trigger.SpecificRoundEndTrigger;
@@ -217,5 +219,21 @@ class VictoryPointVictoryTest {
 
         assertTrue(result.isVictory());
         assertTrue(result.isDraw());
+    }
+
+    @Test
+    void testRaidSchemePointScoresAtGameEnd() {
+        enableObjectiveScoring();
+        ObjectiveMarker raidPoint = new ObjectiveMarker();
+        raidPoint.setName("Raid Point");
+        raidPoint.setVictoryPointValue(3);
+        raidPoint.setScoringScheme(ObjectiveScoringScheme.raid());
+        raidPoint.setController(1, ObjectiveMarker.NO_CONTROLLER);
+        game.placeGroundObject(new megamek.common.board.Coords(2, 2), raidPoint);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertTrue(result.isVictory());
+        assertEquals(3, (int) result.getTeamScore(1));
     }
 }

@@ -120,6 +120,8 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
                     continue;
                 }
                 marker.setLobbyPosition(hexObjects.getKey());
+                // a fresh game starts with fresh counters - the setup values on the scheme remain
+                marker.getScoringScheme().resetState();
                 owner.getGroundObjectsToPlace().add(marker);
                 returnedCount++;
                 VICTORY_HEX_LOGGER.debug("[Objective] Returned {} at {} to the lobby designations of {}",

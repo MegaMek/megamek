@@ -34,11 +34,16 @@
 package megamek.server.victory;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.ObjectiveMarker;
+import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
@@ -65,6 +70,7 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
 
     private static final int REPORT_VICTORY_POINT_TOTAL = 7115;
     private static final int REPORT_VICTORY_POINTS_TIED = 7116;
+    private static final int REPORT_RAID_OBJECTIVE_SCORED = 7131;
 
     @Override
     public VictoryResult checkVictory(Game game, Map<String, Object> context) {
@@ -91,6 +97,11 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
               .booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES);
 
         VictoryPointTracker tracker = VictoryPointTracker.findTracker(context);
+        List<Report> endScoringReports = new ArrayList<>();
+        if (victoryPointScoringEnabled) {
+            tracker = VictoryPointTracker.getTracker(game);
+            endScoringReports = awardRaidPoints(game, tracker);
+        }
         if ((tracker == null) || !tracker.hasAnyScore()) {
             if (victoryPointScoringEnabled) {
                 LOGGER.info("[VP] Game ends with no victory points scored by any side; the game is a draw");
@@ -99,11 +110,61 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
             LOGGER.debug("[VP] No victory points were scored and VP scoring is not enabled; not applicable");
             return VictoryResult.noResult();
         }
-        return buildResult(game, tracker);
+        return buildResult(game, tracker, endScoringReports);
     }
 
-    private VictoryResult buildResult(Game game, VictoryPointTracker tracker) {
+    /**
+     * Objective Raid end-scoring, once when the game ends: every point using the {@code RAID} scheme awards its
+     * victory point value to its controller per the last End Phase control resolution. Uncontrolled or destroyed
+     * points award nothing.
+     *
+     * @return the end-scoring reports, shown with the victory result
+     */
+    private List<Report> awardRaidPoints(Game game, VictoryPointTracker tracker) {
+        List<Report> endScoringReports = new ArrayList<>();
+        if (tracker.isEndScoringDone()) {
+            return endScoringReports;
+        }
+        tracker.setEndScoringDone(true);
+        for (List<ICarryable> groundObjects : game.getGroundObjects().values()) {
+            for (ICarryable groundObject : groundObjects) {
+                if (!(groundObject instanceof ObjectiveMarker marker) || marker.isDestroyed()
+                      || (marker.getScoringScheme().getPreset() != SchemePreset.RAID)) {
+                    continue;
+                }
+                boolean isControlled = (marker.getControllingTeam() != ObjectiveMarker.NO_CONTROLLER)
+                      || (marker.getControllingPlayerId() != ObjectiveMarker.NO_CONTROLLER);
+                if (!isControlled) {
+                    LOGGER.debug("[VP] Raid point {} is uncontrolled at mission end - no points",
+                          marker.generalName());
+                    continue;
+                }
+                int points = marker.getVictoryPointValue();
+                String sideName;
+                if (marker.getControllingTeam() != ObjectiveMarker.NO_CONTROLLER) {
+                    tracker.awardToTeam(marker.getControllingTeam(), points, game.getCurrentRound(),
+                          "Raid: controls " + marker.generalName());
+                    sideName = "Team " + marker.getControllingTeam();
+                } else {
+                    tracker.awardToPlayer(marker.getControllingPlayerId(), points, game.getCurrentRound(),
+                          "Raid: controls " + marker.generalName());
+                    sideName = playerDisplayName(game, marker.getControllingPlayerId());
+                }
+                Report report = new Report(REPORT_RAID_OBJECTIVE_SCORED, Report.PUBLIC);
+                report.add(sideName);
+                report.add(marker.generalName());
+                report.add(points);
+                endScoringReports.add(report);
+                LOGGER.info("[VP] Raid: {} controls {} at mission end (+{} VP)", sideName,
+                      marker.generalName(), points);
+            }
+        }
+        return endScoringReports;
+    }
+
+    private VictoryResult buildResult(Game game, VictoryPointTracker tracker, List<Report> endScoringReports) {
         VictoryResult result = new VictoryResult(true);
+        endScoringReports.forEach(result::addReport);
         for (int playerId : tracker.getScoringPlayers()) {
             int points = tracker.getPlayerVictoryPoints(playerId);
             result.setPlayerScore(playerId, points);

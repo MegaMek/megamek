@@ -89,6 +89,9 @@ public class ObjectiveMarker extends GroundObject {
     // the pre-set lobby placement position; null when the marker has no pre-set position
     private Coords lobbyPosition = null;
 
+    // how this point is fought over and what it is worth; never null via the getter
+    private ObjectiveScoringScheme scoringScheme = new ObjectiveScoringScheme();
+
     /** Value of {@link #getControllingTeam()} / {@link #getControllingPlayerId()} when no side controls this objective. */
     public static final int NO_CONTROLLER = -1;
 
@@ -306,6 +309,22 @@ public class ObjectiveMarker extends GroundObject {
 
     public void setLobbyPosition(@Nullable Coords lobbyPosition) {
         this.lobbyPosition = lobbyPosition;
+    }
+
+    /**
+     * @return this point's scoring scheme (never {@code null}; a marker restored from a stream written before
+     *       schemes existed gets the standard printed-rules scheme, because Java deserialization skips field
+     *       initializers)
+     */
+    public ObjectiveScoringScheme getScoringScheme() {
+        if (scoringScheme == null) {
+            scoringScheme = new ObjectiveScoringScheme();
+        }
+        return scoringScheme;
+    }
+
+    public void setScoringScheme(ObjectiveScoringScheme scoringScheme) {
+        this.scoringScheme = scoringScheme;
     }
 
     /**

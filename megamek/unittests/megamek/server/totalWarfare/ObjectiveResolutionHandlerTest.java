@@ -34,6 +34,8 @@
 package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -47,6 +49,8 @@ import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
+import megamek.common.equipment.ObjectiveScoringScheme;
+import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -489,4 +493,172 @@ class ObjectiveResolutionHandlerTest {
         assertEquals(1, tracker.getTeamVictoryPoints(1));
     }
 
+    // --- Scoring scheme counters (Control Points) ---
+
+    /** Installs one marker with the given scheme as the game's only ground object. */
+    private PlacedObjective schemePoint(ObjectiveScoringScheme scheme, Player owner, Coords position) {
+        PlacedObjective objective = objectiveAt(position, 1, owner);
+        objective.marker().setScoringScheme(scheme);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(position, new ArrayList<>(List.of(objective.marker())));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        return objective;
+    }
+
+    private void resolveWith(Entity... presentUnits) {
+        List<Entity> entities = List.of(presentUnits);
+        when(game.getEntitiesVector()).thenReturn(entities);
+        handler.resolveObjectives();
+    }
+
+    @Test
+    void testHoldSecuresAfterThresholdTurns() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.hold(2, HoldCounting.CONSECUTIVE),
+              teamTwoPlayer, position);
+        Entity holdingUnit = groundUnit(teamOnePlayer, position);
+
+        resolveWith(holdingUnit);
+        assertFalse(objective.marker().getScoringScheme().isDecided());
+        resolveWith(holdingUnit);
+
+        assertTrue(objective.marker().getScoringScheme().isDecided());
+        assertEquals(1, objective.marker().getScoringScheme().getSecuredTeam());
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(1, tracker.getTeamVictoryPoints(1));
+    }
+
+    @Test
+    void testConsecutiveHoldResetsOnLoss() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.hold(2, HoldCounting.CONSECUTIVE),
+              teamTwoPlayer, position);
+        Entity holdingUnit = groundUnit(teamOnePlayer, position);
+
+        resolveWith(holdingUnit);
+        resolveWith();                 // an uncontrolled turn breaks the run
+        resolveWith(holdingUnit);
+        assertFalse(objective.marker().getScoringScheme().isDecided());
+        resolveWith(holdingUnit);
+
+        assertTrue(objective.marker().getScoringScheme().isDecided());
+    }
+
+    @Test
+    void testCumulativeHoldPausesOnLoss() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.hold(2, HoldCounting.CUMULATIVE),
+              teamTwoPlayer, position);
+        Entity holdingUnit = groundUnit(teamOnePlayer, position);
+
+        resolveWith(holdingUnit);
+        resolveWith();                 // the interruption only pauses the count
+        resolveWith(holdingUnit);
+
+        assertTrue(objective.marker().getScoringScheme().isDecided());
+    }
+
+    @Test
+    void testDefendGripDrainsAndFalls() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.defend(2, 1), teamOnePlayer, position);
+        Entity raider = groundUnit(teamTwoPlayer, position);
+
+        resolveWith(raider);
+        assertFalse(objective.marker().getScoringScheme().isDecided());
+        resolveWith(raider);
+
+        assertTrue(objective.marker().getScoringScheme().isDecided());
+        assertEquals(2, objective.marker().getScoringScheme().getSecuredTeam());
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(1, tracker.getTeamVictoryPoints(2));
+    }
+
+    @Test
+    void testDefendTiedPresenceDefersFall() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.defend(1, 1), teamOnePlayer, position);
+        Player teamThreePlayer = new Player(2, "Craig");
+        teamThreePlayer.setTeam(3);
+        Entity teamTwoRaider = groundUnit(teamTwoPlayer, position);
+        Entity teamThreeRaider = groundUnit(teamThreePlayer, position);
+
+        resolveWith(teamTwoRaider, teamThreeRaider);
+        // the grip is gone, but two enemy sides are tied - the fall waits for a unique leader
+        assertFalse(objective.marker().getScoringScheme().isDecided());
+
+        resolveWith(teamTwoRaider);
+        assertTrue(objective.marker().getScoringScheme().isDecided());
+        assertEquals(2, objective.marker().getScoringScheme().getSecuredTeam());
+    }
+
+    @Test
+    void testCaptureProgressCapturesThePoint() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.capture(2, 1), teamOnePlayer, position);
+        Entity attacker = groundUnit(teamTwoPlayer, position);
+
+        resolveWith(attacker);
+        assertFalse(objective.marker().getScoringScheme().isDecided());
+        resolveWith(attacker);
+
+        assertTrue(objective.marker().getScoringScheme().isDecided());
+        assertEquals(2, objective.marker().getScoringScheme().getSecuredTeam());
+    }
+
+    @Test
+    void testOwnerPushesCaptureProgressBack() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.capture(2, 1), teamOnePlayer, position);
+        Entity attacker = groundUnit(teamTwoPlayer, position);
+        Entity defender = groundUnit(teamOnePlayer, position);
+
+        resolveWith(attacker);         // progress 1 of 2
+        resolveWith(defender);         // the owner pushes it back to 0
+        resolveWith(attacker);         // progress 1 again
+        assertFalse(objective.marker().getScoringScheme().isDecided());
+        resolveWith(attacker);         // progress 2 - captured
+
+        assertTrue(objective.marker().getScoringScheme().isDecided());
+    }
+
+    @Test
+    void testDecidedPointAwardsOnlyOnce() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.hold(1, HoldCounting.CONSECUTIVE),
+              teamTwoPlayer, position);
+        Entity holdingUnit = groundUnit(teamOnePlayer, position);
+
+        resolveWith(holdingUnit);
+        resolveWith(holdingUnit);
+        resolveWith(holdingUnit);
+
+        assertTrue(objective.marker().getScoringScheme().isDecided());
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(1, tracker.getTeamVictoryPoints(1));
+    }
+
+    @Test
+    void testStandardPairingIgnoresCounterPoints() {
+        // one STANDARD point and one HOLD point, both controlled by team 1: the pairing rule sees only the
+        // STANDARD point (a friendly one, so no pairing VP), while the HOLD counter advances separately
+        Coords standardPosition = new Coords(2, 2);
+        Coords holdPosition = new Coords(6, 6);
+        PlacedObjective standardObjective = objectiveAt(standardPosition, 1, teamOnePlayer);
+        PlacedObjective holdObjective = objectiveAt(holdPosition, 1, teamTwoPlayer);
+        holdObjective.marker().setScoringScheme(ObjectiveScoringScheme.hold(5, HoldCounting.CONSECUTIVE));
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(standardPosition, new ArrayList<>(List.of(standardObjective.marker())));
+        groundObjects.put(holdPosition, new ArrayList<>(List.of(holdObjective.marker())));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        List<Entity> entities = List.of(groundUnit(teamOnePlayer, standardPosition),
+              groundUnit(teamOnePlayer, holdPosition));
+        when(game.getEntitiesVector()).thenReturn(entities);
+
+        handler.resolveObjectives();
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertTrue((tracker == null) || (tracker.getTeamVictoryPoints(1) == 0));
+        assertEquals(1, holdObjective.marker().getScoringScheme().getHeldTurns(1, -1));
+    }
 }

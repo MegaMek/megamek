@@ -4762,7 +4762,10 @@ public class MiscType extends EquipmentType {
               F_SUPPORT_TANK_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 113);
+        misc.rulesRefs = rulesRefs(
+            rulesRef(SourceBookCode.TO_AUE, 113),
+            rulesRef(SourceBookCode.CORE, 203)
+            );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

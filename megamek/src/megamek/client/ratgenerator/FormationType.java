@@ -256,6 +256,19 @@ public class FormationType {
     }
 
     /**
+     * Some formations belong to one faction only - the Hammer and Anvil Lances are Free Worlds League
+     * doctrine, the Rifle Lance is House Davion, the Order Lance House Kurita. Note that
+     * {@link #qualifies(List)} does NOT test this: it answers whether the units fit the formation's
+     * shape, and leaves who is allowed to field it to the caller.
+     *
+     * @return the faction key this formation is exclusive to, or {@code null} when any faction may
+     *       field it
+     */
+    public @Nullable String getExclusiveFaction() {
+        return exclusiveFaction;
+    }
+
+    /**
      * Returns a stable resource-bundle key for this formation's tooltip text, suitable for lookup in
      * {@code megamek.client.messages}. The key has the form {@code FormationType.<sanitizedName>.tooltip}, where spaces
      * and forward slashes in the formation name are replaced with underscores so the key is a valid properties
@@ -1491,7 +1504,11 @@ public class FormationType {
                         }
                     }
                 }
-                int groupSize = Math.min(groupingCriteria.getGroupSize(), groupedUnits.size());
+                // A group size of zero means "one group of everything" (the Order Lance: every unit
+                // the same model); resolving it to the unit count keeps the arithmetic below sound.
+                int groupSize = (groupingCriteria.getGroupSize() <= 0)
+                      ? groupedUnits.size()
+                      : Math.min(groupingCriteria.getGroupSize(), groupedUnits.size());
                 int numGroups = Math.min(groupingCriteria.getNumGroups(), groupedUnits.size() / groupSize);
                 /* Allow for the possibility that two or more groups may be identical */
                 int groupCount = 0;
@@ -1655,7 +1672,11 @@ public class FormationType {
                         }
                     }
                 }
-                int groupSize = Math.min(groupingCriteria.getGroupSize(), groupedUnits.size());
+                // A group size of zero means "one group of everything" (the Order Lance: every unit
+                // the same model); resolving it to the unit count keeps the arithmetic below sound.
+                int groupSize = (groupingCriteria.getGroupSize() <= 0)
+                      ? groupedUnits.size()
+                      : Math.min(groupingCriteria.getGroupSize(), groupedUnits.size());
                 int numGroups = Math.min(groupingCriteria.getNumGroups(), groupedUnits.size() / groupSize);
                 /* Allow for the possibility that two or more groups may be identical */
                 int groupCount = 0;

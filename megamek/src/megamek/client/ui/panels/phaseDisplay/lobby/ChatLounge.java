@@ -236,6 +236,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     private final JToggleButton butForceView = new JToggleButton(Messages.getString("ChatLounge.butForceView"));
     private final JButton butCollapse = new JButton(Messages.getString("ChatLounge.butCollapse"));
     private final JButton butExpand = new JButton(Messages.getString("ChatLounge.butExpand"));
+    private final JButton butAssembleForce = new JButton(Messages.getString("ChatLounge.butAssembleForce"));
     private MekTableModel mekModel;
 
     /* Force Tree */
@@ -488,6 +489,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butForceView.addActionListener(lobbyListener);
         butCollapse.addActionListener(lobbyListener);
         butExpand.addActionListener(lobbyListener);
+        butAssembleForce.addActionListener(lobbyListener);
         butRunAutoResolve.addActionListener(lobbyListener);
 
         fldMapWidth.addActionListener(lobbyListener);
@@ -623,6 +625,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butAdd.setEnabled(true);
         butArmy.setEnabled(true);
         butLoadList.setEnabled(true);
+        butAssembleForce.setEnabled(true);
     }
 
     /** Sets up the Mek Table and Mek Tree. */
@@ -671,6 +674,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         butAdd.setEnabled(mscLoaded);
         butAdd.setActionCommand(CL_ACTION_COMMAND_LOAD_MEK);
         butArmy.setEnabled(mscLoaded);
+        // Assembly looks units up in the unit cache, so it waits for the cache like the add buttons.
+        butAssembleForce.setEnabled(mscLoaded);
+        butAssembleForce.setToolTipText(Messages.getString("ChatLounge.butAssembleForce.tooltip"));
 
         panUnitInfo.setBorder(BorderFactory.createTitledBorder(Messages.getString("ChatLounge.name.unitSetup")));
         panUnitInfo.setLayout(new BoxLayout(panUnitInfo, BoxLayout.PAGE_AXIS));
@@ -818,6 +824,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         topRight.add(Box.createHorizontalStrut(30));
         topRight.add(butCollapse);
         topRight.add(butExpand);
+        topRight.add(butAssembleForce);
         topRight.add(Box.createHorizontalStrut(30));
         topRight.add(butGameMaster);
 
@@ -2331,6 +2338,9 @@ public class ChatLounge extends AbstractPhaseDisplay
 
             } else if (ev.getSource() == butExpand) {
                 expandTree();
+
+            } else if (ev.getSource() == butAssembleForce) {
+                lobbyActions.assembleForces();
             }
         }
     };
@@ -2696,6 +2706,14 @@ public class ChatLounge extends AbstractPhaseDisplay
             lobbySavePerformed = true;
         }
 
+        // Assemble any still-loose units (own and local bots') into formations before the done packet
+        // goes out: nothing of a bot force reaches round one formationless. The force packets make the
+        // server un-ready everyone, but they are sent on this same connection before the done packet,
+        // so this player's ready click survives. Un-readying afterward leaves the formations editable.
+        if (done && MekSummaryCache.getInstance().isInitialized()) {
+            lobbyActions.assembleForces();
+        }
+
         client.sendDone(done);
         refreshDoneButton(done);
         for (AbstractClient botClient : clientgui.getLocalBots().values()) {
@@ -2785,6 +2803,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butForceView.removeActionListener(lobbyListener);
         butCollapse.removeActionListener(lobbyListener);
         butExpand.removeActionListener(lobbyListener);
+        butAssembleForce.removeActionListener(lobbyListener);
         butRunAutoResolve.removeActionListener(lobbyListener);
 
         fldMapWidth.removeActionListener(lobbyListener);

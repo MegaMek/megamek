@@ -50,6 +50,10 @@ import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.formation.AssembledFormation;
+import megamek.client.formation.AssemblyUnit;
+import megamek.client.formation.FormationAssembler;
+import megamek.client.formation.Organization;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
@@ -59,12 +63,15 @@ import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
 import megamek.client.ui.dialogs.SBFStats.SBFStatsDialog;
 import megamek.client.ui.dialogs.UnitEditorDialog;
 import megamek.client.ui.dialogs.abstractDialogs.ASStatsDialog;
+import megamek.client.ui.dialogs.abstractDialogs.FormationRationaleDialog;
 import megamek.client.ui.dialogs.customMek.BattlefieldSupportAssetConfigDialog;
 import megamek.client.ui.dialogs.customMek.BattlefieldSupportAssetDamageDialog;
 import megamek.client.ui.dialogs.customMek.CustomMekDialog;
 import megamek.client.ui.dialogs.lobby.TrainOrderDialog;
 import megamek.client.ui.dialogs.iconChooser.CamoChooserDialog;
 import megamek.common.Player;
+import megamek.common.Team;
+import megamek.common.annotations.Nullable;
 import megamek.common.bays.Bay;
 import megamek.common.enums.Gender;
 import megamek.common.enums.VariableRangeTargetingMode;
@@ -78,6 +85,7 @@ import megamek.common.icons.Camouflage;
 import megamek.common.interfaces.ForceAssignable;
 import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.options.OptionsConstants;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import megamek.common.units.Crew;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
@@ -624,6 +632,143 @@ public class LobbyActions {
         }
         client().sendAddForce(Force.createToplevelForce(name, CollectionUtil.anyOneElement(entities).getOwner()),
               entities);
+    }
+
+    /**
+     * Assembles the still-loose units of the local player and of every local bot into Campaign
+     * Operations formations - the lobby's Assemble Force feature. Hand-built forces are never touched:
+     * only units outside any force are assembled, so the action is repeatable. Each proposed formation
+     * becomes one top-level force holding its units, sent by the owning client in a single packet, and
+     * the result is announced with a lobby chat line per player.
+     *
+     * <p>The local player assembles under the organization doctrine chosen in the player settings;
+     * bots always auto-detect theirs from their units' majority tech base (a Clan OpFor gets stars
+     * without anyone configuring it).</p>
+     */
+    void assembleForces() {
+        if (localPlayer().isDone()) {
+            return;
+        }
+        List<Player> owners = new ArrayList<>();
+        owners.add(localPlayer());
+        for (AbstractClient bot : client().getBots().values()) {
+            if (bot.getLocalPlayer() != null) {
+                owners.add(bot.getLocalPlayer());
+            }
+        }
+
+        Set<String> namesInUse = new HashSet<>();
+        for (Force force : game().getForces().getAllForces()) {
+            namesInUse.add(force.getName());
+        }
+
+        for (Player owner : owners) {
+            List<AssemblyUnit> looseUnits = new ArrayList<>();
+            for (ForceAssignable forceless : game().getForces().forcelessEntities()) {
+                if ((forceless instanceof Entity entity) && (entity.getOwnerId() == owner.getId())) {
+                    looseUnits.add(AssemblyUnit.of(entity));
+                }
+            }
+            if (looseUnits.isEmpty()) {
+                continue;
+            }
+
+            Organization organization = Organization.AUTO;
+            if (owner.equals(localPlayer())) {
+                try {
+                    organization = Organization.valueOf(
+                          PreferenceManager.getClientPreferences().getForceOrganization());
+                } catch (IllegalArgumentException ignored) {
+                    // An unknown stored name falls back to auto-detection.
+                }
+            }
+
+            Client sender = owner.equals(localPlayer())
+                  ? client()
+                  : (Client) client().getBots().get(owner.getName());
+            if (sender == null) {
+                continue;
+            }
+
+            List<String> announced = new ArrayList<>();
+            for (AssembledFormation formation
+                  : FormationAssembler.assemble(looseUnits, organization, namesInUse, factionOf(owner))) {
+                List<Entity> members = new ArrayList<>();
+                for (AssemblyUnit unit : formation.units()) {
+                    Entity member = game().getEntity(unit.entityId());
+                    if (member != null) {
+                        members.add(member);
+                    }
+                }
+                sender.sendAddForce(Force.createToplevelForce(formation.name(), owner), members);
+                namesInUse.add(formation.name());
+                announced.add(formation.describe());
+            }
+            if (!announced.isEmpty()) {
+                client().sendChat(Messages.getString("ChatLounge.assembleForce.chat",
+                      owner.getName(), String.join(", ", announced)));
+            }
+        }
+    }
+
+    /**
+     * Shows why the given force holds the units it holds - the doctrine name it earned, the ledger
+     * behind it, what could not be split, and the closest grouping that was passed over. Works on any
+     * force, assembled or hand-built: the answer is recomputed from the force as it stands now.
+     */
+    void explainFormation(int forceId) {
+        Forces forces = game().getForces();
+        Force force = forces.getForce(forceId);
+        if (force == null) {
+            return;
+        }
+        List<AssemblyUnit> members = assemblyUnitsOf(forces, force);
+        if (members.isEmpty()) {
+            return;
+        }
+
+        // Siblings are the owner's other forces: the alternatives pass asks what it would have cost
+        // to trade a unit with one of them.
+        Map<String, List<AssemblyUnit>> siblings = new LinkedHashMap<>();
+        for (Force other : forces.getAllForces()) {
+            if ((other.getId() == forceId) || (forces.getOwnerId(other) != forces.getOwnerId(force))) {
+                continue;
+            }
+            List<AssemblyUnit> otherMembers = assemblyUnitsOf(forces, other);
+            if (!otherMembers.isEmpty()) {
+                siblings.put(other.getName(), otherMembers);
+            }
+        }
+
+        new FormationRationaleDialog(frame(), FormationAssembler.explain(force.getName(), members,
+              siblings, factionOf(forces.getOwner(force)))).setVisible(true);
+    }
+
+    /**
+     * The faction a player is fighting as, as the army generators and the player settings record it.
+     * This is what tells auto-detection that a ComStar or Word of Blake force organizes into Level
+     * IIs - they field Inner Sphere equipment, so their units can never reveal it.
+     *
+     * @param player the player to look up, may be {@code null}
+     *
+     * @return the generator faction key, or {@code null} when the player has no team
+     */
+    private @Nullable String factionOf(@Nullable Player player) {
+        if (player == null) {
+            return null;
+        }
+        Team team = game().getTeamForPlayer(player);
+        return (team == null) ? null : team.getFaction();
+    }
+
+    private static List<AssemblyUnit> assemblyUnitsOf(Forces forces, Force force) {
+        List<AssemblyUnit> units = new ArrayList<>();
+        for (ForceAssignable member : forces.getFullEntities(force)) {
+            if (member instanceof Entity entity) {
+                units.add(AssemblyUnit.of(entity));
+            }
+        }
+        return units;
     }
 
     /**

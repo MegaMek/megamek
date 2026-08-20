@@ -615,6 +615,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if ((selectedEntity instanceof Mek climbingMek) && climbingMek.isClimbing()) {
             SwingUtilities.invokeLater(() -> promptContinueClimbing(climbingMek));
         }
+
+        // If it has not deployed yet, draw the deployment
+        if (Game.rulesManager.getRulesGame().walkOnInitiative() && !selectedEntity.isDeployed()) {
+            clientgui.boardViews().forEach(bv -> ((BoardView) bv).markDeploymentHexesFor(selectedEntity));
+        }
     }
 
     /**
@@ -1683,6 +1688,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         startTimer();
+
     }
 
     /**
@@ -1841,6 +1847,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
             currentlySelectedEntity.setMovementMode(EntityMovementMode.BIPED);
         } else if (currentlySelectedEntity.getMovementMode() == EntityMovementMode.QUAD_SWIM) {
             currentlySelectedEntity.setMovementMode(EntityMovementMode.QUAD);
+        }
+
+        // If it was walk on deployment, invalidate the deployment
+        if ((cmd != null) && cmd.contains(MoveStepType.DEPLOY)) {
+            currentEntity().setDeployed(false);
+            currentEntity().setPosition(null);
         }
 
         // create new current and considered paths
@@ -2563,6 +2575,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
               && hasLandingMoveStep()) {
             finalizeAeroLandFromAtmosphereMap(aero, boardViewEvent);
             return;
+        }
+
+        if (Game.rulesManager.getRulesGame().walkOnInitiative()) {
+            if (!currentlySelectedEntity.isDeployed() && boardViewEvent.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
+                if (game.getBoard(boardViewEvent.getBoardId())
+                      .isLegalDeployment(boardViewEvent.getCoords(), currentlySelectedEntity)) {
+                    currentlySelectedEntity.setPosition(boardViewEvent.getCoords());
+                    cmd.addStep(MoveStepType.DEPLOY);
+                    Hex hex = game.getBoard(boardViewEvent.getBoardId()).getHex(boardViewEvent.getCoords());
+                    currentlySelectedEntity.setDeployed(true);
+                    clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
+                } else {
+                    // Message about choosing a legal deployment area
+                }
+                return;
+
+            }
         }
 
         // check for shifty goodness

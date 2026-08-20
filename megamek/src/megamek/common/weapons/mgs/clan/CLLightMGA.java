@@ -91,6 +91,7 @@ public class CLLightMGA extends AmmoWeapon {
         rulesRefs = rulesRefs(
               rulesRef(SourceBookCode.TM, 228),
               rulesRef(SourceBookCode.TW, 137),
+              rulesRef(SourceBookCode.BMM, 102),
               rulesRef(SourceBookCode.CORE, 185)
         );
         techAdvancement.setTechBase(TechBase.CLAN)

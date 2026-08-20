@@ -34,6 +34,9 @@
 package megamek.client.ui.panels.phaseDisplay.lobby;
 
 import java.awt.Container;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -45,14 +48,22 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 import megamek.client.ui.panels.DialogOptionComponentYPanel;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
+import megamek.common.Player;
+import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.options.BasicOption;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
@@ -75,6 +86,8 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
     public static final String VICTORY_OPTIONS_GROUP_NAME = "victory";
 
     private final ClientGUI clientGui;
+    private final DefaultListModel<ObjectiveMarker> controlPointsModel = new DefaultListModel<>();
+    private final JList<ObjectiveMarker> controlPointsList = new JList<>(controlPointsModel);
     private final JPanel victoryOptionsPanel = new JPanel();
     private final List<DialogOptionComponentYPanel> victoryOptionComps = new ArrayList<>();
     private final JTextField fieldPassword = new JTextField(15);
@@ -88,6 +101,7 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
 
     /** Refreshes the victory option values from the game options; call before showing the dialog. */
     public void refreshLobbyState() {
+        refreshControlPoints();
         victoryOptionsPanel.removeAll();
         victoryOptionComps.clear();
         for (Enumeration<IOptionGroup> groups = clientGui.getClient().getGame().getOptions().getGroups();
@@ -113,6 +127,28 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
         result.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
 
+        controlPointsList.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                  boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof ObjectiveMarker marker) {
+                    Player owner = clientGui.getClient().getGame().getPlayer(marker.getOwnerId());
+                    setText(VictoryHexPropertiesPane.describe(marker)
+                          + ((owner == null) ? "" : " - " + owner.getName()));
+                }
+                return this;
+            }
+        });
+        controlPointsList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                if (event.getClickCount() == 2) {
+                    editSelectedControlPoint();
+                }
+            }
+        });
+
         victoryOptionsPanel.setLayout(new BoxLayout(victoryOptionsPanel, BoxLayout.PAGE_AXIS));
         JScrollPane victoryOptionsScroll = new JScrollPane(victoryOptionsPanel);
         victoryOptionsScroll.setBorder(BorderFactory.createTitledBorder(
@@ -125,10 +161,59 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         passwordPanel.add(new JLabel(Messages.getString("VictoryConditionsDialog.password")));
         passwordPanel.add(fieldPassword);
 
+        JScrollPane controlPointsScroll = new JScrollPane(controlPointsList);
+        controlPointsScroll.setBorder(BorderFactory.createTitledBorder(
+              Messages.getString("VictoryConditionsDialog.controlPoints")));
+        controlPointsScroll.setPreferredSize(UIUtil.scaleForGUI(560, 140));
+        JLabel controlPointsHint = new JLabel(Messages.getString("VictoryConditionsDialog.controlPointsHint"));
+
+        result.add(controlPointsScroll);
+        result.add(controlPointsHint);
+        result.add(Box.createVerticalStrut(5));
         result.add(victoryOptionsScroll);
         result.add(Box.createVerticalStrut(5));
         result.add(passwordPanel);
         return result;
+    }
+
+    /** Rebuilds the control point list from every designation this client may see. */
+    private void refreshControlPoints() {
+        controlPointsModel.clear();
+        for (Player player : clientGui.getClient().getGame().getPlayersList()) {
+            for (ICarryable groundObject : player.getGroundObjectsToPlace()) {
+                if ((groundObject instanceof ObjectiveMarker marker) && (marker.getLobbyPosition() != null)) {
+                    controlPointsModel.addElement(marker);
+                }
+            }
+        }
+    }
+
+    /**
+     * Opens the properties editor for the double-clicked control point. Only the local player's own points can be
+     * edited; the list still shows the teammates' points for the mission overview.
+     */
+    private void editSelectedControlPoint() {
+        ObjectiveMarker marker = controlPointsList.getSelectedValue();
+        if (marker == null) {
+            return;
+        }
+        Player localPlayer = clientGui.getClient().getLocalPlayer();
+        if (marker.getOwnerId() != localPlayer.getId()) {
+            JOptionPane.showMessageDialog(this,
+                  Messages.getString("VictoryConditionsDialog.controlPointNotYours"),
+                  Messages.getString("VictoryConditionsDialog.title"), JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        VictoryHexPropertiesPane.Result result =
+              VictoryHexPropertiesPane.edit(clientGui.getFrame(), marker);
+        if (result == VictoryHexPropertiesPane.Result.CANCELLED) {
+            return;
+        }
+        if (result == VictoryHexPropertiesPane.Result.REMOVED) {
+            localPlayer.getGroundObjectsToPlace().remove(marker);
+        }
+        clientGui.getClient().sendPlayerInfo();
+        refreshControlPoints();
     }
 
     /** @return The text entered in the server password field; the server checks it only when it has a password */

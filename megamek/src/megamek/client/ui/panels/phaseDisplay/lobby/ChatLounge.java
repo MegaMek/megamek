@@ -156,9 +156,6 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
-import megamek.common.equipment.ObjectiveScoringScheme;
-import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
-import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
@@ -1592,112 +1589,22 @@ public class ChatLounge extends AbstractPhaseDisplay
             return;
         }
 
-        ObjectiveScoringScheme scheme = marker.getScoringScheme();
-        JSpinner radiusSpinner = new JSpinner(
-              new SpinnerNumberModel(marker.getControlRadius(), 0, ObjectiveMarker.MAX_CONTROL_RADIUS, 1));
-        JSpinner victoryPointSpinner = new JSpinner(
-              new SpinnerNumberModel(marker.getVictoryPointValue(), 1, 99, 1));
-        JComboBox<SchemePreset> schemeCombo = new JComboBox<>(SchemePreset.values());
-        schemeCombo.setSelectedItem(scheme.getPreset());
-        schemeCombo.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                  boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof SchemePreset preset) {
-                    setText(Messages.getString("ChatLounge.victoryHex.scheme."
-                          + preset.name().toLowerCase(Locale.ROOT)));
-                }
-                return this;
+        VictoryHexPropertiesPane.Result result = VictoryHexPropertiesPane.edit(clientgui.getFrame(), marker);
+        switch (result) {
+            case SAVED -> VICTORY_HEX_LOGGER.info(
+                  "[VictoryHex] {} updated: radius {}, {} VP, {} scheme (threshold {}, rate {}, {})",
+                  coords.getBoardNum(), marker.getControlRadius(), marker.getVictoryPointValue(),
+                  marker.getScoringScheme().getPreset(), marker.getScoringScheme().getThreshold(),
+                  marker.getScoringScheme().getRatePerTurn(), marker.getScoringScheme().getHoldCounting());
+            case REMOVED -> {
+                client().getLocalPlayer().getGroundObjectsToPlace().remove(marker);
+                VICTORY_HEX_LOGGER.info("[VictoryHex] Removed the victory hex designation at {}",
+                      coords.getBoardNum());
             }
-        });
-        JSpinner thresholdSpinner = new JSpinner(new SpinnerNumberModel(scheme.getThreshold(), 1, 99, 1));
-        JSpinner rateSpinner = new JSpinner(new SpinnerNumberModel(scheme.getRatePerTurn(), 1, 99, 1));
-        JComboBox<HoldCounting> countingCombo = new JComboBox<>(HoldCounting.values());
-        countingCombo.setSelectedItem(scheme.getHoldCounting());
-        countingCombo.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                  boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof HoldCounting counting) {
-                    setText(Messages.getString("ChatLounge.victoryHex.counting."
-                          + counting.name().toLowerCase(Locale.ROOT)));
-                }
-                return this;
+            case CANCELLED -> {
+                return;
             }
-        });
-
-        JLabel thresholdLabel = new JLabel();
-        JLabel rateLabel = new JLabel();
-        JLabel countingLabel = new JLabel(Messages.getString("ChatLounge.victoryHex.counting"));
-        Runnable refreshSchemeRows = () -> {
-            SchemePreset preset = (SchemePreset) schemeCombo.getSelectedItem();
-            boolean usesThreshold = (preset == SchemePreset.HOLD) || (preset == SchemePreset.DEFEND)
-                  || (preset == SchemePreset.CAPTURE);
-            boolean usesRate = (preset == SchemePreset.DEFEND) || (preset == SchemePreset.CAPTURE);
-            boolean usesCounting = preset == SchemePreset.HOLD;
-            thresholdLabel.setText(Messages.getString(switch (preset) {
-                case HOLD -> "ChatLounge.victoryHex.turnsToSecure";
-                case DEFEND -> "ChatLounge.victoryHex.startingGrip";
-                case CAPTURE -> "ChatLounge.victoryHex.pointsToCapture";
-                case STANDARD, RAID -> "ChatLounge.victoryHex.turnsToSecure";
-            }));
-            rateLabel.setText(Messages.getString((preset == SchemePreset.DEFEND)
-                  ? "ChatLounge.victoryHex.gripDrainPerTurn"
-                  : "ChatLounge.victoryHex.progressPerTurn"));
-            thresholdLabel.setVisible(usesThreshold);
-            thresholdSpinner.setVisible(usesThreshold);
-            rateLabel.setVisible(usesRate);
-            rateSpinner.setVisible(usesRate);
-            countingLabel.setVisible(usesCounting);
-            countingCombo.setVisible(usesCounting);
-        };
-        schemeCombo.addActionListener(event -> refreshSchemeRows.run());
-        refreshSchemeRows.run();
-
-        JPanel propertiesPanel = new JPanel(new GridLayout(0, 2));
-        propertiesPanel.add(new JLabel(Messages.getString("ChatLounge.victoryHex.radius")));
-        propertiesPanel.add(radiusSpinner);
-        propertiesPanel.add(new JLabel(Messages.getString("ChatLounge.victoryHex.victoryPoints")));
-        propertiesPanel.add(victoryPointSpinner);
-        propertiesPanel.add(new JLabel(Messages.getString("ChatLounge.victoryHex.scheme")));
-        propertiesPanel.add(schemeCombo);
-        propertiesPanel.add(thresholdLabel);
-        propertiesPanel.add(thresholdSpinner);
-        propertiesPanel.add(countingLabel);
-        propertiesPanel.add(countingCombo);
-        propertiesPanel.add(rateLabel);
-        propertiesPanel.add(rateSpinner);
-
-        String okLabel = Messages.getString("Okay");
-        String removeLabel = Messages.getString("ChatLounge.victoryHex.remove");
-        String cancelLabel = Messages.getString("Cancel");
-        Object[] dialogOptions = { okLabel, removeLabel, cancelLabel };
-        int result = JOptionPane.showOptionDialog(clientgui.getFrame(), propertiesPanel,
-              Messages.getString("ChatLounge.victoryHex.title", marker.generalName()),
-              JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, dialogOptions, okLabel);
-        if (result == 1) {
-            client().getLocalPlayer().getGroundObjectsToPlace().remove(marker);
-            VICTORY_HEX_LOGGER.info("[VictoryHex] Removed the victory hex designation at {}",
-                  coords.getBoardNum());
-            client().sendPlayerInfo();
-            refreshPreviewFlagSprites();
-            return;
         }
-        if (result != 0) {
-            return;
-        }
-        marker.setControlRadius((Integer) radiusSpinner.getValue());
-        marker.setVictoryPointValue((Integer) victoryPointSpinner.getValue());
-        scheme.setPreset((SchemePreset) schemeCombo.getSelectedItem());
-        scheme.setThreshold((Integer) thresholdSpinner.getValue());
-        scheme.setRatePerTurn((Integer) rateSpinner.getValue());
-        scheme.setHoldCounting((HoldCounting) countingCombo.getSelectedItem());
-        VICTORY_HEX_LOGGER.info("[VictoryHex] {} now has control radius {}, {} victory point(s) and the {} "
-                    + "scheme (threshold {}, rate {}, {})",
-              coords.getBoardNum(), marker.getControlRadius(), marker.getVictoryPointValue(),
-              scheme.getPreset(), scheme.getThreshold(), scheme.getRatePerTurn(), scheme.getHoldCounting());
         client().sendPlayerInfo();
         refreshPreviewFlagSprites();
     }

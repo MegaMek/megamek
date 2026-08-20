@@ -46,6 +46,8 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
+import megamek.client.ui.Messages;
+import megamek.common.event.GameToastEvent;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
 import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
@@ -338,6 +340,37 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
                   marker.generalName(), objective.position());
         }
         return true;
+    }
+
+    /**
+     * Sends a toast when a unit's move ends inside a control zone it did not start in, so entering a zone is
+     * announced the moment it happens instead of only surfacing in the End Phase report. Fires once per completed
+     * move per zone; shuffling within a zone or ending outside one says nothing.
+     *
+     * @param movedEntity      the unit that finished moving
+     * @param startingPosition where the unit stood before the move, or {@code null} (e.g. it was just deployed)
+     */
+    void toastZoneEntry(Entity movedEntity, @Nullable Coords startingPosition) {
+        Coords endingPosition = movedEntity.getPosition();
+        if ((endingPosition == null) || endingPosition.equals(startingPosition)) {
+            return;
+        }
+        for (PlacedObjective objective : findAllObjectives()) {
+            if (objective.marker().isDestroyed()) {
+                continue;
+            }
+            int radius = objective.marker().getControlRadius();
+            boolean wasInside = (startingPosition != null)
+                  && (startingPosition.distance(objective.position()) <= radius);
+            boolean isInside = endingPosition.distance(objective.position()) <= radius;
+            if (isInside && !wasInside) {
+                gameManager.sendToast(GameToastEvent.Level.INFO,
+                      Messages.getString("Objective.toast.zoneEntered", movedEntity.getShortName(),
+                            objective.marker().generalName()), movedEntity);
+                LOGGER.debug("[Objective] {} entered the control zone of {} at {}",
+                      movedEntity.getShortName(), objective.marker().generalName(), objective.position());
+            }
+        }
     }
 
     /** @return All objective markers placed on the ground, including destroyed ones, with their map positions */

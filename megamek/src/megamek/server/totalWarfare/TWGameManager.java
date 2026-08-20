@@ -4353,8 +4353,10 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // looks like mostly everything's okay
+            Coords positionBeforeMovement = entity.getPosition();
             MovePathHandler handler = new MovePathHandler(this, entity, movePath, losCache);
             handler.processMovement();
+            new ObjectiveResolutionHandler(this).toastZoneEntry(entity, positionBeforeMovement);
             datasetLogger.append(movePath, true);
 
             // The attacker may choose to break a chain whip grapple by expending MP

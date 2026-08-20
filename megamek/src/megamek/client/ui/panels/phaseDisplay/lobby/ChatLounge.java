@@ -2654,7 +2654,11 @@ public class ChatLounge extends AbstractPhaseDisplay
             victoryConditionsDialog = new VictoryConditionsDialog(clientgui);
         }
         victoryConditionsDialog.refreshLobbyState();
-        if (victoryConditionsDialog.showDialog() == DialogResult.CONFIRMED) {
+        DialogResult dialogResult = victoryConditionsDialog.showDialog();
+        // window sizes and positions normally persist only on a clean exit; mission setup is worth keeping
+        // even when the process is killed, so save the preferences when this dialog closes
+        MegaMek.getMMPreferences().saveToFile(SuiteConstants.MM_PREFERENCES_FILE);
+        if (dialogResult == DialogResult.CONFIRMED) {
             Vector<IBasicOption> changedOptions = victoryConditionsDialog.getChangedVictoryOptions();
             if (!changedOptions.isEmpty()) {
                 clientgui.getClient().sendGameOptions(victoryConditionsDialog.getPassword(), changedOptions);

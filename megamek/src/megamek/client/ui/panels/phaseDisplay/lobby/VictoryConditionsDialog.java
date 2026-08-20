@@ -140,6 +140,8 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
                 return this;
             }
         });
+        controlPointsList.setToolTipText(
+              Messages.getString("VictoryConditionsDialog.controlPointsHint"));
         controlPointsList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent event) {
@@ -167,10 +169,10 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         controlPointsScroll.setPreferredSize(UIUtil.scaleForGUI(560, 140));
         JLabel controlPointsHint = new JLabel(Messages.getString("VictoryConditionsDialog.controlPointsHint"));
 
+        result.add(victoryOptionsScroll);
+        result.add(Box.createVerticalStrut(5));
         result.add(controlPointsScroll);
         result.add(controlPointsHint);
-        result.add(Box.createVerticalStrut(5));
-        result.add(victoryOptionsScroll);
         result.add(Box.createVerticalStrut(5));
         result.add(passwordPanel);
         return result;

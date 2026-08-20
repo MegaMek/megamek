@@ -35,6 +35,7 @@ package megamek.client.ui.panels.phaseDisplay.lobby;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.util.Locale;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -94,12 +95,30 @@ public final class VictoryHexPropertiesPane {
         JComboBox<HoldCounting> countingCombo = new JComboBox<>(HoldCounting.values());
         countingCombo.setSelectedItem(scheme.getHoldCounting());
         countingCombo.setRenderer(new MessageKeyRenderer("ChatLounge.victoryHex.counting."));
+        radiusSpinner.setToolTipText(Messages.getString("ChatLounge.victoryHex.radius.tooltip"));
+        victoryPointSpinner.setToolTipText(Messages.getString("ChatLounge.victoryHex.victoryPoints.tooltip"));
+        countingCombo.setToolTipText(Messages.getString("ChatLounge.victoryHex.counting.tooltip"));
 
         JLabel thresholdLabel = new JLabel();
         JLabel rateLabel = new JLabel();
         JLabel countingLabel = new JLabel(Messages.getString("ChatLounge.victoryHex.counting"));
+        JLabel schemeDescription = new JLabel();
         Runnable refreshSchemeRows = () -> {
             SchemePreset preset = (SchemePreset) schemeCombo.getSelectedItem();
+            String presetDescription = Messages.getString("ChatLounge.victoryHex.describe."
+                  + preset.name().toLowerCase(Locale.ROOT));
+            schemeDescription.setText("<html><body style='width: 260px'>" + presetDescription
+                  + "</body></html>");
+            schemeCombo.setToolTipText(presetDescription);
+            thresholdSpinner.setToolTipText(Messages.getString(switch (preset) {
+                case HOLD -> "ChatLounge.victoryHex.turnsToSecure.tooltip";
+                case DEFEND -> "ChatLounge.victoryHex.startingGrip.tooltip";
+                case CAPTURE -> "ChatLounge.victoryHex.pointsToCapture.tooltip";
+                case STANDARD, RAID -> "ChatLounge.victoryHex.turnsToSecure.tooltip";
+            }));
+            rateSpinner.setToolTipText(Messages.getString((preset == SchemePreset.DEFEND)
+                  ? "ChatLounge.victoryHex.gripDrainPerTurn.tooltip"
+                  : "ChatLounge.victoryHex.progressPerTurn.tooltip"));
             boolean usesThreshold = (preset == SchemePreset.HOLD) || (preset == SchemePreset.DEFEND)
                   || (preset == SchemePreset.CAPTURE);
             boolean usesRate = (preset == SchemePreset.DEFEND) || (preset == SchemePreset.CAPTURE);
@@ -137,11 +156,16 @@ public final class VictoryHexPropertiesPane {
         propertiesPanel.add(rateLabel);
         propertiesPanel.add(rateSpinner);
 
+        JPanel editorPanel = new JPanel();
+        editorPanel.setLayout(new BoxLayout(editorPanel, BoxLayout.PAGE_AXIS));
+        editorPanel.add(propertiesPanel);
+        editorPanel.add(schemeDescription);
+
         String okLabel = Messages.getString("Okay");
         String removeLabel = Messages.getString("ChatLounge.victoryHex.remove");
         String cancelLabel = Messages.getString("Cancel");
         Object[] dialogOptions = { okLabel, removeLabel, cancelLabel };
-        int result = JOptionPane.showOptionDialog(frame, propertiesPanel,
+        int result = JOptionPane.showOptionDialog(frame, editorPanel,
               Messages.getString("ChatLounge.victoryHex.title", marker.generalName()),
               JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, dialogOptions, okLabel);
         if (result == 1) {

@@ -453,6 +453,10 @@ public class TWGameManager extends AbstractGameManager {
      */
     @Override
     public void resetGame() {
+        // return designated objective markers to their owners' lobby lists before the reset wipes the board;
+        // the player updates sent below carry them back to every client
+        returnObjectivesToLobby();
+
         // remove all entities
         getGame().reset();
         send(createEntitiesPacket());
@@ -648,7 +652,9 @@ public class TWGameManager extends AbstractGameManager {
 
     public void setGameMaster(Player player, boolean gameMaster) {
         player.setGameMaster(gameMaster);
-        transmitPlayerUpdate(player);
+        // a game master sees every side's victory hex designations - re-send everyone so a new game
+        // master receives the designations that were stripped before
+        transmitAllPlayerUpdates();
         sendServerChat(player.getName() + " set GameMaster: " + player.getGameMaster());
     }
 
@@ -709,7 +715,8 @@ public class TWGameManager extends AbstractGameManager {
     void changePlayerTeams(TeamChangeRequest teamChangeRequest) {
         teamChangeRequest.player().setTeam(teamChangeRequest.teamID());
         getGame().setupTeams();
-        transmitPlayerUpdate(teamChangeRequest.player());
+        // a team change alters who may see whose victory hex designations - re-send everyone
+        transmitAllPlayerUpdates();
         String teamString = "Team " + teamChangeRequest.teamID() + "!";
         if (teamChangeRequest.teamID() == Player.TEAM_UNASSIGNED) {
             teamString = " unassigned!";
@@ -2286,6 +2293,7 @@ public class TWGameManager extends AbstractGameManager {
                 game.setupDeployment();
                 game.setVictoryContext(new HashMap<>());
                 game.createVictoryConditions();
+                placeLobbyObjectives();
                 // some entities may need to be checked and updated
                 checkEntityExchange();
                 datasetLogger.append(game.getBoard(), true);
@@ -16123,6 +16131,23 @@ public class TWGameManager extends AbstractGameManager {
      */
     void checkBuildBridges() {
         new BridgeBuildPhaseHandler(this).checkBuildBridges();
+    }
+
+    /**
+     * Places the objective markers that players designated in the lobby when the game starts. Delegates to
+     * {@link ObjectivePlacementHandler} so the objectives rules do not add to this already very large class.
+     */
+    void placeLobbyObjectives() {
+        new ObjectivePlacementHandler(this).placeLobbyObjectives();
+    }
+
+    /**
+     * Returns the objective markers on the board to their owners' lobby designations when the game is reset back to
+     * the lobby. Delegates to {@link ObjectivePlacementHandler} so the objectives rules do not add to this already
+     * very large class.
+     */
+    void returnObjectivesToLobby() {
+        new ObjectivePlacementHandler(this).returnObjectivesToLobby();
     }
 
     /**

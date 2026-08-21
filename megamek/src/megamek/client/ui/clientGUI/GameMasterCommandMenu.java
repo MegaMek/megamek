@@ -41,6 +41,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
+import megamek.logging.MMLogger;
 import megamek.server.commands.ChangeWeatherCommand;
 import megamek.server.commands.ClientServerCommand;
 import megamek.server.commands.DisasterCommand;
@@ -50,17 +51,24 @@ import megamek.server.commands.FirestormCommand;
 import megamek.server.commands.NoFiresCommand;
 import megamek.server.commands.OrbitalBombardmentCommand;
 import megamek.server.commands.RemoveSmokeCommand;
-import megamek.server.commands.SkillModifierCommand;
 
 /**
  * Builds the Game Master special commands menu: one entry per server command that only a Game Master may run, each
  * opening the {@link ClientCommandDialog} that builds an input form from the command's own argument definitions.
  *
  * <p>The menu is shared by the board context menu ({@link MapMenu}), which passes the hex that was clicked, and the
- * game commands strip ({@link GameCommandsMenu}), which has no hex context and passes {@code null}. Keeping one list
- * means a command added here shows up in both places.</p>
+ * game commands strip ({@link GameCommandsMenu}), which has no hex context and passes {@code null}. Each gets the
+ * commands that match how it was opened, and nothing else.</p>
+ *
+ * <p>Right-clicking a hex means "do something to this hex", so that menu offers only the commands that act on one
+ * hex, already aimed at the hex that was clicked. The commands that act on the whole map are not about the hex under
+ * the cursor at all, so they belong on the game commands strip instead, where no hex is implied.</p>
+ *
+ * <p>Commands that act on a single unit are in neither list. They live in that unit's Edit Damage dialog, which is
+ * reached from the same context menu and shows the unit's current state while it changes it.</p>
  */
 public final class GameMasterCommandMenu {
+    private static final MMLogger LOGGER = MMLogger.create(GameMasterCommandMenu.class);
 
     private GameMasterCommandMenu() {
     }
@@ -70,13 +78,14 @@ public final class GameMasterCommandMenu {
      * actually holds the Game Master role - the server rejects these commands from anyone else.
      *
      * @param clientGUI The client GUI the command dialogs are shown on
-     * @param coords    The hex the command should default to, or {@code null} when the command is not tied to a hex
+     * @param coords    The hex the commands should act on, or {@code null} when the menu is opened without a hex,
+     *                  which limits it to the board-wide commands
      *
      * @return The Game Master special commands menu
      */
     public static JMenu createSpecialCommandsMenu(ClientGUI clientGUI, @Nullable Coords coords) {
         JMenu menu = new JMenu(Messages.getString("Gamemaster.SpecialCommands"));
-        for (ClientServerCommand command : gameMasterCommands()) {
+        for (ClientServerCommand command : commandsFor(coords)) {
             JMenuItem commandItem = new JMenuItem(command.getLongName());
             commandItem.addActionListener(event ->
                   new ClientCommandDialog(clientGUI.getFrame(), clientGUI, command, coords).setVisible(true));
@@ -86,23 +95,52 @@ public final class GameMasterCommandMenu {
     }
 
     /**
-     * Creates the Game Master commands the menu offers. The commands are built without a server or game manager,
-     * because only their name, help text and argument definitions are read here; the command itself is run by the
-     * server after the dialog sends it as a chat command.
+     * The commands to offer, chosen by how the menu was opened. Opened on a hex it offers the commands that act on
+     * that hex; opened without one it offers the commands that act on the whole map.
      *
-     * @return The Game Master commands, in menu order
+     * <p>Package-private so the rule itself can be tested: a command offered without a hex must not declare a hex or
+     * unit argument, because there would be nothing to fill it in from.</p>
+     *
+     * @param coords The hex the menu was opened on, or {@code null} when it was opened without one
+     *
+     * @return The commands to offer, in menu order
      */
-    private static List<ClientServerCommand> gameMasterCommands() {
-        // Change Unit Ownership, Destroy Unit and Rescue Unit live in the Edit Damage dialog now, not here. What is
-        // left is the hex and board tools, which act on the map rather than a single unit, plus the skill modifier.
+    static List<ClientServerCommand> commandsFor(@Nullable Coords coords) {
+        if (coords == null) {
+            LOGGER.debug("[GMCommands] menu opened without a hex - offering the board-wide commands");
+            return boardWideCommands();
+        }
+        LOGGER.debug("[GMCommands] menu opened on hex {} - offering the hex commands", coords.getBoardNum());
+        return hexTargetedCommands();
+    }
+
+    /**
+     * Creates the Game Master commands that act on the whole map. They are offered from the game commands strip,
+     * which implies no hex, rather than from a right-click on one hex in particular.
+     *
+     * <p>The commands are built without a server or game manager, because only their name, help text and argument
+     * definitions are read here; the command itself is run by the server after the dialog sends it as a chat
+     * command.</p>
+     *
+     * @return The board-wide Game Master commands, in menu order
+     */
+    private static List<ClientServerCommand> boardWideCommands() {
         return List.of(new ChangeWeatherCommand(null, null),
               new DisasterCommand(null, null),
-              new FirefightCommand(null, null),
-              new FirestarterCommand(null, null),
               new FirestormCommand(null, null),
               new NoFiresCommand(null, null),
-              new OrbitalBombardmentCommand(null, null),
-              new RemoveSmokeCommand(null, null),
-              new SkillModifierCommand(null, null));
+              new RemoveSmokeCommand(null, null));
+    }
+
+    /**
+     * Creates the Game Master commands that act on one hex. Each takes an X and a Y coordinate, which the dialog fills
+     * in from the hex that was right-clicked, so these are only offered from the board context menu.
+     *
+     * @return The hex-targeted Game Master commands, in menu order
+     */
+    private static List<ClientServerCommand> hexTargetedCommands() {
+        return List.of(new FirefightCommand(null, null),
+              new FirestarterCommand(null, null),
+              new OrbitalBombardmentCommand(null, null));
     }
 }

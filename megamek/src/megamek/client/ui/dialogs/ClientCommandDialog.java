@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -53,8 +53,13 @@ import megamek.server.commands.arguments.*;
  * @author Luana Coppio
  */
 public class ClientCommandDialog extends JDialog {
+
+    /** Where a hex spinner starts when the dialog was opened without a hex; board coordinates are one-based. */
+    private static final int FIRST_BOARD_COORDINATE = 1;
+
     private final ClientServerCommand command;
     private final ClientGUI client;
+    /** The hex the dialog acts on, or {@code null} when it was opened from a menu that had no hex to offer. */
     private final Coords coords;
     private int yPosition = 0;
 
@@ -64,6 +69,8 @@ public class ClientCommandDialog extends JDialog {
      * @param parent  The parent frame.
      * @param client  The client GUI.
      * @param command The command to render.
+     * @param coords  The hex the command should start on, or {@code null} when the dialog was opened without a hex.
+     *                Hex spinners then start at the first board coordinate and no unit is preselected.
      */
     public ClientCommandDialog(JFrame parent, ClientGUI client, ClientServerCommand command, @Nullable Coords coords) {
         super(parent, command.getLongName() + " /" + command.getName(), true);
@@ -267,17 +274,33 @@ public class ClientCommandDialog extends JDialog {
               1));
     }
 
+    /**
+     * A spinner for a hex X coordinate, starting on the hex the dialog was opened from. Board coordinates are
+     * displayed one-based, so the stored value is offset by one for display.
+     *
+     * <p>The dialog can be opened without a hex, from a menu that has no board position to offer. The spinner then
+     * starts at the first column and the gamemaster types the hex they want.</p>
+     */
     private JSpinner createSpinner(CoordXArgument coordX) {
+        int startingColumn = (coords == null) ? FIRST_BOARD_COORDINATE : coords.getX() + 1;
         return new JSpinner(new SpinnerNumberModel(
-              coords.getX() + 1,
+              startingColumn,
               0,
               1_000_000,
               1));
     }
 
+    /**
+     * A spinner for a hex Y coordinate, starting on the hex the dialog was opened from. Board coordinates are
+     * displayed one-based, so the stored value is offset by one for display.
+     *
+     * <p>The dialog can be opened without a hex, from a menu that has no board position to offer. The spinner then
+     * starts at the first row and the gamemaster types the hex they want.</p>
+     */
     private JSpinner createSpinner(CoordYArgument coordY) {
+        int startingRow = (coords == null) ? FIRST_BOARD_COORDINATE : coords.getY() + 1;
         return new JSpinner(new SpinnerNumberModel(
-              coords.getY() + 1,
+              startingRow,
               0,
               1_000_000,
               1));
@@ -308,10 +331,14 @@ public class ClientCommandDialog extends JDialog {
             comboBox.addItem(entity.getId() + ":" + entity.getDisplayName());
         }
 
-        var entitiesAtSpot = client.getClient().getGame().getEntities(coords);
-        if (entitiesAtSpot.hasNext()) {
-            var selectedEntity = entitiesAtSpot.next();
-            comboBox.setSelectedItem(selectedEntity.getId() + ":" + selectedEntity.getDisplayName());
+        // Opened from a hex, the unit standing there is the one the gamemaster means, so it starts selected. Opened
+        // without a hex there is nothing to preselect, and the full list is left for them to pick from.
+        if (coords != null) {
+            var entitiesAtSpot = client.getClient().getGame().getEntities(coords);
+            if (entitiesAtSpot.hasNext()) {
+                var selectedEntity = entitiesAtSpot.next();
+                comboBox.setSelectedItem(selectedEntity.getId() + ":" + selectedEntity.getDisplayName());
+            }
         }
 
         return comboBox;

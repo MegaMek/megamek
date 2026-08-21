@@ -54,7 +54,7 @@ class ScenarioV2PlayerCamoTest {
 
     @Test
     void factionsWithoutACamoGetTheirPlayerColorCamouflage() throws Exception {
-        IGame game = loadScenario("testresources/data/scenarios/test_setups/AeroDuelGroundMap.mms");
+        IGame game = loadScenario("testresources/data/scenarios/test_setups/AeroGroundAttackRun.mms");
 
         Set<String> seenCamoNames = new HashSet<>();
         for (Player player : game.getPlayersList()) {

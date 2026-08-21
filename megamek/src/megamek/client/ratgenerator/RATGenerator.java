@@ -169,8 +169,13 @@ public class RATGenerator {
         chassisIndex.clear();
         modelIndex.clear();
         eraSet.clear();
+        // Stay marked as initializing for the duration of the reload, and set that before clearing initialized so the
+        // two flags are never both clear. getInstance() starts a loader thread whenever it finds them both clear, and
+        // one started partway through a reload runs its own initialize() as soon as this one releases the lock. That
+        // second pass rebuilds every faction record but skips the era files, which are marked loaded by then, so the
+        // reloaded era parameters are replaced by empty ones.
+        initializing = true;
         initialized = false;
-        initializing = false;
         initialize(dir);
     }
 
@@ -1655,22 +1660,7 @@ public class RATGenerator {
         for (int x = 0; x < nl.getLength(); x++) {
             Node mainNode = nl.item(x);
             if (mainNode.getNodeName().equalsIgnoreCase("factions")) {
-                for (int i = 0; i < mainNode.getChildNodes().getLength(); i++) {
-                    Node wn = mainNode.getChildNodes().item(i);
-                    if (wn.getNodeName().equalsIgnoreCase("faction")) {
-                        String fKey = wn.getAttributes().getNamedItem("key").getTextContent();
-                        if (fKey != null) {
-                            FactionRecord rec = factions.get(fKey);
-                            if (rec != null) {
-                                rec.loadEra(wn, era);
-                            } else {
-                                LOGGER.error("Faction {} not found in {}", fKey, file.getPath());
-                            }
-                        } else {
-                            LOGGER.error("Faction key not found in {}", file.getPath());
-                        }
-                    }
-                }
+                loadEraFactionParameters(mainNode, era, file);
             } else if (mainNode.getNodeName().equalsIgnoreCase("units")) {
                 for (int i = 0; i < mainNode.getChildNodes().getLength(); i++) {
                     Node wn = mainNode.getChildNodes().item(i);
@@ -1684,6 +1674,65 @@ public class RATGenerator {
         unitFileAvailabilityLoader.loadEra(era);
 
         notifyListenersEraLoaded();
+    }
+
+    /**
+     * Loads the per-era faction parameters - the Clan, Star League and Omni percentages, the tech margins, the salvage
+     * table and the weight distributions - from the {@code <factions>} section of an era file.
+     *
+     * <p>Faction codes are resolved through {@link #getFaction(String)} rather than by a direct lookup, so a block
+     * still written under a retired code loads into the faction that absorbed it. The availability tokens in the
+     * {@code <units>} section have always resolved that way, but this section did not, so a faction whose code was
+     * retired silently lost every parameter for the eras written under the old code and fell back on its parent
+     * faction's tech mix. Clan Goliath Scorpion is the live case: its blocks from 3082 on are written as {@code CEI}
+     * and then {@code SE}, both aliases of {@code CGS}.</p>
+     *
+     * <p>Two shipped era files name both the retired and the surviving code, so two blocks can resolve to the same
+     * faction. They are merged in document order and the later block wins for each field it sets, which is harmless
+     * while the overlapping values agree but would quietly discard data if they diverged. That case is logged rather
+     * than resolved here, because the fix belongs in the data.</p>
+     *
+     * @param factionsNode the {@code <factions>} element of an era file
+     * @param era          the era bucket being loaded
+     * @param file         the era file being read, named in the log messages so a bad block can be found
+     */
+    private void loadEraFactionParameters(Node factionsNode, int era, File file) {
+        Set<String> factionsAlreadyLoadedFromThisFile = new HashSet<>();
+        NodeList factionNodes = factionsNode.getChildNodes();
+
+        for (int index = 0; index < factionNodes.getLength(); index++) {
+            Node factionNode = factionNodes.item(index);
+            if (!factionNode.getNodeName().equalsIgnoreCase("faction")) {
+                continue;
+            }
+
+            Node keyAttribute = factionNode.getAttributes().getNamedItem("key");
+            if (keyAttribute == null) {
+                LOGGER.error("Faction key not found in {}", file.getPath());
+                continue;
+            }
+
+            String factionKey = keyAttribute.getTextContent();
+            FactionRecord factionRecord = getFaction(factionKey);
+            if (factionRecord == null) {
+                LOGGER.error("Faction {} not found in {}", factionKey, file.getPath());
+                continue;
+            }
+
+            String canonicalKey = factionRecord.getKey();
+            if (!canonicalKey.equals(factionKey)) {
+                LOGGER.debug("[FactionAlias] era {} parameters written as {} loaded into {}",
+                      era, factionKey, canonicalKey);
+            }
+
+            if (!factionsAlreadyLoadedFromThisFile.add(canonicalKey)) {
+                LOGGER.warn("[FactionAlias] {} in {} loads era {} parameters into {}, which an earlier block in the" +
+                            " same file already filled; the values set here replace it. Merge the two blocks in the" +
+                            " data to resolve this.", factionKey, file.getName(), era, canonicalKey);
+            }
+
+            factionRecord.loadEra(factionNode, era);
+        }
     }
 
     /**

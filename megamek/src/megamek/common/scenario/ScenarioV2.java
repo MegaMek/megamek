@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -63,6 +63,7 @@ import megamek.common.game.GameType;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
 import megamek.common.hexArea.HexArea;
+import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
 import megamek.common.interfaces.IStartingPositions;
@@ -74,6 +75,8 @@ import megamek.common.jacksonAdapters.GeneralEventDeserializer;
 import megamek.common.jacksonAdapters.HexAreaDeserializer;
 import megamek.common.jacksonAdapters.MMUReader;
 import megamek.common.jacksonAdapters.MessageDeserializer;
+import megamek.common.jacksonAdapters.ObjectiveDeserializer;
+import megamek.common.jacksonAdapters.ObjectiveDeserializer.ObjectiveInfo;
 import megamek.common.jacksonAdapters.TriggerDeserializer;
 import megamek.common.jacksonAdapters.VictoryDeserializer;
 import megamek.common.jacksonAdapters.dtos.GroundObjectInfo;
@@ -102,6 +105,7 @@ public class ScenarioV2 implements Scenario {
     private static final String UNITS = "units";
     private static final String OPTIONS = "options";
     private static final String OBJECTS = "objects";
+    private static final String OBJECTIVES = "objectives";
     private static final String MESSAGES = "messages";
     private static final String END = "end";
     private static final String TRIGGER = "trigger";
@@ -444,6 +448,23 @@ public class ScenarioV2 implements Scenario {
                         ((AbstractGame) game).placeGroundObject(groundObjectInfo.position(),
                               groundObjectInfo.groundObject());
                     }
+                }
+            }
+
+            // Objective markers; the player they are listed under owns them (friendly side)
+            if (playerNode.has(OBJECTIVES) && (game instanceof AbstractGame abstractGame)) {
+                for (JsonNode objectiveNode : playerNode.get(OBJECTIVES)) {
+                    ObjectiveInfo objectiveInfo = ObjectiveDeserializer.parse(objectiveNode);
+                    objectiveInfo.marker().setOwnerId(player.getId());
+                    // stacking rule: only one objective can be in a single hex
+                    boolean hexHasObjective = abstractGame.getGroundObjects(objectiveInfo.position()).stream()
+                          .anyMatch(groundObject -> groundObject instanceof ObjectiveMarker);
+                    if (hexHasObjective) {
+                        throw new IllegalArgumentException("Objective " + objectiveInfo.marker().generalName()
+                              + " at " + objectiveInfo.position()
+                              + ": only one objective can be in a single hex");
+                    }
+                    abstractGame.placeGroundObject(objectiveInfo.position(), objectiveInfo.marker());
                 }
             }
 

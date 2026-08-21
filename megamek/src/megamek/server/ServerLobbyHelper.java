@@ -365,9 +365,9 @@ public class ServerLobbyHelper {
         correctC3Connections(game);
 
         gameManager.send(gameManager.createFullEntitiesPacket());
-        for (Player player : serverPlayers) {
-            gameManager.transmitPlayerUpdate(player);
-        }
+        // team changes alter who may see whose victory hex designations - re-send everyone so each
+        // client gets the data its new relations allow
+        gameManager.transmitAllPlayerUpdates();
     }
 
     /**

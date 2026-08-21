@@ -113,6 +113,19 @@ public class C3NetworkConfigurationsTest {
         return entity;
     }
 
+    /** Creates a Mek carrying a C3i computer. */
+    private Entity createC3iUnit() {
+        Entity entity = createBaseUnit("C3i");
+        try {
+            EquipmentType c3iComputer = EquipmentType.get("ISC3iUnit");
+            entity.addEquipment(c3iComputer, Mek.LOC_HEAD);
+        } catch (Exception ex) {
+            fail("Failed to add C3i equipment: " + ex.getMessage());
+        }
+        game.addEntity(entity);
+        return entity;
+    }
+
     private Entity createBaseUnit(String model) {
         Entity entity = new BipedMek();
         entity.setGame(game);
@@ -438,5 +451,76 @@ public class C3NetworkConfigurationsTest {
         int slaveBaseBV = slave.calculateBattleValue(true, true);
         assertEquals((int) Math.round(slaveBaseBV * 0.40), slave.getExtraC3BV(slaveBaseBV),
               "Slave in a 10-unit network gets the capped 40% bonus");
+    }
+
+    /** The membership-based BV gate must also work for the masterless systems (C3i branch). */
+    @Test
+    void testBVBonusForC3iNetwork() throws Exception {
+        Entity firstPeer = createC3iUnit();
+        Entity secondPeer = createC3iUnit();
+
+        int soloBaseBV = firstPeer.calculateBattleValue(true, true);
+        assertEquals(0, firstPeer.getExtraC3BV(soloBaseBV), "A solo C3i unit gets no network bonus");
+
+        C3Util.joinNh(game, new ArrayList<>(List.of(firstPeer, secondPeer)), firstPeer.getId(), true);
+
+        int baseBV = firstPeer.calculateBattleValue(true, true);
+        assertEquals((int) Math.round(baseBV * 0.10), firstPeer.getExtraC3BV(baseBV),
+              "Each member of a 2-unit C3i network gets the 10% bonus");
+        int secondBaseBV = secondPeer.calculateBattleValue(true, true);
+        assertEquals((int) Math.round(secondBaseBV * 0.10), secondPeer.getExtraC3BV(secondBaseBV),
+              "Both peers get the bonus");
+    }
+
+    /**
+     * Save/load is the classic C3 breakage: a Configuration 3 network must survive the UUID round trip that MUL
+     * files and lobby serialization use. Simulates the save (record each unit's master as a UUID reference, as
+     * EntityListFile does), the load (live master ids are gone), and the client-side rewire.
+     */
+    @Test
+    void testWireC3RestoresConfiguration3FromUUIDs() throws Exception {
+        Entity companyNode = createMasterUnit(3);
+        C3Util.setCompanyMaster(List.of(companyNode));
+        List<Entity> directSlaves = createSlaveUnits(6);
+        connect(directSlaves, companyNode);
+        Entity lanceMaster = createMasterUnit(1);
+        connect(List.of(lanceMaster), companyNode);
+        List<Entity> lanceSlaves = createSlaveUnits(3);
+        connect(lanceSlaves, lanceMaster);
+
+        List<Entity> members = new ArrayList<>(game.getC3NetworkMembers(companyNode));
+        assertEquals(11, members.size(), "Configuration 3 before the round trip");
+
+        // Save: every unit records its master as a UUID reference (the company commander references itself)
+        for (Entity member : members) {
+            Entity master = member.getC3Master();
+            if (master != null) {
+                member.setC3MasterIsUUIDAsString(master.getC3UUIDAsString());
+            }
+        }
+        // Load: live master ids are gone until wireC3 resolves the UUID references
+        for (Entity member : members) {
+            member.setC3Master(Entity.NONE, false);
+        }
+        for (Entity member : members) {
+            assertEquals(1, game.getC3NetworkMembers(member).size(),
+                  "Each unit stands alone after the simulated load");
+        }
+
+        for (Entity member : members) {
+            C3Util.wireC3(game, member);
+        }
+
+        assertTrue(companyNode.isC3CompanyCommander(), "Company designation survives the round trip");
+        assertEquals(11, game.getC3NetworkMembers(companyNode).size(), "Full network restored");
+        for (Entity directSlave : directSlaves) {
+            assertTrue(directSlave.C3MasterIs(companyNode), "Direct slaves reattach to the company node");
+        }
+        assertTrue(lanceMaster.C3MasterIs(companyNode), "The lance master reattaches to the company node");
+        for (Entity lanceSlave : lanceSlaves) {
+            assertTrue(lanceSlave.C3MasterIs(lanceMaster), "Lance slaves reattach to their lance master");
+        }
+        assertEquals(0, companyNode.calculateFreeC3MNodes(), "Restored network is at full master capacity");
+        assertEquals(0, companyNode.calculateFreeC3Nodes(), "Restored network is at full slave capacity");
     }
 }

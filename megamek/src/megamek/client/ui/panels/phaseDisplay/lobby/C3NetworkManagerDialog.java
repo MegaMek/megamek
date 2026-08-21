@@ -54,6 +54,7 @@ import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.JCheckBox;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.JButton;
@@ -113,11 +114,44 @@ public class C3NetworkManagerDialog extends JDialog {
     private JButton buildButton;
     private JButton discardPlanButton;
     private JButton autoFormButton;
+    private final JCheckBox autoAssignCheckBox =
+          new JCheckBox(Messages.getString("C3NetworkManagerDialog.chkAutoAssign"), true);
     private final JLabel forcePlanLabel = new JLabel(" ");
     private final JButton[] configStartButtons = new JButton[4];
 
-    /** The active configuration plan, or null; at most one plan exists at a time. */
-    private Blueprint blueprint;
+    /** The staged network plan cards, filled by the template buttons or Plan Force and applied on Build. */
+    private final List<Blueprint> plans = new ArrayList<>();
+
+    /** True while any plan card holds the given unit. */
+    private boolean planContainsUnit(int entityId) {
+        for (Blueprint plan : plans) {
+            if (plan.containsUnit(entityId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Removes the unit from every plan card, so it can never occupy two slots across cards. */
+    private void unassignFromPlans(int entityId) {
+        for (Blueprint plan : plans) {
+            plan.unassignUnit(entityId);
+        }
+    }
+
+    /** Filled slots across all plan cards. */
+    private int plansFilledCount() {
+        int filled = 0;
+        for (Blueprint plan : plans) {
+            filled += plan.filledCount();
+        }
+        return filled;
+    }
+
+    /** The plan card a slot reference points into. */
+    private Blueprint planAt(BlueprintSlotRef ref) {
+        return plans.get(ref.planIndex());
+    }
     private final DefaultMutableTreeNode treeRoot = new DefaultMutableTreeNode();
     private final DefaultTreeModel treeModel = new DefaultTreeModel(treeRoot);
     private final JTree networkTree = new JTree(treeModel);
@@ -216,8 +250,10 @@ public class C3NetworkManagerDialog extends JDialog {
         }
         autoFormButton = new JButton(Messages.getString("C3NetworkManagerDialog.btnAutoForm"));
         autoFormButton.setToolTipText(Messages.getString("C3NetworkManagerDialog.btnAutoForm.tooltip"));
-        autoFormButton.addActionListener(event -> executeForcePlan());
+        autoFormButton.addActionListener(event -> createForcePlanTemplates());
         configPickerPanel.add(autoFormButton);
+        autoAssignCheckBox.setToolTipText(Messages.getString("C3NetworkManagerDialog.chkAutoAssign.tooltip"));
+        configPickerPanel.add(autoAssignCheckBox);
 
         // Above the tree: what the whole force can field, so multiple networks read as the expected outcome
         JPanel networksHeaderPanel = new JPanel();
@@ -268,7 +304,7 @@ public class C3NetworkManagerDialog extends JDialog {
 
         discardPlanButton = new JButton(Messages.getString("C3NetworkManagerDialog.btnDiscardPlan"));
         discardPlanButton.addActionListener(event -> {
-            blueprint = null;
+            plans.clear();
             refresh();
         });
 
@@ -366,9 +402,11 @@ public class C3NetworkManagerDialog extends JDialog {
         formPeerNetworkButton.setVisible(!c3iUnits.isEmpty() || !navalC3Units.isEmpty() || !novaUnits.isEmpty());
 
         treeRoot.removeAllChildren();
-        if (blueprint != null) {
+        if (!plans.isEmpty()) {
             pruneStaleBlueprintAssignments();
-            treeRoot.add(buildBlueprintNode());
+            for (int planIndex = 0; planIndex < plans.size(); planIndex++) {
+                treeRoot.add(buildBlueprintNode(planIndex));
+            }
         }
         for (List<Entity> members : collectNetworks().values()) {
             treeRoot.add(buildNetworkNode(members));
@@ -392,8 +430,8 @@ public class C3NetworkManagerDialog extends JDialog {
         }
         updateConfigurationFeasibility(masterUnits, seedMasters, slaveUnits);
         updateForcePlanSummary();
-        buildButton.setVisible(blueprint != null);
-        discardPlanButton.setVisible(blueprint != null);
+        buildButton.setVisible(!plans.isEmpty());
+        discardPlanButton.setVisible(!plans.isEmpty());
         treeModel.reload();
         for (int row = 0; row < networkTree.getRowCount(); row++) {
             networkTree.expandRow(row);
@@ -621,12 +659,12 @@ public class C3NetworkManagerDialog extends JDialog {
     /** The kinds of slot a configuration template offers. */
     private enum SlotKind { COMPANY, DIRECT_SLAVE, LANCE_MASTER, LANCE_SLAVE }
 
-    /** One slot of the active configuration plan; lanceIndex/slotIndex are -1 where not applicable. */
-    private record BlueprintSlotRef(SlotKind kind, int lanceIndex, int slotIndex) {
+    /** One slot of a plan card; lanceIndex/slotIndex are -1 where not applicable. */
+    private record BlueprintSlotRef(int planIndex, SlotKind kind, int lanceIndex, int slotIndex) {
     }
 
-    /** The header row of the active configuration plan. */
-    private record BlueprintHeader() {
+    /** The header row of one plan card. */
+    private record BlueprintHeader(int planIndex) {
     }
 
     /**
@@ -658,6 +696,21 @@ public class C3NetworkManagerDialog extends JDialog {
                 case 4 -> new Blueprint(4, 9, new int[0]);
                 default -> new Blueprint(1, 0, new int[] { 3, 3, 2 });
             };
+        }
+
+        /** A remainder lance: one master (in the company slot) with up to three slaves. */
+        static Blueprint slaveLance() {
+            return new Blueprint(0, Entity.MAX_C3M_SUBORDINATES, new int[0]);
+        }
+
+        /** An all-master lance: one master heading up to three masters in slave roles (CR p.199). */
+        static Blueprint allMasterLance() {
+            return new Blueprint(-1, 0, new int[] { 0, 0, 0 });
+        }
+
+        /** True for the four company configurations; false for the remainder lance cards. */
+        boolean isCompanyConfiguration() {
+            return configurationNumber >= 1;
         }
 
         int totalSlots() {
@@ -774,7 +827,13 @@ public class C3NetworkManagerDialog extends JDialog {
         allMasters.addAll(seedMasters);
         for (int configNumber = 1; configNumber <= 4; configNumber++) {
             JButton configButton = configStartButtons[configNumber - 1];
-            boolean planIsThisConfig = (blueprint != null) && (blueprint.configurationNumber == configNumber);
+            boolean planIsThisConfig = false;
+            for (Blueprint plan : plans) {
+                if (plan.configurationNumber == configNumber) {
+                    planIsThisConfig = true;
+                    break;
+                }
+            }
             // Extra computers idle, so any unit with at least N computers can head Configuration N
             int companyCandidates = 0;
             for (Entity master : allMasters) {
@@ -923,33 +982,58 @@ public class C3NetworkManagerDialog extends JDialog {
         return taken;
     }
 
-    /** Builds every network of the current force plan in one action, through the ordinary lobby actions. */
-    private void executeForcePlan() {
+    /**
+     * Lays out the whole force plan as staged template cards - one per network - without building anything.
+     * With auto-assign checked the slots come pre-filled with the planned units; unchecked they arrive empty and
+     * the player drags units in. Build Network applies the cards.
+     */
+    private void createForcePlanTemplates() {
         ForcePlan plan = computeForcePlan();
         if (plan.isEmpty()) {
             return;
         }
-        blueprint = null;
-        for (PlannedCompany company : plan.companies()) {
-            lobby.lobbyActions.c3SetCompanyMaster(List.of(company.company()));
-            if (!company.directSlaves().isEmpty()) {
-                lobby.lobbyActions.c3Connect(new ArrayList<>(company.directSlaves()),
-                      company.company().getId(), false);
-            }
-            if (!company.lanceMasters().isEmpty()) {
-                lobby.lobbyActions.c3Connect(new ArrayList<>(company.lanceMasters()),
-                      company.company().getId(), false);
-            }
-            for (int lanceIndex = 0; lanceIndex < company.lanceMasters().size(); lanceIndex++) {
-                List<Entity> lanceSlaveUnits = company.lanceSlaves().get(lanceIndex);
-                if (!lanceSlaveUnits.isEmpty()) {
-                    lobby.lobbyActions.c3Connect(new ArrayList<>(lanceSlaveUnits),
-                          company.lanceMasters().get(lanceIndex).getId(), false);
-                }
+        if (plansFilledCount() > 0) {
+            int result = JOptionPane.showConfirmDialog(this,
+                  Messages.getString("C3NetworkManagerDialog.replaceForcePlan"),
+                  Messages.getString("C3NetworkManagerDialog.title"),
+                  JOptionPane.YES_NO_OPTION,
+                  JOptionPane.WARNING_MESSAGE);
+            if (result != JOptionPane.YES_OPTION) {
+                return;
             }
         }
+        plans.clear();
+        boolean autoAssign = autoAssignCheckBox.isSelected();
+        for (PlannedCompany company : plan.companies()) {
+            Blueprint card = Blueprint.forConfiguration(company.configurationNumber());
+            if (autoAssign) {
+                card.companyId = company.company().getId();
+                for (int slotIndex = 0; slotIndex < company.directSlaves().size(); slotIndex++) {
+                    card.directSlaves[slotIndex] = company.directSlaves().get(slotIndex).getId();
+                }
+                for (int lanceIndex = 0; lanceIndex < company.lanceMasters().size(); lanceIndex++) {
+                    card.lanceMasters[lanceIndex] = company.lanceMasters().get(lanceIndex).getId();
+                    List<Entity> lanceSlaveUnits = company.lanceSlaves().get(lanceIndex);
+                    for (int slotIndex = 0; slotIndex < lanceSlaveUnits.size(); slotIndex++) {
+                        card.lanceSlaves[lanceIndex][slotIndex] = lanceSlaveUnits.get(slotIndex).getId();
+                    }
+                }
+            }
+            plans.add(card);
+        }
         for (PlannedLance lance : plan.lances()) {
-            lobby.lobbyActions.c3Connect(new ArrayList<>(lance.members()), lance.master().getId(), false);
+            Blueprint card = lance.allMasters() ? Blueprint.allMasterLance() : Blueprint.slaveLance();
+            if (autoAssign) {
+                card.companyId = lance.master().getId();
+                for (int slotIndex = 0; slotIndex < lance.members().size(); slotIndex++) {
+                    if (lance.allMasters()) {
+                        card.lanceMasters[slotIndex] = lance.members().get(slotIndex).getId();
+                    } else {
+                        card.directSlaves[slotIndex] = lance.members().get(slotIndex).getId();
+                    }
+                }
+            }
+            plans.add(card);
         }
         refresh();
     }
@@ -976,9 +1060,9 @@ public class C3NetworkManagerDialog extends JDialog {
               String.join(" + ", planParts), plan.leftoverUnits()));
     }
 
-    /** Starts a configuration plan; a partially filled existing plan asks before being replaced. */
+    /** Starts a configuration plan; partially filled existing plans ask before being replaced. */
     private void startBlueprint(int configurationNumber) {
-        if ((blueprint != null) && (blueprint.filledCount() > 0)) {
+        if (plansFilledCount() > 0) {
             int result = JOptionPane.showConfirmDialog(this,
                   Messages.getString("C3NetworkManagerDialog.replacePlan", configurationNumber),
                   Messages.getString("C3NetworkManagerDialog.title"),
@@ -988,7 +1072,9 @@ public class C3NetworkManagerDialog extends JDialog {
                 return;
             }
         }
-        blueprint = Blueprint.forConfiguration(configurationNumber);
+        plans.clear();
+        Blueprint blueprint = Blueprint.forConfiguration(configurationNumber);
+        plans.add(blueprint);
         // Pre-assign the company slot when the choice is unambiguous, preferring an exact computer count so a
         // bigger multi-master is not burned on a small configuration when a fitting unit exists
         Entity exactCandidate = null;
@@ -1017,49 +1103,50 @@ public class C3NetworkManagerDialog extends JDialog {
         refresh();
     }
 
-    /** Drops slots whose unit was deleted or got networked outside the plan since the last refresh. */
+    /** Drops slots whose unit was deleted or got networked outside the plans since the last refresh. */
     private void pruneStaleBlueprintAssignments() {
-        List<Integer> staleIds = new ArrayList<>();
         for (Entity entity : game.inGameTWEntities()) {
-            if (blueprint.containsUnit(entity.getId()) && isNetworked(entity)) {
-                staleIds.add(entity.getId());
+            if (isNetworked(entity) && planContainsUnit(entity.getId())) {
+                unassignFromPlans(entity.getId());
             }
-        }
-        for (Integer staleId : staleIds) {
-            blueprint.unassignUnit(staleId);
         }
     }
 
-    /** The plan as a tree card: company slot on top, its direct slaves, then the lance blocks, all typed. */
-    private DefaultMutableTreeNode buildBlueprintNode() {
-        DefaultMutableTreeNode planNode = new DefaultMutableTreeNode(new BlueprintHeader());
+    /** One plan card as a tree node: company/master slot on top, its slaves, then the lance blocks, all typed. */
+    private DefaultMutableTreeNode buildBlueprintNode(int planIndex) {
+        Blueprint blueprint = plans.get(planIndex);
+        DefaultMutableTreeNode planNode = new DefaultMutableTreeNode(new BlueprintHeader(planIndex));
         DefaultMutableTreeNode companyNode = new DefaultMutableTreeNode(
-              new BlueprintSlotRef(SlotKind.COMPANY, -1, -1));
+              new BlueprintSlotRef(planIndex, SlotKind.COMPANY, -1, -1));
         planNode.add(companyNode);
         for (int slotIndex = 0; slotIndex < blueprint.directSlaves.length; slotIndex++) {
             companyNode.add(new DefaultMutableTreeNode(
-                  new BlueprintSlotRef(SlotKind.DIRECT_SLAVE, -1, slotIndex)));
+                  new BlueprintSlotRef(planIndex, SlotKind.DIRECT_SLAVE, -1, slotIndex)));
         }
         for (int lanceIndex = 0; lanceIndex < blueprint.lanceMasters.length; lanceIndex++) {
             DefaultMutableTreeNode lanceMasterNode = new DefaultMutableTreeNode(
-                  new BlueprintSlotRef(SlotKind.LANCE_MASTER, lanceIndex, -1));
+                  new BlueprintSlotRef(planIndex, SlotKind.LANCE_MASTER, lanceIndex, -1));
             companyNode.add(lanceMasterNode);
             for (int slotIndex = 0; slotIndex < blueprint.lanceSlaves[lanceIndex].length; slotIndex++) {
                 lanceMasterNode.add(new DefaultMutableTreeNode(
-                      new BlueprintSlotRef(SlotKind.LANCE_SLAVE, lanceIndex, slotIndex)));
+                      new BlueprintSlotRef(planIndex, SlotKind.LANCE_SLAVE, lanceIndex, slotIndex)));
             }
         }
         return planNode;
     }
 
-    /** True when the unit's equipment fits the slot: exact company computer count, master, or slave. */
+    /** True when the unit's equipment fits the slot: company computer count, master, or slave. */
     private boolean unitFitsSlot(Entity unit, BlueprintSlotRef ref) {
         if (unit.hasNhC3() || (unit.getOwnerId() != localPlayerId) || isNetworked(unit)) {
             return false;
         }
+        Blueprint blueprint = planAt(ref);
         return switch (ref.kind()) {
-            // At least N computers: extra computers idle, so a triple-master can head Configuration 1 or 2 too
-            case COMPANY -> unit.getOperableC3MCount() >= blueprint.configurationNumber;
+            // At least N computers: extra computers idle, so a triple-master can head Configuration 1 or 2 too.
+            // On a lance card the company slot is simply the lance master - any master fits.
+            case COMPANY -> blueprint.isCompanyConfiguration()
+                  ? (unit.getOperableC3MCount() >= blueprint.configurationNumber)
+                  : (unit.getOperableC3MCount() > 0);
             case LANCE_MASTER -> unit.getOperableC3MCount() > 0;
             case DIRECT_SLAVE, LANCE_SLAVE -> unit.hasC3S() && (unit.getOperableC3MCount() == 0);
         };
@@ -1072,44 +1159,47 @@ public class C3NetworkManagerDialog extends JDialog {
             statusLabel.setText(Messages.getString("C3NetworkManagerDialog.wrongSlotUnit"));
             return;
         }
-        blueprint.unassignUnit(firstUnit.getId());
-        blueprint.setSlotValue(ref, firstUnit.getId());
+        unassignFromPlans(firstUnit.getId());
+        planAt(ref).setSlotValue(ref, firstUnit.getId());
         if (droppedUnits.size() > 1) {
             autoFillBlueprint(droppedUnits.subList(1, droppedUnits.size()));
         }
         refresh();
     }
 
-    /** Fills each unit into the first empty slot it fits: company, then lance masters, then slave slots. */
+    /** Fills each unit into the first empty slot it fits, across all plan cards in order. */
     private void autoFillBlueprint(List<Entity> droppedUnits) {
         for (Entity unit : droppedUnits) {
             BlueprintSlotRef emptySlot = firstEmptyFittingSlot(unit);
             if (emptySlot != null) {
-                blueprint.unassignUnit(unit.getId());
-                blueprint.setSlotValue(emptySlot, unit.getId());
+                unassignFromPlans(unit.getId());
+                planAt(emptySlot).setSlotValue(emptySlot, unit.getId());
             }
         }
         refresh();
     }
 
-    /** The first empty slot the unit fits, in fill order, or {@code null} when no fitting slot is open. */
+    /** The first empty slot the unit fits, in fill order across all cards, or {@code null} when none is open. */
     @Nullable
     private BlueprintSlotRef firstEmptyFittingSlot(Entity unit) {
         List<BlueprintSlotRef> slotOrder = new ArrayList<>();
-        slotOrder.add(new BlueprintSlotRef(SlotKind.COMPANY, -1, -1));
-        for (int lanceIndex = 0; lanceIndex < blueprint.lanceMasters.length; lanceIndex++) {
-            slotOrder.add(new BlueprintSlotRef(SlotKind.LANCE_MASTER, lanceIndex, -1));
-        }
-        for (int slotIndex = 0; slotIndex < blueprint.directSlaves.length; slotIndex++) {
-            slotOrder.add(new BlueprintSlotRef(SlotKind.DIRECT_SLAVE, -1, slotIndex));
-        }
-        for (int lanceIndex = 0; lanceIndex < blueprint.lanceSlaves.length; lanceIndex++) {
-            for (int slotIndex = 0; slotIndex < blueprint.lanceSlaves[lanceIndex].length; slotIndex++) {
-                slotOrder.add(new BlueprintSlotRef(SlotKind.LANCE_SLAVE, lanceIndex, slotIndex));
+        for (int planIndex = 0; planIndex < plans.size(); planIndex++) {
+            Blueprint blueprint = plans.get(planIndex);
+            slotOrder.add(new BlueprintSlotRef(planIndex, SlotKind.COMPANY, -1, -1));
+            for (int lanceIndex = 0; lanceIndex < blueprint.lanceMasters.length; lanceIndex++) {
+                slotOrder.add(new BlueprintSlotRef(planIndex, SlotKind.LANCE_MASTER, lanceIndex, -1));
+            }
+            for (int slotIndex = 0; slotIndex < blueprint.directSlaves.length; slotIndex++) {
+                slotOrder.add(new BlueprintSlotRef(planIndex, SlotKind.DIRECT_SLAVE, -1, slotIndex));
+            }
+            for (int lanceIndex = 0; lanceIndex < blueprint.lanceSlaves.length; lanceIndex++) {
+                for (int slotIndex = 0; slotIndex < blueprint.lanceSlaves[lanceIndex].length; slotIndex++) {
+                    slotOrder.add(new BlueprintSlotRef(planIndex, SlotKind.LANCE_SLAVE, lanceIndex, slotIndex));
+                }
             }
         }
         for (BlueprintSlotRef ref : slotOrder) {
-            if ((blueprint.slotValue(ref) == null) && unitFitsSlot(unit, ref)) {
+            if ((planAt(ref).slotValue(ref) == null) && unitFitsSlot(unit, ref)) {
                 return ref;
             }
         }
@@ -1117,38 +1207,48 @@ public class C3NetworkManagerDialog extends JDialog {
     }
 
     /**
-     * Applies the plan in dependency order - company master designation, direct slaves, lance masters, then each
-     * lance's slaves - through the same lobby actions as everything else, and discards the plan when done. Slaves
-     * whose lance master slot is empty are left unassigned and reported.
+     * Applies every plan card in dependency order - company master designation, direct slaves, lance masters,
+     * then each lance's slaves - through the same lobby actions as everything else, and discards the plans when
+     * done. Cards without their company/master unit and slaves whose lance master slot is empty are skipped and
+     * reported.
      */
     private void buildNetworkFromBlueprint() {
         pruneStaleBlueprintAssignments();
-        Entity company = (blueprint.companyId == null) ? null : game.getEntity(blueprint.companyId);
-        if (company == null) {
+        int orphanSlaves = 0;
+        boolean builtAnything = false;
+        for (Blueprint blueprint : plans) {
+            Entity company = (blueprint.companyId == null) ? null : game.getEntity(blueprint.companyId);
+            if (company == null) {
+                orphanSlaves += blueprint.filledCount();
+                continue;
+            }
+            builtAnything = true;
+            if (blueprint.isCompanyConfiguration()) {
+                lobby.lobbyActions.c3SetCompanyMaster(List.of(company));
+            }
+            List<Entity> directSlaveUnits = resolveUnits(blueprint.directSlaves);
+            if (!directSlaveUnits.isEmpty()) {
+                lobby.lobbyActions.c3Connect(directSlaveUnits, company.getId(), false);
+            }
+            List<Entity> lanceMasterUnits = resolveUnits(blueprint.lanceMasters);
+            if (!lanceMasterUnits.isEmpty()) {
+                lobby.lobbyActions.c3Connect(lanceMasterUnits, company.getId(), false);
+            }
+            for (int lanceIndex = 0; lanceIndex < blueprint.lanceMasters.length; lanceIndex++) {
+                List<Entity> lanceSlaveUnits = resolveUnits(blueprint.lanceSlaves[lanceIndex]);
+                Integer lanceMasterId = blueprint.lanceMasters[lanceIndex];
+                if (lanceMasterId == null) {
+                    orphanSlaves += lanceSlaveUnits.size();
+                } else if (!lanceSlaveUnits.isEmpty()) {
+                    lobby.lobbyActions.c3Connect(lanceSlaveUnits, lanceMasterId, false);
+                }
+            }
+        }
+        if (!builtAnything) {
             statusLabel.setText(Messages.getString("C3NetworkManagerDialog.buildNeedsCompany"));
             return;
         }
-        lobby.lobbyActions.c3SetCompanyMaster(List.of(company));
-
-        List<Entity> directSlaveUnits = resolveUnits(blueprint.directSlaves);
-        if (!directSlaveUnits.isEmpty()) {
-            lobby.lobbyActions.c3Connect(directSlaveUnits, company.getId(), false);
-        }
-        List<Entity> lanceMasterUnits = resolveUnits(blueprint.lanceMasters);
-        if (!lanceMasterUnits.isEmpty()) {
-            lobby.lobbyActions.c3Connect(lanceMasterUnits, company.getId(), false);
-        }
-        int orphanSlaves = 0;
-        for (int lanceIndex = 0; lanceIndex < blueprint.lanceMasters.length; lanceIndex++) {
-            List<Entity> lanceSlaveUnits = resolveUnits(blueprint.lanceSlaves[lanceIndex]);
-            Integer lanceMasterId = blueprint.lanceMasters[lanceIndex];
-            if (lanceMasterId == null) {
-                orphanSlaves += lanceSlaveUnits.size();
-            } else if (!lanceSlaveUnits.isEmpty()) {
-                lobby.lobbyActions.c3Connect(lanceSlaveUnits, lanceMasterId, false);
-            }
-        }
-        blueprint = null;
+        plans.clear();
         refresh();
         if (orphanSlaves > 0) {
             statusLabel.setText(Messages.getString("C3NetworkManagerDialog.builtOrphans", orphanSlaves));
@@ -1454,7 +1554,7 @@ public class C3NetworkManagerDialog extends JDialog {
               boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             if (value instanceof Entity entity) {
-                String plannedSuffix = ((blueprint != null) && blueprint.containsUnit(entity.getId()))
+                String plannedSuffix = planContainsUnit(entity.getId())
                       ? " <font color='" + MUTED_COLOR + "'>"
                             + Messages.getString("C3NetworkManagerDialog.plannedSuffix") + "</font>"
                       : "";
@@ -1515,13 +1615,22 @@ public class C3NetworkManagerDialog extends JDialog {
                 setText("<html><i><font color='" + MUTED_COLOR + "'>"
                       + Messages.getString("C3NetworkManagerDialog.startHint") + "</font></i></html>");
                 setIcon(null);
-            } else if ((userObject instanceof BlueprintHeader) && (blueprint != null)) {
-                setText("<html><b><font color='" + COMPANY_COLOR + "'>"
-                      + Messages.getString("C3NetworkManagerDialog.planHeader",
-                            blueprint.configurationNumber, blueprint.filledCount(), blueprint.totalSlots())
-                      + "</font></b></html>");
+            } else if ((userObject instanceof BlueprintHeader header) && (header.planIndex() < plans.size())) {
+                Blueprint blueprint = plans.get(header.planIndex());
+                String headerText;
+                if (blueprint.isCompanyConfiguration()) {
+                    headerText = Messages.getString("C3NetworkManagerDialog.planHeader",
+                          blueprint.configurationNumber, blueprint.filledCount(), blueprint.totalSlots());
+                } else if (blueprint.configurationNumber == 0) {
+                    headerText = Messages.getString("C3NetworkManagerDialog.planHeaderLance",
+                          blueprint.filledCount(), blueprint.totalSlots());
+                } else {
+                    headerText = Messages.getString("C3NetworkManagerDialog.planHeaderAllMaster",
+                          blueprint.filledCount(), blueprint.totalSlots());
+                }
+                setText("<html><b><font color='" + COMPANY_COLOR + "'>" + headerText + "</font></b></html>");
                 setIcon(null);
-            } else if ((userObject instanceof BlueprintSlotRef slotRef) && (blueprint != null)) {
+            } else if ((userObject instanceof BlueprintSlotRef slotRef) && (slotRef.planIndex() < plans.size())) {
                 setText(blueprintSlotLabel(slotRef));
                 setIcon(null);
             }
@@ -1531,13 +1640,15 @@ public class C3NetworkManagerDialog extends JDialog {
 
     /** The label for one plan slot: the assigned unit in its lance color, or the typed empty-slot prompt. */
     private String blueprintSlotLabel(BlueprintSlotRef slotRef) {
+        Blueprint blueprint = planAt(slotRef);
         String color = ((slotRef.kind() == SlotKind.COMPANY) || (slotRef.kind() == SlotKind.DIRECT_SLAVE))
               ? COMPANY_COLOR : LANCE_COLORS[slotRef.lanceIndex() % LANCE_COLORS.length];
         Integer assignedId = blueprint.slotValue(slotRef);
         Entity assigned = (assignedId == null) ? null : game.getEntity(assignedId);
         if (assigned != null) {
             String roleKey = switch (slotRef.kind()) {
-                case COMPANY -> "C3NetworkManagerDialog.roleCompanyMaster";
+                case COMPANY -> blueprint.isCompanyConfiguration()
+                      ? "C3NetworkManagerDialog.roleCompanyMaster" : "C3NetworkManagerDialog.roleLanceMaster";
                 case LANCE_MASTER -> "C3NetworkManagerDialog.roleLanceMaster";
                 case DIRECT_SLAVE, LANCE_SLAVE -> "C3NetworkManagerDialog.roleSlave";
             };
@@ -1633,11 +1744,11 @@ public class C3NetworkManagerDialog extends JDialog {
                     formPeerNetworkFrom(droppedUnits, seed.system());
                     return true;
                 }
-                if ((userObject instanceof BlueprintSlotRef slotRef) && (blueprint != null)) {
+                if ((userObject instanceof BlueprintSlotRef slotRef) && !plans.isEmpty()) {
                     assignDroppedToSlot(droppedUnits, slotRef);
                     return true;
                 }
-                if ((userObject instanceof BlueprintHeader) && (blueprint != null)) {
+                if ((userObject instanceof BlueprintHeader) && !plans.isEmpty()) {
                     autoFillBlueprint(droppedUnits);
                     return true;
                 }
@@ -1658,12 +1769,10 @@ public class C3NetworkManagerDialog extends JDialog {
                 // Blank-space drop: disconnect members dragged back from a network, clear planned units out of
                 // their blueprint slots, and demote seeds/solo company commanders back to ordinary roster units
                 boolean anythingCleared = false;
-                if (blueprint != null) {
-                    for (Entity unit : droppedUnits) {
-                        if (blueprint.containsUnit(unit.getId())) {
-                            blueprint.unassignUnit(unit.getId());
-                            anythingCleared = true;
-                        }
+                for (Entity unit : droppedUnits) {
+                    if (planContainsUnit(unit.getId())) {
+                        unassignFromPlans(unit.getId());
+                        anythingCleared = true;
                     }
                 }
                 List<Entity> networkedUnits = new ArrayList<>();

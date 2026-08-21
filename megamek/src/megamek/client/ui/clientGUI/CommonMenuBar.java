@@ -202,6 +202,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
           "CommonMenuBar.viewToggleFovDarken"));
     private final JCheckBoxMenuItem toggleFovSpotting = new JCheckBoxMenuItem(getString(
           "CommonMenuBar.viewToggleFovSpotting"));
+    private final JCheckBoxMenuItem toggleShowObjects = new JCheckBoxMenuItem(getString(
+          "CommonMenuBar.viewToggleShowObjects"));
     private final JCheckBoxMenuItem toggleFiringSolutions = new JCheckBoxMenuItem(getString(
           "CommonMenuBar.viewToggleFiringSolutions"));
     private final JCheckBoxMenuItem toggleCFWarning = new JCheckBoxMenuItem(getString(
@@ -413,6 +415,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(toggleFovHighlight, menu, VIEW_TOGGLE_FOV_HIGHLIGHT, GUIP.getFovHighlight());
         initMenuItem(toggleFovSpotting, menu, VIEW_TOGGLE_FOV_SPOTTING, GUIP.getFovSpottingMode());
         toggleFovSpotting.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFovSpottingTooltip"));
+        initMenuItem(toggleShowObjects, menu, VIEW_TOGGLE_SHOW_OBJECTS, GUIP.getShowObjectiveOverlays());
+        toggleShowObjects.setToolTipText(Messages.getString("CommonMenuBar.viewToggleShowObjectsTooltip"));
         initMenuItem(viewMovementEnvelope, menu, VIEW_MOVE_ENV, GUIP.getMoveEnvelope());
         initMenuItem(viewMovModEnvelope, menu, VIEW_MOVE_MOD_ENV);
         menu.addSeparator();
@@ -466,6 +470,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private void setKeyBinds() {
         toggleSensorRange.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.SENSOR_RANGE));
         toggleFovSpotting.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.FOV_SPOTTING));
+        toggleShowObjects.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.SHOW_OBJECTS));
         toggleFieldOfFire.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.FIELD_FIRE));
         toggleIsometric.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.TOGGLE_ISO));
         viewMovementEnvelope.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.MOVE_ENVELOPE));
@@ -705,6 +710,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
                 // Use invokeLater to avoid interfering with accelerator processing
                 final boolean newState = (Boolean) e.getNewValue();
                 javax.swing.SwingUtilities.invokeLater(() -> toggleFovSpotting.setSelected(newState));
+            }
+            case GUIPreferences.SHOW_OBJECTIVE_OVERLAYS -> {
+                final boolean newState = (Boolean) e.getNewValue();
+                javax.swing.SwingUtilities.invokeLater(() -> toggleShowObjects.setSelected(newState));
             }
             case GUIPreferences.SHOW_KEYBINDS_OVERLAY -> viewKeybindsOverlay.setSelected((Boolean) e.getNewValue());
             case GUIPreferences.SHOW_PLANETARY_CONDITIONS_OVERLAY ->

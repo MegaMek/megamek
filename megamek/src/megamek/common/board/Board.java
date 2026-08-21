@@ -59,6 +59,7 @@ import megamek.common.enums.BasementType;
 import megamek.common.equipment.FuelTank;
 import megamek.common.event.board.BoardEvent;
 import megamek.common.event.board.BoardListener;
+import megamek.common.game.Game;
 import megamek.common.hexArea.HexArea;
 import megamek.common.loaders.MapSettings;
 import megamek.common.units.AbstractBuildingEntity;
@@ -941,6 +942,12 @@ public class Board implements Serializable {
         int maxX = width - startingOffset;
         int maxy = height - startingOffset;
 
+        // Walk on initiative only allows for 1 hex width deployment zones
+        if (Game.rulesManager.getRulesGame().walkOnInitiative()) {
+            startingWidth = 1;
+        }
+
+
         return switch (zoneType) {
             case START_ANY -> (((startingAnyNWx == Entity.STARTING_ANY_NONE) || (c.getX() >= startingAnyNWx))
                   && ((startingAnySEx == Entity.STARTING_ANY_NONE) || (c.getX() <= startingAnySEx))
@@ -1379,8 +1386,8 @@ public class Board implements Serializable {
     }
 
     /**
-     * Record that a fire at the given coordinates was started by a fuel-fed flamer (TO:AuE p.153). Such fires are harder
-     * for firefighting engineers to extinguish.
+     * Record that a fire at the given coordinates was started by a fuel-fed flamer (TO:AuE p.153). Such fires are
+     * harder for firefighting engineers to extinguish.
      *
      * @param coords the <code>Coords</code> of the flamer-started fire
      */

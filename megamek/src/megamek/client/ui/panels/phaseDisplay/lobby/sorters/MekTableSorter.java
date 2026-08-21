@@ -105,15 +105,26 @@ public abstract class MekTableSorter implements Comparator<Entity> {
      */
     public static Comparator<Entity> keepingC3NetworksTogether(List<Entity> entities,
           Comparator<Entity> baseSorter) {
+        // Two passes over the list, no per-entity game scans: a net id shared by 2+ carrier-stack roots in the
+        // list marks a network; solo units keep a null key and sort as ordinary units
+        Map<String, Integer> netIdCounts = new HashMap<>();
+        for (Entity entity : entities) {
+            String networkId = computeNetworkKey(entity);
+            if (networkId != null) {
+                netIdCounts.merge(networkId, 1, Integer::sum);
+            }
+        }
         Map<Integer, String> networkKeys = new HashMap<>();
         Map<String, Entity> representatives = new HashMap<>();
         for (Entity entity : entities) {
             String networkId = computeNetworkKey(entity);
-            networkKeys.put(entity.getId(), networkId);
-            if (networkId != null) {
-                representatives.merge(networkId, entity,
-                      (first, second) -> (first.getId() <= second.getId()) ? first : second);
+            if ((networkId == null) || (netIdCounts.getOrDefault(networkId, 0) < 2)) {
+                networkKeys.put(entity.getId(), null);
+                continue;
             }
+            networkKeys.put(entity.getId(), networkId);
+            representatives.merge(networkId, entity,
+                  (first, second) -> (first.getId() <= second.getId()) ? first : second);
         }
         return (a, b) -> {
             String netA = networkKeys.get(a.getId());
@@ -147,23 +158,18 @@ public abstract class MekTableSorter implements Comparator<Entity> {
             if (depth >= pathB.size()) {
                 return 1;
             }
-            return pathA.get(depth).getId() - pathB.get(depth).getId();
+            return Integer.compare(pathA.get(depth).getId(), pathB.get(depth).getId());
         };
     }
 
-    /** The C3 net id of the unit's carrier-stack root when it is networked with others, {@code null} otherwise. */
+    /** The C3 net id of the unit's carrier-stack root, {@code null} when the root carries no C3 system. */
     @Nullable
     private static String computeNetworkKey(Entity entity) {
         Entity root = carrierPath(entity).get(0);
-        if (!root.hasAnyC3System() || (root.getGame() == null) || (root.getC3NetId() == null)) {
+        if (!root.hasAnyC3System()) {
             return null;
         }
-        for (Entity other : root.getGame().inGameTWEntities()) {
-            if (!other.equals(root) && root.onSameC3NetworkAs(other)) {
-                return root.getC3NetId();
-            }
-        }
-        return null;
+        return root.getC3NetId();
     }
 
     /** Guards against a malformed master chain looping while walking up to the network top. */

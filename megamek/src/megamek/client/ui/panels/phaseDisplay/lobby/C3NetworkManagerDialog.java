@@ -442,8 +442,14 @@ public class C3NetworkManagerDialog extends JDialog {
             initialSelectionIds.clear();
         }
 
+        int unassignedUnitCount = 0;
+        for (int index = 0; index < rosterModel.size(); index++) {
+            if (rosterModel.get(index) instanceof Entity) {
+                unassignedUnitCount++;
+            }
+        }
         statusLabel.setText(Messages.getString("C3NetworkManagerDialog.status",
-              rosterModel.size(), treeRoot.getChildCount()));
+              unassignedUnitCount, treeRoot.getChildCount()));
     }
 
     /** Selects the units handed over by the right-click flow: roster rows and network tree nodes alike. */
@@ -1689,9 +1695,9 @@ public class C3NetworkManagerDialog extends JDialog {
             if (selection.isEmpty()) {
                 return null;
             }
-            StringBuilder ids = new StringBuilder();
+            StringBuilder ids = new StringBuilder(DRAG_PAYLOAD_MARKER);
             for (Entity entity : selection) {
-                if (!ids.isEmpty()) {
+                if (ids.length() > DRAG_PAYLOAD_MARKER.length()) {
                     ids.append(",");
                 }
                 ids.append(entity.getId());
@@ -1833,12 +1839,18 @@ public class C3NetworkManagerDialog extends JDialog {
         statusLabel.setText(Messages.getString("C3NetworkManagerDialog.dropOnMaster"));
     }
 
+    /** Marks drag payloads created by this dialog, so text dragged in from elsewhere is never taken as ids. */
+    private static final String DRAG_PAYLOAD_MARKER = "C3NetworkManager:";
+
     /** The units named in a drop's id list; empty when the payload is not one of ours. */
     private List<Entity> droppedUnits(TransferHandler.TransferSupport support) {
         List<Entity> units = new ArrayList<>();
         try {
             String payload = (String) support.getTransferable().getTransferData(DataFlavor.stringFlavor);
-            for (String idToken : payload.split(",")) {
+            if (!payload.startsWith(DRAG_PAYLOAD_MARKER)) {
+                return List.of();
+            }
+            for (String idToken : payload.substring(DRAG_PAYLOAD_MARKER.length()).split(",")) {
                 Entity entity = game.getEntity(MathUtility.parseInt(idToken.trim(), Entity.NONE));
                 if (entity != null) {
                     units.add(entity);

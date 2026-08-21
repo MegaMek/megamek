@@ -294,6 +294,21 @@
               <AppenderRef ref="MegaMekLog" />
           </Logger>
         -->
+        <!--
+          Objective / control point diagnostics, silent by default (parent "megamek" logger at info).
+          Client lines are tagged [VictoryHex] (control points placed or removed in the Victory Setup
+          phase), server lines [Objective] (markers placed at game start, off-board or stacked markers
+          left unplaced, markers returned to the lobby on a game reset, and the End Phase control
+          resolution). Uncomment to diagnose "why is this objective uncontrolled" - the control
+          resolution logs every in-range unit's exclusion reason and the per-side unit counts; leave
+          commented for normal play.
+
+          <Logger name="megamek.feature.VictoryHex" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
         <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

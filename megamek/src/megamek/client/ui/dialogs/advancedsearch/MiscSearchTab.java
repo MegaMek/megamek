@@ -38,6 +38,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -53,6 +54,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.BooksIcon;
 import megamek.client.ui.dialogs.SourceChooserDialog;
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
@@ -83,6 +85,7 @@ class MiscSearchTab extends JPanel {
     final JComboBox<String> cFailedToLoadEquipment = new JComboBox<>();
     final JComboBox<String> cClanEngine = new JComboBox<>();
     final JTextField tSource = new JTextField(24);
+    final RulesRefPicker rulesRefs = new RulesRefPicker();
     final JTextField tMULId = new JTextField(4);
     final JTextField tStartYear = new JTextField(4);
     final JTextField tEndYear = new JTextField(4);
@@ -114,30 +117,31 @@ class MiscSearchTab extends JPanel {
         addLabeledControl(baseAttributesPanel, 0, 2, Messages.getString("MekSelectorDialog.Search.MULId"), tMULId);
 
         addSourceControl(baseAttributesPanel, 1);
+        addRulesRefsControl(baseAttributesPanel, 2);
 
-        addLabeledControl(baseAttributesPanel, 2, 0, Messages.getString("MekSelectorDialog.Search.Year"),
+        addLabeledControl(baseAttributesPanel, 3, 0, Messages.getString("MekSelectorDialog.Search.Year"),
               createRangeControl(tStartYear, tEndYear));
-        addLabeledControl(baseAttributesPanel, 2, 1,
+        addLabeledControl(baseAttributesPanel, 3, 1,
               Messages.getString("MekSelectorDialog.Search.FailedToLoadEquipment"), cFailedToLoadEquipment);
-        addLabeledControl(baseAttributesPanel, 2, 2, Messages.getString("MekSelectorDialog.Search.Invalid"),
+        addLabeledControl(baseAttributesPanel, 3, 2, Messages.getString("MekSelectorDialog.Search.Invalid"),
               cInvalid);
 
-        addLabeledControl(baseAttributesPanel, 3, 0, Messages.getString("MekSelectorDialog.Search.BV"),
+        addLabeledControl(baseAttributesPanel, 4, 0, Messages.getString("MekSelectorDialog.Search.BV"),
               createRangeControl(tStartBV, tEndBV));
-        addLabeledControl(baseAttributesPanel, 3, 1, Messages.getString("MekSelectorDialog.Search.Tons"),
+        addLabeledControl(baseAttributesPanel, 4, 1, Messages.getString("MekSelectorDialog.Search.Tons"),
               createRangeControl(tStartTons, tEndTons));
-        addLabeledControl(baseAttributesPanel, 3, 2, Messages.getString("MekSelectorDialog.Search.Armor"), cArmor);
+        addLabeledControl(baseAttributesPanel, 4, 2, Messages.getString("MekSelectorDialog.Search.Armor"), cArmor);
 
-        addLabeledControl(baseAttributesPanel, 4, 0, Messages.getString("MekSelectorDialog.Search.Walk"),
+        addLabeledControl(baseAttributesPanel, 5, 0, Messages.getString("MekSelectorDialog.Search.Walk"),
               createRangeControl(tStartWalk, tEndWalk));
-        addLabeledControl(baseAttributesPanel, 4, 1, Messages.getString("MekSelectorDialog.Search.Jump"),
+        addLabeledControl(baseAttributesPanel, 5, 1, Messages.getString("MekSelectorDialog.Search.Jump"),
               createRangeControl(tStartJump, tEndJump));
-        addLabeledControl(baseAttributesPanel, 4, 2, Messages.getString("MekSelectorDialog.Search.TankTurrets"),
+        addLabeledControl(baseAttributesPanel, 5, 2, Messages.getString("MekSelectorDialog.Search.TankTurrets"),
               createRangeControl(tStartTankTurrets, tEndTankTurrets));
 
-        addLabeledControl(baseAttributesPanel, 5, 0, Messages.getString("MekSelectorDialog.Search.LowerArms"),
+        addLabeledControl(baseAttributesPanel, 6, 0, Messages.getString("MekSelectorDialog.Search.LowerArms"),
               createRangeControl(tStartLowerArms, tEndLowerArms));
-        addLabeledControl(baseAttributesPanel, 5, 1, Messages.getString("MekSelectorDialog.Search.Hands"),
+        addLabeledControl(baseAttributesPanel, 6, 1, Messages.getString("MekSelectorDialog.Search.Hands"),
               createRangeControl(tStartHands, tEndHands));
 
         return baseAttributesPanel;
@@ -182,6 +186,24 @@ class MiscSearchTab extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = attributeControlInsets(row);
         panel.add(sourceControl, gbc);
+    }
+
+    private void addRulesRefsControl(JPanel panel, int row) {
+        String tooltip = Messages.getString("MekSelectorDialog.Search.RulesRefs.TT");
+        JLabel label = addAttributeLabel(panel, row, 0,
+              Messages.getString("MekSelectorDialog.Search.RulesRefs"));
+        label.setToolTipText(tooltip);
+        rulesRefs.setToolTipText(tooltip);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = row;
+        gbc.gridwidth = 5;
+        gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = attributeControlInsets(row);
+        panel.add(rulesRefs, gbc);
     }
 
     private void addLabeledControl(JPanel panel, int row, int group, String labelText, JComponent control) {
@@ -390,6 +412,7 @@ class MiscSearchTab extends JPanel {
         tStartBV.setText("");
         tEndBV.setText("");
         tSource.setText("");
+        rulesRefs.clearSelection();
         tMULId.setText("");
 
         listCockpitType.clear();
@@ -428,6 +451,7 @@ class MiscSearchTab extends JPanel {
         state.startBV = tStartBV.getText();
         state.endBV = tEndBV.getText();
         state.source = tSource.getText();
+        state.rulesRefs = rulesRefs.getSelectedAbbreviations();
         state.mulId = tMULId.getText();
 
         state.cockpitType = listCockpitType.getState();
@@ -466,6 +490,7 @@ class MiscSearchTab extends JPanel {
         tStartBV.setText(state.startBV);
         tEndBV.setText(state.endBV);
         tSource.setText(state.source);
+        rulesRefs.setSelectedAbbreviations(state.rulesRefs);
         tMULId.setText(state.mulId);
 
         listCockpitType.applyState(state.cockpitType);
@@ -476,5 +501,9 @@ class MiscSearchTab extends JPanel {
         listTechLevel.applyState(state.techLevel);
         listTechBase.applyState(state.techBase);
         listMoveMode.applyState(state.moveMode);
+    }
+
+    void setRulesRefChoices(Collection<SourceBookCode> choices) {
+        rulesRefs.setChoices(choices);
     }
 }

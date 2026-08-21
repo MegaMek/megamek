@@ -36,6 +36,7 @@ package megamek.common.weapons.srms.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -75,7 +76,13 @@ public class ISSRM4 extends SRMWeapon {
         this.cost = 60000;
         this.shortAV = 4;
         this.maxRange = RANGE_SHORT;
-        rulesRefs = "229, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 229),
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 186),
+              rulesRef(SourceBookCode.TW, 303),
+              rulesRef(SourceBookCode.TW, 304)
+        );
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(true)

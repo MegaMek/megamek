@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -86,7 +87,7 @@ public class CLBAMicroBomb extends Weapon {
         tonnage = .1;
         criticalSlots = 2;
         cost = 30000;
-        rulesRefs = "253, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 253);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

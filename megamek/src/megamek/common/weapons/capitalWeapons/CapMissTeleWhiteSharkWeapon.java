@@ -36,6 +36,7 @@ package megamek.common.weapons.capitalWeapons;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -77,7 +78,10 @@ public class CapMissTeleWhiteSharkWeapon extends CapitalMissileWeapon {
         this.extAV = 3;
         this.missileArmor = 30;
         this.maxRange = RANGE_EXT;
-        rulesRefs = "210, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 210),
+              rulesRef(SourceBookCode.TW, 251)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

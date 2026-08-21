@@ -36,6 +36,7 @@ package megamek.common.weapons.infantry.archaic;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -65,7 +66,7 @@ public class InfantryArchaicCarbonReinforcedNailsWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.02;
         infantryRange = 0;
-        rulesRefs = "272, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 272);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2980, 2990, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CC)
               .setProductionFactions(Faction.CC).setTechRating(TechRating.D)

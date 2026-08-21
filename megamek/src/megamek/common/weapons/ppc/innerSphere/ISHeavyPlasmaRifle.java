@@ -37,6 +37,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -82,7 +83,7 @@ public class ISHeavyPlasmaRifle extends AmmoWeapon {
         medAV = 12;
         maxRange = RANGE_MED;
         atClass = CLASS_PLASMA;
-        rulesRefs = "189, Core";
+        rulesRefs = rulesRefs(SourceBookCode.CORE, 189);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

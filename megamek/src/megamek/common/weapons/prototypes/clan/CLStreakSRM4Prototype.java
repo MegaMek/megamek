@@ -36,6 +36,7 @@ package megamek.common.weapons.prototypes.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -74,7 +75,7 @@ public class CLStreakSRM4Prototype extends CLPrototypeStreakSRMWeapon {
         cost = 60000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
-        rulesRefs = "91, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 91);
         flags = flags.or(F_PROTOTYPE).andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

@@ -36,6 +36,7 @@ package megamek.common.weapons.prototypes.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -68,7 +69,7 @@ public class ISNarcPrototype extends NarcWeapon {
         this.bv = 15;
         this.cost = 300000;
         flags = flags.or(F_PROTOTYPE);
-        rulesRefs = "66, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 66);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

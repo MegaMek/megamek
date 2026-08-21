@@ -203,6 +203,15 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public static final String MODE_OFF = "Off";
 
     /**
+     * Internal name of a PPC capacitor's charging mode. A capacitor whose current mode is this holds a full charge
+     * (a player's switch to it spends a round as the pending mode first, charging); its other mode is
+     * {@link #MODE_OFF}, holding no charge.
+     *
+     * @see #hasChargedCapacitor()
+     */
+    public static final String MODE_CAPACITOR_CHARGE = "Charge";
+
+    /**
      * Internal name of the sentinel mode reported when equipment has no current or pending mode set.
      *
      * @see #curMode()

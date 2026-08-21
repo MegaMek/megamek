@@ -36,6 +36,7 @@ package megamek.common.weapons.lrms.clan.streak;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.weapons.lrms.StreakLRMWeapon;
 
 /**
@@ -61,7 +62,7 @@ public class CLStreakLRM12 extends StreakLRMWeapon {
         criticalSlots = 1;
         bv = 207;
         cost = 180000;
-        rulesRefs = "139, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 139);
         flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON).andNot(F_MEK_WEAPON)
               .andNot(F_TANK_WEAPON).andNot(F_ARTEMIS_COMPATIBLE);
         // Tech Advancement moved to StreakLRMWeapon.java

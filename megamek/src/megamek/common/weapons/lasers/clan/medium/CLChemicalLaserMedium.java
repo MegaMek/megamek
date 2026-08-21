@@ -36,6 +36,7 @@ package megamek.common.weapons.lasers.clan.medium;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -74,7 +75,11 @@ public class CLChemicalLaserMedium extends CLChemicalLaserWeapon {
         cost = 30000;
         shortAV = 5;
         maxRange = RANGE_SHORT;
-        rulesRefs = "132, TO:AUE";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 132),
+              rulesRef(SourceBookCode.BMM, 100),
+              rulesRef(SourceBookCode.CORE, 185)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.E)

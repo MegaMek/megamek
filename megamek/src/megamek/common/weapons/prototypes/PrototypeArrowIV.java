@@ -36,6 +36,7 @@ package megamek.common.weapons.prototypes;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -70,7 +71,7 @@ public class PrototypeArrowIV extends ArtilleryWeapon {
         bv = 240;
         cost = 1800000;
         this.flags = flags.or(F_MISSILE).or(F_PROTOTYPE).or(F_ARTILLERY);
-        rulesRefs = "64, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 64);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

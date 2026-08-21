@@ -36,6 +36,7 @@ package megamek.common.weapons.missiles.innerSphere.rocketLauncher;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -69,7 +70,7 @@ public class ISRL5 extends RLWeapon {
         bv = 6;
         tonnage = 7.0;
         criticalSlots = 2;
-        rulesRefs = "229, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 229);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(true)

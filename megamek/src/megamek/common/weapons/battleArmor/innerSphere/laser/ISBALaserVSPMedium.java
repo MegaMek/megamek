@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.innerSphere.laser;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -81,7 +82,7 @@ public class ISBALaserVSPMedium extends VariableSpeedPulseLaserWeapon {
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         // Tech Progression Missing in IO. Confirmed with Herb uses the same as the Mek Weapon.
-        rulesRefs = "133, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 133);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

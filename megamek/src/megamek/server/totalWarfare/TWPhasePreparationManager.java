@@ -33,6 +33,8 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
@@ -122,10 +124,14 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.setIneligible(phase);
 
                 if (gameManager.getGame().getBoard().isGround()) {
-                    gameManager.getGame().setTurnVector(gameManager.getGame().getPlayersList().stream()
-                          .filter(player -> !player.isObserver() && !player.isGhost())
-                          .map(player -> new GameTurn(player.getId()))
-                          .collect(Collectors.toList()));
+                    List<GameTurn> victorySetupTurns = new ArrayList<>();
+                    for (Player player : gameManager.getGame().getPlayersList()) {
+                        boolean canPlaceObjectives = !player.isObserver() && !player.isGhost();
+                        if (canPlaceObjectives) {
+                            victorySetupTurns.add(new GameTurn(player.getId()));
+                        }
+                    }
+                    gameManager.getGame().setTurnVector(victorySetupTurns);
                 }
 
                 gameManager.getGame().resetTurnIndex();

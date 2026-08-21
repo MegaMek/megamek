@@ -219,7 +219,8 @@ final class GameOptionsPresentation {
               OptionsConstants.VICTORY_GAME_TURN_LIMIT,
               OptionsConstants.VICTORY_USE_KILL_COUNT,
               OptionsConstants.VICTORY_GAME_KILL_COUNT,
-              OptionsConstants.VICTORY_COMMANDER_KILLED);
+              OptionsConstants.VICTORY_COMMANDER_KILLED,
+              OptionsConstants.VICTORY_USE_OBJECTIVES);
 
         register(ALLOWED_UNITS, GENERAL_UNITS_AND_TECHNOLOGY, "allowedUnits.availability",
               OptionsConstants.ALLOWED_CANON_ONLY,

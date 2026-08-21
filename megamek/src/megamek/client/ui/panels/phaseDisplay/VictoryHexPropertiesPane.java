@@ -109,60 +109,13 @@ public final class VictoryHexPropertiesPane {
         JLabel rateLabel = new JLabel();
         JLabel countingLabel = new JLabel(Messages.getString("VictoryHex.counting"));
         JLabel schemeDescription = new JLabel();
-        Runnable refreshSchemeRows = () -> {
-            SchemePreset preset = (SchemePreset) schemeCombo.getSelectedItem();
-            // the description reflects the CONFIGURED point: the chosen mode and the actual numbers,
-            // not a generic text covering every possibility
-            Object threshold = thresholdSpinner.getValue();
-            Object rate = rateSpinner.getValue();
-            String presetDescription = switch (preset) {
-                case HOLD -> {
-                    HoldCounting counting = (HoldCounting) countingCombo.getSelectedItem();
-                    yield Messages.getString("VictoryHex.describe.hold."
-                          + counting.name().toLowerCase(Locale.ROOT), threshold);
-                }
-                case DEFEND -> Messages.getString("VictoryHex.describe.defend", threshold, rate);
-                case CAPTURE -> Messages.getString("VictoryHex.describe.capture", threshold, rate);
-                case STANDARD, RAID -> Messages.getString("VictoryHex.describe."
-                      + preset.name().toLowerCase(Locale.ROOT));
-            };
-            schemeDescription.setText("<html><body style='width: 260px'>" + presetDescription
-                  + "</body></html>");
-            schemeCombo.setToolTipText(presetDescription);
-            thresholdSpinner.setToolTipText(Messages.getString(switch (preset) {
-                case HOLD -> "VictoryHex.turnsToSecure.tooltip";
-                case DEFEND -> "VictoryHex.startingGrip.tooltip";
-                case CAPTURE -> "VictoryHex.pointsToCapture.tooltip";
-                case STANDARD, RAID -> "VictoryHex.turnsToSecure.tooltip";
-            }));
-            rateSpinner.setToolTipText(Messages.getString((preset == SchemePreset.DEFEND)
-                  ? "VictoryHex.gripDrainPerTurn.tooltip"
-                  : "VictoryHex.progressPerTurn.tooltip"));
-            boolean usesThreshold = (preset == SchemePreset.HOLD) || (preset == SchemePreset.DEFEND)
-                  || (preset == SchemePreset.CAPTURE);
-            boolean usesRate = (preset == SchemePreset.DEFEND) || (preset == SchemePreset.CAPTURE);
-            boolean usesCounting = preset == SchemePreset.HOLD;
-            thresholdLabel.setText(Messages.getString(switch (preset) {
-                case HOLD -> "VictoryHex.turnsToSecure";
-                case DEFEND -> "VictoryHex.startingGrip";
-                case CAPTURE -> "VictoryHex.pointsToCapture";
-                case STANDARD, RAID -> "VictoryHex.turnsToSecure";
-            }));
-            rateLabel.setText(Messages.getString((preset == SchemePreset.DEFEND)
-                  ? "VictoryHex.gripDrainPerTurn"
-                  : "VictoryHex.progressPerTurn"));
-            thresholdLabel.setVisible(usesThreshold);
-            thresholdSpinner.setVisible(usesThreshold);
-            rateLabel.setVisible(usesRate);
-            rateSpinner.setVisible(usesRate);
-            countingLabel.setVisible(usesCounting);
-            countingCombo.setVisible(usesCounting);
-        };
-        schemeCombo.addActionListener(event -> refreshSchemeRows.run());
-        countingCombo.addActionListener(event -> refreshSchemeRows.run());
-        thresholdSpinner.addChangeListener(event -> refreshSchemeRows.run());
-        rateSpinner.addChangeListener(event -> refreshSchemeRows.run());
-        refreshSchemeRows.run();
+        SchemeControls controls = new SchemeControls(schemeCombo, countingCombo, thresholdSpinner, rateSpinner,
+              thresholdLabel, rateLabel, countingLabel, schemeDescription);
+        schemeCombo.addActionListener(event -> refreshSchemeRows(controls));
+        countingCombo.addActionListener(event -> refreshSchemeRows(controls));
+        thresholdSpinner.addChangeListener(event -> refreshSchemeRows(controls));
+        rateSpinner.addChangeListener(event -> refreshSchemeRows(controls));
+        refreshSchemeRows(controls);
 
         JPanel propertiesPanel = new JPanel(new GridLayout(0, 2));
         propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.radius")));
@@ -203,6 +156,99 @@ public final class VictoryHexPropertiesPane {
         scheme.setRatePerTurn((Integer) rateSpinner.getValue());
         scheme.setHoldCounting((HoldCounting) countingCombo.getSelectedItem());
         return Result.SAVED;
+    }
+
+
+    /**
+     * The scheme-dependent controls of the properties pane, bundled so the refresh logic can live in a method
+     * instead of a long lambda.
+     *
+     * @param schemeCombo       the scoring scheme selector
+     * @param countingCombo     the Hold turn-counting selector
+     * @param thresholdSpinner  the threshold value (turns to secure, starting grip or points to capture)
+     * @param rateSpinner       the per-turn rate (grip drain or capture progress)
+     * @param thresholdLabel    the label naming the threshold for the selected preset
+     * @param rateLabel         the label naming the rate for the selected preset
+     * @param countingLabel     the label of the counting selector
+     * @param schemeDescription the live plain-words description of the configured scheme
+     */
+    private record SchemeControls(JComboBox<SchemePreset> schemeCombo, JComboBox<HoldCounting> countingCombo,
+          JSpinner thresholdSpinner, JSpinner rateSpinner, JLabel thresholdLabel, JLabel rateLabel,
+          JLabel countingLabel, JLabel schemeDescription) {}
+
+    /**
+     * Rewrites the scheme-dependent rows for the currently selected preset: which rows are visible, what the
+     * threshold and rate spinners mean, and the plain-words description of the point as actually configured.
+     *
+     * @param controls the pane's scheme-dependent controls
+     */
+    private static void refreshSchemeRows(SchemeControls controls) {
+        SchemePreset preset = (SchemePreset) controls.schemeCombo().getSelectedItem();
+        // the description reflects the CONFIGURED point: the chosen mode and the actual numbers,
+        // not a generic text covering every possibility
+        Object threshold = controls.thresholdSpinner().getValue();
+        Object rate = controls.rateSpinner().getValue();
+        HoldCounting counting = (HoldCounting) controls.countingCombo().getSelectedItem();
+        String presetDescription = describeConfiguredPreset(preset, threshold, rate, counting);
+        controls.schemeDescription().setText("<html><body style='width: 260px'>" + presetDescription
+              + "</body></html>");
+        controls.schemeCombo().setToolTipText(presetDescription);
+        controls.thresholdSpinner().setToolTipText(Messages.getString(thresholdLabelKey(preset) + ".tooltip"));
+        controls.rateSpinner().setToolTipText(Messages.getString(rateLabelKey(preset) + ".tooltip"));
+        controls.thresholdLabel().setText(Messages.getString(thresholdLabelKey(preset)));
+        controls.rateLabel().setText(Messages.getString(rateLabelKey(preset)));
+        boolean usesThreshold = (preset == SchemePreset.HOLD) || (preset == SchemePreset.DEFEND)
+              || (preset == SchemePreset.CAPTURE);
+        boolean usesRate = (preset == SchemePreset.DEFEND) || (preset == SchemePreset.CAPTURE);
+        boolean usesCounting = preset == SchemePreset.HOLD;
+        controls.thresholdLabel().setVisible(usesThreshold);
+        controls.thresholdSpinner().setVisible(usesThreshold);
+        controls.rateLabel().setVisible(usesRate);
+        controls.rateSpinner().setVisible(usesRate);
+        controls.countingLabel().setVisible(usesCounting);
+        controls.countingCombo().setVisible(usesCounting);
+    }
+
+    /**
+     * @param preset    the selected scheme preset
+     * @param threshold the configured threshold value
+     * @param rate      the configured per-turn rate
+     * @param counting  the configured Hold turn-counting mode
+     *
+     * @return the plain-words what-it-does / how-to-make-it-work description of the point as configured
+     */
+    private static String describeConfiguredPreset(SchemePreset preset, Object threshold, Object rate,
+          HoldCounting counting) {
+        return switch (preset) {
+            case HOLD -> Messages.getString("VictoryHex.describe.hold."
+                  + counting.name().toLowerCase(Locale.ROOT), threshold);
+            case DEFEND -> Messages.getString("VictoryHex.describe.defend", threshold, rate);
+            case CAPTURE -> Messages.getString("VictoryHex.describe.capture", threshold, rate);
+            case STANDARD, RAID -> Messages.getString("VictoryHex.describe."
+                  + preset.name().toLowerCase(Locale.ROOT));
+        };
+    }
+
+    /**
+     * @param preset the selected scheme preset
+     *
+     * @return the message key naming the threshold spinner for the preset; {@code + ".tooltip"} is its tooltip
+     */
+    private static String thresholdLabelKey(SchemePreset preset) {
+        return switch (preset) {
+            case DEFEND -> "VictoryHex.startingGrip";
+            case CAPTURE -> "VictoryHex.pointsToCapture";
+            case HOLD, STANDARD, RAID -> "VictoryHex.turnsToSecure";
+        };
+    }
+
+    /**
+     * @param preset the selected scheme preset
+     *
+     * @return the message key naming the rate spinner for the preset; {@code + ".tooltip"} is its tooltip
+     */
+    private static String rateLabelKey(SchemePreset preset) {
+        return (preset == SchemePreset.DEFEND) ? "VictoryHex.gripDrainPerTurn" : "VictoryHex.progressPerTurn";
     }
 
     /**

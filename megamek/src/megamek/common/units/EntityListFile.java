@@ -990,6 +990,15 @@ public class EntityListFile {
                     output.write(entity.getC3UUIDAsString());
                 }
             }
+            // C3 Emergency Master state (TO:AUE p.110) survives mid-scenario saves
+            if (entity.isC3EmergencyMasterActive()) {
+                output.write("\" " + MULParser.ATTR_C3EM_ACTIVE + "=\"");
+                output.write("true");
+            }
+            if (entity.getC3EmergencyMasterOperatingTurns() > 0) {
+                output.write("\" " + MULParser.ATTR_C3EM_TURNS + "=\"");
+                output.write(String.valueOf(entity.getC3EmergencyMasterOperatingTurns()));
+            }
             if (!entity.getCamouflage().hasDefaultCategory()) {
                 output.write("\" " + MULParser.ATTR_CAMO_CATEGORY + "=\"");
                 output.write(entity.getCamouflage().getCategory());

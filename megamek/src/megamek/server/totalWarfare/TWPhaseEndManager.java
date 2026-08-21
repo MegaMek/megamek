@@ -63,6 +63,18 @@ record TWPhaseEndManager(TWGameManager gameManager) {
             case EXCHANGE:
             case STARTING_SCENARIO:
                 gameManager.getGame().addReports(gameManager.getMainPhaseReport());
+                // objectives are placed before artillery is pre-sighted and mines are laid: both of those
+                // decisions depend on knowing where the objectives are
+                boolean usesObjectives = gameManager.getGame().getOptions()
+                      .booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES);
+                if (usesObjectives && gameManager.getGame().getBoard().isGround()) {
+                    gameManager.changePhase(GamePhase.VICTORY_SETUP);
+                } else {
+                    gameManager.changePhase(GamePhase.SET_ARTILLERY_AUTO_HIT_HEXES);
+                }
+                break;
+            case VICTORY_SETUP:
+                gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                 gameManager.changePhase(GamePhase.SET_ARTILLERY_AUTO_HIT_HEXES);
                 break;
             case SET_ARTILLERY_AUTO_HIT_HEXES:

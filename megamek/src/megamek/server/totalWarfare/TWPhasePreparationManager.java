@@ -115,6 +115,22 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                       gameManager.getGame().getRoundCount(),
                       MegaMek.getMemoryUsed());
                 break;
+            case VICTORY_SETUP:
+                gameManager.checkForObservers();
+                gameManager.transmitAllPlayerUpdates();
+                gameManager.resetActivePlayersDone();
+                gameManager.setIneligible(phase);
+
+                if (gameManager.getGame().getBoard().isGround()) {
+                    gameManager.getGame().setTurnVector(gameManager.getGame().getPlayersList().stream()
+                          .filter(player -> !player.isObserver() && !player.isGhost())
+                          .map(player -> new GameTurn(player.getId()))
+                          .collect(Collectors.toList()));
+                }
+
+                gameManager.getGame().resetTurnIndex();
+                gameManager.sendCurrentTurns();
+                break;
             case DEPLOY_MINEFIELDS:
                 gameManager.checkForObservers();
                 gameManager.transmitAllPlayerUpdates();

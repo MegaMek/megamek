@@ -303,7 +303,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         return donePanel;
     }
 
-
     protected void addToDonePanel(JPanel donePanel, JComponent item) {
         item.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height));
         butDone.setAlignmentX(LEFT_ALIGNMENT);

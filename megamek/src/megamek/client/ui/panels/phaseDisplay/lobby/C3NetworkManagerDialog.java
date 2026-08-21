@@ -112,6 +112,8 @@ public class C3NetworkManagerDialog extends JDialog {
     private JButton formPeerNetworkButton;
     private JButton buildButton;
     private JButton discardPlanButton;
+    private JButton autoFormButton;
+    private final JLabel forcePlanLabel = new JLabel(" ");
     private final JButton[] configStartButtons = new JButton[4];
 
     /** The active configuration plan, or null; at most one plan exists at a time. */
@@ -212,7 +214,19 @@ public class C3NetworkManagerDialog extends JDialog {
             configStartButtons[configNumber - 1] = configButton;
             configPickerPanel.add(configButton);
         }
-        networksPanel.add(configPickerPanel, BorderLayout.NORTH);
+        autoFormButton = new JButton(Messages.getString("C3NetworkManagerDialog.btnAutoForm"));
+        autoFormButton.setToolTipText(Messages.getString("C3NetworkManagerDialog.btnAutoForm.tooltip"));
+        autoFormButton.addActionListener(event -> executeForcePlan());
+        configPickerPanel.add(autoFormButton);
+
+        // Above the tree: what the whole force can field, so multiple networks read as the expected outcome
+        JPanel networksHeaderPanel = new JPanel();
+        networksHeaderPanel.setLayout(new BoxLayout(networksHeaderPanel, BoxLayout.PAGE_AXIS));
+        networksHeaderPanel.add(configPickerPanel);
+        JPanel forcePlanRow = new JPanel(new FlowLayout(FlowLayout.LEADING, PADDING_SMALL, 0));
+        forcePlanRow.add(forcePlanLabel);
+        networksHeaderPanel.add(forcePlanRow);
+        networksPanel.add(networksHeaderPanel, BorderLayout.NORTH);
         networkTree.setRootVisible(false);
         networkTree.setShowsRootHandles(true);
         networkTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
@@ -377,6 +391,7 @@ public class C3NetworkManagerDialog extends JDialog {
             treeRoot.add(new DefaultMutableTreeNode(new StartHint()));
         }
         updateConfigurationFeasibility(masterUnits, seedMasters, slaveUnits);
+        updateForcePlanSummary();
         buildButton.setVisible(blueprint != null);
         discardPlanButton.setVisible(blueprint != null);
         treeModel.reload();
@@ -790,6 +805,175 @@ public class C3NetworkManagerDialog extends JDialog {
                       configNumber, mastersShort, slavesShort));
             }
         }
+    }
+
+    /** One planned full configuration in a force plan. */
+    private record PlannedCompany(int configurationNumber, Entity company, List<Entity> directSlaves,
+          List<Entity> lanceMasters, List<List<Entity>> lanceSlaves) {
+        int size() {
+            int total = 1 + directSlaves.size() + lanceMasters.size();
+            for (List<Entity> lance : lanceSlaves) {
+                total += lance.size();
+            }
+            return total;
+        }
+    }
+
+    /** One planned remainder lance: a master with slaves, or - all-master - a master heading other masters. */
+    private record PlannedLance(Entity master, List<Entity> members, boolean allMasters) {
+    }
+
+    /** How the whole unassigned force partitions into networks, plus what cannot be placed. */
+    private record ForcePlan(List<PlannedCompany> companies, List<PlannedLance> lances, int leftoverUnits) {
+        boolean isEmpty() {
+            return companies.isEmpty() && lances.isEmpty();
+        }
+    }
+
+    /**
+     * Partitions the unassigned hierarchical C3 units into networks, most consolidated configuration first
+     * (4 down to 1), then remainder lances, then all-master lances from leftover masters. Company slots prefer
+     * an exact computer-count fit and lance master slots take the smallest masters, so multi-computer units are
+     * saved for company roles.
+     */
+    private ForcePlan computeForcePlan() {
+        List<Entity> masters = new ArrayList<>();
+        List<Entity> slaves = new ArrayList<>();
+        for (Entity entity : sortedById(game.inGameTWEntities())) {
+            if ((entity.getOwnerId() != localPlayerId) || !entity.hasAnyC3System() || entity.hasNhC3()
+                  || isNetworked(entity)) {
+                continue;
+            }
+            if (entity.getOperableC3MCount() > 0) {
+                masters.add(entity);
+            } else if (entity.hasC3S()) {
+                slaves.add(entity);
+            }
+        }
+
+        List<PlannedCompany> companies = new ArrayList<>();
+        boolean progress = true;
+        while (progress) {
+            progress = false;
+            for (int configNumber = 4; (configNumber >= 1) && !progress; configNumber--) {
+                Blueprint shape = Blueprint.forConfiguration(configNumber);
+                int slavesNeeded = shape.directSlaves.length;
+                for (Integer[] lance : shape.lanceSlaves) {
+                    slavesNeeded += lance.length;
+                }
+                Entity company = pickCompanyCandidate(masters, configNumber);
+                if ((company == null) || ((masters.size() - 1) < shape.lanceMasters.length)
+                      || (slaves.size() < slavesNeeded)) {
+                    continue;
+                }
+                masters.remove(company);
+                sortByComputerCount(masters);
+                List<Entity> lanceMasterUnits = takeFirst(masters, shape.lanceMasters.length);
+                List<Entity> directSlaveUnits = takeFirst(slaves, shape.directSlaves.length);
+                List<List<Entity>> lanceSlaveUnits = new ArrayList<>();
+                for (Integer[] lance : shape.lanceSlaves) {
+                    lanceSlaveUnits.add(takeFirst(slaves, lance.length));
+                }
+                companies.add(new PlannedCompany(configNumber, company, directSlaveUnits, lanceMasterUnits,
+                      lanceSlaveUnits));
+                progress = true;
+            }
+        }
+
+        sortByComputerCount(masters);
+        List<PlannedLance> lances = new ArrayList<>();
+        while (!masters.isEmpty() && !slaves.isEmpty()) {
+            Entity lanceMaster = masters.remove(0);
+            lances.add(new PlannedLance(lanceMaster,
+                  takeFirst(slaves, Math.min(Entity.MAX_C3M_SUBORDINATES, slaves.size())), false));
+        }
+        while (masters.size() >= 2) {
+            Entity lanceMaster = masters.remove(0);
+            lances.add(new PlannedLance(lanceMaster,
+                  takeFirst(masters, Math.min(Entity.MAX_C3M_SUBORDINATES, masters.size())), true));
+        }
+        return new ForcePlan(companies, lances, masters.size() + slaves.size());
+    }
+
+    /** The company unit for a configuration: an exact computer-count fit if one exists, else the smallest fit. */
+    @Nullable
+    private Entity pickCompanyCandidate(List<Entity> masters, int configurationNumber) {
+        Entity bestCandidate = null;
+        for (Entity master : masters) {
+            int computerCount = master.getOperableC3MCount();
+            if (computerCount == configurationNumber) {
+                return master;
+            }
+            if ((computerCount > configurationNumber) && ((bestCandidate == null)
+                  || (computerCount < bestCandidate.getOperableC3MCount()))) {
+                bestCandidate = master;
+            }
+        }
+        return bestCandidate;
+    }
+
+    private void sortByComputerCount(List<Entity> masters) {
+        masters.sort(Comparator.comparingInt(Entity::getOperableC3MCount).thenComparing(Entity::getId));
+    }
+
+    /** Removes and returns the first count entries of the list. */
+    private List<Entity> takeFirst(List<Entity> units, int count) {
+        List<Entity> taken = new ArrayList<>(units.subList(0, count));
+        units.subList(0, count).clear();
+        return taken;
+    }
+
+    /** Builds every network of the current force plan in one action, through the ordinary lobby actions. */
+    private void executeForcePlan() {
+        ForcePlan plan = computeForcePlan();
+        if (plan.isEmpty()) {
+            return;
+        }
+        blueprint = null;
+        for (PlannedCompany company : plan.companies()) {
+            lobby.lobbyActions.c3SetCompanyMaster(List.of(company.company()));
+            if (!company.directSlaves().isEmpty()) {
+                lobby.lobbyActions.c3Connect(new ArrayList<>(company.directSlaves()),
+                      company.company().getId(), false);
+            }
+            if (!company.lanceMasters().isEmpty()) {
+                lobby.lobbyActions.c3Connect(new ArrayList<>(company.lanceMasters()),
+                      company.company().getId(), false);
+            }
+            for (int lanceIndex = 0; lanceIndex < company.lanceMasters().size(); lanceIndex++) {
+                List<Entity> lanceSlaveUnits = company.lanceSlaves().get(lanceIndex);
+                if (!lanceSlaveUnits.isEmpty()) {
+                    lobby.lobbyActions.c3Connect(new ArrayList<>(lanceSlaveUnits),
+                          company.lanceMasters().get(lanceIndex).getId(), false);
+                }
+            }
+        }
+        for (PlannedLance lance : plan.lances()) {
+            lobby.lobbyActions.c3Connect(new ArrayList<>(lance.members()), lance.master().getId(), false);
+        }
+        refresh();
+    }
+
+    /** Updates the force-plan line and the Auto-Form button from the current unassigned pool. */
+    private void updateForcePlanSummary() {
+        ForcePlan plan = computeForcePlan();
+        autoFormButton.setEnabled(!plan.isEmpty());
+        if (plan.isEmpty()) {
+            forcePlanLabel.setText(" ");
+            return;
+        }
+        List<String> planParts = new ArrayList<>();
+        for (PlannedCompany company : plan.companies()) {
+            planParts.add(Messages.getString("C3NetworkManagerDialog.planPartConfig",
+                  company.configurationNumber(), company.size()));
+        }
+        for (PlannedLance lance : plan.lances()) {
+            String key = lance.allMasters() ? "C3NetworkManagerDialog.planPartAllMasterLance"
+                  : "C3NetworkManagerDialog.planPartLance";
+            planParts.add(Messages.getString(key, 1 + lance.members().size()));
+        }
+        forcePlanLabel.setText(Messages.getString("C3NetworkManagerDialog.forcePlan",
+              String.join(" + ", planParts), plan.leftoverUnits()));
     }
 
     /** Starts a configuration plan; a partially filled existing plan asks before being replaced. */

@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import megamek.utilities.xml.MMXMLUtility;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -57,7 +57,7 @@ class PortraitTest {
               filename +
               "</filename></portrait>";
 
-        final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        final DocumentBuilder builder = MMXMLUtility.newSafeDocumentBuilder();
         final Node node = builder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)))
               .getDocumentElement();
 

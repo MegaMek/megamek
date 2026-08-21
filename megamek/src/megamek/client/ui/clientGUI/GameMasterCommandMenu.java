@@ -51,6 +51,7 @@ import megamek.server.commands.FirestormCommand;
 import megamek.server.commands.NoFiresCommand;
 import megamek.server.commands.OrbitalBombardmentCommand;
 import megamek.server.commands.RemoveSmokeCommand;
+import megamek.server.commands.TerrainCommand;
 
 /**
  * Builds the Game Master special commands menu: one entry per server command that only a Game Master may run, each
@@ -141,6 +142,7 @@ public final class GameMasterCommandMenu {
     private static List<ClientServerCommand> hexTargetedCommands() {
         return List.of(new FirefightCommand(null, null),
               new FirestarterCommand(null, null),
-              new OrbitalBombardmentCommand(null, null));
+              new OrbitalBombardmentCommand(null, null),
+              new TerrainCommand(null, null));
     }
 }

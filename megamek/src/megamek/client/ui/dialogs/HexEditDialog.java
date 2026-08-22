@@ -50,6 +50,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -132,6 +133,7 @@ public class HexEditDialog extends JDialog {
     private final JComboBox<TerrainChoice> terrainChooser = new JComboBox<>();
     private final JComboBox<LevelChoice> levelChooser = new JComboBox<>();
     private final JSpinner hexLevelSpinner = new JSpinner(new SpinnerNumberModel(0, -30, 30, 1));
+    private final JCheckBox changeGroundLevelBox = new JCheckBox(Messages.getString("HexEditDialog.changeGround"));
     private final JLabel groundLabel = new JLabel();
     private final JLabel legalityLabel = new JLabel();
     private final JButton applyButton = new JButton(Messages.getString("HexEditDialog.execute"));
@@ -215,6 +217,7 @@ public class HexEditDialog extends JDialog {
         if (hex == null) {
             return;
         }
+        // shown as a starting point only; the level is not written to a hex unless the gamemaster ticks the box
         hexLevelSpinner.setValue(hex.getLevel());
         for (int terrainType : EDITABLE_TERRAINS) {
             if (hex.containsTerrain(terrainType)) {
@@ -281,7 +284,15 @@ public class HexEditDialog extends JDialog {
         terrainRow.add(levelChooser);
         panel.add(terrainRow);
 
+        changeGroundLevelBox.setToolTipText(Messages.getString("HexEditDialog.changeGround.tooltip"));
+        changeGroundLevelBox.addActionListener(event -> {
+            hexLevelSpinner.setEnabled(changeGroundLevelBox.isSelected());
+            refreshGroundLabel();
+        });
+        hexLevelSpinner.setEnabled(false);
+
         JPanel groundRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        groundRow.add(changeGroundLevelBox);
         groundRow.add(new JLabel(Messages.getString("HexEditDialog.hexLevel")));
         groundRow.add(hexLevelSpinner);
         panel.add(groundRow);
@@ -351,10 +362,16 @@ public class HexEditDialog extends JDialog {
         return panel;
     }
 
-    /** @return what the brush currently holds, ready to be laid on a hex */
+    /**
+     * @return what the brush currently holds, ready to be laid on a hex. The ground level is left out unless the
+     *       gamemaster asked to change it, so painting across a hillside follows the ground rather than flattening
+     *       every hex to one level.
+     */
     private HexEditSpec.HexPaint currentBrush() {
         HexEditSpec.HexPaint paint = new HexEditSpec.HexPaint();
-        paint.setLevel((Integer) hexLevelSpinner.getValue());
+        if (changeGroundLevelBox.isSelected()) {
+            paint.setLevel((Integer) hexLevelSpinner.getValue());
+        }
         TerrainChoice terrain = (TerrainChoice) terrainChooser.getSelectedItem();
         LevelChoice level = (LevelChoice) levelChooser.getSelectedItem();
         if ((terrain != null) && (terrain.terrainType() != BARE_GROUND) && (level != null)) {
@@ -441,6 +458,11 @@ public class HexEditDialog extends JDialog {
         for (int level : HexEditValidator.legalLevelsFor(terrain.terrainType(), HIGHEST_LEVEL_OFFERED)) {
             levelChooser.addItem(new LevelChoice(terrain.terrainType(), level));
         }
+        // start on the first real level rather than depth 0, which is legal but paints something a gamemaster
+        // reaching for water would not see on the board
+        if ((terrain.terrainType() == Terrains.WATER) && (levelChooser.getItemCount() > 1)) {
+            levelChooser.setSelectedIndex(1);
+        }
     }
 
     /**
@@ -448,14 +470,19 @@ public class HexEditDialog extends JDialog {
      * gamemaster doing the arithmetic themselves.
      */
     private void refreshGroundLabel() {
-        int hexLevel = (int) hexLevelSpinner.getValue();
         Integer waterDepth = currentBrush().getTerrainLevels().get(Terrains.WATER);
-        if ((waterDepth == null) || (waterDepth == 0)) {
-            groundLabel.setText(Messages.getString("HexEditDialog.groundDry", hexLevel));
+        boolean isFlooding = (waterDepth != null) && (waterDepth > 0);
+
+        if (!changeGroundLevelBox.isSelected()) {
+            groundLabel.setText(isFlooding
+                  ? Messages.getString("HexEditDialog.groundKeptFlooded", waterDepth)
+                  : Messages.getString("HexEditDialog.groundKept"));
             return;
         }
-        groundLabel.setText(Messages.getString("HexEditDialog.groundFlooded",
-              hexLevel, waterDepth, hexLevel - waterDepth));
+        int hexLevel = (int) hexLevelSpinner.getValue();
+        groundLabel.setText(isFlooding
+              ? Messages.getString("HexEditDialog.groundFlooded", hexLevel, waterDepth, hexLevel - waterDepth)
+              : Messages.getString("HexEditDialog.groundDry", hexLevel));
     }
 
     /** Redraws the painted list, the board highlights and the legality report. */

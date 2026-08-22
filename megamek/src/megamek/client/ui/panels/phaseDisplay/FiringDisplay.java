@@ -586,7 +586,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 setRotateTurretEnabled(false);
                 setRotateRearTurretEnabled(false);
                 setStrafeEnabled(false);
-                clientgui.getUnitDisplay().wPan.setToHit("Hidden units are only allowed to spot!");
+                clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.HiddenUnitMaySpot"));
             }
         } else {
             logger.error("Tried to select non-existent entity {}", en);
@@ -1926,7 +1926,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             setFindClubEnabled(false);
             setFlipArmsEnabled(false);
             setStrafeEnabled(false);
-            clientgui.getUnitDisplay().wPan.setToHit("Hidden units are only allowed to spot!");
+            clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.HiddenUnitMaySpot"));
         }
     }
 

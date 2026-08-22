@@ -35,7 +35,6 @@ package megamek.client.ui.panels.phaseDisplay;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -2078,18 +2077,10 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                     torsoTwist(event.getCoords());
                 }
             }
-            event.getBoardView().cursor(event.getCoords());
         } else if (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             twisting = false;
-            // Only a plain left click picks a target: shift is torso twist, ALT feeds the ruler
-            // (RulerDialog.hexMoused), and the other mouse buttons have no targeting meaning here. The firing
-            // and targeting phases already ignore those clicks.
-            boolean plainLeftClick = (event.getButton() == MouseEvent.BUTTON1)
-                  && ((event.getModifiers() & InputEvent.ALT_DOWN_MASK) == 0);
-            if (!shiftHeld && plainLeftClick) {
-                event.getBoardView().select(event.getCoords());
-            }
         }
+        applyHexMouseAction(event, shiftHeld);
     }
 
     @Override

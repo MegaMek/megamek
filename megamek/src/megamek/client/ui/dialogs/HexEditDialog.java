@@ -57,6 +57,8 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
@@ -122,6 +124,12 @@ public class HexEditDialog extends JDialog {
 
     /** The terrain the edited hexes should end up holding, as terrain type to level, in the order it was added. */
     private final Map<Integer, Integer> terrainLevels = new LinkedHashMap<>();
+
+    /** The level the edited hexes should end up at. Separate from water depth, which is the water terrain's level. */
+    private final JSpinner hexLevelSpinner = new JSpinner(new SpinnerNumberModel(0, -30, 30, 1));
+
+    /** Explains how the hex level and any water depth in it add up, which is not obvious from two numbers. */
+    private final JLabel groundLabel = new JLabel();
 
     private final DefaultListModel<String> hexListModel = new DefaultListModel<>();
     private final DefaultListModel<String> terrainListModel = new DefaultListModel<>();
@@ -200,6 +208,7 @@ public class HexEditDialog extends JDialog {
 
         selectedHexes.add(coords);
         readTerrainFrom(coords);
+        readLevelFrom(coords);
         buildUI(parent);
         refreshEverything();
     }
@@ -217,12 +226,22 @@ public class HexEditDialog extends JDialog {
         }
     }
 
+    /** Starts the level control at the clicked hex's own level, so leaving it alone leaves the ground where it is. */
+    private void readLevelFrom(Coords coords) {
+        Hex hex = clientGUI.getClient().getGame().getBoard().getHex(coords);
+        if (hex != null) {
+            hexLevelSpinner.setValue(hex.getLevel());
+        }
+    }
+
     private void buildUI(JFrame parent) {
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         content.add(hexPanel());
+        content.add(Box.createVerticalStrut(8));
+        content.add(groundPanel());
         content.add(Box.createVerticalStrut(8));
         content.add(terrainPanel());
         content.add(Box.createVerticalStrut(8));
@@ -296,6 +315,39 @@ public class HexEditDialog extends JDialog {
         controls.add(clearButton);
         panel.add(controls, BorderLayout.PAGE_END);
         return panel;
+    }
+
+    /**
+     * The hex's own level, and what it works out to once any water in it is taken into account.
+     *
+     * <p>A hex's level and the depth of water in it are two different numbers, and a gamemaster reading them side by
+     * side has to do the arithmetic themselves. On a dam board a reservoir hex sits at level 5 holding water 8 deep,
+     * which puts its surface five levels up and its bottom three levels down. The line under the spinner says that
+     * out loud so the gamemaster can see what they are building.</p>
+     */
+    private JPanel groundPanel() {
+        JPanel panel = new JPanel(new BorderLayout(4, 4));
+        panel.setBorder(BorderFactory.createTitledBorder(Messages.getString("HexEditDialog.ground")));
+
+        hexLevelSpinner.addChangeListener(event -> refreshEverything());
+        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        row.add(new JLabel(Messages.getString("HexEditDialog.hexLevel")));
+        row.add(hexLevelSpinner);
+        panel.add(row, BorderLayout.CENTER);
+        panel.add(groundLabel, BorderLayout.PAGE_END);
+        return panel;
+    }
+
+    /** Says where the ground and any water surface and bottom end up, in levels. */
+    private void refreshGroundLabel() {
+        int hexLevel = (int) hexLevelSpinner.getValue();
+        Integer waterDepth = terrainLevels.get(Terrains.WATER);
+        if ((waterDepth == null) || (waterDepth == 0)) {
+            groundLabel.setText(Messages.getString("HexEditDialog.groundDry", hexLevel));
+            return;
+        }
+        groundLabel.setText(Messages.getString("HexEditDialog.groundFlooded",
+              hexLevel, waterDepth, hexLevel - waterDepth));
     }
 
     /** Where the hex is reported legal or not, with the reason. */
@@ -422,6 +474,7 @@ public class HexEditDialog extends JDialog {
     private void refreshEverything() {
         editHasBeenSent = false;
         refreshHexHighlights();
+        refreshGroundLabel();
         hexListModel.clear();
         for (Coords coords : selectedHexes) {
             hexListModel.addElement(Messages.getString("HexEditDialog.hexEntry", coords.getBoardNum()));
@@ -488,6 +541,7 @@ public class HexEditDialog extends JDialog {
     /** @return the hex as it would be after the edit, with any structure standing in it carried through */
     private Hex editedCopyOf(Hex hex) {
         Hex edited = hex.duplicate();
+        edited.setLevel((int) hexLevelSpinner.getValue());
         List<Terrain> structures = new ArrayList<>();
         for (int structureTerrain : HexEditValidator.structureTerrains()) {
             Terrain existing = edited.getTerrain(structureTerrain);
@@ -540,6 +594,7 @@ public class HexEditDialog extends JDialog {
         HexEditSpec spec = new HexEditSpec(boardId);
         selectedHexes.forEach(spec::addCoords);
         terrainLevels.forEach(spec::setTerrain);
+        spec.setLevel((Integer) hexLevelSpinner.getValue());
         LOGGER.info("[GMHexEdit] sending an edit of {} hex(es)", selectedHexes.size());
         clientGUI.getClient().sendHexEdit(spec);
         editHasBeenSent = true;

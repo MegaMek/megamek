@@ -152,8 +152,13 @@ public class HexEditHandler extends AbstractTWRuleHandler {
 
         rememberHexesBeforeEdit(spec);
         for (Coords hexCoords : spec.getCoords()) {
-            Hex hex = getGame().getHex(hexCoords, spec.getBoardId());
-            writeTerrain(hex, spec);
+            Hex edited = getGame().getHex(hexCoords, spec.getBoardId()).duplicate();
+            writeTerrain(edited, spec);
+            // put the hex back through the board rather than changing it where it lies, so the board recomputes what
+            // it works out for itself - exits, inclines and cliff bottoms, foliage elevation - and records the new
+            // high and low points of the map. Changing it in place left the server holding a hex the clients had
+            // recomputed and it had not, so the two could disagree about the same hex.
+            getGame().getBoard(spec.getBoardId()).setHex(hexCoords, edited);
             gameManager.sendChangedHex(hexCoords, spec.getBoardId());
         }
         reportHexEdit(spec, gamemasterName);
@@ -238,6 +243,9 @@ public class HexEditHandler extends AbstractTWRuleHandler {
      * The edit describes the ground, not what has been built on it.
      */
     private static void writeTerrain(Hex hex, HexEditSpec spec) {
+        if (spec.getLevel() != null) {
+            hex.setLevel(spec.getLevel());
+        }
         List<Terrain> structures = new ArrayList<>();
         for (int structureTerrain : HexEditValidator.structureTerrains()) {
             Terrain existing = hex.getTerrain(structureTerrain);
@@ -256,14 +264,15 @@ public class HexEditHandler extends AbstractTWRuleHandler {
 
     /** @return the terrain the edit leaves behind, in words, for the report and the log */
     private static String describeTerrain(HexEditSpec spec) {
+        String levelPart = (spec.getLevel() == null) ? "" : " at level " + spec.getLevel();
         if (spec.isClearingHexes()) {
-            return "bare ground";
+            return "bare ground" + levelPart;
         }
         List<String> described = new ArrayList<>();
         for (Map.Entry<Integer, Integer> terrain : spec.getTerrainLevels().entrySet()) {
             described.add(Terrains.getDisplayName(terrain.getKey(), terrain.getValue()));
         }
-        return String.join(", ", described);
+        return String.join(", ", described) + levelPart;
     }
 
     /** Tells every player what changed and where, so a hex changing under them is never unexplained. */

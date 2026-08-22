@@ -65,6 +65,16 @@ public class HexEditSpec implements Serializable {
     private final Map<Integer, Integer> terrainLevels = new HashMap<>();
 
     /**
+     * The level each edited hex should end up at, or {@code null} to leave each hex at the level it already has.
+     *
+     * <p>A hex's level and the depth of water in it are two different numbers. On a dam board a reservoir hex reads
+     * {@code hex 0101 5 "water:8"}: the ground is at level 5 and the water is 8 deep, so its surface is five levels up
+     * and its bottom is three levels below the datum. Changing the water without being able to change the ground can
+     * only ever fill a hole, never raise a lake.</p>
+     */
+    private Integer level;
+
+    /**
      * Creates an edit of the given hexes on the given board.
      *
      * @param boardId The board the hexes are on
@@ -117,6 +127,18 @@ public class HexEditSpec implements Serializable {
     /** Says that the edited hexes should not hold the given terrain at all. */
     public void removeTerrain(int terrainType) {
         terrainLevels.remove(terrainType);
+    }
+
+    /**
+     * @return the level the edited hexes should end up at, or {@code null} to leave each at the level it has
+     */
+    public Integer getLevel() {
+        return level;
+    }
+
+    /** Sets the level the edited hexes should end up at; {@code null} leaves each hex at the level it already has. */
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 
     /** @return {@code true} when this edit would leave the hexes with no terrain at all, which is bare ground */

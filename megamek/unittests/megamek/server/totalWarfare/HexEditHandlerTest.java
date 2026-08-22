@@ -366,4 +366,44 @@ class HexEditHandlerTest {
         assertNotNull(hexEditHandler.applyHexEdit(undo, GAMEMASTER),
               "the remembered hexes are used up by the first undo");
     }
+
+    @Test
+    void aReservoirNeedsBothALevelAndADepth() {
+        // the shape of a dam board hex: "hex 0101 5 water:8" - ground at level 5 holding water 8 deep
+        HexEditSpec spec = new HexEditSpec(board.getBoardId());
+        spec.addCoords(BARE_HEX);
+        spec.setLevel(5);
+        spec.setTerrain(Terrains.WATER, 8);
+
+        String refusal = hexEditHandler.applyHexEdit(spec, GAMEMASTER);
+
+        assertNull(refusal, "a reservoir above the surrounding ground should be allowed");
+        assertEquals(5, board.getHex(BARE_HEX).getLevel(), "the ground should have been raised");
+        assertEquals(8, board.getHex(BARE_HEX).depth(), "and the water should be eight deep on top of it");
+    }
+
+    @Test
+    void anEditWithNoLevelLeavesTheGroundWhereItIs() {
+        board.getHex(BARE_HEX).setLevel(3);
+
+        hexEditHandler.applyHexEdit(floodOf(2, BARE_HEX), GAMEMASTER);
+
+        assertEquals(3, board.getHex(BARE_HEX).getLevel(),
+              "an edit that says nothing about the level must not flatten the hex");
+    }
+
+    @Test
+    void undoPutsTheGroundLevelBackToo() {
+        board.getHex(BARE_HEX).setLevel(2);
+        HexEditSpec spec = new HexEditSpec(board.getBoardId());
+        spec.addCoords(BARE_HEX);
+        spec.setLevel(7);
+        hexEditHandler.applyHexEdit(spec, GAMEMASTER);
+
+        HexEditSpec undo = new HexEditSpec(board.getBoardId());
+        undo.setUndoingLastEdit(true);
+        hexEditHandler.applyHexEdit(undo, GAMEMASTER);
+
+        assertEquals(2, board.getHex(BARE_HEX).getLevel(), "the ground should be back where it was");
+    }
 }

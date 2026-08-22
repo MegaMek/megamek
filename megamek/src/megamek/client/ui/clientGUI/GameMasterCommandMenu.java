@@ -43,16 +43,17 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.logging.MMLogger;
 import megamek.server.commands.BuildingCommand;
+import megamek.server.commands.ChangeTerrainCommand;
 import megamek.server.commands.ChangeWeatherCommand;
 import megamek.server.commands.ClientServerCommand;
 import megamek.server.commands.DisasterCommand;
 import megamek.server.commands.FirefightCommand;
 import megamek.server.commands.FirestarterCommand;
 import megamek.server.commands.FirestormCommand;
+import megamek.server.commands.ModifyTerrainCommand;
 import megamek.server.commands.NoFiresCommand;
 import megamek.server.commands.OrbitalBombardmentCommand;
 import megamek.server.commands.RemoveSmokeCommand;
-import megamek.server.commands.TerrainCommand;
 
 /**
  * Builds the Game Master special commands menu: one entry per server command that only a Game Master may run, each
@@ -138,13 +139,18 @@ public final class GameMasterCommandMenu {
      * Creates the Game Master commands that act on one hex. Each takes an X and a Y coordinate, which the dialog fills
      * in from the hex that was right-clicked, so these are only offered from the board context menu.
      *
+     * <p>The order groups the menu by what each command does rather than listing them arbitrarily: the two that
+     * modify what is already in the hex without changing it come first and stay together, then the one that changes
+     * what the hex is made of, then the ones that do something to it.</p>
+     *
      * @return The hex-targeted Game Master commands, in menu order
      */
     private static List<ClientServerCommand> hexTargetedCommands() {
-        return List.of(new BuildingCommand(null, null),
-              new FirefightCommand(null, null),
+        return List.of(new ModifyTerrainCommand(null, null),
+              new BuildingCommand(null, null),
+              new ChangeTerrainCommand(null, null),
               new FirestarterCommand(null, null),
-              new OrbitalBombardmentCommand(null, null),
-              new TerrainCommand(null, null));
+              new FirefightCommand(null, null),
+              new OrbitalBombardmentCommand(null, null));
     }
 }

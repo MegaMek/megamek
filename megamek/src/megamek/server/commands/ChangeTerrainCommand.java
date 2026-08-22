@@ -49,8 +49,11 @@ import megamek.server.totalWarfare.HexEditHandler;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
- * Lets a Game Master change the terrain in one hex: flooding it, growing woods in it, dropping rubble into it, paving
- * it, or clearing it back to bare ground.
+ * Lets a Game Master change what the terrain in one hex is: turning light woods into heavy woods, flooding a hex,
+ * dropping rubble into it, paving it, or clearing it back to bare ground.
+ *
+ * <p>This changes what is in the hex. To leave the terrain as it is and only adjust how much punishment it can still
+ * take, a gamemaster wants Modify Terrain instead.</p>
  *
  * <p>The terrains offered are the ones a gamemaster plausibly wants to place mid-game. Fire and smoke are not among
  * them because they have commands of their own, and the structural terrains - buildings, bridges, fuel tanks - are
@@ -58,7 +61,7 @@ import megamek.server.totalWarfare.TWGameManager;
  *
  * @see HexEditHandler
  */
-public class TerrainCommand extends GamemasterServerCommand {
+public class ChangeTerrainCommand extends GamemasterServerCommand {
 
     public static final String X = "x";
     public static final String Y = "y";
@@ -107,12 +110,12 @@ public class TerrainCommand extends GamemasterServerCommand {
         }
     }
 
-    public TerrainCommand(Server server, TWGameManager gameManager) {
+    public ChangeTerrainCommand(Server server, TWGameManager gameManager) {
         super(server,
               gameManager,
-              "terrain",
-              Messages.getString("Gamemaster.cmd.terrain.help"),
-              Messages.getString("Gamemaster.cmd.terrain.longName"));
+              "changeterrain",
+              Messages.getString("Gamemaster.cmd.changeTerrain.help"),
+              Messages.getString("Gamemaster.cmd.changeTerrain.longName"));
     }
 
     @Override
@@ -120,11 +123,11 @@ public class TerrainCommand extends GamemasterServerCommand {
         return List.of(new CoordXArgument(X, Messages.getString("Gamemaster.cmd.x")),
               new CoordYArgument(Y, Messages.getString("Gamemaster.cmd.y")),
               new EnumArgument<>(TERRAIN,
-                    Messages.getString("Gamemaster.cmd.terrain.terrain"),
+                    Messages.getString("Gamemaster.cmd.changeTerrain.terrain"),
                     EditableTerrain.class,
                     EditableTerrain.WATER),
               new IntegerArgument(LEVEL,
-                    Messages.getString("Gamemaster.cmd.terrain.level"),
+                    Messages.getString("Gamemaster.cmd.changeTerrain.level"),
                     HexEditHandler.REMOVE_TERRAIN_LEVEL,
                     MAX_TERRAIN_LEVEL,
                     1));
@@ -146,7 +149,7 @@ public class TerrainCommand extends GamemasterServerCommand {
                     .setTerrain(coords, boardId, terrain.terrainType(), level, gamemasterName);
 
         if (refusal != null) {
-            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.terrain.refused", refusal));
+            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.changeTerrain.refused", refusal));
         }
     }
 

@@ -203,4 +203,30 @@ class HexEditHandlerTest {
         assertFalse(board.getHex(WOODS_HEX).containsTerrain(Terrains.FOLIAGE_ELEV),
               "foliage elevation left behind with nothing growing in it would make the hex invalid");
     }
+
+    @Test
+    void modifyingTerrainSetsItsFactorWithoutChangingIt() {
+        String refusal = hexEditHandler.setTerrainFactor(WOODS_HEX, board.getBoardId(), Terrains.WOODS, 20,
+              GAMEMASTER);
+
+        assertNull(refusal, "weakening the woods should be allowed");
+        assertEquals(20, board.getHex(WOODS_HEX).getTerrain(Terrains.WOODS).getTerrainFactor(),
+              "the woods should be left with less of it standing");
+        assertEquals(1, board.getHex(WOODS_HEX).terrainLevel(Terrains.WOODS),
+              "modifying the terrain must not change what the terrain is");
+    }
+
+    @Test
+    void woodsStartAtTheirBookTerrainFactor() {
+        assertEquals(50, board.getHex(WOODS_HEX).getTerrain(Terrains.WOODS).getTerrainFactor(),
+              "light woods start at a terrain factor of 50");
+    }
+
+    @Test
+    void modifyingATerrainThatIsNotThereIsRefused() {
+        String refusal = hexEditHandler.setTerrainFactor(BARE_HEX, board.getBoardId(), Terrains.WOODS, 20,
+              GAMEMASTER);
+
+        assertNotNull(refusal, "there is no woods in a bare hex to modify");
+    }
 }

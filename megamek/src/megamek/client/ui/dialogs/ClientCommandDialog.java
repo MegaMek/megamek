@@ -33,6 +33,7 @@
 package megamek.client.ui.dialogs;
 
 import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.GridBagLayout;
 import java.util.HashMap;
 import java.util.List;
@@ -40,8 +41,10 @@ import java.util.Map;
 import java.util.Objects;
 import javax.swing.*;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.util.FlatLafStyleBuilder;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.server.commands.ClientServerCommand;
@@ -56,6 +59,12 @@ public class ClientCommandDialog extends JDialog {
 
     /** Where a hex spinner starts when the dialog was opened without a hex; board coordinates are one-based. */
     private static final int FIRST_BOARD_COORDINATE = 1;
+
+    /** How many columns the dialog's grid holds, so a full-width row can span all of them. */
+    private static final int DIALOG_COLUMNS = 4;
+
+    /** The width the help text wraps to, before the GUI scale is applied. */
+    private static final int HELP_TEXT_WIDTH = 460;
 
     private final ClientServerCommand command;
     private final ClientGUI client;
@@ -90,43 +99,64 @@ public class ClientCommandDialog extends JDialog {
     }
 
     private void addTitleAndDescription() {
-
-        var title = new JLabel(command.getLongName());
+        JLabel title = new JLabel(command.getLongName());
         new FlatLafStyleBuilder().size(1.5).bold().apply(title);
-        var gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = yPosition++;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.gridheight = 1;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        add(title, gridBagConstraints);
+        add(title, fullWidthRow());
 
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = yPosition++;
-        gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.gridheight = 1;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        addTargetHexLabel();
 
-        add(new JSeparator(), gridBagConstraints);
+        add(new JSeparator(), fullWidthRow());
 
-        var helpLabel = new JLabel(command.getHelpHtml());
+        JLabel helpLabel = new JLabel(helpWrappedToDialogWidth());
         new FlatLafStyleBuilder().size(1).apply(helpLabel);
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = yPosition++;
-        gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.gridheight = 3;
-        yPosition += 2;
+        add(helpLabel, fullWidthRow());
 
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = yPosition++;
-        gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.gridheight = 1;
-        add(new JSeparator(), gridBagConstraints);
+        add(new JSeparator(), fullWidthRow());
+    }
 
-        add(helpLabel, gridBagConstraints);
+    /**
+     * Names the hex the command was opened on, so a gamemaster can see at a glance which hex they are about to change
+     * without reading it back out of the coordinate spinners. Nothing is shown when the dialog was opened without a
+     * hex, because then there is no hex to name.
+     */
+    private void addTargetHexLabel() {
+        if (coords == null) {
+            return;
+        }
+        JLabel targetLabel = new JLabel(Messages.getString("Gamemaster.cmd.targetHex", coords.getBoardNum()));
+        new FlatLafStyleBuilder().size(1).bold().apply(targetLabel);
+        add(targetLabel, fullWidthRow());
+    }
+
+    /**
+     * Builds the constraints for one full-width row of the dialog and moves on to the next row. Every row is built
+     * from its own constraints; sharing one between two components put them in the same cell, which is what squeezed
+     * the help text into a narrow column down the middle of the dialog.
+     *
+     * @return The constraints for the next row
+     */
+    private GridBagConstraints fullWidthRow() {
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridx = 0;
+        constraints.gridy = yPosition++;
+        constraints.gridwidth = DIALOG_COLUMNS;
+        constraints.gridheight = 1;
+        constraints.weightx = 1.0;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.anchor = GridBagConstraints.NORTHWEST;
+        constraints.insets = new Insets(2, 6, 2, 6);
+        return constraints;
+    }
+
+    /**
+     * The command's help text, held to a readable width. An HTML label with no width to work to lays itself out at
+     * whatever width the layout hands it, which for a long help text is a tall thin column of one or two words a line.
+     *
+     * @return The help text as HTML, wrapped to the dialog's text width
+     */
+    private String helpWrappedToDialogWidth() {
+        String widthStyle = "<html><body style='width: " + UIUtil.scaleForGUI(HELP_TEXT_WIDTH) + "px'>";
+        return command.getHelpHtml().replaceFirst("(?i)^<html>", widthStyle);
     }
 
     private Map<String, JComponent> addArgumentComponents() {

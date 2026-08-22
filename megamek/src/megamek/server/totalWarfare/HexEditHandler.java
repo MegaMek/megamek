@@ -69,6 +69,7 @@ public class HexEditHandler extends AbstractTWRuleHandler {
     private static final int REPORT_TERRAIN_SET = 1250;
     private static final int REPORT_TERRAIN_REMOVED = 1251;
     private static final int REPORT_HEX_CLEARED = 1252;
+    private static final int REPORT_TERRAIN_FACTOR_SET = 1254;
 
     HexEditHandler(TWGameManager gameManager) {
         super(gameManager);
@@ -107,6 +108,50 @@ public class HexEditHandler extends AbstractTWRuleHandler {
         reportChange(coords, terrainType, terrainLevel, gamemasterName);
         LOGGER.info("[GMTerrain] {} set {} to level {} in hex {}",
               gamemasterName, Terrains.getName(terrainType), terrainLevel, coords.getBoardNum());
+        return null;
+    }
+
+    /**
+     * Sets how much punishment a terrain in one hex can still take, leaving what the terrain is alone. Woods that have
+     * been shelled but not yet flattened are the usual case: the hex is still light woods, but there is less of it
+     * left to burn or blast away.
+     *
+     * @param coords         The hex holding the terrain
+     * @param boardId        The board the hex is on
+     * @param terrainType    The terrain to weaken or restore, from {@link Terrains}
+     * @param terrainFactor  The terrain factor to leave it at
+     * @param gamemasterName The name of the gamemaster making the change, for the report
+     *
+     * @return A description of why the edit was refused, or {@code null} when it was applied
+     */
+    public String setTerrainFactor(Coords coords, int boardId, int terrainType, int terrainFactor,
+          String gamemasterName) {
+        Hex hex = getGame().getHex(coords, boardId);
+        if (hex == null) {
+            LOGGER.debug("[GMTerrain] {}: refused - hex {} does not exist on board {}",
+                  gamemasterName, coords.getBoardNum(), boardId);
+            return "that hex is not on the board";
+        }
+        Terrain terrain = hex.getTerrain(terrainType);
+        if (terrain == null) {
+            LOGGER.debug("[GMTerrain] {}: refused - hex {} holds no {}",
+                  gamemasterName, coords.getBoardNum(), Terrains.getName(terrainType));
+            return "there is no " + Terrains.getName(terrainType) + " in that hex to modify";
+        }
+
+        int previousFactor = terrain.getTerrainFactor();
+        terrain.setTerrainFactor(terrainFactor);
+        gameManager.sendChangedHex(coords, boardId);
+
+        Report report = new Report(REPORT_TERRAIN_FACTOR_SET, Report.PUBLIC);
+        report.add(gamemasterName);
+        report.add(Terrains.getDisplayName(terrainType, terrain.getLevel()));
+        report.add(coords.getBoardNum());
+        report.add(terrainFactor);
+        addReport(report);
+
+        LOGGER.info("[GMTerrain] {} set the terrain factor of {} in hex {} from {} to {}",
+              gamemasterName, Terrains.getName(terrainType), coords.getBoardNum(), previousFactor, terrainFactor);
         return null;
     }
 

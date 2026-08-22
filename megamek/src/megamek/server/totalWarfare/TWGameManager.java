@@ -357,7 +357,8 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new SkillModifierCommand(server, this));
         commands.add(new DisasterCommand(server, this));
         commands.add(new FirestarterCommand(server, this));
-        commands.add(new TerrainCommand(server, this));
+        commands.add(new ChangeTerrainCommand(server, this));
+        commands.add(new ModifyTerrainCommand(server, this));
         commands.add(new BuildingCommand(server, this));
         commands.add(new NoFiresCommand(server, this));
         commands.add(new FirefightCommand(server, this));

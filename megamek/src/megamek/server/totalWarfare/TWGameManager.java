@@ -267,6 +267,7 @@ public class TWGameManager extends AbstractGameManager {
     private final TWPhasePreparationManager phasePreparationManager = new TWPhasePreparationManager(this);
     private LobbyBoardHandler lobbyBoardHandler;
     private HexEditHandler hexEditHandler;
+    private BuildingEditHandler buildingEditHandler;
     private final InfantryActionTracker infantryActionTracker = new InfantryActionTracker();
     private final BuildingCollapseHandler buildingCollapseHandler = new BuildingCollapseHandler(this);
     private final DeploymentProcessor deploymentProcessor = new DeploymentProcessor(this);
@@ -357,6 +358,7 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new DisasterCommand(server, this));
         commands.add(new FirestarterCommand(server, this));
         commands.add(new TerrainCommand(server, this));
+        commands.add(new BuildingCommand(server, this));
         commands.add(new NoFiresCommand(server, this));
         commands.add(new FirefightCommand(server, this));
         commands.add(new FirestormCommand(server, this));
@@ -404,6 +406,17 @@ public class TWGameManager extends AbstractGameManager {
             hexEditHandler = new HexEditHandler(this);
         }
         return hexEditHandler;
+    }
+
+    /**
+     * @return the handler that applies a gamemaster's edits to a building, created on first use for the same reason as
+     *       {@link #lobbyBoardHandler()}
+     */
+    public BuildingEditHandler buildingEditHandler() {
+        if (buildingEditHandler == null) {
+            buildingEditHandler = new BuildingEditHandler(this);
+        }
+        return buildingEditHandler;
     }
 
     @Override

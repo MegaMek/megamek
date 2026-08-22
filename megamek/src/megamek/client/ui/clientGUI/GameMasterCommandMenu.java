@@ -42,6 +42,7 @@ import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.logging.MMLogger;
+import megamek.server.commands.BuildingCommand;
 import megamek.server.commands.ChangeWeatherCommand;
 import megamek.server.commands.ClientServerCommand;
 import megamek.server.commands.DisasterCommand;
@@ -140,7 +141,8 @@ public final class GameMasterCommandMenu {
      * @return The hex-targeted Game Master commands, in menu order
      */
     private static List<ClientServerCommand> hexTargetedCommands() {
-        return List.of(new FirefightCommand(null, null),
+        return List.of(new BuildingCommand(null, null),
+              new FirefightCommand(null, null),
               new FirestarterCommand(null, null),
               new OrbitalBombardmentCommand(null, null),
               new TerrainCommand(null, null));

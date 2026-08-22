@@ -54,6 +54,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
@@ -457,7 +458,11 @@ public class HexEditDialog extends JDialog {
             if (hex == null) {
                 return List.of(Messages.getString("HexEditDialog.offBoard", coords.getBoardNum()));
             }
-            List<String> problems = HexEditValidator.problemsWith(editedCopyOf(hex));
+            // the same check the server will make, including the rules that depend on what is standing in the hex.
+            // Asking a different question here than the server asks is how a dialog comes to call an edit legal that
+            // is then refused, leaving a gamemaster with no visible reason why nothing happened.
+            boolean isOccupied = !clientGUI.getClient().getGame().getEntitiesVector(coords, boardId).isEmpty();
+            List<String> problems = HexEditValidator.problemsWithChange(hex, editedCopyOf(hex), isOccupied);
             if (!problems.isEmpty()) {
                 problems.add(0, Messages.getString("HexEditDialog.inHex", coords.getBoardNum()));
                 return problems;
@@ -486,8 +491,31 @@ public class HexEditDialog extends JDialog {
         return edited;
     }
 
-    /** Sends the edit and closes, because the gamemaster wants to see the board it changed. */
+    /**
+     * Sends the edit and closes, because the gamemaster wants to see the board it changed.
+     *
+     * <p>An edit that names no terrain strips the hexes to bare ground, which is a real thing to want and also what a
+     * gamemaster ends up with if they choose a terrain but never add it to the list. On hexes that are already clear
+     * it looks like nothing happened at all, so it is worth asking first.</p>
+     */
     private void execute() {
+        if (terrainLevels.isEmpty() && !confirmStrippingHexesBare()) {
+            return;
+        }
+        sendEdit();
+    }
+
+    /** @return {@code true} when the gamemaster confirms they meant to strip the hexes rather than lay something down */
+    private boolean confirmStrippingHexesBare() {
+        int choice = JOptionPane.showConfirmDialog(this,
+              Messages.getString("HexEditDialog.confirmClear.message"),
+              Messages.getString("HexEditDialog.confirmClear.title"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.QUESTION_MESSAGE);
+        return choice == JOptionPane.YES_OPTION;
+    }
+
+    private void sendEdit() {
         HexEditSpec spec = new HexEditSpec(boardId);
         selectedHexes.forEach(spec::addCoords);
         terrainLevels.forEach(spec::setTerrain);

@@ -85,6 +85,42 @@ public final class HexEditValidator {
     }
 
     /**
+     * Lists everything wrong with a change to a hex, including the things that depend on what the hex was before and
+     * on what is standing in it.
+     *
+     * <p>Every rule a gamemaster can break belongs here rather than on one side of the connection, so that the dialog
+     * can report a refusal while there is still something to change instead of the server refusing an edit the dialog
+     * has already called legal.</p>
+     *
+     * @param original   The hex as it is now
+     * @param edited     The hex as it would be after the edit
+     * @param isOccupied Whether any unit is standing in the hex
+     *
+     * @return the problems with the change, in words a gamemaster can act on; empty when the change is legal
+     */
+    public static List<String> problemsWithChange(Hex original, Hex edited, boolean isOccupied) {
+        List<String> problems = problemsWith(edited);
+        if (wouldMoveTheWaterUnderUnits(original, edited, isOccupied)) {
+            problems.add("The water depth cannot be changed while units are standing in the hex; move them first.");
+        }
+        return problems;
+    }
+
+    /**
+     * Whether the change would flood or drain the ground under a unit. There is no rule for what happens to a unit
+     * when the water beneath it rises or falls, so the change is refused rather than guessed at.
+     *
+     * @param original   The hex as it is now
+     * @param edited     The hex as it would be after the edit
+     * @param isOccupied Whether any unit is standing in the hex
+     *
+     * @return {@code true} when the water depth would change under a unit
+     */
+    public static boolean wouldMoveTheWaterUnderUnits(Hex original, Hex edited, boolean isOccupied) {
+        return isOccupied && (original.depth() != edited.depth());
+    }
+
+    /**
      * Whether the hex would leave a structure standing in water. The hex's own validation does not catch this: it
      * checks that a structure in a hex is complete, not that it is somewhere it could have been built.
      *

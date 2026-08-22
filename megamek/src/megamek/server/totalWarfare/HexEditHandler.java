@@ -274,7 +274,9 @@ public class HexEditHandler extends AbstractTWRuleHandler {
                   gamemasterName, coords.getBoardNum(), boardId);
             return "that hex is not on the board";
         }
-        if (drainsOccupiedWater(hex, new Hex(), coords, boardId)) {
+        boolean clearingWaterUnderUnits = HexEditValidator.wouldMoveTheWaterUnderUnits(hex, new Hex(),
+              !getGame().getEntitiesVector(coords, boardId).isEmpty());
+        if (clearingWaterUnderUnits) {
             LOGGER.debug("[GMTerrain] {}: refused clearing hex {} - it holds water and units are in it",
                   gamemasterName, coords.getBoardNum());
             return "that hex holds water with units in it; move them first";
@@ -338,32 +340,14 @@ public class HexEditHandler extends AbstractTWRuleHandler {
      * @return The reason to refuse the edit, or {@code null} when there is none
      */
     private String refusalFor(Hex original, Hex edited, Coords coords, int boardId, String gamemasterName) {
-        List<String> hexProblems = HexEditValidator.problemsWith(edited);
+        boolean isOccupied = !getGame().getEntitiesVector(coords, boardId).isEmpty();
+        List<String> hexProblems = HexEditValidator.problemsWithChange(original, edited, isOccupied);
         if (!hexProblems.isEmpty()) {
-            LOGGER.debug("[GMTerrain] {}: refused editing hex {} - the result would be invalid: {}",
+            LOGGER.debug("[GMTerrain] {}: refused editing hex {} - {}",
                   gamemasterName, coords.getBoardNum(), hexProblems);
             return String.join(" ", hexProblems);
         }
-        if (drainsOccupiedWater(original, edited, coords, boardId)) {
-            LOGGER.debug("[GMTerrain] {}: refused editing hex {} - it would change water depth from {} to {} "
-                        + "with units in the hex",
-                  gamemasterName, coords.getBoardNum(), original.depth(), edited.depth());
-            return "that would change the water depth under units standing in the hex; move them first";
-        }
         return null;
-    }
-
-    /**
-     * Whether the edit would change how deep the water is in a hex that units are standing in. Flooding or draining
-     * the ground under a unit has no rule to follow, so the edit is refused rather than guessed at.
-     *
-     * @return {@code true} if the water depth changes and there is at least one unit in the hex
-     */
-    private boolean drainsOccupiedWater(Hex original, Hex edited, Coords coords, int boardId) {
-        if (original.depth() == edited.depth()) {
-            return false;
-        }
-        return !getGame().getEntitiesVector(coords, boardId).isEmpty();
     }
 
     /** Reports the change to every player, so a hex changing under them is never unexplained. */

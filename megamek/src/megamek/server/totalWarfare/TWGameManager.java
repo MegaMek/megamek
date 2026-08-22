@@ -26992,7 +26992,12 @@ public class TWGameManager extends AbstractGameManager {
         }
         String refusal = hexEditHandler().applyHexEdit(spec, sender.getName());
         if (refusal != null) {
-            sendServerChat(connIndex, Messages.getString("Gamemaster.cmd.changeTerrain.refused", refusal));
+            // a toast as well as chat: the dialog closes when the edit is sent, so a refusal that only went to the
+            // chat log would leave the gamemaster looking at an unchanged board with no visible reason why
+            String message = Messages.getString("Gamemaster.cmd.changeTerrain.refused", refusal);
+            sendServerChat(connIndex, message);
+            send(connIndex, new Packet(PacketCommand.SEND_TOAST, GameToastEvent.Level.WARNING, message,
+                  Entity.NONE));
             return;
         }
         sendToast(GameToastEvent.Level.GAMEMASTER,

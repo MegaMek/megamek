@@ -48,7 +48,6 @@ import megamek.common.board.Coords;
 import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 import megamek.server.commands.BuildingCommand;
-import megamek.server.commands.ChangeTerrainCommand;
 import megamek.server.commands.ChangeWeatherCommand;
 import megamek.server.commands.ClientServerCommand;
 import megamek.server.commands.DisasterCommand;
@@ -175,8 +174,10 @@ public final class GameMasterCommandMenu {
      * in from the hex that was right-clicked, so these are only offered from the board context menu.
      *
      * <p>The order groups the menu by what each command does rather than listing them arbitrarily: the two that
-     * modify what is already in the hex without changing it come first and stay together, then the one that changes
-     * what the hex is made of, then the ones that do something to it.</p>
+     * modify what is already in the hex without changing it come first and stay together, then the ones that do
+     * something to it. Changing what the hex is made of is not here - it has a dialog of its own, put on the menu by
+     * {@link MapMenu}, because the legal choices depend on what the hex already holds and a generated form cannot
+     * know that.</p>
      *
      * <p>Each is paired with what the hex must hold for it to be worth offering. The three that change or attack the
      * hex work on any hex; the ones that modify something already there need that something to be there.</p>
@@ -187,7 +188,6 @@ public final class GameMasterCommandMenu {
         return List.of(
               new HexCommand(new ModifyTerrainCommand(null, null), GameMasterCommandMenu::hasModifiableTerrain),
               new HexCommand(new BuildingCommand(null, null), GameMasterCommandMenu::hasBuilding),
-              new HexCommand(new ChangeTerrainCommand(null, null), GameMasterCommandMenu::anyHex),
               new HexCommand(new FirestarterCommand(null, null), GameMasterCommandMenu::anyHex),
               new HexCommand(new FirefightCommand(null, null), GameMasterCommandMenu::hasFire),
               new HexCommand(new OrbitalBombardmentCommand(null, null), GameMasterCommandMenu::anyHex));

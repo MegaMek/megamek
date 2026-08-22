@@ -494,5 +494,8 @@ public class ClientCommandDialog extends JDialog {
         }
 
         client.getClient().sendChat("/" + command.getName() + " " + String.join(" ", args));
+        // the command is on its way and the dialog has nothing more to say; leaving it open over the board only hides
+        // the result the gamemaster wants to see
+        dispose();
     }
 }

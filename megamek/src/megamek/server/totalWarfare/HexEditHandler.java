@@ -41,6 +41,7 @@ import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.board.Coords;
 import megamek.common.board.HexEditSpec;
+import megamek.common.board.HexEditValidator;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
@@ -168,24 +169,12 @@ public class HexEditHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * The terrains that make up a structure, which a terrain edit leaves alone. A building is not scenery to be
-     * painted over: taking one off the map is what Modify Building is for, and it brings the structure down through
-     * the collapse rules so that whatever is standing on or inside it is dealt with. Wiping these here would make a
-     * building disappear with everything in it still in mid-air.
-     */
-    private static final List<Integer> STRUCTURE_TERRAINS = List.of(
-          Terrains.BUILDING, Terrains.BLDG_CF, Terrains.BLDG_ELEV, Terrains.BLDG_ARMOR, Terrains.BLDG_CLASS,
-          Terrains.BLDG_BASEMENT_TYPE, Terrains.BLDG_BASE_COLLAPSED,
-          Terrains.BRIDGE, Terrains.BRIDGE_CF, Terrains.BRIDGE_ELEV,
-          Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF, Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN);
-
-    /**
      * Leaves the hex holding exactly the terrain the edit names, plus any structure that was already standing there.
      * The edit describes the ground, not what has been built on it.
      */
     private static void writeTerrain(Hex hex, HexEditSpec spec) {
         List<Terrain> structures = new ArrayList<>();
-        for (int structureTerrain : STRUCTURE_TERRAINS) {
+        for (int structureTerrain : HexEditValidator.structureTerrains()) {
             Terrain existing = hex.getTerrain(structureTerrain);
             if (existing != null) {
                 structures.add(existing);
@@ -349,16 +338,11 @@ public class HexEditHandler extends AbstractTWRuleHandler {
      * @return The reason to refuse the edit, or {@code null} when there is none
      */
     private String refusalFor(Hex original, Hex edited, Coords coords, int boardId, String gamemasterName) {
-        List<String> hexErrors = new ArrayList<>();
-        if (!edited.isValid(hexErrors)) {
+        List<String> hexProblems = HexEditValidator.problemsWith(edited);
+        if (!hexProblems.isEmpty()) {
             LOGGER.debug("[GMTerrain] {}: refused editing hex {} - the result would be invalid: {}",
-                  gamemasterName, coords.getBoardNum(), hexErrors);
-            return String.join("; ", hexErrors);
-        }
-        if (wouldFloodAStructure(edited)) {
-            LOGGER.debug("[GMTerrain] {}: refused editing hex {} - it would leave a structure standing in water",
-                  gamemasterName, coords.getBoardNum());
-            return "a building or fuel tank cannot stand in water; take the structure down first";
+                  gamemasterName, coords.getBoardNum(), hexProblems);
+            return String.join(" ", hexProblems);
         }
         if (drainsOccupiedWater(original, edited, coords, boardId)) {
             LOGGER.debug("[GMTerrain] {}: refused editing hex {} - it would change water depth from {} to {} "
@@ -367,20 +351,6 @@ public class HexEditHandler extends AbstractTWRuleHandler {
             return "that would change the water depth under units standing in the hex; move them first";
         }
         return null;
-    }
-
-    /**
-     * Whether the edited hex would leave a structure standing in water. A building or a fuel tank in a water hex is
-     * nonsense that the rules have nothing to say about, and it is not something the hex's own validation catches -
-     * that checks a structure is complete, not that it is somewhere it could be built.
-     *
-     * @param edited The hex as it would be after the edit
-     *
-     * @return {@code true} if the hex would hold both a structure and water for it to stand in
-     */
-    private static boolean wouldFloodAStructure(Hex edited) {
-        boolean hasStructure = edited.containsTerrain(Terrains.BUILDING) || edited.containsTerrain(Terrains.FUEL_TANK);
-        return hasStructure && (edited.depth() > 0);
     }
 
     /**

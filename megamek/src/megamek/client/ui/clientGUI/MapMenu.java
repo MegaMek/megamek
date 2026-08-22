@@ -60,6 +60,7 @@ import megamek.client.bot.princess.ChatCommands;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.HexEditDialog;
 import megamek.client.ui.dialogs.NoteDialog;
 import megamek.client.ui.dialogs.TurretFacingDialog;
 import megamek.client.ui.dialogs.UnitEditorDialog;
@@ -741,9 +742,19 @@ public class MapMenu extends JPopupMenu {
                 menu.add(dmgMenu);
                 menu.addSeparator();
             }
+            // Change Terrain has a dialog of its own rather than a generated form, because what a gamemaster may
+            // legally set depends on what the hex already holds, and the generated form cannot know that.
+            menu.add(createChangeTerrainMenuItem());
             menu.add(specialCommandsMenu);
         }
         return menu;
+    }
+
+    /** Opens the Change Terrain dialog on the hex that was right-clicked. */
+    private JMenuItem createChangeTerrainMenuItem() {
+        JMenuItem item = new JMenuItem(Messages.getString("HexEditDialog.title"));
+        item.addActionListener(event -> new HexEditDialog(gui.getFrame(), gui, coords).setVisible(true));
+        return item;
     }
 
     JMenuItem createUnitEditorMenuItem(Entity entity) {

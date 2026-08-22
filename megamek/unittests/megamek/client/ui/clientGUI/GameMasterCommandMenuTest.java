@@ -174,8 +174,14 @@ class GameMasterCommandMenuTest {
     }
 
     @Test
-    void changeTerrainIsOfferedOnAnyHex() {
-        assertTrue(offeredOn(BARE_HEX).contains("Change Terrain"),
-              "any hex can be changed into something else, including a bare one");
+    void aCommandThatWorksAnywhereIsOfferedOnABareHex() {
+        assertTrue(offeredOn(BARE_HEX).contains("Start a Fire"),
+              "a hex can be set alight whatever is or is not in it");
+    }
+
+    @Test
+    void changeTerrainIsNotAmongTheseCommands() {
+        assertFalse(offeredOn(BARE_HEX).contains("Change Terrain"),
+              "changing what a hex is made of has its own dialog, opened from the map menu, not a generated form");
     }
 }

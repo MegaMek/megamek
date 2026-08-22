@@ -49,15 +49,15 @@ import megamek.client.ui.util.UIUtil;
 /**
  * A border of diagonal yellow and red stripes, in the manner of hazard tape.
  *
- * <p>It marks the one control in a group that does something the player should not press by accident, or should be
- * able to find in a hurry: the bug reporting button, which sits beside nine link buttons in its dialog and beside the
- * bot and game command buttons above the board.</p>
+ * <p>It marks the one control in a group that the player should be able to find in a hurry: the bug reporting button
+ * in its dialog, which sits beside nine buttons that only open a link. Its in-game counterpart on the command strip
+ * is a {@link HazardButton}, which carries the same colours on the phase display skin instead.</p>
  */
 public class HazardStripeBorder extends AbstractBorder {
 
-    /** The yellow of the stripes, also used as the text colour on a {@link HazardButton}. */
+    /** The yellow of the stripes. */
     public static final Color HAZARD_YELLOW = new Color(255, 204, 0);
-    /** The red of the stripes, also used as the face colour of a {@link HazardButton}. */
+    /** The red of the stripes. */
     public static final Color HAZARD_RED = new Color(204, 34, 34);
 
     private static final int UNSCALED_THICKNESS = 5;

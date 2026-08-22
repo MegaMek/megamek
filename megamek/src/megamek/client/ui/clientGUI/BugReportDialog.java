@@ -42,6 +42,7 @@ import java.awt.GridLayout;
 import java.awt.Window;
 import java.util.function.Supplier;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -54,7 +55,7 @@ import megamek.client.ui.BugReportMessages;
 import megamek.client.ui.CopySystemDataAction;
 import megamek.client.ui.PackageBugReportAction;
 import megamek.client.ui.util.UIUtil;
-import megamek.client.ui.widget.HazardButton;
+import megamek.client.ui.widget.HazardStripeBorder;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.IssueReportUrl;
 
@@ -62,6 +63,9 @@ public class BugReportDialog {
 
     private static final int UNSCALED_WIDTH = 600;
     private static final BugReportMessages I18N = new BugReportMessages();
+
+    /** Breathing room between the striped border and the button text, in unscaled pixels. */
+    private static final int HAZARD_PADDING = 4;
 
     private static final int UNSCALED_REPORT_BUTTON_WIDTH = 260;
     private static final int UNSCALED_REPORT_BUTTON_HEIGHT = 48;
@@ -137,7 +141,10 @@ public class BugReportDialog {
      * @return the reporting button
      */
     private JButton createReportButton() {
-        JButton reportButton = new HazardButton(packageBugReportAction);
+        JButton reportButton = new JButton(packageBugReportAction);
+        int padding = UIUtil.scaleForGUI(HAZARD_PADDING);
+        reportButton.setBorder(BorderFactory.createCompoundBorder(new HazardStripeBorder(),
+              BorderFactory.createEmptyBorder(padding, padding, padding, padding)));
         reportButton.setFont(reportButton.getFont().deriveFont(Font.BOLD,
               reportButton.getFont().getSize2D() * REPORT_BUTTON_FONT_FACTOR));
         reportButton.setPreferredSize(new Dimension(UIUtil.scaleForGUI(UNSCALED_REPORT_BUTTON_WIDTH),

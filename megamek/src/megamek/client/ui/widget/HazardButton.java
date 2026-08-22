@@ -37,102 +37,148 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.geom.RoundRectangle2D;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-
-import megamek.client.ui.util.UIUtil;
+import java.awt.image.BufferedImage;
+import java.io.Serial;
+import java.util.function.Consumer;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 /**
- * A button styled like an emergency stop: a red face with bold yellow text, framed in yellow and red hazard stripes.
+ * A phase display button in emergency-stop colours: the usual skinned frame and brushed face, but tinted red, with
+ * the label in bold yellow.
  *
  * <p>It is meant for the one control on a crowded strip that has to be findable at a glance by a player who has
  * just watched something go wrong - the bug reporting button - and should not be used for anything routine, or the
  * effect is lost.</p>
  *
- * <p>The face darkens while the mouse is over it and again while it is pressed, and fades to grey when the button is
- * disabled, so it still reads as a button rather than a label.</p>
+ * <p>The skin's own images are reused rather than copied and recoloured on disk: everything the parent paints,
+ * face and frame alike, is rendered to an offscreen image and each pixel is remapped by its brightness onto a
+ * dark-red to yellow ramp. That keeps the shape identical to the buttons beside it whatever skin is in use, and the
+ * pressed image darkens the red just as it darkens the grey.</p>
  */
-public class HazardButton extends JButton {
+public class HazardButton extends MegaMekButton {
 
-    private static final Color FACE = HazardStripeBorder.HAZARD_RED;
-    private static final Color FACE_HOVER = FACE.darker();
-    private static final Color FACE_PRESSED = FACE_HOVER.darker();
-    private static final Color FACE_DISABLED = new Color(120, 120, 120);
-    private static final Color TEXT = HazardStripeBorder.HAZARD_YELLOW;
-    private static final Color TEXT_DISABLED = new Color(200, 200, 200);
+    @Serial
+    private static final long serialVersionUID = 2817492054981104913L;
 
-    /** Breathing room between the striped border and the text, in unscaled pixels. */
-    private static final int PADDING = 3;
-    /** Radius of the face's rounded corners, in unscaled pixels. */
-    private static final int CORNER = 6;
+    private static final Color LABEL = new Color(255, 221, 0);
+    private static final Color LABEL_HOVER = new Color(255, 245, 150);
+    private static final Color LABEL_DISABLED = new Color(160, 110, 40);
 
-    private final HazardStripeBorder stripeBorder = new HazardStripeBorder();
+    /** Brightness at and above which the ramp starts bending from red towards yellow, for the bevel highlights. */
+    private static final float HIGHLIGHT_START = 0.7f;
+    /** How much redder than blue a source pixel has to be to count as part of the skin's warm-coloured frame. */
+    private static final int FRAME_WARMTH = 40;
+    /** Brightness multiplier for frame pixels, so the bevel reads as a bright yellow rather than a muddy one. */
+    private static final float FRAME_LIFT = 1.6f;
+
+    /** While this is set the parent paints no text, so that the label can be drawn in the hazard colour instead. */
+    private boolean hidingTextForTint;
 
     /**
      * @param text the button's label
      */
     public HazardButton(String text) {
-        super(text);
-        styleAsHazard();
-    }
-
-    /**
-     * @param action the action the button performs, which also supplies its label and tooltip
-     */
-    public HazardButton(Action action) {
-        super(action);
-        styleAsHazard();
-    }
-
-    private void styleAsHazard() {
-        setContentAreaFilled(false);
-        setFocusPainted(false);
-        setOpaque(false);
-        setRolloverEnabled(true);
-        setForeground(TEXT);
+        super(text, SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
         setFont(getFont().deriveFont(Font.BOLD));
-        int padding = UIUtil.scaleForGUI(PADDING);
-        setBorder(BorderFactory.createCompoundBorder(stripeBorder,
-              BorderFactory.createEmptyBorder(padding, padding, padding, padding)));
+    }
+
+    @Override
+    public String getText() {
+        return hidingTextForTint ? "" : super.getText();
     }
 
     @Override
     protected void paintComponent(Graphics graphics) {
-        Graphics2D faceGraphics = (Graphics2D) graphics.create();
-        try {
-            faceGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            faceGraphics.setColor(faceColor());
-            faceGraphics.fill(faceShape());
-        } finally {
-            faceGraphics.dispose();
-        }
-        setForeground(isEnabled() ? TEXT : TEXT_DISABLED);
-        super.paintComponent(graphics);
+        paintTinted(graphics, super::paintComponent);
+
+        JLabel textLabel = new JLabel(super.getText(), SwingConstants.CENTER);
+        textLabel.setSize(getSize());
+        textLabel.setFont(getFont().deriveFont(Font.BOLD));
+        textLabel.setForeground(labelColor());
+        textLabel.paint(graphics);
     }
 
-    private Color faceColor() {
+    @Override
+    protected void paintBorder(Graphics graphics) {
+        paintTinted(graphics, super::paintBorder);
+    }
+
+    private Color labelColor() {
         if (!isEnabled()) {
-            return FACE_DISABLED;
+            return LABEL_DISABLED;
         }
-        if (getModel().isPressed()) {
-            return FACE_PRESSED;
-        }
-        if (getModel().isRollover()) {
-            return FACE_HOVER;
-        }
-        return FACE;
+        return (isMousedOver || hasFocus()) ? LABEL_HOVER : LABEL;
     }
 
-    /** @return the area inside the hazard stripes, with rounded corners so the red face does not fight the frame */
-    private Shape faceShape() {
-        var stripeInsets = stripeBorder.getBorderInsets(this);
-        int corner = UIUtil.scaleForGUI(CORNER);
-        return new RoundRectangle2D.Float(stripeInsets.left, stripeInsets.top,
-              getWidth() - stripeInsets.left - stripeInsets.right,
-              getHeight() - stripeInsets.top - stripeInsets.bottom, corner, corner);
+    /**
+     * Runs the given painter into an offscreen image, remaps every pixel onto the red ramp, and draws the result.
+     *
+     * @param graphics the graphics to draw the tinted result on
+     * @param painter  the parent's painting step, handed an offscreen graphics
+     */
+    private void paintTinted(Graphics graphics, Consumer<Graphics> painter) {
+        int width = getWidth();
+        int height = getHeight();
+        if ((width <= 0) || (height <= 0)) {
+            return;
+        }
+        BufferedImage offscreen = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D offscreenGraphics = offscreen.createGraphics();
+        try {
+            hidingTextForTint = true;
+            painter.accept(offscreenGraphics);
+        } finally {
+            hidingTextForTint = false;
+            offscreenGraphics.dispose();
+        }
+
+        int[] pixels = offscreen.getRGB(0, 0, width, height, null, 0, width);
+        for (int index = 0; index < pixels.length; index++) {
+            pixels[index] = tint(pixels[index]);
+        }
+        offscreen.setRGB(0, 0, width, height, pixels, 0, width);
+        graphics.drawImage(offscreen, 0, 0, null);
+    }
+
+    /**
+     * Maps one ARGB pixel onto the hazard ramp by its brightness: shadows stay dark red, the face is red, and the
+     * brightest bevel highlights turn yellow. Alpha is kept, so transparent corners stay transparent.
+     *
+     * @param argb the source pixel
+     *
+     * @return the tinted pixel
+     */
+    static int tint(int argb) {
+        int alpha = (argb >>> 24) & 0xFF;
+        if (alpha == 0) {
+            return argb;
+        }
+        int red = (argb >> 16) & 0xFF;
+        int green = (argb >> 8) & 0xFF;
+        int blue = argb & 0xFF;
+        float brightness = ((0.299f * red) + (0.587f * green) + (0.114f * blue)) / 255f;
+
+        int tintedRed;
+        int tintedGreen;
+        int tintedBlue;
+        if ((red - blue) > FRAME_WARMTH) {
+            // The skin draws its bevel and corner pieces in warm orange; those become the yellow of the frame.
+            float lift = Math.min(1f, brightness * FRAME_LIFT);
+            tintedRed = Math.round(120 + (135 * lift));
+            tintedGreen = Math.round(90 + (130 * lift));
+            tintedBlue = 0;
+        } else {
+            // Everything else - the brushed grey face and its shadows - becomes the red of the face.
+            tintedRed = Math.round(70 + (185 * brightness));
+            tintedGreen = Math.round(10 + (30 * brightness));
+            tintedBlue = Math.round(5 + (15 * brightness));
+            if (brightness > HIGHLIGHT_START) {
+                float highlight = (brightness - HIGHLIGHT_START) / (1f - HIGHLIGHT_START);
+                tintedGreen = Math.round(tintedGreen + (highlight * 180));
+            }
+        }
+        return (alpha << 24) | (Math.min(255, tintedRed) << 16) | (Math.min(255, tintedGreen) << 8)
+              | Math.min(255, tintedBlue);
     }
 }

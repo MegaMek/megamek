@@ -37,11 +37,16 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.enums.ChargeLevel;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.IArmorState;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponType;
+import megamek.common.exceptions.LocationFullException;
+import megamek.common.options.GameOptions;
+import megamek.common.weapons.Weapon;
 import megamek.testUtilities.MMTestUtilities;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -265,5 +270,174 @@ class DamageEditApplierTest {
         hotLoadOff.hotLoadedAmmo.put(equipmentNumber, false);
         apply(hotLoadOff);
         assertFalse(lrmBin.isHotLoaded());
+    }
+
+    /** Adds the equipment of the given internal name to the unit, failing the test if the type is unknown. */
+    private static Mounted<?> addEquipment(Mek target, String internalName, int location)
+          throws LocationFullException {
+        EquipmentType equipmentType = EquipmentType.get(internalName);
+        assertNotNull(equipmentType, "Equipment type " + internalName + " must exist");
+        return target.addEquipment(equipmentType, location);
+    }
+
+    /** A spec holding only the given equipment mode choice, applied to the given unit. */
+    private static void applyModeSwitch(Entity target, int equipmentNumber, String modeName) {
+        DamageEditSpec spec = new DamageEditSpec();
+        spec.entityId = target.getId();
+        spec.equipmentMode.put(equipmentNumber, modeName);
+        new DamageEditApplier(target, spec).applyToEntity();
+    }
+
+    /** A spec holding only the given charge switch, applied to the given unit. */
+    private static void applyChargeSwitch(Entity target, int equipmentNumber, boolean charged) {
+        DamageEditSpec spec = new DamageEditSpec();
+        spec.entityId = target.getId();
+        spec.equipmentCharged.put(equipmentNumber, charged);
+        new DamageEditApplier(target, spec).applyToEntity();
+    }
+
+    @Test
+    void equipmentSwitchLandsImmediatelyWithoutAnEndPhase() throws LocationFullException {
+        BipedMek bipedMek = new BipedMek();
+        Mounted<?> ecm = addEquipment(bipedMek, "ISGuardianECMSuite", Mek.LOC_RIGHT_TORSO);
+        int equipmentNumber = bipedMek.getEquipmentNum(ecm);
+        assertTrue(bipedMek.hasActiveECM(), "A freshly mounted Guardian ECM starts on");
+
+        applyModeSwitch(bipedMek, equipmentNumber, Mounted.MODE_OFF);
+        assertTrue(ecm.isModeTurnedOff(), "The gamemaster's switch needs no End Phase");
+        assertFalse(bipedMek.hasActiveECM(), "A switched-off ECM suite projects no field");
+
+        applyModeSwitch(bipedMek, equipmentNumber, MiscType.MODE_ECM);
+        assertEquals(MiscType.MODE_ECM, ecm.curMode().getName(),
+              "Switching back on restores the equipment's active mode");
+        assertTrue(bipedMek.hasActiveECM());
+    }
+
+    @Test
+    void matchingSwitchLeavesAPendingPlayerModeChangeAlone() throws LocationFullException {
+        BipedMek bipedMek = new BipedMek();
+        Mounted<?> ecm = addEquipment(bipedMek, "ISGuardianECMSuite", Mek.LOC_RIGHT_TORSO);
+        int equipmentNumber = bipedMek.getEquipmentNum(ecm);
+        ecm.setMode(Mounted.MODE_OFF);
+        assertTrue(ecm.isModeTurnedOffNextRound(), "The player's switch to Off is pending");
+
+        // the switch was prefilled with the current mode and the gamemaster did not touch it
+        applyModeSwitch(bipedMek, equipmentNumber, MiscType.MODE_ECM);
+
+        assertTrue(ecm.isModeTurnedOffNextRound(), "An untouched switch leaves the pending change in place");
+    }
+
+    @Test
+    void gaussPowerSwitchLandsImmediately() throws LocationFullException {
+        BipedMek bipedMek = new BipedMek();
+        Mounted<?> gaussRifle = addEquipment(bipedMek, "ISGaussRifle", Mek.LOC_RIGHT_TORSO);
+        // the powered up/down modes are added when a game's options are adapted, as happens on game setup
+        gaussRifle.adaptToGameOptions(new GameOptions());
+        int equipmentNumber = bipedMek.getEquipmentNum(gaussRifle);
+
+        applyModeSwitch(bipedMek, equipmentNumber, Weapon.MODE_GAUSS_POWERED_DOWN);
+        assertEquals(Weapon.MODE_GAUSS_POWERED_DOWN, gaussRifle.curMode().getName());
+
+        applyModeSwitch(bipedMek, equipmentNumber, Weapon.MODE_GAUSS_POWERED_UP);
+        assertEquals(Weapon.MODE_GAUSS_POWERED_UP, gaussRifle.curMode().getName());
+    }
+
+    @Test
+    void rulesLockedModeStaysLockedEvenForTheGamemaster() throws LocationFullException {
+        BipedMek bipedMek = new BipedMek();
+        Mounted<?> ecm = addEquipment(bipedMek, "ISGuardianECMSuite", Mek.LOC_RIGHT_TORSO);
+        // the per-mount lock the rules use, e.g. an aero's rotary autocannon forced to 6-shot
+        ecm.setModeSwitchable(false);
+
+        applyModeSwitch(bipedMek, bipedMek.getEquipmentNum(ecm), Mounted.MODE_OFF);
+
+        assertFalse(ecm.isModeTurnedOff(), "A rules-locked mode is not switchable, even by the gamemaster");
+    }
+
+    @Test
+    void brokenSpecValuesFromTheNetworkAreIgnored() throws LocationFullException {
+        BipedMek bipedMek = new BipedMek();
+        Mounted<?> ecm = addEquipment(bipedMek, "ISGuardianECMSuite", Mek.LOC_RIGHT_TORSO);
+        Mounted<?> bombastLaser = addEquipment(bipedMek, "ISBombastLaser", Mek.LOC_RIGHT_ARM);
+
+        // the spec travels in a packet, so a broken client may fill its maps with nulls
+        DamageEditSpec brokenSpec = new DamageEditSpec();
+        brokenSpec.entityId = bipedMek.getId();
+        brokenSpec.equipmentMode.put(bipedMek.getEquipmentNum(ecm), null);
+        brokenSpec.equipmentCharged.put(bipedMek.getEquipmentNum(bombastLaser), null);
+        new DamageEditApplier(bipedMek, brokenSpec).applyToEntity();
+
+        assertTrue(bipedMek.hasActiveECM(), "A null mode name is ignored, not applied or crashed on");
+        assertEquals(ChargeLevel.CHARGE_NONE, bombastLaser.getChargeState(), "A null charge state is ignored");
+    }
+
+    @Test
+    void unknownModeNameChangesNothing() throws LocationFullException {
+        BipedMek bipedMek = new BipedMek();
+        Mounted<?> ecm = addEquipment(bipedMek, "ISGuardianECMSuite", Mek.LOC_RIGHT_TORSO);
+        Mounted<?> stealth = addEquipment(bipedMek, "IS Stealth", Mek.LOC_LEFT_TORSO);
+        stealth.setModeImmediately(Mounted.MODE_ON);
+
+        applyModeSwitch(bipedMek, bipedMek.getEquipmentNum(ecm), "No Such Mode");
+
+        assertEquals(MiscType.MODE_ECM, ecm.curMode().getName(), "An unknown mode name changes nothing");
+        assertEquals(Mounted.MODE_ON, stealth.curMode().getName(),
+              "A failed switch must not trigger the ECM/stealth follow-up");
+    }
+
+    @Test
+    void multiModeEquipmentTakesAnyOfItsModes() throws LocationFullException {
+        BipedMek bipedMek = new BipedMek();
+        Mounted<?> shield = addEquipment(bipedMek, "ISMediumShield", Mek.LOC_LEFT_ARM);
+        int equipmentNumber = bipedMek.getEquipmentNum(shield);
+
+        applyModeSwitch(bipedMek, equipmentNumber, MiscType.S_ACTIVE_SHIELD);
+        assertEquals(MiscType.S_ACTIVE_SHIELD, shield.curMode().getName());
+
+        applyModeSwitch(bipedMek, equipmentNumber, MiscType.S_PASSIVE_SHIELD);
+        assertEquals(MiscType.S_PASSIVE_SHIELD, shield.curMode().getName());
+    }
+
+    @Test
+    void capacitorChargeSwitchLandsImmediately() throws LocationFullException {
+        BipedMek bipedMek = new BipedMek();
+        Mounted<?> capacitor = addEquipment(bipedMek, "ISPPCCapacitor", Mek.LOC_RIGHT_ARM);
+        int equipmentNumber = bipedMek.getEquipmentNum(capacitor);
+
+        applyChargeSwitch(bipedMek, equipmentNumber, true);
+        assertEquals(Mounted.MODE_CAPACITOR_CHARGE, capacitor.curMode().getName(),
+              "The gamemaster's charge lands at once, with no charging round");
+
+        applyChargeSwitch(bipedMek, equipmentNumber, false);
+        assertEquals(Mounted.MODE_OFF, capacitor.curMode().getName(), "Emptying the capacitor drops its charge");
+    }
+
+    @Test
+    void bombastLaserChargeSwitchLandsImmediately() throws LocationFullException {
+        BipedMek bipedMek = new BipedMek();
+        Mounted<?> bombastLaser = addEquipment(bipedMek, "ISBombastLaser", Mek.LOC_RIGHT_ARM);
+        int equipmentNumber = bipedMek.getEquipmentNum(bombastLaser);
+        assertEquals(ChargeLevel.CHARGE_NONE, bombastLaser.getChargeState(), "A fresh bombast laser is uncharged");
+
+        applyChargeSwitch(bipedMek, equipmentNumber, true);
+        assertEquals(ChargeLevel.CHARGED, bombastLaser.getChargeState(),
+              "The gamemaster's charge lands at once, with no charging round");
+
+        applyChargeSwitch(bipedMek, equipmentNumber, false);
+        assertEquals(ChargeLevel.CHARGE_NONE, bombastLaser.getChargeState());
+    }
+
+    @Test
+    void switchingTheLastEcmOffTakesStealthArmorDown() throws LocationFullException {
+        BipedMek bipedMek = new BipedMek();
+        Mounted<?> ecm = addEquipment(bipedMek, "ISGuardianECMSuite", Mek.LOC_RIGHT_TORSO);
+        Mounted<?> stealth = addEquipment(bipedMek, "IS Stealth", Mek.LOC_LEFT_TORSO);
+        stealth.setModeImmediately(Mounted.MODE_ON);
+
+        applyModeSwitch(bipedMek, bipedMek.getEquipmentNum(ecm), Mounted.MODE_OFF);
+
+        assertTrue(ecm.isModeTurnedOff());
+        assertEquals(Mounted.MODE_OFF, stealth.curMode().getName(),
+              "Stealth armor cannot run without an operating ECM, so it goes down with it");
     }
 }

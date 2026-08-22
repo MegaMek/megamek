@@ -39,10 +39,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 
+import megamek.client.ui.buttons.StateToggleButton;
+import megamek.common.equipment.EquipmentMode;
 import megamek.common.units.DamageEditSpec;
 
 /**
@@ -91,6 +94,27 @@ public class UnitDamageControls {
     public final Map<Integer, JCheckBox> mgBurst = new HashMap<>();
     /** Hot-loading on each ammo bin allowing it, by equipment number. Only a gamemaster's in-game editor builds these. */
     public final Map<Integer, JCheckBox> hotLoadedAmmo = new HashMap<>();
+    /**
+     * A two-state equipment mode switch: the toggle button and the internal mode name each of its states stands
+     * for, so the chosen mode can be read back without re-deriving which mode was which.
+     *
+     * @param toggle         the button in the editor row
+     * @param selectedMode   the internal mode name the selected state stands for (the active mode)
+     * @param unselectedMode the internal mode name the unselected state stands for (the off mode)
+     */
+    public record ModeSwitch(StateToggleButton toggle, String selectedMode, String unselectedMode) {
+        /** The internal name of the mode the switch currently stands on. */
+        public String chosenMode() {
+            return toggle.isSelected() ? selectedMode : unselectedMode;
+        }
+    }
+
+    /** On/Off switch of each two-mode piece of equipment, by equipment number. Only a gamemaster's in-game editor builds these. */
+    public final Map<Integer, ModeSwitch> equipmentOnOff = new HashMap<>();
+    /** Mode chooser of each piece of equipment with three or more modes, by equipment number. Only a gamemaster's in-game editor builds these. */
+    public final Map<Integer, JComboBox<EquipmentMode>> equipmentModes = new HashMap<>();
+    /** Charged/Empty switch of each chargeable weapon, by equipment number. Only a gamemaster's in-game editor builds these. */
+    public final Map<Integer, StateToggleButton> equipmentCharged = new HashMap<>();
 
     /*
      * The gamemaster's temporary skill modifiers; null when the editor is not the gamemaster's, or out of game.

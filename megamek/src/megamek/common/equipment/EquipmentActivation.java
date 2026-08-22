@@ -58,6 +58,10 @@ public final class EquipmentActivation {
      *       {@code "Off"}
      */
     public static boolean isC3SwitchedOff(Entity entity) {
+        // An activated C3 Emergency Master may not be deliberately switched off (TO:AUE p.110)
+        if (entity.isC3EmergencyMasterActive()) {
+            return false;
+        }
         boolean hasOperableC3Equipment = false;
         for (Mounted<?> mounted : entity.getEquipment()) {
             EquipmentType equipmentType = mounted.getType();

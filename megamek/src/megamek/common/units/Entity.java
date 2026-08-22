@@ -257,6 +257,8 @@ public abstract class Entity extends TurnOrdered
     public static final int MAX_NOVA_CEWS_NODES = 3;
     /** A C3 Master computer controls one to three C3 Slaves or one to three C3 Masters (CR p.198). */
     public static final int MAX_C3M_SUBORDINATES = 3;
+    /** A C3 Emergency Master overloads after this many operating turns (TO:AUE p.110). */
+    public static final int C3EM_MAX_OPERATING_TURNS = 6;
     public static final String C3_NETWORK_ID_SEPARATOR = ".";
 
     protected boolean isC3ecmAffected = false;
@@ -564,6 +566,22 @@ public abstract class Entity extends TurnOrdered
     protected String c3NetIdString = null;
     protected int c3Master = NONE;
     protected int c3CompanyMasterIndex = LOC_DESTROYED;
+
+    /**
+     * The master this unit most recently lost to destruction or damage - recorded when the lazy cleanup in
+     * {@link #getC3Master()} clears {@code c3Master}, so the C3 Emergency Master takeover (TO:AUE p.110) can still
+     * identify the dead master's network after the pointer is gone.
+     */
+    protected int c3MasterLostId = NONE;
+
+    /** True while this unit's C3 Emergency Master has taken over as lance master (TO:AUE p.110). */
+    protected boolean c3emActive = false;
+
+    /** Operating turns the C3 Emergency Master has used; at {@link #C3EM_MAX_OPERATING_TURNS} it overloads. */
+    protected int c3emOperatingTurns = 0;
+
+    /** The master unit the C3 Emergency Master substituted for, so an ECM-jammed master can resume afterward. */
+    protected int c3emOriginalMasterId = NONE;
     private String c3UUID = null;
     private String c3MasterIsUUID = null;
     private final String[] c3iUUIDs = new String[MAX_C3i_NODES];
@@ -6816,12 +6834,75 @@ public abstract class Entity extends TurnOrdered
     /**
      * @return True if this unit has a C3 Slave.
      */
+    /** @return True if this unit mounts an operable C3 Emergency Master that has not overloaded (TO:AUE p.110). */
+    public boolean hasC3EmergencyMaster() {
+        if (isShutDown() || isOffBoard() || isC3EmergencyMasterOverloaded()) {
+            return false;
+        }
+        for (MiscMounted mounted : getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_C3EM) && !mounted.isInoperable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** @return True while this unit's C3 Emergency Master has taken over as a lance master. */
+    public boolean isC3EmergencyMasterActive() {
+        return c3emActive && hasC3EmergencyMaster();
+    }
+
+    public void setC3EmergencyMasterActive(boolean active) {
+        c3emActive = active;
+    }
+
+    /** @return Operating turns the C3 Emergency Master has used ({@link #C3EM_MAX_OPERATING_TURNS} = overload). */
+    public int getC3EmergencyMasterOperatingTurns() {
+        return c3emOperatingTurns;
+    }
+
+    public void setC3EmergencyMasterOperatingTurns(int operatingTurns) {
+        c3emOperatingTurns = operatingTurns;
+    }
+
+    /** @return True once the C3 Emergency Master has burned all its operating turns - dead for the scenario. */
+    public boolean isC3EmergencyMasterOverloaded() {
+        return c3emOperatingTurns >= C3EM_MAX_OPERATING_TURNS;
+    }
+
+    /** @return The id of the master the C3 Emergency Master substituted for, or {@code NONE}. */
+    public int getC3EmergencyOriginalMasterId() {
+        return c3emOriginalMasterId;
+    }
+
+    public void setC3EmergencyOriginalMasterId(int masterId) {
+        c3emOriginalMasterId = masterId;
+    }
+
+    /** @return The id of the master this unit lost to destruction or damage, or {@code NONE}. Not cleared by the
+     *       lazy cleanup in {@link #getC3Master()}, so takeover logic can identify a dead master's network. */
+    public int getC3MasterLostId() {
+        return c3MasterLostId;
+    }
+
+    public void setC3MasterLostId(int masterId) {
+        c3MasterLostId = masterId;
+    }
+
     public boolean hasC3S() {
         if (isShutDown() || isOffBoard()) {
             return false;
         }
+        // An ACTIVE C3 Emergency Master functions as a master, not a slave (TO:AUE p.110)
+        if (c3emActive) {
+            return false;
+        }
         for (MiscMounted m : getMisc()) {
             if ((m.getType().hasFlag(MiscType.F_C3S) || m.getType().hasFlag(MiscType.F_C3SBS)) && !m.isInoperable()) {
+                // An overloaded C3 Emergency Master is dead as master AND slave; a separate plain C3S still works
+                if (m.getType().hasFlag(MiscType.F_C3EM) && isC3EmergencyMasterOverloaded()) {
+                    continue;
+                }
                 return true;
             }
         }
@@ -6894,6 +6975,10 @@ public abstract class Entity extends TurnOrdered
         if (isShutDown() || isOffBoard()) {
             return false;
         }
+        // An ACTIVE C3 Emergency Master functions as a C3 Master (TO:AUE p.110)
+        if (isC3EmergencyMasterActive()) {
+            return true;
+        }
         for (WeaponMounted m : getWeaponList()) {
             if ((m.getType().hasFlag(WeaponType.F_C3M) || m.getType().hasFlag(WeaponType.F_C3MBS)) &&
                   !m.isInoperable()) {
@@ -6959,6 +7044,10 @@ public abstract class Entity extends TurnOrdered
                   && !mounted.isInoperable()) {
                 count++;
             }
+        }
+        // An ACTIVE C3 Emergency Master counts as one master computer (TO:AUE p.110)
+        if (isC3EmergencyMasterActive()) {
+            count++;
         }
         return count;
     }
@@ -7360,6 +7449,14 @@ public abstract class Entity extends TurnOrdered
      *       <code>null</code>. If the value master
      *       unit has shut down, then the value will be non-<code>null</code> after the master unit restarts.
      */
+    /** Clears the c3Master pointer while recording which master was lost, for the C3EM takeover (TO:AUE p.110). */
+    private void rememberLostC3Master() {
+        if (c3Master > NONE) {
+            c3MasterLostId = c3Master;
+        }
+        c3Master = NONE;
+    }
+
     public Entity getC3Master() {
         if (c3Master == NONE) {
             return null;
@@ -7370,7 +7467,7 @@ public abstract class Entity extends TurnOrdered
             Entity eMaster = game.getEntity(c3Master);
             // Have we lost our C3Master?
             if (eMaster == null) {
-                c3Master = NONE;
+                rememberLostC3Master();
             }
             // If our master is shut down, don't clear this slave's setting.
             else if (eMaster.isShutDown()) {
@@ -7378,17 +7475,17 @@ public abstract class Entity extends TurnOrdered
             }
             // Slave computers can't connect to single-computer company masters.
             else if (eMaster.C3MasterIs(eMaster) && !eMaster.hasC3MM()) {
-                c3Master = NONE;
+                rememberLostC3Master();
             }
             // Has our lance master lost its computer?
             else if (!eMaster.hasC3M()) {
-                c3Master = NONE;
+                rememberLostC3Master();
             }
         } else if (hasC3M() && (c3Master > NONE)) {
             Entity eMaster = game.getEntity(c3Master);
             // Have we lost our C3Master?
             if (eMaster == null) {
-                c3Master = NONE;
+                rememberLostC3Master();
             }
             // If our master is shut down, don't clear this slave's setting.
             else if (eMaster.isShutDown()) {
@@ -7397,20 +7494,20 @@ public abstract class Entity extends TurnOrdered
             // Has our company commander lost his company command computer?
             else if (((eMaster.c3CompanyMasterIndex > LOC_NONE) && !eMaster.hasC3MM()) ||
                   ((eMaster.c3CompanyMasterIndex <= LOC_NONE) && !eMaster.hasC3M())) {
-                c3Master = NONE;
+                rememberLostC3Master();
             }
             // maximum depth of a c3 network is 2 levels.
             else if (eMaster != this) {
                 Entity eCompanyMaster = eMaster.getC3Master();
                 if ((eCompanyMaster != null) && (eCompanyMaster.getC3Master() != eCompanyMaster)) {
-                    c3Master = NONE;
+                    rememberLostC3Master();
                 }
             }
         }
         // If we aren't shut down, and if we don't have a company master
         // computer, but have a C3Master, then we must have lost our network.
         else if (!isShutDown() && !hasC3MM() && (c3Master > NONE)) {
-            c3Master = NONE;
+            rememberLostC3Master();
         }
         if (c3Master == NONE) {
             return null;
@@ -7486,6 +7583,10 @@ public abstract class Entity extends TurnOrdered
         }
         if (hasC3()) {
             c3Master = entityId;
+            if (entityId != NONE) {
+                // A live assignment supersedes any recorded loss
+                c3MasterLostId = NONE;
+            }
         }
         if (hasC3() && (entityId == NONE)) {
             c3NetIdString = "C3" + C3_NETWORK_ID_SEPARATOR + id;

@@ -297,6 +297,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 break;
             case END:
                 gameManager.addReport(gameManager.resolveCrewConsciousness());
+                gameManager.addReport(C3EmergencyMasterProcessor.processEndPhase(gameManager.getGame()));
                 // remove any entities that died in the heat/end phase before
                 // checking for victory
                 gameManager.resetEntityPhase(GamePhase.END);

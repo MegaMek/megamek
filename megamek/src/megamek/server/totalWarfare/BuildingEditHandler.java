@@ -154,12 +154,18 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
     /** Puts a building up in a hex that has none, by writing what it is into the hex and letting the board build it. */
     private String raiseBuilding(Board board, Hex hex, BuildingEditSpec spec, String gamemasterName) {
         writeBuildingTerrain(hex, spec);
+        // put the hex back through the board rather than leaving it changed where it lies, so the board recomputes
+        // what it works out for itself - exits, inclines, the map's high and low points - before the building is made
+        // from it. Clients do that work when the hex reaches them, so skipping it here leaves the two sides holding
+        // different versions of the same hex.
+        board.setHex(spec.getCoords(), hex);
         IBuilding raised;
         try {
             raised = new BuildingTerrain(spec.getCoords(), board, Terrains.BUILDING, spec.getBasement());
         } catch (RuntimeException buildFailure) {
             // the hex is put back rather than left holding half a building that the board never made into one
             clearBuildingTerrain(hex);
+            board.setHex(spec.getCoords(), hex);
             LOGGER.error(buildFailure, "[GMBuilding] {}: could not raise a building in hex {}",
                   gamemasterName, spec.getCoords().getBoardNum());
             return "that building could not be built there";

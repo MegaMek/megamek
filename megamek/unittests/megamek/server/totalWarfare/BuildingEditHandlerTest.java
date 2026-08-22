@@ -44,6 +44,7 @@ import megamek.common.board.Board;
 import megamek.common.board.BuildingEditSpec;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
+import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.enums.BuildingType;
 import megamek.common.units.IBuilding;
@@ -245,5 +246,38 @@ class BuildingEditHandlerTest {
 
         assertNotNull(buildingEditHandler().applyBuildingSpec(specFor(EMPTY_HEX, BuildingType.MEDIUM), GAMEMASTER),
               "a building cannot stand in water, so raising one there should be refused");
+    }
+
+    /** Sends a building edit the way a client does, so the packet handler and its Game Master guard are exercised. */
+    private void sendAsPacket(BuildingEditSpec spec, boolean senderIsGameMaster) {
+        Player sender = game.getPlayer(0);
+        sender.setGameMaster(senderIsGameMaster);
+        gameManager.handlePacket(0, new Packet(PacketCommand.BUILDING_EDIT, spec));
+    }
+
+    @Test
+    void aGameMasterCanRaiseABuildingThroughThePacket() {
+        sendAsPacket(specFor(EMPTY_HEX, BuildingType.HEAVY), true);
+
+        assertNotNull(board.getBuildingAt(EMPTY_HEX),
+              "the packet path should reach the handler and put the building up");
+    }
+
+    @Test
+    void aPlayerWhoIsNotGameMasterCannotChangeTheBoard() {
+        sendAsPacket(specFor(EMPTY_HEX, BuildingType.HEAVY), false);
+
+        assertNull(board.getBuildingAt(EMPTY_HEX),
+              "only a gamemaster may change the board, whatever a client sends");
+    }
+
+    @Test
+    void aPlayerWhoIsNotGameMasterCannotRemoveABuilding() {
+        BuildingEditSpec spec = new BuildingEditSpec(BUILDING_HEX, board.getBoardId());
+        spec.setRemovingBuilding(true);
+
+        sendAsPacket(spec, false);
+
+        assertNotNull(board.getBuildingAt(BUILDING_HEX), "the building should still be standing");
     }
 }

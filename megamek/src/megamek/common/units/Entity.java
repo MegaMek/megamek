@@ -255,6 +255,8 @@ public abstract class Entity extends TurnOrdered
     public static final int MAX_C3_NODES = 12;
     public static final int MAX_C3i_NODES = 6;
     public static final int MAX_NOVA_CEWS_NODES = 3;
+    /** A C3 Master computer controls one to three C3 Slaves or one to three C3 Masters (CR p.198). */
+    public static final int MAX_C3M_SUBORDINATES = 3;
     public static final String C3_NETWORK_ID_SEPARATOR = ".";
 
     protected boolean isC3ecmAffected = false;
@@ -6945,6 +6947,23 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * @return The number of operable C3 Master computers (standard or boosted) mounted on this unit. Units carrying
+     *       two to four C3 Masters can act as consolidated company nodes: one computer provides the company-level
+     *       link while each additional computer runs a lance of slaves (CR p.199, Configurations 2-4). Ignores
+     *       shutdown/off-board state - callers that care use {@link #hasC3M()} or {@link #hasC3MM()} first.
+     */
+    public int getOperableC3MCount() {
+        int count = 0;
+        for (WeaponMounted mounted : getWeaponList()) {
+            if ((mounted.getType().hasFlag(WeaponType.F_C3M) || mounted.getType().hasFlag(WeaponType.F_C3MBS))
+                  && !mounted.isInoperable()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
      * @return True if this unit has any type of standard C3 computer (not C3i), TM p.209.
      */
     public boolean hasC3() {
@@ -7205,39 +7224,27 @@ public abstract class Entity extends TurnOrdered
      * @return a non-negative <code>int</code> value.
      */
     public int calculateFreeC3MNodes() {
-        int nodes = 0;
-        if (hasC3MM()) {
-            nodes = 2;
-            if (game != null) {
-                for (Entity e : game.getEntitiesVector()) {
-                    if (e.hasC3M() && (e != this)) {
-                        final Entity m = e.getC3Master();
-                        if (equals(m)) {
-                            nodes--;
-                        }
-                        if (nodes <= 0) {
-                            return 0;
-                        }
-                    }
-                }
-            }
-        } else if (hasC3M() && C3MasterIs(this)) {
-            nodes = 3;
-            if (game != null) {
-                for (Entity e : game.getEntitiesVector()) {
-                    if (e.hasC3() && (e != this)) {
-                        final Entity m = e.getC3Master();
-                        if (equals(m)) {
-                            nodes--;
-                        }
-                        if (nodes <= 0) {
-                            return 0;
-                        }
+        if (!hasC3MM() && !(hasC3M() && C3MasterIs(this))) {
+            return 0;
+        }
+        // The company computer controls up to three masters (CR p.198). Sibling computers occupy company links
+        // only while they actually run a lance of slaves - idle computers do not count, so a multi-master unit
+        // can also head the smaller configurations (a triple-master heading Configuration 1 keeps two idle).
+        int slaveDependents = 0;
+        int masterDependents = 0;
+        if (game != null) {
+            for (Entity e : game.getEntitiesVector()) {
+                if (e.hasC3() && (e != this) && equals(e.getC3Master())) {
+                    if (e.hasC3S()) {
+                        slaveDependents++;
+                    } else {
+                        masterDependents++;
                     }
                 }
             }
         }
-        return nodes;
+        int lanceComputersInUse = (slaveDependents + MAX_C3M_SUBORDINATES - 1) / MAX_C3M_SUBORDINATES;
+        return Math.max(0, MAX_C3M_SUBORDINATES - lanceComputersInUse - masterDependents);
     }
 
     /**
@@ -7263,23 +7270,32 @@ public abstract class Entity extends TurnOrdered
                 }
             }
         } else if (hasC3M()) {
-            nodes = 3;
+            // Slave capacity: a lance master runs one lance of three - in an All-C3-Master lance (CR p.199) the
+            // masters fill the slave slots. Only the designated company commander consolidates: each of its
+            // computers not needed for the company link and not matched by an external master runs a lance of
+            // slaves (CR p.199: up to 3 slaves for two C3M, 6 for three, 9 for four). Idle computers are allowed,
+            // so a multi-master unit heading a smaller configuration simply leaves computers unused; a subordinate
+            // or undesignated multi-master gets a single lance (CR p.198: the diagram shows "the only four ways"
+            // a network forms).
+            int slaveDependents = 0;
+            int masterDependents = 0;
             if (game != null) {
                 for (Entity e : game.getEntitiesVector()) {
-                    if (e.hasC3() && !equals(e)) {
-                        final Entity m = e.getC3Master();
-                        if (equals(m)) {
-                            // If this unit is a company commander, and has two C3 Master computers, only count C3
-                            // Slaves here.
-                            if (!C3MasterIs(this) || !hasC3MM() || e.hasC3S()) {
-                                nodes--;
-                            }
-                        }
-                        if (nodes <= 0) {
-                            return 0;
+                    if (e.hasC3() && !equals(e) && equals(e.getC3Master())) {
+                        if (e.hasC3S()) {
+                            slaveDependents++;
+                        } else {
+                            masterDependents++;
                         }
                     }
                 }
+            }
+            if (C3MasterIs(this)) {
+                int usableLanceComputers = Math.max(0,
+                      Math.min(getOperableC3MCount() - 1, MAX_C3M_SUBORDINATES - masterDependents));
+                nodes = Math.max(0, (MAX_C3M_SUBORDINATES * usableLanceComputers) - slaveDependents);
+            } else {
+                nodes = Math.max(0, MAX_C3M_SUBORDINATES - slaveDependents - masterDependents);
             }
         } else if (hasActiveNovaCEWS()) {
             nodes = MAX_NOVA_CEWS_NODES - 1;
@@ -15323,15 +15339,11 @@ public abstract class Entity extends TurnOrdered
             double multiplier = 0.05;
             double c3BoostedMultiplier = 0;
 
-            // C3 network bonus requires at least 2 members. Check conditions:
-            // - C3MM: has at least one C3M connected
-            // - C3M: has C3S slaves connected OR is connected to a C3MM master
-            // - C3S: has a master (C3M or C3MM) connected
-            // - C3i/Naval C3: has at least one other network member
-            if ((hasC3MM() && (calculateFreeC3MNodes() < 2)) ||
-                  (hasC3M() && ((calculateFreeC3Nodes() < 3) || (getC3Master() != null))) ||
-                  (hasC3S() && (c3Master > NONE)) ||
-                  ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5))) {
+            // C3 network bonus requires at least 2 members, which the numberOfC3Members checks below enforce.
+            // Membership is checked directly rather than through free-node heuristics - those broke for
+            // consolidated multi-master company nodes (CR p.199 Configurations 3-4), whose free counts start
+            // below the old hardcoded thresholds.
+            if (hasC3() || hasC3i() || hasNavalC3()) {
 
                 Vector<Entity> c3Members = game.getC3NetworkMembers(this);
                 int numberOfC3Members = c3Members.size();

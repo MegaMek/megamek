@@ -123,4 +123,20 @@ public class HexEditSpec implements Serializable {
     public boolean isClearingHexes() {
         return terrainLevels.isEmpty();
     }
+
+    /** Whether this asks to put back the last edit rather than to make a new one. */
+    private boolean undoingLastEdit;
+
+    /**
+     * @return {@code true} when this asks the server to put the hexes back the way they were before the last edit,
+     *       rather than to change them again. The hexes and terrain it carries are then ignored.
+     */
+    public boolean isUndoingLastEdit() {
+        return undoingLastEdit;
+    }
+
+    /** Makes this an undo of the last edit rather than a new one. */
+    public void setUndoingLastEdit(boolean undoingLastEdit) {
+        this.undoingLastEdit = undoingLastEdit;
+    }
 }

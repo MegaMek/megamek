@@ -34,6 +34,7 @@
 package megamek.server.totalWarfare;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -74,6 +75,16 @@ public class HexEditHandler extends AbstractTWRuleHandler {
     private static final int REPORT_HEX_CLEARED = 1252;
     private static final int REPORT_TERRAIN_FACTOR_SET = 1254;
     private static final int REPORT_HEXES_EDITED = 1255;
+    private static final int REPORT_HEX_EDIT_UNDONE = 1256;
+
+    /**
+     * The hexes as they stood before the most recent edit, so it can be taken back. Only the last edit is kept: undo
+     * is for a change the gamemaster has just looked at and thought better of.
+     */
+    private final Map<Coords, Hex> hexesBeforeLastEdit = new LinkedHashMap<>();
+
+    /** The board the remembered hexes are on. */
+    private int boardOfLastEdit;
 
     HexEditHandler(TWGameManager gameManager) {
         super(gameManager);
@@ -128,6 +139,9 @@ public class HexEditHandler extends AbstractTWRuleHandler {
      * @return A description of why the edit was refused, or {@code null} when it was applied
      */
     public String applyHexEdit(HexEditSpec spec, String gamemasterName) {
+        if (spec.isUndoingLastEdit()) {
+            return undoLastEdit(gamemasterName);
+        }
         if (spec.getCoords().isEmpty()) {
             return "no hexes were chosen";
         }
@@ -136,6 +150,7 @@ public class HexEditHandler extends AbstractTWRuleHandler {
             return refusal;
         }
 
+        rememberHexesBeforeEdit(spec);
         for (Coords hexCoords : spec.getCoords()) {
             Hex hex = getGame().getHex(hexCoords, spec.getBoardId());
             writeTerrain(hex, spec);
@@ -144,6 +159,56 @@ public class HexEditHandler extends AbstractTWRuleHandler {
         reportHexEdit(spec, gamemasterName);
         LOGGER.info("[GMTerrain] {} changed {} hex(es) to hold {}",
               gamemasterName, spec.getCoords().size(), describeTerrain(spec));
+        return null;
+    }
+
+    /**
+     * Keeps a copy of each hex as it was, so the edit can be taken back. Only the most recent edit is remembered: an
+     * undo is for looking at a change and deciding against it, not for walking back through an evening's work.
+     */
+    private void rememberHexesBeforeEdit(HexEditSpec spec) {
+        hexesBeforeLastEdit.clear();
+        boardOfLastEdit = spec.getBoardId();
+        for (Coords hexCoords : spec.getCoords()) {
+            Hex hex = getGame().getHex(hexCoords, spec.getBoardId());
+            if (hex != null) {
+                hexesBeforeLastEdit.put(hexCoords, hex.duplicate());
+            }
+        }
+    }
+
+    /**
+     * Puts the hexes back the way they were before the last edit.
+     *
+     * <p>What is restored is the hex as it stood at that moment, so anything that has happened to those hexes since -
+     * a fire spreading into one, a building coming down in another - is undone along with the edit. An undo is meant
+     * to be used straight away, on a change the gamemaster has just looked at and thought better of.</p>
+     *
+     * @param gamemasterName The name of the gamemaster taking the edit back, for the report
+     *
+     * @return A description of why the undo was refused, or {@code null} when it was applied
+     */
+    private String undoLastEdit(String gamemasterName) {
+        if (hexesBeforeLastEdit.isEmpty()) {
+            LOGGER.debug("[GMTerrain] {}: nothing to undo", gamemasterName);
+            return "there is no terrain change to undo";
+        }
+
+        List<String> hexNumbers = new ArrayList<>();
+        for (Map.Entry<Coords, Hex> before : hexesBeforeLastEdit.entrySet()) {
+            getGame().getBoard(boardOfLastEdit).setHex(before.getKey(), before.getValue());
+            gameManager.sendChangedHex(before.getKey(), boardOfLastEdit);
+            hexNumbers.add(String.valueOf(before.getKey().getBoardNum()));
+        }
+
+        Report report = new Report(REPORT_HEX_EDIT_UNDONE, Report.PUBLIC);
+        report.add(gamemasterName);
+        report.add(String.join(", ", hexNumbers));
+        addReport(report);
+
+        LOGGER.info("[GMTerrain] {} took back the last terrain change, putting {} hex(es) back",
+              gamemasterName, hexesBeforeLastEdit.size());
+        hexesBeforeLastEdit.clear();
         return null;
     }
 

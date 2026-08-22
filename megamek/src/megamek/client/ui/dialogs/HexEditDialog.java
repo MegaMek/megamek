@@ -130,6 +130,10 @@ public class HexEditDialog extends JDialog {
     private final JComboBox<LevelChoice> levelChooser = new JComboBox<>();
     private final JLabel legalityLabel = new JLabel();
     private final JButton executeButton = new JButton(Messages.getString("HexEditDialog.execute"));
+    private final JButton undoButton = new JButton(Messages.getString("HexEditDialog.undo"));
+
+    /** Whether the edit on screen has been sent, so it can be taken back rather than sent again. */
+    private boolean editHasBeenSent;
     private final JToggleButton pickHexesButton =
           new JToggleButton(Messages.getString("HexEditDialog.pickHexes"));
 
@@ -305,12 +309,16 @@ public class HexEditDialog extends JDialog {
 
     private JPanel buttonPanel() {
         executeButton.addActionListener(event -> execute());
-        JButton cancelButton = new JButton(Messages.getString("Cancel"));
-        cancelButton.addActionListener(event -> closeDialog());
+        undoButton.addActionListener(event -> undoEdit());
+        undoButton.setToolTipText(Messages.getString("HexEditDialog.undo.tooltip"));
+        undoButton.setEnabled(false);
+        JButton closeButton = new JButton(Messages.getString("HexEditDialog.close"));
+        closeButton.addActionListener(event -> closeDialog());
 
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panel.add(executeButton);
-        panel.add(cancelButton);
+        panel.add(undoButton);
+        panel.add(closeButton);
         getRootPane().setDefaultButton(executeButton);
         return panel;
     }
@@ -412,6 +420,7 @@ public class HexEditDialog extends JDialog {
 
     /** Redraws the hex list, the terrain list and the legality report from the edit as it now stands. */
     private void refreshEverything() {
+        editHasBeenSent = false;
         refreshHexHighlights();
         hexListModel.clear();
         for (Coords coords : selectedHexes) {
@@ -441,7 +450,12 @@ public class HexEditDialog extends JDialog {
         List<String> problems = firstProblems();
         boolean isLegal = problems.isEmpty() && !selectedHexes.isEmpty();
         executeButton.setEnabled(isLegal);
+        undoButton.setEnabled(editHasBeenSent);
 
+        if (editHasBeenSent) {
+            legalityLabel.setText(Messages.getString("HexEditDialog.applied", selectedHexes.size()));
+            return;
+        }
         if (selectedHexes.isEmpty()) {
             legalityLabel.setText(Messages.getString("HexEditDialog.noHexes"));
             return;
@@ -515,13 +529,33 @@ public class HexEditDialog extends JDialog {
         return choice == JOptionPane.YES_OPTION;
     }
 
+    /**
+     * Sends the edit and stays open, offering to take it back.
+     *
+     * <p>The change is made on the real board rather than drawn as a sketch over it, because the only preview worth
+     * having is the one that shows what the players will actually see. The dialog stays up so that a gamemaster who
+     * looks at the result and thinks better of it can put the hexes back without hunting for a way to.</p>
+     */
     private void sendEdit() {
         HexEditSpec spec = new HexEditSpec(boardId);
         selectedHexes.forEach(spec::addCoords);
         terrainLevels.forEach(spec::setTerrain);
         LOGGER.info("[GMHexEdit] sending an edit of {} hex(es)", selectedHexes.size());
         clientGUI.getClient().sendHexEdit(spec);
-        closeDialog();
+        editHasBeenSent = true;
+        setHexPicking(false);
+        pickHexesButton.setSelected(false);
+        refreshLegality();
+    }
+
+    /** Asks the server to put the hexes back the way they were before the edit that was just sent. */
+    private void undoEdit() {
+        HexEditSpec undo = new HexEditSpec(boardId);
+        undo.setUndoingLastEdit(true);
+        LOGGER.info("[GMHexEdit] taking back the last edit");
+        clientGUI.getClient().sendHexEdit(undo);
+        editHasBeenSent = false;
+        refreshLegality();
     }
 
     /** Closes, making sure the board is not left listening for hex picks that no longer have a dialog to go to. */

@@ -319,4 +319,51 @@ class HexEditHandlerTest {
               "a terrain edit describes the ground, so the building on it must survive");
         assertTrue(board.getHex(BUILDING_HEX).containsTerrain(Terrains.ROUGH), "and the new ground should be there");
     }
+
+    @Test
+    void undoPutsTheHexesBackAsTheyWere() {
+        hexEditHandler.applyHexEdit(floodOf(2, WOODS_HEX), GAMEMASTER);
+        assertEquals(2, board.getHex(WOODS_HEX).depth(), "the hex should have been flooded first");
+
+        HexEditSpec undo = new HexEditSpec(board.getBoardId());
+        undo.setUndoingLastEdit(true);
+        String refusal = hexEditHandler.applyHexEdit(undo, GAMEMASTER);
+
+        assertNull(refusal, "there was an edit to take back");
+        assertEquals(0, board.getHex(WOODS_HEX).depth(), "the water should be gone again");
+        assertTrue(board.getHex(WOODS_HEX).containsTerrain(Terrains.WOODS),
+              "and the woods the hex used to hold should be back");
+    }
+
+    @Test
+    void undoWithNothingToUndoIsRefused() {
+        HexEditSpec undo = new HexEditSpec(board.getBoardId());
+        undo.setUndoingLastEdit(true);
+
+        assertNotNull(hexEditHandler.applyHexEdit(undo, GAMEMASTER), "there is no edit to take back");
+    }
+
+    @Test
+    void onlyTheMostRecentEditCanBeTakenBack() {
+        hexEditHandler.applyHexEdit(floodOf(2, WOODS_HEX), GAMEMASTER);
+        hexEditHandler.applyHexEdit(floodOf(3, BARE_HEX), GAMEMASTER);
+
+        HexEditSpec undo = new HexEditSpec(board.getBoardId());
+        undo.setUndoingLastEdit(true);
+        hexEditHandler.applyHexEdit(undo, GAMEMASTER);
+
+        assertEquals(0, board.getHex(BARE_HEX).depth(), "the most recent edit should be taken back");
+        assertEquals(2, board.getHex(WOODS_HEX).depth(), "the one before it should stand");
+    }
+
+    @Test
+    void anUndoCannotBeUndoneTwice() {
+        hexEditHandler.applyHexEdit(floodOf(2, WOODS_HEX), GAMEMASTER);
+        HexEditSpec undo = new HexEditSpec(board.getBoardId());
+        undo.setUndoingLastEdit(true);
+        hexEditHandler.applyHexEdit(undo, GAMEMASTER);
+
+        assertNotNull(hexEditHandler.applyHexEdit(undo, GAMEMASTER),
+              "the remembered hexes are used up by the first undo");
+    }
 }

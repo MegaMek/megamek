@@ -2069,6 +2069,9 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         if (shiftHeld == ((event.getModifiers() & InputEvent.SHIFT_DOWN_MASK) == 0)) {
             shiftHeld = (event.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
         }
+        // Select the hex exactly once per click. BoardView.select() always fires a hex-selected event, even when
+        // the hex has not changed, and hexSelected() answers it by asking the player which unit in the hex to
+        // attack. A second select() for the same click therefore opens that target dialog a second time.
         if (event.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
             if ((shiftHeld || twisting) && isMyTurn() && Game.rulesManager.getRulesUnits().getPhysicalTwistEnabled()) {
                 if ((currentEntity() != null) && !currentEntity().getAlreadyTwisted()) {
@@ -2078,18 +2081,12 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             event.getBoardView().cursor(event.getCoords());
         } else if (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             twisting = false;
-            if (!shiftHeld) {
-                event.getBoardView().select(event.getCoords());
-            }
-        }
-        if (clientgui.getClient().isMyTurn()
-              && (event.getButton() == MouseEvent.BUTTON1)) {
-            if (event.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-                if (!event.getCoords().equals(
-                      event.getBoardView().getLastCursor())) {
-                    event.getBoardView().cursor(event.getCoords());
-                }
-            } else if (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
+            // Only a plain left click picks a target: shift is torso twist, ALT feeds the ruler
+            // (RulerDialog.hexMoused), and the other mouse buttons have no targeting meaning here. The firing
+            // and targeting phases already ignore those clicks.
+            boolean plainLeftClick = (event.getButton() == MouseEvent.BUTTON1)
+                  && ((event.getModifiers() & InputEvent.ALT_DOWN_MASK) == 0);
+            if (!shiftHeld && plainLeftClick) {
                 event.getBoardView().select(event.getCoords());
             }
         }

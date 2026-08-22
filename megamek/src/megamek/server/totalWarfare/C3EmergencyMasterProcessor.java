@@ -92,7 +92,7 @@ public final class C3EmergencyMasterProcessor {
 
     /** Ticks, overloads or yields back one active emergency master. */
     private static void processActiveEmergencyMaster(Game game, Entity emergencyMaster, Vector<Report> reports) {
-        if (isInHostileEcm(game, emergencyMaster)) {
+        if (isInHostileEcm(emergencyMaster)) {
             // Standby: the turn is not counted and the system just waits out the interference (TO:AUE p.110)
             reports.add(unitReport(7602, emergencyMaster));
             return;
@@ -128,7 +128,7 @@ public final class C3EmergencyMasterProcessor {
     private static void yieldBackIfMasterRecovered(Game game, Entity emergencyMaster, Vector<Report> reports) {
         Entity originalMaster = game.getEntity(emergencyMaster.getC3EmergencyOriginalMasterId());
         if ((originalMaster == null) || originalMaster.isDestroyed() || originalMaster.isDoomed()
-              || !originalMaster.hasC3M() || isInHostileEcm(game, originalMaster)) {
+              || !originalMaster.hasC3M() || isInHostileEcm(originalMaster)) {
             return;
         }
         for (Entity dependent : dependentsOf(game, emergencyMaster)) {
@@ -158,7 +158,7 @@ public final class C3EmergencyMasterProcessor {
         Entity lanceMaster = game.getEntity(lanceMasterId);
         boolean masterGone = (lanceMaster == null) || lanceMaster.isDestroyed() || lanceMaster.isDoomed()
               || !lanceMaster.hasC3M();
-        boolean masterJammed = !masterGone && isInHostileEcm(game, lanceMaster);
+        boolean masterJammed = !masterGone && isInHostileEcm(lanceMaster);
         if (!masterGone && !masterJammed) {
             return;
         }
@@ -240,7 +240,7 @@ public final class C3EmergencyMasterProcessor {
     }
 
     /** True when the unit's own hex sits inside hostile ECM (positions may be null in the lobby - then false). */
-    private static boolean isInHostileEcm(Game game, Entity entity) {
+    private static boolean isInHostileEcm(Entity entity) {
         return (entity.getPosition() != null)
               && ComputeECM.isAffectedByECM(entity, entity.getPosition(), entity.getPosition());
     }

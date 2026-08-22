@@ -67,7 +67,10 @@ import javax.swing.WindowConstants;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
+import megamek.MegaMek;
 import megamek.client.ui.Messages;
+import megamek.client.ui.preferences.JWindowPreference;
+import megamek.client.ui.preferences.PreferencesNode;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
@@ -265,7 +268,25 @@ public class HexEditDialog extends JDialog {
         setSize(UIUtil.scaleForGUI(480, 560));
         setMinimumSize(UIUtil.scaleForGUI(420, 460));
         setLocationRelativeTo(parent);
+        setPreferences("HexEditDialog");
     }
+
+    /**
+     * Restores the size and position the dialog was last left at, and keeps them up to date as it is moved and
+     * resized. A gamemaster works out of these dialogs for a whole session, so having one open where they put it
+     * last is worth more than opening tidily in the middle of the screen.
+     */
+    private void setPreferences(String dialogName) {
+        try {
+            setName(dialogName);
+            PreferencesNode preferences = MegaMek.getMMPreferences().forClass(getClass());
+            preferences.manage(new JWindowPreference(this));
+        } catch (Exception ex) {
+            // a dialog that cannot remember where it was is still perfectly usable
+            LOGGER.error(ex, "Could not set the preferences of {}", dialogName);
+        }
+    }
+
 
     /** What the brush holds, and the switch that turns board clicks into painting. */
     private JPanel brushPanel() {

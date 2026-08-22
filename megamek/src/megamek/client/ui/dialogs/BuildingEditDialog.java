@@ -51,7 +51,10 @@ import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.WindowConstants;
 
+import megamek.MegaMek;
 import megamek.client.ui.Messages;
+import megamek.client.ui.preferences.JWindowPreference;
+import megamek.client.ui.preferences.PreferencesNode;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
@@ -166,6 +169,10 @@ public class BuildingEditDialog extends JDialog {
     private final JLabel magnitudeEffectLabel = new JLabel();
     private final JComboBox<StructureKind> structureChooser = new JComboBox<>();
     private final JButton removeButton = new JButton(Messages.getString("BuildingEditDialog.remove"));
+    private final JButton restoreButton = new JButton(Messages.getString("BuildingEditDialog.restore"));
+
+    /** Says what the hex held before this gamemaster first changed it, so a change can be seen and taken back. */
+    private final JLabel originalLabel = new JLabel();
 
     /** One building class offered in the chooser, named rather than numbered. */
     private record BuildingClassChoice(int buildingClass, String messageKey) {
@@ -209,6 +216,7 @@ public class BuildingEditDialog extends JDialog {
      * up. Either way the gamemaster is changing something concrete rather than describing a building from nothing.
      */
     private void loadFromHex() {
+        refreshOriginalLabel();
         IBuilding existing = buildingInHex();
         removeButton.setEnabled(existing != null);
         if (existing == null) {
@@ -296,10 +304,29 @@ public class BuildingEditDialog extends JDialog {
               KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
               JComponent.WHEN_IN_FOCUSED_WINDOW);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        getContentPane().add(originalLabel, BorderLayout.PAGE_START);
         pack();
         setMinimumSize(UIUtil.scaleForGUI(360, 260));
         setLocationRelativeTo(parent);
+        setPreferences("BuildingEditDialog");
     }
+
+    /**
+     * Restores the size and position the dialog was last left at, and keeps them up to date as it is moved and
+     * resized. A gamemaster works out of these dialogs for a whole session, so having one open where they put it
+     * last is worth more than opening tidily in the middle of the screen.
+     */
+    private void setPreferences(String dialogName) {
+        try {
+            setName(dialogName);
+            PreferencesNode preferences = MegaMek.getMMPreferences().forClass(getClass());
+            preferences.manage(new JWindowPreference(this));
+        } catch (Exception ex) {
+            // a dialog that cannot remember where it was is still perfectly usable
+            LOGGER.error(ex, "Could not set the preferences of {}", dialogName);
+        }
+    }
+
 
     /**
      * Greys out the fields that mean nothing for the kind of structure chosen. A fuel tank has no building type,
@@ -341,12 +368,15 @@ public class BuildingEditDialog extends JDialog {
         applyButton.addActionListener(event -> apply());
         removeButton.setToolTipText(Messages.getString("BuildingEditDialog.remove.tooltip"));
         removeButton.addActionListener(event -> removeBuilding());
+        restoreButton.setToolTipText(Messages.getString("BuildingEditDialog.restore.tooltip"));
+        restoreButton.addActionListener(event -> restoreOriginal());
         JButton closeButton = new JButton(Messages.getString("HexEditDialog.close"));
         closeButton.addActionListener(event -> dispose());
 
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panel.add(applyButton);
         panel.add(removeButton);
+        panel.add(restoreButton);
         panel.add(closeButton);
         getRootPane().setDefaultButton(applyButton);
         return panel;
@@ -376,6 +406,39 @@ public class BuildingEditDialog extends JDialog {
         return spec;
     }
 
+    /** Shows what the hex held before it was first changed, and offers to put it back when there is something to. */
+    private void refreshOriginalLabel() {
+        String before = GameMasterEditMemory.describeBeforeFirstEdit(coords);
+        restoreButton.setEnabled(before != null);
+        originalLabel.setText((before == null)
+              ? Messages.getString("BuildingEditDialog.original.unchanged")
+              : Messages.getString("BuildingEditDialog.original.was", before));
+    }
+
+    /** @return what the hex holds now, in words, for remembering before a change is made */
+    private String describeHexNow() {
+        IBuilding existing = buildingInHex();
+        if (existing == null) {
+            return Messages.getString("BuildingEditDialog.original.nothing");
+        }
+        if (existing instanceof FuelTank fuelTank) {
+            return Messages.getString("BuildingEditDialog.original.fuelTank",
+                  existing.getCurrentCF(coords), fuelTank.getMagnitude());
+        }
+        return Messages.getString("BuildingEditDialog.original.building",
+              existing.getBuildingType().toString(), existing.getCurrentCF(coords), existing.getHeight(coords));
+    }
+
+    /** Asks the server to put the hex back the way it was before any gamemaster changed it. */
+    private void restoreOriginal() {
+        BuildingEditSpec spec = new BuildingEditSpec(coords, boardId);
+        spec.setRestoringOriginal(true);
+        LOGGER.info("[GMBuilding] restoring hex {} to how it was before it was edited", coords.getBoardNum());
+        clientGUI.getClient().sendBuildingEdit(spec);
+        GameMasterEditMemory.forget(coords);
+        dispose();
+    }
+
     private void apply() {
         Hex hex = clientGUI.getClient().getGame().getBoard().getHex(coords);
         if ((hex != null) && (hex.depth() > 0) && !hex.containsTerrain(Terrains.BUILDING)) {
@@ -384,6 +447,7 @@ public class BuildingEditDialog extends JDialog {
                   Messages.getString("BuildingEditDialog.cannotBuild.inWater"));
             return;
         }
+        GameMasterEditMemory.rememberBeforeFirstEdit(coords, describeHexNow());
         LOGGER.info("[GMBuilding] sending a building edit for hex {}", coords.getBoardNum());
         clientGUI.getClient().sendBuildingEdit(describedBuilding());
         dispose();
@@ -392,6 +456,7 @@ public class BuildingEditDialog extends JDialog {
     private void removeBuilding() {
         BuildingEditSpec spec = new BuildingEditSpec(coords, boardId);
         spec.setRemovingBuilding(true);
+        GameMasterEditMemory.rememberBeforeFirstEdit(coords, describeHexNow());
         LOGGER.info("[GMBuilding] removing the building in hex {}", coords.getBoardNum());
         clientGUI.getClient().sendBuildingEdit(spec);
         dispose();

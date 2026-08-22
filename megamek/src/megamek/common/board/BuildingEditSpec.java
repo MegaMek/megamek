@@ -66,6 +66,12 @@ public class BuildingEditSpec implements Serializable {
     /** Whether the edit takes the building away rather than putting one there. */
     private boolean removingBuilding;
 
+    /**
+     * Whether the edit puts the hex back the way it was before any gamemaster touched it, ignoring everything else
+     * this spec describes. What the players did to it in the meantime is left alone.
+     */
+    private boolean restoringOriginal;
+
     /** What the building is made of, which decides how much punishment it takes. */
     private BuildingType buildingType = BuildingType.MEDIUM;
 
@@ -124,6 +130,18 @@ public class BuildingEditSpec implements Serializable {
 
     public int getBoardId() {
         return boardId;
+    }
+
+    /**
+     * @return {@code true} when the edit puts the hex back the way it was before any gamemaster touched it, rather
+     *       than making a change of its own
+     */
+    public boolean isRestoringOriginal() {
+        return restoringOriginal;
+    }
+
+    public void setRestoringOriginal(boolean restoringOriginal) {
+        this.restoringOriginal = restoringOriginal;
     }
 
     /** @return {@code true} when the edit takes the building away rather than putting one there */

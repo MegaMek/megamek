@@ -344,4 +344,55 @@ class BuildingEditHandlerTest {
         assertInstanceOf(FuelTank.class, board.getBuildingAt(BUILDING_HEX),
               "the hex should now hold a fuel tank rather than the building that was there");
     }
+
+    @Test
+    void aHexCanBePutBackTheWayItWasBeforeEditing() {
+        int originalFactor = board.getBuildingAt(BUILDING_HEX).getCurrentCF(BUILDING_HEX);
+        buildingEditHandler().applyBuildingSpec(specFor(BUILDING_HEX, BuildingType.HARDENED), GAMEMASTER);
+        assertEquals(BuildingType.HARDENED, board.getBuildingAt(BUILDING_HEX).getBuildingType());
+
+        BuildingEditSpec restore = new BuildingEditSpec(BUILDING_HEX, board.getBoardId());
+        restore.setRestoringOriginal(true);
+        String refusal = buildingEditHandler().applyBuildingSpec(restore, GAMEMASTER);
+
+        assertNull(refusal, "there was a change to put back");
+        assertEquals(BuildingType.MEDIUM, board.getBuildingAt(BUILDING_HEX).getBuildingType(),
+              "the building should be the kind it was before it was edited");
+        assertEquals(originalFactor, board.getBuildingAt(BUILDING_HEX).getCurrentCF(BUILDING_HEX),
+              "and should stand at the factor it had then");
+    }
+
+    @Test
+    void restoringGoesBackPastSeveralEdits() {
+        buildingEditHandler().applyBuildingSpec(specFor(BUILDING_HEX, BuildingType.HEAVY), GAMEMASTER);
+        buildingEditHandler().applyBuildingSpec(specFor(BUILDING_HEX, BuildingType.HARDENED), GAMEMASTER);
+
+        BuildingEditSpec restore = new BuildingEditSpec(BUILDING_HEX, board.getBoardId());
+        restore.setRestoringOriginal(true);
+        buildingEditHandler().applyBuildingSpec(restore, GAMEMASTER);
+
+        assertEquals(BuildingType.MEDIUM, board.getBuildingAt(BUILDING_HEX).getBuildingType(),
+              "restoring goes back to before the gamemaster started, not to the previous edit");
+    }
+
+    @Test
+    void restoringAnUntouchedHexIsRefused() {
+        BuildingEditSpec restore = new BuildingEditSpec(EMPTY_HEX, board.getBoardId());
+        restore.setRestoringOriginal(true);
+
+        assertNotNull(buildingEditHandler().applyBuildingSpec(restore, GAMEMASTER),
+              "a hex no gamemaster has touched has nothing to put back");
+    }
+
+    @Test
+    void aRaisedBuildingCanBeRestoredAwayAgain() {
+        buildingEditHandler().applyBuildingSpec(specFor(EMPTY_HEX, BuildingType.HEAVY), GAMEMASTER);
+
+        BuildingEditSpec restore = new BuildingEditSpec(EMPTY_HEX, board.getBoardId());
+        restore.setRestoringOriginal(true);
+        buildingEditHandler().applyBuildingSpec(restore, GAMEMASTER);
+
+        assertNull(board.getBuildingAt(EMPTY_HEX),
+              "the hex was empty before, so putting it back should leave it empty");
+    }
 }

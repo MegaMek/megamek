@@ -33,6 +33,8 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.client.ui.Messages;
@@ -69,6 +71,14 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
     private static final int REPORT_BUILDING_CF_SET = 1253;
     private static final int REPORT_BUILDING_RAISED = 1257;
     private static final int REPORT_BUILDING_REMOVED = 1258;
+    private static final int REPORT_HEX_RESTORED = 1259;
+
+    /**
+     * Each hex as it stood before the first gamemaster edit reached it, so it can be put back. Keyed by hex and kept
+     * until it is restored, so a gamemaster who changes a building three times still gets back what was there before
+     * they started.
+     */
+    private final Map<Coords, Hex> hexBeforeFirstEdit = new LinkedHashMap<>();
 
     /**
      * The collapse rules this handler brings a building down through. It holds no state of its own beyond the game
@@ -119,6 +129,10 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
         if (hex == null) {
             return "that hex is not on the board";
         }
+        if (spec.isRestoringOriginal()) {
+            return restoreOriginal(board, spec, gamemasterName);
+        }
+        rememberHexBeforeFirstEdit(board, spec.getCoords());
         IBuilding existing = board.getBuildingAt(spec.getCoords());
 
         if (spec.isRemovingBuilding()) {
@@ -142,6 +156,84 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
         return applyEdit(spec.getCoords(),
               new BuildingEdit(spec.getConstructionFactor(), spec.getArmor(), spec.getHeight(), spec.getBasement()),
               gamemasterName);
+    }
+
+    /**
+     * Keeps a copy of a hex the first time a gamemaster edit reaches it, so it can be put back the way it was before
+     * they started. Only the first is kept: later edits are changes to a hex that is already being worked on, and
+     * restoring should undo all of them rather than the most recent one.
+     *
+     * <p>What the players did to the hex before the gamemaster touched it is part of that copy and comes back with
+     * it, which is the point: this restores the hex to how it stood, not to how the board shipped.</p>
+     */
+    private void rememberHexBeforeFirstEdit(Board board, Coords coords) {
+        if (hexBeforeFirstEdit.containsKey(coords)) {
+            return;
+        }
+        Hex hex = board.getHex(coords);
+        if (hex != null) {
+            hexBeforeFirstEdit.put(coords, hex.duplicate());
+        }
+    }
+
+    /**
+     * Puts a hex back the way it stood before any gamemaster edit reached it, and rebuilds whatever structure that
+     * describes.
+     *
+     * @return A description of why the restore was refused, or {@code null} when it was applied
+     */
+    private String restoreOriginal(Board board, BuildingEditSpec spec, String gamemasterName) {
+        Hex original = hexBeforeFirstEdit.get(spec.getCoords());
+        if (original == null) {
+            LOGGER.debug("[GMBuilding] {}: nothing to restore in hex {}",
+                  gamemasterName, spec.getCoords().getBoardNum());
+            return "that hex has not been changed by a gamemaster, so there is nothing to put back";
+        }
+
+        IBuilding standing = board.getBuildingAt(spec.getCoords());
+        if (standing != null) {
+            board.removeBuilding(standing);
+            gameManager.sendRemovedBuildings(oneBuilding(standing));
+        }
+        board.setHex(spec.getCoords(), original.duplicate());
+
+        IBuilding rebuilt = rebuildFromHex(board, spec.getCoords());
+        if (rebuilt != null) {
+            board.addBuildingToBoard(rebuilt);
+            gameManager.sendNewBuildings(oneBuilding(rebuilt));
+        }
+        gameManager.sendChangedHex(spec.getCoords(), spec.getBoardId());
+        hexBeforeFirstEdit.remove(spec.getCoords());
+
+        Report report = new Report(REPORT_HEX_RESTORED, Report.PUBLIC);
+        report.add(gamemasterName);
+        report.add(spec.getCoords().getBoardNum());
+        addReport(report);
+
+        LOGGER.info("[GMBuilding] {} put hex {} back the way it was before it was edited",
+              gamemasterName, spec.getCoords().getBoardNum());
+        return null;
+    }
+
+    /**
+     * @return the structure the restored hex describes - a fuel tank, a building, or {@code null} when the hex holds
+     *       neither and the restore simply leaves bare ground
+     */
+    private IBuilding rebuildFromHex(Board board, Coords coords) {
+        Hex hex = board.getHex(coords);
+        try {
+            if (hex.containsTerrain(Terrains.FUEL_TANK)) {
+                return new FuelTank(coords, board, Terrains.FUEL_TANK, hex.terrainLevel(Terrains.FUEL_TANK_MAGN));
+            }
+            if (hex.containsTerrain(Terrains.BUILDING)) {
+                return new BuildingTerrain(coords, board, Terrains.BUILDING,
+                      BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
+            }
+        } catch (RuntimeException buildFailure) {
+            LOGGER.error(buildFailure, "[GMBuilding] could not rebuild the structure in restored hex {}",
+                  coords.getBoardNum());
+        }
+        return null;
     }
 
     /**

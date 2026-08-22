@@ -48,12 +48,11 @@ public abstract class RulesCharts {
     public int escalatingFailure(int count) {
         // For each count after 5, the number is 11+
         return switch (count) {
-            case 0 -> 2;
-            case 1 -> 3;
-            case 2 -> 5;
-            case 3 -> 7;
-            case 4 -> 10;
-            default -> 11;
+            case 0 -> 3;
+            case 1 -> 5;
+            case 2 -> 7;
+            case 3 -> 10;
+            default-> 11;
         };
     }
 

@@ -267,6 +267,8 @@ public class MULParser {
     public static final String ATTR_PENALTY = "penalty";
     public static final String ATTR_C3_MASTER_IS = "c3MasterIs";
     public static final String ATTR_C3UUID = "c3UUID";
+    public static final String ATTR_C3EM_ACTIVE = "c3emActive";
+    public static final String ATTR_C3EM_TURNS = "c3emTurns";
     public static final String ATTR_LOAD = "load";
     public static final String ATTR_INTERNAL = "Internal";
     public static final String ATTR_BA_APM_MOUNT_NUM = "baAPMMountNum";
@@ -1139,6 +1141,12 @@ public class MULParser {
         String c3uuid = entityTag.getAttribute(ATTR_C3UUID);
         if (!c3uuid.isBlank()) {
             entity.setC3UUIDAsString(c3uuid);
+        }
+        // C3 Emergency Master state (TO:AUE p.110) survives mid-scenario saves
+        entity.setC3EmergencyMasterActive(Boolean.parseBoolean(entityTag.getAttribute(ATTR_C3EM_ACTIVE)));
+        String c3emTurns = entityTag.getAttribute(ATTR_C3EM_TURNS);
+        if (!c3emTurns.isBlank()) {
+            entity.setC3EmergencyMasterOperatingTurns(MathUtility.parseInt(c3emTurns, 0));
         }
 
         // Load some values for conventional infantry

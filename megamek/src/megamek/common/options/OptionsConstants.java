@@ -376,6 +376,7 @@ public class OptionsConstants {
     public static final String ADVANCED_TEAM_VISION = "team_vision";
     public static final String ADVANCED_TAC_OPS_BAP = "tacops_bap";
     public static final String ADVANCED_TAC_OPS_ECCM = "tacops_eccm";
+    public static final String ADVANCED_TAC_OPS_C3_EMERGENCY_MASTER = "tacops_c3_emergency_master";
     public static final String ADVANCED_TAC_OPS_GHOST_TARGET = "tacops_ghost_target";
     public static final String ADVANCED_GHOST_TARGET_MODE = "ghost_target_mode";
     public static final String ADVANCED_GHOST_TARGET_MAX = "ghost_target_max";

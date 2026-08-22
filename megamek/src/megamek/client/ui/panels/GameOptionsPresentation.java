@@ -257,7 +257,8 @@ final class GameOptionsPresentation {
               OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET,
               OptionsConstants.ADVANCED_GHOST_TARGET_MODE,
               OptionsConstants.ADVANCED_GHOST_TARGET_MAX,
-              OptionsConstants.ADVANCED_TAC_OPS_ANGEL_ECM);
+              OptionsConstants.ADVANCED_TAC_OPS_ANGEL_ECM,
+              OptionsConstants.ADVANCED_TAC_OPS_C3_EMERGENCY_MASTER);
 
         register(ADVANCED_RULES, RULES_ENVIRONMENT, "rules.environment.hazards",
               OptionsConstants.ADVANCED_MINEFIELDS,

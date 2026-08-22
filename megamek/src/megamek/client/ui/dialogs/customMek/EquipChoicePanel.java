@@ -506,7 +506,9 @@ public class EquipChoicePanel extends JPanel {
                 continue;
             }
             int nodes = e.calculateFreeC3Nodes();
-            if (e.hasC3MM() && entity.hasC3M() && e.C3MasterIs(e)) {
+            if (entity.hasC3M() && e.C3MasterIs(e)) {
+                // A master joining a company commander occupies a company-level master link - also for
+                // single-computer company masters (CR p.198, Configuration 1)
                 nodes = e.calculateFreeC3MNodes();
             }
             if (entity.C3MasterIs(e) && !entity.equals(e)) {

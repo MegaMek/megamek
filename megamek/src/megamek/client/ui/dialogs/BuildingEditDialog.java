@@ -110,6 +110,25 @@ public class BuildingEditDialog extends JDialog {
     /** Above the largest fuel tank explosion the shipped boards use. */
     private static final int MAX_MAGNITUDE = 100;
 
+    /**
+     * How much less damage each hex further from the tank takes. The explosion is dealt as the magnitude in the
+     * tank's own hex, less this much in each ring outward, until there is nothing left to deal.
+     */
+    private static final int MAGNITUDE_DEGRADATION = 10;
+
+    /**
+     * The smallest magnitude that does anything at all. The explosion works out how many rings it reaches by
+     * dividing the magnitude by the degradation, so anything under one full ring produces no explosion whatsoever -
+     * the tank is destroyed and nobody near it notices.
+     */
+    private static final int SMALLEST_USEFUL_MAGNITUDE = MAGNITUDE_DEGRADATION;
+
+    /** What a new tank starts at; the shipped boards use 10 to 100, most often 20 to 50. */
+    private static final int DEFAULT_MAGNITUDE = 20;
+
+    /** Shipped boards step magnitudes in fives, so the spinner does too. */
+    private static final int MAGNITUDE_STEP = 5;
+
     /** What kind of structure stands in the hex, which decides which of the fields below mean anything. */
     private enum StructureKind {
         BUILDING("BuildingEditDialog.structure.building"),
@@ -139,7 +158,12 @@ public class BuildingEditDialog extends JDialog {
     private final JSpinner armorSpinner = new JSpinner(new SpinnerNumberModel(0, 0, MAX_ARMOR, 1));
     private final JSpinner heightSpinner = new JSpinner(new SpinnerNumberModel(1, 1, MAX_HEIGHT, 1));
     private final JSpinner fluffImageSpinner = new JSpinner(new SpinnerNumberModel(0, 0, MAX_FLUFF_IMAGE, 1));
-    private final JSpinner magnitudeSpinner = new JSpinner(new SpinnerNumberModel(1, 1, MAX_MAGNITUDE, 1));
+    private final JSpinner magnitudeSpinner =
+          new JSpinner(new SpinnerNumberModel(DEFAULT_MAGNITUDE, SMALLEST_USEFUL_MAGNITUDE, MAX_MAGNITUDE,
+                MAGNITUDE_STEP));
+
+    /** Says in plain terms what the chosen magnitude will actually do when the tank goes up. */
+    private final JLabel magnitudeEffectLabel = new JLabel();
     private final JComboBox<StructureKind> structureChooser = new JComboBox<>();
     private final JButton removeButton = new JButton(Messages.getString("BuildingEditDialog.remove"));
 
@@ -194,7 +218,8 @@ public class BuildingEditDialog extends JDialog {
         }
         if (existing instanceof FuelTank fuelTank) {
             structureChooser.setSelectedItem(StructureKind.FUEL_TANK);
-            magnitudeSpinner.setValue(Math.max(1, fuelTank.getMagnitude()));
+            magnitudeSpinner.setValue(Math.max(SMALLEST_USEFUL_MAGNITUDE, fuelTank.getMagnitude()));
+            refreshMagnitudeEffect();
             constructionFactorSpinner.setValue(existing.getCurrentCF(coords));
             heightSpinner.setValue(Math.max(1, existing.getHeight(coords)));
             refreshFieldsForStructure();
@@ -224,6 +249,8 @@ public class BuildingEditDialog extends JDialog {
             structureChooser.addItem(kind);
         }
         structureChooser.addActionListener(event -> refreshFieldsForStructure());
+        magnitudeSpinner.setToolTipText(Messages.getString("BuildingEditDialog.magnitude.tooltip"));
+        magnitudeSpinner.addChangeListener(event -> refreshMagnitudeEffect());
         for (BuildingType type : BuildingType.values()) {
             // UNKNOWN is what the code uses for "no building here", not something to build
             if (type != BuildingType.UNKNOWN) {
@@ -246,6 +273,7 @@ public class BuildingEditDialog extends JDialog {
         });
 
         refreshFieldsForStructure();
+        refreshMagnitudeEffect();
 
         JPanel fields = new JPanel(new GridLayout(0, 2, 6, 6));
         fields.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -258,6 +286,7 @@ public class BuildingEditDialog extends JDialog {
         addField(fields, "BuildingEditDialog.basement", basementChooser);
         addField(fields, "BuildingEditDialog.fluffImage", fluffImageSpinner);
         addField(fields, "BuildingEditDialog.magnitude", magnitudeSpinner);
+        addField(fields, "BuildingEditDialog.magnitudeEffect", magnitudeEffectLabel);
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(fields, BorderLayout.CENTER);
@@ -283,6 +312,23 @@ public class BuildingEditDialog extends JDialog {
         basementChooser.setEnabled(!isFuelTank);
         fluffImageSpinner.setEnabled(!isFuelTank);
         magnitudeSpinner.setEnabled(isFuelTank);
+        magnitudeEffectLabel.setEnabled(isFuelTank);
+    }
+
+    /**
+     * Spells out what the chosen magnitude does, because the number on its own says nothing about how far the
+     * explosion reaches or how much anything takes.
+     */
+    private void refreshMagnitudeEffect() {
+        int magnitude = (int) magnitudeSpinner.getValue();
+        int hexesReached = magnitude / MAGNITUDE_DEGRADATION;
+        if (hexesReached < 1) {
+            magnitudeEffectLabel.setText(Messages.getString("BuildingEditDialog.magnitudeEffect.none"));
+            return;
+        }
+        int damageAtEdge = magnitude - ((hexesReached - 1) * MAGNITUDE_DEGRADATION);
+        magnitudeEffectLabel.setText(Messages.getString("BuildingEditDialog.magnitudeEffect.text",
+              magnitude, hexesReached - 1, damageAtEdge));
     }
 
     private static void addField(JPanel fields, String labelKey, JComponent control) {

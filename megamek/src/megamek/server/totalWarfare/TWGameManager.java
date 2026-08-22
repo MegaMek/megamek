@@ -60,6 +60,7 @@ import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
+import megamek.common.board.BuildingEditSpec;
 import megamek.common.board.HexEditSpec;
 import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.comparators.WeaponComparatorBV;
@@ -1097,6 +1098,9 @@ public class TWGameManager extends AbstractGameManager {
                     break;
                 case HEX_EDIT:
                     receiveHexEdit(packet, connId);
+                    break;
+                case BUILDING_EDIT:
+                    receiveBuildingEdit(packet, connId);
                     break;
                 case ENTITY_MULTI_UPDATE:
                     receiveEntitiesUpdate(packet, connId);
@@ -27003,6 +27007,33 @@ public class TWGameManager extends AbstractGameManager {
         sendToast(GameToastEvent.Level.GAMEMASTER,
               Messages.getString("Gamemaster.toast.hexEdit", sender.getName(), spec.getCoords().size()),
               null);
+    }
+
+    /**
+     * Applies a gamemaster's edit of the building in one hex. The edit says what should be standing there when it is
+     * done, so the same packet puts a building up, changes the one that is there and takes it away; the handler works
+     * out which by looking at the hex.
+     */
+    private void receiveBuildingEdit(Packet packet, int connIndex) {
+        if (!(packet.getObject(0) instanceof BuildingEditSpec spec)) {
+            LOGGER.warn("Dropping building edit: the packet carries no spec");
+            return;
+        }
+        Player sender = game.getPlayer(connIndex);
+        if ((sender == null) || !sender.isGameMaster()) {
+            LOGGER.warn("Dropping building edit from {}: only a gamemaster may change the board",
+                  (sender == null) ? "an unknown connection" : sender.getName());
+            return;
+        }
+        String refusal = buildingEditHandler().applyBuildingSpec(spec, sender.getName());
+        if (refusal != null) {
+            // a toast as well as chat: the dialog may have closed, and a refusal that only went to the chat log
+            // would leave the gamemaster looking at an unchanged hex with no visible reason why
+            String message = Messages.getString("Gamemaster.cmd.building.refused", refusal);
+            sendServerChat(connIndex, message);
+            send(connIndex, new Packet(PacketCommand.SEND_TOAST, GameToastEvent.Level.WARNING, message,
+                  Entity.NONE));
+        }
     }
 
     private void receiveDamageEdit(Packet packet, int connIndex) {

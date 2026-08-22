@@ -39,7 +39,10 @@ import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.BasementType;
+import megamek.common.board.Board;
+import megamek.common.board.BuildingEditSpec;
 import megamek.common.board.Coords;
+import megamek.common.units.BuildingTerrain;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
@@ -62,6 +65,8 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
 
     /** Report ids from {@code report-messages.properties}. */
     private static final int REPORT_BUILDING_CF_SET = 1253;
+    private static final int REPORT_BUILDING_RAISED = 1257;
+    private static final int REPORT_BUILDING_REMOVED = 1258;
 
     /**
      * The collapse rules this handler brings a building down through. It holds no state of its own beyond the game
@@ -87,6 +92,143 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
      */
     public record BuildingEdit(@Nullable Integer constructionFactor, @Nullable Integer armor,
                                @Nullable Integer height, @Nullable BasementType basement) {
+    }
+
+
+    /**
+     * Puts the building the gamemaster describes into a hex, whatever is there now.
+     *
+     * <p>One entry point covers all of it, because the gamemaster is saying what should be standing in the hex rather
+     * than which operation to perform. An empty hex gets a building put up; a hex whose building already matches the
+     * type and class asked for has its condition changed; a hex whose building is of another type is rebuilt, since
+     * what a building is made of is fixed when the board makes it and cannot be set afterwards.</p>
+     *
+     * @param spec           What should be standing in the hex when the edit is done
+     * @param gamemasterName The name of the gamemaster making the change, for the report
+     *
+     * @return A description of why the edit was refused, or {@code null} when it was applied
+     */
+    public String applyBuildingSpec(BuildingEditSpec spec, String gamemasterName) {
+        Board board = getGame().getBoard(spec.getBoardId());
+        if (board == null) {
+            return "that board is not in play";
+        }
+        Hex hex = board.getHex(spec.getCoords());
+        if (hex == null) {
+            return "that hex is not on the board";
+        }
+        IBuilding existing = board.getBuildingAt(spec.getCoords());
+
+        if (spec.isRemovingBuilding()) {
+            return removeBuilding(board, existing, spec, gamemasterName);
+        }
+        if (hex.depth() > 0) {
+            LOGGER.debug("[GMBuilding] {}: refused - hex {} holds water", gamemasterName,
+                  spec.getCoords().getBoardNum());
+            return "a building cannot stand in water";
+        }
+        if (existing == null) {
+            return raiseBuilding(board, hex, spec, gamemasterName);
+        }
+        if (needsRebuilding(existing, spec)) {
+            LOGGER.info("[GMBuilding] {} rebuilds the building in hex {} as a {}",
+                  gamemasterName, spec.getCoords().getBoardNum(), spec.getBuildingType());
+            board.removeBuilding(existing);
+            gameManager.sendRemovedBuildings(oneBuilding(existing));
+            return raiseBuilding(board, hex, spec, gamemasterName);
+        }
+        return applyEdit(spec.getCoords(),
+              new BuildingEdit(spec.getConstructionFactor(), spec.getArmor(), spec.getHeight(), spec.getBasement()),
+              gamemasterName);
+    }
+
+    /**
+     * @return {@code true} when the building standing there is not the kind the gamemaster asked for, so it has to be
+     *       taken down and put up again rather than adjusted
+     */
+    private static boolean needsRebuilding(IBuilding existing, BuildingEditSpec spec) {
+        return (existing.getBuildingType() != spec.getBuildingType())
+              || (existing.getBldgClass() != spec.getBuildingClass());
+    }
+
+    /** Puts a building up in a hex that has none, by writing what it is into the hex and letting the board build it. */
+    private String raiseBuilding(Board board, Hex hex, BuildingEditSpec spec, String gamemasterName) {
+        writeBuildingTerrain(hex, spec);
+        IBuilding raised;
+        try {
+            raised = new BuildingTerrain(spec.getCoords(), board, Terrains.BUILDING, spec.getBasement());
+        } catch (RuntimeException buildFailure) {
+            // the hex is put back rather than left holding half a building that the board never made into one
+            clearBuildingTerrain(hex);
+            LOGGER.error(buildFailure, "[GMBuilding] {}: could not raise a building in hex {}",
+                  gamemasterName, spec.getCoords().getBoardNum());
+            return "that building could not be built there";
+        }
+        board.addBuildingToBoard(raised);
+        gameManager.sendChangedHex(spec.getCoords(), spec.getBoardId());
+        gameManager.sendNewBuildings(oneBuilding(raised));
+
+        Report report = new Report(REPORT_BUILDING_RAISED, Report.PUBLIC);
+        report.add(gamemasterName);
+        report.add(raised.getName());
+        report.add(spec.getCoords().getBoardNum());
+        addReport(report);
+
+        LOGGER.info("[GMBuilding] {} raised a {} building in hex {} (CF {}, {} levels)",
+              gamemasterName, spec.getBuildingType(), spec.getCoords().getBoardNum(),
+              spec.getConstructionFactor(), spec.getHeight());
+        return null;
+    }
+
+    /** Takes a building away without leaving rubble, which is what a gamemaster removing one from the map means. */
+    private String removeBuilding(Board board, IBuilding existing, BuildingEditSpec spec, String gamemasterName) {
+        if (existing == null) {
+            return "there is no building in that hex to remove";
+        }
+        board.removeBuilding(existing);
+        gameManager.sendRemovedBuildings(oneBuilding(existing));
+        gameManager.sendChangedHex(spec.getCoords(), spec.getBoardId());
+
+        Report report = new Report(REPORT_BUILDING_REMOVED, Report.PUBLIC);
+        report.add(gamemasterName);
+        report.add(existing.getName());
+        report.add(spec.getCoords().getBoardNum());
+        addReport(report);
+
+        LOGGER.info("[GMBuilding] {} removed the building in hex {}",
+              gamemasterName, spec.getCoords().getBoardNum());
+        return null;
+    }
+
+    /** Writes what the building is into the hex, which is what the board reads to make the building itself. */
+    private static void writeBuildingTerrain(Hex hex, BuildingEditSpec spec) {
+        clearBuildingTerrain(hex);
+        hex.addTerrain(new Terrain(Terrains.BUILDING, spec.getBuildingType().getTypeValue()));
+        hex.addTerrain(new Terrain(Terrains.BLDG_CF, spec.getConstructionFactor()));
+        hex.addTerrain(new Terrain(Terrains.BLDG_ELEV, spec.getHeight()));
+        hex.addTerrain(new Terrain(Terrains.BLDG_CLASS, spec.getBuildingClass()));
+        if (spec.getArmor() > 0) {
+            hex.addTerrain(new Terrain(Terrains.BLDG_ARMOR, spec.getArmor()));
+        }
+        hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, spec.getBasement().ordinal()));
+    }
+
+    /** Takes every scrap of building out of a hex, so nothing of the old one is left to confuse the new one. */
+    private static void clearBuildingTerrain(Hex hex) {
+        hex.removeTerrain(Terrains.BUILDING);
+        hex.removeTerrain(Terrains.BLDG_CF);
+        hex.removeTerrain(Terrains.BLDG_ELEV);
+        hex.removeTerrain(Terrains.BLDG_CLASS);
+        hex.removeTerrain(Terrains.BLDG_ARMOR);
+        hex.removeTerrain(Terrains.BLDG_BASEMENT_TYPE);
+        hex.removeTerrain(Terrains.BLDG_BASE_COLLAPSED);
+    }
+
+    /** @return the given building on its own, in the vector the broadcast methods take */
+    private static Vector<IBuilding> oneBuilding(IBuilding building) {
+        Vector<IBuilding> buildings = new Vector<>();
+        buildings.add(building);
+        return buildings;
     }
 
     /**

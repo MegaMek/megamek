@@ -41,10 +41,13 @@ import static org.mockito.ArgumentMatchers.anyInt;
 
 import megamek.common.Player;
 import megamek.common.board.Board;
+import megamek.common.board.BuildingEditSpec;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
+import megamek.common.enums.BuildingType;
 import megamek.common.units.IBuilding;
+import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,7 +79,7 @@ class BuildingEditHandlerTest {
     private TWGameManager gameManager;
     private Game game;
     private Board board;
-    private BuildingEditHandler buildingEditHandler;
+
 
     @BeforeEach
     void beforeEach() {
@@ -90,7 +93,13 @@ class BuildingEditHandlerTest {
         board = BoardLoader.initializeBoard(BOARD_DATA);
         game.setBoard(board);
 
-        buildingEditHandler = new BuildingEditHandler(gameManager);
+
+    }
+
+
+    /** @return the handler under test, reached the way the server reaches it */
+    private BuildingEditHandler buildingEditHandler() {
+        return gameManager.buildingEditHandler();
     }
 
     /** @return an edit that sets only the construction factor and leaves everything else alone */
@@ -108,7 +117,7 @@ class BuildingEditHandlerTest {
 
     @Test
     void weakeningABuildingSetsItsConstructionFactor() {
-        String refusal = buildingEditHandler.applyEdit(BUILDING_HEX, cfOnly(15), GAMEMASTER);
+        String refusal = buildingEditHandler().applyEdit(BUILDING_HEX, cfOnly(15), GAMEMASTER);
 
         assertNull(refusal, "weakening a building should be allowed");
         assertEquals(15, board.getBuildingAt(BUILDING_HEX).getCurrentCF(BUILDING_HEX),
@@ -117,7 +126,7 @@ class BuildingEditHandlerTest {
 
     @Test
     void thePhaseFactorMovesWithIt() {
-        buildingEditHandler.applyEdit(BUILDING_HEX, cfOnly(15), GAMEMASTER);
+        buildingEditHandler().applyEdit(BUILDING_HEX, cfOnly(15), GAMEMASTER);
 
         assertEquals(15, board.getBuildingAt(BUILDING_HEX).getPhaseCF(BUILDING_HEX),
               "leaving the phase factor behind would measure this phase's damage against the old value");
@@ -125,14 +134,14 @@ class BuildingEditHandlerTest {
 
     @Test
     void aHexWithNoBuildingIsRefused() {
-        String refusal = buildingEditHandler.applyEdit(EMPTY_HEX, cfOnly(20), GAMEMASTER);
+        String refusal = buildingEditHandler().applyEdit(EMPTY_HEX, cfOnly(20), GAMEMASTER);
 
         assertNotNull(refusal, "there is nothing to change in a hex with no building");
     }
 
     @Test
     void aFactorOfZeroBringsTheBuildingDown() {
-        String refusal = buildingEditHandler.applyEdit(BUILDING_HEX,
+        String refusal = buildingEditHandler().applyEdit(BUILDING_HEX,
               cfOnly(BuildingEditHandler.COLLAPSING_CONSTRUCTION_FACTOR),
               GAMEMASTER);
 
@@ -143,7 +152,7 @@ class BuildingEditHandlerTest {
 
     @Test
     void theHeightIsWrittenToTheBuildingAndTheHex() {
-        String refusal = buildingEditHandler.applyEdit(BUILDING_HEX,
+        String refusal = buildingEditHandler().applyEdit(BUILDING_HEX,
               new BuildingEditHandler.BuildingEdit(null, null, 5, null), GAMEMASTER);
 
         assertNull(refusal, "raising a building should be allowed");
@@ -155,7 +164,7 @@ class BuildingEditHandlerTest {
 
     @Test
     void theArmorIsWrittenToTheBuilding() {
-        String refusal = buildingEditHandler.applyEdit(BUILDING_HEX,
+        String refusal = buildingEditHandler().applyEdit(BUILDING_HEX,
               new BuildingEditHandler.BuildingEdit(null, 12, null, null), GAMEMASTER);
 
         assertNull(refusal, "armouring a building should be allowed");
@@ -165,10 +174,76 @@ class BuildingEditHandlerTest {
 
     @Test
     void valuesLeftAloneAreNotTouched() {
-        buildingEditHandler.applyEdit(BUILDING_HEX,
+        buildingEditHandler().applyEdit(BUILDING_HEX,
               new BuildingEditHandler.BuildingEdit(null, 12, null, null), GAMEMASTER);
 
         assertEquals(40, board.getBuildingAt(BUILDING_HEX).getCurrentCF(BUILDING_HEX),
               "only the armor was set, so the construction factor should be untouched");
+    }
+
+    /** @return a spec describing a building of the given type in the given hex */
+    private BuildingEditSpec specFor(Coords coords, BuildingType type) {
+        BuildingEditSpec spec = new BuildingEditSpec(coords, board.getBoardId());
+        spec.setBuildingType(type);
+        spec.setConstructionFactor(type.getDefaultCF());
+        spec.setHeight(2);
+        return spec;
+    }
+
+    @Test
+    void aBuildingCanBeRaisedInAnEmptyHex() {
+        String refusal = buildingEditHandler().applyBuildingSpec(specFor(EMPTY_HEX, BuildingType.HEAVY), GAMEMASTER);
+
+        assertNull(refusal, "putting a building in an empty hex should be allowed");
+        IBuilding raised = board.getBuildingAt(EMPTY_HEX);
+        assertNotNull(raised, "the board should now hold a building there");
+        assertEquals(BuildingType.HEAVY, raised.getBuildingType(), "and it should be the type that was asked for");
+    }
+
+    @Test
+    void aRaisedBuildingTakesTheConstructionFactorItWasGiven() {
+        buildingEditHandler().applyBuildingSpec(specFor(EMPTY_HEX, BuildingType.LIGHT), GAMEMASTER);
+
+        assertEquals(BuildingType.LIGHT.getDefaultCF(), board.getBuildingAt(EMPTY_HEX).getCurrentCF(EMPTY_HEX),
+              "a new building should stand at the factor it was built with");
+    }
+
+    @Test
+    void changingTheTypeRebuildsTheBuilding() {
+        BuildingEditSpec spec = specFor(BUILDING_HEX, BuildingType.HARDENED);
+
+        String refusal = buildingEditHandler().applyBuildingSpec(spec, GAMEMASTER);
+
+        assertNull(refusal, "changing what a building is made of should be allowed");
+        assertEquals(BuildingType.HARDENED, board.getBuildingAt(BUILDING_HEX).getBuildingType(),
+              "what a building is made of is fixed when the board makes it, so it has to be rebuilt to change");
+    }
+
+    @Test
+    void aBuildingCanBeRemoved() {
+        BuildingEditSpec spec = new BuildingEditSpec(BUILDING_HEX, board.getBoardId());
+        spec.setRemovingBuilding(true);
+
+        String refusal = buildingEditHandler().applyBuildingSpec(spec, GAMEMASTER);
+
+        assertNull(refusal, "removing a building should be allowed");
+        assertNull(board.getBuildingAt(BUILDING_HEX), "and the hex should hold no building afterwards");
+    }
+
+    @Test
+    void removingABuildingThatIsNotThereIsRefused() {
+        BuildingEditSpec spec = new BuildingEditSpec(EMPTY_HEX, board.getBoardId());
+        spec.setRemovingBuilding(true);
+
+        assertNotNull(buildingEditHandler().applyBuildingSpec(spec, GAMEMASTER),
+              "there is nothing to remove from an empty hex");
+    }
+
+    @Test
+    void aBuildingCannotBeRaisedInWater() {
+        board.getHex(EMPTY_HEX).addTerrain(new Terrain(Terrains.WATER, 2));
+
+        assertNotNull(buildingEditHandler().applyBuildingSpec(specFor(EMPTY_HEX, BuildingType.MEDIUM), GAMEMASTER),
+              "a building cannot stand in water, so raising one there should be refused");
     }
 }

@@ -278,7 +278,14 @@ public enum PacketCommand {
      * several hexes, is more than a command line can carry. The server accepts it only from a Game Master, and
      * validates every hex before changing any of them.
      */
-    HEX_EDIT;
+    HEX_EDIT,
+
+    /**
+     * A Client to Server packet carrying a Game Master's edit of the building in one hex: what should be standing
+     * there when the edit is done. The same packet puts a building where there was none, changes the one that is
+     * there and takes it away; the server works out which by looking at the hex. Accepted only from a Game Master.
+     */
+    BUILDING_EDIT;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

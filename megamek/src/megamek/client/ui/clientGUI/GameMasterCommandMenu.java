@@ -47,7 +47,6 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
-import megamek.server.commands.BuildingCommand;
 import megamek.server.commands.ChangeWeatherCommand;
 import megamek.server.commands.ClientServerCommand;
 import megamek.server.commands.DisasterCommand;
@@ -187,7 +186,6 @@ public final class GameMasterCommandMenu {
     private static List<HexCommand> hexTargetedCommands() {
         return List.of(
               new HexCommand(new ModifyTerrainCommand(null, null), GameMasterCommandMenu::hasModifiableTerrain),
-              new HexCommand(new BuildingCommand(null, null), GameMasterCommandMenu::hasBuilding),
               new HexCommand(new FirestarterCommand(null, null), GameMasterCommandMenu::anyHex),
               new HexCommand(new FirefightCommand(null, null), GameMasterCommandMenu::hasFire),
               new HexCommand(new OrbitalBombardmentCommand(null, null), GameMasterCommandMenu::anyHex));

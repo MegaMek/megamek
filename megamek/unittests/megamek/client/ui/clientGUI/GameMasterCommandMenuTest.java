@@ -152,17 +152,9 @@ class GameMasterCommandMenuTest {
     }
 
     @Test
-    void modifyBuildingIsNotOfferedOnAHexWithNoBuilding() {
-        assertFalse(offeredOn(WOODS_HEX).contains("Modify Building"),
-              "a hex of woods has no building, so offering to modify one only leads to a refusal");
-        assertFalse(offeredOn(BARE_HEX).contains("Modify Building"),
-              "a bare hex has no building either");
-    }
-
-    @Test
-    void modifyBuildingIsOfferedWhereThereIsABuilding() {
-        assertTrue(offeredOn(BUILDING_HEX).contains("Modify Building"),
-              "the hex holds a building, so it should be offered");
+    void buildingsAreNotAmongTheseCommands() {
+        assertFalse(offeredOn(BUILDING_HEX).contains("Modify Building"),
+              "buildings have their own dialog, opened from the map menu, not a generated form");
     }
 
     @Test

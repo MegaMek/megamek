@@ -142,8 +142,8 @@ public class HexEditHandler extends AbstractTWRuleHandler {
         if (spec.isUndoingLastEdit()) {
             return undoLastEdit(gamemasterName);
         }
-        if (spec.getCoords().isEmpty()) {
-            return "no hexes were chosen";
+        if (spec.isEmpty()) {
+            return "no hexes were painted";
         }
         String refusal = firstRefusalIn(spec, gamemasterName);
         if (refusal != null) {
@@ -151,9 +151,10 @@ public class HexEditHandler extends AbstractTWRuleHandler {
         }
 
         rememberHexesBeforeEdit(spec);
-        for (Coords hexCoords : spec.getCoords()) {
+        for (Map.Entry<Coords, HexEditSpec.HexPaint> painted : spec.getPaintedHexes().entrySet()) {
+            Coords hexCoords = painted.getKey();
             Hex edited = getGame().getHex(hexCoords, spec.getBoardId()).duplicate();
-            writeTerrain(edited, spec);
+            writeTerrain(edited, painted.getValue());
             // put the hex back through the board rather than changing it where it lies, so the board recomputes what
             // it works out for itself - exits, inclines and cliff bottoms, foliage elevation - and records the new
             // high and low points of the map. Changing it in place left the server holding a hex the clients had
@@ -162,8 +163,7 @@ public class HexEditHandler extends AbstractTWRuleHandler {
             gameManager.sendChangedHex(hexCoords, spec.getBoardId());
         }
         reportHexEdit(spec, gamemasterName);
-        LOGGER.info("[GMTerrain] {} changed {} hex(es) to hold {}",
-              gamemasterName, spec.getCoords().size(), describeTerrain(spec));
+        LOGGER.info("[GMTerrain] {} painted {} hex(es)", gamemasterName, spec.getPaintedHexes().size());
         return null;
     }
 
@@ -223,13 +223,14 @@ public class HexEditHandler extends AbstractTWRuleHandler {
      * @return the reason the first hex that cannot take the edit cannot take it, or {@code null} when all of them can
      */
     private String firstRefusalIn(HexEditSpec spec, String gamemasterName) {
-        for (Coords hexCoords : spec.getCoords()) {
+        for (Map.Entry<Coords, HexEditSpec.HexPaint> painted : spec.getPaintedHexes().entrySet()) {
+            Coords hexCoords = painted.getKey();
             Hex hex = getGame().getHex(hexCoords, spec.getBoardId());
             if (hex == null) {
                 return "hex " + hexCoords.getBoardNum() + " is not on the board";
             }
             Hex edited = hex.duplicate();
-            writeTerrain(edited, spec);
+            writeTerrain(edited, painted.getValue());
             String refusal = refusalFor(hex, edited, hexCoords, spec.getBoardId(), gamemasterName);
             if (refusal != null) {
                 return "hex " + hexCoords.getBoardNum() + ": " + refusal;
@@ -242,9 +243,9 @@ public class HexEditHandler extends AbstractTWRuleHandler {
      * Leaves the hex holding exactly the terrain the edit names, plus any structure that was already standing there.
      * The edit describes the ground, not what has been built on it.
      */
-    private static void writeTerrain(Hex hex, HexEditSpec spec) {
-        if (spec.getLevel() != null) {
-            hex.setLevel(spec.getLevel());
+    private static void writeTerrain(Hex hex, HexEditSpec.HexPaint paint) {
+        if (paint.getLevel() != null) {
+            hex.setLevel(paint.getLevel());
         }
         List<Terrain> structures = new ArrayList<>();
         for (int structureTerrain : HexEditValidator.structureTerrains()) {
@@ -254,7 +255,7 @@ public class HexEditHandler extends AbstractTWRuleHandler {
             }
         }
         hex.removeAllTerrains();
-        for (Map.Entry<Integer, Integer> terrain : spec.getTerrainLevels().entrySet()) {
+        for (Map.Entry<Integer, Integer> terrain : paint.getTerrainLevels().entrySet()) {
             hex.addTerrain(new Terrain(terrain.getKey(), terrain.getValue()));
         }
         for (Terrain structure : structures) {
@@ -262,30 +263,37 @@ public class HexEditHandler extends AbstractTWRuleHandler {
         }
     }
 
-    /** @return the terrain the edit leaves behind, in words, for the report and the log */
-    private static String describeTerrain(HexEditSpec spec) {
-        String levelPart = (spec.getLevel() == null) ? "" : " at level " + spec.getLevel();
-        if (spec.isClearingHexes()) {
+    /** @return what one hex is left holding, in words, for the report and the log */
+    private static String describeTerrain(HexEditSpec.HexPaint paint) {
+        String levelPart = (paint.getLevel() == null) ? "" : " at level " + paint.getLevel();
+        if (paint.isBareGround()) {
             return "bare ground" + levelPart;
         }
         List<String> described = new ArrayList<>();
-        for (Map.Entry<Integer, Integer> terrain : spec.getTerrainLevels().entrySet()) {
+        for (Map.Entry<Integer, Integer> terrain : paint.getTerrainLevels().entrySet()) {
             described.add(Terrains.getDisplayName(terrain.getKey(), terrain.getValue()));
         }
         return String.join(", ", described) + levelPart;
     }
 
-    /** Tells every player what changed and where, so a hex changing under them is never unexplained. */
+    /**
+     * Tells every player what changed and where. Painted hexes need not match one another any more, so hexes that end
+     * up holding the same thing are reported together and the rest get a line each, rather than one line claiming
+     * they all became the same.
+     */
     private void reportHexEdit(HexEditSpec spec, String gamemasterName) {
-        List<String> hexNumbers = new ArrayList<>();
-        for (Coords hexCoords : spec.getCoords()) {
-            hexNumbers.add(String.valueOf(hexCoords.getBoardNum()));
+        Map<String, List<String>> hexesByTerrain = new LinkedHashMap<>();
+        for (Map.Entry<Coords, HexEditSpec.HexPaint> painted : spec.getPaintedHexes().entrySet()) {
+            hexesByTerrain.computeIfAbsent(describeTerrain(painted.getValue()), terrain -> new ArrayList<>())
+                  .add(String.valueOf(painted.getKey().getBoardNum()));
         }
-        Report report = new Report(REPORT_HEXES_EDITED, Report.PUBLIC);
-        report.add(gamemasterName);
-        report.add(describeTerrain(spec));
-        report.add(String.join(", ", hexNumbers));
-        addReport(report);
+        for (Map.Entry<String, List<String>> group : hexesByTerrain.entrySet()) {
+            Report report = new Report(REPORT_HEXES_EDITED, Report.PUBLIC);
+            report.add(gamemasterName);
+            report.add(group.getKey());
+            report.add(String.join(", ", group.getValue()));
+            addReport(report);
+        }
     }
 
     /**

@@ -38,6 +38,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -54,13 +56,12 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.WindowConstants;
 
 import megamek.client.event.BoardViewEvent;
@@ -69,35 +70,37 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
-import megamek.client.ui.util.FlatLafStyleBuilder;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
 import megamek.common.RangeType;
-import megamek.common.util.Distractable;
 import megamek.common.board.Coords;
 import megamek.common.board.HexEditSpec;
 import megamek.common.board.HexEditValidator;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
+import megamek.common.util.Distractable;
 import megamek.logging.MMLogger;
 
 /**
- * Lets a Game Master rebuild the ground in one or more hexes, and shows them as they go whether what they have built
- * is a legal hex.
+ * Lets a Game Master repaint the ground, hex by hex, and shows them as they go whether what they have built is legal.
  *
- * <p>The point of the dialog is that a gamemaster should not be able to assemble something the rules do not allow.
- * Terrain levels are offered in the rules' own words - Light, Heavy and Ultra Woods rather than one, two and three -
- * and only the levels a terrain actually has are offered at all. Every change re-checks the hex that would result and
- * puts the reason on screen while there is still something to change, instead of letting the gamemaster press the
- * button and be refused.</p>
+ * <p>The dialog works as a brush. Set what the brush holds - a terrain, its level, a ground level - then click hexes
+ * on the map to lay it down. Change the brush and keep clicking, and different hexes get different terrain, so a
+ * river can have deep water in the channel, shallows at its edge and rough ground on the bank in one action. This is
+ * how the map editor already works, so it needs no explaining to anyone who has drawn a map.</p>
  *
- * <p>Structures are not shown or edited here. A building is not part of the ground, it is built on it, and taking one
- * down is Modify Building's job so that it goes through the collapse rules.</p>
+ * <p>A gamemaster should not be able to assemble something the rules do not allow. Levels are offered in the rules
+ * own words - Light, Heavy and Ultra Woods rather than one, two and three - and only the levels a terrain actually
+ * has are offered at all. Every painted hex is re-checked and the reason put on screen while there is still something
+ * to change, rather than the server refusing the edit afterwards.</p>
+ *
+ * <p>Structures are not painted here. A building is not part of the ground, it is built on it, and taking one down is
+ * Modify Building's job so that it goes through the collapse rules.</p>
  */
 public class HexEditDialog extends JDialog {
 
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private static final MMLogger LOGGER = MMLogger.create(HexEditDialog.class);
 
@@ -113,73 +116,67 @@ public class HexEditDialog extends JDialog {
     /** Water is the one terrain whose level starts at zero, because depth 0 water is a legal thing to have. */
     private static final int LOWEST_WATER_DEPTH = 0;
 
-    /** Draws the highlight around a picked hex on every side of it. */
+    /** Draws the highlight around a painted hex on every side of it. */
     private static final int ALL_HEX_BORDERS = 63;
+
+    /** Stands for the brush holding nothing, which strips a hex to bare ground. */
+    private static final int BARE_GROUND = -1;
 
     private final ClientGUI clientGUI;
     private final int boardId;
 
-    /** The hexes the edit applies to, in the order they were picked. */
-    private final List<Coords> selectedHexes = new ArrayList<>();
+    /** Each hex painted so far and what it will end up holding, in the order it was painted. */
+    private final Map<Coords, HexEditSpec.HexPaint> paintedHexes = new LinkedHashMap<>();
 
-    /** The terrain the edited hexes should end up holding, as terrain type to level, in the order it was added. */
-    private final Map<Integer, Integer> terrainLevels = new LinkedHashMap<>();
-
-    /** The level the edited hexes should end up at. Separate from water depth, which is the water terrain's level. */
-    private final JSpinner hexLevelSpinner = new JSpinner(new SpinnerNumberModel(0, -30, 30, 1));
-
-    /** Explains how the hex level and any water depth in it add up, which is not obvious from two numbers. */
-    private final JLabel groundLabel = new JLabel();
-
-    private final DefaultListModel<String> hexListModel = new DefaultListModel<>();
-    private final DefaultListModel<String> terrainListModel = new DefaultListModel<>();
-    private final JList<String> terrainList = new JList<>(terrainListModel);
+    private final DefaultListModel<String> paintedListModel = new DefaultListModel<>();
     private final JComboBox<TerrainChoice> terrainChooser = new JComboBox<>();
     private final JComboBox<LevelChoice> levelChooser = new JComboBox<>();
+    private final JSpinner hexLevelSpinner = new JSpinner(new SpinnerNumberModel(0, -30, 30, 1));
+    private final JLabel groundLabel = new JLabel();
     private final JLabel legalityLabel = new JLabel();
-    private final JButton executeButton = new JButton(Messages.getString("HexEditDialog.execute"));
+    private final JButton applyButton = new JButton(Messages.getString("HexEditDialog.execute"));
     private final JButton undoButton = new JButton(Messages.getString("HexEditDialog.undo"));
+    private final JToggleButton paintOnMapButton = new JToggleButton(Messages.getString("HexEditDialog.paintOnMap"));
+    private final JToggleButton eraseButton = new JToggleButton(Messages.getString("HexEditDialog.erase"));
 
-    /** Whether the edit on screen has been sent, so it can be taken back rather than sent again. */
-    private boolean editHasBeenSent;
-    private final JToggleButton pickHexesButton =
-          new JToggleButton(Messages.getString("HexEditDialog.pickHexes"));
+    /** Whether the edit on screen has been applied, so it can be taken back rather than applied again. */
+    private boolean editHasBeenApplied;
 
-    /** Listens for clicks on the board while hex picking is on, so the gamemaster can select an area to change. */
-    private final BoardViewListenerAdapter hexPicker = new BoardViewListenerAdapter() {
+    /**
+     * The phase display kept from acting on board clicks while painting. A click is delivered to everything listening
+     * to the board, so without this a click meant for the brush is also read by the movement phase as a move order.
+     */
+    private Distractable suppressedDisplay;
+
+    /** The highlight drawn on each painted hex, so the work is visible on the board and not only in the list. */
+    private final Map<Coords, FieldOfFireSprite> hexHighlights = new LinkedHashMap<>();
+
+    /** Listens for clicks on the board while painting is on. */
+    private final BoardViewListenerAdapter brushListener = new BoardViewListenerAdapter() {
         @Override
         public void hexMoused(BoardViewEvent event) {
             boolean isLeftClickOnAHex = (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED)
                   && (event.getButton() == MouseEvent.BUTTON1)
                   && (event.getCoords() != null);
             if (isLeftClickOnAHex) {
-                toggleHex(event.getCoords());
+                brushHex(event.getCoords());
             }
         }
     };
 
-    /**
-     * The phase display that is being kept from acting on board clicks while hexes are being picked. Without this a
-     * click meant for the hex list is also read by the movement phase as a move order, so picking a hex to flood also
-     * walks a unit into it.
-     */
-    private Distractable suppressedDisplay;
-
-    /** The highlight drawn on each picked hex, so the selection is visible on the board and not only in the list. */
-    private final Map<Coords, FieldOfFireSprite> hexHighlights = new LinkedHashMap<>();
-
-    /** One terrain offered in the chooser, named the way the map editor names it. */
+    /** One terrain offered in the brush, named the way the map editor names it. */
     private record TerrainChoice(int terrainType) {
         @Override
         public String toString() {
-            return Terrains.getEditorName(terrainType);
+            return (terrainType == BARE_GROUND)
+                  ? Messages.getString("HexEditDialog.bareGroundChoice")
+                  : Terrains.getEditorName(terrainType);
         }
     }
 
     /**
-     * One level offered for the chosen terrain, in the words the rules use for it. The terrain's own name is dropped
-     * from the front, because the terrain is already named in the chooser beside this one and reading "Water" twice
-     * across two dropdowns is what made them look like duplicates of each other.
+     * One level offered for the brush's terrain, in the words the rules use for it. The terrain's own name is dropped
+     * from the front, because the terrain is named in the chooser beside this one.
      */
     private record LevelChoice(int terrainType, int level) {
         @Override
@@ -195,7 +192,8 @@ public class HexEditDialog extends JDialog {
     }
 
     /**
-     * Opens the dialog on one hex, which the gamemaster may then add more hexes to.
+     * Opens the dialog with the brush set to what the clicked hex already holds, and that hex painted, so a
+     * gamemaster who only wants to change one hex has it in front of them.
      *
      * @param parent    The frame to open over
      * @param clientGUI The client the edit is sent through
@@ -206,31 +204,25 @@ public class HexEditDialog extends JDialog {
         this.clientGUI = clientGUI;
         this.boardId = clientGUI.getClient().getGame().getBoard().getBoardId();
 
-        selectedHexes.add(coords);
-        readTerrainFrom(coords);
-        readLevelFrom(coords);
         buildUI(parent);
-        refreshEverything();
+        loadBrushFrom(coords);
+        brushHex(coords);
     }
 
-    /** Starts the edit from what the clicked hex already holds, so the gamemaster changes it rather than replacing it. */
-    private void readTerrainFrom(Coords coords) {
+    /** Sets the brush to what a hex already holds, so the gamemaster starts from that hex rather than from nothing. */
+    private void loadBrushFrom(Coords coords) {
         Hex hex = clientGUI.getClient().getGame().getBoard().getHex(coords);
         if (hex == null) {
             return;
         }
+        hexLevelSpinner.setValue(hex.getLevel());
         for (int terrainType : EDITABLE_TERRAINS) {
             if (hex.containsTerrain(terrainType)) {
-                terrainLevels.put(terrainType, hex.terrainLevel(terrainType));
+                terrainChooser.setSelectedItem(new TerrainChoice(terrainType));
+                refreshLevelChooser();
+                levelChooser.setSelectedItem(new LevelChoice(terrainType, hex.terrainLevel(terrainType)));
+                return;
             }
-        }
-    }
-
-    /** Starts the level control at the clicked hex's own level, so leaving it alone leaves the ground where it is. */
-    private void readLevelFrom(Coords coords) {
-        Hex hex = clientGUI.getClient().getGame().getBoard().getHex(coords);
-        if (hex != null) {
-            hexLevelSpinner.setValue(hex.getLevel());
         }
     }
 
@@ -239,11 +231,9 @@ public class HexEditDialog extends JDialog {
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        content.add(hexPanel());
+        content.add(brushPanel());
         content.add(Box.createVerticalStrut(8));
-        content.add(groundPanel());
-        content.add(Box.createVerticalStrut(8));
-        content.add(terrainPanel());
+        content.add(paintedPanel());
         content.add(Box.createVerticalStrut(8));
         content.add(legalityPanel());
 
@@ -255,118 +245,98 @@ public class HexEditDialog extends JDialog {
               KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
               JComponent.WHEN_IN_FOCUSED_WINDOW);
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        addWindowListener(new java.awt.event.WindowAdapter() {
+        addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(java.awt.event.WindowEvent event) {
+            public void windowClosing(WindowEvent event) {
                 closeDialog();
             }
         });
 
-        setSize(UIUtil.scaleForGUI(460, 520));
-        setMinimumSize(UIUtil.scaleForGUI(400, 420));
+        setSize(UIUtil.scaleForGUI(480, 560));
+        setMinimumSize(UIUtil.scaleForGUI(420, 460));
         setLocationRelativeTo(parent);
     }
 
-    /** The hexes being changed, and the button that lets more be picked off the board. */
-    private JPanel hexPanel() {
+    /** What the brush holds, and the switch that turns board clicks into painting. */
+    private JPanel brushPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(BorderFactory.createTitledBorder(Messages.getString("HexEditDialog.brush")));
+
+        terrainChooser.addItem(new TerrainChoice(BARE_GROUND));
+        for (int terrainType : EDITABLE_TERRAINS) {
+            terrainChooser.addItem(new TerrainChoice(terrainType));
+        }
+        terrainChooser.addActionListener(event -> {
+            refreshLevelChooser();
+            refreshGroundLabel();
+        });
+        levelChooser.addActionListener(event -> refreshGroundLabel());
+        hexLevelSpinner.addChangeListener(event -> refreshGroundLabel());
+
+        JPanel terrainRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        terrainRow.add(new JLabel(Messages.getString("HexEditDialog.terrainLabel")));
+        terrainRow.add(terrainChooser);
+        terrainRow.add(new JLabel(Messages.getString("HexEditDialog.levelLabel")));
+        terrainRow.add(levelChooser);
+        panel.add(terrainRow);
+
+        JPanel groundRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        groundRow.add(new JLabel(Messages.getString("HexEditDialog.hexLevel")));
+        groundRow.add(hexLevelSpinner);
+        panel.add(groundRow);
+
+        paintOnMapButton.setToolTipText(Messages.getString("HexEditDialog.paintOnMap.tooltip"));
+        paintOnMapButton.addActionListener(event -> setPainting(paintOnMapButton.isSelected()));
+        eraseButton.setToolTipText(Messages.getString("HexEditDialog.erase.tooltip"));
+
+        JButton applyToAllButton = new JButton(Messages.getString("HexEditDialog.brushToAll"));
+        applyToAllButton.setToolTipText(Messages.getString("HexEditDialog.brushToAll.tooltip"));
+        applyToAllButton.addActionListener(event -> brushEveryPaintedHex());
+
+        JPanel modeRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        modeRow.add(paintOnMapButton);
+        modeRow.add(eraseButton);
+        modeRow.add(applyToAllButton);
+        panel.add(modeRow);
+
+        panel.add(groundLabel);
+        return panel;
+    }
+
+    /** The hexes painted so far and what each will hold. */
+    private JPanel paintedPanel() {
         JPanel panel = new JPanel(new BorderLayout(4, 4));
-        panel.setBorder(BorderFactory.createTitledBorder(Messages.getString("HexEditDialog.hexes")));
+        panel.setBorder(BorderFactory.createTitledBorder(Messages.getString("HexEditDialog.painted")));
 
-        JList<String> hexList = new JList<>(hexListModel);
-        hexList.setVisibleRowCount(3);
-        panel.add(new JScrollPane(hexList), BorderLayout.CENTER);
+        JList<String> paintedList = new JList<>(paintedListModel);
+        paintedList.setVisibleRowCount(6);
+        panel.add(new JScrollPane(paintedList), BorderLayout.CENTER);
 
-        pickHexesButton.setToolTipText(Messages.getString("HexEditDialog.pickHexes.tooltip"));
-        pickHexesButton.addActionListener(event -> setHexPicking(pickHexesButton.isSelected()));
-
-        JButton clearHexesButton = new JButton(Messages.getString("HexEditDialog.clearHexes"));
-        clearHexesButton.setToolTipText(Messages.getString("HexEditDialog.clearHexes.tooltip"));
-        clearHexesButton.addActionListener(event -> clearSelectedHexes());
+        JButton undoLastHexButton = new JButton(Messages.getString("HexEditDialog.undoLastHex"));
+        undoLastHexButton.addActionListener(event -> unpaintLastHex());
+        JButton clearAllButton = new JButton(Messages.getString("HexEditDialog.clearHexes"));
+        clearAllButton.setToolTipText(Messages.getString("HexEditDialog.clearHexes.tooltip"));
+        clearAllButton.addActionListener(event -> clearPaintedHexes());
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        buttons.add(pickHexesButton);
-        buttons.add(clearHexesButton);
+        buttons.add(undoLastHexButton);
+        buttons.add(clearAllButton);
         panel.add(buttons, BorderLayout.PAGE_END);
         return panel;
     }
 
-    /** The terrain the hexes will end up holding, with the controls that add to and take from it. */
-    private JPanel terrainPanel() {
-        JPanel panel = new JPanel(new BorderLayout(4, 4));
-        panel.setBorder(BorderFactory.createTitledBorder(Messages.getString("HexEditDialog.terrain")));
-
-        terrainList.setVisibleRowCount(5);
-        panel.add(new JScrollPane(terrainList), BorderLayout.CENTER);
-
-        for (int terrainType : EDITABLE_TERRAINS) {
-            terrainChooser.addItem(new TerrainChoice(terrainType));
-        }
-        terrainChooser.addActionListener(event -> refreshLevelChooser());
-
-        JButton setButton = new JButton(Messages.getString("HexEditDialog.set"));
-        setButton.addActionListener(event -> setChosenTerrain());
-        JButton removeButton = new JButton(Messages.getString("HexEditDialog.remove"));
-        removeButton.addActionListener(event -> removeSelectedTerrain());
-        JButton clearButton = new JButton(Messages.getString("HexEditDialog.clear"));
-        clearButton.setToolTipText(Messages.getString("HexEditDialog.clear.tooltip"));
-        clearButton.addActionListener(event -> clearTerrain());
-
-        JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        controls.add(new JLabel(Messages.getString("HexEditDialog.terrainLabel")));
-        controls.add(terrainChooser);
-        controls.add(new JLabel(Messages.getString("HexEditDialog.levelLabel")));
-        controls.add(levelChooser);
-        controls.add(setButton);
-        controls.add(removeButton);
-        controls.add(clearButton);
-        panel.add(controls, BorderLayout.PAGE_END);
-        return panel;
-    }
-
-    /**
-     * The hex's own level, and what it works out to once any water in it is taken into account.
-     *
-     * <p>A hex's level and the depth of water in it are two different numbers, and a gamemaster reading them side by
-     * side has to do the arithmetic themselves. On a dam board a reservoir hex sits at level 5 holding water 8 deep,
-     * which puts its surface five levels up and its bottom three levels down. The line under the spinner says that
-     * out loud so the gamemaster can see what they are building.</p>
-     */
-    private JPanel groundPanel() {
-        JPanel panel = new JPanel(new BorderLayout(4, 4));
-        panel.setBorder(BorderFactory.createTitledBorder(Messages.getString("HexEditDialog.ground")));
-
-        hexLevelSpinner.addChangeListener(event -> refreshEverything());
-        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        row.add(new JLabel(Messages.getString("HexEditDialog.hexLevel")));
-        row.add(hexLevelSpinner);
-        panel.add(row, BorderLayout.CENTER);
-        panel.add(groundLabel, BorderLayout.PAGE_END);
-        return panel;
-    }
-
-    /** Says where the ground and any water surface and bottom end up, in levels. */
-    private void refreshGroundLabel() {
-        int hexLevel = (int) hexLevelSpinner.getValue();
-        Integer waterDepth = terrainLevels.get(Terrains.WATER);
-        if ((waterDepth == null) || (waterDepth == 0)) {
-            groundLabel.setText(Messages.getString("HexEditDialog.groundDry", hexLevel));
-            return;
-        }
-        groundLabel.setText(Messages.getString("HexEditDialog.groundFlooded",
-              hexLevel, waterDepth, hexLevel - waterDepth));
-    }
-
-    /** Where the hex is reported legal or not, with the reason. */
+    /** Where the edit is reported legal or not, with the reason. */
     private JPanel legalityPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         legalityLabel.setVerticalAlignment(JLabel.TOP);
-        legalityLabel.setPreferredSize(new Dimension(UIUtil.scaleForGUI(400), UIUtil.scaleForGUI(60)));
+        legalityLabel.setPreferredSize(new Dimension(UIUtil.scaleForGUI(420), UIUtil.scaleForGUI(52)));
         panel.add(legalityLabel, BorderLayout.CENTER);
         return panel;
     }
 
     private JPanel buttonPanel() {
-        executeButton.addActionListener(event -> execute());
+        applyButton.addActionListener(event -> apply());
         undoButton.addActionListener(event -> undoEdit());
         undoButton.setToolTipText(Messages.getString("HexEditDialog.undo.tooltip"));
         undoButton.setEnabled(false);
@@ -374,29 +344,76 @@ public class HexEditDialog extends JDialog {
         closeButton.addActionListener(event -> closeDialog());
 
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panel.add(executeButton);
+        panel.add(applyButton);
         panel.add(undoButton);
         panel.add(closeButton);
-        getRootPane().setDefaultButton(executeButton);
+        getRootPane().setDefaultButton(applyButton);
         return panel;
     }
 
+    /** @return what the brush currently holds, ready to be laid on a hex */
+    private HexEditSpec.HexPaint currentBrush() {
+        HexEditSpec.HexPaint paint = new HexEditSpec.HexPaint();
+        paint.setLevel((Integer) hexLevelSpinner.getValue());
+        TerrainChoice terrain = (TerrainChoice) terrainChooser.getSelectedItem();
+        LevelChoice level = (LevelChoice) levelChooser.getSelectedItem();
+        if ((terrain != null) && (terrain.terrainType() != BARE_GROUND) && (level != null)) {
+            paint.setTerrain(terrain.terrainType(), level.level());
+        }
+        return paint;
+    }
+
+    /** Lays the brush on a hex, or lifts the hex out of the edit when erasing. */
+    private void brushHex(Coords coords) {
+        if (coords == null) {
+            return;
+        }
+        if (eraseButton.isSelected()) {
+            paintedHexes.remove(coords);
+        } else {
+            paintedHexes.put(coords, currentBrush());
+        }
+        refreshEverything();
+    }
+
+    /** Lays the brush on every hex painted so far, which is how a whole area is given one terrain. */
+    private void brushEveryPaintedHex() {
+        for (Coords coords : new ArrayList<>(paintedHexes.keySet())) {
+            paintedHexes.put(coords, currentBrush());
+        }
+        refreshEverything();
+    }
+
+    /** Lifts the most recently painted hex back out of the edit. */
+    private void unpaintLastHex() {
+        List<Coords> painted = new ArrayList<>(paintedHexes.keySet());
+        if (!painted.isEmpty()) {
+            paintedHexes.remove(painted.getLast());
+            refreshEverything();
+        }
+    }
+
+    private void clearPaintedHexes() {
+        paintedHexes.clear();
+        refreshEverything();
+    }
+
     /**
-     * Turns board hex picking on or off.
+     * Turns painting on or off.
      *
-     * <p>While it is on the current phase display is kept from acting on board clicks. A click is delivered to
-     * everything listening to the board, so without this a click meant to add a hex to the list is also read by the
-     * movement phase as a move order, and picking a hex to flood walks a unit into it as well.</p>
+     * <p>While it is on the current phase display is kept from acting on board clicks, because a click is delivered
+     * to everything listening to the board; without this a click meant for the brush is also read by the movement
+     * phase as a move order.</p>
      */
-    private void setHexPicking(boolean picking) {
+    private void setPainting(boolean painting) {
         clientGUI.boardViews().forEach(boardView -> {
-            boardView.removeBoardViewListener(hexPicker);
-            if (picking) {
-                boardView.addBoardViewListener(hexPicker);
+            boardView.removeBoardViewListener(brushListener);
+            if (painting) {
+                boardView.addBoardViewListener(brushListener);
             }
         });
 
-        if (picking) {
+        if (painting) {
             if ((suppressedDisplay == null) && (clientGUI.getCurrentPanel() instanceof Distractable distractable)) {
                 suppressedDisplay = distractable;
                 suppressedDisplay.setIgnoringEvents(true);
@@ -405,75 +422,18 @@ public class HexEditDialog extends JDialog {
             suppressedDisplay.setIgnoringEvents(false);
             suppressedDisplay = null;
         }
-        LOGGER.debug("[GMHexEdit] hex picking {}", picking ? "on" : "off");
+        LOGGER.debug("[GMHexEdit] painting {}", painting ? "on" : "off");
     }
 
-    /** Draws a highlight on every picked hex and takes away the ones no longer picked. */
-    private void refreshHexHighlights() {
-        clientGUI.boardViews().stream().findFirst().ifPresent(boardView -> {
-            boardView.removeSprites(hexHighlights.values());
-            hexHighlights.clear();
-            for (Coords coords : selectedHexes) {
-                hexHighlights.put(coords,
-                      new FieldOfFireSprite((BoardView) boardView, RangeType.RANGE_SHORT, coords, ALL_HEX_BORDERS));
-            }
-            boardView.addSprites(hexHighlights.values());
-        });
-    }
-
-    /** Empties the hex selection, so a gamemaster who has picked the wrong area can start again rather than
-     * clicking each wrong hex a second time to take it back off the list. */
-    private void clearSelectedHexes() {
-        selectedHexes.clear();
-        refreshEverything();
-    }
-
-    /** Adds a hex to the edit, or takes it out again when it was already in. */
-    private void toggleHex(Coords coords) {
-        if (coords == null) {
-            return;
-        }
-        if (selectedHexes.contains(coords)) {
-            selectedHexes.remove(coords);
-        } else {
-            selectedHexes.add(coords);
-        }
-        refreshEverything();
-    }
-
-    /** Adds the chosen terrain at the chosen level, replacing that terrain if the hexes already had it. */
-    private void setChosenTerrain() {
-        TerrainChoice terrain = (TerrainChoice) terrainChooser.getSelectedItem();
-        LevelChoice level = (LevelChoice) levelChooser.getSelectedItem();
-        if ((terrain == null) || (level == null)) {
-            return;
-        }
-        terrainLevels.put(terrain.terrainType(), level.level());
-        refreshEverything();
-    }
-
-    private void removeSelectedTerrain() {
-        int selectedRow = terrainList.getSelectedIndex();
-        if (selectedRow < 0) {
-            return;
-        }
-        List<Integer> terrainTypes = new ArrayList<>(terrainLevels.keySet());
-        terrainLevels.remove(terrainTypes.get(selectedRow));
-        refreshEverything();
-    }
-
-    private void clearTerrain() {
-        terrainLevels.clear();
-        refreshEverything();
-    }
-
-    /** Offers only the levels the chosen terrain actually has, named the way the rules name them. */
+    /** Offers only the levels the brush's terrain actually has, named the way the rules name them. */
     private void refreshLevelChooser() {
         TerrainChoice terrain = (TerrainChoice) terrainChooser.getSelectedItem();
         levelChooser.removeAllItems();
-        if (terrain == null) {
+        if ((terrain == null) || (terrain.terrainType() == BARE_GROUND)) {
+            levelChooser.setEnabled(false);
             return;
         }
+        levelChooser.setEnabled(true);
         if (terrain.terrainType() == Terrains.WATER) {
             // depth 0 water is a legal hex, so water is the one terrain offered from zero
             levelChooser.addItem(new LevelChoice(Terrains.WATER, LOWEST_WATER_DEPTH));
@@ -483,57 +443,88 @@ public class HexEditDialog extends JDialog {
         }
     }
 
-    /** Redraws the hex list, the terrain list and the legality report from the edit as it now stands. */
+    /**
+     * Says where the ground and any water surface and bottom end up, because two numbers side by side leave the
+     * gamemaster doing the arithmetic themselves.
+     */
+    private void refreshGroundLabel() {
+        int hexLevel = (int) hexLevelSpinner.getValue();
+        Integer waterDepth = currentBrush().getTerrainLevels().get(Terrains.WATER);
+        if ((waterDepth == null) || (waterDepth == 0)) {
+            groundLabel.setText(Messages.getString("HexEditDialog.groundDry", hexLevel));
+            return;
+        }
+        groundLabel.setText(Messages.getString("HexEditDialog.groundFlooded",
+              hexLevel, waterDepth, hexLevel - waterDepth));
+    }
+
+    /** Redraws the painted list, the board highlights and the legality report. */
     private void refreshEverything() {
-        editHasBeenSent = false;
+        editHasBeenApplied = false;
         refreshHexHighlights();
         refreshGroundLabel();
-        hexListModel.clear();
-        for (Coords coords : selectedHexes) {
-            hexListModel.addElement(Messages.getString("HexEditDialog.hexEntry", coords.getBoardNum()));
-        }
 
-        terrainListModel.clear();
-        for (Map.Entry<Integer, Integer> terrain : terrainLevels.entrySet()) {
-            terrainListModel.addElement(Terrains.getDisplayName(terrain.getKey(), terrain.getValue()));
-        }
-        if (terrainLevels.isEmpty()) {
-            terrainListModel.addElement(Messages.getString("HexEditDialog.bareGround"));
-        }
-
-        if (levelChooser.getItemCount() == 0) {
-            refreshLevelChooser();
+        paintedListModel.clear();
+        for (Map.Entry<Coords, HexEditSpec.HexPaint> painted : paintedHexes.entrySet()) {
+            paintedListModel.addElement(Messages.getString("HexEditDialog.paintedEntry",
+                  painted.getKey().getBoardNum(), describe(painted.getValue())));
         }
         refreshLegality();
     }
 
+    /** @return what a painted hex will end up holding, in words */
+    private static String describe(HexEditSpec.HexPaint paint) {
+        if (paint.isBareGround()) {
+            return Messages.getString("HexEditDialog.bareGroundChoice");
+        }
+        List<String> described = new ArrayList<>();
+        for (Map.Entry<Integer, Integer> terrain : paint.getTerrainLevels().entrySet()) {
+            described.add(Terrains.getDisplayName(terrain.getKey(), terrain.getValue()));
+        }
+        return String.join(", ", described);
+    }
+
+    /** Draws a highlight on every painted hex and takes away the ones no longer painted. */
+    private void refreshHexHighlights() {
+        clientGUI.boardViews().stream().findFirst().ifPresent(boardView -> {
+            boardView.removeSprites(hexHighlights.values());
+            hexHighlights.clear();
+            for (Coords coords : paintedHexes.keySet()) {
+                hexHighlights.put(coords,
+                      new FieldOfFireSprite((BoardView) boardView, RangeType.RANGE_SHORT, coords, ALL_HEX_BORDERS));
+            }
+            boardView.addSprites(hexHighlights.values());
+        });
+    }
+
     /**
-     * Re-checks every selected hex as it would be after the edit and reports the first thing wrong, turning the
-     * execute button off while anything is. This is the part that keeps a gamemaster from building an illegal hex:
-     * the reason is on screen while there is still something to change.
+     * Re-checks every painted hex and reports the first thing wrong, turning Apply off while anything is. This is
+     * what keeps a gamemaster from building an illegal hex: the reason is on screen while there is still something to
+     * change.
      */
     private void refreshLegality() {
         List<String> problems = firstProblems();
-        boolean isLegal = problems.isEmpty() && !selectedHexes.isEmpty();
-        executeButton.setEnabled(isLegal);
-        undoButton.setEnabled(editHasBeenSent);
+        boolean isLegal = problems.isEmpty() && !paintedHexes.isEmpty();
+        applyButton.setEnabled(isLegal);
+        undoButton.setEnabled(editHasBeenApplied);
 
-        if (editHasBeenSent) {
-            legalityLabel.setText(Messages.getString("HexEditDialog.applied", selectedHexes.size()));
+        if (editHasBeenApplied) {
+            legalityLabel.setText(Messages.getString("HexEditDialog.applied", paintedHexes.size()));
             return;
         }
-        if (selectedHexes.isEmpty()) {
+        if (paintedHexes.isEmpty()) {
             legalityLabel.setText(Messages.getString("HexEditDialog.noHexes"));
             return;
         }
         legalityLabel.setText(isLegal
-              ? Messages.getString("HexEditDialog.legal", selectedHexes.size())
+              ? Messages.getString("HexEditDialog.legal", paintedHexes.size())
               : Messages.getString("HexEditDialog.illegal", String.join(" ", problems)));
     }
 
-    /** @return what is wrong with the first selected hex that the edit would break, or an empty list when none would */
+    /** @return what is wrong with the first painted hex that would break, or an empty list when none would */
     private List<String> firstProblems() {
-        for (Coords coords : selectedHexes) {
+        for (Map.Entry<Coords, HexEditSpec.HexPaint> painted : paintedHexes.entrySet()) {
+            Coords coords = painted.getKey();
             Hex hex = clientGUI.getClient().getGame().getBoard().getHex(coords);
             if (hex == null) {
                 return List.of(Messages.getString("HexEditDialog.offBoard", coords.getBoardNum()));
@@ -542,7 +533,8 @@ public class HexEditDialog extends JDialog {
             // Asking a different question here than the server asks is how a dialog comes to call an edit legal that
             // is then refused, leaving a gamemaster with no visible reason why nothing happened.
             boolean isOccupied = !clientGUI.getClient().getGame().getEntitiesVector(coords, boardId).isEmpty();
-            List<String> problems = HexEditValidator.problemsWithChange(hex, editedCopyOf(hex), isOccupied);
+            List<String> problems = HexEditValidator.problemsWithChange(hex,
+                  editedCopyOf(hex, painted.getValue()), isOccupied);
             if (!problems.isEmpty()) {
                 problems.add(0, Messages.getString("HexEditDialog.inHex", coords.getBoardNum()));
                 return problems;
@@ -551,10 +543,12 @@ public class HexEditDialog extends JDialog {
         return List.of();
     }
 
-    /** @return the hex as it would be after the edit, with any structure standing in it carried through */
-    private Hex editedCopyOf(Hex hex) {
+    /** @return the hex as it would be after the paint, with any structure standing in it carried through */
+    private static Hex editedCopyOf(Hex hex, HexEditSpec.HexPaint paint) {
         Hex edited = hex.duplicate();
-        edited.setLevel((int) hexLevelSpinner.getValue());
+        if (paint.getLevel() != null) {
+            edited.setLevel(paint.getLevel());
+        }
         List<Terrain> structures = new ArrayList<>();
         for (int structureTerrain : HexEditValidator.structureTerrains()) {
             Terrain existing = edited.getTerrain(structureTerrain);
@@ -563,7 +557,7 @@ public class HexEditDialog extends JDialog {
             }
         }
         edited.removeAllTerrains();
-        for (Map.Entry<Integer, Integer> terrain : terrainLevels.entrySet()) {
+        for (Map.Entry<Integer, Integer> terrain : paint.getTerrainLevels().entrySet()) {
             edited.addTerrain(new Terrain(terrain.getKey(), terrain.getValue()));
         }
         for (Terrain structure : structures) {
@@ -573,62 +567,35 @@ public class HexEditDialog extends JDialog {
     }
 
     /**
-     * Sends the edit and closes, because the gamemaster wants to see the board it changed.
-     *
-     * <p>An edit that names no terrain strips the hexes to bare ground, which is a real thing to want and also what a
-     * gamemaster ends up with if they choose a terrain but never add it to the list. On hexes that are already clear
-     * it looks like nothing happened at all, so it is worth asking first.</p>
-     */
-    private void execute() {
-        if (terrainLevels.isEmpty() && !confirmStrippingHexesBare()) {
-            return;
-        }
-        sendEdit();
-    }
-
-    /** @return {@code true} when the gamemaster confirms they meant to strip the hexes rather than lay something down */
-    private boolean confirmStrippingHexesBare() {
-        int choice = JOptionPane.showConfirmDialog(this,
-              Messages.getString("HexEditDialog.confirmClear.message"),
-              Messages.getString("HexEditDialog.confirmClear.title"),
-              JOptionPane.YES_NO_OPTION,
-              JOptionPane.QUESTION_MESSAGE);
-        return choice == JOptionPane.YES_OPTION;
-    }
-
-    /**
-     * Sends the edit and stays open, offering to take it back.
+     * Applies the edit and stays open, offering to take it back.
      *
      * <p>The change is made on the real board rather than drawn as a sketch over it, because the only preview worth
-     * having is the one that shows what the players will actually see. The dialog stays up so that a gamemaster who
-     * looks at the result and thinks better of it can put the hexes back without hunting for a way to.</p>
+     * having is the one that shows what the players will actually see.</p>
      */
-    private void sendEdit() {
+    private void apply() {
         HexEditSpec spec = new HexEditSpec(boardId);
-        selectedHexes.forEach(spec::addCoords);
-        terrainLevels.forEach(spec::setTerrain);
-        spec.setLevel((Integer) hexLevelSpinner.getValue());
-        LOGGER.info("[GMHexEdit] sending an edit of {} hex(es)", selectedHexes.size());
+        paintedHexes.forEach(spec::paint);
+        LOGGER.info("[GMHexEdit] applying an edit of {} painted hex(es)", paintedHexes.size());
         clientGUI.getClient().sendHexEdit(spec);
-        editHasBeenSent = true;
-        setHexPicking(false);
-        pickHexesButton.setSelected(false);
+        editHasBeenApplied = true;
+        setPainting(false);
+        paintOnMapButton.setSelected(false);
         refreshLegality();
     }
 
-    /** Asks the server to put the hexes back the way they were before the edit that was just sent. */
+    /** Asks the server to put the hexes back the way they were before the edit that was just applied. */
     private void undoEdit() {
         HexEditSpec undo = new HexEditSpec(boardId);
         undo.setUndoingLastEdit(true);
         LOGGER.info("[GMHexEdit] taking back the last edit");
         clientGUI.getClient().sendHexEdit(undo);
-        editHasBeenSent = false;
+        editHasBeenApplied = false;
         refreshLegality();
     }
 
-    /** Closes, making sure the board is not left listening for hex picks that no longer have a dialog to go to. */
+    /** Closes, making sure the board is not left listening for paint strokes that no longer have a dialog to go to. */
     private void closeDialog() {
-        setHexPicking(false);
+        setPainting(false);
         clientGUI.boardViews().stream().findFirst().ifPresent(boardView -> {
             boardView.removeSprites(hexHighlights.values());
             hexHighlights.clear();

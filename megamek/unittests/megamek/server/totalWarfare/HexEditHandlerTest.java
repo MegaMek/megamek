@@ -249,14 +249,22 @@ class HexEditHandlerTest {
         assertNull(refusal, "only water is held back by a building; rough ground around it is fine");
     }
 
-    /** @return an edit of the given hexes that leaves them holding water at the given depth */
+    /** @return an edit that paints every given hex with water at the given depth */
     private HexEditSpec floodOf(int depth, Coords... hexes) {
         HexEditSpec spec = new HexEditSpec(board.getBoardId());
         for (Coords hex : hexes) {
-            spec.addCoords(hex);
+            HexEditSpec.HexPaint paint = new HexEditSpec.HexPaint();
+            paint.setTerrain(Terrains.WATER, depth);
+            spec.paint(hex, paint);
         }
-        spec.setTerrain(Terrains.WATER, depth);
         return spec;
+    }
+
+    /** @return a paint holding the given terrain at the given level, and nothing else */
+    private static HexEditSpec.HexPaint paintOf(int terrainType, int level) {
+        HexEditSpec.HexPaint paint = new HexEditSpec.HexPaint();
+        paint.setTerrain(terrainType, level);
+        return paint;
     }
 
     @Test
@@ -291,7 +299,7 @@ class HexEditHandlerTest {
     @Test
     void anEditWithNoTerrainClearsTheHexes() {
         HexEditSpec spec = new HexEditSpec(board.getBoardId());
-        spec.addCoords(WOODS_HEX);
+        spec.paint(WOODS_HEX, new HexEditSpec.HexPaint());
 
         String refusal = hexEditHandler.applyHexEdit(spec, GAMEMASTER);
 
@@ -309,8 +317,7 @@ class HexEditHandlerTest {
     @Test
     void aTerrainEditLeavesAStructureStanding() {
         HexEditSpec spec = new HexEditSpec(board.getBoardId());
-        spec.addCoords(BUILDING_HEX);
-        spec.setTerrain(Terrains.ROUGH, 1);
+        spec.paint(BUILDING_HEX, paintOf(Terrains.ROUGH, 1));
 
         String refusal = hexEditHandler.applyHexEdit(spec, GAMEMASTER);
 
@@ -370,10 +377,10 @@ class HexEditHandlerTest {
     @Test
     void aReservoirNeedsBothALevelAndADepth() {
         // the shape of a dam board hex: "hex 0101 5 water:8" - ground at level 5 holding water 8 deep
+        HexEditSpec.HexPaint reservoir = paintOf(Terrains.WATER, 8);
+        reservoir.setLevel(5);
         HexEditSpec spec = new HexEditSpec(board.getBoardId());
-        spec.addCoords(BARE_HEX);
-        spec.setLevel(5);
-        spec.setTerrain(Terrains.WATER, 8);
+        spec.paint(BARE_HEX, reservoir);
 
         String refusal = hexEditHandler.applyHexEdit(spec, GAMEMASTER);
 
@@ -395,9 +402,10 @@ class HexEditHandlerTest {
     @Test
     void undoPutsTheGroundLevelBackToo() {
         board.getHex(BARE_HEX).setLevel(2);
+        HexEditSpec.HexPaint raised = new HexEditSpec.HexPaint();
+        raised.setLevel(7);
         HexEditSpec spec = new HexEditSpec(board.getBoardId());
-        spec.addCoords(BARE_HEX);
-        spec.setLevel(7);
+        spec.paint(BARE_HEX, raised);
         hexEditHandler.applyHexEdit(spec, GAMEMASTER);
 
         HexEditSpec undo = new HexEditSpec(board.getBoardId());
@@ -405,5 +413,19 @@ class HexEditHandlerTest {
         hexEditHandler.applyHexEdit(undo, GAMEMASTER);
 
         assertEquals(2, board.getHex(BARE_HEX).getLevel(), "the ground should be back where it was");
+    }
+
+    @Test
+    void differentHexesCanBePaintedDifferently() {
+        HexEditSpec spec = new HexEditSpec(board.getBoardId());
+        spec.paint(BARE_HEX, paintOf(Terrains.WATER, 2));
+        spec.paint(WOODS_HEX, paintOf(Terrains.ROUGH, 1));
+
+        String refusal = hexEditHandler.applyHexEdit(spec, GAMEMASTER);
+
+        assertNull(refusal, "painting a channel and its bank in one action should be allowed");
+        assertEquals(2, board.getHex(BARE_HEX).depth(), "the channel hex should hold water");
+        assertTrue(board.getHex(WOODS_HEX).containsTerrain(Terrains.ROUGH), "and the bank hex should hold rough");
+        assertEquals(0, board.getHex(WOODS_HEX).depth(), "the bank must not have been flooded too");
     }
 }

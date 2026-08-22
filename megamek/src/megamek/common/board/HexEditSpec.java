@@ -35,69 +35,95 @@ package megamek.common.board;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
+
+import megamek.common.annotations.Nullable;
 
 /**
- * A Game Master's edit of one or more hexes: which hexes to change, and what terrain they should hold afterwards.
+ * A Game Master's edit of the board: which hexes to change, and what each of them should hold afterwards.
  *
- * <p>The edit says what the hex should end up as rather than listing changes to make to it. A hex ends up holding
- * exactly the terrains named here, at the levels named here, and nothing else; a terrain the gamemaster removed is
- * simply absent from the list. Describing the finished hex rather than a sequence of steps means the result can be
- * checked before any of it is applied, and means the same edit can be sent to several hexes at once.</p>
+ * <p>Each hex carries its own terrain rather than the whole edit sharing one set, so a gamemaster painting a river
+ * can put deep water in the channel, shallows at the edge and rough ground on the bank in a single action.</p>
  *
- * <p>This travels between client and server, so everything it holds must be serializable.</p>
+ * <p>A hex's entry says what that hex should end up as rather than listing changes to make to it. It ends up holding
+ * exactly the terrains named, at the levels named, and nothing else; a terrain that was removed is simply absent.
+ * Describing the finished hex rather than a sequence of steps means the result can be checked before any of it is
+ * applied.</p>
+ *
+ * <p>This travels between client and server, so everything it holds must be serializable. It is a message rather than
+ * game state and is never written to a savegame.</p>
  */
 public class HexEditSpec implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
-    /** The hexes to change. */
-    private final List<Coords> coords = new ArrayList<>();
+    /** What one hex should end up holding. */
+    public static class HexPaint implements Serializable {
+
+        @Serial
+        private static final long serialVersionUID = 1L;
+
+        /** The terrain the hex should end up holding, as terrain type to level. Empty means bare ground. */
+        private final Map<Integer, Integer> terrainLevels = new LinkedHashMap<>();
+
+        /**
+         * The level the hex should end up at, or {@code null} to leave it at the level it already has.
+         *
+         * <p>A hex's level and the depth of water in it are two different numbers. On a dam board a reservoir hex
+         * reads {@code hex 0101 5 "water:8"}: the ground is at level 5 and the water is 8 deep, so its surface is
+         * five levels up and its bottom is three levels below the datum.</p>
+         */
+        private Integer level;
+
+        /** @return the terrain this hex should end up holding, as terrain type to level */
+        public Map<Integer, Integer> getTerrainLevels() {
+            return terrainLevels;
+        }
+
+        /**
+         * Says that the hex should hold the given terrain at the given level.
+         *
+         * @param terrainType  The terrain, from {@link megamek.common.units.Terrains}
+         * @param terrainLevel The level it should be at
+         */
+        public void setTerrain(int terrainType, int terrainLevel) {
+            terrainLevels.put(terrainType, terrainLevel);
+        }
+
+        /** @return the level this hex should end up at, or {@code null} to leave it where it is */
+        public @Nullable Integer getLevel() {
+            return level;
+        }
+
+        public void setLevel(@Nullable Integer level) {
+            this.level = level;
+        }
+
+        /** @return {@code true} when this would leave the hex with no terrain at all, which is bare ground */
+        public boolean isBareGround() {
+            return terrainLevels.isEmpty();
+        }
+    }
 
     /** The board the hexes are on. */
     private int boardId;
 
-    /** The terrain each edited hex should end up holding, as terrain type to level. */
-    private final Map<Integer, Integer> terrainLevels = new HashMap<>();
+    /** Whether this asks to put back the last edit rather than to make a new one. */
+    private boolean undoingLastEdit;
+
+    /** Each hex to change, and what it should end up holding, in the order it was painted. */
+    private final Map<Coords, HexPaint> paintedHexes = new LinkedHashMap<>();
 
     /**
-     * The level each edited hex should end up at, or {@code null} to leave each hex at the level it already has.
-     *
-     * <p>A hex's level and the depth of water in it are two different numbers. On a dam board a reservoir hex reads
-     * {@code hex 0101 5 "water:8"}: the ground is at level 5 and the water is 8 deep, so its surface is five levels up
-     * and its bottom is three levels below the datum. Changing the water without being able to change the ground can
-     * only ever fill a hole, never raise a lake.</p>
-     */
-    private Integer level;
-
-    /**
-     * Creates an edit of the given hexes on the given board.
+     * Creates an edit of hexes on the given board.
      *
      * @param boardId The board the hexes are on
      */
     public HexEditSpec(int boardId) {
         this.boardId = boardId;
-    }
-
-    /** @return the hexes this edit applies to */
-    public List<Coords> getCoords() {
-        return coords;
-    }
-
-    /** Adds a hex for this edit to apply to. */
-    public void addCoords(Coords hex) {
-        if (!coords.contains(hex)) {
-            coords.add(hex);
-        }
-    }
-
-    /** Stops this edit applying to the given hex. */
-    public void removeCoords(Coords hex) {
-        coords.remove(hex);
     }
 
     /** @return the board the hexes are on */
@@ -109,49 +135,39 @@ public class HexEditSpec implements Serializable {
         this.boardId = boardId;
     }
 
-    /** @return the terrain each edited hex should end up holding, as terrain type to level */
-    public Map<Integer, Integer> getTerrainLevels() {
-        return terrainLevels;
+    /** @return each hex to change and what it should end up holding */
+    public Map<Coords, HexPaint> getPaintedHexes() {
+        return paintedHexes;
+    }
+
+    /** @return the hexes this edit applies to */
+    public Set<Coords> getCoords() {
+        return paintedHexes.keySet();
     }
 
     /**
-     * Says that the edited hexes should hold the given terrain at the given level.
+     * Says what one hex should end up holding, replacing anything already said about it.
      *
-     * @param terrainType  The terrain, from {@link megamek.common.units.Terrains}
-     * @param terrainLevel The level it should be at
+     * @param hex   The hex to change
+     * @param paint What it should end up holding
      */
-    public void setTerrain(int terrainType, int terrainLevel) {
-        terrainLevels.put(terrainType, terrainLevel);
+    public void paint(Coords hex, HexPaint paint) {
+        paintedHexes.put(hex, paint);
     }
 
-    /** Says that the edited hexes should not hold the given terrain at all. */
-    public void removeTerrain(int terrainType) {
-        terrainLevels.remove(terrainType);
+    /** Takes a hex out of the edit, leaving it alone. */
+    public void unpaint(Coords hex) {
+        paintedHexes.remove(hex);
     }
 
-    /**
-     * @return the level the edited hexes should end up at, or {@code null} to leave each at the level it has
-     */
-    public Integer getLevel() {
-        return level;
+    /** @return {@code true} when no hex has been painted, so there is nothing to do */
+    public boolean isEmpty() {
+        return paintedHexes.isEmpty();
     }
-
-    /** Sets the level the edited hexes should end up at; {@code null} leaves each hex at the level it already has. */
-    public void setLevel(Integer level) {
-        this.level = level;
-    }
-
-    /** @return {@code true} when this edit would leave the hexes with no terrain at all, which is bare ground */
-    public boolean isClearingHexes() {
-        return terrainLevels.isEmpty();
-    }
-
-    /** Whether this asks to put back the last edit rather than to make a new one. */
-    private boolean undoingLastEdit;
 
     /**
      * @return {@code true} when this asks the server to put the hexes back the way they were before the last edit,
-     *       rather than to change them again. The hexes and terrain it carries are then ignored.
+     *       rather than to change them again. The hexes it carries are then ignored.
      */
     public boolean isUndoingLastEdit() {
         return undoingLastEdit;

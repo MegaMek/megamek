@@ -34,9 +34,12 @@ package megamek.client.ui.dialogs.unitEditor;
 
 import java.util.Map;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JSpinner;
 
+import megamek.client.ui.buttons.StateToggleButton;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.EquipmentMode;
 import megamek.common.units.DamageEditSpec;
 import megamek.common.units.Entity;
 
@@ -85,6 +88,17 @@ public class UnitDamageSpecBuilder {
         }
         for (Map.Entry<Integer, JCheckBox> hotLoaded : controls.hotLoadedAmmo.entrySet()) {
             spec.hotLoadedAmmo.put(hotLoaded.getKey(), hotLoaded.getValue().isSelected());
+        }
+        for (Map.Entry<Integer, UnitDamageControls.ModeSwitch> onOff : controls.equipmentOnOff.entrySet()) {
+            spec.equipmentMode.put(onOff.getKey(), onOff.getValue().chosenMode());
+        }
+        for (Map.Entry<Integer, JComboBox<EquipmentMode>> modes : controls.equipmentModes.entrySet()) {
+            if (modes.getValue().getSelectedItem() instanceof EquipmentMode chosen) {
+                spec.equipmentMode.put(modes.getKey(), chosen.getName());
+            }
+        }
+        for (Map.Entry<Integer, StateToggleButton> charged : controls.equipmentCharged.entrySet()) {
+            spec.equipmentCharged.put(charged.getKey(), charged.getValue().isSelected());
         }
 
         if (null != controls.spnGunneryModifier) {

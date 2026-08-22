@@ -278,8 +278,14 @@ public class HexEditDialog extends JDialog {
 
         pickHexesButton.setToolTipText(Messages.getString("HexEditDialog.pickHexes.tooltip"));
         pickHexesButton.addActionListener(event -> setHexPicking(pickHexesButton.isSelected()));
+
+        JButton clearHexesButton = new JButton(Messages.getString("HexEditDialog.clearHexes"));
+        clearHexesButton.setToolTipText(Messages.getString("HexEditDialog.clearHexes.tooltip"));
+        clearHexesButton.addActionListener(event -> clearSelectedHexes());
+
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
         buttons.add(pickHexesButton);
+        buttons.add(clearHexesButton);
         panel.add(buttons, BorderLayout.PAGE_END);
         return panel;
     }
@@ -413,6 +419,13 @@ public class HexEditDialog extends JDialog {
             }
             boardView.addSprites(hexHighlights.values());
         });
+    }
+
+    /** Empties the hex selection, so a gamemaster who has picked the wrong area can start again rather than
+     * clicking each wrong hex a second time to take it back off the list. */
+    private void clearSelectedHexes() {
+        selectedHexes.clear();
+        refreshEverything();
     }
 
     /** Adds a hex to the edit, or takes it out again when it was already in. */

@@ -47,6 +47,25 @@ import megamek.common.units.Terrains;
  * agree. The dialog asks as the gamemaster builds an edit, so an illegal hex can be refused before it is sent and the
  * reason shown while there is still something to change; the server asks again when the edit arrives, because it is
  * the server that decides what the board is and the hex may have changed in between.</p>
+ *
+ * <h2>Status and known limits</h2>
+ *
+ * <p>Note for anyone picking this up: the gamemaster terrain tools are a first, deliberately simple pass. They change
+ * terrain and they check the obvious things, but they have not had much testing yet and the validation is thinner
+ * than it looks.</p>
+ *
+ * <p>Most of what is checked comes from {@link megamek.common.Hex#isValid}, which asks whether a hex is well formed -
+ * a building that has its construction factor, a woods level that exists, rapids that sit in water - and almost
+ * nothing about whether the hex makes sense on a battlefield. Only two rules beyond that are enforced here: a
+ * structure may not stand in water, and the water under a unit may not be moved. Both were added because a
+ * gamemaster hit them, not because the list was worked through.</p>
+ *
+ * <p>So a gamemaster can still build combinations nobody has thought hard about: terrain that parses but reads as
+ * nonsense on the ground, changes that leave a unit at an elevation the rules have no answer for, and edits that cut
+ * across fire, smoke and the other terrain the engine maintains for itself.</p>
+ *
+ * <p>TODO: widen the validation beyond the two rules here, and get both the terrain modification and the terrain
+ * change paths properly playtested. Neither has had more than a first look.</p>
  */
 public final class HexEditValidator {
 

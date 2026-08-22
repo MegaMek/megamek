@@ -97,6 +97,13 @@ import megamek.logging.MMLogger;
  *
  * <p>Structures are not painted here. A building is not part of the ground, it is built on it, and taking one down is
  * Modify Building's job so that it goes through the collapse rules.</p>
+ *
+ * <h2>Status and known limits</h2>
+ *
+ * <p>Note for anyone picking this up: the gamemaster terrain tools are a first, deliberately simple pass. They work,
+ * but they have had little testing and the validation is thin - see {@link megamek.common.board.HexEditValidator} for
+ * what is and is not checked, and for the TODO that goes with it. Both modifying terrain and changing it want more
+ * testing than they have had.</p>
  */
 public class HexEditDialog extends JDialog {
 

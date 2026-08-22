@@ -57,6 +57,13 @@ import megamek.logging.MMLogger;
  * <p>Changing the depth of water in a hex that units are standing in is refused. There is no rule for what happens to
  * a unit when the ground beneath it floods, and inventing one here would be a house rule; that is being decided
  * separately.</p>
+ *
+ * <h2>Status and known limits</h2>
+ *
+ * <p>Note for anyone picking this up: the gamemaster terrain tools are a first, deliberately simple pass. They work,
+ * but they have had little testing and the validation is thin - see {@link megamek.common.board.HexEditValidator} for
+ * what is and is not checked, and for the TODO that goes with it. Both modifying terrain and changing it want more
+ * testing than they have had.</p>
  */
 public class HexEditHandler extends AbstractTWRuleHandler {
     private static final MMLogger LOGGER = MMLogger.create(HexEditHandler.class);

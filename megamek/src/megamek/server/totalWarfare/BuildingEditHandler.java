@@ -35,9 +35,14 @@ package megamek.server.totalWarfare;
 
 import java.util.Vector;
 
+import megamek.common.Hex;
 import megamek.common.Report;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.BasementType;
 import megamek.common.board.Coords;
 import megamek.common.units.IBuilding;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
 /**
@@ -71,26 +76,83 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Sets the construction factor of the building in one hex, collapsing that hex of the building when the factor is
-     * set to {@link #COLLAPSING_CONSTRUCTION_FACTOR}.
+     * The values of a building a gamemaster may change, with {@code null} meaning "leave this one alone". These are
+     * the values the map editor sets on a building that can also be changed while a game is running; what kind of
+     * building it is and what class it belongs to are settled when the board is built and are not among them.
      *
-     * @param coords            The hex whose part of the building is being changed
-     * @param constructionFactor The construction factor to leave the building at in that hex
-     * @param gamemasterName    The name of the gamemaster making the change, for the report
+     * @param constructionFactor How much of the building is left standing in the hex, or {@code null} to leave it
+     * @param armor              The building's armor in the hex, or {@code null} to leave it
+     * @param height             How many levels the building stands in the hex, or {@code null} to leave it
+     * @param basement           The kind of basement under the hex, or {@code null} to leave it
+     */
+    public record BuildingEdit(@Nullable Integer constructionFactor, @Nullable Integer armor,
+                               @Nullable Integer height, @Nullable BasementType basement) {
+    }
+
+    /**
+     * Applies a gamemaster's changes to the building in one hex, collapsing that hex of the building when the
+     * construction factor is set to {@link #COLLAPSING_CONSTRUCTION_FACTOR}.
+     *
+     * @param coords         The hex whose part of the building is being changed
+     * @param edit           The values to change, each of which may be left alone
+     * @param gamemasterName The name of the gamemaster making the change, for the report
      *
      * @return A description of why the edit was refused, or {@code null} when it was applied
      */
-    public String setConstructionFactor(Coords coords, int constructionFactor, String gamemasterName) {
+    public String applyEdit(Coords coords, BuildingEdit edit, String gamemasterName) {
         IBuilding building = getGame().getBoard().getBuildingAt(coords);
         if (building == null) {
             LOGGER.debug("[GMBuilding] {}: refused - no building in hex {}", gamemasterName, coords.getBoardNum());
             return "there is no building in that hex";
         }
 
+        boolean hexChanged = false;
+        if (edit.armor() != null) {
+            LOGGER.info("[GMBuilding] {} set the armor of {} in hex {} from {} to {}",
+                  gamemasterName, building.getName(), coords.getBoardNum(), building.getArmor(coords), edit.armor());
+            building.setArmor(edit.armor(), coords);
+            hexChanged |= writeHexTerrain(coords, building.getBoardId(), Terrains.BLDG_ARMOR, edit.armor());
+        }
+        if (edit.height() != null) {
+            LOGGER.info("[GMBuilding] {} set the height of {} in hex {} from {} to {}",
+                  gamemasterName, building.getName(), coords.getBoardNum(), building.getHeight(coords), edit.height());
+            building.setHeight(edit.height(), coords);
+            hexChanged |= writeHexTerrain(coords, building.getBoardId(), Terrains.BLDG_ELEV, edit.height());
+        }
+        if (edit.basement() != null) {
+            LOGGER.info("[GMBuilding] {} set the basement of {} in hex {} from {} to {}",
+                  gamemasterName, building.getName(), coords.getBoardNum(),
+                  building.getBasement(coords), edit.basement());
+            building.setBasement(coords, edit.basement());
+            hexChanged |= writeHexTerrain(coords, building.getBoardId(),
+                  Terrains.BLDG_BASEMENT_TYPE, edit.basement().ordinal());
+        }
+
+        boolean collapsing = (edit.constructionFactor() != null)
+              && (edit.constructionFactor() <= COLLAPSING_CONSTRUCTION_FACTOR);
+        if (edit.constructionFactor() != null) {
+            setConstructionFactor(building, coords, edit.constructionFactor(), gamemasterName);
+        }
+
+        if (collapsing) {
+            collapse(building, coords, gamemasterName);
+        } else {
+            if (hexChanged) {
+                gameManager.sendChangedHex(coords, building.getBoardId());
+            }
+            broadcast(building);
+        }
+        return null;
+    }
+
+    /**
+     * Writes the construction factor to the building and says so. Both factors move together: the current one is the
+     * building's standing state, and the phase one is what damage during this phase is measured against. Leaving the
+     * phase factor behind would let damage already dealt this phase be counted against the old value.
+     */
+    private void setConstructionFactor(IBuilding building, Coords coords, int constructionFactor,
+          String gamemasterName) {
         int previousFactor = building.getCurrentCF(coords);
-        // both factors move together: the current one is the building's standing state, and the phase one is what
-        // damage during this phase is measured against. Leaving the phase factor behind would let damage already
-        // dealt this phase be counted against the old value.
         building.setCurrentCF(constructionFactor, coords);
         building.setPhaseCF(constructionFactor, coords);
 
@@ -103,13 +165,23 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
 
         LOGGER.info("[GMBuilding] {} set the construction factor of {} in hex {} from {} to {}",
               gamemasterName, building.getName(), coords.getBoardNum(), previousFactor, constructionFactor);
+    }
 
-        if (constructionFactor <= COLLAPSING_CONSTRUCTION_FACTOR) {
-            collapse(building, coords, gamemasterName);
-        } else {
-            broadcast(building);
+    /**
+     * Keeps the hex's own record of a building value in step with the building's. The two are separate: the building
+     * holds the value the rules read, while the hex terrain holds what the board is drawn from. Changing only the
+     * building would leave a two-storey block still drawn four storeys tall.
+     *
+     * @return {@code true} if the hex was changed and needs sending to the clients
+     */
+    private boolean writeHexTerrain(Coords coords, int boardId, int terrainType, int level) {
+        Hex hex = getGame().getHex(coords, boardId);
+        if (hex == null) {
+            return false;
         }
-        return null;
+        hex.removeTerrain(terrainType);
+        hex.addTerrain(new Terrain(terrainType, level));
+        return true;
     }
 
     /**

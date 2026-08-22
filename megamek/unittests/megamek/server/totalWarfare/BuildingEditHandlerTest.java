@@ -45,6 +45,7 @@ import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.IBuilding;
+import megamek.common.units.Terrains;
 import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -92,6 +93,11 @@ class BuildingEditHandlerTest {
         buildingEditHandler = new BuildingEditHandler(gameManager);
     }
 
+    /** @return an edit that sets only the construction factor and leaves everything else alone */
+    private static BuildingEditHandler.BuildingEdit cfOnly(int constructionFactor) {
+        return new BuildingEditHandler.BuildingEdit(constructionFactor, null, null, null);
+    }
+
     @Test
     void theBoardStartsWithABuildingToEdit() {
         IBuilding building = board.getBuildingAt(BUILDING_HEX);
@@ -102,7 +108,7 @@ class BuildingEditHandlerTest {
 
     @Test
     void weakeningABuildingSetsItsConstructionFactor() {
-        String refusal = buildingEditHandler.setConstructionFactor(BUILDING_HEX, 15, GAMEMASTER);
+        String refusal = buildingEditHandler.applyEdit(BUILDING_HEX, cfOnly(15), GAMEMASTER);
 
         assertNull(refusal, "weakening a building should be allowed");
         assertEquals(15, board.getBuildingAt(BUILDING_HEX).getCurrentCF(BUILDING_HEX),
@@ -111,7 +117,7 @@ class BuildingEditHandlerTest {
 
     @Test
     void thePhaseFactorMovesWithIt() {
-        buildingEditHandler.setConstructionFactor(BUILDING_HEX, 15, GAMEMASTER);
+        buildingEditHandler.applyEdit(BUILDING_HEX, cfOnly(15), GAMEMASTER);
 
         assertEquals(15, board.getBuildingAt(BUILDING_HEX).getPhaseCF(BUILDING_HEX),
               "leaving the phase factor behind would measure this phase's damage against the old value");
@@ -119,19 +125,50 @@ class BuildingEditHandlerTest {
 
     @Test
     void aHexWithNoBuildingIsRefused() {
-        String refusal = buildingEditHandler.setConstructionFactor(EMPTY_HEX, 20, GAMEMASTER);
+        String refusal = buildingEditHandler.applyEdit(EMPTY_HEX, cfOnly(20), GAMEMASTER);
 
         assertNotNull(refusal, "there is nothing to change in a hex with no building");
     }
 
     @Test
     void aFactorOfZeroBringsTheBuildingDown() {
-        String refusal = buildingEditHandler.setConstructionFactor(BUILDING_HEX,
-              BuildingEditHandler.COLLAPSING_CONSTRUCTION_FACTOR,
+        String refusal = buildingEditHandler.applyEdit(BUILDING_HEX,
+              cfOnly(BuildingEditHandler.COLLAPSING_CONSTRUCTION_FACTOR),
               GAMEMASTER);
 
         assertNull(refusal, "collapsing a building should be allowed");
         assertNull(board.getBuildingAt(BUILDING_HEX),
               "a collapsed building is gone from the hex, not merely left standing at zero");
+    }
+
+    @Test
+    void theHeightIsWrittenToTheBuildingAndTheHex() {
+        String refusal = buildingEditHandler.applyEdit(BUILDING_HEX,
+              new BuildingEditHandler.BuildingEdit(null, null, 5, null), GAMEMASTER);
+
+        assertNull(refusal, "raising a building should be allowed");
+        assertEquals(5, board.getBuildingAt(BUILDING_HEX).getHeight(BUILDING_HEX),
+              "the building should stand at its new height");
+        assertEquals(5, board.getHex(BUILDING_HEX).terrainLevel(Terrains.BLDG_ELEV),
+              "the hex is what the board is drawn from, so it has to agree with the building");
+    }
+
+    @Test
+    void theArmorIsWrittenToTheBuilding() {
+        String refusal = buildingEditHandler.applyEdit(BUILDING_HEX,
+              new BuildingEditHandler.BuildingEdit(null, 12, null, null), GAMEMASTER);
+
+        assertNull(refusal, "armouring a building should be allowed");
+        assertEquals(12, board.getBuildingAt(BUILDING_HEX).getArmor(BUILDING_HEX),
+              "the building should carry the armor it was given");
+    }
+
+    @Test
+    void valuesLeftAloneAreNotTouched() {
+        buildingEditHandler.applyEdit(BUILDING_HEX,
+              new BuildingEditHandler.BuildingEdit(null, 12, null, null), GAMEMASTER);
+
+        assertEquals(40, board.getBuildingAt(BUILDING_HEX).getCurrentCF(BUILDING_HEX),
+              "only the armor was set, so the construction factor should be untouched");
     }
 }

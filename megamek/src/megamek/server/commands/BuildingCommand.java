@@ -36,13 +36,16 @@ package megamek.server.commands;
 import java.util.List;
 
 import megamek.client.ui.Messages;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
+import megamek.common.enums.BasementType;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.CoordXArgument;
 import megamek.server.commands.arguments.CoordYArgument;
 import megamek.server.commands.arguments.IntegerArgument;
+import megamek.server.commands.arguments.OptionalEnumArgument;
 import megamek.server.totalWarfare.BuildingEditHandler;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -59,12 +62,24 @@ public class BuildingCommand extends GamemasterServerCommand {
     public static final String X = "x";
     public static final String Y = "y";
     public static final String CONSTRUCTION_FACTOR = "cf";
+    public static final String ARMOR = "armor";
+    public static final String HEIGHT = "height";
+    public static final String BASEMENT = "basement";
+
+    /**
+     * What a value spinner starts on, meaning "leave this one as it is". A gamemaster usually opens this to change one
+     * thing, so every value starts at leave-alone and only what they raise is written to the building.
+     */
+    private static final int LEAVE_UNCHANGED = -1;
 
     /** Comfortably above the sturdiest building in the rules, so a gamemaster is not boxed in by the dialog. */
     private static final int MAX_CONSTRUCTION_FACTOR = 500;
 
-    /** What the spinner starts on: a solid medium building, rather than a collapse nobody asked for. */
-    private static final int DEFAULT_CONSTRUCTION_FACTOR = 40;
+    /** Above the heaviest building armor in the rules. */
+    private static final int MAX_ARMOR = 200;
+
+    /** Taller than any building on a standard map. */
+    private static final int MAX_HEIGHT = 20;
 
     public BuildingCommand(Server server, TWGameManager gameManager) {
         super(server,
@@ -80,9 +95,22 @@ public class BuildingCommand extends GamemasterServerCommand {
               new CoordYArgument(Y, Messages.getString("Gamemaster.cmd.y")),
               new IntegerArgument(CONSTRUCTION_FACTOR,
                     Messages.getString("Gamemaster.cmd.building.cf"),
-                    BuildingEditHandler.COLLAPSING_CONSTRUCTION_FACTOR,
+                    LEAVE_UNCHANGED,
                     MAX_CONSTRUCTION_FACTOR,
-                    DEFAULT_CONSTRUCTION_FACTOR));
+                    LEAVE_UNCHANGED),
+              new IntegerArgument(ARMOR,
+                    Messages.getString("Gamemaster.cmd.building.armor"),
+                    LEAVE_UNCHANGED,
+                    MAX_ARMOR,
+                    LEAVE_UNCHANGED),
+              new IntegerArgument(HEIGHT,
+                    Messages.getString("Gamemaster.cmd.building.height"),
+                    LEAVE_UNCHANGED,
+                    MAX_HEIGHT,
+                    LEAVE_UNCHANGED),
+              new OptionalEnumArgument<>(BASEMENT,
+                    Messages.getString("Gamemaster.cmd.building.basement"),
+                    BasementType.class));
     }
 
     @Override
@@ -90,15 +118,28 @@ public class BuildingCommand extends GamemasterServerCommand {
         // the dialog shows hex coordinates the way the board does, counting from one, while the board itself counts
         // from zero
         Coords coords = new Coords((int) args.get(X).getValue() - 1, (int) args.get(Y).getValue() - 1);
-        int constructionFactor = (int) args.get(CONSTRUCTION_FACTOR).getValue();
         String gamemasterName = gamemasterName(connId);
+        BuildingEditHandler.BuildingEdit edit = new BuildingEditHandler.BuildingEdit(
+              changedValue(args, CONSTRUCTION_FACTOR),
+              changedValue(args, ARMOR),
+              changedValue(args, HEIGHT),
+              (BasementType) args.get(BASEMENT).getValue());
 
-        String refusal = getGameManager().buildingEditHandler()
-              .setConstructionFactor(coords, constructionFactor, gamemasterName);
+        String refusal = getGameManager().buildingEditHandler().applyEdit(coords, edit, gamemasterName);
 
         if (refusal != null) {
             server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.building.refused", refusal));
         }
+    }
+
+    /**
+     * Reads one value the gamemaster may have changed.
+     *
+     * @return the value to write to the building, or {@code null} when it was left at leave-unchanged
+     */
+    private @Nullable Integer changedValue(Arguments args, String argumentName) {
+        int value = (int) args.get(argumentName).getValue();
+        return (value == LEAVE_UNCHANGED) ? null : value;
     }
 
     /**

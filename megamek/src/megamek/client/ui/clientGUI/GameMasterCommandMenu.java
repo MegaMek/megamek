@@ -33,14 +33,19 @@
 
 package megamek.client.ui.clientGUI;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiPredicate;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.common.annotations.Nullable;
+import megamek.common.Hex;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 import megamek.server.commands.BuildingCommand;
 import megamek.server.commands.ChangeTerrainCommand;
@@ -88,7 +93,8 @@ public final class GameMasterCommandMenu {
      */
     public static JMenu createSpecialCommandsMenu(ClientGUI clientGUI, @Nullable Coords coords) {
         JMenu menu = new JMenu(Messages.getString("Gamemaster.SpecialCommands"));
-        for (ClientServerCommand command : commandsFor(coords)) {
+        Board board = (coords == null) ? null : clientGUI.getClient().getGame().getBoard();
+        for (ClientServerCommand command : commandsFor(coords, board)) {
             JMenuItem commandItem = new JMenuItem(command.getLongName());
             commandItem.addActionListener(event ->
                   new ClientCommandDialog(clientGUI.getFrame(), clientGUI, command, coords).setVisible(true));
@@ -98,23 +104,52 @@ public final class GameMasterCommandMenu {
     }
 
     /**
-     * The commands to offer, chosen by how the menu was opened. Opened on a hex it offers the commands that act on
-     * that hex; opened without one it offers the commands that act on the whole map.
+     * The commands to offer, chosen by how the menu was opened and by what is actually in the hex. Opened on a hex it
+     * offers the commands that act on that hex and have something there to act on; opened without one it offers the
+     * commands that act on the whole map.
      *
-     * <p>Package-private so the rule itself can be tested: a command offered without a hex must not declare a hex or
-     * unit argument, because there would be nothing to fill it in from.</p>
+     * <p>The second half of that matters: offering Modify Building on a hex of woods invites a gamemaster to fill in a
+     * form that can only be refused. A command whose subject is not in the hex is not offered at all.</p>
+     *
+     * <p>Package-private so the rules can be tested: a command offered without a hex must not declare a hex or unit
+     * argument, because there would be nothing to fill it in from.</p>
      *
      * @param coords The hex the menu was opened on, or {@code null} when it was opened without one
+     * @param board  The board that hex is on, or {@code null} when the menu was opened without a hex
      *
      * @return The commands to offer, in menu order
      */
-    static List<ClientServerCommand> commandsFor(@Nullable Coords coords) {
-        if (coords == null) {
+    static List<ClientServerCommand> commandsFor(@Nullable Coords coords, @Nullable Board board) {
+        if ((coords == null) || (board == null)) {
             LOGGER.debug("[GMCommands] menu opened without a hex - offering the board-wide commands");
             return boardWideCommands();
         }
-        LOGGER.debug("[GMCommands] menu opened on hex {} - offering the hex commands", coords.getBoardNum());
-        return hexTargetedCommands();
+        List<ClientServerCommand> applicable = new ArrayList<>();
+        for (HexCommand hexCommand : hexTargetedCommands()) {
+            if (hexCommand.hasSomethingToActOn(board, coords)) {
+                applicable.add(hexCommand.command());
+            } else {
+                LOGGER.debug("[GMCommands] hex {}: not offering {} - nothing there for it to act on",
+                      coords.getBoardNum(), hexCommand.command().getName());
+            }
+        }
+        return applicable;
+    }
+
+    /**
+     * A command that acts on one hex, paired with the test for whether that hex holds anything for it to act on.
+     *
+     * @param command          The command to offer
+     * @param hasSomethingToActOn Whether the hex holds the command's subject
+     */
+    private record HexCommand(ClientServerCommand command, BiPredicate<Board, Coords> hasSomethingToActOn) {
+
+        /**
+         * @return {@code true} when the hex holds what this command acts on, so the command is worth offering
+         */
+        boolean hasSomethingToActOn(Board board, Coords coords) {
+            return hasSomethingToActOn.test(board, coords);
+        }
     }
 
     /**
@@ -143,14 +178,51 @@ public final class GameMasterCommandMenu {
      * modify what is already in the hex without changing it come first and stay together, then the one that changes
      * what the hex is made of, then the ones that do something to it.</p>
      *
+     * <p>Each is paired with what the hex must hold for it to be worth offering. The three that change or attack the
+     * hex work on any hex; the ones that modify something already there need that something to be there.</p>
+     *
      * @return The hex-targeted Game Master commands, in menu order
      */
-    private static List<ClientServerCommand> hexTargetedCommands() {
-        return List.of(new ModifyTerrainCommand(null, null),
-              new BuildingCommand(null, null),
-              new ChangeTerrainCommand(null, null),
-              new FirestarterCommand(null, null),
-              new FirefightCommand(null, null),
-              new OrbitalBombardmentCommand(null, null));
+    private static List<HexCommand> hexTargetedCommands() {
+        return List.of(
+              new HexCommand(new ModifyTerrainCommand(null, null), GameMasterCommandMenu::hasModifiableTerrain),
+              new HexCommand(new BuildingCommand(null, null), GameMasterCommandMenu::hasBuilding),
+              new HexCommand(new ChangeTerrainCommand(null, null), GameMasterCommandMenu::anyHex),
+              new HexCommand(new FirestarterCommand(null, null), GameMasterCommandMenu::anyHex),
+              new HexCommand(new FirefightCommand(null, null), GameMasterCommandMenu::hasFire),
+              new HexCommand(new OrbitalBombardmentCommand(null, null), GameMasterCommandMenu::anyHex));
+    }
+
+    /** @return {@code true} always; for the commands that work on any hex, whatever is or is not in it */
+    private static boolean anyHex(Board board, Coords coords) {
+        return true;
+    }
+
+    /** @return {@code true} if a building stands in the hex, whether it is part of the map or a unit in its own right */
+    private static boolean hasBuilding(Board board, Coords coords) {
+        return board.getBuildingAt(coords) != null;
+    }
+
+    /** @return {@code true} if the hex holds fire to put out */
+    private static boolean hasFire(Board board, Coords coords) {
+        Hex hex = board.getHex(coords);
+        return (hex != null) && hex.containsTerrain(Terrains.FIRE);
+    }
+
+    /**
+     * @return {@code true} if the hex holds terrain that carries a terrain factor, which is the only thing Modify
+     *       Terrain can act on
+     */
+    private static boolean hasModifiableTerrain(Board board, Coords coords) {
+        Hex hex = board.getHex(coords);
+        if (hex == null) {
+            return false;
+        }
+        for (ModifyTerrainCommand.ModifiableTerrain terrain : ModifyTerrainCommand.ModifiableTerrain.values()) {
+            if (hex.containsTerrain(terrain.terrainType())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

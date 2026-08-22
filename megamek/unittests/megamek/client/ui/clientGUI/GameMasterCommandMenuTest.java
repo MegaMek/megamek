@@ -39,11 +39,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.server.commands.ClientServerCommand;
 import megamek.server.commands.arguments.CoordXArgument;
 import megamek.server.commands.arguments.CoordYArgument;
 import megamek.server.commands.arguments.UnitArgument;
+import megamek.utils.BoardLoader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -57,8 +60,36 @@ import org.junit.jupiter.api.Test;
  */
 class GameMasterCommandMenuTest {
 
-    /** Any hex will do; only whether one was supplied changes what the menu offers. */
-    private static final Coords SOME_HEX = new Coords(4, 7);
+    /**
+     * A board holding one hex of each kind the menu cares about, so the tests can ask what is offered on a hex that
+     * has a building, one that has terrain worth modifying, and one that has neither.
+     */
+    private static final String BOARD_DATA = """
+          size 4 4
+          hex 0101 0 "" ""
+          hex 0102 0 "woods:1" ""
+          hex 0103 0 "bldg_elev:2;building:2;bldg_class:1;bldg_cf:40" ""
+          hex 0104 0 "" ""
+          end""";
+
+    private static final Coords BARE_HEX = new Coords(0, 0);
+    private static final Coords WOODS_HEX = new Coords(1, 0);
+    private static final Coords BUILDING_HEX = new Coords(2, 0);
+
+    private Board board;
+
+    @BeforeEach
+    void beforeEach() {
+        board = BoardLoader.initializeBoard(BOARD_DATA);
+    }
+
+    /** @return the long names of the commands offered on the given hex */
+    private List<String> offeredOn(Coords coords) {
+        return GameMasterCommandMenu.commandsFor(coords, board)
+              .stream()
+              .map(ClientServerCommand::getLongName)
+              .toList();
+    }
 
     /** @return {@code true} if the command asks for a hex, which it can only get from a right-clicked hex */
     private static boolean takesAHex(ClientServerCommand command) {
@@ -74,7 +105,7 @@ class GameMasterCommandMenuTest {
 
     @Test
     void withoutAHexOffersOnlyCommandsThatNeedNone() {
-        List<ClientServerCommand> offered = GameMasterCommandMenu.commandsFor(null);
+        List<ClientServerCommand> offered = GameMasterCommandMenu.commandsFor(null, null);
 
         assertFalse(offered.isEmpty(), "the board-wide commands should be offered without a hex");
         for (ClientServerCommand command : offered) {
@@ -85,7 +116,7 @@ class GameMasterCommandMenuTest {
 
     @Test
     void withAHexOffersOnlyCommandsThatActOnThatHex() {
-        List<ClientServerCommand> offered = GameMasterCommandMenu.commandsFor(SOME_HEX);
+        List<ClientServerCommand> offered = GameMasterCommandMenu.commandsFor(BUILDING_HEX, board);
 
         assertFalse(offered.isEmpty(), "the hex commands should be offered when a hex was right-clicked");
         for (ClientServerCommand command : offered) {
@@ -96,11 +127,11 @@ class GameMasterCommandMenuTest {
 
     @Test
     void theTwoMenusOfferDifferentCommands() {
-        List<String> boardWide = GameMasterCommandMenu.commandsFor(null)
+        List<String> boardWide = GameMasterCommandMenu.commandsFor(null, null)
               .stream()
               .map(ClientServerCommand::getName)
               .toList();
-        List<String> hexTargeted = GameMasterCommandMenu.commandsFor(SOME_HEX)
+        List<String> hexTargeted = GameMasterCommandMenu.commandsFor(BUILDING_HEX, board)
               .stream()
               .map(ClientServerCommand::getName)
               .toList();
@@ -111,12 +142,40 @@ class GameMasterCommandMenuTest {
 
     @Test
     void neitherMenuOffersAUnitCommand() {
-        List<ClientServerCommand> everythingOffered = new ArrayList<>(GameMasterCommandMenu.commandsFor(null));
-        everythingOffered.addAll(GameMasterCommandMenu.commandsFor(SOME_HEX));
+        List<ClientServerCommand> everythingOffered = new ArrayList<>(GameMasterCommandMenu.commandsFor(null, null));
+        everythingOffered.addAll(GameMasterCommandMenu.commandsFor(BUILDING_HEX, board));
 
         for (ClientServerCommand command : everythingOffered) {
             assertFalse(takesAUnit(command),
                   command.getName() + " acts on one unit, so it belongs in that unit's Edit Damage dialog");
         }
+    }
+
+    @Test
+    void modifyBuildingIsNotOfferedOnAHexWithNoBuilding() {
+        assertFalse(offeredOn(WOODS_HEX).contains("Modify Building"),
+              "a hex of woods has no building, so offering to modify one only leads to a refusal");
+        assertFalse(offeredOn(BARE_HEX).contains("Modify Building"),
+              "a bare hex has no building either");
+    }
+
+    @Test
+    void modifyBuildingIsOfferedWhereThereIsABuilding() {
+        assertTrue(offeredOn(BUILDING_HEX).contains("Modify Building"),
+              "the hex holds a building, so it should be offered");
+    }
+
+    @Test
+    void modifyTerrainIsOnlyOfferedWhereSomethingCanBeModified() {
+        assertTrue(offeredOn(WOODS_HEX).contains("Modify Terrain"),
+              "woods carry a terrain factor, so they can be modified");
+        assertFalse(offeredOn(BARE_HEX).contains("Modify Terrain"),
+              "a bare hex holds no terrain with a factor to set");
+    }
+
+    @Test
+    void changeTerrainIsOfferedOnAnyHex() {
+        assertTrue(offeredOn(BARE_HEX).contains("Change Terrain"),
+              "any hex can be changed into something else, including a bare one");
     }
 }

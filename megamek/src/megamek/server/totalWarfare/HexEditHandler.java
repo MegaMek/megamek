@@ -255,7 +255,7 @@ public class HexEditHandler extends AbstractTWRuleHandler {
             hex.setLevel(paint.getLevel());
         }
         List<Terrain> structures = new ArrayList<>();
-        for (int structureTerrain : HexEditValidator.structureTerrains()) {
+        for (int structureTerrain : HexEditValidator.carriedThroughTerrains()) {
             Terrain existing = hex.getTerrain(structureTerrain);
             if (existing != null) {
                 structures.add(existing);

@@ -103,6 +103,9 @@ public class BuildingEditDialog extends JDialog {
     /** Taller than any building on a standard map. */
     private static final int MAX_HEIGHT = 20;
 
+    /** Above any fluff image number the shipped boards use, so a gamemaster is not boxed in by the dialog. */
+    private static final int MAX_FLUFF_IMAGE = 999;
+
     private final ClientGUI clientGUI;
     private final Coords coords;
     private final int boardId;
@@ -114,6 +117,7 @@ public class BuildingEditDialog extends JDialog {
           new JSpinner(new SpinnerNumberModel(0, 0, MAX_CONSTRUCTION_FACTOR, 5));
     private final JSpinner armorSpinner = new JSpinner(new SpinnerNumberModel(0, 0, MAX_ARMOR, 1));
     private final JSpinner heightSpinner = new JSpinner(new SpinnerNumberModel(1, 1, MAX_HEIGHT, 1));
+    private final JSpinner fluffImageSpinner = new JSpinner(new SpinnerNumberModel(0, 0, MAX_FLUFF_IMAGE, 1));
     private final JButton removeButton = new JButton(Messages.getString("BuildingEditDialog.remove"));
 
     /** One building class offered in the chooser, named rather than numbered. */
@@ -170,6 +174,10 @@ public class BuildingEditDialog extends JDialog {
         armorSpinner.setValue(existing.getArmor(coords));
         heightSpinner.setValue(Math.max(1, existing.getHeight(coords)));
         basementChooser.setSelectedItem(existing.getBasement(coords));
+        Hex hex = clientGUI.getClient().getGame().getBoard().getHex(coords);
+        if (hex != null) {
+            fluffImageSpinner.setValue(Math.max(0, hex.terrainLevel(Terrains.BLDG_FLUFF)));
+        }
         for (BuildingClassChoice choice : BUILDING_CLASSES) {
             if (choice.buildingClass() == existing.getBldgClass()) {
                 classChooser.setSelectedItem(choice);
@@ -208,6 +216,7 @@ public class BuildingEditDialog extends JDialog {
         addField(fields, "BuildingEditDialog.armor", armorSpinner);
         addField(fields, "BuildingEditDialog.height", heightSpinner);
         addField(fields, "BuildingEditDialog.basement", basementChooser);
+        addField(fields, "BuildingEditDialog.fluffImage", fluffImageSpinner);
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(fields, BorderLayout.CENTER);
@@ -261,6 +270,7 @@ public class BuildingEditDialog extends JDialog {
         spec.setConstructionFactor((int) constructionFactorSpinner.getValue());
         spec.setArmor((int) armorSpinner.getValue());
         spec.setHeight((int) heightSpinner.getValue());
+        spec.setFluffImage((int) fluffImageSpinner.getValue());
         return spec;
     }
 

@@ -88,6 +88,12 @@ public class BuildingEditSpec implements Serializable {
     private BasementType basement = BasementType.NONE;
 
     /**
+     * Which special image the building is drawn with, or zero for the ordinary artwork for its type. Boards use this
+     * to give a district its look - a row of warehouses is ordinary medium buildings with a fluff image on each.
+     */
+    private int fluffImage;
+
+    /**
      * Describes the building that should stand in the given hex.
      *
      * @param coords  The hex the building stands in
@@ -157,6 +163,15 @@ public class BuildingEditSpec implements Serializable {
 
     public BasementType getBasement() {
         return basement;
+    }
+
+    /** @return which special image the building is drawn with, or zero for the ordinary artwork for its type */
+    public int getFluffImage() {
+        return fluffImage;
+    }
+
+    public void setFluffImage(int fluffImage) {
+        this.fluffImage = fluffImage;
     }
 
     public void setBasement(BasementType basement) {

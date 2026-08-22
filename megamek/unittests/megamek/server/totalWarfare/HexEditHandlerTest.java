@@ -50,6 +50,7 @@ import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.Entity;
 import megamek.common.units.BipedMek;
+import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -427,5 +428,34 @@ class HexEditHandlerTest {
         assertEquals(2, board.getHex(BARE_HEX).depth(), "the channel hex should hold water");
         assertTrue(board.getHex(WOODS_HEX).containsTerrain(Terrains.ROUGH), "and the bank hex should hold rough");
         assertEquals(0, board.getHex(WOODS_HEX).depth(), "the bank must not have been flooded too");
+    }
+
+    /** @return a paint holding rough ground and nothing else */
+    private static HexEditSpec.HexPaint paintOfRough() {
+        HexEditSpec.HexPaint paint = new HexEditSpec.HexPaint();
+        paint.setTerrain(Terrains.ROUGH, 1);
+        return paint;
+    }
+
+    @Test
+    void aTerrainEditKeepsTheHexesSpecialImage() {
+        board.getHex(WOODS_HEX).addTerrain(new Terrain(Terrains.GROUND_FLUFF, 100));
+
+        hexEditHandler.applyHexEdit(floodOf(1, WOODS_HEX), GAMEMASTER);
+
+        assertEquals(100, board.getHex(WOODS_HEX).terrainLevel(Terrains.GROUND_FLUFF),
+              "fluff terrain chooses how a hex is drawn, so repainting the ground must not throw the artwork away");
+    }
+
+    @Test
+    void aTerrainEditKeepsABuildingsSpecialImage() {
+        board.getHex(BUILDING_HEX).addTerrain(new Terrain(Terrains.BLDG_FLUFF, 100));
+
+        HexEditSpec spec = new HexEditSpec(board.getBoardId());
+        spec.paint(BUILDING_HEX, paintOfRough());
+        hexEditHandler.applyHexEdit(spec, GAMEMASTER);
+
+        assertEquals(100, board.getHex(BUILDING_HEX).terrainLevel(Terrains.BLDG_FLUFF),
+              "a drawn building must not become a generic box because the ground around it was repainted");
     }
 }

@@ -217,6 +217,9 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
             hex.addTerrain(new Terrain(Terrains.BLDG_ARMOR, spec.getArmor()));
         }
         hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, spec.getBasement().ordinal()));
+        if (spec.getFluffImage() > 0) {
+            hex.addTerrain(new Terrain(Terrains.BLDG_FLUFF, spec.getFluffImage()));
+        }
     }
 
     /** Takes every scrap of building out of a hex, so nothing of the old one is left to confuse the new one. */
@@ -228,6 +231,7 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
         hex.removeTerrain(Terrains.BLDG_ARMOR);
         hex.removeTerrain(Terrains.BLDG_BASEMENT_TYPE);
         hex.removeTerrain(Terrains.BLDG_BASE_COLLAPSED);
+        hex.removeTerrain(Terrains.BLDG_FLUFF);
     }
 
     /** @return the given building on its own, in the vector the broadcast methods take */

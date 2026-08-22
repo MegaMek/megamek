@@ -34,6 +34,7 @@
 package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -279,5 +280,25 @@ class BuildingEditHandlerTest {
         sendAsPacket(spec, false);
 
         assertNotNull(board.getBuildingAt(BUILDING_HEX), "the building should still be standing");
+    }
+
+    @Test
+    void aRebuiltBuildingKeepsItsSpecialImage() {
+        BuildingEditSpec spec = specFor(BUILDING_HEX, BuildingType.HARDENED);
+        spec.setFluffImage(100);
+
+        String refusal = buildingEditHandler().applyBuildingSpec(spec, GAMEMASTER);
+
+        assertNull(refusal, "rebuilding with a fluff image should be allowed");
+        assertEquals(100, board.getHex(BUILDING_HEX).terrainLevel(Terrains.BLDG_FLUFF),
+              "the building should still be drawn with the image it was given");
+    }
+
+    @Test
+    void aBuildingWithNoFluffImageIsDrawnTheOrdinaryWay() {
+        buildingEditHandler().applyBuildingSpec(specFor(EMPTY_HEX, BuildingType.MEDIUM), GAMEMASTER);
+
+        assertFalse(board.getHex(EMPTY_HEX).containsTerrain(Terrains.BLDG_FLUFF),
+              "a building raised without a fluff image should carry none");
     }
 }

@@ -70,6 +70,15 @@ import megamek.common.units.Terrains;
 public final class HexEditValidator {
 
     /**
+     * The terrains that pick the special image a hex is drawn with. These say nothing about what the hex is made of
+     * and everything about how it looks, and boards use them heavily - a warehouse district is ordinary medium
+     * buildings with {@code bldg_fluff} picking the artwork. A terrain edit must carry them through, or repainting
+     * the ground under a building turns a drawn building into a generic box.
+     */
+    private static final List<Integer> FLUFF_TERRAINS = List.of(
+          Terrains.FLUFF, Terrains.BLDG_FLUFF, Terrains.ROAD_FLUFF, Terrains.GROUND_FLUFF, Terrains.WATER_FLUFF);
+
+    /**
      * The terrains that make up a structure. A structure standing in a hex constrains what the ground under it may
      * become, and is not itself changed by a terrain edit.
      */
@@ -85,6 +94,16 @@ public final class HexEditValidator {
     /** @return the terrains that make up a structure, which a terrain edit carries through unchanged */
     public static List<Integer> structureTerrains() {
         return STRUCTURE_TERRAINS;
+    }
+
+    /**
+     * @return every terrain a terrain edit carries through rather than replacing: the structures standing in the hex,
+     *       and the fluff terrains that choose how it is drawn
+     */
+    public static List<Integer> carriedThroughTerrains() {
+        List<Integer> carried = new ArrayList<>(STRUCTURE_TERRAINS);
+        carried.addAll(FLUFF_TERRAINS);
+        return carried;
     }
 
     /**

@@ -45,6 +45,7 @@ import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.utils.BoardLoader;
 import megamek.common.board.Coords;
+import megamek.common.board.HexEditSpec;
 import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.Entity;
@@ -246,5 +247,76 @@ class HexEditHandlerTest {
         String refusal = hexEditHandler.setTerrain(BUILDING_HEX, board.getBoardId(), Terrains.ROUGH, 1, GAMEMASTER);
 
         assertNull(refusal, "only water is held back by a building; rough ground around it is fine");
+    }
+
+    /** @return an edit of the given hexes that leaves them holding water at the given depth */
+    private HexEditSpec floodOf(int depth, Coords... hexes) {
+        HexEditSpec spec = new HexEditSpec(board.getBoardId());
+        for (Coords hex : hexes) {
+            spec.addCoords(hex);
+        }
+        spec.setTerrain(Terrains.WATER, depth);
+        return spec;
+    }
+
+    @Test
+    void oneEditFloodsEveryHexItNames() {
+        String refusal = hexEditHandler.applyHexEdit(floodOf(2, BARE_HEX, WOODS_HEX), GAMEMASTER);
+
+        assertNull(refusal, "flooding two clear hexes should be allowed");
+        assertEquals(2, board.getHex(BARE_HEX).depth(), "the first hex should be flooded");
+        assertEquals(2, board.getHex(WOODS_HEX).depth(), "and so should the second");
+        assertFalse(board.getHex(WOODS_HEX).containsTerrain(Terrains.WOODS),
+              "the edit says what the hex ends up as, so the woods it used to hold are gone");
+    }
+
+    @Test
+    void oneBadHexRefusesTheWholeEdit() {
+        String refusal = hexEditHandler.applyHexEdit(floodOf(2, BARE_HEX, BUILDING_HEX), GAMEMASTER);
+
+        assertNotNull(refusal, "the building hex cannot be flooded, so the edit should be refused");
+        assertEquals(0, board.getHex(BARE_HEX).depth(),
+              "and the hex that could have been flooded must be left alone, not half-applied");
+    }
+
+    @Test
+    void theRefusalNamesTheHexThatCausedIt() {
+        String refusal = hexEditHandler.applyHexEdit(floodOf(2, BARE_HEX, BUILDING_HEX), GAMEMASTER);
+
+        assertNotNull(refusal);
+        assertTrue(refusal.contains(String.valueOf(BUILDING_HEX.getBoardNum())),
+              "a gamemaster needs to know which hex stopped the edit, not just that one did");
+    }
+
+    @Test
+    void anEditWithNoTerrainClearsTheHexes() {
+        HexEditSpec spec = new HexEditSpec(board.getBoardId());
+        spec.addCoords(WOODS_HEX);
+
+        String refusal = hexEditHandler.applyHexEdit(spec, GAMEMASTER);
+
+        assertNull(refusal, "clearing a hex should be allowed");
+        assertFalse(board.getHex(WOODS_HEX).containsTerrain(Terrains.WOODS), "the woods should be gone");
+    }
+
+    @Test
+    void anEditNamingNoHexesIsRefused() {
+        String refusal = hexEditHandler.applyHexEdit(new HexEditSpec(board.getBoardId()), GAMEMASTER);
+
+        assertNotNull(refusal, "an edit with no hexes chosen has nothing to do");
+    }
+
+    @Test
+    void aTerrainEditLeavesAStructureStanding() {
+        HexEditSpec spec = new HexEditSpec(board.getBoardId());
+        spec.addCoords(BUILDING_HEX);
+        spec.setTerrain(Terrains.ROUGH, 1);
+
+        String refusal = hexEditHandler.applyHexEdit(spec, GAMEMASTER);
+
+        assertNull(refusal, "roughening the ground around a building should be allowed");
+        assertTrue(board.getHex(BUILDING_HEX).containsTerrain(Terrains.BUILDING),
+              "a terrain edit describes the ground, so the building on it must survive");
+        assertTrue(board.getHex(BUILDING_HEX).containsTerrain(Terrains.ROUGH), "and the new ground should be there");
     }
 }

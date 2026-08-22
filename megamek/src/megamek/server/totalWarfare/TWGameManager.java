@@ -60,6 +60,7 @@ import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
+import megamek.common.board.HexEditSpec;
 import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.comparators.WeaponComparatorBV;
 import megamek.common.compute.Compute;
@@ -1093,6 +1094,9 @@ public class TWGameManager extends AbstractGameManager {
                     break;
                 case ENTITY_DAMAGE_EDIT:
                     receiveDamageEdit(packet, connId);
+                    break;
+                case HEX_EDIT:
+                    receiveHexEdit(packet, connId);
                     break;
                 case ENTITY_MULTI_UPDATE:
                     receiveEntitiesUpdate(packet, connId);
@@ -26970,6 +26974,32 @@ public class TWGameManager extends AbstractGameManager {
      * state, a pending traitor switch, anything that changed since the editor opened - keeps the server's authoritative
      * value without having to be preserved field by field.
      */
+    /**
+     * Applies a gamemaster's edit of one or more hexes. The edit arrives as the terrain the hexes should end up
+     * holding rather than as a chat command, because an edit of a whole hex across several hexes is more than a
+     * command line can carry, and it is checked against every named hex before any of them is changed.
+     */
+    private void receiveHexEdit(Packet packet, int connIndex) {
+        if (!(packet.getObject(0) instanceof HexEditSpec spec)) {
+            LOGGER.warn("Dropping hex edit: the packet carries no spec");
+            return;
+        }
+        Player sender = game.getPlayer(connIndex);
+        if ((sender == null) || !sender.isGameMaster()) {
+            LOGGER.warn("Dropping hex edit from {}: only a gamemaster may change the board",
+                  (sender == null) ? "an unknown connection" : sender.getName());
+            return;
+        }
+        String refusal = hexEditHandler().applyHexEdit(spec, sender.getName());
+        if (refusal != null) {
+            sendServerChat(connIndex, Messages.getString("Gamemaster.cmd.changeTerrain.refused", refusal));
+            return;
+        }
+        sendToast(GameToastEvent.Level.GAMEMASTER,
+              Messages.getString("Gamemaster.toast.hexEdit", sender.getName(), spec.getCoords().size()),
+              null);
+    }
+
     private void receiveDamageEdit(Packet packet, int connIndex) {
         if (!(packet.getObject(0) instanceof DamageEditSpec spec)) {
             LOGGER.warn("Dropping damage edit: the packet carries no spec");

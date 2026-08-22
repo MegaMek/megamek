@@ -35,10 +35,12 @@ package megamek.server.totalWarfare;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.board.Coords;
+import megamek.common.board.HexEditSpec;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
@@ -70,6 +72,7 @@ public class HexEditHandler extends AbstractTWRuleHandler {
     private static final int REPORT_TERRAIN_REMOVED = 1251;
     private static final int REPORT_HEX_CLEARED = 1252;
     private static final int REPORT_TERRAIN_FACTOR_SET = 1254;
+    private static final int REPORT_HEXES_EDITED = 1255;
 
     HexEditHandler(TWGameManager gameManager) {
         super(gameManager);
@@ -109,6 +112,117 @@ public class HexEditHandler extends AbstractTWRuleHandler {
         LOGGER.info("[GMTerrain] {} set {} to level {} in hex {}",
               gamemasterName, Terrains.getName(terrainType), terrainLevel, coords.getBoardNum());
         return null;
+    }
+
+    /**
+     * Applies a gamemaster's edit to every hex it names, or to none of them.
+     *
+     * <p>Each hex is checked first and the whole edit is refused if any one of them would end up invalid. A
+     * gamemaster flooding a valley wants the valley flooded or a reason why not; half a valley flooded, with the
+     * hexes that failed left dry among the ones that worked, is the worst of both.</p>
+     *
+     * @param spec           The hexes to change and the terrain they should end up holding
+     * @param gamemasterName The name of the gamemaster making the change, for the report
+     *
+     * @return A description of why the edit was refused, or {@code null} when it was applied
+     */
+    public String applyHexEdit(HexEditSpec spec, String gamemasterName) {
+        if (spec.getCoords().isEmpty()) {
+            return "no hexes were chosen";
+        }
+        String refusal = firstRefusalIn(spec, gamemasterName);
+        if (refusal != null) {
+            return refusal;
+        }
+
+        for (Coords hexCoords : spec.getCoords()) {
+            Hex hex = getGame().getHex(hexCoords, spec.getBoardId());
+            writeTerrain(hex, spec);
+            gameManager.sendChangedHex(hexCoords, spec.getBoardId());
+        }
+        reportHexEdit(spec, gamemasterName);
+        LOGGER.info("[GMTerrain] {} changed {} hex(es) to hold {}",
+              gamemasterName, spec.getCoords().size(), describeTerrain(spec));
+        return null;
+    }
+
+    /**
+     * Checks every hex the edit names, so that nothing is changed unless all of it can be.
+     *
+     * @return the reason the first hex that cannot take the edit cannot take it, or {@code null} when all of them can
+     */
+    private String firstRefusalIn(HexEditSpec spec, String gamemasterName) {
+        for (Coords hexCoords : spec.getCoords()) {
+            Hex hex = getGame().getHex(hexCoords, spec.getBoardId());
+            if (hex == null) {
+                return "hex " + hexCoords.getBoardNum() + " is not on the board";
+            }
+            Hex edited = hex.duplicate();
+            writeTerrain(edited, spec);
+            String refusal = refusalFor(hex, edited, hexCoords, spec.getBoardId(), gamemasterName);
+            if (refusal != null) {
+                return "hex " + hexCoords.getBoardNum() + ": " + refusal;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The terrains that make up a structure, which a terrain edit leaves alone. A building is not scenery to be
+     * painted over: taking one off the map is what Modify Building is for, and it brings the structure down through
+     * the collapse rules so that whatever is standing on or inside it is dealt with. Wiping these here would make a
+     * building disappear with everything in it still in mid-air.
+     */
+    private static final List<Integer> STRUCTURE_TERRAINS = List.of(
+          Terrains.BUILDING, Terrains.BLDG_CF, Terrains.BLDG_ELEV, Terrains.BLDG_ARMOR, Terrains.BLDG_CLASS,
+          Terrains.BLDG_BASEMENT_TYPE, Terrains.BLDG_BASE_COLLAPSED,
+          Terrains.BRIDGE, Terrains.BRIDGE_CF, Terrains.BRIDGE_ELEV,
+          Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF, Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN);
+
+    /**
+     * Leaves the hex holding exactly the terrain the edit names, plus any structure that was already standing there.
+     * The edit describes the ground, not what has been built on it.
+     */
+    private static void writeTerrain(Hex hex, HexEditSpec spec) {
+        List<Terrain> structures = new ArrayList<>();
+        for (int structureTerrain : STRUCTURE_TERRAINS) {
+            Terrain existing = hex.getTerrain(structureTerrain);
+            if (existing != null) {
+                structures.add(existing);
+            }
+        }
+        hex.removeAllTerrains();
+        for (Map.Entry<Integer, Integer> terrain : spec.getTerrainLevels().entrySet()) {
+            hex.addTerrain(new Terrain(terrain.getKey(), terrain.getValue()));
+        }
+        for (Terrain structure : structures) {
+            hex.addTerrain(structure);
+        }
+    }
+
+    /** @return the terrain the edit leaves behind, in words, for the report and the log */
+    private static String describeTerrain(HexEditSpec spec) {
+        if (spec.isClearingHexes()) {
+            return "bare ground";
+        }
+        List<String> described = new ArrayList<>();
+        for (Map.Entry<Integer, Integer> terrain : spec.getTerrainLevels().entrySet()) {
+            described.add(Terrains.getDisplayName(terrain.getKey(), terrain.getValue()));
+        }
+        return String.join(", ", described);
+    }
+
+    /** Tells every player what changed and where, so a hex changing under them is never unexplained. */
+    private void reportHexEdit(HexEditSpec spec, String gamemasterName) {
+        List<String> hexNumbers = new ArrayList<>();
+        for (Coords hexCoords : spec.getCoords()) {
+            hexNumbers.add(String.valueOf(hexCoords.getBoardNum()));
+        }
+        Report report = new Report(REPORT_HEXES_EDITED, Report.PUBLIC);
+        report.add(gamemasterName);
+        report.add(describeTerrain(spec));
+        report.add(String.join(", ", hexNumbers));
+        addReport(report);
     }
 
     /**

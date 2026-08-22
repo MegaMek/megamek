@@ -41,6 +41,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +63,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Regression test for GitHub issue #8789 (MUL files forget C3 networks). Drives the real lobby load path: the MUL is
@@ -75,6 +77,10 @@ class C3MulLoadTest {
     private static final String C3_MASTER_UNIT = "Atlas AS7-CM";
     private static final String C3_SLAVE_UNIT = "Atlas AS7-C";
     private static final String C3I_UNIT = "Crab CRB-30";
+
+    /** JUnit-managed scratch directory, private to this test run. */
+    @TempDir
+    Path tempDir;
 
     private Game sourceGame;
     private Game serverGame;
@@ -128,9 +134,8 @@ class C3MulLoadTest {
         return entity;
     }
 
-    private static File toMul(List<Entity> entities) throws Exception {
-        File file = File.createTempFile("c3-mul-load", ".mul");
-        file.deleteOnExit();
+    private File toMul(List<Entity> entities) throws Exception {
+        File file = tempDir.resolve("c3-mul-load.mul").toFile();
         EntityListFile.saveTo(file, new ArrayList<>(entities), true);
         return file;
     }

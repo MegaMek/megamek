@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -51,6 +52,7 @@ import megamek.common.util.C3Util;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Regression test for GitHub issue #8789: a MUL saved from the lobby must bring its C3 networks back when it is
@@ -60,6 +62,10 @@ import org.junit.jupiter.api.Test;
 public class EntityListFileC3RoundTripTest {
 
     private Game game;
+
+    /** JUnit-managed scratch directory, private to this test run. */
+    @TempDir
+    Path tempDir;
     private static String lastParserWarning = "";
 
     @BeforeAll
@@ -107,9 +113,8 @@ public class EntityListFileC3RoundTripTest {
     }
 
     /** Saves the units to a temporary MUL (units embedded, so no unit cache is needed) and returns the file. */
-    private static File toMul(List<Entity> entities) throws Exception {
-        File file = File.createTempFile("c3-round-trip", ".mul");
-        file.deleteOnExit();
+    private File toMul(List<Entity> entities) throws Exception {
+        File file = tempDir.resolve("c3-round-trip.mul").toFile();
         EntityListFile.saveTo(file, new ArrayList<>(entities), true);
         return file;
     }

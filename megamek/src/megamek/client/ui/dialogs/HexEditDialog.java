@@ -37,6 +37,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -63,9 +64,13 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
 import megamek.client.ui.util.FlatLafStyleBuilder;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
+import megamek.common.RangeType;
+import megamek.common.util.Distractable;
 import megamek.common.board.Coords;
 import megamek.common.board.HexEditSpec;
 import megamek.common.board.HexEditValidator;
@@ -105,6 +110,9 @@ public class HexEditDialog extends JDialog {
     /** Water is the one terrain whose level starts at zero, because depth 0 water is a legal thing to have. */
     private static final int LOWEST_WATER_DEPTH = 0;
 
+    /** Draws the highlight around a picked hex on every side of it. */
+    private static final int ALL_HEX_BORDERS = 63;
+
     private final ClientGUI clientGUI;
     private final int boardId;
 
@@ -128,26 +136,48 @@ public class HexEditDialog extends JDialog {
     private final BoardViewListenerAdapter hexPicker = new BoardViewListenerAdapter() {
         @Override
         public void hexMoused(BoardViewEvent event) {
-            if (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
+            boolean isLeftClickOnAHex = (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED)
+                  && (event.getButton() == MouseEvent.BUTTON1)
+                  && (event.getCoords() != null);
+            if (isLeftClickOnAHex) {
                 toggleHex(event.getCoords());
             }
         }
     };
 
-    /** One terrain offered in the chooser, shown by name rather than by its number. */
+    /**
+     * The phase display that is being kept from acting on board clicks while hexes are being picked. Without this a
+     * click meant for the hex list is also read by the movement phase as a move order, so picking a hex to flood also
+     * walks a unit into it.
+     */
+    private Distractable suppressedDisplay;
+
+    /** The highlight drawn on each picked hex, so the selection is visible on the board and not only in the list. */
+    private final Map<Coords, FieldOfFireSprite> hexHighlights = new LinkedHashMap<>();
+
+    /** One terrain offered in the chooser, named the way the map editor names it. */
     private record TerrainChoice(int terrainType) {
         @Override
         public String toString() {
-            return Terrains.getDisplayName(terrainType, 1);
+            return Terrains.getEditorName(terrainType);
         }
     }
 
-    /** One level offered for the chosen terrain, shown in the words the rules use for it. */
+    /**
+     * One level offered for the chosen terrain, in the words the rules use for it. The terrain's own name is dropped
+     * from the front, because the terrain is already named in the chooser beside this one and reading "Water" twice
+     * across two dropdowns is what made them look like duplicates of each other.
+     */
     private record LevelChoice(int terrainType, int level) {
         @Override
         public String toString() {
-            String name = Terrains.getDisplayName(terrainType, level);
-            return (name == null) ? String.valueOf(level) : name;
+            String fullName = Terrains.getDisplayName(terrainType, level);
+            if (fullName == null) {
+                return Messages.getString("HexEditDialog.levelNumber", level);
+            }
+            String terrainName = Terrains.getEditorName(terrainType);
+            String withoutTerrainName = fullName.replace(terrainName, "").replace("()", "").trim();
+            return withoutTerrainName.isBlank() ? fullName : withoutTerrainName;
         }
     }
 
@@ -252,7 +282,9 @@ public class HexEditDialog extends JDialog {
         clearButton.addActionListener(event -> clearTerrain());
 
         JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        controls.add(new JLabel(Messages.getString("HexEditDialog.terrainLabel")));
         controls.add(terrainChooser);
+        controls.add(new JLabel(Messages.getString("HexEditDialog.levelLabel")));
         controls.add(levelChooser);
         controls.add(setButton);
         controls.add(removeButton);
@@ -282,7 +314,13 @@ public class HexEditDialog extends JDialog {
         return panel;
     }
 
-    /** Turns board hex picking on or off, adding or removing the listener that watches for clicks. */
+    /**
+     * Turns board hex picking on or off.
+     *
+     * <p>While it is on the current phase display is kept from acting on board clicks. A click is delivered to
+     * everything listening to the board, so without this a click meant to add a hex to the list is also read by the
+     * movement phase as a move order, and picking a hex to flood walks a unit into it as well.</p>
+     */
     private void setHexPicking(boolean picking) {
         clientGUI.boardViews().forEach(boardView -> {
             boardView.removeBoardViewListener(hexPicker);
@@ -290,7 +328,30 @@ public class HexEditDialog extends JDialog {
                 boardView.addBoardViewListener(hexPicker);
             }
         });
+
+        if (picking) {
+            if ((suppressedDisplay == null) && (clientGUI.getCurrentPanel() instanceof Distractable distractable)) {
+                suppressedDisplay = distractable;
+                suppressedDisplay.setIgnoringEvents(true);
+            }
+        } else if (suppressedDisplay != null) {
+            suppressedDisplay.setIgnoringEvents(false);
+            suppressedDisplay = null;
+        }
         LOGGER.debug("[GMHexEdit] hex picking {}", picking ? "on" : "off");
+    }
+
+    /** Draws a highlight on every picked hex and takes away the ones no longer picked. */
+    private void refreshHexHighlights() {
+        clientGUI.boardViews().stream().findFirst().ifPresent(boardView -> {
+            boardView.removeSprites(hexHighlights.values());
+            hexHighlights.clear();
+            for (Coords coords : selectedHexes) {
+                hexHighlights.put(coords,
+                      new FieldOfFireSprite((BoardView) boardView, RangeType.RANGE_SHORT, coords, ALL_HEX_BORDERS));
+            }
+            boardView.addSprites(hexHighlights.values());
+        });
     }
 
     /** Adds a hex to the edit, or takes it out again when it was already in. */
@@ -350,6 +411,7 @@ public class HexEditDialog extends JDialog {
 
     /** Redraws the hex list, the terrain list and the legality report from the edit as it now stands. */
     private void refreshEverything() {
+        refreshHexHighlights();
         hexListModel.clear();
         for (Coords coords : selectedHexes) {
             hexListModel.addElement(Messages.getString("HexEditDialog.hexEntry", coords.getBoardNum()));
@@ -437,6 +499,10 @@ public class HexEditDialog extends JDialog {
     /** Closes, making sure the board is not left listening for hex picks that no longer have a dialog to go to. */
     private void closeDialog() {
         setHexPicking(false);
+        clientGUI.boardViews().stream().findFirst().ifPresent(boardView -> {
+            boardView.removeSprites(hexHighlights.values());
+            hexHighlights.clear();
+        });
         dispose();
     }
 }

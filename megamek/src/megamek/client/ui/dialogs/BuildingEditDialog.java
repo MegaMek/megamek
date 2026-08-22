@@ -59,6 +59,7 @@ import megamek.common.board.BuildingEditSpec;
 import megamek.common.board.Coords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
+import megamek.common.equipment.FuelTank;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
@@ -106,6 +107,26 @@ public class BuildingEditDialog extends JDialog {
     /** Above any fluff image number the shipped boards use, so a gamemaster is not boxed in by the dialog. */
     private static final int MAX_FLUFF_IMAGE = 999;
 
+    /** Above the largest fuel tank explosion the shipped boards use. */
+    private static final int MAX_MAGNITUDE = 100;
+
+    /** What kind of structure stands in the hex, which decides which of the fields below mean anything. */
+    private enum StructureKind {
+        BUILDING("BuildingEditDialog.structure.building"),
+        FUEL_TANK("BuildingEditDialog.structure.fuelTank");
+
+        private final String messageKey;
+
+        StructureKind(String messageKey) {
+            this.messageKey = messageKey;
+        }
+
+        @Override
+        public String toString() {
+            return Messages.getString(messageKey);
+        }
+    }
+
     private final ClientGUI clientGUI;
     private final Coords coords;
     private final int boardId;
@@ -118,6 +139,8 @@ public class BuildingEditDialog extends JDialog {
     private final JSpinner armorSpinner = new JSpinner(new SpinnerNumberModel(0, 0, MAX_ARMOR, 1));
     private final JSpinner heightSpinner = new JSpinner(new SpinnerNumberModel(1, 1, MAX_HEIGHT, 1));
     private final JSpinner fluffImageSpinner = new JSpinner(new SpinnerNumberModel(0, 0, MAX_FLUFF_IMAGE, 1));
+    private final JSpinner magnitudeSpinner = new JSpinner(new SpinnerNumberModel(1, 1, MAX_MAGNITUDE, 1));
+    private final JComboBox<StructureKind> structureChooser = new JComboBox<>();
     private final JButton removeButton = new JButton(Messages.getString("BuildingEditDialog.remove"));
 
     /** One building class offered in the chooser, named rather than numbered. */
@@ -169,6 +192,16 @@ public class BuildingEditDialog extends JDialog {
             constructionFactorSpinner.setValue(BuildingType.MEDIUM.getDefaultCF());
             return;
         }
+        if (existing instanceof FuelTank fuelTank) {
+            structureChooser.setSelectedItem(StructureKind.FUEL_TANK);
+            magnitudeSpinner.setValue(Math.max(1, fuelTank.getMagnitude()));
+            constructionFactorSpinner.setValue(existing.getCurrentCF(coords));
+            heightSpinner.setValue(Math.max(1, existing.getHeight(coords)));
+            refreshFieldsForStructure();
+            return;
+        }
+        structureChooser.setSelectedItem(StructureKind.BUILDING);
+        refreshFieldsForStructure();
         typeChooser.setSelectedItem(existing.getBuildingType());
         constructionFactorSpinner.setValue(existing.getCurrentCF(coords));
         armorSpinner.setValue(existing.getArmor(coords));
@@ -187,6 +220,10 @@ public class BuildingEditDialog extends JDialog {
     }
 
     private void buildUI(JFrame parent) {
+        for (StructureKind kind : StructureKind.values()) {
+            structureChooser.addItem(kind);
+        }
+        structureChooser.addActionListener(event -> refreshFieldsForStructure());
         for (BuildingType type : BuildingType.values()) {
             // UNKNOWN is what the code uses for "no building here", not something to build
             if (type != BuildingType.UNKNOWN) {
@@ -208,8 +245,11 @@ public class BuildingEditDialog extends JDialog {
             }
         });
 
+        refreshFieldsForStructure();
+
         JPanel fields = new JPanel(new GridLayout(0, 2, 6, 6));
         fields.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        addField(fields, "BuildingEditDialog.structure", structureChooser);
         addField(fields, "BuildingEditDialog.type", typeChooser);
         addField(fields, "BuildingEditDialog.buildingClass", classChooser);
         addField(fields, "BuildingEditDialog.constructionFactor", constructionFactorSpinner);
@@ -217,6 +257,7 @@ public class BuildingEditDialog extends JDialog {
         addField(fields, "BuildingEditDialog.height", heightSpinner);
         addField(fields, "BuildingEditDialog.basement", basementChooser);
         addField(fields, "BuildingEditDialog.fluffImage", fluffImageSpinner);
+        addField(fields, "BuildingEditDialog.magnitude", magnitudeSpinner);
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(fields, BorderLayout.CENTER);
@@ -229,6 +270,19 @@ public class BuildingEditDialog extends JDialog {
         pack();
         setMinimumSize(UIUtil.scaleForGUI(360, 260));
         setLocationRelativeTo(parent);
+    }
+
+    /**
+     * Greys out the fields that mean nothing for the kind of structure chosen. A fuel tank has no building type,
+     * class, basement or artwork of its own, and only a fuel tank has an explosion to size.
+     */
+    private void refreshFieldsForStructure() {
+        boolean isFuelTank = structureChooser.getSelectedItem() == StructureKind.FUEL_TANK;
+        typeChooser.setEnabled(!isFuelTank);
+        classChooser.setEnabled(!isFuelTank);
+        basementChooser.setEnabled(!isFuelTank);
+        fluffImageSpinner.setEnabled(!isFuelTank);
+        magnitudeSpinner.setEnabled(isFuelTank);
     }
 
     private static void addField(JPanel fields, String labelKey, JComponent control) {
@@ -271,6 +325,8 @@ public class BuildingEditDialog extends JDialog {
         spec.setArmor((int) armorSpinner.getValue());
         spec.setHeight((int) heightSpinner.getValue());
         spec.setFluffImage((int) fluffImageSpinner.getValue());
+        spec.setFuelTank(structureChooser.getSelectedItem() == StructureKind.FUEL_TANK);
+        spec.setMagnitude((int) magnitudeSpinner.getValue());
         return spec;
     }
 

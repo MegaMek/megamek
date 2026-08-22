@@ -43,6 +43,7 @@ import megamek.common.enums.BasementType;
 import megamek.common.board.Board;
 import megamek.common.board.BuildingEditSpec;
 import megamek.common.board.Coords;
+import megamek.common.equipment.FuelTank;
 import megamek.common.units.BuildingTerrain;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Terrain;
@@ -148,6 +149,15 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
      *       taken down and put up again rather than adjusted
      */
     private static boolean needsRebuilding(IBuilding existing, BuildingEditSpec spec) {
+        boolean wasFuelTank = existing instanceof FuelTank;
+        if (wasFuelTank != spec.isFuelTank()) {
+            return true;
+        }
+        if (wasFuelTank) {
+            // a fuel tank holds its magnitude as a final field set when the board builds it, so the only way to
+            // change how big the explosion is is to put a new tank up
+            return ((FuelTank) existing).getMagnitude() != spec.getMagnitude();
+        }
         return (existing.getBuildingType() != spec.getBuildingType())
               || (existing.getBldgClass() != spec.getBuildingClass());
     }
@@ -162,7 +172,9 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
         board.setHex(spec.getCoords(), hex);
         IBuilding raised;
         try {
-            raised = new BuildingTerrain(spec.getCoords(), board, Terrains.BUILDING, spec.getBasement());
+            raised = spec.isFuelTank()
+                  ? new FuelTank(spec.getCoords(), board, Terrains.FUEL_TANK, spec.getMagnitude())
+                  : new BuildingTerrain(spec.getCoords(), board, Terrains.BUILDING, spec.getBasement());
         } catch (RuntimeException buildFailure) {
             // the hex is put back rather than left holding half a building that the board never made into one
             clearBuildingTerrain(hex);
@@ -210,6 +222,13 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
     /** Writes what the building is into the hex, which is what the board reads to make the building itself. */
     private static void writeBuildingTerrain(Hex hex, BuildingEditSpec spec) {
         clearBuildingTerrain(hex);
+        if (spec.isFuelTank()) {
+            hex.addTerrain(new Terrain(Terrains.FUEL_TANK, 1));
+            hex.addTerrain(new Terrain(Terrains.FUEL_TANK_CF, spec.getConstructionFactor()));
+            hex.addTerrain(new Terrain(Terrains.FUEL_TANK_ELEV, spec.getHeight()));
+            hex.addTerrain(new Terrain(Terrains.FUEL_TANK_MAGN, spec.getMagnitude()));
+            return;
+        }
         hex.addTerrain(new Terrain(Terrains.BUILDING, spec.getBuildingType().getTypeValue()));
         hex.addTerrain(new Terrain(Terrains.BLDG_CF, spec.getConstructionFactor()));
         hex.addTerrain(new Terrain(Terrains.BLDG_ELEV, spec.getHeight()));
@@ -233,6 +252,10 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
         hex.removeTerrain(Terrains.BLDG_BASEMENT_TYPE);
         hex.removeTerrain(Terrains.BLDG_BASE_COLLAPSED);
         hex.removeTerrain(Terrains.BLDG_FLUFF);
+        hex.removeTerrain(Terrains.FUEL_TANK);
+        hex.removeTerrain(Terrains.FUEL_TANK_CF);
+        hex.removeTerrain(Terrains.FUEL_TANK_ELEV);
+        hex.removeTerrain(Terrains.FUEL_TANK_MAGN);
     }
 
     /** @return the given building on its own, in the vector the broadcast methods take */

@@ -35,6 +35,7 @@ package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,6 +49,7 @@ import megamek.common.game.Game;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.enums.BuildingType;
+import megamek.common.equipment.FuelTank;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
@@ -300,5 +302,46 @@ class BuildingEditHandlerTest {
 
         assertFalse(board.getHex(EMPTY_HEX).containsTerrain(Terrains.BLDG_FLUFF),
               "a building raised without a fluff image should carry none");
+    }
+
+    /** @return a spec describing a fuel tank of the given explosion magnitude in the given hex */
+    private BuildingEditSpec fuelTankFor(Coords coords, int magnitude) {
+        BuildingEditSpec spec = new BuildingEditSpec(coords, board.getBoardId());
+        spec.setFuelTank(true);
+        spec.setMagnitude(magnitude);
+        spec.setConstructionFactor(20);
+        spec.setHeight(1);
+        return spec;
+    }
+
+    @Test
+    void aFuelTankCanBeRaised() {
+        String refusal = buildingEditHandler().applyBuildingSpec(fuelTankFor(EMPTY_HEX, 15), GAMEMASTER);
+
+        assertNull(refusal, "putting a fuel tank in an empty hex should be allowed");
+        assertInstanceOf(FuelTank.class, board.getBuildingAt(EMPTY_HEX),
+              "a fuel tank is its own kind of structure, not an ordinary building");
+        assertEquals(15, ((FuelTank) board.getBuildingAt(EMPTY_HEX)).getMagnitude(),
+              "and it should carry the explosion size it was given");
+    }
+
+    @Test
+    void changingTheMagnitudeRebuildsTheTank() {
+        buildingEditHandler().applyBuildingSpec(fuelTankFor(EMPTY_HEX, 15), GAMEMASTER);
+
+        String refusal = buildingEditHandler().applyBuildingSpec(fuelTankFor(EMPTY_HEX, 30), GAMEMASTER);
+
+        assertNull(refusal, "changing how big the explosion is should be allowed");
+        assertEquals(30, ((FuelTank) board.getBuildingAt(EMPTY_HEX)).getMagnitude(),
+              "a fuel tank holds its magnitude as a final field, so it has to be rebuilt to change it");
+    }
+
+    @Test
+    void aBuildingCanBeReplacedByAFuelTank() {
+        String refusal = buildingEditHandler().applyBuildingSpec(fuelTankFor(BUILDING_HEX, 10), GAMEMASTER);
+
+        assertNull(refusal, "replacing a building with a fuel tank should be allowed");
+        assertInstanceOf(FuelTank.class, board.getBuildingAt(BUILDING_HEX),
+              "the hex should now hold a fuel tank rather than the building that was there");
     }
 }

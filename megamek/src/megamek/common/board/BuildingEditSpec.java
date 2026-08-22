@@ -88,6 +88,20 @@ public class BuildingEditSpec implements Serializable {
     private BasementType basement = BasementType.NONE;
 
     /**
+     * Whether the structure is a fuel tank rather than a building. A fuel tank is built from its own terrain, has no
+     * class or basement, and does not collapse when it is destroyed - it explodes.
+     */
+    private boolean fuelTank;
+
+    /**
+     * How big the explosion is when a fuel tank goes up. Meaningless on an ordinary building.
+     *
+     * <p>A fuel tank holds this as a final field set when the board builds it, so changing it means taking the tank
+     * down and putting a new one up rather than adjusting the one that is there.</p>
+     */
+    private int magnitude = 1;
+
+    /**
      * Which special image the building is drawn with, or zero for the ordinary artwork for its type. Boards use this
      * to give a district its look - a row of warehouses is ordinary medium buildings with a fluff image on each.
      */
@@ -163,6 +177,24 @@ public class BuildingEditSpec implements Serializable {
 
     public BasementType getBasement() {
         return basement;
+    }
+
+    /** @return {@code true} when the structure is a fuel tank rather than a building */
+    public boolean isFuelTank() {
+        return fuelTank;
+    }
+
+    public void setFuelTank(boolean fuelTank) {
+        this.fuelTank = fuelTank;
+    }
+
+    /** @return how big the explosion is when the fuel tank goes up; meaningless on an ordinary building */
+    public int getMagnitude() {
+        return magnitude;
+    }
+
+    public void setMagnitude(int magnitude) {
+        this.magnitude = magnitude;
     }
 
     /** @return which special image the building is drawn with, or zero for the ordinary artwork for its type */

@@ -500,7 +500,7 @@ public class C3Util {
      * <p>Joining units are classified by their equipment: C3 Master carriers occupy company-level master links
      * when the target is a company node (a C3MM unit or a designated company commander), while C3 Slave carriers
      * occupy slave links. A plain lance master accepts a homogeneous lance only: all slaves, or - per the
-     * All-C3-Master rule (CR p.199) - all masters acting in slave roles.</p>
+     * All-C3-Master rule (TW p.132, CR p.199) - all masters acting in slave roles.</p>
      */
     public static Set<Entity> connect(Game game, Collection<Entity> entities, int masterID, boolean disconnectFirst)
           throws MismatchingC3MException, C3CapacityException {

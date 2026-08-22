@@ -241,6 +241,11 @@ public class HexEditHandler extends AbstractTWRuleHandler {
                   gamemasterName, coords.getBoardNum(), hexErrors);
             return String.join("; ", hexErrors);
         }
+        if (wouldFloodAStructure(edited)) {
+            LOGGER.debug("[GMTerrain] {}: refused editing hex {} - it would leave a structure standing in water",
+                  gamemasterName, coords.getBoardNum());
+            return "a building or fuel tank cannot stand in water; take the structure down first";
+        }
         if (drainsOccupiedWater(original, edited, coords, boardId)) {
             LOGGER.debug("[GMTerrain] {}: refused editing hex {} - it would change water depth from {} to {} "
                         + "with units in the hex",
@@ -248,6 +253,20 @@ public class HexEditHandler extends AbstractTWRuleHandler {
             return "that would change the water depth under units standing in the hex; move them first";
         }
         return null;
+    }
+
+    /**
+     * Whether the edited hex would leave a structure standing in water. A building or a fuel tank in a water hex is
+     * nonsense that the rules have nothing to say about, and it is not something the hex's own validation catches -
+     * that checks a structure is complete, not that it is somewhere it could be built.
+     *
+     * @param edited The hex as it would be after the edit
+     *
+     * @return {@code true} if the hex would hold both a structure and water for it to stand in
+     */
+    private static boolean wouldFloodAStructure(Hex edited) {
+        boolean hasStructure = edited.containsTerrain(Terrains.BUILDING) || edited.containsTerrain(Terrains.FUEL_TANK);
+        return hasStructure && (edited.depth() > 0);
     }
 
     /**

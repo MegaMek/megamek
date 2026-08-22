@@ -171,11 +171,16 @@ public class ClientCommandDialog extends JDialog {
 
     private JComponent getArgumentComponent(Argument<?> argument) {
         JComponent component = null;
-        if (argument instanceof CoordXArgument intArg) {
-            return getJSpinner(argument, createSpinner(intArg), 0);
+        if (argument instanceof CoordXArgument coordXArgument) {
+            JSpinner spinner = createSpinner(coordXArgument);
+            // The hex is already settled by the right-click that opened the dialog and is named at the top of it, so
+            // asking for it again is a coordinate to get wrong. The spinner is still built, holding the clicked hex,
+            // because the command is assembled from these components; it is simply not shown.
+            return (coords == null) ? getJSpinner(argument, spinner, 0) : spinner;
 
-        } else if (argument instanceof CoordYArgument intArg) {
-            component = getJSpinner(argument, createSpinner(intArg), 2);
+        } else if (argument instanceof CoordYArgument coordYArgument) {
+            JSpinner spinner = createSpinner(coordYArgument);
+            component = (coords == null) ? getJSpinner(argument, spinner, 2) : spinner;
 
         } else if (argument instanceof PlayerArgument playerArg) {
             component = getStringJComboBox(argument.getName(), createPlayerComboBox(playerArg), argument.getHelp());

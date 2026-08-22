@@ -69,7 +69,7 @@ class HexEditHandlerTest {
           hex 0101 0 "" ""
           hex 0102 0 "woods:1" ""
           hex 0103 0 "water:2" ""
-          hex 0104 0 "" ""
+          hex 0104 0 "bldg_elev:2;building:2;bldg_class:1;bldg_cf:40" ""
           end""";
 
     private static final String GAMEMASTER = "Referee";
@@ -78,6 +78,7 @@ class HexEditHandlerTest {
     private static final Coords BARE_HEX = new Coords(0, 0);
     private static final Coords WOODS_HEX = new Coords(1, 0);
     private static final Coords WATER_HEX = new Coords(2, 0);
+    private static final Coords BUILDING_HEX = new Coords(3, 0);
 
     private TWGameManager gameManager;
     private Game game;
@@ -228,5 +229,22 @@ class HexEditHandlerTest {
               GAMEMASTER);
 
         assertNotNull(refusal, "there is no woods in a bare hex to modify");
+    }
+
+    @Test
+    void floodingAHexWithABuildingInItIsRefused() {
+        String refusal = hexEditHandler.setTerrain(BUILDING_HEX, board.getBoardId(), Terrains.WATER, 2, GAMEMASTER);
+
+        assertNotNull(refusal, "a building cannot stand in water, so flooding its hex should be refused");
+        assertEquals(0, board.getHex(BUILDING_HEX).depth(), "the hex must be left dry");
+        assertTrue(board.getHex(BUILDING_HEX).containsTerrain(Terrains.BUILDING),
+              "and the building must still be standing");
+    }
+
+    @Test
+    void aBuildingHexCanStillBeChangedInOtherWays() {
+        String refusal = hexEditHandler.setTerrain(BUILDING_HEX, board.getBoardId(), Terrains.ROUGH, 1, GAMEMASTER);
+
+        assertNull(refusal, "only water is held back by a building; rough ground around it is fine");
     }
 }

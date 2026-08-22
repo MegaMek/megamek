@@ -35,6 +35,7 @@ package megamek.server.totalWarfare;
 
 import java.util.Vector;
 
+import megamek.client.ui.Messages;
 import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
@@ -282,7 +283,10 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
 
         boolean collapsing = (edit.constructionFactor() != null)
               && (edit.constructionFactor() <= COLLAPSING_CONSTRUCTION_FACTOR);
-        if (edit.constructionFactor() != null) {
+        // a building being brought down is not given a construction factor of zero and then collapsed: the damage
+        // that brings it down is worked out from what it still has, so writing zero first would leave nothing to
+        // deal and the building would stand there at zero instead of falling
+        if ((edit.constructionFactor() != null) && !collapsing) {
             setConstructionFactor(building, coords, edit.constructionFactor(), gamemasterName);
         }
 
@@ -337,15 +341,71 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Brings down the building in one hex through the same collapse the rules use, so that whatever is standing on it,
-     * inside it, or in its basement is resolved rather than left hanging in the air.
+     * Brings a building down by damaging it to nothing, exactly as a unit shooting at it would.
+     *
+     * <p>Forcing the collapse directly would skip everything the rules do on the way there. Damage is taken by the
+     * building's armor first and then scaled by what the building is made of; a fuel tank reaching zero does not
+     * collapse but explodes, taking the neighbourhood with it; a wall reports its own way; and gun emplacements in
+     * the building roll for criticals. A gamemaster setting the construction factor to zero means the building comes
+     * down the way it would have if someone had shot it, so it is dealt the damage to do that and then checked for
+     * collapse the way damage is.</p>
      */
     private void collapse(IBuilding building, Coords coords, String gamemasterName) {
-        LOGGER.info("[GMBuilding] {} collapses {} in hex {}",
-              gamemasterName, building.getName(), coords.getBoardNum());
+        int damage = damageNeededToFlatten(building, coords);
+        LOGGER.info("[GMBuilding] {} brings down {} in hex {} with {} damage, the way an attack would",
+              gamemasterName, building.getName(), coords.getBoardNum(), damage);
+
+        addReport(gameManager.damageBuilding(building, damage,
+              Messages.getString("Gamemaster.cmd.building.damageReason"), coords));
+
         Vector<Report> collapseReports = new Vector<>();
-        collapseHandler.collapseBuilding(building, getGame().getPositionMapMulti(), coords, collapseReports);
+        boolean collapsed = collapseHandler.checkForCollapse(building, coords, true, collapseReports);
         addReport(collapseReports);
+
+        if (!collapsed && isStillStandingAtNothing(building, coords)) {
+            // checkForCollapse refuses to do anything when no unit is anywhere on the board: it treats an empty
+            // position map as a bad argument, because it is written for damage resolution where units exist by
+            // definition. A gamemaster flattening a building on an empty map hit exactly that and was left with a
+            // building standing at a construction factor of zero, so it is brought down here instead.
+            LOGGER.debug("[GMBuilding] {} still stands at zero after damage - bringing it down directly",
+                  building.getName());
+            Vector<Report> forcedReports = new Vector<>();
+            collapseHandler.collapseBuilding(building, getGame().getPositionMapMulti(), coords, forcedReports);
+            addReport(forcedReports);
+        }
+    }
+
+    /**
+     * @return {@code true} when the building is still on the board with nothing left to hold it up, which means
+     *       something declined to bring it down
+     */
+    private boolean isStillStandingAtNothing(IBuilding building, Coords coords) {
+        Board board = getGame().getBoard(building.getBoardId());
+        if ((board == null) || (board.getBuildingAt(coords) == null)) {
+            // already gone, which is what a fuel tank does: it explodes rather than collapsing
+            return false;
+        }
+        return building.getCurrentCF(coords) <= COLLAPSING_CONSTRUCTION_FACTOR;
+    }
+
+    /**
+     * Works out how much damage takes a building from where it is to nothing, so that the same damage the rules
+     * apply gets it exactly to zero rather than part way.
+     *
+     * <p>Armor is taken off first and at face value. What is left goes through the building's damage scaling, which
+     * can be less than one for a sturdy building, so more raw damage than the construction factor may be needed to
+     * remove it.</p>
+     *
+     * @return the damage that leaves the building at a construction factor of zero
+     */
+    private static int damageNeededToFlatten(IBuilding building, Coords coords) {
+        int armor = Math.max(0, building.getArmor(coords));
+        int constructionFactor = Math.max(0, building.getCurrentCF(coords));
+        double scale = building.getDamageToScale();
+        int damageThroughScaling = (scale <= 0)
+              ? constructionFactor
+              : (int) Math.ceil(constructionFactor / scale);
+        return armor + damageThroughScaling;
     }
 
     /** Tells every client the building changed, so its display and tooltip follow the new construction factor. */

@@ -34,12 +34,17 @@
 package megamek.client.ui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.util.List;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.io.Serial;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -56,14 +61,18 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.preferences.JWindowPreference;
 import megamek.client.ui.preferences.PreferencesNode;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.tileset.HexTileset;
+import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.BuildingEditSpec;
 import megamek.common.board.Coords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.FuelTank;
 import megamek.common.units.IBuilding;
+import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
@@ -174,6 +183,9 @@ public class BuildingEditDialog extends JDialog {
     /** Says what the hex held before this gamemaster first changed it, so a change can be seen and taken back. */
     private final JLabel originalLabel = new JLabel();
 
+    /** Draws the building as the chosen fluff image will actually look, since the number alone says nothing. */
+    private final JLabel fluffPreviewLabel = new JLabel();
+
     /** One building class offered in the chooser, named rather than numbered. */
     private record BuildingClassChoice(int buildingClass, String messageKey) {
         @Override
@@ -282,6 +294,7 @@ public class BuildingEditDialog extends JDialog {
 
         refreshFieldsForStructure();
         refreshMagnitudeEffect();
+        refreshFluffPreview();
 
         JPanel fields = new JPanel(new GridLayout(0, 2, 6, 6));
         fields.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -293,6 +306,9 @@ public class BuildingEditDialog extends JDialog {
         addField(fields, "BuildingEditDialog.height", heightSpinner);
         addField(fields, "BuildingEditDialog.basement", basementChooser);
         addField(fields, "BuildingEditDialog.fluffImage", fluffImageSpinner);
+        fluffImageSpinner.addChangeListener(event -> refreshFluffPreview());
+        typeChooser.addActionListener(event -> refreshFluffPreview());
+        addField(fields, "BuildingEditDialog.fluffPreview", fluffPreviewLabel);
         addField(fields, "BuildingEditDialog.magnitude", magnitudeSpinner);
         addField(fields, "BuildingEditDialog.magnitudeEffect", magnitudeEffectLabel);
 
@@ -329,6 +345,78 @@ public class BuildingEditDialog extends JDialog {
 
 
     /**
+     * Draws the building as the tileset will actually draw it, for the fluff image currently chosen.
+     *
+     * <p>A fluff image is picked by number, and the number says nothing about what the building looks like. Boards
+     * use them to give a district its character, so a gamemaster placing a building in one wants to see whether it
+     * matches its neighbours rather than counting through numbers and looking at the map after each try.</p>
+     *
+     * <p>The preview is built by asking the tileset for the images it would use for a hex holding exactly this
+     * building, which is the same question the board asks when it draws one - so what is shown here is what will
+     * appear.</p>
+     */
+    private void refreshFluffPreview() {
+        if (structureChooser.getSelectedItem() == StructureKind.FUEL_TANK) {
+            fluffPreviewLabel.setIcon(null);
+            fluffPreviewLabel.setText(null);
+            return;
+        }
+        try {
+            Image preview = drawBuildingAsTilesetWould();
+            fluffPreviewLabel.setIcon((preview == null) ? null : new ImageIcon(preview));
+            fluffPreviewLabel.setText((preview == null)
+                  ? Messages.getString("BuildingEditDialog.fluffPreview.none")
+                  : null);
+        } catch (RuntimeException previewFailure) {
+            // a preview that cannot be drawn must not stop the dialog being used to place a building
+            LOGGER.debug("[GMBuilding] could not draw the fluff preview: {}", previewFailure.getMessage());
+            fluffPreviewLabel.setIcon(null);
+            fluffPreviewLabel.setText(Messages.getString("BuildingEditDialog.fluffPreview.none"));
+        }
+    }
+
+    /**
+     * @return the building drawn the way the board would draw it, or {@code null} when the tileset offers nothing for
+     *       this combination
+     */
+    private @Nullable Image drawBuildingAsTilesetWould() {
+        Hex preview = new Hex();
+        BuildingType type = (BuildingType) typeChooser.getSelectedItem();
+        preview.addTerrain(new Terrain(Terrains.BUILDING,
+              (type == null) ? BuildingType.MEDIUM.getTypeValue() : type.getTypeValue()));
+        preview.addTerrain(new Terrain(Terrains.BLDG_ELEV, (int) heightSpinner.getValue()));
+        preview.addTerrain(new Terrain(Terrains.BLDG_CF, (int) constructionFactorSpinner.getValue()));
+        int fluffImage = (int) fluffImageSpinner.getValue();
+        if (fluffImage > 0) {
+            preview.addTerrain(new Terrain(Terrains.BLDG_FLUFF, fluffImage));
+        }
+
+        TilesetManager tilesetManager = clientGUI.getTilesetManager();
+        Image base = tilesetManager.baseFor(preview);
+        List<Image> supers = tilesetManager.supersFor(preview);
+        if ((base == null) && ((supers == null) || supers.isEmpty())) {
+            return null;
+        }
+
+        BufferedImage canvas = new BufferedImage(HexTileset.HEX_W, HexTileset.HEX_H,
+              BufferedImage.TYPE_INT_ARGB);
+        Graphics graphics = canvas.getGraphics();
+        try {
+            if (base != null) {
+                graphics.drawImage(base, 0, 0, null);
+            }
+            if (supers != null) {
+                for (Image layer : supers) {
+                    graphics.drawImage(layer, 0, 0, null);
+                }
+            }
+        } finally {
+            graphics.dispose();
+        }
+        return canvas;
+    }
+
+    /**
      * Greys out the fields that mean nothing for the kind of structure chosen. A fuel tank has no building type,
      * class, basement or artwork of its own, and only a fuel tank has an explosion to size.
      */
@@ -338,6 +426,7 @@ public class BuildingEditDialog extends JDialog {
         classChooser.setEnabled(!isFuelTank);
         basementChooser.setEnabled(!isFuelTank);
         fluffImageSpinner.setEnabled(!isFuelTank);
+        fluffPreviewLabel.setEnabled(!isFuelTank);
         magnitudeSpinner.setEnabled(isFuelTank);
         magnitudeEffectLabel.setEnabled(isFuelTank);
     }

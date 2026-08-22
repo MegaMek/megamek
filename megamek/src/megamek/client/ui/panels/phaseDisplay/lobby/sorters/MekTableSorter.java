@@ -75,23 +75,6 @@ public abstract class MekTableSorter implements Comparator<Entity> {
     private static final int MAX_CARRIER_DEPTH = 16;
 
     /**
-     * Wraps a sorter so anything riding on another unit stays with it, whatever the sorter is ordering by.
-     * <p>
-     * A carrier and its load are one object on the board, so they should be one block in the list. Without this each
-     * unit is sorted on its own merits and drifts away from what it is riding on: sorting by tonnage puts a 10 ton
-     * carriage nowhere near the 75 ton tractor pulling it, and a DropShip nowhere near its JumpShip.
-     * </p>
-     * <p>
-     * The wrapped sorter is asked about the outermost carriers instead, so a whole stack sorts wherever its carrier
-     * would. Below that, units are ordered by where they sit in the stack: a carrier comes before the things it
-     * carries, and trailers follow their tractor in hitch order, which is the order they occupy hexes in.
-     * </p>
-     *
-     * @param baseSorter the sorter the player chose
-     *
-     * @return a sorter that applies the player's choice to whole carrier stacks
-     */
-    /**
      * Wraps a sorter so C3 network members stay together as one hierarchy-ordered block, whatever the sorter is
      * ordering by - the same guarantee {@link #keepingCarriedUnitsTogether(Comparator)} gives carrier stacks, and
      * for the same reason: the lobby draws branch glyphs in front of network members, which only tell the truth
@@ -105,71 +88,109 @@ public abstract class MekTableSorter implements Comparator<Entity> {
      */
     public static Comparator<Entity> keepingC3NetworksTogether(List<Entity> entities,
           Comparator<Entity> baseSorter) {
-        // Two passes over the list, no per-entity game scans: a net id shared by 2+ carrier-stack roots in the
-        // list marks a network; solo units keep a null key and sort as ordinary units
-        Map<String, Integer> netIdCounts = new HashMap<>();
-        for (Entity entity : entities) {
-            String networkId = computeNetworkKey(entity);
-            if (networkId != null) {
-                netIdCounts.merge(networkId, 1, Integer::sum);
-            }
-        }
-        Map<Integer, String> networkKeys = new HashMap<>();
-        Map<String, Entity> representatives = new HashMap<>();
-        for (Entity entity : entities) {
-            String networkId = computeNetworkKey(entity);
-            if ((networkId == null) || (netIdCounts.getOrDefault(networkId, 0) < 2)) {
-                networkKeys.put(entity.getId(), null);
-                continue;
-            }
-            networkKeys.put(entity.getId(), networkId);
-            representatives.merge(networkId, entity,
-                  (first, second) -> (first.getId() <= second.getId()) ? first : second);
-        }
+        C3NetworkIndex index = new C3NetworkIndex(entities);
         return (a, b) -> {
-            String netA = networkKeys.get(a.getId());
-            String netB = networkKeys.get(b.getId());
+            String netA = index.networkKey(a);
+            String netB = index.networkKey(b);
             if ((netA == null) && (netB == null)) {
                 return baseSorter.compare(a, b);
             }
             if (!Objects.equals(netA, netB)) {
-                // Different networks (or one unit un-networked): the base sorter judges the representatives, so
-                // a whole network sorts where its representative would; tie-break keeps blocks from interleaving
-                Entity repA = (netA == null) ? a : representatives.get(netA);
-                Entity repB = (netB == null) ? b : representatives.get(netB);
-                int repComparison = baseSorter.compare(repA, repB);
-                return (repComparison != 0) ? repComparison
-                      : String.valueOf(netA).compareTo(String.valueOf(netB));
+                return compareAcrossNetworks(a, netA, b, netB, index, baseSorter);
             }
-            // Same network: walk the master chains, parent before dependents, sibling branches by unit id
-            List<Entity> pathA = c3Path(a);
-            List<Entity> pathB = c3Path(b);
-            int depth = 0;
-            while ((depth < pathA.size()) && (depth < pathB.size())
-                  && (pathA.get(depth).getId() == pathB.get(depth).getId())) {
-                depth++;
-            }
-            if ((depth >= pathA.size()) && (depth >= pathB.size())) {
-                return baseSorter.compare(a, b);
-            }
-            if (depth >= pathA.size()) {
-                return -1;
-            }
-            if (depth >= pathB.size()) {
-                return 1;
-            }
-            return Integer.compare(pathA.get(depth).getId(), pathB.get(depth).getId());
+            return compareWithinNetwork(a, b, baseSorter);
         };
     }
 
-    /** The C3 net id of the unit's carrier-stack root, {@code null} when the root carries no C3 system. */
-    @Nullable
-    private static String computeNetworkKey(Entity entity) {
-        Entity root = carrierPath(entity).get(0);
-        if (!root.hasAnyC3System()) {
-            return null;
+    /**
+     * What one pass over the list being sorted says about its C3 networks: each unit's net id, how many
+     * carrier-stack roots share each net id, and the lowest-id member of each. A net id shared by 2+ roots marks
+     * a network; a unit whose net id is its own is solo and sorts as an ordinary unit.
+     */
+    private static final class C3NetworkIndex {
+        private final Map<Integer, String> netIdByEntityId = new HashMap<>();
+        private final Map<String, Integer> memberCounts = new HashMap<>();
+        private final Map<String, Entity> representatives = new HashMap<>();
+
+        C3NetworkIndex(List<Entity> entities) {
+            for (Entity entity : entities) {
+                String netId = rootNetId(entity);
+                if (netId == null) {
+                    continue;
+                }
+                netIdByEntityId.put(entity.getId(), netId);
+                memberCounts.merge(netId, 1, Integer::sum);
+                Entity current = representatives.get(netId);
+                if ((current == null) || (entity.getId() < current.getId())) {
+                    representatives.put(netId, entity);
+                }
+            }
         }
-        return root.getC3NetId();
+
+        /** The unit's network key, or {@code null} when it is not part of a 2+ member network in this list. */
+        @Nullable
+        String networkKey(Entity entity) {
+            String netId = netIdByEntityId.get(entity.getId());
+            if ((netId == null) || (memberCounts.get(netId) < 2)) {
+                return null;
+            }
+            return netId;
+        }
+
+        /** The lowest-id member of the network; the base sorter judges this unit for the whole block. */
+        Entity representative(String netId) {
+            return representatives.get(netId);
+        }
+
+        /** The C3 net id of the unit's carrier-stack root, {@code null} when the root carries no C3 system. */
+        @Nullable
+        private static String rootNetId(Entity entity) {
+            Entity root = carrierPath(entity).get(0);
+            if (!root.hasAnyC3System()) {
+                return null;
+            }
+            return root.getC3NetId();
+        }
+    }
+
+    /**
+     * Orders two units in different networks (or one networked, one not): the base sorter judges the
+     * representatives, so a whole network sorts where its representative would. The tie-break on net id keeps
+     * two blocks the sorter considers equal from interleaving.
+     */
+    private static int compareAcrossNetworks(Entity a, @Nullable String netA, Entity b, @Nullable String netB,
+          C3NetworkIndex index, Comparator<Entity> baseSorter) {
+        Entity representativeA = (netA == null) ? a : index.representative(netA);
+        Entity representativeB = (netB == null) ? b : index.representative(netB);
+        int representativeComparison = baseSorter.compare(representativeA, representativeB);
+        if (representativeComparison != 0) {
+            return representativeComparison;
+        }
+        return String.valueOf(netA).compareTo(String.valueOf(netB));
+    }
+
+    /**
+     * Orders two units in the same network by walking their master chains from the top: a master comes before
+     * its dependents, sibling branches go by unit id, and peers with identical chains fall back to the base sorter.
+     */
+    private static int compareWithinNetwork(Entity a, Entity b, Comparator<Entity> baseSorter) {
+        List<Entity> pathA = c3Path(a);
+        List<Entity> pathB = c3Path(b);
+        int depth = 0;
+        while ((depth < pathA.size()) && (depth < pathB.size())
+              && (pathA.get(depth).getId() == pathB.get(depth).getId())) {
+            depth++;
+        }
+        if ((depth >= pathA.size()) && (depth >= pathB.size())) {
+            return baseSorter.compare(a, b);
+        }
+        if (depth >= pathA.size()) {
+            return -1;
+        }
+        if (depth >= pathB.size()) {
+            return 1;
+        }
+        return Integer.compare(pathA.get(depth).getId(), pathB.get(depth).getId());
     }
 
     /** Guards against a malformed master chain looping while walking up to the network top. */
@@ -192,6 +213,23 @@ public abstract class MekTableSorter implements Comparator<Entity> {
         return path;
     }
 
+    /**
+     * Wraps a sorter so anything riding on another unit stays with it, whatever the sorter is ordering by.
+     * <p>
+     * A carrier and its load are one object on the board, so they should be one block in the list. Without this each
+     * unit is sorted on its own merits and drifts away from what it is riding on: sorting by tonnage puts a 10 ton
+     * carriage nowhere near the 75 ton tractor pulling it, and a DropShip nowhere near its JumpShip.
+     * </p>
+     * <p>
+     * The wrapped sorter is asked about the outermost carriers instead, so a whole stack sorts wherever its carrier
+     * would. Below that, units are ordered by where they sit in the stack: a carrier comes before the things it
+     * carries, and trailers follow their tractor in hitch order, which is the order they occupy hexes in.
+     * </p>
+     *
+     * @param baseSorter the sorter the player chose
+     *
+     * @return a sorter that applies the player's choice to whole carrier stacks
+     */
     public static Comparator<Entity> keepingCarriedUnitsTogether(Comparator<Entity> baseSorter) {
         return (a, b) -> {
             List<Entity> pathA = carrierPath(a);

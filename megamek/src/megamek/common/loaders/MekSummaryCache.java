@@ -913,7 +913,7 @@ public class MekSummaryCache {
         if (ms.isSupport()) {
             ms.setWeightClass(EntityWeightClass.getSupportWeightClass(ms.getTons(), ms.getUnitSubType()));
         } else {
-            double weightClassWeight = ms.isBattleArmor() ? ms.getSuitWeight() : ms.getTons();
+            double weightClassWeight = e.isBattleArmor() ? ms.getSuitWeight() : ms.getTons();
             ms.setWeightClass(EntityWeightClass.getWeightClass(weightClassWeight, ms.getUnitType()));
         }
 

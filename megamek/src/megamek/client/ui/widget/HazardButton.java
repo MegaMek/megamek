@@ -76,6 +76,13 @@ public class HazardButton extends MegaMekButton {
     private boolean hidingTextForTint;
 
     /**
+     * The tinted face and frame, kept between repaints. Tinting walks every pixel, so it is done once per size and
+     * pressed state rather than on every hover or expose; the skin's own images do not change otherwise.
+     */
+    private final TintedImage tintedFace = new TintedImage();
+    private final TintedImage tintedFrame = new TintedImage();
+
+    /**
      * @param text the button's label
      */
     public HazardButton(String text) {
@@ -90,7 +97,7 @@ public class HazardButton extends MegaMekButton {
 
     @Override
     protected void paintComponent(Graphics graphics) {
-        paintTinted(graphics, super::paintComponent);
+        paintTinted(graphics, tintedFace, super::paintComponent);
 
         JLabel textLabel = new JLabel(super.getText(), SwingConstants.CENTER);
         textLabel.setSize(getSize());
@@ -101,7 +108,7 @@ public class HazardButton extends MegaMekButton {
 
     @Override
     protected void paintBorder(Graphics graphics) {
-        paintTinted(graphics, super::paintBorder);
+        paintTinted(graphics, tintedFrame, super::paintBorder);
     }
 
     private Color labelColor() {
@@ -112,17 +119,35 @@ public class HazardButton extends MegaMekButton {
     }
 
     /**
-     * Runs the given painter into an offscreen image, remaps every pixel onto the red ramp, and draws the result.
+     * Draws the tinted version of what the given painter paints, rebuilding it only when the button's size or pressed
+     * state has changed since it was last built.
      *
      * @param graphics the graphics to draw the tinted result on
-     * @param painter  the parent's painting step, handed an offscreen graphics
+     * @param cache    where the tinted image for this painter is kept between repaints
+     * @param painter  the parent's painting step, handed an offscreen graphics when a rebuild is needed
      */
-    private void paintTinted(Graphics graphics, Consumer<Graphics> painter) {
+    private void paintTinted(Graphics graphics, TintedImage cache, Consumer<Graphics> painter) {
         int width = getWidth();
         int height = getHeight();
         if ((width <= 0) || (height <= 0)) {
             return;
         }
+        if (!cache.matches(width, height, isPressed)) {
+            cache.update(renderTinted(width, height, painter), isPressed);
+        }
+        graphics.drawImage(cache.image, 0, 0, null);
+    }
+
+    /**
+     * Runs the given painter into a fresh offscreen image and remaps every pixel onto the hazard ramp.
+     *
+     * @param width   the button's current width
+     * @param height  the button's current height
+     * @param painter the parent's painting step
+     *
+     * @return the tinted image
+     */
+    private BufferedImage renderTinted(int width, int height, Consumer<Graphics> painter) {
         BufferedImage offscreen = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D offscreenGraphics = offscreen.createGraphics();
         try {
@@ -138,7 +163,7 @@ public class HazardButton extends MegaMekButton {
             pixels[index] = tint(pixels[index]);
         }
         offscreen.setRGB(0, 0, width, height, pixels, 0, width);
-        graphics.drawImage(offscreen, 0, 0, null);
+        return offscreen;
     }
 
     /**
@@ -180,5 +205,21 @@ public class HazardButton extends MegaMekButton {
         }
         return (alpha << 24) | (Math.min(255, tintedRed) << 16) | (Math.min(255, tintedGreen) << 8)
               | Math.min(255, tintedBlue);
+    }
+
+    /** A tinted image together with the size and pressed state it was built for. */
+    private static class TintedImage {
+        private BufferedImage image;
+        private boolean pressed;
+
+        boolean matches(int width, int height, boolean isPressed) {
+            return (image != null) && (image.getWidth() == width) && (image.getHeight() == height)
+                  && (pressed == isPressed);
+        }
+
+        void update(BufferedImage newImage, boolean isPressed) {
+            image = newImage;
+            pressed = isPressed;
+        }
     }
 }

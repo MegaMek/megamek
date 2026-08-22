@@ -64,6 +64,17 @@ class HazardStripeBorderTest {
     }
 
     @Test
+    void aZeroThicknessIsClampedToOnePixelSoPaintingTerminates() {
+        HazardStripeBorder border = new HazardStripeBorder(0);
+        assertEquals(new Insets(1, 1, 1, 1), border.getBorderInsets(new JPanel()));
+
+        BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = image.createGraphics();
+        border.paintBorder(new JPanel(), graphics, 0, 0, WIDTH, HEIGHT);
+        graphics.dispose();
+    }
+
+    @Test
     void paintsTheFrameAndLeavesTheInsideAlone() {
         BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = image.createGraphics();

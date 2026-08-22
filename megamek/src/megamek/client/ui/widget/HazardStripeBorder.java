@@ -70,10 +70,11 @@ public class HazardStripeBorder extends AbstractBorder {
     }
 
     /**
-     * @param unscaledThickness the stripe width in unscaled pixels; the GUI scale is applied here
+     * @param unscaledThickness the stripe width in unscaled pixels; the GUI scale is applied here, and the result is
+     *                          never less than one pixel, since the stripe loop steps by the thickness
      */
     public HazardStripeBorder(int unscaledThickness) {
-        thickness = UIUtil.scaleForGUI(unscaledThickness);
+        thickness = Math.max(1, UIUtil.scaleForGUI(unscaledThickness));
     }
 
     @Override

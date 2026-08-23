@@ -71,6 +71,15 @@ public class HexEditSpec implements Serializable {
         private final Map<Integer, Integer> terrainLevels = new LinkedHashMap<>();
 
         /**
+         * How much punishment each terrain can still take, as terrain type to terrain factor.
+         *
+         * <p>This is separate from the level because it says nothing about what the terrain is: woods that have been
+         * shelled but not yet flattened are still heavy woods, with less of them left to burn or blast away. A
+         * terrain named here but not in this map is left at the factor the rules give it when it is new.</p>
+         */
+        private final Map<Integer, Integer> terrainFactors = new LinkedHashMap<>();
+
+        /**
          * The level the hex should end up at, or {@code null} to leave it at the level it already has.
          *
          * <p>A hex's level and the depth of water in it are two different numbers. On a dam board a reservoir hex
@@ -92,6 +101,21 @@ public class HexEditSpec implements Serializable {
          */
         public void setTerrain(int terrainType, int terrainLevel) {
             terrainLevels.put(terrainType, terrainLevel);
+        }
+
+        /** @return how much punishment each terrain can still take, as terrain type to terrain factor */
+        public Map<Integer, Integer> getTerrainFactors() {
+            return terrainFactors;
+        }
+
+        /**
+         * Says how much punishment one of the hex's terrains can still take, leaving what that terrain is alone.
+         *
+         * @param terrainType   The terrain, from {@link megamek.common.units.Terrains}
+         * @param terrainFactor The terrain factor to leave it at
+         */
+        public void setTerrainFactor(int terrainType, int terrainFactor) {
+            terrainFactors.put(terrainType, terrainFactor);
         }
 
         /** @return the level this hex should end up at, or {@code null} to leave it where it is */
@@ -120,12 +144,14 @@ public class HexEditSpec implements Serializable {
             if (!(other instanceof HexPaint otherPaint)) {
                 return false;
             }
-            return terrainLevels.equals(otherPaint.terrainLevels) && Objects.equals(level, otherPaint.level);
+            return terrainLevels.equals(otherPaint.terrainLevels)
+                  && terrainFactors.equals(otherPaint.terrainFactors)
+                  && Objects.equals(level, otherPaint.level);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(terrainLevels, level);
+            return Objects.hash(terrainLevels, terrainFactors, level);
         }
     }
 

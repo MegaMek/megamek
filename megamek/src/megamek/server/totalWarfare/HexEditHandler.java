@@ -278,7 +278,14 @@ public class HexEditHandler extends AbstractTWRuleHandler {
         }
         hex.removeAllTerrains();
         for (Map.Entry<Integer, Integer> terrain : paint.getTerrainLevels().entrySet()) {
-            hex.addTerrain(new Terrain(terrain.getKey(), terrain.getValue()));
+            Terrain written = new Terrain(terrain.getKey(), terrain.getValue());
+            // a new terrain starts at the factor the rules give it, so this only speaks up when the gamemaster
+            // asked for something else - woods already shelled halfway down, say
+            Integer terrainFactor = paint.getTerrainFactors().get(terrain.getKey());
+            if (terrainFactor != null) {
+                written.setTerrainFactor(terrainFactor);
+            }
+            hex.addTerrain(written);
         }
         for (Terrain structure : structures) {
             hex.addTerrain(structure);
@@ -336,9 +343,22 @@ public class HexEditHandler extends AbstractTWRuleHandler {
         }
         List<String> described = new ArrayList<>();
         for (Map.Entry<Integer, Integer> terrain : paint.getTerrainLevels().entrySet()) {
-            described.add(Terrains.getDisplayName(terrain.getKey(), terrain.getValue()));
+            described.add(describeOneTerrain(paint, terrain.getKey(), terrain.getValue()));
         }
         return String.join(", ", described) + levelPart;
+    }
+
+    /**
+     * @return one terrain in words, naming its terrain factor only when the gamemaster asked for one other than the
+     *       factor the rules give that terrain when it is new
+     */
+    private static String describeOneTerrain(HexEditSpec.HexPaint paint, int terrainType, int terrainLevel) {
+        String name = Terrains.getDisplayName(terrainType, terrainLevel);
+        Integer terrainFactor = paint.getTerrainFactors().get(terrainType);
+        if ((terrainFactor == null) || (terrainFactor == Terrains.getTerrainFactor(terrainType, terrainLevel))) {
+            return name;
+        }
+        return name + " (terrain factor " + terrainFactor + ")";
     }
 
     /**

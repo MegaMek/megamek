@@ -83,11 +83,11 @@ class GameMasterCommandMenuTest {
         board = BoardLoader.initializeBoard(BOARD_DATA);
     }
 
-    /** @return the long names of the commands offered on the given hex */
+    /** @return the names of the commands offered on the given hex */
     private List<String> offeredOn(Coords coords) {
         return GameMasterCommandMenu.commandsFor(coords, board)
               .stream()
-              .map(ClientServerCommand::getLongName)
+              .map(ClientServerCommand::getName)
               .toList();
     }
 
@@ -153,27 +153,25 @@ class GameMasterCommandMenuTest {
 
     @Test
     void buildingsAreNotAmongTheseCommands() {
-        assertFalse(offeredOn(BUILDING_HEX).contains("Modify Building"),
+        assertFalse(offeredOn(BUILDING_HEX).contains("building"),
               "buildings have their own dialog, opened from the map menu, not a generated form");
     }
 
     @Test
-    void modifyTerrainIsOnlyOfferedWhereSomethingCanBeModified() {
-        assertTrue(offeredOn(WOODS_HEX).contains("Modify Terrain"),
-              "woods carry a terrain factor, so they can be modified");
-        assertFalse(offeredOn(BARE_HEX).contains("Modify Terrain"),
-              "a bare hex holds no terrain with a factor to set");
+    void theTerrainFactorIsNotAmongTheseCommands() {
+        assertFalse(offeredOn(WOODS_HEX).contains("modifyterrain"),
+              "the terrain factor is set in the Change Terrain dialog, beside the terrain it belongs to");
     }
 
     @Test
     void aCommandThatWorksAnywhereIsOfferedOnABareHex() {
-        assertTrue(offeredOn(BARE_HEX).contains("Start a Fire"),
+        assertTrue(offeredOn(BARE_HEX).contains("firestarter"),
               "a hex can be set alight whatever is or is not in it");
     }
 
     @Test
     void changeTerrainIsNotAmongTheseCommands() {
-        assertFalse(offeredOn(BARE_HEX).contains("Change Terrain"),
+        assertFalse(offeredOn(BARE_HEX).contains("changeterrain"),
               "changing what a hex is made of has its own dialog, opened from the map menu, not a generated form");
     }
 }

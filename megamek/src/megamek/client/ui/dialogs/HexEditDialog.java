@@ -131,6 +131,9 @@ public class HexEditDialog extends JDialog {
     /** The highest level worth offering for a terrain whose levels are open-ended, such as water depth. */
     private static final int HIGHEST_LEVEL_OFFERED = 10;
 
+    /** Above the sturdiest terrain in the rules, which is rough ground and pavement at 200. */
+    private static final int HIGHEST_TERRAIN_FACTOR = 500;
+
     /** Water is the one terrain whose level starts at zero, because depth 0 water is a legal thing to have. */
     private static final int LOWEST_WATER_DEPTH = 0;
 
@@ -174,9 +177,15 @@ public class HexEditDialog extends JDialog {
     private final JComboBox<TerrainChoice> terrainChooser = new JComboBox<>();
     private final JComboBox<LevelChoice> levelChooser = new JComboBox<>();
     private final JSpinner hexLevelSpinner = new JSpinner(new SpinnerNumberModel(0, -30, 30, 1));
+    private final JSpinner terrainFactorSpinner =
+          new JSpinner(new SpinnerNumberModel(0, 0, HIGHEST_TERRAIN_FACTOR, 5));
     private final JCheckBox changeGroundLevelBox = new JCheckBox(Messages.getString("HexEditDialog.changeGround"));
     private final JLabel groundLabel = new JLabel();
     private final JLabel legalityLabel = new JLabel();
+
+    /** Says what the rules give the chosen terrain when it is new, so a changed factor can be seen as changed. */
+    private final JLabel bookFactorLabel = new JLabel();
+
     private final JButton applyButton = new JButton(Messages.getString("HexEditDialog.execute"));
     private final JButton undoButton = new JButton(Messages.getString("HexEditDialog.undo"));
     private final JToggleButton paintOnMapButton = new JToggleButton(Messages.getString("HexEditDialog.paintOnMap"));
@@ -387,7 +396,12 @@ public class HexEditDialog extends JDialog {
             refreshLevelChooser();
             brushChanged();
         });
-        levelChooser.addActionListener(event -> brushChanged());
+        levelChooser.addActionListener(event -> {
+            if (!isRebuildingLevelChooser) {
+                resetTerrainFactorToBookValue();
+            }
+            brushChanged();
+        });
         hexLevelSpinner.addChangeListener(event -> brushChanged());
 
         brushSizeChooser.setToolTipText(Messages.getString("HexEditDialog.brushSize.tooltip"));
@@ -404,6 +418,15 @@ public class HexEditDialog extends JDialog {
         terrainRow.add(new JLabel(Messages.getString("HexEditDialog.levelLabel")));
         terrainRow.add(levelChooser);
         panel.add(terrainRow);
+
+        terrainFactorSpinner.setToolTipText(Messages.getString("HexEditDialog.terrainFactor.tooltip"));
+        terrainFactorSpinner.addChangeListener(event -> brushChanged());
+
+        JPanel factorRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        factorRow.add(new JLabel(Messages.getString("HexEditDialog.terrainFactorLabel")));
+        factorRow.add(terrainFactorSpinner);
+        factorRow.add(bookFactorLabel);
+        panel.add(factorRow);
 
         changeGroundLevelBox.setToolTipText(Messages.getString("HexEditDialog.changeGround.tooltip"));
         changeGroundLevelBox.addActionListener(event -> {
@@ -497,6 +520,7 @@ public class HexEditDialog extends JDialog {
         LevelChoice level = (LevelChoice) levelChooser.getSelectedItem();
         if ((terrain != null) && (terrain.terrainType() != BARE_GROUND) && (level != null)) {
             paint.setTerrain(terrain.terrainType(), level.level());
+            paint.setTerrainFactor(terrain.terrainType(), (int) terrainFactorSpinner.getValue());
         }
         return paint;
     }
@@ -648,9 +672,31 @@ public class HexEditDialog extends JDialog {
         isRebuildingLevelChooser = true;
         try {
             rebuildLevelChooser();
+            resetTerrainFactorToBookValue();
         } finally {
             isRebuildingLevelChooser = false;
         }
+    }
+
+    /**
+     * Puts the terrain factor back to what the rules give the chosen terrain when it is new.
+     *
+     * <p>Called whenever the terrain or its level changes, because the book value moves with both - light woods
+     * start at 50 where heavy woods start at 90. A gamemaster who wants woods already shelled halfway down types
+     * over it; one who does not gets exactly what painting fresh terrain has always given them.</p>
+     */
+    private void resetTerrainFactorToBookValue() {
+        TerrainChoice terrain = (TerrainChoice) terrainChooser.getSelectedItem();
+        LevelChoice level = (LevelChoice) levelChooser.getSelectedItem();
+        boolean hasTerrain = (terrain != null) && (terrain.terrainType() != BARE_GROUND) && (level != null);
+        terrainFactorSpinner.setEnabled(hasTerrain);
+        if (!hasTerrain) {
+            bookFactorLabel.setText(null);
+            return;
+        }
+        int bookFactor = Terrains.getTerrainFactor(terrain.terrainType(), level.level());
+        terrainFactorSpinner.setValue(bookFactor);
+        bookFactorLabel.setText(Messages.getString("HexEditDialog.terrainFactor.book", bookFactor));
     }
 
     /** Fills the level chooser for the terrain the brush is set to. */

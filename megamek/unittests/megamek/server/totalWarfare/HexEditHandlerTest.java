@@ -593,4 +593,54 @@ class HexEditHandlerTest {
         assertEquals(2, board.getHex(WATER_HEX).getLevel(), "the ground should have been raised");
         assertEquals(0, board.getHex(WATER_HEX).depth(), "and the water should be gone");
     }
+
+    /** @return an edit that paints one hex with a terrain held at a particular terrain factor */
+    private HexEditSpec paintWithFactor(Coords hex, int terrainType, int level, int terrainFactor) {
+        HexEditSpec.HexPaint paint = new HexEditSpec.HexPaint();
+        paint.setTerrain(terrainType, level);
+        paint.setTerrainFactor(terrainType, terrainFactor);
+        HexEditSpec spec = new HexEditSpec(board.getBoardId());
+        spec.paint(hex, paint);
+        return spec;
+    }
+
+    @Test
+    void aPaintedTerrainCanBeGivenATerrainFactorOfItsOwn() {
+        // what the Modify Terrain command used to do, now reachable from the brush: heavy woods already shelled
+        // most of the way down, rather than a fresh stand at the full 90
+        String refusal = hexEditHandler.applyHexEdit(paintWithFactor(BARE_HEX, Terrains.WOODS, 2, 20), GAMEMASTER);
+
+        assertNull(refusal, "painting weakened woods should be allowed");
+        assertEquals(2, board.getHex(BARE_HEX).terrainLevel(Terrains.WOODS), "the woods should be heavy woods");
+        assertEquals(20, board.getHex(BARE_HEX).getTerrain(Terrains.WOODS).getTerrainFactor(),
+              "and should stand at the factor that was asked for, not the one the rules give new woods");
+    }
+
+    @Test
+    void aPaintedTerrainWithNoFactorGivenStartsAtTheBookValue() {
+        HexEditSpec spec = new HexEditSpec(board.getBoardId());
+        spec.paint(BARE_HEX, paintOf(Terrains.WOODS, 2));
+
+        hexEditHandler.applyHexEdit(spec, GAMEMASTER);
+
+        assertEquals(Terrains.getTerrainFactor(Terrains.WOODS, 2),
+              board.getHex(BARE_HEX).getTerrain(Terrains.WOODS).getTerrainFactor(),
+              "an edit that says nothing about the factor must leave fresh terrain as the rules make it");
+    }
+
+    @Test
+    void theFactorFollowsTheTerrainItWasGivenFor() {
+        // the factor is keyed by terrain, so one meant for woods must not land on the water beside it
+        HexEditSpec spec = paintWithFactor(BARE_HEX, Terrains.WOODS, 2, 20);
+        spec.getPaintedHexes().get(BARE_HEX).setTerrain(Terrains.WATER, 1);
+
+        String refusal = hexEditHandler.applyHexEdit(spec, GAMEMASTER);
+
+        assertNull(refusal, "woods standing in shallow water is a legal hex");
+        assertEquals(20, board.getHex(BARE_HEX).getTerrain(Terrains.WOODS).getTerrainFactor(),
+              "the woods should hold the factor it was given");
+        assertEquals(Terrains.getTerrainFactor(Terrains.WATER, 1),
+              board.getHex(BARE_HEX).getTerrain(Terrains.WATER).getTerrainFactor(),
+              "and the water should be left as the rules make it");
+    }
 }

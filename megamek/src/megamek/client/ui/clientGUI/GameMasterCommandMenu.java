@@ -53,7 +53,6 @@ import megamek.server.commands.DisasterCommand;
 import megamek.server.commands.FirefightCommand;
 import megamek.server.commands.FirestarterCommand;
 import megamek.server.commands.FirestormCommand;
-import megamek.server.commands.ModifyTerrainCommand;
 import megamek.server.commands.NoFiresCommand;
 import megamek.server.commands.OrbitalBombardmentCommand;
 import megamek.server.commands.RemoveSmokeCommand;
@@ -172,20 +171,18 @@ public final class GameMasterCommandMenu {
      * Creates the Game Master commands that act on one hex. Each takes an X and a Y coordinate, which the dialog fills
      * in from the hex that was right-clicked, so these are only offered from the board context menu.
      *
-     * <p>The order groups the menu by what each command does rather than listing them arbitrarily: the two that
-     * modify what is already in the hex without changing it come first and stay together, then the ones that do
-     * something to it. Changing what the hex is made of is not here - it has a dialog of its own, put on the menu by
-     * {@link MapMenu}, because the legal choices depend on what the hex already holds and a generated form cannot
-     * know that.</p>
+     * <p>What is left here is the commands that do something to a hex. Changing what a hex is made of, and how much
+     * punishment that terrain can still take, are both in the Change Terrain dialog instead, which {@link MapMenu}
+     * puts on the menu: the legal choices depend on what the hex already holds, and a generated form cannot know
+     * that. Buildings likewise have a dialog of their own.</p>
      *
-     * <p>Each is paired with what the hex must hold for it to be worth offering. The three that change or attack the
-     * hex work on any hex; the ones that modify something already there need that something to be there.</p>
+     * <p>Each is paired with what the hex must hold for it to be worth offering, so that a command whose subject is
+     * not in the hex is not offered at all.</p>
      *
      * @return The hex-targeted Game Master commands, in menu order
      */
     private static List<HexCommand> hexTargetedCommands() {
         return List.of(
-              new HexCommand(new ModifyTerrainCommand(null, null), GameMasterCommandMenu::hasModifiableTerrain),
               new HexCommand(new FirestarterCommand(null, null), GameMasterCommandMenu::anyHex),
               new HexCommand(new FirefightCommand(null, null), GameMasterCommandMenu::hasFire),
               new HexCommand(new OrbitalBombardmentCommand(null, null), GameMasterCommandMenu::anyHex));
@@ -196,31 +193,9 @@ public final class GameMasterCommandMenu {
         return true;
     }
 
-    /** @return {@code true} if a building stands in the hex, whether it is part of the map or a unit in its own right */
-    private static boolean hasBuilding(Board board, Coords coords) {
-        return board.getBuildingAt(coords) != null;
-    }
-
     /** @return {@code true} if the hex holds fire to put out */
     private static boolean hasFire(Board board, Coords coords) {
         Hex hex = board.getHex(coords);
         return (hex != null) && hex.containsTerrain(Terrains.FIRE);
-    }
-
-    /**
-     * @return {@code true} if the hex holds terrain that carries a terrain factor, which is the only thing Modify
-     *       Terrain can act on
-     */
-    private static boolean hasModifiableTerrain(Board board, Coords coords) {
-        Hex hex = board.getHex(coords);
-        if (hex == null) {
-            return false;
-        }
-        for (ModifyTerrainCommand.ModifiableTerrain terrain : ModifyTerrainCommand.ModifiableTerrain.values()) {
-            if (hex.containsTerrain(terrain.terrainType())) {
-                return true;
-            }
-        }
-        return false;
     }
 }

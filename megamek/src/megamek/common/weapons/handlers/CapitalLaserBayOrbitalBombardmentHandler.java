@@ -232,9 +232,16 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
         reports.addElement(report);
         Report.addNewline(reports);
 
+        // The incoming marker is meant for the firing player's team only. A null owner makes
+        // SpecialHexDisplay.isObscured() report the marker as visible to everyone, which would show the aim hex to the
+        // whole game under double-blind, so it is not drawn when the firer cannot be resolved - a team that has left
+        // the game has nobody left to warn.
         Player owner = game.getPlayer(aaa.getPlayerId());
+        if (owner == null) {
+            return;
+        }
         int landingRound = game.getRoundCount() + aaa.getTurnsTilHit();
-        String message = "Orbital Bombardment incoming, landing this round, fired by " + firingPlayerName(game, aaa);
+        String message = "Orbital Bombardment incoming, landing this round, fired by " + owner.getName();
         SpecialHexDisplay incomingMarker = SpecialHexDisplay.createIncomingFire(owner, landingRound, message);
         game.getBoard(target).addSpecialHexDisplay(target.getPosition(), incomingMarker);
     }

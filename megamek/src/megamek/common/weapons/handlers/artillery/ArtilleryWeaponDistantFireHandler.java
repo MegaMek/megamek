@@ -43,6 +43,7 @@ import megamek.client.ui.Messages;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.LosEffects;
+import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.SpecialHexDisplay.Type;
@@ -123,7 +124,6 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
         if (!cares(phase)) {
             return true;
         }
-        String artyMsg;
         ArtilleryAttackAction artilleryAttackAction = (ArtilleryAttackAction) weaponAttackAction;
         if (phase.isTargeting()) {
             if (!handledAmmoAndReport) {
@@ -144,17 +144,23 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
                 // "Shot, over" - the battery announces the round is on the way, characterised by fire type
                 reportShot();
 
-                artyMsg = "Artillery fire Incoming, landing on round "
-                      + (game.getRoundCount() + artilleryAttackAction.getTurnsTilHit())
-                      + ", fired by "
-                      + ArtilleryHandlerHelper.firingPlayerName(game, artilleryAttackAction);
-                if (artilleryAttackAction.getTarget(game) != null) {
-                    game.getBoard(artilleryAttackAction.getTarget(game).getBoardId()).addSpecialHexDisplay(
-                          artilleryAttackAction.getTarget(game).getPosition(),
+                // The incoming marker is meant for the firing player's team only. A null owner makes
+                // SpecialHexDisplay.isObscured() report the marker as visible to everyone, which would show the aim
+                // hex to the whole game under double-blind, so it is not drawn when the firer cannot be resolved -
+                // a team that has left the game has nobody left to warn.
+                Player firingPlayer = game.getPlayer(artilleryAttackAction.getPlayerId());
+                Targetable incomingTarget = artilleryAttackAction.getTarget(game);
+                if ((firingPlayer != null) && (incomingTarget != null)) {
+                    int landingRound = game.getRoundCount() + artilleryAttackAction.getTurnsTilHit();
+                    String artyMsg = "Artillery fire Incoming, landing on round "
+                          + landingRound
+                          + ", fired by "
+                          + firingPlayer.getName();
+                    game.getBoard(incomingTarget.getBoardId()).addSpecialHexDisplay(
+                          incomingTarget.getPosition(),
                           new SpecialHexDisplay(
-                                Type.ARTILLERY_INCOMING, game
-                                .getRoundCount() + artilleryAttackAction.getTurnsTilHit(),
-                                game.getPlayer(artilleryAttackAction.getPlayerId()), artyMsg,
+                                Type.ARTILLERY_INCOMING, landingRound,
+                                firingPlayer, artyMsg,
                                 SpecialHexDisplay.SHD_VISIBLE_TO_TEAM));
                 }
             }

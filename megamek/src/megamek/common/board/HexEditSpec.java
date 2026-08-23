@@ -37,6 +37,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import megamek.common.annotations.Nullable;
@@ -105,6 +106,26 @@ public class HexEditSpec implements Serializable {
         /** @return {@code true} when this would leave the hex with no terrain at all, which is bare ground */
         public boolean isBareGround() {
             return terrainLevels.isEmpty();
+        }
+
+        /**
+         * Two paints are the same when they would leave a hex holding the same thing. This is what lets a second
+         * click on a hex be recognised as the same stroke again rather than a new one.
+         */
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) {
+                return true;
+            }
+            if (!(other instanceof HexPaint otherPaint)) {
+                return false;
+            }
+            return terrainLevels.equals(otherPaint.terrainLevels) && Objects.equals(level, otherPaint.level);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(terrainLevels, level);
         }
     }
 

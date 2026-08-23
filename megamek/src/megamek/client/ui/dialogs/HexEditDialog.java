@@ -417,15 +417,24 @@ public class HexEditDialog extends JDialog {
         return paint;
     }
 
-    /** Lays the brush on a hex, or lifts the hex out of the edit when erasing. */
+    /**
+     * Lays the brush on a hex, or lifts the hex back out of the edit.
+     *
+     * <p>Clicking a hex that already holds what the brush would put there takes it out again, so a hex picked by
+     * mistake is undone by clicking it a second time. Clicking with a changed brush paints over it instead, which is
+     * how a hex already in the edit is given something different without having to remove it first.</p>
+     */
     private void brushHex(Coords coords) {
         if (coords == null) {
             return;
         }
-        if (eraseButton.isSelected()) {
+        HexEditSpec.HexPaint brush = currentBrush();
+        boolean isTheSameStrokeAgain = brush.equals(paintedHexes.get(coords));
+        if (eraseButton.isSelected() || isTheSameStrokeAgain) {
             paintedHexes.remove(coords);
+            LOGGER.debug("[GMHexEdit] hex {} taken back out of the edit", coords.getBoardNum());
         } else {
-            paintedHexes.put(coords, currentBrush());
+            paintedHexes.put(coords, brush);
         }
         refreshEverything();
     }

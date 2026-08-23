@@ -170,7 +170,10 @@ public class HexEditHandler extends AbstractTWRuleHandler {
             gameManager.sendChangedHex(hexCoords, spec.getBoardId());
         }
         reportHexEdit(spec, gamemasterName);
-        LOGGER.info("[GMTerrain] {} painted {} hex(es)", gamemasterName, spec.getPaintedHexes().size());
+        // what was painted, not just how much of it: a playtest report is "I changed it and it did not change", and
+        // a line that only counts hexes cannot say whether the server thought it was laying water or bare ground
+        LOGGER.info("[GMTerrain] {} painted {} hex(es): {}",
+              gamemasterName, spec.getPaintedHexes().size(), describeEdit(spec));
         return null;
     }
 
@@ -270,6 +273,34 @@ public class HexEditHandler extends AbstractTWRuleHandler {
         }
     }
 
+    /**
+     * Groups the hexes an edit names by what each of them will be left holding.
+     *
+     * <p>Painted hexes need not match one another, so this is what lets both the report and the log say "these five
+     * hexes became water, that one became bare ground" rather than one line claiming they all became the same.</p>
+     *
+     * @param spec The edit
+     *
+     * @return what each group of hexes will hold, to the hex numbers in it
+     */
+    private static Map<String, List<String>> hexNumbersByTerrain(HexEditSpec spec) {
+        Map<String, List<String>> hexesByTerrain = new LinkedHashMap<>();
+        for (Map.Entry<Coords, HexEditSpec.HexPaint> painted : spec.getPaintedHexes().entrySet()) {
+            hexesByTerrain.computeIfAbsent(describeTerrain(painted.getValue()), terrain -> new ArrayList<>())
+                  .add(String.valueOf(painted.getKey().getBoardNum()));
+        }
+        return hexesByTerrain;
+    }
+
+    /** @return every hex the edit names and what it will be left holding, on one line, for the log */
+    private static String describeEdit(HexEditSpec spec) {
+        List<String> described = new ArrayList<>();
+        for (Map.Entry<String, List<String>> group : hexNumbersByTerrain(spec).entrySet()) {
+            described.add(String.join(", ", group.getValue()) + " becomes " + group.getKey());
+        }
+        return String.join("; ", described);
+    }
+
     /** @return what one hex is left holding, in words, for the report and the log */
     private static String describeTerrain(HexEditSpec.HexPaint paint) {
         String levelPart = (paint.getLevel() == null) ? "" : " at level " + paint.getLevel();
@@ -289,12 +320,7 @@ public class HexEditHandler extends AbstractTWRuleHandler {
      * they all became the same.
      */
     private void reportHexEdit(HexEditSpec spec, String gamemasterName) {
-        Map<String, List<String>> hexesByTerrain = new LinkedHashMap<>();
-        for (Map.Entry<Coords, HexEditSpec.HexPaint> painted : spec.getPaintedHexes().entrySet()) {
-            hexesByTerrain.computeIfAbsent(describeTerrain(painted.getValue()), terrain -> new ArrayList<>())
-                  .add(String.valueOf(painted.getKey().getBoardNum()));
-        }
-        for (Map.Entry<String, List<String>> group : hexesByTerrain.entrySet()) {
+        for (Map.Entry<String, List<String>> group : hexNumbersByTerrain(spec).entrySet()) {
             Report report = new Report(REPORT_HEXES_EDITED, Report.PUBLIC);
             report.add(gamemasterName);
             report.add(group.getKey());

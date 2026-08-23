@@ -26996,6 +26996,10 @@ public class TWGameManager extends AbstractGameManager {
         }
         String refusal = hexEditHandler().applyHexEdit(spec, sender.getName());
         if (refusal != null) {
+            // at INFO, not DEBUG: a playtest report is "I changed the terrain and nothing happened", and the shipped
+            // logging config runs at INFO, so a refusal logged any lower leaves no trace of why at all
+            LOGGER.info("[GMTerrain] {}: edit of {} hex(es) refused - {}",
+                  sender.getName(), spec.getCoords().size(), refusal);
             // a toast as well as chat: the dialog closes when the edit is sent, so a refusal that only went to the
             // chat log would leave the gamemaster looking at an unchanged board with no visible reason why
             String message = Messages.getString("Gamemaster.cmd.changeTerrain.refused", refusal);
@@ -27027,6 +27031,10 @@ public class TWGameManager extends AbstractGameManager {
         }
         String refusal = buildingEditHandler().applyBuildingSpec(spec, sender.getName());
         if (refusal != null) {
+            // at INFO for the same reason as the terrain edit above: the shipped logging config runs at INFO, so a
+            // refusal logged any lower cannot answer "why did nothing happen" from a playtest log
+            LOGGER.info("[GMBuilding] {}: edit of hex {} refused - {}",
+                  sender.getName(), spec.getCoords().getBoardNum(), refusal);
             // a toast as well as chat: the dialog may have closed, and a refusal that only went to the chat log
             // would leave the gamemaster looking at an unchanged hex with no visible reason why
             String message = Messages.getString("Gamemaster.cmd.building.refused", refusal);

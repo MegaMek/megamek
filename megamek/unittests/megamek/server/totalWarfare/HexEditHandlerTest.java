@@ -48,6 +48,7 @@ import megamek.common.board.Coords;
 import megamek.common.board.HexEditSpec;
 import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
+import megamek.common.util.SerializationHelper;
 import megamek.common.units.Entity;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Terrain;
@@ -457,5 +458,43 @@ class HexEditHandlerTest {
 
         assertEquals(100, board.getHex(BUILDING_HEX).terrainLevel(Terrains.BLDG_FLUFF),
               "a drawn building must not become a generic box because the ground around it was repainted");
+    }
+
+    @Test
+    void groundFloodedByAGamemasterCanBeMadeBareAgain() {
+        hexEditHandler.applyHexEdit(floodOf(1, BARE_HEX), GAMEMASTER);
+        assertEquals(1, board.getHex(BARE_HEX).depth(), "the hex should be flooded first");
+
+        HexEditSpec bareGround = new HexEditSpec(board.getBoardId());
+        bareGround.paint(BARE_HEX, new HexEditSpec.HexPaint());
+        String refusal = hexEditHandler.applyHexEdit(bareGround, GAMEMASTER);
+
+        assertNull(refusal, "draining a hex nobody is standing in should be allowed");
+        assertEquals(0, board.getHex(BARE_HEX).depth(), "the water should be gone");
+        assertFalse(board.getHex(BARE_HEX).containsTerrain(Terrains.WATER),
+              "and no water terrain should be left behind at depth zero");
+    }
+
+    @Test
+    void groundFloodedBeforeASaveCanBeMadeBareAfterTheLoad() {
+        // A gamemaster floods hexes, saves, and comes back to it later. The board goes through XStream on the way
+        // out and back, so the hex the second session edits is a rebuilt one - this checks it can still be drained.
+        hexEditHandler.applyHexEdit(floodOf(1, BARE_HEX), GAMEMASTER);
+
+        Game reloaded = (Game) SerializationHelper.getLoadSaveGameXStream()
+              .fromXML(SerializationHelper.getSaveGameXStream().toXML(game));
+        TWGameManager reloadedManager = Mockito.spy(new TWGameManager());
+        Mockito.doNothing().when(reloadedManager).send(any(Packet.class));
+        Mockito.doNothing().when(reloadedManager).sendChangedHex(any(Coords.class), anyInt());
+        reloadedManager.setGame(reloaded);
+        Board reloadedBoard = reloaded.getBoard(board.getBoardId());
+        assertEquals(1, reloadedBoard.getHex(BARE_HEX).depth(), "the water should have survived the save");
+
+        HexEditSpec bareGround = new HexEditSpec(reloadedBoard.getBoardId());
+        bareGround.paint(BARE_HEX, new HexEditSpec.HexPaint());
+        String refusal = new HexEditHandler(reloadedManager).applyHexEdit(bareGround, GAMEMASTER);
+
+        assertNull(refusal, "a reloaded game must still let the gamemaster drain what they flooded");
+        assertEquals(0, reloadedBoard.getHex(BARE_HEX).depth(), "the water should be gone after the reload too");
     }
 }

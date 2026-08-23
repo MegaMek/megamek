@@ -119,4 +119,21 @@ class UnitRecipientsTest {
         assertEquals(List.of("Dave"), recipients.stream().map(Player::getName).toList(),
               "there is always someone to add units to, so a chooser is never left empty");
     }
+
+    @Test
+    void theListDoublesAsAPermissionCheck() {
+        // the unit list buttons act on whoever is highlighted in the player table rather than on a chooser, so they
+        // ask this the other way round: is that player someone I am allowed to act for?
+        DAVE.setGameMaster(false);
+        List<Player> allowedToAnOrdinaryPlayer = UnitRecipients.availableTo(DAVE, EVERYONE, DAVES_BOTS);
+
+        assertTrue(allowedToAnOrdinaryPlayer.contains(DAVE), "your own force is always yours to load and save");
+        assertTrue(allowedToAnOrdinaryPlayer.contains(PRINCESS_ONE), "and so is a bot you are running");
+        assertFalse(allowedToAnOrdinaryPlayer.contains(BLUE),
+              "but another player's force is not, and asking must say so rather than quietly allowing it");
+
+        DAVE.setGameMaster(true);
+        assertTrue(UnitRecipients.availableTo(DAVE, EVERYONE, DAVES_BOTS).contains(BLUE),
+              "a gamemaster may act for anyone");
+    }
 }

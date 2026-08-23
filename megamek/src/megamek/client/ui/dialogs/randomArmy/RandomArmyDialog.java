@@ -165,7 +165,6 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
         setVisible(false);
     }
 
-    /** @return the client the generated units belong to: a chosen local bot, or this player */
     /**
      * @return the player the generated units should belong to, which is the local player when the chooser holds
      *       something no longer in the game
@@ -180,6 +179,7 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
               .orElse(client.getLocalPlayer());
     }
 
+    /** @return the client the generated units belong to: a chosen local bot, or this player */
     private Client selectedClient() {
         if (playerChooser.getSelectedIndex() > 0) {
             Client botClient = (Client) clientGui.getLocalBots().get((String) playerChooser.getSelectedItem());

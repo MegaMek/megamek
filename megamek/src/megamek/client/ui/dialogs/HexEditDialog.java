@@ -43,8 +43,10 @@ import java.awt.event.WindowEvent;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -78,9 +80,13 @@ import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
 import megamek.common.RangeType;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.HexEditSpec;
 import megamek.common.board.HexEditValidator;
+import megamek.common.event.GameListener;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.common.util.Distractable;
@@ -152,12 +158,19 @@ public class HexEditDialog extends JDialog {
     private Coords hexPaintedOnOpening;
 
     /**
+     * The hexes that hex put in the edit, which is seven rather than one when the brush is set wide. Kept so that
+     * changing the brush can take them out again before laying the new footprint down.
+     */
+    private final Set<Coords> hexesPaintedOnOpening = new LinkedHashSet<>();
+
+    /**
      * Set while the level chooser is being rebuilt, because emptying and refilling it fires its listener for each
      * item. Without this the brush would be read half-built and the opened hex painted with something nobody chose.
      */
     private boolean isRebuildingLevelChooser;
 
     private final DefaultListModel<String> paintedListModel = new DefaultListModel<>();
+    private final JComboBox<BrushSize> brushSizeChooser = new JComboBox<>(BrushSize.values());
     private final JComboBox<TerrainChoice> terrainChooser = new JComboBox<>();
     private final JComboBox<LevelChoice> levelChooser = new JComboBox<>();
     private final JSpinner hexLevelSpinner = new JSpinner(new SpinnerNumberModel(0, -30, 30, 1));
@@ -193,6 +206,44 @@ public class HexEditDialog extends JDialog {
             }
         }
     };
+
+    /**
+     * Takes hold of the new phase display when the phase changes, so that a dialog left open across a phase boundary
+     * keeps painting instead of quietly handing board clicks back and ordering units about.
+     */
+    private final GameListener phaseListener = new GameListenerAdapter() {
+        @Override
+        public void gamePhaseChange(GamePhaseChangeEvent event) {
+            if (paintOnMapButton.isSelected()) {
+                setPainting(true);
+            }
+        }
+    };
+
+    /**
+     * How much of the board one click covers.
+     *
+     * <p>Flooding a valley a hex at a time is a great deal of clicking, and the ring of six around a hex is the
+     * shape terrain actually comes in - a pond, a copse, a crater. Anything wider belongs to the map editor.</p>
+     */
+    private enum BrushSize {
+        SINGLE_HEX("HexEditDialog.brushSize.single", 0),
+        SEVEN_HEXES("HexEditDialog.brushSize.seven", 1);
+
+        /** How far from the hex that was clicked the brush reaches. */
+        private final int radius;
+        private final String messageKey;
+
+        BrushSize(String messageKey, int radius) {
+            this.messageKey = messageKey;
+            this.radius = radius;
+        }
+
+        @Override
+        public String toString() {
+            return Messages.getString(messageKey);
+        }
+    }
 
     /** One terrain offered in the brush, named the way the map editor names it. */
     private record TerrainChoice(int terrainType) {
@@ -238,6 +289,13 @@ public class HexEditDialog extends JDialog {
         loadBrushFrom(coords);
         brushHex(coords);
         hexPaintedOnOpening = coords;
+        hexesPaintedOnOpening.addAll(footprintAround(coords));
+
+        // on from the start: the dialog is opened by right-clicking a hex, so the gamemaster is already picking
+        // hexes on the map, and a click that goes to the movement display instead orders a unit to walk there
+        paintOnMapButton.setSelected(true);
+        setPainting(true);
+        clientGUI.getClient().getGame().addGameListener(phaseListener);
     }
 
     /** Sets the brush to what a hex already holds, so the gamemaster starts from that hex rather than from nothing. */
@@ -331,6 +389,14 @@ public class HexEditDialog extends JDialog {
         });
         levelChooser.addActionListener(event -> brushChanged());
         hexLevelSpinner.addChangeListener(event -> brushChanged());
+
+        brushSizeChooser.setToolTipText(Messages.getString("HexEditDialog.brushSize.tooltip"));
+        brushSizeChooser.addActionListener(event -> brushChanged());
+
+        JPanel sizeRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        sizeRow.add(new JLabel(Messages.getString("HexEditDialog.brushSizeLabel")));
+        sizeRow.add(brushSizeChooser);
+        panel.add(sizeRow);
 
         JPanel terrainRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
         terrainRow.add(new JLabel(Messages.getString("HexEditDialog.terrainLabel")));
@@ -447,16 +513,44 @@ public class HexEditDialog extends JDialog {
             return;
         }
         // the gamemaster is painting for themselves now, so the hex the dialog opened on stops following the brush
-        hexPaintedOnOpening = null;
+        forgetTheHexTheDialogOpenedOn();
         HexEditSpec.HexPaint brush = currentBrush();
-        boolean isTheSameStrokeAgain = brush.equals(paintedHexes.get(coords));
+        List<Coords> footprint = footprintAround(coords);
+
+        // the whole footprint comes back out only when all of it already holds this brush, so a stroke laid exactly
+        // over one already there is taken back in a click, while one that merely overlaps another still paints
+        boolean isTheSameStrokeAgain = footprint.stream().allMatch(hex -> brush.equals(paintedHexes.get(hex)));
         if (eraseButton.isSelected() || isTheSameStrokeAgain) {
-            paintedHexes.remove(coords);
-            LOGGER.debug("[GMHexEdit] hex {} taken back out of the edit", coords.getBoardNum());
+            footprint.forEach(paintedHexes::remove);
+            LOGGER.debug("[GMHexEdit] {} hex(es) around {} taken back out of the edit",
+                  footprint.size(), coords.getBoardNum());
         } else {
-            paintedHexes.put(coords, brush);
+            footprint.forEach(hex -> paintedHexes.put(hex, brush));
         }
         refreshEverything();
+    }
+
+    /**
+     * The hexes one click covers, leaving out any that would fall off the edge of the board.
+     *
+     * @param centre The hex that was clicked
+     *
+     * @return that hex, and the ring of six around it when the brush is set to seven hexes
+     */
+    private List<Coords> footprintAround(Coords centre) {
+        BrushSize size = (BrushSize) brushSizeChooser.getSelectedItem();
+        int radius = (size == null) ? 0 : size.radius;
+        Board board = clientGUI.getClient().getGame().getBoard(boardId);
+        return centre.allAtDistanceOrLess(radius)
+              .stream()
+              .filter(board::contains)
+              .toList();
+    }
+
+    /** Stops the hex the dialog opened on following the brush, and forgets the hexes it put in the edit. */
+    private void forgetTheHexTheDialogOpenedOn() {
+        hexPaintedOnOpening = null;
+        hexesPaintedOnOpening.clear();
     }
 
     /**
@@ -473,19 +567,26 @@ public class HexEditDialog extends JDialog {
      */
     private void brushChanged() {
         refreshGroundLabel();
-        if (isRebuildingLevelChooser || (hexPaintedOnOpening == null)
-              || !paintedHexes.containsKey(hexPaintedOnOpening)) {
+        if (isRebuildingLevelChooser || (hexPaintedOnOpening == null)) {
             return;
         }
-        paintedHexes.put(hexPaintedOnOpening, currentBrush());
-        LOGGER.debug("[GMHexEdit] hex {} follows the brush, now {}",
-              hexPaintedOnOpening.getBoardNum(), describe(paintedHexes.get(hexPaintedOnOpening)));
+        // the footprint is laid down again from scratch, because the size is part of the brush: widening it has to
+        // add the ring and narrowing it again has to take the ring away
+        paintedHexes.keySet().removeAll(hexesPaintedOnOpening);
+        hexesPaintedOnOpening.clear();
+        HexEditSpec.HexPaint brush = currentBrush();
+        for (Coords hex : footprintAround(hexPaintedOnOpening)) {
+            paintedHexes.put(hex, brush);
+            hexesPaintedOnOpening.add(hex);
+        }
+        LOGGER.debug("[GMHexEdit] the {} hex(es) around {} follow the brush, now {}",
+              hexesPaintedOnOpening.size(), hexPaintedOnOpening.getBoardNum(), describe(brush));
         refreshEverything();
     }
 
     /** Lays the brush on every hex painted so far, which is how a whole area is given one terrain. */
     private void brushEveryPaintedHex() {
-        hexPaintedOnOpening = null;
+        forgetTheHexTheDialogOpenedOn();
         for (Coords coords : new ArrayList<>(paintedHexes.keySet())) {
             paintedHexes.put(coords, currentBrush());
         }
@@ -494,7 +595,7 @@ public class HexEditDialog extends JDialog {
 
     /** Lifts the most recently painted hex back out of the edit. */
     private void unpaintLastHex() {
-        hexPaintedOnOpening = null;
+        forgetTheHexTheDialogOpenedOn();
         List<Coords> painted = new ArrayList<>(paintedHexes.keySet());
         if (!painted.isEmpty()) {
             paintedHexes.remove(painted.getLast());
@@ -503,7 +604,7 @@ public class HexEditDialog extends JDialog {
     }
 
     private void clearPaintedHexes() {
-        hexPaintedOnOpening = null;
+        forgetTheHexTheDialogOpenedOn();
         paintedHexes.clear();
         refreshEverything();
     }
@@ -523,14 +624,16 @@ public class HexEditDialog extends JDialog {
             }
         });
 
-        if (painting) {
-            if ((suppressedDisplay == null) && (clientGUI.getCurrentPanel() instanceof Distractable distractable)) {
-                suppressedDisplay = distractable;
-                suppressedDisplay.setIgnoringEvents(true);
-            }
-        } else if (suppressedDisplay != null) {
+        // let go of whatever was being held before taking hold of the panel on screen now. The phase display is
+        // swapped out when the phase changes, so the panel that was told to leave clicks alone is not necessarily
+        // the one receiving them any more, and calling this again is how the new one is caught.
+        if (suppressedDisplay != null) {
             suppressedDisplay.setIgnoringEvents(false);
             suppressedDisplay = null;
+        }
+        if (painting && (clientGUI.getCurrentPanel() instanceof Distractable distractable)) {
+            suppressedDisplay = distractable;
+            suppressedDisplay.setIgnoringEvents(true);
         }
         LOGGER.debug("[GMHexEdit] painting {}", painting ? "on" : "off");
     }
@@ -713,8 +816,8 @@ public class HexEditDialog extends JDialog {
         LOGGER.info("[GMHexEdit] applying an edit of {} painted hex(es)", paintedHexes.size());
         clientGUI.getClient().sendHexEdit(spec);
         editHasBeenApplied = true;
-        setPainting(false);
-        paintOnMapButton.setSelected(false);
+        // painting stays on. Turning it off here handed the next click back to the movement display, so a
+        // gamemaster who applied a change and then clicked the map ordered a unit to walk instead of painting
         refreshLegality();
     }
 
@@ -730,6 +833,7 @@ public class HexEditDialog extends JDialog {
 
     /** Closes, making sure the board is not left listening for paint strokes that no longer have a dialog to go to. */
     private void closeDialog() {
+        clientGUI.getClient().getGame().removeGameListener(phaseListener);
         setPainting(false);
         clientGUI.boardViews().stream().findFirst().ifPresent(boardView -> {
             boardView.removeSprites(hexHighlights.values());

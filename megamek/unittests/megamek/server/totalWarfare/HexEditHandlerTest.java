@@ -510,4 +510,30 @@ class HexEditHandlerTest {
         assertNull(refusal, "asking a hex for what it already holds is legal, just pointless");
         assertEquals(2, board.getHex(WATER_HEX).depth(), "and the hex is left exactly as it was");
     }
+
+    @Test
+    void aWideBrushEditPaintsEveryHexItCovers() {
+        // the seven-hex brush sends the hex clicked and the ring around it as one edit; the two on this board that
+        // are on it stand in for that ring
+        String refusal = hexEditHandler.applyHexEdit(floodOf(1, BARE_HEX, WOODS_HEX, WATER_HEX), GAMEMASTER);
+
+        assertNull(refusal, "a wide stroke over clear ground should be allowed");
+        assertEquals(1, board.getHex(BARE_HEX).depth(), "the hex clicked should be flooded");
+        assertEquals(1, board.getHex(WOODS_HEX).depth(), "and so should its neighbours");
+        assertEquals(1, board.getHex(WATER_HEX).depth(), "including one that already held deeper water");
+    }
+
+    @Test
+    void anEditNamingAHexOffTheBoardIsRefused() {
+        // the dialog clips a wide brush at the board edge, and this is the guard behind that: a stroke that ran off
+        // the map must be refused by name rather than dropping the server into a null hex
+        HexEditSpec spec = floodOf(1, BARE_HEX);
+        spec.paint(new Coords(99, 99), paintOf(Terrains.WATER, 1));
+
+        String refusal = hexEditHandler.applyHexEdit(spec, GAMEMASTER);
+
+        assertNotNull(refusal, "a hex that is not on the board cannot be painted");
+        assertEquals(0, board.getHex(BARE_HEX).depth(),
+              "and the hex that could have been painted must be left alone, not half-applied");
+    }
 }

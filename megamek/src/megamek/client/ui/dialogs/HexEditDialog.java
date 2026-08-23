@@ -140,6 +140,23 @@ public class HexEditDialog extends JDialog {
     /** Each hex painted so far and what it will end up holding, in the order it was painted. */
     private final Map<Coords, HexEditSpec.HexPaint> paintedHexes = new LinkedHashMap<>();
 
+    /**
+     * The hex the dialog put in the edit by itself when it opened, or {@code null} once the gamemaster has painted
+     * anything of their own.
+     *
+     * <p>That hex is painted with the brush before the gamemaster has chosen anything, and the brush starts out
+     * holding whatever the hex already has - so left alone it is a stroke that changes nothing. It follows the brush
+     * until the gamemaster paints a hex themselves, at which point the brush stops reaching backwards and they are
+     * painting hex by hex as normal.</p>
+     */
+    private Coords hexPaintedOnOpening;
+
+    /**
+     * Set while the level chooser is being rebuilt, because emptying and refilling it fires its listener for each
+     * item. Without this the brush would be read half-built and the opened hex painted with something nobody chose.
+     */
+    private boolean isRebuildingLevelChooser;
+
     private final DefaultListModel<String> paintedListModel = new DefaultListModel<>();
     private final JComboBox<TerrainChoice> terrainChooser = new JComboBox<>();
     private final JComboBox<LevelChoice> levelChooser = new JComboBox<>();
@@ -220,6 +237,7 @@ public class HexEditDialog extends JDialog {
         buildUI(parent);
         loadBrushFrom(coords);
         brushHex(coords);
+        hexPaintedOnOpening = coords;
     }
 
     /** Sets the brush to what a hex already holds, so the gamemaster starts from that hex rather than from nothing. */
@@ -309,10 +327,10 @@ public class HexEditDialog extends JDialog {
         }
         terrainChooser.addActionListener(event -> {
             refreshLevelChooser();
-            refreshGroundLabel();
+            brushChanged();
         });
-        levelChooser.addActionListener(event -> refreshGroundLabel());
-        hexLevelSpinner.addChangeListener(event -> refreshGroundLabel());
+        levelChooser.addActionListener(event -> brushChanged());
+        hexLevelSpinner.addChangeListener(event -> brushChanged());
 
         JPanel terrainRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
         terrainRow.add(new JLabel(Messages.getString("HexEditDialog.terrainLabel")));
@@ -324,7 +342,7 @@ public class HexEditDialog extends JDialog {
         changeGroundLevelBox.setToolTipText(Messages.getString("HexEditDialog.changeGround.tooltip"));
         changeGroundLevelBox.addActionListener(event -> {
             hexLevelSpinner.setEnabled(changeGroundLevelBox.isSelected());
-            refreshGroundLabel();
+            brushChanged();
         });
         hexLevelSpinner.setEnabled(false);
 
@@ -428,6 +446,8 @@ public class HexEditDialog extends JDialog {
         if (coords == null) {
             return;
         }
+        // the gamemaster is painting for themselves now, so the hex the dialog opened on stops following the brush
+        hexPaintedOnOpening = null;
         HexEditSpec.HexPaint brush = currentBrush();
         boolean isTheSameStrokeAgain = brush.equals(paintedHexes.get(coords));
         if (eraseButton.isSelected() || isTheSameStrokeAgain) {
@@ -439,8 +459,33 @@ public class HexEditDialog extends JDialog {
         refreshEverything();
     }
 
+    /**
+     * Called whenever the brush is changed, to keep the opened hex in step with it.
+     *
+     * <p>The dialog opens with the right-clicked hex already in the edit, painted with the brush as it stood before
+     * the gamemaster touched anything - which is whatever that hex already holds. Changing the brush has to reach
+     * that hex, or a gamemaster who right-clicks a water hex and picks bare ground sends an edit that says the hex
+     * should be water: it is applied, it is reported as applied, and nothing on the board changes.</p>
+     *
+     * <p>It reaches no further than that one hex. Every other painted hex was put there by the gamemaster deliberately
+     * and must keep what they gave it, so that a river can be painted deep in the channel and shallow at the edge;
+     * changing the brush and pressing Brush All is how they are all given the same thing on purpose.</p>
+     */
+    private void brushChanged() {
+        refreshGroundLabel();
+        if (isRebuildingLevelChooser || (hexPaintedOnOpening == null)
+              || !paintedHexes.containsKey(hexPaintedOnOpening)) {
+            return;
+        }
+        paintedHexes.put(hexPaintedOnOpening, currentBrush());
+        LOGGER.debug("[GMHexEdit] hex {} follows the brush, now {}",
+              hexPaintedOnOpening.getBoardNum(), describe(paintedHexes.get(hexPaintedOnOpening)));
+        refreshEverything();
+    }
+
     /** Lays the brush on every hex painted so far, which is how a whole area is given one terrain. */
     private void brushEveryPaintedHex() {
+        hexPaintedOnOpening = null;
         for (Coords coords : new ArrayList<>(paintedHexes.keySet())) {
             paintedHexes.put(coords, currentBrush());
         }
@@ -449,6 +494,7 @@ public class HexEditDialog extends JDialog {
 
     /** Lifts the most recently painted hex back out of the edit. */
     private void unpaintLastHex() {
+        hexPaintedOnOpening = null;
         List<Coords> painted = new ArrayList<>(paintedHexes.keySet());
         if (!painted.isEmpty()) {
             paintedHexes.remove(painted.getLast());
@@ -457,6 +503,7 @@ public class HexEditDialog extends JDialog {
     }
 
     private void clearPaintedHexes() {
+        hexPaintedOnOpening = null;
         paintedHexes.clear();
         refreshEverything();
     }
@@ -488,8 +535,23 @@ public class HexEditDialog extends JDialog {
         LOGGER.debug("[GMHexEdit] painting {}", painting ? "on" : "off");
     }
 
-    /** Offers only the levels the brush's terrain actually has, named the way the rules name them. */
+    /**
+     * Offers only the levels the brush's terrain actually has, named the way the rules name them.
+     *
+     * <p>Emptying and refilling the chooser fires its listener once per item, each time with a brush that is only
+     * half built, so the rebuild is marked while it runs and those listeners do nothing until it is over.</p>
+     */
     private void refreshLevelChooser() {
+        isRebuildingLevelChooser = true;
+        try {
+            rebuildLevelChooser();
+        } finally {
+            isRebuildingLevelChooser = false;
+        }
+    }
+
+    /** Fills the level chooser for the terrain the brush is set to. */
+    private void rebuildLevelChooser() {
         TerrainChoice terrain = (TerrainChoice) terrainChooser.getSelectedItem();
         levelChooser.removeAllItems();
         if ((terrain == null) || (terrain.terrainType() == BARE_GROUND)) {

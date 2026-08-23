@@ -158,10 +158,15 @@ public class HexEditHandler extends AbstractTWRuleHandler {
         }
 
         rememberHexesBeforeEdit(spec);
+        int hexesActuallyChanged = 0;
         for (Map.Entry<Coords, HexEditSpec.HexPaint> painted : spec.getPaintedHexes().entrySet()) {
             Coords hexCoords = painted.getKey();
-            Hex edited = getGame().getHex(hexCoords, spec.getBoardId()).duplicate();
+            Hex original = getGame().getHex(hexCoords, spec.getBoardId());
+            Hex edited = original.duplicate();
             writeTerrain(edited, painted.getValue());
+            if (!leavesTheHexAsItWas(original, edited)) {
+                hexesActuallyChanged++;
+            }
             // put the hex back through the board rather than changing it where it lies, so the board recomputes what
             // it works out for itself - exits, inclines and cliff bottoms, foliage elevation - and records the new
             // high and low points of the map. Changing it in place left the server holding a hex the clients had
@@ -172,8 +177,15 @@ public class HexEditHandler extends AbstractTWRuleHandler {
         reportHexEdit(spec, gamemasterName);
         // what was painted, not just how much of it: a playtest report is "I changed it and it did not change", and
         // a line that only counts hexes cannot say whether the server thought it was laying water or bare ground
-        LOGGER.info("[GMTerrain] {} painted {} hex(es): {}",
-              gamemasterName, spec.getPaintedHexes().size(), describeEdit(spec));
+        LOGGER.info("[GMTerrain] {} painted {} hex(es), {} of them changed: {}",
+              gamemasterName, spec.getPaintedHexes().size(), hexesActuallyChanged, describeEdit(spec));
+        if (hexesActuallyChanged == 0) {
+            // an edit that asks each hex for exactly what it already holds is applied and reported like any other,
+            // and looks from the board like nothing happened. Saying so is the difference between a log that
+            // explains a "the tool does nothing" report and one that quietly agrees with itself
+            LOGGER.info("[GMTerrain] {}: that edit changed nothing - every hex already held what it asked for",
+                  gamemasterName);
+        }
         return null;
     }
 
@@ -271,6 +283,21 @@ public class HexEditHandler extends AbstractTWRuleHandler {
         for (Terrain structure : structures) {
             hex.addTerrain(structure);
         }
+    }
+
+    /**
+     * Whether the edit would leave a hex exactly as it already is.
+     *
+     * <p>Compared by the same text a hex is copied to the clipboard with, which covers the level, the theme and every
+     * terrain a board author writes, and leaves out the ones the board works out for itself.</p>
+     *
+     * @param original The hex as it is now
+     * @param edited   The hex as it would be after the edit
+     *
+     * @return {@code true} when the edit would change nothing about it
+     */
+    private static boolean leavesTheHexAsItWas(Hex original, Hex edited) {
+        return original.getClipboardString().equals(edited.getClipboardString());
     }
 
     /**

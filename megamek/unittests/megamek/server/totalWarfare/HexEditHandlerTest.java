@@ -497,4 +497,17 @@ class HexEditHandlerTest {
         assertNull(refusal, "a reloaded game must still let the gamemaster drain what they flooded");
         assertEquals(0, reloadedBoard.getHex(BARE_HEX).depth(), "the water should be gone after the reload too");
     }
+
+    @Test
+    void anEditAskingForWhatTheHexAlreadyHoldsIsAppliedAndChangesNothing() {
+        // the shape of the bug behind "I picked bare ground and nothing happened": the dialog sent the hex's own
+        // terrain straight back, and the server applied it, reported it and left the board looking untouched
+        HexEditSpec sameAgain = new HexEditSpec(board.getBoardId());
+        sameAgain.paint(WATER_HEX, paintOf(Terrains.WATER, 2));
+
+        String refusal = hexEditHandler.applyHexEdit(sameAgain, GAMEMASTER);
+
+        assertNull(refusal, "asking a hex for what it already holds is legal, just pointless");
+        assertEquals(2, board.getHex(WATER_HEX).depth(), "and the hex is left exactly as it was");
+    }
 }

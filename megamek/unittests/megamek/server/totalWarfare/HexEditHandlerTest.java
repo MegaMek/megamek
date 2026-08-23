@@ -721,4 +721,41 @@ class HexEditHandlerTest {
         assertEquals(2, board.getHex(BARE_HEX).depth(),
               "an undo is a board change like any other, so it needs the same guard");
     }
+
+    @Test
+    void theModifyTerrainCommandIsHeldToTheSameCapAsTheBrush() {
+        // the brush refuses a terrain factor above the table, and this is the other way into the same setting: if
+        // only one of them checked, the command would be a way round the rule
+        int aboveTheTable = Terrains.getTerrainFactor(Terrains.WOODS, 1) + 50;
+
+        String refusal = hexEditHandler.setTerrainFactor(WOODS_HEX, board.getBoardId(), Terrains.WOODS,
+              aboveTheTable, GAMEMASTER);
+
+        assertNotNull(refusal, "the command must refuse what the brush refuses");
+        assertEquals(Terrains.getTerrainFactor(Terrains.WOODS, 1),
+              board.getHex(WOODS_HEX).getTerrain(Terrains.WOODS).getTerrainFactor(),
+              "and the woods should be left at the factor they had");
+    }
+
+    @Test
+    void theModifyTerrainCommandStillWeakensTerrain() {
+        String refusal = hexEditHandler.setTerrainFactor(WOODS_HEX, board.getBoardId(), Terrains.WOODS, 10,
+              GAMEMASTER);
+
+        assertNull(refusal, "knocking woods down is the whole point of the command");
+        assertEquals(10, board.getHex(WOODS_HEX).getTerrain(Terrains.WOODS).getTerrainFactor(),
+              "and the factor asked for should be the one they are left at");
+    }
+
+    @Test
+    void theModifyTerrainCommandCanLowerAnAlreadyOverStrongHex() {
+        // a board may hold terrain above the table; the cap must not make such a hex impossible to bring down
+        board.getHex(WOODS_HEX).getTerrain(Terrains.WOODS).setTerrainFactor(400);
+
+        String refusal = hexEditHandler.setTerrainFactor(WOODS_HEX, board.getBoardId(), Terrains.WOODS, 300,
+              GAMEMASTER);
+
+        assertNull(refusal, "lowering an over-strong hex must still be allowed");
+        assertEquals(300, board.getHex(WOODS_HEX).getTerrain(Terrains.WOODS).getTerrainFactor());
+    }
 }

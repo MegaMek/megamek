@@ -297,8 +297,10 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
         report.add(spec.getCoords().getBoardNum());
         addReport(report);
 
-        LOGGER.info("[GMBuilding] {} raised a {} building in hex {} (CF {}, {} levels)",
-              gamemasterName, spec.getBuildingType(), spec.getCoords().getBoardNum(),
+        // named from what was built rather than from the spec's building type, which a fuel tank never sets and
+        // which therefore reported every tank as a medium building
+        LOGGER.info("[GMBuilding] {} raised {} in hex {} (CF {}, {} levels)",
+              gamemasterName, raised.getName(), spec.getCoords().getBoardNum(),
               spec.getConstructionFactor(), spec.getHeight());
         return null;
     }

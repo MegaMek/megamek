@@ -166,8 +166,7 @@ public final class HexEditValidator {
         List<String> problems = new ArrayList<>();
         for (int terrainType : edited.getTerrainTypes()) {
             Terrain terrain = edited.getTerrain(terrainType);
-            int highestAllowed = highestTerrainFactorFor(original, terrainType,
-                  Terrains.getTerrainFactor(terrainType, terrain.getLevel()));
+            int highestAllowed = highestTerrainFactorFor(original, terrainType, terrain.getLevel());
             if (terrain.getTerrainFactor() > highestAllowed) {
                 problems.add(Terrains.getDisplayName(terrainType, terrain.getLevel())
                       + " cannot have a terrain factor above " + highestAllowed + ".");
@@ -177,11 +176,25 @@ public final class HexEditValidator {
     }
 
     /**
-     * @return the highest terrain factor this hex may be left with for one terrain: what the rules give it, or what
-     *       the hex already has when that is higher still
+     * The highest terrain factor one terrain in a hex may be left at.
+     *
+     * <p>The rules give each terrain one value and damage only takes it down (Tactical Operations: Advanced Rules,
+     * p. 63). A hex already standing above that keeps what it has, so an over-strong hex can be brought down rather
+     * than becoming uneditable.</p>
+     *
+     * <p>Every path that sets a terrain factor asks this, so that the brush and the {@code /modifyterrain} command
+     * cannot disagree about what is allowed.</p>
+     *
+     * @param hex          The hex as it is now, which is what the allowance for an already-strong hex reads
+     * @param terrainType  The terrain, from {@link Terrains}
+     * @param terrainLevel The level the terrain will be at, which is what the rules value is read from - light woods
+     *                     and heavy woods are the same terrain at different levels and have different factors
+     *
+     * @return the highest factor that terrain may be set to in this hex
      */
-    private static int highestTerrainFactorFor(Hex original, int terrainType, int fromTheRules) {
-        Terrain existing = original.getTerrain(terrainType);
+    public static int highestTerrainFactorFor(Hex hex, int terrainType, int terrainLevel) {
+        int fromTheRules = Terrains.getTerrainFactor(terrainType, terrainLevel);
+        Terrain existing = hex.getTerrain(terrainType);
         return (existing == null) ? fromTheRules : Math.max(fromTheRules, existing.getTerrainFactor());
     }
 

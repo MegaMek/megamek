@@ -404,6 +404,15 @@ public class HexEditHandler extends AbstractTWRuleHandler {
             return "there is no " + Terrains.getName(terrainType) + " in that hex to modify";
         }
 
+        // the same cap the brush is held to, asked of the same shared rule: without this the command was a way
+        // round it, and woods set past the table would simply never burn down
+        int highestAllowed = HexEditValidator.highestTerrainFactorFor(hex, terrainType, terrain.getLevel());
+        if (terrainFactor > highestAllowed) {
+            LOGGER.info("[GMTerrain] {}: refused - {} in hex {} cannot have a terrain factor above {}",
+                  gamemasterName, Terrains.getName(terrainType), coords.getBoardNum(), highestAllowed);
+            return Terrains.getName(terrainType) + " cannot have a terrain factor above " + highestAllowed;
+        }
+
         int previousFactor = terrain.getTerrainFactor();
         terrain.setTerrainFactor(terrainFactor);
         gameManager.sendChangedHex(coords, boardId);

@@ -328,7 +328,7 @@ public class ClientCommandDialog extends JDialog {
         int startingColumn = (coords == null) ? FIRST_BOARD_COORDINATE : coords.getX() + 1;
         return new JSpinner(new SpinnerNumberModel(
               startingColumn,
-              0,
+              FIRST_BOARD_COORDINATE,
               1_000_000,
               1));
     }
@@ -344,7 +344,7 @@ public class ClientCommandDialog extends JDialog {
         int startingRow = (coords == null) ? FIRST_BOARD_COORDINATE : coords.getY() + 1;
         return new JSpinner(new SpinnerNumberModel(
               startingRow,
-              0,
+              FIRST_BOARD_COORDINATE,
               1_000_000,
               1));
     }

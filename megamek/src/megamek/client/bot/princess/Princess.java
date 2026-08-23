@@ -41,6 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import megamek.client.bot.BotClient;
+import megamek.client.bot.BotHeatEquipmentManager;
 import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.Messages;
 import megamek.client.bot.PhysicalCalculator;
@@ -117,21 +118,6 @@ public class Princess extends BotClient {
      * heat-dissipating armor. Mirrors the fire check in the server's {@code HeatResolver}.
      */
     private static final int FIRE_HEAT_PER_TURN = 5;
-
-    /**
-     * Heat an active Nova CEWS adds every turn. There is no shared constant for any of the four values
-     * below; each mirrors the literal the server's {@code HeatResolver} charges.
-     */
-    private static final int NOVA_CEWS_HEAT_PER_TURN = 2;
-
-    /** Heat an active Null Signature System adds every turn. */
-    private static final int NULL_SIGNATURE_HEAT_PER_TURN = 10;
-
-    /** Heat an active Void Signature System adds every turn. */
-    private static final int VOID_SIGNATURE_HEAT_PER_TURN = 10;
-
-    /** Heat an active Chameleon Light Polarization Shield adds every turn. */
-    private static final int CHAMELEON_SHIELD_HEAT_PER_TURN = 6;
 
     /**
      * Number of jump MP priced when asking whether a heat-stalled unit can afford to jump clear. One hex
@@ -3169,14 +3155,18 @@ public class Princess extends BotClient {
 
     /**
      * Heat this unit gains every turn whatever its pilot decides to do. Weapon heat and movement heat are
-     * choices and are therefore left out, and so is stealth armor: {@code BotClient.toggleStealth()}
-     * already switches that off in the end phase once a unit passes roughly 13 to 19 heat, so a
-     * heat-stalled unit has shed it before this question is ever asked.
+     * choices and are therefore left out, and so is every switchable heat load:
+     * {@link BotHeatEquipmentManager} sheds stealth armor, Null Signature, Void Signature, the Chameleon
+     * shield and Nova CEWS in the end phase once a unit reaches shutdown-roll heat, so a unit stalled
+     * badly enough to reach this question has already dropped them.
      * <p>
-     * What is left is engine criticals, a burning hex the unit cannot walk out of, and the concealment
-     * systems no bot code touches: Null Signature, Void Signature, Chameleon Light Polarization Shield
-     * and Nova CEWS. Their heat really does keep arriving. See MegaMek/megamek#8802, which proposes
-     * folding them into the same end-phase utility that handles stealth armor.
+     * What is left is heat the pilot genuinely cannot switch off: engine criticals, and a burning hex the
+     * unit has no movement left to walk out of.
+     * </p><p>
+     * Radical heat sinks are deliberately not credited on the dissipation side even though
+     * {@link BotHeatEquipmentManager} now activates them. They last three consecutive turns before the
+     * odds turn against the unit, and a failed roll destroys the system outright, so they are a
+     * short-term reprieve rather than a reason to believe a unit will keep cooling.
      * </p>
      *
      * @param mover          the unit being assessed
@@ -3194,22 +3184,6 @@ public class Princess extends BotClient {
                 fireHeat /= 2;
             }
             recurring += fireHeat;
-        }
-
-        if (mover.isNullSigOn()) {
-            recurring += NULL_SIGNATURE_HEAT_PER_TURN;
-        }
-
-        if (mover.isVoidSigOn()) {
-            recurring += VOID_SIGNATURE_HEAT_PER_TURN;
-        }
-
-        if (mover.isChameleonShieldOn()) {
-            recurring += CHAMELEON_SHIELD_HEAT_PER_TURN;
-        }
-
-        if (mover.hasActiveNovaCEWS()) {
-            recurring += NOVA_CEWS_HEAT_PER_TURN;
         }
 
         return recurring;

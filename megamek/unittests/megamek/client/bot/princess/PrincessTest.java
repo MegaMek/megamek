@@ -53,6 +53,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.UUID;
 
 import megamek.client.bot.princess.PathRanker.PathRankerType;
@@ -1330,10 +1331,6 @@ class PrincessTest {
             when(mockMek.getEngineCritHeat()).thenReturn(engineCritHeat);
             when(mockMek.isProne()).thenReturn(false);
             when(mockMek.getAnyTypeMaxJumpMP()).thenReturn(0);
-            when(mockMek.isNullSigOn()).thenReturn(false);
-            when(mockMek.isVoidSigOn()).thenReturn(false);
-            when(mockMek.isChameleonShieldOn()).thenReturn(false);
-            when(mockMek.hasActiveNovaCEWS()).thenReturn(false);
             when(mockMek.tracksHeat()).thenReturn(true);
             when(mockMek.getAltitude()).thenReturn(0);
             when(mockMek.getElevation()).thenReturn(0);
@@ -1457,47 +1454,20 @@ class PrincessTest {
         }
 
         @Test
-        void stealthArmorIsNotCountedBecauseTheBotAlreadyShedsIt() {
-            // Huron Warrior HUR-WO-R4N, the stealth variant: 20 dissipation against 10 engine heat.
-            // BotClient.toggleStealth already switches the armor off in the end phase once the Mek is
-            // over roughly 13 to 19 heat, and this Mek is at 25, so its 10 points are not recurring.
-            Mek mockMek = stalledMek(20, 10);
-            when(mockMek.isStealthOn()).thenReturn(true);
-            assertTrue(mockPrincess.canRecoverMobility(mockMek));
-        }
-
-        @Test
-        void nullSignatureHeatIsCounted() {
-            // Nothing in the bot switches a Null Signature System off, so its 10 points a turn keep
-            // arriving and this Mek never cools.
-            Mek mockMek = stalledMek(20, 10);
-            when(mockMek.isNullSigOn()).thenReturn(true);
-            assertFalse(mockPrincess.canRecoverMobility(mockMek));
-        }
-
-        @Test
-        void voidSignatureHeatIsCounted() {
-            // Same 10 points a turn, same lack of any bot code to switch it off.
-            Mek mockMek = stalledMek(20, 10);
-            when(mockMek.isVoidSigOn()).thenReturn(true);
-            assertFalse(mockPrincess.canRecoverMobility(mockMek));
-        }
-
-        @Test
-        void chameleonShieldHeatIsCounted() {
-            // A Chameleon Light Polarization Shield is 6 a turn, which is enough to close a 5-point gap.
-            Mek mockMek = stalledMek(15, 10);
-            when(mockMek.isChameleonShieldOn()).thenReturn(true);
-            assertFalse(mockPrincess.canRecoverMobility(mockMek));
-        }
-
-        @Test
-        void novaCewsHeatIsCounted() {
-            // Two points a turn is enough to turn a Mek that was clearing its bar by exactly one into a
-            // Mek that never cools.
-            Mek mockMek = stalledMek(11, 10);
-            when(mockMek.hasActiveNovaCEWS()).thenReturn(true);
-            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        void switchableHeatLoadsAreNotCountedBecauseTheBotShedsThem() {
+            // BotHeatEquipmentManager switches all five of these off in the end phase once a unit reaches
+            // shutdown-roll heat, and a Mek stalled badly enough to reach this question is well past that
+            // point. Counting them would abandon pilots over heat the bot has already stopped paying.
+            for (Consumer<Mek> switchOn : List.<Consumer<Mek>>of(
+                  mek -> when(mek.isStealthOn()).thenReturn(true),
+                  mek -> when(mek.isNullSigOn()).thenReturn(true),
+                  mek -> when(mek.isVoidSigOn()).thenReturn(true),
+                  mek -> when(mek.isChameleonShieldOn()).thenReturn(true),
+                  mek -> when(mek.hasActiveNovaCEWS()).thenReturn(true))) {
+                Mek mockMek = stalledMek(11, 10);
+                switchOn.accept(mockMek);
+                assertTrue(mockPrincess.canRecoverMobility(mockMek));
+            }
         }
 
         @Test

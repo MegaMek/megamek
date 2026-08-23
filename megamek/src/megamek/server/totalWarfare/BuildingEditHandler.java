@@ -153,6 +153,14 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
             gameManager.sendRemovedBuildings(oneBuilding(existing));
             return raiseBuilding(board, hex, spec, gamemasterName);
         }
+        // the fluff image is hex terrain rather than building state, so it is written here: the edit below deals with
+        // what the building is made of and what condition it is in, and would leave a changed image untouched
+        if (writeFluffImage(hex, spec)) {
+            board.setHex(spec.getCoords(), hex);
+            gameManager.sendChangedHex(spec.getCoords(), spec.getBoardId());
+            LOGGER.debug("[GMBuilding] {} set the image of the building in hex {} to {}",
+                  gamemasterName, spec.getCoords().getBoardNum(), spec.getFluffImage());
+        }
         return applyEdit(spec.getCoords(),
               new BuildingEdit(spec.getConstructionFactor(), spec.getArmor(), spec.getHeight(), spec.getBasement()),
               gamemasterName);
@@ -309,6 +317,27 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
         LOGGER.info("[GMBuilding] {} removed the building in hex {}",
               gamemasterName, spec.getCoords().getBoardNum());
         return null;
+    }
+
+    /**
+     * Writes the building's special image into the hex, which is where it lives - it chooses how the building is
+     * drawn rather than saying anything about the building itself.
+     *
+     * <p>The caller puts the hex back through the board afterwards, so that both sides of the connection end up
+     * holding a hex the board has looked over rather than one changed where it lay.</p>
+     *
+     * @return {@code true} when the hex changed and needs putting back
+     */
+    private static boolean writeFluffImage(Hex hex, BuildingEditSpec spec) {
+        int current = hex.containsTerrain(Terrains.BLDG_FLUFF) ? hex.terrainLevel(Terrains.BLDG_FLUFF) : 0;
+        if (current == spec.getFluffImage()) {
+            return false;
+        }
+        hex.removeTerrain(Terrains.BLDG_FLUFF);
+        if (spec.getFluffImage() > 0) {
+            hex.addTerrain(new Terrain(Terrains.BLDG_FLUFF, spec.getFluffImage()));
+        }
+        return true;
     }
 
     /** Writes what the building is into the hex, which is what the board reads to make the building itself. */

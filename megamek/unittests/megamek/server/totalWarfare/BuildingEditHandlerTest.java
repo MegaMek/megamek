@@ -395,4 +395,46 @@ class BuildingEditHandlerTest {
         assertNull(board.getBuildingAt(EMPTY_HEX),
               "the hex was empty before, so putting it back should leave it empty");
     }
+
+    @Test
+    void theImageIsWrittenWhenNothingElseAboutTheBuildingChanges() {
+        // the picture a building is drawn with is hex terrain, not building state, so an edit that only changes the
+        // picture goes down a path that never touches the building itself - and used to leave the hex alone with it
+        BuildingEditSpec spec = specFor(BUILDING_HEX, BuildingType.MEDIUM);
+        spec.setBuildingClass(IBuilding.HANGAR);
+        spec.setFluffImage(7);
+
+        String refusal = buildingEditHandler().applyBuildingSpec(spec, GAMEMASTER);
+
+        assertNull(refusal, "changing only the picture should be allowed");
+        assertEquals(7, board.getHex(BUILDING_HEX).terrainLevel(Terrains.BLDG_FLUFF),
+              "the hex should hold the picture that was chosen");
+    }
+
+    @Test
+    void theImageCanBeTakenBackOffAgain() {
+        BuildingEditSpec spec = specFor(BUILDING_HEX, BuildingType.MEDIUM);
+        spec.setBuildingClass(IBuilding.HANGAR);
+        spec.setFluffImage(7);
+        buildingEditHandler().applyBuildingSpec(spec, GAMEMASTER);
+
+        BuildingEditSpec plain = specFor(BUILDING_HEX, BuildingType.MEDIUM);
+        plain.setBuildingClass(IBuilding.HANGAR);
+        plain.setFluffImage(0);
+        buildingEditHandler().applyBuildingSpec(plain, GAMEMASTER);
+
+        assertFalse(board.getHex(BUILDING_HEX).containsTerrain(Terrains.BLDG_FLUFF),
+              "choosing the default picture should leave no picture terrain behind");
+    }
+
+    @Test
+    void aRebuiltBuildingKeepsTheImageItWasGiven() {
+        BuildingEditSpec spec = specFor(BUILDING_HEX, BuildingType.HEAVY);
+        spec.setFluffImage(3);
+
+        buildingEditHandler().applyBuildingSpec(spec, GAMEMASTER);
+
+        assertEquals(3, board.getHex(BUILDING_HEX).terrainLevel(Terrains.BLDG_FLUFF),
+              "a building rebuilt as another type should still be drawn with the picture that was chosen");
+    }
 }

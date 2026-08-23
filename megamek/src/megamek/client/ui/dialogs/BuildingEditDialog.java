@@ -122,9 +122,6 @@ public class BuildingEditDialog extends JDialog {
     /** Taller than any building on a standard map. */
     private static final int MAX_HEIGHT = 20;
 
-    /** Above any fluff image number the shipped boards use, so a gamemaster is not boxed in by the dialog. */
-    private static final int MAX_FLUFF_IMAGE = 999;
-
     /** Above the largest fuel tank explosion the shipped boards use. */
     private static final int MAX_MAGNITUDE = 100;
 
@@ -175,7 +172,7 @@ public class BuildingEditDialog extends JDialog {
           new JSpinner(new SpinnerNumberModel(0, 0, MAX_CONSTRUCTION_FACTOR, 5));
     private final JSpinner armorSpinner = new JSpinner(new SpinnerNumberModel(0, 0, MAX_ARMOR, 1));
     private final JSpinner heightSpinner = new JSpinner(new SpinnerNumberModel(1, 1, MAX_HEIGHT, 1));
-    private final JSpinner fluffImageSpinner = new JSpinner(new SpinnerNumberModel(0, 0, MAX_FLUFF_IMAGE, 1));
+    private final JComboBox<FluffChoice> fluffImageChooser = new JComboBox<>();
     private final JSpinner magnitudeSpinner =
           new JSpinner(new SpinnerNumberModel(DEFAULT_MAGNITUDE, SMALLEST_USEFUL_MAGNITUDE, MAX_MAGNITUDE,
                 MAGNITUDE_STEP));
@@ -201,6 +198,19 @@ public class BuildingEditDialog extends JDialog {
     private final JPanel conditionSection;
     private final JPanel appearanceSection;
     private final JPanel explosionSection;
+
+    /**
+     * One fluff image offered in the chooser. Zero is the ordinary artwork for the building type; the rest are the
+     * levels the tileset actually defines for it.
+     */
+    private record FluffChoice(int level) {
+        @Override
+        public String toString() {
+            return (level == 0)
+                  ? Messages.getString("BuildingEditDialog.fluffImage.default")
+                  : Messages.getString("BuildingEditDialog.fluffImage.numbered", level);
+        }
+    }
 
     /** One building class offered in the chooser, named rather than numbered. */
     private record BuildingClassChoice(int buildingClass, String messageKey) {
@@ -240,7 +250,7 @@ public class BuildingEditDialog extends JDialog {
               "BuildingEditDialog.height", heightSpinner,
               "BuildingEditDialog.basement", basementChooser);
         appearanceSection = section("BuildingEditDialog.section.appearance",
-              "BuildingEditDialog.fluffImage", fluffImageSpinner,
+              "BuildingEditDialog.fluffImage", fluffImageChooser,
               "BuildingEditDialog.fluffPreview", fluffPreviewLabel);
         explosionSection = section("BuildingEditDialog.section.explosion",
               "BuildingEditDialog.magnitude", magnitudeSpinner,
@@ -286,7 +296,9 @@ public class BuildingEditDialog extends JDialog {
         basementChooser.setSelectedItem(existing.getBasement(coords));
         Hex hex = clientGUI.getClient().getGame().getBoard().getHex(coords);
         if (hex != null) {
-            fluffImageSpinner.setValue(Math.max(0, hex.terrainLevel(Terrains.BLDG_FLUFF)));
+            refreshFluffChoices();
+            fluffImageChooser.setSelectedItem(
+                  new FluffChoice(Math.max(0, hex.terrainLevel(Terrains.BLDG_FLUFF))));
         }
         for (BuildingClassChoice choice : BUILDING_CLASSES) {
             if (choice.buildingClass() == existing.getBldgClass()) {
@@ -324,8 +336,14 @@ public class BuildingEditDialog extends JDialog {
             }
         });
 
-        fluffImageSpinner.addChangeListener(event -> refreshFluffPreview());
-        typeChooser.addActionListener(event -> refreshFluffPreview());
+        // which images exist depends on the whole building, not only its type, so anything the tileset matches on
+        // works the list out again
+        fluffImageChooser.addActionListener(event -> refreshFluffPreview());
+        typeChooser.addActionListener(event -> refreshFluffChoices());
+        classChooser.addActionListener(event -> refreshFluffChoices());
+        heightSpinner.addChangeListener(event -> refreshFluffChoices());
+        armorSpinner.addChangeListener(event -> refreshFluffChoices());
+        basementChooser.addActionListener(event -> refreshFluffChoices());
 
         JPanel sections = new JPanel();
         sections.setLayout(new BoxLayout(sections, BoxLayout.Y_AXIS));
@@ -352,7 +370,7 @@ public class BuildingEditDialog extends JDialog {
 
         refreshFieldsForStructure();
         refreshMagnitudeEffect();
-        refreshFluffPreview();
+        refreshFluffChoices();
 
         pack();
         setMinimumSize(UIUtil.scaleForGUI(380, 300));
@@ -376,6 +394,34 @@ public class BuildingEditDialog extends JDialog {
         }
     }
 
+    /** @return the fluff image level currently chosen, or zero for the ordinary artwork */
+    private int chosenFluffImage() {
+        FluffChoice chosen = (FluffChoice) fluffImageChooser.getSelectedItem();
+        return (chosen == null) ? 0 : chosen.level();
+    }
+
+    /**
+     * Fills the fluff chooser with the images the tileset actually has for the building as it is currently set up.
+     *
+     * <p>The numbers are not a range. The tileset defines particular ones and ties each to a particular building, so
+     * a plain number field offered a thousand values of which nearly all drew nothing and most of the rest belonged
+     * to a different kind of building - a light building has four images where a hardened one has fifty-four. What
+     * is offered here is what exists, and it is worked out again whenever the building changes.</p>
+     */
+    private void refreshFluffChoices() {
+        int previous = chosenFluffImage();
+        fluffImageChooser.removeAllItems();
+        fluffImageChooser.addItem(new FluffChoice(0));
+        for (int level : clientGUI.getTilesetManager().definedFluffLevels(buildingAsHex(0), Terrains.BLDG_FLUFF)) {
+            fluffImageChooser.addItem(new FluffChoice(level));
+        }
+        fluffImageChooser.setSelectedItem(new FluffChoice(previous));
+        if (fluffImageChooser.getSelectedIndex() < 0) {
+            // the image that was chosen does not exist for this building type, so fall back to its ordinary artwork
+            fluffImageChooser.setSelectedIndex(0);
+        }
+        refreshFluffPreview();
+    }
 
     /**
      * Draws the building as the tileset will actually draw it, for the fluff image currently chosen.
@@ -409,21 +455,46 @@ public class BuildingEditDialog extends JDialog {
     }
 
     /**
+     * Writes the building the dialog currently describes into a hex, the way the board would hold it.
+     *
+     * <p>Both the picture and the list of available pictures come from this, because the tileset answers questions
+     * about hexes rather than about buildings - so asking it with the same hex the board would have is what makes
+     * the preview show what will actually appear.</p>
+     *
+     * @param fluffImage The fluff image to include, or zero for none
+     *
+     * @return The hex, which belongs to no board and is only ever handed to the tileset
+     */
+    private Hex buildingAsHex(int fluffImage) {
+        Hex hex = new Hex();
+        BuildingType type = (BuildingType) typeChooser.getSelectedItem();
+        hex.addTerrain(new Terrain(Terrains.BUILDING,
+              (type == null) ? BuildingType.MEDIUM.getTypeValue() : type.getTypeValue()));
+        hex.addTerrain(new Terrain(Terrains.BLDG_ELEV, (int) heightSpinner.getValue()));
+        hex.addTerrain(new Terrain(Terrains.BLDG_CF, (int) constructionFactorSpinner.getValue()));
+        BuildingClassChoice buildingClass = (BuildingClassChoice) classChooser.getSelectedItem();
+        if (buildingClass != null) {
+            hex.addTerrain(new Terrain(Terrains.BLDG_CLASS, buildingClass.buildingClass()));
+        }
+        int armor = (int) armorSpinner.getValue();
+        if (armor > 0) {
+            hex.addTerrain(new Terrain(Terrains.BLDG_ARMOR, armor));
+        }
+        BasementType basement = (BasementType) basementChooser.getSelectedItem();
+        hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE,
+              ((basement == null) ? BasementType.NONE : basement).ordinal()));
+        if (fluffImage > 0) {
+            hex.addTerrain(new Terrain(Terrains.BLDG_FLUFF, fluffImage));
+        }
+        return hex;
+    }
+
+    /**
      * @return the building drawn the way the board would draw it, or {@code null} when the tileset offers nothing for
      *       this combination
      */
     private @Nullable Image drawBuildingAsTilesetWould() {
-        Hex preview = new Hex();
-        BuildingType type = (BuildingType) typeChooser.getSelectedItem();
-        preview.addTerrain(new Terrain(Terrains.BUILDING,
-              (type == null) ? BuildingType.MEDIUM.getTypeValue() : type.getTypeValue()));
-        preview.addTerrain(new Terrain(Terrains.BLDG_ELEV, (int) heightSpinner.getValue()));
-        preview.addTerrain(new Terrain(Terrains.BLDG_CF, (int) constructionFactorSpinner.getValue()));
-        int fluffImage = (int) fluffImageSpinner.getValue();
-        if (fluffImage > 0) {
-            preview.addTerrain(new Terrain(Terrains.BLDG_FLUFF, fluffImage));
-        }
-
+        Hex preview = buildingAsHex(chosenFluffImage());
         TilesetManager tilesetManager = clientGUI.getTilesetManager();
         Image base = tilesetManager.baseFor(preview);
         List<Image> supers = tilesetManager.supersFor(preview);
@@ -559,7 +630,7 @@ public class BuildingEditDialog extends JDialog {
         spec.setConstructionFactor((int) constructionFactorSpinner.getValue());
         spec.setArmor((int) armorSpinner.getValue());
         spec.setHeight((int) heightSpinner.getValue());
-        spec.setFluffImage((int) fluffImageSpinner.getValue());
+        spec.setFluffImage(chosenFluffImage());
         spec.setFuelTank(structureChooser.getSelectedItem() == StructureKind.FUEL_TANK);
         spec.setMagnitude((int) magnitudeSpinner.getValue());
         return spec;

@@ -32,9 +32,12 @@
  */
 package megamek.client.ui.panels.phaseDisplay;
 
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.tooltip.EntityActionLog;
 import megamek.client.ui.dialogs.TurretFacingDialog;
@@ -441,5 +444,46 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
             setRotateTurretEnabled(!tank.hasNoTurret() && canTwistTurret);
             setRotateRearTurretEnabled(false);
         }
+    }
+
+    /**
+     * Applies the one board action a hex mouse event calls for: move the cursor while the player drags, select the
+     * hex on a plain left click.
+     * <p>
+     * Every attack phase display routes its mouse handling through this method so that a single click can select a
+     * hex only once. {@link megamek.client.ui.clientGUI.boardview.BoardView#select(megamek.common.board.Coords)}
+     * fires a hex-selected event every time it is called, even when the hex has not changed, and the displays
+     * answer that event by asking the player which unit in the hex to attack. A second selection for the same
+     * click therefore opens that target window twice (issue #8781).
+     * </p>
+     *
+     * @param event             the hex mouse event being handled
+     * @param twistModifierHeld {@code true} when the shift key is held and this display uses shift for torso twist,
+     *                          in which case the click twists and must not pick a target. Displays without torso
+     *                          twist pass {@code false}.
+     */
+    protected static void applyHexMouseAction(BoardViewEvent event, boolean twistModifierHeld) {
+        switch (event.getType()) {
+            case BoardViewEvent.BOARD_HEX_DRAGGED -> event.getBoardView().cursor(event.getCoords());
+            case BoardViewEvent.BOARD_HEX_CLICKED -> {
+                if (!twistModifierHeld && isPlainLeftClick(event)) {
+                    event.getBoardView().select(event.getCoords());
+                }
+            }
+            default -> {
+                // Every other board event is the display's own business.
+            }
+        }
+    }
+
+    /**
+     * @param event the hex mouse event being handled
+     *
+     * @return {@code true} if this is a left click with no ALT key. ALT belongs to the ruler
+     *       (RulerDialog.hexMoused) and the other mouse buttons have no targeting meaning on the board.
+     */
+    private static boolean isPlainLeftClick(BoardViewEvent event) {
+        return (event.getButton() == MouseEvent.BUTTON1)
+              && ((event.getModifiers() & InputEvent.ALT_DOWN_MASK) == 0);
     }
 }

@@ -2018,13 +2018,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 updateFlipArms(false);
                 torsoTwist(event.getCoords());
             }
-            event.getBoardView().cursor(event.getCoords());
         } else if (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             twisting = false;
-            if (!event.isShiftHeld()) {
-                event.getBoardView().select(event.getCoords());
-            }
         }
+        applyHexMouseAction(event, event.isShiftHeld());
     }
 
     @Override

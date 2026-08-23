@@ -190,6 +190,67 @@ class BotHeatEquipmentManagerTest {
     }
 
     @Test
+    void concealmentGoesFirstAndNovaOnlyOnceItHasActuallySwitchedOff() {
+        // One Mek carrying both, which is what actually pins the priority. All four managed systems
+        // declare setInstantModeSwitch(false), so switching one queues a pending mode and curMode() -
+        // and therefore isVoidSigOn() - still reports the old state for the rest of this pass. That
+        // deferral is what stops the concealment shed from immediately unlocking the Nova shed in the
+        // same turn. If any of them ever became an instant switch, this test fails.
+        MiscMounted voidSignature = mockEquipment(MiscType.F_VOID_SIG, "Void Signature System", true);
+        MiscMounted novaCews = mockEquipment(MiscType.F_NOVA, "Nova CEWS", true);
+        BipedMek mockMek = mekWith(20, voidSignature, novaCews);
+        when(mockMek.isVoidSigOn()).thenReturn(true);
+        when(mockMek.getEquipmentNum(voidSignature)).thenReturn(1);
+        when(mockMek.getEquipmentNum(novaCews)).thenReturn(2);
+
+        heatEquipmentManager.manageOwnedUnits();
+
+        verify(voidSignature).setMode(Weapon.MODE_AMS_OFF);
+        verify(novaCews, never()).setMode(Weapon.MODE_AMS_OFF);
+
+        // Next turn the queued switch has been applied and the void sig really is off, so the Nova is
+        // now the cheapest thing left to drop.
+        when(mockMek.isVoidSigOn()).thenReturn(false);
+        when(voidSignature.isModeTurnedOff()).thenReturn(true);
+
+        heatEquipmentManager.manageOwnedUnits();
+
+        verify(novaCews).setMode(Weapon.MODE_AMS_OFF);
+    }
+
+    /** One operable, currently on-or-off piece of equipment carrying the given flag. */
+    private MiscMounted mockEquipment(megamek.common.equipment.enums.MiscTypeFlag equipmentFlag,
+          String name, boolean currentlyOn) {
+        MiscType mockType = mock(MiscType.class);
+        when(mockType.hasFlag(equipmentFlag)).thenReturn(true);
+        when(mockType.getName()).thenReturn(name);
+
+        MiscMounted mockEquipment = mock(MiscMounted.class);
+        when(mockEquipment.getType()).thenReturn(mockType);
+        when(mockEquipment.isOperable()).thenReturn(true);
+        when(mockEquipment.isModeTurnedOff()).thenReturn(!currentlyOn);
+        when(mockEquipment.setMode(Weapon.MODE_AMS_ON)).thenReturn(1);
+        when(mockEquipment.setMode(Weapon.MODE_AMS_OFF)).thenReturn(0);
+        return mockEquipment;
+    }
+
+    /** A heat-tracking Mek owned by the bot, carrying the given equipment. */
+    private BipedMek mekWith(int heat, MiscMounted... equipment) {
+        BipedMek mockMek = mock(BipedMek.class);
+        when(mockMek.getOwnerId()).thenReturn(BOT_PLAYER_ID);
+        when(mockMek.getId()).thenReturn(42);
+        when(mockMek.getShortName()).thenReturn("Test Mek");
+        when(mockMek.tracksHeat()).thenReturn(true);
+        when(mockMek.getHeat()).thenReturn(heat);
+        when(mockMek.hasStealth()).thenReturn(false);
+        when(mockMek.hasWorkingRadicalHS()).thenReturn(false);
+        when(mockMek.getMisc()).thenReturn(List.of(equipment));
+
+        when(mockGame.getEntitiesVector()).thenReturn(new Vector<>(List.of(mockMek)));
+        return mockMek;
+    }
+
+    @Test
     void equipmentOnAUnitThatIgnoresHeatIsLeftSwitchedOn() {
         BipedMek mockMek = mekCarrying(MiscType.F_VOID_SIG, 0, true);
         when(mockMek.tracksHeat()).thenReturn(false);

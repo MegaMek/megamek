@@ -44,13 +44,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.dialogs.UnitLoadingDialog;
+import megamek.client.ui.clientGUI.UnitRecipients;
 import megamek.common.Player;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
@@ -157,27 +157,37 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         if (entities.isEmpty()) {
             return;
         }
-        Client client = null;
-        String name = (String) comboPlayer.getSelectedItem();
+        Player owner = chosenOwner();
 
-        if (comboPlayer.getSelectedIndex() > 0) {
-            client = (Client) clientGUI.getLocalBots().get(name);
+        for (Entity entity : entities) {
+            autoSetSkillsAndName(entity, owner);
+            entity.setOwner(owner);
         }
+        // sent over this machine's own connection whoever the units are for, the way reinforcements during a game
+        // have always been sent: a remote player has no client here to send through
+        clientGUI.getClient().sendAddEntity(entities);
 
-        if (client == null) {
-            client = clientGUI.getClient();
-        }
+        // named from the owner the units were actually given, not from the chooser: those were two different
+        // things to read, and the chat line could name a player who received nothing
+        String message = clientGUI.getClient().getLocalPlayer() + " selected "
+              + ((entities.size() == 1) ? "a unit" : entities.size() + " units")
+              + " for player: " + owner.getName();
+        clientGUI.getClient().sendServerChat(Player.PLAYER_NONE, message);
+    }
 
-        for (var e : entities) {
-            autoSetSkillsAndName(e, client.getLocalPlayer());
-            e.setOwner(client.getLocalPlayer());
-        }
-        client.sendAddEntity(entities);
-
-        String msg = clientGUI.getClient().getLocalPlayer() + " selected " + (entities.size() == 1 ?
-              "a unit" :
-              entities.size() + " units") + " for player: " + name;
-        clientGUI.getClient().sendServerChat(Player.PLAYER_NONE, msg);
+    /**
+     * @return the player the chosen units should belong to, which is the local player when the chooser holds
+     *       something no longer in the game
+     */
+    private Player chosenOwner() {
+        String chosenName = (String) comboPlayer.getSelectedItem();
+        return clientGUI.getClient()
+              .getGame()
+              .getPlayersList()
+              .stream()
+              .filter(player -> player.getName().equals(chosenName))
+              .findFirst()
+              .orElse(clientGUI.getClient().getLocalPlayer());
     }
 
     private void autoSetSkillsAndName(Entity e, Player player) {
@@ -206,13 +216,12 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     }
 
     private void updatePlayerChoice(String selectionName) {
-        String clientName = clientGUI.getClient().getName();
         comboPlayer.setEnabled(false);
         comboPlayer.removeAllItems();
-        comboPlayer.addItem(clientName);
-
-        for (AbstractClient client : clientGUI.getLocalBots().values()) {
-            comboPlayer.addItem(client.getName());
+        for (Player player : UnitRecipients.availableTo(clientGUI.getClient().getLocalPlayer(),
+              clientGUI.getClient().getGame().getPlayersList(),
+              clientGUI.getLocalBots().keySet())) {
+            comboPlayer.addItem(player.getName());
         }
         comboPlayer.setSelectedItem(selectionName);
         if (comboPlayer.getSelectedIndex() < 0) {
@@ -228,12 +237,29 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         updatePlayerChoice(lastChoice);
     }
 
-    public void setPlayerFromClient(Client c) {
-        if (c != null) {
-            updatePlayerChoice(c.getName());
-        } else {
+    /**
+     * Points the player chooser at the given player, so a dialog opened from a chosen player opens on them.
+     *
+     * @param player The player to select, or {@code null} to leave the chooser where it was
+     */
+    public void setPlayerFrom(@Nullable Player player) {
+        if (player == null) {
             updatePlayerChoice();
+        } else {
+            updatePlayerChoice(player.getName());
         }
+    }
+
+    /**
+     * @param c The client whose player to select, or {@code null} to leave the chooser where it was
+     *
+     * @deprecated since 0.51.01 - use {@link #setPlayerFrom(Player)}. A client cannot name a remote player,
+     *       because there is none on this machine, so anything asking for one silently fell back to the local
+     *       player.
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
+    public void setPlayerFromClient(@Nullable Client c) {
+        setPlayerFrom((c == null) ? null : c.getLocalPlayer());
     }
     //endregion Button Methods
 

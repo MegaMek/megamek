@@ -59,6 +59,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.JSpinner;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
@@ -249,9 +250,17 @@ public class HexEditDialog extends JDialog {
         content.add(paintedPanel());
         content.add(Box.createVerticalStrut(8));
         content.add(legalityPanel());
+        content.add(Box.createVerticalGlue());
+
+        // scrolled, and each section held to the height it asks for, so the dialog stays usable on a small screen
+        // and a long list of painted hexes does not push the buttons off the bottom
+        JScrollPane scroller = new JScrollPane(content);
+        scroller.getVerticalScrollBar().setUnitIncrement(16);
+        scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scroller.setBorder(null);
 
         getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(content, BorderLayout.CENTER);
+        getContentPane().add(scroller, BorderLayout.CENTER);
         getContentPane().add(buttonPanel(), BorderLayout.PAGE_END);
 
         getRootPane().registerKeyboardAction(event -> closeDialog(),
@@ -290,7 +299,7 @@ public class HexEditDialog extends JDialog {
 
     /** What the brush holds, and the switch that turns board clicks into painting. */
     private JPanel brushPanel() {
-        JPanel panel = new JPanel();
+        JPanel panel = new UIUtil.FixedYPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createTitledBorder(Messages.getString("HexEditDialog.brush")));
 
@@ -367,7 +376,7 @@ public class HexEditDialog extends JDialog {
 
     /** Where the edit is reported legal or not, with the reason. */
     private JPanel legalityPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new UIUtil.FixedYPanel(new BorderLayout());
         legalityLabel.setVerticalAlignment(JLabel.TOP);
         legalityLabel.setPreferredSize(new Dimension(UIUtil.scaleForGUI(420), UIUtil.scaleForGUI(52)));
         panel.add(legalityLabel, BorderLayout.CENTER);

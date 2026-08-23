@@ -34,16 +34,20 @@
 package megamek.client.ui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.io.Serial;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -51,7 +55,9 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.WindowConstants;
@@ -186,6 +192,16 @@ public class BuildingEditDialog extends JDialog {
     /** Draws the building as the chosen fluff image will actually look, since the number alone says nothing. */
     private final JLabel fluffPreviewLabel = new JLabel();
 
+    /**
+     * The dialog's sections. A fuel tank and a building have little in common beyond a construction factor, so the
+     * parts that do not apply are taken away rather than greyed out - a dialog that only shows what can be set is
+     * shorter and says what it is for.
+     */
+    private final JPanel structureSection;
+    private final JPanel conditionSection;
+    private final JPanel appearanceSection;
+    private final JPanel explosionSection;
+
     /** One building class offered in the chooser, named rather than numbered. */
     private record BuildingClassChoice(int buildingClass, String messageKey) {
         @Override
@@ -213,6 +229,22 @@ public class BuildingEditDialog extends JDialog {
         this.clientGUI = clientGUI;
         this.coords = coords;
         this.boardId = clientGUI.getClient().getGame().getBoard().getBoardId();
+
+        structureSection = section("BuildingEditDialog.section.structure",
+              "BuildingEditDialog.structure", structureChooser,
+              "BuildingEditDialog.type", typeChooser,
+              "BuildingEditDialog.buildingClass", classChooser);
+        conditionSection = section("BuildingEditDialog.section.condition",
+              "BuildingEditDialog.constructionFactor", constructionFactorSpinner,
+              "BuildingEditDialog.armor", armorSpinner,
+              "BuildingEditDialog.height", heightSpinner,
+              "BuildingEditDialog.basement", basementChooser);
+        appearanceSection = section("BuildingEditDialog.section.appearance",
+              "BuildingEditDialog.fluffImage", fluffImageSpinner,
+              "BuildingEditDialog.fluffPreview", fluffPreviewLabel);
+        explosionSection = section("BuildingEditDialog.section.explosion",
+              "BuildingEditDialog.magnitude", magnitudeSpinner,
+              "BuildingEditDialog.magnitudeEffect", magnitudeEffectLabel);
 
         buildUI(parent);
         loadFromHex();
@@ -292,37 +324,38 @@ public class BuildingEditDialog extends JDialog {
             }
         });
 
-        refreshFieldsForStructure();
-        refreshMagnitudeEffect();
-        refreshFluffPreview();
-
-        JPanel fields = new JPanel(new GridLayout(0, 2, 6, 6));
-        fields.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        addField(fields, "BuildingEditDialog.structure", structureChooser);
-        addField(fields, "BuildingEditDialog.type", typeChooser);
-        addField(fields, "BuildingEditDialog.buildingClass", classChooser);
-        addField(fields, "BuildingEditDialog.constructionFactor", constructionFactorSpinner);
-        addField(fields, "BuildingEditDialog.armor", armorSpinner);
-        addField(fields, "BuildingEditDialog.height", heightSpinner);
-        addField(fields, "BuildingEditDialog.basement", basementChooser);
-        addField(fields, "BuildingEditDialog.fluffImage", fluffImageSpinner);
         fluffImageSpinner.addChangeListener(event -> refreshFluffPreview());
         typeChooser.addActionListener(event -> refreshFluffPreview());
-        addField(fields, "BuildingEditDialog.fluffPreview", fluffPreviewLabel);
-        addField(fields, "BuildingEditDialog.magnitude", magnitudeSpinner);
-        addField(fields, "BuildingEditDialog.magnitudeEffect", magnitudeEffectLabel);
+
+        JPanel sections = new JPanel();
+        sections.setLayout(new BoxLayout(sections, BoxLayout.Y_AXIS));
+        sections.add(originalSection());
+        sections.add(structureSection);
+        sections.add(conditionSection);
+        sections.add(appearanceSection);
+        sections.add(explosionSection);
+        sections.add(Box.createVerticalGlue());
+
+        JScrollPane scroller = new JScrollPane(sections);
+        scroller.getVerticalScrollBar().setUnitIncrement(16);
+        scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scroller.setBorder(null);
 
         getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(fields, BorderLayout.CENTER);
+        getContentPane().add(scroller, BorderLayout.CENTER);
         getContentPane().add(buttonPanel(), BorderLayout.PAGE_END);
 
         getRootPane().registerKeyboardAction(event -> dispose(),
               KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
               JComponent.WHEN_IN_FOCUSED_WINDOW);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        getContentPane().add(originalLabel, BorderLayout.PAGE_START);
+
+        refreshFieldsForStructure();
+        refreshMagnitudeEffect();
+        refreshFluffPreview();
+
         pack();
-        setMinimumSize(UIUtil.scaleForGUI(360, 260));
+        setMinimumSize(UIUtil.scaleForGUI(380, 300));
         setLocationRelativeTo(parent);
         setPreferences("BuildingEditDialog");
     }
@@ -425,10 +458,8 @@ public class BuildingEditDialog extends JDialog {
         typeChooser.setEnabled(!isFuelTank);
         classChooser.setEnabled(!isFuelTank);
         basementChooser.setEnabled(!isFuelTank);
-        fluffImageSpinner.setEnabled(!isFuelTank);
-        fluffPreviewLabel.setEnabled(!isFuelTank);
-        magnitudeSpinner.setEnabled(isFuelTank);
-        magnitudeEffectLabel.setEnabled(isFuelTank);
+        appearanceSection.setVisible(!isFuelTank);
+        explosionSection.setVisible(isFuelTank);
     }
 
     /**
@@ -447,9 +478,48 @@ public class BuildingEditDialog extends JDialog {
               magnitude, hexesReached - 1, damageAtEdge));
     }
 
-    private static void addField(JPanel fields, String labelKey, JComponent control) {
-        fields.add(new JLabel(Messages.getString(labelKey)));
-        fields.add(control);
+    /** The line saying what the hex held before a gamemaster changed it. */
+    private JPanel originalSection() {
+        JPanel panel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
+        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.add(originalLabel);
+        return panel;
+    }
+
+    /**
+     * Builds one titled section holding label-and-control rows.
+     *
+     * <p>The rows are laid out so that each control keeps the height it asks for. Giving every row an equal share of
+     * the dialog, as a plain grid does, stretches a spinner to the height of a picture and turns ten fields into a
+     * wall of controls taller than the screen.</p>
+     *
+     * @param headerKey The message key for the section's title
+     * @param rows      Alternating message keys and the controls they label
+     *
+     * @return The finished section
+     */
+    private static JPanel section(String headerKey, Object... rows) {
+        JPanel panel = new UIUtil.OptionPanel(headerKey);
+        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        UIUtil.Content content = new UIUtil.Content(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.insets = new Insets(2, 2, 2, 8);
+        constraints.anchor = GridBagConstraints.WEST;
+
+        for (int row = 0; row < rows.length; row += 2) {
+            constraints.gridy = row / 2;
+            constraints.gridx = 0;
+            constraints.weightx = 0;
+            constraints.fill = GridBagConstraints.NONE;
+            content.add(new JLabel(Messages.getString((String) rows[row])), constraints);
+
+            constraints.gridx = 1;
+            constraints.weightx = 1;
+            constraints.fill = GridBagConstraints.HORIZONTAL;
+            content.add((JComponent) rows[row + 1], constraints);
+        }
+        panel.add(content);
+        return panel;
     }
 
     private JPanel buttonPanel() {

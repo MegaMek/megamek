@@ -586,7 +586,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 setRotateTurretEnabled(false);
                 setRotateRearTurretEnabled(false);
                 setStrafeEnabled(false);
-                clientgui.getUnitDisplay().wPan.setToHit("Hidden units are only allowed to spot!");
+                clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.HiddenUnitMaySpot"));
             }
         } else {
             logger.error("Tried to select non-existent entity {}", en);
@@ -1926,7 +1926,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             setFindClubEnabled(false);
             setFlipArmsEnabled(false);
             setStrafeEnabled(false);
-            clientgui.getUnitDisplay().wPan.setToHit("Hidden units are only allowed to spot!");
+            clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.HiddenUnitMaySpot"));
         }
     }
 
@@ -2018,13 +2018,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 updateFlipArms(false);
                 torsoTwist(event.getCoords());
             }
-            event.getBoardView().cursor(event.getCoords());
         } else if (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             twisting = false;
-            if (!event.isShiftHeld()) {
-                event.getBoardView().select(event.getCoords());
-            }
         }
+        applyHexMouseAction(event, event.isShiftHeld());
     }
 
     @Override

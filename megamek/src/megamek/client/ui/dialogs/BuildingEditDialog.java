@@ -116,6 +116,12 @@ public class BuildingEditDialog extends JDialog {
     /** Comfortably above the sturdiest building in the rules, so a gamemaster is not boxed in by the dialog. */
     private static final int MAX_CONSTRUCTION_FACTOR = 500;
 
+    /** Unscaled padding around a row's controls; scaled through {@link UIUtil#scaleForGUI(int)} when used. */
+    private static final int ROW_PADDING = 2;
+
+    /** Unscaled gap between a label and the control it names. */
+    private static final int LABEL_GAP = 8;
+
     /** Above the heaviest building armor in the rules. */
     private static final int MAX_ARMOR = 200;
 
@@ -395,9 +401,9 @@ public class BuildingEditDialog extends JDialog {
             setName(dialogName);
             PreferencesNode preferences = MegaMek.getMMPreferences().forClass(getClass());
             preferences.manage(new JWindowPreference(this));
-        } catch (Exception ex) {
+        } catch (Exception preferencesFailure) {
             // a dialog that cannot remember where it was is still perfectly usable
-            LOGGER.error(ex, "Could not set the preferences of {}", dialogName);
+            LOGGER.error(preferencesFailure, "Could not set the preferences of {}", dialogName);
         }
     }
 
@@ -606,7 +612,9 @@ public class BuildingEditDialog extends JDialog {
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
         UIUtil.Content content = new UIUtil.Content(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
-        constraints.insets = new Insets(2, 2, 2, 8);
+        int rowPadding = UIUtil.scaleForGUI(ROW_PADDING);
+        int labelGap = UIUtil.scaleForGUI(LABEL_GAP);
+        constraints.insets = new Insets(rowPadding, rowPadding, rowPadding, labelGap);
         constraints.anchor = GridBagConstraints.WEST;
 
         for (int row = 0; row < rows.length; row += 2) {

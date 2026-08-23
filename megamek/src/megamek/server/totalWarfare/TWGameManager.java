@@ -26978,72 +26978,6 @@ public class TWGameManager extends AbstractGameManager {
      * state, a pending traitor switch, anything that changed since the editor opened - keeps the server's authoritative
      * value without having to be preserved field by field.
      */
-    /**
-     * Applies a gamemaster's edit of one or more hexes. The edit arrives as the terrain the hexes should end up
-     * holding rather than as a chat command, because an edit of a whole hex across several hexes is more than a
-     * command line can carry, and it is checked against every named hex before any of them is changed.
-     */
-    private void receiveHexEdit(Packet packet, int connIndex) {
-        if (!(packet.getObject(0) instanceof HexEditSpec spec)) {
-            LOGGER.warn("Dropping hex edit: the packet carries no spec");
-            return;
-        }
-        Player sender = game.getPlayer(connIndex);
-        if ((sender == null) || !sender.isGameMaster()) {
-            LOGGER.warn("Dropping hex edit from {}: only a gamemaster may change the board",
-                  (sender == null) ? "an unknown connection" : sender.getName());
-            return;
-        }
-        String refusal = hexEditHandler().applyHexEdit(spec, sender.getName());
-        if (refusal != null) {
-            // at INFO, not DEBUG: a playtest report is "I changed the terrain and nothing happened", and the shipped
-            // logging config runs at INFO, so a refusal logged any lower leaves no trace of why at all
-            LOGGER.info("[GMTerrain] {}: edit of {} hex(es) refused - {}",
-                  sender.getName(), spec.getCoords().size(), refusal);
-            // a toast as well as chat: the dialog closes when the edit is sent, so a refusal that only went to the
-            // chat log would leave the gamemaster looking at an unchanged board with no visible reason why
-            String message = Messages.getString("Gamemaster.cmd.changeTerrain.refused", refusal);
-            sendServerChat(connIndex, message);
-            send(connIndex, new Packet(PacketCommand.SEND_TOAST, GameToastEvent.Level.WARNING, message,
-                  Entity.NONE));
-            return;
-        }
-        sendToast(GameToastEvent.Level.GAMEMASTER,
-              Messages.getString("Gamemaster.toast.hexEdit", sender.getName(), spec.getCoords().size()),
-              null);
-    }
-
-    /**
-     * Applies a gamemaster's edit of the building in one hex. The edit says what should be standing there when it is
-     * done, so the same packet puts a building up, changes the one that is there and takes it away; the handler works
-     * out which by looking at the hex.
-     */
-    private void receiveBuildingEdit(Packet packet, int connIndex) {
-        if (!(packet.getObject(0) instanceof BuildingEditSpec spec)) {
-            LOGGER.warn("Dropping building edit: the packet carries no spec");
-            return;
-        }
-        Player sender = game.getPlayer(connIndex);
-        if ((sender == null) || !sender.isGameMaster()) {
-            LOGGER.warn("Dropping building edit from {}: only a gamemaster may change the board",
-                  (sender == null) ? "an unknown connection" : sender.getName());
-            return;
-        }
-        String refusal = buildingEditHandler().applyBuildingSpec(spec, sender.getName());
-        if (refusal != null) {
-            // at INFO for the same reason as the terrain edit above: the shipped logging config runs at INFO, so a
-            // refusal logged any lower cannot answer "why did nothing happen" from a playtest log
-            LOGGER.info("[GMBuilding] {}: edit of hex {} refused - {}",
-                  sender.getName(), spec.getCoords().getBoardNum(), refusal);
-            // a toast as well as chat: the dialog may have closed, and a refusal that only went to the chat log
-            // would leave the gamemaster looking at an unchanged hex with no visible reason why
-            String message = Messages.getString("Gamemaster.cmd.building.refused", refusal);
-            sendServerChat(connIndex, message);
-            send(connIndex, new Packet(PacketCommand.SEND_TOAST, GameToastEvent.Level.WARNING, message,
-                  Entity.NONE));
-        }
-    }
-
     private void receiveDamageEdit(Packet packet, int connIndex) {
         if (!(packet.getObject(0) instanceof DamageEditSpec spec)) {
             LOGGER.warn("Dropping damage edit: the packet carries no spec");
@@ -27173,6 +27107,74 @@ public class TWGameManager extends AbstractGameManager {
      * units that are teammates of the sender or when the sender is a gamemaster. Other entities remain unchanged but
      * still be sent back to overwrite incorrect client changes.
      */
+    /**
+     * Applies a gamemaster's edit of one or more hexes. The edit arrives as the terrain the hexes should end up
+     * holding rather than as a chat command, because an edit of a whole hex across several hexes is more than a
+     * command line can carry, and it is checked against every named hex before any of them is changed.
+     */
+    private void receiveHexEdit(Packet packet, int connIndex) {
+        if (!(packet.getObject(0) instanceof HexEditSpec spec)) {
+            LOGGER.warn("Dropping hex edit: the packet carries no spec");
+            return;
+        }
+        Player sender = game.getPlayer(connIndex);
+        if ((sender == null) || !sender.isGameMaster()) {
+            LOGGER.warn("Dropping hex edit from {}: only a gamemaster may change the board",
+                  (sender == null) ? "an unknown connection" : sender.getName());
+            return;
+        }
+        String refusal = hexEditHandler().applyHexEdit(spec, sender.getName());
+        if (refusal != null) {
+            LOGGER.info("[GMTerrain] {}: edit of {} hex(es) refused - {}",
+                  sender.getName(), spec.getCoords().size(), refusal);
+            reportBoardEditRefused(connIndex, "Gamemaster.cmd.changeTerrain.refused", refusal);
+            return;
+        }
+        sendToast(GameToastEvent.Level.GAMEMASTER,
+              Messages.getString("Gamemaster.toast.hexEdit", sender.getName(), spec.getCoords().size()),
+              null);
+    }
+
+    /**
+     * Applies a gamemaster's edit of the building in one hex. The edit says what should be standing there when it is
+     * done, so the same packet puts a building up, changes the one that is there and takes it away; the handler works
+     * out which by looking at the hex.
+     */
+    private void receiveBuildingEdit(Packet packet, int connIndex) {
+        if (!(packet.getObject(0) instanceof BuildingEditSpec spec)) {
+            LOGGER.warn("Dropping building edit: the packet carries no spec");
+            return;
+        }
+        Player sender = game.getPlayer(connIndex);
+        if ((sender == null) || !sender.isGameMaster()) {
+            LOGGER.warn("Dropping building edit from {}: only a gamemaster may change the board",
+                  (sender == null) ? "an unknown connection" : sender.getName());
+            return;
+        }
+        String refusal = buildingEditHandler().applyBuildingSpec(spec, sender.getName());
+        if (refusal != null) {
+            LOGGER.info("[GMBuilding] {}: edit of hex {} refused - {}",
+                  sender.getName(), spec.getCoords().getBoardNum(), refusal);
+            reportBoardEditRefused(connIndex, "Gamemaster.cmd.building.refused", refusal);
+        }
+    }
+
+    /**
+     * Tells a gamemaster why a board edit of theirs was not applied, in the chat log and as a toast.
+     *
+     * <p>Both, because the dialog that sent the edit may already have closed: a reason that only reached the chat log
+     * would leave a gamemaster looking at an unchanged board with nothing on screen to say why.</p>
+     *
+     * @param connIndex  The connection the edit came from
+     * @param messageKey The message naming what was refused
+     * @param refusal    The reason, from the handler that refused it
+     */
+    private void reportBoardEditRefused(int connIndex, String messageKey, String refusal) {
+        String message = Messages.getString(messageKey, refusal);
+        sendServerChat(connIndex, message);
+        send(connIndex, new Packet(PacketCommand.SEND_TOAST, GameToastEvent.Level.WARNING, message, Entity.NONE));
+    }
+
     private void receiveEntitiesUpdate(Packet packet, int connIndex) throws InvalidPacketDataException {
         if (!getGame().getPhase().isLounge()) {
             LOGGER.error("Multi entity updates should not be used outside the lobby phase!");

@@ -89,7 +89,9 @@ public class GameMasterAppointedDialog extends JDialog {
         messagePane.setForeground(UIManager.getColor("Label.foreground"));
 
         JPanel panMain = new JPanel(new BorderLayout());
-        panMain.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        int messageBorder = UIUtil.scaleForGUI(MESSAGE_BORDER);
+        panMain.setBorder(BorderFactory.createEmptyBorder(messageBorder, messageBorder, messageBorder,
+              messageBorder));
         panMain.add(messagePane, BorderLayout.CENTER);
 
         JButton butOkay = new JButton(Messages.getString("Okay"));

@@ -60,6 +60,12 @@ public class ClientCommandDialog extends JDialog {
     /** Where a hex spinner starts when the dialog was opened without a hex; board coordinates are one-based. */
     private static final int FIRST_BOARD_COORDINATE = 1;
 
+    /** Unscaled padding above and below a row; scaled through {@link UIUtil#scaleForGUI(int)} when used. */
+    private static final int VERTICAL_PADDING = 2;
+
+    /** Unscaled padding to the left and right of a row's controls. */
+    private static final int HORIZONTAL_PADDING = 6;
+
     /** How many columns the dialog's grid holds, so a full-width row can span all of them. */
     private static final int DIALOG_COLUMNS = 4;
 
@@ -144,7 +150,9 @@ public class ClientCommandDialog extends JDialog {
         constraints.weightx = 1.0;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.anchor = GridBagConstraints.NORTHWEST;
-        constraints.insets = new Insets(2, 6, 2, 6);
+        int verticalPadding = UIUtil.scaleForGUI(VERTICAL_PADDING);
+        int horizontalPadding = UIUtil.scaleForGUI(HORIZONTAL_PADDING);
+        constraints.insets = new Insets(verticalPadding, horizontalPadding, verticalPadding, horizontalPadding);
         return constraints;
     }
 

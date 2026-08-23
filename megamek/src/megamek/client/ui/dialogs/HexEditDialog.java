@@ -138,6 +138,15 @@ public class HexEditDialog extends JDialog {
     /** Draws the highlight around a painted hex on every side of it. */
     private static final int ALL_HEX_BORDERS = 63;
 
+    /** Unscaled padding around the dialog's content; scaled through {@link UIUtil#scaleForGUI(int)} when used. */
+    private static final int CONTENT_PADDING = 10;
+
+    /** Unscaled gap between the dialog's sections. */
+    private static final int SECTION_GAP = 8;
+
+    /** Unscaled gap around the painted-hex list. */
+    private static final int LIST_GAP = 4;
+
     /** Stands for the brush holding nothing, which strips a hex to bare ground. */
     private static final int BARE_GROUND = -1;
 
@@ -353,14 +362,18 @@ public class HexEditDialog extends JDialog {
     }
 
     private void buildUI(JFrame parent) {
+        int contentPadding = UIUtil.scaleForGUI(CONTENT_PADDING);
+        int sectionGap = UIUtil.scaleForGUI(SECTION_GAP);
+
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-        content.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        content.setBorder(BorderFactory.createEmptyBorder(contentPadding, contentPadding, contentPadding,
+              contentPadding));
 
         content.add(brushPanel());
-        content.add(Box.createVerticalStrut(8));
+        content.add(Box.createVerticalStrut(sectionGap));
         content.add(paintedPanel());
-        content.add(Box.createVerticalStrut(8));
+        content.add(Box.createVerticalStrut(sectionGap));
         content.add(legalityPanel());
         content.add(Box.createVerticalGlue());
 
@@ -402,9 +415,9 @@ public class HexEditDialog extends JDialog {
             setName(dialogName);
             PreferencesNode preferences = MegaMek.getMMPreferences().forClass(getClass());
             preferences.manage(new JWindowPreference(this));
-        } catch (Exception ex) {
+        } catch (Exception preferencesFailure) {
             // a dialog that cannot remember where it was is still perfectly usable
-            LOGGER.error(ex, "Could not set the preferences of {}", dialogName);
+            LOGGER.error(preferencesFailure, "Could not set the preferences of {}", dialogName);
         }
     }
 
@@ -488,7 +501,8 @@ public class HexEditDialog extends JDialog {
 
     /** The hexes painted so far and what each will hold. */
     private JPanel paintedPanel() {
-        JPanel panel = new JPanel(new BorderLayout(4, 4));
+        int listGap = UIUtil.scaleForGUI(LIST_GAP);
+        JPanel panel = new JPanel(new BorderLayout(listGap, listGap));
         panel.setBorder(BorderFactory.createTitledBorder(Messages.getString("HexEditDialog.painted")));
 
         JList<String> paintedList = new JList<>(paintedListModel);

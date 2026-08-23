@@ -617,7 +617,9 @@ public class BuildingEditDialog extends JDialog {
         constraints.insets = new Insets(rowPadding, rowPadding, rowPadding, labelGap);
         constraints.anchor = GridBagConstraints.WEST;
 
-        for (int row = 0; row < rows.length; row += 2) {
+        // stepping to rows.length - 1 rather than rows.length, so that the pairing this method documents is
+        // enforced by the loop instead of assumed of every caller
+        for (int row = 0; row < rows.length - 1; row += 2) {
             constraints.gridy = row / 2;
             constraints.gridx = 0;
             constraints.weightx = 0;

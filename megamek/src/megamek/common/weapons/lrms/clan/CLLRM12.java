@@ -36,6 +36,7 @@ package megamek.common.weapons.lrms.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -65,7 +66,7 @@ public class CLLRM12 extends LRMWeapon {
         flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
         cost = 120000;
-        rulesRefs = "231, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

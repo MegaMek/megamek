@@ -36,6 +36,7 @@ package megamek.common.weapons.unofficial.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -70,7 +71,7 @@ public class ISRailGun extends GaussWeapon {
         this.cost = 300000;
         this.explosionDamage = 20;
         // This appears to be like the Heavy Gauss using those stats.
-        rulesRefs = "Unofficial";
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)

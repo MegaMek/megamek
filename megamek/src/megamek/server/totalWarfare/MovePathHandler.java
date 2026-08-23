@@ -46,6 +46,7 @@ import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.IndustrialElevator;
 import megamek.common.LosEffects;
+import megamek.common.ManeuverType;
 import megamek.common.MPCalculationSetting;
 import megamek.common.Player;
 import megamek.common.Report;
@@ -265,6 +266,25 @@ class MovePathHandler extends AbstractTWRuleHandler {
         elevatorReport.add(direction);
         elevatorReport.add(curElevation);
         addReport(elevatorReport);
+    }
+
+    /**
+     * Checks whether the TW p.54 rule applies that VTOL-capable creatures must spend 1 MP per turn, even if
+     * remaining stationary. This is a pure check with no side effects: when it returns {@code true}, the caller
+     * ({@code processMovement()}) converts the entity's movement type to
+     * {@link EntityMovementType#MOVE_VTOL_WALK} and records 1 MP spent, so an airborne beast-mounted platoon
+     * (e.g. Branth) that holds its hex still counts as having walked.
+     *
+     * @param entity the entity whose movement was just processed
+     *
+     * @return {@code true} if the entity is airborne VTOL beast-mounted infantry that did not move this turn
+     */
+    static boolean mustSpendStationaryFlightMP(Entity entity) {
+        return (entity instanceof ConvInfantry beastInfantry)
+              && (beastInfantry.getMount() != null)
+              && beastInfantry.getMount().movementMode().isVTOL()
+              && entity.isAirborneVTOLorWIGE()
+              && (entity.moved == EntityMovementType.MOVE_NONE);
     }
 
     void processMovement() {
@@ -1061,6 +1081,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
         } else {
             entity.underwaterRounds = 0;
         }
+        if (mustSpendStationaryFlightMP(entity)) {
+            entity.moved = EntityMovementType.MOVE_VTOL_WALK;
+            entity.mpUsed = Math.max(entity.mpUsed, 1);
+        }
         entity.setClimbMode(curClimbMode);
         if (!sideslipped && !fellDuringMovement && !crashedDuringMovement
               && (entity.getMovementMode() == EntityMovementMode.VTOL)) {
@@ -1090,17 +1114,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
 
         // if we ran with destroyed hip or gyro, we need a psr
-        MoveStep lastStep = md.getLastStep();
-        if (lastStep != null) {
-            rollTarget = entity.checkRunningWithDamage(overallMoveType, lastStep.getDistance());
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
-                gameManager.doSkillCheckInPlace(entity, rollTarget);
-            }
-        } else {
-            logger.error("Unexpected null last step! Entity: {}; MoveType: {}; md: {}", entity.getId(),
-                  overallMoveType, md);
+        rollTarget = entity.checkRunningWithDamage(overallMoveType, md.getHexesMoved());
+        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
+            gameManager.doSkillCheckInPlace(entity, rollTarget);
         }
-        
+
         // if we moved a hex with a destroyed leg, but it was not a run
         rollTarget = Game.rulesManager.getRulesPSR().checkWalkWithLegDestroyed(entity,
               overallMoveType, md.getHexesMoved());
@@ -2410,7 +2428,26 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                 rollTarget = a.checkManeuver(step, overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    if (!gameManager.doSkillCheckManeuver(entity, rollTarget)) {
+                    // Announce the maneuver itself, separately from the control roll: the roll line is
+                    // skipped entirely on an automatic success, and a fighter that suddenly reverses
+                    // facing with no explanation reads as a bug to the opposing player.
+                    Report maneuverReport = new Report(9604);
+                    maneuverReport.subject = entity.getId();
+                    maneuverReport.addDesc(entity);
+                    maneuverReport.add(ManeuverType.getTypeName(step.getManeuverType()));
+                    addReport(maneuverReport);
+                    // The roll reports land in the phase report as usual; capture them so announcement
+                    // and result can also be pushed at the moment they happen as a kill-feed toast (the
+                    // climbing-collapse / EMP-mine pattern), instead of surfacing only in the
+                    // end-of-phase round report.
+                    int reportsBefore = gameManager.getMainPhaseReport().size();
+                    boolean maneuverFailed = !gameManager.doSkillCheckManeuver(entity, rollTarget);
+                    Vector<Report> maneuverSpecial = new Vector<>();
+                    maneuverSpecial.add(maneuverReport);
+                    maneuverSpecial.addAll(gameManager.getMainPhaseReport()
+                          .subList(reportsBefore, gameManager.getMainPhaseReport().size()));
+                    gameManager.sendSpecialReport(maneuverSpecial);
+                    if (maneuverFailed) {
                         a.setFailedManeuver(true);
                         int forward = Math.max(step.getVelocityLeft() / 2, 1);
                         if (forward < step.getVelocityLeft()) {

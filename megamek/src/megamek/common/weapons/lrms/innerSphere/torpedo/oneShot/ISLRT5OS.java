@@ -36,6 +36,7 @@ package megamek.common.weapons.lrms.innerSphere.torpedo.oneShot;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -69,7 +70,12 @@ public class ISLRT5OS extends LRTWeapon {
         bv = 9;
         flags = flags.or(F_ONE_SHOT).andNot(F_PROTO_WEAPON);
         cost = 15000;
-        rulesRefs = "230, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 230),
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 182),
+              rulesRef(SourceBookCode.TW, 113)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

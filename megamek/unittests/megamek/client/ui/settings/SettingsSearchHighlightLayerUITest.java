@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.settings;
 
+import static megamek.client.ui.util.UIUtil.scaleForGUI;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -48,16 +49,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import javax.swing.JCheckBox;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JLayer;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.plaf.basic.BasicHTML;
 import javax.swing.text.View;
 
@@ -179,6 +171,7 @@ class SettingsSearchHighlightLayerUITest {
             JEditorPane textPane = new JEditorPane("text/html", "<html><b>Heat &amp; Fire</b></html>");
             textPane.setEditable(false);
             textPane.setFocusable(false);
+            textPane.setPreferredSize(scaleForGUI(320, 40));
             HighlightFixture fixture = fixture(textPane);
 
             fixture.paint("heat");

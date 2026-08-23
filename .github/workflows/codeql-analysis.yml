@@ -52,7 +52,7 @@ jobs:
           java-version: ${{ matrix.java-version }}
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v4.37.6
+        uses: github/codeql-action/init@v4.37.7
         with:
           languages: java-kotlin
           build-mode: none
@@ -61,7 +61,7 @@ jobs:
           dependency-caching: true
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v4.37.6
+        uses: github/codeql-action/analyze@v4.37.7
         with:
           checkout_path: megamek
           sha: ${{ github.event.pull_request.head.sha || github.sha}}

@@ -936,4 +936,9 @@ public class SmallCraft extends Aero {
     public int getRecoveryTime() {
         return 120;
     }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return true;
+    }
 }

@@ -36,6 +36,7 @@ package megamek.common.weapons.infantry.support;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -68,7 +69,7 @@ public class InfantrySupportSnubNoseSupportPPCWeapon extends InfantryWeapon {
         crew = 3;
         ammoWeight = 0.025;
         shots = 150;
-        rulesRefs = "176, AToW-C";
+        rulesRefs = rulesRefs(SourceBookCode.ATOW_COMPANION, 176);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3075, 3082, 3090, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.DC)

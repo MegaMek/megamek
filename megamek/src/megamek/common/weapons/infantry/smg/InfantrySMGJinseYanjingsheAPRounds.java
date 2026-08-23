@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.smg;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -69,7 +70,7 @@ public class InfantrySMGJinseYanjingsheAPRounds extends InfantryWeapon {
         shots = 30;
         bursts = 5;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        rulesRefs = "Shrapnel #5";
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_5);
         techAdvancement
               .setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)

@@ -37,6 +37,7 @@ package megamek.common.equipment;
 import java.text.NumberFormat;
 import java.util.Map;
 
+import megamek.common.SourceBookCode;
 import megamek.common.Messages;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
@@ -72,6 +73,13 @@ public class MiscType extends EquipmentType {
      */
     public static final String MODE_ECM = "ECM";
 
+    /**
+     * Internal (non-localized) name of the running mode of an Enhanced Imaging Interface, paired with
+     * {@link Mounted#MODE_OFF}. Per IO p.69 EI runs unless the pilot deliberately shuts it down, so this is the
+     * interface's default mode.
+     */
+    public static final String MODE_EI_ON = "Initiate enhanced imaging";
+
     // equipment flags (okay, like every type of equipment has its own flag)
     public static final MiscTypeFlag F_HEAT_SINK = MiscTypeFlag.F_HEAT_SINK;
     public static final MiscTypeFlag F_DOUBLE_HEAT_SINK = MiscTypeFlag.F_DOUBLE_HEAT_SINK;
@@ -99,6 +107,7 @@ public class MiscType extends EquipmentType {
     public static final MiscTypeFlag F_AP_POD = MiscTypeFlag.F_AP_POD;
     public static final MiscTypeFlag F_SEARCHLIGHT = MiscTypeFlag.F_SEARCHLIGHT;
     public static final MiscTypeFlag F_CLUB = MiscTypeFlag.F_CLUB;
+    public static final MiscTypeFlag F_SHIELD = MiscTypeFlag.F_SHIELD;
     public static final MiscTypeFlag F_HAND_WEAPON = MiscTypeFlag.F_HAND_WEAPON;
     public static final MiscTypeFlag F_COWL = MiscTypeFlag.F_COWL;
     public static final MiscTypeFlag F_JUMP_BOOSTER = MiscTypeFlag.F_JUMP_BOOSTER;
@@ -107,6 +116,7 @@ public class MiscType extends EquipmentType {
     public static final MiscTypeFlag F_BA_VTOL = MiscTypeFlag.F_BA_VTOL;
     public static final MiscTypeFlag F_SPIKES = MiscTypeFlag.F_SPIKES;
     public static final MiscTypeFlag F_COMMUNICATIONS = MiscTypeFlag.F_COMMUNICATIONS;
+    public static final MiscTypeFlag F_PHYSICAL_WEAPON = MiscTypeFlag.F_PHYSICAL_WEAPON;
     public static final MiscTypeFlag F_PPC_CAPACITOR = MiscTypeFlag.F_PPC_CAPACITOR;
     public static final MiscTypeFlag F_REFLECTIVE = MiscTypeFlag.F_REFLECTIVE;
     public static final MiscTypeFlag F_REACTIVE = MiscTypeFlag.F_REACTIVE;
@@ -395,13 +405,7 @@ public class MiscType extends EquipmentType {
     public boolean isBoobyTrap() {
         return hasFlag(F_BOOBY_TRAP);
     }
-
-    public boolean isShield() {
-        return hasAnyFlag(MiscTypeFlag.S_SHIELD_LARGE,
-              MiscTypeFlag.S_SHIELD_MEDIUM,
-              MiscTypeFlag.S_SHIELD_SMALL);
-    }
-
+    
     public boolean isVibroblade() {
         return hasFlag(F_CLUB)
               && hasAnyFlag(
@@ -1848,7 +1852,6 @@ public class MiscType extends EquipmentType {
     // Advanced Mek/ProtoMek/Vehicular Motive Systems
     public static MiscType createJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.JUMP_JET);
         misc.addLookupName("JumpJet");
@@ -1857,7 +1860,13 @@ public class MiscType extends EquipmentType {
         misc.tankSlots = 0;
         misc.flags = misc.flags.or(F_JUMP_JET, F_MEK_EQUIPMENT, MiscTypeFlag.S_STANDARD);
         misc.bv = 0;
-        misc.rulesRefs = "225, TM";
+        misc.industrial = true;
+        misc.rulesRefs = rulesRefs(
+            rulesRef(SourceBookCode.TM, 225),
+            rulesRef(SourceBookCode.TW, 53),
+            rulesRef(SourceBookCode.BMM, 18),
+            rulesRef(SourceBookCode.CORE, 98)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(2464, 2471, 2500, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
@@ -1873,7 +1882,6 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createImprovedJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Improved Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.IMPROVED_JUMP_JET);
         misc.addLookupName("IS Improved Jump Jet");
@@ -1885,7 +1893,12 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 2;
         misc.flags = misc.flags.or(F_JUMP_JET, F_MEK_EQUIPMENT, MiscTypeFlag.S_IMPROVED);
         misc.bv = 0;
-        misc.rulesRefs = "225, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 225),
+              rulesRef(SourceBookCode.TW, 53),
+              rulesRef(SourceBookCode.BMM, 18),
+              rulesRef(SourceBookCode.CORE, 98)
+        );
         // Jan 22 - Errata issued by CGL (Greekfire) for IJJs
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(3067, 3068, 3069, DATE_NONE, DATE_NONE)
@@ -1901,10 +1914,9 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISPrototypeImprovedJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Prototype Improved Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.PROTOTYPE_IMPROVED_JJ);
-        misc.shortName = "Prototype Imp. Jump Jet";
+        misc.shortName = "Proto. Imp. Jump Jet";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 1;
         misc.tankSlots = 0;
@@ -1912,7 +1924,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_JUMP_JET, F_MEK_EQUIPMENT, MiscTypeFlag.S_IMPROVED,
               MiscTypeFlag.S_PROTOTYPE);
         misc.bv = 0;
-        misc.rulesRefs = "17,XTRO:SW1";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 97);
         // Not included in IO Progression data based on original source.
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3020, DATE_NONE, DATE_NONE, 3069)
@@ -1927,15 +1939,16 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISPrototypeJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Primitive Prototype Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.PROTOTYPE_JUMP_JET);
-        misc.shortName = "Prototype Jump Jet";
+        misc.shortName = "Primitive Proto. Jump Jet";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 1;
         misc.tankSlots = 0;
         misc.flags = misc.flags.or(F_JUMP_JET, F_MEK_EQUIPMENT, MiscTypeFlag.S_PROTOTYPE);
         misc.bv = 0;
+        misc.industrial = true;
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 114);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(2464, DATE_NONE, DATE_NONE, 2471, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
@@ -1951,7 +1964,6 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createVehicularJumpJet() {
         MiscType misc = new MiscType();
-
         misc.name = "Jump Jet";
         misc.setInternalName(EquipmentTypeLookup.VEHICLE_JUMP_JET);
         misc.addLookupName("VJJ");
@@ -1960,7 +1972,7 @@ public class MiscType extends EquipmentType {
         misc.tankSlots = 1;
         misc.flags = misc.flags.or(F_JUMP_JET, F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT, MiscTypeFlag.S_STANDARD);
         misc.bv = 0;
-        misc.rulesRefs = "161, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 161);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setAdvancement(2650, 3083, DATE_NONE, 2840, 3083)
@@ -1974,7 +1986,6 @@ public class MiscType extends EquipmentType {
     }
 
     // TODO Protomek Jump Jets See IO, pg 35
-
     public static MiscType createProtomekJumpJet() {
         MiscType misc = new MiscType();
         misc.name = "Jump Jet";
@@ -1984,7 +1995,12 @@ public class MiscType extends EquipmentType {
         misc.cost = 0;
         misc.flags = misc.flags.or(F_JUMP_JET, F_PROTOMEK_EQUIPMENT, MiscTypeFlag.S_STANDARD);
         misc.bv = 0;
-        misc.rulesRefs = "225, TM";
+        misc.rulesRefs = rulesRefs(
+            rulesRef(SourceBookCode.TM, 225),
+            rulesRef(SourceBookCode.TW, 53),
+            rulesRef(SourceBookCode.BMM, 18),
+            rulesRef(SourceBookCode.CORE, 98)
+        );
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(3055, 3060, 3060)
               .setClanApproximate(true, false, false)
@@ -2008,7 +2024,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0;
         misc.flags = misc.flags.or(F_JUMP_JET, F_PROTOMEK_EQUIPMENT, MiscTypeFlag.S_IMPROVED);
         misc.bv = 0;
-        misc.rulesRefs = "59, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 59);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(3071, DATE_NONE, 3079, DATE_NONE, DATE_NONE)
@@ -2031,7 +2047,11 @@ public class MiscType extends EquipmentType {
         misc.cost = 0;
         misc.flags = misc.flags.or(F_UMU, F_PROTOMEK_EQUIPMENT, MiscTypeFlag.S_STANDARD);
         misc.bv = 0;
-        misc.rulesRefs = "95, IO:AE";
+        misc.rulesRefs = rulesRefs(
+            rulesRef(SourceBookCode.IO_AE, 95),
+            rulesRef(SourceBookCode.TW, 56),
+            rulesRef(SourceBookCode.BMM, 117)
+        );
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(3065, 3075, 3084)
               .setClanApproximate(true, true, false)
@@ -2053,7 +2073,7 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_MASC, F_PROTOMEK_EQUIPMENT);
-        misc.rulesRefs = "232, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 232);
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(3066, 3068, 3075, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
@@ -2082,7 +2102,12 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         String[] saModes = { "Armed", "Off" };
         misc.setModes(saModes);
-        misc.rulesRefs = "225, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 225),
+              rulesRef(SourceBookCode.BMM, 116),
+              rulesRef(SourceBookCode.CORE, 204),
+              rulesRef(SourceBookCode.TW, 137)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(2730, 2740, 3040, 2795, 3035)
               .setISApproximate(true, false, false, false, false)
@@ -2109,7 +2134,12 @@ public class MiscType extends EquipmentType {
         String[] saModes = { "Armed", "Off" };
         misc.setModes(saModes);
 
-        misc.rulesRefs = "225, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 225),
+              rulesRef(SourceBookCode.BMM, 116),
+              rulesRef(SourceBookCode.CORE, 204),
+              rulesRef(SourceBookCode.TW, 137)
+        );
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(2820, 2827, 2835, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
@@ -2135,7 +2165,10 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_JUMP_BOOSTER, F_MEK_EQUIPMENT, F_VARIABLE_SIZE);
         misc.spreadable = true;
-        misc.rulesRefs = "105, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+            rulesRef(SourceBookCode.TO_AUE, 105),
+            rulesRef(SourceBookCode.BMM, 116)
+            );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(DATE_NONE, 3060, 3083, DATE_NONE, DATE_NONE)
@@ -2161,7 +2194,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_CHAIN_DRAPE, configurationFlag, F_MEK_EQUIPMENT);
         // Arcade Ops: UrbanFest
-        misc.rulesRefs = "16, UF";
+        misc.rulesRefs = rulesRefs(SourceBookCode.PS_AO_URBANFEST, 16);
         // No information about this is provided so we fill in essentially "blank" data
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL)
@@ -2186,7 +2219,11 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_PARTIAL_WING, F_MEK_EQUIPMENT);
-        misc.rulesRefs = "105, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 105),
+              rulesRef(SourceBookCode.BMM, 116),
+              rulesRef(SourceBookCode.CORE, 204)
+        );
         misc.omniFixedOnly = true;
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -2214,7 +2251,11 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_PARTIAL_WING, F_MEK_EQUIPMENT);
         misc.omniFixedOnly = true;
-        misc.rulesRefs = "105, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 105),
+              rulesRef(SourceBookCode.BMM, 116),
+              rulesRef(SourceBookCode.CORE, 204)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
@@ -2241,7 +2282,7 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_PROTOMEK_EQUIPMENT, F_PARTIAL_WING);
 
-        misc.rulesRefs = "192, TO:AUE (4th-7th)";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 105);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
@@ -2268,7 +2309,12 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 1;
         misc.flags = misc.flags.or(F_UMU, F_MEK_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "107, TO:AUE";
+        misc.industrial = true;
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 107),
+              rulesRef(SourceBookCode.BMM, 19),
+              rulesRef(SourceBookCode.BMM, 117)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(DATE_NONE, 3066, 3084, DATE_NONE, DATE_NONE)
@@ -2296,7 +2342,7 @@ public class MiscType extends EquipmentType {
                     MiscTypeFlag.S_JET_BOOSTER);
         misc.criticalSlots = 1;
         misc.omniFixedOnly = true;
-        misc.rulesRefs = "162, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 162);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(DATE_NONE, DATE_ES, 3078, DATE_NONE, DATE_NONE)
@@ -2334,7 +2380,12 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         String[] saModes = { "Armed", "Off" };
         misc.setModes(saModes);
-        misc.rulesRefs = "157, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 157),
+              rulesRef(SourceBookCode.BMM, 116),
+              rulesRef(SourceBookCode.CORE, 204),
+              rulesRef(SourceBookCode.CORE, 205)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
@@ -2360,7 +2411,10 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_TRACKS, F_MEK_EQUIPMENT);
 
-        misc.rulesRefs = "249, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 249),
+              rulesRef(SourceBookCode.TW, 143)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
@@ -2388,7 +2442,7 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_TRACKS, F_MEK_EQUIPMENT, MiscTypeFlag.S_QUADVEE_WHEELS);
         misc.omniFixedOnly = true;
-        misc.rulesRefs = "127, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 127);
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
@@ -2452,7 +2506,7 @@ public class MiscType extends EquipmentType {
         misc.bv = BV_VARIABLE;
         misc.baseDamageAbsorptionRate = 10;
         misc.baseDamageCapacity = 10;
-        misc.rulesRefs = "93, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 93);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
@@ -2478,7 +2532,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 1000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_ENCUMBERING);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
@@ -2499,7 +2553,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 1500;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.B, AvailabilityValue.B)
@@ -2523,7 +2577,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 800;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
 
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
@@ -2547,7 +2601,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 1400;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
@@ -2570,7 +2624,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 2.0;
         misc.cost = 1600;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_ENCUMBERING);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
@@ -2592,7 +2646,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 2880;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
 
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
@@ -2613,7 +2667,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 25;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.A)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
@@ -2633,7 +2687,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 100;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.A)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
@@ -2653,7 +2707,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 0.5;
         misc.cost = 15;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.A)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
@@ -2674,7 +2728,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 7500;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_ENCUMBERING, MiscTypeFlag.S_SPACE_SUIT);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
@@ -2698,7 +2752,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 200;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_ENCUMBERING, MiscTypeFlag.S_SPACE_SUIT);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
@@ -2725,7 +2779,7 @@ public class MiscType extends EquipmentType {
               MiscTypeFlag.S_XCT_VACUUM,
               MiscTypeFlag.S_COLD_WEATHER,
               MiscTypeFlag.S_HOT_WEATHER);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
@@ -2754,7 +2808,7 @@ public class MiscType extends EquipmentType {
               MiscTypeFlag.S_COLD_WEATHER,
               MiscTypeFlag.S_HOT_WEATHER);
 
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
@@ -2776,7 +2830,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 150;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
@@ -2796,7 +2850,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 225;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
@@ -2816,7 +2870,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 100;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_HOT_WEATHER);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B)
@@ -2840,7 +2894,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 20000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
@@ -2863,7 +2917,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 500;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_HOT_WEATHER);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
@@ -2886,7 +2940,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 0.5;
         misc.cost = 200;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
@@ -2908,7 +2962,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 2.0;
         misc.cost = 5800;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_ENCUMBERING);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
@@ -2928,7 +2982,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 2.0;
         misc.cost = 1800;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
@@ -2948,7 +3002,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 920;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
@@ -2967,7 +3021,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 50;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
@@ -2989,7 +3043,7 @@ public class MiscType extends EquipmentType {
               F_ARMOR_KIT,
               MiscTypeFlag.S_COLD_WEATHER,
               MiscTypeFlag.S_ENCUMBERING);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
@@ -3013,7 +3067,7 @@ public class MiscType extends EquipmentType {
               MiscTypeFlag.S_SPACE_SUIT,
               MiscTypeFlag.S_XCT_VACUUM,
               MiscTypeFlag.S_COLD_WEATHER);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
@@ -3039,7 +3093,7 @@ public class MiscType extends EquipmentType {
               MiscTypeFlag.S_XCT_VACUUM,
               MiscTypeFlag.S_COLD_WEATHER);
 
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D)
@@ -3059,7 +3113,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 450;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B)
@@ -3079,7 +3133,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 2.0;
         misc.cost = 5560;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.C)
@@ -3101,7 +3155,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 2.0;
         misc.cost = 4280;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.E)
@@ -3121,7 +3175,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 360;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
@@ -3141,7 +3195,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 750;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.F)
@@ -3163,7 +3217,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 2;
         misc.cost = 1040;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.B, AvailabilityValue.E)
@@ -3184,7 +3238,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 2.0;
         misc.cost = 2080;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_ENCUMBERING);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C)
@@ -3204,7 +3258,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 360;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
@@ -3224,7 +3278,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 950;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.D)
@@ -3245,7 +3299,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 2.0;
         misc.cost = 1830;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_ENCUMBERING);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.B, AvailabilityValue.B)
@@ -3265,7 +3319,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 650;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.E)
@@ -3285,7 +3339,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 2.0;
         misc.cost = 730;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.B, AvailabilityValue.E)
@@ -3305,7 +3359,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 400;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
@@ -3325,7 +3379,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 2.0;
         misc.cost = 1580;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.B, AvailabilityValue.B)
@@ -3339,14 +3393,14 @@ public class MiscType extends EquipmentType {
     public static MiscType createISSLDFInfArmor() {
         MiscType misc = new MiscType();
 
-        // Stats converted from ATOW
+        // Stats converted from AToW
         misc.name = "SLDF Infantry Kit";
         misc.setInternalName(misc.name);
         misc.addLookupName("SLDFKit");
         misc.damageDivisor = 2.0;
         misc.cost = 5000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "195, AToW-C";
+        misc.rulesRefs = rulesRefs(SourceBookCode.ATOW_COMPANION, 195);
         // Kit never really goes extinct but should be very rare.
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.E)
@@ -3369,7 +3423,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 370;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
@@ -3389,7 +3443,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 2.0;
         misc.cost = 4300;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.F)
@@ -3409,7 +3463,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 330;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
@@ -3431,7 +3485,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 500;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
-        misc.rulesRefs = "195, ATOW-C";
+        misc.rulesRefs = rulesRefs(SourceBookCode.ATOW_COMPANION, 195);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.E)
@@ -3452,7 +3506,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 750;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_ENCUMBERING);
-        misc.rulesRefs = "195, ATOW-C";
+        misc.rulesRefs = rulesRefs(SourceBookCode.ATOW_COMPANION, 195);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.E)
@@ -3473,7 +3527,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 50000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_DEST);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
@@ -3494,7 +3548,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 7000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_SNEAK_CAMO);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
@@ -3516,7 +3570,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 7000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_SNEAK_IR);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
@@ -3538,7 +3592,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 7000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_SNEAK_ECM);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
@@ -3562,7 +3616,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 21000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_SNEAK_CAMO, MiscTypeFlag.S_SNEAK_IR);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
@@ -3584,7 +3638,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 21000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_SNEAK_CAMO, MiscTypeFlag.S_SNEAK_ECM);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
@@ -3606,7 +3660,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 21000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_SNEAK_IR, MiscTypeFlag.S_SNEAK_ECM);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
@@ -3632,7 +3686,7 @@ public class MiscType extends EquipmentType {
         misc.flags =
               misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_SNEAK_CAMO, MiscTypeFlag.S_SNEAK_IR,
                     MiscTypeFlag.S_SNEAK_ECM);
-        misc.rulesRefs = "130, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
@@ -3656,7 +3710,7 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.flags = misc.flags.or(F_ARMORED_MOTIVE_SYSTEM, F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "95, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 95);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
@@ -3680,7 +3734,7 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.flags = misc.flags.or(F_ARMORED_MOTIVE_SYSTEM, F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "95, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 95);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
@@ -3702,10 +3756,10 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 3;
         misc.criticalSlots = 2;
         misc.cost = 120000;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_CHAIN_WHIP).andNot(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_CHAIN_WHIP).andNot(F_FIGHTER_EQUIPMENT);
         misc.toHitModifier = -2;
         misc.bv = 5.175;
-        misc.rulesRefs = "100, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 100);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -3729,10 +3783,13 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_HAND_WEAPON, F_MEK_EQUIPMENT, MiscTypeFlag.S_CLAW);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_HAND_WEAPON, F_MEK_EQUIPMENT, MiscTypeFlag.S_CLAW);
         misc.bv = BV_VARIABLE;
         misc.toHitModifier = 0;
-        misc.rulesRefs = "101, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 101),
+              rulesRef(SourceBookCode.CORE, 194)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
@@ -3757,9 +3814,12 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 5;
         misc.criticalSlots = 4;
         misc.cost = 110000;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_FLAIL);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_FLAIL);
         misc.bv = 11;
-        misc.rulesRefs = "101, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 101),
+              rulesRef(SourceBookCode.BMM, 109)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -3782,10 +3842,15 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_HATCHET);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_HATCHET);
         misc.toHitModifier = -1;
         misc.bv = BV_VARIABLE;
-        misc.rulesRefs = "220, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 220),
+              rulesRef(SourceBookCode.BMM, 109),
+              rulesRef(SourceBookCode.CORE, 194),
+              rulesRef(SourceBookCode.TW, 146)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
@@ -3806,10 +3871,14 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_LANCE);
-        misc.toHitModifier = 0;
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_LANCE);
+        misc.toHitModifier = 1;
         misc.bv = BV_VARIABLE;
-        misc.rulesRefs = "102, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 102),
+              rulesRef(SourceBookCode.BMM, 109),
+              rulesRef(SourceBookCode.CORE, 194)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -3833,10 +3902,14 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.cost = 130000;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_MACE).andNot(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_MACE).andNot(F_FIGHTER_EQUIPMENT);
         misc.toHitModifier = 1;
         misc.bv = BV_VARIABLE;
-        misc.rulesRefs = "102, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 102),
+              rulesRef(SourceBookCode.BMM, 109),
+              rulesRef(SourceBookCode.CORE, 194)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -3860,13 +3933,18 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.cost = COST_VARIABLE;
         misc.flags =
-              misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_RETRACTABLE_BLADE).andNot(F_FIGHTER_EQUIPMENT);
+              misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_RETRACTABLE_BLADE).andNot(F_FIGHTER_EQUIPMENT);
         misc.toHitModifier = -2;
         misc.bv = BV_VARIABLE;
         misc.setInstantModeSwitch(true);
         String[] modes = { "retracted", "extended" };
         misc.setModes(modes);
-        misc.rulesRefs = "236, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 236),
+              rulesRef(SourceBookCode.BMM, 109),
+              rulesRef(SourceBookCode.CORE, 194),
+              rulesRef(SourceBookCode.TW, 139)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -3890,14 +3968,17 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 2;
         misc.criticalSlots = 3;
         misc.cost = 50000;
-        misc.flags = misc.flags.or(F_MEK_EQUIPMENT, MiscTypeFlag.S_SHIELD_SMALL);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_SHIELD, F_MEK_EQUIPMENT, MiscTypeFlag.S_SHIELD_SMALL);
         misc.bv = 50;
         misc.setInstantModeSwitch(true);
         String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
         misc.setModes(modes);
         misc.baseDamageAbsorptionRate = 3;
         misc.baseDamageCapacity = 11;
-        misc.rulesRefs = "103, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 103),
+              rulesRef(SourceBookCode.CORE, 195)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -3922,14 +4003,17 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 4;
         misc.criticalSlots = 5;
         misc.cost = 100000;
-        misc.flags = misc.flags.or(F_MEK_EQUIPMENT, MiscTypeFlag.S_SHIELD_MEDIUM);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_SHIELD, F_MEK_EQUIPMENT, MiscTypeFlag.S_SHIELD_MEDIUM);
         misc.bv = 135;
         misc.setInstantModeSwitch(true);
         String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
         misc.setModes(modes);
         misc.baseDamageAbsorptionRate = 5;
         misc.baseDamageCapacity = 18;
-        misc.rulesRefs = "103, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 103),
+              rulesRef(SourceBookCode.CORE, 195)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -3954,14 +4038,17 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 6;
         misc.criticalSlots = 7;
         misc.cost = 300000;
-        misc.flags = misc.flags.or(F_MEK_EQUIPMENT, MiscTypeFlag.S_SHIELD_LARGE);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_SHIELD, F_MEK_EQUIPMENT, MiscTypeFlag.S_SHIELD_LARGE);
         misc.bv = 263;
         misc.setInstantModeSwitch(true);
         String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
         misc.setModes(modes);
         misc.baseDamageAbsorptionRate = 7;
         misc.baseDamageCapacity = 25;
-        misc.rulesRefs = "103, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 103),
+              rulesRef(SourceBookCode.CORE, 195)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -3984,9 +4071,12 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5;
         misc.criticalSlots = 1;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_SPIKES, F_MEK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_SPIKES, F_MEK_EQUIPMENT);
         misc.bv = 4;
-        misc.rulesRefs = "103, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 103),
+              rulesRef(SourceBookCode.CORE, 196)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -4007,10 +4097,15 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_SWORD).andNot(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_SWORD).andNot(F_FIGHTER_EQUIPMENT);
         misc.toHitModifier = -2;
         misc.bv = BV_VARIABLE;
-        misc.rulesRefs = "237, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 237),
+              rulesRef(SourceBookCode.BMM, 109),
+              rulesRef(SourceBookCode.CORE, 196),
+              rulesRef(SourceBookCode.TW, 146)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
@@ -4031,9 +4126,13 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = CRITICAL_SLOTS_VARIABLE;
         misc.spreadable = true;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_TALON, F_MEK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_TALON, F_MEK_EQUIPMENT);
         misc.bv = BV_VARIABLE;
-        misc.rulesRefs = "103, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 103),
+              rulesRef(SourceBookCode.BMM, 109),
+              rulesRef(SourceBookCode.CORE, 196)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
@@ -4057,13 +4156,17 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 3;
         misc.criticalSlots = 1;
         misc.cost = 150000;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_VIBRO_SMALL);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_VIBRO_SMALL);
         misc.toHitModifier = -2;
         misc.bv = 12;
         misc.setInstantModeSwitch(true);
         String[] modes = { "Inactive", "Active" };
         misc.setModes(modes);
-        misc.rulesRefs = "104, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 104),
+              rulesRef(SourceBookCode.BMM, 109),
+              rulesRef(SourceBookCode.CORE, 196)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -4087,13 +4190,17 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 5;
         misc.criticalSlots = 2;
         misc.cost = 400000;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_VIBRO_MEDIUM);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_VIBRO_MEDIUM);
         misc.toHitModifier = -2;
         misc.bv = 17;
         misc.setInstantModeSwitch(true);
         String[] modes = { "Inactive", "Active" };
         misc.setModes(modes);
-        misc.rulesRefs = "104, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 104),
+              rulesRef(SourceBookCode.BMM, 109),
+              rulesRef(SourceBookCode.CORE, 196)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -4118,13 +4225,17 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 7;
         misc.criticalSlots = 4;
         misc.cost = 750000;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_VIBRO_LARGE);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_VIBRO_LARGE);
         misc.toHitModifier = -2;
         misc.bv = 24;
         misc.setInstantModeSwitch(true);
         String[] modes = { "Inactive", "Active" };
         misc.setModes(modes);
-        misc.rulesRefs = "104, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 104),
+              rulesRef(SourceBookCode.BMM, 109),
+              rulesRef(SourceBookCode.CORE, 196)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -4147,7 +4258,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentTypeLookup.TREE_CLUB);
         misc.tonnage = 0;
         misc.criticalSlots = 0;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_TREE_CLUB, MiscTypeFlag.S_CLUB);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_TREE_CLUB, MiscTypeFlag.S_CLUB);
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TechBase.ALL);
@@ -4167,7 +4278,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentTypeLookup.GIRDER_CLUB);
         misc.tonnage = 0;
         misc.criticalSlots = 0;
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_CLUB);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_CLUB);
         misc.bv = 0;
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
@@ -4186,7 +4297,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentTypeLookup.LIMB_CLUB);
         misc.tonnage = 0;
         misc.criticalSlots = 0;
-        misc.flags = misc.flags.or(F_CLUB, MiscTypeFlag.S_CLUB);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, MiscTypeFlag.S_CLUB);
         misc.bv = 0;
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
@@ -4217,7 +4328,12 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "209, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 209),
+              rulesRef(SourceBookCode.BMM, 110),
+              rulesRef(SourceBookCode.CORE, 198),
+              rulesRef(SourceBookCode.TW, 131)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -4243,7 +4359,11 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 2;
         misc.svSlots = 1;
         misc.cost = 750000;
-        misc.rulesRefs = "133, TW";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TW, 133),
+              rulesRef(SourceBookCode.BMM, 112),
+              rulesRef(SourceBookCode.CORE, 199)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         // December 2021 - Errata request to change common date
         misc.flags = misc.flags.or(F_C3I, MiscTypeFlag.ANY_C3, F_MEK_EQUIPMENT, F_TANK_EQUIPMENT,
@@ -4285,7 +4405,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "110, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 110),
+              rulesRef(SourceBookCode.BMM, 112),
+              rulesRef(SourceBookCode.CORE, 199)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -4322,7 +4446,7 @@ public class MiscType extends EquipmentType {
                     F_C3S)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "110, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 110);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -4361,7 +4485,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "109, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 109);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
@@ -4396,7 +4520,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "109, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 109);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
@@ -4428,7 +4552,13 @@ public class MiscType extends EquipmentType {
               F_HEAVY_EQUIPMENT);
         misc.cost = 50000;
         misc.bv = 0;
-        misc.rulesRefs = "210, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 210),
+              rulesRef(SourceBookCode.BMM, 118),
+              rulesRef(SourceBookCode.CORE, 96),
+              rulesRef(SourceBookCode.CORE, 207),
+              rulesRef(SourceBookCode.TW, 133)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -4461,7 +4591,7 @@ public class MiscType extends EquipmentType {
               F_PROTOTYPE);
         misc.cost = 150000;
         misc.bv = 0;
-        misc.rulesRefs = "65, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 65);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -4492,7 +4622,13 @@ public class MiscType extends EquipmentType {
               F_HEAVY_EQUIPMENT);
         misc.cost = 50000;
         misc.bv = 0;
-        misc.rulesRefs = "210, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 210),
+              rulesRef(SourceBookCode.BMM, 118),
+              rulesRef(SourceBookCode.CORE, 96),
+              rulesRef(SourceBookCode.CORE, 207),
+              rulesRef(SourceBookCode.TW, 133)
+        );
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -4517,7 +4653,12 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_CASEII, F_MEK_EQUIPMENT, F_FIGHTER_EQUIPMENT);
         misc.cost = 175000;
         misc.bv = 0;
-        misc.rulesRefs = "111, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 111),
+              rulesRef(SourceBookCode.BMM, 119),
+              rulesRef(SourceBookCode.CORE, 96),
+              rulesRef(SourceBookCode.CORE, 207)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -4544,7 +4685,12 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_CASEII, F_MEK_EQUIPMENT, F_FIGHTER_EQUIPMENT);
         misc.cost = 175000;
         misc.bv = 0;
-        misc.rulesRefs = "111, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 111),
+              rulesRef(SourceBookCode.BMM, 119),
+              rulesRef(SourceBookCode.CORE, 96),
+              rulesRef(SourceBookCode.CORE, 207)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
@@ -4583,7 +4729,11 @@ public class MiscType extends EquipmentType {
                     F_HEAVY_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 1;
-        misc.rulesRefs = "204, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 204),
+              rulesRef(SourceBookCode.CORE, 189),
+              rulesRef(SourceBookCode.TW, 130)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -4612,7 +4762,10 @@ public class MiscType extends EquipmentType {
               F_SUPPORT_TANK_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "113, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+            rulesRef(SourceBookCode.TO_AUE, 113),
+            rulesRef(SourceBookCode.CORE, 203)
+            );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -4644,7 +4797,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 9;
         misc.cost = 4000;
         misc.flags = misc.flags.or(F_MASS, F_MEK_EQUIPMENT);
-        misc.rulesRefs = "137, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 137);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
@@ -4678,7 +4831,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BATTLEMEK_NIU, F_BA_EQUIPMENT);
 
-        misc.rulesRefs = "110, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 110);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -4705,11 +4858,11 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 0;
         misc.cost = 250000;
         misc.hittable = false;
-        // Available for BM, IM, BA, CV, SV, AF, CF per IO p.83
+        // Available for BM, IM, BA, CV, SV, AF, CF per IO:AE p.62
         misc.flags = misc.flags.or(F_MEK_EQUIPMENT, F_DNI_COCKPIT_MOD, F_BA_EQUIPMENT,
               F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT, F_FIGHTER_EQUIPMENT);
 
-        misc.rulesRefs = "83, IO";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 62);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -4724,7 +4877,7 @@ public class MiscType extends EquipmentType {
     }
 
     /**
-     * Creates the Damage Interrupt Circuit cockpit modification (IO p.39). When working, reduces internal explosion
+     * Creates the Damage Interrupt Circuit cockpit modification (IO:AE p.62). When working, reduces internal explosion
      * pilot damage from 2 to 1. Disabled by Life Support critical hit or any hit rolling "2" on the hit location table.
      * When disabled, adds +1 to all PSR until repaired.
      */
@@ -4735,11 +4888,11 @@ public class MiscType extends EquipmentType {
 
         misc.tonnage = 0;
         misc.criticalSlots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE; // 150 C-bills per pilot seat (IO p.39)
+        misc.cost = EquipmentType.COST_VARIABLE; // 150 C-bills per pilot seat (IO:AE p.62)
         misc.hittable = false;
         misc.flags = misc.flags.or(F_MEK_EQUIPMENT, F_DAMAGE_INTERRUPT_CIRCUIT);
 
-        misc.rulesRefs = "39, IO";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 62);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -4779,7 +4932,7 @@ public class MiscType extends EquipmentType {
               F_WS_EQUIPMENT,
               F_SUPPORT_TANK_EQUIPMENT,
               F_TANK_EQUIPMENT);
-        misc.rulesRefs = "117, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 117);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -4811,7 +4964,7 @@ public class MiscType extends EquipmentType {
               F_TANK_EQUIPMENT,
               F_FIGHTER_EQUIPMENT,
               F_SUPPORT_TANK_EQUIPMENT);
-        misc.rulesRefs = "118, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 118);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -4843,7 +4996,7 @@ public class MiscType extends EquipmentType {
               F_WS_EQUIPMENT,
               F_SUPPORT_TANK_EQUIPMENT,
               F_REMOTE_DRONE_COMMAND_CONSOLE);
-        misc.rulesRefs = "84, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 84);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -4866,7 +5019,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 0;
         misc.cost = COST_VARIABLE;
-        misc.rulesRefs = "134, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 134);
         misc.flags = misc.flags.or(F_SRCS,
               F_MEK_EQUIPMENT,
               F_TANK_EQUIPMENT,
@@ -4898,7 +5051,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticalSlots = 0;
         misc.cost = COST_VARIABLE;
-        misc.rulesRefs = "134, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 134);
         misc.flags = misc.flags.or(F_SRCS,
               F_MEK_EQUIPMENT,
               F_TANK_EQUIPMENT,
@@ -4933,7 +5086,7 @@ public class MiscType extends EquipmentType {
               F_SS_EQUIPMENT,
               F_SUPPORT_TANK_EQUIPMENT,
               MiscTypeFlag.S_STANDARD);
-        misc.rulesRefs = "135, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 135);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
@@ -4959,7 +5112,7 @@ public class MiscType extends EquipmentType {
               F_SS_EQUIPMENT,
               F_SUPPORT_TANK_EQUIPMENT,
               MiscTypeFlag.S_IMPROVED);
-        misc.rulesRefs = "135, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 135);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
@@ -4985,7 +5138,7 @@ public class MiscType extends EquipmentType {
               F_SS_EQUIPMENT,
               F_SUPPORT_TANK_EQUIPMENT,
               MiscTypeFlag.S_ELITE);
-        misc.rulesRefs = "135, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 135);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F)
@@ -5011,7 +5164,7 @@ public class MiscType extends EquipmentType {
               F_WS_EQUIPMENT,
               F_SS_EQUIPMENT,
               MiscTypeFlag.S_STANDARD);
-        misc.rulesRefs = "136, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 136);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
@@ -5037,7 +5190,7 @@ public class MiscType extends EquipmentType {
               F_WS_EQUIPMENT,
               F_SS_EQUIPMENT,
               MiscTypeFlag.S_IMPROVED);
-        misc.rulesRefs = "136, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 136);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
@@ -5063,7 +5216,7 @@ public class MiscType extends EquipmentType {
               F_WS_EQUIPMENT,
               F_SS_EQUIPMENT,
               MiscTypeFlag.S_STANDARD);
-        misc.rulesRefs = "137, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 137);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X)
@@ -5089,7 +5242,7 @@ public class MiscType extends EquipmentType {
               F_WS_EQUIPMENT,
               F_SS_EQUIPMENT,
               MiscTypeFlag.S_IMPROVED);
-        misc.rulesRefs = "137, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 137);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X)
@@ -5111,7 +5264,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 0;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_ATAC, F_VARIABLE_SIZE, F_DS_EQUIPMENT, F_WS_EQUIPMENT, F_SS_EQUIPMENT);
-        misc.rulesRefs = "139, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 139);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5136,7 +5289,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 0;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_DTAC, F_VARIABLE_SIZE, F_DS_EQUIPMENT, F_WS_EQUIPMENT, F_SS_EQUIPMENT);
-        misc.rulesRefs = "140, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 140);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5159,7 +5312,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 0;
         misc.cost = 1000000;
         misc.flags = misc.flags.or(F_SDS_DESTRUCT, F_SC_EQUIPMENT, F_DS_EQUIPMENT, F_WS_EQUIPMENT, F_SS_EQUIPMENT);
-        misc.rulesRefs = "141, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 141);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5183,7 +5336,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 0;
         misc.cost = 800000000;
         misc.flags = misc.flags.or(F_SDS_JAMMER, F_WS_EQUIPMENT);
-        misc.rulesRefs = "142, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 142);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5209,7 +5362,7 @@ public class MiscType extends EquipmentType {
         misc.tankSlots = 1; // Treated as weapon item in rear, hittable by criticals (TO:AUE p.121)
         misc.cost = 10000;
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT, F_VTOL_EQUIPMENT, F_COMBAT_VEHICLE_ESCAPE_POD);
-        misc.rulesRefs = "121, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 121);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
@@ -5235,7 +5388,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_EJECTION_SEAT, F_MEK_EQUIPMENT);
         misc.bv = 0;
         misc.industrial = true;
-        misc.rulesRefs = "213, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 213);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5263,7 +5416,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_EJECTION_SEAT, F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.industrial = true;
-        misc.rulesRefs = "213, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 213);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5292,7 +5445,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT, F_LIFEBOAT, MiscTypeFlag.S_MARITIME_ESCAPE_POD);
         misc.bv = 0;
         misc.industrial = true;
-        misc.rulesRefs = "216, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 216);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5318,7 +5471,7 @@ public class MiscType extends EquipmentType {
               F_SUPPORT_TANK_EQUIPMENT,
               F_LIFEBOAT,
               MiscTypeFlag.S_MARITIME_LIFEBOAT);
-        misc.rulesRefs = "227, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 227);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5344,7 +5497,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.industrial = true;
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT, F_LIFEBOAT, MiscTypeFlag.S_ATMOSPHERIC_LIFEBOAT);
-        misc.rulesRefs = "227, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 227);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5383,7 +5536,12 @@ public class MiscType extends EquipmentType {
         misc.bv = 10;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "204, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 204),
+              rulesRef(SourceBookCode.BMM, 110),
+              rulesRef(SourceBookCode.CORE, 197),
+              rulesRef(SourceBookCode.TW, 129)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5422,7 +5580,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 10;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "65, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 65);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5462,7 +5620,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 25;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "90, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 90),
+              rulesRef(SourceBookCode.BMM, 110),
+              rulesRef(SourceBookCode.CORE, 197)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -5504,7 +5666,7 @@ public class MiscType extends EquipmentType {
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
         // Since its Tactical Handbook Using TO Values
-        misc.rulesRefs = "Unofficial";
+        misc.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)
@@ -5542,7 +5704,12 @@ public class MiscType extends EquipmentType {
         misc.bv = 12;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "204, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 204),
+              rulesRef(SourceBookCode.BMM, 109),
+              rulesRef(SourceBookCode.CORE, 197),
+              rulesRef(SourceBookCode.TW, 129)
+        );
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5583,7 +5750,12 @@ public class MiscType extends EquipmentType {
         misc.bv = 7;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "204, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 204),
+              rulesRef(SourceBookCode.BMM, 110),
+              rulesRef(SourceBookCode.CORE, 197),
+              rulesRef(SourceBookCode.TW, 129)
+        );
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5623,7 +5795,12 @@ public class MiscType extends EquipmentType {
         // Every mode switch here is declared now and takes effect in the End Phase, deactivation
         // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "213, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 213),
+              rulesRef(SourceBookCode.BMM, 112),
+              rulesRef(SourceBookCode.CORE, 200),
+              rulesRef(SourceBookCode.TW, 134)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5664,7 +5841,7 @@ public class MiscType extends EquipmentType {
         // Every mode switch here is declared now and takes effect in the End Phase, deactivation
         // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "66, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 66);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5703,7 +5880,12 @@ public class MiscType extends EquipmentType {
         // Every mode switch here is declared now and takes effect in the End Phase, deactivation
         // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "213, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 213),
+              rulesRef(SourceBookCode.BMM, 112),
+              rulesRef(SourceBookCode.CORE, 200),
+              rulesRef(SourceBookCode.TW, 134)
+        );
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5749,7 +5931,12 @@ public class MiscType extends EquipmentType {
         // Every mode switch here is declared now and takes effect in the End Phase, deactivation
         // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "91, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 91),
+              rulesRef(SourceBookCode.BMM, 112),
+              rulesRef(SourceBookCode.BMM, 113),
+              rulesRef(SourceBookCode.CORE, 200)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
@@ -5794,7 +5981,7 @@ public class MiscType extends EquipmentType {
         // Every mode switch here is declared now and takes effect in the End Phase, deactivation
         // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "Unofficial";
+        misc.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
@@ -5829,7 +6016,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_JS_EQUIPMENT)
               .andNot(F_SS_EQUIPMENT);
         misc.bv = 39;
-        misc.rulesRefs = "123, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 123);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5874,7 +6061,11 @@ public class MiscType extends EquipmentType {
         // Every mode switch here is declared now and takes effect in the End Phase, deactivation
         // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "90, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 90),
+              rulesRef(SourceBookCode.BMM, 114),
+              rulesRef(SourceBookCode.CORE, 201)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
@@ -5915,7 +6106,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 68;
         misc.setModes(MODE_ECM, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "60, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 60);
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -5950,9 +6141,11 @@ public class MiscType extends EquipmentType {
               F_BA_EQUIPMENT,
               F_PROTOMEK_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "69, IO";
-        // EI modes: Off disables EI completely, On enables all EI benefits including aimed shots
-        String[] modes = { "Off", "Initiate enhanced imaging" };
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 69);
+        // EI modes: On enables all EI benefits including aimed shots, Off disables EI completely. The running mode is
+        // listed first so that it is the default: a newly mounted interface takes mode index 0, and per IO p.69 EI is
+        // running unless the pilot deliberately shuts it down during the End Phase.
+        String[] modes = { MODE_EI_ON, Mounted.MODE_OFF };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
         // EI Interface introduced 3040 by Clan Smoke Jaguar, per IO p.69
@@ -5986,7 +6179,7 @@ public class MiscType extends EquipmentType {
               F_FIGHTER_EQUIPMENT,
               F_SC_EQUIPMENT,
               F_RECON_CAMERA);
-        misc.rulesRefs = "150, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 150);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6019,7 +6212,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 51000;
         misc.industrial = true;
-        misc.rulesRefs = "187, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 187);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6056,7 +6249,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 60000;
         misc.industrial = true;
-        misc.rulesRefs = "67, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 67);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6089,7 +6282,7 @@ public class MiscType extends EquipmentType {
               F_SS_EQUIPMENT,
               F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "152, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 152);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6122,7 +6315,7 @@ public class MiscType extends EquipmentType {
               F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.criticalSlots = 1;
-        misc.rulesRefs = "151, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 151);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6156,7 +6349,7 @@ public class MiscType extends EquipmentType {
               F_WS_EQUIPMENT,
               F_SS_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "151, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 151);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6189,7 +6382,7 @@ public class MiscType extends EquipmentType {
               F_WS_EQUIPMENT,
               F_SS_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "151, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 151);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6215,7 +6408,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(MiscType.F_BASIC_FIRE_CONTROL, MiscType.F_SUPPORT_TANK_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.industrial = true;
-        misc.rulesRefs = "217, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 217);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6238,7 +6431,7 @@ public class MiscType extends EquipmentType {
         misc.cost = EquipmentType.COST_VARIABLE;
         misc.flags = misc.flags.or(MiscType.F_ADVANCED_FIRE_CONTROL, MiscType.F_SUPPORT_TANK_EQUIPMENT);
         misc.omniFixedOnly = true;
-        misc.rulesRefs = "217, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 217);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6274,7 +6467,12 @@ public class MiscType extends EquipmentType {
               F_WS_EQUIPMENT,
               F_SS_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
-        misc.rulesRefs = "206, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 206),
+              rulesRef(SourceBookCode.BMM, 110),
+              rulesRef(SourceBookCode.CORE, 197),
+              rulesRef(SourceBookCode.TW, 130)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6310,7 +6508,7 @@ public class MiscType extends EquipmentType {
               F_SS_EQUIPMENT,
               F_HEAVY_EQUIPMENT,
               F_PROTOTYPE);
-        misc.rulesRefs = "64, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 64);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6346,7 +6544,12 @@ public class MiscType extends EquipmentType {
               F_WS_EQUIPMENT,
               F_SS_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
-        misc.rulesRefs = "206, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 206),
+              rulesRef(SourceBookCode.BMM, 110),
+              rulesRef(SourceBookCode.CORE, 197),
+              rulesRef(SourceBookCode.TW, 130)
+        );
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6382,7 +6585,11 @@ public class MiscType extends EquipmentType {
               F_WS_EQUIPMENT,
               F_SS_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
-        misc.rulesRefs = "95, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 95),
+              rulesRef(SourceBookCode.BMM, 110),
+              rulesRef(SourceBookCode.CORE, 197)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
@@ -6417,7 +6624,11 @@ public class MiscType extends EquipmentType {
               F_WS_EQUIPMENT,
               F_SS_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
-        misc.rulesRefs = "143, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 143),
+              rulesRef(SourceBookCode.BMM, 113),
+              rulesRef(SourceBookCode.CORE, 197)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6459,7 +6670,12 @@ public class MiscType extends EquipmentType {
         // see note above
         String[] modes = { "Normal", "Aimed shot" };
         misc.setModes(modes);
-        misc.rulesRefs = "238, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 238),
+              rulesRef(SourceBookCode.BMM, 114),
+              rulesRef(SourceBookCode.CORE, 200),
+              rulesRef(SourceBookCode.TW, 143)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6493,7 +6709,12 @@ public class MiscType extends EquipmentType {
         // see note above
         String[] modes = { "Normal", "Aimed shot" };
         misc.setModes(modes);
-        misc.rulesRefs = "238, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 238),
+              rulesRef(SourceBookCode.BMM, 114),
+              rulesRef(SourceBookCode.CORE, 200),
+              rulesRef(SourceBookCode.TW, 143)
+        );
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6524,7 +6745,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 1000;
         misc.flags = misc.flags.or(F_MEK_EQUIPMENT, F_SPRAYER);
         misc.industrial = true;
-        misc.rulesRefs = "248, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 248);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6551,7 +6772,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 1000;
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT, F_SPRAYER);
         misc.industrial = true;
-        misc.rulesRefs = "248, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 248);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6577,7 +6798,12 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "221, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 221),
+              rulesRef(SourceBookCode.BMM, 51),
+              rulesRef(SourceBookCode.CORE, 98),
+              rulesRef(SourceBookCode.TW, 158)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
@@ -6606,7 +6832,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 3000;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "128, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 128);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3058, 3079)
@@ -6632,7 +6858,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "128, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 128);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3058, 3079)
@@ -6659,7 +6885,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "65, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 65);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(2559, DATE_NONE, DATE_NONE, 2567, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
@@ -6683,7 +6909,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "96, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 96);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3022, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
               .setISApproximate(true, false, false, true, false)
@@ -6707,7 +6933,12 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "221, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 221),
+              rulesRef(SourceBookCode.BMM, 51),
+              rulesRef(SourceBookCode.CORE, 98),
+              rulesRef(SourceBookCode.TW, 158)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
@@ -6731,7 +6962,12 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "221, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 221),
+              rulesRef(SourceBookCode.BMM, 51),
+              rulesRef(SourceBookCode.CORE, 98),
+              rulesRef(SourceBookCode.TW, 158)
+        );
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(2825, 2827, 2829, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, true, false, false, false)
@@ -6755,7 +6991,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "129, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setClanAdvancement(3040, 3051, 3060, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
@@ -6780,7 +7016,7 @@ public class MiscType extends EquipmentType {
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(true);
-        misc.rulesRefs = "83, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 83);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3095, 3122, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -6804,7 +7040,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 6;
         misc.svSlots = 1;
         misc.cost = 50000;
-        misc.flags = misc.flags.or(F_CLUB,
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB,
                     F_MEK_EQUIPMENT,
                     F_TANK_EQUIPMENT,
                     F_SUPPORT_TANK_EQUIPMENT,
@@ -6813,7 +7049,10 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 8;
         misc.industrial = true;
-        misc.rulesRefs = "241, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 241),
+              rulesRef(SourceBookCode.TW, 130)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6838,7 +7077,10 @@ public class MiscType extends EquipmentType {
         misc.sortingName = "Bridge B";
         misc.flags = misc.flags.or(F_LIGHT_BRIDGE_LAYER, F_MEK_EQUIPMENT, F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT);
         misc.industrial = true;
-        misc.rulesRefs = "242, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 242),
+              rulesRef(SourceBookCode.TW, 130)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6863,7 +7105,10 @@ public class MiscType extends EquipmentType {
         misc.sortingName = "Bridge C";
         misc.flags = misc.flags.or(F_MEDIUM_BRIDGE_LAYER, F_MEK_EQUIPMENT, F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT);
         misc.industrial = true;
-        misc.rulesRefs = "242, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 242),
+              rulesRef(SourceBookCode.TW, 130)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6888,7 +7133,10 @@ public class MiscType extends EquipmentType {
         misc.sortingName = "Bridge D";
         misc.flags = misc.flags.or(F_HEAVY_BRIDGE_LAYER, F_MEK_EQUIPMENT, F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT);
         misc.industrial = true;
-        misc.rulesRefs = "242, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 242),
+              rulesRef(SourceBookCode.TW, 130)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6911,7 +7159,10 @@ public class MiscType extends EquipmentType {
         misc.bv = 10;
         misc.flags = misc.flags.or(F_BULLDOZER, F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT, F_TRENCH_CAPABLE);
         misc.industrial = true;
-        misc.rulesRefs = "241, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 241),
+              rulesRef(SourceBookCode.TW, 131)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6933,7 +7184,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 5;
         misc.svSlots = 1;
         misc.cost = 100000;
-        misc.flags = misc.flags.or(F_CLUB,
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB,
                     F_MEK_EQUIPMENT,
                     F_TANK_EQUIPMENT,
                     F_SUPPORT_TANK_EQUIPMENT,
@@ -6941,7 +7192,10 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 7;
         misc.industrial = true;
-        misc.rulesRefs = "241, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 241),
+              rulesRef(SourceBookCode.TW, 134)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6963,7 +7217,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 4;
         misc.svSlots = 1;
         misc.cost = 75000;
-        misc.flags = misc.flags.or(F_CLUB,
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB,
                     F_MEK_EQUIPMENT,
                     F_TANK_EQUIPMENT,
                     F_SUPPORT_TANK_EQUIPMENT,
@@ -6971,7 +7225,10 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 5;
         misc.industrial = true;
-        misc.rulesRefs = "243, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 243),
+              rulesRef(SourceBookCode.TW, 134)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -6993,7 +7250,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 7;
         misc.svSlots = 1;
         misc.cost = 100000;
-        misc.flags = misc.flags.or(F_CLUB,
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB,
                     F_MEK_EQUIPMENT,
                     F_TANK_EQUIPMENT,
                     F_SUPPORT_TANK_EQUIPMENT,
@@ -7001,7 +7258,10 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 9;
         misc.industrial = true;
-        misc.rulesRefs = "243, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 243),
+              rulesRef(SourceBookCode.TW, 134)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7025,10 +7285,10 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 4;
         misc.criticalSlots = 2;
         misc.cost = 100000;// From the Ask the Writer Forum
-        misc.flags = misc.flags.or(F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_BUZZSAW);
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB, F_MEK_EQUIPMENT, MiscTypeFlag.S_BUZZSAW);
         misc.bv = 67;// From the Ask the Writer Forum
         // Assuming this is a variant of the Dual Saw
-        misc.rulesRefs = "243, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 243);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7051,7 +7311,10 @@ public class MiscType extends EquipmentType {
         misc.cost = 5000;
         misc.flags = misc.flags.or(F_DUMPER, F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT, F_MEK_EQUIPMENT);
         misc.industrial = true;
-        misc.rulesRefs = "243, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 243),
+              rulesRef(SourceBookCode.TW, 134)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7074,7 +7337,10 @@ public class MiscType extends EquipmentType {
         misc.cost = 5000;
         misc.flags = misc.flags.or(F_DUMPER, F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT, F_MEK_EQUIPMENT);
         misc.industrial = true;
-        misc.rulesRefs = "243, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 243),
+              rulesRef(SourceBookCode.TW, 134)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7097,7 +7363,10 @@ public class MiscType extends EquipmentType {
         misc.cost = 5000;
         misc.flags = misc.flags.or(F_DUMPER, F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT, F_MEK_EQUIPMENT);
         misc.industrial = true;
-        misc.rulesRefs = "243, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 243),
+              rulesRef(SourceBookCode.TW, 134)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7120,7 +7389,10 @@ public class MiscType extends EquipmentType {
         misc.cost = 5000;
         misc.flags = misc.flags.or(F_DUMPER, F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT, F_MEK_EQUIPMENT);
         misc.industrial = true;
-        misc.rulesRefs = "243, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 243),
+              rulesRef(SourceBookCode.TW, 134)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7149,7 +7421,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_JS_EQUIPMENT)
               .andNot(F_WS_EQUIPMENT)
               .andNot(F_SS_EQUIPMENT);
-        misc.rulesRefs = "248, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 248);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7177,7 +7449,11 @@ public class MiscType extends EquipmentType {
               .andNot(F_JS_EQUIPMENT)
               .andNot(F_WS_EQUIPMENT)
               .andNot(F_SS_EQUIPMENT);
-        misc.rulesRefs = "248, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 248),
+              rulesRef(SourceBookCode.TW, 303),
+              rulesRef(SourceBookCode.TW, 304)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7207,7 +7483,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_JS_EQUIPMENT)
               .andNot(F_WS_EQUIPMENT)
               .andNot(F_SS_EQUIPMENT);
-        misc.rulesRefs = "248, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 248);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7231,7 +7507,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 8;
         misc.svSlots = 1;
         misc.cost = 100000;
-        misc.flags = misc.flags.or(F_CLUB,
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB,
                     F_MEK_EQUIPMENT,
                     F_TANK_EQUIPMENT,
                     F_SUPPORT_TANK_EQUIPMENT,
@@ -7239,7 +7515,10 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 5;
         misc.industrial = true;
-        misc.rulesRefs = "244, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 244),
+              rulesRef(SourceBookCode.TW, 136)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7271,7 +7550,7 @@ public class MiscType extends EquipmentType {
                     F_TANK_EQUIPMENT,
                     F_SUPPORT_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
-        misc.rulesRefs = "244, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 244);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7297,7 +7576,10 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_LIFT_HOIST, F_MEK_EQUIPMENT, F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.industrial = true;
-        misc.rulesRefs = "245, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 245),
+              rulesRef(SourceBookCode.TW, 136)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7324,7 +7606,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.01;
         misc.cost = 7500;
         misc.criticalSlots = 1;
-        misc.rulesRefs = "245, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 245);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7346,14 +7628,17 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 3.0;
         misc.criticalSlots = 4;
         misc.svSlots = 1;
-        misc.flags = misc.flags.or(F_CLUB,
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB,
               F_MEK_EQUIPMENT,
               F_TANK_EQUIPMENT,
               F_SUPPORT_TANK_EQUIPMENT,
               MiscTypeFlag.S_MINING_DRILL);
         misc.bv = 6;
         misc.industrial = true;
-        misc.rulesRefs = "246, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 246),
+              rulesRef(SourceBookCode.TW, 138)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7382,7 +7667,7 @@ public class MiscType extends EquipmentType {
               F_SUPPORT_TANK_EQUIPMENT,
               F_SC_EQUIPMENT);
         misc.industrial = true;
-        misc.rulesRefs = "247, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 247);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7405,7 +7690,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 5;
         misc.svSlots = 1;
         misc.cost = 100000;
-        misc.flags = misc.flags.or(F_CLUB,
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB,
                     F_MEK_EQUIPMENT,
                     F_TANK_EQUIPMENT,
                     F_SUPPORT_TANK_EQUIPMENT,
@@ -7413,7 +7698,10 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 6;
         misc.industrial = true;
-        misc.rulesRefs = "247, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 247),
+              rulesRef(SourceBookCode.TW, 140)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7438,7 +7726,10 @@ public class MiscType extends EquipmentType {
         misc.cost = 50000;
         misc.flags = misc.flags.or(F_SALVAGE_ARM, F_MEK_EQUIPMENT);
         misc.industrial = true;
-        misc.rulesRefs = "248, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 248),
+              rulesRef(SourceBookCode.TW, 142)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7459,7 +7750,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 2;
         misc.criticalSlots = 1;
         misc.cost = 75000;
-        misc.flags = misc.flags.or(F_CLUB,
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB,
                     F_MEK_EQUIPMENT,
                     F_TANK_EQUIPMENT,
                     F_SUPPORT_TANK_EQUIPMENT,
@@ -7467,7 +7758,10 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 5;
         misc.industrial = true;
-        misc.rulesRefs = "248, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 248),
+              rulesRef(SourceBookCode.TW, 142)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7492,14 +7786,17 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 5;
         misc.svSlots = 1;
         misc.cost = 110000;
-        misc.flags = misc.flags.or(F_CLUB,
+        misc.flags = misc.flags.or(F_PHYSICAL_WEAPON, F_CLUB,
               F_MEK_EQUIPMENT,
               F_TANK_EQUIPMENT,
               F_SUPPORT_TANK_EQUIPMENT,
               MiscTypeFlag.S_WRECKING_BALL);
         misc.bv = 8;
         misc.industrial = true;
-        misc.rulesRefs = "249, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 249),
+              rulesRef(SourceBookCode.TW, 143)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7530,7 +7827,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 1000000;
         misc.flags = misc.flags.or(F_STORAGE_BATTERY, F_SS_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "118, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 118);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7553,7 +7850,7 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_LIGHT_SAIL, F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "135, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 135);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7581,7 +7878,7 @@ public class MiscType extends EquipmentType {
               F_WS_EQUIPMENT,
               F_SS_EQUIPMENT,
               F_SUPPORT_TANK_EQUIPMENT);
-        misc.rulesRefs = "145, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 145);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7609,7 +7906,7 @@ public class MiscType extends EquipmentType {
               F_JS_EQUIPMENT,
               F_WS_EQUIPMENT,
               F_SS_EQUIPMENT);
-        misc.rulesRefs = "145, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 145);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7644,7 +7941,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "144, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 144);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
@@ -7662,7 +7959,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("ISNavalTugAdaptor");
         misc.addLookupName("CLNavalTugAdaptor");
         misc.flags = misc.flags.or(F_NAVAL_TUG_ADAPTOR, F_SC_EQUIPMENT, F_DS_EQUIPMENT, F_WS_EQUIPMENT);
-        misc.rulesRefs = "147, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 147);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7683,7 +7980,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Power Collector and Microwave Transmitter (10 Tons)";
         misc.setInternalName("PCMT");
         misc.flags = misc.flags.and(F_SS_EQUIPMENT);
-        misc.rulesRefs = "149, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 149);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7708,7 +8005,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0;
         misc.flags = misc.flags.or(F_LF_STORAGE_BATTERY, F_JS_EQUIPMENT, F_WS_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "135, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 135);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7739,7 +8036,7 @@ public class MiscType extends EquipmentType {
               MiscType.F_FIGHTER_EQUIPMENT,
               MiscType.F_TANK_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
-        misc.rulesRefs = "134, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 134);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7795,7 +8092,7 @@ public class MiscType extends EquipmentType {
               F_FIGHTER_EQUIPMENT,
               F_SC_EQUIPMENT);
         misc.bv = 8; // because it includes 2 mines
-        misc.rulesRefs = "137, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 137);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7827,7 +8124,7 @@ public class MiscType extends EquipmentType {
               F_SPACE_MINE_DISPENSER);
         misc.bv = 200; // because it includes 2 mines. 100 for each mine,
         // because it deals max potential damage to 100
-        misc.rulesRefs = "138, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 138);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7855,7 +8152,7 @@ public class MiscType extends EquipmentType {
         // = false defers the switch to the next turn, matching the rule's End-Phase timing.
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.instantModeSwitch = false;
-        misc.rulesRefs = "138, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 138);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7888,7 +8185,7 @@ public class MiscType extends EquipmentType {
               F_TANK_EQUIPMENT,
               F_SUPPORT_TANK_EQUIPMENT,
               F_FIGHTER_EQUIPMENT);
-        misc.rulesRefs = "108, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 108);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7923,7 +8220,7 @@ public class MiscType extends EquipmentType {
         String[] saModes = { "Off", "Armed" };
         misc.setModes(saModes);
         misc.instantModeSwitch = true;
-        misc.rulesRefs = "109, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 109);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -7974,7 +8271,7 @@ public class MiscType extends EquipmentType {
               F_FIGHTER_EQUIPMENT);
         misc.industrial = true;
         misc.tankSlots = 1;
-        misc.rulesRefs = "239, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 239);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
               .setTechRating(TechRating.A)
@@ -8000,7 +8297,7 @@ public class MiscType extends EquipmentType {
               F_FIGHTER_EQUIPMENT);
         misc.industrial = true;
         misc.tankSlots = 1;
-        misc.rulesRefs = "239, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 239);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
               .setTechRating(TechRating.A)
@@ -8028,7 +8325,7 @@ public class MiscType extends EquipmentType {
               F_SS_EQUIPMENT);
         misc.industrial = true;
         misc.tankSlots = 1;
-        misc.rulesRefs = "239, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 239);
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.A);
@@ -8057,7 +8354,7 @@ public class MiscType extends EquipmentType {
               F_SC_EQUIPMENT,
               F_DS_EQUIPMENT);
         misc.bv = 19;
-        misc.rulesRefs = "111, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 111);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -8090,7 +8387,10 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_CHAMELEON_SHIELD, F_MEK_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 600000;
-        misc.rulesRefs = "112, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 112),
+              rulesRef(SourceBookCode.CORE, 209)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -8165,7 +8465,7 @@ public class MiscType extends EquipmentType {
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
         misc.industrial = true;
-        misc.rulesRefs = "212, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 212);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -8189,7 +8489,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 500000;
         misc.flags = misc.flags.or(F_CCM, F_MEK_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "113, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 113);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -8225,7 +8525,7 @@ public class MiscType extends EquipmentType {
               F_SS_EQUIPMENT);
         misc.bv = 0;
         misc.industrial = true;
-        misc.rulesRefs = "217, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 217);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
               .setTechRating(TechRating.A)
@@ -8253,7 +8553,10 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_FUEL, F_MEK_EQUIPMENT, F_TANK_EQUIPMENT);
         misc.explosive = true;
         misc.industrial = true;
-        misc.rulesRefs = "244, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 244),
+              rulesRef(SourceBookCode.TW, 135)
+        );
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
@@ -8271,7 +8574,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.flags = misc.flags.or(F_EXTERNAL_STORES_HARDPOINT, F_SUPPORT_TANK_EQUIPMENT);
         misc.industrial = true;
-        misc.rulesRefs = "216, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 216);
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.B);
@@ -8298,7 +8601,10 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_HARJEL, F_MEK_EQUIPMENT, F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT);
         misc.omniFixedOnly = false;
         misc.bv = 0;
-        misc.rulesRefs = "100, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 100),
+              rulesRef(SourceBookCode.CORE, 208)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
@@ -8330,7 +8636,7 @@ public class MiscType extends EquipmentType {
         misc.setInstantModeSwitch(true);
         String[] modes = { S_HARJEL_II_1F1R, S_HARJEL_II_2F0R, S_HARJEL_II_0F2R };
         misc.setModes(modes);
-        misc.rulesRefs = "82, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 82);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
@@ -8361,7 +8667,7 @@ public class MiscType extends EquipmentType {
         String[] modes = { S_HARJEL_III_2F2R, S_HARJEL_III_4F0R, S_HARJEL_III_3F1R, S_HARJEL_III_1F3R,
                            S_HARJEL_III_0F4R };
         misc.setModes(modes);
-        misc.rulesRefs = "82, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 82);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
@@ -8392,7 +8698,7 @@ public class MiscType extends EquipmentType {
               F_SS_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "142, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 142);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -8428,7 +8734,7 @@ public class MiscType extends EquipmentType {
                     F_MASH)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.industrial = true;
-        misc.rulesRefs = "228, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 228);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
@@ -8454,7 +8760,10 @@ public class MiscType extends EquipmentType {
         misc.setInstantModeSwitch(false);
         misc.bv = 0;
         misc.cost = 1400000;
-        misc.rulesRefs = "148, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 148),
+              rulesRef(SourceBookCode.CORE, 209)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -8481,7 +8790,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT, F_MEK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.industrial = true;
-        misc.rulesRefs = "233, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 233);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -8516,7 +8825,7 @@ public class MiscType extends EquipmentType {
               F_BA_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 500;
-        misc.rulesRefs = "237, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 237);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -8548,7 +8857,7 @@ public class MiscType extends EquipmentType {
               F_BA_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 2000;
-        misc.rulesRefs = "237, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 237);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -8575,7 +8884,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 1000;
-        misc.rulesRefs = "161, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 161);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -8603,7 +8912,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 3000;
-        misc.rulesRefs = "161, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 161);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -8631,7 +8940,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 5000;
-        misc.rulesRefs = "161, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 161);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -8659,7 +8968,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 0;
-        misc.rulesRefs = "161, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 161);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -8691,7 +9000,10 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_VOID_SIG, F_MEK_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 2000000;
-        misc.rulesRefs = "161, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 161),
+              rulesRef(SourceBookCode.CORE, 209)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.F)
@@ -8713,7 +9025,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 50000;
         misc.flags = misc.flags.or(F_MAST_MOUNT, F_VTOL_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = BV_VARIABLE;
-        misc.rulesRefs = "162, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 162);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -8745,7 +9057,7 @@ public class MiscType extends EquipmentType {
         misc.setModes(saModes);
         misc.setInstantModeSwitch(true);
         misc.bv = 1;
-        misc.rulesRefs = "60, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 60);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
@@ -8773,7 +9085,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 50000;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_PROTOMEK_MELEE, F_PROTOMEK_EQUIPMENT, MiscTypeFlag.S_PROTOMEK_WEAPON);
-        misc.rulesRefs = "149, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 149);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
@@ -8799,7 +9111,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_MEK_EQUIPMENT)
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
-        misc.rulesRefs = "61, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 61);
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -8833,7 +9145,7 @@ public class MiscType extends EquipmentType {
               F_SS_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "143, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 143);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -8870,7 +9182,7 @@ public class MiscType extends EquipmentType {
                     F_SPLITABLE)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "143, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 143);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -8901,7 +9213,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 460000;
         misc.flags = misc.flags.or(F_EMERGENCY_COOLANT_SYSTEM, F_MEK_EQUIPMENT);
         misc.explosive = true;
-        misc.rulesRefs = "86, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 86);
         misc.omniFixedOnly = true;
         //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
         misc.techAdvancement.setTechBase(TechBase.IS)
@@ -8942,7 +9254,7 @@ public class MiscType extends EquipmentType {
               F_PROTOMEK_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
         misc.explosive = true;
-        misc.rulesRefs = "87, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 87);
         //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -8974,7 +9286,7 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         // TODO: add game rules, BV rules are implemented
-        misc.rulesRefs = "88, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 88);
         //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -9003,7 +9315,7 @@ public class MiscType extends EquipmentType {
               F_SUPPORT_TANK_EQUIPMENT,
               F_PROTOMEK_EQUIPMENT);
         // TODO: game rules
-        misc.rulesRefs = "88, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 88);
         //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -9032,7 +9344,7 @@ public class MiscType extends EquipmentType {
               F_SUPPORT_TANK_EQUIPMENT,
               F_PROTOMEK_EQUIPMENT);
         // TODO: game rules
-        misc.rulesRefs = "88, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 88);
         //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -9084,7 +9396,11 @@ public class MiscType extends EquipmentType {
         misc.explosive = true;
         // misc.bv = 88;
         misc.bv = 0;
-        misc.rulesRefs = "149, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 149),
+              rulesRef(SourceBookCode.BMM, 105),
+              rulesRef(SourceBookCode.CORE, 188)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.E)
@@ -9117,7 +9433,12 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_ENDO_STEEL);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "224, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 224),
+              rulesRef(SourceBookCode.BMM, 117),
+              rulesRef(SourceBookCode.TW, 134),
+              rulesRef(SourceBookCode.CORE, 205)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -9147,7 +9468,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_ENDO_STEEL_PROTO);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "65, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 65);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -9176,7 +9497,12 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_ENDO_STEEL);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "224, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 224),
+              rulesRef(SourceBookCode.BMM, 117),
+              rulesRef(SourceBookCode.TW, 134),
+              rulesRef(SourceBookCode.CORE, 205)
+        );
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -9202,7 +9528,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMPOSITE);
         misc.omniFixedOnly = true;
-        misc.rulesRefs = "154, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 154),
+              rulesRef(SourceBookCode.BMM, 117),
+              rulesRef(SourceBookCode.CORE, 205)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
@@ -9228,7 +9558,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_ENDO_COMPOSITE);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "154, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 154),
+              rulesRef(SourceBookCode.BMM, 117),
+              rulesRef(SourceBookCode.CORE, 205)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
@@ -9255,7 +9589,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_ENDO_COMPOSITE);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "154, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 154),
+              rulesRef(SourceBookCode.BMM, 117),
+              rulesRef(SourceBookCode.CORE, 205)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.E)
@@ -9282,7 +9620,11 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_REINFORCED);
         misc.omniFixedOnly = true;
-        misc.rulesRefs = "155, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 155),
+              rulesRef(SourceBookCode.BMM, 117),
+              rulesRef(SourceBookCode.CORE, 205)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.E)
@@ -9311,7 +9653,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.industrial = true;
         misc.flags = misc.flags.or(F_INDUSTRIAL_STRUCTURE);
-        misc.rulesRefs = "224, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 224);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
@@ -9352,7 +9694,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_ACTUATOR_ENHANCEMENT_SYSTEM, F_MEK_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.bv = BV_VARIABLE;
-        misc.rulesRefs = "91, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 91),
+              rulesRef(SourceBookCode.BMM, 118),
+              rulesRef(SourceBookCode.CORE, 206)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
@@ -9385,7 +9731,12 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TSM, F_MEK_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "240, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 240),
+              rulesRef(SourceBookCode.BMM, 117),
+              rulesRef(SourceBookCode.CORE, 205),
+              rulesRef(SourceBookCode.TW, 143)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -9417,7 +9768,10 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.industrial = true;
-        misc.rulesRefs = "240, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 240),
+              rulesRef(SourceBookCode.TW, 143)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -9443,7 +9797,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TSM, F_PROTOTYPE, F_MEK_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "98, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 98);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
@@ -9468,7 +9822,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING, F_MEK_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "216, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 216);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setAdvancement(2300, 2350, 2495)
               .setApproximate(true, false, false)
@@ -9500,7 +9854,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_FLOTATION_HULL, F_TANK_EQUIPMENT, F_VTOL_EQUIPMENT, F_CHASSIS_MODIFICATION)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "114, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 114);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -9531,7 +9885,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS, F_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "114, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 114);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -9562,7 +9916,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS, F_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "115, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 115);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -9593,7 +9947,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_DUNE_BUGGY, F_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "115, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 115);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -9623,7 +9977,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING, F_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "115, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 115);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -9651,7 +10005,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_AMPHIBIOUS, F_SUPPORT_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "122, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 122);
 
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
@@ -9677,7 +10031,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_ARMORED_CHASSIS, F_SUPPORT_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "122, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 122);
 
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
@@ -9701,7 +10055,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BICYCLE, F_SUPPORT_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "122, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 122);
         misc.tankSlots = 0;
         misc.industrial = true;
         misc.techAdvancement.setTechBase(TechBase.ALL);
@@ -9726,7 +10080,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_CONVERTIBLE, F_SUPPORT_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "122, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 122);
         misc.tankSlots = 0;
         misc.industrial = true;
         misc.techAdvancement.setTechBase(TechBase.ALL);
@@ -9755,7 +10109,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_DUNE_BUGGY, F_SUPPORT_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "115, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 115);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -9784,7 +10138,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING, F_SUPPORT_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "122, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 122);
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.C);
@@ -9805,7 +10159,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION, F_EXTERNAL_POWER_PICKUP);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "59, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 59);
         misc.tankSlots = 0;
         misc.industrial = true;
         misc.techAdvancement.setTechBase(TechBase.ALL)
@@ -9827,7 +10181,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_HYDROFOIL, F_SUPPORT_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "122, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 122);
         misc.tankSlots = 0;
         misc.industrial = true;
         misc.techAdvancement.setTechBase(TechBase.ALL);
@@ -9852,7 +10206,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MONOCYCLE, F_SUPPORT_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "122, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 122);
         misc.tankSlots = 0;
         misc.industrial = true;
         misc.techAdvancement.setTechBase(TechBase.ALL);
@@ -9881,7 +10235,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_OFF_ROAD, F_CHASSIS_MODIFICATION, F_SUPPORT_TANK_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "122, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 122);
 
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
@@ -9905,7 +10259,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_CHASSIS_MODIFICATION, F_SUPPORT_TANK_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "122, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 122);
 
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(DATE_NONE, DATE_NONE, 3052)
@@ -9929,7 +10283,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.andNot(F_FIGHTER_EQUIPMENT).or(F_CHASSIS_MODIFICATION, F_PROP,
               F_SUPPORT_TANK_EQUIPMENT);
         misc.omniFixedOnly = true;
-        misc.rulesRefs = "122, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 122);
         // Setting this Pre-Spaceflight
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
@@ -9954,7 +10308,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_SNOWMOBILE, F_SUPPORT_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "122, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 122);
         // TODO: implement game rules
 
         misc.techAdvancement.setTechBase(TechBase.ALL);
@@ -9977,7 +10331,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_STOL_CHASSIS, F_SUPPORT_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "122, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 122);
         misc.tankSlots = 0;
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
@@ -10003,7 +10357,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.tankSlots = 0;
         misc.industrial = true;
-        misc.rulesRefs = "122, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 122);
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.B);
@@ -10028,7 +10382,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TRACTOR_MODIFICATION, F_SUPPORT_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "122, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 122);
         misc.tankSlots = 0;
         misc.industrial = true;
         misc.techAdvancement.setTechBase(TechBase.ALL);
@@ -10052,7 +10406,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_HITCH, F_TANK_EQUIPMENT, F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.industrial = true;
-        misc.rulesRefs = "101, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 101);
 
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
@@ -10080,7 +10434,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.tankSlots = 0;
         misc.industrial = true;
-        misc.rulesRefs = "122, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 122);
 
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
@@ -10101,7 +10455,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION, F_ULTRA_LIGHT);
         misc.omniFixedOnly = true;
-        misc.rulesRefs = "122, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 122);
         // Setting this Pre-Spaceflight
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
@@ -10123,7 +10477,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_VSTOL_CHASSIS, F_SUPPORT_TANK_EQUIPMENT, F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "122, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 122);
         misc.tankSlots = 0;
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
@@ -10159,7 +10513,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_SHOULDER_TURRET, F_MEK_EQUIPMENT, F_TURRET);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "159, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 159);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
@@ -10184,7 +10538,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_HEAD_TURRET, F_MEK_EQUIPMENT, F_TURRET);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "159, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 159);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
@@ -10211,7 +10565,10 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_QUAD_TURRET, F_MEK_EQUIPMENT, F_TURRET);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "159, TO:AUE";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 159),
+              rulesRef(SourceBookCode.CORE, 205)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
@@ -10245,7 +10602,7 @@ public class MiscType extends EquipmentType {
               F_TURRET);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "160, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 160);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.B)
@@ -10268,7 +10625,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_PINTLE_TURRET, F_SUPPORT_TANK_EQUIPMENT, F_TURRET);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "234, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 234);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10300,7 +10657,10 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "252, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 252),
+              rulesRef(SourceBookCode.TW, 228)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10329,7 +10689,10 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "348, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 348),
+              rulesRef(SourceBookCode.TW, 228)
+        );
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10360,7 +10723,7 @@ public class MiscType extends EquipmentType {
         // Every mode switch here is declared now and takes effect in the End Phase, deactivation
         // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "91, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 91);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -10394,7 +10757,7 @@ public class MiscType extends EquipmentType {
         // Every mode switch here is declared now and takes effect in the End Phase, deactivation
         // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "91, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 91);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
@@ -10422,7 +10785,10 @@ public class MiscType extends EquipmentType {
               .andNot(F_MEK_EQUIPMENT)
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
-        misc.rulesRefs = "253, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 253),
+              rulesRef(SourceBookCode.TW, 228)
+        );
         misc.bv = 0;
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
@@ -10449,7 +10815,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "254, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 254);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10483,7 +10849,10 @@ public class MiscType extends EquipmentType {
         // Every mode switch here is declared now and takes effect in the End Phase, deactivation
         // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "254, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 254),
+              rulesRef(SourceBookCode.TW, 228)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10517,7 +10886,10 @@ public class MiscType extends EquipmentType {
         // Every mode switch here is declared now and takes effect in the End Phase, deactivation
         // included; that is what setInstantModeSwitch(false) does.
         misc.setInstantModeSwitch(false);
-        misc.rulesRefs = "254, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 254),
+              rulesRef(SourceBookCode.TW, 228)
+        );
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10545,7 +10917,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_MEK_EQUIPMENT)
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
-        misc.rulesRefs = "254, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 254);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10574,7 +10946,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 500;
-        misc.rulesRefs = "255, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 255);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10604,7 +10976,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_MEK_EQUIPMENT)
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
-        misc.rulesRefs = "256, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 256);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10630,7 +11002,10 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 1;
         misc.cost = 35000;
         misc.flags = misc.flags.or(F_BAP, F_BA_EQUIPMENT).andNot(F_MEK_EQUIPMENT).andNot(F_TANK_EQUIPMENT);
-        misc.rulesRefs = "257, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 257),
+              rulesRef(SourceBookCode.TW, 228)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10652,7 +11027,10 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 1;
         misc.cost = 200000;
         misc.flags = misc.flags.or(F_BAP, F_BA_EQUIPMENT).andNot(F_MEK_EQUIPMENT).andNot(F_TANK_EQUIPMENT);
-        misc.rulesRefs = "257, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 257),
+              rulesRef(SourceBookCode.TW, 228)
+        );
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10678,7 +11056,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 750;
-        misc.rulesRefs = "258, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 258);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10705,7 +11083,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "266, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 266);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10731,7 +11109,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "268, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 268);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10761,7 +11139,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "268, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 268);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10791,7 +11169,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 500;
-        misc.rulesRefs = "269, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 269);
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.A);
@@ -10815,7 +11193,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 750;
-        misc.rulesRefs = "258, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 258);
         misc.techAdvancement.setTechBase(TechBase.ALL);
         misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
         misc.techAdvancement.setTechRating(TechRating.C);
@@ -10840,7 +11218,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
-        misc.rulesRefs = "269, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 269);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10871,7 +11249,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BA_EQUIPMENT, F_ARMORED_GLOVE, F_AP_MOUNT, F_BA_MANIPULATOR);
         misc.bv = 0;
         misc.cost = 2500;
-        misc.rulesRefs = "259, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 259);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10898,7 +11276,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BA_EQUIPMENT, F_BA_MANIPULATOR, F_BASIC_MANIPULATOR);
         misc.bv = 0;
         misc.cost = 5000;
-        misc.rulesRefs = "259, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 259);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10926,7 +11304,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BA_EQUIPMENT, F_BATTLE_CLAW, F_BA_MANIPULATOR);
         misc.bv = 0;
         misc.cost = 10000;
-        misc.rulesRefs = "259, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 259);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10955,7 +11333,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BA_EQUIPMENT, F_BATTLE_CLAW, F_BA_MANIPULATOR);
         misc.bv = 0;
         misc.cost = 25000;
-        misc.rulesRefs = "259, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 259);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -10984,7 +11362,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT, F_CARGO_LIFTER, F_BA_MANIPULATOR, F_VARIABLE_SIZE);
         misc.bv = 0;
-        misc.rulesRefs = "259, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 259);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -11010,7 +11388,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BA_EQUIPMENT, F_BA_MANIPULATOR);
         misc.bv = 0;
         misc.cost = 2500;
-        misc.rulesRefs = "259, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 259);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -11036,7 +11414,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BA_EQUIPMENT, F_BA_MANIPULATOR);
         misc.bv = 0;
         misc.cost = 50000;
-        misc.rulesRefs = "259, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 259);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -11066,7 +11444,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MAGNET_CLAW, F_BA_EQUIPMENT, F_BATTLE_CLAW, F_BA_MANIPULATOR);
         misc.bv = 1.5;
         misc.cost = 12500;
-        misc.rulesRefs = "260, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 260);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -11096,7 +11474,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MAGNET_CLAW, F_BA_EQUIPMENT, F_BATTLE_CLAW, F_BA_MANIPULATOR);
         misc.bv = 1.5;
         misc.cost = 31250;
-        misc.rulesRefs = "260, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 260);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -11130,7 +11508,7 @@ public class MiscType extends EquipmentType {
               MiscTypeFlag.S_MINESWEEPER);
         misc.bv = 0;
         misc.cost = 7500;
-        misc.rulesRefs = "260, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 260);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -11159,7 +11537,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_VIBROCLAW, F_BA_EQUIPMENT, F_BATTLE_CLAW, F_BA_MANIPULATOR);
         misc.bv = 1;
         misc.cost = 15000;
-        misc.rulesRefs = "260, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 260);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -11189,7 +11567,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_VIBROCLAW, F_BA_EQUIPMENT, F_BATTLE_CLAW, F_BA_MANIPULATOR);
         misc.bv = 1;
         misc.cost = 30000;
-        misc.rulesRefs = "260, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 260);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -11216,7 +11594,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BA_EQUIPMENT, F_BA_MEA);
         misc.bv = 0;
         misc.cost = 10000;
-        misc.rulesRefs = "260, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 260);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -11240,7 +11618,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 0;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_JUMP_JET, F_BA_EQUIPMENT);
-        misc.rulesRefs = "257, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 257);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
@@ -11257,7 +11635,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 0;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT, F_BA_VTOL);
-        misc.rulesRefs = "271, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 271);
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
@@ -11277,7 +11655,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 0;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_UMU, F_BA_EQUIPMENT);
-        misc.rulesRefs = "270, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 270);
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
@@ -11304,7 +11682,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_MEK_EQUIPMENT)
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
-        misc.rulesRefs = "257, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 257);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -11339,7 +11717,10 @@ public class MiscType extends EquipmentType {
         misc.setModes(saModes);
         misc.setInstantModeSwitch(true);
         misc.bv = 1;
-        misc.rulesRefs = "259, TM";
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 259),
+              rulesRef(SourceBookCode.TW, 228)
+        );
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -11362,7 +11743,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_MECHANICAL_JUMP_BOOSTER, F_BA_EQUIPMENT);
-        misc.rulesRefs = "99, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 99);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
@@ -11397,7 +11778,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_MEK_EQUIPMENT)
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
-        misc.rulesRefs = "99, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 99);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
@@ -11422,7 +11803,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 1;
         misc.cost = 50000;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT, F_PARTIAL_WING);
-        misc.rulesRefs = "266, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 266);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -11448,7 +11829,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 1000;
-        misc.rulesRefs = "161, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 161);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -11476,7 +11857,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 3000;
-        misc.rulesRefs = "161, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 161);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -11504,7 +11885,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 1000;
-        misc.rulesRefs = "161, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 161);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -11533,7 +11914,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.cost = COST_VARIABLE;
-        misc.rulesRefs = "161, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 161);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -11562,7 +11943,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 1;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT, F_AP_MOUNT);
         misc.bv = 0;
-        misc.rulesRefs = "271, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 271);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -11590,7 +11971,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT, F_MODULAR_WEAPON_MOUNT);
         misc.bv = 0;
-        misc.rulesRefs = "271, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 271);
         // I couldn't find this information anywhere so I just copied it from the AP weapon mount
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
@@ -11619,7 +12000,7 @@ public class MiscType extends EquipmentType {
         misc.criticalSlots = 1;
         misc.cost = 18000;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT, F_DETACHABLE_WEAPON_PACK);
-        misc.rulesRefs = "99, TO:AUE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 99);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
@@ -11651,7 +12032,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_TANK_EQUIPMENT)
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 8; // because it includes 2 mines
-        misc.rulesRefs = "260, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 260);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)
@@ -11680,7 +12061,7 @@ public class MiscType extends EquipmentType {
               .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 0;
-        misc.rulesRefs = "262, TM";
+        misc.rulesRefs = rulesRefs(SourceBookCode.TM, 262);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setAdvancement(DATE_NONE, DATE_NONE, 2720)
               .setTechRating(TechRating.C)
@@ -11828,7 +12209,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BOMB_BAY, F_MEK_EQUIPMENT);
         misc.explosive = true;
         misc.cost = 5000;
-        misc.rulesRefs = "104, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 104);
         // IO, p.220/221 (LAMs can be constructed in all later eras so Bomb Bays must
         // not go extinct)
         misc.techAdvancement.setTechBase(TechBase.ALL)
@@ -11852,7 +12233,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MEK_EQUIPMENT, F_LAM_FUEL_TANK);
         misc.explosive = true; // Assumed. Game effects not implemented. Might follow rules for Bomb Bay Fuel,
         // IO p.111
-        misc.rulesRefs = "108, IO:AE";
+        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 108);
         // IO, p.220/221
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setAdvancement(DATE_ES, DATE_ES)
@@ -11872,7 +12253,7 @@ public class MiscType extends EquipmentType {
         misc.bv = BV_VARIABLE;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_RAM_PLATE, F_MEK_EQUIPMENT);
-        misc.rulesRefs = "?";
+        misc.rulesRefs = rulesRefs(SourceBookCode.OTP_HC, 30);
 
         // Not yet published
         misc.techAdvancement.setTechBase(TechBase.ALL)

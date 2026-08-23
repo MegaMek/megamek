@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -69,7 +70,7 @@ public class ISBAAPDS extends Weapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 50000;
-        rulesRefs = "85, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 85);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

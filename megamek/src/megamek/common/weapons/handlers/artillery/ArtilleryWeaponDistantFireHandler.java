@@ -612,23 +612,28 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
                   .omnidirectional(targetPos, toHit.getMoS(), scatterReduction);
             targetPos = scatterResult.landing();
             if (game.getBoard().contains(targetPos)) {
-                // misses and scatters to another hex
-                if (!isFlak) {
-                    r = new Report(3195);
+                // A shot can miss and still come to rest on the hex it was aimed at, when the drift is shortened
+                // to nothing - a narrow miss by an Oblique Artilleryman, say. Saying it "scatters to" the hex it
+                // was aimed at reads like the drift was lost, so name the intended hex instead.
+                boolean driftedOffTarget = scatterResult.distanceHexes() > 0;
+                if (isFlak) {
+                    r = new Report(3192);
+                } else {
+                    r = driftedOffTarget ? new Report(3195) : new Report(3196);
 
                     String artyMsg = "Artillery missed here on round "
                           + game.getRoundCount() + ", by "
                           + game.getPlayer(aaa.getPlayerId()).getName()
-                          + ", drifted to " + targetPos.getBoardNum();
+                          + (driftedOffTarget ? ", drifted to " + targetPos.getBoardNum() : ", landed on target");
                     SpecialHexDisplay missMarker = new SpecialHexDisplay(Type.ARTILLERY_MISS,
                           game.getRoundCount(),
                           game.getPlayer(aaa.getPlayerId()),
                           artyMsg);
-                    // Record where the round actually drifted so the board view can draw the drift line.
-                    missMarker.setDriftHex(targetPos);
+                    if (driftedOffTarget) {
+                        // Record where the round actually drifted so the board view can draw the drift line.
+                        missMarker.setDriftHex(targetPos);
+                    }
                     game.getBoard().addSpecialHexDisplay(originalPosition, missMarker);
-                } else {
-                    r = new Report(3192);
                 }
                 r.subject = subjectId;
                 r.add(targetPos.getBoardNum());

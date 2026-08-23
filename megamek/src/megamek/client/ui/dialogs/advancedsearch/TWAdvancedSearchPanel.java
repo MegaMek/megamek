@@ -34,12 +34,14 @@
 package megamek.client.ui.dialogs.advancedsearch;
 
 import java.awt.Component;
+import java.util.Collection;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 import com.formdev.flatlaf.extras.components.FlatTriStateCheckBox;
 import megamek.client.ui.Messages;
+import megamek.common.SourceBookCode;
 import megamek.common.equipment.EquipmentType;
 
 /**
@@ -156,6 +158,8 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
         mekFilter.iPatchwork = basePanel.cPatchwork.getSelectedIndex();
 
         mekFilter.source = basePanel.tSource.getText();
+        mekFilter.rulesRefs.clear();
+        mekFilter.rulesRefs.addAll(basePanel.rulesRefs.getSelectedBooks());
         mekFilter.mulID = basePanel.tMULId.getText();
 
         mekFilter.sStartYear = basePanel.tStartYear.getText();
@@ -363,5 +367,9 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
         state.miscState = basePanel.getState();
         state.equipmentState = weaponEqPanel.getState();
         return state;
+    }
+
+    void setRulesRefChoices(Collection<SourceBookCode> choices) {
+        basePanel.setRulesRefChoices(choices);
     }
 }

@@ -36,6 +36,7 @@ package megamek.common.weapons.primitive;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -78,7 +79,7 @@ public class ISLaserPrimitiveSmall extends LaserWeapon {
         atClass = CLASS_POINT_DEFENSE;
         // IO Doesn't strictly define when these weapons stop production. Checked with Herb, and they
         // would always be around. This is to cover some of the back worlds in the Periphery.
-        rulesRefs = "112, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 112);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

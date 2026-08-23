@@ -161,6 +161,41 @@ public class LRMHandler extends MissileWeaponHandler {
         return false;
     }
 
+    /**
+     * Returns {@code true} if the given ammunition is a Semi-Guided load for one of the long range missile launchers
+     * that can carry it, otherwise {@code false}.
+     *
+     * @param ammoType the ammunition loaded in the firing weapon
+     *
+     * @return {@code true} if this is a Semi-Guided load for a launcher that can carry it
+     */
+    private boolean isSemiGuidedMissileAmmo(AmmoType ammoType) {
+        boolean isSemiGuidedCapableLauncher = ammoType.getAmmoType()
+              .isAnyOf(AmmoType.AmmoTypeEnum.LRM,
+                    AmmoType.AmmoTypeEnum.LRM_IMP,
+                    AmmoType.AmmoTypeEnum.MML,
+                    AmmoType.AmmoTypeEnum.NLRM);
+        boolean isSemiGuidedMunition = ammoType.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED);
+        return isSemiGuidedCapableLauncher && isSemiGuidedMunition;
+    }
+
+    /**
+     * Returns the cluster roll modifier that Semi-Guided ammunition contributes to this attack, which depends on
+     * whether the target is currently designated by TAG. The modifier is zero under Total Warfare rules, where
+     * Semi-Guided ammunition improves the to-hit roll instead of the number of missiles that hit.
+     * <p>
+     * Buildings and hexes can be designated by TAG just like units can, so the designation is looked up through the
+     * game rather than on the target unit, which does not exist for those targets.
+     * </p>
+     *
+     * @return the number of missiles to add to or subtract from the cluster roll
+     */
+    protected int getSemiGuidedClusterModifier() {
+        boolean isTargetTagged = Compute.isTargetTagged(target, game);
+        boolean isIndirectFire = weapon.curMode().equals("Indirect");
+        return Game.rulesManager.getRulesAmmo().getSemiGuidedNMissiles(isTargetTagged, isIndirectFire);
+    }
+
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // Use effective rack size (reduced by 20% when incendiary mixed)
@@ -315,14 +350,11 @@ public class LRMHandler extends MissileWeaponHandler {
                         nMissilesModifier += 2;
                     }
                 }
-            } else if (((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM)
-                  || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP)
-                  || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML)
-                  || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM))
-                  && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED))) {
-                nMissilesModifier += Game.rulesManager.getRulesAmmo().getSemiGuidedNMissiles((entityTarget.getTaggedBy() != WeaponAttackAction.UNASSIGNED),
-                      weapon.curMode().equals("Indirect"));
             }
+        }
+
+        if (isSemiGuidedMissileAmmo(ammoType)) {
+            nMissilesModifier += getSemiGuidedClusterModifier();
         }
 
         // add AMS mods

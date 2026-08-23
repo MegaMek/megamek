@@ -33,6 +33,7 @@
 
 package megamek.common.weapons.infantry.sniperRifle;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -64,7 +65,7 @@ public class InfantrySniperRifleThorsHammer extends InfantryWeapon {
         shots = 10;
         bursts = 1;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        rulesRefs = "Shrapnel #1";
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_1);
         techAdvancement
               .setTechBase(TechBase.IS)
               .setTechRating(TechRating.D)

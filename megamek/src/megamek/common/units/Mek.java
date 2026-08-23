@@ -1772,11 +1772,11 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                 MPBoosters armed = getArmedMPBoosters();
 
                 str += (mpBoosters.hasMASC() ? " MASC:" + getMASCTurns()
-                                               + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
+                      + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
                       + (mpBoosters.hasSupercharger() ? " Supercharger:" + getSuperchargerTurns()
-                                                        + (armed.hasSupercharger() ?
-                                                           "(" + getSuperchargerTarget() + "+)" :
-                                                           "(NA)") : "");
+                      + (armed.hasSupercharger() ?
+                      "(" + getSuperchargerTarget() + "+)" :
+                      "(NA)") : "");
             }
             return str;
         }
@@ -2788,8 +2788,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         int roll;
 
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-            if (Game.rulesManager.getRulesTarget().checkAimedLocation())
-            {
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation()) {
                 return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
         }
@@ -4117,7 +4116,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                 roll.addModifier(1, "Mismatched Legs from different Meks");
             }
         }
-        
+
         // gyro hit?
         int gyroHits = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
               Mek.LOC_CENTER_TORSO);
@@ -4129,7 +4128,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             } else {
                 gyroMessage = Messages.getString("PilotingRoll.Gyro.Gyro");
             }
-            gyroMessage += " " + String.valueOf(gyroHits) + " " + Messages.getString("PilotingRoll.Gyro.Damaged"); 
+            gyroMessage += " " + String.valueOf(gyroHits) + " " + Messages.getString("PilotingRoll.Gyro.Damaged");
             roll.addModifier(Game.rulesManager.getRulesPSR().getGyroModifier(gyroHits, getGyroType()), gyroMessage);
         }
 
@@ -4211,8 +4210,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     @Override
     public int getMaxElevationChange() {
-        return (movementMode.isTracked() || movementMode.isWiGE() || Game.rulesManager.getRulesMovement().reduceMaxElevation(this))  
-              ? 1 
+        return (movementMode.isTracked() || movementMode.isWiGE() || Game.rulesManager.getRulesMovement()
+              .reduceMaxElevation(this))
+              ? 1
               : 2;
     }
 
@@ -4575,13 +4575,13 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     }
 
     /**
-     * Bulk control for heat sink activation: switches individual heat sink mounts On or Off so that the given number
-     * of sinks remains active. Like all activation/deactivation, the change is declared now and takes effect in the
-     * End Phase (the mounts' pending modes apply at the round rollover). Prototype double heat sinks and Freezers are
-     * not part of this counter (matching {@link #getNumberOfSinks()}); they can be switched individually via their
+     * Bulk control for heat sink activation: switches individual heat sink mounts On or Off so that the given number of
+     * sinks remains active. Like all activation/deactivation, the change is declared now and takes effect in the End
+     * Phase (the mounts' pending modes apply at the round rollover). Prototype double heat sinks and Freezers are not
+     * part of this counter (matching {@link #getNumberOfSinks()}); they can be switched individually via their
      * equipment mode. The value arrives from a client packet, so out-of-range requests are clamped (mirroring
-     * {@link Aero#setActiveSinksNextRound(int)}): a negative count deactivates every sink, a count above the number
-     * of operable sinks activates every sink.
+     * {@link Aero#setActiveSinksNextRound(int)}): a negative count deactivates every sink, a count above the number of
+     * operable sinks activates every sink.
      *
      * @param sinks the number of heat sinks that should be active next round
      */
@@ -4630,8 +4630,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     }
 
     /**
-     * @return the number of operable heat sinks that will be switched on next round, taking pending mode changes
-     *       into account (prototype double heat sinks and Freezers excluded)
+     * @return the number of operable heat sinks that will be switched on next round, taking pending mode changes into
+     *       account (prototype double heat sinks and Freezers excluded)
      */
     public int getActiveSinksNextRound() {
         int activeSinks = 0;
@@ -6134,7 +6134,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             }
 
             Mounted<?> m = cs.getMount();
-            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().isShield()) {
+            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().hasFlag(MiscType.F_SHIELD)) {
                 rate -= ((MiscMounted) m).getDamageAbsorption(this, m.getLocation());
                 ((MiscMounted) m).takeDamage(1);
                 return Math.max(0, rate);
@@ -6236,8 +6236,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         if (game != null && locationIsLeg(loc) && canFall()) {
             game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL,
                   Game.rulesManager.getRulesPSR().getLegDestroyedModifier(),
-                  "leg " 
-                  + "destroyed"));
+                  "leg "
+                        + "destroyed"));
         }
     }
 
@@ -6949,7 +6949,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         // certainly isn't leaving that hex under its own power anymore.
 
         int hitsToDestroyGyro = Game.rulesManager.getRulesEquipment().hitsToDestroyGyro(gyroType);
-        
+
         return getGyroHits() >= hitsToDestroyGyro;
     }
 
@@ -7419,5 +7419,10 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             return false;
         }
         return getCrew().isEjected() && !isDestroyed();
+    }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return true;
     }
 }

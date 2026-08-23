@@ -36,6 +36,7 @@ package megamek.common.weapons.infantry.pistol;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -67,7 +68,7 @@ public class InfantryPistolClanGaussPistolWeapon extends InfantryWeapon {
         ammoWeight = 0.00001;
         ammoCost = 1;
         shots = 4;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(2845, 2850, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CSA)
               .setProductionFactions().setTechRating(TechRating.F)

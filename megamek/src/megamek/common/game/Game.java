@@ -241,12 +241,23 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private Map<String, BehaviorSettings> botSettings = new HashMap<>();
 
     /**
-     * Which AI implementation the most recent bot connected under each name was, alongside {@link #botSettings}.
-     * Rides the savegame so a loaded game can restore each seat with the same kind of bot it held, rather than
-     * guessing. Absent ({@code null}) in games saved before this was recorded - read it through
-     * {@link #getBotTypes()}, which heals that.
+     * Which AI implementation the most recent bot connected under each name was, alongside {@link #botSettings}. Rides
+     * the savegame so a loaded game can restore each seat with the same kind of bot it held, rather than guessing.
+     * Absent ({@code null}) in games saved before this was recorded - read it through {@link #getBotTypes()}, which
+     * heals that.
      */
     private Map<String, AIType> botTypes = new HashMap<>();
+
+    /**
+     * For each bot player (keyed by player ID), the set of player IDs that bot currently considers dishonored. Reported
+     * by Princess bots through {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED} and relayed to all
+     * clients, so a human client can warn before an action that would newly dishonor them without guessing at a remote
+     * bot's honor state. Transient, ephemeral battle state; not part of savegames.
+     *
+     * <p>Concurrent because it is written on the packet-handling thread and read on the EDT during turn commit. The
+     * inner sets are always replaced wholesale (never mutated in place), so a reader safely sees a consistent set.</p>
+     */
+    private transient Map<Integer, Set<Integer>> dishonoredPlayersByBot = new ConcurrentHashMap<>();
 
     /**
      * Constructor
@@ -327,7 +338,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             rulesManager = new CoreRulesManager();
         }
     }
-    
+
     /**
      * Returns the map of hex locations being cleared by saws to turns remaining. Used by the board view to render cut
      * indicators and tooltips.
@@ -505,7 +516,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 initializeRulesManager(OptionsConstants.RULES_CORE);
             } else if (!rules_system.stringValue().equals(loadedOption)) {
                 initializeRulesManager(rules_system.stringValue());
-            } 
+            }
             processGameEvent(new GameSettingsChangeEvent(this));
         }
     }
@@ -633,7 +644,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                       (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
                       (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
                       (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
-                      (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) {
+                      (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR) ||
+                      (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_5) ||
+                      (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_10) ||
+                      (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_15) ||
+                      (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_20)) {
                     return true;
                 }
 
@@ -1380,7 +1395,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 case Targetable.TYPE_HEX_CLEAR, Targetable.TYPE_HEX_IGNITE, Targetable.TYPE_HEX_BOMB,
                      Targetable.TYPE_MINEFIELD_DELIVER, Targetable.TYPE_FLARE_DELIVER, Targetable.TYPE_HEX_EXTINGUISH,
                      Targetable.TYPE_HEX_ARTILLERY, Targetable.TYPE_HEX_SCREEN, Targetable.TYPE_HEX_AERO_BOMB,
-                     Targetable.TYPE_SATURATION, Targetable.TYPE_HEX_TAG -> new HexTarget(HexTarget.idToLocation(targetId), targetType);
+                     Targetable.TYPE_SATURATION, Targetable.TYPE_HEX_TAG ->
+                      new HexTarget(HexTarget.idToLocation(targetId), targetType);
 
                 case Targetable.TYPE_FUEL_TANK, Targetable.TYPE_FUEL_TANK_IGNITE, Targetable.TYPE_BUILDING,
                      Targetable.TYPE_BLDG_IGNITE, Targetable.TYPE_BLDG_TAG -> {
@@ -2648,6 +2664,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * Remove displacement attacks that were added previously
+     *
      * @param ea
      */
     public void removeDisplacementAttack(AttackAction ea) {
@@ -2715,12 +2732,12 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
         if (pendingDisplacementAttacks == null) {
             pendingDisplacementAttacks = new Vector<>();
-        } 
-        if (!pendingDisplacementAttacks.isEmpty()){
+        }
+        if (!pendingDisplacementAttacks.isEmpty()) {
             // Reverse traverse the pendingDisplacementAttacks, otherwise when we remove things, it causes problems
-            for (int attack = (pendingDisplacementAttacks.size()-1); attack >= 0; attack--) {
+            for (int attack = (pendingDisplacementAttacks.size() - 1); attack >= 0; attack--) {
                 AttackAction pendingAttack = pendingDisplacementAttacks.get(attack);
-                if (pendingAttack == null) { continue; }
+                if (pendingAttack == null) {continue;}
                 if (pendingAttack instanceof RamAttackAction) {
                     addRam(pendingAttack);
                     pendingDisplacementAttacks.remove(attack);
@@ -2731,7 +2748,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             }
         }
     }
-    
+
     /**
      * Adds a pending ramming attack to the list for this phase.
      *
@@ -2802,7 +2819,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public ArrayList<PilotingRollData> getPSRsForEntity(Entity entity) {
         ArrayList<PilotingRollData> rollsForEntity = new ArrayList<>();
-        
+
         for (PilotingRollData psr : pilotingRolls) {
             if (psr.getEntityId() == entity.getId()) {
                 rollsForEntity.add(psr);
@@ -2810,11 +2827,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
         return rollsForEntity;
     }
-        
+
     public void removePSRsByArray(ArrayList<PilotingRollData> psrList) {
         pilotingRolls.removeAll(psrList);
     }
-    
+
     /**
      * Resets the PSR list for a given entity.
      */
@@ -3905,9 +3922,59 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * @return which AI implementation the most recent bot connected under each player name was, as an
-     *       unmodifiable view; never {@code null} - games saved before the types were recorded read as an
-     *       empty map. Record entries through {@link #recordBotType(String, AIType)}.
+     * Records the set of players the given bot player currently considers dishonored, as reported through
+     * {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED}.
+     *
+     * @param botPlayerId         the reporting bot's player ID
+     * @param dishonoredPlayerIds the player IDs that bot considers dishonored
+     */
+    public void setDishonoredPlayers(int botPlayerId, Collection<Integer> dishonoredPlayerIds) {
+        ensureDishonoredPlayers().put(botPlayerId, new HashSet<>(dishonoredPlayerIds));
+    }
+
+    /**
+     * Adds a single player to the set the given bot player considers dishonored. Used to optimistically record a
+     * dishonoring action the moment the local player commits it, so the same turn's later actions are not re-warned
+     * before the bot's authoritative {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED} report arrives
+     * (that report then replaces this set wholesale). Replaces the inner set rather than mutating it in place, keeping
+     * the wholesale-replacement invariant that lets {@link #isPlayerDishonoredBy} read without locking.
+     *
+     * @param botPlayerId the bot player that now holds a grudge
+     * @param playerId    the player it now considers dishonored
+     */
+    public void addDishonoredPlayer(int botPlayerId, int playerId) {
+        Map<Integer, Set<Integer>> byBot = ensureDishonoredPlayers();
+        Set<Integer> current = byBot.get(botPlayerId);
+        Set<Integer> updated = (current == null) ? new HashSet<>() : new HashSet<>(current);
+        updated.add(playerId);
+        byBot.put(botPlayerId, updated);
+    }
+
+    /**
+     * @param botPlayerId the bot player whose honor opinion is being queried
+     * @param playerId    the player who may be dishonored
+     *
+     * @return true if the bot with player ID {@code botPlayerId} currently considers {@code playerId} dishonored, as
+     *       last reported via {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED}. False if that bot has
+     *       not reported (e.g. it is not a Princess bot, or the report has not arrived yet).
+     */
+    public boolean isPlayerDishonoredBy(int botPlayerId, int playerId) {
+        Set<Integer> dishonored = ensureDishonoredPlayers().get(botPlayerId);
+        return (dishonored != null) && dishonored.contains(playerId);
+    }
+
+    private Map<Integer, Set<Integer>> ensureDishonoredPlayers() {
+        if (dishonoredPlayersByBot == null) {
+            // Transient field is null after deserialization of a savegame.
+            dishonoredPlayersByBot = new ConcurrentHashMap<>();
+        }
+        return dishonoredPlayersByBot;
+    }
+
+    /**
+     * @return which AI implementation the most recent bot connected under each player name was, as an unmodifiable
+     *       view; never {@code null} - games saved before the types were recorded read as an empty map. Record entries
+     *       through {@link #recordBotType(String, AIType)}.
      */
     public Map<String, AIType> getBotTypes() {
         return Collections.unmodifiableMap(ensureBotTypes());

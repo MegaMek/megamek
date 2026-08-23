@@ -778,7 +778,7 @@ public class PointblankShotDisplay extends FiringDisplay {
     // BoardListener
     //
     @Override
-    public void hexMoused(BoardViewEvent b) {
+    public void hexMoused(BoardViewEvent event) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -786,28 +786,25 @@ public class PointblankShotDisplay extends FiringDisplay {
 
         // ignore buttons other than 1
         if (!clientgui.isProcessingPointblankShot()
-              || ((b.getButton() != MouseEvent.BUTTON1))) {
+              || ((event.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
-        if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
-              || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
+        if (((event.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
+              || ((event.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
 
-        if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-            if (b.isShiftHeld() || twisting) {
+        if (event.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
+            if (event.isShiftHeld() || twisting) {
                 updateFlipArms(false);
-                torsoTwist(b.getCoords());
+                torsoTwist(event.getCoords());
             }
-            b.getBoardView().cursor(b.getCoords());
-        } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
+        } else if (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             twisting = false;
-            if (!b.isShiftHeld()) {
-                b.getBoardView().select(b.getCoords());
-            }
         }
+        applyHexMouseAction(event, event.isShiftHeld());
     }
 
     @Override

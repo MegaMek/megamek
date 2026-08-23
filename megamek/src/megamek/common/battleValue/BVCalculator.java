@@ -35,7 +35,6 @@ package megamek.common.battleValue;
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -523,7 +522,7 @@ public abstract class BVCalculator {
                   eType.hasFlag(MiscType.F_HARJEL_III) ||
                   eType.hasFlag(MiscType.F_SPIKES) ||
                   eType.hasFlag(MiscType.F_MINESWEEPER) ||
-                  ((MiscType) eType).isShield();
+                  eType.hasFlag(MiscType.F_SHIELD);
         } else {
             return false;
         }
@@ -997,13 +996,14 @@ public abstract class BVCalculator {
                   miscType.hasFlag(MiscType.F_HARJEL_III) ||
                   miscType.hasFlag(MiscType.F_MASS) ||
                   miscType.hasFlag(MiscType.F_MINE) ||
-                  miscType.isShield() ||
+                  miscType.hasFlag(MiscType.F_SHIELD) ||
                   offensiveEquipmentBV(miscType, misc.getLocation()) == 0) {
                 continue;
             }
 
             double bv = offensiveEquipmentBV(miscType, misc.getLocation());
-            if ((miscType.hasFlag(MiscType.F_CLUB) || miscType.hasFlag(MiscType.F_HAND_WEAPON)) &&
+            if ((miscType.hasFlag(MiscType.F_CLUB) || miscType.hasFlag(MiscType.F_HAND_WEAPON) || miscType.hasFlag(
+                  MiscType.F_SHIELD)) &&
                   entity.hasFunctionalArmAES(misc.getLocation())) {
                 bv *= 1.25;
             } else if (miscType.hasFlag(MiscType.F_WATCHDOG)) {
@@ -1416,8 +1416,8 @@ public abstract class BVCalculator {
         if (modifiedBV != adjustedBV) {
             hasGuided = true;
             adjustedBV = modifiedBV;
-        } 
-        
+        }
+
         bvReport.finalizeTentativeSection(hasGuided);
     }
 

@@ -49,6 +49,7 @@ import java.util.stream.Collectors;
 
 import megamek.client.ui.Base64Image;
 import megamek.codeUtilities.StringUtility;
+import megamek.common.SourceBookCode;
 import megamek.common.TechConstants;
 import megamek.common.alphaStrike.ASArcSummary;
 import megamek.common.alphaStrike.ASCardDisplayable;
@@ -72,6 +73,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.ForceGeneratorAvailability;
 import megamek.common.units.UnitRole;
+import megamek.common.util.UnitRulesRefUtil;
 import megamek.logging.MMLogger;
 
 /**
@@ -79,19 +81,18 @@ import megamek.logging.MMLogger;
  */
 public class MekSummary implements Serializable, ASCardDisplayable {
     /**
-     * This class had no explicit serialVersionUID, so the JVM computed one from the field list. That meant every
-     * change to the fields silently invalidated units.cache, and this release changes them again, so one more rebuild
-     * happens on first run. {@code MekSummaryCache} catches the failure and rescans, so it heals itself.
+     * This class had no explicit serialVersionUID, so the JVM computed one from the field list. That meant every change
+     * to the fields silently invalidated units.cache, and this release changes them again, so one more rebuild happens
+     * on first run. {@code MekSummaryCache} catches the failure and rescans, so it heals itself.
      * <p>
-     * Pinning it stops the next field addition from doing the same. Bump it only for a change that genuinely cannot
-     * be read back, and expect a full cache rebuild when you do.
+     * Pinning it stops the next field addition from doing the same. Bump it only for a change that genuinely cannot be
+     * read back, and expect a full cache rebuild when you do.
      * </p>
      */
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private static final MMLogger logger = MMLogger.create(MekSummary.class);
-
     private String name;
     private String chassis;
     private String clanChassisName;
@@ -166,8 +167,10 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private int bfsBsp;
     /** The recognized Specials present on the Asset, for presence filtering. */
     private List<BFSSpecialType> bfsSpecials = new ArrayList<>();
-    /** The full Specials present on the Asset, retaining parameter values (for example {@code ECM4},
-     * {@code Artillery (LT)}), for value-based filtering. */
+    /**
+     * The full Specials present on the Asset, retaining parameter values (for example {@code ECM4},
+     * {@code Artillery (LT)}), for value-based filtering.
+     */
     private List<BFSSpecial> bfsSpecialDetails = new ArrayList<>();
 
     /** The full cost of the unit (including ammo). */
@@ -180,6 +183,11 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private String level;
     private int advTechYear; // year after which the unit is advanced level
     private int stdTechYear; // year after which the unit is standard level
+    private int prototypeDate;
+    private int productionDate;
+    private int commonDate;
+    private int techExtinctionDate;
+    private int reintroductionDate;
     private String extinctRange;
     private boolean canon;
     private boolean patchwork;
@@ -190,6 +198,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private boolean doomedInExtremeTemp;
     private boolean doomedInVacuum;
     private boolean clan;
+    private boolean mixedTech;
     private boolean support;
     private int walkMp;
     private int runMp;
@@ -267,6 +276,9 @@ public class MekSummary implements Serializable, ASCardDisplayable {
      * The number of times the piece of equipment in the corresponding equipmentNames list appears.
      */
     private Vector<Integer> equipmentQuantities;
+
+    /** Alternative sourcebook combinations that each cover every referenced component on this unit. */
+    private List<List<SourceBookCode>> rulesRefs = List.of();
 
     private String quirkNames;
     private String weaponQuirkNames;
@@ -836,6 +848,51 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         return stdTechYear;
     }
 
+    public int getPrototypeDate() {
+        return prototypeDate;
+    }
+
+    public void setPrototypeDate(int prototypeDate) {
+        this.prototypeDate = prototypeDate;
+    }
+
+    public int getProductionDate() {
+        return productionDate;
+    }
+
+    public void setProductionDate(int productionDate) {
+        this.productionDate = productionDate;
+    }
+
+    public int getCommonDate() {
+        return commonDate;
+    }
+
+    public void setCommonDate(int commonDate) {
+        this.commonDate = commonDate;
+    }
+
+    public int getExtinctionDate() {
+        return techExtinctionDate;
+    }
+
+    public void setExtinctionDate(int extinctionDate) {
+        this.techExtinctionDate = extinctionDate;
+    }
+
+    /**
+     * @return the year this unit returned to production after going extinct, or {@code ITechnology.DATE_NONE} if it
+     *       never went extinct or never returned. A cache written before this field existed deserializes it as 0;
+     *       callers should treat any non-positive value as "no date".
+     */
+    public int getReintroductionDate() {
+        return reintroductionDate;
+    }
+
+    public void setReintroductionDate(int reintroductionDate) {
+        this.reintroductionDate = reintroductionDate;
+    }
+
     public String getLevel(int year) {
         if (level.equals("F")) {
             return level;
@@ -1304,6 +1361,14 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         this.clan = clan;
     }
 
+    public boolean isMixedTech() {
+        return mixedTech;
+    }
+
+    public void setMixedTech(boolean mixedTech) {
+        this.mixedTech = mixedTech;
+    }
+
     public void setSupport(boolean support) {
         this.support = support;
     }
@@ -1376,6 +1441,23 @@ public class MekSummary implements Serializable, ASCardDisplayable {
                 equipmentQuantities.set(index, equipmentQuantities.get(index) + 1);
             }
         }
+    }
+
+    /**
+     * Collects the rules references for all explicit equipment and intrinsic systems that provide structured reference
+     * data, then stores every inclusion-minimal sourcebook combination capable of covering the unit.
+     *
+     * @param entity the source unit
+     */
+    public void setRulesRefs(Entity entity) {
+        rulesRefs = UnitRulesRefUtil.collectRulesRefBuckets(entity);
+    }
+
+    /**
+     * @return alternative sourcebook combinations; owning every book in any one bucket covers this unit
+     */
+    public List<List<SourceBookCode>> getRulesRefs() {
+        return (rulesRefs == null) ? List.of() : rulesRefs;
     }
 
     public Vector<String> getEquipmentNames() {

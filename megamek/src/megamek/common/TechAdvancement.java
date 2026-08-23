@@ -34,6 +34,7 @@
 package megamek.common;
 
 import java.util.Collections;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -996,8 +997,9 @@ public class TechAdvancement implements ITechnology {
         return this;
     }
 
-    public SimpleTechLevel guessStaticTechLevel(String rulesRefs) {
-        if (rulesRefs.contains("TW") || rulesRefs.contains("TM")) {
+    public SimpleTechLevel guessStaticTechLevel(Collection<RulesRef> rulesRefs) {
+        if (rulesRefs.stream().map(RulesRef::book)
+              .anyMatch(book -> (book == SourceBookCode.TW) || (book == SourceBookCode.TM))) {
             return SimpleTechLevel.STANDARD;
         } else if (getProductionDate() != DATE_NONE) {
             return SimpleTechLevel.ADVANCED;

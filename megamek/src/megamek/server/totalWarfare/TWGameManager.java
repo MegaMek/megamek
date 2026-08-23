@@ -103,16 +103,14 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
-import megamek.common.rules.RulesPSR;
-import megamek.common.rules.totalwarfare.TWRulesUnderwater;
-import megamek.common.voting.Poll;
-import megamek.common.voting.VoteThreshold;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Wind;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.RulesPSR;
+import megamek.common.rules.totalwarfare.TWRulesUnderwater;
 import megamek.common.turns.CounterGrappleTurn;
 import megamek.common.turns.PrephaseTurn;
 import megamek.common.turns.SpecificEntityTurn;
@@ -126,6 +124,8 @@ import megamek.common.util.C3Util;
 import megamek.common.util.EmailService;
 import megamek.common.util.HazardousLiquidPoolUtil;
 import megamek.common.verifier.TestEntity;
+import megamek.common.voting.Poll;
+import megamek.common.voting.VoteThreshold;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.TeleMissile;
 import megamek.common.weapons.Weapon;
@@ -239,7 +239,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
         }
-        
+
         if (!vPhaseReport.isEmpty()) {
             vPhaseReport.insertElementAt(new Report(3901, Report.PUBLIC), 0);
         }
@@ -383,8 +383,8 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * @return the handler for lobby-built game boards, created on first use. Lazy creation (rather than a field
-     *       initializer) keeps the handler available on mock instances of this class, whose field initializers
-     *       never run; several existing tests call the real {@link #setGame(IGame)} on such mocks.
+     *       initializer) keeps the handler available on mock instances of this class, whose field initializers never
+     *       run; several existing tests call the real {@link #setGame(IGame)} on such mocks.
      */
     private LobbyBoardHandler lobbyBoardHandler() {
         if (lobbyBoardHandler == null) {
@@ -1006,6 +1006,15 @@ public class TWGameManager extends AbstractGameManager {
                         if (packet.getObject(1) instanceof AIType aiType) {
                             game.recordBotType(player.getName(), aiType);
                         }
+                    }
+                    break;
+                case PRINCESS_DISHONORED:
+                    // Only bots report dishonor, and only a list of player IDs is worth relaying; anything else is a
+                    // client sending a packet it has no business sending, so drop it rather than pass it on.
+                    if ((player != null) && player.isBot() && (packet.getObject(0) instanceof List<?>)) {
+                        // Relay this bot's dishonored-players list to all clients, tagged with the bot's player ID, so
+                        // clients can warn a human before an action that would newly dishonor them.
+                        send(new Packet(PacketCommand.PRINCESS_DISHONORED, player.getId(), packet.getObject(0)));
                     }
                     break;
                 case REROLL_INITIATIVE:
@@ -2573,6 +2582,16 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
+        // The server-side half of the turn-dispatch audit trail: which player the server is now
+        // waiting on, for which entity, in which phase. When a game stalls, pairing this line with
+        // the bot's own dispatch log says immediately whether the turn packet was never sent, sent
+        // and dropped, or received and mishandled.
+        LOGGER.info("Turn dispatch: phase {}, turn {} -> player {} ({}), first entity {}",
+              game.getPhase(), game.getTurnIndex(),
+              (player != null) ? player.getId() : Player.PLAYER_NONE,
+              (player != null) ? player.getName() : "none",
+              (nextEntity != null) ? nextEntity.getDisplayName() : "none");
+
         if (prevPlayerId != -1) {
             send(packetHelper.createTurnIndexPacket(prevPlayerId));
         } else {
@@ -2694,8 +2713,8 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Applies board settings. This loads and combines all the boards that were specified into one mega-board and sets
-     * that board as current. Surprise board picks are resolved into the game's map settings so that the settings
-     * record the board that is actually played.
+     * that board as current. Surprise board picks are resolved into the game's map settings so that the settings record
+     * the board that is actually played.
      */
     public void applyBoardSettings() {
         Board newBoard = TWBoardTransformer.instantiateBoardResolvingSettings(game.getMapSettings(),
@@ -7081,8 +7100,8 @@ public class TWGameManager extends AbstractGameManager {
     public Vector<Report> deliverInfernoMissiles(Entity ae, Targetable t, int missiles, int called) {
         return deliverInfernoMissiles(ae, t, missiles, called, false);
     }
-    
-        /**
+
+    /**
      * deliver inferno missiles
      *
      * @param ae         the <code>Entity</code> that fired the missiles
@@ -7278,7 +7297,8 @@ public class TWGameManager extends AbstractGameManager {
                             int missileHeat = 2;
                             if ((te.getArmor(hit) > 0) &&
                                   (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
-                                heatDamage += Game.rulesManager.getRulesArmor().reduceHeatDamageByArmor(te.getArmorType(hit.getLocation()),missileHeat);
+                                heatDamage += Game.rulesManager.getRulesArmor()
+                                      .reduceHeatDamageByArmor(te.getArmorType(hit.getLocation()), missileHeat);
                                 heatReduced = true;
                                 reductionCause = ArmorType.forEntity(te, hit.getLocation()).getName();
                             } else {
@@ -9514,7 +9534,7 @@ public class TWGameManager extends AbstractGameManager {
             MovePath stepForward = new MovePath(game, violation);
             MovePath stepBackwards = new MovePath(game, violation);
             boolean bNoCost = !Game.rulesManager.getRulesMovement().getDominoDisplacementCostsMP();
-            stepForward.addStep(MoveStepType.FORWARDS, bNoCost);            
+            stepForward.addStep(MoveStepType.FORWARDS, bNoCost);
             stepBackwards.addStep(MoveStepType.BACKWARDS, bNoCost);
             stepForward.compile(getGame(), violation, false);
             stepBackwards.compile(getGame(), violation, false);
@@ -9983,6 +10003,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // looks like mostly everything's okay
+        announceStrafingRun(entity, actionList);
         processAttack(entity, actionList);
 
         // Update visibility indications if using double-blind.
@@ -9991,6 +10012,30 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         endCurrentTurn(entity);
+    }
+
+    /**
+     * Announces a strafing run the moment it is declared: one report line and its kill-feed toast,
+     * nothing more. Without it the run only surfaces as a burst of unexplained attack lines in the
+     * end-of-phase report - the same reads-as-a-bug problem the maneuver announcement solved.
+     */
+    private void announceStrafingRun(Entity entity, List<EntityAction> entityActions) {
+        if (entityActions == null) {
+            return;
+        }
+        for (EntityAction entityAction : entityActions) {
+            if ((entityAction instanceof WeaponAttackAction attack)
+                  && attack.isStrafing() && attack.isStrafingFirstShot()) {
+                Report strafeReport = new Report(9610);
+                strafeReport.subject = entity.getId();
+                strafeReport.addDesc(entity);
+                addReport(strafeReport);
+                Vector<Report> strafeSpecial = new Vector<>();
+                strafeSpecial.add(strafeReport);
+                sendSpecialReport(strafeSpecial);
+                return;
+            }
+        }
     }
 
     /**
@@ -10318,7 +10363,9 @@ public class TWGameManager extends AbstractGameManager {
 
                 // For Arrow IV homing artillery
                 if (waa instanceof ArtilleryAttackAction) {
-                    targetEntity = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa.getTarget(game) : null;
+                    targetEntity = (waa.getTargetType() == Targetable.TYPE_ENTITY) ?
+                          (Entity) waa.getTarget(game) :
+                          null;
 
                     // In case our target really is null.
                     if (targetEntity == null) {
@@ -10352,7 +10399,7 @@ public class TWGameManager extends AbstractGameManager {
                 // Saturation attack; get all enemy entities / APDS installations and add them to htAttacks
                 Entity saturator = game.getEntityFromAllSources(waa.getEntityId());
                 List<Entity> entities = game.getEntitiesVector(target.getPosition(), target.getBoardId(), true);
-                for (Entity candidate: entities) {
+                for (Entity candidate : entities) {
                     // Only let enemies use AMS against a saturation attack, although Core p. 197 is ambiguous
                     if (candidate.isEnemyOf(saturator)) {
                         Vector<WeaponHandler> weaponHandlerVector = htAttacks.computeIfAbsent(candidate,
@@ -10365,7 +10412,8 @@ public class TWGameManager extends AbstractGameManager {
                                 if (candidate.isEnemyOf(apds.getEntity())) {
                                     continue;
                                 }
-                                Vector<WeaponHandler> handlerList = apdsTargets.computeIfAbsent(apds, k -> new Vector<>());
+                                Vector<WeaponHandler> handlerList = apdsTargets.computeIfAbsent(apds,
+                                      k -> new Vector<>());
                                 handlerList.add(wh);
                             }
                         }
@@ -11335,7 +11383,8 @@ public class TWGameManager extends AbstractGameManager {
 
         Report r;
         final int TN = entity.getCrew().getGunnery() + 3;
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC) && game.rulesManager.getRulesWeapons().canUACsJam()) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_UNJAM_UAC)
+              && game.rulesManager.getRulesWeapons().canUACsJam()) {
             r = new Report(3026);
         } else {
             r = new Report(3025);
@@ -13915,11 +13964,6 @@ public class TWGameManager extends AbstractGameManager {
         // restore club attack
         caa.getClub().restore();
 
-        // Shield bash causes 1 point of damage to the shield
-        if (caa.getClub().getType().isShield()) {
-            ((Mek) ae).shieldAbsorptionDamage(1, caa.getClub().getLocation(), false);
-        }
-
         if (lastEntityId != caa.getEntityId()) {
             // who is making the attacks
             r = new Report(4005);
@@ -15850,7 +15894,7 @@ public class TWGameManager extends AbstractGameManager {
                     boolean hasLance = false;
                     boolean secondLance = false;
                     for (MiscMounted getClub : ae.getClubs()) {
-                        if (getClub.getType().hasFlag(MiscTypeFlag.S_LANCE) && 
+                        if (getClub.getType().hasFlag(MiscTypeFlag.S_LANCE) &&
                               !getClub.isInoperable() &&
                               (te.getArmor(hit) > 0) &&
                               (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION)) {
@@ -18162,8 +18206,7 @@ public class TWGameManager extends AbstractGameManager {
         if (!vPhaseReport.isEmpty()) {
             vPhaseReport.insertElementAt(new Report(3900, Report.PUBLIC), 0);
         }
-        
-        
+
 
         return vPhaseReport;
     }
@@ -20835,7 +20878,7 @@ public class TWGameManager extends AbstractGameManager {
         reports.addElement(r);
 
         // Shield objects are not useless when they take one crit.
-        if ((eqType instanceof MiscType) && ((MiscType) eqType).isShield()) {
+        if ((eqType instanceof MiscType) && ((MiscType) eqType).hasFlag(MiscType.F_SHIELD)) {
             mounted.setHit(false);
         } else if (mounted.is(EquipmentTypeLookup.SCM)) {
             // Super-Cooled Myomer remains functional until all its slots have been hit
@@ -23921,13 +23964,13 @@ public class TWGameManager extends AbstractGameManager {
             // adjust target
             if ((entity.getLocationStatus(loc) == ILocationExposureStatus.VACUUM) &&
                   conditions.getAtmosphere().isTrace()) {
-                target = (lowFail) ? target-2 : target+2;
+                target = (lowFail) ? target - 2 : target + 2;
             }
             // if this is a surface naval vessel and the attack is not from
             // underwater
             // then the breach should only occur on a roll of 2 / 12
             if (entity.isSurfaceNaval() && !underWater) {
-                target = (lowFail) ? target-2 : target+2;
+                target = (lowFail) ? target - 2 : target + 2;
             }
             if ((entity.getArmor(loc) > 0) &&
                   (!(entity instanceof Mek) || entity.getArmor(loc, true) > 0) &&
@@ -23952,7 +23995,7 @@ public class TWGameManager extends AbstractGameManager {
                 // Check for impact resistant armor
                 if ((entity.getArmorType(loc) == EquipmentType.T_ARMOR_IMPACT_RESISTANT)) {
                     int impactChange = Game.rulesManager.getRulesArmor().impactArmorBreach();
-                    target = (lowFail) ? target + impactChange: target - impactChange;
+                    target = (lowFail) ? target + impactChange : target - impactChange;
                     if (impactChange != 0) {
                         r = new Report(6344);
                         r.subject = entity.getId();
@@ -23980,7 +24023,7 @@ public class TWGameManager extends AbstractGameManager {
                 breachRoll = applyBreachEdge(entity, loc, target, breachRoll, vDesc, lowFail);
             }
 
-            boolean breached = (lowFail) ? (breachRoll <= target) : (breachRoll >=target);
+            boolean breached = (lowFail) ? (breachRoll <= target) : (breachRoll >= target);
             // Breach by damage or lack of armor.
             if ((breached) ||
                   !(entity.getArmor(loc) > 0) ||
@@ -25192,10 +25235,11 @@ public class TWGameManager extends AbstractGameManager {
         // into water
         // if we fell onto the water surface, that damage is halved.
         int waterDamage = 0;
-        
+
         if (waterDepth > 0) {
-            RulesPSR.FallDamageInWater fallDamage = Game.rulesManager.getRulesPSR().reduceFallDamageIntoWater(damage, waterDepth, fallHeight,
-                  entity.getWeight());
+            RulesPSR.FallDamageInWater fallDamage = Game.rulesManager.getRulesPSR()
+                  .reduceFallDamageIntoWater(damage, waterDepth, fallHeight,
+                        entity.getWeight());
             damage = fallDamage.damage();
             waterDamage = fallDamage.waterDamage();
         }
@@ -26737,7 +26781,7 @@ public class TWGameManager extends AbstractGameManager {
 
                 if (trailer == null) {
                     LOGGER.warn("[Train] {} was saved towing unit #{}, which is not in this file; the rest of the "
-                                + "train is still hitched", tractor.getDisplayName(), savedTrailerId);
+                          + "train is still hitched", tractor.getDisplayName(), savedTrailerId);
                     continue;
                 }
 
@@ -27185,7 +27229,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * receive and process an entity mode change packet
      *
-     * @param packet the packet to be processed
+     * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
     private void receiveEntityModeChange(Packet packet, int connIndex) throws InvalidPacketDataException {
@@ -27294,7 +27338,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * receive and process an entity charge change packet
      *
-     * @param packet the packet to be processed
+     * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
     private void receiveEntityChargeChange(Packet packet, int connIndex) throws InvalidPacketDataException {
@@ -27315,7 +27359,7 @@ public class TWGameManager extends AbstractGameManager {
 
         EquipmentType equipmentType = mounted.getType();
         if (equipmentType == null) {
-            EQUIP_OFF_LOGGER.debug("[EquipOff] {}: ignored charge change for equipment {} - its type cannot be " 
+            EQUIP_OFF_LOGGER.debug("[EquipOff] {}: ignored charge change for equipment {} - its type cannot be "
                         + "resolved",
                   entity.getShortName(), equipId);
             return;
@@ -27331,7 +27375,7 @@ public class TWGameManager extends AbstractGameManager {
             mounted.setChargeState(ChargeLevel.CHARGE_NONE);
         }
     }
-    
+
     /**
      * Receive and process an Entity Sensor Change Packet
      *
@@ -27350,7 +27394,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Receive and process an Entity Heat Sinks Change Packet
      *
-     * @param packet the packet to be processed
+     * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
     private void receiveEntitySinksChange(Packet packet, int connIndex) throws InvalidPacketDataException {
@@ -27942,8 +27986,8 @@ public class TWGameManager extends AbstractGameManager {
      * report phase.
      *
      * @deprecated this sends the whole phase report accumulated so far, so a second mid-phase interruption re-sends
-     *       everything the first one already delivered. Use {@link #sendNewSpecialReportsTo(int)} to send a player
-     *       only what is new, or {@link #createSpecialReportPacket(Vector)} to send an explicit set of reports.
+     *       everything the first one already delivered. Use {@link #sendNewSpecialReportsTo(int)} to send a player only
+     *       what is new, or {@link #createSpecialReportPacket(Vector)} to send an explicit set of reports.
      */
     @Deprecated(since = "0.51.01", forRemoval = true)
     public Packet createSpecialReportPacket() {
@@ -27959,6 +28003,28 @@ public class TWGameManager extends AbstractGameManager {
      */
     public Packet createSpecialReportPacket(Vector<Report> reports) {
         return new Packet(PacketCommand.SENDING_REPORTS_SPECIAL, reports.clone());
+    }
+
+    /**
+     * Sends the given reports to every player as an immediate special-report packet (surfaced client-side as a
+     * kill-feed toast), respecting double blind: with double blind on, each player receives only the reports they
+     * are entitled to see; otherwise the packet is broadcast unfiltered. Use this instead of broadcasting
+     * {@link #createSpecialReportPacket(Vector)} whenever the reports concern a unit that might be hidden from
+     * some players.
+     *
+     * @param reports the specific reports to push immediately; they are not added to the phase report here
+     */
+    void sendSpecialReport(Vector<Report> reports) {
+        if (!doBlind()) {
+            send(createSpecialReportPacket(reports));
+            return;
+        }
+        for (Player player : game.getPlayersList()) {
+            Vector<Report> filteredReports = filterReportVector(reports, player);
+            if (!filteredReports.isEmpty()) {
+                send(player.getId(), createSpecialReportPacket(filteredReports));
+            }
+        }
     }
 
     /**
@@ -29597,7 +29663,7 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 }
                 if (caa.getTargetType() == Targetable.TYPE_ENTITY &&
-                      ((Entity) caa.getTarget(game)).canFall() && 
+                      ((Entity) caa.getTarget(game)).canFall() &&
                       caa.getClub().getType().hasFlag(MiscTypeFlag.S_CLUB)) {
                     Game.rulesManager.getRulesPSR().clubImpact(game, ae);
                 }
@@ -31636,10 +31702,10 @@ public class TWGameManager extends AbstractGameManager {
      * Sink a Hover Vehicle immobilized over water (non-ice)
      *
      * @param tank the Hover Vehicle to sink
-     * <p>
-     * Checks {@link Tank#isMovementHitPending()} as well as {@code getWalkMP() <= 0} since immobilization may be
-     * pending until {@link Tank#applyDamage()} is resolved.
-     * </p>
+     *             <p>
+     *             Checks {@link Tank#isMovementHitPending()} as well as {@code getWalkMP() <= 0} since immobilization
+     *             may be pending until {@link Tank#applyDamage()} is resolved.
+     *             </p>
      *
      * @return a <code>Vector<Report></code> containing what to add to the turn log
      */

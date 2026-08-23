@@ -80,6 +80,7 @@ import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
 import megamek.common.RangeType;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.HexEditSpec;
@@ -315,14 +316,38 @@ public class HexEditDialog extends JDialog {
         }
         // shown as a starting point only; the level is not written to a hex unless the gamemaster ticks the box
         hexLevelSpinner.setValue(hex.getLevel());
+        Terrain existing = brushableTerrainIn(hex);
+        if (existing == null) {
+            return;
+        }
+        terrainChooser.setSelectedItem(new TerrainChoice(existing.getType()));
+        refreshLevelChooser();
+        levelChooser.setSelectedItem(new LevelChoice(existing.getType(), existing.getLevel()));
+        // last, because choosing the terrain and its level each put the factor back to what the rules give new
+        // terrain. What the hex actually holds is the point: woods shelled down to 15 must not open reading 50.
+        terrainFactorSpinner.setValue(existing.getTerrainFactor());
+    }
+
+    /**
+     * The terrain in a hex that the brush should start from.
+     *
+     * <p>The brush holds one terrain at a time, so a hex holding several is opened on the first of them the brush
+     * can paint, in the order they are offered. The whole terrain is returned rather than its type, because the
+     * brush starts from the level and the terrain factor the hex actually has as well.</p>
+     *
+     * <p>Package-private so it can be tested without a screen.</p>
+     *
+     * @param hex The hex the dialog was opened on
+     *
+     * @return the terrain to start from, or {@code null} when the hex holds nothing the brush paints
+     */
+    static @Nullable Terrain brushableTerrainIn(Hex hex) {
         for (int terrainType : EDITABLE_TERRAINS) {
             if (hex.containsTerrain(terrainType)) {
-                terrainChooser.setSelectedItem(new TerrainChoice(terrainType));
-                refreshLevelChooser();
-                levelChooser.setSelectedItem(new LevelChoice(terrainType, hex.terrainLevel(terrainType)));
-                return;
+                return hex.getTerrain(terrainType);
             }
         }
+        return null;
     }
 
     private void buildUI(JFrame parent) {

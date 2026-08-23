@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Set;
 
 import megamek.common.Player;
+import megamek.logging.MMLogger;
 
 /**
  * Which players the person at this screen may add units to.
@@ -56,6 +57,8 @@ import megamek.common.Player;
  * always done it.</p>
  */
 public final class UnitRecipients {
+
+    private static final MMLogger LOGGER = MMLogger.create(UnitRecipients.class);
 
     private UnitRecipients() {
     }
@@ -81,6 +84,11 @@ public final class UnitRecipients {
                 recipients.add(player);
             }
         }
+        // at INFO because the shipped logging runs at INFO, and the question this answers - "why is that player
+        // not in the list" - is one a playtest has to be able to settle from the log. Once per dialog opening.
+        LOGGER.info("[GMAddUnit] {} (gamemaster: {}) may add units to {} of {} player(s): {}",
+              localPlayer.getName(), localPlayer.isGameMaster(), recipients.size(), allPlayers.size(),
+              recipients.stream().map(Player::getName).toList());
         return recipients;
     }
 

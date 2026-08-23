@@ -41,18 +41,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 
+import java.util.Arrays;
+import java.util.List;
+
+import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.board.Board;
-import megamek.utils.BoardLoader;
 import megamek.common.board.Coords;
 import megamek.common.board.HexEditSpec;
 import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
-import megamek.common.util.SerializationHelper;
-import megamek.common.units.Entity;
 import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
+import megamek.common.util.SerializationHelper;
+import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -535,5 +539,58 @@ class HexEditHandlerTest {
         assertNotNull(refusal, "a hex that is not on the board cannot be painted");
         assertEquals(0, board.getHex(BARE_HEX).depth(),
               "and the hex that could have been painted must be left alone, not half-applied");
+    }
+
+    /**
+     * @return the terrains a board author would have written in the hex, leaving out the ones the board adds for
+     *       itself - the inclines and cliff edges it works out from how the hex sits against its neighbours
+     */
+    private static List<Integer> nonAutomaticTerrainsIn(Hex hex) {
+        return Arrays.stream(hex.getTerrainTypes())
+              .boxed()
+              .filter(terrainType -> !Terrains.AUTOMATIC.contains(terrainType))
+              .toList();
+    }
+
+    /** @return an edit that leaves one hex as bare ground sitting at the given level */
+    private HexEditSpec bareGroundAt(int hexLevel, Coords hex) {
+        HexEditSpec.HexPaint paint = new HexEditSpec.HexPaint();
+        paint.setLevel(hexLevel);
+        HexEditSpec spec = new HexEditSpec(board.getBoardId());
+        spec.paint(hex, paint);
+        return spec;
+    }
+
+    @Test
+    void bareGroundAtALevelRaisesABareHill() {
+        // the ground level and the terrain are two separate things to set, so bare ground with a level is how a hill
+        // with nothing growing on it is made
+        String refusal = hexEditHandler.applyHexEdit(bareGroundAt(3, WOODS_HEX), GAMEMASTER);
+
+        assertNull(refusal, "raising bare ground should be allowed");
+        assertEquals(3, board.getHex(WOODS_HEX).getLevel(), "the ground should have been raised");
+        assertFalse(board.getHex(WOODS_HEX).containsTerrain(Terrains.WOODS),
+              "and the woods that used to grow there should be gone");
+        assertTrue(nonAutomaticTerrainsIn(board.getHex(WOODS_HEX)).isEmpty(),
+              "leaving nothing on the hill but what the board works out for itself");
+    }
+
+    @Test
+    void bareGroundAtANegativeLevelDigsAHole() {
+        String refusal = hexEditHandler.applyHexEdit(bareGroundAt(-3, BARE_HEX), GAMEMASTER);
+
+        assertNull(refusal, "digging bare ground down should be allowed");
+        assertEquals(-3, board.getHex(BARE_HEX).getLevel(), "the ground should have been lowered");
+        assertEquals(0, board.getHex(BARE_HEX).depth(), "a hole is not a pond, so no water should appear in it");
+    }
+
+    @Test
+    void raisingTheGroundUnderAWaterHexDrainsItAsWell() {
+        // bare ground says the hex ends up holding nothing, and the water is terrain like any other, so it goes
+        String refusal = hexEditHandler.applyHexEdit(bareGroundAt(2, WATER_HEX), GAMEMASTER);
+
+        assertNull(refusal, "turning a pond into a hill should be allowed when nobody is standing in it");
+        assertEquals(2, board.getHex(WATER_HEX).getLevel(), "the ground should have been raised");
+        assertEquals(0, board.getHex(WATER_HEX).depth(), "and the water should be gone");
     }
 }

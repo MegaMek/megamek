@@ -761,7 +761,9 @@ public class MapMenu extends JPopupMenu {
 
     /** Opens the Change Terrain dialog on the hex that was right-clicked. */
     private JMenuItem createChangeTerrainMenuItem() {
-        JMenuItem item = new JMenuItem(Messages.getString("HexEditDialog.title"));
+        // named from the command rather than from the dialog's title, so this entry reads the same as the one on the
+        // Commands button and carries the same mark
+        JMenuItem item = new JMenuItem(Messages.getString("Gamemaster.cmd.changeTerrain.longName"));
         item.addActionListener(event -> new HexEditDialog(gui.getFrame(), gui, coords).setVisible(true));
         return item;
     }

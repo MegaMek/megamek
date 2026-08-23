@@ -264,15 +264,16 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
     }
 
     /**
-     * @param c The client whose player to select, or {@code null} to leave the chooser where it was
+     * @param clientToSelect The client whose player to select, or {@code null} to leave the chooser where it was
      *
      * @deprecated since 0.51.01 - use {@link #setPlayerFrom(Player)}. A client cannot name a remote player,
      *       because there is none on this machine, so anything asking for one silently fell back to the local
      *       player.
      */
     @Deprecated(since = "0.51.01", forRemoval = true)
-    public void setPlayerFromClient(@Nullable Client c) {
-        setPlayerFrom((c == null) ? null : c.getLocalPlayer());
+    public void setPlayerFromClient(@Nullable Client clientToSelect) {
+        // named apart from this dialog's own client field, which it would otherwise shadow
+        setPlayerFrom((clientToSelect == null) ? null : clientToSelect.getLocalPlayer());
     }
 
     @Override

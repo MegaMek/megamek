@@ -33,7 +33,6 @@
 package megamek.client.ui.panels.phaseDisplay;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -463,17 +462,8 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         //if (event.getCoords() != null) {
         //    clientgui.getBoardView().cursor(event.getCoords());
         //}
-        if (clientgui.getClient().isMyTurn()
-              && (event.getButton() == MouseEvent.BUTTON1)) {
-            if (event.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-                if (!event.getCoords().equals(
-                      event.getBoardView().getLastCursor())) {
-                    event.getBoardView().cursor(event.getCoords());
-                }
-            } else if (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
-                event.getBoardView().select(event.getCoords());
-            }
-        }
+        // This display has no torso twist, so the shift key never suppresses the selection.
+        applyHexMouseAction(event, false);
     }
 
     @Override

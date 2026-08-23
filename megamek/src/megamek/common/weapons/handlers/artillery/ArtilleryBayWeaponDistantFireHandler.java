@@ -173,7 +173,7 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
                 artyMsg = "Artillery bay fire Incoming, landing on round "
                       + (game.getRoundCount() + aaa.getTurnsTilHit())
                       + ", fired by "
-                      + game.getPlayer(aaa.getPlayerId()).getName();
+                      + ArtilleryHandlerHelper.firingPlayerName(game, aaa);
                 game.getBoard(aaa.getTarget(game).getBoardId()).addSpecialHexDisplay(
                       aaa.getTarget(game).getPosition(),
                       new SpecialHexDisplay(
@@ -390,7 +390,7 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
             targetHex = game.getBoard(target.getBoardId()).getHex(targetPos);
             heights.add((targetHex != null) ? game.getBoard(target.getBoardId()).getHex(targetPos).getLevel() : 0);
             artyMsg = "Artillery hit here on round " + game.getRoundCount()
-                  + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
+                  + ", fired by " + ArtilleryHandlerHelper.firingPlayerName(game, aaa)
                   + " (this hex is now an auto-hit)";
             game.getBoard(target.getBoardId()).addSpecialHexDisplay(targetPos,
                   new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
@@ -405,7 +405,7 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
             // Any drifted shots will be indicated at their end points
             artyMsg = "Bay Artillery missed here on round "
                   + game.getRoundCount() + ", by "
-                  + game.getPlayer(aaa.getPlayerId()).getName();
+                  + ArtilleryHandlerHelper.firingPlayerName(game, aaa);
             SpecialHexDisplay bayMissMarker = new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_MISS,
                   game.getRoundCount(), game.getPlayer(aaa.getPlayerId()), artyMsg);
             game.getBoard().addSpecialHexDisplay(originalPosition, bayMissMarker);

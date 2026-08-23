@@ -147,7 +147,7 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
                 artyMsg = "Artillery fire Incoming, landing on round "
                       + (game.getRoundCount() + artilleryAttackAction.getTurnsTilHit())
                       + ", fired by "
-                      + game.getPlayer(artilleryAttackAction.getPlayerId()).getName();
+                      + ArtilleryHandlerHelper.firingPlayerName(game, artilleryAttackAction);
                 if (artilleryAttackAction.getTarget(game) != null) {
                     game.getBoard(artilleryAttackAction.getTarget(game).getBoardId()).addSpecialHexDisplay(
                           artilleryAttackAction.getTarget(game).getPosition(),
@@ -591,7 +591,7 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
                 String artyMsg = "Artillery hit here on round " +
                       game.getRoundCount() +
                       ", fired by " +
-                      game.getPlayer(aaa.getPlayerId()).getName() +
+                      ArtilleryHandlerHelper.firingPlayerName(game, aaa) +
                       " (this hex is now an auto-hit)";
                 game.getBoard()
                       .addSpecialHexDisplay(targetPos,
@@ -623,7 +623,7 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
 
                     String artyMsg = "Artillery missed here on round "
                           + game.getRoundCount() + ", by "
-                          + game.getPlayer(aaa.getPlayerId()).getName()
+                          + ArtilleryHandlerHelper.firingPlayerName(game, aaa)
                           + (driftedOffTarget ? ", drifted to " + targetPos.getBoardNum() : ", landed on target");
                     SpecialHexDisplay missMarker = new SpecialHexDisplay(Type.ARTILLERY_MISS,
                           game.getRoundCount(),
@@ -657,7 +657,7 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
 
                 String artyMsg = "Artillery missed here on round "
                       + game.getRoundCount() + ", by "
-                      + game.getPlayer(aaa.getPlayerId()).getName()
+                      + ArtilleryHandlerHelper.firingPlayerName(game, aaa)
                       + ", drifted off the board";
                 SpecialHexDisplay missMarker = new SpecialHexDisplay(Type.ARTILLERY_MISS,
                       game.getRoundCount(),

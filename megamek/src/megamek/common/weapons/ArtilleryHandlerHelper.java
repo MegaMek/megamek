@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,7 +41,10 @@ import java.util.Optional;
 import java.util.Vector;
 
 import megamek.common.LosEffects;
+import megamek.common.Messages;
+import megamek.common.Player;
 import megamek.common.Report;
+import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -172,6 +175,26 @@ public final class ArtilleryHandlerHelper {
             }
         }
         return lastOnBoard;
+    }
+
+    /**
+     * Returns the name of the player who fired the given artillery attack, for use in the "fired by ..." text of a hex
+     * marker or report.
+     * <p>
+     * A round already in the air outlives its firer: by the rules it lands whether or not the firing unit survives, and
+     * a player whose last unit is destroyed can be dropped from the game while the round is still in flight. When that
+     * has happened the player can no longer be looked up, so a plain label is used instead of their name.</p>
+     *
+     * @param game   The game the attack belongs to
+     * @param attack The artillery attack whose firer is being named
+     *
+     * @return The firing player's name, or a generic label when that player is no longer in the game
+     */
+    public static String firingPlayerName(Game game, ArtilleryAttackAction attack) {
+        Player firingPlayer = game.getPlayer(attack.getPlayerId());
+        return (firingPlayer == null)
+              ? Messages.getString("ArtilleryMessage.unknownFiringPlayer")
+              : firingPlayer.getName();
     }
 
     private ArtilleryHandlerHelper() {}

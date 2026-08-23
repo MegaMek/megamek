@@ -54,6 +54,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.UnitRecipients;
 import megamek.client.ui.dialogs.buttonDialogs.SkillGenerationDialog;
 import megamek.common.Player;
+import megamek.common.Team;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.Gender;
 import megamek.common.event.GameListener;
@@ -202,7 +203,16 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
         // roll - topping a ComStar force up from the plain RAT tab would file it as Inner Sphere.
         if (context.source() != GenerationContext.Source.UNSPECIFIED) {
             clientGui.setGenerationContext(owner.getId(), context);
-            clientGui.getClient().getGame().getTeamForPlayer(owner).setFaction(context.faction());
+            // a player on no team has no team faction to set, which is the ordinary state of an observer being
+            // handed their first force: the faction is recorded against the player either way, and the team picks
+            // it up when they are put on one
+            Team team = clientGui.getClient().getGame().getTeamForPlayer(owner);
+            if (team != null) {
+                team.setFaction(context.faction());
+            } else {
+                LOGGER.info("[GMAddUnit] {} is on no team, so the rolled faction {} is recorded against the player "
+                            + "only", owner.getName(), context.faction());
+            }
             // The year goes in as text: message formatting would group the digits into "3,067".
             String year = String.valueOf(context.year());
             String message = (context.rating() == null)

@@ -131,7 +131,11 @@ public class EquipChoicePanel extends JPanel {
     private final JCheckBox chEICockpit = new JCheckBox(Messages.getString("CustomMekDialog.labEICockpit"));
     private final JCheckBox chDamageInterruptCircuit
           = new JCheckBox(Messages.getString("CustomMekDialog.labDamageInterruptCircuit"));
-    /** Ghost target equipment mode selectors, keyed by equipment number on the entity. */
+    /**
+     * Mode selectors for the equipment shown in the ECM section - ECM suites, active probes, C3 gear, comms gear and
+     * the command console - keyed by equipment number on the entity. The ECM suites among them also drive the
+     * single-suite conflict check.
+     */
     private final Map<Integer, JComboBox<String>> ecmModeSelectors = new LinkedHashMap<>();
     /** Set while the ECM dropdowns are being changed in code, so those changes do not re-trigger the conflict check. */
     private boolean adjustingEcmModes;

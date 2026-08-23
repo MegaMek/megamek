@@ -45,6 +45,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.Serial;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -682,18 +683,24 @@ class SystemPanel extends PicMap
             return true;
         }
 
-        List<MiscMounted> suitesInUse = EquipmentActivation.ecmSuitesInUseNextRound(en);
-        if (!suitesInUse.contains(changedSuite)) {
-            suitesInUse.add(changedSuite);
+        // Walk the mounts rather than appending the changed suite to the list of those already in use, so the
+        // dialog offers the suites in mount order and its numbering runs 1, 2, 3 down the list
+        List<MiscMounted> alreadyInUse = EquipmentActivation.ecmSuitesInUseNextRound(en);
+        List<MiscMounted> suitesInUse = new ArrayList<>();
+        for (MiscMounted suite : en.getMisc()) {
+            if (suite.equals(changedSuite) || alreadyInUse.contains(suite)) {
+                suitesInUse.add(suite);
+            }
         }
         if (suitesInUse.size() < 2) {
             return true;
         }
 
-        // Making room for this suite means switching another one off, which stealth armor forbids while it is
-        // engaged or engaging - the server rejects that switch, so there is no choice to offer here
+        // Making room for this suite means switching another one off, which the server refuses for any ECM suite
+        // while stealth armor is engaged or engaging - so there is no choice to offer here
         if (EquipmentActivation.isStealthOnOrActivating(en)) {
-            clientgui.systemMessage(Messages.getString("MekDisplay.EcmSuiteStealthEngaged", changedSuite.getName()));
+            clientgui.systemMessage(Messages.getString("MekDisplay.EcmSuiteStealthEngaged",
+                  EquipmentActivation.ecmSuiteLabel(en, changedSuite)));
             return false;
         }
 
@@ -708,7 +715,8 @@ class SystemPanel extends PicMap
         MiscMounted keptSuite = EcmSuiteChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(), en,
               suiteModeNames);
         if (!changedSuite.equals(keptSuite)) {
-            clientgui.systemMessage(Messages.getString("MekDisplay.EcmSuiteNotSwitched", changedSuite.getName()));
+            clientgui.systemMessage(Messages.getString("MekDisplay.EcmSuiteNotSwitched",
+                  EquipmentActivation.ecmSuiteLabel(en, changedSuite)));
             return false;
         }
 
@@ -720,7 +728,8 @@ class SystemPanel extends PicMap
             if (offModeIndex >= 0) {
                 clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(suite), offModeIndex);
                 clientgui.systemMessage(Messages.getString("MekDisplay.willSwitchAtEnd",
-                      suite.getName(), suite.pendingMode().getStateName(suite.getType())));
+                      EquipmentActivation.ecmSuiteLabel(en, suite),
+                      suite.pendingMode().getStateName(suite.getType())));
             }
         }
         return true;

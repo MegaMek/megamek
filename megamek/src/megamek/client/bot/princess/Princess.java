@@ -3143,16 +3143,28 @@ public class Princess extends BotClient {
         }
 
         final int dissipation = mover.getHeatCapacityWithWater();
+        return canJumpClear(mover, dissipation) || (dissipation > recurringHeat(mover, false));
+    }
 
-        // Heat never reduces jump MP, so a unit with working jets can leave under its own power - as long
-        // as it can afford the jump heat on top of everything else it is already gaining. A prone Mek does
-        // not get this: it has to stand up first, and standing needs walking MP it does not have.
-        if (!mover.isProne() && (0 < mover.getAnyTypeMaxJumpMP())
-              && (dissipation > recurringHeat(mover, true) + mover.getJumpHeat(CHEAPEST_JUMP_DISTANCE))) {
-            return true;
-        }
-
-        return dissipation > recurringHeat(mover, false);
+    /**
+     * Whether a heat-stalled unit can leave its hex by jumping rather than waiting to cool.
+     * <p>
+     * Heat never reduces jump MP, so a unit with working jets can move under its own power even at zero
+     * walking MP - as long as it can afford the jump's heat on top of everything else it is already
+     * gaining. Jumping also leaves any fire behind, which is why the recurring heat here excludes it. A
+     * prone Mek does not get this route: it has to stand up first, and standing needs walking MP it does
+     * not have.
+     * </p>
+     *
+     * @param mover       the unit being assessed
+     * @param dissipation the unit's heat dissipation per turn
+     *
+     * @return {@code true} if jumping one hex is sustainable for this unit
+     */
+    private boolean canJumpClear(final Entity mover, final int dissipation) {
+        return !mover.isProne()
+              && (0 < mover.getAnyTypeMaxJumpMP())
+              && (dissipation > recurringHeat(mover, true) + mover.getJumpHeat(CHEAPEST_JUMP_DISTANCE));
     }
 
     /**
@@ -3338,11 +3350,23 @@ public class Princess extends BotClient {
                 // it can still shed, in which case it moves again in a turn or two and is worth keeping.
                 if (isImmobilized(entity) && entity.isEjectionPossible()) {
                     if (canRecoverMobility(entity)) {
-                        LOGGER.info("{} cannot move but will recover: sinks {} against {} recurring heat."
-                                    + " Not abandoning it.",
-                              entity.getDisplayName(),
-                              entity.getHeatCapacityWithWater(),
-                              recurringHeat(entity, false));
+                        // Name the route that saved it, so the printed numbers always back the claim: a
+                        // unit jumping clear of a fire is not out-sinking the heat it is standing in.
+                        final int dissipation = entity.getHeatCapacityWithWater();
+                        if (canJumpClear(entity, dissipation)) {
+                            LOGGER.info("{} cannot walk but can jump clear: sinks {} against {} recurring"
+                                        + " heat plus {} jump heat. Not abandoning it.",
+                                  entity.getDisplayName(),
+                                  dissipation,
+                                  recurringHeat(entity, true),
+                                  entity.getJumpHeat(CHEAPEST_JUMP_DISTANCE));
+                        } else {
+                            LOGGER.info("{} cannot move but will cool: sinks {} against {} recurring heat."
+                                        + " Not abandoning it.",
+                                  entity.getDisplayName(),
+                                  dissipation,
+                                  recurringHeat(entity, false));
+                        }
                     } else {
                         msg = entity.getDisplayName() + " is immobile. Abandoning unit.";
                         LOGGER.info(msg);

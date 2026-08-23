@@ -45,6 +45,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.Serial;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -55,6 +58,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.ChoiceDialog;
+import megamek.client.ui.dialogs.phaseDisplay.EcmSuiteChoiceDialog;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
@@ -607,6 +611,10 @@ class SystemPanel extends PicMap
                             return;
                         }
 
+                        if (!resolveEcmSuiteConflict(clientgui, m, nMode)) {
+                            return;
+                        }
+
                         m.setMode(nMode);
                         // send the event to the server
                         clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);
@@ -645,6 +653,77 @@ class SystemPanel extends PicMap
         } finally {
             addListeners();
         }
+    }
+
+    /**
+     * Asks the player which ECM suite to leave on when the mode they just picked would put a second one into use, and
+     * switches off the suites they did not keep. A unit may use only one ECM suite at a time, of any type (TM p.213,
+     * CO p.200), and every mode other than {@code "Off"} counts as using the suite - ECCM and Ghost Targets included.
+     *
+     * <p>The choice is always between the suite already in use and the one the player just switched, so keeping the
+     * suite that was already on means abandoning the requested switch. Cancelling does the same.</p>
+     *
+     * @param clientgui        the client GUI, used for the parent frame and to send the switches that are applied
+     * @param changedEquipment the equipment whose mode the player just picked
+     * @param newMode          the requested mode index
+     *
+     * @return {@code true} if the requested mode change should go ahead, {@code false} if it should be abandoned
+     */
+    private boolean resolveEcmSuiteConflict(ClientGUI clientgui, Mounted<?> changedEquipment, int newMode) {
+        if (!(changedEquipment instanceof MiscMounted changedSuite)
+              || !changedSuite.getType().hasFlag(MiscType.F_ECM)) {
+            return true;
+        }
+        if ((newMode < 0) || (newMode >= changedSuite.getType().getModesCount())) {
+            return true;
+        }
+        EquipmentMode requestedMode = changedSuite.getType().getMode(newMode);
+        if (requestedMode.equals(Mounted.MODE_OFF)) {
+            return true;
+        }
+
+        List<MiscMounted> suitesInUse = EquipmentActivation.ecmSuitesInUseNextRound(en);
+        if (!suitesInUse.contains(changedSuite)) {
+            suitesInUse.add(changedSuite);
+        }
+        if (suitesInUse.size() < 2) {
+            return true;
+        }
+
+        // Making room for this suite means switching another one off, which stealth armor forbids while it is
+        // engaged or engaging - the server rejects that switch, so there is no choice to offer here
+        if (EquipmentActivation.isStealthOnOrActivating(en)) {
+            clientgui.systemMessage(Messages.getString("MekDisplay.EcmSuiteStealthEngaged", changedSuite.getName()));
+            return false;
+        }
+
+        // The mode the player just picked has not been applied yet, so it has to be named for the dialog rather
+        // than read back off the equipment
+        Map<MiscMounted, String> suiteModeNames = new LinkedHashMap<>();
+        for (MiscMounted suite : suitesInUse) {
+            suiteModeNames.put(suite, suite.equals(changedSuite)
+                  ? requestedMode.getStateName(changedSuite.getType())
+                  : suite.modeNextRound().getStateName(suite.getType()));
+        }
+        MiscMounted keptSuite = EcmSuiteChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(), en,
+              suiteModeNames);
+        if (!changedSuite.equals(keptSuite)) {
+            clientgui.systemMessage(Messages.getString("MekDisplay.EcmSuiteNotSwitched", changedSuite.getName()));
+            return false;
+        }
+
+        for (MiscMounted suite : suitesInUse) {
+            if (suite.equals(keptSuite)) {
+                continue;
+            }
+            int offModeIndex = suite.setMode(Mounted.MODE_OFF);
+            if (offModeIndex >= 0) {
+                clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(suite), offModeIndex);
+                clientgui.systemMessage(Messages.getString("MekDisplay.willSwitchAtEnd",
+                      suite.getName(), suite.pendingMode().getStateName(suite.getType())));
+            }
+        }
+        return true;
     }
 
     @Override

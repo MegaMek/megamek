@@ -2403,6 +2403,7 @@ public class TWGameManager extends AbstractGameManager {
             if (entity.getsAutoExternalSearchlight()) {
                 entity.setExternalSearchlight(true);
             }
+            deactivateSurplusEcmSuites(entity);
             entityUpdate(entity.getId());
 
             // Remove hot-loading some from LRMs for meks
@@ -2421,6 +2422,43 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
         }
+    }
+
+    /**
+     * Switches off all but one of a unit's ECM suites when it enters play with several of them in use. A unit may use
+     * only one ECM suite at a time, of any type (TM p.213, CO p.200), but every suite starts in its first mode, which
+     * is {@code "ECM"}, so a unit carrying more than one deploys using all of them before the player has touched
+     * anything. The Mantis Light Attack VTOL (ECCM) with its two Guardian suites is the stock example.
+     *
+     * <p>The suite that stays on is the one {@link EquipmentActivation#preferredEcmSuite(List)} picks; the player is
+     * free to switch to any of the others on any turn. The modes are set immediately rather than queued, because at
+     * game start there is no turn boundary for a pending switch to cross.</p>
+     *
+     * @param entity the unit entering play
+     */
+    private void deactivateSurplusEcmSuites(Entity entity) {
+        List<MiscMounted> suitesInUse = EquipmentActivation.ecmSuitesInUseNextRound(entity);
+        if (suitesInUse.size() < 2) {
+            return;
+        }
+        MiscMounted keptSuite = EquipmentActivation.preferredEcmSuite(suitesInUse);
+        if (keptSuite == null) {
+            return;
+        }
+        StringJoiner deactivatedSuites = new StringJoiner(", ");
+        for (MiscMounted suite : suitesInUse) {
+            if (suite.equals(keptSuite)) {
+                continue;
+            }
+            suite.setModeImmediately(Mounted.MODE_OFF);
+            deactivatedSuites.add(EquipmentActivation.ecmSuiteLabel(entity, suite));
+        }
+        String message = entity.getShortName() + " may use only one ECM suite at a time (TM p.213): "
+              + EquipmentActivation.ecmSuiteLabel(entity, keptSuite) + " stays on, "
+              + deactivatedSuites + " switched off";
+        EQUIP_OFF_LOGGER.debug("[EquipOff] {}: deployed with {} ECM suites in use - all but {} switched off",
+              entity.getShortName(), suitesInUse.size(), keptSuite.getName());
+        sendServerChat(message);
     }
 
     @Override
@@ -27268,6 +27306,16 @@ public class TWGameManager extends AbstractGameManager {
             String message = entity.getShortName() + ": " + mounted.getName()
                   + " cannot be engaged while the ECM suite is deactivated or deactivating";
             EQUIP_OFF_LOGGER.debug("[EquipOff] {}: rejected mode change - no ECM suite will be operating next round",
+                  entity.getShortName());
+            sendServerChat(connIndex, message);
+            return;
+        }
+
+        if (ServerHelper.isSecondEcmSuiteActivation(entity, mounted, mode)) {
+            String message = entity.getShortName() + ": " + mounted.getName()
+                  + " cannot be used while another ECM suite is in use - a unit may use only one at a time"
+                  + " (TM p.213)";
+            EQUIP_OFF_LOGGER.debug("[EquipOff] {}: rejected mode change - another ECM suite is already in use",
                   entity.getShortName());
             sendServerChat(connIndex, message);
             return;

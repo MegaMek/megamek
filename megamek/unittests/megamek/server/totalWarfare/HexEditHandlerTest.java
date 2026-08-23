@@ -50,6 +50,7 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.HexEditSpec;
 import megamek.common.game.Game;
+import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
@@ -682,5 +683,42 @@ class HexEditHandlerTest {
         String raisingIt = hexEditHandler.applyHexEdit(
               paintWithFactor(WOODS_HEX, Terrains.WOODS, 1, 500), GAMEMASTER);
         assertNotNull(raisingIt, "but making it stronger still should be refused");
+    }
+
+    /** Sends a hex edit the way a client does, so the packet handler and its Game Master guard are exercised. */
+    private void sendAsPacket(HexEditSpec spec, boolean senderIsGameMaster) {
+        Player sender = game.getPlayer(0);
+        sender.setGameMaster(senderIsGameMaster);
+        gameManager.handlePacket(0, new Packet(PacketCommand.HEX_EDIT, spec));
+    }
+
+    @Test
+    void aGameMasterCanChangeTheTerrainThroughThePacket() {
+        sendAsPacket(floodOf(2, BARE_HEX), true);
+
+        assertEquals(2, board.getHex(BARE_HEX).depth(),
+              "the packet path should reach the handler and flood the hex");
+    }
+
+    @Test
+    void aPlayerWhoIsNotGameMasterCannotChangeTheTerrain() {
+        // the positive test above is what keeps this one honest: without it, a broken packet path would leave the
+        // hex dry here too and this test would pass while proving nothing
+        sendAsPacket(floodOf(2, BARE_HEX), false);
+
+        assertEquals(0, board.getHex(BARE_HEX).depth(),
+              "only a gamemaster may change the board, whatever a client sends");
+    }
+
+    @Test
+    void aPlayerWhoIsNotGameMasterCannotUndoATerrainChange() {
+        hexEditHandler.applyHexEdit(floodOf(2, BARE_HEX), GAMEMASTER);
+
+        HexEditSpec undo = new HexEditSpec(board.getBoardId());
+        undo.setUndoingLastEdit(true);
+        sendAsPacket(undo, false);
+
+        assertEquals(2, board.getHex(BARE_HEX).depth(),
+              "an undo is a board change like any other, so it needs the same guard");
     }
 }

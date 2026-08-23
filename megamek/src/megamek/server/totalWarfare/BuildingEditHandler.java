@@ -138,6 +138,10 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
         if (spec.isRemovingBuilding()) {
             return removeBuilding(board, existing, spec, gamemasterName);
         }
+        String tooStrong = refusalForAnOverStrongBuilding(spec, existing, gamemasterName);
+        if (tooStrong != null) {
+            return tooStrong;
+        }
         if (hex.depth() > 0) {
             LOGGER.debug("[GMBuilding] {}: refused - hex {} holds water", gamemasterName,
                   spec.getCoords().getBoardNum());
@@ -361,6 +365,46 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
         if (spec.getFluffImage() > 0) {
             hex.addTerrain(new Terrain(Terrains.BLDG_FLUFF, spec.getFluffImage()));
         }
+    }
+
+    /**
+     * Whether the edit would leave a building stronger than its type is built to be.
+     *
+     * <p>Each building type covers a band of construction factors - light 1-15, medium 16-40, heavy 41-90, hardened
+     * 91-150 (Total Warfare, p. 168, Building Type/Original CF). Something stronger than its band is a different
+     * type of building, so this is refused rather than quietly built. Only the top of the band is held to: damage
+     * takes a building below its band without changing what it is made of.</p>
+     *
+     * <p>A building already standing above its band is left alone. Boards may say what they like, and a gamemaster
+     * editing such a hex should be able to lower it rather than find every edit refused.</p>
+     *
+     * @param spec           The edit
+     * @param existing       The building already in the hex, or {@code null} when there is none
+     * @param gamemasterName The gamemaster making the change, for the log
+     *
+     * @return A description of why the edit was refused, or {@code null} when the building is within its band
+     */
+    private String refusalForAnOverStrongBuilding(BuildingEditSpec spec, @Nullable IBuilding existing,
+          String gamemasterName) {
+        if (spec.isFuelTank() || (spec.getBuildingType() == null)) {
+            return null;
+        }
+        int highestAllowed = spec.getBuildingType().getMaximumCF();
+        if (highestAllowed < 0) {
+            return null;
+        }
+        if (existing != null) {
+            highestAllowed = Math.max(highestAllowed, existing.getCurrentCF(spec.getCoords()));
+        }
+        if (spec.getConstructionFactor() <= highestAllowed) {
+            return null;
+        }
+        LOGGER.info("[GMBuilding] {}: refused - a {} building in hex {} cannot stand at {}, the most it is built to "
+                    + "is {}",
+              gamemasterName, spec.getBuildingType(), spec.getCoords().getBoardNum(),
+              spec.getConstructionFactor(), highestAllowed);
+        return "a " + spec.getBuildingType() + " building is built to at most " + highestAllowed
+              + "; anything stronger is a different type of building";
     }
 
     /** Takes every scrap of building out of a hex, so nothing of the old one is left to confuse the new one. */

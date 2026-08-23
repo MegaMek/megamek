@@ -437,4 +437,50 @@ class BuildingEditHandlerTest {
         assertEquals(3, board.getHex(BUILDING_HEX).terrainLevel(Terrains.BLDG_FLUFF),
               "a building rebuilt as another type should still be drawn with the picture that was chosen");
     }
+
+    @Test
+    void aBuildingCannotBeBuiltStrongerThanItsTypeAllows() {
+        // Total Warfare p.168: a light building is CF 1-15. Anything stronger is a medium building, not a light one.
+        BuildingEditSpec spec = specFor(EMPTY_HEX, BuildingType.LIGHT);
+        spec.setConstructionFactor(BuildingType.LIGHT.getMaximumCF() + 1);
+
+        String refusal = buildingEditHandler().applyBuildingSpec(spec, GAMEMASTER);
+
+        assertNotNull(refusal, "a light building stronger than its band should be refused");
+        assertNull(board.getBuildingAt(EMPTY_HEX), "and nothing should have been built");
+    }
+
+    @Test
+    void aBuildingCanBeBuiltToTheTopOfItsBand() {
+        BuildingEditSpec spec = specFor(EMPTY_HEX, BuildingType.LIGHT);
+        spec.setConstructionFactor(BuildingType.LIGHT.getMaximumCF());
+
+        String refusal = buildingEditHandler().applyBuildingSpec(spec, GAMEMASTER);
+
+        assertNull(refusal, "the top of the band is allowed, it is only going above it that is not");
+        assertEquals(BuildingType.LIGHT.getMaximumCF(), board.getBuildingAt(EMPTY_HEX).getCurrentCF(EMPTY_HEX));
+    }
+
+    @Test
+    void aDamagedBuildingIsStillWithinItsBand() {
+        // damage takes a building below its band without changing what it is made of, so only the top is held to
+        BuildingEditSpec spec = specFor(BUILDING_HEX, BuildingType.MEDIUM);
+        spec.setConstructionFactor(3);
+
+        String refusal = buildingEditHandler().applyBuildingSpec(spec, GAMEMASTER);
+
+        assertNull(refusal, "a medium building nearly flattened is still a medium building");
+        assertEquals(3, board.getBuildingAt(BUILDING_HEX).getCurrentCF(BUILDING_HEX));
+    }
+
+    @Test
+    void aHardenedBuildingMayGoToOneHundredAndFifty() {
+        BuildingEditSpec spec = specFor(EMPTY_HEX, BuildingType.HARDENED);
+        spec.setConstructionFactor(150);
+
+        String refusal = buildingEditHandler().applyBuildingSpec(spec, GAMEMASTER);
+
+        assertNull(refusal, "hardened buildings run to 150, above the 120 they are assumed to have");
+        assertEquals(150, board.getBuildingAt(EMPTY_HEX).getCurrentCF(EMPTY_HEX));
+    }
 }

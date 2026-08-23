@@ -643,4 +643,44 @@ class HexEditHandlerTest {
               board.getHex(BARE_HEX).getTerrain(Terrains.WATER).getTerrainFactor(),
               "and the water should be left as the rules make it");
     }
+
+    @Test
+    void aTerrainCannotBeMadeStrongerThanTheRulesAllow() {
+        // TacOps p.63 gives heavy woods a terrain factor of 90 and damage only takes it down. Woods at 300 would
+        // simply never burn, so the edit is refused rather than quietly built.
+        int aboveTheTable = Terrains.getTerrainFactor(Terrains.WOODS, 2) + 10;
+
+        String refusal = hexEditHandler.applyHexEdit(
+              paintWithFactor(BARE_HEX, Terrains.WOODS, 2, aboveTheTable), GAMEMASTER);
+
+        assertNotNull(refusal, "woods stronger than the rules allow should be refused");
+        assertFalse(board.getHex(BARE_HEX).containsTerrain(Terrains.WOODS), "and the hex should be left alone");
+    }
+
+    @Test
+    void aTerrainCanBeSetToExactlyWhatTheRulesAllow() {
+        int fromTheTable = Terrains.getTerrainFactor(Terrains.WOODS, 2);
+
+        String refusal = hexEditHandler.applyHexEdit(
+              paintWithFactor(BARE_HEX, Terrains.WOODS, 2, fromTheTable), GAMEMASTER);
+
+        assertNull(refusal, "the value in the table is allowed, it is only going above it that is not");
+        assertEquals(fromTheTable, board.getHex(BARE_HEX).getTerrain(Terrains.WOODS).getTerrainFactor());
+    }
+
+    @Test
+    void aHexAlreadyStrongerThanTheTableCanStillBeEdited() {
+        // a board may say what it likes. A hex already above the table must not become uneditable, so what it has
+        // is allowed - the gamemaster may lower it, just not raise it further
+        board.getHex(WOODS_HEX).getTerrain(Terrains.WOODS).setTerrainFactor(400);
+
+        String keepingIt = hexEditHandler.applyHexEdit(
+              paintWithFactor(WOODS_HEX, Terrains.WOODS, 1, 400), GAMEMASTER);
+        assertNull(keepingIt, "leaving an over-strong hex as it is must not be refused");
+
+        board.getHex(WOODS_HEX).getTerrain(Terrains.WOODS).setTerrainFactor(400);
+        String raisingIt = hexEditHandler.applyHexEdit(
+              paintWithFactor(WOODS_HEX, Terrains.WOODS, 1, 500), GAMEMASTER);
+        assertNotNull(raisingIt, "but making it stronger still should be refused");
+    }
 }

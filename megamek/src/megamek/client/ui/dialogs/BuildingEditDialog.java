@@ -168,8 +168,12 @@ public class BuildingEditDialog extends JDialog {
     private final JComboBox<BuildingType> typeChooser = new JComboBox<>();
     private final JComboBox<BuildingClassChoice> classChooser = new JComboBox<>();
     private final JComboBox<BasementType> basementChooser = new JComboBox<>();
-    private final JSpinner constructionFactorSpinner =
-          new JSpinner(new SpinnerNumberModel(0, 0, MAX_CONSTRUCTION_FACTOR, 5));
+    private final SpinnerNumberModel constructionFactorModel =
+          new SpinnerNumberModel(0, 0, MAX_CONSTRUCTION_FACTOR, 5);
+    private final JSpinner constructionFactorSpinner = new JSpinner(constructionFactorModel);
+
+    /** Says what band of construction factors the chosen building type covers, so the limit is not a surprise. */
+    private final JLabel constructionFactorBandLabel = new JLabel();
     private final JSpinner armorSpinner = new JSpinner(new SpinnerNumberModel(0, 0, MAX_ARMOR, 1));
     private final JSpinner heightSpinner = new JSpinner(new SpinnerNumberModel(1, 1, MAX_HEIGHT, 1));
     private final JComboBox<FluffChoice> fluffImageChooser = new JComboBox<>();
@@ -249,6 +253,7 @@ public class BuildingEditDialog extends JDialog {
               "BuildingEditDialog.armor", armorSpinner,
               "BuildingEditDialog.height", heightSpinner,
               "BuildingEditDialog.basement", basementChooser);
+        conditionSection.add(constructionFactorBandLabel);
         appearanceSection = section("BuildingEditDialog.section.appearance",
               "BuildingEditDialog.fluffImage", fluffImageChooser,
               "BuildingEditDialog.fluffPreview", fluffPreviewLabel);
@@ -290,6 +295,7 @@ public class BuildingEditDialog extends JDialog {
         structureChooser.setSelectedItem(StructureKind.BUILDING);
         refreshFieldsForStructure();
         typeChooser.setSelectedItem(existing.getBuildingType());
+        refreshConstructionFactorBand(existing.getCurrentCF(coords));
         constructionFactorSpinner.setValue(existing.getCurrentCF(coords));
         armorSpinner.setValue(existing.getArmor(coords));
         heightSpinner.setValue(Math.max(1, existing.getHeight(coords)));
@@ -332,6 +338,7 @@ public class BuildingEditDialog extends JDialog {
         typeChooser.addActionListener(event -> {
             BuildingType type = (BuildingType) typeChooser.getSelectedItem();
             if (type != null) {
+                refreshConstructionFactorBand(type.getDefaultCF());
                 constructionFactorSpinner.setValue(type.getDefaultCF());
             }
         });
@@ -518,6 +525,31 @@ public class BuildingEditDialog extends JDialog {
             graphics.dispose();
         }
         return canvas;
+    }
+
+    /**
+     * Holds the construction factor to the band the chosen building type covers, and says what that band is.
+     *
+     * <p>Each type is a band rather than a single value - light 1-15, medium 16-40, heavy 41-90, hardened 91-150
+     * (Total Warfare, p. 168). A building stronger than its band is not that type of building, it is the next type
+     * up, so raising a light building to 40 is really asking for a medium one.</p>
+     *
+     * <p>Only the top of the band is held to. Damage takes a building below its band without changing what it is
+     * made of, so a medium building standing at 3 is simply a medium building nearly flattened.</p>
+     *
+     * @param currentFactor What the building stands at now, which is allowed even above the band: a board may say
+     *                      what it likes, and a gamemaster should be able to lower it rather than be stuck
+     */
+    private void refreshConstructionFactorBand(int currentFactor) {
+        BuildingType type = (BuildingType) typeChooser.getSelectedItem();
+        if ((type == null) || (type.getMaximumCF() < 0)) {
+            constructionFactorModel.setMaximum(MAX_CONSTRUCTION_FACTOR);
+            constructionFactorBandLabel.setText(null);
+            return;
+        }
+        constructionFactorModel.setMaximum(Math.max(type.getMaximumCF(), currentFactor));
+        constructionFactorBandLabel.setText(Messages.getString("BuildingEditDialog.constructionFactor.band",
+              type.getMinimumCF(), type.getMaximumCF()));
     }
 
     /**

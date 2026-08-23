@@ -141,7 +141,48 @@ public final class HexEditValidator {
         if (wouldMoveTheWaterUnderUnits(original, edited, isOccupied)) {
             problems.add("The water depth cannot be changed while units are standing in the hex; move them first.");
         }
+        problems.addAll(terrainsStrongerThanTheRulesAllow(original, edited));
         return problems;
+    }
+
+    /**
+     * The terrains the change would leave stronger than the rules allow them to be.
+     *
+     * <p>A terrain factor is how much punishment a terrain can take before it is destroyed, and the rules give each
+     * terrain one fixed value: light woods 50, heavy woods 90, paved 200 (Tactical Operations: Advanced Rules,
+     * p. 63, Terrain Factor and Conversion Table). Damage takes a terrain below that; nothing puts it above. Woods
+     * at 300 would simply never burn down.</p>
+     *
+     * <p>A hex that already stands above the table is left alone rather than made unfixable: the change is only
+     * refused if it would raise the terrain further. A board may say what it likes, and a gamemaster should still be
+     * able to edit a hex on it.</p>
+     *
+     * @param original The hex as it is now
+     * @param edited   The hex as it would be after the change
+     *
+     * @return the problems, in words a gamemaster can act on; empty when nothing would be over-strengthened
+     */
+    private static List<String> terrainsStrongerThanTheRulesAllow(Hex original, Hex edited) {
+        List<String> problems = new ArrayList<>();
+        for (int terrainType : edited.getTerrainTypes()) {
+            Terrain terrain = edited.getTerrain(terrainType);
+            int highestAllowed = highestTerrainFactorFor(original, terrainType,
+                  Terrains.getTerrainFactor(terrainType, terrain.getLevel()));
+            if (terrain.getTerrainFactor() > highestAllowed) {
+                problems.add(Terrains.getDisplayName(terrainType, terrain.getLevel())
+                      + " cannot have a terrain factor above " + highestAllowed + ".");
+            }
+        }
+        return problems;
+    }
+
+    /**
+     * @return the highest terrain factor this hex may be left with for one terrain: what the rules give it, or what
+     *       the hex already has when that is higher still
+     */
+    private static int highestTerrainFactorFor(Hex original, int terrainType, int fromTheRules) {
+        Terrain existing = original.getTerrain(terrainType);
+        return (existing == null) ? fromTheRules : Math.max(fromTheRules, existing.getTerrainFactor());
     }
 
     /**

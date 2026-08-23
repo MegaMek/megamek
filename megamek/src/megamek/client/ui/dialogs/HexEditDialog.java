@@ -132,9 +132,6 @@ public class HexEditDialog extends JDialog {
     /** The highest level worth offering for a terrain whose levels are open-ended, such as water depth. */
     private static final int HIGHEST_LEVEL_OFFERED = 10;
 
-    /** Above the sturdiest terrain in the rules, which is rough ground and pavement at 200. */
-    private static final int HIGHEST_TERRAIN_FACTOR = 500;
-
     /** Water is the one terrain whose level starts at zero, because depth 0 water is a legal thing to have. */
     private static final int LOWEST_WATER_DEPTH = 0;
 
@@ -178,8 +175,8 @@ public class HexEditDialog extends JDialog {
     private final JComboBox<TerrainChoice> terrainChooser = new JComboBox<>();
     private final JComboBox<LevelChoice> levelChooser = new JComboBox<>();
     private final JSpinner hexLevelSpinner = new JSpinner(new SpinnerNumberModel(0, -30, 30, 1));
-    private final JSpinner terrainFactorSpinner =
-          new JSpinner(new SpinnerNumberModel(0, 0, HIGHEST_TERRAIN_FACTOR, 5));
+    private final SpinnerNumberModel terrainFactorModel = new SpinnerNumberModel(0, 0, 0, 5);
+    private final JSpinner terrainFactorSpinner = new JSpinner(terrainFactorModel);
     private final JCheckBox changeGroundLevelBox = new JCheckBox(Messages.getString("HexEditDialog.changeGround"));
     private final JLabel groundLabel = new JLabel();
     private final JLabel legalityLabel = new JLabel();
@@ -325,6 +322,11 @@ public class HexEditDialog extends JDialog {
         levelChooser.setSelectedItem(new LevelChoice(existing.getType(), existing.getLevel()));
         // last, because choosing the terrain and its level each put the factor back to what the rules give new
         // terrain. What the hex actually holds is the point: woods shelled down to 15 must not open reading 50.
+        if (existing.getTerrainFactor() > (Integer) terrainFactorModel.getMaximum()) {
+            // a board may say what it likes, so what the hex actually holds is allowed even above the table; the
+            // gamemaster may lower it from there but not raise it further
+            terrainFactorModel.setMaximum(existing.getTerrainFactor());
+        }
         terrainFactorSpinner.setValue(existing.getTerrainFactor());
     }
 
@@ -714,12 +716,22 @@ public class HexEditDialog extends JDialog {
         TerrainChoice terrain = (TerrainChoice) terrainChooser.getSelectedItem();
         LevelChoice level = (LevelChoice) levelChooser.getSelectedItem();
         boolean hasTerrain = (terrain != null) && (terrain.terrainType() != BARE_GROUND) && (level != null);
-        terrainFactorSpinner.setEnabled(hasTerrain);
-        if (!hasTerrain) {
-            bookFactorLabel.setText(null);
+        int bookFactor = hasTerrain ? Terrains.getTerrainFactor(terrain.terrainType(), level.level()) : 0;
+
+        // a terrain the rules give no factor to has nothing to set, so the field says so rather than sitting at zero
+        // and inviting a number that would mean nothing
+        boolean hasAFactor = hasTerrain && (bookFactor > 0);
+        terrainFactorSpinner.setEnabled(hasAFactor);
+        if (!hasAFactor) {
+            bookFactorLabel.setText(hasTerrain
+                  ? Messages.getString("HexEditDialog.terrainFactor.none")
+                  : null);
+            terrainFactorModel.setMaximum(0);
+            terrainFactorSpinner.setValue(0);
             return;
         }
-        int bookFactor = Terrains.getTerrainFactor(terrain.terrainType(), level.level());
+        // the rules give each terrain one value and damage only takes it down, so the brush cannot go above it
+        terrainFactorModel.setMaximum(bookFactor);
         terrainFactorSpinner.setValue(bookFactor);
         bookFactorLabel.setText(Messages.getString("HexEditDialog.terrainFactor.book", bookFactor));
     }

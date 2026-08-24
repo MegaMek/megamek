@@ -220,7 +220,8 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         comboPlayer.removeAllItems();
         for (Player player : UnitRecipients.availableTo(clientGUI.getClient().getLocalPlayer(),
               clientGUI.getClient().getGame().getPlayersList(),
-              clientGUI.getLocalBots().keySet())) {
+              clientGUI.getLocalBots().keySet(),
+              !clientGUI.getClient().getGame().getPhase().isLounge())) {
             comboPlayer.addItem(player.getName());
         }
         comboPlayer.setSelectedItem(selectionName);

@@ -136,4 +136,32 @@ class UnitRecipientsTest {
         assertTrue(UnitRecipients.availableTo(DAVE, EVERYONE, DAVES_BOTS).contains(BLUE),
               "a gamemaster may act for anyone");
     }
+
+    @Test
+    void aPlayerOnNoTeamIsNotOfferedDuringAGame() {
+        // in a running game a teamless player is left out of the turn order, so units given to them can never
+        // deploy - and a unit is called for only on the exact round it is due, so one handed over early is
+        // stranded for good rather than merely delayed
+        DAVE.setGameMaster(true);
+        BLUE.setTeam(Player.TEAM_UNASSIGNED);
+        GREEN.setTeam(2);
+
+        List<String> offeredInGame = UnitRecipients.availableTo(DAVE, EVERYONE, DAVES_BOTS, true)
+              .stream().map(Player::getName).toList();
+
+        assertFalse(offeredInGame.contains("Blue"), "Blue cannot deploy yet, so offering them units is a trap");
+        assertTrue(offeredInGame.contains("Green"), "Green is on a team and can take delivery");
+    }
+
+    @Test
+    void aPlayerOnNoTeamIsStillOfferedInTheLobby() {
+        // the lobby has no turn order yet and teams are settled before the game starts, so nothing is stranded
+        DAVE.setGameMaster(true);
+        BLUE.setTeam(Player.TEAM_UNASSIGNED);
+
+        List<String> offeredInLobby = UnitRecipients.availableTo(DAVE, EVERYONE, DAVES_BOTS, false)
+              .stream().map(Player::getName).toList();
+
+        assertTrue(offeredInLobby.contains("Blue"), "building forces before a game starts is the normal case");
+    }
 }

@@ -233,7 +233,8 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
         playerChooser.removeAllItems();
         for (Player player : UnitRecipients.availableTo(client.getLocalPlayer(),
               client.getGame().getPlayersList(),
-              clientGui.getLocalBots().keySet())) {
+              clientGui.getLocalBots().keySet(),
+              !client.getGame().getPhase().isLounge())) {
             playerChooser.addItem(player.getName());
         }
         if (playerChooser.getItemCount() > 1) {

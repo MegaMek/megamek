@@ -38,6 +38,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import megamek.client.Client;
+import java.awt.event.ActionEvent;
+
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.GameMasterPlayerSetupDialog;
 import megamek.client.ui.dialogs.ClientCommandDialog;
@@ -168,7 +170,15 @@ public class GameCommandsMenu {
 
         if (localPlayerIsGameMaster) {
             popup.add(createCommandItem("GiveUpGameMaster", COMMAND_GAME_MASTER));
+            // in the order a gamemaster uses them: somebody has to be set up before there is any point giving them
+            // units, because units handed to a player who cannot deploy are stranded
             popup.add(createPlayerSetupItem());
+            popup.addSeparator();
+            popup.add(createClientActionItem("CommonMenuBar.fileUnitsReinforce",
+                  ClientGUI.FILE_UNITS_REINFORCE));
+            popup.add(createClientActionItem("CommonMenuBar.fileUnitsReinforceRAT",
+                  ClientGUI.FILE_UNITS_REINFORCE_RAT));
+            popup.addSeparator();
             popup.add(GameMasterCommandMenu.createSpecialCommandsMenu(clientGUI, null));
         } else if (gameMaster != null) {
             LOGGER.debug("[GameCommands] {}: Game Master tools hidden - {} holds the role",
@@ -261,6 +271,24 @@ public class GameCommandsMenu {
         JMenuItem item = new JMenuItem(Messages.getString("GameMasterPlayerSetupDialog.title"));
         item.addActionListener(event ->
               new GameMasterPlayerSetupDialog(clientGUI.getFrame(), clientGUI, null).setVisible(true));
+        return item;
+    }
+
+    /**
+     * Creates a menu item that runs one of the client's own actions, rather than sending a chat command.
+     *
+     * <p>The reinforcement dialogs are client actions that already exist; this is what lets them be offered from
+     * the Game Master menu without a second copy of them.</p>
+     *
+     * @param titleKey     The message key for the item's title
+     * @param clientAction The client action to run
+     *
+     * @return the menu item
+     */
+    private JMenuItem createClientActionItem(String titleKey, String clientAction) {
+        JMenuItem item = new JMenuItem(Messages.getString(titleKey));
+        item.addActionListener(event -> clientGUI.actionPerformed(
+              new ActionEvent(item, ActionEvent.ACTION_PERFORMED, clientAction)));
         return item;
     }
 

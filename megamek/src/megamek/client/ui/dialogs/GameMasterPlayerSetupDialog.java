@@ -33,28 +33,29 @@
 package megamek.client.ui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.KeyEvent;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.WindowConstants;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
@@ -72,7 +73,7 @@ import megamek.logging.MMLogger;
  * <p>Both choosers start on what the chosen player already has, so changing one does not disturb the other. Nothing
  * is sent for a value that was not changed.</p>
  */
-public class GameMasterPlayerSetupDialog extends JDialog {
+public class GameMasterPlayerSetupDialog extends AbstractButtonDialog {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -83,6 +84,12 @@ public class GameMasterPlayerSetupDialog extends JDialog {
     private static final int ROW_PADDING = 4;
 
     private final ClientGUI clientGUI;
+
+    /**
+     * The player to open on. Kept as a field because the base class builds the pane while the constructor is still
+     * running, before anything assigned after {@code super(...)} would be set.
+     */
+    private final Player playerToStartOn;
     private final JComboBox<PlayerChoice> playerChooser = new JComboBox<>();
     private final JComboBox<TeamChoice> teamChooser = new JComboBox<>();
     private final JComboBox<ZoneChoice> zoneChooser = new JComboBox<>();
@@ -102,8 +109,6 @@ public class GameMasterPlayerSetupDialog extends JDialog {
     private final JButton reinforceFromGeneratorButton =
           new JButton(Messages.getString("CommonMenuBar.fileUnitsReinforceRAT"));
 
-    /** The player whose setup has been applied, so reinforcing them is now safe. Cleared by choosing another. */
-    private int playerReadyForUnits = Player.PLAYER_NONE;
 
     /** One player offered in the chooser, named rather than numbered. */
     private record PlayerChoice(int playerId, String playerName) {
@@ -167,17 +172,15 @@ public class GameMasterPlayerSetupDialog extends JDialog {
      * @param player    The player to start on, or {@code null} to start on the first in the game
      */
     public GameMasterPlayerSetupDialog(JFrame parent, ClientGUI clientGUI, @Nullable Player player) {
-        super(parent, Messages.getString("GameMasterPlayerSetupDialog.title"), false);
+        // not modal: a gamemaster sets somebody up while the game carries on around them
+        super(parent, false, "GameMasterPlayerSetupDialog", "GameMasterPlayerSetupDialog.title");
         this.clientGUI = clientGUI;
-
-        buildUI(parent);
-        if (player != null) {
-            playerChooser.setSelectedItem(new PlayerChoice(player.getId(), player.getName()));
-        }
-        loadFromChosenPlayer();
+        this.playerToStartOn = player;
+        initialize();
     }
 
-    private void buildUI(JFrame parent) {
+    @Override
+    protected Container createCenterPane() {
         List<String> offered = new ArrayList<>();
         for (Player player : clientGUI.getClient().getGame().getPlayersList()) {
             if (!mayBeSetUp(player)) {
@@ -222,20 +225,15 @@ public class GameMasterPlayerSetupDialog extends JDialog {
         fields.add(statusLabel, constraints);
         constraints.gridwidth = 1;
 
-        getContentPane().setLayout(new BorderLayout());
-        JPanel below = new JPanel(new BorderLayout());
-        below.add(reinforcePanel(), BorderLayout.PAGE_START);
-        below.add(buttonPanel(), BorderLayout.PAGE_END);
+        JPanel pane = new JPanel(new BorderLayout());
+        pane.add(fields, BorderLayout.CENTER);
+        pane.add(reinforcePanel(), BorderLayout.PAGE_END);
 
-        getContentPane().add(fields, BorderLayout.CENTER);
-        getContentPane().add(below, BorderLayout.PAGE_END);
-
-        getRootPane().registerKeyboardAction(event -> dispose(),
-              KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-              JComponent.WHEN_IN_FOCUSED_WINDOW);
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        pack();
-        setLocationRelativeTo(parent);
+        if (playerToStartOn != null) {
+            playerChooser.setSelectedItem(new PlayerChoice(playerToStartOn.getId(), playerToStartOn.getName()));
+        }
+        loadFromChosenPlayer();
+        return pane;
     }
 
     /** Adds one labelled row to the form. */
@@ -248,13 +246,24 @@ public class GameMasterPlayerSetupDialog extends JDialog {
         fields.add(control, constraints);
     }
 
-    /** The two reinforcement buttons, switched off until the player above them has been set up. */
+    /**
+     * The two ways of handing over a force, one above the other.
+     *
+     * <p>Stacked rather than side by side because the names are long: in a row they are squeezed until the text is
+     * cut off, and a button whose label is cut off is a button nobody can read.</p>
+     */
     private JPanel reinforcePanel() {
         reinforceFromFileButton.addActionListener(event -> reinforce(clientGUI::reinforceFromFile));
         reinforceFromGeneratorButton.addActionListener(event -> reinforce(this::openUnitGeneratorFor));
+        reinforceFromFileButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        reinforceFromGeneratorButton.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        int padding = UIUtil.scaleForGUI(ROW_PADDING);
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding));
         panel.add(reinforceFromFileButton);
+        panel.add(Box.createVerticalStrut(padding));
         panel.add(reinforceFromGeneratorButton);
         return panel;
     }
@@ -266,10 +275,14 @@ public class GameMasterPlayerSetupDialog extends JDialog {
      */
     private void reinforce(Consumer<Player> reinforcement) {
         Player player = chosenPlayer();
-        if (player != null) {
-            LOGGER.info("[GMPlayerSetup] reinforcing {}", player.getName());
-            reinforcement.accept(player);
+        if (player == null) {
+            return;
         }
+        // the setup goes first, always: a force handed to somebody who has not been put on a team is stranded
+        // rather than delayed, and making the button do both is what stops that being possible to get wrong
+        apply();
+        LOGGER.info("[GMPlayerSetup] reinforcing {}", player.getName());
+        reinforcement.accept(player);
     }
 
     /** Opens the unit generator already pointed at the given player. */
@@ -278,10 +291,17 @@ public class GameMasterPlayerSetupDialog extends JDialog {
         clientGUI.getRandomArmyDialog().setVisible(true);
     }
 
-    private JPanel buttonPanel() {
+    /**
+     * Apply and Close rather than the usual Ok and Cancel.
+     *
+     * <p>Setting somebody up is not one decision confirmed once: a gamemaster applies the team and zone, hands over
+     * a force from the same dialog, and may do the same for the next player without closing it.</p>
+     */
+    @Override
+    protected JPanel createButtonPanel() {
         applyButton.addActionListener(event -> apply());
         JButton closeButton = new JButton(Messages.getString("Close"));
-        closeButton.addActionListener(event -> dispose());
+        closeButton.addActionListener(event -> setVisible(false));
 
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panel.add(applyButton);
@@ -299,9 +319,6 @@ public class GameMasterPlayerSetupDialog extends JDialog {
         Player player = chosenPlayer();
         if (player == null) {
             return;
-        }
-        if (player.getId() != playerReadyForUnits) {
-            playerReadyForUnits = Player.PLAYER_NONE;
         }
         teamChooser.setSelectedItem(TeamChoice.of(player.getTeam()));
         if (teamChooser.getSelectedIndex() < 0) {
@@ -326,12 +343,13 @@ public class GameMasterPlayerSetupDialog extends JDialog {
               ? Messages.getString("GameMasterPlayerSetupDialog.ready")
               : Messages.getString("GameMasterPlayerSetupDialog.refused", problem));
 
-        Player player = chosenPlayer();
-        boolean readyForUnits = (player != null) && (player.getId() == playerReadyForUnits);
-        reinforceFromFileButton.setEnabled(readyForUnits);
-        reinforceFromGeneratorButton.setEnabled(readyForUnits);
-        String tip = readyForUnits
-              ? null
+        // the reinforcement buttons follow the choices rather than a separate Apply press: pressing one applies
+        // the team and zone first, so the order that has to hold still holds without a second step
+        boolean canReinforce = (problem == null) && (chosenPlayer() != null);
+        reinforceFromFileButton.setEnabled(canReinforce);
+        reinforceFromGeneratorButton.setEnabled(canReinforce);
+        String tip = canReinforce
+              ? Messages.getString("GameMasterPlayerSetupDialog.reinforce.tooltip")
               : Messages.getString("GameMasterPlayerSetupDialog.reinforce.notYet");
         reinforceFromFileButton.setToolTipText(tip);
         reinforceFromGeneratorButton.setToolTipText(tip);
@@ -468,7 +486,6 @@ public class GameMasterPlayerSetupDialog extends JDialog {
             LOGGER.info("[GMPlayerSetup] nothing to change for {}", player.getName());
         }
         // the dialog stays open so the force can be handed over straight away, which is the rest of the same job
-        playerReadyForUnits = player.getId();
         refreshLegality();
     }
 

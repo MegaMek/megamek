@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.shotgun;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -74,7 +75,7 @@ public class InfantryShotgunSawedOffPumpActionWeapon extends InfantryWeapon {
         ammoWeight = 0.00012;
         ammoCost = 1;
         shots = 6;
-        rulesRefs = " 273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

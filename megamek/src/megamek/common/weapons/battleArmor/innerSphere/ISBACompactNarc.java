@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -70,7 +71,7 @@ public class ISBACompactNarc extends NarcWeapon {
         tonnage = .15;
         criticalSlots = 1;
         cost = 15000;
-        rulesRefs = "263, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 263);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

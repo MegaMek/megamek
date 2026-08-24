@@ -439,6 +439,12 @@ public class MekSummaryCache {
                     inputStream.close();
                 }
             } catch (Exception ex) {
+                // A cache-format change can fail after some entries were read. Rescan every unit instead of retaining
+                // partial data or treating the old cache timestamp as authoritative.
+                vMeks.clear();
+                sKnownFiles.clear();
+                lLastCheck = 0;
+                cacheCount = 0;
                 loadReport.append("  Unable to load unit cache: ").append(ex.getMessage()).append("\n");
                 logger.error(loadReport.toString(), ex);
             }
@@ -907,11 +913,12 @@ public class MekSummaryCache {
         if (ms.isSupport()) {
             ms.setWeightClass(EntityWeightClass.getSupportWeightClass(ms.getTons(), ms.getUnitSubType()));
         } else {
-            double weightClassWeight = ms.isBattleArmor() ? ms.getSuitWeight() : ms.getTons();
+            double weightClassWeight = e.isBattleArmor() ? ms.getSuitWeight() : ms.getTons();
             ms.setWeightClass(EntityWeightClass.getWeightClass(weightClassWeight, ms.getUnitType()));
         }
 
         ms.setEquipment(e.getEquipment());
+        ms.setRulesRefs(e);
         ms.setQuirkNames(e.getQuirks());
         ms.setWeaponQuirkNames(e);
         ms.setTotalArmor(e.getTotalArmor());

@@ -36,6 +36,7 @@ package megamek.common.weapons.bombs.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -86,7 +87,7 @@ public class ISASMissileWeapon extends ThunderboltWeapon {
         ammoType = AmmoType.AmmoTypeEnum.AS_MISSILE;
         capital = false;
         this.missileArmor = 30;
-        rulesRefs = "170, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 170);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

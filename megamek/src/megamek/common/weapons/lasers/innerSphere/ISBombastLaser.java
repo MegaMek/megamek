@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -91,7 +92,10 @@ public class ISBombastLaser extends LaserWeapon {
         medAV = 16;
         maxRange = RANGE_MED;
         flags = flags.or(F_BOMBAST_LASER).or(F_ENERGY).or(F_HEAT_VARIABLE).andNot(F_PROTO_WEAPON);
-        rulesRefs = "132, TO:AUE";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 132),
+              rulesRef(SourceBookCode.CORE, 185)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)

@@ -36,6 +36,7 @@ package megamek.common.weapons.unofficial.innerSphere.lrm;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -58,7 +59,7 @@ public class ISLRM3 extends LRMWeapon {
         rackSize = 3;
         minimumRange = 6;
         bv = 29;
-        rulesRefs = "Unofficial";
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)

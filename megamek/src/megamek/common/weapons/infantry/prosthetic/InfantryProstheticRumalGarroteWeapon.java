@@ -64,7 +64,7 @@ public class InfantryProstheticRumalGarroteWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.14;
         infantryRange = 0;
-        rulesRefs = "84, IO";
+        rulesRefs = rulesRefs();
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

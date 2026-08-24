@@ -36,6 +36,7 @@ package megamek.common.weapons.lrms.clan.streak.oneShot;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -73,7 +74,11 @@ public class CLStreakLRM10IOS extends StreakLRMWeapon {
         medAV = 15;
         longAV = 15;
         maxRange = RANGE_LONG;
-        rulesRefs = "139, TO:AUE";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 139),
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 182)
+        );
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3058, 3081, 3088).setClanApproximate(false, true, false)

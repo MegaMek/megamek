@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support.heavy;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -76,7 +77,7 @@ public class InfantrySupportHeavyPPCWeapon extends InfantryWeapon {
         ammoWeight = 0.0025;
         shots = 150;
         tonnage = 1.800;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2465, 2470, 2500, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2465, 2470, 2500, DATE_NONE, DATE_NONE)

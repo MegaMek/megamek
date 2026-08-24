@@ -147,6 +147,9 @@ class AeroWeaponFireInfoProbeTest {
         when(precognition.getECMInfo()).thenReturn(new ArrayList<>());
         when(princess.getPrecognition()).thenReturn(precognition);
         when(princess.getHonorUtil()).thenReturn(new HonorUtil());
+        // Unstubbed, Mockito hands back null and the ranker switches on it: calculateAerospaceMod reads
+        // the standing focus order to weight its two credit sets. A live Princess starts at AUTO.
+        when(princess.getAerospaceFocus()).thenReturn(AerospaceFocus.AUTO);
         return princess;
     }
 

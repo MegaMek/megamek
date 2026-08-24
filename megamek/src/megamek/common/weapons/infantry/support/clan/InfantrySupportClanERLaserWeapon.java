@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -76,7 +77,7 @@ public class InfantrySupportClanERLaserWeapon extends InfantryWeapon {
         ammoWeight = 0.003;
         shots = 10;
         tonnage = .100;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(2824, 2825, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CHH)
               .setProductionFactions(Faction.CHH).setTechRating(TechRating.F)

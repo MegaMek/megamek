@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -72,7 +73,7 @@ public class CLBAFlamer extends BAFlamerWeapon {
         cost = 7500;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        rulesRefs = "255, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 255);
         techAdvancement.setTechBase(TechBase.ALL);
         techAdvancement.setClanAdvancement(2860, 2868, 3050);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3050);

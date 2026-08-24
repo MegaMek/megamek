@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -90,7 +91,12 @@ public class ISHGaussRifle extends GaussWeapon {
         longAV = 10;
         maxRange = RANGE_LONG;
         explosionDamage = 25;
-        rulesRefs = "218, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 218),
+              rulesRef(SourceBookCode.BMM, 100),
+              rulesRef(SourceBookCode.CORE, 184),
+              rulesRef(SourceBookCode.TW, 136)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

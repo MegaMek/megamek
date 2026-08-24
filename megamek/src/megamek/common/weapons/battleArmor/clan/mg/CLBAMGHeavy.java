@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.clan.mg;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -70,7 +71,7 @@ public class CLBAMGHeavy extends BAMGWeapon {
         criticalSlots = 1;
         bv = 6;
         cost = 7500;
-        rulesRefs = "258, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 258);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

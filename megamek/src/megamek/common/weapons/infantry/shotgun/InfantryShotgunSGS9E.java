@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.shotgun;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -70,7 +71,7 @@ public class InfantryShotgunSGS9E extends InfantryWeapon {
         shots = 21;
         bursts = 3;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_ENCUMBER);
-        rulesRefs = "Shrapnel #7";
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_7);
         techAdvancement
               .setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.C)

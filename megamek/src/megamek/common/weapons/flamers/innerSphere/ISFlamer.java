@@ -36,6 +36,7 @@ package megamek.common.weapons.flamers.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -71,7 +72,13 @@ public class ISFlamer extends FlamerWeapon {
         shortAV = 2;
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
-        rulesRefs = "218, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 218),
+              rulesRef(SourceBookCode.BMM, 99),
+              rulesRef(SourceBookCode.CORE, 184),
+              rulesRef(SourceBookCode.TW, 303),
+              rulesRef(SourceBookCode.TW, 304)
+        );
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(true)
               .setUnofficial(false)

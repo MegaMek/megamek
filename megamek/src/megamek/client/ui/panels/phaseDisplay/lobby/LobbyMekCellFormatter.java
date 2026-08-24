@@ -40,6 +40,8 @@ import static megamek.common.options.PilotOptions.MD_ADVANTAGES;
 import java.awt.Color;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import megamek.MegaMek;
@@ -74,6 +76,15 @@ class LobbyMekCellFormatter {
 
     /** One length of branch. Repeated once per level, so a deeper load reads as a longer arm. */
     private static final String BRANCH_ARM = "\u2500";
+
+    /** Top of the bracket drawn on the first member of a masterless C3 network (C3i, NC3, Nova CEWS). */
+    private static final String BRANCH_TOP = "\u250c";
+
+    /** Middle rung of the bracket drawn on inner members of a masterless C3 network. */
+    private static final String BRANCH_TEE = "\u251c";
+
+    /** Stops a malformed C3 master chain from spinning while counting how deep a unit sits. */
+    private static final int MAX_C3_DEPTH = 3;
 
     /** Stops a malformed load loop from spinning while counting how deep a unit sits. */
     private static final int MAX_CARRIER_DEPTH = 16;
@@ -170,6 +181,102 @@ class LobbyMekCellFormatter {
     }
 
     /**
+     * Returns the branch drawn in front of a C3 network member, so a network reads as the tree from the rulebook's
+     * configuration diagram. The C3 sorter wrapper keeps members adjacent in hierarchy order under every sorter, so
+     * the branch always points at the row above it. Hierarchical C3 draws a corner per level below the network's
+     * top unit (lance masters one level in, their slaves two). C3i, NC3 and Nova CEWS networks have no master, so
+     * their members are drawn as a flat bracket instead: a top corner on the first member, rungs on inner members
+     * and a bottom corner on the last, showing they belong together without inventing a hierarchy.
+     */
+    static String c3Branch(Entity entity) {
+        if (!entity.hasAnyC3System()) {
+            return "";
+        }
+
+        if (entity.hasNhC3()) {
+            return peerNetworkBracket(entity);
+        }
+
+        int depth = c3Depth(entity);
+
+        if (depth <= 0) {
+            // The network's top unit opens the block with a top corner, the way a peer bracket opens - it heads
+            // the tree rather than hanging from anything, but it should not look like an ordinary lone unit
+            return hierarchicalNetworkTopBranch(entity);
+        }
+
+        return "&nbsp;".repeat(depth) + BRANCH_CORNER + BRANCH_ARM.repeat(depth) + "&nbsp;";
+    }
+
+    /** The opening corner for a unit heading a hierarchical C3 network; empty for units networked with no one. */
+    private static String hierarchicalNetworkTopBranch(Entity entity) {
+        Game game = entity.getGame();
+        if ((game == null) || !entity.hasC3()) {
+            return "";
+        }
+        for (Entity other : game.inGameTWEntities()) {
+            if (!other.equals(entity) && entity.onSameC3NetworkAs(other)) {
+                return BRANCH_TOP + BRANCH_ARM + "&nbsp;";
+            }
+        }
+        return "";
+    }
+
+    /** How many masters sit above this unit: 1 for a lance master under a company commander, 2 for its slaves. */
+    private static int c3Depth(Entity entity) {
+        int depth = 0;
+        Entity current = entity;
+
+        while (depth < MAX_C3_DEPTH) {
+            Entity master = current.getC3Master();
+
+            if ((master == null) || (master.getId() == current.getId())) {
+                break;
+            }
+            depth++;
+            current = master;
+        }
+
+        return depth;
+    }
+
+    /** The flat bracket for masterless networks; empty when the unit is not networked with anyone. */
+    private static String peerNetworkBracket(Entity entity) {
+        Game game = entity.getGame();
+        String netId = entity.getC3NetId();
+
+        if ((game == null) || (netId == null)) {
+            return "";
+        }
+
+        // Only peers shown in the same table block bracket together: the table groups rows by player first, so a
+        // network spanning allied players draws one bracket per player rather than one pointing across the table.
+        List<Integer> peerIds = new ArrayList<>();
+        for (Entity other : game.inGameTWEntities()) {
+            if (other.hasNhC3() && (other.getOwnerId() == entity.getOwnerId())
+                  && netId.equals(other.getC3NetId())) {
+                peerIds.add(other.getId());
+            }
+        }
+
+        if (peerIds.size() < 2) {
+            return "";
+        }
+
+        Collections.sort(peerIds);
+        String corner;
+        if (entity.getId() == peerIds.get(0)) {
+            corner = BRANCH_TOP;
+        } else if (entity.getId() == peerIds.get(peerIds.size() - 1)) {
+            corner = BRANCH_CORNER;
+        } else {
+            corner = BRANCH_TEE;
+        }
+
+        return corner + BRANCH_ARM + "&nbsp;";
+    }
+
+    /**
      * Creates and returns the display content of the Unit column for the given entity and for the non-compact display
      * mode. When blindDrop is true, the unit details are not given.
      */
@@ -220,6 +327,10 @@ class LobbyMekCellFormatter {
         if (isCarried || isTowed) {
             result.append(UIUtil.fontHTML(uiGray())).append(carriedBranch(entity)).append("</FONT>");
         }
+
+        // Networked C3 units draw the network as a tree the same way - the C3 sorter wrapper keeps a network's
+        // members adjacent in hierarchy order under every sorter, so the branch always points at the master above
+        result.append(UIUtil.fontHTML(uiC3Color())).append(c3Branch(entity)).append("</FONT>");
 
         if (LobbyUtility.hasYellowWarning(entity)) {
             result.append(UIUtil.fontHTML(uiYellow()));
@@ -753,6 +864,9 @@ class LobbyMekCellFormatter {
         if (isCarried || isTowed) {
             result.append(UIUtil.fontHTML(uiGray())).append(carriedBranch(entity)).append("</FONT>");
         }
+
+        // Networked C3 units draw the network as a tree the same way (see formatUnitFull)
+        result.append(UIUtil.fontHTML(uiC3Color())).append(c3Branch(entity)).append("</FONT>");
 
         if (isCarried) {
             result.append(UIUtil.fontHTML(uiGreen())).append(LOADED_SIGN).append("</FONT>");

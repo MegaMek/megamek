@@ -36,6 +36,7 @@ package megamek.common.weapons.missiles.rocketLauncher;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -77,7 +78,12 @@ public class RocketLauncher10 extends RLWeapon {
         shortAV = 6;
         medAV = 6;
         maxRange = RANGE_MED;
-        rulesRefs = "229, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 229),
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 186),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

@@ -2577,7 +2577,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if (Game.rulesManager.getRulesGame().walkOnDeployment()) {
+        if (Game.rulesManager.getRulesGame().walkOnDeployment() && currentlySelectedEntity != null && cmd != null) {
             if (!currentlySelectedEntity.isDeployed() && boardViewEvent.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
                 if (game.getBoard(boardViewEvent.getBoardId())
                       .isLegalDeployment(boardViewEvent.getCoords(), currentlySelectedEntity)) {

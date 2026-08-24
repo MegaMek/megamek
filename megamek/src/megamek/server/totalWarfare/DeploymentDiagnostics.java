@@ -59,6 +59,38 @@ final class DeploymentDiagnostics {
     }
 
     /**
+     * Records whether a deployment phase will happen this round, and what is waiting if it will not.
+     *
+     * <p>The phase only happens when something is due to arrive on exactly this round: the table is keyed by
+     * arrival round and looked up by the round now being played. A unit whose round has already gone by is
+     * therefore never called for, even though the unit itself reports that it is ready to go - so it waits for
+     * ever, in silence.</p>
+     *
+     * @param game The game deciding whether to deploy
+     */
+    static void logDeploymentDecision(Game game) {
+        int round = game.getRoundCount();
+        List<String> waiting = new ArrayList<>();
+        for (Entity entity : game.getEntitiesVector()) {
+            if (!entity.isDeployed()) {
+                waiting.add(entity.getShortName() + " (" + entity.getOwner().getName() + ") due round "
+                      + entity.getDeployRound());
+            }
+        }
+        if (game.shouldDeployThisRound()) {
+            LOGGER.info("[Deployment] round {}: a deployment phase is due; waiting: {}", round, waiting);
+            return;
+        }
+        if (waiting.isEmpty()) {
+            LOGGER.info("[Deployment] round {}: no deployment phase, nothing is waiting to arrive", round);
+            return;
+        }
+        LOGGER.info("[Deployment] round {}: NO deployment phase, yet {} unit(s) are still undeployed - a phase only "
+                    + "happens when something is due on exactly this round, so anything whose round has passed is "
+                    + "never called for: {}", round, waiting.size(), waiting);
+    }
+
+    /**
      * Records who can deploy this phase.
      *
      * @param game The game entering its deployment phase

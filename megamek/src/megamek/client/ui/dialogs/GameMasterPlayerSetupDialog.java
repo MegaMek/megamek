@@ -39,6 +39,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
 import java.io.Serial;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -131,9 +132,15 @@ public class GameMasterPlayerSetupDialog extends JDialog {
     }
 
     private void buildUI(JFrame parent) {
+        List<String> offered = new ArrayList<>();
         for (Player player : clientGUI.getClient().getGame().getPlayersList()) {
+            if (!mayBeSetUp(player)) {
+                continue;
+            }
             playerChooser.addItem(new PlayerChoice(player.getId(), player.getName()));
+            offered.add(player.getName());
         }
+        LOGGER.info("[GMPlayerSetup] offering to set up {} player(s): {}", offered.size(), offered);
         // the teams that exist, plus the one a player sits on before they are given any: a gamemaster taking someone
         // back out of the game needs the same list as one putting them in
         teamChooser.addItem(new TeamChoice(Player.TEAM_UNASSIGNED));
@@ -215,6 +222,22 @@ public class GameMasterPlayerSetupDialog extends JDialog {
         int zone = player.getStartingPos();
         zoneChooser.setSelectedIndex(
               ((zone >= 0) && (zone < IStartingPositions.START_LOCATION_NAMES.length)) ? zone : 0);
+    }
+
+    /**
+     * Whether a player is someone this dialog is for.
+     *
+     * <p>The gamemaster is left out: they set themselves up the way any player does, and this dialog exists for the
+     * people they are bringing into the game. A player who has dropped out is left out as well, since setting up
+     * somebody who is not connected achieves nothing.</p>
+     *
+     * @param player The player being considered
+     *
+     * @return {@code true} when the player may be set up here
+     */
+    private boolean mayBeSetUp(Player player) {
+        boolean isTheGamemaster = player.getId() == clientGUI.getClient().getLocalPlayer().getId();
+        return !isTheGamemaster && !player.isGhost();
     }
 
     /** @return the player the dialog is currently set to, or {@code null} when the game has none */

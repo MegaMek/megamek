@@ -46,8 +46,8 @@ import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.IndustrialElevator;
 import megamek.common.LosEffects;
-import megamek.common.ManeuverType;
 import megamek.common.MPCalculationSetting;
+import megamek.common.ManeuverType;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -269,11 +269,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Checks whether the TW p.54 rule applies that VTOL-capable creatures must spend 1 MP per turn, even if
-     * remaining stationary. This is a pure check with no side effects: when it returns {@code true}, the caller
-     * ({@code processMovement()}) converts the entity's movement type to
-     * {@link EntityMovementType#MOVE_VTOL_WALK} and records 1 MP spent, so an airborne beast-mounted platoon
-     * (e.g. Branth) that holds its hex still counts as having walked.
+     * Checks whether the TW p.54 rule applies that VTOL-capable creatures must spend 1 MP per turn, even if remaining
+     * stationary. This is a pure check with no side effects: when it returns {@code true}, the caller
+     * ({@code processMovement()}) converts the entity's movement type to {@link EntityMovementType#MOVE_VTOL_WALK} and
+     * records 1 MP spent, so an airborne beast-mounted platoon (e.g. Branth) that holds its hex still counts as having
+     * walked.
      *
      * @param entity the entity whose movement was just processed
      *
@@ -297,7 +297,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                   || (entity.isDangling() && (climbableArms < 2));
             if (cannotHoldOn) {
                 logger.debug("[FALL-TRACE] Climbing/dangling Mek {} lost required arms, auto-falling " +
-                      "from elevation {} in hex {}",
+                            "from elevation {} in hex {}",
                       entity.getDisplayName(), entity.getElevation(), entity.getPosition());
                 // Surface as a special-report toast (kill-feed style) AND mirror to chat so the
                 // player sees the auto-fall immediately, not just buried in the round report.
@@ -740,6 +740,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // All auto-hit hexes for this unit (not including preset targets) are cleared
             // if any MP are expended.
             entity.aTracker.clearHitHexMods();
+        }
+
+        if (md.contains(MoveStepType.DEPLOY) && Game.rulesManager.getRulesGame().walkOnInitiative()) {
+            entity.setDeployed(true);
+            if (entity.getPosition() == null) {
+                entity.setPosition(md.getFinalCoords());
+                entity.setBoardId(md.getFinalBoardId());
+                entity.setElevation(md.getFinalElevation());
+                entity.setFacing(md.getFinalFacing());
+                entity.setSecondaryFacing(md.getFinalFacing());
+            }
         }
 
         if (md.contains(MoveStepType.EJECT)) {
@@ -1966,10 +1977,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Returns the entity-relative elevation of its current hex's actual floor — 0 for dry hexes,
-     * negative for water/basement hexes. Multi-arity descents (climb-down, dangle, drop) treat
-     * this as the lower bound: descending past elev 0 in a water hex is fine as long as the Mek
-     * stays at or above this floor.
+     * Returns the entity-relative elevation of its current hex's actual floor — 0 for dry hexes, negative for
+     * water/basement hexes. Multi-arity descents (climb-down, dangle, drop) treat this as the lower bound: descending
+     * past elev 0 in a water hex is fine as long as the Mek stays at or above this floor.
      */
     private int hexFloorRelative(Entity entity) {
         Hex hex = getGame().getBoard(entity.getBoardId()).getHex(entity.getPosition());
@@ -1977,30 +1987,29 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Returns true when the entity has reached the actual floor of its current hex — dry ground
-     * for a normal hex, water bottom for a water hex, basement floor for a basement hex. Used by
-     * every climb / dangle / drop completion path: only at the hex floor is the descent really
-     * "done"; anywhere above it (clinging on a cliff face, on a building wall, or on the
-     * underwater portion of either) the unit is still in the air/water column and the climbing
-     * or dangling flag must stay set so the next-turn dialog fires.
+     * Returns true when the entity has reached the actual floor of its current hex — dry ground for a normal hex, water
+     * bottom for a water hex, basement floor for a basement hex. Used by every climb / dangle / drop completion path:
+     * only at the hex floor is the descent really "done"; anywhere above it (clinging on a cliff face, on a building
+     * wall, or on the underwater portion of either) the unit is still in the air/water column and the climbing or
+     * dangling flag must stay set so the next-turn dialog fires.
      */
     private boolean entityHasReachedFloor(Entity entity) {
         return entity.getElevation() == hexFloorRelative(entity);
     }
 
     /**
-     * Returns true when the entity at {@code curPos} looks like it is clinging to a climbable
-     * feature (bridge or building) in its facing hex — i.e. that hex has a bridge or building roof
-     * higher than the entity's current absolute altitude. Used by the end-of-movement defensive
-     * cleanup to distinguish a legitimate mid-multi-turn climb (where the partial-climb branch in
-     * {@link #processSteps} intentionally leaves {@code climbing=true} in the SOURCE hex) from a
-     * stale flag that should be wiped. Without this gate, a Mek that climbed out of deep water onto
-     * a bridge stops mid-climb at water-surface (elevation 0), gets its climbing flag cleared, and
-     * never sees the continue-climbing dialog on the following turn.
+     * Returns true when the entity at {@code curPos} looks like it is clinging to a climbable feature (bridge or
+     * building) in its facing hex — i.e. that hex has a bridge or building roof higher than the entity's current
+     * absolute altitude. Used by the end-of-movement defensive cleanup to distinguish a legitimate mid-multi-turn climb
+     * (where the partial-climb branch in {@link #processSteps} intentionally leaves {@code climbing=true} in the SOURCE
+     * hex) from a stale flag that should be wiped. Without this gate, a Mek that climbed out of deep water onto a
+     * bridge stops mid-climb at water-surface (elevation 0), gets its climbing flag cleared, and never sees the
+     * continue-climbing dialog on the following turn.
      *
-     * @param entity   the entity being checked
-     * @param curPos   the entity's current hex (source hex of an in-progress climb)
-     * @param curHex   the resolved hex for {@code curPos}, or null if the board doesn't have it
+     * @param entity the entity being checked
+     * @param curPos the entity's current hex (source hex of an in-progress climb)
+     * @param curHex the resolved hex for {@code curPos}, or null if the board doesn't have it
+     *
      * @return true if the facing hex has a climbable feature above the entity
      */
     private boolean isClingingToAdjacentClimbable(Entity entity, Coords curPos, @Nullable Hex curHex) {
@@ -2926,7 +2935,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                           step.getPosition());
                     entity.setDisplacementAttack(daa);
                     entity.setElevation(Game.rulesManager.getRulesMovement().getDFAElevation(entity.getGame(),
-                                entity.getId(), targetID, step));
+                          entity.getId(), targetID, step));
                     getGame().addDisplacementAttack(daa);
                     charge = daa;
 
@@ -3213,7 +3222,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                       + getGame().getBoard(curBoardId).getHex(lastPos).getLevel())
                       - (curElevation + curHex.getLevel());
                 logger.debug("[LEAP-TRACE] Leap check: lastPos={}, curPos={}, lastElevation={}, " +
-                      "curElevation={}, leapDistance={}, isClimbing={}, isDangling={}",
+                            "curElevation={}, leapDistance={}, isClimbing={}, isDangling={}",
                       lastPos, curPos, lastElevation, curElevation, leapDistance,
                       entity.isClimbing(), entity.isDangling());
                 if (leapDistance > 2) {
@@ -3634,10 +3643,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (isOnGround) {
                     boom = gameManager.checkVibraBombs(entity, curPos, false, lastPos, curPos,
                           gameManager.getMainPhaseReport());
-                    
-                    boom |= gameManager.handleTripwire(entity, lastPos, curPos, stepMoveType, gameManager.getMainPhaseReport());
+
+                    boom |= gameManager.handleTripwire(entity,
+                          lastPos,
+                          curPos,
+                          stepMoveType,
+                          gameManager.getMainPhaseReport());
                     boom |= gameManager.handlePitfall(entity, curPos, gameManager.getMainPhaseReport());
-                    
+
                     // Collect EMP reports separately for popup, then add to main report
                     Vector<Report> empReports = new Vector<>();
                     boolean empBoom = gameManager.checkEMPMines(entity, curPos, empReports);
@@ -4432,8 +4445,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 int overallClimbHeight = levelsAlreadyClimbed + totalLevelsToClimb;
 
                 logger.debug("Climbing: totalLevels={}, affordableLevels={}, levelsThisTurn={}, " +
-                      "walkMP={}, availableMP={}, costPerLevel={}, nonClimbMpUsed={}, " +
-                      "levelsAlreadyClimbed={}, overallClimbHeight={}",
+                            "walkMP={}, availableMP={}, costPerLevel={}, nonClimbMpUsed={}, " +
+                            "levelsAlreadyClimbed={}, overallClimbHeight={}",
                       totalLevelsToClimb, affordableLevels, levelsThisTurn,
                       walkMP, availableMP, costPerLevel, nonClimbMpUsed,
                       levelsAlreadyClimbed, overallClimbHeight);
@@ -4489,14 +4502,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         curPos = entity.getPosition();
                         curVTOLElevation = entity.getElevation();
                         logger.debug("[FALL-TRACE] After doSkillCheckWhileMoving fall: " +
-                              "entity.position={}, entity.elevation={}, entity.isProne={}, " +
-                              "climbingElevation={}, lastPos={}, curPos={}, curVTOLElevation={}",
+                                    "entity.position={}, entity.elevation={}, entity.isProne={}, " +
+                                    "climbingElevation={}, lastPos={}, curPos={}, curVTOLElevation={}",
                               entity.getPosition(), entity.getElevation(), entity.isProne(),
                               climbingElevation, lastPos, curPos, curVTOLElevation);
                         Hex fallHex = getGame().getBoard(entity.getBoardId()).getHex(entity.getPosition());
                         if (fallHex != null) {
                             logger.debug("[FALL-TRACE] Fall hex: level={}, ceiling={}, floor={}, depth={}, " +
-                                  "containsWater={}, isElevationValid={}",
+                                        "containsWater={}, isElevationValid={}",
                                   fallHex.getLevel(), fallHex.ceiling(), fallHex.floor(), fallHex.depth(),
                                   fallHex.containsTerrain(Terrains.WATER),
                                   entity.isElevationValid(entity.getElevation(), fallHex));
@@ -4516,7 +4529,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // The building being climbed is at the destination hex (curPos)
                     Hex climbHex = getGame().getBoard(entity.getBoardId()).getHex(curPos);
                     logger.debug("[FALL-TRACE] Building check: curPos={}, lastPos={}, " +
-                          "containsBuilding={}", curPos, lastPos,
+                                "containsBuilding={}", curPos, lastPos,
                           climbHex.containsTerrain(Terrains.BUILDING));
                     if (climbHex.containsTerrain(Terrains.BUILDING)) {
                         IBuilding climbBldg = getGame().getBoard(entity.getBoardId()).getBuildingAt(curPos);
@@ -4538,7 +4551,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                   currentCF);
                             if (entity.getWeight() > currentCF) {
                                 logger.debug("[FALL-TRACE] Building too weak for climbing entity: " +
-                                      "weight={}, CF={}, climbingElevation={}, curPos={}, lastPos={}",
+                                            "weight={}, CF={}, climbingElevation={}, curPos={}, lastPos={}",
                                       entity.getWeight(), currentCF, climbingElevation, curPos, lastPos);
                                 // Entity falls from climbing elevation before collapse
                                 entity.setClimbing(false);
@@ -4581,7 +4594,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     curVTOLElevation = climbingElevation;
                     mpUsed = walkMP;
                     logger.debug("Climbing: partial climb, {} of {} levels. " +
-                          "Clinging at elevation {} in hex {}",
+                                "Clinging at elevation {} in hex {}",
                           levelsThisTurn, totalLevelsToClimb, climbingElevation, lastPos);
                     // End movement - spent all MP climbing
                     turnOver = true;

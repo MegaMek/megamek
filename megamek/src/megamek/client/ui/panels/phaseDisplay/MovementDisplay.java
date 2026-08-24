@@ -1849,7 +1849,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             currentlySelectedEntity.setMovementMode(EntityMovementMode.QUAD);
         }
 
-        // If it was walk on deployment, invalidate the deployment
+        // If it was walk-on deployment, invalidate the deployment
         if ((cmd != null) && cmd.contains(MoveStepType.DEPLOY)) {
             currentEntity().setDeployed(false);
             currentEntity().setPosition(null);

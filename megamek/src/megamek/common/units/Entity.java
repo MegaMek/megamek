@@ -6879,8 +6879,10 @@ public abstract class Entity extends TurnOrdered
         c3emOriginalMasterId = masterId;
     }
 
-    /** @return The id of the master this unit lost to destruction or damage, or {@code NONE}. Not cleared by the
-     *       lazy cleanup in {@link #getC3Master()}, so takeover logic can identify a dead master's network. */
+    /**
+     * @return The id of the master this unit lost to destruction or damage, or {@code NONE}. Not cleared by the lazy
+     *       cleanup in {@link #getC3Master()}, so takeover logic can identify a dead master's network.
+     */
     public int getC3MasterLostId() {
         return c3MasterLostId;
     }
@@ -7032,9 +7034,9 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * @return The number of operable C3 Master computers (standard or boosted) mounted on this unit. Units carrying
-     *       two to four C3 Masters can act as consolidated company nodes: one computer provides the company-level
-     *       link while each additional computer runs a lance of slaves (CR p.199, Configurations 2-4). Ignores
+     * @return The number of operable C3 Master computers (standard or boosted) mounted on this unit. Units carrying two
+     *       to four C3 Masters can act as consolidated company nodes: one computer provides the company-level link
+     *       while each additional computer runs a lance of slaves (CR p.199, Configurations 2-4). Ignores
      *       shutdown/off-board state - callers that care use {@link #hasC3M()} or {@link #hasC3MM()} first.
      */
     public int getOperableC3MCount() {
@@ -11360,8 +11362,10 @@ public abstract class Entity extends TurnOrdered
             if (!isDeployed() && phase.isSetArtilleryAutoHitHexes() && isEligibleForArtyAutoHitHexes()) {
                 LOGGER.debug("Artillery Units Present and Advanced PreDesignate option enabled");
             } else {
-                if (Game.rulesManager.getRulesGame().walkOnInitiative()) {
-                    if (!(phase.isMovement() && !isDeployed() && deployRound <= getGame().getCurrentRound())) {
+                if (Game.rulesManager.getRulesGame().walkOnInitiative() && phase.isMovement()) {
+                    // If they have not deployed yet and it is movement phase and walk on initiative is active
+                    if (!isDeployed() && deployRound > getGame().getCurrentRound()) {
+                        // They should not be active yet if not deployed yet and are not supposed to deploy yet
                         return false;
                     }
                 } else {

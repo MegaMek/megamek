@@ -710,6 +710,9 @@ public class TWGameManager extends AbstractGameManager {
      * Changes the team of the player specified in the team change request and updates the game state.
      */
     void processTeamChangeRequest() {
+        if (!playersChangingTeam.isEmpty()) {
+            LOGGER.info("[TeamChange] applying {} queued team change(s) before initiative", playersChangingTeam.size());
+        }
         // Change requested by a GM must execute.
         playersChangingTeam.forEach(this::changePlayerTeams);
         playersChangingTeam.clear();
@@ -725,6 +728,11 @@ public class TWGameManager extends AbstractGameManager {
         teamChangeRequest.player().setTeam(teamChangeRequest.teamID());
         getGame().setupTeams();
         transmitPlayerUpdate(teamChangeRequest.player());
+        // a team change is queued when it is asked for and applied here, at the end of the round, so that the new
+        // team is in place before initiative is rolled. Logged because the delay between the two is otherwise
+        // invisible, and looks like the request having been dropped.
+        LOGGER.info("[TeamChange] {} is now on team {}; the game now has {} team(s)",
+              teamChangeRequest.player().getName(), teamChangeRequest.teamID(), getGame().getTeams().size());
         String teamString = "Team " + teamChangeRequest.teamID() + "!";
         if (teamChangeRequest.teamID() == Player.TEAM_UNASSIGNED) {
             teamString = " unassigned!";

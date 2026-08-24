@@ -617,7 +617,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         // If it has not deployed yet, draw the deployment
-        if (Game.rulesManager.getRulesGame().walkOnInitiative() && !selectedEntity.isDeployed()) {
+        if (Game.rulesManager.getRulesGame().walkOnDeployment() && !selectedEntity.isDeployed()) {
             clientgui.boardViews().forEach(bv -> ((BoardView) bv).markDeploymentHexesFor(selectedEntity));
         }
     }
@@ -2577,7 +2577,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if (Game.rulesManager.getRulesGame().walkOnInitiative()) {
+        if (Game.rulesManager.getRulesGame().walkOnDeployment()) {
             if (!currentlySelectedEntity.isDeployed() && boardViewEvent.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
                 if (game.getBoard(boardViewEvent.getBoardId())
                       .isLegalDeployment(boardViewEvent.getCoords(), currentlySelectedEntity)) {

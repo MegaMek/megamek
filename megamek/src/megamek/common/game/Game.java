@@ -334,6 +334,12 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public void initializeRulesManager(String system) {
         if (system.equals(OptionsConstants.RULES_TW)) {
             rulesManager = new TWRulesManager();
+            // Check for walk-on deployment here
+            boolean walkOnDeployment = false; // Add getter to GameOptions here
+            // This will not run until the getter is added for the walk on deployment games option
+            if (walkOnDeployment) {
+                rulesManager.getRulesGame().setWalkOnDeployment(walkOnDeployment);
+            }
         } else if (system.equals(OptionsConstants.RULES_CORE)) {
             rulesManager = new CoreRulesManager();
         }

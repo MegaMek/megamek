@@ -161,7 +161,7 @@ public class CoreRulesGame extends RulesGame {
      * @return true
      */
     @Override
-    public boolean walkOnInitiative() {
+    public boolean walkOnDeployment() {
         return true;
     }
 }

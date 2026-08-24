@@ -3001,7 +3001,7 @@ public class TWGameManager extends AbstractGameManager {
                         includeInPhase = false;
                     }
                 }
-                if (!includeInPhase && Game.rulesManager.getRulesGame().walkOnInitiative()) {
+                if (!includeInPhase && Game.rulesManager.getRulesGame().walkOnDeployment()) {
                     break;
                 }
                 if ((entity instanceof SpaceStation) &&

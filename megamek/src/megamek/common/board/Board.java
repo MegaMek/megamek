@@ -943,7 +943,7 @@ public class Board implements Serializable {
         int maxy = height - startingOffset;
 
         // Walk on initiative only allows for 1 hex width deployment zones
-        if (Game.rulesManager.getRulesGame().walkOnInitiative()) {
+        if (Game.rulesManager.getRulesGame().walkOnDeployment()) {
             startingWidth = 1;
         }
 

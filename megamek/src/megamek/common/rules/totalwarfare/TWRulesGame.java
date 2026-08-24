@@ -33,9 +33,12 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
+
+import java.util.EnumSet;
+
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.annotations.Nullable;
-import megamek.common.battleValue.BVCalculator;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
@@ -44,11 +47,9 @@ import megamek.common.rules.RulesGame;
 import megamek.common.units.Entity;
 import megamek.common.units.IBomber;
 
-import java.util.EnumSet;
-
-import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
-
 public class TWRulesGame extends RulesGame {
+
+    private boolean walkOn = false;
 
     /**
      * Ammo dumping is allowed
@@ -56,13 +57,15 @@ public class TWRulesGame extends RulesGame {
      * @return true if ammo dumping is allowed
      */
     @Override
-    public boolean ammoDumping() { return true; }
+    public boolean ammoDumping() {return true;}
 
 
     /**
      * Is an entity eligible for a phase
+     *
      * @param entity the unit being considered
-     * @param phase what phase it is in
+     * @param phase  what phase it is in
+     *
      * @return is it eligible
      */
     @Override
@@ -74,13 +77,13 @@ public class TWRulesGame extends RulesGame {
     }
 
     /**
-     * Return the number of units to move.
-     * Only do front-loaded init if the option is selected
+     * Return the number of units to move. Only do front-loaded init if the option is selected
      *
-     * @param num_turns array of normal turns
-     * @param index the current index
-     * @param min the minimum value
+     * @param num_turns       array of normal turns
+     * @param index           the current index
+     * @param min             the minimum value
      * @param frontLoadOption true if front load option is enabled
+     *
      * @return the initiative order
      */
     @Override
@@ -90,8 +93,7 @@ public class TWRulesGame extends RulesGame {
     }
 
     /**
-     * TAG can increase BV when Semi-guided or homing arrow IV is present
-     * {@inheritDoc}
+     * TAG can increase BV when Semi-guided or homing arrow IV is present {@inheritDoc}
      */
     @Override
     public double tagBVBump(Entity entity, CalculationReport bvReport, double adjustedBV,
@@ -144,9 +146,26 @@ public class TWRulesGame extends RulesGame {
     }
 
     /**
-     * {@inheritDoc}
-     * Allow only if TO Minefields is enabled
+     * {@inheritDoc} Allow only if TO Minefields is enabled
      */
     @Override
-    public boolean allowMinefields(boolean toMinefields) { return toMinefields; }
+    public boolean allowMinefields(boolean toMinefields) {return toMinefields;}
+
+    /**
+     * {@inheritDoc} TW will allow walk-on initiative with the right option
+     */
+    @Override
+    public void setWalkOnDeployment(final boolean walkOn) {
+        this.walkOn = walkOn;
+    }
+
+    /**
+     * {@inheritDoc} Should we allow walkOnDeployment
+     *
+     * @return
+     */
+    @Override
+    public boolean walkOnDeployment() {
+        return walkOn;
+    }
 }

@@ -742,7 +742,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             entity.aTracker.clearHitHexMods();
         }
 
-        if (md.contains(MoveStepType.DEPLOY) && Game.rulesManager.getRulesGame().walkOnInitiative()) {
+        if (md.contains(MoveStepType.DEPLOY) && Game.rulesManager.getRulesGame().walkOnDeployment()) {
             entity.setDeployed(true);
             if (entity.getPosition() == null) {
                 entity.setPosition(md.getFinalCoords());

@@ -130,11 +130,16 @@ public abstract class RulesGame {
     }
 
     /**
-     * Is walk on initiative supported?
+     * Is walk on deployment supported?
      *
      * @return Default to false.
      */
-    public boolean walkOnInitiative() {
-        return false;
-    }
+    public abstract boolean walkOnDeployment();
+
+    /**
+     * For use by TW to enable walk on deployment. Not used by Core
+     *
+     * @param walkOn should walk-on deployment be enabled
+     */
+    public void setWalkOnDeployment(boolean walkOn) {}
 }

@@ -155,6 +155,14 @@ public class GameMasterPlayerSetupDialog extends JDialog {
         addRow(fields, constraints, 1, "GameMasterPlayerSetupDialog.teamLabel", teamChooser);
         addRow(fields, constraints, 2, "GameMasterPlayerSetupDialog.zoneLabel", zoneChooser);
 
+        // the two settings do not take effect at the same moment, and a gamemaster who is not told that reads the
+        // delay as the dialog having done nothing
+        constraints.gridy = 3;
+        constraints.gridx = 0;
+        constraints.gridwidth = 2;
+        fields.add(new JLabel(Messages.getString("GameMasterPlayerSetupDialog.whenApplied")), constraints);
+        constraints.gridwidth = 1;
+
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(fields, BorderLayout.CENTER);
         getContentPane().add(buttonPanel(), BorderLayout.PAGE_END);
@@ -229,16 +237,23 @@ public class GameMasterPlayerSetupDialog extends JDialog {
         }
         TeamChoice team = (TeamChoice) teamChooser.getSelectedItem();
         ZoneChoice zone = (ZoneChoice) zoneChooser.getSelectedItem();
+        boolean teamChanged = (team != null) && (team.teamId() != player.getTeam());
+        boolean zoneChanged = (zone != null) && (zone.zoneId() != player.getStartingPos());
 
-        if ((team != null) && (team.teamId() != player.getTeam())) {
+        if (teamChanged) {
             LOGGER.info("[GMPlayerSetup] moving {} to team {}", player.getName(), team.teamId());
             clientGUI.getClient().sendChat("/changeTeam playerID=" + player.getId() + " teamID=" + team.teamId());
         }
-        if ((zone != null) && (zone.zoneId() != player.getStartingPos())) {
+        if (zoneChanged) {
             LOGGER.info("[GMPlayerSetup] setting the deployment zone of {} to {}", player.getName(), zone.zoneName());
             clientGUI.getClient()
                   .sendChat("/changeDeploymentZone playerID=" + player.getId() + " zoneID=" + zone.zoneId());
         }
+        if (!teamChanged && !zoneChanged) {
+            LOGGER.info("[GMPlayerSetup] nothing to change for {}", player.getName());
+        }
+        // closed either way: leaving it open after a change has been sent reads as nothing having happened
+        dispose();
     }
 
     /** @return the deployment zones offered, for tests */

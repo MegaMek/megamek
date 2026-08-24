@@ -75,6 +75,13 @@ public abstract class Weapon extends WeaponType implements Serializable {
     public static final String MODE_FLAMER_DAMAGE = "Damage";
     public static final String MODE_FLAMER_HEAT = "Heat";
 
+    /**
+     * Conventional infantry SRM launchers loaded with true Inferno munitions fire either inferno missiles or
+     * ordinary SRM damage (TW p. 143). Incendiary weapons use {@link #MODE_FLAMER_HEAT} instead, which only
+     * converts damage to heat.
+     */
+    public static final String MODE_INFERNO = "Inferno";
+
     public static final String MODE_AMS_ON = "On";
     public static final String MODE_AMS_OFF = "Off";
     public static final String MODE_AMS_MANUAL = "Use as Weapon";

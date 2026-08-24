@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,6 +46,8 @@ import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
+import megamek.common.options.IGameOptions;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
@@ -87,7 +89,9 @@ public class InfantrySupportSRMStandardInfernoWeapon extends InfantryWeapon {
         ammoWeight = 0.02;
         ammoCost = 450;
         shots = 2;
-        String[] modeStrings = { "Damage", "Heat" };
+        // Inferno munitions fire either inferno missiles or ordinary SRM damage (TW p. 143). The incendiary
+        // support weapons offer Damage/Heat instead, which only converts damage to heat.
+        String[] modeStrings = { Weapon.MODE_INFERNO, Weapon.MODE_FLAMER_DAMAGE };
         setModes(modeStrings);
         rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)
@@ -97,5 +101,20 @@ public class InfantrySupportSRMStandardInfernoWeapon extends InfantryWeapon {
               .setProductionFactions(Faction.TH).setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C);
 
+    }
+
+    /**
+     * Keeps the Inferno/Damage modes whatever the game options say.
+     *
+     * <p>The base implementation swaps flame-based infantry weapons between a Damage/Heat toggle and no modes at
+     * all, depending on the unofficial "infantry weapons like BMM flamers" option. That option is about
+     * converting damage to heat, which is not what this launcher does: it carries true Inferno munitions, and
+     * its choice is between inferno missiles and ordinary SRM damage.</p>
+     *
+     * @param gameOptions the current game options, unused here
+     */
+    @Override
+    public void adaptToGameOptions(IGameOptions gameOptions) {
+        // Deliberately does not call super.
     }
 }

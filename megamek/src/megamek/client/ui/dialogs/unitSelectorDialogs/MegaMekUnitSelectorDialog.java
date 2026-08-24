@@ -36,6 +36,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Arrays;
 import java.util.Map;
 import javax.swing.JButton;
@@ -70,6 +71,16 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     MMLogger LOGGER = MMLogger.create(MegaMekUnitSelectorDialog.class);
     //region Variable Declarations
     private final ClientGUI clientGUI;
+    /**
+     * The player a gamemaster tool asked this dialog to open on, or {@code null} when it was opened by itself.
+     *
+     * <p>Such a player is always offered, even when the ordinary rules would leave them out. A gamemaster who has
+     * just put somebody on a team and pressed a reinforcement button has said plainly who the units are for, and the
+     * team change does not reach the board until the end of the round - so the rule that hides players who cannot
+     * deploy yet would otherwise hide the very person being set up.</p>
+     */
+    private Player explicitlyRequestedPlayer;
+
     private final JComboBox<String> comboPlayer = new JComboBox<>();
     private JButton buttonSelectAsset;
     //endregion Variable Declarations
@@ -218,18 +229,42 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     private void updatePlayerChoice(String selectionName) {
         comboPlayer.setEnabled(false);
         comboPlayer.removeAllItems();
-        for (Player player : UnitRecipients.availableTo(clientGUI.getClient().getLocalPlayer(),
+        List<Player> offered = new ArrayList<>(UnitRecipients.availableTo(clientGUI.getClient().getLocalPlayer(),
               clientGUI.getClient().getGame().getPlayersList(),
               clientGUI.getLocalBots().keySet(),
-              !clientGUI.getClient().getGame().getPhase().isLounge())) {
+              !clientGUI.getClient().getGame().getPhase().isLounge()));
+        addExplicitlyRequestedPlayer(offered);
+        for (Player player : offered) {
             comboPlayer.addItem(player.getName());
         }
         comboPlayer.setSelectedItem(selectionName);
         if (comboPlayer.getSelectedIndex() < 0) {
+            // never fall back in silence: units quietly going to the wrong player looks exactly like them going to
+            // the right one, and is only noticed a turn later
+            LOGGER.warn("[GMAddUnit] {} is not in the player list, so the chooser fell back to {}",
+                  selectionName, comboPlayer.getItemAt(0));
             comboPlayer.setSelectedIndex(0);
         }
         if (comboPlayer.getItemCount() > 1) {
             comboPlayer.setEnabled(true);
+        }
+    }
+
+    /**
+     * Puts the player a gamemaster tool asked for into the list when the ordinary rules left them out.
+     *
+     * @param offered The players the rules offer, added to in place
+     */
+    private void addExplicitlyRequestedPlayer(List<Player> offered) {
+        if (explicitlyRequestedPlayer == null) {
+            return;
+        }
+        boolean alreadyThere = offered.stream()
+              .anyMatch(player -> player.getId() == explicitlyRequestedPlayer.getId());
+        if (!alreadyThere) {
+            LOGGER.info("[GMAddUnit] offering {} because a gamemaster tool asked for them by name",
+                  explicitlyRequestedPlayer.getName());
+            offered.add(explicitlyRequestedPlayer);
         }
     }
 
@@ -244,6 +279,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
      * @param player The player to select, or {@code null} to leave the chooser where it was
      */
     public void setPlayerFrom(@Nullable Player player) {
+        explicitlyRequestedPlayer = player;
         if (player == null) {
             updatePlayerChoice();
         } else {

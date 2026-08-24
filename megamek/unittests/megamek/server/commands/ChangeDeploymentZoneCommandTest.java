@@ -38,12 +38,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
+import megamek.common.Player;
+import megamek.common.game.Game;
 import megamek.common.interfaces.IStartingPositions;
+import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.IntegerArgument;
 import megamek.server.commands.arguments.PlayerArgument;
 import megamek.server.commands.arguments.UnitArgument;
+import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 /**
  * Verifies how the deployment zone command presents itself.
@@ -53,6 +58,9 @@ import org.junit.jupiter.api.Test;
  * lobby offers, and be refused to anyone who is not the gamemaster.</p>
  */
 class ChangeDeploymentZoneCommandTest {
+
+    /** The connection the command is treated as arriving on. */
+    private static final int SENDING_CONNECTION = 1;
 
     private final ChangeDeploymentZoneCommand command = new ChangeDeploymentZoneCommand(null, null);
 
@@ -87,5 +95,38 @@ class ChangeDeploymentZoneCommandTest {
         for (Argument<?> argument : command.defineArguments()) {
             assertFalse(argument instanceof UnitArgument, "this acts on a player, not on one of their units");
         }
+    }
+
+    /**
+     * @param holdsTheRole Whether the player sending the command holds the Game Master role
+     *
+     * @return a command wired to a server whose sending player is or is not the gamemaster
+     */
+    private static ChangeDeploymentZoneCommand commandSentBy(boolean holdsTheRole) {
+        Player sender = new Player(SENDING_CONNECTION, "Sender");
+        sender.setGameMaster(holdsTheRole);
+
+        Game game = new Game();
+        game.addPlayer(SENDING_CONNECTION, sender);
+        TWGameManager gameManager = Mockito.mock(TWGameManager.class);
+        Mockito.when(gameManager.getGame()).thenReturn(game);
+        Server server = Mockito.mock(Server.class);
+        Mockito.when(server.getGameManager()).thenReturn(gameManager);
+
+        return new ChangeDeploymentZoneCommand(server, gameManager);
+    }
+
+    @Test
+    void aGameMasterMaySetADeploymentZone() {
+        // the positive case is what keeps the one below honest: without it, a guard that refused everybody would
+        // pass the negative test while making the command useless
+        assertTrue(commandSentBy(true).preRun(SENDING_CONNECTION),
+              "a gamemaster is exactly who this command is for");
+    }
+
+    @Test
+    void aPlayerWhoIsNotGameMasterMayNot() {
+        assertFalse(commandSentBy(false).preRun(SENDING_CONNECTION),
+              "moving another player's deployment zone would be a way to ruin their game");
     }
 }

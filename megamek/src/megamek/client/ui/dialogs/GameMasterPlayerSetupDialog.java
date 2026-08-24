@@ -83,6 +83,15 @@ public class GameMasterPlayerSetupDialog extends AbstractButtonDialog {
     /** Unscaled padding around a row; scaled through {@link UIUtil#scaleForGUI(int)} when used. */
     private static final int ROW_PADDING = 4;
 
+    /**
+     * The width the explanatory lines wrap at, before the GUI scale is applied.
+     *
+     * <p>Given outright because an HTML label with no width of its own reflows to whatever space it is left, and
+     * dragging the dialog narrower collapses it to one word per line - which grows it tall enough to push the
+     * controls above it out of sight.</p>
+     */
+    private static final int TEXT_WRAP_WIDTH = 320;
+
     private final ClientGUI clientGUI;
 
     /**
@@ -179,6 +188,18 @@ public class GameMasterPlayerSetupDialog extends AbstractButtonDialog {
         initialize();
     }
 
+    /**
+     * Keeps the dialog from being dragged smaller than its contents.
+     *
+     * <p>Without this the form is clipped from the top when the window is shortened, so the player and team rows
+     * simply disappear while the buttons stay put - which reads as the dialog having lost them.</p>
+     */
+    @Override
+    protected void finalizeInitialization() throws Exception {
+        super.finalizeInitialization();
+        setMinimumSize(getPreferredSize());
+    }
+
     @Override
     protected Container createCenterPane() {
         List<String> offered = new ArrayList<>();
@@ -224,7 +245,7 @@ public class GameMasterPlayerSetupDialog extends AbstractButtonDialog {
         constraints.gridy = 3;
         constraints.gridx = 0;
         constraints.gridwidth = 2;
-        fields.add(new JLabel(Messages.getString("GameMasterPlayerSetupDialog.whenApplied")), constraints);
+        fields.add(wrappedLabel(Messages.getString("GameMasterPlayerSetupDialog.whenApplied")), constraints);
         constraints.gridy = 4;
         fields.add(statusLabel, constraints);
         constraints.gridwidth = 1;
@@ -238,6 +259,25 @@ public class GameMasterPlayerSetupDialog extends AbstractButtonDialog {
         }
         loadFromChosenPlayer();
         return pane;
+    }
+
+    /**
+     * @param text The words to show
+     *
+     * @return a label that wraps at a width of its own rather than at whatever width it is given
+     */
+    private static JLabel wrappedLabel(String text) {
+        return new JLabel(wrapped(text));
+    }
+
+    /**
+     * @param text The words to show
+     *
+     * @return the text with a width fixed on it, so narrowing the dialog does not collapse it to one word a line
+     */
+    private static String wrapped(String text) {
+        return "<html><div width=" + UIUtil.scaleForGUI(TEXT_WRAP_WIDTH) + '>'
+              + text.replace("<html>", "").replace("</html>", "") + "</div></html>";
     }
 
     /** Adds one labelled row to the form. */
@@ -354,9 +394,9 @@ public class GameMasterPlayerSetupDialog extends AbstractButtonDialog {
     private void refreshLegality() {
         String problem = problemWithChoices();
         applyButton.setEnabled(problem == null);
-        statusLabel.setText((problem == null)
+        statusLabel.setText(wrapped((problem == null)
               ? Messages.getString("GameMasterPlayerSetupDialog.ready")
-              : Messages.getString("GameMasterPlayerSetupDialog.refused", problem));
+              : Messages.getString("GameMasterPlayerSetupDialog.refused", problem)));
 
         // the reinforcement buttons follow the choices rather than a separate Apply press: pressing one applies
         // the team and zone first, so the order that has to hold still holds without a second step

@@ -35,6 +35,7 @@ package megamek.common.weapons.infantry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -56,10 +57,10 @@ import org.junit.jupiter.params.provider.MethodSource;
  * display, but their pre-errata names must keep resolving: unit files and saved games written before the rename
  * still refer to them.</p>
  *
- * <p>The three SRM launchers that carried real Inferno ammo are deliberately NOT renamed. The errata deletes those
- * rows rather than renaming them, and the replacement rule - a conventional infantry SRM platoon declaring Inferno
- * munitions before the battle - is not implemented yet. Renaming them would hide a capability that has no
- * replacement.</p>
+ * <p>The SRM launchers that carry real Inferno ammo are handled differently, because the errata deletes those rows
+ * rather than renaming them. The light and heavy versions had no users at all and are withdrawn. The two-shot
+ * version stays registered and keeps its name: a stock unit mounts it, and player-built units and saved games may
+ * too. Unlike the incendiary weapons, which only convert damage to heat, it carries true Inferno munitions.</p>
  */
 class IncendiaryInfantryWeaponNameTest {
 
@@ -107,19 +108,25 @@ class IncendiaryInfantryWeaponNameTest {
     }
 
     @Test
-    @DisplayName("The true Inferno SRM launchers keep their name")
-    void infernoSrmLaunchersAreNotRenamed() {
-        String[] infernoSrmLaunchers = {
-              "InfantryStandardSRMInferno",
-              "InfantryHeavySRMInferno",
-              "InfantrySRMLightInferno" };
+    @DisplayName("The two-shot Inferno SRM launcher stays registered and keeps its name")
+    void infernoSrmLauncherIsNotRenamed() {
+        EquipmentType launcher = EquipmentType.get("InfantryStandardSRMInferno");
 
-        for (String internalName : infernoSrmLaunchers) {
-            EquipmentType launcher = EquipmentType.get(internalName);
-            assertNotNull(launcher, internalName + " should still exist");
-            assertTrue(launcher.getName().contains("Inferno"),
-                  "The SRM launchers carry real Inferno munitions and are not part of the incendiary rename; "
-                        + internalName + " is named \"" + launcher.getName() + "\"");
+        assertNotNull(launcher, "A stock unit mounts this launcher, so withdrawing it would break unit files");
+        assertTrue(launcher.getName().contains("Inferno"),
+              "This launcher carries true Inferno munitions and is not part of the incendiary rename; it is "
+                    + "named \"" + launcher.getName() + "\"");
+    }
+
+    @Test
+    @DisplayName("The unused Inferno SRM launchers are withdrawn per the errata")
+    void unusedInfernoSrmLaunchersAreNotRegistered() {
+        String[] withdrawnLaunchers = { "InfantryHeavySRMInferno", "InfantrySRMLightInferno" };
+
+        for (String internalName : withdrawnLaunchers) {
+            assertNull(EquipmentType.get(internalName),
+                  "The errata deletes this row and no unit file mounts it, so it should no longer be "
+                        + "registered: " + internalName);
         }
     }
 }

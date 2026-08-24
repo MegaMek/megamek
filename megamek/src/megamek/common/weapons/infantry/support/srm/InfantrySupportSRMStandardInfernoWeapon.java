@@ -62,6 +62,13 @@ public class InfantrySupportSRMStandardInfernoWeapon extends InfantryWeapon {
     public InfantrySupportSRMStandardInfernoWeapon() {
         super();
 
+        // The TechManual pp. 350-352 errata deletes this row along with the light and heavy versions, replacing
+        // the weapon with a pre-battle Inferno munition declaration on a normal SRM platoon. It is kept
+        // registered anyway: a stock unit mounts it (Beast Infantry (Elephant) (Needler/SRM)), player-built
+        // units and saved games may mount it too, and withdrawing it would break those downstream. The light and
+        // heavy versions had no users at all and are commented out in WeaponType.initializeTypes().
+        // Unlike the incendiary weapons, which only convert damage to heat, this one carries true Inferno
+        // munitions and should deliver inferno missiles.
         name = "SRM Launcher (Std, Two-Shot) - Inferno";
         setInternalName("InfantryStandardSRMInferno");
         addLookupName(name);

@@ -26,6 +26,16 @@
             <pctClan>0,0</pctClan>
             <pctSL>0,0</pctSL>
         </faction>
+        <!-- Written under the retired code RET, which resolves to SUC. This is the shape of the shipped 3082 to
+             3160 files, where Clan Goliath Scorpion's blocks are keyed CEI and then SE and no CGS block exists.
+             See RATGeneratorAliasedEraParametersTest. -->
+        <faction key='RET'>
+            <pctOmni>10,20,30,40,50</pctOmni>
+            <pctClan>11,21,31,41,51</pctClan>
+            <pctSL>89,79,69,59,49</pctSL>
+            <techMargin>7</techMargin>
+            <salvage pct='13'>LA:2</salvage>
+        </faction>
     </factions>
     <units>
         <chassis name='Archer' unitType='Mek'>

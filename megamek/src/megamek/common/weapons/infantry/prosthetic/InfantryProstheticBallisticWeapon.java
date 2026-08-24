@@ -36,6 +36,7 @@ package megamek.common.weapons.infantry.prosthetic;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -62,7 +63,7 @@ public class InfantryProstheticBallisticWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.01;
         infantryRange = 0;
-        rulesRefs = "78, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 78);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

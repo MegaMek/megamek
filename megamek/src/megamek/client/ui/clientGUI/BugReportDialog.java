@@ -33,22 +33,13 @@
 
 package megamek.client.ui.clientGUI;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.Window;
-import java.awt.geom.Area;
 import java.util.function.Supplier;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -57,7 +48,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.border.AbstractBorder;
 
 import megamek.MMConstants;
 import megamek.client.Client;
@@ -65,6 +55,7 @@ import megamek.client.ui.BugReportMessages;
 import megamek.client.ui.CopySystemDataAction;
 import megamek.client.ui.PackageBugReportAction;
 import megamek.client.ui.util.UIUtil;
+import megamek.client.ui.widget.HazardStripeBorder;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.IssueReportUrl;
 
@@ -73,11 +64,7 @@ public class BugReportDialog {
     private static final int UNSCALED_WIDTH = 600;
     private static final BugReportMessages I18N = new BugReportMessages();
 
-    /** Hazard colours for the striped border around the reporting button. */
-    private static final Color HAZARD_YELLOW = new Color(255, 204, 0);
-    private static final Color HAZARD_RED = new Color(204, 34, 34);
-
-    /** Breathing room between the striped border and the button text. */
+    /** Breathing room between the striped border and the button text, in unscaled pixels. */
     private static final int HAZARD_PADDING = 4;
 
     private static final int UNSCALED_REPORT_BUTTON_WIDTH = 260;
@@ -155,8 +142,9 @@ public class BugReportDialog {
      */
     private JButton createReportButton() {
         JButton reportButton = new JButton(packageBugReportAction);
+        int padding = UIUtil.scaleForGUI(HAZARD_PADDING);
         reportButton.setBorder(BorderFactory.createCompoundBorder(new HazardStripeBorder(),
-              BorderFactory.createEmptyBorder(HAZARD_PADDING, HAZARD_PADDING, HAZARD_PADDING, HAZARD_PADDING)));
+              BorderFactory.createEmptyBorder(padding, padding, padding, padding)));
         reportButton.setFont(reportButton.getFont().deriveFont(Font.BOLD,
               reportButton.getFont().getSize2D() * REPORT_BUTTON_FONT_FACTOR));
         reportButton.setPreferredSize(new Dimension(UIUtil.scaleForGUI(UNSCALED_REPORT_BUTTON_WIDTH),
@@ -205,52 +193,6 @@ public class BugReportDialog {
         rootPanel.add(gatherFilesRow);
         rootPanel.add(repositoryRow);
         return rootPanel;
-    }
-
-    /**
-     * A border of diagonal yellow and red stripes, in the manner of hazard tape.
-     *
-     * <p>Used on the one button in this dialog that does something rather than opening a link, so that a player
-     * skimming ten similar-looking buttons cannot miss which one starts the job.</p>
-     */
-    private static class HazardStripeBorder extends AbstractBorder {
-
-        private final int thickness = UIUtil.scaleForGUI(5);
-
-        @Override
-        public void paintBorder(Component component, Graphics graphics, int x, int y, int width, int height) {
-            Graphics2D stripeGraphics = (Graphics2D) graphics.create();
-            try {
-                Area frame = new Area(new Rectangle(x, y, width, height));
-                frame.subtract(new Area(new Rectangle(x + thickness, y + thickness,
-                      width - (2 * thickness), height - (2 * thickness))));
-                stripeGraphics.clip(frame);
-                stripeGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                stripeGraphics.setColor(HAZARD_YELLOW);
-                stripeGraphics.fillRect(x, y, width, height);
-
-                // Diagonals are drawn from off the left edge so that the stripes carry across the whole frame.
-                stripeGraphics.setColor(HAZARD_RED);
-                stripeGraphics.setStroke(new BasicStroke(thickness));
-                for (int offset = -height; offset < width; offset += thickness * 2) {
-                    stripeGraphics.drawLine(x + offset, y + height, x + offset + height, y);
-                }
-            } finally {
-                stripeGraphics.dispose();
-            }
-        }
-
-        @Override
-        public Insets getBorderInsets(Component component) {
-            return new Insets(thickness, thickness, thickness, thickness);
-        }
-
-        @Override
-        public Insets getBorderInsets(Component component, Insets insets) {
-            insets.set(thickness, thickness, thickness, thickness);
-            return insets;
-        }
     }
 
     private static class UrlButton extends JButton {

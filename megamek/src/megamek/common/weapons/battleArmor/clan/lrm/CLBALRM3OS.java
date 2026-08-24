@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.clan.lrm;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -67,7 +68,10 @@ public class CLBALRM3OS extends LRMWeapon {
               .andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON)
               .andNot(F_PROTO_WEAPON);
-        rulesRefs = "261, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 261),
+              rulesRef(SourceBookCode.TW, 305)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

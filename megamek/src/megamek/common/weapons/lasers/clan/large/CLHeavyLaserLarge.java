@@ -36,6 +36,7 @@ package megamek.common.weapons.lasers.clan.large;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -77,7 +78,12 @@ public class CLHeavyLaserLarge extends LaserWeapon {
         medAV = 16;
         maxRange = RANGE_MED;
         flags = flags.or(WeaponTypeFlag.HEAVY_LASER);
-        rulesRefs = "226, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 226),
+              rulesRef(SourceBookCode.BMM, 101),
+              rulesRef(SourceBookCode.CORE, 185),
+              rulesRef(SourceBookCode.TW, 304)
+        );
         //Jan 22 - Errata issued by CGL (Greekfire) for Heavy Lasers
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

@@ -4832,11 +4832,17 @@ public class Princess extends BotClient {
      * spotting for indirect fire. The detailed decision (and the reason on the failure path) is logged with the
      * {@code [Spot]} tag in princess.log.
      *
+     * <p>A hidden unit gets no chat readback. Spotting does not break concealment (TW p.259), but chat is broadcast
+     * to every player, so naming the spotter would hand the enemy the unit and its location anyway. The {@code [Spot]}
+     * log entry is still written, so playtesting visibility is unaffected.</p>
+     *
+     * <p>Package-private rather than private so the hidden-unit guard can be tested directly.</p>
+     *
      * @param spotAction The action the fire control returned (a no-op for anything that is not a {@link SpotAction})
      * @param spotter    The unit doing the spotting
      */
-    private void announceSpotting(final EntityAction spotAction, final Entity spotter) {
-        if (spotAction instanceof SpotAction spot) {
+    void announceSpotting(final EntityAction spotAction, final Entity spotter) {
+        if ((spotAction instanceof SpotAction spot) && !spotter.isHidden()) {
             Entity target = getGame().getEntity(spot.getTargetId());
             String targetName = (target != null) ? target.getShortName() : Integer.toString(spot.getTargetId());
             sendChat(Messages.getString("Princess.spotting", spotter.getShortName(), targetName), Level.INFO);

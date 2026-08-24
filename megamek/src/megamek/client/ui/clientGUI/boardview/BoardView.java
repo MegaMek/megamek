@@ -3797,6 +3797,19 @@ public final class BoardView extends AbstractBoardView
             addC3Link(entity);
         }
 
+        // The removal above also dropped the lines that this entity's hierarchic subordinates draw TO it (each
+        // slave owns its own line to its master), and addC3Link(entity) only redraws the entity's own line to its
+        // master. Re-add the subordinates' lines, otherwise selecting a master in the firing phase erases its
+        // network on the board until the next full redraw.
+        for (Entity subordinate : game.getEntitiesVector()) {
+            if ((subordinate.getC3MasterId() == entity.getId())
+                  && !subordinate.equals(entity)
+                  && subordinate.hasC3()
+                  && isOnThisBord(subordinate)) {
+                addC3Link(subordinate);
+            }
+        }
+
         vtolAttackSprites.removeIf(s -> s.getEntity().getId() == entity.getId());
 
         // Remove Flyover Sprites

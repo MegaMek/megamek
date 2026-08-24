@@ -122,6 +122,7 @@ class LobbyMekPopup {
     static final String LMP_C3JOIN = "C3JOIN";
     static final String LMP_C3_FORM_NHC3 = "C3FORMNHC3";
     static final String LMP_C3_FORM_C3 = "C3FORMC3";
+    static final String LMP_C3_MANAGER = "C3MANAGER";
     static final String LMP_C3LM = "C3LM";
     static final String LMP_C3CM = "C3CM";
     static final String LMP_SQUADRON = "SQUADRON";
@@ -695,6 +696,11 @@ class LobbyMekPopup {
 
         if (entities.stream().anyMatch(Entity::hasAnyC3System)) {
 
+            // The primary entry: the manager shows the selected units and every network as a tree
+            menu.add(menuItem("Open C3 Network Manager...", LMP_C3_MANAGER + NO_INFO + enToken(entities),
+                  enabled, listener));
+            menu.addSeparator();
+
             menu.add(menuItem("Disconnect", LMP_C3DISCONNECT + NO_INFO + enToken(entities), enabled, listener));
 
             if (entities.stream().anyMatch(e -> e.hasC3MM() || e.hasC3M())) {
@@ -759,7 +765,9 @@ class LobbyMekPopup {
                         continue;
                     }
                     int nodes = other.calculateFreeC3Nodes();
-                    if (other.hasC3MM() && entity.hasC3M() && other.C3MasterIs(other)) {
+                    if (entity.hasC3M() && other.C3MasterIs(other)) {
+                        // A master joining a company commander occupies a company-level master link, so show
+                        // that pool - also for single-computer company masters (CR p.198, Configuration 1)
                         nodes = other.calculateFreeC3MNodes();
                     }
                     if (entity.C3MasterIs(other)) {
@@ -787,8 +795,11 @@ class LobbyMekPopup {
                         menu.add(menuItem(item, LMP_C3CONNECT + "|" + other.getId() + enToken(entities), nodes != 0,
                               listener));
 
-                    } else if (other.isC3CompanyCommander() == entity.hasC3M()
-                          && !entity.isC3CompanyCommander()) {
+                    } else if (!entity.isC3CompanyCommander()
+                          && (entity.hasC3M() ? lanceRolesCompatible(game, entity, other)
+                                : other.isC3IndependentMaster())) {
+                        // Slaves connect to lance masters; masters connect to company commanders or - forming an
+                        // All-C3-Master lance (CR p.199) - to lance masters whose dependents are all masters too.
                         String item = "<HTML>Connect to " + other.getShortNameRaw() + idString(game, other.getId());
                         item += " (" + other.getC3NetId() + ")";
                         if (entity.C3MasterIs(other)) {
@@ -806,6 +817,22 @@ class LobbyMekPopup {
         }
         menu.setEnabled(enabled && menu.getItemCount() > 0);
         return menu;
+    }
+
+    /**
+     * Returns true when the joining unit's role fits the dependents already connected to the given master. A lance
+     * is homogeneous (CR p.199): all C3 Slaves, or - under the All-C3-Master rule - all C3 Masters in slave roles,
+     * so a master may not join a lance of slaves and vice versa.
+     */
+    private static boolean lanceRolesCompatible(Game game, Entity joiningUnit, Entity master) {
+        boolean joinerIsMaster = joiningUnit.hasC3M();
+        for (Entity other : game.getEntitiesVector()) {
+            if (!other.equals(master) && !other.equals(joiningUnit) && other.C3MasterIs(master)
+                  && (other.hasC3M() != joinerIsMaster)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

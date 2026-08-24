@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -78,7 +79,7 @@ public abstract class ThunderboltWeapon extends MissileWeapon {
         maxRange = RANGE_MED;
         flags = flags.or(F_LARGE_MISSILE).or(F_INDIRECT_FIRE);
         atClass = CLASS_THUNDERBOLT;
-        rulesRefs = "159, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 159);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

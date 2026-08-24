@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.rifle;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -75,7 +76,7 @@ public class InfantryRifleStrikerCarbineRifleWeapon extends InfantryWeapon {
         shots = 60;
         bursts = 2;
         damage = 1;
-        rulesRefs = " HBHL, 147";
+        rulesRefs = rulesRefs(SourceBookCode.HB_HL, 147);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false).setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D);

@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -78,7 +79,7 @@ public class InfantrySupportMk1LightAAWeapon extends InfantryWeapon {
         infantryDamage = 0.23;
         infantryRange = 1;
         crew = 1;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(2490, 2500, 2590, 2790, 3056)
               .setISApproximate(true, false, false, false, false)

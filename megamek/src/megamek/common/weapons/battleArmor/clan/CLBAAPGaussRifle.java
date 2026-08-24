@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -71,7 +72,7 @@ public class CLBAAPGaussRifle extends Weapon {
         maxRange = RANGE_SHORT;
         explosionDamage = 3;
         flags = flags.or(F_BA_WEAPON).or(F_BURST_FIRE).or(F_BALLISTIC).or(F_NO_FIRES).or(F_DIRECT_FIRE);
-        rulesRefs = "255, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 255);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

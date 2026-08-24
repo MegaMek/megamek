@@ -219,6 +219,8 @@ public class ChatLounge extends AbstractPhaseDisplay
     private final FixedYPanel panUnitInfo = new FixedYPanel();
     private final JButton butAdd = new JButton(Messages.getString("ChatLounge.butLoad"));
     private final JButton butArmy = new JButton(Messages.getString("ChatLounge.butArmy"));
+    private final JButton butC3Manager = new JButton(Messages.getString("ChatLounge.butC3Manager"));
+    private JPanel panUnitInfoAdd;
     private final JButton butSkills = new JButton(Messages.getString("ChatLounge.butSkills"));
     private final JButton butNames = new JButton(Messages.getString("ChatLounge.butNames"));
     private final JButton butLoadList = new JButton(Messages.getString("ChatLounge.butLoadList"));
@@ -327,6 +329,30 @@ public class ChatLounge extends AbstractPhaseDisplay
     private transient MekTableSorter activeSorter;
     private final transient ArrayList<MekTableSorter> unitSorters = new ArrayList<>();
     private final transient ArrayList<MekTableSorter> bvSorters = new ArrayList<>();
+
+    /** Shows the C3 manager button only while C3-equipped units are in the lobby. */
+    private void updateC3ManagerButton(java.util.List<Entity> allEntities) {
+        boolean anyC3Units = false;
+        for (Entity entity : allEntities) {
+            if (entity.hasAnyC3System()) {
+                anyC3Units = true;
+                break;
+            }
+        }
+        boolean currentlyShown = butC3Manager.getParent() != null;
+        if (anyC3Units == currentlyShown) {
+            return;
+        }
+        if (anyC3Units) {
+            panUnitInfoAdd.setLayout(new GridLayout(3, 1, 2, 2));
+            panUnitInfoAdd.add(butC3Manager);
+        } else {
+            panUnitInfoAdd.setLayout(new GridLayout(2, 1, 2, 2));
+            panUnitInfoAdd.remove(butC3Manager);
+        }
+        panUnitInfoAdd.revalidate();
+        panUnitInfoAdd.repaint();
+    }
 
     private final JButton butAddY = new JButton(Messages.getString("ChatLounge.butAdd"));
     private final JButton butAddX = new JButton(Messages.getString("ChatLounge.butAdd"));
@@ -672,9 +698,13 @@ public class ChatLounge extends AbstractPhaseDisplay
         butAdd.setActionCommand(CL_ACTION_COMMAND_LOAD_MEK);
         butArmy.setEnabled(mscLoaded);
 
+        butC3Manager.setToolTipText(Messages.getString("ChatLounge.butC3Manager.tooltip"));
+        butC3Manager.addActionListener(event -> new C3NetworkManagerDialog(this).setVisible(true));
+
         panUnitInfo.setBorder(BorderFactory.createTitledBorder(Messages.getString("ChatLounge.name.unitSetup")));
         panUnitInfo.setLayout(new BoxLayout(panUnitInfo, BoxLayout.PAGE_AXIS));
-        JPanel panUnitInfoAdd = new JPanel(new GridLayout(2, 1, 2, 2));
+        // The C3 manager button joins this panel only while C3 units are in the lobby (updateC3ManagerButton)
+        panUnitInfoAdd = new JPanel(new GridLayout(2, 1, 2, 2));
         panUnitInfoAdd.setBorder(new EmptyBorder(0, 0, 2, 1));
         panUnitInfoAdd.add(butAdd);
         panUnitInfoAdd.add(butArmy);
@@ -1497,9 +1527,12 @@ public class ChatLounge extends AbstractPhaseDisplay
         java.util.List<Integer> enIds = getSelectedEntities().stream().map(Entity::getId).toList();
         mekModel.clearData();
         ArrayList<Entity> allEntities = new ArrayList<>(clientgui.getClient().getEntitiesVector());
-        // Whatever the player is sorting by, a train stays together: the choice is applied to the tractor and its
-        // trailers follow it. Sorting by tonnage would otherwise strand a 10 ton carriage far from its tractor.
-        allEntities.sort(MekTableSorter.keepingCarriedUnitsTogether(activeSorter));
+        // Whatever the player is sorting by, a train stays together (the choice is applied to the tractor and its
+        // trailers follow it) and a C3 network stays together in hierarchy order - the branch glyphs drawn in
+        // front of members rely on a member sitting directly under its master.
+        allEntities.sort(MekTableSorter.keepingC3NetworksTogether(allEntities,
+              MekTableSorter.keepingCarriedUnitsTogether(activeSorter)));
+        updateC3ManagerButton(allEntities);
 
         boolean localUnits = false;
         var opts = clientgui.getClient().getGame().getOptions();

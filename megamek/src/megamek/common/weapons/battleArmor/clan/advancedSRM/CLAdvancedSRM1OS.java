@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.clan.advancedSRM;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -69,7 +70,10 @@ public class CLAdvancedSRM1OS extends AdvancedSRMWeapon {
         tonnage = 0.035;
         criticalSlots = 3;
         cost = 7500;
-        rulesRefs = "261, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 261),
+              rulesRef(SourceBookCode.TW, 305)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

@@ -36,6 +36,7 @@ package megamek.common.weapons.lrms.clan.improvedLRM;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -70,7 +71,7 @@ public class CLImprovedLRM20 extends LRMWeapon {
         longAV = 12;
         maxRange = RANGE_LONG;
         ammoType = AmmoType.AmmoTypeEnum.LRM_IMP;
-        rulesRefs = "90, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 90);
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)

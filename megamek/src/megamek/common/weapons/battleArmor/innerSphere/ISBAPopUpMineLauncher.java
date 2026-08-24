@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -82,7 +83,10 @@ public class ISBAPopUpMineLauncher extends Weapon {
         String[] modeStrings = { "Single", "2-shot", "3-shot", "4-shot", "5-shot", "6-shot" };
         setModes(modeStrings);
         flags = flags.or(F_DIRECT_FIRE).or(F_SOLO_ATTACK).or(F_BA_WEAPON).or(F_ONE_SHOT).or(F_BA_INDIVIDUAL);
-        rulesRefs = "267, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 267),
+              rulesRef(SourceBookCode.TW, 229)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

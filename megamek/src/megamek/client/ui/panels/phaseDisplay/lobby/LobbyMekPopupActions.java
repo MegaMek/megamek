@@ -107,6 +107,7 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
             case LMP_C3DISCONNECT:
             case LMP_C3_FORM_C3:
             case LMP_C3_FORM_NHC3:
+            case LMP_C3_MANAGER:
             case LMP_SWAP:
             case LMP_DAMAGE:
             case LMP_BV:
@@ -405,6 +406,10 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
                 case LMP_C3_FORM_NHC3:
                     master = Integer.parseInt(info);
                     lobby.lobbyActions.c3JoinNh(entities, master, true);
+                    break;
+
+                case LMP_C3_MANAGER:
+                    new C3NetworkManagerDialog(lobby, entities).setVisible(true);
                     break;
 
                 case LMP_UNLOAD_ALL_FROM_BAY:

@@ -36,6 +36,7 @@ package megamek.common.weapons.mortars.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -69,7 +70,7 @@ public class CLMekMortar4 extends MekMortarWeapon {
         criticalSlots = 2;
         tonnage = 3.5;
         cost = 32000;
-        rulesRefs = "136, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 136);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

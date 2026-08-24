@@ -59,11 +59,8 @@ import javax.swing.ToolTipManager;
 import javax.swing.border.EmptyBorder;
 
 import megamek.client.AbstractClient;
-import megamek.client.Client;
-import megamek.client.ui.BugReportMessages;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.BugReportDialog;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.IClientGUI;
 import megamek.client.ui.clientGUI.MegaMekGUI;
@@ -101,12 +98,10 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     private static final String SBPD_KEY_CLEAR_BUTTON = "clearButton";
 
     /**
-     * How many buttons the Done column has to make room for: the Done button, the Skip button the action phases add
-     * below it, and the reporting button that sits under both in every phase.
+     * How many buttons the Done column has to make room for: the Done button, and the Skip button the action phases
+     * add below it.
      */
-    private static final int DONE_PANEL_ROWS = 3;
-
-    private static final BugReportMessages BUG_REPORT_I18N = new BugReportMessages();
+    private static final int DONE_PANEL_ROWS = 2;
 
     protected final IClientGUI clientGUI;
 
@@ -289,9 +284,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         }
 
         var donePanel = setupDonePanel();
-        // Added here rather than in setupDonePanel() so that it stays below whatever the phase itself puts in the
-        // column: MovementDisplay and its relatives add a Skip button in their override.
-        addToDonePanel(donePanel, createReportBugButton());
 
         panButtons.add(buttonsPanel);
         panButtons.add(donePanel);
@@ -309,33 +301,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         donePanel.setLayout(new GridBagLayout());
         addToDonePanel(donePanel, butDone);
         return donePanel;
-    }
-
-    /**
-     * Creates the reporting button that sits at the bottom of the Done column in every phase.
-     *
-     * <p>The reporting tools are also on the menu bar, but a player who has just watched something go wrong is
-     * looking at the board, not at the menus, and by the time they have found the entry the game may have moved on.
-     * Keeping the button in the same place all game means it is always where they last saw it.</p>
-     *
-     * @return the reporting button, ready to be added to the Done column
-     */
-    private MegaMekButton createReportBugButton() {
-        MegaMekButton reportBugButton = new MegaMekButton(
-              "<html><b>" + BUG_REPORT_I18N.get("package.reportBug") + "</b></html>",
-              SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-        reportBugButton.setToolTipText(BUG_REPORT_I18N.get("package.reportBug.tooltip"));
-        reportBugButton.addActionListener(event -> BugReportDialog.showWithGameTools(clientGUI.getFrame(),
-              this::totalWarfareClient));
-        return reportBugButton;
-    }
-
-    /**
-     * @return the client of the running game when it is one whose save the bug report packager understands, otherwise
-     *       {@code null}; a Strategic BattleForce game, for instance, packages its logs alone
-     */
-    private @Nullable Client totalWarfareClient() {
-        return (clientGUI.getClient() instanceof Client totalWarfareClient) ? totalWarfareClient : null;
     }
 
     protected void addToDonePanel(JPanel donePanel, JComponent item) {

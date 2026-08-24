@@ -35,7 +35,6 @@ package megamek.client.ui.panels.phaseDisplay;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -2069,30 +2068,19 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         if (shiftHeld == ((event.getModifiers() & InputEvent.SHIFT_DOWN_MASK) == 0)) {
             shiftHeld = (event.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
         }
+        // Select the hex exactly once per click. BoardView.select() always fires a hex-selected event, even when
+        // the hex has not changed, and hexSelected() answers it by asking the player which unit in the hex to
+        // attack. A second select() for the same click therefore opens that target dialog a second time.
         if (event.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
             if ((shiftHeld || twisting) && isMyTurn() && Game.rulesManager.getRulesUnits().getPhysicalTwistEnabled()) {
                 if ((currentEntity() != null) && !currentEntity().getAlreadyTwisted()) {
                     torsoTwist(event.getCoords());
                 }
             }
-            event.getBoardView().cursor(event.getCoords());
         } else if (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             twisting = false;
-            if (!shiftHeld) {
-                event.getBoardView().select(event.getCoords());
-            }
         }
-        if (clientgui.getClient().isMyTurn()
-              && (event.getButton() == MouseEvent.BUTTON1)) {
-            if (event.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-                if (!event.getCoords().equals(
-                      event.getBoardView().getLastCursor())) {
-                    event.getBoardView().cursor(event.getCoords());
-                }
-            } else if (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
-                event.getBoardView().select(event.getCoords());
-            }
-        }
+        applyHexMouseAction(event, shiftHeld);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -496,6 +496,11 @@ public class C3Util {
 
     /**
      * Connects the passed entities to a standard C3M identified by masterID.
+     *
+     * <p>Joining units are classified by their equipment: C3 Master carriers occupy company-level master links
+     * when the target is a company node (a C3MM unit or a designated company commander), while C3 Slave carriers
+     * occupy slave links. A plain lance master accepts a homogeneous lance only: all slaves, or - per the
+     * All-C3-Master rule (TW p.132, CR p.199) - all masters acting in slave roles.</p>
      */
     public static Set<Entity> connect(Game game, Collection<Entity> entities, int masterID, boolean disconnectFirst)
           throws MismatchingC3MException, C3CapacityException {
@@ -505,22 +510,86 @@ public class C3Util {
             return Collections.emptySet();
         }
 
-        // To make it possible to mark a C3S/C3S/C3S/C3M lance and connect it:
-        entities.remove(master);
-        boolean connectMS = master.isC3IndependentMaster() && entities.stream().allMatch(Entity::hasC3S);
-        boolean connectMM = master.isC3CompanyCommander() && entities.stream().allMatch(Entity::hasC3M);
-        boolean connectSMM = master.hasC3MM() && entities.stream().allMatch(e -> e.hasC3S() || e.hasC3M());
-        if (!connectMM && !connectMS && !connectSMM) {
+        if (!master.hasC3M()) {
             throw new MismatchingC3MException();
         }
+
+        // To make it possible to mark a C3S/C3S/C3S/C3M lance and connect it:
+        entities.remove(master);
+
+        List<Entity> joiningMasters = new ArrayList<>();
+        List<Entity> joiningSlaves = new ArrayList<>();
+        for (Entity entity : entities) {
+            if (entity.hasC3M()) {
+                joiningMasters.add(entity);
+            } else if (entity.hasC3S()) {
+                joiningSlaves.add(entity);
+            } else {
+                throw new MismatchingC3MException();
+            }
+        }
+
         Set<Entity> updateCandidates = new HashSet<>(entities);
         if (disconnectFirst) { // this is only true when a C3 lance is formed from SSSM
             updateCandidates.addAll(performDisconnect(game, entities));
             updateCandidates.addAll(performDisconnect(game, List.of(master)));
         }
-        int newC3nodeCount = entities.stream().mapToInt(e -> game.getC3SubNetworkMembers(e).size()).sum();
+
+        boolean masterIsCompanyNode = master.isC3CompanyCommander();
+        if (!masterIsCompanyNode) {
+            // A lance is homogeneous: existing dependents and joiners must all be slaves or all be masters
+            // (CR p.199: a C3 Master cannot control another C3 Master and a C3 Slave simultaneously).
+            boolean anyMasters = !joiningMasters.isEmpty();
+            boolean anySlaves = !joiningSlaves.isEmpty();
+            for (Entity other : game.getEntitiesVector()) {
+                if (!other.equals(master) && !entities.contains(other) && other.C3MasterIs(master)) {
+                    if (other.hasC3M()) {
+                        anyMasters = true;
+                    } else {
+                        anySlaves = true;
+                    }
+                }
+            }
+            if (anyMasters && anySlaves) {
+                throw new MismatchingC3MException();
+            }
+        }
+
+        int newC3nodeCount = 0;
+        for (Entity entity : entities) {
+            newC3nodeCount += game.getC3SubNetworkMembers(entity).size();
+        }
         int masC3nodeCount = game.getC3NetworkMembers(master).size();
-        if (newC3nodeCount + masC3nodeCount > Entity.MAX_C3_NODES || entities.size() > master.calculateFreeC3Nodes()) {
+
+        boolean overCapacity;
+        if (masterIsCompanyNode) {
+            // Slaves and masters compete for the same three company links: every three slaves occupy one of the
+            // node's own lance computers, every external master occupies a company link directly, and idle
+            // computers are allowed (CR p.198). Checked jointly - the two free-node pools alone would let a
+            // combined join oversubscribe the computers.
+            int currentSlaveDependents = 0;
+            int currentMasterDependents = 0;
+            for (Entity other : game.getEntitiesVector()) {
+                if (!other.equals(master) && !entities.contains(other) && other.C3MasterIs(master)) {
+                    if (other.hasC3S()) {
+                        currentSlaveDependents++;
+                    } else {
+                        currentMasterDependents++;
+                    }
+                }
+            }
+            int totalSlaves = currentSlaveDependents + joiningSlaves.size();
+            int totalMasters = currentMasterDependents + joiningMasters.size();
+            int lanceComputersNeeded =
+                  (totalSlaves + Entity.MAX_C3M_SUBORDINATES - 1) / Entity.MAX_C3M_SUBORDINATES;
+            int usableLanceComputers = Math.max(0, Math.min(master.getOperableC3MCount() - 1,
+                  Entity.MAX_C3M_SUBORDINATES - totalMasters));
+            overCapacity = ((totalMasters + lanceComputersNeeded) > Entity.MAX_C3M_SUBORDINATES)
+                  || (totalSlaves > (Entity.MAX_C3M_SUBORDINATES * usableLanceComputers));
+        } else {
+            overCapacity = entities.size() > master.calculateFreeC3Nodes();
+        }
+        if (overCapacity || (newC3nodeCount + masC3nodeCount > Entity.MAX_C3_NODES)) {
             throw new C3CapacityException();
         }
         entities.forEach(e -> e.setC3Master(master, true));

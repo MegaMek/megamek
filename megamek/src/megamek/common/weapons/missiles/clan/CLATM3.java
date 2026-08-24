@@ -36,6 +36,7 @@ package megamek.common.weapons.missiles.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -77,7 +78,12 @@ public class CLATM3 extends ATMWeapon {
         shortAV = 4;
         medAV = 4;
         maxRange = RANGE_MED;
-        rulesRefs = "229, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 229),
+              rulesRef(SourceBookCode.BMM, 102),
+              rulesRef(SourceBookCode.CORE, 186),
+              rulesRef(SourceBookCode.TW, 138)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(false)

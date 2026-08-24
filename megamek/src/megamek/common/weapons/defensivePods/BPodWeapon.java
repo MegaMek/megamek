@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -81,7 +82,11 @@ public abstract class BPodWeapon extends AmmoWeapon {
         bv = 2;
         cost = 2500;
         explosionDamage = 2;
-        rulesRefs = "204, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 204),
+              rulesRef(SourceBookCode.CORE, 189),
+              rulesRef(SourceBookCode.TW, 130)
+        );
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

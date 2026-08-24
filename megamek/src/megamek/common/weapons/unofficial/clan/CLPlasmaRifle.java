@@ -36,6 +36,7 @@ package megamek.common.weapons.unofficial.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -72,7 +73,7 @@ public class CLPlasmaRifle extends PlasmaMFUKWeapon {
         bv = 400;
         cost = 300000;
         // Gonna use the same tech info as the Cannon
-        rulesRefs = "Unofficial";
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
               .setUnofficial(true)

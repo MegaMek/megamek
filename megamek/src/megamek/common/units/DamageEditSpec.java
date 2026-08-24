@@ -93,6 +93,20 @@ public class DamageEditSpec implements Serializable {
     /** Hot-loading on each ammo bin, by its equipment number; only carried by a gamemaster's in-game edit. */
     public final Map<Integer, Boolean> hotLoadedAmmo = new HashMap<>();
 
+    /**
+     * The chosen mode of each piece of equipment with modes, by its equipment number as the internal (non-localized)
+     * mode name; only carried by a gamemaster's in-game edit. The gamemaster's mode change takes effect at once,
+     * without the End Phase wait of a player's declared switch, and a mode matching the equipment's current mode is
+     * left alone so that a player's pending switch on untouched equipment survives the edit.
+     */
+    public final Map<Integer, String> equipmentMode = new HashMap<>();
+
+    /**
+     * Whether each chargeable weapon (a bombast laser or a PPC capacitor) holds a full charge, by its equipment
+     * number; only carried by a gamemaster's in-game edit.
+     */
+    public final Map<Integer, Boolean> equipmentCharged = new HashMap<>();
+
     /*
      * the gamemaster's temporary skill modifiers, each with a duration of its own (rounds, ignored while its
      * permanent flag is on). Gunnery and piloting travel together; the initiative trio is present only where the

@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -87,7 +88,7 @@ public class ISUAC5Prototype extends UACWeapon {
         longAV = 7;
         maxRange = RANGE_LONG;
         flags = flags.or(F_PROTOTYPE);
-        rulesRefs = "98, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 98);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

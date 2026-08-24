@@ -36,6 +36,7 @@ package megamek.common.weapons.lasers.clan.large;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -76,7 +77,7 @@ public class CLImprovedPulseLaserLarge extends PulseLaserWeapon {
         shortAV = 9;
         medAV = 9;
         maxRange = RANGE_MED;
-        rulesRefs = "89, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 89);
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(2815, 2818, 2820, 2826, 3080)

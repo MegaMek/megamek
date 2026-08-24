@@ -36,6 +36,7 @@ package megamek.common.weapons.c3;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -77,7 +78,12 @@ public class ISC3M extends TAGWeapon {
         mediumRange = 9;
         longRange = 15;
         extremeRange = 18;
-        rulesRefs = "209, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 209),
+              rulesRef(SourceBookCode.BMM, 110),
+              rulesRef(SourceBookCode.CORE, 198),
+              rulesRef(SourceBookCode.TW, 131)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.pistol;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -73,7 +74,7 @@ public class InfantryPistolWhisper4Standard extends InfantryWeapon {
         shots = 6;
         bursts = 1;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        rulesRefs = "Shrapnel #3";
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_3);
         techAdvancement
               .setTechBase(TechBase.IS)
               .setTechRating(TechRating.D)

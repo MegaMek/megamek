@@ -282,6 +282,11 @@ public class GameMasterPlayerSetupDialog extends AbstractButtonDialog {
         // rather than delayed, and making the button do both is what stops that being possible to get wrong
         apply();
         LOGGER.info("[GMPlayerSetup] reinforcing {}", player.getName());
+
+        // and this dialog is finished: pressing one of these buttons is the last thing a gamemaster does here, so
+        // leaving it open behind the unit chooser only raises the question of whether Apply is still owed. It gets
+        // out of the way first so the chooser is not opened behind it.
+        setVisible(false);
         reinforcement.accept(player);
     }
 
@@ -299,7 +304,13 @@ public class GameMasterPlayerSetupDialog extends AbstractButtonDialog {
      */
     @Override
     protected JPanel createButtonPanel() {
-        applyButton.addActionListener(event -> apply());
+        // both buttons finish this dialog: Apply sets the player up, a reinforcement button sets them up and then
+        // hands over a force. Either way there is nothing further owed here, and staying open only invites the
+        // question of whether there is
+        applyButton.addActionListener(event -> {
+            apply();
+            setVisible(false);
+        });
         JButton closeButton = new JButton(Messages.getString("Close"));
         closeButton.addActionListener(event -> setVisible(false));
 
@@ -485,7 +496,6 @@ public class GameMasterPlayerSetupDialog extends AbstractButtonDialog {
         if (!teamChanged && !zoneChanged) {
             LOGGER.info("[GMPlayerSetup] nothing to change for {}", player.getName());
         }
-        // the dialog stays open so the force can be handed over straight away, which is the rest of the same job
         refreshLegality();
     }
 

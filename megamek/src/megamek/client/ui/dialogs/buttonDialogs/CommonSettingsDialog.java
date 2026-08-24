@@ -54,6 +54,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
+import java.util.function.Consumer;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
@@ -63,7 +64,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 
-import com.formdev.flatlaf.icons.FlatHelpButtonIcon;
 import megamek.MMConstants;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.ui.Messages;
@@ -82,8 +82,6 @@ import megamek.client.ui.dialogs.minimap.MinimapPanel;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.client.ui.models.FileNameComboBoxModel;
 import megamek.client.ui.panels.CommonSettingsPane;
-import megamek.client.ui.settings.SettingsFormPanel;
-import megamek.client.ui.settings.SettingsIconLegend;
 import megamek.client.ui.panels.phaseDisplay.DeploymentDisplay;
 import megamek.client.ui.panels.phaseDisplay.FiringDisplay;
 import megamek.client.ui.panels.phaseDisplay.PhysicalDisplay;
@@ -91,6 +89,11 @@ import megamek.client.ui.panels.phaseDisplay.StatusBarPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.StatusBarPhaseDisplay.PhaseCommand;
 import megamek.client.ui.panels.phaseDisplay.TargetingPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.commands.MoveCommand;
+import megamek.client.ui.settings.SettingsBadge;
+import megamek.client.ui.settings.SettingsCheckBox;
+import megamek.client.ui.settings.SettingsFormPanel;
+import megamek.client.ui.settings.SettingsIconLegend;
+import megamek.client.ui.settings.SettingsTextProvider;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.PlayerColour;
@@ -123,6 +126,10 @@ import megamek.logging.MMLogger;
 public class CommonSettingsDialog extends AbstractButtonDialog
       implements ItemListener, FocusListener, ListSelectionListener, ChangeListener {
     private final static MMLogger logger = MMLogger.create(CommonSettingsDialog.class);
+    private static final SettingsTextProvider SETTINGS_TEXT = SettingsTextProvider.megaMek();
+    private static final SettingsBadge IMPORTANT_BADGE = new SettingsBadge(0xE002, null,
+          Messages.getString("CommonSettingsDialog.legend.important"));
+    private static final int BEHAVIOR_OPTION_COLUMNS = 2;
 
     /**
      * A class for storing information about an GUIPreferences advanced option.
@@ -282,8 +289,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
           "CommonSettingsDialog.showAutoResolvePanel"));
     private JComboBox<String> favoritePrincessBehaviorSetting;
     private JComboBox<String> displayLocale;
-    private final JCheckBox showIPAddressesInChat = new JCheckBox(Messages.getString(
-          "CommonSettingsDialog.showIPAddressesInChat"));
+    private final SettingsCheckBox showIPAddressesInChat = createShowIpAddressesInChatCheckBox();
     private final JCheckBox spritesOnly = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.spritesOnly"));
     private final JCheckBox showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel"));
@@ -669,8 +675,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         CommonSettingsPane.SectionedContent audio = sectionedContent(getAudioPanel(), "audio");
         addMappedPages(pages, "audio", audio,
               optionPage("audio", path("audio"), audio,
-                    section("audio.volume", 0), section("audio.chat", 1), section("audio.myTurn", 2),
-                    section("audio.otherTurns", 3)));
+                    section("audio.volume", 0), section("audio.notifications", 1)));
         pages.add(optionPage("keyBinds", path("keyBinds"), getKeyBindSections()));
 
         CommonSettingsPane.SectionedContent gameBoard = sectionedContent(getGameBoardPanel(), "gameBoard");
@@ -834,13 +839,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     }
 
     private JPanel getAudioPanel() {
-        List<List<Component>> comps = new ArrayList<>();
-        ArrayList<Component> row;
-
-        row = new ArrayList<>();
-        row.add(masterVolumeLabel);
-        comps.add(row);
-
         masterVolumeSlider = new JSlider();
         masterVolumeSlider.setMinorTickSpacing(5);
         masterVolumeSlider.setMajorTickSpacing(25);
@@ -855,43 +853,36 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         masterVolumeSlider.setLabelTable(table);
         masterVolumeSlider.setPaintTicks(true);
         masterVolumeSlider.setPaintLabels(true);
-        masterVolumeSlider.setMaximumSize(new Dimension(250, 100));
         masterVolumeSlider.setToolTipText(Messages.getString("CommonSettingsDialog.masterVolumeTT"));
-        row = new ArrayList<>();
-        row.add(masterVolumeSlider);
-        comps.add(row);
-
-        addLineSpacer(comps);
-
-        comps.add(checkboxEntry(soundMuteChat, null));
 
         tfSoundMuteChatFileName = new JTextField(5);
-        tfSoundMuteChatFileName.setMaximumSize(new Dimension(450, 40));
-        row = new ArrayList<>();
-        row.add(tfSoundMuteChatFileName);
-        comps.add(row);
-
-        addLineSpacer(comps);
-
-        comps.add(checkboxEntry(soundMuteMyTurn, null));
-
         tfSoundMuteMyTurnFileName = new JTextField(5);
-        tfSoundMuteMyTurnFileName.setMaximumSize(new Dimension(450, 40));
-        row = new ArrayList<>();
-        row.add(tfSoundMuteMyTurnFileName);
-        comps.add(row);
-
-        addLineSpacer(comps);
-
-        comps.add(checkboxEntry(soundMuteOthersTurn, null));
-
         tfSoundMuteOthersFileName = new JTextField(5);
-        tfSoundMuteOthersFileName.setMaximumSize(new Dimension(450, 40));
-        row = new ArrayList<>();
-        row.add(tfSoundMuteOthersFileName);
-        comps.add(row);
 
-        return createSettingsPanel(comps);
+        return createAudioSettingsPanel(masterVolumeLabel, masterVolumeSlider,
+              soundMuteChat, tfSoundMuteChatFileName,
+              soundMuteMyTurn, tfSoundMuteMyTurnFileName,
+              soundMuteOthersTurn, tfSoundMuteOthersFileName);
+    }
+
+    static CommonSettingsPane.SectionedContent createAudioSettingsPanel(JLabel volumeLabel, JSlider volumeSlider,
+          JCheckBox chatMute, JTextField chatSoundFile,
+          JCheckBox myTurnMute, JTextField myTurnSoundFile,
+          JCheckBox otherTurnsMute, JTextField otherTurnsSoundFile) {
+        volumeLabel.setLabelFor(volumeSlider);
+        SettingsFormPanel volumeGrid = createAudioControlGrid(
+              "CommonSettingsAudioVolumeGrid", volumeLabel, volumeSlider);
+        SettingsFormPanel notificationGrid = createAudioControlGrid(
+              "CommonSettingsAudioNotificationGrid",
+              chatMute, chatSoundFile, myTurnMute, myTurnSoundFile, otherTurnsMute, otherTurnsSoundFile);
+        return new CommonSettingsPane.SectionedContent(List.of(volumeGrid, notificationGrid));
+    }
+
+    static SettingsFormPanel createAudioControlGrid(String name, JComponent... controls) {
+        SettingsFormPanel grid = new SettingsFormPanel(name,
+              SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
+        grid.addEqualWidthComponentGrid(2, controls);
+        return grid;
     }
 
     private JPanel getGameBoardPanel() {
@@ -2201,6 +2192,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         }
     }
 
+    static ColourSelectorButton createPlayerColourButton(PlayerColour playerColour) {
+        ColourSelectorButton button = new ColourSelectorButton(playerColour.toString());
+        button.setToolTipText(Messages.getString("CommonSettingsDialog.playerColour.tooltip"));
+        return button;
+    }
+
     private JPanel getPlayerColourPanel() {
         List<List<Component>> comps = new ArrayList<>();
         ArrayList<Component> row;
@@ -2214,8 +2211,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         comps.add(row);
 
         for (PlayerColour pc : PlayerColour.values()) {
-            ColourSelectorButton csb = new ColourSelectorButton("");
-            csb.setToolTipText(Messages.getString("CommonSettingsDialog.playerColour.tooltip"));
+            ColourSelectorButton csb = createPlayerColourButton(pc);
             playerColours.add(new PlayerColourHelper(pc, csb));
         }
 
@@ -2241,7 +2237,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Deutsch"));
         displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Russian"));
         displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Spanish"));
-        displayLocale.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
         row.add(displayLocaleLabel);
         row.add(displayLocale);
@@ -2249,24 +2244,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         addLineSpacer(comps);
 
-        guiScale = new JSlider();
-        guiScale.setMajorTickSpacing(3);
-        guiScale.setMinimum(7);
-        guiScale.setMaximum(24);
-        Hashtable<Integer, JComponent> table = new Hashtable<>();
-        table.put(7, new JLabel("70%"));
-        table.put(10, new JLabel("100%"));
-        table.put(16, new JLabel("160%"));
-        table.put(22, new JLabel("220%"));
-        guiScale.setLabelTable(table);
-        guiScale.setPaintTicks(true);
-        guiScale.setPaintLabels(true);
-        guiScale.setMaximumSize(new Dimension(250, 100));
-        guiScale.setToolTipText(Messages.getString("CommonSettingsDialog.guiScaleTT"));
         JLabel guiScaleLabel = new JLabel(Messages.getString("CommonSettingsDialog.guiScale"));
         row = new ArrayList<>();
         row.add(guiScaleLabel);
-        row.add(guiScale);
+        row.add(createGuiScaleControl());
         comps.add(row);
 
         addLineSpacer(comps);
@@ -2274,28 +2255,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         JLabel userDirLabel = new JLabel(Messages.getString("CommonSettingsDialog.userDir"));
         userDirLabel.setToolTipText(Messages.getString("CommonSettingsDialog.userDir.tooltip"));
         userDir = new JTextField(20);
-        userDir.setMaximumSize(new Dimension(250, 40));
         userDir.setToolTipText(Messages.getString("CommonSettingsDialog.userDir.tooltip"));
-        JButton userDirChooser = new JButton("...");
-        userDirChooser.addActionListener(e -> fileChooseUserDir(userDir, getFrame()));
-        userDirChooser.setToolTipText(Messages.getString("CommonSettingsDialog.userDir.chooser.title"));
-        JButton userDirHelp = new JButton(new FlatHelpButtonIcon());
-        userDirHelp.putClientProperty("JButton.buttonType", "help");
-        try {
-            String helpTitle = Messages.getString("UserDirHelpDialog.title");
-            URL helpFile = new File(MMConstants.USER_DIR_README_FILE).toURI().toURL();
-            userDirHelp.addActionListener(e -> new HelpDialog(helpTitle, helpFile, getFrame()).setVisible(true));
-        } catch (MalformedURLException e) {
-            logger.error(e,
-                  "Could not find the user data directory readme file at {}", MMConstants.USER_DIR_README_FILE);
-        }
+        String userFilesChooserTitle = Messages.getString("CommonSettingsDialog.userDir.chooser.title");
+        JButton userFilesChooser = applicationIconButton("btnUserDirChooser", 0xE2C8, userFilesChooserTitle);
+        userFilesChooser.addActionListener(e -> fileChooseUserDir(userDir, getFrame()));
+        JButton userFilesHelp = createUserFilesHelpButton();
         row = new ArrayList<>();
         row.add(userDirLabel);
-        row.add(userDir);
-        row.add(Box.createHorizontalStrut(10));
-        row.add(userDirChooser);
-        row.add(Box.createHorizontalStrut(10));
-        row.add(userDirHelp);
+        row.add(applicationPathControl(userDir, userFilesChooser, userFilesHelp));
         comps.add(row);
 
         addLineSpacer(comps);
@@ -2303,25 +2270,22 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         JLabel mmlPathLabel = new JLabel(Messages.getString("CommonSettingsDialog.mmlPath"));
         mmlPathLabel.setToolTipText(Messages.getString("CommonSettingsDialog.mmlPath.tooltip"));
         mmlPath = new JTextField(20);
-        mmlPath.setMaximumSize(new Dimension(250, 40));
         mmlPath.setToolTipText(Messages.getString("CommonSettingsDialog.mmlPath.tooltip"));
-        JButton mmlPathChooser = new JButton("...");
+        String mmlPathChooserTitle = Messages.getString("CommonSettingsDialog.mmlPath.chooser.title");
+        JButton mmlPathChooser = applicationIconButton("btnMmlPathChooser", 0xE2C8, mmlPathChooserTitle);
         mmlPathChooser.addActionListener(e -> fileChoose(mmlPath,
               getFrame(),
-              Messages.getString("CommonSettingsDialog.mmlPath.chooser.title"),
+              mmlPathChooserTitle,
               false));
         row = new ArrayList<>();
         row.add(mmlPathLabel);
-        row.add(mmlPath);
-        row.add(Box.createHorizontalStrut(10));
-        row.add(mmlPathChooser);
+        row.add(applicationPathControl(mmlPath, mmlPathChooser));
         comps.add(row);
 
         addLineSpacer(comps);
 
         // UI Theme
         uiThemes = new JComboBox<>();
-        uiThemes.setMaximumSize(new Dimension(400, uiThemes.getMaximumSize().height));
         JLabel uiThemesLabel = new JLabel(Messages.getString("CommonSettingsDialog.uiTheme"));
         row = new ArrayList<>();
         row.add(uiThemesLabel);
@@ -2343,7 +2307,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog
                       cellHasFocus);
             }
         });
-        skinFiles.setMaximumSize(new Dimension(400, skinFiles.getMaximumSize().height));
         JLabel skinFileLabel = new JLabel(Messages.getString("CommonSettingsDialog.skinFile"));
         row = new ArrayList<>();
         row.add(skinFileLabel);
@@ -2390,13 +2353,17 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         addLineSpacer(comps);
 
-        comps.add(checkboxEntry(teamColoring, Messages.getString("CommonSettingsDialog.teamColoring.tooltip")));
-        comps.add(checkboxEntry(dockOnLeft, null));
+        configureCheckBox(teamColoring, Messages.getString("CommonSettingsDialog.teamColoring.tooltip"));
+        configureCheckBox(dockOnLeft, null);
         dockOnLeft.setSelected(GUIP.getDockOnLeft());
-        comps.add(checkboxEntry(dockMultipleOnYAxis, null));
+        configureCheckBox(dockMultipleOnYAxis, null);
         dockMultipleOnYAxis.setSelected(GUIP.getDockMultipleOnYAxis());
-        comps.add(checkboxEntry(useCamoOverlay, null));
+        configureCheckBox(useCamoOverlay, null);
         useCamoOverlay.setSelected(GUIP.getUseCamoOverlay());
+        row = new ArrayList<>();
+        row.add(createBehaviorOptionsGrid("CommonSettingsWindowLayoutGrid",
+              teamColoring, dockOnLeft, dockMultipleOnYAxis, useCamoOverlay));
+        comps.add(row);
 
         addLineSpacer(comps);
 
@@ -2409,64 +2376,58 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         // Add option for "alpha, beta, gamma, delta..."
         unitStartChar.addItem("\u03B1, \u03B2, \u03B3, \u03B4...");
         unitStartChar.setMaximumSize(new Dimension(150, 40));
+        configureCheckBox(defaultAutoEjectDisabled, null);
+        configureCheckBox(useAverageSkills, null);
+        configureCheckBox(generateNames, null);
         row = new ArrayList<>();
-        row.add(unitStartCharLabel);
-        row.add(unitStartChar);
+        row.add(createUnitDefaultsGrid(unitStartCharLabel, unitStartChar,
+              defaultAutoEjectDisabled, useAverageSkills, generateNames));
         comps.add(row);
 
-        comps.add(checkboxEntry(defaultAutoEjectDisabled, null));
-        comps.add(checkboxEntry(useAverageSkills, null));
-        comps.add(checkboxEntry(generateNames, null));
-
         addLineSpacer(comps);
-        comps.add(checkboxEntry(datasetLogging, null));
-        comps.add(checkboxEntry(keepGameLog, null));
+        configureCheckBox(datasetLogging, null);
+        configureCheckBox(keepGameLog, null);
 
         gameLogFilenameLabel = new JLabel(Messages.getString("CommonSettingsDialog.logFileName"));
         gameLogFilename = new JTextField(15);
-        gameLogFilename.setMaximumSize(new Dimension(250, 40));
-        row = new ArrayList<>();
-        row.add(Box.createRigidArea(DEPENDENT_INSET));
-        row.add(gameLogFilenameLabel);
-        row.add(gameLogFilename);
-        comps.add(row);
-
-        JLabel autoResolveLogFilenameLabel = new JLabel(Messages.getString("CommonSettingsDialog.autoResolveLogFileName"));
+        JLabel autoResolveLogFilenameLabel = new JLabel(
+              Messages.getString("CommonSettingsDialog.autoResolveLogFileName"));
         autoResolveLogFilename = new JTextField(15);
-        autoResolveLogFilename.setMaximumSize(new Dimension(250, 40));
-        row = new ArrayList<>();
-        row.add(Box.createRigidArea(DEPENDENT_INSET));
-        row.add(autoResolveLogFilenameLabel);
-        row.add(autoResolveLogFilename);
-        comps.add(row);
-
-        addSpacer(comps, 5);
-        comps.add(checkboxEntry(stampFilenames, null));
+        configureCheckBox(stampFilenames, null);
 
         stampFormatLabel = new JLabel(Messages.getString("CommonSettingsDialog.stampFormat"));
-        stampFormat = new JTextField(15);
-        stampFormat.setMaximumSize(new Dimension(15 * 13, 40));
+        stampFormat = new JTextField(20);
         row = new ArrayList<>();
-        row.add(Box.createRigidArea(DEPENDENT_INSET));
-        row.add(stampFormatLabel);
-        row.add(stampFormat);
+        row.add(createBehaviorLoggingGrid("CommonSettingsLoggingGrid",
+              List.of(datasetLogging,
+                  keepGameLog,
+                  createBehaviorFieldOption("CommonSettingsGameLogFilenameOption",
+                      gameLogFilenameLabel, gameLogFilename),
+                  createBehaviorFieldOption("CommonSettingsAutoResolveLogFilenameOption",
+                      autoResolveLogFilenameLabel, autoResolveLogFilename),
+                  stampFilenames),
+              stampFormatLabel, stampFormat));
         comps.add(row);
 
         addLineSpacer(comps);
 
-        comps.add(checkboxEntry(showIPAddressesInChat,
-              Messages.getString("CommonSettingsDialog.showIPAddressesInChat.tooltip")));
-        comps.add(checkboxEntry(spritesOnly,
-              Messages.getString("CommonSettingsDialog.spritesOnly.tooltip")));
+        showIPAddressesInChat.addItemListener(this);
+        configureCheckBox(spritesOnly, Messages.getString("CommonSettingsDialog.spritesOnly.tooltip"));
+        row = new ArrayList<>();
+        row.add(createBehaviorOptionsGrid("CommonSettingsPrivacyRenderingGrid",
+              showIPAddressesInChat, spritesOnly));
+        comps.add(row);
         return createSettingsPanel(comps);
     }
 
     private List<Component> checkboxEntry(JCheckBox checkbox, String toolTip) {
+        configureCheckBox(checkbox, toolTip);
+        return List.of(checkbox);
+    }
+
+    private void configureCheckBox(JCheckBox checkbox, String toolTip) {
         checkbox.setToolTipText(toolTip);
         checkbox.addItemListener(this);
-        List<Component> row = new ArrayList<>();
-        row.add(checkbox);
-        return row;
     }
 
     /**
@@ -4122,7 +4083,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     private static void flushCheckBoxGrid(SettingsFormPanel panel, List<JCheckBox> checkBoxes) {
         if (!checkBoxes.isEmpty()) {
-            panel.addCheckBoxGrid(2, checkBoxes.toArray(new JCheckBox[0]));
+            panel.addEqualWidthComponentGrid(2, checkBoxes.toArray(new JComponent[0]));
             checkBoxes.clear();
         }
     }
@@ -4130,7 +4091,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private static void flushComponentGrid(SettingsFormPanel panel, List<JComponent> components) {
         if (!components.isEmpty()) {
             SettingsFormPanel colourGrid = new SettingsFormPanel("CommonSettingsColourGrid");
-            colourGrid.addComponentGrid(2, components.toArray(new JComponent[0]));
+            colourGrid.addEqualWidthComponentGrid(2, components.toArray(new JComponent[0]));
             panel.addFullWidthComponent(colourGrid);
             components.clear();
         }
@@ -4144,11 +4105,153 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             panel.addCheckBox(checkBox);
             return;
         }
+        if (components.size() == 1) {
+            panel.addFullWidthComponent(components.getFirst());
+            return;
+        }
         if (components.getFirst() instanceof JLabel label && components.size() > 1) {
-            panel.addRow(label, rowPanel(components.subList(1, components.size())));
+            JComponent control = components.size() == 2
+                  ? components.get(1)
+                  : rowPanel(components.subList(1, components.size()));
+            label.setLabelFor(control);
+            panel.addEqualWidthComponentGrid(2, label, control);
             return;
         }
         panel.addFullWidthComponent(rowPanel(components));
+    }
+
+    static JPanel createUnitDefaultsGrid(JLabel protoMekLabel, JComponent protoMekControl,
+          JCheckBox... checkBoxes) {
+        List<JComponent> options = new ArrayList<>();
+        options.add(createBehaviorFieldOption("CommonSettingsProtoMekOption", protoMekLabel, protoMekControl));
+        options.addAll(List.of(checkBoxes));
+
+        return createBehaviorOptionsGrid("CommonSettingsUnitDefaultsGrid", options.toArray(new JComponent[0]));
+    }
+
+    static SettingsFormPanel createBehaviorOptionsGrid(String name, JComponent... options) {
+        SettingsFormPanel grid = new SettingsFormPanel(name, SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
+        grid.addEqualWidthComponentGrid(BEHAVIOR_OPTION_COLUMNS, options);
+        return grid;
+    }
+
+static SettingsFormPanel createBehaviorLoggingGrid(String name, List<JComponent> options,
+      JLabel dateFormatLabel, JComponent dateFormatControl) {
+    SettingsFormPanel grid = new SettingsFormPanel(name, SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
+    grid.addEqualWidthComponentGrid(BEHAVIOR_OPTION_COLUMNS, options.toArray(new JComponent[0]));
+    dateFormatLabel.setLabelFor(dateFormatControl);
+    grid.addEqualWidthComponentGrid(BEHAVIOR_OPTION_COLUMNS, dateFormatLabel, dateFormatControl);
+    return grid;
+}
+
+    static SettingsFormPanel createBehaviorFieldOption(String name, JLabel label, JComponent control) {
+        SettingsFormPanel option = new SettingsFormPanel(name, 0, 0);
+        option.addRow(label, control);
+        return option;
+    }
+
+    static SettingsCheckBox createShowIpAddressesInChatCheckBox() {
+        return new SettingsCheckBox(SETTINGS_TEXT, "CommonSettingsDialog.showIPAddressesInChat",
+              List.of(IMPORTANT_BADGE));
+    }
+
+    private static JButton applicationIconButton(String name, int codePoint, String accessibleName) {
+        JButton button = new JButton();
+        button.setName(name);
+        button.setToolTipText(accessibleName);
+        button.getAccessibleContext().setAccessibleName(accessibleName);
+        button.setIcon(FontHandler.symbolIcon(codePoint,
+              button.getFont().getSize() + UIUtil.scaleForGUI(2), button.getForeground()));
+        return button;
+    }
+
+    private JPanel createGuiScaleControl() {
+        guiScale = new JSlider(7, 24);
+        guiScale.setMinorTickSpacing(1);
+        Hashtable<Integer, JComponent> labels = new Hashtable<>();
+        labels.put(7, new JLabel("70%"));
+        labels.put(10, new JLabel("100%"));
+        labels.put(14, new JLabel("140%"));
+        labels.put(17, new JLabel("170%"));
+        labels.put(21, new JLabel("210%"));
+        labels.put(24, new JLabel("240%"));
+        guiScale.setLabelTable(labels);
+        guiScale.setPaintTicks(true);
+        guiScale.setPaintLabels(true);
+        guiScale.setToolTipText(Messages.getString("CommonSettingsDialog.guiScaleTT"));
+        guiScale.setPreferredSize(new Dimension(UIUtil.scaleForGUI(320), guiScale.getPreferredSize().height));
+
+        JPanel control = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        control.setOpaque(false);
+        control.add(guiScale);
+        return control;
+    }
+
+    private JButton createUserFilesHelpButton() {
+        String title = Messages.getString("UserDirHelpDialog.title");
+        JButton button = applicationIconButton("btnUserDirHelp", 0xE887, title);
+        configureUserFilesHelpButton(button, Configuration.docsDir(),
+              documentUrl -> new HelpDialog(title, documentUrl, this).setVisible(true));
+        return button;
+    }
+
+    static void configureUserFilesHelpButton(JButton button, File docsDirectory, Consumer<URL> helpAction) {
+        Optional<File> document = resolveUserFilesHelpDocument(docsDirectory);
+        if (document.isEmpty()) {
+            disableUserFilesHelpButton(button);
+            logger.error("Could not find the user data directory help file under {}", docsDirectory);
+            return;
+        }
+
+        File resolvedDocument = document.get();
+        try {
+            URL documentUrl = resolvedDocument.toURI().toURL();
+            button.addActionListener(e -> helpAction.accept(documentUrl));
+        } catch (MalformedURLException exception) {
+            disableUserFilesHelpButton(button);
+            logger.error(exception, "Could not open the user data directory help file at {}", resolvedDocument);
+        }
+    }
+
+    private static Optional<File> resolveUserFilesHelpDocument(File docsDirectory) {
+        File megaMekDocument = new File(docsDirectory, "Customization/UserDir/UserDirHelp.html");
+        if (megaMekDocument.isFile()) {
+            return Optional.of(megaMekDocument);
+        }
+
+        File mekHqDocument = new File(docsDirectory, "Customization/MekHQ/UserDirHelp.html");
+        return mekHqDocument.isFile() ? Optional.of(mekHqDocument) : Optional.empty();
+    }
+
+    private static void disableUserFilesHelpButton(JButton button) {
+        String unavailableMessage = Messages.getString("CommonSettingsDialog.userDir.helpUnavailable");
+        button.setEnabled(false);
+        button.setToolTipText(unavailableMessage);
+        button.getAccessibleContext().setAccessibleDescription(unavailableMessage);
+    }
+
+    static JPanel applicationPathControl(JTextField field, JButton... buttons) {
+        int gap = UIUtil.scaleForGUI(6);
+        Dimension buttonSize = new Dimension(field.getPreferredSize().height, field.getPreferredSize().height);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
+        buttonPanel.setOpaque(false);
+        for (int index = 0; index < buttons.length; index++) {
+            JButton button = buttons[index];
+            button.setPreferredSize(buttonSize);
+            button.setMinimumSize(buttonSize);
+            button.setMaximumSize(buttonSize);
+            if (index > 0) {
+                buttonPanel.add(Box.createHorizontalStrut(gap));
+            }
+            buttonPanel.add(button);
+        }
+
+        JPanel control = new JPanel(new BorderLayout(gap, 0));
+        control.setOpaque(false);
+        control.add(field, BorderLayout.CENTER);
+        control.add(buttonPanel, BorderLayout.LINE_END);
+        return control;
     }
 
     private static void collectColourButtons(Component component, List<ColourSelectorButton> colourButtons) {

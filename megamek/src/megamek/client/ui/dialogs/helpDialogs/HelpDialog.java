@@ -32,6 +32,8 @@
  */
 package megamek.client.ui.dialogs.helpDialogs;
 
+import java.awt.Dialog.ModalityType;
+import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.net.URL;
 import javax.swing.JComponent;
@@ -62,7 +64,11 @@ public class HelpDialog extends JDialog {
     private static final int HEIGHT = 600;
 
     public HelpDialog(String title, URL helpURL, JFrame parent) {
-        super(parent, title, true);
+        this(title, helpURL, (Window) parent);
+    }
+
+    public HelpDialog(String title, URL helpURL, Window parent) {
+        super(parent, title, ModalityType.APPLICATION_MODAL);
 
         JEditorPane mainView = new JEditorPane();
         mainView.setEditable(false);
@@ -98,6 +104,6 @@ public class HelpDialog extends JDialog {
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(WIDTH, HEIGHT);
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(parent);
     }
 }

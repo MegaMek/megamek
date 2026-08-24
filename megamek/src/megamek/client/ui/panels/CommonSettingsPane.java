@@ -75,11 +75,11 @@ import megamek.common.Configuration;
 public class CommonSettingsPane extends JPanel {
     private static final int START_HEIGHT = 800;
     private static final int HEADER_IMAGE_SIZE = 80;
-    private static final int DETAILS_ICON = 0xE88E;
+    private static final int IMPORTANT_ICON = 0xE002;
     private static final int ADVANCED_ICON = 0xE8B8;
     private static final SettingsTextProvider TEXT = SettingsTextProvider.megaMek();
-    private static final SettingsBadge DETAILS_BADGE = new SettingsBadge(DETAILS_ICON, null,
-          getString("CommonSettingsDialog.legend.details"));
+    private static final SettingsBadge IMPORTANT_BADGE = new SettingsBadge(IMPORTANT_ICON, null,
+          getString("CommonSettingsDialog.legend.important"));
     private static final SettingsBadge ADVANCED_BADGE = new SettingsBadge(ADVANCED_ICON, null,
           getString("CommonSettingsDialog.legend.advanced"));
     private static final Map<String, String> PAGE_FACTION_LOGOS = Map.ofEntries(
@@ -139,9 +139,6 @@ public class CommonSettingsPane extends JPanel {
         for (OptionSection section : page.sections()) {
             List<String> aliases = collectSearchAliases(section.content());
             List<SettingsBadge> badges = new ArrayList<>();
-            if (containsHelpText(section.content())) {
-                badges.add(DETAILS_BADGE);
-            }
             if (section.advanced()) {
                 badges.add(ADVANCED_BADGE);
             }
@@ -155,7 +152,7 @@ public class CommonSettingsPane extends JPanel {
     }
 
     public static List<SettingsBadge> legendEntries() {
-        return List.of(DETAILS_BADGE, ADVANCED_BADGE);
+        return List.of(IMPORTANT_BADGE, ADVANCED_BADGE);
     }
 
     @Override

@@ -50,9 +50,13 @@ import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.settings.CollapsibleSectionPanel;
+import megamek.client.ui.settings.SettingsBadge;
+import megamek.client.ui.settings.SettingsCheckBox;
 import megamek.client.ui.settings.SettingsNavigationPanel;
 import megamek.client.ui.settings.SettingsPagePanel;
+import megamek.client.ui.settings.SettingsTextProvider;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
 import org.junit.jupiter.api.Test;
@@ -100,16 +104,70 @@ class CommonSettingsPaneTest {
                               new CommonSettingsPane.OptionSection("display", "Display", "Board display", detailed,
                                     false),
                               new CommonSettingsPane.OptionSection("controls", "Controls", "Board controls",
-                                    new JPanel(), false)))));
+                                new JPanel(), true)))));
 
             List<CollapsibleSectionPanel> sections = findSections(pane);
             assertEquals(2, sections.size());
             assertFalse(sections.get(0).isExpanded());
             assertFalse(sections.get(1).isExpanded());
+            assertTrue(findComponent(pane, SettingsPagePanel.class).shouldShowDetailsPanel());
+            assertEquals("Display", sectionAccessibleName(sections.get(0)));
+            SettingsBadge advancedBadge = CommonSettingsPane.legendEntries().stream()
+                  .filter(badge -> badge.codePoint() == 0xE8B8)
+                  .findFirst()
+                  .orElseThrow();
+            assertTrue(sectionAccessibleName(sections.get(1)).contains(advancedBadge.toHtml()));
             assertTrue(pane.getPreferredSize().width >= UIUtil.scaleForGUI(
                   SettingsNavigationPanel.DEFAULT_NAVIGATION_WIDTH + SettingsPagePanel.DEFAULT_MAXIMUM_PAGE_WIDTH));
             assertTrue(pane.getPreferredSize().height >= UIUtil.scaleForGUI(800));
-            assertEquals(2, CommonSettingsPane.legendEntries().size());
+        });
+    }
+
+    @Test
+    void usesStandardWidthForBehaviorPageAndPaneFloor() throws Exception {
+        runOnEdt(() -> {
+            CommonSettingsPane behaviorPane = new CommonSettingsPane(List.of(
+                  new CommonSettingsPane.OptionPage("main.behavior", List.of("Main", "Behavior"),
+                        "Behavior", List.of(new CommonSettingsPane.OptionSection(
+                              "behavior", "Behavior", "Behavior settings", new JPanel(), false)))));
+            SettingsPagePanel behaviorPage = findComponent(behaviorPane, SettingsPagePanel.class);
+            CollapsibleSectionPanel behaviorSection = findSections(behaviorPage).getFirst();
+            int standardSectionWidth = UIUtil.scaleForGUI(SettingsPagePanel.DEFAULT_SECTION_STACK_WIDTH);
+            int standardPageWidth = UIUtil.scaleForGUI(SettingsPagePanel.DEFAULT_MAXIMUM_PAGE_WIDTH);
+            int standardPaneWidth = UIUtil.scaleForGUI(SettingsNavigationPanel.DEFAULT_NAVIGATION_WIDTH)
+                  + standardPageWidth;
+            int widenedPaneWidth = UIUtil.scaleForGUI(SettingsNavigationPanel.DEFAULT_NAVIGATION_WIDTH)
+                  + UIUtil.scaleForGUI(SettingsPagePanel.DEFAULT_MAXIMUM_PAGE_WIDTH + 100);
+
+            assertEquals(standardSectionWidth, behaviorSection.getParent().getPreferredSize().width);
+            assertEquals(standardSectionWidth, behaviorPage.getPreferredSize().width);
+            assertEquals(standardPaneWidth, behaviorPane.getPreferredSize().width);
+            assertTrue(behaviorPane.getPreferredSize().width < widenedPaneWidth);
+        });
+    }
+
+    @Test
+    void legendExplainsImportantAndAdvancedMarkers() {
+        List<SettingsBadge> entries = CommonSettingsPane.legendEntries();
+
+        assertEquals(List.of(0xE002, 0xE8B8), entries.stream().map(SettingsBadge::codePoint).toList());
+        assertEquals(Messages.getString("CommonSettingsDialog.legend.important"), entries.get(0).description());
+        assertEquals(Messages.getString("CommonSettingsDialog.legend.advanced"), entries.get(1).description());
+    }
+
+    @Test
+    void settingsHelpProviderMakesOptionDetailsEligible() throws Exception {
+        runOnEdt(() -> {
+            SettingsBadge importantBadge = CommonSettingsPane.legendEntries().getFirst();
+            SettingsCheckBox showIpAddresses = new SettingsCheckBox(SettingsTextProvider.megaMek(),
+                  "CommonSettingsDialog.showIPAddressesInChat", List.of(importantBadge));
+            JPanel main = new JPanel();
+            main.add(showIpAddresses);
+            CommonSettingsPane pane = pane(main, new JPanel());
+
+            assertTrue(findComponent(pane, SettingsPagePanel.class).shouldShowDetailsPanel());
+            assertEquals(Messages.getString("CommonSettingsDialog.showIPAddressesInChat.tooltip"),
+                  showIpAddresses.getSettingsHelpText());
         });
     }
 
@@ -159,6 +217,39 @@ class CommonSettingsPaneTest {
               .orElseThrow(() -> new AssertionError("No " + type.getSimpleName() + " named " + name));
     }
 
+    private static <T extends Component> T findComponent(Container root, Class<T> type) {
+        if (type.isInstance(root)) {
+            return type.cast(root);
+        }
+        for (Component child : root.getComponents()) {
+            if (type.isInstance(child)) {
+                return type.cast(child);
+            }
+            if (child instanceof Container container) {
+                Optional<T> result = findComponentOptional(container, type);
+                if (result.isPresent()) {
+                    return result.get();
+                }
+            }
+        }
+        throw new AssertionError("No " + type.getSimpleName());
+    }
+
+    private static <T extends Component> Optional<T> findComponentOptional(Container root, Class<T> type) {
+        for (Component child : root.getComponents()) {
+            if (type.isInstance(child)) {
+                return Optional.of(type.cast(child));
+            }
+            if (child instanceof Container container) {
+                Optional<T> result = findComponentOptional(container, type);
+                if (result.isPresent()) {
+                    return result;
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
     private static <T extends Component> Optional<T> findComponentOptional(Container root, String name,
           Class<T> type) {
         for (Component child : root.getComponents()) {
@@ -186,6 +277,10 @@ class CommonSettingsPaneTest {
             }
         }
         return sections;
+    }
+
+    private static String sectionAccessibleName(CollapsibleSectionPanel section) {
+        return section.getComponent(0).getAccessibleContext().getAccessibleName();
     }
 
     private static void runOnEdt(Runnable test) throws Exception {

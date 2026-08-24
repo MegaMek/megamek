@@ -55,8 +55,8 @@ import megamek.client.ui.util.UIUtil;
  *   <li>{@link #addRow(JComponent, JComponent)} for one {@code label | control} setting.</li>
  *   <li>{@link #addRowGrid(int, JComponent...)} for several {@code label | control} settings per row.</li>
  *   <li>{@link #addComponentGrid(int, JComponent...)} for arbitrary cells that keep their natural widths.</li>
- *   <li>{@link #addEqualWidthComponentGrid(int, JComponent...)} when every cell is a complete setting or composite
- *       panel and all cells must have the same width.</li>
+ *   <li>{@link #addEqualWidthComponentGrid(int, JComponent...)} for balanced columns whose cells may be alternating
+ *       labels and controls or complete setting panels.</li>
  *   <li>{@link #addFullWidthComponent(JComponent)} for content that must span the complete form.</li>
  * </ul>
  *
@@ -65,14 +65,15 @@ import megamek.client.ui.util.UIUtil;
  * addCheckBoxGrid(2):            [checkbox + text] | [checkbox + text]
  * addRow:                        label             | control
  * addRowGrid(2):                 label | control   | label | control
- * addEqualWidthComponentGrid(2): [complete option] | [complete option]
+ * addEqualWidthComponentGrid(2): [ label or option ] | [control or option]
  * addFullWidthComponent:         [             full-width content             ]
  * }</pre>
  *
  * <p>A Swing {@link JCheckBox} already contains its box and text; it is one component. A composite option panel can
- * similarly contain a label and control while remaining one component from this form's perspective. Prefer
- * {@code addRow} or {@code addRowGrid} for separately constructed labels and controls because those methods associate
- * {@link JLabel labels} with their controls for accessibility.</p>
+ * similarly contain a label and control while remaining one component from this form's perspective. Use
+ * {@code addRow} or {@code addRowGrid} for fixed-label/flexible-control forms. Balanced forms may place separate labels
+ * and controls in {@code addEqualWidthComponentGrid}, but callers must associate each {@link JLabel} with its control
+ * for accessibility.</p>
  */
 public class SettingsFormPanel extends JPanel {
     public static final int DEFAULT_LABEL_WIDTH = 300;
@@ -181,19 +182,24 @@ public class SettingsFormPanel extends JPanel {
         finishGrid(firstRow, components.length, columnCount);
     }
 
-    /**
-     * Adds arbitrary components in row-major order after assigning every component the same preferred width.
-     *
-     * <p>Use this when each component is one complete setting or composite option panel and the visual columns must be
-     * equal. A configured label width becomes the shared preferred cell width, allowing grids in separate sections to
-     * align without a long option widening only its own section. Without a configured label width, the widest component
-     * determines the shared width. Every column receives equal layout weight and divides any extra available width.
-     * This method changes the supplied components' preferred widths. Callers must wrap or otherwise adapt content that
-     * is naturally wider than one configured cell. For separate label/control pairs, use
-     * {@link #addRowGrid(int, JComponent...)}.</p>
-     *
-     * @param columnCount number of equal-width components per row
-     * @param components  complete settings or composite panels to place in row-major order
+     /**
+      * Adds arbitrary components in row-major order after assigning every component the same preferred and minimum
+      * widths.
+      *
+      * <p>Use this when visual columns must be equal. A cell may be a complete setting or composite option panel, or
+      * callers may alternate separate labels and controls to create balanced form rows. A configured label width becomes
+      * the shared preferred cell width, allowing grids in separate sections to align without a long option widening only
+      * its own section. Without a configured label width, the widest component determines the shared width. The widest
+      * effective minimum, capped at the shared preferred width, becomes every cell's minimum so constrained columns
+      * remain balanced. The layout also compensates for components such as column-based text fields that recompute their
+      * preferred width. Every column receives equal layout weight and divides any extra available width. This method
+      * changes the supplied components' preferred and minimum widths. Callers must wrap or otherwise adapt content that
+      * is naturally wider than one configured cell. Unlike {@link #addRow(JComponent, JComponent)}, this method does not
+      * infer label/control roles; callers placing a {@link JLabel} beside a control must call
+      * {@link JLabel#setLabelFor(java.awt.Component)}.</p>
+      *
+      * @param columnCount number of equal-width components per row
+      * @param components  balanced labels, controls, complete settings, or composite panels in row-major order
      */
     public void addEqualWidthComponentGrid(int columnCount, JComponent... components) {
         if (columnCount <= 1) {
@@ -202,16 +208,21 @@ public class SettingsFormPanel extends JPanel {
         }
 
         int cellWidth = setUniformPreferredWidth(components);
+        int[] horizontalPadding = horizontalPadding(cellWidth, components);
+        int minimumCellWidth = setUniformMinimumWidth(cellWidth, horizontalPadding, components);
         int rowCount = (components.length + columnCount - 1) / columnCount;
         int firstRow = row;
         for (int index = 0; index < rowCount * columnCount; index++) {
             int column = index % columnCount;
             JComponent component = index < components.length
                   ? components[index]
-                  : equalWidthFiller(cellWidth);
+                : equalWidthFiller(cellWidth, minimumCellWidth);
             GridBagConstraints layout = gridCellConstraints(firstRow + index / columnCount, column, columnCount);
             layout.weightx = 1.0;
             layout.fill = GridBagConstraints.HORIZONTAL;
+            if (index < horizontalPadding.length) {
+                layout.ipadx = horizontalPadding[index];
+            }
             add(component, layout);
         }
         row += rowCount;
@@ -231,10 +242,36 @@ public class SettingsFormPanel extends JPanel {
         return width;
     }
 
-    private JPanel equalWidthFiller(int width) {
+    private int[] horizontalPadding(int cellWidth, JComponent... components) {
+        int[] padding = new int[components.length];
+        for (int index = 0; index < components.length; index++) {
+            padding[index] = Math.max(0, cellWidth - components[index].getPreferredSize().width);
+        }
+        return padding;
+    }
+
+    private int setUniformMinimumWidth(int cellWidth, int[] horizontalPadding, JComponent... components) {
+        int minimumWidth = 0;
+        for (int index = 0; index < components.length; index++) {
+            minimumWidth = Math.max(minimumWidth, components[index].getMinimumSize().width);
+            minimumWidth = Math.max(minimumWidth, horizontalPadding[index]);
+        }
+        minimumWidth = Math.min(minimumWidth, cellWidth);
+        for (int index = 0; index < components.length; index++) {
+            JComponent component = components[index];
+            Dimension minimumSize = component.getMinimumSize();
+            int componentMinimumWidth = Math.max(0, minimumWidth - horizontalPadding[index]);
+            component.setMinimumSize(new Dimension(componentMinimumWidth, minimumSize.height));
+        }
+        return minimumWidth;
+    }
+
+    private JPanel equalWidthFiller(int preferredWidth, int minimumWidth) {
         JPanel filler = new JPanel();
         filler.setOpaque(false);
-        filler.setPreferredSize(new Dimension(width, 0));
+        int height = UIUtil.scaleForGUI(1);
+        filler.setPreferredSize(new Dimension(preferredWidth, height));
+        filler.setMinimumSize(new Dimension(minimumWidth, height));
         return filler;
     }
 

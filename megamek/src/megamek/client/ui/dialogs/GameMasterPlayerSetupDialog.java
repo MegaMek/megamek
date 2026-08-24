@@ -41,6 +41,7 @@ import java.awt.event.KeyEvent;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -56,7 +57,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
-import megamek.common.Team;
 import megamek.common.annotations.Nullable;
 import megamek.common.interfaces.IStartingPositions;
 import megamek.logging.MMLogger;
@@ -87,6 +87,24 @@ public class GameMasterPlayerSetupDialog extends JDialog {
     private final JComboBox<TeamChoice> teamChooser = new JComboBox<>();
     private final JComboBox<ZoneChoice> zoneChooser = new JComboBox<>();
 
+    /** Says whether what is on screen can be applied, and why not when it cannot. */
+    private final JLabel statusLabel = new JLabel();
+
+    private final JButton applyButton = new JButton(Messages.getString("GameMasterPlayerSetupDialog.apply"));
+
+    /**
+     * The two ways of giving the player a force, offered here so the job is done in one place and in an order that
+     * works: they stay switched off until the setup has been applied, because units handed to somebody who cannot
+     * deploy yet are stranded rather than delayed.
+     */
+    private final JButton reinforceFromFileButton =
+          new JButton(Messages.getString("CommonMenuBar.fileUnitsReinforce"));
+    private final JButton reinforceFromGeneratorButton =
+          new JButton(Messages.getString("CommonMenuBar.fileUnitsReinforceRAT"));
+
+    /** The player whose setup has been applied, so reinforcing them is now safe. Cleared by choosing another. */
+    private int playerReadyForUnits = Player.PLAYER_NONE;
+
     /** One player offered in the chooser, named rather than numbered. */
     private record PlayerChoice(int playerId, String playerName) {
         @Override
@@ -95,13 +113,41 @@ public class GameMasterPlayerSetupDialog extends JDialog {
         }
     }
 
-    /** One team offered in the chooser. */
-    private record TeamChoice(int teamId) {
+    /**
+     * One team offered in the chooser, plus the choice of starting a fresh one.
+     *
+     * <p>{@link #NEW_TEAM} is not a team; it stands for "whichever team nobody is using yet" and is worked out when
+     * Apply is pressed, so a gamemaster splitting people up does not have to remember which numbers are taken.</p>
+     */
+    private record TeamChoice(int teamId, List<String> membersOnIt) {
+        /** Stands for the first team nobody is on, resolved when the change is applied. */
+        private static final int NEW_TEAM = Integer.MIN_VALUE;
+
+        /** @return a choice for the given team, with nobody listed on it */
+        private static TeamChoice of(int teamId) {
+            return new TeamChoice(teamId, List.of());
+        }
+
+        /** A choice is the same team whoever happened to be on it when the label was built. */
+        @Override
+        public boolean equals(Object other) {
+            return (other instanceof TeamChoice otherChoice) && (otherChoice.teamId == teamId);
+        }
+
+        @Override
+        public int hashCode() {
+            return Integer.hashCode(teamId);
+        }
+
         @Override
         public String toString() {
-            return (teamId == Player.TEAM_UNASSIGNED)
+            if (teamId == NEW_TEAM) {
+                return Messages.getString("GameMasterPlayerSetupDialog.newTeam");
+            }
+            String name = (teamId == Player.TEAM_UNASSIGNED)
                   ? Messages.getString("GameMasterPlayerSetupDialog.noTeam")
-                  : Messages.getString("GameMasterPlayerSetupDialog.team", teamId);
+                  : Player.TEAM_NAMES[teamId];
+            return membersOnIt.isEmpty() ? name : name + " - " + String.join(", ", membersOnIt);
         }
     }
 
@@ -143,14 +189,18 @@ public class GameMasterPlayerSetupDialog extends JDialog {
         LOGGER.info("[GMPlayerSetup] offering to set up {} player(s): {}", offered.size(), offered);
         // the teams that exist, plus the one a player sits on before they are given any: a gamemaster taking someone
         // back out of the game needs the same list as one putting them in
-        teamChooser.addItem(new TeamChoice(Player.TEAM_UNASSIGNED));
-        for (Team team : clientGUI.getClient().getGame().getTeams()) {
-            teamChooser.addItem(new TeamChoice(team.getId()));
+        teamChooser.addItem(TeamChoice.of(Player.TEAM_UNASSIGNED));
+        for (int teamId = 0; teamId < Player.TEAM_NAMES.length; teamId++) {
+            teamChooser.addItem(new TeamChoice(teamId, membersOf(teamId)));
+        }
+        if (firstUnusedTeam() != Player.TEAM_UNASSIGNED) {
+            teamChooser.addItem(TeamChoice.of(TeamChoice.NEW_TEAM));
         }
         for (int zone = 0; zone < IStartingPositions.START_LOCATION_NAMES.length; zone++) {
             zoneChooser.addItem(new ZoneChoice(zone, IStartingPositions.START_LOCATION_NAMES[zone]));
         }
         playerChooser.addActionListener(event -> loadFromChosenPlayer());
+        teamChooser.addActionListener(event -> refreshLegality());
 
         int rowPadding = UIUtil.scaleForGUI(ROW_PADDING);
         JPanel fields = new JPanel(new GridBagLayout());
@@ -168,11 +218,17 @@ public class GameMasterPlayerSetupDialog extends JDialog {
         constraints.gridx = 0;
         constraints.gridwidth = 2;
         fields.add(new JLabel(Messages.getString("GameMasterPlayerSetupDialog.whenApplied")), constraints);
+        constraints.gridy = 4;
+        fields.add(statusLabel, constraints);
         constraints.gridwidth = 1;
 
         getContentPane().setLayout(new BorderLayout());
+        JPanel below = new JPanel(new BorderLayout());
+        below.add(reinforcePanel(), BorderLayout.PAGE_START);
+        below.add(buttonPanel(), BorderLayout.PAGE_END);
+
         getContentPane().add(fields, BorderLayout.CENTER);
-        getContentPane().add(buttonPanel(), BorderLayout.PAGE_END);
+        getContentPane().add(below, BorderLayout.PAGE_END);
 
         getRootPane().registerKeyboardAction(event -> dispose(),
               KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
@@ -192,8 +248,37 @@ public class GameMasterPlayerSetupDialog extends JDialog {
         fields.add(control, constraints);
     }
 
+    /** The two reinforcement buttons, switched off until the player above them has been set up. */
+    private JPanel reinforcePanel() {
+        reinforceFromFileButton.addActionListener(event -> reinforce(clientGUI::reinforceFromFile));
+        reinforceFromGeneratorButton.addActionListener(event -> reinforce(this::openUnitGeneratorFor));
+
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panel.add(reinforceFromFileButton);
+        panel.add(reinforceFromGeneratorButton);
+        return panel;
+    }
+
+    /**
+     * Hands the chosen player over to one of the reinforcement dialogs.
+     *
+     * @param reinforcement What to do with the player
+     */
+    private void reinforce(Consumer<Player> reinforcement) {
+        Player player = chosenPlayer();
+        if (player != null) {
+            LOGGER.info("[GMPlayerSetup] reinforcing {}", player.getName());
+            reinforcement.accept(player);
+        }
+    }
+
+    /** Opens the unit generator already pointed at the given player. */
+    private void openUnitGeneratorFor(Player player) {
+        clientGUI.getRandomArmyDialog().setPlayerFrom(player);
+        clientGUI.getRandomArmyDialog().setVisible(true);
+    }
+
     private JPanel buttonPanel() {
-        JButton applyButton = new JButton(Messages.getString("GameMasterPlayerSetupDialog.apply"));
         applyButton.addActionListener(event -> apply());
         JButton closeButton = new JButton(Messages.getString("Close"));
         closeButton.addActionListener(event -> dispose());
@@ -215,13 +300,119 @@ public class GameMasterPlayerSetupDialog extends JDialog {
         if (player == null) {
             return;
         }
-        teamChooser.setSelectedItem(new TeamChoice(player.getTeam()));
+        if (player.getId() != playerReadyForUnits) {
+            playerReadyForUnits = Player.PLAYER_NONE;
+        }
+        teamChooser.setSelectedItem(TeamChoice.of(player.getTeam()));
         if (teamChooser.getSelectedIndex() < 0) {
             teamChooser.setSelectedIndex(0);
         }
         int zone = player.getStartingPos();
         zoneChooser.setSelectedIndex(
               ((zone >= 0) && (zone < IStartingPositions.START_LOCATION_NAMES.length)) ? zone : 0);
+        refreshLegality();
+    }
+
+    /**
+     * Says whether the choices on screen can be applied, and turns Apply off while they cannot.
+     *
+     * <p>The server refuses some of these outright and the rest of them end a game, and neither is something to find
+     * out after pressing a button.</p>
+     */
+    private void refreshLegality() {
+        String problem = problemWithChoices();
+        applyButton.setEnabled(problem == null);
+        statusLabel.setText((problem == null)
+              ? Messages.getString("GameMasterPlayerSetupDialog.ready")
+              : Messages.getString("GameMasterPlayerSetupDialog.refused", problem));
+
+        Player player = chosenPlayer();
+        boolean readyForUnits = (player != null) && (player.getId() == playerReadyForUnits);
+        reinforceFromFileButton.setEnabled(readyForUnits);
+        reinforceFromGeneratorButton.setEnabled(readyForUnits);
+        String tip = readyForUnits
+              ? null
+              : Messages.getString("GameMasterPlayerSetupDialog.reinforce.notYet");
+        reinforceFromFileButton.setToolTipText(tip);
+        reinforceFromGeneratorButton.setToolTipText(tip);
+    }
+
+    /**
+     * @return why the chosen combination cannot be applied, or {@code null} when it can
+     */
+    private String problemWithChoices() {
+        Player player = chosenPlayer();
+        TeamChoice team = (TeamChoice) teamChooser.getSelectedItem();
+        if ((player == null) || (team == null)) {
+            return null;
+        }
+        int chosenTeam = resolveTeam(team);
+
+        // the server refuses this one, so offering it only produces a message nobody asked for
+        boolean holdsUnits = !clientGUI.getClient().getGame().getPlayerEntities(player, false).isEmpty();
+        if ((chosenTeam == Player.TEAM_UNASSIGNED) && holdsUnits) {
+            return Messages.getString("GameMasterPlayerSetupDialog.refused.unassignedWithUnits", player.getName());
+        }
+        if (wouldLeaveOneTeam(player, chosenTeam)) {
+            return Messages.getString("GameMasterPlayerSetupDialog.refused.oneTeamLeft");
+        }
+        return null;
+    }
+
+    /**
+     * Whether the change would leave everybody who is still playing on the same team.
+     *
+     * <p>A game with nobody left to fight is over, and the victory check runs immediately after a team change is
+     * applied - so this would end the game rather than set somebody up in it.</p>
+     *
+     * @param player     The player being moved
+     * @param chosenTeam The team they would end up on
+     *
+     * @return {@code true} when no opposing team would remain
+     */
+    private boolean wouldLeaveOneTeam(Player player, int chosenTeam) {
+        if ((chosenTeam == Player.TEAM_UNASSIGNED) || (chosenTeam == Player.TEAM_NONE)) {
+            // lone wolves are everybody's enemy, so this cannot empty the board of opposition
+            return false;
+        }
+        for (Player other : clientGUI.getClient().getGame().getPlayersList()) {
+            boolean isTheOneMoving = other.getId() == player.getId();
+            boolean isPlaying = !other.isGhost() && (other.getTeam() != Player.TEAM_UNASSIGNED);
+            if (!isTheOneMoving && isPlaying && (other.getTeam() != chosenTeam)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** @return the names of the players already on the given team, in player order */
+    private List<String> membersOf(int teamId) {
+        return clientGUI.getClient()
+              .getGame()
+              .getPlayersList()
+              .stream()
+              .filter(player -> player.getTeam() == teamId)
+              .map(Player::getName)
+              .toList();
+    }
+
+    /**
+     * @return the lowest numbered team that nobody is on, or {@link Player#TEAM_UNASSIGNED} when every team in the
+     *       rules is already in use
+     */
+    private int firstUnusedTeam() {
+        for (int teamId = Player.TEAM_NONE + 1; teamId < Player.TEAM_NAMES.length; teamId++) {
+            final int teamBeingTested = teamId;
+            boolean anybodyOnIt = clientGUI.getClient()
+                  .getGame()
+                  .getPlayersList()
+                  .stream()
+                  .anyMatch(player -> player.getTeam() == teamBeingTested);
+            if (!anybodyOnIt) {
+                return teamId;
+            }
+        }
+        return Player.TEAM_UNASSIGNED;
     }
 
     /**
@@ -260,12 +451,13 @@ public class GameMasterPlayerSetupDialog extends JDialog {
         }
         TeamChoice team = (TeamChoice) teamChooser.getSelectedItem();
         ZoneChoice zone = (ZoneChoice) zoneChooser.getSelectedItem();
-        boolean teamChanged = (team != null) && (team.teamId() != player.getTeam());
+        int chosenTeamId = (team == null) ? player.getTeam() : resolveTeam(team);
+        boolean teamChanged = chosenTeamId != player.getTeam();
         boolean zoneChanged = (zone != null) && (zone.zoneId() != player.getStartingPos());
 
         if (teamChanged) {
-            LOGGER.info("[GMPlayerSetup] moving {} to team {}", player.getName(), team.teamId());
-            clientGUI.getClient().sendChat("/changeTeam playerID=" + player.getId() + " teamID=" + team.teamId());
+            LOGGER.info("[GMPlayerSetup] moving {} to team {}", player.getName(), chosenTeamId);
+            clientGUI.getClient().sendChat("/changeTeam playerID=" + player.getId() + " teamID=" + chosenTeamId);
         }
         if (zoneChanged) {
             LOGGER.info("[GMPlayerSetup] setting the deployment zone of {} to {}", player.getName(), zone.zoneName());
@@ -275,8 +467,18 @@ public class GameMasterPlayerSetupDialog extends JDialog {
         if (!teamChanged && !zoneChanged) {
             LOGGER.info("[GMPlayerSetup] nothing to change for {}", player.getName());
         }
-        // closed either way: leaving it open after a change has been sent reads as nothing having happened
-        dispose();
+        // the dialog stays open so the force can be handed over straight away, which is the rest of the same job
+        playerReadyForUnits = player.getId();
+        refreshLegality();
+    }
+
+    /**
+     * @param team The team chosen in the chooser
+     *
+     * @return the team to send, turning the "new team" choice into a real team number
+     */
+    private int resolveTeam(TeamChoice team) {
+        return (team.teamId() == TeamChoice.NEW_TEAM) ? firstUnusedTeam() : team.teamId();
     }
 
     /** @return the deployment zones offered, for tests */

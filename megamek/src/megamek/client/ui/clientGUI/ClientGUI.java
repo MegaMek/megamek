@@ -2694,6 +2694,18 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
+     * Loads a unit file onto a player as reinforcements, arriving next round.
+     *
+     * <p>Public so that a gamemaster tool which already knows which player it is setting up can send units to them
+     * without asking again in a second dialog.</p>
+     *
+     * @param player The player the units are for
+     */
+    public void reinforceFromFile(Player player) {
+        loadListFile(player, true);
+    }
+
+    /**
      * Allow the player to select a MegaMek Unit List file to load. The
      * <code>Entity</code>s in the file will replace any that the player has
      * already selected. As such, this method should only be called in the chat lounge. The file can record damage

@@ -61,8 +61,9 @@ public class InfantrySupportGrenadeLauncherAutoInfernoWeapon extends InfantryWea
     public InfantrySupportGrenadeLauncherAutoInfernoWeapon() {
         super();
 
-        name = "Grenade Launcher (Auto) - Inferno";
+        name = "Grenade Launcher (Auto) - Incendiary";
         setInternalName("InfantryAutoGLInferno");
+        addLookupName("Grenade Launcher (Auto) - Inferno");
         addLookupName(name);
         addLookupName("Infantry Inferno Auto Grenade Launcher");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;

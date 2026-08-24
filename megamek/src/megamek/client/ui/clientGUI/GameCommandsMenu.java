@@ -39,6 +39,7 @@ import javax.swing.JPopupMenu;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.GameMasterPlayerSetupDialog;
 import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
@@ -167,6 +168,7 @@ public class GameCommandsMenu {
 
         if (localPlayerIsGameMaster) {
             popup.add(createCommandItem("GiveUpGameMaster", COMMAND_GAME_MASTER));
+            popup.add(createPlayerSetupItem());
             popup.add(GameMasterCommandMenu.createSpecialCommandsMenu(clientGUI, null));
         } else if (gameMaster != null) {
             LOGGER.debug("[GameCommands] {}: Game Master tools hidden - {} holds the role",
@@ -248,6 +250,20 @@ public class GameCommandsMenu {
      *
      * @return The created menu item
      */
+    /**
+     * Opens the dialog that puts a player on a team and gives them a deployment zone.
+     *
+     * <p>Offered here rather than on a hex, because it is about a player rather than a place. It is what brings
+     * somebody who joined a running game into it: without a team they are left out of the turn order, and without a
+     * zone their units may arrive anywhere on the map.</p>
+     */
+    private JMenuItem createPlayerSetupItem() {
+        JMenuItem item = new JMenuItem(Messages.getString("GameMasterPlayerSetupDialog.title"));
+        item.addActionListener(event ->
+              new GameMasterPlayerSetupDialog(clientGUI.getFrame(), clientGUI, null).setVisible(true));
+        return item;
+    }
+
     private JMenuItem createCommandItem(String messageKey, String chatCommand) {
         JMenuItem commandItem = new JMenuItem(Messages.getString("GameCommands." + messageKey + ".title"));
         commandItem.setToolTipText(Messages.getString("GameCommands." + messageKey + ".tooltip"));

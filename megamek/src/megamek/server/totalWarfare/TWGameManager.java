@@ -370,6 +370,7 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new CancelGameMasterCommand(server, this));
         commands.add(new GameMasterCommand(server));
         commands.add(new ChangeTeamCommand(server, this));
+        commands.add(new ChangeDeploymentZoneCommand(server, this));
         commands.add(new EndGameCommand(server, this));
         commands.add(new NuclearStrikeCommand(server, this));
         commands.add(new NuclearStrikeCustomCommand(server, this));
@@ -656,6 +657,20 @@ public class TWGameManager extends AbstractGameManager {
         player.setSingleBlind(singleBlind);
         transmitPlayerUpdate(player);
         sendServerChat(player.getName() + " set SingleBlind: " + player.getSingleBlind());
+    }
+
+    /**
+     * Sets which edge of the board a player's units arrive from.
+     *
+     * <p>The zone is read when a unit deploys, so this affects whatever has not arrived yet and leaves anything
+     * already on the board where it stands.</p>
+     *
+     * @param player       The player whose deployment zone to set
+     * @param startingPos  The zone, as an index into {@link megamek.common.interfaces.IStartingPositions}
+     */
+    public void setStartingPosition(Player player, int startingPos) {
+        player.setStartingPos(startingPos);
+        transmitPlayerUpdate(player);
     }
 
     public void setSeeAll(Player player, boolean seeAll) {

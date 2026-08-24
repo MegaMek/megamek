@@ -2702,7 +2702,11 @@ public class ClientGUI extends AbstractClientGUI
      * @param player The player the units are for
      */
     public void reinforceFromFile(Player player) {
-        loadListFile(player, true);
+        // the team check below is skipped because the caller has just set one. A team change is queued by the
+        // server and applied at the end of the round, so the player is still on no team at this instant even
+        // though they will have one before anything of theirs deploys; checking now would refuse the very case
+        // the gamemaster tools exist to handle.
+        loadListFile(player, true, false);
     }
 
     /**
@@ -2714,10 +2718,23 @@ public class ClientGUI extends AbstractClientGUI
      * @param player The player to add the units to
      */
     protected void loadListFile(Player player, boolean reinforce) {
+        loadListFile(player, reinforce, true);
+    }
+
+    /**
+     * Loads a unit file onto a player.
+     *
+     * @param player        The player to add the units to
+     * @param reinforce     Whether the units arrive as reinforcements during a game
+     * @param requireATeam  Whether to refuse a player who is on no team. A gamemaster tool that has just assigned
+     *                      one passes {@code false}, because the change does not reach the board until the end of
+     *                      the round and the player has no team yet at the moment this is called
+     */
+    protected void loadListFile(Player player, boolean reinforce, boolean requireATeam) {
         if (player != null) {
             boolean addedUnits = false;
 
-            if (reinforce && (player.getTeam() == Player.TEAM_UNASSIGNED)) {
+            if (requireATeam && reinforce && (player.getTeam() == Player.TEAM_UNASSIGNED)) {
                 addToast(ToastLevel.ERROR,
                       Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceMessage"));
                 return;

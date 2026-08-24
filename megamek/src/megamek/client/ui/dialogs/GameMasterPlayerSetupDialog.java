@@ -202,6 +202,10 @@ public class GameMasterPlayerSetupDialog extends AbstractButtonDialog {
         for (int zone = 0; zone < IStartingPositions.START_LOCATION_NAMES.length; zone++) {
             zoneChooser.addItem(new ZoneChoice(zone, IStartingPositions.START_LOCATION_NAMES[zone]));
         }
+        playerChooser.setToolTipText(Messages.getString("GameMasterPlayerSetupDialog.player.tooltip"));
+        teamChooser.setToolTipText(Messages.getString("GameMasterPlayerSetupDialog.teamLabel.tooltip"));
+        zoneChooser.setToolTipText(Messages.getString("GameMasterPlayerSetupDialog.zoneLabel.tooltip"));
+        applyButton.setToolTipText(Messages.getString("GameMasterPlayerSetupDialog.apply.tooltip"));
         playerChooser.addActionListener(event -> loadFromChosenPlayer());
         teamChooser.addActionListener(event -> refreshLegality());
 

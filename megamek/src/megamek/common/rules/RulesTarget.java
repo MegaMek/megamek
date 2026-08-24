@@ -63,8 +63,6 @@ public abstract class RulesTarget {
      */
     public int largeTargetModifier(int weightclass) {return largeTargetModifier(weightclass, false);}
 
-    ;
-
     /**
      * Alternate call for largeTargetModifier(int weightclass, boolean markedLarge) with default weightclass = 0.
      *
@@ -73,8 +71,6 @@ public abstract class RulesTarget {
      * @return the large target modifier
      */
     public int largeTargetModifier(boolean markedLarge) {return largeTargetModifier(0, markedLarge);}
-
-    ;
 
     /**
      * Do we hit the aimed location?

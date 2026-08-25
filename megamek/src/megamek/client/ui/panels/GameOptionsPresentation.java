@@ -160,7 +160,8 @@ final class GameOptionsPresentation {
               OptionsConstants.BASE_BLIND_DROP,
               OptionsConstants.BASE_REAL_BLIND_DROP,
               OptionsConstants.BASE_SET_ARTY_PLAYER_HOME_EDGE,
-              OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0);
+              OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0,
+              OptionsConstants.BASE_WALK_ON_DEPLOYMENT);
         register(BASIC, GENERAL_MATCH_SETUP, "general.matchSetup.interface",
               OptionsConstants.BASE_LOBBY_AMMO_DUMP,
               OptionsConstants.BASE_DUMPING_FROM_ROUND,
@@ -539,6 +540,7 @@ final class GameOptionsPresentation {
           int order) {
         return new PageDefinition(id, categoryId, iconGroupId, "", advanced, order);
     }
+
     private static PageDefinition directPage(String id, String iconGroupId, boolean advanced, int order) {
         return new PageDefinition(id, "", iconGroupId, "", advanced, order);
     }

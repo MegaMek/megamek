@@ -2987,10 +2987,13 @@ public class TWGameManager extends AbstractGameManager {
                 if (game.getPhase().isDeployment()) {
                     int startingPos = entity.getOwner().getStartingPos();
                     // walk-on deployment. Skip deployument for eligible units
+                    // Note: Bot does not get Walk-on deployment for now.
+                    // TODO bot walk-on deployment when enabled will remove the isBot check.
                     if (!entity.isDeployed()
                           && deploymentRound >= 0
                           && startingPos != Board.START_ANY
-                          && startingPos != Board.START_CENTER) {
+                          && startingPos != Board.START_CENTER
+                          && !entity.getOwner().isBot()) {
                         includeInPhase = false;
                     }
                 }

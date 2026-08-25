@@ -322,12 +322,7 @@ public class SBFMovementDisplay extends SBFActionPhaseDisplay {
         Map<BoardLocation, SBFMovePath> mvEnvData;
         SBFMovePath mp = new SBFMovePath(formation.getId(), formation.getPosition(), game());
 
-        int maxMP = formation.getMovement();
-        // TO:AR PG 18 - Forth Printing.
-        if (game().usesSprintingMove()) {
-            double sprintingMovementPoints = maxMP * 1.5;
-            maxMP = (int) Math.floor(sprintingMovementPoints);
-        }
+        int maxMP = SBFMovePath.maximumMovementPoints(formation, game());
 
         SBFMovePathFinder pathFinder = SBFMovePathFinder.moveEnvelopeFinder(maxMP, game());
         pathFinder.run(mp);

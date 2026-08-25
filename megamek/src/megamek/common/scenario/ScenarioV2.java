@@ -77,7 +77,7 @@ import megamek.common.jacksonAdapters.MessageDeserializer;
 import megamek.common.jacksonAdapters.TriggerDeserializer;
 import megamek.common.jacksonAdapters.VictoryDeserializer;
 import megamek.common.jacksonAdapters.dtos.GroundObjectInfo;
-import megamek.common.options.GameOptions;
+import megamek.common.options.BasicGameOptions;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.common.units.Entity;
@@ -316,7 +316,7 @@ public class ScenarioV2 implements Scenario {
     }
 
     private void parseOptions(IGame game) {
-        var gameOptions = ((GameOptions) game.getOptions());
+        var gameOptions = ((BasicGameOptions) game.getOptions());
         gameOptions.initialize();
         if (node.has(OPTIONS)) {
             JsonNode optionsNode = node.get(OPTIONS);

@@ -218,10 +218,19 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
         if (actingFormation().isEmpty() || !isMyTurn() || selectedTarget == null) {
             return;
         }
-        var attack = new SBFStandardUnitAttack(actingFormation().get().getId(),
+        SBFFormation attacker = actingFormation().get();
+        Optional<SBFFormation> target = game().getFormation(selectedTarget.getId());
+        if (target.isEmpty()) {
+            return;
+        }
+        Optional<ASRange> effectiveRange = SBFToHitData.effectiveRange(attacker, target.get(), ASRange.LONG);
+        if (effectiveRange.isEmpty()) {
+            return;
+        }
+        var attack = new SBFStandardUnitAttack(attacker.getId(),
               firingUnit,
               selectedTarget.getId(),
-              ASRange.LONG);
+              effectiveRange.get());
         plannedActions.add(attack);
         updateButtonStatus();
         updateDonePanel();
@@ -345,8 +354,15 @@ public class SBFFiringDisplay extends SBFActionPhaseDisplay implements ListSelec
             if (firingUnit >= attacker.getUnits().size() || firingUnit < 0) {
                 toHitData.addModifier(TargetRoll.IMPOSSIBLE, "Invalid Unit");
             } else {
-                toHitData = SBFToHitData.compileToHit(game(),
-                      new SBFStandardUnitAttack(attacker.getId(), firingUnit, selectedTarget.getId(), ASRange.LONG));
+                Optional<SBFFormation> target = game().getFormation(selectedTarget.getId());
+                Optional<ASRange> effectiveRange = target.flatMap(value ->
+                      SBFToHitData.effectiveRange(attacker, value, ASRange.LONG));
+                if (effectiveRange.isPresent()) {
+                    toHitData = SBFToHitData.compileToHit(game(), new SBFStandardUnitAttack(attacker.getId(),
+                          firingUnit, selectedTarget.getId(), effectiveRange.get()));
+                } else {
+                    toHitData.addModifier(TargetRoll.IMPOSSIBLE, "Target is out of range");
+                }
             }
         }
         showTargetDialog();

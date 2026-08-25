@@ -62,7 +62,7 @@ public class InfantryLaserRifleScorcherVIBlazerRifle extends InfantryWeapon {
         cost = 1500;
         bv = 1.05;
         tonnage = 0.0075;
-        infantryDamage = 0.53;
+        infantryDamage = 0.525;
         infantryRange = 4;
         shots = 10;
         bursts = 1;

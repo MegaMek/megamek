@@ -62,7 +62,7 @@ public class InfantryLaserPistolDarklightIVLaserPistol extends InfantryWeapon {
         cost = 1200;
         bv = 0.021;
         tonnage = 0.0012;
-        infantryDamage = 0.07;
+        infantryDamage = 0.021;
         infantryRange = 1;
         shots = 1;
         bursts = 1;

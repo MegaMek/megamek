@@ -59,6 +59,11 @@ public class InfantryPistolWhisper4Standard extends InfantryWeapon {
 
     public InfantryPistolWhisper4Standard() {
         super();
+        // This weapon and its other ammunition load are separate weapon types rather than one weapon with a
+        // mode. The loads have different Battle Values, and Battle Value is worked out from the weapon type
+        // before a battle starts, so a load that could be switched mid-game would leave the platoon's Battle
+        // Value undefined. Keeping them separate also matches how a platoon is built: the load is chosen when
+        // the unit is created, in the same way Inferno munitions are declared before the fight.
 
         name = "Pistol (Whisper-4 (Standard Rounds))";
         setInternalName(name);

@@ -54,8 +54,9 @@ public class InfantryPulseLaserRifleGaul extends InfantryWeapon {
     public InfantryPulseLaserRifleGaul() {
         super();
 
-        name = "Pulse Laser Rifle (Gaul)";
-        setInternalName(name);
+        name = "Pulse Laser Rifle (GAUL)";
+        setInternalName("Pulse Laser Rifle (Gaul)");
+        addLookupName(name);
         addLookupName("GAUL");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 2200;

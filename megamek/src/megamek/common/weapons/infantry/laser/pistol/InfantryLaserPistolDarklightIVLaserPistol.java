@@ -54,8 +54,9 @@ public class InfantryLaserPistolDarklightIVLaserPistol extends InfantryWeapon {
     public InfantryLaserPistolDarklightIVLaserPistol() {
         super();
 
-        name = "Laser Pistol (Darklight IV)";
-        setInternalName(name);
+        name = "Laser Pistol (Darklight IV Laser Pistol)";
+        setInternalName("Laser Pistol (Darklight IV)");
+        addLookupName(name);
         addLookupName("DARKLIGHTIV");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1200;

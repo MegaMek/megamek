@@ -53,8 +53,9 @@ public class InfantryLaserPistolAWAWilibyMk4LaserPistol extends InfantryWeapon {
     public InfantryLaserPistolAWAWilibyMk4LaserPistol() {
         super();
 
-        name = "Laser Pistol (AWA Wiliby MK4 LASER PISTOL)";
-        setInternalName(name);
+        name = "Laser Pistol (AWA Wiliby Mk4 Laser Pistol)";
+        setInternalName("Laser Pistol (AWA Wiliby MK4 LASER PISTOL)");
+        addLookupName(name);
         addLookupName("WILIBYMK4");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1500;

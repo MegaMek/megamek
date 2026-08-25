@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,8 +31,7 @@
  * affiliated with Microsoft.
  */
 
-
-package megamek.common.weapons.infantry.laser.pistol;
+package megamek.common.weapons.infantry.support.mg;
 
 import java.io.Serial;
 
@@ -45,37 +43,42 @@ import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
-
-public class InfantryLaserPistolXingShanER extends InfantryWeapon {
+/**
+ * Light machine gun from Shrapnel #22.
+ *
+ * <p>Damage and Battle Value come from the Infantry Weapons Calculator sheet, using the updated conversion
+ * formulas and feedback supplied by a CGL freelancer. Cost, mass, shots, bursts and the reload figures are
+ * from Shrapnel #22 itself.</p>
+ */
+public class InfantryMachineGunBooneMGL14A extends InfantryWeapon {
 
     @Serial
-    private static final long serialVersionUID = 1L; // Update for each unique class
+    private static final long serialVersionUID = -4899999999999904972L;
 
-    public InfantryLaserPistolXingShanER() {
+    public InfantryMachineGunBooneMGL14A() {
         super();
 
-        name = "Laser Pistol (Xing Shan ER)";
-        // The pre-normalisation spelling wrote Xing with a non-ASCII i. No unit file used it, and MegaMek
-        // source is ASCII only, so the ASCII spelling is now both the display and the internal name.
+        name = "Machine Gun (Boone MGL 14A)";
         setInternalName(name);
-        addLookupName("XingShanER");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
-        cost = 830;
-        bv = 0.21; // The bv in the image seems incorrect, adjusted to the value from the text
-        tonnage = 0.0016;
-        infantryDamage = 0.105;
-        infantryRange = 3;
-        shots = 3;
-        bursts = 1;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_9);
-
+        bv = 1.1;
+        tonnage = 0.0091;
+        ammoWeight = 0.0014;
+        ammoCost = 30;
+        infantryDamage = 0.55;
+        infantryRange = 2;
+        cost = 2500;
+        shots = 40;
+        bursts = 8;
+        crew = 1;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_22);
         techAdvancement
               .setTechBase(TechBase.IS)
-              .setTechRating(TechRating.E) // Assuming X-X-E-E simplifies to E
-              .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
-              .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
-              .setISApproximate(false, false, true, false, false)
-              .setProductionFactions(Faction.CC);
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
+              .setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, false, false, false, false)
+              .setProductionFactions(Faction.TC);
     }
 }

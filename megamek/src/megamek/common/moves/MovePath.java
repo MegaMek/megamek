@@ -422,16 +422,19 @@ public class MovePath implements Cloneable, Serializable {
                 prevStep = s;
             }
         }
-        
-        if (steps.size() > 1 && entity instanceof Mek && ((Mek) entity).countBadLegs() > 0 && Game.rulesManager instanceof CoreRulesManager) {
+
+        if (steps.size() > 1
+              && entity instanceof Mek
+              && ((Mek) entity).countBadLegs() > 0
+              && Game.rulesManager instanceof CoreRulesManager) {
             MoveStep lastStep = steps.getLast();
             MoveStep prevStep = steps.getFirst();
-            if ((lastStep.getPosition().equals(prevStep.getPosition()) 
-            || lastStep.getMovementType(true) != EntityMovementType.MOVE_WALK) 
-            && !(entity instanceof QuadMek && ((QuadMek) entity).countBadLegs() < 3)) {
+            if ((lastStep.getPosition().equals(prevStep.getPosition())
+                  || lastStep.getMovementType(true) != EntityMovementType.MOVE_WALK)
+                  && !(entity instanceof QuadMek && ((QuadMek) entity).countBadLegs() < 3)) {
                 for (MoveStep s : steps) {
-                   s.setDanger(true);
-                   s.setPastDanger(s.isPastDanger() || s.isDanger());
+                    s.setDanger(true);
+                    s.setPastDanger(s.isPastDanger() || s.isDanger());
                 }
             }
         }
@@ -472,8 +475,8 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * Perform all the possible "is this illegal" checks.
-     * Short-circuits to omit unnecessary checks once the move has been declared illegal
+     * Perform all the possible "is this illegal" checks. Short-circuits to omit unnecessary checks once the move has
+     * been declared illegal
      */
     private void performIllegalCheck(MoveStep step, Coords start, Coords land) {
         // Ensure that the appropriate steps to flee from stuck or prone were taken
@@ -483,15 +486,13 @@ public class MovePath implements Cloneable, Serializable {
                     // A stuck and prone entity has no way to get up and flee during the move path
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                     return;
-                }
-                else if (getEntity().isStuck()) {
+                } else if (getEntity().isStuck()) {
                     // A stuck entity has to jump to move during the move path
                     if (!(contains(MoveStepType.START_JUMP))) {
                         step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                         return;
                     }
-                }
-                else if (getEntity().isProne()) {
+                } else if (getEntity().isProne()) {
                     // A prone entity can flee if it succeeds in getting up during the move path
                     // The GET_UP step is cleared from the containedStepTypes when reaching this point
                     boolean emptyStepTypes = containedStepTypes.isEmpty();
@@ -505,8 +506,7 @@ public class MovePath implements Cloneable, Serializable {
                     if (emptyStepTypes) {
                         containedStepTypes.clear();
                     }
-                }
-                else {
+                } else {
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                     return;
                 }
@@ -1719,7 +1719,11 @@ public class MovePath implements Cloneable, Serializable {
     public void rotatePathfinder(final int destFacing, final boolean isManeuver, int maneuverType) {
         while (getFinalFacing() != destFacing) {
             final MoveStepType stepType = getDirection(getFinalFacing(), destFacing);
-            addStep(stepType, isManeuver, isManeuver, maneuverType);
+            if (getLastStep().isDeploying()) {
+                addStep(stepType, false, false, maneuverType);
+            } else {
+                addStep(stepType, isManeuver, isManeuver, maneuverType);
+            }
         }
     }
 

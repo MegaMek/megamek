@@ -33,6 +33,7 @@
 
 package megamek.common.weapons.infantry;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -43,7 +44,9 @@ import java.util.Enumeration;
 
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.InfantryWeaponMounted;
 import megamek.common.options.GameOptions;
+import megamek.common.units.ConvInfantry;
 import megamek.common.weapons.Weapon;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -106,6 +109,31 @@ class InfantryInfernoSRMHandlerTest {
               "Incendiary weapons convert damage to heat; modes are " + modeNames);
         assertFalse(modeNames.contains(Weapon.MODE_INFERNO),
               "Incendiary weapons carry no Inferno munitions; modes are " + modeNames);
+    }
+
+    @Test
+    @DisplayName("Every mode a platoon's mount counts can also be read back")
+    void everyCountedModeIsReadable() {
+        // An infantry mount combines the modes of its primary and secondary weapons, so it can offer modes its
+        // own type does not have. Counting with getModesCount() and then reading from the type walks off the end
+        // of the type's list, which crashed the right-click Modes menu on any platoon whose primary weapon has no
+        // modes of its own.
+        InfantryWeapon primaryWithoutModes = (InfantryWeapon) EquipmentType.get("InfantryAssaultRifle");
+        InfantryWeapon secondaryWithModes = (InfantryWeapon) EquipmentType.get(INFERNO_SRM_LAUNCHER);
+        assertNotNull(primaryWithoutModes, "The assault rifle should be registered");
+        assertNotNull(secondaryWithModes, "The Inferno SRM launcher should be registered");
+
+        ConvInfantry platoon = new ConvInfantry();
+        InfantryWeaponMounted mount = new InfantryWeaponMounted(platoon, primaryWithoutModes, secondaryWithModes);
+
+        assertTrue(mount.getModesCount() > 0,
+              "The mount should pick up the launcher's modes even though its own type has none");
+        for (int position = 0; position < mount.getModesCount(); position++) {
+            final int index = position;
+            assertNotNull(assertDoesNotThrow(() -> mount.getMode(index),
+                        "Mode " + index + " is counted, so it must be readable"),
+                  "Mode " + index + " should not be null");
+        }
     }
 
     @Test

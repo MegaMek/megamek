@@ -1817,7 +1817,10 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createModeJMenuItem(Mounted<?> mounted, int position) {
         JMenuItem item = new JMenuItem();
 
-        EquipmentMode mode = mounted.getType().getMode(position);
+        // Read from the mount, not its type. An infantry platoon's mount combines the modes of its primary and
+        // secondary weapons, so a mount can offer modes its own type does not have: reading from the type after
+        // counting with getModesCount() walks off the end of the type's list.
+        EquipmentMode mode = mounted.getMode(position);
 
         // The starred entry is the mode the equipment is already in, so it is described as a state; the rest
         // are changes the player can pick, and read as instructions.

@@ -43,6 +43,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.common.board.Coords;
 import megamek.common.jacksonAdapters.ObjectiveDeserializer.ObjectiveInfo;
+import megamek.common.equipment.ObjectiveScoringScheme;
+import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
+import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import org.junit.jupiter.api.Test;
 
 class ObjectiveDeserializerTest {
@@ -171,5 +174,70 @@ class ObjectiveDeserializerTest {
               """);
 
         assertThrows(IllegalArgumentException.class, () -> ObjectiveDeserializer.parse(node));
+    }
+
+    // --- Scoring scheme parsing (part 4: scenarios define the mission) ---
+
+    @Test
+    void testObjectiveWithoutASchemeKeepsStandard() throws Exception {
+        ObjectiveInfo info = ObjectiveDeserializer.parse(parseYaml("""
+              name: Crossroads
+              at: [ 4, 4 ]
+              """));
+        assertEquals(SchemePreset.STANDARD, info.marker().getScoringScheme().getPreset());
+    }
+
+    @Test
+    void testHoldSchemeParsesTurnsAndCounting() throws Exception {
+        ObjectiveInfo info = ObjectiveDeserializer.parse(parseYaml("""
+              name: Relay Station
+              at: [ 4, 4 ]
+              scheme: hold
+              turns: 5
+              counting: cumulative
+              """));
+        ObjectiveScoringScheme scheme = info.marker().getScoringScheme();
+        assertEquals(SchemePreset.HOLD, scheme.getPreset());
+        assertEquals(5, scheme.getThreshold());
+        assertEquals(HoldCounting.CUMULATIVE, scheme.getHoldCounting());
+    }
+
+    @Test
+    void testDefendSchemeParsesGripAndDrain() throws Exception {
+        ObjectiveInfo info = ObjectiveDeserializer.parse(parseYaml("""
+              name: Supply Dump
+              at: [ 4, 4 ]
+              scheme: defend
+              grip: 3
+              drain: 2
+              """));
+        ObjectiveScoringScheme scheme = info.marker().getScoringScheme();
+        assertEquals(SchemePreset.DEFEND, scheme.getPreset());
+        assertEquals(3, scheme.getThreshold());
+        assertEquals(2, scheme.getRatePerTurn());
+    }
+
+    @Test
+    void testCaptureSchemeParsesPointsAndRate() throws Exception {
+        ObjectiveInfo info = ObjectiveDeserializer.parse(parseYaml("""
+              name: Comm Tower
+              at: [ 4, 4 ]
+              scheme: capture
+              points: 4
+              rate: 2
+              """));
+        ObjectiveScoringScheme scheme = info.marker().getScoringScheme();
+        assertEquals(SchemePreset.CAPTURE, scheme.getPreset());
+        assertEquals(4, scheme.getThreshold());
+        assertEquals(2, scheme.getRatePerTurn());
+    }
+
+    @Test
+    void testUnknownSchemeIsRejected() {
+        assertThrows(IllegalArgumentException.class, () -> ObjectiveDeserializer.parse(parseYaml("""
+              name: Bad Point
+              at: [ 4, 4 ]
+              scheme: conquer
+              """)));
     }
 }

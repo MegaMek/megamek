@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
+import java.util.List;
 
 import megamek.common.Player;
 import megamek.common.game.Game;
@@ -239,13 +240,9 @@ class VictoryPointVictoryTest {
 
     // --- Part 4: mid-game enders (sudden death and the victory point thresholds) ---
 
-    private void enableObjectives() {
-        game.getOptions().getOption(OptionsConstants.VICTORY_USE_OBJECTIVES).setValue(true);
-    }
-
     @Test
     void testSuddenDeathEndsTheGameOnTheFirstDecidedPoint() {
-        enableObjectives();
+        enableObjectiveScoring();
         game.getOptions().getOption(OptionsConstants.VICTORY_VP_SUDDEN_DEATH).setValue(true);
         VictoryPointTracker tracker = VictoryPointTracker.getTracker(game);
         tracker.awardToTeam(1, 3, 2, "secured Objective 0512");
@@ -259,7 +256,7 @@ class VictoryPointVictoryTest {
 
     @Test
     void testSuddenDeathWaitsWhileNoPointIsDecided() {
-        enableObjectives();
+        enableObjectiveScoring();
         game.getOptions().getOption(OptionsConstants.VICTORY_VP_SUDDEN_DEATH).setValue(true);
         VictoryPointTracker.getTracker(game).awardToTeam(1, 3, 2, "per-turn control");
 
@@ -270,7 +267,7 @@ class VictoryPointVictoryTest {
 
     @Test
     void testWinThresholdEndsTheGameWhenASideReachesIt() {
-        enableObjectives();
+        enableObjectiveScoring();
         game.getOptions().getOption(OptionsConstants.VICTORY_VP_WIN_THRESHOLD).setValue(5);
         VictoryPointTracker tracker = VictoryPointTracker.getTracker(game);
         tracker.awardToTeam(1, 5, 3, "controls objectives");
@@ -284,7 +281,7 @@ class VictoryPointVictoryTest {
 
     @Test
     void testWinThresholdWaitsBelowTheScore() {
-        enableObjectives();
+        enableObjectiveScoring();
         game.getOptions().getOption(OptionsConstants.VICTORY_VP_WIN_THRESHOLD).setValue(5);
         VictoryPointTracker.getTracker(game).awardToTeam(1, 4, 3, "controls objectives");
 
@@ -296,7 +293,7 @@ class VictoryPointVictoryTest {
     @Test
     void testWinThresholdNeedsASoleLeader() {
         // both sides crossing together is not a win - the first to pull ahead at the score wins
-        enableObjectives();
+        enableObjectiveScoring();
         game.getOptions().getOption(OptionsConstants.VICTORY_VP_WIN_THRESHOLD).setValue(5);
         VictoryPointTracker tracker = VictoryPointTracker.getTracker(game);
         tracker.awardToTeam(1, 5, 3, "controls objectives");
@@ -309,7 +306,7 @@ class VictoryPointVictoryTest {
 
     @Test
     void testLossThresholdEndsTheGameWhenASideFallsToIt() {
-        enableObjectives();
+        enableObjectiveScoring();
         game.getOptions().getOption(OptionsConstants.VICTORY_VP_LOSS_THRESHOLD).setValue(3);
         VictoryPointTracker tracker = VictoryPointTracker.getTracker(game);
         tracker.awardToTeam(1, 2, 4, "holds its objectives");
@@ -352,5 +349,42 @@ class VictoryPointVictoryTest {
         game.getOptions().getOption(OptionsConstants.VICTORY_VP_SUDDEN_DEATH).setValue(false);
         game.getOptions().getOption(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT).setValue(true);
         assertTrue(VictoryPointVictory.gameHasVictoryPointResolution(game));
+    }
+
+    // --- Graded victory levels (part 4: the scenario names the magnitude of the win) ---
+
+    @Test
+    void testWinnerReceivesTheMatchingVictoryLevel() {
+        enableObjectiveScoring();
+        game.setVictoryPointLevels(List.of(
+              new VictoryPointLevel(10, "Pyrrhic victory"),
+              new VictoryPointLevel(20, "Minor victory"),
+              new VictoryPointLevel(30, "Major victory"),
+              new VictoryPointLevel(VictoryPointLevel.NO_UPPER_BOUND, "Overwhelming victory")));
+        VictoryPointTracker tracker = VictoryPointTracker.getTracker(game);
+        tracker.awardToTeam(1, 24, 8, "controls objectives");
+        tracker.awardToTeam(2, 6, 8, "controls objectives");
+        game.setCurrentRound(GAME_DURATION_ROUNDS);
+
+        VictoryResult result = new VictoryPointVictory().checkVictory(game, game.getVictoryContext());
+
+        assertTrue(result.isVictory());
+        boolean namedTheLevel = result.getReports().stream()
+              .anyMatch(report -> report.messageId == 7146);
+        assertTrue(namedTheLevel, "the winner's victory level must be reported");
+    }
+
+    @Test
+    void testUnboundedTopLevelCatchesEveryTotal() {
+        enableObjectiveScoring();
+        game.setVictoryPointLevels(List.of(
+              new VictoryPointLevel(10, "Pyrrhic victory"),
+              new VictoryPointLevel(VictoryPointLevel.NO_UPPER_BOUND, "Overwhelming victory")));
+        VictoryPointTracker.getTracker(game).awardToTeam(1, 999, 8, "controls everything");
+        game.setCurrentRound(GAME_DURATION_ROUNDS);
+
+        VictoryResult result = new VictoryPointVictory().checkVictory(game, game.getVictoryContext());
+
+        assertTrue(result.isVictory());
     }
 }

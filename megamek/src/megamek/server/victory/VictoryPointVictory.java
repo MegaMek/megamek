@@ -75,6 +75,7 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
     private static final int REPORT_SUDDEN_DEATH = 7143;
     private static final int REPORT_WIN_THRESHOLD_REACHED = 7144;
     private static final int REPORT_LOSS_THRESHOLD_REACHED = 7145;
+    private static final int REPORT_VICTORY_LEVEL = 7146;
 
     @Override
     public VictoryResult checkVictory(Game game, Map<String, Object> context) {
@@ -290,8 +291,42 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
         } else {
             LOGGER.info("[VP] Game ends by victory points; winning player ID: {}, winning team: {}",
                   result.getWinningPlayer(), result.getWinningTeam());
+            declareVictoryLevel(game, tracker, result);
         }
         return result;
+    }
+
+
+    /**
+     * Declares the winner's victory level from the scenario's graded scale, when one is defined: the first band
+     * whose bound covers the winner's final total names the victory (e.g. "Pyrrhic victory" up to 10, "Major
+     * victory" above 20). Games without a scale keep the plain result.
+     */
+    private void declareVictoryLevel(Game game, VictoryPointTracker tracker, VictoryResult result) {
+        List<VictoryPointLevel> levels = game.getVictoryPointLevels();
+        if (levels.isEmpty()) {
+            return;
+        }
+        int winnerPoints = (result.getWinningTeam() != Player.TEAM_NONE)
+              ? tracker.getTeamVictoryPoints(result.getWinningTeam())
+              : tracker.getPlayerVictoryPoints(result.getWinningPlayer());
+        String winnerName = (result.getWinningTeam() != Player.TEAM_NONE)
+              ? "Team " + result.getWinningTeam()
+              : playerDisplayName(game, result.getWinningPlayer());
+        for (VictoryPointLevel level : levels) {
+            if (winnerPoints <= level.getUpTo()) {
+                Report report = new Report(REPORT_VICTORY_LEVEL, Report.PUBLIC);
+                report.add(winnerName);
+                report.add(level.getName());
+                report.add(winnerPoints);
+                result.addReport(report);
+                LOGGER.info("[VP] {} achieves a {} ({} victory points)", winnerName, level.getName(),
+                      winnerPoints);
+                return;
+            }
+        }
+        LOGGER.warn("[VP] The winner's total of {} is above every victory level bound - no level declared; "
+              + "give the last level no upTo bound to catch every total", winnerPoints);
     }
 
     private String playerDisplayName(Game game, int playerId) {

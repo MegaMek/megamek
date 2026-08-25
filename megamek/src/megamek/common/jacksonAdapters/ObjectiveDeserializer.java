@@ -41,6 +41,8 @@ import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ObjectiveMarker;
+import megamek.common.equipment.ObjectiveScoringScheme;
+import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
 
 /**
  * Parses an objective marker (Standard Missions, Objectives) from a scenario file (V2 YAML format only). Objectives
@@ -73,6 +75,20 @@ public final class ObjectiveDeserializer {
     private static final String VICTORY_POINTS = "vp";
     private static final String DESTRUCTIBLE = "destructible";
     private static final String VARIANTS = "variants";
+    private static final String SCHEME = "scheme";
+    private static final String SCHEME_STANDARD = "standard";
+    private static final String SCHEME_RAID = "raid";
+    private static final String SCHEME_HOLD = "hold";
+    private static final String SCHEME_DEFEND = "defend";
+    private static final String SCHEME_CAPTURE = "capture";
+    private static final String HOLD_TURNS = "turns";
+    private static final String HOLD_COUNTING = "counting";
+    private static final String COUNTING_CUMULATIVE = "cumulative";
+    private static final String COUNTING_CONSECUTIVE = "consecutive";
+    private static final String DEFEND_GRIP = "grip";
+    private static final String DEFEND_DRAIN = "drain";
+    private static final String CAPTURE_POINTS = "points";
+    private static final String CAPTURE_RATE = "rate";
     private static final String VARIANT_POTENTIAL = "potential";
     private static final String VARIANT_FALSE = "false";
     private static final String VARIANT_FRAGILE = "fragile";
@@ -109,6 +125,7 @@ public final class ObjectiveDeserializer {
         if (node.has(DESTRUCTIBLE)) {
             marker.setInvulnerable(!node.get(DESTRUCTIBLE).asBoolean());
         }
+        parseScheme(marker, node);
         parseVariants(marker, node);
         if (marker.isPotential() && marker.isFalseObjective()) {
             throw new IllegalArgumentException("Objective " + marker.generalName()
@@ -134,6 +151,49 @@ public final class ObjectiveDeserializer {
         }
         throw new IllegalArgumentException("Objective " + marker.generalName()
               + " requires a position (at: or x:/y:)");
+    }
+
+    /**
+     * Reads the objective's scoring scheme: {@code scheme:} names the preset ({@code standard}, {@code raid},
+     * {@code hold}, {@code defend} or {@code capture}), and the scheme's numbers use the same names the setup
+     * pane shows - {@code turns:} and {@code counting:} for Hold, {@code grip:} and {@code drain:} for Defend,
+     * {@code points:} and {@code rate:} for Capture. Without a {@code scheme:} key the marker keeps the
+     * Standard scheme.
+     *
+     * @throws IllegalArgumentException on an unknown scheme or counting mode
+     */
+    private static void parseScheme(ObjectiveMarker marker, JsonNode node) {
+        if (!node.has(SCHEME)) {
+            return;
+        }
+        String scheme = node.get(SCHEME).asText();
+        marker.setScoringScheme(switch (scheme) {
+            case SCHEME_STANDARD -> ObjectiveScoringScheme.standard();
+            case SCHEME_RAID -> ObjectiveScoringScheme.raid();
+            case SCHEME_HOLD -> ObjectiveScoringScheme.hold(
+                  node.has(HOLD_TURNS) ? node.get(HOLD_TURNS).asInt() : 1,
+                  parseCounting(marker, node));
+            case SCHEME_DEFEND -> ObjectiveScoringScheme.defend(
+                  node.has(DEFEND_GRIP) ? node.get(DEFEND_GRIP).asInt() : 1,
+                  node.has(DEFEND_DRAIN) ? node.get(DEFEND_DRAIN).asInt() : 1);
+            case SCHEME_CAPTURE -> ObjectiveScoringScheme.capture(
+                  node.has(CAPTURE_POINTS) ? node.get(CAPTURE_POINTS).asInt() : 1,
+                  node.has(CAPTURE_RATE) ? node.get(CAPTURE_RATE).asInt() : 1);
+            default -> throw new IllegalArgumentException("Unknown scoring scheme " + scheme
+                  + " for objective " + marker.generalName());
+        });
+    }
+
+    private static HoldCounting parseCounting(ObjectiveMarker marker, JsonNode node) {
+        if (!node.has(HOLD_COUNTING)) {
+            return HoldCounting.CONSECUTIVE;
+        }
+        return switch (node.get(HOLD_COUNTING).asText()) {
+            case COUNTING_CONSECUTIVE -> HoldCounting.CONSECUTIVE;
+            case COUNTING_CUMULATIVE -> HoldCounting.CUMULATIVE;
+            default -> throw new IllegalArgumentException("Unknown hold counting mode "
+                  + node.get(HOLD_COUNTING).asText() + " for objective " + marker.generalName());
+        };
     }
 
     private static void parseVariants(ObjectiveMarker marker, JsonNode node) {

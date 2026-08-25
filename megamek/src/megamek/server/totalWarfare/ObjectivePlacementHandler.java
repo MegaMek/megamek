@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.Player;
+import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -44,6 +45,7 @@ import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import megamek.server.victory.VictoryPointVictory;
+import megamek.server.victory.VictoryPointTracker;
 
 /**
  * Places the objective markers that players designated in the lobby onto the board when the game starts. A marker
@@ -58,6 +60,8 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
     /** Feature logger for the victory hex designation diagnostics; enabled via the log4j2.xml VictoryHex block. */
     private static final MMLogger VICTORY_HEX_LOGGER = MMLogger.create("megamek.feature.VictoryHex");
 
+    private static final int REPORT_STARTING_VICTORY_POINTS = 7147;
+
     ObjectivePlacementHandler(TWGameManager gameManager) {
         super(gameManager);
     }
@@ -68,6 +72,7 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
      */
     void placeLobbyObjectives() {
         warnWhenVictoryPointsCannotResolve();
+        applyStartingVictoryPoints();
         Board board = getGame().getBoard();
         boolean anyPlaced = false;
         for (Player player : getGame().getPlayersList()) {
@@ -153,6 +158,38 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
             }
         }
         return null;
+    }
+
+    /**
+     * Applies each faction's scenario-defined starting victory points to the fresh tally at game start. Teamed
+     * players contribute to their team's pool, solo players to their own; the round report names each grant.
+     * The victory context is reset every game start, so a lobby round trip cannot double-award.
+     */
+    private void applyStartingVictoryPoints() {
+        VictoryPointTracker tracker = VictoryPointTracker.getTracker(getGame());
+        for (Player player : getGame().getPlayersList()) {
+            int startingPoints = player.getStartingVictoryPoints();
+            if (startingPoints == 0) {
+                continue;
+            }
+            boolean isTeamed = player.getTeam() != Player.TEAM_NONE;
+            String sideName;
+            if (isTeamed) {
+                tracker.awardToTeam(player.getTeam(), startingPoints, getGame().getCurrentRound(),
+                      "scenario starting victory points of " + player.getName());
+                sideName = "Team " + player.getTeam();
+            } else {
+                tracker.awardToPlayer(player.getId(), startingPoints, getGame().getCurrentRound(),
+                      "scenario starting victory points");
+                sideName = player.getName();
+            }
+            Report report = new Report(REPORT_STARTING_VICTORY_POINTS, Report.PUBLIC);
+            report.add(sideName);
+            report.add(startingPoints);
+            addReport(report);
+            VICTORY_HEX_LOGGER.info("[Objective] {} starts the game with {} victory point(s)",
+                  sideName, startingPoints);
+        }
     }
 
     /**

@@ -153,6 +153,7 @@ import megamek.common.weapons.infantry.archaic.*;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeInfernoWeapon;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeMicroWeapon;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeMiniInfernoWeapon;
+import megamek.common.weapons.infantry.grenade.InfantryGrenadeMiniWeapon;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeRAGWeapon;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeStandardWeapon;
 import megamek.common.weapons.infantry.laser.InfantryLaserCarbineBrightStarL15;
@@ -2221,6 +2222,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryGrenadeInfernoWeapon());
         EquipmentType.addType(new InfantryGrenadeMicroWeapon());
         EquipmentType.addType(new InfantryGrenadeMiniInfernoWeapon());
+        EquipmentType.addType(new InfantryGrenadeMiniWeapon());
         EquipmentType.addType(new InfantryGrenadeRAGWeapon());
         EquipmentType.addType(new InfantryGrenadeStandardWeapon());
 
@@ -2237,6 +2239,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryProstheticSMGWeapon());
         EquipmentType.addType(new InfantryProstheticBladeWeapon());
         EquipmentType.addType(new InfantryProstheticNeedleWeapon());
+        EquipmentType.addType(new InfantryProstheticRumalGarroteWeapon());
         EquipmentType.addType(new InfantryProstheticShockerWeapon());
         EquipmentType.addType(new InfantryProstheticVibroBladeWeapon());
         EquipmentType.addType(new InfantryProstheticClimbingClawsWeapon());

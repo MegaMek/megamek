@@ -73,7 +73,7 @@ final class DeploymentDiagnostics {
         List<String> waiting = new ArrayList<>();
         for (Entity entity : game.getEntitiesVector()) {
             if (!entity.isDeployed()) {
-                waiting.add(entity.getShortName() + " (" + entity.getOwner().getName() + ") due round "
+                waiting.add(entity.getShortName() + " (" + ownerNameOf(entity) + ") due round "
                       + entity.getDeployRound());
             }
         }
@@ -102,6 +102,18 @@ final class DeploymentDiagnostics {
             perPlayer.add(describePlayer(game, player, round));
         }
         LOGGER.info("[Deployment] round {}: {}", round, String.join(" | ", perPlayer));
+    }
+
+    /**
+     * @param entity The unit being described
+     *
+     * @return the name of whoever owns the unit, or a plain note when nobody does. A unit freshly created may have
+     *       no owner yet, and this exists to explain a phase rather than to interrupt one - so it must not be the
+     *       thing that throws during phase processing.
+     */
+    private static String ownerNameOf(Entity entity) {
+        Player owner = entity.getOwner();
+        return (owner == null) ? "no owner" : owner.getName();
     }
 
     /** @return one player's deployment position, in words */

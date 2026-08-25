@@ -33,16 +33,15 @@
 
 package megamek.client.ui.clientGUI;
 
+import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import megamek.client.Client;
-import java.awt.event.ActionEvent;
-
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.GameMasterPlayerSetupDialog;
 import megamek.client.ui.dialogs.ClientCommandDialog;
+import megamek.client.ui.dialogs.GameMasterPlayerSetupDialog;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;

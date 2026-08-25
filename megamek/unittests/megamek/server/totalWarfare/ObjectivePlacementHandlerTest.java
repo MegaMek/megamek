@@ -54,6 +54,7 @@ import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.game.Game;
+import megamek.common.options.GameOptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -68,6 +69,7 @@ class ObjectivePlacementHandlerTest {
     @BeforeEach
     void setUp() {
         game = mock(Game.class);
+        when(game.getOptions()).thenReturn(new GameOptions());
         gameManager = mock(TWGameManager.class);
         when(gameManager.getGame()).thenReturn(game);
         handler = new ObjectivePlacementHandler(gameManager);

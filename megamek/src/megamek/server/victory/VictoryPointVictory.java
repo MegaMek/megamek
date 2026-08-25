@@ -47,6 +47,7 @@ import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
+import megamek.server.scriptedEvents.TriggeredEvent;
 
 /**
  * Resolves the winner of a game by cumulative Victory Points (VP), as used by objective-based missions: VP are awarded
@@ -71,14 +72,121 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
     private static final int REPORT_VICTORY_POINT_TOTAL = 7115;
     private static final int REPORT_VICTORY_POINTS_TIED = 7116;
     private static final int REPORT_RAID_OBJECTIVE_SCORED = 7131;
+    private static final int REPORT_SUDDEN_DEATH = 7143;
+    private static final int REPORT_WIN_THRESHOLD_REACHED = 7144;
+    private static final int REPORT_LOSS_THRESHOLD_REACHED = 7145;
 
     @Override
     public VictoryResult checkVictory(Game game, Map<String, Object> context) {
-        if (!game.gameTimerIsExpired()) {
+        if (game.gameTimerIsExpired()) {
+            LOGGER.debug("[VP] Game turn limit reached; resolving victory points");
+            return checkAtGameEnd(game, context);
+        }
+        return checkEarlyEnd(game, context);
+    }
+
+    /**
+     * Checks the mid-game enders: sudden death (the game ends the moment any control point is decided) and the
+     * victory point win and loss thresholds. All of them resolve the running tally into a winner immediately
+     * instead of waiting for the game clock.
+     *
+     * @param game    The current {@link Game}
+     * @param context The victory context holding the {@link VictoryPointTracker}
+     *
+     * @return The resolved result when an ender fired; {@link VictoryResult#noResult()} otherwise
+     */
+    private VictoryResult checkEarlyEnd(Game game, Map<String, Object> context) {
+        if (!game.getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
             return VictoryResult.noResult();
         }
-        LOGGER.debug("[VP] Game turn limit reached; resolving victory points");
-        return checkAtGameEnd(game, context);
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(context);
+        if (tracker == null) {
+            return VictoryResult.noResult();
+        }
+
+        boolean isSuddenDeath = game.getOptions().booleanOption(OptionsConstants.VICTORY_VP_SUDDEN_DEATH);
+        if (isSuddenDeath && tracker.isPointDecided()) {
+            LOGGER.info("[VP] Sudden death: a control point was decided - resolving victory points now");
+            VictoryResult result = checkAtGameEnd(game, context);
+            result.addReport(new Report(REPORT_SUDDEN_DEATH, Report.PUBLIC));
+            return result;
+        }
+
+        int winThreshold = game.getOptions().intOption(OptionsConstants.VICTORY_VP_WIN_THRESHOLD);
+        boolean isWinThresholdReached = (winThreshold > 0) && soleLeaderIsAtOrAbove(tracker, winThreshold);
+        if (isWinThresholdReached) {
+            LOGGER.info("[VP] The victory point win threshold of {} was reached - resolving now", winThreshold);
+            VictoryResult result = checkAtGameEnd(game, context);
+            Report report = new Report(REPORT_WIN_THRESHOLD_REACHED, Report.PUBLIC);
+            report.add(winThreshold);
+            result.addReport(report);
+            return result;
+        }
+
+        int lossThreshold = game.getOptions().intOption(OptionsConstants.VICTORY_VP_LOSS_THRESHOLD);
+        boolean isLossThresholdReached = (lossThreshold > 0) && anySideIsAtOrBelow(tracker, -lossThreshold);
+        if (isLossThresholdReached) {
+            LOGGER.info("[VP] A side fell to the victory point loss threshold of -{} - resolving now",
+                  lossThreshold);
+            VictoryResult result = checkAtGameEnd(game, context);
+            Report report = new Report(REPORT_LOSS_THRESHOLD_REACHED, Report.PUBLIC);
+            report.add(lossThreshold);
+            result.addReport(report);
+            return result;
+        }
+
+        return VictoryResult.noResult();
+    }
+
+    /**
+     * @param tracker   the tally
+     * @param threshold the win threshold, above zero
+     *
+     * @return {@code true} when exactly one side holds the highest total and that total is at or above the
+     *       threshold - a shared high score keeps the game going, first to pull ahead at the score wins
+     */
+    private boolean soleLeaderIsAtOrAbove(VictoryPointTracker tracker, int threshold) {
+        List<Integer> totals = allSideTotals(tracker);
+        int best = totals.stream().mapToInt(Integer::intValue).max().orElse(Integer.MIN_VALUE);
+        long sidesAtBest = totals.stream().filter(total -> total == best).count();
+        return (best >= threshold) && (sidesAtBest == 1);
+    }
+
+    /**
+     * @param tracker the tally
+     * @param limit   the (negative) score at which a side loses
+     *
+     * @return {@code true} when any side's total is at or below the limit
+     */
+    private boolean anySideIsAtOrBelow(VictoryPointTracker tracker, int limit) {
+        return allSideTotals(tracker).stream().anyMatch(total -> total <= limit);
+    }
+
+    /** @return every scoring side's current total, players and teams alike */
+    private List<Integer> allSideTotals(VictoryPointTracker tracker) {
+        List<Integer> totals = new ArrayList<>();
+        for (int playerId : tracker.getScoringPlayers()) {
+            totals.add(tracker.getPlayerVictoryPoints(playerId));
+        }
+        for (int teamId : tracker.getScoringTeams()) {
+            totals.add(tracker.getTeamVictoryPoints(teamId));
+        }
+        return totals;
+    }
+
+    /**
+     * @param game the game, using its final (post-lobby) options and scripted events
+     *
+     * @return {@code true} when the game has any way to resolve scored victory points into a result: the game
+     *       turn limit, a victory point win or loss threshold, sudden death, or a game-ending scripted event
+     */
+    public static boolean gameHasVictoryPointResolution(Game game) {
+        boolean hasTurnLimit = game.getOptions().booleanOption(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT);
+        boolean hasWinThreshold = game.getOptions().intOption(OptionsConstants.VICTORY_VP_WIN_THRESHOLD) > 0;
+        boolean hasLossThreshold = game.getOptions().intOption(OptionsConstants.VICTORY_VP_LOSS_THRESHOLD) > 0;
+        boolean hasSuddenDeath = game.getOptions().booleanOption(OptionsConstants.VICTORY_VP_SUDDEN_DEATH);
+        boolean hasGameEndEvent = game.scriptedEvents().stream().anyMatch(TriggeredEvent::isGameEnding);
+        return hasTurnLimit || hasWinThreshold || hasLossThreshold || hasSuddenDeath || hasGameEndEvent;
     }
 
     /**

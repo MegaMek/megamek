@@ -41,7 +41,9 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
+import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
+import megamek.server.victory.VictoryPointVictory;
 
 /**
  * Places the objective markers that players designated in the lobby onto the board when the game starts. A marker
@@ -65,6 +67,7 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
      * objects to all clients. Called once when the game starts (the EXCHANGE phase), when the real game board exists.
      */
     void placeLobbyObjectives() {
+        warnWhenVictoryPointsCannotResolve();
         Board board = getGame().getBoard();
         boolean anyPlaced = false;
         for (Player player : getGame().getPlayersList()) {
@@ -150,5 +153,22 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
             }
         }
         return null;
+    }
+
+    /**
+     * Tells the players in the game chat when objective victory points are enabled but nothing can end the game
+     * to resolve them - the log-only warning proved too easy to miss in playtesting, and "I enabled objectives
+     * and nothing happens" was the predictable report.
+     */
+    private void warnWhenVictoryPointsCannotResolve() {
+        boolean usesObjectives = getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES);
+        if (!usesObjectives || VictoryPointVictory.gameHasVictoryPointResolution(getGame())) {
+            return;
+        }
+        gameManager.sendServerChat("Use Objectives is enabled, but nothing can end this game - victory points "
+              + "will never resolve. Enable the game turn limit, a victory point threshold, or sudden death "
+              + "in the Victory Conditions.");
+        VICTORY_HEX_LOGGER.warn("[Objective] use_objectives is on but the game has no ender - "
+              + "victory points cannot resolve");
     }
 }

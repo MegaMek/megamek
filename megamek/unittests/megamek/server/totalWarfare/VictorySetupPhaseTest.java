@@ -39,6 +39,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.board.Board;
@@ -75,6 +76,7 @@ class VictorySetupPhaseTest {
         Board groundBoard = mock(Board.class);
         when(groundBoard.isGround()).thenReturn(true);
         when(game.getBoard()).thenReturn(groundBoard);
+        when(game.getBoards()).thenReturn(Map.of(0, groundBoard));
     }
 
     @Test
@@ -103,6 +105,19 @@ class VictorySetupPhaseTest {
         Board spaceBoard = mock(Board.class);
         when(spaceBoard.isGround()).thenReturn(false);
         when(game.getBoard()).thenReturn(spaceBoard);
+        when(game.getPhase()).thenReturn(GamePhase.EXCHANGE);
+
+        phaseEndManager.managePhase();
+
+        verify(gameManager).changePhase(GamePhase.SET_ARTILLERY_AUTO_HIT_HEXES);
+    }
+
+    @Test
+    void testExchangeSkipsVictorySetupInAMultiBoardGame() {
+        // the ground-object map has no board id, so objectives cannot address a multi-board game
+        gameOptions.getOption(OptionsConstants.VICTORY_USE_OBJECTIVES).setValue(true);
+        Board secondBoard = mock(Board.class);
+        when(game.getBoards()).thenReturn(Map.of(0, mock(Board.class), 1, secondBoard));
         when(game.getPhase()).thenReturn(GamePhase.EXCHANGE);
 
         phaseEndManager.managePhase();

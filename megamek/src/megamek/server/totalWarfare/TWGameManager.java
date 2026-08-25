@@ -9777,6 +9777,16 @@ public class TWGameManager extends AbstractGameManager {
      * Receives an updated data structure containing carryable objects on the ground
      */
     private void receiveGroundObjectUpdate(Packet packet, int connId) throws InvalidPacketDataException {
+        // only the Victory Setup and Deploy Minefields flows send this packet; accepting it in any other
+        // phase would let a buggy or malicious client overwrite the board's ground objects mid-game (the
+        // in-game pickup and drop flows are computed server-side and never send it)
+        boolean isGroundObjectSetupPhase = getGame().getPhase().isVictorySetup()
+              || getGame().getPhase().isDeployMinefields();
+        if (!isGroundObjectSetupPhase) {
+            LOGGER.warn("[Objective] Ignoring a ground object update from connection {} during the {} phase",
+                  connId, getGame().getPhase());
+            return;
+        }
         Map<Coords, List<ICarryable>> groundObjects = packet.getCoordsWithGroundObjectListMap(0);
         getGame().setGroundObjects(groundObjects);
 

@@ -37,17 +37,21 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import megamek.common.RangeType;
+import megamek.common.RulesRef;
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.TechAdvancement;
 import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AvailabilityValue;
+import megamek.common.enums.ChargeLevel;
 import megamek.common.enums.Era;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.enums.BombType;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.units.Entity;
 import megamek.common.util.RoundWeight;
@@ -206,10 +210,8 @@ public class EquipmentType implements ITechnology {
     protected static Hashtable<String, EquipmentType> lookupHash;
     private static Map<String, Set<EquipmentType>> lookupCollisions = new TreeMap<>();
 
-    /**
-     * Keeps track of page numbers for rules references.
-     */
-    protected String rulesRefs = "";
+    /** Structured sourcebook and page references for this equipment type. */
+    protected List<RulesRef> rulesRefs = rulesRefs();
 
     /** Creates new EquipmentType */
     public EquipmentType() {
@@ -260,8 +262,45 @@ public class EquipmentType implements ITechnology {
         return internalName;
     }
 
-    public String getRulesRefs() {
+    public List<RulesRef> getRulesRefs() {
         return rulesRefs;
+    }
+
+    /** Creates one rule reference for use in a multi-source {@link #rulesRefs(RulesRef...)} call. */
+    protected static RulesRef rulesRef(SourceBookCode book, Integer page) {
+        return new RulesRef(Objects.requireNonNull(book, "book"), page);
+    }
+
+    /** Creates one page-less rule reference for use in a multi-source {@link #rulesRefs(RulesRef...)} call. */
+    protected static RulesRef rulesRef(SourceBookCode book) {
+        return rulesRef(book, null);
+    }
+
+    /**
+     * Creates an immutable rule-reference list for one sourcebook. Passing no pages creates one reference with a null
+     * page; passing multiple pages creates one reference per page.
+     */
+    protected static List<RulesRef> rulesRefs(SourceBookCode book, Integer... pages) {
+        Objects.requireNonNull(book, "book");
+        Objects.requireNonNull(pages, "pages");
+        if (pages.length == 0) {
+            return List.of(rulesRef(book));
+        }
+        return Arrays.stream(pages).map(page -> rulesRef(book, page)).toList();
+    }
+
+    /** Creates an immutable rule-reference list, including an empty list when no references are supplied. */
+    protected static List<RulesRef> rulesRefs(RulesRef... references) {
+        return List.of(references);
+    }
+
+    /** Adds references to an existing list, preserving order and removing exact duplicates. */
+    protected static List<RulesRef> rulesRefs(List<RulesRef> existing, RulesRef... additions) {
+        Objects.requireNonNull(existing, "existing");
+        Objects.requireNonNull(additions, "additions");
+        Set<RulesRef> result = new LinkedHashSet<>(existing);
+        result.addAll(Arrays.asList(additions));
+        return List.copyOf(result);
     }
 
     public Map<Integer, Integer> getTechLevels() {
@@ -413,9 +452,12 @@ public class EquipmentType implements ITechnology {
         }
 
         // Special case: discharged M- and B-pods shouldn't explode.
-        if (((this instanceof MPodWeapon) || (this instanceof BPodWeapon)) &&
-              ((mounted.getLinked() == null) || (mounted.getLinked().getUsableShotsLeft() == 0))) {
-            return false;
+        if ((this instanceof MPodWeapon) || (this instanceof BPodWeapon)) {
+            boolean explosivePods =
+                  Game.rulesManager.getRulesExplosions().arePodsExplosive(mounted);
+            if (!explosivePods) {
+                return false;
+            }
         }
 
         // special case: RISC laser pulse module are only explosive when the
@@ -484,13 +526,13 @@ public class EquipmentType implements ITechnology {
                   (mounted.getLinked() != null)) {
                 return true;
             }
-
         }
         if ((mounted.getType() instanceof MiscType) &&
               mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR) &&
               !mounted.curMode().equals("Charge")) {
             return false;
         }
+        
         if ((mounted.getType() instanceof PPCWeapon) && (mounted.hasChargedCapacitor() == 0)) {
             return false;
         }
@@ -1353,7 +1395,7 @@ public class EquipmentType implements ITechnology {
 
         YamlEncDec.addPropIfNotEmpty(data, "shortName", shortName);
         YamlEncDec.addPropIfNotEmpty(data, "sortingName", sortingName);
-        YamlEncDec.addPropIfNotEmpty(data, "rulesRefs", rulesRefs);
+        YamlEncDec.addPropIfNotEmpty(data, "rulesRefs", rulesRefs.stream().map(RulesRef::toYamlData).toList());
 
         addAliases(data);
     }

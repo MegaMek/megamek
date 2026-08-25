@@ -36,6 +36,7 @@ package megamek.common.weapons.ppc.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -74,7 +75,12 @@ public class CLERPPC extends PPCWeapon {
         this.medAV = 15;
         this.longAV = 15;
         this.maxRange = RANGE_LONG;
-        rulesRefs = "233, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 233),
+              rulesRef(SourceBookCode.BMM, 105),
+              rulesRef(SourceBookCode.CORE, 188),
+              rulesRef(SourceBookCode.TW, 304)
+        );
         flags = flags.or(F_PPC_CAPACITOR_COMPATIBLE);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

@@ -62,13 +62,15 @@ public class MunitionChoice {
     private final JComboBox<AmmoType> comboAmmoTypes;
     private final JComboBox<String> comboNumberOfShots = new JComboBox<>();
     private final ItemListener numShotsListener;
+    private ItemListener halfAmmoListener = evt -> {};
     private final GameOptions gameOptions;
     private final AmmoMounted ammoMounted;
     private final JCheckBox chDump = new JCheckBox(Messages.getString("CustomMekDialog.labDump"));
     private final JCheckBox chHotLoad = new JCheckBox(Messages.getString("CustomMekDialog.switchToHotLoading"));
+    private final JCheckBox chHalfAmmo = new JCheckBox(Messages.getString("CustomMekDialog.halfAmmo"));
 
     private boolean numShotsChanged = false;
-
+    
     public MunitionChoice(AmmoMounted ammoMounted, Vector<AmmoType> ammoTypes,
                           List<WeaponAmmoChoice> weaponAmmoChoices, Entity entity, Game game, JPanel parentPanel, GBC2 gbc) {
 
@@ -80,8 +82,49 @@ public class MunitionChoice {
         comboAmmoTypes.setRenderer(new AmmoComboRenderer());
         comboAmmoTypes.setSelectedItem(ammoType);
 
-        numShotsListener = evt -> numShotsChanged = true;
+        numShotsListener = evt -> {
+            numShotsChanged = true;
+            if (chHalfAmmo.isSelected()) {
+                chHalfAmmo.removeItemListener(halfAmmoListener);
+                chHalfAmmo.setSelected(false);
+                chHalfAmmo.addItemListener(halfAmmoListener);
+            }
+        };
+        
+        halfAmmoListener = evt -> {
+            int numberOfShotsPerTon = this.ammoTypes.get(comboAmmoTypes.getSelectedIndex()).getShots();
+            int currShots = 0;
 
+            if (chHalfAmmo.isSelected() && !ammoMounted.isHalfLoadAmmo()) {
+                // Switch to a half load of ammo
+                // Only go down this if there is a munition mutator
+                AmmoType selectedAmmoType = this.ammoTypes.get(comboAmmoTypes.getSelectedIndex());
+                if (selectedAmmoType.getMutatorName() != null) {
+                    // Check if the KgPerShot is different than the base (indicating a mutator)
+                    double baseKgPerShot = selectedAmmoType.getBaseAmmo().getKgPerShot();
+                    double selectedKgPerShot = selectedAmmoType.getKgPerShot();
+                    if (baseKgPerShot != selectedKgPerShot) {
+                        double weightRatio = selectedKgPerShot / baseKgPerShot;
+                        int mutateShots = (int) Math.floor(selectedAmmoType.getBaseAmmo().getShots() / 2.0);
+                        currShots = (int) Math.floor(mutateShots / weightRatio);
+                    } else {
+                        currShots = (int) Math.floor(numberOfShotsPerTon / 2);
+                    }
+                } else {
+                    currShots = (int) Math.floor(numberOfShotsPerTon / 2);
+                }
+
+                comboNumberOfShots.removeItemListener(numShotsListener);
+                comboNumberOfShots.setSelectedItem(String.valueOf(currShots));
+                comboNumberOfShots.addItemListener(numShotsListener);
+            } else if (!chHalfAmmo.isSelected() && ammoMounted.isHalfLoadAmmo()) {
+                // Switch to a full load of ammo
+                comboNumberOfShots.removeItemListener(numShotsListener);
+                comboNumberOfShots.setSelectedItem(String.valueOf(numberOfShotsPerTon));
+                comboNumberOfShots.addItemListener(numShotsListener);
+            }
+        };
+        
         int shotsPerTon = ammoType.getShots();
         // BattleArmor always have a certain number of shots per slot
         int stepSize = 1;
@@ -128,6 +171,8 @@ public class MunitionChoice {
             } else {
                 comboNumberOfShots.setSelectedItem(String.valueOf(numberOfShotsPerTon));
             }
+            // Changing ammo bins resets the half
+            chHalfAmmo.setSelected(false);
 
             for (WeaponAmmoChoice weaponAmmoChoice : weaponAmmoChoices) {
                 weaponAmmoChoice.refreshAmmoBinName(this.ammoMounted,
@@ -137,6 +182,8 @@ public class MunitionChoice {
             comboNumberOfShots.addItemListener(numShotsListener);
         });
 
+        chHalfAmmo.addItemListener(halfAmmoListener);
+        
         int ammoMountedLocation = ammoMounted.getLocation();
         boolean isOneShot = false;
 
@@ -158,6 +205,11 @@ public class MunitionChoice {
         boolean gameUsesHotLoad = gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD);
         boolean ammoAllowsHotLoad = ammoType.hasFlag(AmmoType.F_HOTLOAD);
         chHotLoad.setSelected(ammoMounted.isHotLoaded());
+        if (ammoMounted.isHalfLoadAmmo()) {
+            chHalfAmmo.setSelected(true);
+        } else {
+            chHalfAmmo.setSelected(false);
+        }
         comboAmmoTypes.setEnabled(ammoTypes.size() > 1);
 
         parentPanel.add(labelLocation, gbc.forLabel());
@@ -165,8 +217,9 @@ public class MunitionChoice {
 
         if (!isOneShot) {
             parentPanel.add(comboNumberOfShots, gameUsesHotLoad ? gbc.oneColumn() : gbc.eol());
+            parentPanel.add(chHalfAmmo, gameUsesHotLoad ? gbc.oneColumn() : gbc.eol());
         }
-
+        
         if (ammoAllowsHotLoad) {
             parentPanel.add(chHotLoad, gbc.eol());
         } else {
@@ -195,6 +248,12 @@ public class MunitionChoice {
             ammoMounted.setShotsLeft(0);
         }
 
+        if (chHalfAmmo.isSelected() && !ammoMounted.isHalfLoadAmmo()) {
+            ammoMounted.setHalfLoadAmmo(true);
+        } else if (!chHalfAmmo.isSelected() && ammoMounted.isHalfLoadAmmo()) {
+            ammoMounted.setHalfLoadAmmo(false);
+        }
+        
         if (gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD)) {
             if (chHotLoad.isSelected() != ammoMounted.isHotLoaded()) {
                 ammoMounted.setHotLoad(chHotLoad.isSelected());

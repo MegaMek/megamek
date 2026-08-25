@@ -36,6 +36,7 @@ package megamek.common.weapons.unofficial.innerSphere.thb;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -69,7 +70,7 @@ public class ISTHBUAC20 extends UACWeapon {
         bv = 335;
         cost = 600000;
         // Since this are the Tactical Handbook Weapons I'm using the TM Stats.
-        rulesRefs = "THB (Unofficial)";
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(true)

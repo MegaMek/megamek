@@ -36,6 +36,7 @@ package megamek.common.weapons.infantry.prosthetic;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -64,7 +65,7 @@ public class InfantryProstheticShotgunWeapon extends InfantryWeapon {
         infantryRange = 0;
         // Rating and Dates not available below is compiled from Specific
         // Weapons in IO blended with the rating for the limb itself
-        rulesRefs = "78, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 78);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

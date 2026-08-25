@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,6 +47,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
@@ -55,6 +56,9 @@ import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
+import megamek.common.weapons.ppc.innerSphere.ISHeavyPlasmaRifle;
+import megamek.common.weapons.ppc.innerSphere.ISLightPlasmaRifle;
+import megamek.common.weapons.ppc.innerSphere.ISPlasmaRifle;
 import megamek.server.totalWarfare.TWGameManager;
 
 public class PlasmaRifleHandler extends AmmoWeaponHandler {
@@ -76,10 +80,8 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding bldg, int hits,
           int nCluster, int bldgAbsorbs) {
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            if (hit != null) {
-                hit.setHeatWeapon(true);
-            }
+        if (hit != null) {
+            hit.setHeatWeapon(true);
         }
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
         if (!missed && entityTarget.tracksHeat()) {
@@ -87,35 +89,38 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             report.subject = subjectId;
             report.indent(2);
             int extraHeat = 0;
-            // if this is a fighter squadron, we need to account for the number of weapons should default to one for
-            // non-squadrons
+
+            /**
+             * if this is a fighter squadron, we need to account for the number of weapons should default to one for
+             * non-squadrons
+             * Handles light and heavy plasma rifles as well as per Core Rules p.189
+             */
             for (int i = 0; i < numWeaponsHit; i++) {
-                extraHeat += Compute.d6();
+                if (weapon.getType() instanceof ISLightPlasmaRifle) {
+                    extraHeat += (int) Math.ceil(Compute.d6() / 2.0);
+                } else if (weapon.getType() instanceof ISHeavyPlasmaRifle) {
+                    extraHeat += Compute.d6(2);
+                } else {
+                    extraHeat += Compute.d6();
+                }
             }
 
-            if (entityTarget.getArmor(hit) > 0
-                  &&
-                  (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)
-                  && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                // PLAYTEST3 do not halve for reflective
-                entityTarget.heatFromExternal += Math.max(1, extraHeat / 2);
-                report.add(Math.max(1, extraHeat / 2));
-                report.choose(true);
-                report.messageId = 3406;
-                report.add(extraHeat);
-                report.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
-            } else if (entityTarget.getArmor(hit) > 0 &&
-                  (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
-                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                    // PLAYTEST3 no heat from plasma
-                    extraHeat = 0;
+            if (entityTarget.getArmor(hit) > 0 &&
+                  ((entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING) || (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE))) {
+                int reducedHeat =
+                      Game.rulesManager.getRulesArmor().reduceHeatDamageByArmor(entityTarget.getArmorType(hit.getLocation()), extraHeat);
+                if (reducedHeat != extraHeat) {
+                    entityTarget.heatFromExternal += reducedHeat;
+                    report.add(reducedHeat);
+                    report.choose(true);
+                    report.messageId = 3406;
+                    report.add(extraHeat);
+                    report.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
+                } else {
+                    entityTarget.heatFromExternal += extraHeat;
+                    report.add(extraHeat);
+                    report.choose(true);
                 }
-                entityTarget.heatFromExternal += extraHeat / 2;
-                report.add(extraHeat / 2);
-                report.choose(true);
-                report.messageId = 3406;
-                report.add(extraHeat);
-                report.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
             } else {
                 entityTarget.heatFromExternal += extraHeat;
                 report.add(extraHeat);
@@ -128,7 +133,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         if (target.tracksHeat()) {
-            int toReturn = 10;
+            int toReturn = weapon.getType().getDamage();
             toReturn = applyGlancingBlowModifier(toReturn, false);
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE) &&
                   (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
@@ -153,7 +158,13 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         int toReturn = 5;
 
         if (target.isConventionalInfantry()) {
-            toReturn = Compute.d6(2);
+            if (weapon.getType() instanceof ISLightPlasmaRifle) {
+                toReturn = Compute.d6();
+            } else if (weapon.getType() instanceof ISHeavyPlasmaRifle) {
+                toReturn = Compute.d6(3);
+            } else {
+                toReturn = Compute.d6(2);
+            }
         }
 
         bSalvo = true;
@@ -168,17 +179,25 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         int toReturn;
-
         // against meks, 1 hit with 10 damage, plus heat
         if (target.tracksHeat()) {
             toReturn = 1;
             // otherwise, 10+2d6 damage but fire-resistant BA armor gets no damage from heat, and half the normal
             // one, so only 5 damage
         } else {
+            WeaponType plasmaWeapon = weapon.getType();
             if ((target instanceof BattleArmor) && ((BattleArmor) target).isFireResistant()) {
-                toReturn = 5;
+                toReturn = plasmaWeapon.getDamage() / 2;
             } else {
-                toReturn = 10 + Compute.d6(2);
+                int damage = plasmaWeapon.getDamage();
+                if (plasmaWeapon instanceof ISLightPlasmaRifle) {
+                    damage += Compute.d6();
+                } else if (plasmaWeapon instanceof ISHeavyPlasmaRifle) {
+                    damage += Compute.d6(3);
+                } else {
+                    damage += Compute.d6(2);
+                }
+                toReturn = damage;
             }
             toReturn = applyGlancingBlowModifier(toReturn, false);
         }

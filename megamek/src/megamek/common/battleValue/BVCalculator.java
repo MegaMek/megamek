@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,7 +35,6 @@ package megamek.common.battleValue;
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +52,7 @@ import megamek.common.equipment.*;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.*;
 import megamek.common.weapons.bayWeapons.BayWeapon;
@@ -522,7 +522,7 @@ public abstract class BVCalculator {
                   eType.hasFlag(MiscType.F_HARJEL_III) ||
                   eType.hasFlag(MiscType.F_SPIKES) ||
                   eType.hasFlag(MiscType.F_MINESWEEPER) ||
-                  ((MiscType) eType).isShield();
+                  eType.hasFlag(MiscType.F_SHIELD);
         } else {
             return false;
         }
@@ -996,13 +996,14 @@ public abstract class BVCalculator {
                   miscType.hasFlag(MiscType.F_HARJEL_III) ||
                   miscType.hasFlag(MiscType.F_MASS) ||
                   miscType.hasFlag(MiscType.F_MINE) ||
-                  miscType.isShield() ||
+                  miscType.hasFlag(MiscType.F_SHIELD) ||
                   offensiveEquipmentBV(miscType, misc.getLocation()) == 0) {
                 continue;
             }
 
             double bv = offensiveEquipmentBV(miscType, misc.getLocation());
-            if ((miscType.hasFlag(MiscType.F_CLUB) || miscType.hasFlag(MiscType.F_HAND_WEAPON)) &&
+            if ((miscType.hasFlag(MiscType.F_CLUB) || miscType.hasFlag(MiscType.F_HAND_WEAPON) || miscType.hasFlag(
+                  MiscType.F_SHIELD)) &&
                   entity.hasFunctionalArmAES(misc.getLocation())) {
                 bv *= 1.25;
             } else if (miscType.hasFlag(MiscType.F_WATCHDOG)) {
@@ -1395,8 +1396,13 @@ public abstract class BVCalculator {
      * <a href="https://bg.battletech.com/forums/tactical-operations/tagguided-munitions-and-bv/">BT Forum</a>)
      */
     public void processTagBonus() {
+        if (entity.getGame() == null) {
+            return;
+        }
         long tagCount = workingTAGCount(entity);
-        if ((tagCount == 0) || (entity.getGame() == null)) {
+        // CORE if we need to adapt this for only SG, replace (munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED))
+        // (munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED) && Game.rulesManager.getRulesGame().tagBVBump())
+        if ((tagCount == 0)) {
             return;
         }
 
@@ -1405,50 +1411,13 @@ public abstract class BVCalculator {
         // In the lobby, bombs are represented as a bombChoices array, only later is it
         // real Mounted.
         boolean hasGuided = false;
-
-        for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
-            if ((otherEntity.getOwner() == null) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
-                continue;
-            }
-            for (Mounted<?> mounted : otherEntity.getAmmo()) {
-                AmmoType ammoType = (AmmoType) mounted.getType();
-                EnumSet<AmmoType.Munitions> munitionType = ammoType.getMunitionType();
-                if ((mounted.getUsableShotsLeft() > 0) &&
-                      ((munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED)) ||
-                            (munitionType.contains(AmmoType.Munitions.M_HOMING)))) {
-                    adjustedBV += mounted.getType().getBV(entity) * tagCount;
-                    bvReport.addLine("- " + equipmentDescriptor(mounted),
-                          "+ " +
-                                tagCount +
-                                " x " +
-                                formatForReport(mounted.getType().getBV(entity)) +
-                                " (" +
-                                otherEntity.getShortName() +
-                                ")",
-                          "= " + formatForReport(adjustedBV));
-                    hasGuided = true;
-                }
-            }
-            if (otherEntity instanceof IBomber asBomber) {
-                BombType bomb = BombType.createBombByType(BombTypeEnum.HOMING);
-                if (bomb != null) {
-                    int homingCount = asBomber.getBombChoices().getCount(BombTypeEnum.HOMING);
-                    if (homingCount > 0) {
-                        adjustedBV += bomb.getBV(otherEntity) * homingCount * tagCount;
-                        bvReport.addLine("- " + bomb.getName(),
-                              "+ " +
-                                    tagCount +
-                                    " x " +
-                                    formatForReport(bomb.getBV(otherEntity)) +
-                                    " (" +
-                                    otherEntity.getShortName() +
-                                    ")",
-                              "= " + formatForReport(adjustedBV));
-                        hasGuided = true;
-                    }
-                }
-            }
+        double modifiedBV = Game.rulesManager.getRulesGame().tagBVBump(entity, bvReport, adjustedBV, tagCount,
+              hasGuided);
+        if (modifiedBV != adjustedBV) {
+            hasGuided = true;
+            adjustedBV = modifiedBV;
         }
+
         bvReport.finalizeTentativeSection(hasGuided);
     }
 

@@ -65,6 +65,7 @@ import megamek.common.equipment.*;
 import megamek.common.equipment.enums.FuelType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
@@ -91,6 +92,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
               && getGame().getOptions()
               .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT);
     }
+
     protected boolean m_bHasNoTurret = false;
     protected boolean m_bTurretLocked = false;
     protected boolean m_bTurretJammed = false;
@@ -156,8 +158,8 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     private transient FortifyState fortifyState = new FortifyState();
 
     /**
-     * The rubble hex this vehicle is currently clearing with its bulldozer, or {@code null} if it is not clearing (TacOps). The
-     * vehicle must remain in this hex for the duration; if displaced or destroyed the work is abandoned.
+     * The rubble hex this vehicle is currently clearing with its bulldozer, or {@code null} if it is not clearing
+     * (TacOps). The vehicle must remain in this hex for the duration; if displaced or destroyed the work is abandoned.
      */
     private Coords rubbleClearTarget = null;
     /** Turns of bulldozer clearing banked so far against {@link #rubbleClearTurnsRequired}. */
@@ -1287,9 +1289,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-            int roll = Compute.d6(2);
-
-            if ((5 < roll) && (roll < 9)) {
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation()) {
                 rv = new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
                 bHitAimed = true;
             }
@@ -1805,9 +1805,9 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     }
 
     /**
-     * Whether this vehicle type can use hull-down at all, independent of its current hex. Large Vehicles cannot use
-     * the cover, and naval, hydrofoil, and submarine (water-based) vehicles cannot dig in / hull down since
-     * hull-down requires a fortified land hex (TO:AR p.19).
+     * Whether this vehicle type can use hull-down at all, independent of its current hex. Large Vehicles cannot use the
+     * cover, and naval, hydrofoil, and submarine (water-based) vehicles cannot dig in / hull down since hull-down
+     * requires a fortified land hex (TO:AR p.19).
      *
      * @return true if this vehicle may ever go hull-down
      */
@@ -2638,7 +2638,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         if ((armType == EquipmentType.T_ARMOR_STEALTH_VEHICLE) && addMount) {
             try {
                 this.addEquipment(EquipmentType.getArmorFromName(EquipmentType.getArmorTypeName(
-                    EquipmentType.T_ARMOR_STEALTH_VEHICLE, false)), LOC_BODY);
+                      EquipmentType.T_ARMOR_STEALTH_VEHICLE, false)), LOC_BODY);
             } catch (LocationFullException e) {
                 // this should never happen
             }
@@ -2679,7 +2679,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                       (mpBoosters.hasSupercharger() ?
                             " Supercharger:" +
                                   getSuperchargerTurns() +
-                            (armed.hasSupercharger() ? "(" + getSuperchargerTarget() + "+)" : "(NA)") :
+                                  (armed.hasSupercharger() ? "(" + getSuperchargerTarget() + "+)" : "(NA)") :
                             "");
             }
             return str;
@@ -3298,5 +3298,10 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
 
         // Vehicle must not already be destroyed
         return !isDestroyed() && !isDoomed();
+    }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return true;
     }
 }

@@ -63,6 +63,7 @@ import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.loaders.MtfFile;
@@ -1771,11 +1772,11 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                 MPBoosters armed = getArmedMPBoosters();
 
                 str += (mpBoosters.hasMASC() ? " MASC:" + getMASCTurns()
-                                               + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
+                      + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
                       + (mpBoosters.hasSupercharger() ? " Supercharger:" + getSuperchargerTurns()
-                                                        + (armed.hasSupercharger() ?
-                                                           "(" + getSuperchargerTarget() + "+)" :
-                                                           "(NA)") : "");
+                      + (armed.hasSupercharger() ?
+                      "(" + getSuperchargerTarget() + "+)" :
+                      "(NA)") : "");
             }
             return str;
         }
@@ -2498,7 +2499,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         if (hasQuirk(OptionsConstants.QUIRK_NEG_NO_TWIST)) {
             return false;
         }
-        return !(isProne() || isBracing() || getAlreadyTwisted());
+        return !(isProne() || isBracing() || getAlreadyTwisted() || isCharging() || isMakingDfa());
     }
 
     /**
@@ -2787,14 +2788,11 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         int roll;
 
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-            roll = Compute.d6(2);
-
-            if ((5 < roll) && (roll < 9)) {
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation()) {
                 return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
         }
 
-        boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
         boolean toAdvHitLoc =
               gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS);
 
@@ -2812,14 +2810,6 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                 }
             } catch (Throwable t) {
                 LOGGER.error("", t);
-            }
-
-            if (playtestLocations && !toAdvHitLoc
-                  && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
-                  && roll != 2 // clarified on forum, TACs don't go to the CT in this case
-                // https://battletech.com/playtest-battletech/feedback-discussion/topic/through-armor-critical-hits-on-side-arc/
-            ) {
-                return getPlaytestSideLocation(table, side, cover);
             }
 
             if (side == ToHitData.SIDE_FRONT) {
@@ -2972,69 +2962,12 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                 LOGGER.error("", t);
             }
 
-            if (side == ToHitData.SIDE_FRONT) {
-                // front punch hits
-                switch (roll) {
-                    case 1:
-                        return new HitData(Mek.LOC_LEFT_ARM);
-                    case 2:
-                        return new HitData(Mek.LOC_LEFT_TORSO);
-                    case 3:
-                        return new HitData(Mek.LOC_CENTER_TORSO);
-                    case 4:
-                        return new HitData(Mek.LOC_RIGHT_TORSO);
-                    case 5:
-                        return new HitData(Mek.LOC_RIGHT_ARM);
-                    case 6:
-                        return new HitData(Mek.LOC_HEAD);
-                }
-            }
-            if (side == ToHitData.SIDE_LEFT) {
-                // left side punch hits
-                switch (roll) {
-                    case 1:
-                    case 2:
-                        return new HitData(Mek.LOC_LEFT_TORSO);
-                    case 3:
-                        return new HitData(Mek.LOC_CENTER_TORSO);
-                    case 4:
-                    case 5:
-                        return new HitData(Mek.LOC_LEFT_ARM);
-                    case 6:
-                        return new HitData(Mek.LOC_HEAD);
-                }
-            }
-            if (side == ToHitData.SIDE_RIGHT) {
-                // right side punch hits
-                switch (roll) {
-                    case 1:
-                    case 2:
-                        return new HitData(Mek.LOC_RIGHT_TORSO);
-                    case 3:
-                        return new HitData(Mek.LOC_CENTER_TORSO);
-                    case 4:
-                    case 5:
-                        return new HitData(Mek.LOC_RIGHT_ARM);
-                    case 6:
-                        return new HitData(Mek.LOC_HEAD);
-                }
+            if (side == ToHitData.SIDE_FRONT || side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT) {
+                return new HitData(Game.rulesManager.getRulesCharts().getPunchHitLocation(roll, side));
             }
             if (side == ToHitData.SIDE_REAR) {
-                // rear punch hits
-                switch (roll) {
-                    case 1:
-                        return new HitData(Mek.LOC_LEFT_ARM, true);
-                    case 2:
-                        return new HitData(Mek.LOC_LEFT_TORSO, true);
-                    case 3:
-                        return new HitData(Mek.LOC_CENTER_TORSO, true);
-                    case 4:
-                        return new HitData(Mek.LOC_RIGHT_TORSO, true);
-                    case 5:
-                        return new HitData(Mek.LOC_RIGHT_ARM, true);
-                    case 6:
-                        return new HitData(Mek.LOC_HEAD, true);
-                }
+                return new HitData(Game.rulesManager.getRulesCharts().getPunchHitLocation(roll, ToHitData.SIDE_REAR),
+                      true);
             }
         }
         if (table == ToHitData.HIT_KICK) {
@@ -3185,20 +3118,6 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             }
         }
         return null;
-    }
-
-    public HitData getPlaytestSideLocation(int table, int side, int cover) {
-        var isLeft = side == ToHitData.SIDE_LEFT;
-
-        var hitData = innerRollHitLocation(table, ToHitData.SIDE_FRONT, LOC_NONE, AimingMode.NONE, cover);
-        hitData.setLocation(switch (hitData.getLocation()) {
-            case LOC_LEFT_ARM, LOC_RIGHT_ARM -> isLeft ? LOC_LEFT_ARM : LOC_RIGHT_ARM;
-            case LOC_LEFT_LEG, LOC_RIGHT_LEG -> isLeft ? LOC_LEFT_LEG : LOC_RIGHT_LEG;
-            case LOC_LEFT_TORSO, LOC_RIGHT_TORSO -> isLeft ? LOC_LEFT_TORSO : LOC_RIGHT_TORSO;
-            default -> hitData.getLocation();
-        });
-
-        return hitData;
     }
 
     /**
@@ -4199,36 +4118,18 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         }
 
         // gyro hit?
-        if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-              Mek.LOC_CENTER_TORSO) > 0) {
+        int gyroHits = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
+              Mek.LOC_CENTER_TORSO);
+        if (gyroHits > 0) {
+            String gyroMessage = "";
             if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
-                if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                    if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                          Mek.LOC_CENTER_TORSO) == 1) {
-                        roll.addModifier(1, "HD Gyro damaged once");
-                    } else if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                          Mek.LOC_CENTER_TORSO) == 2) {
-                        roll.addModifier(2, "HD Gyro damaged twice");
-                    } else if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                          Mek.LOC_CENTER_TORSO) == 3) {
-                        roll.addModifier(3, "HD Gyro damaged thrice");
-                    }
-                } else {
-                    if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                          Mek.LOC_CENTER_TORSO) == 1) {
-                        roll.addModifier(1, "HD Gyro damaged once");
-                    } else {
-                        roll.addModifier(3, "HD Gyro damaged twice");
-                    }
-                }
+                // HD Gyro
+                gyroMessage = Messages.getString("PilotingRoll.Gyro.HDGyro");
             } else {
-                if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                    roll.addModifier(2, "Gyro damaged");
-                } else {
-                    roll.addModifier(3, "Gyro damaged");
-                }
+                gyroMessage = Messages.getString("PilotingRoll.Gyro.Gyro");
             }
-
+            gyroMessage += " " + String.valueOf(gyroHits) + " " + Messages.getString("PilotingRoll.Gyro.Damaged");
+            roll.addModifier(Game.rulesManager.getRulesPSR().getGyroModifier(gyroHits, getGyroType()), gyroMessage);
         }
 
         // EI bonus?
@@ -4309,7 +4210,10 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     @Override
     public int getMaxElevationChange() {
-        return (movementMode.isTracked() || movementMode.isWiGE()) ? 1 : 2;
+        return (movementMode.isTracked() || movementMode.isWiGE() || Game.rulesManager.getRulesMovement()
+              .reduceMaxElevation(this))
+              ? 1
+              : 2;
     }
 
     @Override
@@ -4671,13 +4575,13 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     }
 
     /**
-     * Bulk control for heat sink activation: switches individual heat sink mounts On or Off so that the given number
-     * of sinks remains active. Like all activation/deactivation, the change is declared now and takes effect in the
-     * End Phase (the mounts' pending modes apply at the round rollover). Prototype double heat sinks and Freezers are
-     * not part of this counter (matching {@link #getNumberOfSinks()}); they can be switched individually via their
+     * Bulk control for heat sink activation: switches individual heat sink mounts On or Off so that the given number of
+     * sinks remains active. Like all activation/deactivation, the change is declared now and takes effect in the End
+     * Phase (the mounts' pending modes apply at the round rollover). Prototype double heat sinks and Freezers are not
+     * part of this counter (matching {@link #getNumberOfSinks()}); they can be switched individually via their
      * equipment mode. The value arrives from a client packet, so out-of-range requests are clamped (mirroring
-     * {@link Aero#setActiveSinksNextRound(int)}): a negative count deactivates every sink, a count above the number
-     * of operable sinks activates every sink.
+     * {@link Aero#setActiveSinksNextRound(int)}): a negative count deactivates every sink, a count above the number of
+     * operable sinks activates every sink.
      *
      * @param sinks the number of heat sinks that should be active next round
      */
@@ -4726,8 +4630,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     }
 
     /**
-     * @return the number of operable heat sinks that will be switched on next round, taking pending mode changes
-     *       into account (prototype double heat sinks and Freezers excluded)
+     * @return the number of operable heat sinks that will be switched on next round, taking pending mode changes into
+     *       account (prototype double heat sinks and Freezers excluded)
      */
     public int getActiveSinksNextRound() {
         int activeSinks = 0;
@@ -6131,15 +6035,15 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     public int shieldAbsorptionDamage(int damage, int location, boolean rear) {
         int damageAbsorption = damage;
-        if (hasActiveShield(location, rear)) {
+        if (hasRaisedShield(location, rear)) {
             switch (location) {
                 case Mek.LOC_CENTER_TORSO:
                 case Mek.LOC_HEAD:
-                    if (hasActiveShield(Mek.LOC_RIGHT_ARM)) {
+                    if (hasRaisedShield(Mek.LOC_RIGHT_ARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_RIGHT_ARM,
                               damageAbsorption);
                     }
-                    if (hasActiveShield(Mek.LOC_LEFT_ARM)) {
+                    if (hasRaisedShield(Mek.LOC_LEFT_ARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_LEFT_ARM,
                               damageAbsorption);
                     }
@@ -6147,13 +6051,13 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                 case Mek.LOC_LEFT_ARM:
                 case Mek.LOC_LEFT_TORSO:
                 case Mek.LOC_LEFT_LEG:
-                    if (hasActiveShield(Mek.LOC_LEFT_ARM)) {
+                    if (hasRaisedShield(Mek.LOC_LEFT_ARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_LEFT_ARM,
                               damageAbsorption);
                     }
                     break;
                 default:
-                    if (hasActiveShield(Mek.LOC_RIGHT_ARM)) {
+                    if (hasRaisedShield(Mek.LOC_RIGHT_ARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_RIGHT_ARM,
                               damageAbsorption);
                     }
@@ -6161,18 +6065,18 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             }
         }
 
-        if (hasPassiveShield(location, rear)) {
+        if (hasLoweredShield(location, rear)) {
             switch (location) {
                 case Mek.LOC_LEFT_ARM:
                 case Mek.LOC_LEFT_TORSO:
-                    if (hasPassiveShield(Mek.LOC_LEFT_ARM)) {
+                    if (hasLoweredShield(Mek.LOC_LEFT_ARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_LEFT_ARM,
                               damageAbsorption);
                     }
                     break;
                 case Mek.LOC_RIGHT_ARM:
                 case Mek.LOC_RIGHT_TORSO:
-                    if (hasPassiveShield(Mek.LOC_RIGHT_ARM)) {
+                    if (hasLoweredShield(Mek.LOC_RIGHT_ARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_RIGHT_ARM,
                               damageAbsorption);
                     }
@@ -6230,7 +6134,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             }
 
             Mounted<?> m = cs.getMount();
-            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().isShield()) {
+            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().hasFlag(MiscType.F_SHIELD)) {
                 rate -= ((MiscMounted) m).getDamageAbsorption(this, m.getLocation());
                 ((MiscMounted) m).takeDamage(1);
                 return Math.max(0, rate);
@@ -6330,12 +6234,10 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         super.destroyLocation(loc, blownOff);
         // if it's a leg, the entity falls
         if (game != null && locationIsLeg(loc) && canFall()) {
-            if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, 4, "leg destroyed"));
-            } else {
-                game.addPSR(new PilotingRollData(getId(),
-                      TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
-            }
+            game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL,
+                  Game.rulesManager.getRulesPSR().getLegDestroyedModifier(),
+                  "leg "
+                        + "destroyed"));
         }
     }
 
@@ -7046,14 +6948,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         // as being immobilized as well, which makes sense because the 'Mek
         // certainly isn't leaving that hex under its own power anymore.
 
-        int hitsToDestroyGyro = (gyroType == GYRO_HEAVY_DUTY) ? 3 : 2;
+        int hitsToDestroyGyro = Game.rulesManager.getRulesEquipment().hitsToDestroyGyro(gyroType);
 
-        // PLAYTEST3 heavy duty gyro is now 4
-        if (game != null
-              && gameOptions().booleanOption(OptionsConstants.PLAYTEST_3)
-              && gyroType == GYRO_HEAVY_DUTY) {
-            hitsToDestroyGyro = 4;
-        }
         return getGyroHits() >= hitsToDestroyGyro;
     }
 
@@ -7523,5 +7419,10 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             return false;
         }
         return getCrew().isEjected() && !isDestroyed();
+    }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return true;
     }
 }

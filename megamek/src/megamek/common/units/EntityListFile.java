@@ -990,6 +990,15 @@ public class EntityListFile {
                     output.write(entity.getC3UUIDAsString());
                 }
             }
+            // C3 Emergency Master state (TO:AUE p.110) survives mid-scenario saves
+            if (entity.isC3EmergencyMasterActive()) {
+                output.write("\" " + MULParser.ATTR_C3EM_ACTIVE + "=\"");
+                output.write("true");
+            }
+            if (entity.getC3EmergencyMasterOperatingTurns() > 0) {
+                output.write("\" " + MULParser.ATTR_C3EM_TURNS + "=\"");
+                output.write(String.valueOf(entity.getC3EmergencyMasterOperatingTurns()));
+            }
             if (!entity.getCamouflage().hasDefaultCategory()) {
                 output.write("\" " + MULParser.ATTR_CAMO_CATEGORY + "=\"");
                 output.write(entity.getCamouflage().getCategory());
@@ -1021,6 +1030,10 @@ public class EntityListFile {
 
             // Save some values for conventional infantry
             if (entity instanceof ConvInfantry infantry) {
+                if (infantry.getCustomArmorName() != null) {
+                    output.write("\" " + MULParser.ATTR_ARMOR_NAME + "=\"");
+                    output.write(MMXMLUtility.escape(infantry.getCustomArmorName()));
+                }
                 if (infantry.getCustomArmorDamageDivisor() != 1) {
                     output.write("\" " + MULParser.ATTR_ARMOR_DIVISOR + "=\"");
                     output.write(infantry.getCustomArmorDamageDivisor() + "");

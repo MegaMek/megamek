@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,10 +47,10 @@ import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.SkinSpecification;
-import megamek.common.units.Entity;
-import megamek.common.game.Game;
 import megamek.common.annotations.Nullable;
+import megamek.common.game.Game;
 import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.units.Entity;
 
 public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
 
@@ -157,6 +157,10 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         return GUIP.getNagForOverheat() && !isTimerExpired();
     }
 
+    protected boolean needNagForDishonor() {
+        return GUIP.getNagForDishonor() && !isTimerExpired();
+    }
+
     protected boolean needNagForNoUnJamRAC() {
         return GUIP.getNagForNoUnJamRAC() && !isTimerExpired();
     }
@@ -240,6 +244,10 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
 
     protected boolean checkNagForOverheat(String title, String body) {
         return doYesNoBotherDialog(title, body, () -> GUIP.setNagForOverheat(false));
+    }
+
+    protected boolean checkNagForDishonor(String title, String body) {
+        return doYesNoBotherDialog(title, body, () -> GUIP.setNagForDishonor(false));
     }
 
     protected boolean checkNagLaunchDoors(String title, String body) {

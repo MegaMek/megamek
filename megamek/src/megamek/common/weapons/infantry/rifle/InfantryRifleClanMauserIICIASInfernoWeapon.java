@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.rifle;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -75,7 +76,7 @@ public class InfantryRifleClanMauserIICIASInfernoWeapon extends InfantryWeapon {
         infantryRange = 3;
         ammoWeight = 0.0003;
         shots = 6;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(3013, 3015, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CHH)
               .setProductionFactions(Faction.CHH).setTechRating(TechRating.F)

@@ -36,6 +36,7 @@ package megamek.common.weapons.ppc.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -73,7 +74,7 @@ public class ISKinsSlaughterPPC extends PPCWeapon {
         // Since this is a SL Era ER PPC variant mentioned in Spartan Fluff
         // This weapons was actually blended into IO's Enhanced PPC and should be considered non-canon
         // for IS factions
-        rulesRefs = "Unofficial";
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         flags = flags.or(F_PPC_CAPACITOR_COMPATIBLE);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,6 +47,7 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -57,8 +58,10 @@ import javax.swing.KeyStroke;
 
 import megamek.MMConstants;
 import megamek.MegaMek;
+import megamek.client.Client;
 import megamek.client.ui.CopySystemDataAction;
 import megamek.client.ui.Messages;
+import megamek.client.ui.PackageBugReportAction;
 import megamek.client.ui.ShowBugReportDialogAction;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.common.KeyBindParser;
@@ -83,6 +86,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
     /** True when this menu is attached to a client (lobby or in game). */
     private final boolean isGame;
+
+    /**
+     * Supplies the client whose game the bug report packager should save. The menu bar is built before any client
+     * exists - and for the main menu, none ever does - so this is resolved lazily and defaults to no client.
+     */
+    private Supplier<Client> clientSupplier = () -> null;
 
     /** The current phase of the game, if any. */
     private GamePhase phase = GamePhase.UNKNOWN;
@@ -218,6 +227,18 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
     /** Maps the Action Command to the respective MenuItem. */
     private final Map<String, JMenuItem> itemMap = new HashMap<>();
+
+    /**
+     * Tells this menu bar how to find the client whose game should be saved for a bug report.
+     *
+     * <p>Set this once the client exists. Without it, the bug report packager still works but produces an archive of
+     * logs and system information only, which is the correct behaviour for the main menu and the board editor.</p>
+     *
+     * @param clientSupplier supplies the current client; may return {@code null} when no game is running
+     */
+    public void setClientSupplier(Supplier<Client> clientSupplier) {
+        this.clientSupplier = clientSupplier;
+    }
 
     public static CommonMenuBar getMenuBarForGame() {
         var menuBar = new CommonMenuBar(false, true, false);
@@ -422,7 +443,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
         menu.addSeparator();
 
-        menu.add(new ShowBugReportDialogAction(this, new CopySystemDataAction()));
+        // The client is resolved when the button is pressed, not now: this menu bar is also built for the main menu,
+        // where no game exists yet. A null client is a supported state and yields a logs-only archive.
+        // This must stay a lambda rather than the method reference clientSupplier::get, which would capture the
+        // placeholder supplier installed above and ignore whatever setClientSupplier later provides.
+        menu.add(new ShowBugReportDialogAction(this, new CopySystemDataAction(),
+              new PackageBugReportAction(this, () -> clientSupplier.get())));
         menu.add(new CopySystemDataAction());
 
         menu.addSeparator();

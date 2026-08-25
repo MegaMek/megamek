@@ -205,6 +205,23 @@ public class AddBotUtil {
 
     public @Nullable BotClient replaceGhostWithBot(final BehaviorSettings behavior, final String playerName,
           final Client client, StringBuilder message) {
+        return replaceGhostWithBot(AIType.PRINCESS, behavior, playerName, client, message);
+    }
+
+    /**
+     * Replaces a ghost player with a bot of the given AI type.
+     *
+     * @param aiType     which bot implementation to stand up in the ghost's place
+     * @param behavior   the behavior settings to give it
+     * @param playerName the ghost player to replace
+     * @param client     the client whose game the ghost is in
+     * @param message    receives a human-readable result, whether or not the replacement succeeded
+     *
+     * @return the connected bot, or {@code null} if the player was not a ghost or the bot failed to connect
+     */
+    public @Nullable BotClient replaceGhostWithBot(final AIType aiType, final BehaviorSettings behavior,
+          final String playerName, final Client client, StringBuilder message) {
+        Objects.requireNonNull(aiType);
         Objects.requireNonNull(client);
         Objects.requireNonNull(behavior);
 
@@ -227,7 +244,7 @@ public class AddBotUtil {
         }
 
         final Player target = possible.get();
-        final BotClient botClient = BotFactory.createBot(AIType.PRINCESS, target.getName(), host, port);
+        final BotClient botClient = BotFactory.createBot(aiType, target.getName(), host, port);
         botClient.setBehaviorSettings(behavior);
 
         boolean connected;

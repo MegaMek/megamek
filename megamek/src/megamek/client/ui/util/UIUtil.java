@@ -501,6 +501,22 @@ public final class UIUtil {
     }
 
     /**
+     * Paints the given component in the top menu bar's color, so that a strip placed directly below the menu bar blends
+     * with the bar above it. Falls back to the generic control color when the current theme does not define a menu bar
+     * background.
+     *
+     * @param component The component to paint in the menu bar color
+     */
+    public static void applyTopBarBackground(JComponent component) {
+        Color barBackground = UIManager.getColor("MenuBar.background");
+        if (barBackground == null) {
+            barBackground = UIManager.getColor("control");
+        }
+        component.setOpaque(true);
+        component.setBackground(barBackground);
+    }
+
+    /**
      * Returns the given values multiplied by the current GUI scaling as a Dimension. Use this to adapt things that the
      * automatic scaling doesn't affect, e.g. images.
      *
@@ -1398,7 +1414,8 @@ public final class UIUtil {
     private static final Color DARK_UI_YELLOW = new Color(200, 200, 60);
     private static final Color LIGHT_UI_LIGHTCYAN = new Color(40, 130, 130);
     private static final Color DARK_UI_LIGHTCYAN = new Color(100, 180, 180);
-    private static final Color LIGHT_UI_LIGHTGREEN = new Color(80, 180, 80);
+    // forest green: the old pale (80, 180, 80) washed out on a light background (GM lobby button, 2026-08-18)
+    private static final Color LIGHT_UI_LIGHTGREEN = new Color(34, 139, 34);
     private static final Color DARK_UI_LIGHTGREEN = new Color(150, 210, 150);
     private static final Color LIGHT_UI_DARKBLUE = new Color(225, 225, 245);
     private static final Color DARK_UI_DARKBLUE = new Color(50, 50, 80);

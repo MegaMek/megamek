@@ -35,6 +35,7 @@ package megamek.common.weapons.subCapitalWeapons;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
@@ -77,7 +78,7 @@ public class SubCapMissilePiranhaWeapon extends SubCapMissileWeapon {
         maxRange = WeaponType.RANGE_LONG;
         flags = flags.or(WeaponType.F_AERO_WEAPON).or(WeaponType.F_MISSILE);
         atClass = WeaponType.CLASS_CAPITAL_MISSILE;
-        rulesRefs = "156, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 156);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)

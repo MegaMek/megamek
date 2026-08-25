@@ -34,14 +34,18 @@ package megamek.client.ui.dialogs.advancedsearch;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import megamek.common.Messages;
+import megamek.common.SourceBookCode;
 import megamek.common.SourceBooks;
 import megamek.common.annotations.Nullable;
 import megamek.common.loaders.MekSummary;
@@ -58,6 +62,8 @@ import megamek.logging.MMLogger;
  */
 public class MekSearchFilter {
     private static final MMLogger LOGGER = MMLogger.create(MekSearchFilter.class);
+    private static final Set<SourceBookCode> BASE_RULE_BOOKS = Set.of(
+          SourceBookCode.TW, SourceBookCode.TM, SourceBookCode.BMM, SourceBookCode.CORE);
 
     public enum BoolOp {
         AND, OR, NOP
@@ -92,6 +98,7 @@ public class MekSearchFilter {
     public int iCanon;
     public int iPatchwork;
     public String source;
+    public Set<SourceBookCode> rulesRefs = new LinkedHashSet<>();
     public String mulID;
     public int iInvalid;
     public int iFailedToLoadEquipment;
@@ -243,6 +250,7 @@ public class MekSearchFilter {
             isDisabled = mekSearchFilter.isDisabled;
             checkEquipment = mekSearchFilter.checkEquipment;
             equipmentCriteria = new ExpressionTree(mekSearchFilter.equipmentCriteria);
+            rulesRefs.addAll(mekSearchFilter.rulesRefs);
         } else {
             isDisabled = true;
             checkEquipment = false;
@@ -432,6 +440,10 @@ public class MekSearchFilter {
         }
 
         if (!f.source.isEmpty() && !matchesSourceFilter(mek, f.source)) {
+            return false;
+        }
+
+        if (!matchesRulesRefs(mek.getRulesRefs(), f.rulesRefs)) {
             return false;
         }
 
@@ -1074,6 +1086,31 @@ public class MekSearchFilter {
     static boolean matchesSourceFilter(MekSummary mek, String sourceFilter) {
         return SourceBooks.splitSourceList(sourceFilter).stream()
               .anyMatch(source -> findTokenized(mek.getSource(), source) || findTokenized(mek.getPublished(), source));
+    }
+
+    static boolean matchesRulesRefs(List<? extends Collection<SourceBookCode>> buckets,
+          Set<SourceBookCode> selectedBooks) {
+        if (selectedBooks.isEmpty()) {
+            return true;
+        }
+        if (selectedBooks.stream().anyMatch(BASE_RULE_BOOKS::contains)) {
+            return buckets.stream().anyMatch(selectedBooks::containsAll);
+        }
+        return buckets.stream().anyMatch(bucket -> matchesWithoutBaseBooks(bucket, selectedBooks));
+    }
+
+    private static boolean matchesWithoutBaseBooks(Collection<SourceBookCode> bucket,
+          Set<SourceBookCode> selectedBooks) {
+        boolean hasNonBaseBook = false;
+        for (SourceBookCode book : bucket) {
+            if (!BASE_RULE_BOOKS.contains(book)) {
+                hasNonBaseBook = true;
+                if (!selectedBooks.contains(book)) {
+                    return false;
+                }
+            }
+        }
+        return hasNonBaseBook;
     }
 
     /**

@@ -74,9 +74,8 @@ import megamek.client.Client;
 import megamek.client.ratgenerator.C3NetworkConfigurator;
 import megamek.client.ratgenerator.CrewDescriptor;
 import megamek.client.ratgenerator.ForceDescriptor;
-import megamek.client.ratgenerator.FormationMix;
-import megamek.client.ratgenerator.FormationMixPreview;
 import megamek.client.ratgenerator.FormationType;
+import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ui.Messages;
@@ -577,6 +576,18 @@ public class ForceGeneratorViewUi implements ActionListener {
         modelChosen.clearData();
     }
 
+
+    /**
+     * @return what the generated force was rolled for - faction, command, year and rating - or
+     *       {@code null} when nothing has been generated yet
+     */
+    public @Nullable GenerationContext getGenerationContext() {
+        if (!(forceTree.getModel().getRoot() instanceof ForceDescriptor root)) {
+            return null;
+        }
+        return new GenerationContext(root.getFaction(), root.getYear(), root.getRating(),
+              GenerationContext.Source.FORCE_GENERATOR);
+    }
 
     private void setGeneratedForce(ForceDescriptor fd) {
         // A null descriptor means Clear Force. The accumulated Command Model has to go with the tree:

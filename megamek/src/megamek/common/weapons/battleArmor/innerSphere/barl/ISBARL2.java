@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.innerSphere.barl;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -70,7 +71,10 @@ public class ISBARL2 extends RLWeapon {
         criticalSlots = 2;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONE_SHOT).andNot(F_MEK_WEAPON)
               .andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        rulesRefs = "261, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 261),
+              rulesRef(SourceBookCode.TW, 305)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
               .setUnofficial(false)

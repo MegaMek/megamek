@@ -32,7 +32,171 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
-import megamek.common.rules.core.CoreRulesWeapons;
+import megamek.common.CriticalSlot;
+import megamek.common.Report;
+import megamek.common.annotations.Nullable;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.rules.RulesWeapons;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.Mek;
 
-public class TWRulesWeapons extends CoreRulesWeapons {
+import java.util.Vector;
+
+public class TWRulesWeapons extends RulesWeapons {
+
+    /**
+     * Does a RAC unjamming cause issues?
+     * Yes, it is restricted in what it can do in the weapons phase
+     *
+     * @return true if RAC unjamming has restrictions
+     */
+    @Override
+    public boolean getRACUnjamRestriction() {
+        return true;
+    }
+
+    /**
+     * What size do ATMs cluster in? 5s
+     *
+     * @return the ATM cluster size
+     */
+    @Override
+    public int getATMClusterSize() { return 5; }
+
+    /**
+     * Can ultra autocannons jam? Yes.
+     *
+     * @return true if ultra autocannons can jam
+     */
+    @Override
+    public boolean canUACsJam() { return true; }
+
+    /**
+     * What happens when an AC is hit? nothing extra
+     * This function does nothing
+     *
+     * @param cs the critical slot being hit
+     * @param mounted the mounted weapon
+     * @param reports vector of reports describing the hit
+     * @param entityId the ID of the entity being hit
+     */
+    @Override
+    public void setACHit(CriticalSlot cs, Mounted<?> mounted, Vector<Report> reports, int entityId) {}
+
+    /**
+     * Extended LRMs halve the rack size under minimum
+     *
+     * @param rackSize the rack size
+     * @return the minimum ELRM rack size
+     */
+    @Override
+    public int getELRMMinimumRackSize(int rackSize) { return (rackSize / 2 + rackSize % 2); }
+
+    /**
+     * MRMs are +1 to hit
+     *
+     * @param modifier the base modifier
+     * @return the MRM modifier
+     */
+    @Override
+    public int getMRMModifier(int modifier) { return (modifier + 1); }
+
+    /**
+     * What is the cluster modifier for MRMs?
+     * MRMs have no cluster modifier, but with Apollo they do
+     * 
+     * @param apollo true if Apollo fire control is used
+     * @return the MRM cluster modifier
+     */
+    @Override
+    public int getMRMClusterModifier(boolean apollo) {
+        if (apollo) {
+            return -1;
+        }
+        return 0;
+    }
+
+    /**
+     * Apollos is -1 to hit
+     *
+     * @return the Apollo to-hit modifier
+     */
+    @Override
+    public int getApolloToHit() { return -1; }
+
+    /**
+     * Do flamers do damage and heat?
+     * Only if BMM Flamers is enabled
+     *
+     * @param bmmFlamers true if using alternate flamer rules
+     * @return true if flamers do both damage and heat
+     */
+    @Override
+    public boolean flamerHeatAndDamage(boolean bmmFlamers) {
+        return bmmFlamers ? true : false;
+    }
+
+    /**
+     * PPC Capacitor check.
+     *
+     * @param roll the dice roll result
+     * @param attackingEntity the entity firing the PPC
+     * @param weapon the PPC weapon being fired
+     * @return a report of the capacitor check result
+     */
+    @Nullable
+    @Override
+    public Report checkPPCCapacitor(int roll, Entity attackingEntity, WeaponMounted
+          weapon) {
+        Report r = new Report(3178);
+        if (roll == 2) {
+            r.subject = attackingEntity.getId();
+            r.indent();
+            // Oops, we ruined our day...
+            int wLocation = weapon.getLocation();
+            weapon.setHit(true);
+            for (int i = 0; i < attackingEntity.getNumberOfCriticalSlots(wLocation); i++) {
+                CriticalSlot slot = attackingEntity.getCritical(wLocation, i);
+                if ((slot == null)
+                      || (slot.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                    continue;
+                }
+                // Only one Crit needs to be damaged.
+                Mounted<?> mounted = slot.getMount();
+                if (mounted.equals(weapon)) {
+                    slot.setDestroyed(true);
+                    break;
+                }
+            }
+            return r;
+        }
+        return null;
+    }
+
+    /**
+     * No MGA cluster bonus
+     *
+     * @return the MGA bonus
+     */
+    @Override
+    public int getMGABonus() {
+        return 0;
+    }
+
+    /**
+     * Does the HGR trigger a PSR? Only if they moved and it isn't an assault mek
+     *
+     * @param mpUsed the movement points used
+     * @param weightClass the weight class of the unit
+     * @return true if HGR can trigger a piloting skill roll
+     */
+    @Override
+    public boolean canHGRTriggerPSR(int mpUsed, int weightClass) {
+        if (mpUsed > 0 && weightClass <= EntityWeightClass.WEIGHT_ASSAULT) {
+            return true;
+        }
+        return false;
+    }
 }

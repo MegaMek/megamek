@@ -52,8 +52,10 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 import megamek.MMConstants;
+import megamek.client.bot.AIType;
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerator;
+import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.tileset.TilesetManager;
@@ -65,13 +67,7 @@ import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
 import megamek.common.TemporaryECMField;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.ClubAttackAction;
-import megamek.common.actions.DodgeAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.TorsoTwistAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
@@ -87,6 +83,7 @@ import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePollEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.GameToastEvent;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
@@ -153,10 +150,10 @@ public class Client extends AbstractClient {
      * The tile set, built on first use rather than with the client.
      *
      * <p>Building one parses the whole hex tile set into thousands of template hexes and their terrain, which a
-     * client that never draws anything has no use for. Every client used to pay that at construction: headless
-     * runners, and every bot, since {@code BotClient} is a {@code Client} too. A batch playing many games in one
-     * process paid it once per client per game and kept the result alive, which is tens of megabytes a game
-     * retained for images nobody would ever ask for.</p>
+     * client that never draws anything has no use for. Every client used to pay that at construction: headless runners,
+     * and every bot, since {@code BotClient} is a {@code Client} too. A batch playing many games in one process paid it
+     * once per client per game and kept the result alive, which is tens of megabytes a game retained for images nobody
+     * would ever ask for.</p>
      *
      * @return the tile set manager, or {@code null} if it cannot be built
      */
@@ -416,8 +413,8 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Asks the server to build the game board from the current map settings and broadcast it to all clients while
-     * still in the lobby, so that all players can see the battlefield that will actually be played.
+     * Asks the server to build the game board from the current map settings and broadcast it to all clients while still
+     * in the lobby, so that all players can see the battlefield that will actually be played.
      */
     public void sendLobbyBoardGenerationRequest() {
         send(new Packet(PacketCommand.LOBBY_GENERATE_BOARD));
@@ -880,7 +877,24 @@ public class Client extends AbstractClient {
                 if (!isCharge) {
                     game.addAction(entityAction);
                 } else {
-                    game.addCharge((AttackAction) entityAction);
+                    // This should work for Charge, DFA, and RAM attacks.
+                    if (entityAction instanceof DisplacementAttackAction) {
+                        Entity chargingUnit = game.getEntity(entityAction.getEntityId());
+                        if (chargingUnit != null) {
+                            chargingUnit.setDisplacementAttack((DisplacementAttackAction) entityAction);
+                        }
+                        game.addDisplacementAttack((AttackAction) entityAction);
+                    }
+                    if (entityAction instanceof RamAttackAction) {
+                        Entity rammingUnit = game.getEntity(entityAction.getEntityId());
+                        if (rammingUnit != null) {
+                            rammingUnit.setRamming(true);
+                        }
+                        game.addRam((AttackAction) entityAction);
+                    }
+                    if (entityAction instanceof TeleMissileAttackAction) {
+                        game.addTeleMissileAttack((AttackAction) entityAction);
+                    }
                 }
             }
         }
@@ -1096,6 +1110,22 @@ public class Client extends AbstractClient {
                     break;
                 case PRINCESS_SETTINGS:
                     game.setBotSettings(packet.getStringWIthBehaviorSettingsMap(0));
+                    // Which AI each bot was rides along, so a loaded game restores the same kind of bot.
+                    if (packet.getObject(1) instanceof Map<?, ?> typesByName) {
+                        Map<String, AIType> botTypes = new HashMap<>();
+                        for (Map.Entry<?, ?> entry : typesByName.entrySet()) {
+                            if ((entry.getKey() instanceof String botName)
+                                  && (entry.getValue() instanceof AIType aiType)) {
+                                botTypes.put(botName, aiType);
+                            }
+                        }
+                        game.setBotTypes(botTypes);
+                    }
+                    break;
+                case PRINCESS_DISHONORED:
+                    // A bot reported (via the server) which players it now considers dishonored; remember it so the
+                    // dishonor warning can be suppressed once a bot already holds a grudge.
+                    receivePrincessDishonored(packet);
                     break;
                 case ENTITY_UPDATE:
                     receiveEntityUpdate(packet);
@@ -1317,6 +1347,7 @@ public class Client extends AbstractClient {
                         try {
                             if (!sDir.mkdir()) {
                                 LOGGER.error("Failed to create savegames directory.");
+                                fireSaveCompleted(null);
                                 return true;
                             }
                         } catch (Exception ex) {
@@ -1337,6 +1368,10 @@ public class Client extends AbstractClient {
                         LOGGER.error(ex, "Unable to save file {}", sFinalFile);
                     }
                     setAwaitingSave(false);
+                    // Report the file only if it actually made it to disk; a failed or partial write must not be
+                    // handed to a waiting caller as though it succeeded.
+                    File savedFile = new File(localFile);
+                    fireSaveCompleted(savedFile.isFile() ? savedFile : null);
                     break;
                 case LOAD_SAVEGAME:
                     String loadFile = packet.getStringValue(0);
@@ -1366,6 +1401,7 @@ public class Client extends AbstractClient {
                         switch (cfrType) {
                             case CFR_DOMINO_EFFECT:
                                 cfrEvt.setEntityId(packet.getIntValue(1));
+                                cfrEvt.setDirection(packet.getIntValue(2));
                                 break;
                             case CFR_AMS_ASSIGN:
                                 cfrEvt.setEntityId(packet.getIntValue(1));
@@ -1407,6 +1443,40 @@ public class Client extends AbstractClient {
         } catch (InvalidPacketDataException e) {
             LOGGER.error("Invalid packet data:", e);
             return false;
+        }
+    }
+
+    /**
+     * Receives a bot's dishonored-players report, records it, and - the first time an enemy bot marks the local player
+     * dishonored - shows the player a toast so they know the bot's units will no longer show theirs mercy.
+     *
+     * <p>The notice is skipped when the player had already been flagged for this bot, so a player who confirmed the
+     * pre-attack nag (which optimistically records the dishonor) does not get a redundant second notice. A player who
+     * disabled that nag, or who was dishonored by a bot command such as blood-feud, is still told here.</p>
+     *
+     * @param packet the received {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED} packet
+     */
+    protected void receivePrincessDishonored(Packet packet) throws InvalidPacketDataException {
+        int botPlayerId = packet.getIntValue(0);
+        List<Integer> dishonoredPlayerIds = packet.getIntList(1);
+        Player localPlayer = getLocalPlayer();
+
+        if (localPlayer == null) {
+            game.setDishonoredPlayers(botPlayerId, dishonoredPlayerIds);
+            return;
+        }
+
+        int localPlayerId = localPlayer.getId();
+        boolean wasDishonored = game.isPlayerDishonoredBy(botPlayerId, localPlayerId);
+        game.setDishonoredPlayers(botPlayerId, dishonoredPlayerIds);
+
+        if (!wasDishonored
+              && (botPlayerId != localPlayerId)
+              && game.isPlayerDishonoredBy(botPlayerId, localPlayerId)) {
+            Player bot = game.getPlayer(botPlayerId);
+            String botName = (bot != null) ? bot.getName() : Messages.getString("HonorNag.unknownBot");
+            game.fireGameEvent(new GameToastEvent(this, GameToastEvent.Level.GAMEMASTER,
+                  Messages.getString("HonorNag.dishonoredToast", botName), Entity.NONE));
         }
     }
 
@@ -1574,6 +1644,13 @@ public class Client extends AbstractClient {
      */
     public void sendModeChange(int nEntity, int nEquip, int nMode) {
         send(new Packet(PacketCommand.ENTITY_MODE_CHANGE, nEntity, nEquip, nMode));
+    }
+
+    /**
+     * Send charge-change data to the server
+     */
+    public void sendChargeLevelChange(int nEntity, int nEquip, int nChargeLevel) {
+        send(new Packet(PacketCommand.ENTITY_CHARGE_CHANGE, nEntity, nEquip, nChargeLevel));
     }
 
     /**

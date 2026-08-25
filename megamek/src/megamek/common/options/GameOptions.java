@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -78,11 +78,7 @@ public class GameOptions extends BasicGameOptions {
         super.initialize();
 
         IBasicOptionGroup base = addGroup("basic");
-        // Change this to false for normal release
-        addOption(base, OptionsConstants.TWRULES, true);
-        addOption(base, OptionsConstants.PLAYTEST_1, false);
-        addOption(base, OptionsConstants.PLAYTEST_2, false);
-        addOption(base, OptionsConstants.PLAYTEST_3, false);
+        
         addOption(base, OptionsConstants.SEARCHLIGHTS_ON, true);
         addOption(base, OptionsConstants.BASE_PUSH_OFF_BOARD, true);
         addOption(base, OptionsConstants.BASE_DUMPING_FROM_ROUND, 1);
@@ -138,6 +134,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_TEAM_VISION, true);
         addOption(advancedRules, OptionsConstants.ADVANCED_TAC_OPS_BAP, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TAC_OPS_ECCM, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_TAC_OPS_C3_EMERGENCY_MASTER, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_GHOST_TARGET_MODE, IOption.CHOICE,
               OptionsConstants.GHOST_TARGET_MODE_STANDARD);

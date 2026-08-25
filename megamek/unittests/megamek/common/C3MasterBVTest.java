@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -233,16 +233,18 @@ public class C3MasterBVTest {
         int baseBVC3MM = c3mm.calculateBattleValue(true, true);
         int baseBVC3M = c3m.calculateBattleValue(true, true);
         int totalNetworkBV = baseBVC3MM + baseBVC3M;
-        int expectedBonus = (int) Math.round(totalNetworkBV * 0.05);
+        int expectedC3MMBonus = (int) Math.round(baseBVC3MM * 0.10);
+        int expectedC3MBonus = (int) Math.round(baseBVC3M * 0.10);
 
         // Both units should receive the 5% network bonus
         int c3mmBonus = c3mm.getExtraC3BV(baseBVC3MM);
         int c3mBonus = c3m.getExtraC3BV(baseBVC3M);
 
-        assertEquals(expectedBonus, c3mmBonus,
-              "C3MM should receive 5% of network BV (" + totalNetworkBV + " * 0.05 = " + expectedBonus + ")");
-        assertEquals(expectedBonus, c3mBonus,
-              "C3M connected to C3MM (no slaves) should receive 5% of network BV");
+        assertEquals(expectedC3MMBonus, c3mmBonus,
+              "C3MM should receive 10% of bonus BV for 2 members (" + baseBVC3MM + " * 0.10 = " + expectedC3MMBonus + 
+                    ")");
+        assertEquals(expectedC3MBonus, c3mBonus,
+              "C3M connected to C3MM (no slaves) should receive 10% BV bonus");
     }
 
     /**
@@ -297,17 +299,19 @@ public class C3MasterBVTest {
         int baseBVC3M = c3m.calculateBattleValue(true, true);
         int baseBVC3S1 = c3s1.calculateBattleValue(true, true);
         int baseBVC3S2 = c3s2.calculateBattleValue(true, true);
-        int totalNetworkBV = baseBVC3MM + baseBVC3M + baseBVC3S1 + baseBVC3S2;
-        int expectedBonus = (int) Math.round(totalNetworkBV * 0.05);
+        int expectedBonusC3MM = (int) Math.round(baseBVC3MM * 0.2);
+        int expectedBonusC3M = (int) Math.round(baseBVC3M * 0.2);
+        int expectedBonusC3S1 = (int) Math.round(baseBVC3S1 * 0.2);
+        int expectedBonusC3S2 =  (int) Math.round(baseBVC3S2 * 0.2);
 
         int c3mmBonus = c3mm.getExtraC3BV(baseBVC3MM);
         int c3mBonus = c3m.getExtraC3BV(baseBVC3M);
         int c3s1Bonus = c3s1.getExtraC3BV(baseBVC3S1);
         int c3s2Bonus = c3s2.getExtraC3BV(baseBVC3S2);
 
-        assertEquals(expectedBonus, c3mmBonus, "C3MM should receive 5% of full network BV");
-        assertEquals(expectedBonus, c3mBonus, "C3M should receive 5% of full network BV");
-        assertEquals(expectedBonus, c3s1Bonus, "C3S should receive 5% of full network BV");
-        assertEquals(expectedBonus, c3s2Bonus, "C3S should receive 5% of full network BV");
+        assertEquals(expectedBonusC3MM, c3mmBonus, "C3MM should receive 20% bonus BV");
+        assertEquals(expectedBonusC3M, c3mBonus, "C3M should receive 20% bonus BV");
+        assertEquals(expectedBonusC3S1, c3s1Bonus, "C3S should receive 20% bonus BV");
+        assertEquals(expectedBonusC3S2, c3s2Bonus, "C3S should receive 20% bonus BV");
     }
 }

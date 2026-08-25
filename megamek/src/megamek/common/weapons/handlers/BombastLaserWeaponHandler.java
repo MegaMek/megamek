@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,10 +35,15 @@
 package megamek.common.weapons.handlers;
 
 import java.io.Serial;
+import java.util.Vector;
 
 import megamek.common.HitData;
+import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.ChargeLevel;
+import megamek.common.enums.GamePhase;
+import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.server.totalWarfare.TWGameManager;
@@ -48,11 +53,53 @@ public class BombastLaserWeaponHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = 2452514543790235562L;
 
     /**
+     * Bombast Laser handler
      *
+     * @param toHit       tohit calc
+     * @param waa         weapon attack action
+     * @param game        game
+     * @param gameManager TWGameManager
+     *
+     * @throws EntityLoadingException
      */
-    public BombastLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
+    public BombastLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager gameManager)
           throws EntityLoadingException {
-        super(toHit, waa, g, m);
+        super(toHit, waa, game, gameManager);
         generalDamageType = HitData.DAMAGE_ENERGY;
+    }
+
+    @Override
+    public boolean handle(GamePhase phase, Vector<Report> returnedReports) {
+        boolean handled = false;
+        handled = super.handle(phase, returnedReports);
+        dischargeIfCharged();
+
+        return handled;
+    }
+
+    private void dischargeIfCharged() {
+        if (weapon.getChargeState() != ChargeLevel.CHARGED) {
+            return;
+        }
+        weapon.setChargeState(ChargeLevel.CHARGE_NONE);
+    }
+
+    public static int getDamageValue(Mounted<?> weapon) {
+        int damageValue = 16;
+        String damage = weapon.curMode().getName().toLowerCase();
+        if ((damage.trim().length() > 6) && damage.contains("damage")) {
+            return damageValue = Integer.parseInt(damage.substring(damage.indexOf("damage") + 6).trim());
+        }
+        return damageValue;
+    }
+
+    public static int getHeat(Mounted<?> mounted) {
+        int damage = getDamageValue(mounted);
+        return switch (damage) {
+            case 16 -> 12;
+            case 12 -> 8;
+            case 8 -> 6;
+            default -> 12;
+        };
     }
 }

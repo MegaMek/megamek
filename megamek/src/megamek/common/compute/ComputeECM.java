@@ -510,14 +510,7 @@ public class ComputeECM {
         }
 
         // Get intervening Coords
-        ArrayList<Coords> coords = Coords.intervening(a, b);
-
-        // PLAYTEST3 only if the two coordinates are affected by ECM, not intervening
-        if (ae.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            coords.clear();
-            coords.add(a);
-            coords.add(b);
-        }
+        ArrayList<Coords> coords = Game.rulesManager.getRulesEquipment().getECMCoordsAffected(a, b);
         
         ECMInfo worstECMEffects = null;
         // Loop through intervening coords, and find the worst effects
@@ -628,14 +621,7 @@ public class ComputeECM {
                 }
                 // Anything that's not Angel ECM
             } else if (m.getType().hasFlag(MiscType.F_ECM) && m.curMode().equals("ECM")) {
-                int range = 6;
-                if (m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
-                    range = 0;
-                } else if (m.getType().hasFlag(MiscType.F_EW_EQUIPMENT) ||
-                      m.getType().hasFlag(MiscType.F_NOVA) ||
-                      m.getType().hasFlag(MiscType.F_WATCHDOG)) {
-                    range = 3;
-                }
+                int range = Game.rulesManager.getRulesEquipment().getECMRanges(m.getType());
                 newInfo = new ECMInfo(range, 1, entity);
                 newInfo.setECMNova(m.getType().hasFlag(MiscType.F_NOVA));
             }
@@ -717,14 +703,8 @@ public class ComputeECM {
                 }
                 // Anything that's not Angel ECM
             } else if (m.getType().hasFlag(MiscType.F_ECM) && m.curMode().equals("ECCM")) {
-                int range = 6;
-                if (m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
-                    range = 0;
-                } else if (m.getType().hasFlag(MiscType.F_EW_EQUIPMENT) ||
-                      m.getType().hasFlag(MiscType.F_NOVA) ||
-                      m.getType().hasFlag(MiscType.F_WATCHDOG)) {
-                    range = 3;
-                }
+                int range = Game.rulesManager.getRulesEquipment().getECMRanges(m.getType());
+                
                 newInfo = new ECMInfo(range, 0, entity);
                 newInfo.setECCMStrength(1);
             }

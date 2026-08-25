@@ -57,6 +57,7 @@ import megamek.client.ratgenerator.Parameters;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.dialogs.AnalyzeFormationDialog;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.loaders.MekSummary;
@@ -77,6 +78,8 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
     private static final long serialVersionUID = -3462304612643343012L;
 
     private static final MMLogger LOGGER = MMLogger.create(ForceGenerationOptionsPanel.class);
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     public enum Use {
         RAT_GENERATOR, FORMATION_BUILDER // , FORCE_GENERATOR
@@ -290,6 +293,8 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
         c.weighty = 0.5;
         add(panUnitTypeOptions, c);
 
+        restoreRememberedSelections();
+
         if (!RATGenerator.getInstance().isInitialized()) {
             RATGenerator.getInstance().registerListener(this);
         }
@@ -299,6 +304,22 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
 
         if (panUnitTypeOptions != null) {
             panUnitTypeOptions.optionsChanged();
+        }
+    }
+
+    /**
+     * Restores the choices that do not depend on the generator data being loaded. Faction, command and
+     * rating are restored as their lists are built, since those lists depend on the year and on the
+     * generator finishing its load.
+     */
+    private void restoreRememberedSelections() {
+        String unitCount = GUIP.getRandomArmySetting(GUIPreferences.RND_ARMY_LAST_UNIT_COUNT);
+        if (!unitCount.isBlank()) {
+            txtNumUnits.setText(unitCount);
+        }
+        String unitType = GUIP.getRandomArmySetting(GUIPreferences.RND_ARMY_LAST_UNIT_TYPE);
+        if (!unitType.isBlank()) {
+            cbUnitType.setSelectedItem(unitType);
         }
     }
     // endregion Constructors
@@ -369,6 +390,10 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
             cbFaction.addItem(fRec);
         }
         cbFaction.setSelectedItem(old);
+        if (old == null) {
+            // First population of this dialog: pick up where the player left off last time.
+            selectRememberedFaction(cbFaction, GUIPreferences.RND_ARMY_LAST_FACTION);
+        }
         if (cbFaction.getSelectedItem() == null) {
             cbFaction.setSelectedItem(RATGenerator.getInstance().getFaction("IS"));
         }
@@ -395,6 +420,9 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
             }
         }
         cbSubFaction.setSelectedItem(old);
+        if (old == null) {
+            selectRememberedFaction(cbSubFaction, GUIPreferences.RND_ARMY_LAST_SUB_FACTION);
+        }
         updateRatingChoice();
         cbSubFaction.addActionListener(this);
     }
@@ -425,7 +453,11 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
             }
         }
         if (current < 0 && cbRating.getItemCount() > 0) {
+            String remembered = GUIP.getRandomArmySetting(GUIPreferences.RND_ARMY_LAST_RATING);
             cbRating.setSelectedIndex(0);
+            if (!remembered.isBlank()) {
+                cbRating.setSelectedItem(remembered);
+            }
         } else {
             cbRating.setSelectedIndex(Math.min(current, cbRating.getItemCount() - 1));
         }
@@ -447,6 +479,46 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
             updateFactionChoice();
             RATGenerator.getInstance().removeListener(this);
             RATGenerator.getInstance().loadYear(ratGenYear);
+        }
+        rememberSelections();
+    }
+
+    /**
+     * Saves the current choices so the dialog reopens on them. Retyping a faction, command, unit type
+     * and rating on every visit is the single most repeated action in this dialog.
+     */
+    public void rememberSelections() {
+        FactionRecord faction = (FactionRecord) cbFaction.getSelectedItem();
+        FactionRecord subFaction = (FactionRecord) cbSubFaction.getSelectedItem();
+        GUIP.setRandomArmySetting(GUIPreferences.RND_ARMY_LAST_FACTION,
+              (faction == null) ? "" : faction.getKey());
+        GUIP.setRandomArmySetting(GUIPreferences.RND_ARMY_LAST_SUB_FACTION,
+              (subFaction == null) ? "" : subFaction.getKey());
+        String unitType = (String) cbUnitType.getSelectedItem();
+        GUIP.setRandomArmySetting(GUIPreferences.RND_ARMY_LAST_UNIT_TYPE,
+              (unitType == null) ? "" : unitType);
+        String rating = (String) cbRating.getSelectedItem();
+        GUIP.setRandomArmySetting(GUIPreferences.RND_ARMY_LAST_RATING, (rating == null) ? "" : rating);
+        GUIP.setRandomArmySetting(GUIPreferences.RND_ARMY_LAST_UNIT_COUNT, txtNumUnits.getText());
+    }
+
+    /**
+     * Restores a remembered combo choice when the list is first populated and nothing is selected yet.
+     *
+     * @param comboBox        the list to select in
+     * @param rememberedKey   the preference holding the remembered faction key
+     */
+    private static void selectRememberedFaction(JComboBox<FactionRecord> comboBox, String rememberedKey) {
+        String remembered = GUIP.getRandomArmySetting(rememberedKey);
+        if (remembered.isBlank()) {
+            return;
+        }
+        for (int index = 0; index < comboBox.getItemCount(); index++) {
+            FactionRecord candidate = comboBox.getItemAt(index);
+            if ((candidate != null) && candidate.getKey().equals(remembered)) {
+                comboBox.setSelectedIndex(index);
+                return;
+            }
         }
     }
 
@@ -567,7 +639,6 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
         @Serial
         private static final long serialVersionUID = -3961143911841133921L;
 
-        private final JComboBox<String> cbWeightClass = new JComboBox<>();
         private final List<JCheckBox> weightChecks = new ArrayList<>();
         private final JComboBox<String> cbRoleStrictness = new JComboBox<>();
         private final List<JCheckBox> roleChecks = new ArrayList<>();
@@ -829,45 +900,46 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
             }
         }
 
+        /**
+         * Builds the weight-class picker: one check box per class, any combination allowed.
+         *
+         * <p>There used to be a combo box beside these boxes offering "Mixed" or a single weight
+         * class, and choosing a class disabled the boxes. It could not express anything the boxes
+         * could not - picking one class from the combo is checking one box - so it only added a way
+         * to get the same answer.</p>
+         *
+         * @param panel the panel to build into
+         * @param start the lightest class this unit type has
+         * @param end   the heaviest class this unit type has
+         * @param all   whether every class starts selected; otherwise only the lightest real one does
+         */
         private void addWeightClasses(JPanel panel, int start, int end, boolean all) {
-            cbWeightClass.addItem(Messages.getString("RandomArmyDialog.Mixed"));
             GridBagConstraints c = new GridBagConstraints();
-            c.gridx = 1;
+            c.gridx = 0;
             c.gridy = 0;
-            c.gridwidth = 1;
+            c.gridwidth = 2;
             c.fill = GridBagConstraints.NONE;
             c.anchor = GridBagConstraints.NORTHWEST;
             c.weightx = 0.0;
             c.weighty = 0.0;
-            panel.add(cbWeightClass);
-
-            c.gridx = 0;
-            c.gridwidth = 2;
-            for (int i = start; i <= end; i++) {
-                String name = Messages.getString("RandomArmyDialog.weight_class_" + i);
-                cbWeightClass.addItem(name);
-                JCheckBox chk = new JCheckBox(name);
-                chk.setName(String.valueOf(i));
-                chk.setSelected(all);
-                weightChecks.add(chk);
+            for (int weightClass = start; weightClass <= end; weightClass++) {
+                String name = Messages.getString("RandomArmyDialog.weight_class_" + weightClass);
+                JCheckBox weightCheck = new JCheckBox(name);
+                weightCheck.setName(String.valueOf(weightClass));
+                weightCheck.setSelected(all);
+                weightChecks.add(weightCheck);
                 c.gridy++;
-                if (i == end) {
+                if (weightClass == end) {
                     c.weightx = 1.0;
                     c.weighty = 1.0;
                 }
-                panel.add(chk, c);
+                panel.add(weightCheck, c);
             }
-            cbWeightClass.addActionListener(e -> {
-                for (JCheckBox chk : weightChecks) {
-                    chk.setEnabled(cbWeightClass.getSelectedIndex() == 0);
-                }
-            });
-            if (all) {
-                cbWeightClass.setSelectedIndex(0);
-            } else if (start > EntityWeightClass.WEIGHT_ULTRA_LIGHT) {
-                cbWeightClass.setSelectedIndex(1);
-            } else {
-                cbWeightClass.setSelectedIndex(2);
+            if (!all && !weightChecks.isEmpty()) {
+                // Matches what the old combo defaulted to: the lightest class, skipping ultra-light
+                // where the unit type has one, since almost nothing is built at that weight.
+                int defaultIndex = (start > EntityWeightClass.WEIGHT_ULTRA_LIGHT) ? 0 : 1;
+                weightChecks.get(Math.min(defaultIndex, weightChecks.size() - 1)).setSelected(true);
             }
         }
 
@@ -894,15 +966,13 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
         }
 
         public List<Integer> getSelectedWeights() {
-            if (cbWeightClass.getSelectedIndex() > 0) {
-                List<Integer> retVal = new ArrayList<>();
-                retVal.add(MathUtility.parseInt(weightChecks.get(cbWeightClass.getSelectedIndex() - 1).getName(), 0));
-                return retVal;
+            List<Integer> selectedWeights = new ArrayList<>();
+            for (JCheckBox weightCheck : weightChecks) {
+                if (weightCheck.isSelected()) {
+                    selectedWeights.add(MathUtility.parseInt(weightCheck.getName(), 0));
+                }
             }
-            return weightChecks.stream()
-                  .filter(AbstractButton::isSelected)
-                  .map(chk -> MathUtility.parseInt(chk.getName(), 0))
-                  .collect(Collectors.toList());
+            return selectedWeights;
         }
 
         public List<MissionRole> getSelectedRoles() {

@@ -36,6 +36,7 @@ package megamek.common.weapons.other.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
@@ -78,7 +79,7 @@ public class CLFussilade extends CLIATMWeapon {
         tonnage = 1.5;
         criticalSlots = 1;
         bv = 11.0;
-        rulesRefs = "59, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 59);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X)

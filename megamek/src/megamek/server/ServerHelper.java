@@ -251,7 +251,7 @@ public class ServerHelper {
      */
     public static boolean detectMinefields(Game game, Entity entity, Coords coords,
           Vector<Report> vPhaseReport, TWGameManager gameManager) {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
+        if (!Game.rulesManager.getRulesGame().allowMinefields(game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS))) {
             return false;
         }
 
@@ -488,25 +488,5 @@ public class ServerHelper {
                 gameManager.entityUpdate(entity.getId());
             }
         }
-    }
-
-    /**
-     * Returns the target number to avoid Radical Heat Sink Failure for the given number of rounds of consecutive use,
-     * IO p.89. The first round of use means consecutiveRounds = 1; this is the minimum as 0 rounds of use would not
-     * trigger a roll.
-     *
-     * @param consecutiveRounds The rounds the RHS has been used
-     *
-     * @return The roll target number to avoid failure
-     */
-    public static int radicalHeatSinkSuccessTarget(int consecutiveRounds) {
-        return switch (consecutiveRounds) {
-            case 1 -> 3;
-            case 2 -> 5;
-            case 3 -> 7;
-            case 4 -> 10;
-            case 5 -> 11;
-            default -> TargetRoll.AUTOMATIC_FAIL;
-        };
     }
 }

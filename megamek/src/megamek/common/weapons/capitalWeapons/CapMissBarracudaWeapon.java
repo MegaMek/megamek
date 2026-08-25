@@ -36,6 +36,7 @@ package megamek.common.weapons.capitalWeapons;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -75,7 +76,10 @@ public class CapMissBarracudaWeapon extends CapitalMissileWeapon {
         this.missileArmor = 20;
         this.maxRange = RANGE_EXT;
         this.toHitModifier = -2;
-        rulesRefs = "210, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 210),
+              rulesRef(SourceBookCode.TW, 304)
+        );
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
               .setUnofficial(false)

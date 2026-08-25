@@ -47,6 +47,7 @@ import megamek.common.compute.Compute;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 
@@ -148,12 +149,8 @@ public class LargeSupportTank extends SupportTank {
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-
-            int roll = Compute.d6(2);
-
-            if ((5 < roll) && (roll < 9)) {
-                rv = new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
-                      true);
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation()) {
+                rv = new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
                 bHitAimed = true;
             }
         }

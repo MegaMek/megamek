@@ -376,6 +376,7 @@ public class OptionsConstants {
     public static final String ADVANCED_TEAM_VISION = "team_vision";
     public static final String ADVANCED_TAC_OPS_BAP = "tacops_bap";
     public static final String ADVANCED_TAC_OPS_ECCM = "tacops_eccm";
+    public static final String ADVANCED_TAC_OPS_C3_EMERGENCY_MASTER = "tacops_c3_emergency_master";
     public static final String ADVANCED_TAC_OPS_GHOST_TARGET = "tacops_ghost_target";
     public static final String ADVANCED_GHOST_TARGET_MODE = "ghost_target_mode";
     public static final String ADVANCED_GHOST_TARGET_MAX = "ghost_target_max";
@@ -582,12 +583,10 @@ public class OptionsConstants {
     public static final String RPG_TOUGHNESS = "toughness";
     public static final String RPG_CONDITIONAL_EJECTION = "conditional_ejection";
     public static final String RPG_BEGIN_SHUTDOWN = "begin_shutdown";
-
-    public static final String PLAYTEST_1 = "playtest_1";
-    public static final String PLAYTEST_2 = "playtest_2";
-    public static final String PLAYTEST_3 = "playtest_3";
     public static final String SEARCHLIGHTS_ON = "searchlights_on";
-    public static final String TWRULES = "twrules";
+    public static final String RULES_TW = "Total Warfare";
+    public static final String RULES_SYSTEM = "rules_system";
+    public static final String RULES_CORE = "Core Rules";
 
     private OptionsConstants() {
     }

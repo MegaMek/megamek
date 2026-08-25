@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -409,6 +409,11 @@ public class ScenarioV2 implements Scenario {
                 } else {
                     player.setCamouflage(new Camouflage(new File(camoPath)));
                 }
+            } else {
+                // like lobby-created players (Server.addNewPlayer), a faction without a camo of its own
+                // gets its player color's camouflage - otherwise every faction renders with the same
+                // default camo and the sides cannot be told apart on the board
+                player.setCamouflage(Camouflage.of(player.getColour()));
             }
 
             teamId = playerNode.has(PARAM_TEAM) ? playerNode.get(PARAM_TEAM).intValue() : teamId + 1;

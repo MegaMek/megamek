@@ -36,6 +36,7 @@ package megamek.common.weapons.lrms.clan.torpedo;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -67,7 +68,12 @@ public class CLLRT4 extends LRTWeapon {
         this.bv = 46;
         // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         // But LRM Tech Base and Avail Ratings.
-        rulesRefs = "231, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 231),
+              rulesRef(SourceBookCode.BMM, 104),
+              rulesRef(SourceBookCode.CORE, 187),
+              rulesRef(SourceBookCode.TW, 138)
+        );
         flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN)

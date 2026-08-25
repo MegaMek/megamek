@@ -36,6 +36,7 @@ package megamek.common.weapons.prototypes.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -70,7 +71,7 @@ public class CLUAC10Prototype extends CLPrototypeUACWeapon {
         medAV = 15;
         maxRange = RANGE_MED;
         explosionDamage = damage;
-        rulesRefs = "92, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 92);
         flags = flags.or(F_PROTOTYPE).andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)

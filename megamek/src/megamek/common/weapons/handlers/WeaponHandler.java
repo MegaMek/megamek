@@ -568,9 +568,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
               && !(attackingEntity.getSwarmTargetId() == target.getId())) {
             bSalvo = true;
             int toReturn = allShotsHit() ? ((BattleArmor) attackingEntity)
-                                           .getShootingStrength()
+                  .getShootingStrength()
                   : Compute
-                    .missilesHit(((BattleArmor) attackingEntity).getShootingStrength());
+                  .missilesHit(((BattleArmor) attackingEntity).getShootingStrength());
             Report r = new Report(3325);
             r.newlines = 0;
             r.subject = subjectId;
@@ -2295,11 +2295,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     /**
-     * Used by certain artillery handlers to draw a drift marker at the hex an artillery round actually landed on when it
-     * missed its target. The round is always marked as a drift: a drift that lands on a unit is still a drift, and the
-     * resulting damage is already shown in the combat report. (It must not be marked as a hit - {@link
-     * SpecialHexDisplay#drawNow} deliberately suppresses "hit" markers whose text says they drifted, which would leave
-     * the landing hex with no marker at all.) No-op for direct hits.
+     * Used by certain artillery handlers to draw a drift marker at the hex an artillery round actually landed on when
+     * it missed its target. The round is always marked as a drift: a drift that lands on a unit is still a drift, and
+     * the resulting damage is already shown in the combat report. (It must not be marked as a hit -
+     * {@link SpecialHexDisplay#drawNow} deliberately suppresses "hit" markers whose text says they drifted, which would
+     * leave the landing hex with no marker at all.) No-op for direct hits.
      *
      * @param targetPos The hex that was targeted
      * @param finalPos  The hex the round actually drifted to

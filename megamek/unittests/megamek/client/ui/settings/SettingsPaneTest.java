@@ -34,6 +34,7 @@ package megamek.client.ui.settings;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Component;
@@ -47,6 +48,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.junit.jupiter.api.Test;
@@ -78,7 +80,7 @@ class SettingsPaneTest {
                 secondBuilds.incrementAndGet();
                 return page("Second section", "second summary");
             });
-            SettingsPane pane = new SettingsPane(List.of(first, second), factories, NAVIGATION_TEXT, "Details");
+            SettingsPane pane = new SettingsPane(List.of(first, second), factories, NAVIGATION_TEXT);
 
             pane.selectRoute(second);
             pane.selectRoute(second);
@@ -98,7 +100,7 @@ class SettingsPaneTest {
                 .literalSection("Beta", "beta summary", new JLabel())
                 .build();
             SettingsPane pane = new SettingsPane(List.of(route), Map.of("page", () -> page),
-                NAVIGATION_TEXT, "Details");
+                NAVIGATION_TEXT);
 
             pane.setFilterText("beta");
             pane.selectRoute(route);
@@ -109,6 +111,116 @@ class SettingsPaneTest {
             assertTrue(sections.get(1).isExpanded());
         });
         flushEventQueue();
+    }
+
+    @Test
+    void typingFilterExpandsMatchingSectionOnCurrentPage() throws Exception {
+        runOnEdt(() -> {
+            SettingsRoute route = new SettingsRoute("page", List.of("Page"));
+            SettingsPagePanel page = SettingsPagePanel.builder("Test", PAGE_TEXT, "header", null)
+                  .sectionsExpandedByDefault(false)
+                  .literalSection("Alpha", null, new JLabel("First option"))
+                  .literalSection("Beta", null, new JLabel("Needle option"))
+                  .build();
+            SettingsPane pane = new SettingsPane(List.of(route), Map.of("page", () -> page),
+                NAVIGATION_TEXT);
+
+            pane.setFilterText("needle");
+
+            List<CollapsibleSectionPanel> sections = findSections(page);
+            assertFalse(sections.get(0).isExpanded());
+            assertTrue(sections.get(1).isExpanded());
+        });
+    }
+
+    @Test
+    void filterMatchingAnotherRouteLeavesCurrentPageExpansionUnchanged() throws Exception {
+        runOnEdt(() -> {
+            SettingsRoute first = new SettingsRoute("first", List.of("First"));
+            SettingsRoute second = new SettingsRoute("second", List.of("Second"));
+            SettingsPagePanel firstPage = SettingsPagePanel.builder("First", PAGE_TEXT, "header", null)
+                  .sectionsExpandedByDefault(false)
+                  .literalSection("Alpha", null, new JLabel("Alpha option"))
+                  .literalSection("Beta", null, new JLabel("Beta option"))
+                  .build();
+            SettingsPane pane = new SettingsPane(List.of(first, second), Map.of(
+                  "first", () -> firstPage,
+                "second", () -> page("Needle section", null)), NAVIGATION_TEXT);
+
+            pane.setFilterText("needle");
+
+            List<CollapsibleSectionPanel> sections = findSections(firstPage);
+            assertFalse(sections.get(0).isExpanded());
+            assertFalse(sections.get(1).isExpanded());
+        });
+        finishSearchIndexing();
+    }
+
+    @Test
+    void clearingFilterRestoresExpansionState() throws Exception {
+        runOnEdt(() -> {
+            SettingsRoute route = new SettingsRoute("page", List.of("Page"));
+            SettingsPagePanel page = SettingsPagePanel.builder("Test", PAGE_TEXT, "header", null)
+                  .sectionsExpandedByDefault(false)
+                  .literalSection("Alpha", null, new JLabel("Alpha option"))
+                  .literalSection("Beta", null, new JLabel("Needle option"))
+                  .build();
+            SettingsPane pane = new SettingsPane(List.of(route), Map.of("page", () -> page),
+                NAVIGATION_TEXT);
+
+            pane.setFilterText("needle");
+            List<CollapsibleSectionPanel> sections = findSections(page);
+            assertFalse(sections.get(0).isExpanded());
+            assertTrue(sections.get(1).isExpanded());
+
+            pane.setFilterText("");
+            assertFalse(sections.get(0).isExpanded());
+            assertFalse(sections.get(1).isExpanded());
+        });
+    }
+
+    @Test
+    void activeFilterHighlightsCurrentAndNewlySelectedPages() throws Exception {
+        runOnEdt(() -> {
+            SettingsRoute first = new SettingsRoute("first", List.of("First"));
+            SettingsRoute second = new SettingsRoute("second", List.of("Second"));
+            SettingsPane pane = new SettingsPane(List.of(first, second), Map.of(
+                  "first", () -> componentPage("Search Needle"),
+                "second", () -> componentPage("Another Needle")), NAVIGATION_TEXT);
+            pane.setSize(800, 500);
+            layoutTree(pane);
+
+            pane.setFilterText("needle");
+            SettingsContentHost host = findComponent(pane, "settingsContentHost", SettingsContentHost.class);
+            assertFalse(host.getSearchHighlightBounds().isEmpty());
+
+            assertTrue(pane.selectRoute(second));
+            layoutTree(pane);
+            assertFalse(host.getSearchHighlightBounds().isEmpty());
+        });
+    }
+
+    @Test
+    void navigatingWithActiveFilterRebindsHelpWhenHiddenControlReturns() throws Exception {
+        runOnEdt(() -> {
+            SettingsRoute first = new SettingsRoute("first", List.of("First"));
+            SettingsRoute second = new SettingsRoute("second", List.of("Second"));
+            FilterableHelpPage secondPage = new FilterableHelpPage();
+            SettingsPane pane = new SettingsPane(List.of(first, second), Map.of(
+                  "first", () -> componentPage("First option"),
+                  "second", () -> secondPage), NAVIGATION_TEXT);
+
+            pane.selectRoute(second);
+            pane.selectRoute(first);
+            pane.setFilterText("needle");
+            pane.selectRoute(second);
+
+            assertEquals("Other help", secondPage.other.getToolTipText());
+
+            pane.setFilterText("");
+
+            assertNull(secondPage.other.getToolTipText());
+        });
     }
 
     @Test
@@ -126,7 +238,7 @@ class SettingsPaneTest {
                 return page("Child", null);
             });
             SettingsPane pane = new SettingsPane(List.of(initial, parent, child), factories,
-                  NAVIGATION_TEXT, "Details");
+                NAVIGATION_TEXT);
 
             assertTrue(pane.selectRoute(parent));
             assertEquals(1, childBuilds.get());
@@ -145,7 +257,7 @@ class SettingsPaneTest {
                   "second", () -> {
                       secondBuilds.incrementAndGet();
                       return page("Needle section", null);
-                  }), NAVIGATION_TEXT, "Details"));
+                  }), NAVIGATION_TEXT));
             pane.get().setFilterText("needle");
         });
         finishSearchIndexing();
@@ -154,6 +266,20 @@ class SettingsPaneTest {
             JLabel status = findComponent(pane.get(), "lblSettingsFilterStatus", JLabel.class);
             assertEquals(1, secondBuilds.get());
             assertEquals("1 matches", status.getText());
+        });
+    }
+
+    @Test
+    void pageBuildClearsStaleRouteSearchText() throws Exception {
+        runOnEdt(() -> {
+            SettingsRoute route = new SettingsRoute("page", List.of("Page"));
+            route.setSectionSearchText("Stale Search Token");
+
+            new SettingsPane(List.of(route), Map.of("page", () -> SettingsPagePanel.builder(
+                "Test", PAGE_TEXT, "header", null).build()), NAVIGATION_TEXT);
+
+            assertFalse(route.matches(SettingsRoute.normalizeSearchText("stale")));
+            assertTrue(route.matches(SettingsRoute.normalizeSearchText("header")));
         });
     }
 
@@ -170,7 +296,7 @@ class SettingsPaneTest {
                   "second", () -> {
                       secondBuilds.incrementAndGet();
                       return page("Needle section", null);
-                  }), NAVIGATION_TEXT, "Details"));
+                  }), NAVIGATION_TEXT));
             pane.get().setFilterText("needle");
             pane.get().setFilterText("");
         });
@@ -196,7 +322,7 @@ class SettingsPaneTest {
                           throw new IllegalStateException("First indexing attempt fails");
                       }
                       return page("Needle section", null);
-                  }), NAVIGATION_TEXT, "Details"));
+                  }), NAVIGATION_TEXT));
             pane.get().setFilterText("needle");
         });
         flushEventQueue();
@@ -218,6 +344,40 @@ class SettingsPaneTest {
               .build();
     }
 
+    private static SettingsPagePanel componentPage(String text) {
+        return SettingsPagePanel.builder("Test", PAGE_TEXT, "header", null)
+              .component(new JLabel(text))
+              .build();
+    }
+
+    private static final class FilterableHelpPage extends JPanel implements SettingsFilterable {
+        private final JLabel needle = helpLabel("Needle option", "Needle help");
+        private final JLabel other = helpLabel("Other option", "Other help");
+
+        private FilterableHelpPage() {
+            applySettingsFilter("");
+        }
+
+        @Override
+        public void applySettingsFilter(String normalizedFilter) {
+            removeAll();
+            if (normalizedFilter.isBlank() || "needle option".contains(normalizedFilter)) {
+                add(needle);
+            }
+            if (normalizedFilter.isBlank() || "other option".contains(normalizedFilter)) {
+                add(other);
+            }
+            revalidate();
+            repaint();
+        }
+
+        private static JLabel helpLabel(String text, String help) {
+            JLabel label = new JLabel(text);
+            label.setToolTipText(help);
+            return label;
+        }
+    }
+
     private static List<CollapsibleSectionPanel> findSections(Container root) {
         java.util.ArrayList<CollapsibleSectionPanel> sections = new java.util.ArrayList<>();
         for (Component child : root.getComponents()) {
@@ -229,6 +389,15 @@ class SettingsPaneTest {
             }
         }
         return sections;
+    }
+
+    private static void layoutTree(Container root) {
+        root.doLayout();
+        for (Component child : root.getComponents()) {
+            if (child instanceof Container container) {
+                layoutTree(container);
+            }
+        }
     }
 
     private static <T extends Component> T findComponent(Container root, String name, Class<T> type) {

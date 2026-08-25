@@ -66,7 +66,6 @@ import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.game.Game;
-import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
@@ -74,6 +73,8 @@ import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.planetaryConditions.IlluminationLevel;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.core.CoreRulesManager;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.*;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.StopSwarmAttack;
@@ -206,7 +207,6 @@ public class FireControl {
     static final TargetRollModifier TH_WEAPON_FLAK_HAG = new TargetRollModifier(-3,
           "HAG Flak vs airborne target");
     static final TargetRollModifier TH_APOLLO = new TargetRollModifier(-1, "Apollo FCS");
-    static final TargetRollModifier TH_AP_AMMO = new TargetRollModifier(1, "armor-piercing ammo");
     static final TargetRollModifier TH_WEAPON_NO_ARC = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "not in arc");
     static final TargetRollModifier TH_INF_ZERO_RNG = new TargetRollModifier(TargetRoll.AUTOMATIC_FAIL,
           "non-infantry shooting with zero range");
@@ -261,7 +261,15 @@ public class FireControl {
     public enum FireControlType {
         Basic,
         Infantry,
-        MultiTarget
+        MultiTarget,
+        /**
+         * Airborne aerospace units firing in an atmosphere, where the dead zone can make a shot illegal on
+         * geometry alone.
+         *
+         * <p>Princess registers its ordinary {@link FireControl} here, so this slot changes nothing for it;
+         * the slot exists so that CASPAR can replace atmospheric aerospace gunnery on its own.</p>
+         */
+        Aerospace
     }
 
     protected final Princess owner;
@@ -396,7 +404,7 @@ public class FireControl {
         if (shooterState.isProne()) {
             toHitData.addModifier(TH_ATT_PRONE);
         }
-        if (targetState.isImmobile() && !target.isHexBeingBombed()) {
+        if (targetState.isImmobile() && !(target.isHexBeingBombed() || target.getTargetType() == Targetable.TYPE_SATURATION)) {
             toHitData.addModifier(TH_TAR_IMMOBILE);
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL)
@@ -834,6 +842,42 @@ public class FireControl {
      *
      * @return The to hit modifiers for the given weapon firing at the given target as a {@link ToHitData} object.
      */
+    /**
+     * The range this guessed shot is resolved at, from a hypothetical shooter pose.
+     *
+     * <p>Its own method so that CASPAR's aerospace gunnery can replace it without reproducing the rest of
+     * the to-hit guess. The stock behaviour is unchanged.</p>
+     *
+     * @param shooter      the unit doing the shooting
+     * @param shooterState the pose the shooter would be firing from
+     * @param target       the unit being fired on
+     * @param targetState  the pose the target would be in
+     * @param game         the current game
+     *
+     * @return the range to look up on the weapon's range brackets
+     */
+    protected int guessDistance(final Entity shooter, final EntityState shooterState, final Targetable target,
+          final EntityState targetState, final Game game) {
+        int distance = shooterState.getPosition().distance(targetState.getPosition());
+        if (shooterState.isAirborne() && targetState.isAirborne() && game.getBoard(target).isGround()) {
+            // Aerospace firing at each on the ground map have immense range.
+            distance /= 16;
+        }
+
+        // Ground units attacking airborne aero considerations.
+        if (targetState.isAirborneAero() && !shooterState.isAero()) {
+
+            // If the aero is attacking me, there is no range.
+            if (target.getId() == shooter.getId()) {
+                distance = 0;
+            } else {
+                // Take into account altitude.
+                distance += 2 * target.getAltitude();
+            }
+        }
+        return distance;
+    }
+
     ToHitData guessToHitModifierForWeapon(final Entity shooter,
           @Nullable EntityState shooterState,
           final Targetable target,
@@ -902,25 +946,24 @@ public class FireControl {
         }
 
         // Check range.
-        int distance = shooterState.getPosition().distance(targetState.getPosition());
-        if (shooterState.isAirborne() && targetState.isAirborne() && game.getBoard(target).isGround()) {
-            // Aerospace firing at each on the ground map have immense range.
-            distance /= 16;
+        int distance = guessDistance(shooter, shooterState, target, targetState, game);
+        // Water restricts fire in both directions, and a weapon that can fire underwater does so with a
+        // shortened range table (TW p.107-109). The server enforces this from the shooter's real location
+        // status; the estimate has to predict it from the hypothetical position, or every submerged hex
+        // looks like a full-strength firing position.
+        final Hex shooterHex = game.getBoard(shooter).getHex(shooterState.getPosition());
+        final Hex targetHex = game.getBoard(target).getHex(targetState.getPosition());
+        final UnderwaterFire waterFire = UnderwaterFire.check(shooter, shooterState, shooterHex,
+              target, targetState, targetHex, weapon, firingAmmo);
+        if (null != waterFire.blocked()) {
+            return new ToHitData(waterFire.blocked());
         }
+        final int[] weaponRanges = (null != waterFire.underwaterRanges())
+              ? waterFire.underwaterRanges()
+              : weaponType.getRanges(weapon, ammo);
 
-        // Ground units attacking airborne aero considerations.
-        if (targetState.isAirborneAero() && !shooterState.isAero()) {
-
-            // If the aero is attacking me, there is no range.
-            if (target.getId() == shooter.getId()) {
-                distance = 0;
-            } else {
-                // Take into account altitude.
-                distance += 2 * target.getAltitude();
-            }
-        }
         // BayWeapons do range differently
-        int range = RangeType.rangeBracket(distance, weaponType.getRanges(weapon, ammo),
+        int range = RangeType.rangeBracket(distance, weaponRanges,
               game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE),
               game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE));
         if (RangeType.RANGE_OUT == range) {
@@ -966,7 +1009,6 @@ public class FireControl {
               targetState.getPosition(), false);
 
         // water is a separate los effect
-        final Hex targetHex = game.getBoard(target).getHex(targetState.getPosition());
         Entity targetEntity = null;
         if (target instanceof Entity) {
             targetEntity = (Entity) target;
@@ -1021,7 +1063,7 @@ public class FireControl {
             toHit.append(getInfantryRangeMods(distance, (InfantryWeapon) weapon.getType(),
                   shooter instanceof ConvInfantry infantry ? infantry.getSecondaryWeapon() : null,
                   shooter instanceof ConvInfantry infantry ? infantry.getDisposableWeapon() : null,
-                  ILocationExposureStatus.WET == shooter.getLocationStatus(weapon.getLocation())));
+                  UnderwaterFire.isWeaponUnderwater(shooter, shooterState, shooterHex, weapon)));
         }
 
         // let us not forget about heat
@@ -1080,12 +1122,11 @@ public class FireControl {
                 case null, default -> false;
             };
             boolean isArmorPiercingMunition =
-                  munitionTypes.contains(AmmoType.Munitions.M_ARMOR_PIERCING)
-                        || munitionTypes.contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST);
-            boolean isArmorPiercingPenaltyInEffect =
-                  !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3);
+                  munitionTypes.contains(AmmoType.Munitions.M_ARMOR_PIERCING);
+            boolean isArmorPiercingPenaltyInEffect = (Game.rulesManager instanceof TWRulesManager);
             if (isAutocannonAmmo && isArmorPiercingMunition && isArmorPiercingPenaltyInEffect) {
-                toHit.addModifier(TH_AP_AMMO);
+                TargetRollModifier thAPAmmo = new TargetRollModifier(Game.rulesManager.getRulesAmmo().armorPiercingAttackMod(),"armor-piercing ammo");
+                toHit.addModifier(thAPAmmo);
             }
             // Air-defense Arrow IV handling; can only fire at airborne targets
             if (munitionTypes.contains(AmmoType.Munitions.M_ADA)) {

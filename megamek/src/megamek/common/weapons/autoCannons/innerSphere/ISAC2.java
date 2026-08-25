@@ -36,6 +36,7 @@ package megamek.common.weapons.autoCannons.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -81,7 +82,12 @@ public class ISAC2 extends ACWeapon {
         longAV = 2;
         maxRange = RANGE_LONG;
         explosionDamage = damage;
-        rulesRefs = "208, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 208),
+              rulesRef(SourceBookCode.BMM, 98),
+              rulesRef(SourceBookCode.CORE, 182),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(true)
               .setTechRating(TechRating.C)

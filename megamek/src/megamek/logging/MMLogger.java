@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -251,7 +251,9 @@ public class MMLogger extends ExtendedLoggerWrapper {
         Sentry.captureException(exception);
         message = parametrizedStringAnyway(message, args);
         exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.ERROR, null, message, exception);
-        popupErrorDialog(title, message);
+        // An exception reached a dialog, so this is a defect rather than something the player can put right: offer
+        // the reporting button.
+        showErrorDialog(title, message, true);
     }
 
     /**
@@ -268,6 +270,40 @@ public class MMLogger extends ExtendedLoggerWrapper {
     }
 
     /**
+     * An extra button offered on error dialogs, installed by the user interface layer.
+     *
+     * <p>The label of the button that merely closes the dialog is supplied here as well. Offering a choice of buttons
+     * means naming both of them, and {@code megamek.logging} sits below the user interface and so has no access to the
+     * translated strings; whoever installs the hook does.</p>
+     *
+     * @param label        the reporting button text, already localized by whoever installs it
+     * @param dismissLabel the text of the button that simply closes the dialog, already localized
+     * @param action       what to do when the reporting button is pressed
+     */
+    public record ErrorDialogButton(String label, String dismissLabel, Runnable action) {}
+
+    /**
+     * The extra error-dialog button, or {@code null} when none is installed.
+     *
+     * <p>This is a hook rather than a direct call because {@code megamek.logging} is a lower layer than the user
+     * interface and must not depend on it: MMLogger is also used by MegaMekLab, MekHQ and the headless dedicated
+     * server. Marked {@code volatile} because an uncaught exception can surface on any thread.</p>
+     */
+    private static volatile ErrorDialogButton errorDialogButton;
+
+    /**
+     * Installs an extra button shown on every error dialog, typically one offering to report the problem.
+     *
+     * <p>An error dialog is the moment a player is most likely to want to file a bug, so this lets the user
+     * interface put the reporting tools directly in front of them instead of expecting them to find a menu.</p>
+     *
+     * @param errorDialogButton the button to offer, or {@code null} to show a plain OK dialog as before
+     */
+    public static void setErrorDialogButton(ErrorDialogButton errorDialogButton) {
+        MMLogger.errorDialogButton = errorDialogButton;
+    }
+
+    /**
      * Formatted Error Level Logging w/o Exception w/ Dialog.
      *
      * @param message Message to write to the log file AND be displayed in the error pane.
@@ -275,9 +311,35 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * @param args    Variable list of arguments for the message
      */
     private void popupErrorDialog(String title, String message, Object... args) {
-        message = parametrizedStringAnyway(message, args);
+        showErrorDialog(title, parametrizedStringAnyway(message, args), false);
+    }
+
+    /**
+     * Shows the error dialog, optionally offering the reporting button alongside OK.
+     *
+     * <p>The button is offered only for errors that carry a {@link Throwable}, because those are the ones that
+     * represent something going wrong in the code. The dialogs raised without one are largely conditions the player
+     * has to put right themselves - a mismatched server version, a MegaMekLab path that needs configuring - and
+     * inviting a bug report for those would send the maintainers noise rather than defects.</p>
+     *
+     * @param title           Title of the error message box.
+     * @param message         The fully formatted message to display.
+     * @param offerBugReport  Whether to offer the installed reporting button, if there is one.
+     */
+    private void showErrorDialog(String title, String message, boolean offerBugReport) {
+        ErrorDialogButton extraButton = errorDialogButton;
         try {
-            JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+            if (!offerBugReport || (extraButton == null)) {
+                JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Object[] options = { extraButton.label(), extraButton.dismissLabel() };
+            int choice = JOptionPane.showOptionDialog(null, message, title, JOptionPane.DEFAULT_OPTION,
+                  JOptionPane.ERROR_MESSAGE, null, options, options[1]);
+            if (choice == 0) {
+                extraButton.action().run();
+            }
         } catch (Exception ignored) {
             // if the message dialog crashes, we don't really care
         }

@@ -75,6 +75,7 @@ import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
+import megamek.common.compute.ArtilleryRange;
 import megamek.common.compute.Compute;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.AmmoMounted;
@@ -1766,6 +1767,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         } else {
             wDamR.setText(Integer.toString(weaponType.getDamage()));
         }
+        
+        if (mounted.getType().hasFlag(WeaponType.F_BOMBAST_LASER)) {
+            int damage = (mounted.curMode().equals("Damage 16")) ? 16 : (mounted.curMode().equals("Damage 12")) ? 12 :
+                                                                         8;
+            wDamR.setText(Integer.toString(damage));
+        }
 
         // update range
         int shortR = weaponType.getShortRange();
@@ -1779,10 +1786,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         // (torpedoes)
         if ((entity.getLocationStatus(mounted.getLocation()) == ILocationExposureStatus.WET)
               || ((longR == 0) && weaponType.getWLongRange() > 0)) {
-            shortR = weaponType.getWShortRange();
-            mediumR = weaponType.getWMediumRange();
-            longR = weaponType.getWLongRange();
-            extremeR = weaponType.getWExtremeRange();
+            shortR = Game.rulesManager.getRulesUnderwater().getShortRange(weaponType);
+            mediumR = Game.rulesManager.getRulesUnderwater().getMediumRange(weaponType);
+            longR = Game.rulesManager.getRulesUnderwater().getLongRange(weaponType);
+            extremeR = Game.rulesManager.getRulesUnderwater().getExtremeRange(weaponType);
         } else if (weaponType.hasFlag(WeaponType.F_PD_BAY)) {
             // Point Defense bays have a variable range, depending on the mode they're in
             if (mounted.hasModes() && mounted.curMode().equals("Point Defense")) {
@@ -1827,15 +1834,28 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         } else {
             wMedR.setText("" + mediumR);
         }
+        // The Oblique Artilleryman ability extends an artillery weapon's range by ten percent (CamOps p.78, 5th
+        // printing). Artillery ranges are rated in map sheets and the extension is a fraction of one, so the extended
+        // figure is shown with a decimal and marked with an asterisk.
+        // An aerospace unit's display is rewritten below with attack values instead of ranges, so it is left alone.
+        boolean isRangeExtendedByCrew = ArtilleryRange.isExtendedByObliqueArtilleryman(entity, weaponType)
+              && !aerospaceAttack;
+        String longRangeText = isRangeExtendedByCrew ? extendedArtilleryRange(longR) : Integer.toString(longR);
+        String extremeRangeText = isRangeExtendedByCrew ? extendedArtilleryRange(extremeR) : Integer.toString(extremeR);
+        String extendedRangeTooltip = isRangeExtendedByCrew
+              ? Messages.getString("MekDisplay.ObliqueArtillerymanRange.tooltip") : null;
+        wLongR.setToolTipText(extendedRangeTooltip);
+        wExtR.setToolTipText(extendedRangeTooltip);
+
         if ((longR - mediumR) > 1) {
-            wLongR.setText(mediumR + 1 + " - " + longR);
+            wLongR.setText(mediumR + 1 + " - " + longRangeText);
         } else {
-            wLongR.setText("" + longR);
+            wLongR.setText(longRangeText);
         }
         if ((extremeR - longR) > 1) {
-            wExtR.setText(longR + 1 + " - " + extremeR);
+            wExtR.setText(longR + 1 + " - " + extremeRangeText);
         } else {
-            wExtR.setText("" + extremeR);
+            wExtR.setText(extremeRangeText);
         }
 
         // Update the range display to account for the selected ammo, or the loaded ammo
@@ -2019,6 +2039,21 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     private String formatBayWeapon(WeaponMounted m) {
         return m.getDesc();
+    }
+
+    /**
+     * Formats an artillery weapon's range as extended by the Oblique Artilleryman ability - ten percent more range
+     * (CamOps p.78, 5th printing) - marked with an asterisk so the reader can tell it apart from the weapon's rated
+     * range. Artillery ranges are given in map sheets, and ten percent of one is a fraction, so the extended figure
+     * keeps its decimal.
+     *
+     * @param ratedRangeInMapSheets the weapon's rated range, in map sheets
+     *
+     * @return the extended range, marked with an asterisk
+     */
+    private static String extendedArtilleryRange(int ratedRangeInMapSheets) {
+        return Messages.getString("MekDisplay.ObliqueArtillerymanRange",
+              ArtilleryRange.extendedRangeInMapSheets(ratedRangeInMapSheets));
     }
 
     /**

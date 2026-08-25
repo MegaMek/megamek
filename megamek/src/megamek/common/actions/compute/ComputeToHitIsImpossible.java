@@ -53,8 +53,10 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.CrossBoardAttackHelper;
+import megamek.common.compute.ArtilleryRange;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
+import megamek.common.enums.ChargeLevel;
 import megamek.common.equipment.*;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
@@ -150,6 +152,10 @@ class ComputeToHitIsImpossible {
             return null;
         }
 
+        if (los.isShotBlockedByWater()) {
+            return Messages.getString("WeaponAttackAction.WaterBlocksShot");
+        }
+
         // got ammo?
         if (usesAmmo && ((ammo == null) || (ammo.getUsableShotsLeft() == 0))) {
             return Messages.getString("WeaponAttackAction.OutOfAmmo");
@@ -212,9 +218,22 @@ class ComputeToHitIsImpossible {
                   && !AmmoType.canDeliverMinefield(ammoType)) {
                 return Messages.getString("WeaponAttackAction.NoMinefields");
             }
+            if (target.getTargetType() == Targetable.TYPE_SATURATION 
+            && !(
+                  weaponType.hasFlag(WeaponType.F_MRM)
+                        && weapon.getLinkedBy() != null
+                        && weapon.getLinkedBy().getType().hasFlag(MiscType.F_APOLLO)
+                        && !(
+                              weapon.getLinkedBy().isDestroyed() || weapon.getLinkedBy().isMissing()
+                                    || weapon.getLinkedBy().isBreached()
+                            )
+                )
+            ) {
+                return Messages.getString("WeaponAttackAction.NoSaturation");
+            }
 
             // These ammo types can only target hexes for minefield delivery
-            if (ammoType.getAmmoType().isAnyOf(LRM, LRM_IMP, MML, MEK_MORTAR) &&
+            if (ammoType.getAmmoType().isAnyOf(LRM, LRM_IMP, MML, MEK_MORTAR, TBOLT_10, TBOLT_15, TBOLT_20) &&
                   ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_THUNDER)) ||
                         (ammoType.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_ACTIVE)) ||
                         (ammoType.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_INFERNO)) ||
@@ -230,7 +249,7 @@ class ComputeToHitIsImpossible {
         // If the attacker is actively using a shield, weapons in the same location are blocked
         if (weapon != null
               && attacker.hasShield()
-              && attacker.hasActiveShield(weapon.getLocation(), weapon.isRearMounted())) {
+              && attacker.hasRaisedShield(weapon.getLocation(), weapon.isRearMounted())) {
             return Messages.getString("WeaponAttackAction.ActiveShieldBlocking");
         }
 
@@ -604,6 +623,11 @@ class ComputeToHitIsImpossible {
                     }
                 }
             }
+        }
+        
+        // Bombast lasers while charging cannot fire
+        if ((weapon != null) && (weaponType.hasFlag(WeaponType.F_BOMBAST_LASER) && weapon.getChargeState().equals(ChargeLevel.CHARGING))) {
+            return Messages.getString("WeaponAttackAction.BombastImpossible");
         }
 
         // Phase Reasons
@@ -1155,31 +1179,9 @@ class ComputeToHitIsImpossible {
                     return Messages.getString("WeaponAttackAction.FlakIndirect");
                 }
 
-                int boardRange = (int) Math.ceil(distance / 17f);
-                int maxRange = weaponType.getLongRange();
-                // Capital/subcapital missiles have a board range equal to their max space hex
-                // range
-                if (weaponType instanceof CapitalMissileWeapon) {
-                    if (weaponType.getMaxRange(weapon) == WeaponType.RANGE_EXT) {
-                        maxRange = 50;
-                    }
-                    if (weaponType.getMaxRange(weapon) == WeaponType.RANGE_LONG) {
-                        maxRange = 40;
-                    }
-                    if (weaponType.getMaxRange(weapon) == WeaponType.RANGE_MED) {
-                        maxRange = 24;
-                    }
-                    if (weaponType.getMaxRange(weapon) == WeaponType.RANGE_SHORT) {
-                        maxRange = 12;
-                    }
-                }
-
-                // Apply gravity mod here, per TO: AR pg 155
-                maxRange = (int) (Math.floor((double) (maxRange * Board.DEFAULT_BOARD_HEIGHT) /
-                      game.getPlanetaryConditions().getGravity()) / 17f);
-
-                // Maximum range is measured in map sheets
-                if (boardRange > maxRange) {
+                // Measured in hexes rather than map sheets, since Oblique Artilleryman extends the weapon's rated
+                // range by a fraction of a map sheet
+                if (distance > ArtilleryRange.maximumIndirectRangeInHexes(game, attacker, weaponType, weapon)) {
                     return Messages.getString("WeaponAttackAction.OutOfRange");
                 }
                 // Indirect (=targeting phase) shots cannot be made at less than 17 hexes range unless

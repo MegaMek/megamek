@@ -48,6 +48,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
@@ -118,18 +119,11 @@ public class TripodMek extends MekWithArms {
 
     @Override
     public boolean isImmobile() {
-        if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-            int legsDestroyed = 0;
-            for (int i = 0; i < locations(); i++) {
-                if (locationIsLeg(i)) {
-                    if (isLocationBad(i)) {
-                        legsDestroyed++;
-                    }
-                }
-            }
-            if (legsDestroyed == 2) {
-                return true;
-            }
+        if (Game.rulesManager.getRulesUnits().getDoesLegDestructionCauseImmobile(this)) {
+            return true;
+        }
+        if (getOriginalWalkMP() > 0 && Game.rulesManager.getRulesMovement().checkMPZeroCauseImmobile(getWalkMP(MPCalculationSetting.NO_HEAT_OR_EQUIPMENT))) {
+            return true;
         }
         return super.isImmobile();
     }
@@ -147,6 +141,13 @@ public class TripodMek extends MekWithArms {
         int rightLegActuators = 0;
         int centerLegActuators = 0;
 
+        boolean bCumulativeLegDamage = true;
+        if (game != null) {
+            bCumulativeLegDamage = Game.rulesManager.getRulesMovement().cumulativeLegDamage(gameOptions()
+                  .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE));
+
+        }
+
         // A Mek using tracks has its movement reduced by 1/3 per leg or track destroyed, based
         // on analogy with biped and quad Meks.
         if (getMovementMode().isTracked()) {
@@ -160,115 +161,35 @@ public class TripodMek extends MekWithArms {
             mp = (mp * (3 - legsDestroyed)) / 3;
         } else {
             for (int i : List.of(Mek.LOC_RIGHT_LEG, Mek.LOC_LEFT_LEG, Mek.LOC_CENTER_LEG)) {
-                // PLAYTEST2 leg crits and MP
-                if (!(game == null) && gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                    if (!isLocationBad(i)) {
-                        if (legHasHipCrit(i)) {
-                            if (i == Mek.LOC_LEFT_LEG) {
-                                leftHip++;
-                            }
-                            if (i == Mek.LOC_RIGHT_LEG) {
-                                rightHip++;
-                            }
-                            if (i == Mek.LOC_CENTER_LEG) {
-                                centerHip++;
-                            }
-                            hipHits++;
-                            if ((game == null) ||
-                                  !gameOptions()
-                                        .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
-                                continue;
-                            }
+                if (!isLocationBad(i)) {
+                    if (legHasHipCrit(i)) {
+                        hipHits++;
+                        if ((game == null) ||
+                              !bCumulativeLegDamage) {
+                            continue;
                         }
-                        if (i == Mek.LOC_LEFT_LEG) {
-                            leftLegActuators += countLegActuatorCrits(i);
-                        }
-                        if (i == Mek.LOC_RIGHT_LEG) {
-                            rightLegActuators += countLegActuatorCrits(i);
-                        }
-                        if (i == Mek.LOC_CENTER_LEG) {
-                            centerLegActuators += countLegActuatorCrits(i);
-                        }
-                        actuatorHits += countLegActuatorCrits(i);
-                    } else {
-                        legsDestroyed++;
                     }
+                    actuatorHits += countLegActuatorCrits(i);
                 } else {
-                    if (!isLocationBad(i)) {
-                        if (legHasHipCrit(i)) {
-                            hipHits++;
-                            if ((game == null) ||
-                                  !gameOptions()
-                                        .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
-                                continue;
-                            }
-                        }
-                        actuatorHits += countLegActuatorCrits(i);
-                    } else {
-                        legsDestroyed++;
-                    }
+                    legsDestroyed++;
                 }
             }
 
             // leg damage effects
-
             if (legsDestroyed > 0) {
-                if (game != null && gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                    if (legsDestroyed == 2) {mp = 0;}
-                } else {
-                    mp = (legsDestroyed == 1) ? 1 : 0;
-                }
+                mp = (legsDestroyed == 1) ? 1 : 0;
             }
 
-            // PLAYTEST 2 Set leg to half MP, ignore crits to the leg.
-            if ((game != null) &&
-                  gameOptions().booleanOption(OptionsConstants.PLAYTEST_2) && (mp > 0)) {
-                if (hipHits > 0 || legsDestroyed == 1) {
-                    int minReduction;
-                    int midReduction;
-                    int maxReduction;
-                    minReduction = (int) Math.ceil(mp / 2.0);
-                    midReduction = (int) Math.ceil(minReduction / 2.0);
-                    maxReduction = (int) Math.ceil(midReduction / 2.0);
-
-                    if ((hipHits == 1 && legsDestroyed == 0) || (hipHits == 0 && legsDestroyed == 1)) {
-                        // Only a single hip or leg
-                        mp = mp - minReduction;
-
-                    } else if ((hipHits == 2 && legsDestroyed == 0) || (hipHits == 1 && legsDestroyed == 1)) {
-                        // Can only happen if 2 hips are hit and no legs are destroyed
-                        mp = mp - minReduction - midReduction;
-                    } else if ((hipHits == 3) || (hipHits == 2 && legsDestroyed == 1)) {
-                        // Can only happen if all 3 hips are hit and no legs are destroyed
-                        // or 2 hips and 1 leg destroyed
-                        mp = mp - minReduction - midReduction - maxReduction;
-                    }
-                    if (leftHip == 0) {
-                        mp -= leftLegActuators;
-                    }
-                    if (rightHip == 0) {
-                        mp -= rightLegActuators;
-                    }
-                    if (centerHip == 0) {
-                        mp -= centerLegActuators;
-                    }
-                } else {
-                    mp -= actuatorHits;
-                }
-            } else {
+            if (mp > 0) {
                 if (hipHits > 0 && legsDestroyed == 0) {
-                    if ((game != null) &&
-                          gameOptions()
-                                .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE)) {
-                        mp = mp - 2 * hipHits;
-                    } else {
-                        mp = (hipHits == 1) ? (int) Math.ceil(mp / 2.0) : 0;
-                    }
+                    mp = Game.rulesManager.getRulesUnits().getMekMPReduction(hipHits, bCumulativeLegDamage, mp);
                 }
                 mp -= actuatorHits;
             }
+            if (legsDestroyed < 2 && mp <= 0) {
+                mp = Game.rulesManager.getRulesUnits().getMinimumMP(mp);
+            }
         }
-
         if (hasShield()) {
             mp -= getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE);
             mp -= getNumberOfShields(MiscTypeFlag.S_SHIELD_MEDIUM);
@@ -410,18 +331,18 @@ public class TripodMek extends MekWithArms {
     }
 
     @Override
-    public boolean hasActiveShield(int location, boolean rear) {
+    public boolean hasRaisedShield(int location, boolean rear) {
         return switch (location) {
             case Mek.LOC_CENTER_TORSO, Mek.LOC_HEAD -> {
                 // no rear head location so must be rear CT which is not projected by any shield
                 if (rear) {
                     yield false;
                 }
-                yield hasActiveShield(Mek.LOC_LEFT_ARM) || hasActiveShield(Mek.LOC_RIGHT_ARM);
+                yield hasRaisedShield(Mek.LOC_LEFT_ARM) || hasRaisedShield(Mek.LOC_RIGHT_ARM);
             }
             // else
-            case Mek.LOC_LEFT_ARM, Mek.LOC_LEFT_TORSO, Mek.LOC_LEFT_LEG -> hasActiveShield(Mek.LOC_LEFT_ARM);
-            default -> hasActiveShield(Mek.LOC_RIGHT_ARM);
+            case Mek.LOC_LEFT_ARM, Mek.LOC_LEFT_TORSO, Mek.LOC_LEFT_LEG -> hasRaisedShield(Mek.LOC_LEFT_ARM);
+            default -> hasRaisedShield(Mek.LOC_RIGHT_ARM);
         };
     }
 
@@ -472,15 +393,11 @@ public class TripodMek extends MekWithArms {
         int roll;
 
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-
-            roll = Compute.d6(2);
-
-            if ((5 < roll) && (roll < 9)) {
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation()) {
                 return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
         }
 
-        boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
         boolean toAdvHitLoc =
               gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS);
 
@@ -497,13 +414,6 @@ public class TripodMek extends MekWithArms {
                 }
             } catch (Throwable t) {
                 logger.error("", t);
-            }
-
-            if (playtestLocations && !toAdvHitLoc
-                  && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
-                  && roll != 2 // clarified on forum, TACs don't go to the CT in this case
-            ) {
-                return getPlaytestSideLocation(table, side, cover);
             }
 
             if (side == ToHitData.SIDE_FRONT) {
@@ -766,10 +676,6 @@ public class TripodMek extends MekWithArms {
                 }
             } catch (Throwable t) {
                 logger.error("", t);
-            }
-
-            if (playtestLocations && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)) {
-                return getPlaytestSideLocation(table, side, cover);
             }
 
             if ((side == ToHitData.SIDE_FRONT) || (side == ToHitData.SIDE_REAR)) {

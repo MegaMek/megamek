@@ -73,6 +73,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityListFile;
 import megamek.common.units.EntityWeightClass;
@@ -278,7 +279,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         add(describedLabel("ForceGeneratorDialog.unitType"), constraints);
         cbUnitType = new JComboBox<>();
         cbUnitType.setRenderer(new CBRenderer<>(Messages.getString("ForceGeneratorDialog.combined"),
-              UnitType::getTypeName));
+              UnitType::getTypeDisplayableName));
         constraints.gridx = 1;
         constraints.gridy = row;
         add(cbUnitType, constraints);
@@ -921,7 +922,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             if (asPercent) {
                 int typeTotal = row[0][0] + row[1][0] + row[2][0] + row[3][0];
                 summaryModel.addRow(new Object[] {
-                      UnitType.getTypeName(entry.getKey()),
+                      UnitType.getTypeDisplayableName(entry.getKey()),
                       formatSummaryPercent(row[0][0], typeTotal),
                       formatSummaryPercent(row[1][0], typeTotal),
                       formatSummaryPercent(row[2][0], typeTotal),
@@ -929,7 +930,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 });
             } else {
                 summaryModel.addRow(new Object[] {
-                      UnitType.getTypeName(entry.getKey()),
+                      UnitType.getTypeDisplayableName(entry.getKey()),
                       formatSummaryCell(row[0], isBA),
                       formatSummaryCell(row[1], isBA),
                       formatSummaryCell(row[2], isBA),
@@ -1010,15 +1011,18 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         cbSubFaction.removeAllItems();
         String currentFaction = ((FactionRecord) Objects.requireNonNull(cbFaction.getSelectedItem())).getKey();
         if (currentFaction != null) {
+            // Subunits are deliberately left out: this list offers whole commands, so including every regiment of
+            // every command would swell one faction's list by hundreds of entries.
             List<FactionRecord> sorted = RATGenerator.getInstance()
                   .getFactionList()
                   .stream()
-                  .filter(fr -> fr.getKey().startsWith(currentFaction + ".") &&
-                        fr.isActiveInYear(currentYear))
-                  .sorted(Comparator.comparing(fr -> fr.getName(currentYear)))
+                  .filter(factionRecord -> factionRecord.getKey().startsWith(currentFaction + ".") &&
+                        !factionRecord.isSubunit() &&
+                        factionRecord.isActiveInYear(currentYear))
+                  .sorted(Comparator.comparing(factionRecord -> factionRecord.getName(currentYear)))
                   .toList();
             cbSubFaction.addItem(null);
-            sorted.forEach(fr -> cbSubFaction.addItem(fr));
+            sorted.forEach(factionRecord -> cbSubFaction.addItem(factionRecord));
         }
         cbSubFaction.setSelectedItem(oldFaction);
         if (cbSubFaction.getSelectedItem() == null) {
@@ -1050,8 +1054,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                             hasCurrent = true;
                         }
                     } else {
-                        cbUnitType.addItem(AbstractUnitRecord.parseUnitType(unitType));
-                        if (currentType != null && UnitType.getTypeDisplayableName(currentType).equals(unitType)) {
+                        int unitTypeCode = AbstractUnitRecord.parseUnitType(unitType);
+                        cbUnitType.addItem(unitTypeCode);
+                        if ((currentType != null) && (currentType == unitTypeCode)) {
                             hasCurrent = true;
                         }
                     }
@@ -1517,6 +1522,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
         // Create a fake game so we can write the entities to a file without adding them
         // to the real game.
+        // Make sure we set the right rules manager here.
+        if (Game.rulesManager instanceof TWRulesManager) {
+            gameOptions.getOption(OptionsConstants.RULES_SYSTEM).setValue(OptionsConstants.RULES_TW);
+        }
         Game game = new Game();
         // Add a player to prevent complaining in the log file
         Player p = new Player(1, "Observer");

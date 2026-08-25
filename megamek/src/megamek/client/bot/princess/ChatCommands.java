@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -60,6 +60,18 @@ public enum ChatCommands {
           "mutual-support",
           Messages.getString("Princess.command.mutualSupport.description"),
           new MutualSupportCommand()),
+    POSTURE("po",
+          "posture",
+          Messages.getString("Princess.command.posture.description"),
+          new PostureCommand()),
+    AERO_FOCUS("af",
+          "aero-focus",
+          Messages.getString("Princess.command.aeroFocus.description"),
+          new AeroFocusCommand()),
+    AERO_LIFT("al",
+          "aero-lift",
+          Messages.getString("Princess.command.aeroLift.description"),
+          new AeroLiftCommand()),
     HOLD_POSITION("hp",
           "hold-position",
           Messages.getString("Princess.command.holdPosition.description"),

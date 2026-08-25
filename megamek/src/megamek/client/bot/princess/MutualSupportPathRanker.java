@@ -37,8 +37,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.analysis.DamageProfile;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
+import megamek.common.analysis.DamageProfile;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -53,7 +53,7 @@ import megamek.logging.MMLogger;
  * engaging one element can itself be engaged by another - and commit their combat power together rather than
  * sequentially.
  *
- * <p>Three changes relative to {@link BasicPathRanker}:</p>
+ * <p>Four changes relative to {@link BasicPathRanker}:</p>
  * <ol>
  *     <li><b>Supporting-range cohesion</b> replaces herding: instead of a pull toward the (historical)
  *     friendly center of mass, the unit is penalized only for ending BEYOND the effective weapons envelope
@@ -68,6 +68,12 @@ import megamek.logging.MMLogger;
  *     engagement range in TURNS AT ITS OWN SPEED rather than raw hexes, so a 3/5 assault and a 6/9 medium
  *     share one commit tempo (a full move closes one turn's worth for either), and each unit closes to its
  *     own band - brawlers to knife range, fire-support to its optimum - not blindly to contact.</li>
+ *     <li><b>Combat posture at water</b>: a defending force does not cross the water it is defending behind -
+ *     any water, fords included, since a fordable river is one the enemy can cross anywhere. Whether the
+ *     force is attacking or defending is set explicitly in {@link BehaviorSettings}, or read each round from
+ *     the mission and the enemy's movement ({@link PostureResolver}); a defender's crossing paths are charged
+ *     a full turn of advance, so it holds its bank and fights the enemy in the water instead of wading into
+ *     the same trap (see {@code calculatePosturePenalty}).</li>
  * </ol>
  *
  * <p><b>The rule that must always hold: keeping formation never stops a unit closing with the enemy.</b> Two things
@@ -150,28 +156,15 @@ public class MutualSupportPathRanker extends BasicPathRanker {
     /** At most this many covering friends earn the bonus; a whole company stacking adds nothing. */
     private static final int COVER_BONUS_MAX_FRIENDS = 2;
 
-    /**
-     * Cover shaping only applies once the destination is within this range of an enemy; out of contact the
-     * force moves loose and fast (traveling, not bounding overwatch).
-     */
-    private static final int THREAT_CONTACT_RANGE = 15;
-
-    /**
-     * Reference movement rate used to scale the turns-to-close tempo term: a full move's advance is worth
-     * {@code TEMPO_REFERENCE_MP * hyperAggressionValue} to every unit regardless of its speed, which is what
-     * puts a 3/5 assault and a 6/9 medium on one commit tempo.
-     *
-     * <p>Sized against the noise floor rather than for slider parity. The mechanism study measured the
-     * competing rank terms at roughly 50 for one risky piloting roll, up to 100 for facing and 250 for
-     * sprint exposure, while stock aggression gave a slow assault a whole-turn commit signal of about 7.5 -
-     * which is why heavy companies dithered instead of committing. The first benchmark used 6.0 (15 points
-     * per move at default aggression), still under that floor, and arrival stagger only improved 12%.
-     * Fifteen gives 37.5 per move, above the single-roll term and below the sprint penalty.</p>
-     */
-    private static final double TEMPO_REFERENCE_MP = 15.0;
-
     private final Map<Integer, SupportEnvelope> envelopeCache = new HashMap<>();
     private int envelopeCacheRound = -1;
+
+    private double lastPosturePenalty;
+
+    // Bank labels are a property of the board, recomputed per round (ice can break) and shared by
+    // every path of every mover. Keyed by board id.
+    private final Map<Integer, BankRegions> bankRegionsByBoard = new HashMap<>();
+    private int bankRegionsRound = -1;
 
     // Per-ranking-pass caches. rankPath is called once per candidate path for a single mover, and a
     // company-scale turn evaluates thousands of paths per unit, so anything that depends only on the
@@ -283,13 +276,16 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         Entity movingUnit = path.getEntity();
         Game game = getOwner().getGame();
 
+        double posturePenalty = calculatePosturePenalty(movingUnit, path, game);
+
         List<Entity> friends = getSupportingFriends(movingUnit, game);
         if (friends.isEmpty()) {
             // Nothing to form up on, so the doctrine scores nothing - but they are recorded for every path
             // whether or not this ran, so they have to say "nothing" rather than repeat the last path's.
+            // Posture is a force-level call, not a formation one, so it still applies to a lone unit.
             clearDoctrineScores();
-            logger.trace("[MutualSupport] mod [0: no friends]");
-            return 0;
+            logger.trace("[MutualSupport] mod [{}: no friends]", posturePenalty);
+            return posturePenalty;
         }
 
         double supportPenalty = 0;
@@ -311,10 +307,88 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         double coverBonus = calculateCoverBonus(movingUnit, path, friends, game);
         lastCoverBonus = coverBonus;
 
-        double mutualSupportMod = supportPenalty - coverBonus;
-        logger.trace("[MutualSupport] mod [{} = out-of-formation {} - cover {}]",
-              mutualSupportMod, supportPenalty, coverBonus);
+        double mutualSupportMod = supportPenalty - coverBonus + posturePenalty;
+        logger.trace("[MutualSupport] mod [{} = out-of-formation {} - cover {} + posture {}]",
+              mutualSupportMod, supportPenalty, coverBonus, posturePenalty);
         return mutualSupportMod;
+    }
+
+    /**
+     * What a defending force charges a path for taking a unit into or across the water it is defending
+     * behind - any water, fords included.
+     *
+     * <p>To a defender the river is its best weapon: the enemy arrives slowed, split into single units by
+     * the crossing, and with most of its weapons underwater, and the defender gets to fight that enemy from
+     * dry ground. Wading in itself throws all of that away, so a crossing path is charged a full turn of
+     * advance ({@link #TEMPO_REFERENCE_MP} times aggression - the same scale the tempo term pays for
+     * closing). The charge is finite, not a ban: a big enough prize on the far bank can still buy a
+     * crossing.</p>
+     *
+     * <p>Three kinds of path pay nothing. An attacking force pays nothing anywhere - posture is resolved per
+     * round by {@link PostureResolver} unless set explicitly. A unit with somewhere specific to be
+     * (forced withdrawal, a destination edge, a waypoint) pays nothing, because its route does not move to
+     * suit the terrain. And a unit already standing in the river pays nothing, because the water pricing
+     * already argues for the nearest bank and charging every dry destination would trap it mid-stream.</p>
+     *
+     * @param movingUnit the unit being moved
+     * @param path       the path being ranked
+     * @param game       the current game
+     *
+     * @return the posture penalty for this path; zero unless a defending unit is crossing water
+     */
+    private double calculatePosturePenalty(Entity movingUnit, MovePath path, Game game) {
+        lastPosturePenalty = computePosturePenalty(movingUnit, path, game);
+        return lastPosturePenalty;
+    }
+
+    private double computePosturePenalty(Entity movingUnit, MovePath path, Game game) {
+        if (CombatPosture.DEFEND != resolvePosture(game, movingUnit.getBoardId())) {
+            return 0;
+        }
+        BehaviorType behaviorType = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner());
+        if ((BehaviorType.ForcedWithdrawal == behaviorType) || (BehaviorType.MoveToDestination == behaviorType)) {
+            return 0;
+        }
+        if (getOwner().getUnitBehaviorTracker().getWaypointForEntity(movingUnit).isPresent()) {
+            return 0;
+        }
+
+        // Any water counts as the defender's line, fords included. The formation rules ignore depth 1
+        // because a ford does not split a force; a defender's river is the opposite case - a fordable
+        // river is one the enemy can cross anywhere, so it is even more a line to hold. Measured: on a
+        // river of depth-1 fords, a depth-2 test never fired and the defending company crossed at will.
+        //
+        // "Same side" is walkable connectivity (BankRegions), not a straight line: on a meandering
+        // river the chord between two positions on one bank clips the bends, and a line test charged
+        // the defender for repositioning along its own shore - worst exactly at the water's edge, so
+        // the force drifted out of its firing positions into dead ground.
+        BankRegions banks = bankRegions(game, movingUnit.getBoardId());
+        int currentBank = banks.regionOf(movingUnit.getPosition());
+        if (BankRegions.WATER == currentBank) {
+            return 0;
+        }
+        if (currentBank == banks.regionOf(path.getFinalCoords())) {
+            return 0;
+        }
+
+        double aggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
+        double posturePenalty = TEMPO_REFERENCE_MP * aggression;
+        logger.trace("[Posture] DEFEND holds the bank: path to {} enters or crosses water, penalty {}",
+              path.getFinalCoords(), posturePenalty);
+        return posturePenalty;
+    }
+
+    /**
+     * The bank labels for a board, computed once per round and shared by every path of every mover.
+     */
+    private BankRegions bankRegions(Game game, int boardId) {
+        int round = game.getCurrentRound();
+        if (round != bankRegionsRound) {
+            bankRegionsRound = round;
+            bankRegionsByBoard.clear();
+        }
+        return bankRegionsByBoard.computeIfAbsent(boardId,
+              id -> BankRegions.of(game.getBoard(id), FormationSide.ANY_WATER_DEPTH));
     }
 
     /**
@@ -412,7 +486,8 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      */
     @Override
     protected Map<String, Double> doctrineScores() {
-        Map<String, Double> scores = new HashMap<>();
+        // The base ranker records the position-discipline columns (posture, quality, hold credit).
+        Map<String, Double> scores = new HashMap<>(super.doctrineScores());
         scores.put("formationCentre_x", lastFormationCentre == null ? -1.0 : lastFormationCentre.getX());
         scores.put("formationCentre_y", lastFormationCentre == null ? -1.0 : lastFormationCentre.getY());
         scores.put("formationRadius", (double) lastFormationRadius);
@@ -420,11 +495,11 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         scores.put("coverBonus", lastCoverBonus);
         scores.put("coveringFriends", (double) lastCoveringFriends);
         scores.put("turnsToOwnBand", lastTurnsToBand);
+        // What the posture charged this particular path. Fresh for every path: the penalty is computed
+        // at the top of calculateMutualSupportMod before anything can return early.
+        scores.put("posturePenalty", lastPosturePenalty);
         return scores;
     }
-
-
-
 
     /**
      * Whether a unit is part of the formation, and so gets a say in where its centre is.
@@ -451,13 +526,6 @@ public class MutualSupportPathRanker extends BasicPathRanker {
             return WITHDRAWING_CENTRE_WEIGHT;
         }
         return 1.0;
-    }
-
-    /** Whether a unit has left the fighting line to pull back. */
-    private boolean isWithdrawing(Entity unit) {
-        return getOwner().isFallingBack(unit)
-              || getOwner().getUnitBehaviorTracker()
-                    .getBehaviorType(unit, getOwner()).equals(BehaviorType.ForcedWithdrawal);
     }
 
     /**
@@ -527,6 +595,14 @@ public class MutualSupportPathRanker extends BasicPathRanker {
      * runs 9. Zero once inside the band - nothing pulls a fire-support unit past its optimum toward
      * point-blank range.
      *
+     * <p>A laid defense does not pay tempo. Once the enemy is inside contact range and the force's posture
+     * is DEFEND, the enemy is coming to us: the closing charge that keeps an attack from dithering would
+     * here bleed the defender off its firing positions one hex at a time - measured as the biggest payer
+     * in 40% of the defender's remaining two-steps after the attacker-movement fix. Out of contact the
+     * charge stands, so a defending force still closes ranks toward its line instead of scattering. The
+     * gate reads the unit's CURRENT distance, not the path's, so every candidate path of the pass sees the
+     * same flat field.</p>
+     *
      * @param movingUnit the unit being moved
      * @param path       the path being evaluated
      * @param game       the current game
@@ -539,6 +615,12 @@ public class MutualSupportPathRanker extends BasicPathRanker {
         int ownSpeed = Math.max(1, Math.max(movingUnit.getRunMP(), movingUnit.getAnyTypeMaxJumpMP()));
         double turnsToClose = remainingGap / ownSpeed;
         lastTurnsToBand = turnsToClose;
+
+        if ((CombatPosture.DEFEND == resolvePosture(game, movingUnit.getBoardId()))
+              && (distanceToClosestEnemy(movingUnit, movingUnit.getPosition(), game)
+                    <= THREAT_CONTACT_RANGE)) {
+            return 0;
+        }
 
         double aggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
         double aggressionMod = turnsToClose * TEMPO_REFERENCE_MP * aggression;

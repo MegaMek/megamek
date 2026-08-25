@@ -3985,14 +3985,16 @@ public class Princess extends BotClient {
 
     @Override
     public void endOfTurnProcessing() {
+        // Taken before refreshCrippledUnits folds in this turn's damage. Both checkForDishonoredEnemies and
+        // updateReturnFirePermission judge this turn's attacks against who was visibly crippled when those
+        // attacks were declared, not against who is crippled now.
+        final Set<Integer> unitsWithdrawingAtStartOfTurn = Set.copyOf(crippledUnits);
         checkForDishonoredEnemies();
         checkForBrokenEnemies();
         // refreshCrippledUnits should happen after checkForDishonoredEnemies, since checkForDishonoredEnemies
         // wants to examine the units that were considered crippled at the *beginning* of the turn and were attacked.
         refreshCrippledUnits();
-        // updateReturnFirePermission wants the opposite: the freshly refreshed crippled set, so a unit
-        // crippled and attacked in the same turn may return fire next turn.
-        updateReturnFirePermission();
+        updateReturnFirePermission(unitsWithdrawingAtStartOfTurn);
         setAMSModes();
         updateEnemyHeatMaps();
         updateFriendlyHeatMap();
@@ -4001,27 +4003,31 @@ public class Princess extends BotClient {
 
     /**
      * Grants withdrawing units permission to return fire. A crippled unit under Forced Withdrawal holds its
-     * fire unless it has been attacked while fleeing. That permission used to be granted only by
-     * {@code checkForDishonoredEnemies}, which works with the crippled set as it stood at the start of the
-     * turn - so a unit crippled and attacked in the same turn gained permission only if an enemy attacked it
-     * again on a later turn. Bot opponents never do (their honor rules stop them from attacking crippled
-     * units), which left withdrawing units permanently unable to defend themselves.
+     * fire unless an enemy attacks it while it is withdrawing - the same act that marks that enemy
+     * dishonored. So a unit only earns return fire from attacks made after it was already visibly crippled:
+     * the attacks that crippled it this turn were declared against a legitimate target and grant nothing.
      *
-     * <p>This pass runs on the freshly refreshed crippled set instead: attacked this turn and crippled now
-     * means the unit may return fire from the next turn on. {@code checkForDishonoredEnemies} keeps its
-     * start-of-turn view, because an attacker should only be dishonored for shooting a unit that was already
-     * visibly crippled.</p>
+     * <p>{@code checkForDishonoredEnemies} grants the same permission from the same start-of-turn view, but
+     * only for an attacker still on the board - it looks each one up by id and skips the ones it cannot find.
+     * This pass also covers a withdrawing unit whose attacker was destroyed later in the same turn, because
+     * it only needs to know that the unit was attacked, not by whom.</p>
+     *
+     * @param unitsWithdrawingAtStartOfTurn ids of this bot's units that were already crippled, and so visibly
+     *                                      withdrawing, when this turn's attacks were declared
      */
-    private void updateReturnFirePermission() {
+    void updateReturnFirePermission(final Set<Integer> unitsWithdrawingAtStartOfTurn) {
         if (!getForcedWithdrawal()) {
             return;
         }
         for (final Entity ownedEntity : getEntitiesOwned()) {
-            if (crippledUnits.contains(ownedEntity.getId()) && !ownedEntity.getAttackedByThisTurn().isEmpty()) {
-                if (attackedWhileFleeing.add(ownedEntity.getId())) {
-                    LOGGER.info("[ForcedWithdrawal] {} is crippled and was attacked this turn; may return fire "
-                          + "from now on.", ownedEntity.getDisplayName());
-                }
+            boolean wasAlreadyWithdrawing = unitsWithdrawingAtStartOfTurn.contains(ownedEntity.getId());
+            boolean wasAttackedThisTurn = !ownedEntity.getAttackedByThisTurn().isEmpty();
+            if (!wasAlreadyWithdrawing || !wasAttackedThisTurn) {
+                continue;
+            }
+            if (attackedWhileFleeing.add(ownedEntity.getId())) {
+                LOGGER.info("[ForcedWithdrawal] {} was attacked while already crippled and withdrawing; may "
+                      + "return fire from now on.", ownedEntity.getDisplayName());
             }
         }
     }

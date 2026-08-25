@@ -61,7 +61,7 @@ public class InfantryLaserPistolAWAWilibyMk4LaserPistol extends InfantryWeapon {
         bv = 0.028;
         tonnage = 0.0018;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.09;
+        infantryDamage = 0.028;
         infantryRange = 1;
         // ammoWeight is not applicable (NA)
         shots = 1;

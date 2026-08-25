@@ -34,13 +34,19 @@
 package megamek.common.weapons.infantry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
 import megamek.MMConstants;
 import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -87,21 +93,33 @@ class InfantryWeaponTableGapsTest {
     }
 
     @Test
-    @DisplayName("A primary weapon over the damage cap grants the Heavy Burst to-hit bonus at range 0")
-    void damageCapGrantsHeavyBurstToHitBonus() {
+    @DisplayName("Every weapon over the damage cap grants the Heavy Burst to-hit bonus at range 0")
+    void everyWeaponOverTheDamageCapGrantsTheBonus() {
         // TM p. 152: a primary weapon above the cap has its damage reduced and the platoon "automatically gain[s]
         // the Heavy Burst Weapon special feature", which is a -1 to-hit at range 0 as well as +1D6 damage.
-        InfantryWeapon overCap = (InfantryWeapon) EquipmentType.get("Sniper Rifle (Barton AMR (Anti-Armor))");
-        assertNotNull(overCap, "The Barton AMR should be registered");
-        assertTrue(overCap.getInfantryDamage() > MMConstants.INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP,
-              "This test needs a primary weapon above the damage cap; " + overCap.getName() + " deals "
-                    + overCap.getInfantryDamage());
+        //
+        // Written against the data rather than one named weapon on purpose. Every weapon currently above the cap
+        // also carries F_INF_BURST outright, so naming one would test the flag and not the rule, and would go
+        // stale the moment that weapon's damage changed. This asserts the property the rule actually guarantees,
+        // and fails for any weapon added above the cap without the flag.
+        List<InfantryWeapon> overCap = new ArrayList<>();
+        for (Enumeration<EquipmentType> types = EquipmentType.getAllTypes(); types.hasMoreElements(); ) {
+            EquipmentType equipment = types.nextElement();
+            if ((equipment instanceof InfantryWeapon weapon)
+                  && !weapon.hasFlag(WeaponType.F_INF_SUPPORT)
+                  && (weapon.getInfantryDamage() > MMConstants.INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP)) {
+                overCap.add(weapon);
+            }
+        }
+        assertFalse(overCap.isEmpty(), "There should be some infantry weapons above the primary damage cap");
 
-        ToHitData atRangeZero = Compute.getInfantryRangeMods(0, overCap, null, null, false);
-
-        assertTrue(hasBurstBonus(atRangeZero),
-              "A capped primary weapon must give the Heavy Burst -1 at range 0; modifiers were "
-                    + atRangeZero.getDesc());
+        for (InfantryWeapon weapon : overCap) {
+            ToHitData atRangeZero = Compute.getInfantryRangeMods(0, weapon, null, null, false);
+            assertTrue(hasBurstBonus(atRangeZero),
+                  weapon.getName() + " deals " + weapon.getInfantryDamage()
+                        + ", above the primary weapon damage cap, so it must grant the Heavy Burst -1 at range 0; "
+                        + "modifiers were " + atRangeZero.getDesc());
+        }
     }
 
     @Test

@@ -60,7 +60,7 @@ public class InfantryLaserPistolBrightStarL15 extends InfantryWeapon {
         cost = 1750;
         bv = 0.056;
         tonnage = 0.0014;
-        infantryDamage = 0.19;
+        infantryDamage = 0.056;
         infantryRange = 3;
         shots = 2;
         bursts = 1;

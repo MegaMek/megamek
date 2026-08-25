@@ -66,7 +66,7 @@ public class InfantrySniperRifleBartonAMRStandard extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = .98;
         tonnage = 0.014;
-        infantryDamage = 0.61;
+        infantryDamage = 0.49;
         infantryRange = 7;
         ammoWeight = 0.014;
         cost = 700;

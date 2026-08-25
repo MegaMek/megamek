@@ -61,7 +61,7 @@ public class InfantryPulseLaserRifleGaul extends InfantryWeapon {
         cost = 2200;
         bv = 0.252;
         tonnage = 0.0075;
-        infantryDamage = 0.36;
+        infantryDamage = 0.252;
         infantryRange = 4;
         shots = 7;
         bursts = 6;

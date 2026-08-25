@@ -61,7 +61,7 @@ public class InfantryLaserPistolXingShanER extends InfantryWeapon {
         cost = 830;
         bv = 0.21; // The bv in the image seems incorrect, adjusted to the value from the text
         tonnage = 0.0016;
-        infantryDamage = 0.35;
+        infantryDamage = 0.105;
         infantryRange = 3;
         shots = 3;
         bursts = 1;

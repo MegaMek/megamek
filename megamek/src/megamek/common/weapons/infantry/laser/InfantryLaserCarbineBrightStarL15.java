@@ -61,7 +61,7 @@ public class InfantryLaserCarbineBrightStarL15 extends InfantryWeapon {
         cost = 2500;
         bv = 0.2625;
         tonnage = 0.0018;
-        infantryDamage = 0.44;
+        infantryDamage = 0.1313;
         infantryRange = 4;
         shots = 3;
         bursts = 1;

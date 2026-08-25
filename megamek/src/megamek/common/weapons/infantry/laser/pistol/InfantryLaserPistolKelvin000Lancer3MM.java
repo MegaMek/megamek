@@ -61,7 +61,7 @@ public class InfantryLaserPistolKelvin000Lancer3MM extends InfantryWeapon {
         cost = 1250;
         bv = 0.01575;
         tonnage = 0.0016;
-        infantryDamage = 0.05;
+        infantryDamage = 0.0158;
         infantryRange = 1;
         shots = 1;
         bursts = 1;

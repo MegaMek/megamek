@@ -60,7 +60,7 @@ public class InfantryLaserPistolBrightStarL7 extends InfantryWeapon {
         cost = 950;
         bv = 0.021;
         tonnage = 0.0011;
-        infantryDamage = 0.07;
+        infantryDamage = 0.021;
         infantryRange = 2;
         shots = 1;
         bursts = 1; // Bursts value is now always shown

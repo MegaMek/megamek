@@ -60,7 +60,7 @@ public class InfantryPulseLaserPistolMedusaIII extends InfantryWeapon {
         cost = 950;
         bv = 0.0315;
         tonnage = 0.0011;
-        infantryDamage = 0.11;
+        infantryDamage = 0.0315;
         infantryRange = 1;
         shots = 2;
         bursts = 1;

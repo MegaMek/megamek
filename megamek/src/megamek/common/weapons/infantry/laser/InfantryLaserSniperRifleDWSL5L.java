@@ -61,11 +61,11 @@ public class InfantryLaserSniperRifleDWSL5L extends InfantryWeapon {
         cost = 2500;
         bv = 1.225;
         tonnage = 0.0075;
-        infantryDamage = 0.61;
+        infantryDamage = 0.6125;
         infantryRange = 5;
         shots = 15;
         bursts = 1;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY).or(F_INF_BURST);
         rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_9);
 
         techAdvancement

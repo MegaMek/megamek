@@ -61,7 +61,7 @@ public class InfantryLaserRifleSyrtisFirebolt12Unrepaired extends InfantryWeapon
         cost = 2200;
         bv = 0.525;
         tonnage = 0.0065;
-        infantryDamage = 0.53;
+        infantryDamage = 0.2625;
         infantryRange = 5;
         shots = 5;
         bursts = 1;

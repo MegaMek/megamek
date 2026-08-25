@@ -60,7 +60,7 @@ public class InfantryPulseLaserPistolRDISunSwarmPulsar extends InfantryWeapon {
         cost = 1050;
         bv = 0.054;
         tonnage = 0.0001;
-        infantryDamage = 0.18;
+        infantryDamage = 0.054;
         infantryRange = 1;
         shots = 2;
         bursts = 4;

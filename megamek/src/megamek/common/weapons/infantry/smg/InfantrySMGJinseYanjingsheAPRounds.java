@@ -69,7 +69,7 @@ public class InfantrySMGJinseYanjingsheAPRounds extends InfantryWeapon {
         ammoCost = 180;
         shots = 30;
         bursts = 5;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST);
         rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_5);
         techAdvancement
               .setTechBase(TechBase.IS)

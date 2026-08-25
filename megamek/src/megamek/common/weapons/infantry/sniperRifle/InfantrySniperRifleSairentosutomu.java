@@ -66,7 +66,7 @@ public class InfantrySniperRifleSairentosutomu extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = .224;
         tonnage = 0.007;
-        infantryDamage = 0.28;
+        infantryDamage = 0.224;
         infantryRange = 5;
         ammoWeight = 0.007;
         cost = 900;

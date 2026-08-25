@@ -35,6 +35,7 @@ package megamek.server.victory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -49,6 +50,7 @@ import java.util.HashMap;
 import megamek.common.game.Game;
 import megamek.server.victory.VictoryPointTracker.Recipient;
 import megamek.server.victory.VictoryPointTracker.VictoryPointAward;
+import megamek.common.util.SerializationHelper;
 import org.junit.jupiter.api.Test;
 
 class VictoryPointTrackerTest {
@@ -173,5 +175,25 @@ class VictoryPointTrackerTest {
         assertEquals(1, restoredTracker.getPlayerVictoryPoints(4));
         assertEquals(2, restoredTracker.getAwardLog().size());
         assertEquals("controls Objectives 1 and 2", restoredTracker.getAwardLog().getFirst().reason());
+    }
+
+    @Test
+    void testTrackerSurvivesASaveGameRoundTrip() {
+        // saves use XStream, which serializes records but cannot deserialize them without a hand-written
+        // converter - without the VictoryPointAward converter in SerializationHelper, a save made after any
+        // victory points were scored fails to load
+        VictoryPointTracker tracker = new VictoryPointTracker();
+        tracker.awardToTeam(1, 3, 2, "controls Objective 0512");
+        tracker.awardToPlayer(4, 2, 3, "raid end scoring");
+
+        String saved = SerializationHelper.getSaveGameXStream().toXML(tracker);
+        Object loaded = SerializationHelper.getLoadSaveGameXStream().fromXML(saved);
+
+        assertInstanceOf(VictoryPointTracker.class, loaded);
+        VictoryPointTracker restoredTracker = (VictoryPointTracker) loaded;
+        assertEquals(3, restoredTracker.getTeamVictoryPoints(1));
+        assertEquals(2, restoredTracker.getPlayerVictoryPoints(4));
+        assertEquals(2, restoredTracker.getAwardLog().size());
+        assertEquals("controls Objective 0512", restoredTracker.getAwardLog().getFirst().reason());
     }
 }

@@ -54,6 +54,6 @@ public class DeployStep implements PhasePass {
           final CachedEntityState cachedEntityState) {
         moveStep.setDeploying(true);
         moveStep.setDistance(1);
-        return PhasePassResult.BREAK;
+        return PhasePassResult.COMPILE;
     }
 }

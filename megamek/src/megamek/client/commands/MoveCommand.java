@@ -230,10 +230,12 @@ public class MoveCommand extends ClientCommand {
             } else if (currentEntity().getMovementMode().isQuadSwim()) {
                 currentEntity().setMovementMode(EntityMovementMode.QUAD);
             }
+            /*
             if (cmd.contains(MoveStepType.DEPLOY)) {
                 currentEntity().setDeployed(false);
                 currentEntity().setPosition(null);
             }
+             */
 
             cmd = new MovePath(getClient().getGame(), currentEntity());
         } else {

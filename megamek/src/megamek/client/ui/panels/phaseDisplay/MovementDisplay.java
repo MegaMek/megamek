@@ -2582,8 +2582,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 if (game.getBoard(boardViewEvent.getBoardId())
                       .isLegalDeployment(boardViewEvent.getCoords(), currentlySelectedEntity)) {
                     currentlySelectedEntity.setPosition(boardViewEvent.getCoords());
-                    cmd.addStep(MoveStepType.DEPLOY);
-                    Hex hex = game.getBoard(boardViewEvent.getBoardId()).getHex(boardViewEvent.getCoords());
+                    addStepToMovePath(MoveStepType.DEPLOY);
                     currentlySelectedEntity.setDeployed(true);
                     clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
                 } else {

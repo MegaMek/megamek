@@ -2985,24 +2985,21 @@ public class TWGameManager extends AbstractGameManager {
                 boolean includeInPhase = true;
                 int deploymentRound = entity.getDeployRound();
                 if (game.getPhase().isDeployment()) {
-                    // This is pre-deployment
                     int startingPos = entity.getOwner().getStartingPos();
-                    // if the deployment round is pre-game, or they are in a start any or start center position, 
-                    // allow deployment, but not if it is already deployed.
-                    if (deploymentRound >= 0
-                          || !(Board.START_ANY == startingPos || Board.START_CENTER == startingPos)
-                          || entity.isDeployed()) {
+                    // walk-on deployment. Skip deployument for eligible units
+                    if (!entity.isDeployed()
+                          && deploymentRound >= 0
+                          && startingPos != Board.START_ANY
+                          && startingPos != Board.START_CENTER) {
                         includeInPhase = false;
                     }
                 }
                 // Do not include immobile entities in movement or init
-                if (game.getPhase().isMovement() || game.getPhase().isInitiative()) {
-                    if (entity.isImmobile()) {
-                        includeInPhase = false;
-                    }
+                if ((game.getPhase().isMovement() || game.getPhase().isInitiative()) && entity.isImmobile()) {
+                    includeInPhase = false;
                 }
                 if (!includeInPhase && Game.rulesManager.getRulesGame().walkOnDeployment()) {
-                    break;
+                    continue;
                 }
                 if ((entity instanceof SpaceStation) &&
                       (game.getPhase().isMovement() || game.getPhase().isDeployment())) {

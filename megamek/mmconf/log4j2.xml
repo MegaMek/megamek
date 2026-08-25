@@ -302,13 +302,12 @@
           resolution). Uncomment to diagnose "why is this objective uncontrolled" - the control
           resolution logs every in-range unit's exclusion reason and the per-side unit counts; leave
           commented for normal play.
-
-          <Logger name="megamek.feature.VictoryHex" level="debug" additivity="false">
+        -->
+        <Logger name="megamek.feature.VictoryHex" level="debug" additivity="false">
               <AppenderRef ref="${env:mm.profile:-null}" />
               <AppenderRef ref="UnifiedLog" />
               <AppenderRef ref="MegaMekLog" />
           </Logger>
-        -->
         <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

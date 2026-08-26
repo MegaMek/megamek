@@ -4426,8 +4426,10 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // looks like mostly everything's okay
+            Coords positionBeforeMovement = entity.getPosition();
             MovePathHandler handler = new MovePathHandler(this, entity, movePath, losCache);
             handler.processMovement();
+            new ObjectiveResolutionHandler(this).toastZoneEntry(entity, positionBeforeMovement);
             datasetLogger.append(movePath, true);
 
             // The attacker may choose to break a chain whip grapple by expending MP
@@ -16221,6 +16223,15 @@ public class TWGameManager extends AbstractGameManager {
      */
     void returnObjectivesToLobby() {
         new ObjectivePlacementHandler(this).returnObjectivesToLobby();
+    }
+
+    /**
+     * End-phase resolution for objective markers (Standard Missions, Objectives): objective control and victory
+     * point scoring. Delegates to {@link ObjectiveResolutionHandler} so the objectives rules do not add to this
+     * already very large class.
+     */
+    void resolveObjectives() {
+        new ObjectiveResolutionHandler(this).resolveObjectives();
     }
 
     /**
@@ -28075,6 +28086,9 @@ public class TWGameManager extends AbstractGameManager {
                   option.getValue().toString() +
                   '.';
             sendServerChat(message);
+            // also log it: the chat is not in megamek.log, and "why is this option not set" is a
+            // recurring playtest question
+            LOGGER.info("[GameOptions] {} set {} = {}", player, option.getName(), option.getValue());
             originalOption.setValue(option.getValue());
             changed++;
         }

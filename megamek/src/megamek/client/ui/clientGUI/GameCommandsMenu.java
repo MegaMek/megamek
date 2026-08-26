@@ -252,19 +252,13 @@ public class GameCommandsMenu {
     }
 
     /**
-     * Creates a menu item that sends its chat command straight away.
-     *
-     * @param messageKey  The resource key prefix for the item's title and tooltip
-     * @param chatCommand The chat command to send when the item is chosen
-     *
-     * @return The created menu item
-     */
-    /**
      * Opens the dialog that puts a player on a team and gives them a deployment zone.
      *
      * <p>Offered here rather than on a hex, because it is about a player rather than a place. It is what brings
      * somebody who joined a running game into it: without a team they are left out of the turn order, and without a
      * zone their units may arrive anywhere on the map.</p>
+     *
+     * @return The created menu item
      */
     private JMenuItem createPlayerSetupItem() {
         JMenuItem item = new JMenuItem(Messages.getString("GameMasterPlayerSetupDialog.title"));
@@ -291,6 +285,14 @@ public class GameCommandsMenu {
         return item;
     }
 
+    /**
+     * Creates a menu item that sends its chat command straight away.
+     *
+     * @param messageKey  The resource key prefix for the item's title and tooltip
+     * @param chatCommand The chat command to send when the item is chosen
+     *
+     * @return The created menu item
+     */
     private JMenuItem createCommandItem(String messageKey, String chatCommand) {
         JMenuItem commandItem = new JMenuItem(Messages.getString("GameCommands." + messageKey + ".title"));
         commandItem.setToolTipText(Messages.getString("GameCommands." + messageKey + ".tooltip"));

@@ -63,7 +63,7 @@ public class InfantryShotgunCWIJianhuren extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = .054;
         tonnage = 0.0027;
-        infantryDamage = 0.14;
+        infantryDamage = 0.054;
         infantryRange = 1;
         ammoWeight = 0.0027;
         cost = 225;

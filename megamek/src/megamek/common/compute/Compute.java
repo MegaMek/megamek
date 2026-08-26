@@ -39,6 +39,7 @@ import static java.lang.Math.min;
 
 import java.util.*;
 
+import megamek.MMConstants;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
@@ -1834,7 +1835,14 @@ public class Compute {
                 mods.addModifier(1, "point blank support weapon");
             }
 
-            if (primaryWeapon.hasFlag(WeaponType.F_INF_BURST)) {
+            // A platoon whose primary weapon is over the damage cap has its damage reduced to the cap and
+            // "automatically gain[s] the Heavy Burst Weapon special feature" (TM p. 152). That feature is both a
+            // -1 to-hit at range 0 and +1D6 damage against conventional infantry; the damage half is applied in
+            // InfantryWeaponHandler, so the to-hit half has to honour the same condition or the platoon gets only
+            // half of what the rule grants.
+            boolean heavyBurstFromDamageCap =
+                  primaryWeapon.getInfantryDamage() > MMConstants.INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP;
+            if (primaryWeapon.hasFlag(WeaponType.F_INF_BURST) || heavyBurstFromDamageCap) {
                 mods.addModifier(-1, "point blank burst fire weapon");
             }
         }

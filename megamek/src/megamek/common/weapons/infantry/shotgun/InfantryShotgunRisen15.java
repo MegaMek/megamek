@@ -63,7 +63,7 @@ public class InfantryShotgunRisen15 extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = .216;
         tonnage = 0.0039;
-        infantryDamage = 0.27;
+        infantryDamage = 0.216;
         infantryRange = 0;
         ammoWeight = 0.0039;
         cost = 250;

@@ -60,7 +60,7 @@ public class InfantryLaserPistolBR25 extends InfantryWeapon {
         cost = 950;
         bv = 0.01575;
         tonnage = 0.0013;
-        infantryDamage = 0.05;
+        infantryDamage = 0.0158;
         infantryRange = 1;
         shots = 1;
         bursts = 1; // Bursts value is now always shown

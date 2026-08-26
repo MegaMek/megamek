@@ -61,7 +61,7 @@ public class InfantryPistolLemisonCombatRevolver extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = 0.28;
         tonnage = 0.0016;
-        infantryDamage = 0.35;
+        infantryDamage = 0.28;
         infantryRange = 0;
         ammoWeight = 0.000025;
         cost = 120;

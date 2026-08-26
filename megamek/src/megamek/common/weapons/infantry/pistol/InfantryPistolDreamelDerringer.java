@@ -61,7 +61,7 @@ public class InfantryPistolDreamelDerringer extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = 0.042;
         tonnage = 0.0002;
-        infantryDamage = 0.14;
+        infantryDamage = 0.042;
         infantryRange = 0;
         ammoWeight = 0.000001;
         cost = 60;

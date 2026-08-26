@@ -54,14 +54,18 @@ public class InfantryLaserPistolXingShanER extends InfantryWeapon {
     public InfantryLaserPistolXingShanER() {
         super();
 
-        name = "Laser Pistol (Xīng Shan ER)";
+        name = "Laser Pistol (Xing Shan ER)";
+        // The pre-normalisation spelling wrote Xing with a non-ASCII i. MegaMek source is ASCII only, so the
+        // ASCII spelling is now both the display and the internal name, and the old spelling is kept as a
+        // lookup name written as an escape so a player's saved game or custom unit still resolves.
         setInternalName(name);
-        addLookupName("XīngShanER");
+        addLookupName("Laser Pistol (X\u012bng Shan ER)");
+        addLookupName("XingShanER");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 830;
         bv = 0.21; // The bv in the image seems incorrect, adjusted to the value from the text
         tonnage = 0.0016;
-        infantryDamage = 0.35;
+        infantryDamage = 0.105;
         infantryRange = 3;
         shots = 3;
         bursts = 1;

@@ -232,24 +232,31 @@ public class InfantryWeaponHandler extends WeaponHandler {
         int tailDamageDealt = (int) Math.round(tailBonusDamage * troopersHit);
 
         // beast-mounted infantry get range 0 bonus damage per platoon
+        int mountBurstDamageDealt = 0;
         if ((attackingEntity instanceof ConvInfantry infantry) && (nRange == 0)) {
             InfantryMount mount = infantry.getMount();
             if (mount != null) {
                 if (!target.isConventionalInfantry()) {
                     damageDealt += mount.vehicleDamage();
                 } else if (mount.getBurstDamageDice() > 0) {
-                    damageDealt += Compute.d6(mount.getBurstDamageDice());
+                    mountBurstDamageDealt = Compute.d6(mount.getBurstDamageDice());
+                    damageDealt += mountBurstDamageDealt;
                 }
             }
         }
 
-        // conventional infantry weapons with high damage get treated as if they have
-        // the infantry burst mod
-        if (target instanceof ConvInfantry infantry &&
-              (weaponType.hasFlag(WeaponType.F_INF_BURST) ||
-                    (attackingEntity.isConventionalInfantry()
-                          && infantry.primaryWeaponDamageCapped()))) {
-            damageDealt += Compute.d6();
+        // A Heavy Burst weapon adds 1D6 damage against conventional infantry. A platoon whose primary weapon is
+        // over the damage cap gains that feature outright (TM p. 152), so the cap has to be read off the ATTACKING
+        // platoon; reading it off the target made the bonus depend on what the victim happened to be carrying.
+        int heavyBurstDamageDealt = 0;
+        // Kept as instanceof, not isConventionalInfantry(): CombatVehicleEscapePod is a ConvInfantry subclass that
+        // answers false, so switching would silently drop the bonus against escape pods.
+        if ((target instanceof ConvInfantry)
+              && (weaponType.hasFlag(WeaponType.F_INF_BURST)
+                    || ((attackingEntity instanceof ConvInfantry attackingInfantry)
+                          && attackingInfantry.primaryWeaponDamageCapped()))) {
+            heavyBurstDamageDealt = Compute.d6();
+            damageDealt += heavyBurstDamageDealt;
         }
         if ((target instanceof Infantry) && ((Infantry) target).isMechanized()) {
             damageDealt /= 2;
@@ -281,7 +288,9 @@ public class InfantryWeaponHandler extends WeaponHandler {
               - tsmDamageDealt
               - prostheticDamageDealt
               - extraneousDamageDealt
-              - tailDamageDealt;
+              - tailDamageDealt
+              - heavyBurstDamageDealt
+              - mountBurstDamageDealt;
         boolean hasTsm = tsmDamageDealt > 0;
         boolean hasProsthetic = prostheticDamageDealt > 0;
         boolean hasExtraneous = extraneousDamageDealt > 0;
@@ -336,6 +345,23 @@ public class InfantryWeaponHandler extends WeaponHandler {
                 prostheticReport.add(allEnhancementNames.toString());
                 vPhaseReport.addElement(prostheticReport);
             }
+        }
+
+        // The burst dice are rolled, not derived from the weapon, so without a line of their own the player has
+        // no way to tell a high roll from a hard-hitting platoon.
+        if (heavyBurstDamageDealt > 0) {
+            Report heavyBurstReport = new Report(3422);
+            heavyBurstReport.subject = subjectId;
+            heavyBurstReport.indent(2);
+            heavyBurstReport.add(heavyBurstDamageDealt);
+            vPhaseReport.addElement(heavyBurstReport);
+        }
+        if (mountBurstDamageDealt > 0) {
+            Report mountBurstReport = new Report(3423);
+            mountBurstReport.subject = subjectId;
+            mountBurstReport.indent(2);
+            mountBurstReport.add(mountBurstDamageDealt);
+            vPhaseReport.addElement(mountBurstReport);
         }
 
         if (target.isConventionalInfantry()) {

@@ -113,6 +113,34 @@ public class Princess extends BotClient {
     private static final int MAX_OVERHEAT_AMS = 14;
 
     /**
+     * Heat a unit standing in a burning hex gains every turn, halved for a Mek with intact
+     * heat-dissipating armor. Mirrors the fire check in the server's {@code HeatResolver}.
+     */
+    private static final int FIRE_HEAT_PER_TURN = 5;
+
+    /**
+     * Heat an active Nova CEWS adds every turn. There is no shared constant for any of the four values
+     * below; each mirrors the literal the server's {@code HeatResolver} charges.
+     */
+    private static final int NOVA_CEWS_HEAT_PER_TURN = 2;
+
+    /** Heat an active Null Signature System adds every turn. */
+    private static final int NULL_SIGNATURE_HEAT_PER_TURN = 10;
+
+    /** Heat an active Void Signature System adds every turn. */
+    private static final int VOID_SIGNATURE_HEAT_PER_TURN = 10;
+
+    /** Heat an active Chameleon Light Polarization Shield adds every turn. */
+    private static final int CHAMELEON_SHIELD_HEAT_PER_TURN = 6;
+
+    /**
+     * Number of jump MP priced when asking whether a heat-stalled unit can afford to jump clear. One hex
+     * is the cheapest jump that gets a unit moving again, and Princess chooses the path, so this is the
+     * least the unit could commit to rather than the jump it would most likely make.
+     */
+    private static final int CHEAPEST_JUMP_DISTANCE = 1;
+
+    /**
      * Highest target number to consider when not aiming at the head on an immobile Mek
      */
     private static final int SHUTDOWN_MAX_TARGET_NUMBER = 12;
@@ -3076,6 +3104,134 @@ public class Princess extends BotClient {
         }
     }
 
+    /**
+     * Whether a unit that cannot move right now is expected to move again under its own power.
+     * <p>
+     * Movement lost to damage is gone for the rest of the battle, but movement lost to heat comes back as
+     * soon as the unit cools: heat costs a unit one MP for every five heat points, so a Mek walking 5 has
+     * nothing left at 25 heat and walks again the moment it drops back to 24. A unit in that state is
+     * stalled, not finished, and abandoning it throws away a working machine.
+     * </p><p>
+     * A stalled unit has two ways out and only needs one of them. It can stand still and let its heat
+     * sinks win, which they do whenever they out-dissipate the heat that arrives every turn no matter what
+     * the pilot chooses to do. Or, if it still has working jump jets, it can jump clear - which leaves any
+     * fire behind but costs jump heat instead. Both comparisons are strictly greater: a unit whose sinks
+     * exactly match its incoming heat holds that heat forever and never moves again.
+     * </p>
+     *
+     * @param mover the unit {@link #isImmobilized(Entity)} has reported as unable to move
+     *
+     * @return {@code true} if the unit is expected to move again without help
+     */
+    boolean canRecoverMobility(final Entity mover) {
+        // Only heat is temporary. A unit that still has movement points was called immobilized for some
+        // other reason - prone with poor odds of standing, or bogged down - and no amount of cooling
+        // changes that, so it is not this method's business.
+        if (0 < mover.getRunMP()) {
+            return false;
+        }
+
+        // The core rules already measure this with heat ignored, so anything it catches is damage rather
+        // than temperature: legs gone, gyro destroyed, or prone with no walking MP left to stand on.
+        if (mover.isPermanentlyImmobilized(true)) {
+            return false;
+        }
+
+        // A unit that does not track heat did not lose its movement to heat, so there is nothing to wait out.
+        if (Entity.DOES_NOT_TRACK_HEAT == mover.getHeatCapacity()) {
+            return false;
+        }
+
+        final int dissipation = mover.getHeatCapacityWithWater();
+        return canJumpClear(mover, dissipation) || (dissipation > recurringHeat(mover, false));
+    }
+
+    /**
+     * Whether a heat-stalled unit can leave its hex by jumping rather than waiting to cool.
+     * <p>
+     * Heat never reduces jump MP, so a unit with working jets can move under its own power even at zero
+     * walking MP - as long as it can afford the jump's heat on top of everything else it is already
+     * gaining. Jumping also leaves any fire behind, which is why the recurring heat here excludes it. A
+     * prone Mek does not get this route: it has to stand up first, and standing needs walking MP it does
+     * not have.
+     * </p>
+     *
+     * @param mover       the unit being assessed
+     * @param dissipation the unit's heat dissipation per turn
+     *
+     * @return {@code true} if jumping one hex is sustainable for this unit
+     */
+    private boolean canJumpClear(final Entity mover, final int dissipation) {
+        return !mover.isProne()
+              && (0 < mover.getAnyTypeMaxJumpMP())
+              && (dissipation > recurringHeat(mover, true) + mover.getJumpHeat(CHEAPEST_JUMP_DISTANCE));
+    }
+
+    /**
+     * Heat this unit gains every turn whatever its pilot decides to do. Weapon heat and movement heat are
+     * choices and are therefore left out, and so is stealth armor: {@code BotClient.toggleStealth()}
+     * already switches that off in the end phase once a unit passes roughly 13 to 19 heat, so a
+     * heat-stalled unit has shed it before this question is ever asked.
+     * <p>
+     * What is left is engine criticals, a burning hex the unit cannot walk out of, and the concealment
+     * systems no bot code touches: Null Signature, Void Signature, Chameleon Light Polarization Shield
+     * and Nova CEWS. Their heat really does keep arriving. See MegaMek/megamek#8802, which proposes
+     * folding them into the same end-phase utility that handles stealth armor.
+     * </p>
+     *
+     * @param mover          the unit being assessed
+     * @param leavingThisHex {@code true} when the unit is about to jump out of its current hex, which
+     *                       means any fire it is standing in stops being its problem
+     *
+     * @return heat points added per turn that the pilot cannot avoid
+     */
+    int recurringHeat(final Entity mover, final boolean leavingThisHex) {
+        int recurring = mover.getEngineCritHeat();
+
+        if (!leavingThisHex && isStandingInFire(mover)) {
+            int fireHeat = FIRE_HEAT_PER_TURN;
+            if ((mover instanceof Mek mek) && mek.hasIntactHeatDissipatingArmor()) {
+                fireHeat /= 2;
+            }
+            recurring += fireHeat;
+        }
+
+        if (mover.isNullSigOn()) {
+            recurring += NULL_SIGNATURE_HEAT_PER_TURN;
+        }
+
+        if (mover.isVoidSigOn()) {
+            recurring += VOID_SIGNATURE_HEAT_PER_TURN;
+        }
+
+        if (mover.isChameleonShieldOn()) {
+            recurring += CHAMELEON_SHIELD_HEAT_PER_TURN;
+        }
+
+        if (mover.hasActiveNovaCEWS()) {
+            recurring += NOVA_CEWS_HEAT_PER_TURN;
+        }
+
+        return recurring;
+    }
+
+    /**
+     * Whether this unit is taking heat from a fire in its own hex. Mirrors the fire check in the server's
+     * heat resolver, including the requirement that the fire started on an earlier turn.
+     *
+     * @param mover the unit being assessed
+     *
+     * @return {@code true} if the unit's hex is burning and the unit is low enough to be burned by it
+     */
+    private boolean isStandingInFire(final Entity mover) {
+        if (!mover.tracksHeat() || (0 != mover.getAltitude()) || (1 < mover.getElevation())) {
+            return false;
+        }
+
+        final Hex hex = getGame().getHex(mover.getPosition(), mover.getBoardId());
+        return (null != hex) && hex.containsTerrain(Terrains.FIRE) && (0 < hex.getFireTurn());
+    }
+
     boolean isImmobilized(final Entity mover) {
         if (mover.isImmobile() && !mover.isShutDown()) {
             LOGGER.info("Is truly immobile.");
@@ -3190,14 +3346,35 @@ public class Princess extends BotClient {
                     return mp;
                 }
 
-                // If we want to flee, but cannot, eject the crew.
+                // If we want to flee but cannot, eject the crew - unless the unit is only stopped by heat
+                // it can still shed, in which case it moves again in a turn or two and is worth keeping.
                 if (isImmobilized(entity) && entity.isEjectionPossible()) {
-                    msg = entity.getDisplayName() + " is immobile. Abandoning unit.";
-                    LOGGER.info(msg);
-                    sendChat(msg, Level.ERROR);
-                    final MovePath mp = new MovePath(game, entity);
-                    mp.addStep(MoveStepType.EJECT);
-                    return mp;
+                    if (canRecoverMobility(entity)) {
+                        // Name the route that saved it, so the printed numbers always back the claim: a
+                        // unit jumping clear of a fire is not out-sinking the heat it is standing in.
+                        final int dissipation = entity.getHeatCapacityWithWater();
+                        if (canJumpClear(entity, dissipation)) {
+                            LOGGER.info("{} cannot walk but can jump clear: sinks {} against {} recurring"
+                                        + " heat plus {} jump heat. Not abandoning it.",
+                                  entity.getDisplayName(),
+                                  dissipation,
+                                  recurringHeat(entity, true),
+                                  entity.getJumpHeat(CHEAPEST_JUMP_DISTANCE));
+                        } else {
+                            LOGGER.info("{} cannot move but will cool: sinks {} against {} recurring heat."
+                                        + " Not abandoning it.",
+                                  entity.getDisplayName(),
+                                  dissipation,
+                                  recurringHeat(entity, false));
+                        }
+                    } else {
+                        msg = entity.getDisplayName() + " is immobile. Abandoning unit.";
+                        LOGGER.info(msg);
+                        sendChat(msg, Level.ERROR);
+                        final MovePath mp = new MovePath(game, entity);
+                        mp.addStep(MoveStepType.EJECT);
+                        return mp;
+                    }
                 }
             }
 

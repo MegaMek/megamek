@@ -1294,4 +1294,250 @@ class PrincessTest {
             verify(path).addStep(MoveStepType.EVADE);
         }
     }
+
+    /**
+     * Regression tests for {@link Princess#canRecoverMobility(Entity)} (issue #8775): a Mek whose
+     * movement has been eaten by heat is stalled, not finished, and its crew must not be ejected while
+     * its heat sinks are still winning. The numbers come from the units in the reporter's game log.
+     */
+    @Nested
+    class CanRecoverMobilityTests {
+
+        private Game mockGame;
+        private Hex mockHex;
+
+        @BeforeEach
+        void setUpGate() {
+            mockGame = mock(Game.class);
+            mockHex = mock(Hex.class);
+            when(mockHex.containsTerrain(Terrains.FIRE)).thenReturn(false);
+            when(mockGame.getHex(any(Coords.class), anyInt())).thenReturn(mockHex);
+            doReturn(mockGame).when(mockPrincess).getGame();
+            when(mockPrincess.canRecoverMobility(any(Entity.class))).thenCallRealMethod();
+            when(mockPrincess.recurringHeat(any(Entity.class), anyBoolean())).thenCallRealMethod();
+        }
+
+        /**
+         * A heat-stalled Mek with the given dissipation and engine damage: standing, no jump jets, no
+         * stealth armor, no Nova CEWS, and a hex that is not burning.
+         */
+        private Mek stalledMek(int heatCapacity, int engineCritHeat) {
+            Mek mockMek = mock(BipedMek.class);
+            when(mockMek.isPermanentlyImmobilized(true)).thenReturn(false);
+            when(mockMek.getRunMP()).thenReturn(0);
+            when(mockMek.getHeatCapacity()).thenReturn(heatCapacity);
+            when(mockMek.getHeatCapacityWithWater()).thenReturn(heatCapacity);
+            when(mockMek.getEngineCritHeat()).thenReturn(engineCritHeat);
+            when(mockMek.isProne()).thenReturn(false);
+            when(mockMek.getAnyTypeMaxJumpMP()).thenReturn(0);
+            when(mockMek.isNullSigOn()).thenReturn(false);
+            when(mockMek.isVoidSigOn()).thenReturn(false);
+            when(mockMek.isChameleonShieldOn()).thenReturn(false);
+            when(mockMek.hasActiveNovaCEWS()).thenReturn(false);
+            when(mockMek.tracksHeat()).thenReturn(true);
+            when(mockMek.getAltitude()).thenReturn(0);
+            when(mockMek.getElevation()).thenReturn(0);
+            when(mockMek.getPosition()).thenReturn(new Coords(5, 5));
+            when(mockMek.getBoardId()).thenReturn(0);
+            return mockMek;
+        }
+
+        /** Sets the Mek's hex burning, with the fire having started on an earlier turn. */
+        private void setHexOnFire() {
+            when(mockHex.containsTerrain(Terrains.FIRE)).thenReturn(true);
+            when(mockHex.getFireTurn()).thenReturn(2);
+        }
+
+        /** Gives the Mek working jump jets that cost the stated heat for a single hex. */
+        private void giveJumpJets(Mek mockMek, int jumpMP, int cheapestJumpHeat) {
+            when(mockMek.getAnyTypeMaxJumpMP()).thenReturn(jumpMP);
+            when(mockMek.getJumpHeat(1)).thenReturn(cheapestJumpHeat);
+        }
+
+        @Test
+        void carronadeCoolsAndKeepsItsPilot() {
+            // Carronade CRN-7M from the log: 10 IS doubles, so 20 points of dissipation, against two
+            // engine criticals. It sheds 10 a turn and walks again next turn.
+            assertTrue(mockPrincess.canRecoverMobility(stalledMek(20, 10)));
+        }
+
+        @Test
+        void huronWarriorCoolsSlowlyAndStillKeepsItsPilot() {
+            // Huron Warrior HUR-WO-R4L from the log: 11 single sinks against two engine criticals. One
+            // point a turn is slow, but the heat is coming down, so the Mek is not abandoned.
+            assertTrue(mockPrincess.canRecoverMobility(stalledMek(11, 10)));
+        }
+
+        @Test
+        void breakingEvenIsNotRecovery() {
+            // Dissipation exactly matching the incoming heat holds that heat forever. The comparison has
+            // to be strictly greater or this Mek stands at zero MP for the rest of the game.
+            assertFalse(mockPrincess.canRecoverMobility(stalledMek(10, 10)));
+        }
+
+        @Test
+        void fireInTheHexIsCountedWhenTheMekCannotLeave() {
+            // The same Huron Warrior, now standing in a fire: 11 against 10 engine plus 5 fire. With no
+            // jump jets it cannot get out of the hex, so the fire heat never stops.
+            Mek mockMek = stalledMek(11, 10);
+            setHexOnFire();
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void heatDissipatingArmorHalvesTheFireHeat() {
+            // Intact heat-dissipating armor takes 2 from the fire rather than 5, which brings the Mek
+            // back under its 13 points of dissipation.
+            Mek mockMek = stalledMek(13, 10);
+            when(mockMek.hasIntactHeatDissipatingArmor()).thenReturn(true);
+            setHexOnFire();
+            assertTrue(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void jumpingOutOfAFireLeavesTheFireBehind() {
+            // Grasshopper GHR-5H with 8 sinks shot away, two engine criticals, standing in a fire.
+            // Staying is 14 against 15 and fails; jumping is 14 against 10 engine plus 3 jump heat and
+            // succeeds, because the fire stops being its problem the moment it leaves the hex.
+            Mek mockMek = stalledMek(14, 10);
+            giveJumpJets(mockMek, 4, 3);
+            setHexOnFire();
+            assertTrue(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void jumpHeatCanMakeTheEscapeUnaffordable() {
+            // The same situation with two fewer working sinks: 12 against 15 standing still, and 12
+            // against 13 jumping. The jets are there and it still cannot use them.
+            Mek mockMek = stalledMek(12, 10);
+            giveJumpJets(mockMek, 4, 3);
+            setHexOnFire();
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void anXxlEngineIsChargedTheHigherMinimumJumpHeat() {
+            // Same numbers as the Grasshopper above, but an XXL engine pays max(6, hexes * 2) rather
+            // than max(3, hexes). Six heat rather than three is the difference between getting out of
+            // the fire and not.
+            Mek mockMek = stalledMek(14, 10);
+            giveJumpJets(mockMek, 4, 6);
+            setHexOnFire();
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void aMechanicalJumpBoosterCostsNoHeat() {
+            // Jump boosters are not engine-driven, so they cost nothing to use. The Mek that could not
+            // afford a 3-heat jump out of the fire can afford a free one.
+            Mek mockMek = stalledMek(12, 10);
+            giveJumpJets(mockMek, 2, 0);
+            setHexOnFire();
+            assertTrue(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void aProneMekCannotUseItsJumpJets() {
+            // The Grasshopper again, knocked down. Standing up needs walking MP, which heat has taken,
+            // so the jets are out of reach and the fire keeps burning it.
+            Mek mockMek = stalledMek(14, 10);
+            giveJumpJets(mockMek, 4, 3);
+            setHexOnFire();
+            when(mockMek.isProne()).thenReturn(true);
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void jumpingDoesNotRescueAMekThatCannotCool() {
+            // Wolverine WVR-6R with 3 sinks destroyed and two engine criticals: 9 dissipation against 10
+            // engine heat, with no fire to escape. Jumping only adds heat, so it buys nothing.
+            Mek mockMek = stalledMek(9, 10);
+            giveJumpJets(mockMek, 5, 3);
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void stealthArmorIsNotCountedBecauseTheBotAlreadyShedsIt() {
+            // Huron Warrior HUR-WO-R4N, the stealth variant: 20 dissipation against 10 engine heat.
+            // BotClient.toggleStealth already switches the armor off in the end phase once the Mek is
+            // over roughly 13 to 19 heat, and this Mek is at 25, so its 10 points are not recurring.
+            Mek mockMek = stalledMek(20, 10);
+            when(mockMek.isStealthOn()).thenReturn(true);
+            assertTrue(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void nullSignatureHeatIsCounted() {
+            // Nothing in the bot switches a Null Signature System off, so its 10 points a turn keep
+            // arriving and this Mek never cools.
+            Mek mockMek = stalledMek(20, 10);
+            when(mockMek.isNullSigOn()).thenReturn(true);
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void voidSignatureHeatIsCounted() {
+            // Same 10 points a turn, same lack of any bot code to switch it off.
+            Mek mockMek = stalledMek(20, 10);
+            when(mockMek.isVoidSigOn()).thenReturn(true);
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void chameleonShieldHeatIsCounted() {
+            // A Chameleon Light Polarization Shield is 6 a turn, which is enough to close a 5-point gap.
+            Mek mockMek = stalledMek(15, 10);
+            when(mockMek.isChameleonShieldOn()).thenReturn(true);
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void novaCewsHeatIsCounted() {
+            // Two points a turn is enough to turn a Mek that was clearing its bar by exactly one into a
+            // Mek that never cools.
+            Mek mockMek = stalledMek(11, 10);
+            when(mockMek.hasActiveNovaCEWS()).thenReturn(true);
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void damageThatIsNotHeatIsStillPermanent() {
+            // Both legs gone. The core rules already measure this with heat ignored, so no amount of
+            // cooling brings the movement back and the crew should get out.
+            Mek mockMek = stalledMek(20, 0);
+            when(mockMek.isPermanentlyImmobilized(true)).thenReturn(true);
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void aUnitThatDoesNotTrackHeatIsUnaffected() {
+            // A vehicle never lost its movement to heat, so the gate leaves it exactly as it was.
+            Tank mockTank = mock(Tank.class);
+            when(mockTank.isPermanentlyImmobilized(true)).thenReturn(false);
+            when(mockTank.getRunMP()).thenReturn(0);
+            when(mockTank.getHeatCapacity()).thenReturn(Entity.DOES_NOT_TRACK_HEAT);
+            assertFalse(mockPrincess.canRecoverMobility(mockTank));
+        }
+
+        @Test
+        void aProneMekThatStillHasMovementIsNotAHeatCase() {
+            // isImmobilized also reports true for a Mek that is prone with poor odds of standing back
+            // up, which has nothing to do with temperature. Found in headless play: a cool, undamaged
+            // Doloire with 28 points of dissipation and no recurring heat was being held on the field
+            // because it had fallen over. If the unit still has run MP, cooling cannot be the answer.
+            Mek mockMek = stalledMek(28, 0);
+            when(mockMek.getRunMP()).thenReturn(6);
+            when(mockMek.isProne()).thenReturn(true);
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void aStuckMekThatStillHasMovementIsNotAHeatCase() {
+            // Same reasoning for a Mek bogged down in a swamp: its movement is not heat's doing.
+            Mek mockMek = stalledMek(28, 0);
+            when(mockMek.getRunMP()).thenReturn(4);
+            when(mockMek.isStuck()).thenReturn(true);
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+    }
 }

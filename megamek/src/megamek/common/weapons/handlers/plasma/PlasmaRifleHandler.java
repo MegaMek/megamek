@@ -54,7 +54,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
-import megamek.common.units.Infantry;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.common.weapons.ppc.innerSphere.ISHeavyPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISLightPlasmaRifle;
@@ -168,11 +167,6 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         }
 
         bSalvo = true;
-        // pain-shunted infantry gets half-damage
-        if ((target instanceof Infantry) && ((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
-            toReturn = Math.max(toReturn / 2, 1);
-        }
-
         return toReturn;
     }
 
@@ -200,6 +194,10 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
                 toReturn = damage;
             }
             toReturn = applyGlancingBlowModifier(toReturn, false);
+            // Conventional infantry and battle armor with an Artificial Pain Shunt halve flame damage (IO p. 78).
+            // Plasma delivers that damage as 1-point hits, so the hit count is what carries the damage total.
+            // Halving the cluster size instead, as this handler used to, only regroups the same total.
+            toReturn = (int) applyPainShuntModifier(toReturn);
         }
         return toReturn;
     }

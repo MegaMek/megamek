@@ -63,7 +63,7 @@ public class InfantryShotgunMorriganStormsweeper extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = 1.125;
         tonnage = 0.004;
-        infantryDamage = 0.56;
+        infantryDamage = 0.5625;
         infantryRange = 1;
         ammoWeight = 0.004;
         cost = 800;

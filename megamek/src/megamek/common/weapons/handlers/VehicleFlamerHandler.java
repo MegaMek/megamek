@@ -34,8 +34,6 @@
 
 package megamek.common.weapons.handlers;
 
-import static java.lang.Math.floor;
-
 import java.io.Serial;
 import java.util.Vector;
 
@@ -43,8 +41,6 @@ import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.battleArmor.BattleArmor;
-import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.game.Game;
@@ -55,8 +51,6 @@ import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.weapons.FlamerHandlerHelper;
 import megamek.common.weapons.Weapon;
-import megamek.common.weapons.flamers.clan.CLHeavyFlamer;
-import megamek.common.weapons.flamers.innerSphere.ISHeavyFlamer;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -141,29 +135,14 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        double toReturn;
-        if (target.isConventionalInfantry()) {
-            if (attackingEntity instanceof BattleArmor) {
-                toReturn = Compute.d6(3);
-            } else if ((weaponType instanceof ISHeavyFlamer)
-                  || (weaponType instanceof CLHeavyFlamer)) {
-                toReturn = Compute.d6(6);
-            } else {
-                toReturn = Compute.d6(4);
-            }
-            if (bDirect) {
-                toReturn += (int) floor(toHit.getMoS() / 3.0);
-            }
-            // pain shunted infantry get half damage
-            if (((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
-                toReturn /= 2;
-            }
-
-            toReturn = applyGlancingBlowModifier(toReturn, true);
-        } else {
-            toReturn = super.calcDamagePerHit();
+        if (targetIgnoresHeatWeaponDamage()) {
+            return 0;
         }
-        return (int) toReturn;
+        // Anti-infantry damage is rolled by the shared handler from the weapon's infantry damage class, which is
+        // 6D6 for the heavy flamers and 4D6 for the vehicle flamer. Rolling it here instead skipped the burst
+        // halving against mechanized infantry and through buildings, and skipped the damage breakdown report.
+        // Conventional infantry and battle armor with an Artificial Pain Shunt halve flame damage (IO p. 78).
+        return (int) applyPainShuntModifier(super.calcDamagePerHit());
     }
 
     @Override

@@ -66,7 +66,7 @@ public class InfantrySniperRifleLRS53SniperRifle extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = .252;
         tonnage = 0.006;
-        infantryDamage = 0.28;
+        infantryDamage = 0.252;
         infantryRange = 5;
         ammoWeight = 0.006;
         cost = 1000;

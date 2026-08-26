@@ -60,9 +60,9 @@ public class InfantrySMGRFWBedivere extends InfantryWeapon {
         setInternalName(name);
         addLookupName("RFW Bedivere");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
-        bv = .202;
+        bv = 0.2025;
         tonnage = 0.0012;
-        infantryDamage = 0.2;
+        infantryDamage = 0.2025;
         infantryRange = 1;
         ammoWeight = 0.0012;
         cost = 560;

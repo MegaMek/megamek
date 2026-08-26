@@ -109,6 +109,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(victory, OptionsConstants.VICTORY_USE_KILL_COUNT, false);
         addOption(victory, OptionsConstants.VICTORY_GAME_KILL_COUNT, 4);
         addOption(victory, OptionsConstants.VICTORY_COMMANDER_KILLED, false);
+        addOption(victory, OptionsConstants.VICTORY_USE_OBJECTIVES, false);
 
         IBasicOptionGroup allowed = addGroup("allowedUnits");
         addOption(allowed, OptionsConstants.ALLOWED_CANON_ONLY, false);

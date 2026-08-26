@@ -56,12 +56,17 @@ public class InfantryShotgunDaystarVC extends InfantryWeapon {
 
     public InfantryShotgunDaystarVC() {
         super();
+        // This weapon and its other ammunition load are separate weapon types rather than one weapon with a
+        // mode. The loads have different Battle Values, and Battle Value is worked out from the weapon type
+        // before a battle starts, so a load that could be switched mid-game would leave the platoon's Battle
+        // Value undefined. Keeping them separate also matches how a platoon is built: the load is chosen when
+        // the unit is created, in the same way Inferno munitions are declared before the fight.
 
         name = "Shotgun (Daystar V (C))";
         setInternalName(name);
         addLookupName("Daystar V (C)");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
-        bv = .44;
+        bv = 0.45;
         tonnage = 0.0024;
         infantryDamage = 0.45;
         infantryRange = 1;

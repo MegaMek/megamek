@@ -36,6 +36,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Arrays;
 import java.util.Map;
 import javax.swing.JButton;
@@ -44,13 +45,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.dialogs.UnitLoadingDialog;
+import megamek.client.ui.clientGUI.UnitRecipients;
 import megamek.common.Player;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
@@ -70,6 +71,16 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     MMLogger LOGGER = MMLogger.create(MegaMekUnitSelectorDialog.class);
     //region Variable Declarations
     private final ClientGUI clientGUI;
+    /**
+     * The player a gamemaster tool asked this dialog to open on, or {@code null} when it was opened by itself.
+     *
+     * <p>Such a player is always offered, even when the ordinary rules would leave them out. A gamemaster who has
+     * just put somebody on a team and pressed a reinforcement button has said plainly who the units are for, and the
+     * team change does not reach the board until the end of the round - so the rule that hides players who cannot
+     * deploy yet would otherwise hide the very person being set up.</p>
+     */
+    private Player explicitlyRequestedPlayer;
+
     private final JComboBox<String> comboPlayer = new JComboBox<>();
     private JButton buttonSelectAsset;
     //endregion Variable Declarations
@@ -157,27 +168,37 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         if (entities.isEmpty()) {
             return;
         }
-        Client client = null;
-        String name = (String) comboPlayer.getSelectedItem();
+        Player owner = chosenOwner();
 
-        if (comboPlayer.getSelectedIndex() > 0) {
-            client = (Client) clientGUI.getLocalBots().get(name);
+        for (Entity entity : entities) {
+            autoSetSkillsAndName(entity, owner);
+            entity.setOwner(owner);
         }
+        // sent over this machine's own connection whoever the units are for, the way reinforcements during a game
+        // have always been sent: a remote player has no client here to send through
+        clientGUI.getClient().sendAddEntity(entities);
 
-        if (client == null) {
-            client = clientGUI.getClient();
-        }
+        // named from the owner the units were actually given, not from the chooser: those were two different
+        // things to read, and the chat line could name a player who received nothing
+        String message = clientGUI.getClient().getLocalPlayer() + " selected "
+              + ((entities.size() == 1) ? "a unit" : entities.size() + " units")
+              + " for player: " + owner.getName();
+        clientGUI.getClient().sendServerChat(Player.PLAYER_NONE, message);
+    }
 
-        for (var e : entities) {
-            autoSetSkillsAndName(e, client.getLocalPlayer());
-            e.setOwner(client.getLocalPlayer());
-        }
-        client.sendAddEntity(entities);
-
-        String msg = clientGUI.getClient().getLocalPlayer() + " selected " + (entities.size() == 1 ?
-              "a unit" :
-              entities.size() + " units") + " for player: " + name;
-        clientGUI.getClient().sendServerChat(Player.PLAYER_NONE, msg);
+    /**
+     * @return the player the chosen units should belong to, which is the local player when the chooser holds
+     *       something no longer in the game
+     */
+    private Player chosenOwner() {
+        String chosenName = (String) comboPlayer.getSelectedItem();
+        return clientGUI.getClient()
+              .getGame()
+              .getPlayersList()
+              .stream()
+              .filter(player -> player.getName().equals(chosenName))
+              .findFirst()
+              .orElse(clientGUI.getClient().getLocalPlayer());
     }
 
     private void autoSetSkillsAndName(Entity e, Player player) {
@@ -206,20 +227,44 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     }
 
     private void updatePlayerChoice(String selectionName) {
-        String clientName = clientGUI.getClient().getName();
         comboPlayer.setEnabled(false);
         comboPlayer.removeAllItems();
-        comboPlayer.addItem(clientName);
-
-        for (AbstractClient client : clientGUI.getLocalBots().values()) {
-            comboPlayer.addItem(client.getName());
+        List<Player> offered = new ArrayList<>(UnitRecipients.availableTo(clientGUI.getClient().getLocalPlayer(),
+              clientGUI.getClient().getGame().getPlayersList(),
+              clientGUI.getLocalBots().keySet(),
+              !clientGUI.getClient().getGame().getPhase().isLounge()));
+        addExplicitlyRequestedPlayer(offered);
+        for (Player player : offered) {
+            comboPlayer.addItem(player.getName());
         }
         comboPlayer.setSelectedItem(selectionName);
         if (comboPlayer.getSelectedIndex() < 0) {
+            // never fall back in silence: units quietly going to the wrong player looks exactly like them going to
+            // the right one, and is only noticed a turn later
+            LOGGER.warn("[GMAddUnit] {} is not in the player list, so the chooser fell back to {}",
+                  selectionName, comboPlayer.getItemAt(0));
             comboPlayer.setSelectedIndex(0);
         }
         if (comboPlayer.getItemCount() > 1) {
             comboPlayer.setEnabled(true);
+        }
+    }
+
+    /**
+     * Puts the player a gamemaster tool asked for into the list when the ordinary rules left them out.
+     *
+     * @param offered The players the rules offer, added to in place
+     */
+    private void addExplicitlyRequestedPlayer(List<Player> offered) {
+        if (explicitlyRequestedPlayer == null) {
+            return;
+        }
+        boolean alreadyThere = offered.stream()
+              .anyMatch(player -> player.getId() == explicitlyRequestedPlayer.getId());
+        if (!alreadyThere) {
+            LOGGER.info("[GMAddUnit] offering {} because a gamemaster tool asked for them by name",
+                  explicitlyRequestedPlayer.getName());
+            offered.add(explicitlyRequestedPlayer);
         }
     }
 
@@ -228,12 +273,30 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         updatePlayerChoice(lastChoice);
     }
 
-    public void setPlayerFromClient(Client c) {
-        if (c != null) {
-            updatePlayerChoice(c.getName());
-        } else {
+    /**
+     * Points the player chooser at the given player, so a dialog opened from a chosen player opens on them.
+     *
+     * @param player The player to select, or {@code null} to leave the chooser where it was
+     */
+    public void setPlayerFrom(@Nullable Player player) {
+        explicitlyRequestedPlayer = player;
+        if (player == null) {
             updatePlayerChoice();
+        } else {
+            updatePlayerChoice(player.getName());
         }
+    }
+
+    /**
+     * @param client The client whose player to select, or {@code null} to leave the chooser where it was
+     *
+     * @deprecated since 0.51.01 - use {@link #setPlayerFrom(Player)}. A client cannot name a remote player,
+     *       because there is none on this machine, so anything asking for one silently fell back to the local
+     *       player.
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
+    public void setPlayerFromClient(@Nullable Client client) {
+        setPlayerFrom((client == null) ? null : client.getLocalPlayer());
     }
     //endregion Button Methods
 

@@ -33,6 +33,8 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
@@ -115,6 +117,26 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                       gameManager.getGame().getRoundCount(),
                       MegaMek.getMemoryUsed());
                 break;
+            case VICTORY_SETUP:
+                gameManager.checkForObservers();
+                gameManager.transmitAllPlayerUpdates();
+                gameManager.resetActivePlayersDone();
+                gameManager.setIneligible(phase);
+
+                if (gameManager.getGame().getBoard().isGround()) {
+                    List<GameTurn> victorySetupTurns = new ArrayList<>();
+                    for (Player player : gameManager.getGame().getPlayersList()) {
+                        boolean canPlaceObjectives = !player.isObserver() && !player.isGhost();
+                        if (canPlaceObjectives) {
+                            victorySetupTurns.add(new GameTurn(player.getId()));
+                        }
+                    }
+                    gameManager.getGame().setTurnVector(victorySetupTurns);
+                }
+
+                gameManager.getGame().resetTurnIndex();
+                gameManager.sendCurrentTurns();
+                break;
             case DEPLOY_MINEFIELDS:
                 gameManager.checkForObservers();
                 gameManager.transmitAllPlayerUpdates();
@@ -188,6 +210,11 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                     collapsePreEndPlayerWideTurns();
                 }
                 gameManager.determineTurnOrder(phase);
+                if (phase.isDeployment()) {
+                    // "my units never got a deployment turn" has several causes that look identical on the map, and
+                    // none of them say anything; this is what tells them apart
+                    DeploymentDiagnostics.logWhoCanDeploy(gameManager.getGame());
+                }
                 // Guard the eligibility scan behind the level check so it only runs when [PreEnd] tracing is enabled.
                 if (phase.isPreEndDeclarations() && LOGGER.isDebugEnabled()) {
                     LOGGER.debug("[PreEnd] turn order built: {} turn(s); eligible units: [{}]",

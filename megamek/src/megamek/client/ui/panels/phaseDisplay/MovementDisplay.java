@@ -110,6 +110,7 @@ import megamek.common.equipment.Transporter;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.game.IGame;
@@ -6209,6 +6210,25 @@ public class MovementDisplay extends ActionPhaseDisplay {
             maxMP = currentEntity.getRunMP();
         }
         return maxMP;
+    }
+
+    /**
+     * Recomputes the collapse warnings when the board changes under the selected unit.
+     *
+     * <p>The warnings mark hexes where the unit's weight would bring a building down, and they are worked out once
+     * when the unit is selected. A gamemaster removing a building, or changing its construction factor, changes the
+     * answer without the unit having moved, so they have to be worked out again - otherwise the marker sits over a
+     * hex whose building is no longer there.</p>
+     */
+    @Override
+    public void gameBoardChanged(GameBoardChangeEvent event) {
+        if (isIgnoringEvents()) {
+            return;
+        }
+        Entity selectedEntity = currentEntity();
+        if (selectedEntity != null) {
+            computeCFWarningHexes(selectedEntity);
+        }
     }
 
     private void computeCFWarningHexes(Entity ce) {

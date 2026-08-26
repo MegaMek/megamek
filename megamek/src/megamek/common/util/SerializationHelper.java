@@ -43,6 +43,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import megamek.common.TargetRollModifier;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
+import megamek.server.victory.VictoryPointTracker;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.equipment.INarcPod;
@@ -456,6 +457,64 @@ public class SerializationHelper {
                 }
                 if (coords != null && boardId >= Board.BOARD_NONE) {
                     return new BoardLocation(coords, boardId, isNoLocation);
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        // Necessary because XStream 1.4.x cannot deserialize records natively. VictoryPointAward is the
+        // award log entry of the VictoryPointTracker stored in the game's victory context, so without this
+        // converter a save made after any victory points were scored fails to load.
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == VictoryPointTracker.VictoryPointAward.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                int gameRound = 0;
+                VictoryPointTracker.Recipient recipient = null;
+                int recipientId = -1;
+                int points = 0;
+                String reason = "";
+                try {
+                    while (reader.hasMoreChildren()) {
+                        reader.moveDown();
+                        switch (reader.getNodeName()) {
+                            case "gameRound":
+                                gameRound = Integer.parseInt(reader.getValue());
+                                break;
+                            case "recipient":
+                                recipient = VictoryPointTracker.Recipient.valueOf(reader.getValue());
+                                break;
+                            case "recipientId":
+                                recipientId = Integer.parseInt(reader.getValue());
+                                break;
+                            case "points":
+                                points = Integer.parseInt(reader.getValue());
+                                break;
+                            case "reason":
+                                reason = reader.getValue();
+                                break;
+                            default:
+                                // Unknown node, or <hash>
+                                break;
+                        }
+                        reader.moveUp();
+                    }
+                } catch (IllegalArgumentException exception) {
+                    return null;
+                }
+                if (recipient != null) {
+                    return new VictoryPointTracker.VictoryPointAward(gameRound, recipient, recipientId, points,
+                          reason);
                 } else {
                     return null;
                 }

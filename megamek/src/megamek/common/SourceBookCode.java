@@ -55,6 +55,7 @@ public enum SourceBookCode {
     SHRAPNEL_5("Shrap05"),
     SHRAPNEL_7("Shrap07"),
     SHRAPNEL_9("Shrap09"),
+    SHRAPNEL_22("Shrap22"),
     TM("TM"),
     TO_AR("TO:AR"),
     TO_AUE("TO:AUE"),

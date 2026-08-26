@@ -77,7 +77,7 @@ public class ISHeavyPlasmaRifle extends AmmoWeapon {
         criticalSlots = 3;
         flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
               .or(F_PLASMA).or(F_DIRECT_FIRE).or(F_ENERGY);
-        bv = 278;
+        bv = 246;
         cost = 260000;
         shortAV = 12;
         medAV = 12;

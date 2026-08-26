@@ -315,7 +315,18 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return getType().getModesCount(this);
     }
 
-    protected EquipmentMode getMode(int mode) {
+    /**
+     * Returns one of this mount's available modes by position.
+     *
+     * <p>Read modes through this rather than through {@link #getType()}. A mount can offer more modes than its own
+     * type does: an infantry platoon's mount combines the modes of its primary and secondary weapons, so counting
+     * with {@link #getModesCount()} and then reading from the type walks off the end of the type's list.</p>
+     *
+     * @param mode the position in this mount's mode list
+     *
+     * @return the mode at that position
+     */
+    public EquipmentMode getMode(int mode) {
         return getType().getMode(mode);
     }
 

@@ -153,6 +153,55 @@ public class HexTileset implements BoardListener {
         return pair;
     }
 
+    /**
+     * The levels of a decorative terrain that this tileset actually has images for, given the structure described.
+     *
+     * <p>A fluff terrain picks which picture a hex is drawn with, and the numbers are not a range - the tileset
+     * defines particular ones and ties each to a particular structure. One entry reads
+     * {@code building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:10}, so that image belongs to a medium building and
+     * nothing else; a light building has four images where a hardened one has fifty-four. Offering a plain number
+     * field therefore offers mostly numbers that draw nothing at all, which is what this exists to avoid.</p>
+     *
+     * @param structure    A hex holding the structure the images are wanted for, as the board would hold it
+     * @param fluffTerrain The decorative terrain to look for, such as {@link Terrains#BLDG_FLUFF}
+     *
+     * @return The levels this tileset has images for, in order; empty when it has none
+     */
+    public synchronized List<Integer> definedFluffLevels(Hex structure, int fluffTerrain) {
+        Set<Integer> levels = new TreeSet<>();
+        for (HexEntry entry : superimposed) {
+            addFluffLevel(entry, structure, fluffTerrain, levels);
+        }
+        for (HexEntry entry : bases) {
+            addFluffLevel(entry, structure, fluffTerrain, levels);
+        }
+        return List.copyOf(levels);
+    }
+
+    /** Takes one entry's fluff level, when everything else that entry asks for is what the structure actually is. */
+    private static void addFluffLevel(HexEntry entry, Hex structure, int fluffTerrain, Set<Integer> levels) {
+        Hex entryHex = entry.getHex();
+        int fluffLevel = entryHex.terrainLevel(fluffTerrain);
+        if ((fluffLevel == Terrain.LEVEL_NONE) || (fluffLevel == Terrain.WILDCARD)) {
+            // no fluff at all, or the catch-all entry that matches every level and names no particular picture
+            return;
+        }
+        // the same rule the matching above uses, minus exits and theme: an entry only suits a hex that has every
+        // terrain the entry names, at the level it names unless it names a wildcard
+        for (int terrainType : entryHex.getTerrainTypes()) {
+            if (terrainType == fluffTerrain) {
+                continue;
+            }
+            int requiredLevel = entryHex.terrainLevel(terrainType);
+            int actualLevel = structure.terrainLevel(terrainType);
+            if ((actualLevel == Terrain.LEVEL_NONE)
+                  || ((requiredLevel != Terrain.WILDCARD) && (actualLevel != requiredLevel))) {
+                return;
+            }
+        }
+        levels.add(fluffLevel);
+    }
+
     public synchronized Image getBase(Hex hex) {
         Image i = basesCache.get(hex);
         if (i == null) {

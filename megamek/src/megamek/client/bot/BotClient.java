@@ -158,6 +158,12 @@ public abstract class BotClient extends Client {
     private final Map<Integer, List<Integer>> requestedTrains = new HashMap<>();
 
     /**
+     * Switches this bot's heat-generating equipment on and off to suit each unit's heat. Held on
+     * {@link BotClient} so every bot implementation gets it, Princess and CASPAR alike.
+     */
+    private final BotHeatEquipmentManager heatEquipmentManager = new BotHeatEquipmentManager(this);
+
+    /**
      * The bot's personality/configuration state. Held on {@link BotClient} because it is generic bot-personality state
      * (sliders, targeting, retreat edges) shared by every bot implementation, not specific to any one AI. Initialized
      * to a default so it is never {@code null}: subclasses normally replace it via
@@ -716,10 +722,11 @@ public abstract class BotClient extends Client {
                     initTargeting();
                     break;
                 case END_REPORT:
-                    // Check if stealth armor should be switched on/off
-                    // Kinda cheap leaving this until the end phase, players
-                    // can't do this
-                    toggleStealth();
+                    // Switch heat-generating equipment on or off to suit each unit's heat: stealth armor,
+                    // the other three concealment systems, Nova CEWS and the radical heat sink. The end
+                    // phase is the right moment because the turn's heat has been resolved by then, so
+                    // each unit is being judged on the heat it actually finished the turn carrying.
+                    heatEquipmentManager.manageOwnedUnits();
                     endOfTurnProcessing();
                     // intentional fallthrough: all reports must click "done", otherwise the game
                     // never moves on.
@@ -1388,141 +1395,6 @@ public abstract class BotClient extends Client {
 
         fDamage *= fChance;
         return fDamage;
-    }
-
-    /**
-     * If the unit has stealth armor, turning it off is probably a good idea if most of the enemy force is at 'short'
-     * range or if in danger of overheating
-     */
-
-    private void toggleStealth() {
-
-        initialize();
-
-        int total_bv, known_bv, known_range, known_count, trigger_range;
-        int new_stealth;
-
-        for (Entity check_ent : game.getEntitiesVector()) {
-            if ((check_ent.getOwnerId() == localPlayerNumber)) {
-                if (check_ent.hasStealth()) {
-                    for (Mounted<?> mEquip : check_ent.getMisc()) {
-                        MiscType mtype = (MiscType) mEquip.getType();
-                        if (mtype.hasFlag(MiscType.F_STEALTH)) {
-
-                            if (!check_ent.tracksHeat()) {
-                                // Always activate Stealth if the heat doesn't matter!
-                                new_stealth = 1;
-                            } else {
-                                // If the Mek is in danger of shutting down (14+
-                                // heat), consider shutting
-                                // off the armor
-                                trigger_range = 13 + Compute.randomInt(7);
-
-                                if (check_ent.heat > trigger_range) {
-                                    new_stealth = 0;
-                                } else if ((check_ent.getPosition() == null)) {
-                                    // Off-board entities that _do_ track heat should be Stealth-ing up
-                                    // before they come back on-board.
-                                    new_stealth = 1;
-
-                                } else if (wantsStealthHeatForTsm(check_ent)) {
-                                    // A Mek with heat-activated Triple-Strength Myomer uses stealth armor's
-                                    // heat to reach the TSM activation threshold while it closes, and stays
-                                    // cloaked during the approach. Once it is adjacent to an enemy, though, it
-                                    // drops stealth: at melee it needs its heat sinks free to fire weapons
-                                    // (keeping its own heat up for TSM) while it makes doubled physical
-                                    // attacks, and stealth's defensive value against an adjacent foe is small.
-                                    boolean adjacentToEnemy = isAdjacentToEnemy(check_ent);
-                                    new_stealth = adjacentToEnemy ? 0 : 1;
-                                    LOGGER.debug("[HeatTSM] {}: stealth armor {} for TSM ({})",
-                                          check_ent.getShortName(), (new_stealth == 1) ? "on" : "off",
-                                          adjacentToEnemy ? "adjacent - firing/melee" : "closing");
-
-                                } else {
-
-                                    // Mek is not in danger of shutting down soon;
-                                    // if most of the
-                                    // enemy is right next to the Mek deactivate
-                                    // armor to free up
-                                    // heat sinks for weapons fire
-
-                                    total_bv = 0;
-                                    known_bv = 0;
-                                    known_range = 0;
-                                    known_count = 0;
-
-                                    for (Entity test_ent : game.getEntitiesVector()) {
-                                        if (check_ent.isEnemyOf(test_ent)) {
-                                            total_bv += test_ent.calculateBattleValue();
-                                            // Skip enemies without a position (off-board, not yet deployed, in
-                                            // transport, etc.) - we can't measure distance to them, and including
-                                            // them in the count/BV would skew the (known_range / known_count)
-                                            // average. Mirrors the check_ent null-position guard above.
-                                            if ((test_ent.getPosition() != null) && test_ent.isVisibleToEnemy()) {
-                                                known_count++;
-                                                known_bv += test_ent.calculateBattleValue();
-                                                known_range += Compute.effectiveDistance(game, check_ent, test_ent);
-                                            }
-                                        }
-                                    }
-
-                                    // If no or few enemy units are visible, they're
-                                    // hiding;
-                                    // Default to stealth armor on in this case
-
-                                    if ((known_count == 0) || (known_bv < (total_bv / 2))) {
-                                        new_stealth = 1;
-                                    } else {
-                                        if ((known_range / known_count) <= (5 + Compute.randomInt(5))) {
-                                            new_stealth = 0;
-                                        } else {
-                                            new_stealth = 1;
-                                        }
-                                    }
-                                }
-                            }
-                            mEquip.setMode(new_stealth);
-                            sendModeChange(check_ent.getId(), check_ent.getEquipmentNum(mEquip), new_stealth);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Reports whether keeping stealth armor active benefits this unit's Triple-Strength Myomer. A Mek with
-     * heat-activated standard TSM (which switches on at elevated heat) wants the extra heat stealth armor
-     * generates to reach and hold the activation threshold, so it should not shed stealth to free heat
-     * sinks. Prototype and industrial TSM are always on and do not use the heat threshold, so they gain
-     * nothing here.
-     *
-     * @param entity the unit whose stealth armor is being toggled
-     *
-     * @return {@code true} if the unit has heat-activated standard TSM, otherwise {@code false}
-     */
-    static boolean wantsStealthHeatForTsm(Entity entity) {
-        return (entity instanceof Mek mek) && mek.hasTSM(false);
-    }
-
-    /**
-     * @param entity the unit whose surroundings are being checked
-     *
-     * @return {@code true} if any enemy of {@code entity} occupies a hex adjacent to it (melee range),
-     *       otherwise {@code false}
-     */
-    private boolean isAdjacentToEnemy(Entity entity) {
-        if (entity.getPosition() == null) {
-            return false;
-        }
-        for (Entity other : game.getEntitiesVector()) {
-            if (entity.isEnemyOf(other) && (other.getPosition() != null)
-                  && (Compute.effectiveDistance(game, entity, other) <= 1)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private @Nullable String getRandomBotMessage() {

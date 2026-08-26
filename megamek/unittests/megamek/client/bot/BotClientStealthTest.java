@@ -43,7 +43,7 @@ import megamek.common.units.Tank;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests the {@link BotClient#wantsStealthHeatForTsm(Entity)} predicate that keeps stealth armor active on
+ * Tests the {@link BotHeatEquipmentManager#wantsStealthHeatForTsm(Entity)} predicate that keeps stealth armor active on
  * a heat-activated Triple-Strength Myomer Mek so its heat feeds TSM instead of being shed to free heat
  * sinks.
  *
@@ -55,19 +55,19 @@ class BotClientStealthTest {
     void heatActivatedTsmMekWantsStealthHeat() {
         BipedMek mek = mock(BipedMek.class);
         when(mek.hasTSM(false)).thenReturn(true);
-        assertTrue(BotClient.wantsStealthHeatForTsm(mek));
+        assertTrue(BotHeatEquipmentManager.wantsStealthHeatForTsm(mek));
     }
 
     @Test
     void nonTsmMekDoesNotWantStealthHeat() {
         BipedMek mek = mock(BipedMek.class);
         when(mek.hasTSM(false)).thenReturn(false);
-        assertFalse(BotClient.wantsStealthHeatForTsm(mek));
+        assertFalse(BotHeatEquipmentManager.wantsStealthHeatForTsm(mek));
     }
 
     @Test
     void nonMekDoesNotWantStealthHeat() {
         Tank tank = mock(Tank.class);
-        assertFalse(BotClient.wantsStealthHeatForTsm(tank));
+        assertFalse(BotHeatEquipmentManager.wantsStealthHeatForTsm(tank));
     }
 }

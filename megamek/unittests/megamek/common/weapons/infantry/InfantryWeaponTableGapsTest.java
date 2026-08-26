@@ -46,6 +46,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import megamek.MMConstants;
+import megamek.common.TargetRollModifier;
 import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.EquipmentType;
@@ -64,6 +65,9 @@ import org.junit.jupiter.api.Test;
  * cap only received half of what that feature grants.</p>
  */
 class InfantryWeaponTableGapsTest {
+
+    /** The Heavy Burst feature is worth exactly -1 to hit at range 0 (TM p. 152). */
+    private static final int HEAVY_BURST_MODIFIER = -1;
 
     @BeforeAll
     static void initializeEquipment() {
@@ -159,7 +163,22 @@ class InfantryWeaponTableGapsTest {
               "A weapon under the cap gains no Heavy Burst feature; modifiers were " + atRangeZero.getDesc());
     }
 
+    /**
+     * Looks for the Heavy Burst modifier in the modifier list rather than in {@code getDesc()}. Matching a
+     * substring of the description would pass on any modifier that happened to mention burst fire whatever
+     * its value, and would break if {@link megamek.common.rolls.TargetRoll} ever changed how it joins
+     * descriptions together. The rule grants exactly -1, so that is what gets asserted.
+     *
+     * @param toHit the to-hit data to inspect
+     *
+     * @return {@code true} if a -1 burst fire modifier is present
+     */
     private boolean hasBurstBonus(ToHitData toHit) {
-        return toHit.getDesc() != null && toHit.getDesc().contains("burst fire");
+        for (TargetRollModifier modifier : toHit.getModifiers()) {
+            if ((modifier.value() == HEAVY_BURST_MODIFIER) && modifier.getDesc().contains("burst fire")) {
+                return true;
+            }
+        }
+        return false;
     }
 }

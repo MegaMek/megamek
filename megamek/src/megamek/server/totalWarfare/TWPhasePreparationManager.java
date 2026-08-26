@@ -33,6 +33,8 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
@@ -114,6 +116,26 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 LOGGER.info("Round {} memory usage: {}",
                       gameManager.getGame().getRoundCount(),
                       MegaMek.getMemoryUsed());
+                break;
+            case VICTORY_SETUP:
+                gameManager.checkForObservers();
+                gameManager.transmitAllPlayerUpdates();
+                gameManager.resetActivePlayersDone();
+                gameManager.setIneligible(phase);
+
+                if (gameManager.getGame().getBoard().isGround()) {
+                    List<GameTurn> victorySetupTurns = new ArrayList<>();
+                    for (Player player : gameManager.getGame().getPlayersList()) {
+                        boolean canPlaceObjectives = !player.isObserver() && !player.isGhost();
+                        if (canPlaceObjectives) {
+                            victorySetupTurns.add(new GameTurn(player.getId()));
+                        }
+                    }
+                    gameManager.getGame().setTurnVector(victorySetupTurns);
+                }
+
+                gameManager.getGame().resetTurnIndex();
+                gameManager.sendCurrentTurns();
                 break;
             case DEPLOY_MINEFIELDS:
                 gameManager.checkForObservers();

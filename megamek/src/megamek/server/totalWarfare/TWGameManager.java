@@ -2339,6 +2339,7 @@ public class TWGameManager extends AbstractGameManager {
                 // write Movement Phase header to report
                 addReport(new Report(2000, Report.PUBLIC));
             case PREMOVEMENT:
+            case VICTORY_SETUP:
             case SET_ARTILLERY_AUTO_HIT_HEXES:
             case DEPLOY_MINEFIELDS:
             case DEPLOYMENT:
@@ -2631,6 +2632,7 @@ public class TWGameManager extends AbstractGameManager {
     private void changeToNextTurn(int prevPlayerId) {
         boolean minefieldPhase = game.getPhase().isDeployMinefields();
         boolean artyPhase = game.getPhase().isSetArtilleryAutoHitHexes();
+        boolean victorySetupPhase = game.getPhase().isVictorySetup();
         if (isPlayerForcedVictory()) {
             setIneligible(game.getPhase());
         }
@@ -2640,14 +2642,15 @@ public class TWGameManager extends AbstractGameManager {
         while (game.hasMoreTurns() && (null == nextEntity)) {
             nextTurn = game.changeToNextTurn();
             nextEntity = game.getEntity(game.getFirstEntityNum(nextTurn));
-            if (minefieldPhase || artyPhase) {
+            if (minefieldPhase || artyPhase || victorySetupPhase) {
                 break;
             }
         }
 
         // if there aren't any more valid turns, end the phase
         // note that some phases don't use entities
-        if (((null == nextEntity) && !minefieldPhase) || ((null == nextTurn) && minefieldPhase)) {
+        boolean isPlayerTurnPhase = minefieldPhase || victorySetupPhase;
+        if (((null == nextEntity) && !isPlayerTurnPhase) || ((null == nextTurn) && isPlayerTurnPhase)) {
             endCurrentPhase();
             return;
         }
@@ -2681,7 +2684,8 @@ public class TWGameManager extends AbstractGameManager {
 
         if ((null != player) && player.isGhost()) {
             sendGhostSkipMessage(player);
-        } else if ((null == game.getFirstEntity()) && (null != player) && !minefieldPhase && !artyPhase) {
+        } else if ((null == game.getFirstEntity()) && (null != player) && !minefieldPhase && !artyPhase
+              && !victorySetupPhase) {
             sendTurnErrorSkipMessage(player);
         }
     }
@@ -2709,6 +2713,7 @@ public class TWGameManager extends AbstractGameManager {
 
         switch (game.getPhase()) {
             case DEPLOYMENT:
+            case VICTORY_SETUP:
                 // allow skipping during deployment,
                 // we need that when someone removes a unit.
                 endCurrentTurn(null);
@@ -9845,11 +9850,27 @@ public class TWGameManager extends AbstractGameManager {
      * Receives an updated data structure containing carryable objects on the ground
      */
     private void receiveGroundObjectUpdate(Packet packet, int connId) throws InvalidPacketDataException {
+        // only the Victory Setup and Deploy Minefields flows send this packet; accepting it in any other
+        // phase would let a buggy or malicious client overwrite the board's ground objects mid-game (the
+        // in-game pickup and drop flows are computed server-side and never send it)
+        boolean isGroundObjectSetupPhase = getGame().getPhase().isVictorySetup()
+              || getGame().getPhase().isDeployMinefields();
+        if (!isGroundObjectSetupPhase) {
+            LOGGER.warn("[Objective] Ignoring a ground object update from connection {} during the {} phase",
+                  connId, getGame().getPhase());
+            return;
+        }
         Map<Coords, List<ICarryable>> groundObjects = packet.getCoordsWithGroundObjectListMap(0);
         getGame().setGroundObjects(groundObjects);
 
         // make sure to update the other clients with the new ground objects data structure
         send(packet);
+
+        // in the Victory Setup phase this packet is the player's turn action: storing their control
+        // points ends their turn, exactly as the minefield packet does in the minefield phase
+        if (getGame().getPhase().isVictorySetup()) {
+            endCurrentTurn(null);
+        }
     }
 
     /**

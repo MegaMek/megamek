@@ -32,7 +32,6 @@
  */
 package megamek.client.bot;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -362,10 +361,30 @@ class BotHeatEquipmentManagerTest {
     }
 
     @Test
-    void theRestoreThresholdSitsBelowTheShedThreshold() {
-        // If these ever met, a unit parked on the boundary would flap on and off every single turn.
-        assertTrue(BotHeatEquipmentManager.RESTORE_HEAT_THRESHOLD
-              < BotHeatEquipmentManager.SHED_HEAT_THRESHOLD);
-        assertEquals(14, BotHeatEquipmentManager.SHED_HEAT_THRESHOLD);
+    void aUnitJustUnderTheShedThresholdIsLeftAloneRatherThanRestored() {
+        // The gap between the two thresholds is the anti-flap guarantee, and this is what it means in
+        // behaviour: one point under the shed threshold, a system that is already off stays off. Were
+        // the restore threshold ever raised to meet the shed threshold, this Mek would switch back on
+        // the moment it dipped below the line and would then flap on and off every turn.
+        BipedMek mockMek = mekCarrying(MiscType.F_VOID_SIG,
+              BotHeatEquipmentManager.SHED_HEAT_THRESHOLD - 1, false);
+
+        heatEquipmentManager.manageOwnedUnits();
+
+        verify(equipmentOf(mockMek), never()).setMode(Weapon.MODE_AMS_ON);
+        verify(mockBotClient, never()).sendModeChange(anyInt(), anyInt(), anyInt());
+    }
+
+    @Test
+    void aUnitExactlyOnTheShedThresholdDoesShed() {
+        // The other side of the same boundary, so the pair pins where the line actually falls rather
+        // than restating the constant back to itself.
+        BipedMek mockMek = mekCarrying(MiscType.F_VOID_SIG,
+              BotHeatEquipmentManager.SHED_HEAT_THRESHOLD, true);
+        when(mockMek.isVoidSigOn()).thenReturn(true);
+
+        heatEquipmentManager.manageOwnedUnits();
+
+        verify(equipmentOf(mockMek)).setMode(Weapon.MODE_AMS_OFF);
     }
 }

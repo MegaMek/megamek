@@ -265,6 +265,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_TOGGLE_FOV_DARKEN = "viewToggleFovDarken";
     public static final String VIEW_TOGGLE_FOV_HIGHLIGHT = "viewToggleFovHighlight";
     public static final String VIEW_TOGGLE_FOV_SPOTTING = "viewToggleFovSpotting";
+    public static final String VIEW_TOGGLE_SHOW_OBJECTS = "viewToggleShowObjects";
     public static final String VIEW_TOGGLE_FIRING_SOLUTIONS = "viewToggleFiringSolutions";
     public static final String VIEW_TOGGLE_CF_WARNING = "viewToggleCFWarnings";
     public static final String VIEW_MOVE_ENV = "viewMovementEnvelope";
@@ -314,6 +315,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String CG_STARTING_SCENARIO = "JLabel-StartingScenario";
     public static final String CG_EXCHANGE = "JLabel-Exchange";
     public static final String CG_SELECT_ARTY_AUTO_HIT_HEX_DISPLAY = "SelectArtyAutoHitHexDisplay";
+    public static final String CG_VICTORY_SETUP_DISPLAY = "VictorySetupDisplay";
     public static final String CG_DEPLOY_MINEFIELD_DISPLAY = "DeployMinefieldDisplay";
     public static final String CG_DEPLOYMENT_DISPLAY = "DeploymentDisplay";
     public static final String CG_TARGETING_PHASE_DISPLAY = "TargetingPhaseDisplay";
@@ -1560,6 +1562,10 @@ public class ClientGUI extends AbstractClientGUI
                 boardViews.get(0).refreshDisplayables();
                 ((BoardView) boardViews.get(0)).clearHexImageCache();
                 break;
+            case VIEW_TOGGLE_SHOW_OBJECTS:
+                // the ground object sprite handler listens for the preference change and re-renders
+                GUIP.setShowObjectiveOverlays(!GUIP.getShowObjectiveOverlays());
+                break;
             case VIEW_TOGGLE_FIRING_SOLUTIONS:
                 GUIP.setShowFiringSolutions(!GUIP.getShowFiringSolutions());
                 break;
@@ -1786,6 +1792,7 @@ public class ClientGUI extends AbstractClientGUI
                 boardViews().forEach(bv -> ((BoardView) bv).getTilesetManager().reset());
                 break;
             case POINTBLANK_SHOT:
+            case VICTORY_SETUP:
             case SET_ARTILLERY_AUTO_HIT_HEXES:
             case DEPLOY_MINEFIELDS:
             case DEPLOYMENT:
@@ -1878,6 +1885,17 @@ public class ClientGUI extends AbstractClientGUI
                 main = CG_EXCHANGE;
                 component.setName(main);
                 panMain.add(component, main);
+                break;
+            case VICTORY_SETUP:
+                component = new VictorySetupDisplay(this);
+                main = CG_BOARD_VIEW;
+                secondary = CG_VICTORY_SETUP_DISPLAY;
+                component.setName(secondary);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(panTop, main);
+                }
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
+                panSecondary.add(component, secondary);
                 break;
             case SET_ARTILLERY_AUTO_HIT_HEXES:
                 component = new SelectArtyAutoHitHexDisplay(this);

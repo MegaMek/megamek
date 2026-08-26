@@ -903,6 +903,8 @@ public abstract class BotClient extends Client {
                 }
             } else if (game.getPhase().isDeployment()) {
                 calculateDeployment();
+            } else if (game.getPhase().isVictorySetup()) {
+                performVictorySetupTurn();
             } else if (game.getPhase().isDeployMinefields()) {
                 deployMinefields();
             } else if (game.getPhase().isSetArtilleryAutoHitHexes()) {
@@ -1467,6 +1469,19 @@ public abstract class BotClient extends Client {
     /**
      * Deploy minefields for the bot
      */
+    /**
+     * Takes this bot's turn in the Victory Setup phase. The default sends the game's ground objects back
+     * unchanged, which ends the turn without placing anything: control points assigned to this bot before
+     * the game began (by MekHQ, a scenario file, or in the lobby) are already on the board when this phase
+     * runs, so a bot has nothing it must do here. Bot implementations that want to choose or adjust their
+     * own control points (Princess, CASPAR) override this, edit the ground objects, and send the result -
+     * the send is the turn action that ends the bot's turn, so every override MUST end with
+     * {@link #sendDeployGroundObjects}.
+     */
+    protected void performVictorySetupTurn() {
+        sendDeployGroundObjects(game.getGroundObjects());
+    }
+
     protected void deployMinefields() {
     	MinefieldDeploymentPlanner mdp = new MinefieldDeploymentPlanner(getLocalPlayer(), getGame());
     	Vector<Minefield> deployedMinefields = new Vector<>();

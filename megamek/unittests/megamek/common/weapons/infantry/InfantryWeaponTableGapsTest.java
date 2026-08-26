@@ -38,6 +38,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -120,6 +123,26 @@ class InfantryWeaponTableGapsTest {
                         + ", above the primary weapon damage cap, so it must grant the Heavy Burst -1 at range 0; "
                         + "modifiers were " + atRangeZero.getDesc());
         }
+    }
+
+    @Test
+    @DisplayName("The damage cap alone grants the bonus, with no Heavy Burst flag set")
+    void theDamageCapAloneGrantsTheBonus() {
+        // Every weapon currently above the cap also carries F_INF_BURST, so no real weapon can tell the cap rule
+        // apart from the flag: delete the rule and the data-driven test above still passes. This is the case that
+        // fails without it - a weapon above the cap that does not carry the flag, which is exactly what the rule
+        // exists to catch when such a weapon is added later.
+        InfantryWeapon overCapWithoutFlag = mock(InfantryWeapon.class);
+        when(overCapWithoutFlag.getInfantryRange()).thenReturn(1);
+        when(overCapWithoutFlag.getInfantryDamage())
+              .thenReturn(MMConstants.INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP + 0.01);
+        when(overCapWithoutFlag.hasFlag(WeaponType.F_INF_BURST)).thenReturn(false);
+
+        ToHitData atRangeZero = Compute.getInfantryRangeMods(0, overCapWithoutFlag, null, null, false);
+
+        assertTrue(hasBurstBonus(atRangeZero),
+              "A weapon above the damage cap grants Heavy Burst whether or not it carries the flag; "
+                    + "modifiers were " + atRangeZero.getDesc());
     }
 
     @Test

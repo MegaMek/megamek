@@ -241,9 +241,7 @@ import megamek.common.weapons.infantry.support.recoillessRifle.InfantrySupportRe
 import megamek.common.weapons.infantry.support.recoillessRifle.InfantrySupportRecoillessRifleLightWeapon;
 import megamek.common.weapons.infantry.support.recoillessRifle.InfantrySupportRecoillessRifleMediumInfernoWeapon;
 import megamek.common.weapons.infantry.support.recoillessRifle.InfantrySupportRecoillessRifleMediumWeapon;
-import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMHeavyInfernoWeapon;
 import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMHeavyWeapon;
-import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMLightInfernoWeapon;
 import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMLightWeapon;
 import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMStandardInfernoWeapon;
 import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMStandardWeapon;
@@ -1866,7 +1864,11 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryRifleLaserWeapon());
         EquipmentType.addType(new InfantrySupportLRMWeapon());
         EquipmentType.addType(new InfantrySupportLRMInfernoWeapon());
-        EquipmentType.addType(new InfantrySupportSRMLightInfernoWeapon());
+        // Retired by the TechManual pp. 350-352 errata, which deletes the SRM Launcher (Inferno Ammo) rows
+        // outright. No unit file mounts this one, so it is withdrawn rather than left to confuse players. The
+        // class is kept so the decision stays reversible; see InfantrySupportSRMStandardInfernoWeapon for why
+        // the two-shot version is still registered.
+        // EquipmentType.addType(new InfantrySupportSRMLightInfernoWeapon());
         EquipmentType.addType(new InfantrySupportPortableFlamerWeapon());
         EquipmentType.addType(new InfantryTWFlamerWeapon());
 
@@ -2226,7 +2228,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySupportSRMStandardWeapon());
         EquipmentType.addType(new InfantrySupportSRMStandardInfernoWeapon());
         EquipmentType.addType(new InfantrySupportSRMHeavyWeapon());
-        EquipmentType.addType(new InfantrySupportSRMHeavyInfernoWeapon());
+        // Retired by the TechManual pp. 350-352 errata, as with the light version above. No unit file mounts it.
+        // EquipmentType.addType(new InfantrySupportSRMHeavyInfernoWeapon());
         EquipmentType.addType(new InfantrySupportSRMLightWeapon());
         EquipmentType.addType(new InfantrySupportLaserWeapon());
         EquipmentType.addType(new InfantrySupportERLaserWeapon());

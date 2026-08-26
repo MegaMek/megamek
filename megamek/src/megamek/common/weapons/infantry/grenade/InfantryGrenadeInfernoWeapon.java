@@ -54,11 +54,13 @@ public class InfantryGrenadeInfernoWeapon extends InfantryWeapon {
     public InfantryGrenadeInfernoWeapon() {
         super();
 
-        name = "Grenade (Inferno)";
+        name = "Grenade (Incendiary)";
         // I can find no reference to a Thrown Inferno Grenade. Moving these to Unofficial.
         // Hammer Feb 2017
 
         setInternalName("InfantryGrenadeInferno");
+
+        addLookupName("Grenade (Inferno)");
         addLookupName(name);
         addLookupName("InfantryInfernoGrenade");
         addLookupName("Inferno Grenades");

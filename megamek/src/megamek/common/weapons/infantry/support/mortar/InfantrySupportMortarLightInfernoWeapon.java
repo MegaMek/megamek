@@ -64,8 +64,9 @@ public class InfantrySupportMortarLightInfernoWeapon extends InfantryWeapon {
     public InfantrySupportMortarLightInfernoWeapon() {
         super();
 
-        name = "Mortar (Light) - Inferno";
+        name = "Mortar (Light) - Incendiary";
         setInternalName(EquipmentTypeLookup.INFANTRY_MORTAR_LIGHT_INFERNO);
+        addLookupName("Mortar (Light) - Inferno");
         addLookupName(name);
         addLookupName("Infantry Light Mortar Inferno");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;

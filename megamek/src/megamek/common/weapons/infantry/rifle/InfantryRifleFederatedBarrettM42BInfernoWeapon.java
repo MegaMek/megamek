@@ -55,8 +55,9 @@ public class InfantryRifleFederatedBarrettM42BInfernoWeapon extends InfantryWeap
     public InfantryRifleFederatedBarrettM42BInfernoWeapon() {
         super();
 
-        name = "Rifle (Federated-Barrett M42B) (Inferno Grenades)";
+        name = "Rifle (Federated-Barrett M42B) (Incendiary Grenades)";
         setInternalName("InfantryFederatedBarrettM42BInferno");
+        addLookupName("Rifle (Federated-Barrett M42B) (Inferno Grenades)");
         addLookupName(name);
         addLookupName("Federated Barrett M42B Inferno");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;

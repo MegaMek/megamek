@@ -62,8 +62,11 @@ public class InfantryRifleClanMauserIICIASInfernoWeapon extends InfantryWeapon {
     public InfantryRifleClanMauserIICIASInfernoWeapon() {
         super();
 
-        name = "Laser Rifle (Mauser IIC IAS) (Inferno Grenades)";
-        setInternalName(name);
+        name = "Laser Rifle (Mauser IIC IAS) (Incendiary Grenades)";
+        // The internal name stays on the pre-errata spelling because unit files store it. setInternalName()
+        // registers it as a lookup too, so existing files keep loading.
+        setInternalName("Laser Rifle (Mauser IIC IAS) (Inferno Grenades)");
+        addLookupName(name);
         addLookupName("InfantryClanMauserIICIASInferno");
         addLookupName("Infantry Clan Mauser IIC Inferno");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;

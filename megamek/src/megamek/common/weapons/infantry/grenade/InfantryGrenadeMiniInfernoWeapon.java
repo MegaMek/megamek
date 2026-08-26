@@ -61,8 +61,9 @@ public class InfantryGrenadeMiniInfernoWeapon extends InfantryWeapon {
     public InfantryGrenadeMiniInfernoWeapon() {
         super();
 
-        name = "Grenade (Mini) (Inferno)";
+        name = "Grenade (Mini) (Incendiary)";
         setInternalName("InfantryMiniGrenadeInferno");
+        addLookupName("Grenade (Mini) (Inferno)");
         addLookupName(name);
         addLookupName("InfantryMiniInfernoGrenade");
         addLookupName("Mini Inferno Grenades");

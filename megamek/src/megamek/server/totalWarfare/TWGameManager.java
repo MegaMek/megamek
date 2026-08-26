@@ -29036,6 +29036,22 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Collapse one hex of a building that can no longer stand, such as a building hex burned down to a Construction
+     * Factor of 0. Damages and drops whatever is inside, on top of or in the basement of that hex, replaces the hex
+     * with rubble and updates the clients.
+     *
+     * @param building     the Building that is coming down. This value should not be {@code null}.
+     * @param positionMap  a map of the Coords positions of each unit in the game to the {@link Entity}s at that
+     *                     position. May be empty when no unit is on the board.
+     * @param coords       the Coords of the building hex that is coming down
+     * @param vPhaseReport the current phase reports to attach new reports to
+     */
+    public void collapseBuilding(IBuilding building, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
+          Vector<Report> vPhaseReport) {
+        buildingCollapseHandler.collapseBuilding(building, positionMap, coords, vPhaseReport);
+    }
+
+    /**
      * Determine if the given building should collapse. If so, inflict the appropriate amount of damage on each entity
      * in the building and update the clients. If the building does not collapse, determine if any entities crash
      * through its floor into its basement. Again, apply appropriate damage.

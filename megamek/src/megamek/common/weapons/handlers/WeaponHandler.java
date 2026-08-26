@@ -1326,6 +1326,51 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     /**
+     * @return {@code true} when the target is battle armor wearing Fire-Resistant armor, whose suit "ignores
+     *       damage by heat-causing weapons" (TM p. 170). Flamers of every size are heat-causing, so they do
+     *       nothing to it.
+     */
+    protected boolean targetIgnoresHeatWeaponDamage() {
+        return (target instanceof BattleArmor battleArmorTarget) && battleArmorTarget.isFireResistant();
+    }
+
+    /**
+     * Halves the damage of a flame-based attack when the target is a pain-shunted infantry or battle armor unit.
+     *
+     * <p>Conventional infantry and battle armor units made up of warriors with an Artificial Pain Shunt reduce by
+     * half any damage caused by flame-based weapons (IO p. 78). Battle armor is covered by the same sentence as
+     * conventional infantry, so both unit types are handled here.</p>
+     *
+     * <p>IO does not define "flame-based weapon". TO:AR p. 171 does, listing plasma, flamer and Firedrake, which
+     * is the same set {@code InfantryWeapon.isFlameBased()} already recognises. Core Rules does not use the term
+     * at all; it tags both flamers and plasma as Heat-Causing (p. 183), so that tag does not separate them
+     * either.</p>
+     *
+     * <p>Callers must apply this to the value that scales the total damage of the attack. That is the damage per
+     * hit for some handlers and the number of hits for others, so the call site differs per weapon.</p>
+     *
+     * @param damage the flame damage before the reduction
+     *
+     * @return half the damage, rounded down, or the unchanged damage when the target has no pain shunt
+     */
+    protected double applyPainShuntModifier(double damage) {
+        if (!(target instanceof Infantry infantryTarget)
+              || !infantryTarget.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+            return damage;
+        }
+
+        double reducedDamage = floor(damage / 2.0);
+
+        Report report = new Report(9975);
+        report.subject = subjectId;
+        report.indent(2);
+        report.add((int) reducedDamage);
+        calcDmgPerHitReport.addElement(report);
+
+        return reducedDamage;
+    }
+
+    /**
      * Calculate the attack value based on range
      *
      * @return an <code>int</code> representing the attack value at that range.

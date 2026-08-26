@@ -6731,8 +6731,10 @@ public class Compute {
         r.messageId = 9970;
         String mod = "1:1";
 
-        // Update for MOS
-        damageType += mos;
+        // Update for MOS. The Non-Conventional Damage against Infantry table ends at 7D6, so a large margin of
+        // success cannot shift the damage past its last row. Without the clamp the shifted class matches no case
+        // below and the weapon falls back to its base damage, which is far less than the burst it should roll.
+        damageType = Math.clamp(damageType + mos, WeaponType.WEAPON_DIRECT_FIRE, WeaponType.WEAPON_BURST_7D6);
         double priorDamage = damage;
 
         switch (damageType) {

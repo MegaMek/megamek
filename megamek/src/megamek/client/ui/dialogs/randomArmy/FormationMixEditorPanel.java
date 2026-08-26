@@ -59,6 +59,7 @@ import megamek.client.ratgenerator.FormationMix;
 import megamek.client.ratgenerator.FormationMixPreview;
 import megamek.client.ratgenerator.FormationType;
 import megamek.client.ui.Messages;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
 
 /**
@@ -111,7 +112,8 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
         Set<String> offered = preview.offeredFormations();
         if (offered.isEmpty()) {
             GridBagConstraints constraints = new GridBagConstraints();
-            constraints.insets = new Insets(6, 6, 6, 6);
+            constraints.insets = new Insets(UIUtil.scaleForGUI(6), UIUtil.scaleForGUI(6),
+                  UIUtil.scaleForGUI(6), UIUtil.scaleForGUI(6));
             add(new JLabel(Messages.getString("ForceGeneratorDialog.formationMix.nothingToTweak")), constraints);
             return;
         }
@@ -181,7 +183,7 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
         constraints.gridy = 0;
         constraints.fill = GridBagConstraints.BOTH;
         constraints.weighty = 1.0;
-        constraints.insets = new Insets(0, 0, 0, COLUMN_GAP);
+        constraints.insets = new Insets(0, 0, 0, UIUtil.scaleForGUI(COLUMN_GAP));
         for (int index = 0; index < columns.size(); index++) {
             JPanel column = columns.get(index);
             constraints.gridx = index;
@@ -302,7 +304,8 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
             constraints.gridx = 0;
             constraints.gridy = row++;
             constraints.gridwidth = 3;
-            constraints.insets = new Insets(3, 4, 1, 4);
+            constraints.insets = new Insets(UIUtil.scaleForGUI(3), UIUtil.scaleForGUI(4),
+                  UIUtil.scaleForGUI(1), UIUtil.scaleForGUI(4));
             JLabel familyLabel = new JLabel(familyName);
             familyLabel.setFont(familyLabel.getFont().deriveFont(Font.BOLD));
             // The family is itself a Campaign Operations formation in most cases, so its own description belongs on
@@ -333,7 +336,9 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
             constraints.gridy = row++;
             constraints.weightx = 1.0;
             constraints.gridwidth = 3;
-            constraints.insets = new Insets(1, hasOwnHeading ? (4 + MEMBER_INDENT) : 4, 1, 4);
+            constraints.insets = new Insets(UIUtil.scaleForGUI(1),
+                  UIUtil.scaleForGUI(hasOwnHeading ? (4 + MEMBER_INDENT) : 4),
+                  UIUtil.scaleForGUI(1), UIUtil.scaleForGUI(4));
             constraints.fill = GridBagConstraints.HORIZONTAL;
             choice.setMinimumSize(new Dimension(NAME_MINIMUM_WIDTH, choice.getPreferredSize().height));
             column.add(choice, constraints);
@@ -409,7 +414,8 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
         constraints.gridx = 0;
         constraints.gridy = startRow;
         constraints.gridwidth = 3;
-        constraints.insets = new Insets(4, 4, 2, 4);
+        constraints.insets = new Insets(UIUtil.scaleForGUI(4), UIUtil.scaleForGUI(4),
+                  UIUtil.scaleForGUI(2), UIUtil.scaleForGUI(4));
         column.add(headerLabel(messageKey), constraints);
         return startRow + 1;
     }

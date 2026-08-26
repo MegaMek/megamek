@@ -243,6 +243,8 @@ public class ForceGeneratorViewUi implements ActionListener {
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         txtSearch = new JTextField(18);
         txtSearch.setToolTipText(Messages.getString("ForceGeneratorDialog.search.tooltip"));
+        txtSearch.putClientProperty("JTextField.placeholderText",
+              Messages.getString("ForceGeneratorDialog.search.placeholder"));
         JButton btnSearchPrev = new JButton(Messages.getString("ForceGeneratorDialog.search.prev"));
         JButton btnSearchNext = new JButton(Messages.getString("ForceGeneratorDialog.search.next"));
         lblSearchStatus = new JLabel();
@@ -420,6 +422,28 @@ public class ForceGeneratorViewUi implements ActionListener {
     public void repaintForceTree() {
         if (forceTree != null) {
             forceTree.repaint();
+        }
+    }
+
+    /**
+     * Opens the root and its immediate children so a freshly generated force shows its shape - the regiment
+     * and its battalions - instead of a single collapsed row the player has to open before seeing anything.
+     */
+    private void expandTopLevels() {
+        if (forceTree == null) {
+            return;
+        }
+        forceTree.expandRow(0);
+        // Rows shift as each child opens, so walk by path from the root rather than by row index.
+        TreePath rootPath = forceTree.getPathForRow(0);
+        if (rootPath == null) {
+            return;
+        }
+        Object root = rootPath.getLastPathComponent();
+        int childCount = forceTree.getModel().getChildCount(root);
+        for (int index = 0; index < childCount; index++) {
+            Object child = forceTree.getModel().getChild(root, index);
+            forceTree.expandPath(rootPath.pathByAddingChild(child));
         }
     }
 
@@ -626,6 +650,7 @@ public class ForceGeneratorViewUi implements ActionListener {
                   accumulateModel, fd != null);
         }
         forceTree.setModel(new ForceTreeModel(displayRoot));
+        expandTopLevels();
         // A new force invalidates the previous search; clearing the field re-runs the (now empty)
         // search via the document listener, resetting the match list and status.
         if (txtSearch != null) {

@@ -40,6 +40,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -59,6 +60,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.swing.*;
+import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
@@ -100,6 +104,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private ForceDescriptor forceDesc = new ForceDescriptor();
 
     private JTextField txtYear;
+    /** The year field's own border, kept so an editable year can get it back. */
+    private Border yearFieldBorder;
     private JComboBox<FactionRecord> cbFaction;
     private JComboBox<FactionRecord> cbSubFaction;
     private JComboBox<Integer> cbUnitType;
@@ -139,6 +145,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private String selectedFormation;
     /** Holds the mix editor when a host shows it inline rather than opening it from the button. */
     private JPanel panFormationMixInline;
+    /** The inline panel's title, which names the selected formation so the pick is visible without scrolling. */
+    private TitledBorder formationMixInlineTitle;
     private boolean formationMixInline = false;
     /** Whether a force has been generated and not since cleared; the inline mix editor only shows while one exists. */
     private boolean forceGenerated;
@@ -413,8 +421,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private int addFormationMixPanel(GridBagConstraints constraints, int startRow) {
         int row = startRow;
         panFormationMixInline = new JPanel(new BorderLayout());
-        panFormationMixInline.setBorder(BorderFactory.createTitledBorder(
-              Messages.getString("ForceGeneratorDialog.formationMix.title")));
+        formationMixInlineTitle = BorderFactory.createTitledBorder(
+              Messages.getString("ForceGeneratorDialog.formationMix.title"));
+        panFormationMixInline.setBorder(formationMixInlineTitle);
         panFormationMixInline.setVisible(false);
         constraints.gridx = 0;
         constraints.gridy = row++;
@@ -609,6 +618,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     /** Shows on the main panel which formations the mix is asking for, or nothing at all when it asks for none. */
     private void refreshFormationMixSummary() {
+        refreshInlineFormationMixTitle();
         if (lblFormationMixSummary == null) {
             return;
         }
@@ -687,6 +697,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         panFormationMixInline.setVisible(true);
         panFormationMixInline.revalidate();
         panFormationMixInline.repaint();
+        // Swing scrolls the new viewport to whatever takes focus inside it, which left the first family
+        // heading above the top edge. Reset once layout has settled so the list opens at its own top.
+        SwingUtilities.invokeLater(() -> scroll.getViewport().setViewPosition(new Point(0, 0)));
     }
 
     /**
@@ -757,6 +770,17 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     public void requestGenerate() {
         btnGenerate.doClick();
+    }
+
+    /** Names the selected formation in the inline panel's title, so the pick is readable without scrolling. */
+    private void refreshInlineFormationMixTitle() {
+        if ((formationMixInlineTitle == null) || (panFormationMixInline == null)) {
+            return;
+        }
+        formationMixInlineTitle.setTitle((selectedFormation == null)
+              ? Messages.getString("ForceGeneratorDialog.formationMix.title")
+              : Messages.getString("ForceGeneratorDialog.formationMix.title.selected", selectedFormation));
+        panFormationMixInline.repaint();
     }
 
     public ForceDescriptor buildForceDescriptor() {
@@ -860,6 +884,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         };
         tblSummary = new JTable(summaryModel);
         tblSummary.setAutoCreateRowSorter(false);
+        // Battle Armor cells read "4 (16)": squads, with troopers in brackets. Nothing on the table said so.
+        tblSummary.setToolTipText(Messages.getString("ForceGeneratorDialog.summary.tooltip"));
         tblSummary.getTableHeader().setReorderingAllowed(false);
         // Unit Type column is wider to fit the longest name (AeroSpaceFighter); numeric columns
         // are narrower since they only hold 1-3 digit counts. Total ~380px fits comfortably in
@@ -1483,6 +1509,20 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     public void setYearFieldEditable(boolean editable) {
         txtYear.setEditable(editable);
+        // A locked year is shown as plain text. Drawn as a box it invites typing that does nothing, and
+        // leaves the rest of the row looking as though something failed to appear beside it.
+        if (editable) {
+            if (yearFieldBorder != null) {
+                txtYear.setBorder(yearFieldBorder);
+            }
+            txtYear.setOpaque(true);
+        } else {
+            if (yearFieldBorder == null) {
+                yearFieldBorder = txtYear.getBorder();
+            }
+            txtYear.setBorder(BorderFactory.createEmptyBorder());
+            txtYear.setOpaque(false);
+        }
     }
 
     /**

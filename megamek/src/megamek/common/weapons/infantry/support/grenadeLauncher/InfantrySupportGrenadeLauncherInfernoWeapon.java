@@ -61,8 +61,9 @@ public class InfantrySupportGrenadeLauncherInfernoWeapon extends InfantryWeapon 
     public InfantrySupportGrenadeLauncherInfernoWeapon() {
         super();
 
-        name = "Grenade Launcher - Inferno";
+        name = "Grenade Launcher - Incendiary";
         setInternalName("InfantryGrenadeLauncherInferno");
+        addLookupName("Grenade Launcher - Inferno");
         addLookupName(name);
         addLookupName("InfantryInfernoGrenadeLauncher");
         addLookupName("Infantry Inferno Grenade Launcher");

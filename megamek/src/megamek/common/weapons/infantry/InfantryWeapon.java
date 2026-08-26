@@ -315,6 +315,10 @@ public abstract class InfantryWeapon extends Weapon {
                       .booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS)) {
                     return new InfantryDisposableWeaponHandler(toHit, waa, game, manager);
                 }
+                // True Inferno munitions deliver inferno missiles rather than damage or heat (TW p. 143).
+                if ((null != mounted) && mounted.hasModes() && mounted.curMode().equals(Weapon.MODE_INFERNO)) {
+                    return new InfantryInfernoSRMHandler(toHit, waa, game, manager);
+                }
                 if (((null != mounted) && ((mounted.hasModes() && mounted.curMode().isHeat())
                       || (waa.getEntity(game).isSupportVehicle()
                       && mounted.getLinked() != null

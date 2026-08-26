@@ -59,8 +59,8 @@ import megamek.common.bays.Bay;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
-import megamek.common.board.Coords;
 import megamek.common.board.BuildingEditSpec;
+import megamek.common.board.Coords;
 import megamek.common.board.HexEditSpec;
 import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.comparators.WeaponComparatorBV;
@@ -700,8 +700,8 @@ public class TWGameManager extends AbstractGameManager {
      * <p>The zone is read when a unit deploys, so this affects whatever has not arrived yet and leaves anything
      * already on the board where it stands.</p>
      *
-     * @param player       The player whose deployment zone to set
-     * @param startingPos  The zone, as an index into {@link megamek.common.interfaces.IStartingPositions}
+     * @param player      The player whose deployment zone to set
+     * @param startingPos The zone, as an index into {@link megamek.common.interfaces.IStartingPositions}
      */
     public void setStartingPosition(Player player, int startingPos) {
         player.setStartingPos(startingPos);
@@ -3092,7 +3092,6 @@ public class TWGameManager extends AbstractGameManager {
             if (entity.isSelectableThisTurn()) {
                 final Player player = entity.getOwner();
                 boolean includeInPhase = true;
-                int deploymentRound = entity.getDeployRound();
                 if (phase.isDeployment()) {
                     if (Game.rulesManager.getRulesGame().canWalkOnThisRound(entity)) {
                         includeInPhase = false;
@@ -16275,18 +16274,18 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Returns the objective markers on the board to their owners' lobby designations when the game is reset back to
-     * the lobby. Delegates to {@link ObjectivePlacementHandler} so the objectives rules do not add to this already
-     * very large class.
+     * Returns the objective markers on the board to their owners' lobby designations when the game is reset back to the
+     * lobby. Delegates to {@link ObjectivePlacementHandler} so the objectives rules do not add to this already very
+     * large class.
      */
     void returnObjectivesToLobby() {
         new ObjectivePlacementHandler(this).returnObjectivesToLobby();
     }
 
     /**
-     * End-phase resolution for objective markers (Standard Missions, Objectives): objective control and victory
-     * point scoring. Delegates to {@link ObjectiveResolutionHandler} so the objectives rules do not add to this
-     * already very large class.
+     * End-phase resolution for objective markers (Standard Missions, Objectives): objective control and victory point
+     * scoring. Delegates to {@link ObjectiveResolutionHandler} so the objectives rules do not add to this already very
+     * large class.
      */
     void resolveObjectives() {
         new ObjectiveResolutionHandler(this).resolveObjectives();
@@ -27263,9 +27262,9 @@ public class TWGameManager extends AbstractGameManager {
      * still be sent back to overwrite incorrect client changes.
      */
     /**
-     * Applies a gamemaster's edit of one or more hexes. The edit arrives as the terrain the hexes should end up
-     * holding rather than as a chat command, because an edit of a whole hex across several hexes is more than a
-     * command line can carry, and it is checked against every named hex before any of them is changed.
+     * Applies a gamemaster's edit of one or more hexes. The edit arrives as the terrain the hexes should end up holding
+     * rather than as a chat command, because an edit of a whole hex across several hexes is more than a command line
+     * can carry, and it is checked against every named hex before any of them is changed.
      */
     private void receiveHexEdit(Packet packet, int connIndex) {
         if (!(packet.getObject(0) instanceof HexEditSpec spec)) {

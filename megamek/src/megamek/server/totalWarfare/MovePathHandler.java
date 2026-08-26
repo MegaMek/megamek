@@ -742,17 +742,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
             entity.aTracker.clearHitHexMods();
         }
 
-        if (md.contains(MoveStepType.DEPLOY) && Game.rulesManager.getRulesGame().walkOnDeployment()) {
-            entity.setDeployed(true);
-            if (entity.getPosition() == null) {
-                entity.setPosition(md.getFinalCoords());
-                entity.setBoardId(md.getFinalBoardId());
-                entity.setElevation(md.getFinalElevation());
-                entity.setFacing(md.getFinalFacing());
-                entity.setSecondaryFacing(md.getFinalFacing());
-            }
-        }
-
         if (md.contains(MoveStepType.EJECT)) {
             if (entity.isLargeCraft() && !entity.isCarcass()) {
                 report = new Report(2026);
@@ -907,6 +896,28 @@ class MovePathHandler extends AbstractTWRuleHandler {
             return;
         }
 
+        if (md.contains(MoveStepType.DEPLOY) && Game.rulesManager.getRulesGame().walkOnDeployment()) {
+            entity.setDeployed(true);
+            if (entity.getPosition() == null) {
+                // assume it is at 0, but lets make sure.
+                MoveStep step = md.getStep(0);
+                if (step.getType() != MoveStepType.DEPLOY) {
+                    // Ok, so deployment wasn't the first step. lets get where it was
+                    ListIterator<MoveStep> steps = md.getSteps();
+                    while (steps.hasNext()) {
+                        step = steps.next();
+                        if (step.getType() == MoveStepType.DEPLOY) {
+                            break;
+                        }
+                    }
+                }
+                entity.setPosition(step.getPosition());
+                entity.setBoardId(step.getBoardId());
+                entity.setElevation(step.getElevation());
+                entity.setFacing(step.getFacing());
+                entity.setSecondaryFacing(step.getFacing());
+            }
+        }
         // okay, proceed with movement calculations
         lastPos = entity.getPosition();
         curPos = entity.getPosition();

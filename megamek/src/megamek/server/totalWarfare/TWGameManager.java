@@ -28400,18 +28400,22 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Creates a packet containing off board artillery attacks
      */
-    Packet createArtilleryPacket(Player p) {
+    Packet createArtilleryPacket(Player viewingPlayer) {
         Vector<ArtilleryAttackAction> v = new Vector<>();
         List<EnemyArtilleryInbound> enemyInbound = new ArrayList<>();
-        int team = p.getTeam();
+        int team = viewingPlayer.getTeam();
         for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements(); ) {
             WeaponHandler wh = (WeaponHandler) i.nextElement();
             if (wh.weaponAttackAction instanceof ArtilleryAttackAction aaa) {
-                boolean ownOrAllied = (aaa.getPlayerId() == p.getId())
-                      || ((team != Player.TEAM_NONE) && (team == game.getPlayer(aaa.getPlayerId()).getTeam()));
-                if (ownOrAllied || p.canIgnoreDoubleBlind() || p.isArtilleryRevealAll()) {
+                // A round already in the air outlives its firer: a player whose last unit is destroyed can be
+                // dropped from the game while the round is still in flight, so the firer may no longer be
+                // present. An unknown firer counts as nobody's ally.
+                Player firingPlayer = game.getPlayer(aaa.getPlayerId());
+                boolean ownOrAllied = (aaa.getPlayerId() == viewingPlayer.getId())
+                      || ((firingPlayer != null) && (team != Player.TEAM_NONE) && (team == firingPlayer.getTeam()));
+                if (ownOrAllied || viewingPlayer.canIgnoreDoubleBlind() || viewingPlayer.isArtilleryRevealAll()) {
                     v.addElement(aaa);
-                } else if (enemyArtilleryRoundIsKnownTo(aaa, p)) {
+                } else if (enemyArtilleryRoundIsKnownTo(aaa, viewingPlayer)) {
                     // The player knows an enemy round is inbound (its firing is announced in the report) but not its
                     // target hex or munition - send only a redacted summary so the Rounds-in-Air window can list it with
                     // "Unknown" target/warhead, without ever sending the aim point to the client.

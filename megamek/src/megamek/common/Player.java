@@ -1089,6 +1089,10 @@ public final class Player extends TurnOrdered {
 
         copy.artyAutoHitHexes = new ArrayList<>(artyAutoHitHexes);
 
+        // without this, player updates sent to OTHER clients (which are sent as redacted copies) lose the
+        // ground objects, so designated victory hexes would never show up for anyone but their owner
+        copy.groundObjectsToPlace = new ArrayList<>(groundObjectsToPlace);
+
         copy.initialEntityCount = initialEntityCount;
         copy.initialBV = initialBV;
 

@@ -35,6 +35,7 @@ package megamek.common.rules;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.MiscType;
@@ -142,4 +143,36 @@ public abstract class RulesGame {
      * @param walkOn should walk-on deployment be enabled
      */
     public void setWalkOnDeployment(boolean walkOn) {}
+
+    /**
+     * Walk-on deployment. Skip deployment for eligible units Note: Bot does not get Walk-on deployment for now.
+     * TODO bot walk-on deployment when enabled will remove the isBot check.
+     *
+     * @param entity The mech under consideration
+     *
+     * @return true if they can walk on, false if they cannot
+     */
+    public boolean canWalkOnThisRound(Entity entity) {
+        int deploymentRound = entity.getDeployRound();
+        int currentRound = entity.getGame().getCurrentRound();
+        int startingPos = entity.getStartingPos();
+        if (!entity.isDeployed() && deploymentRound >= 0
+              && deploymentRound <= currentRound
+              && startingPos != Board.START_ANY
+              && startingPos != Board.START_CENTER
+              && !entity.getOwner().isBot()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Should the entity be included in movement / initiative?
+     *
+     * @param phase  what phase is it
+     * @param entity what entity is it
+     *
+     * @return True by default
+     */
+    public boolean includeInMovement(GamePhase phase, Entity entity) {return true;}
 }

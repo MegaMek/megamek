@@ -1719,7 +1719,8 @@ public class MovePath implements Cloneable, Serializable {
     public void rotatePathfinder(final int destFacing, final boolean isManeuver, int maneuverType) {
         while (getFinalFacing() != destFacing) {
             final MoveStepType stepType = getDirection(getFinalFacing(), destFacing);
-            if (getLastStep().isDeploying()) {
+            MoveStep lastStep = getLastStep();
+            if ((lastStep != null) && lastStep.isDeploying()) {
                 addStep(stepType, false, false, maneuverType);
             } else {
                 addStep(stepType, isManeuver, isManeuver, maneuverType);

@@ -11502,7 +11502,7 @@ public abstract class Entity extends TurnOrdered
               !destroyed &&
               getCrew().isActive() &&
               !unloadedThisTurn &&
-              deployed;
+              (deployed || Game.rulesManager.getRulesGame().canWalkOnThisRound(this));
         return isActive &&
               (!isImmobile() ||
                     isManualShutdown() ||

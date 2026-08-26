@@ -524,6 +524,12 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             } else if (!rules_system.stringValue().equals(loadedOption)) {
                 initializeRulesManager(rules_system.stringValue());
             }
+            if (loadedOption == OptionsConstants.RULES_TW) {
+                boolean shouldWalkOn = this.options.booleanOption(OptionsConstants.BASE_WALK_ON_DEPLOYMENT);
+                if (shouldWalkOn != Game.rulesManager.getRulesGame().walkOnDeployment()) {
+                    Game.rulesManager.getRulesGame().setWalkOnDeployment(shouldWalkOn);
+                }
+            }
             processGameEvent(new GameSettingsChangeEvent(this));
         }
     }

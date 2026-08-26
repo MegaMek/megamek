@@ -164,4 +164,14 @@ public class CoreRulesGame extends RulesGame {
     public boolean walkOnDeployment() {
         return true;
     }
+
+    /**
+     * {@inheritDoc} Core omits immobile units from movement/inititative
+     *
+     * @return false if it should not include them
+     */
+    @Override
+    public boolean includeInMovement(GamePhase phase, Entity entity) {
+        return ((phase.isMovement() || phase.isInitiative()) && entity.isImmobile()) ? false : true;
+    }
 }

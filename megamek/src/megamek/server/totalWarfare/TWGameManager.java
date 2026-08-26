@@ -2984,21 +2984,13 @@ public class TWGameManager extends AbstractGameManager {
                 final Player player = entity.getOwner();
                 boolean includeInPhase = true;
                 int deploymentRound = entity.getDeployRound();
-                if (game.getPhase().isDeployment()) {
-                    int startingPos = entity.getOwner().getStartingPos();
-                    // walk-on deployment. Skip deployument for eligible units
-                    // Note: Bot does not get Walk-on deployment for now.
-                    // TODO bot walk-on deployment when enabled will remove the isBot check.
-                    if (!entity.isDeployed()
-                          && deploymentRound >= 0
-                          && startingPos != Board.START_ANY
-                          && startingPos != Board.START_CENTER
-                          && !entity.getOwner().isBot()) {
+                if (phase.isDeployment()) {
+                    if (Game.rulesManager.getRulesGame().canWalkOnThisRound(entity)) {
                         includeInPhase = false;
                     }
                 }
                 // Do not include immobile entities in movement or init
-                if ((game.getPhase().isMovement() || game.getPhase().isInitiative()) && entity.isImmobile()) {
+                if (!Game.rulesManager.getRulesGame().includeInMovement(phase, entity)) {
                     includeInPhase = false;
                 }
                 if (!includeInPhase && Game.rulesManager.getRulesGame().walkOnDeployment()) {

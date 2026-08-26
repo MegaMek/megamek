@@ -16976,12 +16976,26 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
+        if (lastEntityId != daa.getEntityId()) {
+            // who is making the attack
+            Report attackerReport = new Report(4005);
+            attackerReport.subject = ae.getId();
+            attackerReport.addDesc(ae);
+            addReport(attackerReport);
+        }
+
         Board board = game.getBoard(ae);
         final Hex aeHex = game.getHexOf(ae);
         final Hex teHex = board.getHex(daa.getTargetPos());
         final Targetable target = game.getTarget(daa.getTargetType(), daa.getTargetId());
 
+        // The target is no longer in the game at all - it was removed between the declaration in the movement phase
+        // and this attack being resolved, most often destroyed by artillery or an ammo explosion during the weapon
+        // attack phase. The attacker still has to come down, so land it exactly as for a target that was destroyed
+        // but is still on the board. Returning here left the attacker at DFA elevation with a stale displacement
+        // attack, so it never landed.
         if (target == null) {
+            landDfaAttackerOnGoneTarget(ae, daa, aeHex, teHex);
             return;
         }
 
@@ -17025,38 +17039,11 @@ public class TWGameManager extends AbstractGameManager {
 
         final int direction = ae.getFacing();
 
-        if (lastEntityId != daa.getEntityId()) {
-            // who is making the attack
-            r = new Report(4005);
-            r.subject = ae.getId();
-            r.addDesc(ae);
-            addReport(r);
-        }
-
         // Check if the target isn't dead, if it is, exit
         if (targetEntity != null &&
               target.getTargetType() == Targetable.TYPE_ENTITY &&
               (targetEntity.isDestroyed() || targetEntity.isDoomed() || targetEntity.getCrew().isDead())) {
-            r = new Report(4245);
-            r.subject = ae.getId();
-            r.indent();
-            addReport(r);
-
-            if (ae.isProne()) {
-                // attacker prone during weapons phase
-                addReport(doEntityFall(ae, daa.getTargetPos(), 2, 3, ae.getBasePilotingRoll(), false, false));
-
-            } else {
-                // same effect as successful DFA
-                ae.setElevation(ae.calcElevation(aeHex, teHex, 0, false));
-                addReport(doEntityDisplacement(ae,
-                      ae.getPosition(),
-                      daa.getTargetPos(),
-                      new PilotingRollData(ae.getId(), Game.rulesManager.getRulesPSR().getSuccessfulDFAModifier(),
-                            "executed death from above")));
-            }
-            // entity isn't DFA-ing anymore
-            ae.setDisplacementAttack(null);
+            landDfaAttackerOnGoneTarget(ae, daa, aeHex, teHex);
             return;
         }
 
@@ -17330,6 +17317,42 @@ public class TWGameManager extends AbstractGameManager {
         if ((target instanceof Mek mek) && mek.isIndustrial()) {
             mek.setCheckForCrit(true);
         }
+    }
+
+    /**
+     * Lands a death from above attacker whose target is not there to be hit any more, either because it was destroyed
+     * while still on the board or because it has been removed from the game entirely. The attack does no damage, but
+     * the attacker still comes down in the target's hex and rolls to stay standing, which is the same result as a
+     * successful death from above (TW p. 148).
+     *
+     * @param attacker    the unit that declared the death from above
+     * @param dfaAttack   the declared attack, whose target position is the hex the attacker comes down in
+     * @param attackerHex the hex the attacker is jumping from
+     * @param targetHex   the hex the attacker comes down in
+     */
+    private void landDfaAttackerOnGoneTarget(Entity attacker, DfaAttackAction dfaAttack, Hex attackerHex,
+          Hex targetHex) {
+        Report report = new Report(4245);
+        report.subject = attacker.getId();
+        report.indent();
+        addReport(report);
+
+        if (attacker.isProne()) {
+            // attacker prone during weapons phase
+            addReport(doEntityFall(attacker, dfaAttack.getTargetPos(), 2, 3, attacker.getBasePilotingRoll(), false,
+                  false));
+        } else {
+            // same effect as successful DFA
+            attacker.setElevation(attacker.calcElevation(attackerHex, targetHex, 0, false));
+            addReport(doEntityDisplacement(attacker,
+                  attacker.getPosition(),
+                  dfaAttack.getTargetPos(),
+                  new PilotingRollData(attacker.getId(),
+                        Game.rulesManager.getRulesPSR().getSuccessfulDFAModifier(),
+                        "executed death from above")));
+        }
+        // entity isn't DFA-ing anymore
+        attacker.setDisplacementAttack(null);
     }
 
     /**

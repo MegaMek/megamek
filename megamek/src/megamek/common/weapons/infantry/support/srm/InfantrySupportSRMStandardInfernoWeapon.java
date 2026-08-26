@@ -70,9 +70,7 @@ public class InfantrySupportSRMStandardInfernoWeapon extends InfantryWeapon {
         // units and saved games may mount it too, and withdrawing it would break those downstream. The light and
         // heavy versions had no users at all and are commented out in WeaponType.initializeTypes().
         // Unlike the incendiary weapons, which only convert damage to heat, this one carries true Inferno
-        // munitions and should deliver inferno missiles. It does not yet: this PR is the rename, and the
-        // Damage/Heat modes below are still the incendiary handling. Giving it a working Inferno mode is
-        // MegaMek/megamek#8817, which builds on this branch.
+        // munitions and delivers inferno missiles - see the modes below.
         name = "SRM Launcher (Std, Two-Shot) - Inferno";
         setInternalName("InfantryStandardSRMInferno");
         addLookupName(name);
@@ -91,6 +89,11 @@ public class InfantrySupportSRMStandardInfernoWeapon extends InfantryWeapon {
         shots = 2;
         // Inferno munitions fire either inferno missiles or ordinary SRM damage (TW p. 143). The incendiary
         // support weapons offer Damage/Heat instead, which only converts damage to heat.
+        //
+        // Inferno is first on purpose. A mount starts on mode index 0, and this weapon exists because the
+        // platoon declared Inferno munitions before the battle - a launcher named for them that came up firing
+        // ordinary SRMs would need switching on every game. The old list was { Damage, Heat }, so both the
+        // default and the meaning of index 1 change here; see the PR discussion for the save-game implications.
         String[] modeStrings = { Weapon.MODE_INFERNO, Weapon.MODE_FLAMER_DAMAGE };
         setModes(modeStrings);
         rulesRefs = rulesRefs(SourceBookCode.TM, 273);

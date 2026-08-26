@@ -168,10 +168,13 @@ class PlasmaPainShuntTest {
 
         int hits = handler.calcHits(new Vector<Report>());
 
+        // The upper bound of the halved band is MAXIMUM_UNSHUNTED_DAMAGE / 2, which is 11, and the first
+        // assertion has already required hits to be under 12. Asserting it a second time can never fail, so
+        // only the lower bound is checked here and the two together still pin the 6-to-11 band.
         assertTrue(hits < MINIMUM_UNSHUNTED_DAMAGE,
               "A pain shunt must actually reduce the damage, not just regroup it. Unshunted damage is at least "
                     + MINIMUM_UNSHUNTED_DAMAGE + "; got " + hits + " - regression for #8450");
-        assertTrue((hits >= MINIMUM_UNSHUNTED_DAMAGE / 2) && (hits <= MAXIMUM_UNSHUNTED_DAMAGE / 2),
+        assertTrue(hits >= MINIMUM_UNSHUNTED_DAMAGE / 2,
               "Half of 10 + 2d6 is 6 to 11; got " + hits);
     }
 

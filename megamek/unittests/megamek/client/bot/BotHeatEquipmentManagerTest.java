@@ -270,6 +270,81 @@ class BotHeatEquipmentManagerTest {
         verify(mockBotClient, never()).sendModeChange(anyInt(), anyInt(), anyInt());
     }
 
+    /** A Mek owned by the bot whose only equipment is a working radical heat sink. */
+    private BipedMek mekWithRadicalHeatSink(int heat, int consecutiveUses, boolean currentlyActive) {
+        MiscMounted radicalHeatSink = mockEquipment(MiscType.F_RADICAL_HEATSINK,
+              "Radical Heat Sink System", currentlyActive);
+
+        BipedMek mockMek = mekWith(heat, radicalHeatSink);
+        when(mockMek.hasWorkingRadicalHS()).thenReturn(true);
+        when(mockMek.getConsecutiveRHSUses()).thenReturn(consecutiveUses);
+        when(mockMek.hasActivatedRadicalHS()).thenReturn(currentlyActive);
+        when(mockMek.getEquipmentNum(radicalHeatSink)).thenReturn(EQUIPMENT_NUMBER);
+        return mockMek;
+    }
+
+    private MiscMounted radicalHeatSinkOf(Entity entity) {
+        return (MiscMounted) entity.getMisc().get(0);
+    }
+
+    @Test
+    void radicalHeatSinkIsSwitchedOnWhenTheMekNeedsItAndTheOddsAreGood() {
+        // 16 heat is past the point where shutdown rolls begin, and a first use needs only 3+, so this
+        // is the cheap end of the gamble and worth taking.
+        BipedMek mockMek = mekWithRadicalHeatSink(16, 0, false);
+
+        heatEquipmentManager.manageOwnedUnits();
+
+        verify(radicalHeatSinkOf(mockMek)).setMode(Weapon.MODE_AMS_ON);
+        verify(mockBotClient).sendModeChange(42, EQUIPMENT_NUMBER, 1);
+    }
+
+    @Test
+    void radicalHeatSinkIsRestedOnceTheOddsTurnAgainstTheMek() {
+        // Three uses already banked, so a fourth would roll at 10+ - worse than even odds, and failure
+        // destroys the system for the rest of the game. Resting also lets the stress counter fall back.
+        BipedMek mockMek = mekWithRadicalHeatSink(16, 3, true);
+
+        heatEquipmentManager.manageOwnedUnits();
+
+        verify(radicalHeatSinkOf(mockMek)).setMode(Weapon.MODE_AMS_OFF);
+        verify(mockBotClient).sendModeChange(42, EQUIPMENT_NUMBER, 0);
+    }
+
+    @Test
+    void radicalHeatSinkIsSwitchedOffOnceTheMekHasCooled() {
+        // No longer in shutdown-roll territory, so there is nothing to buy with the gamble.
+        BipedMek mockMek = mekWithRadicalHeatSink(5, 1, true);
+
+        heatEquipmentManager.manageOwnedUnits();
+
+        verify(radicalHeatSinkOf(mockMek)).setMode(Weapon.MODE_AMS_OFF);
+    }
+
+    @Test
+    void anAlreadyRunningRadicalHeatSinkIsLeftAlone() {
+        // Still hot, still good odds, already on - nothing to send, and no pointless packet either.
+        BipedMek mockMek = mekWithRadicalHeatSink(16, 1, true);
+
+        heatEquipmentManager.manageOwnedUnits();
+
+        verify(radicalHeatSinkOf(mockMek), never()).setMode(Weapon.MODE_AMS_ON);
+        verify(radicalHeatSinkOf(mockMek), never()).setMode(Weapon.MODE_AMS_OFF);
+        verify(mockBotClient, never()).sendModeChange(anyInt(), anyInt(), anyInt());
+    }
+
+    @Test
+    void aDestroyedRadicalHeatSinkIsNeverSwitched() {
+        // hasWorkingRadicalHS() is false once critical hits have taken it, which is common: on a Doloire
+        // the system is spread across the arms and is usually shot out before the Mek gets hot.
+        BipedMek mockMek = mekWithRadicalHeatSink(20, 0, false);
+        when(mockMek.hasWorkingRadicalHS()).thenReturn(false);
+
+        heatEquipmentManager.manageOwnedUnits();
+
+        verify(mockBotClient, never()).sendModeChange(anyInt(), anyInt(), anyInt());
+    }
+
     @Test
     void theOddsTableStopsAtThreeConsecutiveRadicalHeatSinkUses() {
         // IO p.89: 3+, 5+, 7+, then 10+ and 11+. Better than even odds runs out after the third use, and

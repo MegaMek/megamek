@@ -723,8 +723,9 @@ public abstract class BotClient extends Client {
                     break;
                 case END_REPORT:
                     // Switch heat-generating equipment on or off to suit each unit's heat: stealth armor,
-                    // the other three concealment systems, Nova CEWS and the radical heat sink. Kinda
-                    // cheap leaving this until the end phase, players can't do this.
+                    // the other three concealment systems, Nova CEWS and the radical heat sink. The end
+                    // phase is the right moment because the turn's heat has been resolved by then, so
+                    // each unit is being judged on the heat it actually finished the turn carrying.
                     heatEquipmentManager.manageOwnedUnits();
                     endOfTurnProcessing();
                     // intentional fallthrough: all reports must click "done", otherwise the game

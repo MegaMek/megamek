@@ -60,6 +60,8 @@ import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
+import megamek.common.board.BuildingEditSpec;
+import megamek.common.board.HexEditSpec;
 import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.comparators.WeaponComparatorBV;
 import megamek.common.compute.Compute;
@@ -266,6 +268,8 @@ public class TWGameManager extends AbstractGameManager {
     private final TWPhaseEndManager phaseEndManager = new TWPhaseEndManager(this);
     private final TWPhasePreparationManager phasePreparationManager = new TWPhasePreparationManager(this);
     private LobbyBoardHandler lobbyBoardHandler;
+    private HexEditHandler hexEditHandler;
+    private BuildingEditHandler buildingEditHandler;
     private final InfantryActionTracker infantryActionTracker = new InfantryActionTracker();
     private final BuildingCollapseHandler buildingCollapseHandler = new BuildingCollapseHandler(this);
     private final DeploymentProcessor deploymentProcessor = new DeploymentProcessor(this);
@@ -355,6 +359,9 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new SkillModifierCommand(server, this));
         commands.add(new DisasterCommand(server, this));
         commands.add(new FirestarterCommand(server, this));
+        commands.add(new ChangeTerrainCommand(server, this));
+        commands.add(new ModifyTerrainCommand(server, this));
+        commands.add(new BuildingCommand(server, this));
         commands.add(new NoFiresCommand(server, this));
         commands.add(new FirefightCommand(server, this));
         commands.add(new FirestormCommand(server, this));
@@ -391,6 +398,28 @@ public class TWGameManager extends AbstractGameManager {
             lobbyBoardHandler = new LobbyBoardHandler(this);
         }
         return lobbyBoardHandler;
+    }
+
+    /**
+     * @return the handler that applies a gamemaster's edits to a single hex, created on first use for the same reason
+     *       as {@link #lobbyBoardHandler()}
+     */
+    public HexEditHandler hexEditHandler() {
+        if (hexEditHandler == null) {
+            hexEditHandler = new HexEditHandler(this);
+        }
+        return hexEditHandler;
+    }
+
+    /**
+     * @return the handler that applies a gamemaster's edits to a building, created on first use for the same reason as
+     *       {@link #lobbyBoardHandler()}
+     */
+    public BuildingEditHandler buildingEditHandler() {
+        if (buildingEditHandler == null) {
+            buildingEditHandler = new BuildingEditHandler(this);
+        }
+        return buildingEditHandler;
     }
 
     @Override
@@ -1073,6 +1102,12 @@ public class TWGameManager extends AbstractGameManager {
                     break;
                 case ENTITY_DAMAGE_EDIT:
                     receiveDamageEdit(packet, connId);
+                    break;
+                case HEX_EDIT:
+                    receiveHexEdit(packet, connId);
+                    break;
+                case BUILDING_EDIT:
+                    receiveBuildingEdit(packet, connId);
                     break;
                 case ENTITY_MULTI_UPDATE:
                     receiveEntitiesUpdate(packet, connId);
@@ -27158,6 +27193,74 @@ public class TWGameManager extends AbstractGameManager {
      * units that are teammates of the sender or when the sender is a gamemaster. Other entities remain unchanged but
      * still be sent back to overwrite incorrect client changes.
      */
+    /**
+     * Applies a gamemaster's edit of one or more hexes. The edit arrives as the terrain the hexes should end up
+     * holding rather than as a chat command, because an edit of a whole hex across several hexes is more than a
+     * command line can carry, and it is checked against every named hex before any of them is changed.
+     */
+    private void receiveHexEdit(Packet packet, int connIndex) {
+        if (!(packet.getObject(0) instanceof HexEditSpec spec)) {
+            LOGGER.warn("Dropping hex edit: the packet carries no spec");
+            return;
+        }
+        Player sender = game.getPlayer(connIndex);
+        if ((sender == null) || !sender.isGameMaster()) {
+            LOGGER.warn("Dropping hex edit from {}: only a gamemaster may change the board",
+                  (sender == null) ? "an unknown connection" : sender.getName());
+            return;
+        }
+        String refusal = hexEditHandler().applyHexEdit(spec, sender.getName());
+        if (refusal != null) {
+            LOGGER.info("[GMTerrain] {}: edit of {} hex(es) refused - {}",
+                  sender.getName(), spec.getCoords().size(), refusal);
+            reportBoardEditRefused(connIndex, "Gamemaster.cmd.changeTerrain.refused", refusal);
+            return;
+        }
+        sendToast(GameToastEvent.Level.GAMEMASTER,
+              Messages.getString("Gamemaster.toast.hexEdit", sender.getName(), spec.getCoords().size()),
+              null);
+    }
+
+    /**
+     * Applies a gamemaster's edit of the building in one hex. The edit says what should be standing there when it is
+     * done, so the same packet puts a building up, changes the one that is there and takes it away; the handler works
+     * out which by looking at the hex.
+     */
+    private void receiveBuildingEdit(Packet packet, int connIndex) {
+        if (!(packet.getObject(0) instanceof BuildingEditSpec spec)) {
+            LOGGER.warn("Dropping building edit: the packet carries no spec");
+            return;
+        }
+        Player sender = game.getPlayer(connIndex);
+        if ((sender == null) || !sender.isGameMaster()) {
+            LOGGER.warn("Dropping building edit from {}: only a gamemaster may change the board",
+                  (sender == null) ? "an unknown connection" : sender.getName());
+            return;
+        }
+        String refusal = buildingEditHandler().applyBuildingSpec(spec, sender.getName());
+        if (refusal != null) {
+            LOGGER.info("[GMBuilding] {}: edit of hex {} refused - {}",
+                  sender.getName(), spec.getCoords().getBoardNum(), refusal);
+            reportBoardEditRefused(connIndex, "Gamemaster.cmd.building.refused", refusal);
+        }
+    }
+
+    /**
+     * Tells a gamemaster why a board edit of theirs was not applied, in the chat log and as a toast.
+     *
+     * <p>Both, because the dialog that sent the edit may already have closed: a reason that only reached the chat log
+     * would leave a gamemaster looking at an unchanged board with nothing on screen to say why.</p>
+     *
+     * @param connIndex  The connection the edit came from
+     * @param messageKey The message naming what was refused
+     * @param refusal    The reason, from the handler that refused it
+     */
+    private void reportBoardEditRefused(int connIndex, String messageKey, String refusal) {
+        String message = Messages.getString(messageKey, refusal);
+        sendServerChat(connIndex, message);
+        send(connIndex, new Packet(PacketCommand.SEND_TOAST, GameToastEvent.Level.WARNING, message, Entity.NONE));
+    }
+
     private void receiveEntitiesUpdate(Packet packet, int connIndex) throws InvalidPacketDataException {
         if (!getGame().getPhase().isLounge()) {
             LOGGER.error("Multi entity updates should not be used outside the lobby phase!");

@@ -116,6 +116,9 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 // NOTE: now that aerospace can come and go from the battlefield, I need to update the
                 // deployment table every round. I think this it is OK to go here. (Taharqa)
                 gameManager.getGame().setupDeployment();
+                // whether there is a deployment phase at all is decided here, and when the answer is no nothing is
+                // said - so a unit that quietly missed its arrival round looks the same as one that never existed
+                DeploymentDiagnostics.logDeploymentDecision(gameManager.getGame());
                 if (gameManager.getGame().shouldDeployThisRound()) {
                     gameManager.changePhase(GamePhase.DEPLOYMENT);
                 } else {

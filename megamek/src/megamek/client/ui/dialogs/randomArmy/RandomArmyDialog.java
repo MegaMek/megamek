@@ -36,6 +36,7 @@ package megamek.client.ui.dialogs.randomArmy;
 
 import java.awt.FlowLayout;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Arrays;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -77,6 +78,16 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
 
     private final ClientGUI clientGui;
     private final Client client;
+    /**
+     * The player a gamemaster tool asked this dialog to open on, or {@code null} when it was opened by itself.
+     *
+     * <p>Such a player is always offered, even when the ordinary rules would leave them out. A gamemaster who has
+     * just put somebody on a team and pressed a reinforcement button has said plainly who the units are for, and the
+     * team change does not reach the board until the end of the round - so the rule that hides players who cannot
+     * deploy yet would otherwise hide the very person being set up.</p>
+     */
+    private Player explicitlyRequestedPlayer;
+
     private GameListener gameListener;
 
     private final JComboBox<String> playerChooser = new JComboBox<>();
@@ -231,9 +242,12 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
     private void updatePlayerChoice(String selectionName) {
         playerChooser.setEnabled(false);
         playerChooser.removeAllItems();
-        for (Player player : UnitRecipients.availableTo(client.getLocalPlayer(),
+        List<Player> offered = new ArrayList<>(UnitRecipients.availableTo(client.getLocalPlayer(),
               client.getGame().getPlayersList(),
-              clientGui.getLocalBots().keySet())) {
+              clientGui.getLocalBots().keySet(),
+              !client.getGame().getPhase().isLounge()));
+        addExplicitlyRequestedPlayer(offered);
+        for (Player player : offered) {
             playerChooser.addItem(player.getName());
         }
         if (playerChooser.getItemCount() > 1) {
@@ -241,7 +255,29 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
         }
         playerChooser.setSelectedItem(selectionName);
         if (playerChooser.getSelectedIndex() < 0) {
+            // never fall back in silence: units quietly going to the wrong player looks exactly like them going to
+            // the right one, and is only noticed a turn later
+            LOGGER.warn("[GMAddUnit] {} is not in the player list, so the chooser fell back to {}",
+                  selectionName, playerChooser.getItemAt(0));
             playerChooser.setSelectedIndex(0);
+        }
+    }
+
+    /**
+     * Puts the player a gamemaster tool asked for into the list when the ordinary rules left them out.
+     *
+     * @param offered The players the rules offer, added to in place
+     */
+    private void addExplicitlyRequestedPlayer(List<Player> offered) {
+        if (explicitlyRequestedPlayer == null) {
+            return;
+        }
+        boolean alreadyThere = offered.stream()
+              .anyMatch(player -> player.getId() == explicitlyRequestedPlayer.getId());
+        if (!alreadyThere) {
+            LOGGER.info("[GMAddUnit] offering {} because a gamemaster tool asked for them by name",
+                  explicitlyRequestedPlayer.getName());
+            offered.add(explicitlyRequestedPlayer);
         }
     }
 
@@ -256,6 +292,7 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
      * @param player The player to select, or {@code null} to leave the chooser where it was
      */
     public void setPlayerFrom(@Nullable Player player) {
+        explicitlyRequestedPlayer = player;
         if (player == null) {
             updatePlayerChoice();
         } else {

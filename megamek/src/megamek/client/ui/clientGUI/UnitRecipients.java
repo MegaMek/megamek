@@ -77,12 +77,42 @@ public final class UnitRecipients {
      */
     public static List<Player> availableTo(Player localPlayer, Collection<Player> allPlayers,
           Set<String> localBotNames) {
+        return availableTo(localPlayer, allPlayers, localBotNames, false);
+    }
+
+    /**
+     * The players the local player may add units to, leaving out any who could not use them yet.
+     *
+     * <p>During a game a player on no team is left out of the turn order entirely, so units given to them can never
+     * deploy - and because a unit is called for only on the exact round it is due, one handed over too early is
+     * stranded for good. They are therefore not offered until somebody has put them on a team. In the lobby this
+     * does not arise: nobody has a turn order yet and teams are settled before the game starts.</p>
+     *
+     * @param localPlayer   The player at this screen
+     * @param allPlayers    Every player in the game
+     * @param localBotNames The names of the bots being run from this machine
+     * @param isInGame      Whether the game is under way, rather than still in the lobby
+     *
+     * @return the players that may be given units, local player first
+     */
+    public static List<Player> availableTo(Player localPlayer, Collection<Player> allPlayers,
+          Set<String> localBotNames, boolean isInGame) {
         List<Player> recipients = new ArrayList<>();
         recipients.add(localPlayer);
+        List<String> notYetPlaying = new ArrayList<>();
         for (Player player : allPlayers) {
-            if (mayBeGivenUnits(player, localPlayer, localBotNames)) {
-                recipients.add(player);
+            if (!mayBeGivenUnits(player, localPlayer, localBotNames)) {
+                continue;
             }
+            if (isInGame && (player.getTeam() == Player.TEAM_UNASSIGNED)) {
+                notYetPlaying.add(player.getName());
+                continue;
+            }
+            recipients.add(player);
+        }
+        if (!notYetPlaying.isEmpty()) {
+            LOGGER.info("[GMAddUnit] not offering {} - on no team, so units given to them could never deploy; "
+                        + "use Set Up Player first", notYetPlaying);
         }
         // at INFO because the shipped logging runs at INFO, and the question this answers - "why is that player
         // not in the list" - is one a playtest has to be able to settle from the log. Once per dialog opening.

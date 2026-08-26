@@ -138,7 +138,7 @@ public final class ManeiDominiCrewAugmentor {
         LOGGER.info("[ManeiDomini]   '{}' ({}): rank index {} -> {}, unit type {} -> {} implant(s) {}",
               entity.getCrew().getName(), entity.getShortName(), rankIndex, rank,
               unitType, fitted.size(), fitted);
-        return true;
+        return !fitted.isEmpty();
     }
 
     /**

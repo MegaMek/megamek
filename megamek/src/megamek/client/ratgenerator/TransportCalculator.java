@@ -295,14 +295,6 @@ public class TransportCalculator {
     }
 
     /**
-     * Determines whether potential transport has capacity for the type of unit.
-     *
-     * @param ms       A potential transporting unit
-     * @param unitType The unit to be carried
-     *
-     * @return True if the unit can be carried by the transporting unit.
-     */
-    /**
      * Whether a craft is a liquid tanker rather than a transport that happens to carry some liquid.
      *
      * <p>A tanker can qualify on a stray unit bay and then be drawn over and over, because each one

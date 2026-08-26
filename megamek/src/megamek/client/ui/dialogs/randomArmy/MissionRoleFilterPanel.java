@@ -161,14 +161,9 @@ public class MissionRoleFilterPanel extends JPanel {
      * @param unitType the selected unit type, or {@code null} for a combined-arms force
      */
     public void showFor(@Nullable Integer unitType) {
-        boolean isGround = (unitType != null) && ((unitType == UnitType.MEK) || (unitType == UnitType.TANK));
-        boolean isInfantry = (unitType != null)
-              && ((unitType == UnitType.INFANTRY) || (unitType == UnitType.BATTLE_ARMOR));
-        boolean isAerospace = (unitType != null)
-              && ((unitType == UnitType.AEROSPACE_FIGHTER) || (unitType == UnitType.CONV_FIGHTER));
-        groundPanel.setVisible(isGround);
-        infantryPanel.setVisible(isInfantry);
-        airPanel.setVisible(isAerospace);
+        groundPanel.setVisible(groupFor(unitType) == groundFilters);
+        infantryPanel.setVisible(groupFor(unitType) == infantryFilters);
+        airPanel.setVisible(groupFor(unitType) == airFilters);
     }
 
     /**
@@ -184,17 +179,35 @@ public class MissionRoleFilterPanel extends JPanel {
         if (unitType == null) {
             return;
         }
-        List<RoleFilter> applicable = switch (unitType) {
-            case UnitType.MEK, UnitType.TANK -> groundFilters;
-            case UnitType.INFANTRY, UnitType.BATTLE_ARMOR -> infantryFilters;
-            case UnitType.AERO, UnitType.AEROSPACE_FIGHTER -> airFilters;
-            default -> List.of();
-        };
-        for (RoleFilter filter : applicable) {
+        for (RoleFilter filter : groupFor(unitType)) {
             if (filter.checkBox().isSelected()) {
                 forceDescriptor.getRoles().add(filter.role());
             }
         }
+    }
+
+    /**
+     * The filter group that belongs to a unit type.
+     *
+     * <p>Both {@link #showFor(Integer)} and {@link #applyTo(ForceDescriptor, Integer)} go through here, so a
+     * group can never be shown to the player without being read back. They disagreed once: the aerospace
+     * panel was shown for a Conventional Fighter force but only read for {@code AERO}, so those filters were
+     * ticked and silently ignored.</p>
+     *
+     * @param unitType the selected unit type, or {@code null} for a combined-arms force
+     *
+     * @return the matching group, or an empty list when no group applies
+     */
+    private List<RoleFilter> groupFor(@Nullable Integer unitType) {
+        if (unitType == null) {
+            return List.of();
+        }
+        return switch (unitType) {
+            case UnitType.MEK, UnitType.TANK -> groundFilters;
+            case UnitType.INFANTRY, UnitType.BATTLE_ARMOR -> infantryFilters;
+            case UnitType.AEROSPACE_FIGHTER, UnitType.CONV_FIGHTER -> airFilters;
+            default -> List.of();
+        };
     }
 
     /** Clears every filter in every group, so a reset leaves nothing ticked behind a hidden panel. */

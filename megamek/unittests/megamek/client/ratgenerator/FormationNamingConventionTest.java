@@ -97,9 +97,14 @@ class FormationNamingConventionTest {
 
     @BeforeAll
     static void locateDataAndConstants() {
+        // The staged copy first, then mm-data itself. CI runs "gradlew test" without staging the
+        // data - only run/createExe/packaging depend on stageDataFiles - so the staged directory
+        // does not exist there and the source checkout beside the repo is what the test reads.
         for (String candidatePath : new String[] { "data/forcegenerator/faction_rules",
                                                    "megamek/data/forcegenerator/faction_rules",
-                                                   "../megamek/data/forcegenerator/faction_rules" }) {
+                                                   "../megamek/data/forcegenerator/faction_rules",
+                                                   "../../mm-data/data/forcegenerator/faction_rules",
+                                                   "../mm-data/data/forcegenerator/faction_rules" }) {
             File candidate = new File(candidatePath);
             if (candidate.isDirectory()) {
                 factionRulesDir = candidate;

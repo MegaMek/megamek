@@ -92,7 +92,7 @@ class MissionRoleFilterPanelTest {
      */
     @ParameterizedTest
     @ValueSource(ints = { UnitType.MEK, UnitType.TANK, UnitType.INFANTRY, UnitType.BATTLE_ARMOR,
-                          UnitType.AEROSPACE_FIGHTER })
+                          UnitType.AEROSPACE_FIGHTER, UnitType.CONV_FIGHTER })
     void everyFilterShownForAUnitTypeIsAlsoRead(int unitType) {
         MissionRoleFilterPanel panel = new MissionRoleFilterPanel();
         panel.showFor(unitType);

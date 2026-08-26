@@ -1676,11 +1676,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             } catch (InterruptedException interrupted) {
                 Thread.currentThread().interrupt();
                 logger.warn("[ForceGen] generation was interrupted; no force was produced");
-            } catch (ExecutionException ex) {
+            } catch (ExecutionException executionFailure) {
                 // Generation runs on a worker, so a failure here is invisible to the player - the
                 // button simply appears to do nothing. Log the cause with enough context to identify
                 // it, and say plainly that no force was produced.
-                logger.error(ex, "[ForceGen] generation FAILED for faction={} year={} unitType={}"
+                logger.error(executionFailure, "[ForceGen] generation FAILED for faction={} year={} unitType={}"
                             + " echelon={}; no force was produced",
                       fd.getFaction(), fd.getYear(), fd.getUnitType(), fd.getEchelon());
             } finally {

@@ -751,6 +751,14 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         return List.of(btnGenerate, panGenerateOptions, btnClear);
     }
 
+    /**
+     * Rolls a force exactly as pressing Generate does, for a host that wants to regenerate on the player's behalf
+     * (for example after the player agrees that changed settings call for a fresh roll).
+     */
+    public void requestGenerate() {
+        btnGenerate.doClick();
+    }
+
     public ForceDescriptor buildForceDescriptor() {
         ForceDescriptor fd = new ForceDescriptor();
         fd.setTopLevel(true);

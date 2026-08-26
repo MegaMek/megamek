@@ -141,6 +141,8 @@ public class ForceGeneratorViewUi implements ActionListener {
     // Notified after anything that changes what a commit would produce: a Generate (including an
     // accumulated roll) and an Include/Exclude toggle. Hosts use this to invalidate cached previews.
     private Runnable toeChangeListener = null;
+    /** Told of every roll and every Clear Force, with the rolled force or {@code null} for a clear. */
+    private Consumer<ForceDescriptor> forceGeneratedListener = null;
 
     // When set by a host (e.g. MekHQ's Command Designer), each Generate appends its rolled force to an
     // accumulating Model root rather than replacing the tree, so the player can mix-and-match several
@@ -401,6 +403,17 @@ public class ForceGeneratorViewUi implements ActionListener {
     }
 
     /**
+     * Registers a callback for Generate and Clear Force specifically, as distinct from the TOE-change listener,
+     * which also fires for edits made to an existing tree. A host that needs to know what the settings were
+     * when the force was rolled listens here.
+     *
+     * @param listener the callback, given the rolled force or {@code null} on Clear Force; {@code null} to clear
+     */
+    public void setForceGeneratedListener(@Nullable Consumer<ForceDescriptor> listener) {
+        this.forceGeneratedListener = listener;
+    }
+
+    /**
      * Repaints the force tree so display-affecting host state (for example a changed
      * {@link #setFormationNameProvider} backing) is re-rendered without a structural change.
      */
@@ -635,6 +648,9 @@ public class ForceGeneratorViewUi implements ActionListener {
         // Update the design-stage status line for the model's new size.
         refreshCommandModelChrome();
         fireToeChanged();
+        if (forceGeneratedListener != null) {
+            forceGeneratedListener.accept(fd);
+        }
     }
 
     /**

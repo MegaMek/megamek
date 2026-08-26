@@ -62,7 +62,7 @@ public class InfantrySMGWolfBarronA7 extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = .2475;
         tonnage = 0.0029;
-        infantryDamage = 0.25;
+        infantryDamage = 0.2475;
         infantryRange = 0;
         ammoWeight = 0.0029;
         cost = 450;

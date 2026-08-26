@@ -153,6 +153,7 @@ import megamek.common.weapons.infantry.archaic.*;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeInfernoWeapon;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeMicroWeapon;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeMiniInfernoWeapon;
+import megamek.common.weapons.infantry.grenade.InfantryGrenadeMiniWeapon;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeRAGWeapon;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeStandardWeapon;
 import megamek.common.weapons.infantry.laser.InfantryLaserCarbineBrightStarL15;
@@ -210,6 +211,21 @@ import megamek.common.weapons.infantry.support.laser.InfantrySupportLaserUltraHe
 import megamek.common.weapons.infantry.support.laser.InfantrySupportLaserWeapon;
 import megamek.common.weapons.infantry.support.laser.InfantrySupportPulseLaserWeapon;
 import megamek.common.weapons.infantry.support.laser.InfantrySupportSemiPortableLaserWeapon;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunAkaiRyu;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunBooneMGL14A;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunBooneMGL14D;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunFogueDefender;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunHCKM2MG;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunHuoDushe;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunNambuM12;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunPeacekeeperLB;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunPeacekeeperLLB;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunPeacekeeperLSB;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunPeacekeeperSB;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunSarcotMG19;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunTIE124;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunTharwepNachtgewitter;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunType17;
 import megamek.common.weapons.infantry.support.mg.InfantrySupportMGLightWeapon;
 import megamek.common.weapons.infantry.support.mg.InfantrySupportMGPortableWeapon;
 import megamek.common.weapons.infantry.support.mg.InfantrySupportMGSemiPortableWeapon;
@@ -2149,6 +2165,22 @@ public class WeaponType extends EquipmentType {
 
         // Infantry Support Weapons
         EquipmentType.addType(new InfantrySupportMGPortableWeapon());
+        // Light machine guns from Shrapnel #22.
+        EquipmentType.addType(new InfantryMachineGunType17());
+        EquipmentType.addType(new InfantryMachineGunHuoDushe());
+        EquipmentType.addType(new InfantryMachineGunNambuM12());
+        EquipmentType.addType(new InfantryMachineGunAkaiRyu());
+        EquipmentType.addType(new InfantryMachineGunSarcotMG19());
+        EquipmentType.addType(new InfantryMachineGunFogueDefender());
+        EquipmentType.addType(new InfantryMachineGunHCKM2MG());
+        EquipmentType.addType(new InfantryMachineGunTharwepNachtgewitter());
+        EquipmentType.addType(new InfantryMachineGunPeacekeeperLSB());
+        EquipmentType.addType(new InfantryMachineGunPeacekeeperSB());
+        EquipmentType.addType(new InfantryMachineGunPeacekeeperLLB());
+        EquipmentType.addType(new InfantryMachineGunPeacekeeperLB());
+        EquipmentType.addType(new InfantryMachineGunBooneMGL14A());
+        EquipmentType.addType(new InfantryMachineGunBooneMGL14D());
+        EquipmentType.addType(new InfantryMachineGunTIE124());
         EquipmentType.addType(new InfantrySupportMGSemiPortableWeapon());
         EquipmentType.addType(new InfantrySupportMk1LightAAWeapon());
         EquipmentType.addType(new InfantrySupportMk2PortableAAWeapon());
@@ -2221,6 +2253,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryGrenadeInfernoWeapon());
         EquipmentType.addType(new InfantryGrenadeMicroWeapon());
         EquipmentType.addType(new InfantryGrenadeMiniInfernoWeapon());
+        EquipmentType.addType(new InfantryGrenadeMiniWeapon());
         EquipmentType.addType(new InfantryGrenadeRAGWeapon());
         EquipmentType.addType(new InfantryGrenadeStandardWeapon());
 
@@ -2237,6 +2270,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryProstheticSMGWeapon());
         EquipmentType.addType(new InfantryProstheticBladeWeapon());
         EquipmentType.addType(new InfantryProstheticNeedleWeapon());
+        EquipmentType.addType(new InfantryProstheticRumalGarroteWeapon());
         EquipmentType.addType(new InfantryProstheticShockerWeapon());
         EquipmentType.addType(new InfantryProstheticVibroBladeWeapon());
         EquipmentType.addType(new InfantryProstheticClimbingClawsWeapon());

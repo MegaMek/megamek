@@ -62,7 +62,7 @@ public class InfantryLaserPistolAA75L extends InfantryWeapon {
         bv = 0.021;
         tonnage = 0.0001;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.07;
+        infantryDamage = 0.021;
         infantryRange = 1;
         // ammoWeight is not applicable (NA)
         shots = 1;

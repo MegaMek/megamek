@@ -105,6 +105,8 @@ import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.turns.UnloadStrandedTurn;
 import megamek.common.units.Crew;
+import megamek.common.board.BuildingEditSpec;
+import megamek.common.board.HexEditSpec;
 import megamek.common.units.DamageEditSpec;
 import megamek.common.units.DemolitionCharge;
 import megamek.common.units.Entity;
@@ -528,6 +530,28 @@ public class Client extends AbstractClient {
     public void sendDamageEdit(DamageEditSpec spec) {
         LOGGER.debug("Sending damage edits for unit id {}", spec.entityId);
         send(new Packet(PacketCommand.ENTITY_DAMAGE_EDIT, spec));
+    }
+
+    /**
+     * Sends a gamemaster's edit of one or more hexes. The server accepts it only from a Game Master and checks every
+     * hex before changing any of them, so a refusal comes back as server chat rather than a partly applied edit.
+     *
+     * @param spec The hexes to change and the terrain they should end up holding
+     */
+    public void sendHexEdit(HexEditSpec spec) {
+        LOGGER.debug("Sending a hex edit for {} hex(es)", spec.getCoords().size());
+        send(new Packet(PacketCommand.HEX_EDIT, spec));
+    }
+
+    /**
+     * Sends a gamemaster's edit of the building in one hex. The server accepts it only from a Game Master and decides
+     * from the hex whether it is putting a building there, changing the one that is there, or taking it away.
+     *
+     * @param spec What should be standing in the hex when the edit is done
+     */
+    public void sendBuildingEdit(BuildingEditSpec spec) {
+        LOGGER.debug("Sending a building edit for hex {}", spec.getCoords().getBoardNum());
+        send(new Packet(PacketCommand.BUILDING_EDIT, spec));
     }
 
     /**

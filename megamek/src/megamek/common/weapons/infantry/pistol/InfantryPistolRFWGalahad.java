@@ -60,7 +60,7 @@ public class InfantryPistolRFWGalahad extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = 0.315;
         tonnage = 0.0021;
-        infantryDamage = 0.32;
+        infantryDamage = 0.315;
         infantryRange = 1;
         ammoWeight = 0.000005;
         cost = 200;

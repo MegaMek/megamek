@@ -63,7 +63,7 @@ public class InfantryShotgunAWASS112 extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = .252;
         tonnage = 0.0028;
-        infantryDamage = 0.36;
+        infantryDamage = 0.252;
         infantryRange = 1;
         ammoWeight = 0.0028;
         cost = 300;

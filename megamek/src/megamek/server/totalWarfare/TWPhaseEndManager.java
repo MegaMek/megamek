@@ -63,6 +63,22 @@ record TWPhaseEndManager(TWGameManager gameManager) {
             case EXCHANGE:
             case STARTING_SCENARIO:
                 gameManager.getGame().addReports(gameManager.getMainPhaseReport());
+                // objectives are placed before artillery is pre-sighted and mines are laid: both of those
+                // decisions depend on knowing where the objectives are
+                boolean usesObjectives = gameManager.getGame().getOptions()
+                      .booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES);
+                // the ground-object map is keyed by hex alone, with no board id, so objectives can only
+                // address a single-board ground game; multi-board games skip the phase
+                boolean isSingleGroundBoardGame = (gameManager.getGame().getBoards().size() == 1)
+                      && gameManager.getGame().getBoard().isGround();
+                if (usesObjectives && isSingleGroundBoardGame) {
+                    gameManager.changePhase(GamePhase.VICTORY_SETUP);
+                } else {
+                    gameManager.changePhase(GamePhase.SET_ARTILLERY_AUTO_HIT_HEXES);
+                }
+                break;
+            case VICTORY_SETUP:
+                gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                 gameManager.changePhase(GamePhase.SET_ARTILLERY_AUTO_HIT_HEXES);
                 break;
             case SET_ARTILLERY_AUTO_HIT_HEXES:
@@ -100,6 +116,9 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 // NOTE: now that aerospace can come and go from the battlefield, I need to update the
                 // deployment table every round. I think this it is OK to go here. (Taharqa)
                 gameManager.getGame().setupDeployment();
+                // whether there is a deployment phase at all is decided here, and when the answer is no nothing is
+                // said - so a unit that quietly missed its arrival round looks the same as one that never existed
+                DeploymentDiagnostics.logDeploymentDecision(gameManager.getGame());
                 if (gameManager.getGame().shouldDeployThisRound()) {
                     gameManager.changePhase(GamePhase.DEPLOYMENT);
                 } else {
@@ -309,6 +328,10 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 );
                 // Sync remaining ECM fields to clients
                 gameManager.sendSyncTemporaryECMFields();
+
+                // Resolve objective control and score victory points before the victory check so the
+                // check sees this round's tally
+                gameManager.resolveObjectives();
 
                 boolean victory = gameManager.victory(); // note this may add reports
                 // check phase report

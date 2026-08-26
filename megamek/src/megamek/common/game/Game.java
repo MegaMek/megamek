@@ -632,6 +632,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                  FIRING,
                  PHYSICAL,
                  DEPLOY_MINEFIELDS,
+                 VICTORY_SETUP,
                  SET_ARTILLERY_AUTO_HIT_HEXES -> hasMoreTurns();
             case OFFBOARD -> hasMoreTurns() && isOffboardPlayable();
             default -> true;

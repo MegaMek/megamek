@@ -64,9 +64,9 @@ public class InfantryPistolSerrek7994SF extends InfantryWeapon {
         setInternalName(name);
         addLookupName("Serrek 7994 SF");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
-        bv = .202;
+        bv = 0.2025;
         tonnage = 0.0011;
-        infantryDamage = 0.2;
+        infantryDamage = 0.2025;
         infantryRange = 1;
         ammoWeight = 0.000004;
         cost = 400;

@@ -48,6 +48,7 @@ import javax.swing.JTextField;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 import megamek.client.ui.panels.DialogOptionComponentYPanel;
@@ -116,6 +117,9 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         JScrollPane victoryOptionsScroll = new JScrollPane(victoryOptionsPanel);
         victoryOptionsScroll.setBorder(BorderFactory.createTitledBorder(
               Messages.getString("VictoryConditionsDialog.victoryOptions")));
+        // without a preferred size, pack() squeezes the option rows into a double-scrollbar box; the user
+        // can still resize the dialog, and the size is remembered while MegaMek runs (saved on normal exit)
+        victoryOptionsScroll.setPreferredSize(UIUtil.scaleForGUI(560, 420));
 
         JPanel passwordPanel = new FixedYPanel();
         passwordPanel.add(new JLabel(Messages.getString("VictoryConditionsDialog.password")));

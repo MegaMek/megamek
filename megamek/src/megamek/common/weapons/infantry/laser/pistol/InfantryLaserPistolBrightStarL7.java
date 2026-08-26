@@ -53,14 +53,15 @@ public class InfantryLaserPistolBrightStarL7 extends InfantryWeapon {
     public InfantryLaserPistolBrightStarL7() {
         super();
 
-        name = "Laser Pistol (BrightStar L-7)";
-        setInternalName(name);
+        name = "Laser Pistol (Brightstar L-7)";
+        setInternalName("Laser Pistol (BrightStar L-7)");
+        addLookupName(name);
         addLookupName("BRIGHTSTARL7");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 950;
         bv = 0.021;
         tonnage = 0.0011;
-        infantryDamage = 0.07;
+        infantryDamage = 0.021;
         infantryRange = 2;
         shots = 1;
         bursts = 1; // Bursts value is now always shown

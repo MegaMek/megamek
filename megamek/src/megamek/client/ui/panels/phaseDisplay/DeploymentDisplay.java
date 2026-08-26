@@ -81,6 +81,7 @@ import megamek.common.board.FacingOption;
 import megamek.common.equipment.Transporter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
@@ -357,6 +358,21 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.updateFiringArc(entity);
         clientgui.showSensorRanges(entity);
         computeWarningHexes(entity);
+    }
+
+    /**
+     * Recomputes the collapse warnings when the board changes under the unit being deployed, so a marker does not
+     * outlive the building it was warning about.
+     */
+    @Override
+    public void gameBoardChanged(GameBoardChangeEvent event) {
+        if (isIgnoringEvents()) {
+            return;
+        }
+        Entity deployingEntity = currentEntity();
+        if (deployingEntity != null) {
+            computeWarningHexes(deployingEntity);
+        }
     }
 
     private void computeWarningHexes(Entity ce) {

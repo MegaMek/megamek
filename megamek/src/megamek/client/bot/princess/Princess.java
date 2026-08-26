@@ -41,6 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import megamek.client.bot.BotClient;
+import megamek.client.bot.BotHeatEquipmentManager;
 import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.Messages;
 import megamek.client.bot.PhysicalCalculator;
@@ -111,6 +112,19 @@ public class Princess extends BotClient {
     private static final char MINUS = '-';
 
     private static final int MAX_OVERHEAT_AMS = 14;
+
+    /**
+     * Heat a unit standing in a burning hex gains every turn, halved for a Mek with intact
+     * heat-dissipating armor. Mirrors the fire check in the server's {@code HeatResolver}.
+     */
+    private static final int FIRE_HEAT_PER_TURN = 5;
+
+    /**
+     * Number of jump MP priced when asking whether a heat-stalled unit can afford to jump clear. One hex
+     * is the cheapest jump that gets a unit moving again, and Princess chooses the path, so this is the
+     * least the unit could commit to rather than the jump it would most likely make.
+     */
+    private static final int CHEAPEST_JUMP_DISTANCE = 1;
 
     /**
      * Highest target number to consider when not aiming at the head on an immobile Mek
@@ -3076,6 +3090,122 @@ public class Princess extends BotClient {
         }
     }
 
+    /**
+     * Whether a unit that cannot move right now is expected to move again under its own power.
+     * <p>
+     * Movement lost to damage is gone for the rest of the battle, but movement lost to heat comes back as
+     * soon as the unit cools: heat costs a unit one MP for every five heat points, so a Mek walking 5 has
+     * nothing left at 25 heat and walks again the moment it drops back to 24. A unit in that state is
+     * stalled, not finished, and abandoning it throws away a working machine.
+     * </p><p>
+     * A stalled unit has two ways out and only needs one of them. It can stand still and let its heat
+     * sinks win, which they do whenever they out-dissipate the heat that arrives every turn no matter what
+     * the pilot chooses to do. Or, if it still has working jump jets, it can jump clear - which leaves any
+     * fire behind but costs jump heat instead. Both comparisons are strictly greater: a unit whose sinks
+     * exactly match its incoming heat holds that heat forever and never moves again.
+     * </p>
+     *
+     * @param mover the unit {@link #isImmobilized(Entity)} has reported as unable to move
+     *
+     * @return {@code true} if the unit is expected to move again without help
+     */
+    boolean canRecoverMobility(final Entity mover) {
+        // Only heat is temporary. A unit that still has movement points was called immobilized for some
+        // other reason - prone with poor odds of standing, or bogged down - and no amount of cooling
+        // changes that, so it is not this method's business.
+        if (0 < mover.getRunMP()) {
+            return false;
+        }
+
+        // The core rules already measure this with heat ignored, so anything it catches is damage rather
+        // than temperature: legs gone, gyro destroyed, or prone with no walking MP left to stand on.
+        if (mover.isPermanentlyImmobilized(true)) {
+            return false;
+        }
+
+        // A unit that does not track heat did not lose its movement to heat, so there is nothing to wait out.
+        if (Entity.DOES_NOT_TRACK_HEAT == mover.getHeatCapacity()) {
+            return false;
+        }
+
+        final int dissipation = mover.getHeatCapacityWithWater();
+        return canJumpClear(mover, dissipation) || (dissipation > recurringHeat(mover, false));
+    }
+
+    /**
+     * Whether a heat-stalled unit can leave its hex by jumping rather than waiting to cool.
+     * <p>
+     * Heat never reduces jump MP, so a unit with working jets can move under its own power even at zero
+     * walking MP - as long as it can afford the jump's heat on top of everything else it is already
+     * gaining. Jumping also leaves any fire behind, which is why the recurring heat here excludes it. A
+     * prone Mek does not get this route: it has to stand up first, and standing needs walking MP it does
+     * not have.
+     * </p>
+     *
+     * @param mover       the unit being assessed
+     * @param dissipation the unit's heat dissipation per turn
+     *
+     * @return {@code true} if jumping one hex is sustainable for this unit
+     */
+    private boolean canJumpClear(final Entity mover, final int dissipation) {
+        return !mover.isProne()
+              && (0 < mover.getAnyTypeMaxJumpMP())
+              && (dissipation > recurringHeat(mover, true) + mover.getJumpHeat(CHEAPEST_JUMP_DISTANCE));
+    }
+
+    /**
+     * Heat this unit gains every turn whatever its pilot decides to do. Weapon heat and movement heat are
+     * choices and are therefore left out, and so is every switchable heat load:
+     * {@link BotHeatEquipmentManager} sheds stealth armor, Null Signature, Void Signature, the Chameleon
+     * shield and Nova CEWS in the end phase once a unit reaches shutdown-roll heat, so a unit stalled
+     * badly enough to reach this question has already dropped them.
+     * <p>
+     * What is left is heat the pilot genuinely cannot switch off: engine criticals, and a burning hex the
+     * unit has no movement left to walk out of.
+     * </p><p>
+     * Radical heat sinks are deliberately not credited on the dissipation side even though
+     * {@link BotHeatEquipmentManager} now activates them. They last three consecutive turns before the
+     * odds turn against the unit, and a failed roll destroys the system outright, so they are a
+     * short-term reprieve rather than a reason to believe a unit will keep cooling.
+     * </p>
+     *
+     * @param mover          the unit being assessed
+     * @param leavingThisHex {@code true} when the unit is about to jump out of its current hex, which
+     *                       means any fire it is standing in stops being its problem
+     *
+     * @return heat points added per turn that the pilot cannot avoid
+     */
+    int recurringHeat(final Entity mover, final boolean leavingThisHex) {
+        int recurring = mover.getEngineCritHeat();
+
+        if (!leavingThisHex && isStandingInFire(mover)) {
+            int fireHeat = FIRE_HEAT_PER_TURN;
+            if ((mover instanceof Mek mek) && mek.hasIntactHeatDissipatingArmor()) {
+                fireHeat /= 2;
+            }
+            recurring += fireHeat;
+        }
+
+        return recurring;
+    }
+
+    /**
+     * Whether this unit is taking heat from a fire in its own hex. Mirrors the fire check in the server's
+     * heat resolver, including the requirement that the fire started on an earlier turn.
+     *
+     * @param mover the unit being assessed
+     *
+     * @return {@code true} if the unit's hex is burning and the unit is low enough to be burned by it
+     */
+    private boolean isStandingInFire(final Entity mover) {
+        if (!mover.tracksHeat() || (0 != mover.getAltitude()) || (1 < mover.getElevation())) {
+            return false;
+        }
+
+        final Hex hex = getGame().getHex(mover.getPosition(), mover.getBoardId());
+        return (null != hex) && hex.containsTerrain(Terrains.FIRE) && (0 < hex.getFireTurn());
+    }
+
     boolean isImmobilized(final Entity mover) {
         if (mover.isImmobile() && !mover.isShutDown()) {
             LOGGER.info("Is truly immobile.");
@@ -3190,14 +3320,35 @@ public class Princess extends BotClient {
                     return mp;
                 }
 
-                // If we want to flee, but cannot, eject the crew.
+                // If we want to flee but cannot, eject the crew - unless the unit is only stopped by heat
+                // it can still shed, in which case it moves again in a turn or two and is worth keeping.
                 if (isImmobilized(entity) && entity.isEjectionPossible()) {
-                    msg = entity.getDisplayName() + " is immobile. Abandoning unit.";
-                    LOGGER.info(msg);
-                    sendChat(msg, Level.ERROR);
-                    final MovePath mp = new MovePath(game, entity);
-                    mp.addStep(MoveStepType.EJECT);
-                    return mp;
+                    if (canRecoverMobility(entity)) {
+                        // Name the route that saved it, so the printed numbers always back the claim: a
+                        // unit jumping clear of a fire is not out-sinking the heat it is standing in.
+                        final int dissipation = entity.getHeatCapacityWithWater();
+                        if (canJumpClear(entity, dissipation)) {
+                            LOGGER.info("{} cannot walk but can jump clear: sinks {} against {} recurring"
+                                        + " heat plus {} jump heat. Not abandoning it.",
+                                  entity.getDisplayName(),
+                                  dissipation,
+                                  recurringHeat(entity, true),
+                                  entity.getJumpHeat(CHEAPEST_JUMP_DISTANCE));
+                        } else {
+                            LOGGER.info("{} cannot move but will cool: sinks {} against {} recurring heat."
+                                        + " Not abandoning it.",
+                                  entity.getDisplayName(),
+                                  dissipation,
+                                  recurringHeat(entity, false));
+                        }
+                    } else {
+                        msg = entity.getDisplayName() + " is immobile. Abandoning unit.";
+                        LOGGER.info(msg);
+                        sendChat(msg, Level.ERROR);
+                        final MovePath mp = new MovePath(game, entity);
+                        mp.addStep(MoveStepType.EJECT);
+                        return mp;
+                    }
                 }
             }
 
@@ -3985,14 +4136,16 @@ public class Princess extends BotClient {
 
     @Override
     public void endOfTurnProcessing() {
+        // Taken before refreshCrippledUnits folds in this turn's damage. Both checkForDishonoredEnemies and
+        // updateReturnFirePermission judge this turn's attacks against who was visibly crippled when those
+        // attacks were declared, not against who is crippled now.
+        final Set<Integer> unitsWithdrawingAtStartOfTurn = Set.copyOf(crippledUnits);
         checkForDishonoredEnemies();
         checkForBrokenEnemies();
         // refreshCrippledUnits should happen after checkForDishonoredEnemies, since checkForDishonoredEnemies
         // wants to examine the units that were considered crippled at the *beginning* of the turn and were attacked.
         refreshCrippledUnits();
-        // updateReturnFirePermission wants the opposite: the freshly refreshed crippled set, so a unit
-        // crippled and attacked in the same turn may return fire next turn.
-        updateReturnFirePermission();
+        updateReturnFirePermission(unitsWithdrawingAtStartOfTurn);
         setAMSModes();
         updateEnemyHeatMaps();
         updateFriendlyHeatMap();
@@ -4001,27 +4154,31 @@ public class Princess extends BotClient {
 
     /**
      * Grants withdrawing units permission to return fire. A crippled unit under Forced Withdrawal holds its
-     * fire unless it has been attacked while fleeing. That permission used to be granted only by
-     * {@code checkForDishonoredEnemies}, which works with the crippled set as it stood at the start of the
-     * turn - so a unit crippled and attacked in the same turn gained permission only if an enemy attacked it
-     * again on a later turn. Bot opponents never do (their honor rules stop them from attacking crippled
-     * units), which left withdrawing units permanently unable to defend themselves.
+     * fire unless an enemy attacks it while it is withdrawing - the same act that marks that enemy
+     * dishonored. So a unit only earns return fire from attacks made after it was already visibly crippled:
+     * the attacks that crippled it this turn were declared against a legitimate target and grant nothing.
      *
-     * <p>This pass runs on the freshly refreshed crippled set instead: attacked this turn and crippled now
-     * means the unit may return fire from the next turn on. {@code checkForDishonoredEnemies} keeps its
-     * start-of-turn view, because an attacker should only be dishonored for shooting a unit that was already
-     * visibly crippled.</p>
+     * <p>{@code checkForDishonoredEnemies} grants the same permission from the same start-of-turn view, but
+     * only for an attacker still on the board - it looks each one up by id and skips the ones it cannot find.
+     * This pass also covers a withdrawing unit whose attacker was destroyed later in the same turn, because
+     * it only needs to know that the unit was attacked, not by whom.</p>
+     *
+     * @param unitsWithdrawingAtStartOfTurn ids of this bot's units that were already crippled, and so visibly
+     *                                      withdrawing, when this turn's attacks were declared
      */
-    private void updateReturnFirePermission() {
+    void updateReturnFirePermission(final Set<Integer> unitsWithdrawingAtStartOfTurn) {
         if (!getForcedWithdrawal()) {
             return;
         }
         for (final Entity ownedEntity : getEntitiesOwned()) {
-            if (crippledUnits.contains(ownedEntity.getId()) && !ownedEntity.getAttackedByThisTurn().isEmpty()) {
-                if (attackedWhileFleeing.add(ownedEntity.getId())) {
-                    LOGGER.info("[ForcedWithdrawal] {} is crippled and was attacked this turn; may return fire "
-                          + "from now on.", ownedEntity.getDisplayName());
-                }
+            boolean wasAlreadyWithdrawing = unitsWithdrawingAtStartOfTurn.contains(ownedEntity.getId());
+            boolean wasAttackedThisTurn = !ownedEntity.getAttackedByThisTurn().isEmpty();
+            if (!wasAlreadyWithdrawing || !wasAttackedThisTurn) {
+                continue;
+            }
+            if (attackedWhileFleeing.add(ownedEntity.getId())) {
+                LOGGER.info("[ForcedWithdrawal] {} was attacked while already crippled and withdrawing; may "
+                      + "return fire from now on.", ownedEntity.getDisplayName());
             }
         }
     }

@@ -63,7 +63,7 @@ public class InfantryShotgunDokuhebi extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = .225;
         tonnage = 0.0024;
-        infantryDamage = 0.45;
+        infantryDamage = 0.225;
         infantryRange = 0;
         ammoWeight = 0.0024;
         cost = 420;

@@ -53,14 +53,15 @@ public class InfantryPulseLaserPistolRDISunSwarmPulsar extends InfantryWeapon {
     public InfantryPulseLaserPistolRDISunSwarmPulsar() {
         super();
 
-        name = "Pulse Laser Pistol (RDI SunSwarm Pulsar)";
-        setInternalName(name);
+        name = "Pulse Laser Pistol (RDI Sunswarm Pulsar)";
+        setInternalName("Pulse Laser Pistol (RDI SunSwarm Pulsar)");
+        addLookupName(name);
         addLookupName("SUNSWARM");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1050;
         bv = 0.054;
         tonnage = 0.0001;
-        infantryDamage = 0.18;
+        infantryDamage = 0.054;
         infantryRange = 1;
         shots = 2;
         bursts = 4;

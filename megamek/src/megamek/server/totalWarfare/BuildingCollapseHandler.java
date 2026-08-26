@@ -97,8 +97,9 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
     boolean checkForCollapse(IBuilding bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
           boolean checkBecauseOfDamage, Vector<Report> vPhaseReport) {
 
-        // If the input is meaningless, do nothing and throw no exception.
-        if ((bldg == null) || (positionMap == null) || positionMap.isEmpty() || (coords == null)
+        // If the input is meaningless, do nothing and throw no exception. An empty position map is legal: nothing
+        // is standing on the board, but the building can still come down (a building burning down on an empty map).
+        if ((bldg == null) || (positionMap == null) || (coords == null)
               || !bldg.isIn(coords) || !bldg.hasCFIn(coords)) {
             LOGGER.error("Illegal/null arguments");
             return false;

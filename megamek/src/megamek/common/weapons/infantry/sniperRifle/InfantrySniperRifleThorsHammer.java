@@ -51,8 +51,9 @@ public class InfantrySniperRifleThorsHammer extends InfantryWeapon {
     public InfantrySniperRifleThorsHammer() {
         super();
 
-        name = "Sniper Rifle (Thors Hammer)";
-        setInternalName(name);
+        name = "Sniper Rifle (Thorshammer)";
+        setInternalName("Sniper Rifle (Thors Hammer)");
+        addLookupName(name);
         addLookupName("Thorshammer");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = 0.28;

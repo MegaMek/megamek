@@ -35,10 +35,10 @@ package megamek.common.equipment;
 
 import java.util.*;
 
-import megamek.common.SourceBookCode;
 import megamek.common.RangeType;
 import megamek.common.RulesRef;
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.TechAdvancement;
 import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.TechConstants;
@@ -1097,7 +1097,7 @@ public class AmmoType extends EquipmentType {
           rulesRefs(SourceBookCode.IO_AE, 125));
 
     private static final MunitionMutator ARMOR_PIERCING_MUNITION_MUTATOR = new MunitionMutator("Armor-Piercing", "AP",
-          (5.0/4),
+          (5.0 / 4),
           Munitions.M_ARMOR_PIERCING,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
@@ -1155,7 +1155,7 @@ public class AmmoType extends EquipmentType {
           rulesRefs(SourceBookCode.TM, 208));
 
     private static final MunitionMutator PRECISION_MUNITION_MUTATOR = new MunitionMutator("Precision",
-          (5.0/3),
+          (5.0 / 3),
           Munitions.M_PRECISION,
           new TechAdvancement(TechBase.IS).setIntroLevel(false)
                 .setUnofficial(false)
@@ -1167,7 +1167,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(Faction.FS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),
           rulesRefs(SourceBookCode.CORE, 190));
-    
+
     private static final MunitionMutator TRACER_MUNITION_MUTATOR = new MunitionMutator("Tracer",
           1,
           Munitions.M_TRACER,
@@ -1183,7 +1183,7 @@ public class AmmoType extends EquipmentType {
 
     private static final MunitionMutator CLAN_IMPROVED_ARMOR_PIERCING_MUNITION_MUTATOR = new MunitionMutator(
           "Armor-Piercing", "AP",
-          (5.0/4),
+          (5.0 / 4),
           Munitions.M_ARMOR_PIERCING,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
@@ -1212,7 +1212,7 @@ public class AmmoType extends EquipmentType {
 
     private static final MunitionMutator CLAN_IMPROVED_PRECISION_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
           "Precision",
-          (5.0/3),
+          (5.0 / 3),
           Munitions.M_PRECISION,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
@@ -1239,7 +1239,7 @@ public class AmmoType extends EquipmentType {
 
     private static final MunitionMutator CLAN_ARMOR_PIERCING_MUNITION_MUTATOR_FOR_PROTO = new MunitionMutator(
           "Armor-Piercing",
-          (5.0/4),
+          (5.0 / 4),
           Munitions.M_ARMOR_PIERCING,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(false)
@@ -1290,7 +1290,7 @@ public class AmmoType extends EquipmentType {
           rulesRefs(SourceBookCode.TM, 208));
 
     private static final MunitionMutator CLAN_PRECISION_MUNITION_MUTATOR_FOR_PROTO = new MunitionMutator("Precision",
-          (5.0/3),
+          (5.0 / 3),
           Munitions.M_PRECISION,
           new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
                 .setUnofficial(true)
@@ -3342,31 +3342,31 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createInfantryAmmo());
         EquipmentType.addType(AmmoType.createInfantryInfernoAmmo());
 
-            base = AmmoType.createISAPMortar1Ammo();
+        base = AmmoType.createISAPMortar1Ammo();
         mortarAmmos.add(base);
-            EquipmentType.addType(base);
+        EquipmentType.addType(base);
         base = AmmoType.createISAPMortar2Ammo();
         mortarAmmos.add(base);
-            EquipmentType.addType(base);
+        EquipmentType.addType(base);
         base = AmmoType.createISAPMortar4Ammo();
         mortarAmmos.add(base);
-            EquipmentType.addType(base);
+        EquipmentType.addType(base);
         base = AmmoType.createISAPMortar8Ammo();
         mortarAmmos.add(base);
-            EquipmentType.addType(base);
+        EquipmentType.addType(base);
 
         base = AmmoType.createCLAPMortar1Ammo();
         clanMortarAmmos.add(base);
-            EquipmentType.addType(base);
+        EquipmentType.addType(base);
         base = AmmoType.createCLAPMortar2Ammo();
         clanMortarAmmos.add(base);
-            EquipmentType.addType(base);
+        EquipmentType.addType(base);
         base = AmmoType.createCLAPMortar4Ammo();
         clanMortarAmmos.add(base);
-            EquipmentType.addType(base);
+        EquipmentType.addType(base);
         base = AmmoType.createCLAPMortar8Ammo();
         clanMortarAmmos.add(base);
-            EquipmentType.addType(base);
+        EquipmentType.addType(base);
 
         // Create the munition types for IS Mek mortars
         munitions.add(AIRBURST_MORTAR_MUNITION_MUTATOR);
@@ -3390,16 +3390,16 @@ public class AmmoType extends EquipmentType {
         // Long range Torpedo
         base = AmmoType.createISLRT5Ammo();
         lrtAmmos.add(base);
-            EquipmentType.addType(base);
+        EquipmentType.addType(base);
         base = AmmoType.createISLRT10Ammo();
         lrtAmmos.add(base);
-            EquipmentType.addType(base);
+        EquipmentType.addType(base);
         base = AmmoType.createISLRT15Ammo();
         lrtAmmos.add(base);
-            EquipmentType.addType(base);
+        EquipmentType.addType(base);
         base = AmmoType.createISLRT20Ammo();
         lrtAmmos.add(base);
-            EquipmentType.addType(base);
+        EquipmentType.addType(base);
 
         base = AmmoType.createISEnhancedLRT5Ammo();
         enhancedLrtAmmos.add(base);
@@ -3935,9 +3935,9 @@ public class AmmoType extends EquipmentType {
     /**
      * Create a new techAdvancement that uses: 1. the more restrictive tech base 2. the more-restrictive of all faction
      * tech advancements 3. the later of all intro dates, 4. the earlier of all extinction dates, 5. the later of all
-     * reintroduction dates, 6. the smaller of all prototype / production / reintroduction faction lists, 7. the
-     * greater of all extinction faction lists, 8. the higher static tech level, 9. the rarer availability level 10.
-     * the higher TechRating score given two other TechAdvancements.
+     * reintroduction dates, 6. the smaller of all prototype / production / reintroduction faction lists, 7. the greater
+     * of all extinction faction lists, 8. the higher static tech level, 9. the rarer availability level 10. the higher
+     * TechRating score given two other TechAdvancements.
      *
      * @param base TechAdvancement of base ammo type being modified
      * @param mod  TechAdvancement of the mod/mutator; currently only Incendiary
@@ -12584,7 +12584,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 4;
         ammo.ammoType = AmmoTypeEnum.PLASMA;
         ammo.shots = 20;
-        ammo.bv = 12;
+        ammo.bv = 14;
         ammo.cost = 30000;
         ammo.explosive = false;
         ammo.rulesRefs = rulesRefs(SourceBookCode.CORE, 189, 248);
@@ -12611,7 +12611,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoTypeEnum.PLASMA;
         ammo.shots = 8;
-        ammo.bv = 35;
+        ammo.bv = 31;
         ammo.cost = 30000;
         ammo.explosive = false;
         ammo.rulesRefs = rulesRefs(SourceBookCode.CORE, 189, 248);
@@ -17356,7 +17356,7 @@ public class AmmoType extends EquipmentType {
             if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||
                   (munition.getAmmoType() == AmmoTypeEnum.LRM_IMP) ||
                   (munition.getAmmoType() == AmmoTypeEnum.MML) ||
-                  (munition.getAmmoType() == AmmoTypeEnum.NLRM)||
+                  (munition.getAmmoType() == AmmoTypeEnum.NLRM) ||
                   (munition.getAmmoType() == AmmoTypeEnum.TBOLT_10) ||
                   (munition.getAmmoType() == AmmoTypeEnum.TBOLT_15) ||
                   (munition.getAmmoType() == AmmoTypeEnum.TBOLT_20)) &&
@@ -17689,10 +17689,10 @@ public class AmmoType extends EquipmentType {
         }
         if (hasExactMunitionType(munition, Munitions.M_ARTEMIS_V_CAPABLE)
               && hasAmmoType(munition,
-                    AmmoTypeEnum.LRM,
-                    AmmoTypeEnum.LRM_TORPEDO,
-                    AmmoTypeEnum.SRM,
-                    AmmoTypeEnum.SRM_TORPEDO)) {
+              AmmoTypeEnum.LRM,
+              AmmoTypeEnum.LRM_TORPEDO,
+              AmmoTypeEnum.SRM,
+              AmmoTypeEnum.SRM_TORPEDO)) {
             return rulesRefs(existing,
                   rulesRef(SourceBookCode.BMM, 107),
                   rulesRef(SourceBookCode.CORE, 192));
@@ -17700,10 +17700,10 @@ public class AmmoType extends EquipmentType {
         if (hasExactMunitionType(munition, Munitions.M_FRAGMENTATION)
               && !munition.isClan()
               && hasAmmoType(munition,
-                    AmmoTypeEnum.LRM,
-                    AmmoTypeEnum.MML,
-                    AmmoTypeEnum.NLRM,
-                    AmmoTypeEnum.SRM)) {
+              AmmoTypeEnum.LRM,
+              AmmoTypeEnum.MML,
+              AmmoTypeEnum.NLRM,
+              AmmoTypeEnum.SRM)) {
             return rulesRefs(existing,
                   rulesRef(SourceBookCode.BMM, 107),
                   rulesRef(SourceBookCode.TW, 141));
@@ -17753,7 +17753,7 @@ public class AmmoType extends EquipmentType {
         }
         if (hasExactMunitionType(munition, Munitions.M_THUNDER)
               && (hasAmmoType(munition, AmmoTypeEnum.LRM, AmmoTypeEnum.MML, AmmoTypeEnum.NLRM)
-                    || isThunderboltAmmo(munition))) {
+              || isThunderboltAmmo(munition))) {
             return rulesRefs(existing, rulesRef(SourceBookCode.CORE, 193));
         }
 

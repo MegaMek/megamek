@@ -54,8 +54,9 @@ public class InfantryLaserRifleDarkLightCLLight extends InfantryWeapon {
     public InfantryLaserRifleDarkLightCLLight() {
         super();
 
-        name = "Laser Rifle (Darklight-CL Light)";
-        setInternalName(name);
+        name = "Laser Rifle (Darklight-CL Light Laser Rifle)";
+        setInternalName("Laser Rifle (Darklight-CL Light)");
+        addLookupName(name);
         addLookupName("DARKLIGHT-CL");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 2400;

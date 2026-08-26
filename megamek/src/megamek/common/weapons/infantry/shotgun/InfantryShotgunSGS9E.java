@@ -63,14 +63,14 @@ public class InfantryShotgunSGS9E extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = 1.375;
         tonnage = 0.0045;
-        infantryDamage = 0.69;
+        infantryDamage = 0.6875;
         infantryRange = 1;
         ammoWeight = 0.0045;
         cost = 1500;
         ammoCost = 50;
         shots = 21;
         bursts = 3;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_ENCUMBER);
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_BURST);
         rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_7);
         techAdvancement
               .setTechBase(TechBase.CLAN)

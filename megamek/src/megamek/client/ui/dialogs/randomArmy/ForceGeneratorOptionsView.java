@@ -140,6 +140,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     /** Holds the mix editor when a host shows it inline rather than opening it from the button. */
     private JPanel panFormationMixInline;
     private boolean formationMixInline = false;
+    /** Whether a force has been generated and not since cleared; the inline mix editor only shows while one exists. */
+    private boolean forceGenerated;
 
     private JButton btnGenerate;
     private JButton btnExportMUL;
@@ -210,9 +212,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         int row = 0;
         row = addForceDescriptionFields(constraints, row);
         JPanel transportPanel = buildTransportPanel(constraints);
-        row = addFormationMixPanel(constraints, row);
         row = addMissionRoleFilters(constraints, row);
         row = addTransportAndSummary(constraints, row, transportPanel);
+        // Last, below everything that shapes the force: the mix edits a generated tree, so it belongs with the
+        // result rather than among the settings, and it stays hidden until there is a tree to edit.
+        row = addFormationMixPanel(constraints, row);
         addGenerateControls(constraints, row);
 
         refreshFactions();
@@ -643,11 +647,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     public void setFormationMixInline(boolean visible) {
         formationMixInline = visible;
-        panFormationMixInline.setVisible(visible);
         setFormationMixButtonVisible(!visible);
-        if (visible) {
-            refreshInlineFormationMixEditor();
+        if (!visible) {
+            panFormationMixInline.setVisible(false);
         }
+        refreshInlineFormationMixEditor();
         revalidate();
         repaint();
     }
@@ -655,6 +659,16 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     /** Rebuilds the inline editor for the force the current selections describe, keeping any request already made. */
     public void refreshInlineFormationMixEditor() {
         if (!formationMixInline) {
+            return;
+        }
+        // The palette is a tool for editing a generated tree - re-rolling a node, adding a lance under a company -
+        // so until there is a tree it has nothing to act on, and showing it early only crowded out the settings
+        // that shape the force. It appears with the first generated force and goes when the force is cleared.
+        if (!forceGenerated) {
+            logger.debug("[FormationMix] inline editor hidden - no force generated yet");
+            panFormationMixInline.setVisible(false);
+            revalidate();
+            repaint();
             return;
         }
         Ruleset ruleset = Ruleset.findRuleset(buildForceDescriptor());
@@ -670,6 +684,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         panFormationMixInline.removeAll();
         panFormationMixInline.add(wrappedExplanation(), BorderLayout.NORTH);
         panFormationMixInline.add(scroll, BorderLayout.CENTER);
+        panFormationMixInline.setVisible(true);
         panFormationMixInline.revalidate();
         panFormationMixInline.repaint();
     }
@@ -809,6 +824,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             onGenerate.accept(null);
         }
         clearSummaryTable();
+        forceGenerated = false;
+        logger.debug("[FormationMix] force cleared - inline editor withdrawn");
+        refreshInlineFormationMixEditor();
     }
 
     /**
@@ -1670,6 +1688,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                       generated.getEchelon(), generated.getWeightClass(),
                       generated.getSubForces() == null ? 0 : generated.getSubForces().size());
                 updateSummaryTable(generated);
+                forceGenerated = true;
+                refreshInlineFormationMixEditor();
                 if (onGenerate != null) {
                     onGenerate.accept(generated);
                 }

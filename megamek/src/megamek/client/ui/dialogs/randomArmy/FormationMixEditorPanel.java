@@ -122,15 +122,23 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
         Map<String, Set<String>> families = grouping.families();
         Set<String> aerospaceFamilies = grouping.aerospaceFamilies();
 
-        // The aerospace block takes a column to itself, so the ground families have one fewer to spread across.
-        int groundColumns = aerospaceFamilies.isEmpty() ? CATEGORY_COLUMNS : (CATEGORY_COLUMNS - 1);
-        int groundFamilies = families.size() - aerospaceFamilies.size();
-        int groundFormations = offered.size() - aerospaceFamilies.stream()
-              .mapToInt(family -> families.get(family).size())
-              .sum();
-        // Count the family headings as rows too, or the columns come out lopsided - a couple of dozen formations in
-        // ten families is nearly forty rows, not twenty-seven.
-        int rowsPerColumn = rowsPerColumn(groundFormations + groundFamilies, groundColumns);
+        // Ground and aerospace families share all the columns. Giving the aerospace block a column of its own
+        // left that column mostly empty while the ground list overran the other two and hid its last families
+        // behind a scrollbar. Now the ground families fill the columns and the aerospace block follows them,
+        // kept whole under its own heading, so it ends up at the foot of the last column.
+        // The headings count as rows too, or the columns come out lopsided - a couple of dozen formations in ten
+        // families is nearly forty rows, not twenty-seven.
+        int aerospaceBlockRows = aerospaceFamilies.isEmpty() ? 0 : 1;
+        int groundRows = 0;
+        for (Map.Entry<String, Set<String>> family : families.entrySet()) {
+            int familyRows = familyRowCount(family.getKey(), family.getValue());
+            if (aerospaceFamilies.contains(family.getKey())) {
+                aerospaceBlockRows += familyRows;
+            } else {
+                groundRows += familyRows;
+            }
+        }
+        int rowsPerColumn = rowsPerColumn(groundRows + aerospaceBlockRows, CATEGORY_COLUMNS);
 
         // Each column is a panel of its own rather than a slice of one big grid, so the three read as separate
         // lists. In a single grid the eye tracks across the gap and pairs a formation in one column with the
@@ -141,19 +149,24 @@ public class FormationMixEditorPanel extends JPanel implements Scrollable {
         boolean inAerospace = false;
         for (Map.Entry<String, Set<String>> family : families.entrySet()) {
             boolean familyIsAerospace = aerospaceFamilies.contains(family.getKey());
-            // The aerospace formations start a column of their own under their own heading. They answer a different
+            // The aerospace formations follow the ground ones under a heading of their own. They answer a different
             // question from the ground ones, and a combined-arms force offers both, so running them on from the end
             // of the ground list gives no clue where one ends and the other begins.
             boolean startsAerospaceBlock = familyIsAerospace && !inAerospace;
-            // Look at what this family would add before deciding, not at what the column already holds. Breaking
-            // only once the target is passed lets a family that starts just under it overshoot by its whole
-            // height: Assault, Battle and Command came to eleven against a target of twelve, so Fire's six rows
-            // went on top and the column ran to seventeen while the last one held a single formation.
-            int familyRows = familyRowCount(family.getKey(), family.getValue());
+            // Look at what would be added before deciding, not at what the column already holds. Breaking only
+            // once the target is passed lets a family that starts just under it overshoot by its whole height:
+            // Assault, Battle and Command came to eleven against a target of twelve, so Fire's six rows went on
+            // top and the column ran to seventeen while the last one held a single formation. The aerospace block
+            // is measured as a whole and never split, so its heading cannot land in one column and its
+            // squadrons in the next.
+            int rowsToAdd = startsAerospaceBlock
+                  ? aerospaceBlockRows
+                  : familyRowCount(family.getKey(), family.getValue());
             boolean columnIsFull = (row > 0)
-                  && ((row + familyRows) > rowsPerColumn)
-                  && (columns.size() < groundColumns - 1);
-            if (startsAerospaceBlock || columnIsFull) {
+                  && !inAerospace
+                  && ((row + rowsToAdd) > rowsPerColumn)
+                  && (columns.size() < CATEGORY_COLUMNS - 1);
+            if (columnIsFull) {
                 columns.add(closeColumn(currentColumn, row));
                 currentColumn = newColumnPanel();
                 row = 0;

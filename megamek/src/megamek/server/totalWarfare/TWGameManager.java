@@ -60,6 +60,8 @@ import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
+import megamek.common.board.BuildingEditSpec;
+import megamek.common.board.HexEditSpec;
 import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.comparators.WeaponComparatorBV;
 import megamek.common.compute.Compute;
@@ -266,6 +268,8 @@ public class TWGameManager extends AbstractGameManager {
     private final TWPhaseEndManager phaseEndManager = new TWPhaseEndManager(this);
     private final TWPhasePreparationManager phasePreparationManager = new TWPhasePreparationManager(this);
     private LobbyBoardHandler lobbyBoardHandler;
+    private HexEditHandler hexEditHandler;
+    private BuildingEditHandler buildingEditHandler;
     private final InfantryActionTracker infantryActionTracker = new InfantryActionTracker();
     private final BuildingCollapseHandler buildingCollapseHandler = new BuildingCollapseHandler(this);
     private final DeploymentProcessor deploymentProcessor = new DeploymentProcessor(this);
@@ -355,6 +359,9 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new SkillModifierCommand(server, this));
         commands.add(new DisasterCommand(server, this));
         commands.add(new FirestarterCommand(server, this));
+        commands.add(new ChangeTerrainCommand(server, this));
+        commands.add(new ModifyTerrainCommand(server, this));
+        commands.add(new BuildingCommand(server, this));
         commands.add(new NoFiresCommand(server, this));
         commands.add(new FirefightCommand(server, this));
         commands.add(new FirestormCommand(server, this));
@@ -391,6 +398,28 @@ public class TWGameManager extends AbstractGameManager {
             lobbyBoardHandler = new LobbyBoardHandler(this);
         }
         return lobbyBoardHandler;
+    }
+
+    /**
+     * @return the handler that applies a gamemaster's edits to a single hex, created on first use for the same reason
+     *       as {@link #lobbyBoardHandler()}
+     */
+    public HexEditHandler hexEditHandler() {
+        if (hexEditHandler == null) {
+            hexEditHandler = new HexEditHandler(this);
+        }
+        return hexEditHandler;
+    }
+
+    /**
+     * @return the handler that applies a gamemaster's edits to a building, created on first use for the same reason as
+     *       {@link #lobbyBoardHandler()}
+     */
+    public BuildingEditHandler buildingEditHandler() {
+        if (buildingEditHandler == null) {
+            buildingEditHandler = new BuildingEditHandler(this);
+        }
+        return buildingEditHandler;
     }
 
     @Override
@@ -1073,6 +1102,12 @@ public class TWGameManager extends AbstractGameManager {
                     break;
                 case ENTITY_DAMAGE_EDIT:
                     receiveDamageEdit(packet, connId);
+                    break;
+                case HEX_EDIT:
+                    receiveHexEdit(packet, connId);
+                    break;
+                case BUILDING_EDIT:
+                    receiveBuildingEdit(packet, connId);
                     break;
                 case ENTITY_MULTI_UPDATE:
                     receiveEntitiesUpdate(packet, connId);
@@ -2412,6 +2447,7 @@ public class TWGameManager extends AbstractGameManager {
             if (entity.getsAutoExternalSearchlight()) {
                 entity.setExternalSearchlight(true);
             }
+            deactivateSurplusEcmSuites(entity);
             entityUpdate(entity.getId());
 
             // Remove hot-loading some from LRMs for meks
@@ -2430,6 +2466,43 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
         }
+    }
+
+    /**
+     * Switches off all but one of a unit's ECM suites when it enters play with several of them in use. A unit may use
+     * only one ECM suite at a time, of any type (TM p.213, CO p.200), but every suite starts in its first mode, which
+     * is {@code "ECM"}, so a unit carrying more than one deploys using all of them before the player has touched
+     * anything. The Mantis Light Attack VTOL (ECCM) with its two Guardian suites is the stock example.
+     *
+     * <p>The suite that stays on is the one {@link EquipmentActivation#preferredEcmSuite(List)} picks; the player is
+     * free to switch to any of the others on any turn. The modes are set immediately rather than queued, because at
+     * game start there is no turn boundary for a pending switch to cross.</p>
+     *
+     * @param entity the unit entering play
+     */
+    private void deactivateSurplusEcmSuites(Entity entity) {
+        List<MiscMounted> suitesInUse = EquipmentActivation.ecmSuitesInUseNextRound(entity);
+        if (suitesInUse.size() < 2) {
+            return;
+        }
+        MiscMounted keptSuite = EquipmentActivation.preferredEcmSuite(suitesInUse);
+        if (keptSuite == null) {
+            return;
+        }
+        StringJoiner deactivatedSuites = new StringJoiner(", ");
+        for (MiscMounted suite : suitesInUse) {
+            if (suite.equals(keptSuite)) {
+                continue;
+            }
+            suite.setModeImmediately(Mounted.MODE_OFF);
+            deactivatedSuites.add(EquipmentActivation.ecmSuiteLabel(entity, suite));
+        }
+        String message = entity.getShortName() + " may use only one ECM suite at a time (TM p.213): "
+              + EquipmentActivation.ecmSuiteLabel(entity, keptSuite) + " stays on, "
+              + deactivatedSuites + " switched off";
+        EQUIP_OFF_LOGGER.debug("[EquipOff] {}: deployed with {} ECM suites in use - all but {} switched off",
+              entity.getShortName(), suitesInUse.size(), keptSuite.getName());
+        sendServerChat(message);
     }
 
     @Override
@@ -16970,12 +17043,26 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
 
+        if (lastEntityId != daa.getEntityId()) {
+            // who is making the attack
+            Report attackerReport = new Report(4005);
+            attackerReport.subject = ae.getId();
+            attackerReport.addDesc(ae);
+            addReport(attackerReport);
+        }
+
         Board board = game.getBoard(ae);
         final Hex aeHex = game.getHexOf(ae);
         final Hex teHex = board.getHex(daa.getTargetPos());
         final Targetable target = game.getTarget(daa.getTargetType(), daa.getTargetId());
 
+        // The target is no longer in the game at all - it was removed between the declaration in the movement phase
+        // and this attack being resolved, most often destroyed by artillery or an ammo explosion during the weapon
+        // attack phase. The attacker still has to come down, so land it exactly as for a target that was destroyed
+        // but is still on the board. Returning here left the attacker at DFA elevation with a stale displacement
+        // attack, so it never landed.
         if (target == null) {
+            landDfaAttackerOnGoneTarget(ae, daa, aeHex, teHex);
             return;
         }
 
@@ -17019,38 +17106,11 @@ public class TWGameManager extends AbstractGameManager {
 
         final int direction = ae.getFacing();
 
-        if (lastEntityId != daa.getEntityId()) {
-            // who is making the attack
-            r = new Report(4005);
-            r.subject = ae.getId();
-            r.addDesc(ae);
-            addReport(r);
-        }
-
         // Check if the target isn't dead, if it is, exit
         if (targetEntity != null &&
               target.getTargetType() == Targetable.TYPE_ENTITY &&
               (targetEntity.isDestroyed() || targetEntity.isDoomed() || targetEntity.getCrew().isDead())) {
-            r = new Report(4245);
-            r.subject = ae.getId();
-            r.indent();
-            addReport(r);
-
-            if (ae.isProne()) {
-                // attacker prone during weapons phase
-                addReport(doEntityFall(ae, daa.getTargetPos(), 2, 3, ae.getBasePilotingRoll(), false, false));
-
-            } else {
-                // same effect as successful DFA
-                ae.setElevation(ae.calcElevation(aeHex, teHex, 0, false));
-                addReport(doEntityDisplacement(ae,
-                      ae.getPosition(),
-                      daa.getTargetPos(),
-                      new PilotingRollData(ae.getId(), Game.rulesManager.getRulesPSR().getSuccessfulDFAModifier(),
-                            "executed death from above")));
-            }
-            // entity isn't DFA-ing anymore
-            ae.setDisplacementAttack(null);
+            landDfaAttackerOnGoneTarget(ae, daa, aeHex, teHex);
             return;
         }
 
@@ -17324,6 +17384,42 @@ public class TWGameManager extends AbstractGameManager {
         if ((target instanceof Mek mek) && mek.isIndustrial()) {
             mek.setCheckForCrit(true);
         }
+    }
+
+    /**
+     * Lands a death from above attacker whose target is not there to be hit any more, either because it was destroyed
+     * while still on the board or because it has been removed from the game entirely. The attack does no damage, but
+     * the attacker still comes down in the target's hex and rolls to stay standing, which is the same result as a
+     * successful death from above (TW p. 148).
+     *
+     * @param attacker    the unit that declared the death from above
+     * @param dfaAttack   the declared attack, whose target position is the hex the attacker comes down in
+     * @param attackerHex the hex the attacker is jumping from
+     * @param targetHex   the hex the attacker comes down in
+     */
+    private void landDfaAttackerOnGoneTarget(Entity attacker, DfaAttackAction dfaAttack, Hex attackerHex,
+          Hex targetHex) {
+        Report report = new Report(4245);
+        report.subject = attacker.getId();
+        report.indent();
+        addReport(report);
+
+        if (attacker.isProne()) {
+            // attacker prone during weapons phase
+            addReport(doEntityFall(attacker, dfaAttack.getTargetPos(), 2, 3, attacker.getBasePilotingRoll(), false,
+                  false));
+        } else {
+            // same effect as successful DFA
+            attacker.setElevation(attacker.calcElevation(attackerHex, targetHex, 0, false));
+            addReport(doEntityDisplacement(attacker,
+                  attacker.getPosition(),
+                  dfaAttack.getTargetPos(),
+                  new PilotingRollData(attacker.getId(),
+                        Game.rulesManager.getRulesPSR().getSuccessfulDFAModifier(),
+                        "executed death from above")));
+        }
+        // entity isn't DFA-ing anymore
+        attacker.setDisplacementAttack(null);
     }
 
     /**
@@ -27129,6 +27225,74 @@ public class TWGameManager extends AbstractGameManager {
      * units that are teammates of the sender or when the sender is a gamemaster. Other entities remain unchanged but
      * still be sent back to overwrite incorrect client changes.
      */
+    /**
+     * Applies a gamemaster's edit of one or more hexes. The edit arrives as the terrain the hexes should end up
+     * holding rather than as a chat command, because an edit of a whole hex across several hexes is more than a
+     * command line can carry, and it is checked against every named hex before any of them is changed.
+     */
+    private void receiveHexEdit(Packet packet, int connIndex) {
+        if (!(packet.getObject(0) instanceof HexEditSpec spec)) {
+            LOGGER.warn("Dropping hex edit: the packet carries no spec");
+            return;
+        }
+        Player sender = game.getPlayer(connIndex);
+        if ((sender == null) || !sender.isGameMaster()) {
+            LOGGER.warn("Dropping hex edit from {}: only a gamemaster may change the board",
+                  (sender == null) ? "an unknown connection" : sender.getName());
+            return;
+        }
+        String refusal = hexEditHandler().applyHexEdit(spec, sender.getName());
+        if (refusal != null) {
+            LOGGER.info("[GMTerrain] {}: edit of {} hex(es) refused - {}",
+                  sender.getName(), spec.getCoords().size(), refusal);
+            reportBoardEditRefused(connIndex, "Gamemaster.cmd.changeTerrain.refused", refusal);
+            return;
+        }
+        sendToast(GameToastEvent.Level.GAMEMASTER,
+              Messages.getString("Gamemaster.toast.hexEdit", sender.getName(), spec.getCoords().size()),
+              null);
+    }
+
+    /**
+     * Applies a gamemaster's edit of the building in one hex. The edit says what should be standing there when it is
+     * done, so the same packet puts a building up, changes the one that is there and takes it away; the handler works
+     * out which by looking at the hex.
+     */
+    private void receiveBuildingEdit(Packet packet, int connIndex) {
+        if (!(packet.getObject(0) instanceof BuildingEditSpec spec)) {
+            LOGGER.warn("Dropping building edit: the packet carries no spec");
+            return;
+        }
+        Player sender = game.getPlayer(connIndex);
+        if ((sender == null) || !sender.isGameMaster()) {
+            LOGGER.warn("Dropping building edit from {}: only a gamemaster may change the board",
+                  (sender == null) ? "an unknown connection" : sender.getName());
+            return;
+        }
+        String refusal = buildingEditHandler().applyBuildingSpec(spec, sender.getName());
+        if (refusal != null) {
+            LOGGER.info("[GMBuilding] {}: edit of hex {} refused - {}",
+                  sender.getName(), spec.getCoords().getBoardNum(), refusal);
+            reportBoardEditRefused(connIndex, "Gamemaster.cmd.building.refused", refusal);
+        }
+    }
+
+    /**
+     * Tells a gamemaster why a board edit of theirs was not applied, in the chat log and as a toast.
+     *
+     * <p>Both, because the dialog that sent the edit may already have closed: a reason that only reached the chat log
+     * would leave a gamemaster looking at an unchanged board with nothing on screen to say why.</p>
+     *
+     * @param connIndex  The connection the edit came from
+     * @param messageKey The message naming what was refused
+     * @param refusal    The reason, from the handler that refused it
+     */
+    private void reportBoardEditRefused(int connIndex, String messageKey, String refusal) {
+        String message = Messages.getString(messageKey, refusal);
+        sendServerChat(connIndex, message);
+        send(connIndex, new Packet(PacketCommand.SEND_TOAST, GameToastEvent.Level.WARNING, message, Entity.NONE));
+    }
+
     private void receiveEntitiesUpdate(Packet packet, int connIndex) throws InvalidPacketDataException {
         if (!getGame().getPhase().isLounge()) {
             LOGGER.error("Multi entity updates should not be used outside the lobby phase!");
@@ -27325,6 +27489,16 @@ public class TWGameManager extends AbstractGameManager {
             String message = entity.getShortName() + ": " + mounted.getName()
                   + " cannot be engaged while the ECM suite is deactivated or deactivating";
             EQUIP_OFF_LOGGER.debug("[EquipOff] {}: rejected mode change - no ECM suite will be operating next round",
+                  entity.getShortName());
+            sendServerChat(connIndex, message);
+            return;
+        }
+
+        if (ServerHelper.isSecondEcmSuiteActivation(entity, mounted, mode)) {
+            String message = entity.getShortName() + ": " + mounted.getName()
+                  + " cannot be used while another ECM suite is in use - a unit may use only one at a time"
+                  + " (TM p.213)";
+            EQUIP_OFF_LOGGER.debug("[EquipOff] {}: rejected mode change - another ECM suite is already in use",
                   entity.getShortName());
             sendServerChat(connIndex, message);
             return;
@@ -28364,18 +28538,22 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Creates a packet containing off board artillery attacks
      */
-    Packet createArtilleryPacket(Player p) {
+    Packet createArtilleryPacket(Player viewingPlayer) {
         Vector<ArtilleryAttackAction> v = new Vector<>();
         List<EnemyArtilleryInbound> enemyInbound = new ArrayList<>();
-        int team = p.getTeam();
+        int team = viewingPlayer.getTeam();
         for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements(); ) {
             WeaponHandler wh = (WeaponHandler) i.nextElement();
             if (wh.weaponAttackAction instanceof ArtilleryAttackAction aaa) {
-                boolean ownOrAllied = (aaa.getPlayerId() == p.getId())
-                      || ((team != Player.TEAM_NONE) && (team == game.getPlayer(aaa.getPlayerId()).getTeam()));
-                if (ownOrAllied || p.canIgnoreDoubleBlind() || p.isArtilleryRevealAll()) {
+                // A round already in the air outlives its firer: a player whose last unit is destroyed can be
+                // dropped from the game while the round is still in flight, so the firer may no longer be
+                // present. An unknown firer counts as nobody's ally.
+                Player firingPlayer = game.getPlayer(aaa.getPlayerId());
+                boolean ownOrAllied = (aaa.getPlayerId() == viewingPlayer.getId())
+                      || ((firingPlayer != null) && (team != Player.TEAM_NONE) && (team == firingPlayer.getTeam()));
+                if (ownOrAllied || viewingPlayer.canIgnoreDoubleBlind() || viewingPlayer.isArtilleryRevealAll()) {
                     v.addElement(aaa);
-                } else if (enemyArtilleryRoundIsKnownTo(aaa, p)) {
+                } else if (enemyArtilleryRoundIsKnownTo(aaa, viewingPlayer)) {
                     // The player knows an enemy round is inbound (its firing is announced in the report) but not its
                     // target hex or munition - send only a redacted summary so the Rounds-in-Air window can list it with
                     // "Unknown" target/warhead, without ever sending the aim point to the client.
@@ -28890,6 +29068,22 @@ public class TWGameManager extends AbstractGameManager {
     public boolean checkForCollapse(IBuilding bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
           boolean checkBecauseOfDamage, Vector<Report> vPhaseReport) {
         return buildingCollapseHandler.checkForCollapse(bldg, positionMap, coords, checkBecauseOfDamage, vPhaseReport);
+    }
+
+    /**
+     * Collapse one hex of a building that can no longer stand, such as a building hex burned down to a Construction
+     * Factor of 0. Damages and drops whatever is inside, on top of or in the basement of that hex, replaces the hex
+     * with rubble and updates the clients.
+     *
+     * @param building     the Building that is coming down. This value should not be {@code null}.
+     * @param positionMap  a map of the Coords positions of each unit in the game to the {@link Entity}s at that
+     *                     position. May be empty when no unit is on the board.
+     * @param coords       the Coords of the building hex that is coming down
+     * @param vPhaseReport the current phase reports to attach new reports to
+     */
+    public void collapseBuilding(IBuilding building, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
+          Vector<Report> vPhaseReport) {
+        buildingCollapseHandler.collapseBuilding(building, positionMap, coords, vPhaseReport);
     }
 
     /**

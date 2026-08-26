@@ -43,6 +43,7 @@ import java.util.Vector;
 
 import megamek.common.Hex;
 import megamek.common.LosEffects;
+import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.ToHitData;
@@ -170,17 +171,25 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
                 Report.addNewline(vPhaseReport);
                 handledAmmoAndReport = true;
 
-                artyMsg = "Artillery bay fire Incoming, landing on round "
-                      + (game.getRoundCount() + aaa.getTurnsTilHit())
-                      + ", fired by "
-                      + game.getPlayer(aaa.getPlayerId()).getName();
-                game.getBoard(aaa.getTarget(game).getBoardId()).addSpecialHexDisplay(
-                      aaa.getTarget(game).getPosition(),
-                      new SpecialHexDisplay(
-                            SpecialHexDisplay.Type.ARTILLERY_INCOMING, game
-                            .getRoundCount() + aaa.getTurnsTilHit(),
-                            game.getPlayer(aaa.getPlayerId()), artyMsg,
-                            SpecialHexDisplay.SHD_VISIBLE_TO_TEAM));
+                // The incoming marker is meant for the firing player's team only. A null owner makes
+                // SpecialHexDisplay.isObscured() report the marker as visible to everyone, which would show the aim
+                // hex to the whole game under double-blind, so it is not drawn when the firer cannot be resolved -
+                // a team that has left the game has nobody left to warn.
+                Player firingPlayer = game.getPlayer(aaa.getPlayerId());
+                if (firingPlayer != null) {
+                    Targetable incomingTarget = aaa.getTarget(game);
+                    int landingRound = game.getRoundCount() + aaa.getTurnsTilHit();
+                    artyMsg = "Artillery bay fire Incoming, landing on round "
+                          + landingRound
+                          + ", fired by "
+                          + firingPlayer.getName();
+                    game.getBoard(incomingTarget.getBoardId()).addSpecialHexDisplay(
+                          incomingTarget.getPosition(),
+                          new SpecialHexDisplay(
+                                SpecialHexDisplay.Type.ARTILLERY_INCOMING, landingRound,
+                                firingPlayer, artyMsg,
+                                SpecialHexDisplay.SHD_VISIBLE_TO_TEAM));
+                }
             }
             // if this is the last targeting phase before we hit,
             // make it so the firing entity is announced in the
@@ -390,7 +399,7 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
             targetHex = game.getBoard(target.getBoardId()).getHex(targetPos);
             heights.add((targetHex != null) ? game.getBoard(target.getBoardId()).getHex(targetPos).getLevel() : 0);
             artyMsg = "Artillery hit here on round " + game.getRoundCount()
-                  + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
+                  + ", fired by " + ArtilleryHandlerHelper.firingPlayerName(game, aaa)
                   + " (this hex is now an auto-hit)";
             game.getBoard(target.getBoardId()).addSpecialHexDisplay(targetPos,
                   new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
@@ -405,7 +414,7 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
             // Any drifted shots will be indicated at their end points
             artyMsg = "Bay Artillery missed here on round "
                   + game.getRoundCount() + ", by "
-                  + game.getPlayer(aaa.getPlayerId()).getName();
+                  + ArtilleryHandlerHelper.firingPlayerName(game, aaa);
             SpecialHexDisplay bayMissMarker = new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_MISS,
                   game.getRoundCount(), game.getPlayer(aaa.getPlayerId()), artyMsg);
             game.getBoard().addSpecialHexDisplay(originalPosition, bayMissMarker);

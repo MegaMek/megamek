@@ -201,7 +201,7 @@ public class Bloodnames2 {
         } else {
             // The same Bloodname filed under two Clans; keep the first and merge the Houses in, so a
             // shared legacy is not silently reduced to whichever file happened to load last.
-            existing.getHouses().addAll(bloodname.getHouses());
+            existing.addHouses(bloodname.getHouses());
         }
 
         housesByName.computeIfAbsent(key, ignored -> new ArrayList<>())

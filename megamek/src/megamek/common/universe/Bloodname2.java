@@ -33,6 +33,7 @@
 package megamek.common.universe;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -74,10 +75,24 @@ public class Bloodname2 {
     }
 
     /**
-     * @return every House descending from this Bloodname; usually one, occasionally more
+     * @return every House descending from this Bloodname; usually one, occasionally more. The list is
+     *       read-only - use {@link #addHouses(List)} to record another House against this name.
      */
     public List<BloodnameHouse> getHouses() {
-        return houses;
+        return Collections.unmodifiableList(houses);
+    }
+
+    /**
+     * Records further Houses against this Bloodname.
+     *
+     * <p>The same Bloodname can be filed under more than one Clan, and each file names its own Houses.
+     * Merging them here keeps a shared legacy whole instead of reducing it to whichever file loaded
+     * last.</p>
+     *
+     * @param additionalHouses the Houses to add
+     */
+    public void addHouses(List<BloodnameHouse> additionalHouses) {
+        houses.addAll(additionalHouses);
     }
 
     @Override

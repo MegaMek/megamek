@@ -113,9 +113,11 @@ class IncendiaryInfantryWeaponNameTest {
         EquipmentType launcher = EquipmentType.get("InfantryStandardSRMInferno");
 
         assertNotNull(launcher, "A stock unit mounts this launcher, so withdrawing it would break unit files");
-        assertTrue(launcher.getName().contains("Inferno"),
-              "This launcher carries true Inferno munitions and is not part of the incendiary rename; it is "
-                    + "named \"" + launcher.getName() + "\"");
+        // Pinned to the exact display name rather than to a substring: the test's whole claim is that this
+        // launcher is NOT renamed, and a substring check would sail through a partial rename that happened to
+        // keep the word Inferno in it.
+        assertEquals("SRM Launcher (Std, Two-Shot) - Inferno", launcher.getName(),
+              "This launcher carries true Inferno munitions and is not part of the incendiary rename");
     }
 
     @Test

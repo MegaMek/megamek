@@ -225,9 +225,7 @@ import megamek.common.weapons.infantry.support.recoillessRifle.InfantrySupportRe
 import megamek.common.weapons.infantry.support.recoillessRifle.InfantrySupportRecoillessRifleLightWeapon;
 import megamek.common.weapons.infantry.support.recoillessRifle.InfantrySupportRecoillessRifleMediumInfernoWeapon;
 import megamek.common.weapons.infantry.support.recoillessRifle.InfantrySupportRecoillessRifleMediumWeapon;
-import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMHeavyInfernoWeapon;
 import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMHeavyWeapon;
-import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMLightInfernoWeapon;
 import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMLightWeapon;
 import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMStandardInfernoWeapon;
 import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMStandardWeapon;

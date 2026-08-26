@@ -68,7 +68,9 @@ public class InfantrySupportSRMStandardInfernoWeapon extends InfantryWeapon {
         // units and saved games may mount it too, and withdrawing it would break those downstream. The light and
         // heavy versions had no users at all and are commented out in WeaponType.initializeTypes().
         // Unlike the incendiary weapons, which only convert damage to heat, this one carries true Inferno
-        // munitions and should deliver inferno missiles.
+        // munitions and should deliver inferno missiles. It does not yet: this PR is the rename, and the
+        // Damage/Heat modes below are still the incendiary handling. Giving it a working Inferno mode is
+        // MegaMek/megamek#8817, which builds on this branch.
         name = "SRM Launcher (Std, Two-Shot) - Inferno";
         setInternalName("InfantryStandardSRMInferno");
         addLookupName(name);

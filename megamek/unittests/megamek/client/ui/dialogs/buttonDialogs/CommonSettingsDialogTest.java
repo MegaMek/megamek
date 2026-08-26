@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -49,6 +50,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -57,17 +59,24 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.buttons.ColourSelectorButton;
+import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.client.ui.panels.CommonSettingsPane;
 import megamek.client.ui.settings.SettingsBadge;
+import megamek.client.ui.settings.SettingsButton;
 import megamek.client.ui.settings.SettingsCheckBox;
+import megamek.client.ui.settings.SettingsFormPanel;
 import megamek.client.ui.settings.SettingsPagePanel;
 import megamek.client.ui.util.PlayerColour;
 import megamek.client.ui.util.UIUtil;
@@ -151,7 +160,7 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
         JLabel localeLabel = new JLabel(Messages.getString("CommonSettingsDialog.locale"));
         JComboBox<String> localeControl = new JComboBox<>(new String[] { "English", "Deutsch" });
         JLabel scaleLabel = new JLabel(Messages.getString("CommonSettingsDialog.guiScale"));
-        JSlider scaleControl = new JSlider(7, 24);
+        JSlider scaleControl = CommonSettingsDialog.createGuiScaleSlider();
         JLabel userFilesLabel = new JLabel(Messages.getString("CommonSettingsDialog.userDir"));
         JTextField userFilesField = new JTextField("C:/Users/test/MegaMek", 20);
         JPanel userFilesControl = CommonSettingsDialog.applicationPathControl(
@@ -241,6 +250,733 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
         assertAudioSectionsHaveAlignedControlColumns();
     }
 
+    @Test
+    void laysOutGameBoardGeneralSectionsOnSharedBalancedTracks() {
+        JLabel tilesetLabel = new JLabel(Messages.getString("CommonSettingsDialog.tileset"));
+        JComboBox<String> tileset = new JComboBox<>(new String[] { "saxarba" });
+        JCheckBox noAction = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForNoAction"));
+        JCheckBox psr = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForPSR"));
+        JCheckBox masc = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForMASC"));
+        JCheckBox sprint = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForSprint"));
+        JCheckBox focus = new JCheckBox("Focus window when a phase begins");
+        JCheckBox endFiring = new JCheckBox("Skip Done when firing all weapons");
+        JLabel buttonsLabel = new JLabel(Messages.getString("CommonSettingsDialog.buttonsPerRow"));
+        JSpinner buttons = CommonSettingsDialog.createIntegerSpinner(12, 1, 1);
+        JLabel playersLabel = new JLabel(Messages.getString("CommonSettingsDialog.playersRemainingToShow"));
+        JSpinner players = CommonSettingsDialog.createIntegerSpinner(3, 0, 1);
+        JCheckBox zoom = new JCheckBox(Messages.getString("CommonSettingsDialog.mouseWheelZoom"));
+        JCheckBox flip = new JCheckBox(Messages.getString("CommonSettingsDialog.mouseWheelZoomFlip"));
+        JCheckBox summary = new JCheckBox("Save game summary image of board");
+        JLabel pathfinderLabel = new JLabel(Messages.getString("CommonSettingsDialog.pathFiderTimeLimit"));
+        JSpinner pathfinder = CommonSettingsDialog.createIntegerSpinner(500, 1, 1);
+        JCheckBox damageLabel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel"));
+        JCheckBox damageIcon = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageDecal"));
+        JCheckBox unitId = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId"));
+        ColourSelectorButton textColour = new ColourSelectorButton("Unit Text Color");
+        ColourSelectorButton validColour = new ColourSelectorButton("Unit Valid Color");
+        ColourSelectorButton selectedColour = new ColourSelectorButton("Unit Selected Color");
+
+        JPanel tilesetGrid = CommonSettingsDialog.createGameBoardFieldGrid(
+              "TestGameBoardTilesetGrid", tilesetLabel, tileset);
+        JPanel confirmationGrid = CommonSettingsDialog.createGameBoardOptionGrid(
+              "TestGameBoardConfirmationsGrid", noAction, psr, masc, sprint);
+        JPanel actionGrid = CommonSettingsDialog.createGameBoardOptionGrid(
+              "TestGameBoardActionsGrid", focus, endFiring);
+        JPanel controlsGrid = CommonSettingsDialog.createGameBoardControlsGrid(
+              "TestGameBoardControlsGrid", buttonsLabel, buttons, playersLabel, players, zoom, flip, summary);
+        JPanel pathfinderGrid = CommonSettingsDialog.createGameBoardFieldGrid(
+              "TestGameBoardPathfinderGrid", pathfinderLabel, pathfinder);
+        JPanel unitsGrid = CommonSettingsDialog.createGameBoardGroupedOptionGrid(
+              "TestGameBoardUnitsGrid", List.of(damageLabel, damageIcon, unitId),
+              List.of(textColour, validColour, selectedColour));
+
+        JPanel tilesetSection = settingsGroup(List.of(row(tilesetGrid)));
+        JPanel confirmationSection = settingsGroup(List.of(row(confirmationGrid)));
+        JPanel actionSection = settingsGroup(List.of(row(actionGrid)));
+        JPanel controlsSection = settingsGroup(List.of(row(controlsGrid)));
+        JPanel pathfinderSection = settingsGroup(List.of(row(pathfinderGrid)));
+        JPanel unitsSection = settingsGroup(List.of(row(unitsGrid)));
+        CommonSettingsPane pane = createSettingsPane("gameBoardGeneral",
+              tilesetSection, confirmationSection, actionSection, controlsSection, pathfinderSection, unitsSection);
+        Component controlsFiller = controlsGrid.getComponent(7);
+        Component unitOptionFiller = unitsGrid.getComponent(3);
+        Component unitColourFiller = unitsGrid.getComponent(7);
+
+        assertSame(tileset, tilesetLabel.getLabelFor());
+        assertSame(buttons, buttonsLabel.getLabelFor());
+        assertSame(players, playersLabel.getLabelFor());
+        assertSame(pathfinder, pathfinderLabel.getLabelFor());
+        assertAtConstrainedStandardAndWideWidths(pane,
+              List.of(tilesetSection, confirmationSection, actionSection,
+                    controlsSection, pathfinderSection, unitsSection),
+              laidOutPane -> assertAlignedBalancedRows(laidOutPane, List.of(
+                    List.of(tilesetLabel, tileset),
+                    List.of(noAction, psr), List.of(masc, sprint),
+                    List.of(focus, endFiring),
+                    List.of(buttonsLabel, buttons), List.of(playersLabel, players),
+                    List.of(zoom, flip), List.of(summary, controlsFiller),
+                    List.of(pathfinderLabel, pathfinder),
+                    List.of(damageLabel, damageIcon), List.of(unitId, unitOptionFiller),
+                    List.of(textColour, validColour), List.of(selectedColour, unitColourFiller))));
+    }
+
+    @Test
+    void constrainsGameBoardGeneralNumericSpinners() {
+        JSpinner buttons = CommonSettingsDialog.createIntegerSpinner(0, 1, 1);
+        JSpinner players = CommonSettingsDialog.createIntegerSpinner(-1, 0, 1);
+        JSpinner pathfinder = CommonSettingsDialog.createIntegerSpinner(500, 1, 1);
+
+        assertEquals(1, buttons.getValue());
+        assertEquals(1, ((javax.swing.SpinnerNumberModel) buttons.getModel()).getMinimum());
+        assertEquals(0, players.getValue());
+        assertEquals(0, ((javax.swing.SpinnerNumberModel) players.getModel()).getMinimum());
+        assertEquals(500, pathfinder.getValue());
+        assertEquals(1, ((javax.swing.SpinnerNumberModel) pathfinder.getModel()).getMinimum());
+        assertEquals(1, ((javax.swing.SpinnerNumberModel) pathfinder.getModel()).getStepSize());
+    }
+
+    @Test
+    void gameBoardGeneralLabelsFitStandardBalancedCells() {
+        int cellWidth = UIUtil.scaleForGUI(SettingsFormPanel.DEFAULT_LABEL_WIDTH);
+        List<String> keys = List.of(
+              "CommonSettingsDialog.nagForNoAction",
+              "CommonSettingsDialog.nagForCrushingBuildings",
+              "CommonSettingsDialog.nagForMechanicalJumpFallDamage",
+              "CommonSettingsDialog.nagForWiGELanding",
+              "CommonSettingsDialog.nagForUnJamRAC",
+              "CommonSettingsDialog.nagForLaunchDoors",
+              "CommonSettingsDialog.nagForOverheat",
+              "CommonSettingsDialog.nagForDishonor",
+              "CommonSettingsDialog.nagForOddSizedBoard",
+              "CommonSettingsDialog.autoDeclareSearchlight",
+              "CommonSettingsDialog.useSoftCenter");
+
+                for (String key : keys) {
+            JCheckBox checkBox = new JCheckBox(Messages.getString(key));
+            assertTrue(checkBox.getPreferredSize().width <= cellWidth,
+                                    key + " requires " + checkBox.getPreferredSize().width + "px");
+        }
+                JLabel playersLabel = new JLabel(Messages.getString("CommonSettingsDialog.playersRemainingToShow"));
+                assertTrue(playersLabel.getPreferredSize().width <= cellWidth);
+        }
+
+            @Test
+            void laysOutGameBoardAppearanceSectionsOnSharedBalancedTracks() {
+              JCheckBox animate = new JCheckBox(Messages.getString("CommonSettingsDialog.animateMove"));
+              JCheckBox wrecks = new JCheckBox(Messages.getString("CommonSettingsDialog.showWrecks"));
+              JCheckBox quality = new JCheckBox(Messages.getString("CommonSettingsDialog.highQualityGraphics"));
+              JCheckBox performance = new JCheckBox(Messages.getString("CommonSettingsDialog.highPerformanceGraphics"));
+              JCheckBox mapSheets = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapsheets"));
+              ColourSelectorButton mapSheetColour = new ColourSelectorButton("Map Sheet Color");
+              JCheckBox ambientShadows = new JCheckBox(Messages.getString("CommonSettingsDialog.aOHexSHadows"));
+              JCheckBox spriteShadows = new JCheckBox(Messages.getString("CommonSettingsDialog.useShadowMap"));
+              JCheckBox inclines = new JCheckBox(Messages.getString("CommonSettingsDialog.useInclines"));
+              JCheckBox level = new JCheckBox(Messages.getString("CommonSettingsDialog.levelHighlight"));
+              ColourSelectorButton boardText = new ColourSelectorButton("Board Text Color");
+              ColourSelectorButton spaceText = new ColourSelectorButton("Board Space Text Color");
+              ColourSelectorButton buildingText = new ColourSelectorButton("Building Text Color");
+              JCheckBox demolitionOutline = new JCheckBox(
+                  Messages.getString("CommonSettingsDialog.demolitionChargeHazardOutline"));
+
+              JPanel renderingGrid = CommonSettingsDialog.createGameBoardGroupedOptionGrid(
+                  "TestGameBoardRenderingGrid",
+                  List.of(animate, wrecks, quality, performance),
+                  List.of(mapSheets, ambientShadows, spriteShadows, inclines, level),
+                  List.of(mapSheetColour, boardText, spaceText, buildingText),
+                  List.of(demolitionOutline));
+
+              JLabel attackLabel = new JLabel(Messages.getString("CommonSettingsDialog.attackArrowTransparency"));
+              JSpinner attack = new JSpinner();
+              JLabel ecmLabel = new JLabel(Messages.getString("CommonSettingsDialog.ecmTransparency"));
+              JSpinner ecm = new JSpinner();
+              JLabel pipLabel = new JLabel(Messages.getString("CommonSettingsDialog.tmmPipMode"));
+              JComboBox<String> pips = new JComboBox<>(new String[] { "No Pips" });
+              JPanel indicatorsGrid = CommonSettingsDialog.createGameBoardFieldGrid(
+                  "TestGameBoardIndicatorsGrid", attackLabel, attack, ecmLabel, ecm, pipLabel, pips);
+
+              JLabel fontLabel = new JLabel(Messages.getString("CommonSettingsDialog.moveFontType"));
+              JComboBox<String> font = new JComboBox<>(new String[] { "Noto Sans" });
+              JLabel sizeLabel = new JLabel(Messages.getString("CommonSettingsDialog.moveFontSize"));
+              JSpinner size = CommonSettingsDialog.createIntegerSpinner(26, 1, 1);
+              JLabel styleLabel = new JLabel(Messages.getString("CommonSettingsDialog.moveFontStyle"));
+              JComboBox<String> style = new JComboBox<>(new String[] { "Plain" });
+              ColourSelectorButton defaultMove = new ColourSelectorButton("Move Default Color");
+              ColourSelectorButton illegalMove = new ColourSelectorButton("Move Illegal Color");
+              ColourSelectorButton jumpMove = new ColourSelectorButton("Move Jump Color");
+              SettingsFormPanel movementGrid = CommonSettingsDialog.createGameBoardFieldGrid(
+                  "TestGameBoardMovementGrid", fontLabel, font, sizeLabel, size, styleLabel, style);
+              movementGrid.addEqualWidthComponentGrid(2, defaultMove, illegalMove, jumpMove);
+
+              ColourSelectorButton visibleFire = new ColourSelectorButton("Firing Solutions Color - Can See");
+              ColourSelectorButton hiddenFire = new ColourSelectorButton("Firing Solutions Color - Can't See");
+              ColourSelectorButton sensorRange = new ColourSelectorButton("Sensor Range Color");
+              JPanel fireGrid = CommonSettingsDialog.createGameBoardOptionGrid(
+                  "TestGameBoardFireGrid", visibleFire, hiddenFire, sensorRange);
+
+              JPanel renderingSection = settingsGroup(List.of(row(renderingGrid)));
+              JPanel indicatorsSection = settingsGroup(List.of(row(indicatorsGrid)));
+              JPanel movementSection = settingsGroup(List.of(row(movementGrid)));
+              JPanel fireSection = settingsGroup(List.of(row(fireGrid)));
+              CommonSettingsPane pane = createSettingsPane("gameBoardAppearance",
+                  renderingSection, indicatorsSection, movementSection, fireSection);
+
+              Component renderingOptionFiller = renderingGrid.getComponent(9);
+              Component demolitionFiller = renderingGrid.getComponent(15);
+              Component movementFiller = movementGrid.getComponent(9);
+              Component fireFiller = fireGrid.getComponent(3);
+
+              assertSame(attack, attackLabel.getLabelFor());
+              assertSame(ecm, ecmLabel.getLabelFor());
+              assertSame(pips, pipLabel.getLabelFor());
+              assertSame(font, fontLabel.getLabelFor());
+              assertSame(size, sizeLabel.getLabelFor());
+              assertSame(style, styleLabel.getLabelFor());
+              assertEquals(26, size.getValue());
+              assertEquals(1, ((javax.swing.SpinnerNumberModel) size.getModel()).getMinimum());
+              assertEquals(1, ((javax.swing.SpinnerNumberModel) size.getModel()).getStepSize());
+              assertAtConstrainedStandardAndWideWidths(pane,
+                  List.of(renderingSection, indicatorsSection, movementSection, fireSection),
+                  laidOutPane -> assertAlignedBalancedRows(laidOutPane, List.of(
+                      List.of(animate, wrecks), List.of(quality, performance),
+                      List.of(mapSheets, ambientShadows), List.of(spriteShadows, inclines),
+                      List.of(level, renderingOptionFiller),
+                      List.of(mapSheetColour, boardText), List.of(spaceText, buildingText),
+                      List.of(demolitionOutline, demolitionFiller),
+                      List.of(attackLabel, attack), List.of(ecmLabel, ecm), List.of(pipLabel, pips),
+                      List.of(fontLabel, font), List.of(sizeLabel, size), List.of(styleLabel, style),
+                      List.of(defaultMove, illegalMove), List.of(jumpMove, movementFiller),
+                      List.of(visibleFire, hiddenFire), List.of(sensorRange, fireFiller))));
+            }
+
+            @Test
+            void gameBoardAppearanceLabelsFitStandardBalancedCells() {
+              int cellWidth = UIUtil.scaleForGUI(SettingsFormPanel.DEFAULT_LABEL_WIDTH);
+              List<String> keys = List.of(
+                  "CommonSettingsDialog.aOHexSHadows",
+                  "CommonSettingsDialog.useShadowMap",
+                  "CommonSettingsDialog.useInclines",
+                  "CommonSettingsDialog.levelHighlight",
+                  "CommonSettingsDialog.floatingIso",
+                  "CommonSettingsDialog.demolitionChargeHazardOutline");
+
+              for (String key : keys) {
+                JCheckBox checkBox = new JCheckBox(Messages.getString(key));
+                assertTrue(checkBox.getPreferredSize().width <= cellWidth,
+                    key + " requires " + checkBox.getPreferredSize().width + "px");
+              }
+            }
+
+            @Test
+            void laysOutGameBoardFieldOfViewAsBalancedHybridForm() {
+              JCheckBox insideEnabled = new JCheckBox(
+                  Messages.getString("TacticalOverlaySettingsDialog.FovInsideEnabled"));
+              JLabel insideOpacityLabel = new JLabel(
+                  Messages.getString("TacticalOverlaySettingsDialog.FovHighlightAlpha"));
+              JSlider insideOpacity = new JSlider(0, 255, 40);
+              JSpinner insidePercent = new JSpinner(new javax.swing.SpinnerNumberModel(0, 0, 100, 1));
+              JPanel insideOpacityControl = CommonSettingsDialog.createGameBoardFovOpacityControl(
+                  insideOpacity, insidePercent);
+              JLabel rangesLabel = new JLabel(
+                  Messages.getString("TacticalOverlaySettingsDialog.FovHighlightRanges"));
+              FovHighlightRingsPanel ranges = new FovHighlightRingsPanel(
+                  "5 10", "0.3 1 1 ; 0.6 1 1", () -> { });
+              SettingsFormPanel insideGrid = CommonSettingsDialog.createGameBoardFovInsideGrid(
+                  insideEnabled, insideOpacityLabel, insideOpacityControl, rangesLabel, ranges);
+
+              JCheckBox outsideEnabled = new JCheckBox(
+                  Messages.getString("TacticalOverlaySettingsDialog.FovOutsideEnabled"));
+              JCheckBox grayscale = new JCheckBox(
+                  Messages.getString("TacticalOverlaySettingsDialog.FovGrayscale"));
+              JLabel outsideOpacityLabel = new JLabel(
+                  Messages.getString("TacticalOverlaySettingsDialog.FovDarkenAlpha"));
+              JSlider outsideOpacity = new JSlider(0, 255, 100);
+              JSpinner outsidePercent = new JSpinner(new javax.swing.SpinnerNumberModel(0, 0, 100, 1));
+              JPanel outsideOpacityControl = CommonSettingsDialog.createGameBoardFovOpacityControl(
+                  outsideOpacity, outsidePercent);
+              JLabel stripesLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovStripes"));
+              JSpinner stripes = new JSpinner(new javax.swing.SpinnerNumberModel(35, 0, 50, 1));
+              SettingsFormPanel outsideGrid = CommonSettingsDialog.createGameBoardFovOutsideGrid(
+                  outsideEnabled, grayscale, outsideOpacityLabel, outsideOpacityControl, stripesLabel, stripes);
+
+              JPanel insideSection = settingsGroup(List.of(row(insideGrid)));
+              JPanel outsideSection = settingsGroup(List.of(row(outsideGrid)));
+              CommonSettingsPane pane = createSettingsPane("gameBoardFieldOfView", insideSection, outsideSection);
+              SettingsFormPanel insideFields = (SettingsFormPanel) insideGrid.getComponent(2);
+              JPanel insideOpacityField = (JPanel) insideFields.getComponent(0);
+              Component insideFieldFiller = insideFields.getComponent(1);
+              JPanel rangesField = (JPanel) insideGrid.getComponent(3);
+              SettingsFormPanel outsideOptions = (SettingsFormPanel) outsideGrid.getComponent(0);
+              SettingsFormPanel outsideFields = (SettingsFormPanel) outsideGrid.getComponent(1);
+              JPanel outsideOpacityField = (JPanel) outsideFields.getComponent(0);
+              JPanel stripesField = (JPanel) outsideFields.getComponent(1);
+
+              assertSame(insideOpacity, insideOpacityLabel.getLabelFor());
+              assertSame(ranges, rangesLabel.getLabelFor());
+              assertSame(outsideOpacity, outsideOpacityLabel.getLabelFor());
+              assertSame(stripes, stripesLabel.getLabelFor());
+              assertEquals(16, insidePercent.getValue());
+              assertEquals(39, outsidePercent.getValue());
+              assertFalse(insideOpacity.getPaintTicks());
+              assertFalse(insideOpacity.getPaintLabels());
+              assertAtConstrainedStandardAndWideWidths(pane, List.of(insideSection, outsideSection), laidOutPane -> {
+                assertAlignedBalancedRows(insideFields, List.of(
+                    List.of(insideOpacityField, insideFieldFiller)));
+                assertAlignedBalancedRows(outsideGrid, List.of(
+                    List.of(outsideEnabled, grayscale),
+                    List.of(outsideOpacityField, stripesField)));
+                assertSame(outsideEnabled.getParent(), outsideOptions);
+                assertEquals(insideFields.getX(), rangesField.getX());
+                assertEquals(insideFields.getWidth(), rangesField.getWidth());
+                assertTrue(insideOpacity.getWidth() >= UIUtil.scaleForGUI(80));
+                assertTrue(outsideOpacity.getWidth() >= UIUtil.scaleForGUI(80));
+              });
+            }
+
+            @Test
+            void synchronizesGameBoardFieldOfViewOpacityPercentages() {
+              JSlider opacity = new JSlider(0, 255, 40);
+              JSpinner percentage = new JSpinner(new javax.swing.SpinnerNumberModel(0, 0, 100, 1));
+              CommonSettingsDialog.createGameBoardFovOpacityControl(opacity, percentage);
+
+              assertEquals(16, percentage.getValue());
+              percentage.setValue(50);
+              assertEquals(128, opacity.getValue());
+              opacity.setValue(255);
+              assertEquals(100, percentage.getValue());
+              assertEquals(0, CommonSettingsDialog.fovPercentToAlpha(0));
+              assertEquals(0, CommonSettingsDialog.fovAlphaToPercent(0));
+            }
+
+            @Test
+            void gameBoardFieldOfViewLabelsFitStandardBalancedCells() {
+              int cellWidth = UIUtil.scaleForGUI(SettingsFormPanel.DEFAULT_LABEL_WIDTH);
+              List<String> checkBoxKeys = List.of(
+                  "TacticalOverlaySettingsDialog.FovInsideEnabled",
+                  "TacticalOverlaySettingsDialog.FovOutsideEnabled",
+                  "TacticalOverlaySettingsDialog.FovGrayscale");
+              List<String> labelKeys = List.of(
+                  "TacticalOverlaySettingsDialog.FovHighlightAlpha",
+                  "TacticalOverlaySettingsDialog.FovHighlightRanges",
+                  "TacticalOverlaySettingsDialog.FovDarkenAlpha",
+                  "TacticalOverlaySettingsDialog.FovStripes");
+
+              for (String key : checkBoxKeys) {
+                JCheckBox checkBox = new JCheckBox(Messages.getString(key));
+                assertTrue(checkBox.getPreferredSize().width <= cellWidth,
+                    key + " requires " + checkBox.getPreferredSize().width + "px");
+              }
+              for (String key : labelKeys) {
+                JLabel label = new JLabel(Messages.getString(key));
+                assertTrue(label.getPreferredSize().width <= cellWidth,
+                    key + " requires " + label.getPreferredSize().width + "px");
+              }
+            }
+
+            @Test
+            void laysOutTooltipSectionsOnBalancedTracks() {
+                JLabel popupLabel = new JLabel(Messages.getString("CommonSettingsDialog.tooltipDelay"));
+                JSpinner popup = CommonSettingsDialog.createTooltipIntegerSpinner(1000, 0, 100);
+                JLabel dismissLabel = new JLabel(Messages.getString("CommonSettingsDialog.tooltipDismissDelay"));
+                JSpinner dismiss = CommonSettingsDialog.createTooltipIntegerSpinner(-1, -1, 1);
+                JLabel suppressionLabel = new JLabel(Messages.getString("CommonSettingsDialog.tooltipDistSuppression"));
+                JSpinner suppression = CommonSettingsDialog.createTooltipIntegerSpinner(60, 0, 1);
+                JLabel fontLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitTooltipFontSizeMod"));
+                JComboBox<String> font = new JComboBox<>(new String[] { "small", "medium", "large" });
+                JCheckBox weapons = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsinTT"));
+                JCheckBox locations = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsLocinTT"));
+                JCheckBox portrait = new JCheckBox(Messages.getString("CommonSettingsDialog.showPilotPortraitTT"));
+                ColourSelectorButton foreground = new ColourSelectorButton("Foreground Color");
+                ColourSelectorButton deEmphasized = new ColourSelectorButton("De-emphasized Color");
+                ColourSelectorButton building = new ColourSelectorButton("Building Color");
+                SettingsFormPanel contentGrid = CommonSettingsDialog.createTooltipContentGrid(
+                    new JComponent[] {
+                                       popupLabel, popup, dismissLabel, dismiss,
+                                       suppressionLabel, suppression, fontLabel, font },
+                    new JComponent[] { weapons, locations, portrait },
+                    new JComponent[] { foreground, deEmphasized, building });
+
+                JCheckBox enabled = new JCheckBox(Messages.getString("CommonSettingsDialog.showArmorMiniVisTT"));
+                ColourSelectorButton intact = new ColourSelectorButton("Intact Color");
+                ColourSelectorButton partial = new ColourSelectorButton("Partially Damaged Color");
+                ColourSelectorButton damaged = new ColourSelectorButton("Damaged Color");
+                JLabel armorLabel = new JLabel(Messages.getString("CommonSettingsDialog.armorMiniArmorChar"));
+                JComboBox<CommonSettingsDialog.TooltipSymbolOption> armor = CommonSettingsDialog
+                    .createTooltipSymbolSelector("\u2B1B");
+                JLabel internalLabel = new JLabel(Messages.getString(
+                    "CommonSettingsDialog.armorMiniInternalStructureChar"));
+                JComboBox<CommonSettingsDialog.TooltipSymbolOption> internal = CommonSettingsDialog
+                    .createTooltipSymbolSelector("\u26CA");
+                JLabel unitsLabel = new JLabel(Messages.getString("CommonSettingsDialog.armorMiniUnitsPerBlock"));
+                JSpinner units = CommonSettingsDialog.createTooltipIntegerSpinner(10, 1, 1);
+                SettingsFormPanel armorGrid = CommonSettingsDialog.createTooltipArmorGrid(enabled,
+                    new JComponent[] { intact, partial, damaged },
+                    new JComponent[] {
+                                       armorLabel, armor, internalLabel, internal, unitsLabel, units });
+
+                JPanel contentSection = settingsGroup(List.of(row(contentGrid)));
+                JPanel armorSection = settingsGroup(List.of(row(armorGrid)));
+                CommonSettingsPane pane = createSettingsPane("tooltips", contentSection, armorSection);
+                Component contentOptionFiller = contentGrid.getComponent(11);
+                Component contentColourFiller = contentGrid.getComponent(15);
+                Component armorEnabledFiller = armorGrid.getComponent(1);
+                Component armorColourFiller = armorGrid.getComponent(5);
+
+                assertSame(popup, popupLabel.getLabelFor());
+                assertSame(dismiss, dismissLabel.getLabelFor());
+                assertSame(suppression, suppressionLabel.getLabelFor());
+                assertSame(font, fontLabel.getLabelFor());
+                assertSame(armor, armorLabel.getLabelFor());
+                assertSame(internal, internalLabel.getLabelFor());
+                assertSame(units, unitsLabel.getLabelFor());
+                assertAtConstrainedStandardAndWideWidths(pane, List.of(contentSection, armorSection), laidOutPane -> {
+                    assertAlignedBalancedRows(contentGrid,
+                        List.of(
+                            List.of(popupLabel, popup),
+                            List.of(dismissLabel, dismiss),
+                            List.of(suppressionLabel, suppression),
+                            List.of(fontLabel, font),
+                            List.of(weapons, locations),
+                            List.of(portrait, contentOptionFiller),
+                            List.of(foreground, deEmphasized),
+                            List.of(building, contentColourFiller)));
+                    assertAlignedBalancedRows(armorGrid,
+                        List.of(
+                            List.of(enabled, armorEnabledFiller),
+                            List.of(intact, partial),
+                            List.of(damaged, armorColourFiller),
+                            List.of(armorLabel, armor),
+                            List.of(internalLabel, internal),
+                            List.of(unitsLabel, units)));
+                });
+            }
+
+            @Test
+            void constrainsTooltipNumericSpinnersToValidMinimums() {
+                JSpinner popup = CommonSettingsDialog.createTooltipIntegerSpinner(-5, 0, 100);
+                JSpinner dismiss = CommonSettingsDialog.createTooltipIntegerSpinner(-1, -1, 1);
+                JSpinner units = CommonSettingsDialog.createTooltipIntegerSpinner(10, 1, 1);
+
+                assertEquals(0, popup.getValue());
+                assertEquals(0, ((javax.swing.SpinnerNumberModel) popup.getModel()).getMinimum());
+                assertEquals(100, ((javax.swing.SpinnerNumberModel) popup.getModel()).getStepSize());
+                assertEquals(-1, dismiss.getValue());
+                assertEquals(-1, ((javax.swing.SpinnerNumberModel) dismiss.getModel()).getMinimum());
+                assertEquals(1, ((javax.swing.SpinnerNumberModel) dismiss.getModel()).getStepSize());
+                assertEquals(10, units.getValue());
+                assertEquals(1, ((javax.swing.SpinnerNumberModel) units.getModel()).getMinimum());
+                assertEquals(1, ((javax.swing.SpinnerNumberModel) units.getModel()).getStepSize());
+            }
+
+            @Test
+            void offersDescriptiveTooltipSymbolsAndPreservesCustomValues() {
+                JComboBox<CommonSettingsDialog.TooltipSymbolOption> shipped = CommonSettingsDialog
+                    .createTooltipSymbolSelector("\u26CA");
+                JComboBox<CommonSettingsDialog.TooltipSymbolOption> custom = CommonSettingsDialog
+                    .createTooltipSymbolSelector("custom-symbol");
+
+                assertFalse(shipped.isEditable());
+                assertEquals("\u26CA", CommonSettingsDialog.selectedTooltipSymbol(shipped));
+                assertTrue(shipped.getSelectedItem().toString().contains("Shield"));
+                assertEquals("custom-symbol", CommonSettingsDialog.selectedTooltipSymbol(custom));
+                assertTrue(custom.getSelectedItem().toString().contains("Custom"));
+                assertEquals(shipped.getItemCount() + 1, custom.getItemCount());
+            }
+
+            @Test
+            void tooltipLabelsFitStandardBalancedCells() {
+                int cellWidth = UIUtil.scaleForGUI(SettingsFormPanel.DEFAULT_LABEL_WIDTH);
+                List<String> labelKeys = List.of(
+                    "CommonSettingsDialog.tooltipDelay",
+                    "CommonSettingsDialog.tooltipDismissDelay",
+                    "CommonSettingsDialog.tooltipDistSuppression",
+                    "CommonSettingsDialog.unitTooltipFontSizeMod",
+                    "CommonSettingsDialog.armorMiniArmorChar",
+                    "CommonSettingsDialog.armorMiniCapArmorChar",
+                    "CommonSettingsDialog.armorMiniCriticalChar",
+                    "CommonSettingsDialog.armorMiniDestroyedChar",
+                    "CommonSettingsDialog.armorMiniInternalStructureChar",
+                    "CommonSettingsDialog.armorMiniUnitsPerBlock");
+
+                for (String key : labelKeys) {
+                    JLabel label = new JLabel(Messages.getString(key));
+                    assertTrue(label.getPreferredSize().width <= cellWidth,
+                        key + " requires " + label.getPreferredSize().width + "px");
+                }
+            }
+
+            @Test
+            void laysOutUnitDisplaySectionsWithoutWideningThePage() {
+              JLabel seenByLabel = new JLabel(Messages.getString("CommonSettingsDialog.seenby.label"));
+              JComboBox<String> seenBy = new JComboBox<>(new String[] { "Someone", "Team", "Player" });
+              JLabel[] heatLabels = new JLabel[6];
+              JSpinner[] heatSpinners = new JSpinner[6];
+              ColourSelectorButton[] heatColours = new ColourSelectorButton[6];
+              for (int index = 0; index < heatLabels.length; index++) {
+                heatLabels[index] = new JLabel(Messages.getString(
+                    "CommonSettingsDialog.unitDisplayHeatMaximum", "Level " + (index + 1)));
+                heatSpinners[index] = CommonSettingsDialog.createIntegerSpinner(index + 4, 0, 1);
+                heatColours[index] = new ColourSelectorButton("Level " + (index + 1) + " colour");
+              }
+              JLabel overheatLabel = new JLabel(Messages.getString(
+                  "CommonSettingsDialog.unitDisplayHeatAboveMaximum"));
+              ColourSelectorButton overheatColour = new ColourSelectorButton("Overheat colour");
+              SettingsFormPanel heatGrid = CommonSettingsDialog.createUnitDisplayHeatGrid(
+                  seenByLabel, seenBy, heatLabels, heatSpinners, heatColours, overheatLabel, overheatColour);
+
+              DefaultListModel<String> order = unitDisplayOrderModel();
+              SettingsFormPanel orderGrid = CommonSettingsDialog.createUnitDisplayOrderGrid(order);
+
+              JLabel sortLabel = new JLabel(Messages.getString("CommonSettingsDialog.defaultWeaponSortOrder"));
+              JComboBox<String> sort = new JComboBox<>(new String[] { "Name", "Range" });
+              JLabel heightLabel = new JLabel(Messages.getString("CommonSettingsDialog.weaponListHeight"));
+              JSpinner height = CommonSettingsDialog.createIntegerSpinner(200, 1, 1);
+              SettingsFormPanel weaponsGrid = CommonSettingsDialog.createGameBoardFieldGrid(
+                  "TestUnitDisplayWeaponsGrid", sortLabel, sort, heightLabel, height);
+
+              JLabel armorLargeLabel = new JLabel(Messages.getString(
+                  "CommonSettingsDialog.unitDisplayMekArmorLargeFontSize"));
+              JSpinner armorLarge = CommonSettingsDialog.createIntegerSpinner(12, 1, 1);
+              JLabel armorMediumLabel = new JLabel(Messages.getString(
+                  "CommonSettingsDialog.unitDisplayMekArmorMediumFontSize"));
+              JSpinner armorMedium = CommonSettingsDialog.createIntegerSpinner(10, 1, 1);
+              JLabel armorSmallLabel = new JLabel(Messages.getString(
+                  "CommonSettingsDialog.unitDisplayMekArmorSmallFontSize"));
+              JSpinner armorSmall = CommonSettingsDialog.createIntegerSpinner(9, 1, 1);
+              JLabel informationLargeLabel = new JLabel(Messages.getString(
+                  "CommonSettingsDialog.unitDisplayMekLargeFontSize"));
+              JSpinner informationLarge = CommonSettingsDialog.createIntegerSpinner(12, 1, 1);
+              JLabel informationMediumLabel = new JLabel(Messages.getString(
+                  "CommonSettingsDialog.unitDisplayMekMediumFontSize"));
+              JSpinner informationMedium = CommonSettingsDialog.createIntegerSpinner(10, 1, 1);
+              SettingsFormPanel fontsGrid = CommonSettingsDialog.createGameBoardFieldGrid(
+                  "TestUnitDisplayFontsGrid",
+                  armorLargeLabel, armorLarge, armorMediumLabel, armorMedium, armorSmallLabel, armorSmall,
+                  informationLargeLabel, informationLarge, informationMediumLabel, informationMedium);
+
+              JPanel heatSection = settingsGroup(List.of(row(heatGrid)));
+              JPanel orderSection = settingsGroup(List.of(row(orderGrid)));
+              JPanel weaponsSection = settingsGroup(List.of(row(weaponsGrid)));
+              JPanel fontsSection = settingsGroup(List.of(row(fontsGrid)));
+              CommonSettingsPane pane = createSettingsPane("unitDisplay",
+                  heatSection, orderSection, weaponsSection, fontsSection);
+
+              assertSame(seenBy, seenByLabel.getLabelFor());
+              for (int index = 0; index < heatLabels.length; index++) {
+                assertSame(heatSpinners[index], heatLabels[index].getLabelFor());
+                assertCell(heatGrid, heatGrid.getComponent(2 + (index * 2)), 0, index + 1);
+                assertCell(heatGrid, heatColours[index], 1, index + 1);
+              }
+              assertSame(overheatColour, overheatLabel.getLabelFor());
+              assertSame(sort, sortLabel.getLabelFor());
+              assertSame(height, heightLabel.getLabelFor());
+              assertSame(armorLarge, armorLargeLabel.getLabelFor());
+              assertSame(informationMedium, informationMediumLabel.getLabelFor());
+
+              assertAtConstrainedStandardAndWideWidths(pane,
+                  List.of(heatGrid, orderGrid, weaponsGrid, fontsGrid), laidOutPane -> {
+                    List<List<Component>> heatRows = new ArrayList<>();
+                    heatRows.add(List.of(seenByLabel, seenBy));
+                    for (int index = 0; index < heatLabels.length; index++) {
+                        heatRows.add(List.of(heatGrid.getComponent(2 + (index * 2)), heatColours[index]));
+                    }
+                    heatRows.add(List.of(overheatLabel, overheatColour));
+                    assertAlignedBalancedRows(heatGrid, heatRows);
+                    assertAlignedBalancedRows(weaponsGrid, List.of(
+                        List.of(sortLabel, sort), List.of(heightLabel, height)));
+                    assertAlignedBalancedRows(fontsGrid, List.of(
+                        List.of(armorLargeLabel, armorLarge), List.of(armorMediumLabel, armorMedium),
+                        List.of(armorSmallLabel, armorSmall),
+                        List.of(informationLargeLabel, informationLarge),
+                        List.of(informationMediumLabel, informationMedium)));
+                    assertThreeColumnUnitDisplayOrderGrid(orderGrid);
+                    assertEquals(heatGrid.getWidth(), orderGrid.getWidth());
+                    assertEquals(orderGrid.getWidth(), weaponsGrid.getWidth());
+                    assertEquals(weaponsGrid.getWidth(), fontsGrid.getWidth());
+                  });
+            }
+
+            @Test
+            void swapsNonTabbedUnitDisplayPanelsWithoutDuplicates() {
+              DefaultListModel<String> order = unitDisplayOrderModel();
+              SettingsFormPanel orderGrid = CommonSettingsDialog.createUnitDisplayOrderGrid(order);
+              JComboBox<?> topLeft = findComponent((JPanel) orderGrid.getComponent(0), JComboBox.class);
+
+              topLeft.setSelectedItem(UnitDisplayPanel.NON_TABBED_WEAPON);
+
+              assertEquals(UnitDisplayPanel.NON_TABBED_WEAPON, order.get(0));
+              assertEquals(UnitDisplayPanel.NON_TABBED_GENERAL, order.get(3));
+              List<String> panelNames = java.util.stream.IntStream.range(0, order.size())
+                  .mapToObj(order::get)
+                  .toList();
+              assertEquals(6, new HashSet<>(panelNames).size());
+              for (int index = 0; index < orderGrid.getComponentCount(); index++) {
+                JComboBox<?> selector = findComponent((JPanel) orderGrid.getComponent(index), JComboBox.class);
+                assertEquals(order.get(index), selector.getSelectedItem());
+              }
+            }
+
+                        @Test
+                        void loadsUnitDisplayOrderWithoutRecursion() {
+                            DefaultListModel<String> order = new DefaultListModel<>();
+                            order.addElement("stale");
+                            List<String> savedOrder = List.of(
+                                    UnitDisplayPanel.NON_TABBED_GENERAL, UnitDisplayPanel.NON_TABBED_WEAPON,
+                                    UnitDisplayPanel.NON_TABBED_EXTRA, UnitDisplayPanel.NON_TABBED_PILOT,
+                                    UnitDisplayPanel.NON_TABBED_SYSTEM, UnitDisplayPanel.NON_TABBED_ARMOR);
+
+                            CommonSettingsDialog.loadUnitDisplayOrder(order, savedOrder);
+
+                            assertEquals(savedOrder, java.util.stream.IntStream.range(0, order.size())
+                                    .mapToObj(order::get)
+                                    .toList());
+                        }
+
+            @Test
+            void constrainsUnitDisplayNumericSpinners() {
+              JSpinner heat = CommonSettingsDialog.createIntegerSpinner(-1, 0, 1);
+              JSpinner weaponHeight = CommonSettingsDialog.createIntegerSpinner(0, 1, 1);
+              JSpinner fontSize = CommonSettingsDialog.createIntegerSpinner(0, 1, 1);
+
+              assertEquals(0, heat.getValue());
+              assertEquals(0, ((javax.swing.SpinnerNumberModel) heat.getModel()).getMinimum());
+              assertEquals(1, weaponHeight.getValue());
+              assertEquals(1, ((javax.swing.SpinnerNumberModel) weaponHeight.getModel()).getMinimum());
+              assertEquals(1, fontSize.getValue());
+              assertEquals(1, ((javax.swing.SpinnerNumberModel) fontSize.getModel()).getMinimum());
+            }
+
+            @Test
+            void laysOutReportSectionsOnBalancedTracksWithMultilinePresetEditors() {
+              ColourSelectorButton link = new ColourSelectorButton("Report Link Color");
+              ColourSelectorButton success = new ColourSelectorButton("Report Success Color");
+              ColourSelectorButton miss = new ColourSelectorButton("Report Miss Color");
+              ColourSelectorButton info = new ColourSelectorButton("Report Info Color");
+              JLabel fontLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportFontType"));
+              JComboBox<String> font = new JComboBox<>(new String[] { "Noto Sans" });
+              JCheckBox sprites = new JCheckBox(Messages.getString("CommonSettingsDialog.showReportSprites"));
+              SettingsFormPanel appearanceGrid = CommonSettingsDialog.createReportAppearanceGrid(
+                  link, success, miss, info, fontLabel, font, sprites);
+
+              JCheckBox players = new JCheckBox(Messages.getString("CommonSettingsDialog.showReportPlayerList"));
+              JCheckBox units = new JCheckBox(Messages.getString("CommonSettingsDialog.showReportUnitList"));
+              JCheckBox search = new JCheckBox(Messages.getString("CommonSettingsDialog.showReportKeywordsList"));
+              JLabel searchLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportKeywords"));
+              String searchHelp = Messages.getString("CommonSettingsDialog.reportKeywords.tooltip");
+              JTextArea searchEditor = new JTextArea(6, 20);
+              searchEditor.setText("Needs\nRolls\nDamage");
+              JScrollPane searchControl = CommonSettingsDialog.createReportKeywordEditor(searchEditor, searchHelp);
+              SettingsFormPanel searchGrid = CommonSettingsDialog.createReportSearchGrid(
+                  players, units, search, searchLabel, searchEditor, searchControl);
+
+              JCheckBox filter = new JCheckBox(Messages.getString("CommonSettingsDialog.showReportFilterList"));
+              JLabel filterLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportFilterKeywords"));
+              String filterHelp = Messages.getString("CommonSettingsDialog.reportFilterKeywords.tooltip");
+              JTextArea filterEditor = new JTextArea(4, 20);
+              filterEditor.setText("Fire Hit Damage\nHit Damage");
+              JScrollPane filterControl = CommonSettingsDialog.createReportKeywordEditor(filterEditor, filterHelp);
+              SettingsFormPanel filterGrid = CommonSettingsDialog.createReportFilterGrid(
+                  filter, filterLabel, filterEditor, filterControl);
+
+              assertEquals(searchHelp, searchControl.getToolTipText());
+              assertEquals(filterHelp, filterControl.getToolTipText());
+
+              JPanel appearanceSection = settingsGroup(List.of(row(appearanceGrid)));
+              JPanel searchSection = settingsGroup(List.of(row(searchGrid)));
+              JPanel filterSection = settingsGroup(List.of(row(filterGrid)));
+              CommonSettingsPane pane = createSettingsPane(
+                  "report", appearanceSection, searchSection, filterSection);
+              Component appearanceFiller = appearanceGrid.getComponent(7);
+              Component searchFiller = searchGrid.getComponent(3);
+              Component filterFiller = filterGrid.getComponent(1);
+
+              assertSame(font, fontLabel.getLabelFor());
+              assertSame(searchEditor, searchLabel.getLabelFor());
+              assertSame(filterEditor, filterLabel.getLabelFor());
+              assertFalse(searchEditor.getLineWrap());
+              assertFalse(filterEditor.getLineWrap());
+              assertEquals(6, searchEditor.getRows());
+              assertEquals(4, filterEditor.getRows());
+              assertEquals("Needs\nRolls\nDamage", searchEditor.getText());
+              assertEquals("Fire Hit Damage\nHit Damage", filterEditor.getText());
+
+              assertAtConstrainedStandardAndWideWidths(pane,
+                  List.of(appearanceGrid, searchGrid, filterGrid), laidOutPane -> {
+                    assertAlignedBalancedRows(appearanceGrid, List.of(
+                        List.of(link, success), List.of(miss, info), List.of(fontLabel, font),
+                        List.of(sprites, appearanceFiller)));
+                    assertAlignedBalancedRows(searchGrid, List.of(
+                        List.of(players, units), List.of(search, searchFiller),
+                        List.of(searchLabel, searchControl)));
+                    assertAlignedBalancedRows(filterGrid, List.of(
+                        List.of(filter, filterFiller), List.of(filterLabel, filterControl)));
+                    assertEquals(appearanceGrid.getWidth(), searchGrid.getWidth());
+                    assertEquals(searchGrid.getWidth(), filterGrid.getWidth());
+                  });
+            }
+
+    @Test
+    void presentsKeyBindingsAsOneWorkflowWithContextualNavigationHelp() {
+        SettingsCheckBox navigation = CommonSettingsDialog.createKeyBindTabNavigationControl();
+        SettingsButton reset = CommonSettingsDialog.createKeyBindResetButton();
+          JLabel commandHeader = new JLabel("Command");
+          JLabel modifierHeader = new JLabel("Modifier");
+          JLabel keyHeader = new JLabel("Key");
+          JLabel command = new JLabel("Activate Chatbox Command", SwingConstants.RIGHT);
+          JTextField modifier = new JTextField(10);
+          JTextField key = new JTextField(10);
+          JPanel bindingsGrid = CommonSettingsDialog.createKeyBindGrid(
+              commandHeader, modifierHeader, keyHeader);
+          CommonSettingsDialog.addKeyBindGridRow(bindingsGrid, 2, command, modifier, key);
+        JPanel content = CommonSettingsDialog.createKeyBindSectionContent(navigation, reset, bindingsGrid);
+        List<CommonSettingsPane.OptionSection> sections = CommonSettingsDialog.createKeyBindSections(content);
+
+        assertEquals(1, sections.size());
+        assertEquals("keyBinds.commands", sections.getFirst().id());
+        assertSame(content, sections.getFirst().content());
+        BorderLayout contentLayout = (BorderLayout) content.getLayout();
+        assertSame(bindingsGrid, contentLayout.getLayoutComponent(BorderLayout.CENTER));
+
+        JPanel actions = (JPanel) contentLayout.getLayoutComponent(BorderLayout.NORTH);
+      assertCell(actions, navigation, 0, 0);
+      assertCell(actions, reset, 1, 0);
+        assertEquals(Messages.getString("CommonSettingsDialog.keyBinds.tabNavigation.tooltip"),
+              navigation.getSettingsHelpText());
+          assertEquals(Messages.getString("CommonSettingsDialog.keyBinds.buttonDefault.tooltip"),
+              reset.getSettingsHelpText());
+        assertTrue(navigation.getText().contains(SettingsBadge.formatHtml(
+              List.of(CommonSettingsPane.legendEntries().getFirst()))));
+
+        CommonSettingsPane pane = new CommonSettingsPane(List.of(new CommonSettingsPane.OptionPage(
+              "keyBinds", List.of("Key Binds"), "keyBinds", sections)));
+        assertTrue(findComponent(pane, SettingsPagePanel.class).shouldShowDetailsPanel());
+
+          content.setSize(UIUtil.scaleForGUI(SettingsPagePanel.DEFAULT_SECTION_STACK_WIDTH),
+              content.getPreferredSize().height);
+          layoutRecursively(content);
+
+          assertEquals(navigation.getWidth(), reset.getWidth());
+          assertEquals(command.getPreferredSize().width, command.getWidth());
+          assertEquals(modifier.getPreferredSize().width, modifier.getWidth());
+          assertEquals(key.getPreferredSize().width, key.getWidth());
+          assertTrue(command.getX() > 0);
+          assertTrue(key.getX() + key.getWidth() < bindingsGrid.getWidth());
+    }
+
+    @Test
+    void enablingTabNavigationRemovesTabBinding() {
+        JTextField modifier = new JTextField("Ctrl");
+        JTextField key = new JTextField("Tab");
+
+        int keyCode = CommonSettingsDialog.configureKeyBindFieldsForTabNavigation(
+              true, java.awt.event.KeyEvent.VK_TAB, modifier, key);
+
+        assertEquals(0, keyCode);
+        assertEquals("", modifier.getText());
+        assertEquals("", key.getText());
+        assertTrue(modifier.getFocusTraversalKeysEnabled());
+        assertTrue(key.getFocusTraversalKeysEnabled());
+    }
+
     private static void assertAudioSectionsHaveAlignedControlColumns() {
         JLabel volumeLabel = new JLabel(Messages.getString("CommonSettingsDialog.masterVolume"));
         JSlider volumeSlider = new JSlider(0, 100);
@@ -294,23 +1030,32 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
 
         JPanel notificationGrid = findNamedPanel(notificationsSection,
               "pnlCommonSettingsAudioNotificationGrid");
-                assertSame(notificationsSection, notificationGrid);
+          assertSame(notificationsSection, notificationGrid);
         assertEquals(6, notificationGrid.getComponentCount());
+          JPanel chatSoundControl = (JPanel) notificationGrid.getComponent(1);
+          JPanel myTurnSoundControl = (JPanel) notificationGrid.getComponent(3);
+          JPanel otherTurnsSoundControl = (JPanel) notificationGrid.getComponent(5);
         assertCell(notificationGrid, chatMute, 0, 0);
-        assertCell(notificationGrid, chatSoundFile, 1, 0);
+          assertCell(notificationGrid, chatSoundControl, 1, 0);
         assertCell(notificationGrid, myTurnMute, 0, 1);
-        assertCell(notificationGrid, myTurnSoundFile, 1, 1);
+          assertCell(notificationGrid, myTurnSoundControl, 1, 1);
         assertCell(notificationGrid, otherTurnsMute, 0, 2);
-        assertCell(notificationGrid, otherTurnsSoundFile, 1, 2);
+          assertCell(notificationGrid, otherTurnsSoundControl, 1, 2);
+          assertAudioFileControl(chatSoundControl, chatSoundFile, "btnChatSoundChooser",
+              "CommonSettingsDialog.soundMuteChat.chooser.title");
+          assertAudioFileControl(myTurnSoundControl, myTurnSoundFile, "btnMyTurnSoundChooser",
+              "CommonSettingsDialog.soundMuteMyTurn.chooser.title");
+          assertAudioFileControl(otherTurnsSoundControl, otherTurnsSoundFile, "btnOtherTurnsSoundChooser",
+              "CommonSettingsDialog.soundMuteOthersTurn.chooser.title");
 
         assertAtConstrainedStandardAndWideWidths(pane, List.of(volumeGrid, notificationGrid), laidOutPane -> {
             assertEquals(xRelativeTo(volumeGrid, laidOutPane), xRelativeTo(notificationGrid, laidOutPane));
             assertEquals(volumeGrid.getWidth(), notificationGrid.getWidth());
             assertAlignedBalancedRows(laidOutPane, List.of(
                   List.of(volumeLabel, volumeSlider),
-                  List.of(chatMute, chatSoundFile),
-                  List.of(myTurnMute, myTurnSoundFile),
-                  List.of(otherTurnsMute, otherTurnsSoundFile)));
+                List.of(chatMute, chatSoundControl),
+                List.of(myTurnMute, myTurnSoundControl),
+                List.of(otherTurnsMute, otherTurnsSoundControl)));
             GridBagConstraints volumeLabelConstraints =
                   ((GridBagLayout) volumeGrid.getLayout()).getConstraints(volumeLabel);
             int columnGap = xRelativeTo(volumeSlider, laidOutPane)
@@ -327,6 +1072,20 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
               Messages.getString("CommonSettingsDialog.section.audio.notifications.summary"));
     }
 
+    private static void assertAudioFileControl(JPanel control, JTextField field, String buttonName,
+          String chooserTitleKey) {
+        assertSame(control, field.getParent());
+        JButton chooser = findComponent(control, JButton.class);
+        String chooserTitle = Messages.getString(chooserTitleKey);
+        assertEquals(buttonName, chooser.getName());
+        assertEquals(chooserTitle, chooser.getToolTipText());
+        assertEquals(chooserTitle, chooser.getAccessibleContext().getAccessibleName());
+        assertTrue(chooser.getIcon() != null);
+        assertEquals(field.getPreferredSize().height, chooser.getPreferredSize().width);
+        assertEquals(field.getPreferredSize().height, chooser.getPreferredSize().height);
+        assertEquals(1, chooser.getActionListeners().length);
+    }
+
     @Test
     void rendersUnitDefaultsAsCompleteOptionsOnSharedTwoColumnTracks() {
         JLabel protoMekLabel = new JLabel("ProtoMek unit codes");
@@ -337,18 +1096,20 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
 
         JPanel grid = CommonSettingsDialog.createUnitDefaultsGrid(protoMekLabel, protoMekControl,
               autoEject, randomSkills, randomNames);
-        JPanel protoMekOption = findNamedPanel(grid, "pnlCommonSettingsProtoMekOption");
+          Component finalCellFiller = grid.getComponent(5);
 
-        assertCell(grid, protoMekOption, 0, 0);
-        assertCell(grid, autoEject, 1, 0);
-        assertCell(grid, randomSkills, 0, 1);
-        assertCell(grid, randomNames, 1, 1);
-        assertCell(protoMekOption, protoMekLabel, 0, 0);
-        assertCell(protoMekOption, protoMekControl, 1, 0);
+          assertCell(grid, protoMekLabel, 0, 0);
+          assertCell(grid, protoMekControl, 1, 0);
+          assertCell(grid, autoEject, 0, 1);
+          assertCell(grid, randomSkills, 1, 1);
+          assertCell(grid, randomNames, 0, 2);
+          assertCell(grid, finalCellFiller, 1, 2);
         assertSame(protoMekControl, protoMekLabel.getLabelFor());
-        assertEquals(protoMekOption.getPreferredSize().width, autoEject.getPreferredSize().width);
+          assertEquals(protoMekLabel.getPreferredSize().width, protoMekControl.getPreferredSize().width);
+          assertEquals(protoMekControl.getPreferredSize().width, autoEject.getPreferredSize().width);
         assertEquals(autoEject.getPreferredSize().width, randomSkills.getPreferredSize().width);
         assertEquals(randomSkills.getPreferredSize().width, randomNames.getPreferredSize().width);
+          assertEquals(randomNames.getPreferredSize().width, finalCellFiller.getPreferredSize().width);
     }
 
     @Test
@@ -363,22 +1124,18 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
         JLabel protoMekLabel = new JLabel("ProtoMek unit codes");
         JTextField protoMekControl = new JTextField("A, B, C, D...");
         JCheckBox unitRightTop = new JCheckBox("Disable automatic ejection");
-          JCheckBox unitLeftBottom = new JCheckBox(
+                JCheckBox unitLeftBottom = new JCheckBox(
               Messages.getString("CommonSettingsDialog.useAverageSkills"));
         JCheckBox unitRightBottom = new JCheckBox("Generate random pilot names");
-          int longUnitOptionWidth = unitLeftBottom.getPreferredSize().width;
+                int longUnitOptionWidth = unitLeftBottom.getPreferredSize().width;
         JPanel unitGrid = CommonSettingsDialog.createUnitDefaultsGrid(protoMekLabel, protoMekControl,
               unitRightTop, unitLeftBottom, unitRightBottom);
-          JPanel protoMekOption = findNamedPanel(unitGrid, "pnlCommonSettingsProtoMekOption");
+                Component unitFiller = unitGrid.getComponent(5);
 
-          JLabel gameLogLabel = new JLabel("Game log filename");
-          JTextField gameLogField = new JTextField("game.log");
-        JPanel gameLogOption = CommonSettingsDialog.createBehaviorFieldOption("TestGameLogOption",
-              gameLogLabel, gameLogField);
-          JLabel autoResolveLogLabel = new JLabel("Auto Resolve log filename");
-          JTextField autoResolveLogField = new JTextField("simulation.log");
-        JPanel autoResolveLogOption = CommonSettingsDialog.createBehaviorFieldOption("TestAutoResolveLogOption",
-              autoResolveLogLabel, autoResolveLogField);
+                JLabel gameLogLabel = new JLabel("Game log filename");
+                JTextField gameLogField = new JTextField("game.log");
+                JLabel autoResolveLogLabel = new JLabel("Auto Resolve log filename");
+                JTextField autoResolveLogField = new JTextField("simulation.log");
         JCheckBox timestampOption = new JCheckBox("Add a timestamp");
         String defaultStampFormat = "_yyyy-MM-dd_HH-mm-ss";
         JLabel dateFormatLabel = new JLabel("Date format");
@@ -386,9 +1143,12 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
         JCheckBox loggingLeftTop = new JCheckBox("Log data");
         JCheckBox loggingRightTop = new JCheckBox("Keep game log");
         JPanel loggingGrid = CommonSettingsDialog.createBehaviorLoggingGrid("TestLoggingGrid",
-              List.of(loggingLeftTop, loggingRightTop, gameLogOption, autoResolveLogOption, timestampOption),
+              loggingLeftTop, loggingRightTop,
+              gameLogLabel, gameLogField,
+              autoResolveLogLabel, autoResolveLogField,
+              timestampOption,
               dateFormatLabel, dateFormatField);
-        Component timestampFiller = loggingGrid.getComponent(5);
+          Component timestampFiller = loggingGrid.getComponent(7);
 
         JCheckBox privacyLeft = new JCheckBox("Show IP addresses in chat");
         JCheckBox privacyRight = new JCheckBox("Use sprites only");
@@ -400,21 +1160,27 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
               settingsGroup(List.of(row(unitGrid))),
               settingsGroup(List.of(row(loggingGrid))),
               settingsGroup(List.of(row(privacyGrid))));
-          CommonSettingsPane pane = createSettingsPane("behavior", sections.toArray(new JComponent[0]));
+        CommonSettingsPane pane = createSettingsPane("behavior", sections.toArray(new JComponent[0]));
 
         GridBagConstraints dateFormatFieldConstraints =
               ((GridBagLayout) loggingGrid.getLayout()).getConstraints(dateFormatField);
-          assertCell(unitGrid, protoMekOption, 0, 0);
-          assertCell(unitGrid, unitRightTop, 1, 0);
-          assertCell(loggingGrid, gameLogOption, 0, 1);
-          assertCell(loggingGrid, autoResolveLogOption, 1, 1);
-        assertCell(loggingGrid, timestampOption, 0, 2);
-        assertCell(loggingGrid, timestampFiller, 1, 2);
-        assertCell(loggingGrid, dateFormatLabel, 0, 3);
-        assertCell(loggingGrid, dateFormatField, 1, 3);
-          assertSame(protoMekControl, protoMekLabel.getLabelFor());
-          assertSame(gameLogField, gameLogLabel.getLabelFor());
-          assertSame(autoResolveLogField, autoResolveLogLabel.getLabelFor());
+                assertCell(unitGrid, protoMekLabel, 0, 0);
+                assertCell(unitGrid, protoMekControl, 1, 0);
+                assertCell(unitGrid, unitRightTop, 0, 1);
+                assertCell(unitGrid, unitLeftBottom, 1, 1);
+                assertCell(unitGrid, unitRightBottom, 0, 2);
+                assertCell(unitGrid, unitFiller, 1, 2);
+                assertCell(loggingGrid, gameLogLabel, 0, 1);
+                assertCell(loggingGrid, gameLogField, 1, 1);
+                assertCell(loggingGrid, autoResolveLogLabel, 0, 2);
+                assertCell(loggingGrid, autoResolveLogField, 1, 2);
+                assertCell(loggingGrid, timestampOption, 0, 3);
+                assertCell(loggingGrid, timestampFiller, 1, 3);
+                assertCell(loggingGrid, dateFormatLabel, 0, 4);
+                assertCell(loggingGrid, dateFormatField, 1, 4);
+                assertSame(protoMekControl, protoMekLabel.getLabelFor());
+                assertSame(gameLogField, gameLogLabel.getLabelFor());
+                assertSame(autoResolveLogField, autoResolveLogLabel.getLabelFor());
         assertSame(dateFormatField, dateFormatLabel.getLabelFor());
         assertEquals(GridBagConstraints.HORIZONTAL, dateFormatFieldConstraints.fill);
         assertTrue(dateFormatFieldConstraints.weightx > 0.0);
@@ -427,10 +1193,12 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
             assertAlignedBalancedRows(laidOutPane, List.of(
                   List.of(windowLeftTop, windowRightTop),
                   List.of(windowLeftBottom, windowRightBottom),
-                  List.of(protoMekOption, unitRightTop),
-                  List.of(unitLeftBottom, unitRightBottom),
+                List.of(protoMekLabel, protoMekControl),
+                List.of(unitRightTop, unitLeftBottom),
+                List.of(unitRightBottom, unitFiller),
                   List.of(loggingLeftTop, loggingRightTop),
-                  List.of(gameLogOption, autoResolveLogOption),
+                List.of(gameLogLabel, gameLogField),
+                List.of(autoResolveLogLabel, autoResolveLogField),
                   List.of(timestampOption, timestampFiller),
                   List.of(dateFormatLabel, dateFormatField),
                   List.of(privacyLeft, privacyRight)));
@@ -550,6 +1318,36 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
 
     private static List<Component> row(Component... components) {
         return List.of(components);
+    }
+
+    private static DefaultListModel<String> unitDisplayOrderModel() {
+        DefaultListModel<String> order = new DefaultListModel<>();
+        order.addElement(UnitDisplayPanel.NON_TABBED_GENERAL);
+        order.addElement(UnitDisplayPanel.NON_TABBED_PILOT);
+        order.addElement(UnitDisplayPanel.NON_TABBED_ARMOR);
+        order.addElement(UnitDisplayPanel.NON_TABBED_WEAPON);
+        order.addElement(UnitDisplayPanel.NON_TABBED_SYSTEM);
+        order.addElement(UnitDisplayPanel.NON_TABBED_EXTRA);
+        return order;
+    }
+
+    private static void assertThreeColumnUnitDisplayOrderGrid(SettingsFormPanel orderGrid) {
+        int firstColumnX = orderGrid.getComponent(0).getX();
+        int secondColumnX = orderGrid.getComponent(1).getX();
+        int thirdColumnX = orderGrid.getComponent(2).getX();
+        int cellWidth = orderGrid.getComponent(0).getWidth();
+        for (int index = 0; index < orderGrid.getComponentCount(); index++) {
+            Component slot = orderGrid.getComponent(index);
+            assertEquals(cellWidth, slot.getWidth());
+            assertEquals(switch (index % 3) {
+                case 0 -> firstColumnX;
+                case 1 -> secondColumnX;
+                default -> thirdColumnX;
+            }, slot.getX());
+            assertComponentWithinParent(slot);
+        }
+        assertTrue(firstColumnX + cellWidth < secondColumnX);
+        assertTrue(secondColumnX + cellWidth < thirdColumnX);
     }
 
     private static JPanel settingsGroup(List<List<Component>> rows) {

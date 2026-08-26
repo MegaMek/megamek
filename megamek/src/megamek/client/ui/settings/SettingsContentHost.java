@@ -210,7 +210,8 @@ public class SettingsContentHost extends JPanel {
 
     private void bindHelp(Component component, @Nullable String inheritedHelpText) {
         String descendantHelpText = inheritedHelpText;
-        if (component instanceof JComponent swingComponent && !(component instanceof JButton)) {
+        boolean supportsHelp = !(component instanceof JButton) || component instanceof SettingsHelpProvider;
+        if (component instanceof JComponent swingComponent && supportsHelp) {
             String ownHelpText = component instanceof SettingsHelpProvider provider
                   ? provider.getSettingsHelpText()
                   : swingComponent.getToolTipText();

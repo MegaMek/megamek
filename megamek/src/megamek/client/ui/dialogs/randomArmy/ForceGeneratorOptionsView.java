@@ -134,8 +134,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     /** Opens the formation mix editor; the label beside it shows any request in force. */
     private JButton btnFormationMix;
     private JLabel lblFormationMixSummary;
-    /** The requested distribution of formation types, empty until the player asks for one. */
-    private FormationMix formationMix = FormationMix.EMPTY;
 
     /** The formation the player has picked in the palette, applied to a node from the tree's right-click menu. */
     private String selectedFormation;
@@ -738,25 +736,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         return List.of(btnGenerate, panGenerateOptions, btnClear);
     }
 
-    /**
-     * The formation mix the player has asked for.
-     *
-     * @return the requested mix, never {@code null}
-     */
-    public FormationMix getFormationMix() {
-        return formationMix;
-    }
-
-    /**
-     * Sets the formation mix, for a host restoring saved options.
-     *
-     * @param formationMix the mix to apply, or {@code null} to clear
-     */
-    public void setFormationMix(@Nullable FormationMix formationMix) {
-        this.formationMix = (formationMix == null) ? FormationMix.EMPTY : formationMix;
-        refreshFormationMixSummary();
-    }
-
     public ForceDescriptor buildForceDescriptor() {
         ForceDescriptor fd = new ForceDescriptor();
         fd.setTopLevel(true);
@@ -780,9 +759,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         Object selectedWeight = cbWeightClass.getSelectedItem();
         fd.setWeightClass(selectedWeight instanceof Integer ? (Integer) selectedWeight : null);
         fd.setAttachments(chkDetachments.isSelected());
-        // Empty unless the player opened the mix editor and asked for something, in which case the allocator
-        // returns immediately and the force generates exactly as it did before.
-        fd.setFormationMix(formationMix);
         panMissionRoleFilters.applyTo(fd, forceDesc.getUnitType());
 
         // Internal storage uses fraction (0.0–N.0+); the textbox shows percentage (0–N00).

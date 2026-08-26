@@ -335,15 +335,6 @@ public class ForceGeneratorViewUi implements ActionListener {
         leftPanel.repaint();
     }
 
-    /**
-     * Rebuilds the inline mix editor for the force the options currently describe, keeping whatever the player has
-     * already asked for. Cheap enough to call whenever those options change: it builds the force's structure and
-     * stops before drawing a unit.
-     */
-    public void refreshFormationMixEditor() {
-        panControls.refreshInlineFormationMixEditor();
-    }
-
     public Component getLeftPanel() {
         return new JScrollPane(leftPanel);
     }

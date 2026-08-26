@@ -1298,16 +1298,21 @@ public class CustomMekDialog extends AbstractButtonDialog
         txtDeploymentWidth.setEnabled(false);
 
         choDeploymentRound.removeAllItems();
+        int walkOnOffset = 0;
+        if (Game.rulesManager.getRulesGame().walkOnDeployment()) {
+            choDeploymentRound.addItem(Messages.getString("CustomMekDialog.PreGame"));
+            walkOnOffset = 1;
+        }
         choDeploymentRound.addItem(Messages.getString("CustomMekDialog.StartOfGame"));
 
-        if (entity.getDeployRound() < 1) {
-            choDeploymentRound.setSelectedIndex(0);
+        if (entity.getDeployRound() < 1 && entity.getDeployRound() >= 0) {
+            choDeploymentRound.setSelectedIndex(0 + walkOnOffset);
         }
 
         for (int i = 1; i <= 40; i++) {
             choDeploymentRound.addItem(Messages.getString("CustomMekDialog.AfterRound") + i);
             if (entity.getDeployRound() == i) {
-                choDeploymentRound.setSelectedIndex(i);
+                choDeploymentRound.setSelectedIndex(i + walkOnOffset);
             }
         }
 
@@ -1374,6 +1379,15 @@ public class CustomMekDialog extends AbstractButtonDialog
         txtDeploymentOffset.setEnabled(editableDeployment);
         txtDeploymentWidth.setEnabled(editableDeployment);
         choDeploymentRound.setEnabled(editableDeployment);
+
+        if (Game.rulesManager.getRulesGame().walkOnDeployment()
+              && startingPos != Board.START_ANY
+              && startingPos != Board.START_CENTER
+              && startingPos <= Board.NUM_ZONES) {
+            txtDeploymentWidth.setEnabled(false);
+        } else {
+            if (editableDeployment) {txtDeploymentWidth.setEnabled(true);}
+        }
 
         chHidden.removeActionListener(this);
         boolean enableHidden = !(entity instanceof Dropship) && !entity.isAirborne() && !entity.isAirborneVTOLorWIGE();
@@ -1834,7 +1848,21 @@ public class CustomMekDialog extends AbstractButtonDialog
             }
 
             entity.setStartingPos(zoneID);
-            entity.setDeployRound(choDeploymentRound.getSelectedIndex());
+
+            // Handle if there is a pre-game item in the list for deployment when setting it.
+            if (choDeploymentRound.getSelectedItem() == Messages.getString("CustomMekDialog.PreGame")) {
+                // They chose pre-game
+                entity.setDeployRound(-1);
+            } else if (choDeploymentRound.getSelectedItem() == Messages.getString("CustomMekDialog.StartOfGame")) {
+                // They chose start of game
+                entity.setDeployRound(0);
+            } else if (choDeploymentRound.getItemAt(0) == Messages.getString("CustomMekDialog.PreGame")) {
+                // They chose a specific round and pre-game was an option
+                entity.setDeployRound(choDeploymentRound.getSelectedIndex() + 1);
+            } else {
+                // They chose a specific round and pre-game was not an option.
+                entity.setDeployRound(choDeploymentRound.getSelectedIndex());
+            }
             entity.setStartingOffset(MathUtility.parseInt(txtDeploymentOffset.getText(), 0));
             entity.setStartingWidth(MathUtility.parseInt(txtDeploymentWidth.getText(), 0));
 

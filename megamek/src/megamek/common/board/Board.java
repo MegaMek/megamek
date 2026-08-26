@@ -59,7 +59,6 @@ import megamek.common.enums.BasementType;
 import megamek.common.equipment.FuelTank;
 import megamek.common.event.board.BoardEvent;
 import megamek.common.event.board.BoardListener;
-import megamek.common.game.Game;
 import megamek.common.hexArea.HexArea;
 import megamek.common.loaders.MapSettings;
 import megamek.common.units.AbstractBuildingEntity;
@@ -941,12 +940,6 @@ public class Board implements Serializable {
 
         int maxX = width - startingOffset;
         int maxy = height - startingOffset;
-
-        // Walk on initiative only allows for 1 hex width deployment zones
-        if (Game.rulesManager.getRulesGame().walkOnDeployment()) {
-            startingWidth = 1;
-        }
-
 
         return switch (zoneType) {
             case START_ANY -> (((startingAnyNWx == Entity.STARTING_ANY_NONE) || (c.getX() >= startingAnyNWx))

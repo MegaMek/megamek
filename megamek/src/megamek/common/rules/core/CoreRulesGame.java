@@ -47,8 +47,10 @@ import megamek.common.equipment.enums.BombType;
 import megamek.common.rules.RulesGame;
 import megamek.common.units.Entity;
 import megamek.common.units.IBomber;
+import megamek.logging.MMLogger;
 
 public class CoreRulesGame extends RulesGame {
+    private static final MMLogger logger = MMLogger.create(CoreRulesGame.class);
 
     /**
      * {@inheritDoc} Ammo dumping is not in Core
@@ -173,5 +175,13 @@ public class CoreRulesGame extends RulesGame {
     @Override
     public boolean includeInMovement(GamePhase phase, Entity entity) {
         return ((phase.isMovement() || phase.isInitiative()) && entity.isImmobile()) ? false : true;
+    }
+
+    /**
+     * {@inheritDoc} This is not used by core at all.
+     */
+    @Override
+    public void setWalkOnDeployment(final boolean walkOn) {
+        logger.debug("Setting walk on deployment should never occur when running core.");
     }
 }

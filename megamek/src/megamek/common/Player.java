@@ -196,8 +196,8 @@ public final class Player extends TurnOrdered {
     }
 
     /**
-     * Given a minefield type from one of the TYPE_[MINEFIELDTYPE] constants in Minefield.java
-     * and a count (preferably more than 0), set the count of that type of mine for this player.
+     * Given a minefield type from one of the TYPE_[MINEFIELDTYPE] constants in Minefield.java and a count (preferably
+     * more than 0), set the count of that type of mine for this player.
      */
     public void setMinefieldCount(int minefieldType, int count) {
         minefieldCounts[minefieldType] = count;
@@ -228,8 +228,8 @@ public final class Player extends TurnOrdered {
     }
 
     /**
-     * Given a minefield type from one of the TYPE_[MINEFIELDTYPE] constants in Minefield.java
-     * returns how many mines of that type this player has
+     * Given a minefield type from one of the TYPE_[MINEFIELDTYPE] constants in Minefield.java returns how many mines of
+     * that type this player has
      */
     public int getMinefieldCount(int minefieldType) {
         return minefieldCounts[minefieldType];
@@ -517,6 +517,14 @@ public final class Player extends TurnOrdered {
     }
 
     public int getStartWidth() {
+        if (Game.rulesManager.getRulesGame().walkOnDeployment()
+              && startingPos != Board.START_ANY
+              && startingPos != Board.START_CENTER
+              && startingPos <= Board.NUM_ZONES) {
+            startWidth = 1;
+        } else {
+            startWidth = 3;
+        }
         return startWidth;
     }
 

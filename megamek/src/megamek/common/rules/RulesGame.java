@@ -142,7 +142,7 @@ public abstract class RulesGame {
      *
      * @param walkOn should walk-on deployment be enabled
      */
-    public void setWalkOnDeployment(boolean walkOn) {}
+    public abstract void setWalkOnDeployment(boolean walkOn);
 
     /**
      * Walk-on deployment. Skip deployment for eligible units Note: Bot does not get Walk-on deployment for now.
@@ -160,6 +160,7 @@ public abstract class RulesGame {
               && deploymentRound <= currentRound
               && startingPos != Board.START_ANY
               && startingPos != Board.START_CENTER
+              && startingPos <= Board.NUM_ZONES
               && !entity.getOwner().isBot()) {
             return true;
         }

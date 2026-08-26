@@ -52,9 +52,9 @@ import megamek.client.ui.util.PlayerColour;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.board.Board;
 import megamek.common.force.Force;
-import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.game.Game;
 import megamek.common.game.InGameObject;
 import megamek.common.interfaces.ForceAssignable;
@@ -117,9 +117,9 @@ class LobbyMekCellFormatter {
     }
 
     /**
-     * Returns the branch drawn in front of a unit that rides on another, indented and lengthened by how deeply it
-     * sits. A Mek inside a DropShip inside a JumpShip is drawn further in than the DropShip carrying it, so a stack
-     * reads as a tree rather than a flat run of identical marks.
+     * Returns the branch drawn in front of a unit that rides on another, indented and lengthened by how deeply it sits.
+     * A Mek inside a DropShip inside a JumpShip is drawn further in than the DropShip carrying it, so a stack reads as
+     * a tree rather than a flat run of identical marks.
      */
     static String carriedBranch(Entity entity) {
         int depth = carriedDepth(entity);
@@ -168,8 +168,8 @@ class LobbyMekCellFormatter {
     /**
      * Returns the tractor heading the train this unit is towed by, or {@code null} when it is not towed.
      * <p>
-     * Deployment belongs to that tractor: a train goes where it goes. A trailer only gets a setting of its own once
-     * the game starts and the tractor's is copied onto it, so the lobby has to read it from the head of the train.
+     * Deployment belongs to that tractor: a train goes where it goes. A trailer only gets a setting of its own once the
+     * game starts and the tractor's is copied onto it, so the lobby has to read it from the head of the train.
      * </p>
      */
     private static Entity trainHeadOf(Entity entity) {
@@ -182,11 +182,11 @@ class LobbyMekCellFormatter {
 
     /**
      * Returns the branch drawn in front of a C3 network member, so a network reads as the tree from the rulebook's
-     * configuration diagram. The C3 sorter wrapper keeps members adjacent in hierarchy order under every sorter, so
-     * the branch always points at the row above it. Hierarchical C3 draws a corner per level below the network's
-     * top unit (lance masters one level in, their slaves two). C3i, NC3 and Nova CEWS networks have no master, so
-     * their members are drawn as a flat bracket instead: a top corner on the first member, rungs on inner members
-     * and a bottom corner on the last, showing they belong together without inventing a hierarchy.
+     * configuration diagram. The C3 sorter wrapper keeps members adjacent in hierarchy order under every sorter, so the
+     * branch always points at the row above it. Hierarchical C3 draws a corner per level below the network's top unit
+     * (lance masters one level in, their slaves two). C3i, NC3 and Nova CEWS networks have no master, so their members
+     * are drawn as a flat bracket instead: a top corner on the first member, rungs on inner members and a bottom corner
+     * on the last, showing they belong together without inventing a hierarchy.
      */
     static String c3Branch(Entity entity) {
         if (!entity.hasAnyC3System()) {
@@ -705,6 +705,10 @@ class LobbyMekCellFormatter {
             result.append(", ").append(entity.getOffBoardDistance());
         }
 
+        if (entity.getDeployRound() == -1) {
+            firstEntry = dotSpacer(result, firstEntry);
+            result.append(getString("ChatLounge.deployPreGame"));
+        }
         if (entity.getDeployRound() > 0) {
             firstEntry = dotSpacer(result, firstEntry);
             result.append(getString("ChatLounge.deploysAfterRound", entity.getDeployRound()));

@@ -32,22 +32,16 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
-import megamek.client.ui.Messages;
+import java.util.EnumSet;
+
 import megamek.common.LosEffects;
 import megamek.common.ToHitData;
-import megamek.common.board.Coords;
-import megamek.common.compute.Compute;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
-import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
-import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
-
-import java.util.ArrayList;
-import java.util.EnumSet;
 
 public abstract class RulesTarget {
     /**
@@ -55,23 +49,28 @@ public abstract class RulesTarget {
      *
      * @param weightclass the weight class of the target
      * @param markedLarge true if the target is marked as large
+     *
      * @return the large target modifier
      */
     public abstract int largeTargetModifier(int weightclass, boolean markedLarge);
 
     /**
      * Alternate call for largeTargetModifier(int weightclass, boolean markedLarge) with default markedLarge = false.
+     *
      * @param weightclass the weight class of the target
+     *
      * @return the large target modifier
      */
-    public int largeTargetModifier(int weightclass) { return largeTargetModifier(weightclass, false); };
+    public int largeTargetModifier(int weightclass) {return largeTargetModifier(weightclass, false);}
 
     /**
      * Alternate call for largeTargetModifier(int weightclass, boolean markedLarge) with default weightclass = 0.
+     *
      * @param markedLarge the large target flag
+     *
      * @return the large target modifier
      */
-    public int largeTargetModifier(boolean markedLarge) {return largeTargetModifier(0,markedLarge);};
+    public int largeTargetModifier(boolean markedLarge) {return largeTargetModifier(0, markedLarge);}
 
     /**
      * Do we hit the aimed location?
@@ -91,6 +90,7 @@ public abstract class RulesTarget {
      * Can you shoot with one arm while prone.
      *
      * @param toProneFire true if checking prone fire capability
+     *
      * @return true if you can shoot with one arm while prone
      */
     public abstract boolean proneFireWithOneArm(boolean toProneFire);
@@ -100,6 +100,7 @@ public abstract class RulesTarget {
      *
      * @param attacker the attacking entity
      * @param location the arm location being used
+     *
      * @return the arm actuator hit modifier
      */
     public abstract int getArmActuatorHitMod(Entity attacker, int location);
@@ -108,6 +109,7 @@ public abstract class RulesTarget {
      * Do we reduce smoke?
      *
      * @param los the line of sight effects
+     *
      * @return the BAP smoke reduction amount
      */
     public abstract int getBAPSmokeReduction(LosEffects los);
@@ -115,19 +117,27 @@ public abstract class RulesTarget {
     /**
      * Compute whether this specific target will get an immobile mod, and applies the mod if necessary
      *
-     * @param target        Targetable being attacked
-     * @param toHit         Existing ToHitData
-     * @param aimingAt      Aimed-at location, if applicable
-     * @param weaponType    Type of attacking weapon
-     * @param weapon        The weapon itself
-     * @param ammoType      Type of ammo
-     * @param munition      Collection of munition information
-     * @param entityTarget  Entity version of the target, if it's an entity, else null
-     * @param aimingMode    Aiming mode data
-     *
-     * Note: modifies the passed-in ToHitData toHit.
+     * @param target       Targetable being attacked
+     * @param toHit        Existing ToHitData
+     * @param aimingAt     Aimed-at location, if applicable
+     * @param weaponType   Type of attacking weapon
+     * @param weapon       The weapon itself
+     * @param ammoType     Type of ammo
+     * @param munition     Collection of munition information
+     * @param entityTarget Entity version of the target, if it's an entity, else null
+     * @param aimingMode   Aiming mode data
+     *                     <p>
+     *                     Note: modifies the passed-in ToHitData toHit.
      */
     public abstract void addImmobileMod(Targetable target, ToHitData toHit, int aimingAt, WeaponType weaponType,
           WeaponMounted weapon, AmmoType ammoType, EnumSet<AmmoType.Munitions> munition, Entity entityTarget,
-         AimingMode aimingMode);
+          AimingMode aimingMode);
+
+    /**
+     * Secondary Target Modifier. This is the same under all rules systems, but worthwhile to be here in case it is ever
+     * overridden.
+     *
+     * @return 1
+     */
+    public int getSecondaryTargetModifier() {return 1;}
 }

@@ -2911,13 +2911,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         // log the error, then put some defaults in for the DFA and proceed as if the
                         // target had been moved/destroyed
                     } else {
+                        // A DFA step only carries a target position when the target hex was picked in a dialog, so
+                        // report the hex the step lands in instead - that is the one the player is looking at.
                         String errorMessage = "Illegal DFA by " + entity.getDisplayName()
-                              + " against non-existent entity at " + step.getTargetPosition();
+                              + " against non-existent entity at " + step.getPosition();
                         gameManager.sendServerChat(errorMessage);
                         logger.error(errorMessage);
                         targetID = Entity.NONE;
-                        // doesn't really matter, DFA processing will cut out early if target resolves
-                        // as null
+                        // The physical phase lands the attacker in the target hex as if the target had been
+                        // destroyed, so the unit still comes down even though the attack does nothing.
                         targetType = Targetable.TYPE_ENTITY;
                     }
 

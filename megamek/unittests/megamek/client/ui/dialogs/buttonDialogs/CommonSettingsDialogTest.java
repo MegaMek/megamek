@@ -50,7 +50,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -61,6 +60,8 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -724,7 +725,7 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
                   seenByLabel, seenBy, heatLabels, heatSpinners, heatColours, overheatLabel, overheatColour);
 
               DefaultListModel<String> order = unitDisplayOrderModel();
-              SettingsFormPanel orderGrid = CommonSettingsDialog.createUnitDisplayOrderGrid(order);
+              JPanel orderGrid = CommonSettingsDialog.createUnitDisplayOrderGrid(order);
 
               JLabel sortLabel = new JLabel(Messages.getString("CommonSettingsDialog.defaultWeaponSortOrder"));
               JComboBox<String> sort = new JComboBox<>(new String[] { "Name", "Range" });
@@ -796,24 +797,28 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
             }
 
             @Test
-            void swapsNonTabbedUnitDisplayPanelsWithoutDuplicates() {
+                        void reordersNonTabbedUnitDisplayPanelsWithSharedDragListControl() {
               DefaultListModel<String> order = unitDisplayOrderModel();
-              SettingsFormPanel orderGrid = CommonSettingsDialog.createUnitDisplayOrderGrid(order);
-              JComboBox<?> topLeft = findComponent((JPanel) orderGrid.getComponent(0), JComboBox.class);
+                            JPanel orderGrid = CommonSettingsDialog.createUnitDisplayOrderGrid(order);
+                            JList<?> orderList = findComponent(orderGrid, JList.class);
 
-              topLeft.setSelectedItem(UnitDisplayPanel.NON_TABBED_WEAPON);
+                            CommonSettingsDialog.moveListElement(order, 0, 3);
 
-              assertEquals(UnitDisplayPanel.NON_TABBED_WEAPON, order.get(0));
-              assertEquals(UnitDisplayPanel.NON_TABBED_GENERAL, order.get(3));
-              List<String> panelNames = java.util.stream.IntStream.range(0, order.size())
-                  .mapToObj(order::get)
-                  .toList();
-              assertEquals(6, new HashSet<>(panelNames).size());
-              for (int index = 0; index < orderGrid.getComponentCount(); index++) {
-                JComboBox<?> selector = findComponent((JPanel) orderGrid.getComponent(index), JComboBox.class);
-                assertEquals(order.get(index), selector.getSelectedItem());
-              }
+                            assertSame(order, orderList.getModel());
+                            assertEquals(UnitDisplayPanel.NON_TABBED_PILOT, order.get(0));
+                            assertEquals(UnitDisplayPanel.NON_TABBED_GENERAL, order.get(3));
+                            assertEquals(JList.HORIZONTAL_WRAP, orderList.getLayoutOrientation());
+                            assertEquals(2, orderList.getVisibleRowCount());
+                            assertEquals(ListSelectionModel.SINGLE_SELECTION, orderList.getSelectionMode());
+                            assertTrue(orderList.getMouseMotionListeners().length > 0);
+                            assertThreeColumnUnitDisplayOrderGrid(orderGrid);
             }
+
+                        @Test
+                        void localizesMovementTraitorCommand() {
+                            assertTrue(Messages.keyExists("MovementDisplay.Traitor"));
+                            assertEquals("Traitor", Messages.getString("MovementDisplay.Traitor"));
+                        }
 
                         @Test
                         void loadsUnitDisplayOrderWithoutRecursion() {
@@ -913,6 +918,378 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
                     assertEquals(searchGrid.getWidth(), filterGrid.getWidth());
                   });
             }
+
+            @Test
+            void laysOutOverlaySectionsOnBalancedTracksWithoutSliderLabels() {
+              ColourSelectorButton unitShadow = new ColourSelectorButton("Unit name shadow color");
+              ColourSelectorButton conditionShadow = new ColourSelectorButton("Condition shadow color");
+              SettingsFormPanel overviewGrid = CommonSettingsDialog.createOverlayOverviewGrid(
+                  unitShadow, conditionShadow);
+
+              ColourSelectorButton title = new ColourSelectorButton("Title color");
+              ColourSelectorButton text = new ColourSelectorButton("Text color");
+              ColourSelectorButton background = new ColourSelectorButton("Background color");
+              ColourSelectorButton cold = new ColourSelectorButton("Cold indicator color");
+              ColourSelectorButton hot = new ColourSelectorButton("Hot indicator color");
+              JCheckBox defaults = new JCheckBox("Show default conditions");
+              JCheckBox header = new JCheckBox("Show header");
+              JCheckBox labels = new JCheckBox("Show labels");
+              JCheckBox values = new JCheckBox("Show values");
+              JCheckBox indicators = new JCheckBox("Show indicators");
+              JLabel backgroundOpacityLabel = new JLabel("Background opacity");
+              JSlider backgroundOpacity = new JSlider(0, 255, 128);
+              JSpinner backgroundPercentage = new JSpinner(
+                  new javax.swing.SpinnerNumberModel(0, 0, 100, 1));
+              JPanel backgroundOpacityControl = CommonSettingsDialog.createGameBoardFovOpacityControl(
+                  backgroundOpacity, backgroundPercentage);
+              SettingsFormPanel planetaryGrid = CommonSettingsDialog.createOverlayPlanetaryGrid(
+                  title, text, background, cold, hot, defaults, header, labels, values, indicators,
+                  backgroundOpacityLabel, backgroundOpacity, backgroundOpacityControl);
+
+              JCheckBox toasts = new JCheckBox("Show board toast notifications");
+              JCheckBox reportEvents = new JCheckBox("Show round report events as toasts");
+              JLabel durationLabel = new JLabel("Toast display time (seconds)");
+              JSpinner duration = new JSpinner(new javax.swing.SpinnerNumberModel(3, 1, 10, 1));
+              JLabel gapLabel = new JLabel("Gap between report toasts (seconds)");
+              JSpinner gap = new JSpinner(new javax.swing.SpinnerNumberModel(2, 1, 10, 1));
+              SettingsFormPanel toastGrid = CommonSettingsDialog.createOverlayToastGrid(
+                  toasts, reportEvents, durationLabel, duration, gapLabel, gap);
+
+              JLabel opacityLabel = new JLabel("Opacity");
+              JSlider opacity = new JSlider(0, 255, 64);
+              JSpinner opacityPercentage = new JSpinner(
+                  new javax.swing.SpinnerNumberModel(0, 0, 100, 1));
+              JPanel opacityControl = CommonSettingsDialog.createGameBoardFovOpacityControl(
+                  opacity, opacityPercentage);
+              JLabel scaleLabel = new JLabel("Scale");
+              JSlider scale = new JSlider(30, 150, 100);
+              JSpinner scalePercentage = new JSpinner(
+                  new javax.swing.SpinnerNumberModel(100, 30, 150, 1));
+              JPanel scaleControl = CommonSettingsDialog.createOverlayValueControl(
+                  scale, scalePercentage, "%");
+              JLabel horizontalLabel = new JLabel("Horizontal position");
+              JSlider horizontal = new JSlider(-1000, 2000, -250);
+              JSpinner horizontalPixels = new JSpinner(
+                  new javax.swing.SpinnerNumberModel(-250, -1000, 2000, 10));
+              JPanel horizontalControl = CommonSettingsDialog.createOverlayValueControl(
+                  horizontal, horizontalPixels, "px");
+              JLabel verticalLabel = new JLabel("Vertical position");
+              JSlider vertical = new JSlider(-1000, 2000, 500);
+              JSpinner verticalPixels = new JSpinner(
+                  new javax.swing.SpinnerNumberModel(500, -1000, 2000, 10));
+              JPanel verticalControl = CommonSettingsDialog.createOverlayValueControl(
+                  vertical, verticalPixels, "px");
+              JLabel imageLabel = new JLabel("Image file");
+              JTextField image = new JTextField("trace.png", 20);
+              JPanel imageControl = CommonSettingsDialog.applicationPathControl(image, new JButton());
+              SettingsFormPanel traceGrid = CommonSettingsDialog.createOverlayTraceGrid(
+                  opacityLabel, opacity, opacityControl, scaleLabel, scale, scaleControl,
+                  horizontalLabel, horizontal, horizontalControl,
+                  verticalLabel, vertical, verticalControl, imageLabel, image, imageControl);
+
+              JPanel overviewSection = settingsGroup(List.of(row(overviewGrid)));
+              JPanel planetarySection = settingsGroup(List.of(row(planetaryGrid)));
+              JPanel toastSection = settingsGroup(List.of(row(toastGrid)));
+              JPanel traceSection = settingsGroup(List.of(row(traceGrid)));
+              CommonSettingsPane pane = createSettingsPane(
+                  "overlays", overviewSection, planetarySection, toastSection, traceSection);
+              Component planetaryColorFiller = planetaryGrid.getComponent(5);
+              Component planetaryOptionFiller = planetaryGrid.getComponent(11);
+              JPanel opacityField = (JPanel) traceGrid.getComponent(0);
+              JPanel scaleField = (JPanel) traceGrid.getComponent(1);
+              JPanel horizontalField = (JPanel) traceGrid.getComponent(2);
+              JPanel verticalField = (JPanel) traceGrid.getComponent(3);
+
+              assertSame(backgroundOpacity, backgroundOpacityLabel.getLabelFor());
+              assertSame(duration, durationLabel.getLabelFor());
+              assertSame(gap, gapLabel.getLabelFor());
+              assertSame(opacity, opacityLabel.getLabelFor());
+              assertSame(scale, scaleLabel.getLabelFor());
+              assertSame(horizontal, horizontalLabel.getLabelFor());
+              assertSame(vertical, verticalLabel.getLabelFor());
+              assertSame(image, imageLabel.getLabelFor());
+              assertEquals(50, backgroundPercentage.getValue());
+              assertEquals(25, opacityPercentage.getValue());
+                            int sliderValueWidth = backgroundPercentage.getPreferredSize().width;
+                            for (JSpinner spinner : List.of(
+                                    opacityPercentage, scalePercentage, horizontalPixels, verticalPixels)) {
+                                assertEquals(sliderValueWidth, spinner.getPreferredSize().width);
+                            }
+              for (JSlider slider : List.of(backgroundOpacity, opacity, scale, horizontal, vertical)) {
+                assertFalse(slider.getPaintTicks());
+                assertFalse(slider.getPaintLabels());
+              }
+
+              assertAtConstrainedStandardAndWideWidths(pane,
+                  List.of(overviewSection, planetarySection, toastSection, traceSection), laidOutPane -> {
+                    assertAlignedBalancedRows(overviewGrid, List.of(
+                        List.of(unitShadow, conditionShadow)));
+                    assertAlignedBalancedRows(planetaryGrid, List.of(
+                        List.of(title, text), List.of(background, cold), List.of(hot, planetaryColorFiller),
+                        List.of(defaults, header), List.of(labels, values),
+                        List.of(indicators, planetaryOptionFiller),
+                        List.of(backgroundOpacityLabel, backgroundOpacityControl)));
+                    assertAlignedBalancedRows(toastGrid, List.of(
+                        List.of(toasts, reportEvents), List.of(durationLabel, duration),
+                        List.of(gapLabel, gap)));
+                    assertAlignedBalancedRows(traceGrid, List.of(
+                        List.of(opacityField, scaleField), List.of(horizontalField, verticalField),
+                        List.of(imageLabel, imageControl)));
+                    assertEquals(overviewGrid.getWidth(), planetaryGrid.getWidth());
+                    assertEquals(planetaryGrid.getWidth(), toastGrid.getWidth());
+                    assertEquals(toastGrid.getWidth(), traceGrid.getWidth());
+                    assertTrue(scale.getWidth() >= UIUtil.scaleForGUI(80));
+                    assertTrue(horizontal.getWidth() >= UIUtil.scaleForGUI(80));
+                                        for (JSpinner spinner : List.of(
+                                                opacityPercentage, scalePercentage, horizontalPixels, verticalPixels)) {
+                                            assertEquals(backgroundPercentage.getWidth(), spinner.getWidth());
+                                        }
+                  });
+            }
+
+            @Test
+            void synchronizesOverlayScaleAndOriginValues() {
+              JSlider scale = new JSlider(30, 150, 100);
+              JSpinner scalePercentage = new JSpinner(
+                  new javax.swing.SpinnerNumberModel(100, 30, 150, 1));
+              CommonSettingsDialog.createOverlayValueControl(scale, scalePercentage, "%");
+
+              scalePercentage.setValue(125);
+              assertEquals(125, scale.getValue());
+              scale.setValue(75);
+              assertEquals(75, scalePercentage.getValue());
+
+              JSlider origin = new JSlider(-1000, 2000, 0);
+              JSpinner pixels = new JSpinner(
+                  new javax.swing.SpinnerNumberModel(0, -1000, 2000, 10));
+              CommonSettingsDialog.createOverlayValueControl(origin, pixels, "px");
+
+              pixels.setValue(-400);
+              assertEquals(-400, origin.getValue());
+              origin.setValue(1200);
+              assertEquals(1200, pixels.getValue());
+            }
+
+                        @Test
+                        void laysOutAutoDisplayAsBalancedPhaseRowsAndTabCheckboxes() {
+                            List<SettingsFormPanel> phaseGrids = new ArrayList<>();
+                            List<List<Component>> phaseControls = new ArrayList<>();
+                            List<JPanel> sections = new ArrayList<>();
+                            for (String name : List.of(
+                                    "UnitDisplay", "MiniMap", "MiniReport", "PlayerList", "ForceDisplay", "BotCommands")) {
+                                JLabel reportLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases"));
+                                JComboBox<String> reportControl = new JComboBox<>(new String[] { "Hide", "Show", "Manual" });
+                                JLabel nonReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases"));
+                                JComboBox<String> nonReportControl = new JComboBox<>(new String[] { "Hide", "Show", "Manual" });
+                                SettingsFormPanel grid = CommonSettingsDialog.createAutoDisplayPhaseGrid(
+                                        name, reportLabel, reportControl, nonReportLabel, nonReportControl);
+
+                                assertSame(reportControl, reportLabel.getLabelFor());
+                                assertSame(nonReportControl, nonReportLabel.getLabelFor());
+                                assertEquals(4, grid.getComponentCount());
+                                phaseGrids.add(grid);
+                                phaseControls.add(List.of(reportLabel, reportControl, nonReportLabel, nonReportControl));
+                                sections.add(settingsGroup(List.of(row(grid))));
+                            }
+
+                            JCheckBox movement = new JCheckBox(Messages.getString("CommonSettingsDialog.tabsMove"));
+                            JCheckBox firing = new JCheckBox(Messages.getString("CommonSettingsDialog.tabsFire"));
+                            SettingsFormPanel tabGrid = CommonSettingsDialog.createAutoDisplayTabGrid(movement, firing);
+                            JPanel tabSection = settingsGroup(List.of(row(tabGrid)));
+                            sections.add(tabSection);
+                            CommonSettingsPane pane = createSettingsPane(
+                                    "autoDisplay", sections.toArray(JComponent[]::new));
+
+                            assertEquals(2, tabGrid.getComponentCount());
+                            assertTrue(movement.getText().startsWith("Show "));
+                            assertTrue(firing.getText().startsWith("Show "));
+                            assertAtConstrainedStandardAndWideWidths(pane, sections, laidOutPane -> {
+                                int expectedWidth = phaseGrids.getFirst().getWidth();
+                                for (int index = 0; index < phaseGrids.size(); index++) {
+                                    SettingsFormPanel grid = phaseGrids.get(index);
+                                    List<Component> controls = phaseControls.get(index);
+                                    assertAlignedBalancedRows(grid, List.of(
+                                            controls.subList(0, 2), controls.subList(2, 4)));
+                                    assertEquals(expectedWidth, grid.getWidth());
+                                }
+                                assertAlignedBalancedRows(tabGrid, List.of(List.of(movement, firing)));
+                                assertEquals(expectedWidth, tabGrid.getWidth());
+                            });
+                        }
+
+            @Test
+            void laysOutAiSettingsAsOneBalancedGridWithoutRedundantLabels() {
+              JCheckBox autoResolve = new JCheckBox(
+                  Messages.getString("CommonSettingsDialog.showAutoResolvePanel"));
+              JCheckBox experimental = new JCheckBox(
+                  Messages.getString("CommonSettingsDialog.enableExperimentalBotFeatures"));
+              JLabel favoriteLabel = new JLabel(
+                  Messages.getString("CommonSettingsDialog.favoritePrincessBehaviorSetting"));
+              JComboBox<String> favoriteControl = new JComboBox<>(new String[] { "DEFAULT", "AGGRESSIVE" });
+              SettingsFormPanel grid = CommonSettingsDialog.createAiDisplayGrid(
+                  autoResolve, experimental, favoriteLabel, favoriteControl);
+              JPanel section = settingsGroup(List.of(row(grid)));
+              CommonSettingsPane pane = createSettingsPane("aiDisplay", section);
+
+              assertEquals(4, grid.getComponentCount());
+              assertSame(favoriteControl, favoriteLabel.getLabelFor());
+              assertTrue(autoResolve.getText().startsWith("Show "));
+              assertTrue(experimental.getText().startsWith("Enable "));
+              assertAtConstrainedStandardAndWideWidths(pane, List.of(section), laidOutPane ->
+                  assertAlignedBalancedRows(grid, List.of(
+                      List.of(autoResolve, experimental), List.of(favoriteLabel, favoriteControl))));
+            }
+
+        @Test
+        void laysOutAdvancedOptionsAsThreeSemanticBalancedSections() {
+          ColourSelectorButton backgroundColor = new ColourSelectorButton("Background color");
+            backgroundColor.setColour(Color.WHITE);
+            int initializedColorButtonHeight = backgroundColor.getPreferredSize().height;
+          JCheckBox autoSlide = new JCheckBox("Hide chat when inactive");
+          JLabel opacityLabel = new JLabel("Background opacity");
+          JSlider opacity = new JSlider(0, 255, 128);
+          JSpinner opacityPercentage = new JSpinner(
+              new javax.swing.SpinnerNumberModel(0, 0, 100, 1));
+          JPanel opacityControl = CommonSettingsDialog.createGameBoardFovOpacityControl(
+              opacity, opacityPercentage);
+          SettingsFormPanel chatGrid = CommonSettingsDialog.createAdvancedChatGrid(
+              backgroundColor, autoSlide, opacityLabel, opacity, opacityControl);
+
+          JLabel repeatDelayLabel = new JLabel("Repeat delay (milliseconds)");
+          JSpinner repeatDelay = CommonSettingsDialog.createBoundedIntegerSpinner(0, 0, Integer.MAX_VALUE, 10);
+          JLabel repeatRateLabel = new JLabel("Repeat rate (per second)");
+          JSpinner repeatRate = CommonSettingsDialog.createBoundedIntegerSpinner(20, 0, 100, 1);
+          JLabel moveDelayLabel = new JLabel("Movement step delay (milliseconds)");
+          JSpinner moveDelay = CommonSettingsDialog.createBoundedIntegerSpinner(50, 0, Integer.MAX_VALUE, 10);
+          SettingsFormPanel timingGrid = CommonSettingsDialog.createAdvancedTimingGrid(
+              repeatDelayLabel, repeatDelay, repeatRateLabel, repeatRate, moveDelayLabel, moveDelay);
+
+          JCheckBox drawTime = new JCheckBox("Show board draw time");
+          JCheckBox skipSavePrompt = new JCheckBox("Skip save reminder when leaving");
+          JCheckBox saveLobby = new JCheckBox("Save lobby backup when game starts");
+          SettingsFormPanel safetyGrid = CommonSettingsDialog.createAdvancedSafetyGrid(
+              drawTime, skipSavePrompt, saveLobby);
+          Component safetyFiller = safetyGrid.getComponent(3);
+
+          JPanel chatSection = settingsGroup(List.of(row(chatGrid)));
+          JPanel timingSection = settingsGroup(List.of(row(timingGrid)));
+          JPanel safetySection = settingsGroup(List.of(row(safetyGrid)));
+          CommonSettingsPane pane = createSettingsPane(
+              "advanced", chatSection, timingSection, safetySection);
+
+          assertSame(opacity, opacityLabel.getLabelFor());
+          assertSame(repeatDelay, repeatDelayLabel.getLabelFor());
+          assertSame(repeatRate, repeatRateLabel.getLabelFor());
+          assertSame(moveDelay, moveDelayLabel.getLabelFor());
+        assertEquals(initializedColorButtonHeight, backgroundColor.getPreferredSize().height);
+        assertTrue(backgroundColor.getPreferredSize().height >= backgroundColor.getIcon().getIconHeight());
+          assertEquals(50, opacityPercentage.getValue());
+          assertFalse(opacity.getPaintTicks());
+          assertFalse(opacity.getPaintLabels());
+          assertAtConstrainedStandardAndWideWidths(pane,
+              List.of(chatSection, timingSection, safetySection), laidOutPane -> {
+                assertAlignedBalancedRows(chatGrid, List.of(
+                    List.of(backgroundColor, autoSlide), List.of(opacityLabel, opacityControl)));
+                assertAlignedBalancedRows(timingGrid, List.of(
+                    List.of(repeatDelayLabel, repeatDelay), List.of(repeatRateLabel, repeatRate),
+                    List.of(moveDelayLabel, moveDelay)));
+                assertAlignedBalancedRows(safetyGrid, List.of(
+                    List.of(drawTime, skipSavePrompt), List.of(saveLobby, safetyFiller)));
+                assertEquals(chatGrid.getWidth(), timingGrid.getWidth());
+                assertEquals(timingGrid.getWidth(), safetyGrid.getWidth());
+              });
+        }
+
+        @Test
+        void constrainsAdvancedNumericControlsToRuntimeRanges() {
+          JSpinner repeatDelay = CommonSettingsDialog.createBoundedIntegerSpinner(-10, 0, Integer.MAX_VALUE, 10);
+          JSpinner repeatRate = CommonSettingsDialog.createBoundedIntegerSpinner(150, 0, 100, 1);
+          javax.swing.SpinnerNumberModel delayModel =
+              (javax.swing.SpinnerNumberModel) repeatDelay.getModel();
+          javax.swing.SpinnerNumberModel rateModel =
+              (javax.swing.SpinnerNumberModel) repeatRate.getModel();
+
+          assertEquals(0, repeatDelay.getValue());
+          assertEquals(100, repeatRate.getValue());
+          assertEquals(0, delayModel.getMinimum());
+          assertEquals(10, delayModel.getStepSize());
+          assertEquals(0, rateModel.getMinimum());
+          assertEquals(100, rateModel.getMaximum());
+          assertEquals(1, rateModel.getStepSize());
+        }
+
+        @Test
+        void providesNamesAndOptionDetailsForEveryAdvancedControl() {
+          for (String keyBase : List.of(
+              "AdvancedOptions.Chatbox2BackColor",
+              "AdvancedOptions.Chatbox2Transparency",
+              "AdvancedOptions.Chatbox2AutoSlideDown",
+              "AdvancedOptions.KeyRepeatDelay",
+              "AdvancedOptions.KeyRepeatRate",
+              "AdvancedOptions.MoveStepDelay",
+              "AdvancedOptions.ShowFPS",
+              "AdvancedOptions.NoSaveNag",
+              "AdvancedOptions.SaveLobbyOnStart")) {
+            assertTrue(Messages.keyExists(keyBase + ".name"), keyBase);
+            assertTrue(Messages.keyExists(keyBase + ".tooltip"), keyBase);
+            assertFalse(Messages.getString(keyBase + ".name").isBlank(), keyBase);
+            assertFalse(Messages.getString(keyBase + ".tooltip").isBlank(), keyBase);
+          }
+        }
+
+                        @Test
+                        void alignsButtonOrderPhasesAsDirectFourColumnRowMajorGrids() {
+                            DefaultListModel<String> firstPhase = new DefaultListModel<>();
+                            for (int index = 0; index < 10; index++) {
+                                firstPhase.addElement("Command " + index);
+                            }
+                            DefaultListModel<String> secondPhase = new DefaultListModel<>();
+                            for (int index = 0; index < 8; index++) {
+                                secondPhase.addElement(index == 7 ? "Longest command across phases" : "Action " + index);
+                            }
+                            JList<String> firstList = new JList<>(firstPhase);
+                            JList<String> secondList = new JList<>(secondPhase);
+
+                            JPanel firstPanel = CommonSettingsDialog.createButtonOrderListPanel(firstList);
+                            JPanel secondPanel = CommonSettingsDialog.createButtonOrderListPanel(secondList);
+                            CommonSettingsDialog.setUniformButtonOrderCellSize(List.of(firstList, secondList));
+                            for (JPanel panel : List.of(firstPanel, secondPanel)) {
+                                Dimension listSize = panel.getComponent(0).getPreferredSize();
+                                panel.setSize(listSize.width + UIUtil.scaleForGUI(200), listSize.height);
+                                layoutRecursively(panel);
+                            }
+
+                            assertEquals(JList.HORIZONTAL_WRAP, firstList.getLayoutOrientation());
+                            assertEquals(3, firstList.getVisibleRowCount());
+                            assertEquals(2, secondList.getVisibleRowCount());
+                            assertEquals(firstList.getFixedCellWidth(), secondList.getFixedCellWidth());
+                            assertEquals(firstList.getFixedCellHeight(), secondList.getFixedCellHeight());
+                            assertTrue(firstList.getFixedCellWidth() > 0);
+                            assertTrue(firstList.getFixedCellHeight() > 0);
+                            assertSame(firstList, firstPanel.getComponent(0));
+                            assertSame(secondList, secondPanel.getComponent(0));
+                            assertEquals(firstPanel.getInsets().left, firstList.getX());
+                            assertEquals(secondPanel.getInsets().left, secondList.getX());
+                            assertTrue(firstList.getWidth() < firstPanel.getWidth());
+                            assertTrue(secondList.getWidth() < secondPanel.getWidth());
+
+                            var firstCell = firstList.getCellBounds(0, 0);
+                            var fourthCell = firstList.getCellBounds(3, 3);
+                            var fifthCell = firstList.getCellBounds(4, 4);
+                            assertEquals(firstCell.y, fourthCell.y);
+                            assertEquals(firstCell.x, fifthCell.x);
+                            assertTrue(fifthCell.y > firstCell.y);
+                            for (int column = 0; column < 4; column++) {
+                                assertEquals(firstList.getCellBounds(column, column).x,
+                                        secondList.getCellBounds(column, column).x);
+                            }
+                            for (int index = 0; index < firstPhase.getSize(); index++) {
+                                assertEquals(firstList.getFixedCellWidth(), firstList.getCellBounds(index, index).width);
+                            }
+                            for (int index = 0; index < secondPhase.getSize(); index++) {
+                                assertEquals(secondList.getFixedCellWidth(), secondList.getCellBounds(index, index).width);
+                            }
+                        }
 
     @Test
     void presentsKeyBindingsAsOneWorkflowWithContextualNavigationHelp() {
@@ -1331,23 +1708,14 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
         return order;
     }
 
-    private static void assertThreeColumnUnitDisplayOrderGrid(SettingsFormPanel orderGrid) {
-        int firstColumnX = orderGrid.getComponent(0).getX();
-        int secondColumnX = orderGrid.getComponent(1).getX();
-        int thirdColumnX = orderGrid.getComponent(2).getX();
-        int cellWidth = orderGrid.getComponent(0).getWidth();
-        for (int index = 0; index < orderGrid.getComponentCount(); index++) {
-            Component slot = orderGrid.getComponent(index);
-            assertEquals(cellWidth, slot.getWidth());
-            assertEquals(switch (index % 3) {
-                case 0 -> firstColumnX;
-                case 1 -> secondColumnX;
-                default -> thirdColumnX;
-            }, slot.getX());
-            assertComponentWithinParent(slot);
-        }
-        assertTrue(firstColumnX + cellWidth < secondColumnX);
-        assertTrue(secondColumnX + cellWidth < thirdColumnX);
+    private static void assertThreeColumnUnitDisplayOrderGrid(JPanel orderGrid) {
+        JList<?> orderList = findComponent(orderGrid, JList.class);
+        assertEquals(6, orderList.getModel().getSize());
+        assertEquals(2, orderList.getVisibleRowCount());
+          assertEquals(UIUtil.scaleForGUI((SettingsFormPanel.DEFAULT_LABEL_WIDTH * 2) / 3),
+              orderList.getFixedCellWidth());
+        assertTrue(orderList.getFixedCellHeight() > 0);
+        assertComponentWithinParent(orderList);
     }
 
     private static JPanel settingsGroup(List<List<Component>> rows) {

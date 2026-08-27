@@ -96,6 +96,8 @@ public class PlanetaryConditions implements Serializable {
           "PlanetaryConditions.Doomed.TaintedAtmosphere");
     private static final String MSG_DOOMED_TOXIC_ATMOSPHERE = Messages.getString(
           "PlanetaryConditions.Doomed.ToxicAtmosphere");
+    private static final String MSG_CANNOT_LAUNCH = Messages.getString(
+          "PlanetaryConditions.Doomed.CannotLaunch");
     private static final String MSG_INDICATOR_TEMPERATURE_COLD = "\u2744";
     private static final String MSG_INDICATOR_TEMPERATURE_HEAT = "\uD83D\uDD25";
     private static final String MSG_INDICATOR_TEMPERATURE_NORMAL = "\uD83C\uDF21";
@@ -677,7 +679,7 @@ public class PlanetaryConditions implements Serializable {
             return MSG_DOOMED_TOXIC_ATMOSPHERE;
         }
         if (TaintedAtmosphereRules.barsGroundedJetCraft(entity, getAtmosphericTaint())) {
-            return MSG_DOOMED_TOXIC_ATMOSPHERE;
+            return MSG_CANNOT_LAUNCH;
         }
         return null;
     }

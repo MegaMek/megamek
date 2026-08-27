@@ -157,6 +157,10 @@ public final class TaintedAtmosphereRules {
      * A grounded aerospace fighter, DropShip or Small Craft can never get airborne in flammable toxic air, so there
      * is nothing for it to do on the map. One that is already flying is not launching and is left alone, as is
      * anything that gets aloft without a jet exhaust.
+     * <p>
+     * This bars a unit from taking the field; it does not kill one that is on it. A craft deployed anyway, or one
+     * that flies in and lands, is merely stuck on the ground, so the check stops applying once the unit is deployed.
+     * The rule says such units may not launch, not that the air destroys them.
      *
      * @param entity           the unit being fielded
      * @param atmosphericTaint the air it would be fielded in
@@ -165,6 +169,9 @@ public final class TaintedAtmosphereRules {
      */
     public static boolean barsGroundedJetCraft(Entity entity, AtmosphericTaint atmosphericTaint) {
         if (!prohibitsLaunching(atmosphericTaint) || !isJetPropelled(entity)) {
+            return false;
+        }
+        if (entity.isDeployed()) {
             return false;
         }
         boolean isAlreadyFlying = entity.isAirborne() || (entity.getAltitude() > 0);

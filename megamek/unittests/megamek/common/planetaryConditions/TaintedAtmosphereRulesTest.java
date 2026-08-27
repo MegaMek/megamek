@@ -292,6 +292,21 @@ class TaintedAtmosphereRulesTest {
     }
 
     @Test
+    @DisplayName("A craft already on the field is stuck, not destroyed, so the bar stops once it is deployed")
+    void aDeployedJetCraftIsLeftAlone() {
+        // The rule bars launching, not landing. A craft flown in and put down, or deployed grounded anyway, is
+        // merely unable to take off again; the conditions must not then kill it round after round.
+        Entity landedFighter = mock(Entity.class);
+        when(landedFighter.isAero()).thenReturn(true);
+        when(landedFighter.isDeployed()).thenReturn(true);
+        when(landedFighter.isAirborne()).thenReturn(false);
+        when(landedFighter.getAltitude()).thenReturn(0);
+
+        assertFalse(TaintedAtmosphereRules.barsGroundedJetCraft(landedFighter, AtmosphericTaint.FLAMMABLE_TOXIC),
+              "a craft that has landed is stuck on the ground, not doomed");
+    }
+
+    @Test
     @DisplayName("Only flammable toxic air bars jet-propelled units from launching")
     void launchProhibitionIsFlammableToxicOnly() {
         assertTrue(TaintedAtmosphereRules.prohibitsLaunching(AtmosphericTaint.FLAMMABLE_TOXIC));

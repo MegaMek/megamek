@@ -39,7 +39,6 @@ import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
@@ -126,10 +125,10 @@ public class MissionRoleFilterPanel extends JPanel {
         airPanel.setVisible(false);
     }
 
+    /** A group is laid out as a bare grid: the row it sits on in the form carries the label. */
     private static JPanel createGroupPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createTitledBorder(
-              Messages.getString("ForceGeneratorDialog.missionRoles.title")));
+        panel.setOpaque(false);
         return panel;
     }
 

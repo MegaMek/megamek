@@ -38,7 +38,6 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -102,6 +101,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private Consumer<FactionRecord> onFactionChanged;
 
     private ForceDescriptor forceDesc = new ForceDescriptor();
+
+    /** Width of the transport percentage fields; three digits and a decimal is all they ever hold. */
+    private static final int TRANSPORT_FIELD_COLUMNS = 5;
 
     private JTextField txtYear;
     /** The year field's own border, kept so an editable year can get it back. */
@@ -218,10 +220,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         constraints.insets = new Insets(inset, inset, inset, inset);
 
         int row = 0;
+        // Top to bottom the tab follows the way the force is made: everything that describes it first (the
+        // form, the role filters and the transport to generate for it), then what came out, then the tools
+        // for changing it.
         row = addForceDescriptionFields(constraints, row);
-        JPanel transportPanel = buildTransportPanel(constraints);
         row = addMissionRoleFilters(constraints, row);
-        row = addTransportAndSummary(constraints, row, transportPanel);
+        row = addTransportRow(constraints, row);
+        row = addCompositionSummary(constraints, row);
         // Last, below everything that shapes the force: the mix edits a generated tree, so it belongs with the
         // result rather than among the settings, and it stays hidden until there is a tree to edit.
         row = addFormationMixPanel(constraints, row);
@@ -377,35 +382,82 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      *
      * @return the transport panel, for the caller to place beside the composition summary
      */
-    private JPanel buildTransportPanel(GridBagConstraints constraints) {
-        JPanel panTransport = new JPanel(new GridLayout(5, 2));
-        txtDropshipPct = new JTextField("0");
+    /**
+     * The transport settings as one row of the description form. They decide what gets generated - how much of
+     * the force gets a DropShip berth, whether those ships get JumpShip collars - so they belong with the other
+     * inputs rather than beside the summary of the result, and four short fields fit on a line.
+     */
+    private int addTransportRow(GridBagConstraints constraints, int startRow) {
+        int row = startRow;
+        constraints.gridx = 0;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.transport"), constraints);
+
+        JPanel panTransport = new JPanel(new GridBagLayout());
+        panTransport.setOpaque(false);
+        GridBagConstraints cell = new GridBagConstraints();
+        cell.anchor = GridBagConstraints.WEST;
+        cell.gridy = 0;
+        int gap = UIUtil.scaleForGUI(4);
+        int groupGap = UIUtil.scaleForGUI(14);
+
+        txtDropshipPct = new JTextField("0", TRANSPORT_FIELD_COLUMNS);
         txtDropshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.dropshipPercentage.tooltip"));
-        txtJumpshipPct = new JTextField("0");
+        txtJumpshipPct = new JTextField("0", TRANSPORT_FIELD_COLUMNS);
         txtJumpshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.jumpshipPercentage.tooltip"));
-        txtWarshipPct = new JTextField("0");
+        txtWarshipPct = new JTextField("0", TRANSPORT_FIELD_COLUMNS);
         txtWarshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.warshipPercentage.tooltip"));
         // Default 100: provision cargo holds for everything the command has to haul. Above 100
         // buys headroom for cargo it picks up later.
-        txtCargoPct = new JTextField("100");
+        txtCargoPct = new JTextField("100", TRANSPORT_FIELD_COLUMNS);
         txtCargoPct.setToolTipText(Messages.getString("ForceGeneratorDialog.cargoPct.tooltip"));
+
         // The label is what a player reads and points at, so it carries the same explanation as the
         // field. With the tooltip on the input box alone, hovering the thing that names the setting
         // explained nothing.
-        panTransport.add(describedLabel("ForceGeneratorDialog.dropshipPercentage"));
-        panTransport.add(txtDropshipPct, constraints);
-        panTransport.add(describedLabel("ForceGeneratorDialog.jumpshipPercentage"));
-        panTransport.add(txtJumpshipPct, constraints);
-        panTransport.add(describedLabel("ForceGeneratorDialog.warshipPercentage"));
-        panTransport.add(txtWarshipPct, constraints);
-        panTransport.add(describedLabel("ForceGeneratorDialog.cargoPct"));
-        panTransport.add(txtCargoPct, constraints);
+        int column = 0;
+        column = addTransportField(panTransport, cell, column, "ForceGeneratorDialog.dropshipPercentage",
+              txtDropshipPct, gap, groupGap);
+        column = addTransportField(panTransport, cell, column, "ForceGeneratorDialog.jumpshipPercentage",
+              txtJumpshipPct, gap, groupGap);
+        column = addTransportField(panTransport, cell, column, "ForceGeneratorDialog.warshipPercentage",
+              txtWarshipPct, gap, groupGap);
+        column = addTransportField(panTransport, cell, column, "ForceGeneratorDialog.cargoPct",
+              txtCargoPct, gap, groupGap);
+
         chkFighterComplement = new JCheckBox(Messages.getString("ForceGeneratorDialog.fighterComplement"));
         chkFighterComplement.setToolTipText(Messages.getString("ForceGeneratorDialog.fighterComplement.tooltip"));
-        panTransport.add(chkFighterComplement);
-        panTransport.add(new JLabel(""));
-        panTransport.setBorder(BorderFactory.createTitledBorder(Messages.getString("ForceGeneratorDialog.transport")));
-        return panTransport;
+        cell.gridx = column;
+        cell.insets = new Insets(0, 0, 0, 0);
+        cell.weightx = 1.0;
+        panTransport.add(chkFighterComplement, cell);
+
+        constraints.gridx = 1;
+        constraints.gridy = row++;
+        constraints.gridwidth = 3;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1.0;
+        add(panTransport, constraints);
+        constraints.gridwidth = 1;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.weightx = 0.0;
+        return row;
+    }
+
+    /**
+     * Places one label-and-field pair on the transport row.
+     *
+     * @return the next free column
+     */
+    private int addTransportField(JPanel panTransport, GridBagConstraints cell, int column, String messageKey,
+          JTextField field, int gap, int groupGap) {
+        cell.gridx = column;
+        cell.insets = new Insets(0, 0, 0, gap);
+        panTransport.add(describedLabel(messageKey), cell);
+        cell.gridx = column + 1;
+        cell.insets = new Insets(0, 0, 0, groupGap);
+        panTransport.add(field, cell);
+        return column + 2;
     }
 
     /**
@@ -448,13 +500,22 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      *
      * @return the next free grid row
      */
+    /** The role filters as one row of the description form: a label, then the boxes for the unit type shown. */
     private int addMissionRoleFilters(GridBagConstraints constraints, int startRow) {
         int row = startRow;
-        panMissionRoleFilters = new MissionRoleFilterPanel();
         constraints.gridx = 0;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.missionRoles"), constraints);
+        panMissionRoleFilters = new MissionRoleFilterPanel();
+        constraints.gridx = 1;
         constraints.gridy = row++;
+        constraints.gridwidth = 3;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1.0;
         add(panMissionRoleFilters, constraints);
         constraints.gridwidth = 1;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.weightx = 0.0;
         return row;
     }
 
@@ -471,15 +532,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      *
      * @return the next free grid row
      */
-    private int addTransportAndSummary(GridBagConstraints constraints, int startRow, JPanel panTransport) {
+    /** The Composition Summary across the full width, now that the transport settings sit in the form above. */
+    private int addCompositionSummary(GridBagConstraints constraints, int startRow) {
         int row = startRow;
-        JPanel transportAndSummary = new JPanel(new BorderLayout(10, 0));
-        transportAndSummary.add(panTransport, BorderLayout.WEST);
-        JPanel summaryWithMix = new JPanel(new BorderLayout(0, 2));
-        summaryWithMix.setOpaque(false);
-        summaryWithMix.add(createSummaryTable(), BorderLayout.CENTER);
-        transportAndSummary.add(summaryWithMix, BorderLayout.CENTER);
-
         constraints.gridx = 0;
         constraints.gridy = row++;
         constraints.gridwidth = 4;
@@ -487,11 +542,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // No vertical weight: this panel wants its natural height and nothing more. Sharing the slack with the
         // formation list left the list a third of the height it needed while this row kept grey it had no use for.
         constraints.weighty = 0.0;
-        add(transportAndSummary, constraints);
-        constraints.gridx = 0;
+        add(createSummaryTable(), constraints);
         constraints.gridwidth = 1;
         constraints.fill = GridBagConstraints.NONE;
-        constraints.weighty = 0;
         return row;
     }
 
@@ -871,7 +924,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
               Messages.getString("ForceGeneratorDialog.summary.light"),
               Messages.getString("ForceGeneratorDialog.summary.medium"),
               Messages.getString("ForceGeneratorDialog.summary.heavy"),
-              Messages.getString("ForceGeneratorDialog.summary.assault")
+              Messages.getString("ForceGeneratorDialog.summary.assault"),
+              Messages.getString("ForceGeneratorDialog.summary.total")
         };
         summaryModel = new DefaultTableModel(columns, 0) {
             @Serial
@@ -891,16 +945,14 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // are narrower since they only hold 1-3 digit counts. Total ~380px fits comfortably in
         // the 480px scroll-pane viewport with the default AUTO_RESIZE_SUBSEQUENT_COLUMNS.
         tblSummary.getColumnModel().getColumn(0).setPreferredWidth(140);
-        for (int col = 1; col <= 4; col++) {
+        for (int col = 1; col <= 5; col++) {
             tblSummary.getColumnModel().getColumn(col).setPreferredWidth(60);
         }
         JScrollPane scrollPane = new JScrollPane(tblSummary);
         scrollPane.setBorder(BorderFactory.createTitledBorder(
               Messages.getString("ForceGeneratorDialog.summary.title")));
-        // Preferred width sized so the BorderLayout wrapper extends most of the way to the right
-        // edge of the dialog (cols 0-3 grow to accommodate this preferred when it exceeds the
-        // natural column-sum width). Roughly Transport width + a combo-and-a-half on the right.
-        scrollPane.setPreferredSize(UIUtil.scaleForGUI(480, 140));
+        // Tall enough for the header, the six unit types a combined-arms force can hold, and the total row.
+        scrollPane.setPreferredSize(UIUtil.scaleForGUI(480, 170));
         return scrollPane;
     }
 
@@ -944,17 +996,27 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // percentage of that unit type's total instead. Smaller forces keep the exact counts.
         Integer echelon = fd.getEchelon();
         boolean asPercent = (echelon != null) && (echelon >= LARGE_ECHELON_PERCENT_THRESHOLD);
+        // Column totals count units (squads for Battle Armor) so the bottom row adds up across types.
+        int[] columnTotals = new int[4];
         for (Map.Entry<Integer, int[][]> entry : counts.entrySet()) {
             int[][] row = entry.getValue();
             boolean isBA = (entry.getKey() == UnitType.BATTLE_ARMOR);
+            int typeTotal = row[0][0] + row[1][0] + row[2][0] + row[3][0];
+            int typeTroopers = row[0][1] + row[1][1] + row[2][1] + row[3][1];
+            for (int column = 0; column < 4; column++) {
+                columnTotals[column] += row[column][0];
+            }
+            // The Total column is always the plain count, even when the weight cells show percentages: the
+            // percentages say how the type is spread, the total says how many there are.
+            String rowTotal = formatSummaryCell(new int[] { typeTotal, typeTroopers }, isBA);
             if (asPercent) {
-                int typeTotal = row[0][0] + row[1][0] + row[2][0] + row[3][0];
                 summaryModel.addRow(new Object[] {
                       UnitType.getTypeDisplayableName(entry.getKey()),
                       formatSummaryPercent(row[0][0], typeTotal),
                       formatSummaryPercent(row[1][0], typeTotal),
                       formatSummaryPercent(row[2][0], typeTotal),
-                      formatSummaryPercent(row[3][0], typeTotal)
+                      formatSummaryPercent(row[3][0], typeTotal),
+                      rowTotal
                 });
             } else {
                 summaryModel.addRow(new Object[] {
@@ -962,9 +1024,20 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                       formatSummaryCell(row[0], isBA),
                       formatSummaryCell(row[1], isBA),
                       formatSummaryCell(row[2], isBA),
-                      formatSummaryCell(row[3], isBA)
+                      formatSummaryCell(row[3], isBA),
+                      rowTotal
                 });
             }
+        }
+        if (!counts.isEmpty()) {
+            summaryModel.addRow(new Object[] {
+                  Messages.getString("ForceGeneratorDialog.summary.total"),
+                  String.valueOf(columnTotals[0]),
+                  String.valueOf(columnTotals[1]),
+                  String.valueOf(columnTotals[2]),
+                  String.valueOf(columnTotals[3]),
+                  String.valueOf(columnTotals[0] + columnTotals[1] + columnTotals[2] + columnTotals[3])
+            });
         }
     }
 

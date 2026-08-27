@@ -148,7 +148,7 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
             // The trooper is already dead; the air has nothing left to kill.
             return reports;
         }
-        boolean hasHarJel = battleArmor.hasHarJelIn(location);
+        boolean hasHarJel = battleArmor.hasHarJelProtection(location);
         int target = TaintedAtmosphereRules.getBattleArmorSuitBreachTarget(hasHarJel);
         Roll diceRoll = Compute.rollD6(2);
 

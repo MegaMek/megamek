@@ -247,8 +247,8 @@ class TaintedAtmosphereRulesTest {
     }
 
     @Test
-    @DisplayName("Aerospace units fly on jets; prop, ultra-light and VSTOL support vehicles do not")
-    void jetPropulsionExemptsPropAndLiftCraft() {
+    @DisplayName("Prop, Ultra-Light and VSTOL Fixed-Wing Support vehicles are the exception to jet propulsion")
+    void jetPropulsionExemptsTheThreeFixedWingSupportChassis() {
         Entity aerospaceFighter = mock(Entity.class);
         when(aerospaceFighter.isAero()).thenReturn(true);
         assertTrue(TaintedAtmosphereRules.isJetPropelled(aerospaceFighter),
@@ -257,53 +257,39 @@ class TaintedAtmosphereRulesTest {
         for (String chassisModification : List.of(EquipmentTypeLookup.PROP_CHASSIS_MOD,
               EquipmentTypeLookup.ULTRALIGHT_CHASSIS_MOD,
               EquipmentTypeLookup.VSTOL_CHASSIS_MOD)) {
-            Entity supportVehicle = mock(Entity.class);
-            when(supportVehicle.isAero()).thenReturn(true);
-            when(supportVehicle.hasMisc(chassisModification)).thenReturn(true);
-            assertFalse(TaintedAtmosphereRules.isJetPropelled(supportVehicle),
-                  chassisModification + " gets a support vehicle airborne without a jet exhaust");
+            Entity fixedWingSupport = mock(Entity.class);
+            when(fixedWingSupport.isAero()).thenReturn(true);
+            when(fixedWingSupport.hasMisc(chassisModification)).thenReturn(true);
+            assertFalse(TaintedAtmosphereRules.isJetPropelled(fixedWingSupport),
+                  chassisModification + " is one of the three chassis the rules exempt");
         }
 
-        Entity groundVehicle = mock(Entity.class);
-        when(groundVehicle.isAero()).thenReturn(false);
-        assertFalse(TaintedAtmosphereRules.isJetPropelled(groundVehicle), "a ground unit launches nothing");
+        // A VTOL is a vehicle rather than an aerospace unit, so its rotors never reach this check at all.
+        Entity vtol = mock(Entity.class);
+        when(vtol.isAero()).thenReturn(false);
+        assertFalse(TaintedAtmosphereRules.isJetPropelled(vtol), "a VTOL flies on rotors, not a jet");
     }
 
     @Test
-    @DisplayName("Flammable toxic air keeps grounded jet craft off the field but leaves flying ones alone")
-    void groundedJetCraftCannotBeFielded() {
-        Entity groundedFighter = mock(Entity.class);
-        when(groundedFighter.isAero()).thenReturn(true);
-        when(groundedFighter.isAirborne()).thenReturn(false);
-        when(groundedFighter.getAltitude()).thenReturn(0);
-        assertTrue(TaintedAtmosphereRules.barsGroundedJetCraft(groundedFighter, AtmosphericTaint.FLAMMABLE_TOXIC),
-              "it could never launch, so it cannot take the field");
+    @DisplayName("Flammable toxic air keeps jet-propelled craft off the field entirely")
+    void jetCraftCannotBeFielded() {
+        // Barred outright rather than only when grounded: a fighter that could be fielded but never move, whether
+        // deployed that way or left there by a landing, is a puzzle for everyone looking at it.
+        Entity fighter = mock(Entity.class);
+        when(fighter.isAero()).thenReturn(true);
 
-        Entity airborneFighter = mock(Entity.class);
-        when(airborneFighter.isAero()).thenReturn(true);
-        when(airborneFighter.isAirborne()).thenReturn(true);
-        assertFalse(TaintedAtmosphereRules.barsGroundedJetCraft(airborneFighter, AtmosphericTaint.FLAMMABLE_TOXIC),
-              "a craft already flying is not launching");
-
-        assertFalse(TaintedAtmosphereRules.barsGroundedJetCraft(groundedFighter, AtmosphericTaint.FLAMMABLE_TAINTED),
+        assertTrue(TaintedAtmosphereRules.barsJetPropelledCraft(fighter, AtmosphericTaint.FLAMMABLE_TOXIC),
+              "nothing on jet thrust can operate in flammable toxic air");
+        assertFalse(TaintedAtmosphereRules.barsJetPropelledCraft(fighter, AtmosphericTaint.FLAMMABLE_TAINTED),
               "only toxic air bars launching");
-        assertFalse(TaintedAtmosphereRules.barsGroundedJetCraft(groundedFighter, AtmosphericTaint.BREATHABLE),
+        assertFalse(TaintedAtmosphereRules.barsJetPropelledCraft(fighter, AtmosphericTaint.BREATHABLE),
               "breathable air bars nothing");
-    }
 
-    @Test
-    @DisplayName("A craft already on the field is stuck, not destroyed, so the bar stops once it is deployed")
-    void aDeployedJetCraftIsLeftAlone() {
-        // The rule bars launching, not landing. A craft flown in and put down, or deployed grounded anyway, is
-        // merely unable to take off again; the conditions must not then kill it round after round.
-        Entity landedFighter = mock(Entity.class);
-        when(landedFighter.isAero()).thenReturn(true);
-        when(landedFighter.isDeployed()).thenReturn(true);
-        when(landedFighter.isAirborne()).thenReturn(false);
-        when(landedFighter.getAltitude()).thenReturn(0);
-
-        assertFalse(TaintedAtmosphereRules.barsGroundedJetCraft(landedFighter, AtmosphericTaint.FLAMMABLE_TOXIC),
-              "a craft that has landed is stuck on the ground, not doomed");
+        Entity propellerCraft = mock(Entity.class);
+        when(propellerCraft.isAero()).thenReturn(true);
+        when(propellerCraft.hasMisc(EquipmentTypeLookup.PROP_CHASSIS_MOD)).thenReturn(true);
+        assertFalse(TaintedAtmosphereRules.barsJetPropelledCraft(propellerCraft, AtmosphericTaint.FLAMMABLE_TOXIC),
+              "a propeller-driven support vehicle may still fly");
     }
 
     @Test

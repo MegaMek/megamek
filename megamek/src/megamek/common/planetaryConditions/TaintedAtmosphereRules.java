@@ -151,31 +151,28 @@ public final class TaintedAtmosphereRules {
     }
 
     /**
-     * Whether this unit is a jet-propelled craft that would have to launch, and so may not take the field at all in
-     * this atmosphere (TO:AR p.54).
+     * Whether this unit is a jet-propelled craft that may not take the field at all in this atmosphere.
      * <p>
-     * A grounded aerospace fighter, DropShip or Small Craft can never get airborne in flammable toxic air, so there
-     * is nothing for it to do on the map. One that is already flying is not launching and is left alone, as is
-     * anything that gets aloft without a jet exhaust.
+     * TO:AR p.54, the flammable toxic row: <i>"Aerospace and other jet-propelled units may not launch in lower
+     * atmosphere."</i>
      * <p>
-     * This bars a unit from taking the field; it does not kill one that is on it. A craft deployed anyway, or one
-     * that flies in and lands, is merely stuck on the ground, so the check stops applying once the unit is deployed.
-     * The rule says such units may not launch, not that the air destroys them.
+     * Because of this, it was easier to prohibit aerospace units - fighters and DropShips - from the map completely,
+     * rather than model a craft that may be present but can never move. One deployed on the ground could never
+     * launch, and one that flew in and landed would be in the same position: a unit sitting there permanently
+     * immobile, which reads to a player as a bug rather than as a rule. Keeping them off the field entirely says the
+     * same thing more clearly.
+     * <p>
+     * The rules do carry an exception, and it is kept. Fixed-Wing Support vehicles built with the <b>Prop</b>,
+     * <b>Ultra-Light</b> or <b>VSTOL</b> chassis modification may still fly, as may <b>VTOLs</b> - the latter are
+     * vehicles rather than aerospace units, so they never reach this check at all.
      *
      * @param entity           the unit being fielded
      * @param atmosphericTaint the air it would be fielded in
      *
      * @return {@code true} if this unit may not be fielded
      */
-    public static boolean barsGroundedJetCraft(Entity entity, AtmosphericTaint atmosphericTaint) {
-        if (!prohibitsLaunching(atmosphericTaint) || !isJetPropelled(entity)) {
-            return false;
-        }
-        if (entity.isDeployed()) {
-            return false;
-        }
-        boolean isAlreadyFlying = entity.isAirborne() || (entity.getAltitude() > 0);
-        return !isAlreadyFlying;
+    public static boolean barsJetPropelledCraft(Entity entity, AtmosphericTaint atmosphericTaint) {
+        return prohibitsLaunching(atmosphericTaint) && isJetPropelled(entity);
     }
 
     /**
@@ -454,9 +451,12 @@ public final class TaintedAtmosphereRules {
      * Whether this unit gets into the air on jet thrust, which is what a flammable toxic atmosphere will not tolerate
      * (TO:AR p.54, "Aerospace and other jet-propelled units may not launch in lower atmosphere").
      * <p>
-     * Aerospace units do by default. Support vehicles built with the Prop, Ultra-Light or VSTOL chassis modification
-     * do not: they fly on a propeller or on lift rather than on a jet exhaust that would set the air alight, so the
-     * ban does not reach them.
+     * Aerospace units do by default. The exception is a Fixed-Wing Support vehicle built with one of three chassis
+     * modifications - <b>Prop</b>, <b>Ultra-Light</b> or <b>VSTOL</b> - none of which raises the jet exhaust the rule
+     * is concerned with.
+     * <p>
+     * VTOLs need no exemption here. They are vehicles rather than aerospace units, so they never reach this check and
+     * their rotors are free to fly in air that would not tolerate a jet.
      *
      * @param entity the unit that wants to fly
      *
@@ -466,10 +466,10 @@ public final class TaintedAtmosphereRules {
         if (!entity.isAero()) {
             return false;
         }
-        boolean fliesWithoutJetExhaust = entity.hasMisc(EquipmentTypeLookup.PROP_CHASSIS_MOD)
+        boolean isExemptFixedWingSupport = entity.hasMisc(EquipmentTypeLookup.PROP_CHASSIS_MOD)
               || entity.hasMisc(EquipmentTypeLookup.ULTRALIGHT_CHASSIS_MOD)
               || entity.hasMisc(EquipmentTypeLookup.VSTOL_CHASSIS_MOD);
-        return !fliesWithoutJetExhaust;
+        return !isExemptFixedWingSupport;
     }
 
     /**

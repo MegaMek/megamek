@@ -176,6 +176,7 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
      */
     void checkTaintedAtmosphereEffects() {
         AtmosphericTaint atmosphericTaint = atmosphericTaint();
+        LOGGER.debug("[TaintedAtmosphere] End Phase pass running in {} air", atmosphericTaint);
         if (atmosphericTaint.isBreathable()) {
             return;
         }
@@ -274,10 +275,20 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
             LOGGER.debug("[TaintedAtmosphere] spontaneous ignition skipped: the fire game option is switched off");
             return;
         }
+        int heatTrackingUnits = 0;
+        int unitsHotEnough = 0;
+        int unitsRolled = 0;
         for (Entity entity : getGame().inGameTWEntities()) {
+            if (entity.tracksHeat()) {
+                heatTrackingUnits++;
+                if (entity.getHeat() >= TaintedAtmosphereRules.SPONTANEOUS_IGNITION_HEAT_THRESHOLD) {
+                    unitsHotEnough++;
+                }
+            }
             if (!isSpontaneousIgnitionCandidate(entity)) {
                 continue;
             }
+            unitsRolled++;
             Roll diceRoll = Compute.rollD6(2);
             Report report = new Report(7707);
             report.subject = entity.getId();
@@ -298,6 +309,11 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
                       gameManager.getMainPhaseReport());
             }
         }
+        // Summarised after the loop rather than logged per unit, so a quiet End Phase can still be explained without
+        // a line for every cool Mek on the board.
+        LOGGER.debug("[TaintedAtmosphere] spontaneous ignition: {} heat-tracking unit(s), {} at {}+ heat, {} rolled",
+              heatTrackingUnits, unitsHotEnough, TaintedAtmosphereRules.SPONTANEOUS_IGNITION_HEAT_THRESHOLD,
+              unitsRolled);
     }
 
     /**

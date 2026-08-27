@@ -284,6 +284,7 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
             report.addDesc(entity);
             report.add(entity.getHeat());
             report.add(TaintedAtmosphereRules.SPONTANEOUS_IGNITION_TARGET);
+            report.add(entity.getPosition().getBoardNum());
             report.add(diceRoll);
             report.choose(diceRoll.getIntValue() >= TaintedAtmosphereRules.SPONTANEOUS_IGNITION_TARGET);
             addReport(report);
@@ -388,7 +389,9 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
         if (TaintedAtmosphereRules.jumpJetsAlwaysIgnite(atmosphericTaint)) {
             LOGGER.info("[TaintedAtmosphere] {}: jump exhaust sets {} alight automatically",
                   entity.getShortName(), coords);
-            phaseReport.add(new Report(7711).subject(entity.getId()).addDesc(entity));
+            phaseReport.add(new Report(7711).subject(entity.getId())
+                  .addDesc(entity)
+                  .add(coords.getBoardNum()));
             gameManager.ignite(coords, boardId, Terrains.FIRE_LVL_NORMAL, phaseReport);
             return;
         }
@@ -399,6 +402,7 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
         report.subject = entity.getId();
         report.addDesc(entity);
         report.add(target);
+        report.add(coords.getBoardNum());
         report.add(diceRoll);
         report.choose(diceRoll.getIntValue() >= target);
         phaseReport.add(report);
@@ -449,6 +453,7 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
         report.subject = aeroEntity.getId();
         report.addDesc(aeroEntity);
         report.add(TaintedAtmosphereRules.EXHAUST_WASH_IGNITION_TARGET);
+        report.add(coords.getBoardNum());
         report.add(diceRoll);
         report.choose(diceRoll.getIntValue() >= TaintedAtmosphereRules.EXHAUST_WASH_IGNITION_TARGET);
         gameManager.getMainPhaseReport().add(report);

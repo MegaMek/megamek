@@ -61,7 +61,7 @@ public class InfantryLaserRifleDWSL5S extends InfantryWeapon {
         cost = 2000;
         bv = 0.4375;
         tonnage = 0.0065;
-        infantryDamage = 0.44;
+        infantryDamage = 0.2188;
         infantryRange = 4;
         shots = 5;
         bursts = 1;

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,7 +35,6 @@
 package megamek.server;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +62,12 @@ import megamek.server.totalWarfare.TWGameManager;
 
 public class FireProcessor extends DynamicTerrainProcessor {
     private static final MMLogger logger = MMLogger.create(FireProcessor.class);
+
+    /**
+     * Construction Factor a burning building hex loses each turn. TO:AR p.41: "For each turn that a building is on
+     * fire, it loses 2 CF (regardless of the size or type of building)."
+     */
+    private static final int BURNING_BUILDING_CF_LOSS = 2;
 
     private Game game;
     Vector<Report> vPhaseReport;
@@ -106,25 +111,46 @@ public class FireProcessor extends DynamicTerrainProcessor {
         // Cycle through all buildings, checking for fire.
         // ASSUMPTION: buildings don't lose 2 CF on the turn a fire starts.
         // ASSUMPTION: multi-hex buildings lose 2 CF in each burning hex
-        Enumeration<IBuilding> buildings = board.getBuildings();
-        while (buildings.hasMoreElements()) {
-            IBuilding bldg = buildings.nextElement();
-            Enumeration<Coords> bldgCoords = bldg.getCoords();
-            while (bldgCoords.hasMoreElements()) {
-                Coords coords = bldgCoords.nextElement();
-                if (bldg.isBurning(coords)) {
-                    int cf = Math.max(bldg.getCurrentCF(coords) - 2, 0);
-                    bldg.setCurrentCF(cf, coords);
+        Vector<IBuilding> burningBuildings = new Vector<>();
+        // Copy the list; collapsing a building can remove it from the board's building vector.
+        for (IBuilding building : new ArrayList<>(board.getBuildingsVector())) {
+            boolean burnedThisTurn = false;
+            // Copy the coords; collapsing a hex removes it from the building while we are walking its hexes.
+            for (Coords coords : new ArrayList<>(building.getCoordsList())) {
+                if (!building.isBurning(coords)) {
+                    continue;
+                }
+                burnedThisTurn = true;
+                int constructionFactor = Math.max(building.getCurrentCF(coords) - BURNING_BUILDING_CF_LOSS, 0);
+                building.setCurrentCF(constructionFactor, coords);
+                vPhaseReport.addElement(Report.publicReport(5121)
+                      .add(building.getName())
+                      .add(coords.getBoardNum())
+                      .add(BURNING_BUILDING_CF_LOSS)
+                      .add(constructionFactor));
 
-                    // Does the building burn down?
-                    if (cf == 0) {
-                        vPhaseReport.addElement(Report.publicReport(5120).add(bldg.getName()));
-                    } else if (!gameManager.checkForCollapse(bldg, positionMap, coords, false, vPhaseReport)) {
-                        // If it doesn't collapse under its load, mark it for update.
-                        bldg.setPhaseCF(cf, coords);
-                    }
+                // Does the building burn down?
+                if (constructionFactor == 0) {
+                    vPhaseReport.addElement(Report.publicReport(5120).add(building.getName()));
+                    // A building at CF 0 cannot stand. Bring it down here so whatever is inside it, on top of it or
+                    // in its basement is resolved now rather than a phase later. The phase CF is deliberately left
+                    // alone: the falling debris is scored on the CF the hex had before this turn's burn, the same
+                    // way it is for a building knocked down by weapon damage.
+                    gameManager.collapseBuilding(building, positionMap, coords, vPhaseReport);
+                } else if (!gameManager.checkForCollapse(building, positionMap, coords, false, vPhaseReport)) {
+                    // If it doesn't collapse under its load, mark it for update.
+                    building.setPhaseCF(constructionFactor, coords);
                 }
             }
+            if (burnedThisTurn) {
+                burningBuildings.add(building);
+            }
+        }
+
+        // Tell the clients about the CF the fire took off, so tooltips and bot pathing see the damaged building
+        // rather than the CF it started the game with.
+        if (!burningBuildings.isEmpty()) {
+            gameManager.sendChangedBuildings(burningBuildings);
         }
 
         // Cycle through all hexes, checking for fire and the spread of fire

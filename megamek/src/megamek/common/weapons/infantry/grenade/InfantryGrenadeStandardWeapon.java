@@ -61,8 +61,9 @@ public class InfantryGrenadeStandardWeapon extends InfantryWeapon {
     public InfantryGrenadeStandardWeapon() {
         super();
 
-        name = "Grenade (Non-Inferno)";
+        name = "Grenade (Non-Incendiary)";
         setInternalName("InfantryGrenade");
+        addLookupName("Grenade (Non-Inferno)");
         addLookupName(name);
         addLookupName("Grenades");
         ammoType = AmmoType.AmmoTypeEnum.NA;

@@ -975,6 +975,30 @@ class ComputeTest {
     }
 
     @Test
+    void testDirectBlowInfantryMOSCannotShiftPastEndOfTable() {
+        // A heavy flamer is already 6D6, the second-to-last row of the Non-Conventional Damage against Infantry
+        // table. A direct blow that shifts it two rows would run off the end of the table; the shift must stop at
+        // 7D6 rather than falling through to the weapon's base damage.
+        double originalDamage = 4.0;
+        int weaponType = WeaponType.WEAPON_BURST_6D6;
+        Vector<Report> reports = new Vector<>();
+        int newDamage = directBlowInfantryDamage(
+              originalDamage,
+              3,
+              weaponType,
+              false,
+              false,
+              1,
+              reports,
+              1
+        );
+        assertTrue((newDamage >= 7) && (newDamage <= 42),
+              "A 6D6 burst shifted past the end of the table must roll 7D6 (7-42), not fall back to the weapon's "
+                    + "base damage of 4; got " + newDamage);
+        assertEquals(1, reports.size(), "Report size");
+    }
+
+    @Test
     void testDirectBlowInfantryMOS3BurstInBuilding() {
         // Burst Weapon in the building attacking infantry also in the building.
         // 1D6 -> 4D6 -> 4D6 / 2

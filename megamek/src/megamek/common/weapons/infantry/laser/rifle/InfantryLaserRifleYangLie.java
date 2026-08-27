@@ -61,7 +61,7 @@ public class InfantryLaserRifleYangLie extends InfantryWeapon {
         cost = 1275;
         bv = 0.525;
         tonnage = 0.0055;
-        infantryDamage = 0.53;
+        infantryDamage = 0.2625;
         infantryRange = 4;
         shots = 5;
         bursts = 1;

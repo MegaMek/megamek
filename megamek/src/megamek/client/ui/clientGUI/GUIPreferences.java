@@ -304,6 +304,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String FOV_STRIPES = "FoVFogStripes";
     public static final String FOV_GRAYSCALE = "FoVFogGrayscale";
     public static final String FOV_SPOTTING_MODE = "FovSpottingMode";
+    public static final String SHOW_OBJECTIVE_OVERLAYS = "ShowObjectiveOverlays";
     public static final String GUI_SCALE = "GUIScale";
     public static final String LOBBY_MEK_TABLE_UNIT_WIDTH = "LobbyMekTableUnitWidth";
     public static final String LOBBY_MEK_TABLE_PILOT_WIDTH = "LobbyMekTablePilotWidth";
@@ -702,6 +703,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FOV_STRIPES, 35);
         store.setDefault(FOV_GRAYSCALE, false);
         store.setDefault(FOV_SPOTTING_MODE, false);
+        store.setDefault(SHOW_OBJECTIVE_OVERLAYS, true);
 
         store.setDefault(HIGH_QUALITY_GRAPHICS, true);
         store.setDefault(AO_HEX_SHADOWS, false);
@@ -2302,6 +2304,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setFovSpottingMode(boolean state) {
         store.setValue(FOV_SPOTTING_MODE, state);
+    }
+
+    /** @return whether the objective overlays - control zone outlines and scheme words - are shown */
+    public boolean getShowObjectiveOverlays() {
+        return store.getBoolean(SHOW_OBJECTIVE_OVERLAYS);
+    }
+
+    public void setShowObjectiveOverlays(boolean state) {
+        store.setValue(SHOW_OBJECTIVE_OVERLAYS, state);
     }
 
     public void setMapZoomIndex(int zoomIndex) {

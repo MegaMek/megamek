@@ -61,7 +61,7 @@ public class InfantryPistolHCKP14 extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = 0.056;
         tonnage = 0.0012;
-        infantryDamage = 0.07;
+        infantryDamage = 0.056;
         infantryRange = 0;
         ammoWeight = 0.00004;
         cost = 130;

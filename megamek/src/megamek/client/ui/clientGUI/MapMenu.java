@@ -60,6 +60,8 @@ import megamek.client.bot.princess.ChatCommands;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.BuildingEditDialog;
+import megamek.client.ui.dialogs.HexEditDialog;
 import megamek.client.ui.dialogs.NoteDialog;
 import megamek.client.ui.dialogs.TurretFacingDialog;
 import megamek.client.ui.dialogs.UnitEditorDialog;
@@ -741,9 +743,29 @@ public class MapMenu extends JPopupMenu {
                 menu.add(dmgMenu);
                 menu.addSeparator();
             }
+            // Change Terrain has a dialog of its own rather than a generated form, because what a gamemaster may
+            // legally set depends on what the hex already holds, and the generated form cannot know that.
+            menu.add(createChangeTerrainMenuItem());
+            menu.add(createBuildingMenuItem());
             menu.add(specialCommandsMenu);
         }
         return menu;
+    }
+
+    /** Opens the Building dialog on the hex that was right-clicked, to put one up, change it or remove it. */
+    private JMenuItem createBuildingMenuItem() {
+        JMenuItem item = new JMenuItem(Messages.getString("Gamemaster.cmd.building.longName"));
+        item.addActionListener(event -> new BuildingEditDialog(gui.getFrame(), gui, coords).setVisible(true));
+        return item;
+    }
+
+    /** Opens the Change Terrain dialog on the hex that was right-clicked. */
+    private JMenuItem createChangeTerrainMenuItem() {
+        // named from the command rather than from the dialog's title, so this entry reads the same as the one on the
+        // Commands button and carries the same mark
+        JMenuItem item = new JMenuItem(Messages.getString("Gamemaster.cmd.changeTerrain.longName"));
+        item.addActionListener(event -> new HexEditDialog(gui.getFrame(), gui, coords).setVisible(true));
+        return item;
     }
 
     JMenuItem createUnitEditorMenuItem(Entity entity) {
@@ -1795,7 +1817,10 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createModeJMenuItem(Mounted<?> mounted, int position) {
         JMenuItem item = new JMenuItem();
 
-        EquipmentMode mode = mounted.getType().getMode(position);
+        // Read from the mount, not its type. An infantry platoon's mount combines the modes of its primary and
+        // secondary weapons, so a mount can offer modes its own type does not have: reading from the type after
+        // counting with getModesCount() walks off the end of the type's list.
+        EquipmentMode mode = mounted.getMode(position);
 
         // The starred entry is the mode the equipment is already in, so it is described as a state; the rest
         // are changes the player can pick, and read as instructions.

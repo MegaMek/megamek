@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,6 +33,7 @@
 package megamek.client.ui.dialogs;
 
 import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.GridBagLayout;
 import java.util.HashMap;
 import java.util.List;
@@ -40,8 +41,10 @@ import java.util.Map;
 import java.util.Objects;
 import javax.swing.*;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.util.FlatLafStyleBuilder;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.server.commands.ClientServerCommand;
@@ -53,8 +56,25 @@ import megamek.server.commands.arguments.*;
  * @author Luana Coppio
  */
 public class ClientCommandDialog extends JDialog {
+
+    /** Where a hex spinner starts when the dialog was opened without a hex; board coordinates are one-based. */
+    private static final int FIRST_BOARD_COORDINATE = 1;
+
+    /** Unscaled padding above and below a row; scaled through {@link UIUtil#scaleForGUI(int)} when used. */
+    private static final int VERTICAL_PADDING = 2;
+
+    /** Unscaled padding to the left and right of a row's controls. */
+    private static final int HORIZONTAL_PADDING = 6;
+
+    /** How many columns the dialog's grid holds, so a full-width row can span all of them. */
+    private static final int DIALOG_COLUMNS = 4;
+
+    /** The width the help text wraps to, before the GUI scale is applied. */
+    private static final int HELP_TEXT_WIDTH = 460;
+
     private final ClientServerCommand command;
     private final ClientGUI client;
+    /** The hex the dialog acts on, or {@code null} when it was opened from a menu that had no hex to offer. */
     private final Coords coords;
     private int yPosition = 0;
 
@@ -64,6 +84,8 @@ public class ClientCommandDialog extends JDialog {
      * @param parent  The parent frame.
      * @param client  The client GUI.
      * @param command The command to render.
+     * @param coords  The hex the command should start on, or {@code null} when the dialog was opened without a hex.
+     *                Hex spinners then start at the first board coordinate and no unit is preselected.
      */
     public ClientCommandDialog(JFrame parent, ClientGUI client, ClientServerCommand command, @Nullable Coords coords) {
         super(parent, command.getLongName() + " /" + command.getName(), true);
@@ -83,43 +105,66 @@ public class ClientCommandDialog extends JDialog {
     }
 
     private void addTitleAndDescription() {
-
-        var title = new JLabel(command.getLongName());
+        JLabel title = new JLabel(command.getLongName());
         new FlatLafStyleBuilder().size(1.5).bold().apply(title);
-        var gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = yPosition++;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.gridheight = 1;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        add(title, gridBagConstraints);
+        add(title, fullWidthRow());
 
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = yPosition++;
-        gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.gridheight = 1;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        addTargetHexLabel();
 
-        add(new JSeparator(), gridBagConstraints);
+        add(new JSeparator(), fullWidthRow());
 
-        var helpLabel = new JLabel(command.getHelpHtml());
+        JLabel helpLabel = new JLabel(helpWrappedToDialogWidth());
         new FlatLafStyleBuilder().size(1).apply(helpLabel);
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = yPosition++;
-        gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.gridheight = 3;
-        yPosition += 2;
+        add(helpLabel, fullWidthRow());
 
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = yPosition++;
-        gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.gridheight = 1;
-        add(new JSeparator(), gridBagConstraints);
+        add(new JSeparator(), fullWidthRow());
+    }
 
-        add(helpLabel, gridBagConstraints);
+    /**
+     * Names the hex the command was opened on, so a gamemaster can see at a glance which hex they are about to change
+     * without reading it back out of the coordinate spinners. Nothing is shown when the dialog was opened without a
+     * hex, because then there is no hex to name.
+     */
+    private void addTargetHexLabel() {
+        if (coords == null) {
+            return;
+        }
+        JLabel targetLabel = new JLabel(Messages.getString("Gamemaster.cmd.targetHex", coords.getBoardNum()));
+        new FlatLafStyleBuilder().size(1).bold().apply(targetLabel);
+        add(targetLabel, fullWidthRow());
+    }
+
+    /**
+     * Builds the constraints for one full-width row of the dialog and moves on to the next row. Every row is built
+     * from its own constraints; sharing one between two components put them in the same cell, which is what squeezed
+     * the help text into a narrow column down the middle of the dialog.
+     *
+     * @return The constraints for the next row
+     */
+    private GridBagConstraints fullWidthRow() {
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridx = 0;
+        constraints.gridy = yPosition++;
+        constraints.gridwidth = DIALOG_COLUMNS;
+        constraints.gridheight = 1;
+        constraints.weightx = 1.0;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.anchor = GridBagConstraints.NORTHWEST;
+        int verticalPadding = UIUtil.scaleForGUI(VERTICAL_PADDING);
+        int horizontalPadding = UIUtil.scaleForGUI(HORIZONTAL_PADDING);
+        constraints.insets = new Insets(verticalPadding, horizontalPadding, verticalPadding, horizontalPadding);
+        return constraints;
+    }
+
+    /**
+     * The command's help text, held to a readable width. An HTML label with no width to work to lays itself out at
+     * whatever width the layout hands it, which for a long help text is a tall thin column of one or two words a line.
+     *
+     * @return The help text as HTML, wrapped to the dialog's text width
+     */
+    private String helpWrappedToDialogWidth() {
+        String widthStyle = "<html><body style='width: " + UIUtil.scaleForGUI(HELP_TEXT_WIDTH) + "px'>";
+        return command.getHelpHtml().replaceFirst("(?i)^<html>", widthStyle);
     }
 
     private Map<String, JComponent> addArgumentComponents() {
@@ -134,11 +179,16 @@ public class ClientCommandDialog extends JDialog {
 
     private JComponent getArgumentComponent(Argument<?> argument) {
         JComponent component = null;
-        if (argument instanceof CoordXArgument intArg) {
-            return getJSpinner(argument, createSpinner(intArg), 0);
+        if (argument instanceof CoordXArgument coordXArgument) {
+            JSpinner spinner = createSpinner(coordXArgument);
+            // The hex is already settled by the right-click that opened the dialog and is named at the top of it, so
+            // asking for it again is a coordinate to get wrong. The spinner is still built, holding the clicked hex,
+            // because the command is assembled from these components; it is simply not shown.
+            return (coords == null) ? getJSpinner(argument, spinner, 0) : spinner;
 
-        } else if (argument instanceof CoordYArgument intArg) {
-            component = getJSpinner(argument, createSpinner(intArg), 2);
+        } else if (argument instanceof CoordYArgument coordYArgument) {
+            JSpinner spinner = createSpinner(coordYArgument);
+            component = (coords == null) ? getJSpinner(argument, spinner, 2) : spinner;
 
         } else if (argument instanceof PlayerArgument playerArg) {
             component = getStringJComboBox(argument.getName(), createPlayerComboBox(playerArg), argument.getHelp());
@@ -267,18 +317,34 @@ public class ClientCommandDialog extends JDialog {
               1));
     }
 
+    /**
+     * A spinner for a hex X coordinate, starting on the hex the dialog was opened from. Board coordinates are
+     * displayed one-based, so the stored value is offset by one for display.
+     *
+     * <p>The dialog can be opened without a hex, from a menu that has no board position to offer. The spinner then
+     * starts at the first column and the gamemaster types the hex they want.</p>
+     */
     private JSpinner createSpinner(CoordXArgument coordX) {
+        int startingColumn = (coords == null) ? FIRST_BOARD_COORDINATE : coords.getX() + 1;
         return new JSpinner(new SpinnerNumberModel(
-              coords.getX() + 1,
-              0,
+              startingColumn,
+              FIRST_BOARD_COORDINATE,
               1_000_000,
               1));
     }
 
+    /**
+     * A spinner for a hex Y coordinate, starting on the hex the dialog was opened from. Board coordinates are
+     * displayed one-based, so the stored value is offset by one for display.
+     *
+     * <p>The dialog can be opened without a hex, from a menu that has no board position to offer. The spinner then
+     * starts at the first row and the gamemaster types the hex they want.</p>
+     */
     private JSpinner createSpinner(CoordYArgument coordY) {
+        int startingRow = (coords == null) ? FIRST_BOARD_COORDINATE : coords.getY() + 1;
         return new JSpinner(new SpinnerNumberModel(
-              coords.getY() + 1,
-              0,
+              startingRow,
+              FIRST_BOARD_COORDINATE,
               1_000_000,
               1));
     }
@@ -308,10 +374,14 @@ public class ClientCommandDialog extends JDialog {
             comboBox.addItem(entity.getId() + ":" + entity.getDisplayName());
         }
 
-        var entitiesAtSpot = client.getClient().getGame().getEntities(coords);
-        if (entitiesAtSpot.hasNext()) {
-            var selectedEntity = entitiesAtSpot.next();
-            comboBox.setSelectedItem(selectedEntity.getId() + ":" + selectedEntity.getDisplayName());
+        // Opened from a hex, the unit standing there is the one the gamemaster means, so it starts selected. Opened
+        // without a hex there is nothing to preselect, and the full list is left for them to pick from.
+        if (coords != null) {
+            var entitiesAtSpot = client.getClient().getGame().getEntities(coords);
+            if (entitiesAtSpot.hasNext()) {
+                var selectedEntity = entitiesAtSpot.next();
+                comboBox.setSelectedItem(selectedEntity.getId() + ":" + selectedEntity.getDisplayName());
+            }
         }
 
         return comboBox;
@@ -432,5 +502,8 @@ public class ClientCommandDialog extends JDialog {
         }
 
         client.getClient().sendChat("/" + command.getName() + " " + String.join(" ", args));
+        // the command is on its way and the dialog has nothing more to say; leaving it open over the board only hides
+        // the result the gamemaster wants to see
+        dispose();
     }
 }

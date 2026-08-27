@@ -60,7 +60,7 @@ public class InfantrySniperRifleWilimtonRS17Stripped extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = 1.05;
         tonnage = 0.009;
-        infantryDamage = 0.53;
+        infantryDamage = 0.525;
         infantryRange = 6;
         ammoWeight = 0.009;
         cost = 2000;

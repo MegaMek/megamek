@@ -32,18 +32,6 @@
  */
 package megamek.client.ui.panels.phaseDisplay.lobby;
 
-import static megamek.client.ui.Messages.getString;
-import static megamek.client.ui.util.UIUtil.*;
-import static megamek.common.options.PilotOptions.LVL3_ADVANTAGES;
-import static megamek.common.options.PilotOptions.MD_ADVANTAGES;
-
-import java.awt.Color;
-import java.text.MessageFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
@@ -67,35 +55,62 @@ import megamek.common.units.*;
 import megamek.common.util.CollectionUtil;
 import megamek.common.util.CrewSkillSummaryUtil;
 
+import java.awt.*;
+import java.text.MessageFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static megamek.client.ui.Messages.getString;
+import static megamek.client.ui.util.UIUtil.*;
+import static megamek.common.options.PilotOptions.LVL3_ADVANTAGES;
+import static megamek.common.options.PilotOptions.MD_ADVANTAGES;
+
 class LobbyMekCellFormatter {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    /** Corner of the branch drawn before a carried or towed unit. Escaped to keep the source plain ASCII. */
+    /**
+     * Corner of the branch drawn before a carried or towed unit. Escaped to keep the source plain ASCII.
+     */
     private static final String BRANCH_CORNER = "\u2514";
 
-    /** One length of branch. Repeated once per level, so a deeper load reads as a longer arm. */
+    /**
+     * One length of branch. Repeated once per level, so a deeper load reads as a longer arm.
+     */
     private static final String BRANCH_ARM = "\u2500";
 
-    /** Top of the bracket drawn on the first member of a masterless C3 network (C3i, NC3, Nova CEWS). */
+    /**
+     * Top of the bracket drawn on the first member of a masterless C3 network (C3i, NC3, Nova CEWS).
+     */
     private static final String BRANCH_TOP = "\u250c";
 
-    /** Middle rung of the bracket drawn on inner members of a masterless C3 network. */
+    /**
+     * Middle rung of the bracket drawn on inner members of a masterless C3 network.
+     */
     private static final String BRANCH_TEE = "\u251c";
 
-    /** Stops a malformed C3 master chain from spinning while counting how deep a unit sits. */
+    /**
+     * Stops a malformed C3 master chain from spinning while counting how deep a unit sits.
+     */
     private static final int MAX_C3_DEPTH = 3;
 
-    /** Stops a malformed load loop from spinning while counting how deep a unit sits. */
+    /**
+     * Stops a malformed load loop from spinning while counting how deep a unit sits.
+     */
     private static final int MAX_CARRIER_DEPTH = 16;
 
     private LobbyMekCellFormatter() {
     }
 
-    static String unitTableEntry(InGameObject unit, ChatLounge lobby, boolean forceView, boolean compactView) {
+    static String unitTableEntry(InGameObject unit,
+                                 ChatLounge lobby,
+                                 boolean forceView,
+                                 boolean compactView) {
         if (unit instanceof Entity) {
             return compactView ? formatUnitCompact((Entity) unit, lobby, forceView)
-                  : formatUnitFull((Entity) unit, lobby, forceView);
+                               : formatUnitFull((Entity) unit, lobby, forceView);
         } else if (unit instanceof AlphaStrikeElement) {
             return MekTableASUnitEntry.fullEntry((AlphaStrikeElement) unit, lobby, forceView, compactView);
             // TODO : Provide a suitable lobby table entry
@@ -104,10 +119,13 @@ class LobbyMekCellFormatter {
         }
     }
 
-    static String pilotTableEntry(InGameObject unit, boolean compactView, boolean hide, boolean rpgSkills) {
+    static String pilotTableEntry(InGameObject unit,
+                                  boolean compactView,
+                                  boolean hide,
+                                  boolean rpgSkills) {
         if (unit instanceof Entity) {
             return compactView ? formatPilotCompact((Entity) unit, hide, rpgSkills)
-                  : formatPilotFull((Entity) unit, hide);
+                               : formatPilotFull((Entity) unit, hide);
         } else if (unit instanceof AlphaStrikeElement) {
             // TODO : Provide a suitable lobby table entry
             return "AlphaStrikeElement " + ((AlphaStrikeElement) unit).getName();
@@ -131,7 +149,9 @@ class LobbyMekCellFormatter {
         return "&nbsp;".repeat(depth) + BRANCH_CORNER + BRANCH_ARM.repeat(depth) + "&nbsp;";
     }
 
-    /** How many carriers sit above this unit: 1 for a DropShip in a JumpShip, 2 for a Mek inside that DropShip. */
+    /**
+     * How many carriers sit above this unit: 1 for a DropShip in a JumpShip, 2 for a Mek inside that DropShip.
+     */
     private static int carriedDepth(Entity entity) {
         int depth = 0;
         Entity current = entity;
@@ -149,7 +169,9 @@ class LobbyMekCellFormatter {
         return depth;
     }
 
-    /** The unit this one rides on, carried in a bay or towed behind, or {@code null} when neither. */
+    /**
+     * The unit this one rides on, carried in a bay or towed behind, or {@code null} when neither.
+     */
     private static Entity carrierOf(Entity entity) {
         if (entity.getGame() == null) {
             return null;
@@ -208,7 +230,9 @@ class LobbyMekCellFormatter {
         return "&nbsp;".repeat(depth) + BRANCH_CORNER + BRANCH_ARM.repeat(depth) + "&nbsp;";
     }
 
-    /** The opening corner for a unit heading a hierarchical C3 network; empty for units networked with no one. */
+    /**
+     * The opening corner for a unit heading a hierarchical C3 network; empty for units networked with no one.
+     */
     private static String hierarchicalNetworkTopBranch(Entity entity) {
         Game game = entity.getGame();
         if ((game == null) || !entity.hasC3()) {
@@ -222,7 +246,9 @@ class LobbyMekCellFormatter {
         return "";
     }
 
-    /** How many masters sit above this unit: 1 for a lance master under a company commander, 2 for its slaves. */
+    /**
+     * How many masters sit above this unit: 1 for a lance master under a company commander, 2 for its slaves.
+     */
     private static int c3Depth(Entity entity) {
         int depth = 0;
         Entity current = entity;
@@ -240,7 +266,9 @@ class LobbyMekCellFormatter {
         return depth;
     }
 
-    /** The flat bracket for masterless networks; empty when the unit is not networked with anyone. */
+    /**
+     * The flat bracket for masterless networks; empty when the unit is not networked with anyone.
+     */
     private static String peerNetworkBracket(Entity entity) {
         Game game = entity.getGame();
         String netId = entity.getC3NetId();
@@ -254,7 +282,7 @@ class LobbyMekCellFormatter {
         List<Integer> peerIds = new ArrayList<>();
         for (Entity other : game.inGameTWEntities()) {
             if (other.hasNhC3() && (other.getOwnerId() == entity.getOwnerId())
-                  && netId.equals(other.getC3NetId())) {
+                && netId.equals(other.getC3NetId())) {
                 peerIds.add(other.getId());
             }
         }
@@ -280,7 +308,9 @@ class LobbyMekCellFormatter {
      * Creates and returns the display content of the Unit column for the given entity and for the non-compact display
      * mode. When blindDrop is true, the unit details are not given.
      */
-    static String formatUnitFull(Entity entity, ChatLounge lobby, boolean forceView) {
+    static String formatUnitFull(Entity entity,
+                                 ChatLounge lobby,
+                                 boolean forceView) {
         StringBuilder result = new StringBuilder("<HTML><NOBR>" + fontHTML());
 
         Client client = lobby.getClientGUI().getClient();
@@ -291,7 +321,7 @@ class LobbyMekCellFormatter {
         Player owner = entity.getOwner();
         boolean localGM = localPlayer.isGameMaster();
         boolean hideEntity = !localGM && owner.isEnemyOf(localPlayer)
-              && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
+                             && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {
             result.append(MekTableModel.DOT_SPACER);
             if (entity instanceof Infantry) {
@@ -340,10 +370,10 @@ class LobbyMekCellFormatter {
 
         // Critical (Red) Warnings
         if ((game.getPlanetaryConditions().whyDoomed(entity, entity.getGame()) != null)
-              || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
-              || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
-              || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
-              || (!entity.isDesignValid())) {
+            || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
+            || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
+            || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
+            || (!entity.isDesignValid())) {
             result.append(UIUtil.fontHTML(GUIP.getWarningColor()));
             result.append(WARNING_SIGN + "</FONT>");
             hasCritical = true;
@@ -477,7 +507,7 @@ class LobbyMekCellFormatter {
         int sp = entity.getStartingPos(true);
         int spe = entity.getStartingPos(false);
         if ((!entity.isOffBoard())
-              && (sp >= 0)) {
+            && (sp >= 0)) {
             firstEntry = dotSpacer(result, firstEntry);
             if (spe != Board.START_NONE) {
                 result.append(UIUtil.fontHTML(uiLightGreen()));
@@ -513,7 +543,7 @@ class LobbyMekCellFormatter {
             }
             int so = entity.getStartingOffset(true);
             int sw = entity.getStartingWidth(true);
-            if ((so != 0) || (sw != 3)) {
+            if ((so != 0) || (sw != 3 || (sw != 1 && Game.rulesManager.getRulesGame().isWalkOnDeployment()))) {
                 result.append(", ").append(so);
                 result.append(", ").append(sw);
             }
@@ -598,7 +628,7 @@ class LobbyMekCellFormatter {
                 if (entity.hasC3MM()) {
                     String msgFreeC3MNodes = Messages.getString("ChatLounge.FreeC3MNodes");
                     result.append(MessageFormat.format(" " + msgFreeC3MNodes,
-                          entity.calculateFreeC3MNodes(), entity.calculateFreeC3Nodes()));
+                                                       entity.calculateFreeC3MNodes(), entity.calculateFreeC3Nodes()));
                 } else {
                     result.append(getString("ChatLounge.C3MNodes", entity.calculateFreeC3MNodes()));
                 }
@@ -692,7 +722,7 @@ class LobbyMekCellFormatter {
             }
 
             if ((entity instanceof Infantry dugInInfantry)
-                  && (dugInInfantry.getDugIn() == Infantry.DUG_IN_COMPLETE)) {
+                && (dugInInfantry.getDugIn() == Infantry.DUG_IN_COMPLETE)) {
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(getString("ChatLounge.dugIn"));
             }
@@ -707,7 +737,7 @@ class LobbyMekCellFormatter {
 
         if (entity.getDeployRound() == -1) {
             firstEntry = dotSpacer(result, firstEntry);
-            result.append(getString("ChatLounge.deployPreGame"));
+            result.append(getString("ChatLounge.deploysPreGame"));
         }
         if (entity.getDeployRound() > 0) {
             firstEntry = dotSpacer(result, firstEntry);
@@ -768,10 +798,10 @@ class LobbyMekCellFormatter {
             }
         }
         if ((entity instanceof Aero aero)
-              && (!(entity instanceof Jumpship))
-              && (!(entity instanceof SmallCraft))) {
+            && (!(entity instanceof Jumpship))
+            && (!(entity instanceof SmallCraft))) {
             if ((aero.hasEjectSeat())
-                  && (!aero.isAutoEject())) {
+                && (!aero.isAutoEject())) {
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(UIUtil.fontHTML(uiYellow()));
                 result.append(WARNING_SIGN + "\u23CF<I>");
@@ -787,7 +817,9 @@ class LobbyMekCellFormatter {
      * Creates and returns the display content of the C3-MekTree cell for the given entity and for the compact display
      * mode. Assumes that no enemy or blind-drop-hidden units are provided.
      */
-    static String formatUnitCompact(Entity entity, ChatLounge lobby, boolean forceView) {
+    static String formatUnitCompact(Entity entity,
+                                    ChatLounge lobby,
+                                    boolean forceView) {
         Client client = lobby.getClientGUI().getClient();
         Game game = client.getGame();
         GameOptions options = game.getOptions();
@@ -795,7 +827,7 @@ class LobbyMekCellFormatter {
         Player owner = entity.getOwner();
         boolean localGM = localPlayer.isGameMaster();
         boolean hideEntity = !localGM && owner.isEnemyOf(localPlayer)
-              && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
+                             && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {
             String value = "<HTML><NOBR>&nbsp;&nbsp;";
             if (PreferenceManager.getClientPreferences().getShowUnitId()) {
@@ -849,10 +881,10 @@ class LobbyMekCellFormatter {
 
         // Critical (Red) Warnings
         if ((game.getPlanetaryConditions().whyDoomed(entity, entity.getGame()) != null)
-              || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
-              || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
-              || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
-              || (!entity.isDesignValid())) {
+            || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
+            || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
+            || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
+            || (!entity.isDesignValid())) {
             result.append(UIUtil.fontHTML(GUIP.getWarningColor()));
             result.append(WARNING_SIGN + "</FONT>");
         }
@@ -1030,7 +1062,7 @@ class LobbyMekCellFormatter {
             }
 
             if ((entity instanceof Infantry dugInInfantry)
-                  && (dugInInfantry.getDugIn() == Infantry.DUG_IN_COMPLETE)) {
+                && (dugInInfantry.getDugIn() == Infantry.DUG_IN_COMPLETE)) {
                 result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
                 result.append(Messages.getString("ChatLounge.compact.dugIn")).append("</I></FONT>");
             }
@@ -1052,7 +1084,7 @@ class LobbyMekCellFormatter {
             result.append(Messages.getString("ChatLounge.compact.deployRound", entity.getDeployRound()));
             if (entity.getStartingPos(false) != Board.START_NONE) {
                 result.append(Messages.getString("ChatLounge.compact.deployZone",
-                      IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos(false)]));
+                                                 IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos(false)]));
             }
             result.append("</I></FONT>");
         }
@@ -1103,10 +1135,10 @@ class LobbyMekCellFormatter {
             }
         }
         if ((entity instanceof Aero aero)
-              && (!(entity instanceof Jumpship))
-              && (!(entity instanceof SmallCraft))) {
+            && (!(entity instanceof Jumpship))
+            && (!(entity instanceof SmallCraft))) {
             if ((aero.hasEjectSeat())
-                  && (!aero.isAutoEject())) {
+                && (!aero.isAutoEject())) {
                 result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen()));
                 result.append(UIUtil.fontHTML(uiYellow()));
                 result.append(WARNING_SIGN + "\u23CF</FONT>");
@@ -1120,7 +1152,8 @@ class LobbyMekCellFormatter {
      * Creates and returns the display content of the C3-MekTree cell for the given entity and for the compact display
      * mode. Assumes that no enemy or blind-drop-hidden units are provided.
      */
-    static String formatForceCompact(Force force, ChatLounge lobby) {
+    static String formatForceCompact(Force force,
+                                     ChatLounge lobby) {
         return formatForce(force, lobby);
     }
 
@@ -1128,11 +1161,13 @@ class LobbyMekCellFormatter {
      * Creates and returns the display content of the C3-MekTree cell for the given entity and for the compact display
      * mode. Assumes that no enemy or blind-drop-hidden units are provided.
      */
-    static String formatForceFull(Force force, ChatLounge lobby) {
+    static String formatForceFull(Force force,
+                                  ChatLounge lobby) {
         return formatForce(force, lobby);
     }
 
-    private static String formatForce(Force force, ChatLounge lobby) {
+    private static String formatForce(Force force,
+                                      ChatLounge lobby) {
         Client client = lobby.getClientGUI().getClient();
         Game game = client.getGame();
         Player localPlayer = client.getLocalPlayer();
@@ -1183,13 +1218,13 @@ class LobbyMekCellFormatter {
         result.append(fontHTML(color));
         result.append(MekTableModel.DOT_SPACER);
         int totalBv = fullEntities.stream().filter(e -> !e.isPartOfFighterSquadron())
-              .mapToInt(Entity::calculateBattleValue).sum();
+                                  .mapToInt(Entity::calculateBattleValue).sum();
         if (totalBv > 0) {
             String msgBVPlain = Messages.getString("ChatLounge.BVplain");
             result.append(msgBVPlain).append(" ").append(String.format("%,d", totalBv));
             // Unit Type
             long unitTypes = fullEntities.stream().map(e -> Entity.getEntityMajorTypeName(e.getEntityType())).distinct()
-                  .count();
+                                         .count();
             result.append(fontHTML(color));
             result.append(MekTableModel.DOT_SPACER);
             if (unitTypes > 1) {
@@ -1211,7 +1246,9 @@ class LobbyMekCellFormatter {
      * Creates and returns the display content of the Pilot column for the given entity and for the compact display
      * mode. When blindDrop is true, the pilot details are not given.
      */
-    static String formatPilotCompact(Entity entity, boolean blindDrop, boolean rpgSkills) {
+    static String formatPilotCompact(Entity entity,
+                                     boolean blindDrop,
+                                     boolean rpgSkills) {
         Crew pilot = entity.getCrew();
         StringBuilder result = new StringBuilder("<HTML><NOBR>");
         result.append(fontHTML());
@@ -1253,7 +1290,8 @@ class LobbyMekCellFormatter {
      * Creates and returns the display content of the Pilot column for the given entity and for the non-compact display
      * mode. When blindDrop is true, the pilot details are not given.
      */
-    static String formatPilotFull(Entity entity, boolean blindDrop) {
+    static String formatPilotFull(Entity entity,
+                                  boolean blindDrop) {
         StringBuilder result = new StringBuilder("<HTML><NOBR>");
 
         final Crew crew = entity.getCrew();
@@ -1307,26 +1345,30 @@ class LobbyMekCellFormatter {
         return result.toString();
     }
 
-    static void formatSpan(StringBuilder current, Color color) {
+    static void formatSpan(StringBuilder current,
+                           Color color) {
         current.append("<SPAN style=color:");
         current.append(Integer.toHexString(color.getRGB() & 0xFFFFFF));
         current.append(";>");
     }
 
     @Deprecated(since = "0.51.0", forRemoval = true)
-    static void formatSpan(StringBuilder current, String hexColor) {
+    static void formatSpan(StringBuilder current,
+                           String hexColor) {
         current.append("<SPAN style=color:");
         current.append(hexColor);
         current.append(";>");
     }
 
     @Deprecated(since = "0.51.0", forRemoval = true)
-    static void fullIDString(StringBuilder current, int id) {
+    static void fullIDString(StringBuilder current,
+                             int id) {
         formatSpan(current, uiGray());
         current.append(" [ID: ").append(id).append("]</SPAN>");
     }
 
-    static boolean dotSpacer(StringBuilder current, boolean firstElement) {
+    static boolean dotSpacer(StringBuilder current,
+                             boolean firstElement) {
         if (!firstElement) {
             current.append(MekTableModel.DOT_SPACER);
         }

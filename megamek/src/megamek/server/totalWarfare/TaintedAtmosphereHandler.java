@@ -102,7 +102,7 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
 
         switch (effect) {
             case CREW_KILLED -> {
-                LOGGER.debug("[TaintedAtmosphere] {}: {} breached in {} air - crew killed",
+                LOGGER.info("[TaintedAtmosphere] {}: {} breached in {} air - crew killed",
                       tank.getShortName(), tank.getLocationAbbr(location), atmosphericTaint());
                 reports.add(new Report(7700).subject(tank.getId()).addDesc(tank));
                 reports.addAll(gameManager.applyCriticalHit(tank,
@@ -113,7 +113,7 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
                       false));
             }
             case CREW_STUNNED -> {
-                LOGGER.debug("[TaintedAtmosphere] {}: {} breached in {} air - crew stunned",
+                LOGGER.info("[TaintedAtmosphere] {}: {} breached in {} air - crew stunned",
                       tank.getShortName(), tank.getLocationAbbr(location), atmosphericTaint());
                 reports.add(new Report(7701).subject(tank.getId()).addDesc(tank));
                 reports.addAll(gameManager.applyCriticalHit(tank,
@@ -162,7 +162,7 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
         reports.add(report);
 
         if (diceRoll.getIntValue() >= target) {
-            LOGGER.debug("[TaintedAtmosphere] {}: trooper {} killed by {} air after suit damage (rolled {} vs {})",
+            LOGGER.info("[TaintedAtmosphere] {}: trooper {} killed by {} air after suit damage (rolled {} vs {})",
                   battleArmor.getShortName(), battleArmor.getLocationAbbr(location), atmosphericTaint(),
                   diceRoll.getIntValue(), target);
             battleArmor.destroyLocation(location);
@@ -368,7 +368,7 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
         if (entity.getCrew().isDead()) {
             return reports;
         }
-        LOGGER.debug("[TaintedAtmosphere] {}: cockpit damaged in caustic air - one extra crew hit",
+        LOGGER.info("[TaintedAtmosphere] {}: cockpit damaged in caustic air - one extra crew hit",
               entity.getShortName());
         reports.add(new Report(7710).subject(entity.getId()).addDesc(entity));
         reports.addAll(gameManager.damageCrew(entity, 1));

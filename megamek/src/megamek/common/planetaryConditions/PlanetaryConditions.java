@@ -676,6 +676,9 @@ public class PlanetaryConditions implements Serializable {
         if (isUnsealedVehicle && TaintedAtmosphereRules.barsUnsealedVehicles(getAtmosphericTaint())) {
             return MSG_DOOMED_TOXIC_ATMOSPHERE;
         }
+        if (TaintedAtmosphereRules.barsGroundedJetCraft(entity, getAtmosphericTaint())) {
+            return MSG_DOOMED_TOXIC_ATMOSPHERE;
+        }
         return null;
     }
 

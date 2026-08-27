@@ -750,7 +750,9 @@ public interface IAero {
         if (game == null) {
             return false;
         }
-        return TaintedAtmosphereRules.prohibitsLaunching(game.getPlanetaryConditions().getAtmosphericTaint());
+        boolean atmosphereBarsLaunching = TaintedAtmosphereRules.prohibitsLaunching(
+              game.getPlanetaryConditions().getAtmosphericTaint());
+        return atmosphereBarsLaunching && TaintedAtmosphereRules.isJetPropelled(self);
     }
 
     default boolean canLandHorizontally() {

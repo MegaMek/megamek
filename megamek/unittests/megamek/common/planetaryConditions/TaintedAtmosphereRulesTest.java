@@ -44,6 +44,7 @@ import java.util.List;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.game.Game;
 import megamek.common.planetaryConditions.TaintedAtmosphereRules.VehicleBreachEffect;
 import megamek.common.units.Entity;
@@ -243,6 +244,51 @@ class TaintedAtmosphereRulesTest {
     void harJelRaisesTheSuitBreachTarget() {
         assertEquals(9, TaintedAtmosphereRules.getBattleArmorSuitBreachTarget(false));
         assertEquals(10, TaintedAtmosphereRules.getBattleArmorSuitBreachTarget(true));
+    }
+
+    @Test
+    @DisplayName("Aerospace units fly on jets; prop, ultra-light and VSTOL support vehicles do not")
+    void jetPropulsionExemptsPropAndLiftCraft() {
+        Entity aerospaceFighter = mock(Entity.class);
+        when(aerospaceFighter.isAero()).thenReturn(true);
+        assertTrue(TaintedAtmosphereRules.isJetPropelled(aerospaceFighter),
+              "an ordinary aerospace unit launches on jet thrust");
+
+        for (String chassisModification : List.of(EquipmentTypeLookup.PROP_CHASSIS_MOD,
+              EquipmentTypeLookup.ULTRALIGHT_CHASSIS_MOD,
+              EquipmentTypeLookup.VSTOL_CHASSIS_MOD)) {
+            Entity supportVehicle = mock(Entity.class);
+            when(supportVehicle.isAero()).thenReturn(true);
+            when(supportVehicle.hasMisc(chassisModification)).thenReturn(true);
+            assertFalse(TaintedAtmosphereRules.isJetPropelled(supportVehicle),
+                  chassisModification + " gets a support vehicle airborne without a jet exhaust");
+        }
+
+        Entity groundVehicle = mock(Entity.class);
+        when(groundVehicle.isAero()).thenReturn(false);
+        assertFalse(TaintedAtmosphereRules.isJetPropelled(groundVehicle), "a ground unit launches nothing");
+    }
+
+    @Test
+    @DisplayName("Flammable toxic air keeps grounded jet craft off the field but leaves flying ones alone")
+    void groundedJetCraftCannotBeFielded() {
+        Entity groundedFighter = mock(Entity.class);
+        when(groundedFighter.isAero()).thenReturn(true);
+        when(groundedFighter.isAirborne()).thenReturn(false);
+        when(groundedFighter.getAltitude()).thenReturn(0);
+        assertTrue(TaintedAtmosphereRules.barsGroundedJetCraft(groundedFighter, AtmosphericTaint.FLAMMABLE_TOXIC),
+              "it could never launch, so it cannot take the field");
+
+        Entity airborneFighter = mock(Entity.class);
+        when(airborneFighter.isAero()).thenReturn(true);
+        when(airborneFighter.isAirborne()).thenReturn(true);
+        assertFalse(TaintedAtmosphereRules.barsGroundedJetCraft(airborneFighter, AtmosphericTaint.FLAMMABLE_TOXIC),
+              "a craft already flying is not launching");
+
+        assertFalse(TaintedAtmosphereRules.barsGroundedJetCraft(groundedFighter, AtmosphericTaint.FLAMMABLE_TAINTED),
+              "only toxic air bars launching");
+        assertFalse(TaintedAtmosphereRules.barsGroundedJetCraft(groundedFighter, AtmosphericTaint.BREATHABLE),
+              "breathable air bars nothing");
     }
 
     @Test

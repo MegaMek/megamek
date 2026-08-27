@@ -40,6 +40,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.enums.BuildingType;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
@@ -147,6 +148,27 @@ public final class TaintedAtmosphereRules {
      */
     public static boolean requiresXctInfantry(AtmosphericTaint atmosphericTaint) {
         return isHarmfulToPersonnel(atmosphericTaint);
+    }
+
+    /**
+     * Whether this unit is a jet-propelled craft that would have to launch, and so may not take the field at all in
+     * this atmosphere (TO:AR p.54).
+     * <p>
+     * A grounded aerospace fighter, DropShip or Small Craft can never get airborne in flammable toxic air, so there
+     * is nothing for it to do on the map. One that is already flying is not launching and is left alone, as is
+     * anything that gets aloft without a jet exhaust.
+     *
+     * @param entity           the unit being fielded
+     * @param atmosphericTaint the air it would be fielded in
+     *
+     * @return {@code true} if this unit may not be fielded
+     */
+    public static boolean barsGroundedJetCraft(Entity entity, AtmosphericTaint atmosphericTaint) {
+        if (!prohibitsLaunching(atmosphericTaint) || !isJetPropelled(entity)) {
+            return false;
+        }
+        boolean isAlreadyFlying = entity.isAirborne() || (entity.getAltitude() > 0);
+        return !isAlreadyFlying;
     }
 
     /**
@@ -419,6 +441,28 @@ public final class TaintedAtmosphereRules {
      */
     public static boolean spreadsExplosiveFiresInstantly(AtmosphericTaint atmosphericTaint) {
         return atmosphericTaint == AtmosphericTaint.FLAMMABLE_TOXIC;
+    }
+
+    /**
+     * Whether this unit gets into the air on jet thrust, which is what a flammable toxic atmosphere will not tolerate
+     * (TO:AR p.54, "Aerospace and other jet-propelled units may not launch in lower atmosphere").
+     * <p>
+     * Aerospace units do by default. Support vehicles built with the Prop, Ultra-Light or VSTOL chassis modification
+     * do not: they fly on a propeller or on lift rather than on a jet exhaust that would set the air alight, so the
+     * ban does not reach them.
+     *
+     * @param entity the unit that wants to fly
+     *
+     * @return {@code true} if this unit launches on jet thrust
+     */
+    public static boolean isJetPropelled(Entity entity) {
+        if (!entity.isAero()) {
+            return false;
+        }
+        boolean fliesWithoutJetExhaust = entity.hasMisc(EquipmentTypeLookup.PROP_CHASSIS_MOD)
+              || entity.hasMisc(EquipmentTypeLookup.ULTRALIGHT_CHASSIS_MOD)
+              || entity.hasMisc(EquipmentTypeLookup.VSTOL_CHASSIS_MOD);
+        return !fliesWithoutJetExhaust;
     }
 
     /**

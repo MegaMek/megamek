@@ -356,7 +356,6 @@ public class PlanetaryConditionsDialog extends ClientDialog implements FocusList
         StringBuilder gravTip = new StringBuilder();
         StringBuilder windTip = new StringBuilder();
         StringBuilder atmosphereTip = new StringBuilder();
-        StringBuilder taintTip = new StringBuilder();
         StringBuilder sandTip = new StringBuilder();
         Weather weather = comWeather.getItemAt(comWeather.getSelectedIndex());
         int temp = MathUtility.parseInt(fldTemp.getText(), 0);
@@ -385,13 +384,6 @@ public class PlanetaryConditionsDialog extends ClientDialog implements FocusList
             windTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.traceLightGale"));
         }
 
-        // There is no air in a vacuum for a taint to be carried in, so the two settings contradict each other.
-        AtmosphericTaint atmosphericTaint = comAtmosphericTaint.getItemAt(comAtmosphericTaint.getSelectedIndex());
-        if (atmosphere.isVacuum() && atmosphericTaint.isTaintedOrToxic()) {
-            atmosphereTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.vacuumTaint"));
-            taintTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.vacuumTaint"));
-        }
-
         // The following temperature checks are not exactly what the rules demand, but see the comment above.
         if (weather.isLightSnowOrSleetOrLightHailOrHeavyHail() && (temp > -40)) {
             tempTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.lightSnowTemp"));
@@ -418,7 +410,6 @@ public class PlanetaryConditionsDialog extends ClientDialog implements FocusList
         refreshWarning(labTemp, tempTip);
         refreshWarning(labWeather, weatherTip);
         refreshWarning(labAtmosphere, atmosphereTip);
-        refreshWarning(labAtmosphericTaint, taintTip);
         refreshWarning(labGrav, gravTip);
         refreshWarning(labWind, windTip);
         refreshWarning(labBlowingSands, sandTip);
@@ -426,7 +417,6 @@ public class PlanetaryConditionsDialog extends ClientDialog implements FocusList
         return (tempTip.isEmpty()) &&
               (weatherTip.isEmpty()) &&
               (atmosphereTip.isEmpty()) &&
-              (taintTip.isEmpty()) &&
               (sandTip.isEmpty()) &&
               (windTip.isEmpty()) &&
               (gravTip.isEmpty());
@@ -469,6 +459,8 @@ public class PlanetaryConditionsDialog extends ClientDialog implements FocusList
             comWind.setSelectedItem(Wind.CALM);
             comWeather.setSelectedItem(Weather.CLEAR);
             comFog.setSelectedItem(Fog.FOG_NONE);
+            // There is no air in a vacuum for a taint to be carried in.
+            comAtmosphericTaint.setSelectedItem(AtmosphericTaint.BREATHABLE);
         }
         if (weather.isGustingRainOrSnowFlurriesOrIceStormOrLightningStorm()) {
             chkShiftWindStr.setSelected(false);
@@ -488,6 +480,8 @@ public class PlanetaryConditionsDialog extends ClientDialog implements FocusList
         comWeather.setEnabled(isDense);
         labFog.setEnabled(isDense);
         comFog.setEnabled(isDense);
+        labAtmosphericTaint.setEnabled(!isVacuum);
+        comAtmosphericTaint.setEnabled(!isVacuum);
         labWind.setEnabled(!isVacuum && !weather.isGustingRainOrSnowFlurriesOrIceStormOrLightningStorm());
         comWind.setEnabled(!isVacuum && !weather.isGustingRainOrSnowFlurriesOrIceStormOrLightningStorm());
         labBlowingSands.setEnabled(!isVacuum);

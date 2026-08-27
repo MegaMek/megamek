@@ -53,6 +53,7 @@ import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
+import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -721,6 +722,126 @@ public class EiImplantTest {
             proto.setGameOptions();
             assertEquals(SimpleTechLevel.STANDARD, proto.getStaticTechLevel(),
                   "ProtoMek should revert to Standard after switching to Off");
+        }
+    }
+
+    /**
+     * Sensor damage and the EI Interface (issues #8738 and #8739).
+     *
+     * <p>IO p.69 disables the enhanced imaging system on a critical hit to the sensors of an EI-equipped
+     * unit, and grants the 1-hex active probe only "As long as the EI-equipped unit has not suffered
+     * sensor damage" - while explicitly surviving a shut down interface and a pilot with no implant.</p>
+     */
+    @Nested
+    @DisplayName("EI Sensor Damage Tests")
+    class EiSensorDamageTests {
+
+        /** Destroys every sensor system slot in a location, as a critical hit would. */
+        private void destroySensors(BipedMek mek, int location) {
+            int destroyed = 0;
+            for (int slot = 0; slot < mek.getNumberOfCriticalSlots(location); slot++) {
+                CriticalSlot cs = mek.getCritical(location, slot);
+                if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_SYSTEM)
+                      && (cs.getIndex() == Mek.SYSTEM_SENSORS)) {
+                    cs.setDestroyed(true);
+                    destroyed++;
+                }
+            }
+            assertTrue(destroyed > 0,
+                  "test setup: expected at least one sensor slot in location " + location);
+        }
+
+        @Test
+        @DisplayName("Standard cockpit: EI survives while sensors are intact")
+        void standardCockpitEiSurvivesUndamagedSensors() {
+            enableFullTracking();
+            BipedMek mek = createMek(true, true);
+            mek.addCockpit();
+
+            assertTrue(mek.hasIntactEiSensors(), "undamaged sensors must not suppress EI");
+            assertTrue(mek.hasActiveEiCockpit(), "EI should be active on an undamaged Mek");
+        }
+
+        @Test
+        @DisplayName("Standard cockpit: a head sensor critical disables EI")
+        void standardCockpitEiLostOnHeadSensorCritical() {
+            enableFullTracking();
+            BipedMek mek = createMek(true, true);
+            mek.addCockpit();
+            destroySensors(mek, Mek.LOC_HEAD);
+
+            assertFalse(mek.hasIntactEiSensors(), "a head sensor critical must suppress EI");
+            assertFalse(mek.hasActiveEiCockpit(), "EI must be disabled once sensors are destroyed");
+        }
+
+        /**
+         * The #8739 regression. A torso-mounted cockpit puts sensors in the centre torso as well as the
+         * head, and the old head-only check never noticed the centre torso ones being shot out.
+         */
+        @Test
+        @DisplayName("Torso-mounted cockpit: a centre torso sensor critical disables EI")
+        void torsoMountedCockpitEiLostOnCentreTorsoSensorCritical() {
+            enableFullTracking();
+            BipedMek mek = createMek(true, true);
+            mek.addTorsoMountedCockpit(false);
+            assertEquals(Mek.COCKPIT_TORSO_MOUNTED, mek.getCockpitType(), "test setup");
+
+            // Head sensors deliberately left intact - only the centre torso ones are destroyed.
+            destroySensors(mek, Mek.LOC_CENTER_TORSO);
+
+            assertFalse(mek.hasIntactEiSensors(),
+                  "a centre torso sensor critical must suppress EI on a torso-mounted cockpit");
+            assertFalse(mek.hasActiveEiCockpit(),
+                  "EI must not survive destruction of the centre torso sensors");
+        }
+
+        @Test
+        @DisplayName("Torso-mounted cockpit: EI survives while both sensor groups are intact")
+        void torsoMountedCockpitEiSurvivesUndamagedSensors() {
+            enableFullTracking();
+            BipedMek mek = createMek(true, true);
+            mek.addTorsoMountedCockpit(false);
+
+            assertTrue(mek.hasIntactEiSensors(), "undamaged sensors must not suppress EI");
+        }
+
+        /** The #8738 regression: the 1-hex probe used to survive sensor destruction. */
+        @Test
+        @DisplayName("EI 1-hex probe is lost when the sensors are destroyed")
+        void eiProbeLostWhenSensorsDestroyed() {
+            enableFullTracking();
+            BipedMek mek = createMek(true, true);
+            mek.addCockpit();
+
+            assertTrue(mek.hasBAP(false), "test setup: EI should grant the probe while undamaged");
+            assertEquals(1, mek.getBAPRange(), "test setup: EI probe is 1 hex per IO p.69");
+
+            destroySensors(mek, Mek.LOC_HEAD);
+
+            assertFalse(mek.hasBAP(false), "the EI probe must not survive sensor destruction");
+            assertEquals(Entity.NONE, mek.getBAPRange(),
+                  "getBAPRange reports Entity.NONE once the sensors are gone");
+        }
+
+        /**
+         * IO p.69 keeps the probe alive "even if the EI interface is shut down". Only sensor damage
+         * removes it, so the fix for #8738 must not take the shutdown case with it.
+         */
+        @Test
+        @DisplayName("EI 1-hex probe survives a shut down interface")
+        void eiProbeSurvivesInterfaceShutdown() {
+            enableFullTracking();
+            BipedMek mek = createMek(true, true);
+            mek.addCockpit();
+            setEiInterfaceMode(mek, MiscType.MODE_EI_ON);
+            assertTrue(mek.hasBAP(false), "test setup: EI should grant the probe while running");
+
+            setEiInterfaceMode(mek, Mounted.MODE_OFF);
+
+            assertTrue(mek.isEiShutdown(), "test setup: the interface should be shut down");
+            assertFalse(mek.hasActiveEiCockpit(), "a shut down interface provides no EI benefits");
+            assertTrue(mek.hasBAP(false),
+                  "the probe survives a shut down interface - only sensor damage removes it");
         }
     }
 }

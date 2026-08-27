@@ -1095,6 +1095,18 @@ public class ProtoMek extends Entity {
     }
 
     /**
+     * A ProtoMek has no discrete sensor critical slot, so a head critical is its sensor damage. This is the
+     * same condition the EI benefits already used, lifted into the shared predicate so the 1-hex EI probe in
+     * {@link Entity#hasBAP(boolean)} and {@link Entity#getBAPRange()} honours it too.
+     *
+     * @return true if the head is undamaged
+     */
+    @Override
+    public boolean hasIntactEiSensors() {
+        return getCritsHit(LOC_HEAD) == 0;
+    }
+
+    /**
      * ProtoMeks have EI built-in and always active unless the head is damaged. Unlike other units, ProtoMek pilots
      * don't need the EI Implant option - they are neurally connected by default per IO:AE p.69. Returns false if neural
      * interface rules are disabled (Off mode).
@@ -1103,7 +1115,7 @@ public class ProtoMek extends Entity {
      */
     @Override
     public boolean hasActiveEiCockpit() {
-        return hasEiCockpit() && (getCritsHit(LOC_HEAD) == 0);
+        return hasEiCockpit() && hasIntactEiSensors();
     }
 
     @Override

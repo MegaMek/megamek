@@ -6569,8 +6569,9 @@ public abstract class Entity extends TurnOrdered
         }
 
         // EI Interface provides 1-hex active probe per IO p.69
-        // This works even without the pilot implant (just the hardware)
-        if (hasEiCockpit()) {
+        // This works even without the pilot implant (just the hardware), and even with the interface shut
+        // down, but IO p.69 grants it only while the unit has not suffered sensor damage.
+        if (hasEiCockpit() && hasIntactEiSensors()) {
             return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
 
@@ -6674,8 +6675,9 @@ public abstract class Entity extends TurnOrdered
         }
 
         // EI Interface provides 1-hex active probe per IO p.69
-        // This works even without the pilot implant (just the hardware)
-        if (hasEiCockpit()) {
+        // This works even without the pilot implant (just the hardware), and even with the interface shut
+        // down, but IO p.69 grants it only while the unit has not suffered sensor damage.
+        if (hasEiCockpit() && hasIntactEiSensors()) {
             return 1;
         }
 
@@ -12716,6 +12718,25 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean hasEiCockpit() {
         return hasMisc(MiscType.F_EI_INTERFACE);
+    }
+
+    /**
+     * Whether the sensors the EI Interface depends on are undamaged.
+     *
+     * <p>Interstellar Operations p.69 states that a critical hit to the sensors of an EI-equipped unit
+     * disables the enhanced imaging system, on top of the normal effects of damaged sensors. The same page
+     * grants the 1-hex active probe only "As long as the EI-equipped unit has not suffered sensor damage",
+     * while explicitly keeping the probe alive when the interface is shut down or the pilot has no neural
+     * implant. Those three conditions are therefore separate, and this method covers only the sensor
+     * one.</p>
+     *
+     * <p>The base implementation returns {@code true}: most entity types have no sensor critical to lose.
+     * Types that do model sensor damage override this.</p>
+     *
+     * @return true if sensor damage is not currently suppressing the EI Interface
+     */
+    public boolean hasIntactEiSensors() {
+        return true;
     }
 
     /**

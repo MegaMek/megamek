@@ -4795,13 +4795,30 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         }
     }
 
+    /**
+     * A sensor critical in the head disables the EI Interface. A torso-mounted cockpit also carries a
+     * sensor slot in the centre torso - {@code addTorsoMountedCockpit} puts two sensor slots in the head
+     * and, unless the variant is a VRPP, a third in the centre torso - so a hit there counts too. This
+     * mirrors how {@link #isCrippled()} and {@link #hasArmoredCockpit()} already pick the location.
+     *
+     * @return true if no sensor slot the cockpit relies on has been destroyed
+     */
+    @Override
+    public boolean hasIntactEiSensors() {
+        if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD) > 0) {
+            return false;
+        }
+        return (getCockpitType() != COCKPIT_TORSO_MOUNTED)
+              || (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS,
+              Mek.LOC_CENTER_TORSO) == 0);
+    }
+
     @Override
     public boolean hasActiveEiCockpit() {
         if (cockpitStatus == COCKPIT_OFF) {
             return false;
         }
-        if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS,
-              Mek.LOC_HEAD) > 0) {
+        if (!hasIntactEiSensors()) {
             return false;
         }
         return super.hasActiveEiCockpit();

@@ -128,6 +128,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private final HashMap<String, String> flagDisplayNames = new HashMap<>();
 
     private MissionRoleFilterPanel panMissionRoleFilters;
+    /** The label on the role filters row, hidden with the panel when a host does not offer the filters. */
+    private JLabel lblMissionRoles;
 
     private JTextField txtDropshipPct;
     private JTextField txtJumpshipPct;
@@ -505,7 +507,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         int row = startRow;
         constraints.gridx = 0;
         constraints.gridy = row;
-        add(describedLabel("ForceGeneratorDialog.missionRoles"), constraints);
+        lblMissionRoles = describedLabel("ForceGeneratorDialog.missionRoles");
+        add(lblMissionRoles, constraints);
         panMissionRoleFilters = new MissionRoleFilterPanel();
         constraints.gridx = 1;
         constraints.gridy = row++;
@@ -1565,6 +1568,41 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         JLabel label = new JLabel(Messages.getString(messageKey));
         label.setToolTipText(Messages.getString(messageKey + ".tooltip"));
         return label;
+    }
+
+    /**
+     * Shows or hides the role filters row. A host that builds a whole command rather than a unit list may not want
+     * them: they restrict every draw in the tree to units that can fill the ticked role, which suits picking a
+     * lance of artillery carriers and not designing a regiment. Hiding them also clears them, so nothing ticked
+     * behind a hidden row can filter a force.
+     *
+     * @param visible {@code false} to hide the row
+     */
+    public void setMissionRoleFiltersVisible(boolean visible) {
+        if (!visible && (panMissionRoleFilters != null)) {
+            panMissionRoleFilters.clearSelections();
+        }
+        if (lblMissionRoles != null) {
+            lblMissionRoles.setVisible(visible);
+        }
+        if (panMissionRoleFilters != null) {
+            panMissionRoleFilters.setVisible(visible);
+        }
+        revalidate();
+        repaint();
+    }
+
+    /**
+     * Relabels the Clear button for a host whose model is a set of accumulated rolls rather than one force.
+     *
+     * @param text    the button text
+     * @param tooltip the tooltip, or {@code null} to keep the current one
+     */
+    public void setClearButtonLabel(String text, @Nullable String tooltip) {
+        btnClear.setText(text);
+        if (tooltip != null) {
+            btnClear.setToolTipText(tooltip);
+        }
     }
 
     public void setYearFieldEditable(boolean editable) {

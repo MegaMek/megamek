@@ -60,7 +60,7 @@ public class InfantryLaserPistolXingShan extends InfantryWeapon {
         cost = 795;
         bv = 0.056;
         tonnage = 0.0014;
-        infantryDamage = 0.19;
+        infantryDamage = 0.056;
         infantryRange = 1;
         shots = 2;
         bursts = 1;

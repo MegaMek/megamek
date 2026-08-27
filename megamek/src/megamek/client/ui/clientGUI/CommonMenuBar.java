@@ -110,6 +110,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JMenuItem gameRequestGameMaster = new JMenuItem(getString("CommonMenuBar.gameRequestGameMaster"));
     /** Gives up the Game Master role; only shown while the local player holds it. */
     private final JMenuItem gameGiveUpGameMaster = new JMenuItem(getString("CommonMenuBar.gameGiveUpGameMaster"));
+
+    /**
+     * Whether the player at this screen holds the Game Master role, which decides whether the reinforcement entries
+     * are theirs to use during a game. Kept because the menu is rebuilt on events that do not carry the role.
+     */
+    private boolean localPlayerHoldsGameMasterRole;
     /*
      * Lobby-only shortcuts that set MG burst fire and LRM hot-loading on every unit the player may configure at
      * once, sharing the labels of the same actions in the unit right-click menu. Shown only in the lobby and only
@@ -202,6 +208,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
           "CommonMenuBar.viewToggleFovDarken"));
     private final JCheckBoxMenuItem toggleFovSpotting = new JCheckBoxMenuItem(getString(
           "CommonMenuBar.viewToggleFovSpotting"));
+    private final JCheckBoxMenuItem toggleShowObjects = new JCheckBoxMenuItem(getString(
+          "CommonMenuBar.viewToggleShowObjects"));
     private final JCheckBoxMenuItem toggleFiringSolutions = new JCheckBoxMenuItem(getString(
           "CommonMenuBar.viewToggleFiringSolutions"));
     private final JCheckBoxMenuItem toggleCFWarning = new JCheckBoxMenuItem(getString(
@@ -413,6 +421,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(toggleFovHighlight, menu, VIEW_TOGGLE_FOV_HIGHLIGHT, GUIP.getFovHighlight());
         initMenuItem(toggleFovSpotting, menu, VIEW_TOGGLE_FOV_SPOTTING, GUIP.getFovSpottingMode());
         toggleFovSpotting.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFovSpottingTooltip"));
+        initMenuItem(toggleShowObjects, menu, VIEW_TOGGLE_SHOW_OBJECTS, GUIP.getShowObjectiveOverlays());
+        toggleShowObjects.setToolTipText(Messages.getString("CommonMenuBar.viewToggleShowObjectsTooltip"));
         initMenuItem(viewMovementEnvelope, menu, VIEW_MOVE_ENV, GUIP.getMoveEnvelope());
         initMenuItem(viewMovModEnvelope, menu, VIEW_MOVE_MOD_ENV);
         menu.addSeparator();
@@ -466,6 +476,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private void setKeyBinds() {
         toggleSensorRange.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.SENSOR_RANGE));
         toggleFovSpotting.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.FOV_SPOTTING));
+        toggleShowObjects.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.SHOW_OBJECTS));
         toggleFieldOfFire.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.FIELD_FIRE));
         toggleIsometric.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.TOGGLE_ISO));
         viewMovementEnvelope.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.MOVE_ENVELOPE));
@@ -615,8 +626,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boardTraceOverlay.setEnabled(isBoardEditor);
         fileUnitsPaste.setEnabled(isLobby);
         fileUnitsCopy.setEnabled(isLobby);
-        fileUnitsReinforce.setEnabled((isInGame) && isNotVictory);
-        fileUnitsReinforceRAT.setEnabled((isMainMenu || isLobby || isInGame) && isNotVictory);
+        // reinforcing a player during a game is a gamemaster's job and lives on the Game Master menu; the same
+        // dialog outside a game is how anybody builds an army, so the main menu and the lobby keep it
+        fileUnitsReinforce.setEnabled(isInGame && isNotVictory && localPlayerHoldsGameMasterRole);
+        fileUnitsReinforceRAT.setEnabled(isNotVictory
+              && (isMainMenu || isLobby || (isInGame && localPlayerHoldsGameMasterRole)));
         fileUnitsSave.setEnabled(isLobby || (isInGame && canSave));
         fileUnitsBrowse.setEnabled(isMainMenu);
         boardSaveAsImageUnits.setEnabled(isInGame);
@@ -680,8 +694,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
      * the role is free and the game allows one, and neither while another player holds it.
      */
     public synchronized void setGameMasterState(boolean localPlayerHoldsRole, boolean roleFreeToRequest) {
+        localPlayerHoldsGameMasterRole = localPlayerHoldsRole;
         gameGiveUpGameMaster.setVisible(localPlayerHoldsRole);
         gameRequestGameMaster.setVisible(roleFreeToRequest);
+        updateEnabledStates();
     }
 
     /**
@@ -705,6 +721,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
                 // Use invokeLater to avoid interfering with accelerator processing
                 final boolean newState = (Boolean) e.getNewValue();
                 javax.swing.SwingUtilities.invokeLater(() -> toggleFovSpotting.setSelected(newState));
+            }
+            case GUIPreferences.SHOW_OBJECTIVE_OVERLAYS -> {
+                final boolean newState = (Boolean) e.getNewValue();
+                javax.swing.SwingUtilities.invokeLater(() -> toggleShowObjects.setSelected(newState));
             }
             case GUIPreferences.SHOW_KEYBINDS_OVERLAY -> viewKeybindsOverlay.setSelected((Boolean) e.getNewValue());
             case GUIPreferences.SHOW_PLANETARY_CONDITIONS_OVERLAY ->

@@ -64,7 +64,7 @@ public class InfantryShotgunAMIKeymaster15 extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = .084;
         tonnage = 0.0012;
-        infantryDamage = 0.21;
+        infantryDamage = 0.084;
         infantryRange = 0;
         ammoWeight = 0.0012;
         cost = 250;

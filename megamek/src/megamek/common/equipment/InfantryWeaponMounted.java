@@ -101,7 +101,7 @@ public class InfantryWeaponMounted extends WeaponMounted {
     }
 
     @Override
-    protected EquipmentMode getMode(int mode) {
+    public EquipmentMode getMode(int mode) {
         return getModes().get(mode);
     }
 

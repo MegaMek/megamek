@@ -61,7 +61,7 @@ public class InfantryPulseLaserRifleTirbuni extends InfantryWeapon {
         cost = 1900;
         bv = 0.9;
         tonnage = 0.0074;
-        infantryDamage = 0.56;
+        infantryDamage = 0.45;
         infantryRange = 4;
         shots = 8;
         bursts = 5;

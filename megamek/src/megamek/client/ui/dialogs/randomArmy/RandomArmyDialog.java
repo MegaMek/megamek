@@ -36,6 +36,7 @@ package megamek.client.ui.dialogs.randomArmy;
 
 import java.awt.FlowLayout;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Arrays;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -45,15 +46,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.UnitRecipients;
 import megamek.client.ui.dialogs.buttonDialogs.SkillGenerationDialog;
 import megamek.common.Player;
+import megamek.common.Team;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.Gender;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
@@ -75,6 +78,16 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
 
     private final ClientGUI clientGui;
     private final Client client;
+    /**
+     * The player a gamemaster tool asked this dialog to open on, or {@code null} when it was opened by itself.
+     *
+     * <p>Such a player is always offered, even when the ordinary rules would leave them out. A gamemaster who has
+     * just put somebody on a team and pressed a reinforcement button has said plainly who the units are for, and the
+     * team change does not reach the board until the end of the round - so the rule that hides players who cannot
+     * deploy yet would otherwise hide the very person being set up.</p>
+     */
+    private Player explicitlyRequestedPlayer;
+
     private GameListener gameListener;
 
     private final JComboBox<String> playerChooser = new JComboBox<>();
@@ -122,24 +135,26 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
 
     private void okAction() {
         if (tabbedPane.getSelectedIndex() == TAB_FORCE_GENERATOR) {
-            Client selectedClient = selectedClient();
-            forceGeneratorPanel.addChosenUnits((String) playerChooser.getSelectedItem(), clientGui);
+            forceGeneratorPanel.addChosenUnits(selectedPlayer(), clientGui);
             // The Force Generator knows more about what it rolled than any other tab, so it records
             // the same context as the rest rather than being the one source that reports nothing.
-            recordGenerationContext(selectedClient);
+            recordGenerationContext(selectedPlayer());
         } else {
             ArrayList<Entity> entities = new ArrayList<>(chosenUnitsModel.getAllUnits().size());
             Client selectedClient = selectedClient();
-            recordGenerationContext(selectedClient);
+            Player owner = selectedPlayer();
+            recordGenerationContext(owner);
             for (MekSummary ms : chosenUnitsModel.getAllUnits()) {
                 try {
                     Entity entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
 
+                    // skills still come from the chosen bot's own generator where there is one; only who owns
+                    // the unit has moved, because a remote player has no client here to generate from
                     autoSetSkillsAndName(entity, selectedClient);
-                    entity.setOwner(selectedClient.getLocalPlayer());
-                    if (!selectedClient.getGame().getPhase().isLounge()) {
-                        entity.setDeployRound(selectedClient.getGame().getRoundCount() + 1);
-                        entity.setGame(selectedClient.getGame());
+                    entity.setOwner(owner);
+                    if (!client.getGame().getPhase().isLounge()) {
+                        entity.setDeployRound(client.getGame().getRoundCount() + 1);
+                        entity.setGame(client.getGame());
                         // Set these to true, otherwise units reinforced in the movement turn are considered selectable
                         entity.setDone(true);
                         entity.setUnloaded(true);
@@ -150,14 +165,29 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
                     return;
                 }
             }
-            selectedClient.sendAddEntity(entities);
+            // sent over this machine's own connection whoever the units are for
+            client.sendAddEntity(entities);
             String msg = "%s loaded Units from Random Army for player: %s [%d units]"
-                  .formatted(client.getLocalPlayer(), playerChooser.getSelectedItem(), entities.size());
+                  .formatted(client.getLocalPlayer(), owner.getName(), entities.size());
             client.sendServerChat(Player.PLAYER_NONE, msg);
             clearData();
         }
 
         setVisible(false);
+    }
+
+    /**
+     * @return the player the generated units should belong to, which is the local player when the chooser holds
+     *       something no longer in the game
+     */
+    private Player selectedPlayer() {
+        String chosenName = (String) playerChooser.getSelectedItem();
+        return client.getGame()
+              .getPlayersList()
+              .stream()
+              .filter(player -> player.getName().equals(chosenName))
+              .findFirst()
+              .orElse(client.getLocalPlayer());
     }
 
     /** @return the client the generated units belong to: a chosen local bot, or this player */
@@ -176,16 +206,24 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
      * organizes its own. The team faction is set from the same context, which is what the munition
      * autoconfigurator and the name generator read.
      */
-    private void recordGenerationContext(Client selectedClient) {
+    private void recordGenerationContext(Player owner) {
         GenerationContext context = getGenerationContext();
-        Player owner = selectedClient.getLocalPlayer();
 
         // Only a generator that asked the player anything gets recorded. A tab that knows nothing
         // has nothing to say, and recording its default would erase a real choice made on an earlier
         // roll - topping a ComStar force up from the plain RAT tab would file it as Inner Sphere.
         if (context.source() != GenerationContext.Source.UNSPECIFIED) {
             clientGui.setGenerationContext(owner.getId(), context);
-            clientGui.getClient().getGame().getTeamForPlayer(owner).setFaction(context.faction());
+            // a player on no team has no team faction to set, which is the ordinary state of an observer being
+            // handed their first force: the faction is recorded against the player either way, and the team picks
+            // it up when they are put on one
+            Team team = clientGui.getClient().getGame().getTeamForPlayer(owner);
+            if (team != null) {
+                team.setFaction(context.faction());
+            } else {
+                LOGGER.info("[GMAddUnit] {} is on no team, so the rolled faction {} is recorded against the player "
+                            + "only", owner.getName(), context.faction());
+            }
             // The year goes in as text: message formatting would group the digits into "3,067".
             String year = String.valueOf(context.year());
             String message = (context.rating() == null)
@@ -202,23 +240,44 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
     }
 
     private void updatePlayerChoice(String selectionName) {
-        String clientName = client.getName();
         playerChooser.setEnabled(false);
         playerChooser.removeAllItems();
-        playerChooser.addItem(clientName);
-        for (AbstractClient botClient : clientGui.getLocalBots().values()) {
-            Player player = client.getGame().getPlayer(botClient.getLocalPlayerNumber());
-
-            if (!player.isObserver()) {
-                playerChooser.addItem(botClient.getName());
-            }
+        List<Player> offered = new ArrayList<>(UnitRecipients.availableTo(client.getLocalPlayer(),
+              client.getGame().getPlayersList(),
+              clientGui.getLocalBots().keySet(),
+              !client.getGame().getPhase().isLounge()));
+        addExplicitlyRequestedPlayer(offered);
+        for (Player player : offered) {
+            playerChooser.addItem(player.getName());
         }
         if (playerChooser.getItemCount() > 1) {
             playerChooser.setEnabled(true);
         }
         playerChooser.setSelectedItem(selectionName);
         if (playerChooser.getSelectedIndex() < 0) {
+            // never fall back in silence: units quietly going to the wrong player looks exactly like them going to
+            // the right one, and is only noticed a turn later
+            LOGGER.warn("[GMAddUnit] {} is not in the player list, so the chooser fell back to {}",
+                  selectionName, playerChooser.getItemAt(0));
             playerChooser.setSelectedIndex(0);
+        }
+    }
+
+    /**
+     * Puts the player a gamemaster tool asked for into the list when the ordinary rules left them out.
+     *
+     * @param offered The players the rules offer, added to in place
+     */
+    private void addExplicitlyRequestedPlayer(List<Player> offered) {
+        if (explicitlyRequestedPlayer == null) {
+            return;
+        }
+        boolean alreadyThere = offered.stream()
+              .anyMatch(player -> player.getId() == explicitlyRequestedPlayer.getId());
+        if (!alreadyThere) {
+            LOGGER.info("[GMAddUnit] offering {} because a gamemaster tool asked for them by name",
+                  explicitlyRequestedPlayer.getName());
+            offered.add(explicitlyRequestedPlayer);
         }
     }
 
@@ -227,12 +286,31 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
         updatePlayerChoice(lastChoice);
     }
 
-    public void setPlayerFromClient(Client c) {
-        if (c != null) {
-            updatePlayerChoice(c.getName());
-        } else {
+    /**
+     * Points the player chooser at the given player, so a dialog opened from a chosen player opens on them.
+     *
+     * @param player The player to select, or {@code null} to leave the chooser where it was
+     */
+    public void setPlayerFrom(@Nullable Player player) {
+        explicitlyRequestedPlayer = player;
+        if (player == null) {
             updatePlayerChoice();
+        } else {
+            updatePlayerChoice(player.getName());
         }
+    }
+
+    /**
+     * @param clientToSelect The client whose player to select, or {@code null} to leave the chooser where it was
+     *
+     * @deprecated since 0.51.01 - use {@link #setPlayerFrom(Player)}. A client cannot name a remote player,
+     *       because there is none on this machine, so anything asking for one silently fell back to the local
+     *       player.
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
+    public void setPlayerFromClient(@Nullable Client clientToSelect) {
+        // named apart from this dialog's own client field, which it would otherwise shadow
+        setPlayerFrom((clientToSelect == null) ? null : clientToSelect.getLocalPlayer());
     }
 
     @Override

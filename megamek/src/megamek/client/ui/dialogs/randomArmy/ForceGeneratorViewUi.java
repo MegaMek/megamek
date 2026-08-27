@@ -559,7 +559,7 @@ public class ForceGeneratorViewUi implements ActionListener {
     /**
      * Adds the chosen units to the game
      */
-    public void addChosenUnits(String playerName, ClientGUI clientGui) {
+    public void addChosenUnits(Player owner, ClientGUI clientGui) {
         if ((null != forceTree.getModel().getRoot())
               && (forceTree.getModel().getRoot() instanceof ForceDescriptor)) {
             // Only the units the user actually took are wired; the rest of the model is not going
@@ -569,18 +569,14 @@ public class ForceGeneratorViewUi implements ActionListener {
         }
 
         List<Entity> entities = new ArrayList<>(modelChosen.allEntities().size());
-        Client c = null;
-        if (null != playerName) {
-            c = (Client) clientGui.getLocalBots().get(playerName);
-        }
-        if (null == c) {
-            c = clientGui.getClient();
-        }
+        // the units belong to the player that was chosen; they are sent over this machine's own connection,
+        // because a remote player has no client here to send through
+        Client localClient = clientGui.getClient();
         for (Entity e : modelChosen.allEntities()) {
-            e.setOwner(c.getLocalPlayer());
-            if (!c.getGame().getPhase().isLounge()) {
-                e.setDeployRound(c.getGame().getRoundCount() + 1);
-                e.setGame(c.getGame());
+            e.setOwner(owner);
+            if (!localClient.getGame().getPhase().isLounge()) {
+                e.setDeployRound(localClient.getGame().getRoundCount() + 1);
+                e.setGame(localClient.getGame());
                 // Set these to true, otherwise units reinforced in
                 // the movement turn are considered selectable
                 e.setDone(true);
@@ -595,9 +591,10 @@ public class ForceGeneratorViewUi implements ActionListener {
             }
             entities.add(e);
         }
-        c.sendAddEntity(entities);
+        localClient.sendAddEntity(entities);
 
-        String msg = clientGui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: " + playerName
+        String msg = clientGui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: "
+              + owner.getName()
               + " [" + entities.size() + " units]";
         clientGui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
 

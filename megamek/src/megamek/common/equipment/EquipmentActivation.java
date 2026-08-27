@@ -33,6 +33,10 @@
 
 package megamek.common.equipment;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import megamek.common.annotations.Nullable;
 import megamek.common.units.Entity;
 
 /**
@@ -131,5 +135,95 @@ public final class EquipmentActivation {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns the unit's ECM suites that will be in use next round, i.e. those that are operable and whose next-round
+     * mode is anything other than {@code "Off"}. A suite set to ECCM or Ghost Targets is being used just as much as one
+     * set to ECM, so every non-{@code "Off"} mode counts. The next-round mode is the one that matters because ECM
+     * suites are built with {@code setInstantModeSwitch(false)}: a switch declared now takes effect in the End Phase
+     * (TO:AUE p.90).
+     * <p>
+     * A unit may only use one ECM suite at a time, of any type (TM p.213, CO p.200), so a returned list holding more
+     * than one entry describes a state the rules do not allow.
+     * </p>
+     *
+     * @param entity the unit to check
+     *
+     * @return a new modifiable list of the operable ECM suites that are not deactivated next round, in mount order
+     */
+    public static List<MiscMounted> ecmSuitesInUseNextRound(Entity entity) {
+        List<MiscMounted> suitesInUse = new ArrayList<>();
+        for (MiscMounted mounted : entity.getMisc()) {
+            MiscType miscType = mounted.getType();
+            if (miscType == null) {
+                continue;
+            }
+            if (miscType.hasFlag(MiscType.F_ECM) && !mounted.isInoperable()
+                  && !mounted.isModeTurnedOffNextRound()) {
+                suitesInUse.add(mounted);
+            }
+        }
+        return suitesInUse;
+    }
+
+    /**
+     * Returns the ECM suite to keep when the game has to resolve a multiple-suite conflict without asking the player,
+     * such as a unit that deploys with several suites already active. Angel ECM wins over any other type, matching the
+     * precedence {@code ECCMComparator} already applies to competing ECM fields; otherwise the first suite in mount
+     * order is kept so that the choice is stable from one game to the next.
+     *
+     * @param ecmSuites the candidate suites, normally the result of {@link #ecmSuitesInUseNextRound(Entity)}
+     *
+     * @return the suite to leave on, or {@code null} if the list is empty
+     */
+    public static @Nullable MiscMounted preferredEcmSuite(List<MiscMounted> ecmSuites) {
+        MiscMounted preferred = null;
+        for (MiscMounted mounted : ecmSuites) {
+            MiscType miscType = mounted.getType();
+            if (miscType == null) {
+                continue;
+            }
+            if (preferred == null) {
+                preferred = mounted;
+            } else if (miscType.hasFlag(MiscType.F_ANGEL_ECM)
+                  && !preferred.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
+                preferred = mounted;
+            }
+        }
+        return preferred;
+    }
+
+    /**
+     * Returns a label that identifies one ECM suite among all of the unit's ECM suites, such as
+     * {@code "ECM Suite (Guardian) #2 (Body)"}. The number counts ECM suites in mount order and is only added when the
+     * unit carries more than one, because a unit can mount two suites of the same type in the same location - the
+     * Mantis Light Attack VTOL (ECCM) carries two Guardian suites in its Body - and neither the equipment name nor the
+     * location tells those apart. The client dialog, the lobby and the server chat all build the label here so that
+     * they name the same suite the same way.
+     *
+     * @param entity  the unit carrying the suite
+     * @param ecmSuite the ECM suite to label
+     *
+     * @return the display label for the suite
+     */
+    public static String ecmSuiteLabel(Entity entity, MiscMounted ecmSuite) {
+        int suiteNumber = 0;
+        int suiteCount = 0;
+        for (MiscMounted mounted : entity.getMisc()) {
+            MiscType miscType = mounted.getType();
+            if ((miscType == null) || !miscType.hasFlag(MiscType.F_ECM)) {
+                continue;
+            }
+            suiteCount++;
+            if (mounted.equals(ecmSuite)) {
+                suiteNumber = suiteCount;
+            }
+        }
+        StringBuilder label = new StringBuilder(ecmSuite.getName());
+        if (suiteCount > 1) {
+            label.append(" #").append(suiteNumber);
+        }
+        return label.append(" (").append(entity.getLocationName(ecmSuite.getLocation())).append(')').toString();
     }
 }

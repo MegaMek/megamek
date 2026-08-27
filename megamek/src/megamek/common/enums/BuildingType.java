@@ -40,27 +40,65 @@ import java.util.ResourceBundle;
 import megamek.MegaMek;
 
 public enum BuildingType {
-    UNKNOWN("BuildingType.UNKNOWN.text", -1, -1),
-    LIGHT("BuildingType.LIGHT.text", 1, 15),
-    MEDIUM("BuildingType.MEDIUM.text", 2, 40),
-    HEAVY("BuildingType.HEAVY.text", 3, 90),
-    HARDENED("BuildingType.HARDENED.text", 4, 120),
-    WALL("BuildingType.WALL.text", 5, 120);
+    UNKNOWN("BuildingType.UNKNOWN.text", -1, -1, -1, -1),
+    LIGHT("BuildingType.LIGHT.text", 1, 15, 1, 15),
+    MEDIUM("BuildingType.MEDIUM.text", 2, 40, 16, 40),
+    HEAVY("BuildingType.HEAVY.text", 3, 90, 41, 90),
+    HARDENED("BuildingType.HARDENED.text", 4, 120, 91, 150),
+    WALL("BuildingType.WALL.text", 5, 120, 91, 150);
 
     private final String name;
     private final int type;
     private final int defaultCF;
+    private final int minimumCF;
+    private final int maximumCF;
 
-    BuildingType(String name, int type, int defaultCF) {
+    BuildingType(String name, int type, int defaultCF, int minimumCF, int maximumCF) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
               MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
         this.type = type;
         this.defaultCF = defaultCF;
+        this.minimumCF = minimumCF;
+        this.maximumCF = maximumCF;
     }
 
+    /**
+     * @return the Construction Factor a hex of this building is assumed to have when the board does not say
+     *       otherwise: 15, 40, 90 and 120 for light, medium, heavy and hardened (Total Warfare, p. 168)
+     */
     public int getDefaultCF() {
         return defaultCF;
+    }
+
+    /**
+     * The lowest Construction Factor a building of this type is built with.
+     *
+     * <p>Together with {@link #getMaximumCF()} this is the band the type covers, from Total Warfare, p. 168
+     * (Building Type/Original CF). Damage takes a building below its band without making it a different type of
+     * building, so this describes what one is built to, not what it must currently stand at.</p>
+     *
+     * @return the lowest Construction Factor for this type, or {@code -1} when the type is not known
+     */
+    public int getMinimumCF() {
+        return minimumCF;
+    }
+
+    /**
+     * The highest Construction Factor a building of this type may be built with.
+     *
+     * <p>Each type covers a band of Construction Factors rather than a single value - light 1-15, medium 16-40,
+     * heavy 41-90 and hardened 91-150 (Total Warfare, p. 168, Building Type/Original CF). A building stronger than
+     * its band is not that type of building; it is the next type up. Damage takes a building below its band, so this
+     * bounds what a building may be built or repaired to, not what it may currently stand at.</p>
+     *
+     * <p>Walls are not in that table. They are treated as hardened here, being the sturdiest thing the table
+     * describes.</p>
+     *
+     * @return the highest Construction Factor for this type, or {@code -1} when the type is not known
+     */
+    public int getMaximumCF() {
+        return maximumCF;
     }
 
     public int getTypeValue() {

@@ -62,8 +62,9 @@ public class InfantryRifleFederatedBarrettM61ALaserInfernoWeapon extends Infantr
     public InfantryRifleFederatedBarrettM61ALaserInfernoWeapon() {
         super();
 
-        name = "Laser Rifle (Federated-Barrett M61A) (Inferno Grenades)";
+        name = "Laser Rifle (Federated-Barrett M61A) (Incendiary Grenades)";
         setInternalName("InfantryFederatedBarrettM61AInferno");
+        addLookupName("Laser Rifle (Federated-Barrett M61A) (Inferno Grenades)");
         addLookupName(name);
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 2150;

@@ -62,8 +62,9 @@ public class InfantrySupportHeavyGrenadeLauncherInfernoWeapon extends InfantryWe
     public InfantrySupportHeavyGrenadeLauncherInfernoWeapon() {
         super();
 
-        name = "Grenade Launcher (Heavy) w/Inferno";
+        name = "Grenade Launcher (Heavy) w/Incendiary";
         setInternalName("InfantryHeavyGrenadeLauncherInferno");
+        addLookupName("Grenade Launcher (Heavy) w/Inferno");
         addLookupName(name);
         addLookupName("Infantry Heavy Inferno Grenade Launcher");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;

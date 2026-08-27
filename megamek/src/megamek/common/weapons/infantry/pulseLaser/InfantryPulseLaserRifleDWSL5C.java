@@ -61,7 +61,7 @@ public class InfantryPulseLaserRifleDWSL5C extends InfantryWeapon {
         cost = 1800;
         bv = 0.252;
         tonnage = 0.0055;
-        infantryDamage = 0.36;
+        infantryDamage = 0.252;
         infantryRange = 3;
         shots = 7;
         bursts = 6;

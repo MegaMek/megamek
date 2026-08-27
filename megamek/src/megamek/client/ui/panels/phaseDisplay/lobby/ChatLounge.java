@@ -71,6 +71,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -107,9 +108,11 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.buttons.DialogButton;
 import megamek.client.ui.buttons.MMToggleButton;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.UnitRecipients;
 import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.IMapSettingsObserver;
+import megamek.MegaMek;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.RulerDialog;
 import megamek.client.ui.clientGUI.boardview.toolTip.TWBoardViewTooltip;
@@ -131,6 +134,7 @@ import megamek.client.ui.panels.phaseDisplay.AbstractPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.lobby.PlayerTable.PlayerTableModel;
 import megamek.client.ui.panels.phaseDisplay.lobby.sorters.*;
 import megamek.client.ui.util.ScalingPopup;
+import megamek.client.ui.preferences.JWindowPreference;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedXPanel;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
@@ -1025,6 +1029,15 @@ public class ChatLounge extends AbstractPhaseDisplay
             previewPanel.add(previewBV.getComponent(true));
             boardPreviewW.add(previewPanel);
             boardPreviewW.setSize(clientgui.getFrame().getWidth() / 2, clientgui.getFrame().getHeight() / 2);
+            // remember the preview window's size and position between sessions, like the standard dialogs do
+            // (the preferences are written when MegaMek exits normally)
+            boardPreviewW.setName("BoardPreviewDialog");
+            try {
+                MegaMek.getMMPreferences().forClass(ChatLounge.class)
+                      .manage(new JWindowPreference(boardPreviewW));
+            } catch (Exception exception) {
+                LOGGER.warn(exception, "Could not set up size/position memory for the board preview window");
+            }
 
             String closeAction = "closeAction";
             final KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
@@ -1906,15 +1919,13 @@ public class ChatLounge extends AbstractPhaseDisplay
      * Pop up the dialog to load a mek
      */
     private void addUnit() {
-        Client c = getSelectedClient();
         clientgui.getMekSelectorDialog().updateOptionValues();
-        clientgui.getMekSelectorDialog().setPlayerFromClient(c);
+        clientgui.getMekSelectorDialog().setPlayerFrom(getSelectedPlayer());
         clientgui.getMekSelectorDialog().setVisible(true);
     }
 
     private void createArmy() {
-        Client c = getSelectedClient();
-        clientgui.getRandomArmyDialog().setPlayerFromClient(c);
+        clientgui.getRandomArmyDialog().setPlayerFrom(getSelectedPlayer());
         clientgui.getRandomArmyDialog().setVisible(true);
     }
 
@@ -2105,29 +2116,29 @@ public class ChatLounge extends AbstractPhaseDisplay
                 toggleCompact();
             } else if (ev.getSource().equals(butLoadList)) {
                 // Allow the player to replace their current list of entities with a list from a file.
-                Client c = getSelectedClient();
-                if (c == null) {
+                Player selectedPlayer = getSelectedPlayer();
+                if ((selectedPlayer == null) || !mayActForPlayer(selectedPlayer)) {
                     clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
                           Messages.getString("ChatLounge.SelectBotOrPlayer"));
                     return;
                 }
-                clientgui.loadListFile(c.getLocalPlayer());
+                clientgui.loadListFile(selectedPlayer);
 
             } else if (ev.getSource().equals(butSaveList) || ev.getSource().equals(butPrintList)) {
                 // Allow the player to save their current
                 // list of entities to a file.
-                Client c = getSelectedClient();
-                if (c == null) {
+                Player selectedPlayer = getSelectedPlayer();
+                if ((selectedPlayer == null) || !mayActForPlayer(selectedPlayer)) {
                     clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
                           Messages.getString("ChatLounge.SelectBotOrPlayer"));
                     return;
                 }
-                ArrayList<Entity> entities = c.getGame().getPlayerEntities(c.getLocalPlayer(), false);
+                ArrayList<Entity> entities = client().getGame().getPlayerEntities(selectedPlayer, false);
                 for (Entity entity : entities) {
                     entity.setForceString(game().getForces().forceStringFor(entity));
                 }
                 if (ev.getSource().equals(butSaveList)) {
-                    clientgui.saveListFile(entities, c.getLocalPlayer().getName());
+                    clientgui.saveListFile(entities, selectedPlayer.getName());
                 } else {
                     clientgui.printList(entities, (JButton) ev.getSource());
                 }
@@ -2502,7 +2513,11 @@ public class ChatLounge extends AbstractPhaseDisplay
             victoryConditionsDialog = new VictoryConditionsDialog(clientgui);
         }
         victoryConditionsDialog.refreshLobbyState();
-        if (victoryConditionsDialog.showDialog() == DialogResult.CONFIRMED) {
+        DialogResult dialogResult = victoryConditionsDialog.showDialog();
+        // window sizes and positions normally persist only on a clean exit; mission setup is worth keeping
+        // even when the process is killed, so save the preferences when this dialog closes
+        MegaMek.getMMPreferences().saveToFile(SuiteConstants.MM_PREFERENCES_FILE);
+        if (dialogResult == DialogResult.CONFIRMED) {
             Vector<IBasicOption> changedOptions = victoryConditionsDialog.getChangedVictoryOptions();
             if (!changedOptions.isEmpty()) {
                 clientgui.getClient().sendGameOptions(victoryConditionsDialog.getPassword(), changedOptions);
@@ -2734,6 +2749,40 @@ public class ChatLounge extends AbstractPhaseDisplay
         for (AbstractClient botClient : clientgui.getLocalBots().values()) {
             botClient.sendDone(done);
         }
+    }
+
+    /**
+     * The player highlighted in the player table, whoever is running them.
+     *
+     * <p>Separate from {@link #getSelectedClient()} because most of what the lobby does to a player needs only
+     * the player: units are owned by a player and sent over this machine's own connection. A remote human has no
+     * client here, so anything that asks for one gets nothing back and quietly does the work for the local player
+     * instead.</p>
+     *
+     * @return the selected player, or {@code null} when no row is selected
+     */
+    /**
+     * Whether the local player may act on the given player's force.
+     *
+     * <p>The same rule the unit choosers use, asked here as well: their chooser only offers players it is willing
+     * to act for, so the rule is enforced by what is in the list. The unit list buttons act on whoever is selected
+     * in the player table, which is anyone at all, so they have to ask.</p>
+     *
+     * @param player The player whose force is to be acted on
+     *
+     * @return {@code true} when the local player may load or save that player's units
+     */
+    private boolean mayActForPlayer(Player player) {
+        return UnitRecipients.availableTo(localPlayer(),
+              clientgui.getClient().getGame().getPlayersList(),
+              clientgui.getLocalBots().keySet()).contains(player);
+    }
+
+    @Nullable Player getSelectedPlayer() {
+        if (tablePlayers.getSelectedRowCount() == 0) {
+            return null;
+        }
+        return playerModel.getPlayerAt(tablePlayers.getSelectedRow());
     }
 
     Client getSelectedClient() {

@@ -41,7 +41,6 @@ import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.game.Game;
@@ -119,16 +118,11 @@ public class FlamerHandler extends WeaponHandler {
 
     @Override
     protected int calcDamagePerHit() {
-        int toReturn = super.calcDamagePerHit();
-        if (target.isConventionalInfantry()) {
-            // pain shunted infantry get half damage
-            if (((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
-                toReturn = (int) Math.floor(toReturn / 2.0);
-            }
-        } else if ((target instanceof BattleArmor) && ((BattleArmor) target).isFireResistant()) {
-            toReturn = 0;
+        if (targetIgnoresHeatWeaponDamage()) {
+            return 0;
         }
-        return toReturn;
+        // Conventional infantry and battle armor with an Artificial Pain Shunt halve flame damage (IO p. 78).
+        return (int) applyPainShuntModifier(super.calcDamagePerHit());
     }
 
     @Override

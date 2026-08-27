@@ -1780,10 +1780,18 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
 
     @Override
     public boolean doomedInVacuum() {
-        if (hasEngine() &&
+        // Hovercraft, WiGEs and VTOLs all fly by pushing against air, so there is nothing for them to work with in a
+        // vacuum or a trace atmosphere however well sealed they are (TO:AR p.35, Expanded Movement Costs and
+        // Planetary Conditions Table, footnote 31; the ruling that hovercraft belong in that footnote alongside WiGEs
+        // and VTOLs is at battletech.com/forums topic 55634).
+        if (getMovementMode().isHoverVTOLOrWiGE()) {
+            return true;
+        }
+        boolean hasPowerPlantThatWorksWithoutAir = hasEngine() &&
               (getEngine().isFusion() ||
                     getEngine().getEngineType() == Engine.FISSION ||
-                    getEngine().getEngineType() == Engine.FUEL_CELL)) {
+                    getEngine().getEngineType() == Engine.FUEL_CELL);
+        if (hasPowerPlantThatWorksWithoutAir) {
             return !hasEnvironmentalSealing();
         }
         return true;

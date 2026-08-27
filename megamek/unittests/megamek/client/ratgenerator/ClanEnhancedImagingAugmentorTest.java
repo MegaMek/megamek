@@ -133,7 +133,7 @@ class ClanEnhancedImagingAugmentorTest {
     /** Around one warrior in twenty, not most of them and not none. */
     @Test
     void onlyASmallShareOfWarriorsCarryTheImplant() {
-        int implanted = 0;
+        long implanted = 0;
         int total = 0;
         for (int sample = 0; sample < SAMPLES; sample++) {
             List<Entity> warriors = new ArrayList<>();

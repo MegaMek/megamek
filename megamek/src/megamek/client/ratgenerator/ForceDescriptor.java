@@ -891,16 +891,6 @@ public class ForceDescriptor {
     }
 
     /**
-     * Generates one group of children under the rule their {@code <subforces>} block declared.
-     *
-     * <p>Applied per block rather than per node so a mixed formation can build its groups by different
-     * rules - a Level II generating its Meks as a group while its aerospace pair share one model, which
-     * is what makes the two fighters identical.</p>
-     *
-     * @param rule    the block's generate rule
-     * @param members the children that block produced
-     */
-    /**
      * Generates a node that has been given a formation type, letting each {@code <subforces>} block
      * that asked for a shared unit be built by its own rule.
      *

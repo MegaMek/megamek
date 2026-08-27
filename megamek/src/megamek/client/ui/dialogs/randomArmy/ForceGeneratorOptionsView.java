@@ -140,7 +140,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     /** Post-generation summary: unit type rows, Light/Medium/Heavy/Assault columns. */
     private JTable tblSummary;
     private DefaultTableModel summaryModel;
-    /** What the formation mix delivered against what it asked for. */
     /** Opens the formation mix editor; the label beside it shows any request in force. */
     private JButton btnFormationMix;
     private JLabel lblFormationMixSummary;
@@ -378,13 +377,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     /**
-     * Builds the transport panel: the DropShip, JumpShip, WarShip and cargo percentages, plus fighter complement.
-     *
-     * @param constraints the shared constraints
-     *
-     * @return the transport panel, for the caller to place beside the composition summary
-     */
-    /**
      * The transport settings as one row of the description form. They decide what gets generated - how much of
      * the force gets a DropShip berth, whether those ships get JumpShip collars - so they belong with the other
      * inputs rather than beside the summary of the result, and four short fields fit on a line.
@@ -493,15 +485,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         return row;
     }
 
-    /**
-     * Adds the mission-role filters, which sit between the mix and the panels that describe and carry the force:
-     * they qualify what the mix produces rather than shaping it.
-     *
-     * @param constraints the shared constraints
-     * @param startRow the first free grid row
-     *
-     * @return the next free grid row
-     */
     /** The role filters as one row of the description form: a label, then the boxes for the unit type shown. */
     private int addMissionRoleFilters(GridBagConstraints constraints, int startRow) {
         int row = startRow;
@@ -1535,10 +1518,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     /**
-     * Makes the year text field read-only. Use this when an embedder anchors the year to an external value
-     * (e.g. MekHQ's campaign year) and doesn't want the user editing it on this panel.
-     */
-    /**
      * Appends a host-supplied toggle to the row of options beside the Generate button, so a host's own
      * generation options read as part of that action rather than as a separate setting elsewhere.
      *
@@ -1605,6 +1584,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
     }
 
+    /**
+     * Makes the year text field read-only. Use this when an embedder anchors the year to an external value
+     * (e.g. MekHQ's campaign year) and doesn't want the user editing it on this panel.
+     */
     public void setYearFieldEditable(boolean editable) {
         txtYear.setEditable(editable);
         // A locked year is shown as plain text. Drawn as a box it invites typing that does nothing, and

@@ -100,6 +100,15 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
         VehicleBreachEffect effect = TaintedAtmosphereRules.getVehicleBreachEffect(atmosphericTaint());
         tank.setLocationStatus(location, ILocationExposureStatus.BREACHED);
 
+        // A vehicle can be breached in several locations in one salvo, but the air can only kill the crew once. The
+        // hole in this location is still real, hence the status change above, but there is nobody left to harm.
+        boolean crewIsBeyondFurtherHarm = tank.getCrew().isDead() || tank.getCrew().isDoomed();
+        if (crewIsBeyondFurtherHarm) {
+            LOGGER.debug("[TaintedAtmosphere] {}: {} breached in {} air, but the crew is already lost",
+                  tank.getShortName(), tank.getLocationAbbr(location), atmosphericTaint());
+            return reports;
+        }
+
         switch (effect) {
             case CREW_KILLED -> {
                 LOGGER.info("[TaintedAtmosphere] {}: {} breached in {} air - crew killed",

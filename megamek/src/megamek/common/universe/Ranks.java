@@ -77,8 +77,8 @@ public final class Ranks {
           "SSLDF", // 0  RANK_SL    (Second Star League Defense Force)
           "AFFS",  // 1  RANK_FS    (Armed Forces of the Federated Suns)
           "AFFC",  // 2  RANK_FC    (Armed Forces of the Federated Commonwealth)
-          "LCAF",  // 3  RANK_LC    (Lyran Commonwealth Armed Forces — pre-3035)
-          "LAAF",  // 4  RANK_LA    (Lyran Alliance Armed Forces — post-3035)
+          "LCAF",  // 3  RANK_LC    (Lyran Commonwealth Armed Forces - pre-3035)
+          "LAAF",  // 4  RANK_LA    (Lyran Alliance Armed Forces - post-3035)
           "FWLM",  // 5  RANK_FWL   (Free Worlds League Military)
           "CCAF",  // 6  RANK_CC    (Capellan Confederation Armed Forces)
           "CCWH",  // 7  RANK_CC_WH (Capellan Confederation Warrior House)
@@ -86,7 +86,7 @@ public final class Ranks {
           "CLAN",  // 9  RANK_CLAN
           "CG",    // 10 RANK_CS    (ComStar Guards)
           "WOBM",  // 11 RANK_WOB   (Word of Blake Militia)
-          null,    // 12 RANK_CUSTOM — MekHQ-side user customs, no XML entry
+          null,    // 12 RANK_CUSTOM - MekHQ-side user customs, no XML entry
           "MAF",   // 13 RANK_MOC   (Magistracy Armed Forces)
           "TDF",   // 14 RANK_TC    (Taurian Defense Force)
           "MHAF",  // 15 RANK_MH    (Marian Hegemony Armed Forces)

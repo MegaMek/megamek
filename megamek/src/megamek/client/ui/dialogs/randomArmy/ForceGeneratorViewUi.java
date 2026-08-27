@@ -187,12 +187,12 @@ public class ForceGeneratorViewUi implements ActionListener {
         forceTree.setVisibleRowCount(12);
         forceTree.addTreeExpansionListener(new TreeExpansionListener() {
             @Override
-            public void treeCollapsed(TreeExpansionEvent evt) {
+            public void treeCollapsed(TreeExpansionEvent event) {
 
             }
 
             @Override
-            public void treeExpanded(TreeExpansionEvent evt) {
+            public void treeExpanded(TreeExpansionEvent event) {
                 if (forceTree.getPreferredSize().getWidth() > paneForceTree.getSize().getWidth()) {
                     rightPanel.setMinimumSize(
                           new Dimension(forceTree.getMinimumSize().width, rightPanel.getMinimumSize().height));
@@ -901,18 +901,18 @@ public class ForceGeneratorViewUi implements ActionListener {
 
     private final MouseListener treeMouseListener = new MouseAdapter() {
         @Override
-        public void mousePressed(MouseEvent evt) {
-            showPopup(evt);
+        public void mousePressed(MouseEvent event) {
+            showPopup(event);
         }
 
         @Override
-        public void mouseReleased(MouseEvent evt) {
-            showPopup(evt);
+        public void mouseReleased(MouseEvent event) {
+            showPopup(event);
         }
 
-        private void showPopup(MouseEvent evt) {
-            if (evt.isPopupTrigger()) {
-                TreePath path = forceTree.getPathForLocation(evt.getX(), evt.getY());
+        private void showPopup(MouseEvent event) {
+            if (event.isPopupTrigger()) {
+                TreePath path = forceTree.getPathForLocation(event.getX(), event.getY());
                 if (path == null) {
                     return;
                 }
@@ -926,7 +926,7 @@ public class ForceGeneratorViewUi implements ActionListener {
                     String target = toeExclusionMode ? "TOE" : "force";
                     String toggleText = fd.isIncluded() ? "Exclude from " + target : "Include in " + target;
                     JMenuItem toggleItem = new JMenuItem(toggleText);
-                    toggleItem.addActionListener(ev -> {
+                    toggleItem.addActionListener(actionEvent -> {
                         fd.setIncludedRecursively(!fd.isIncluded());
                         // Exclusions change what a commit produces (dropped formations, shifted
                         // callsigns), so let the host refresh before the repaint renders names.
@@ -954,14 +954,14 @@ public class ForceGeneratorViewUi implements ActionListener {
 
                     if (!toeExclusionMode) {
                         JMenuItem addItem = new JMenuItem("Add to game");
-                        addItem.addActionListener(ev -> modelChosen.addEntities(fd));
+                        addItem.addActionListener(actionEvent -> modelChosen.addEntities(fd));
                         menu.add(addItem);
                     }
 
                     JMenuItem exportItem = new JMenuItem("Export as MUL");
-                    exportItem.addActionListener(ev -> panControls.exportMUL(fd));
+                    exportItem.addActionListener(actionEvent -> panControls.exportMUL(fd));
                     menu.add(exportItem);
-                    menu.show(evt.getComponent(), evt.getX(), evt.getY());
+                    menu.show(event.getComponent(), event.getX(), event.getY());
                 }
             }
         }
@@ -1012,7 +1012,7 @@ public class ForceGeneratorViewUi implements ActionListener {
         item.setToolTipText(offersIt
               ? null
               : Messages.getString("ForceGeneratorDialog.changeFormation.notOffered", formationType.getName()));
-        item.addActionListener(ev -> confirmAndChangeFormation(formation, formationType, offersIt));
+        item.addActionListener(event -> confirmAndChangeFormation(formation, formationType, offersIt));
         return item;
     }
 
@@ -1053,7 +1053,7 @@ public class ForceGeneratorViewUi implements ActionListener {
             return item;
         }
         item.setText(Messages.getString("ForceGeneratorDialog.addFormation.of", formationType.getName()));
-        item.addActionListener(ev -> confirmAndAddSubForce(parent, template, formationType));
+        item.addActionListener(event -> confirmAndAddSubForce(parent, template, formationType));
         return item;
     }
 
@@ -1210,7 +1210,7 @@ public class ForceGeneratorViewUi implements ActionListener {
     private static JMenuItem unitReadoutItem(String messageKey, Entity entity,
           Consumer<Collection<Entity>> readout) {
         JMenuItem item = new JMenuItem(Messages.getString(messageKey));
-        item.addActionListener(ev -> readout.accept(Set.of(entity)));
+        item.addActionListener(event -> readout.accept(Set.of(entity)));
         return item;
     }
 
@@ -1261,17 +1261,17 @@ public class ForceGeneratorViewUi implements ActionListener {
 
     private final MouseListener tableMouseListener = new MouseAdapter() {
         @Override
-        public void mousePressed(MouseEvent evt) {
-            showPopup(evt);
+        public void mousePressed(MouseEvent event) {
+            showPopup(event);
         }
 
         @Override
-        public void mouseReleased(MouseEvent evt) {
-            showPopup(evt);
+        public void mouseReleased(MouseEvent event) {
+            showPopup(event);
         }
 
-        private void showPopup(MouseEvent evt) {
-            if (evt.isPopupTrigger()) {
+        private void showPopup(MouseEvent event) {
+            if (event.isPopupTrigger()) {
                 if (tblChosen.getSelectedRowCount() > 0) {
                     JPopupMenu menu = new JPopupMenu();
 
@@ -1279,7 +1279,7 @@ public class ForceGeneratorViewUi implements ActionListener {
                     int[] entityIDs = entities.stream().mapToInt(Integer::intValue).toArray();
 
                     JMenuItem item = new JMenuItem("Remove");
-                    item.addActionListener(ev -> modelChosen.removeEntities(entityIDs));
+                    item.addActionListener(actionEvent -> modelChosen.removeEntities(entityIDs));
                     menu.add(item);
 
                     // All command strings should follow the layout COMMAND|INFO|ID1,ID2,I3...
@@ -1297,15 +1297,15 @@ public class ForceGeneratorViewUi implements ActionListener {
                     menu.add(UIUtil.menuItem(msgViewCost, FGV_COST + eIds, true, ForceGeneratorViewUi.this,
                           Integer.MIN_VALUE));
 
-                    menu.show(evt.getComponent(), evt.getX(), evt.getY());
+                    menu.show(event.getComponent(), event.getX(), event.getY());
                 }
             }
         }
     };
 
     @Override
-    public void actionPerformed(ActionEvent ev) {
-        StringTokenizer st = new StringTokenizer(ev.getActionCommand(), "|");
+    public void actionPerformed(ActionEvent event) {
+        StringTokenizer st = new StringTokenizer(event.getActionCommand(), "|");
         String command = "";
 
         if (st.hasMoreTokens()) {
@@ -1333,18 +1333,18 @@ public class ForceGeneratorViewUi implements ActionListener {
 
     private final KeyListener tableKeyListener = new KeyListener() {
         @Override
-        public void keyTyped(KeyEvent evt) {
+        public void keyTyped(KeyEvent event) {
 
         }
 
         @Override
-        public void keyPressed(KeyEvent evt) {
+        public void keyPressed(KeyEvent event) {
 
         }
 
         @Override
-        public void keyReleased(KeyEvent evt) {
-            if ((evt.getKeyCode() == KeyEvent.VK_DELETE) && (tblChosen.getSelectedRowCount() > 0)) {
+        public void keyReleased(KeyEvent event) {
+            if ((event.getKeyCode() == KeyEvent.VK_DELETE) && (tblChosen.getSelectedRowCount() > 0)) {
                 modelChosen.removeEntities(tblChosen.getSelectedRows());
             }
         }

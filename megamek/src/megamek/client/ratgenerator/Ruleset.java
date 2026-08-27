@@ -181,7 +181,7 @@ public class Ruleset {
         }
         // This shouldn't happen unless the data is missing. Throw out a default ruleset
         // to prevent barfing.
-        logger.warn("findRuleset({}): no match in any parent — returning empty default ruleset", faction);
+        logger.warn("findRuleset({}): no match in any parent - returning empty default ruleset", faction);
         return new Ruleset();
     }
 

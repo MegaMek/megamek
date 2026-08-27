@@ -182,25 +182,25 @@ public class SettingsFormPanel extends JPanel {
         finishGrid(firstRow, components.length, columnCount);
     }
 
-     /**
-      * Adds arbitrary components in row-major order after assigning every component the same preferred and minimum
-      * widths.
-      *
-      * <p>Use this when visual columns must be equal. A cell may be a complete setting or composite option panel, or
-      * callers may alternate separate labels and controls to create balanced form rows. A configured label width becomes
-      * the shared preferred cell width, allowing grids in separate sections to align without a long option widening only
-      * its own section. Without a configured label width, the widest component determines the shared width. The widest
-      * effective minimum, capped at the shared preferred width, becomes every cell's minimum so constrained columns
-      * remain balanced. The layout also compensates for components such as column-based text fields that recompute their
-      * preferred width. Every column receives equal layout weight and divides any extra available width. This method
-      * changes the supplied components' preferred and minimum widths. Callers must wrap or otherwise adapt content that
-      * is naturally wider than one configured cell. Unlike {@link #addRow(JComponent, JComponent)}, this method does not
-      * infer label/control roles; callers placing a {@link JLabel} beside a control must call
-      * {@link JLabel#setLabelFor(java.awt.Component)}.</p>
-      *
-      * @param columnCount number of equal-width components per row
-      * @param components  balanced labels, controls, complete settings, or composite panels in row-major order
-     */
+    /**
+     * Adds arbitrary components in row-major order after assigning every component the same preferred and minimum
+     * widths.
+     *
+     * <p>Use this when visual columns must be equal. A cell may be a complete setting or composite option panel, or
+     * callers may alternate separate labels and controls to create balanced form rows. A configured label width becomes
+     * the shared preferred cell width, allowing grids in separate sections to align without a long option widening only
+     * its own section. Without a configured label width, the widest component determines the shared width. The widest
+     * effective minimum, capped at the shared preferred width, becomes every cell's minimum so constrained columns
+     * remain balanced. The layout also compensates for components such as column-based text fields that recompute their
+     * preferred width. Every column receives equal layout weight and divides any extra available width. This method
+     * changes the supplied components' preferred and minimum widths. Callers must wrap or otherwise adapt content that
+     * is naturally wider than one configured cell. Unlike {@link #addRow(JComponent, JComponent)}, this method does not
+     * infer label/control roles; callers placing a {@link JLabel} beside a control must call
+     * {@link JLabel#setLabelFor(java.awt.Component)}.</p>
+     *
+     * @param columnCount number of equal-width components per row
+     * @param components  balanced labels, controls, complete settings, or composite panels in row-major order
+    */
     public void addEqualWidthComponentGrid(int columnCount, JComponent... components) {
         if (columnCount <= 1) {
             addComponentGrid(columnCount, components);

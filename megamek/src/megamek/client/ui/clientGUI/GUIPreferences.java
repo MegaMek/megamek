@@ -560,7 +560,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         if (preferenceStore.hasProperty(LEGACY_PLAYER_COLOUR_BROWN)
               && !preferenceStore.hasProperty(PlayerColour.PLAYER_COLOUR_BROWN)) {
             preferenceStore.setValue(PlayerColour.PLAYER_COLOUR_BROWN,
-                  preferenceStore.getString(LEGACY_PLAYER_COLOUR_BROWN));
+                preferenceStore.getString(LEGACY_PLAYER_COLOUR_BROWN));
         }
     }
 

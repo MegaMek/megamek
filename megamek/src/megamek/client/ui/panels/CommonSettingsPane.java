@@ -79,22 +79,22 @@ public class CommonSettingsPane extends JPanel {
     private static final int ADVANCED_ICON = 0xE8B8;
     private static final SettingsTextProvider TEXT = SettingsTextProvider.megaMek();
     private static final SettingsBadge IMPORTANT_BADGE = new SettingsBadge(IMPORTANT_ICON, null,
-          getString("CommonSettingsDialog.legend.important"));
+        getString("CommonSettingsDialog.legend.important"));
     private static final SettingsBadge ADVANCED_BADGE = new SettingsBadge(ADVANCED_ICON, null,
-          getString("CommonSettingsDialog.legend.advanced"));
+        getString("CommonSettingsDialog.legend.advanced"));
     private static final Map<String, String> PAGE_FACTION_LOGOS = Map.ofEntries(
-          Map.entry("main", "logo_federated_suns.png"),
-          Map.entry("audio", "logo_comstar.png"),
-          Map.entry("keyBinds", "logo_clan_coyote.png"),
-          Map.entry("gameBoard", "logo_clan_wolf.png"),
-          Map.entry("unitDisplay", "logo_draconis_combine.png"),
-          Map.entry("miniMap", "logo_rim_worlds_republic.png"),
-          Map.entry("report", "logo_clan_ghost_bear.png"),
-          Map.entry("overlays", "logo_clan_smoke_jaguar.png"),
-          Map.entry("buttonOrder", "logo_free_worlds_league.png"),
-          Map.entry("autoDisplay", "logo_outworld_alliance.png"),
-          Map.entry("aiDisplay", "logo_clan_nova_cat.png"),
-          Map.entry("advanced", "logo_republic_of_the_sphere.png"));
+        Map.entry("main", "logo_federated_suns.png"),
+        Map.entry("audio", "logo_comstar.png"),
+        Map.entry("keyBinds", "logo_clan_coyote.png"),
+        Map.entry("gameBoard", "logo_clan_wolf.png"),
+        Map.entry("unitDisplay", "logo_draconis_combine.png"),
+        Map.entry("miniMap", "logo_rim_worlds_republic.png"),
+        Map.entry("report", "logo_clan_ghost_bear.png"),
+        Map.entry("overlays", "logo_clan_smoke_jaguar.png"),
+        Map.entry("buttonOrder", "logo_free_worlds_league.png"),
+        Map.entry("autoDisplay", "logo_outworld_alliance.png"),
+        Map.entry("aiDisplay", "logo_clan_nova_cat.png"),
+        Map.entry("advanced", "logo_republic_of_the_sphere.png"));
     private static final Map<String, Icon> PAGE_HEADER_ICONS = new LinkedHashMap<>();
 
     private final SettingsPane settingsPane;
@@ -117,12 +117,12 @@ public class CommonSettingsPane extends JPanel {
         }
 
         SettingsNavigationText navigationText = new SettingsNavigationText(
-              getString("CommonSettingsDialog.Search"),
-              getString("CommonSettingsDialog.SearchToolTip"),
-              getString("CommonSettingsDialog.SearchNoMatches"),
-              getString("CommonSettingsDialog.SearchMatches"),
-              getString("SettingsPagePanel.expandAll.text"),
-              getString("SettingsPagePanel.collapseAll.text"));
+            getString("CommonSettingsDialog.Search"),
+            getString("CommonSettingsDialog.SearchToolTip"),
+            getString("CommonSettingsDialog.SearchNoMatches"),
+            getString("CommonSettingsDialog.SearchMatches"),
+            getString("SettingsPagePanel.expandAll.text"),
+            getString("SettingsPagePanel.collapseAll.text"));
         settingsPane = new SettingsPane(routes, pageFactories, navigationText);
         add(settingsPane, BorderLayout.CENTER);
     }
@@ -131,10 +131,10 @@ public class CommonSettingsPane extends JPanel {
         Icon icon = pageIcon(page.id());
         SettingsPagePanel.Builder builder = SettingsPagePanel.builder(page.pageName(), TEXT,
               "CommonSettingsDialog.title", icon)
-              .header(new SettingsHeaderPanel(page.pageName(), page.path().getLast(), icon))
-              .showDetailsPanel(page.sections().stream().anyMatch(section -> containsHelpText(section.content())))
-              .sectionsExpandedByDefault(page.sections().size() == 1)
-              .standardContentWidth();
+            .header(new SettingsHeaderPanel(page.pageName(), page.path().getLast(), icon))
+            .showDetailsPanel(page.sections().stream().anyMatch(section -> containsHelpText(section.content())))
+            .sectionsExpandedByDefault(page.sections().size() == 1)
+            .standardContentWidth();
 
         for (OptionSection section : page.sections()) {
             List<String> aliases = collectSearchAliases(section.content());

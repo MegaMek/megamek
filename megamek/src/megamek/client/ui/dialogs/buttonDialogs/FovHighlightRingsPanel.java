@@ -67,7 +67,7 @@ final class FovHighlightRingsPanel extends JPanel {
 
     private final JPanel rowsPanel = new JPanel(new GridBagLayout());
     private final JButton addButton = new JButton(Messages.getString(
-          "TacticalOverlaySettingsDialog.FovHighlightRanges.Add"));
+        "TacticalOverlaySettingsDialog.FovHighlightRanges.Add"));
     private final List<RingRange> ranges = new ArrayList<>();
     private final Runnable changeHandler;
 
@@ -84,7 +84,7 @@ final class FovHighlightRingsPanel extends JPanel {
         JPanel actions = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
         actions.setOpaque(false);
         addButton.setToolTipText(Messages.getString(
-              "TacticalOverlaySettingsDialog.FovHighlightRanges.Add.tooltip"));
+            "TacticalOverlaySettingsDialog.FovHighlightRanges.Add.tooltip"));
         addButton.addActionListener(event -> addRange());
         actions.add(addButton);
         add(actions, BorderLayout.SOUTH);
@@ -105,13 +105,13 @@ final class FovHighlightRingsPanel extends JPanel {
 
     String getRadiiValue() {
         return String.join(" ", ranges.stream()
-              .map(range -> Integer.toString(range.distance))
-              .toList());
+                .map(range -> Integer.toString(range.distance))
+                .toList());
     }
 
     String getColoursValue() {
         return String.join(" ; ", ranges.stream()
-              .map(range -> range.serializedHsb)
+            .map(range -> range.serializedHsb)
               .toList());
     }
 
@@ -178,12 +178,12 @@ final class FovHighlightRingsPanel extends JPanel {
 
     private void addHeader() {
         JLabel distanceHeader = new JLabel(Messages.getString(
-              "TacticalOverlaySettingsDialog.FovHighlightRanges.Distance"));
+            "TacticalOverlaySettingsDialog.FovHighlightRanges.Distance"));
         distanceHeader.setEnabled(editorEnabled);
         rowsPanel.add(distanceHeader, constraints(0, 0, 2, 0.0, GridBagConstraints.NONE));
 
         JLabel colourHeader = new JLabel(Messages.getString(
-              "TacticalOverlaySettingsDialog.FovHighlightRanges.Color"));
+            "TacticalOverlaySettingsDialog.FovHighlightRanges.Color"));
         colourHeader.setEnabled(editorEnabled);
         rowsPanel.add(colourHeader, constraints(2, 0, 1, 1.0, GridBagConstraints.HORIZONTAL));
     }
@@ -193,7 +193,7 @@ final class FovHighlightRingsPanel extends JPanel {
               range.distance, MIN_DISTANCE, MAX_DISTANCE, 1));
         distanceSpinner.setEnabled(editorEnabled);
         distanceSpinner.setToolTipText(Messages.getString(
-              "TacticalOverlaySettingsDialog.FovHighlightRanges.Distance.tooltip"));
+            "TacticalOverlaySettingsDialog.FovHighlightRanges.Distance.tooltip"));
         distanceSpinner.getAccessibleContext().setAccessibleName(Messages.getString(
               "TacticalOverlaySettingsDialog.FovHighlightRanges.Distance.accessible", index + 1));
         distanceSpinner.addChangeListener(event -> updateDistance(
@@ -201,20 +201,20 @@ final class FovHighlightRingsPanel extends JPanel {
         rowsPanel.add(distanceSpinner, constraints(0, index + 1, 1, 0.0, GridBagConstraints.HORIZONTAL));
 
         JLabel unitLabel = new JLabel(Messages.getString(
-              "TacticalOverlaySettingsDialog.FovHighlightRanges.Unit"));
+            "TacticalOverlaySettingsDialog.FovHighlightRanges.Unit"));
         unitLabel.setEnabled(editorEnabled);
         rowsPanel.add(unitLabel, constraints(1, index + 1, 1, 0.0, GridBagConstraints.NONE));
 
         JButton colourButton = createColourButton(index, range);
         rowsPanel.add(colourButton, constraints(2, index + 1, 1, 1.0, GridBagConstraints.HORIZONTAL));
 
-          JButton removeButton = new JButton();
-          removeButton.setIcon(FontHandler.symbolIcon(0xE872,
+        JButton removeButton = new JButton();
+        removeButton.setIcon(FontHandler.symbolIcon(0xE872,
               removeButton.getFont().getSize() + UIUtil.scaleForGUI(2), removeButton.getForeground()));
-          sizeIconButtonToControlHeight(removeButton, distanceSpinner);
+        sizeIconButtonToControlHeight(removeButton, distanceSpinner);
         removeButton.setEnabled(editorEnabled && (ranges.size() > 1));
         removeButton.setToolTipText(Messages.getString(
-              "TacticalOverlaySettingsDialog.FovHighlightRanges.Remove.tooltip"));
+            "TacticalOverlaySettingsDialog.FovHighlightRanges.Remove.tooltip"));
         removeButton.getAccessibleContext().setAccessibleName(Messages.getString(
               "TacticalOverlaySettingsDialog.FovHighlightRanges.Remove.accessible", index + 1));
         removeButton.addActionListener(event -> removeRange(index));
@@ -233,13 +233,13 @@ final class FovHighlightRingsPanel extends JPanel {
         JButton button = new JButton(colourText(range.colour), colourIcon(range.colour));
         button.setEnabled(editorEnabled);
         button.setToolTipText(Messages.getString(
-              "TacticalOverlaySettingsDialog.FovHighlightRanges.Color.tooltip"));
+            "TacticalOverlaySettingsDialog.FovHighlightRanges.Color.tooltip"));
         button.getAccessibleContext().setAccessibleName(Messages.getString(
               "TacticalOverlaySettingsDialog.FovHighlightRanges.Color.accessible", index + 1));
         button.addActionListener(event -> {
             Color selected = JColorChooser.showDialog(this,
-                  Messages.getString("TacticalOverlaySettingsDialog.FovHighlightRanges.Color.choose"),
-                  range.colour);
+                Messages.getString("TacticalOverlaySettingsDialog.FovHighlightRanges.Color.choose"),
+                range.colour);
             if (selected != null) {
                 range.colour = selected;
                 range.serializedHsb = serializeColour(selected);
@@ -256,7 +256,7 @@ final class FovHighlightRingsPanel extends JPanel {
             return;
         }
         boolean duplicate = ranges.stream()
-              .anyMatch(candidate -> (candidate != range) && (candidate.distance == distance));
+            .anyMatch(candidate -> (candidate != range) && (candidate.distance == distance));
         if (duplicate) {
             Toolkit.getDefaultToolkit().beep();
             if (source != null) {
@@ -325,7 +325,7 @@ final class FovHighlightRingsPanel extends JPanel {
                 }
                 Color colour = new Color(Color.HSBtoRGB(hue, saturation, brightness));
                 parsed.add(new RingRange(distance, colour,
-                      String.join(" ", hsb[0], hsb[1], hsb[2])));
+                    String.join(" ", hsb[0], hsb[1], hsb[2])));
             } catch (NumberFormatException ignored) {
                 // Keep other valid pairs from a hand-edited preferences file.
             }
@@ -361,7 +361,7 @@ final class FovHighlightRingsPanel extends JPanel {
     }
 
     private static GridBagConstraints constraints(int x, int y, int width, double weight,
-          int fill) {
+        int fill) {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = x;
         constraints.gridy = y;

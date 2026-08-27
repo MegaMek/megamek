@@ -46,7 +46,7 @@ class FovHighlightRingsPanelTest {
     @Test
     void exposesOnlyRendererEffectiveRadiusColourPairs() {
         FovHighlightRingsPanel panel = new FovHighlightRingsPanel(
-              "5 10 15 20 25",
+            "5 10 15 20 25",
               "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; "
                     + "0.9 1.0 1.0 ; 1.05 1.0 1.0",
               () -> { });
@@ -54,7 +54,7 @@ class FovHighlightRingsPanelTest {
         assertEquals(5, panel.getRangeCount());
         assertEquals("5 10 15 20 25", panel.getRadiiValue());
         assertEquals("0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0",
-              panel.getColoursValue());
+            panel.getColoursValue());
     }
 
     @Test
@@ -77,25 +77,25 @@ class FovHighlightRingsPanelTest {
     @Test
     void recoversUsableRangesFromMalformedLegacyValues() {
         FovHighlightRingsPanel panel = new FovHighlightRingsPanel(
-              "20 invalid 5 90",
-              "0.2 1 1 ; invalid ; 0.4 1 1 ; 0.8 1 1",
+            "20 invalid 5 90",
+            "0.2 1 1 ; invalid ; 0.4 1 1 ; 0.8 1 1",
               () -> { });
 
         assertEquals(3, panel.getRangeCount());
         assertEquals("5 20 60", panel.getRadiiValue());
     }
 
-      @Test
-      void sizesIconButtonsToTheAdjacentControlHeight() {
-            JButton button = new JButton();
-            JSpinner control = new JSpinner();
+    @Test
+    void sizesIconButtonsToTheAdjacentControlHeight() {
+        JButton button = new JButton();
+        JSpinner control = new JSpinner();
 
-            FovHighlightRingsPanel.sizeIconButtonToControlHeight(button, control);
+        FovHighlightRingsPanel.sizeIconButtonToControlHeight(button, control);
 
-            int side = control.getPreferredSize().height;
-            Dimension expectedSize = new Dimension(side, side);
-            assertEquals(expectedSize, button.getPreferredSize());
-            assertEquals(expectedSize, button.getMinimumSize());
-            assertEquals(expectedSize, button.getMaximumSize());
-      }
+        int side = control.getPreferredSize().height;
+        Dimension expectedSize = new Dimension(side, side);
+        assertEquals(expectedSize, button.getPreferredSize());
+        assertEquals(expectedSize, button.getMinimumSize());
+        assertEquals(expectedSize, button.getMaximumSize());
+    }
 }

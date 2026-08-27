@@ -58,7 +58,6 @@ import megamek.client.ui.settings.SettingsNavigationPanel;
 import megamek.client.ui.settings.SettingsPagePanel;
 import megamek.client.ui.settings.SettingsTextProvider;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.Configuration;
 import org.junit.jupiter.api.Test;
 
 class CommonSettingsPaneTest {
@@ -102,7 +101,7 @@ class CommonSettingsPaneTest {
                   new CommonSettingsPane.OptionPage("gameBoard.general", List.of("Game Board", "General"),
                         "GameBoardGeneral", List.of(
                               new CommonSettingsPane.OptionSection("display", "Display", "Board display", detailed,
-                                    false),
+                            false),
                               new CommonSettingsPane.OptionSection("controls", "Controls", "Board controls",
                                 new JPanel(), true)))));
 
@@ -113,12 +112,12 @@ class CommonSettingsPaneTest {
             assertTrue(findComponent(pane, SettingsPagePanel.class).shouldShowDetailsPanel());
             assertEquals("Display", sectionAccessibleName(sections.get(0)));
             SettingsBadge advancedBadge = CommonSettingsPane.legendEntries().stream()
-                  .filter(badge -> badge.codePoint() == 0xE8B8)
-                  .findFirst()
-                  .orElseThrow();
+                .filter(badge -> badge.codePoint() == 0xE8B8)
+                .findFirst()
+                .orElseThrow();
             assertTrue(sectionAccessibleName(sections.get(1)).contains(advancedBadge.toHtml()));
             assertTrue(pane.getPreferredSize().width >= UIUtil.scaleForGUI(
-                  SettingsNavigationPanel.DEFAULT_NAVIGATION_WIDTH + SettingsPagePanel.DEFAULT_MAXIMUM_PAGE_WIDTH));
+                    SettingsNavigationPanel.DEFAULT_NAVIGATION_WIDTH + SettingsPagePanel.DEFAULT_MAXIMUM_PAGE_WIDTH));
             assertTrue(pane.getPreferredSize().height >= UIUtil.scaleForGUI(800));
         });
     }
@@ -167,7 +166,7 @@ class CommonSettingsPaneTest {
 
             assertTrue(findComponent(pane, SettingsPagePanel.class).shouldShowDetailsPanel());
             assertEquals(Messages.getString("CommonSettingsDialog.showIPAddressesInChat.tooltip"),
-                  showIpAddresses.getSettingsHelpText());
+                showIpAddresses.getSettingsHelpText());
         });
     }
 
@@ -201,17 +200,17 @@ class CommonSettingsPaneTest {
     }
 
     private static File factionAssetsDirectory() {
-        File configuredDirectory = new File(Configuration.universeImagesDir(), "factions");
-        if (configuredDirectory.isDirectory() || configuredDirectory.isAbsolute()) {
-            return configuredDirectory;
+        File factionsDirectory = new File("data/images/universe/factions");
+        if (factionsDirectory.isDirectory()) {
+            return factionsDirectory;
         }
-        return new File("megamek", configuredDirectory.getPath());
+        return new File("megamek", factionsDirectory.getPath());
     }
 
     private static CommonSettingsPane pane(JPanel main, JPanel audio) {
         return new CommonSettingsPane(List.of(
-              new CommonSettingsPane.OptionPage("main", "Main", main),
-              new CommonSettingsPane.OptionPage("audio", "Audio", audio)));
+            new CommonSettingsPane.OptionPage("main", "Main", main),
+            new CommonSettingsPane.OptionPage("audio", "Audio", audio)));
     }
 
     private static String selectedTreeLabel(Container root) {
@@ -223,7 +222,7 @@ class CommonSettingsPaneTest {
 
     private static <T extends Component> T findComponent(Container root, String name, Class<T> type) {
         return findComponentOptional(root, name, type)
-              .orElseThrow(() -> new AssertionError("No " + type.getSimpleName() + " named " + name));
+            .orElseThrow(() -> new AssertionError("No " + type.getSimpleName() + " named " + name));
     }
 
     private static <T extends Component> T findComponent(Container root, Class<T> type) {
@@ -260,7 +259,7 @@ class CommonSettingsPaneTest {
     }
 
     private static <T extends Component> Optional<T> findComponentOptional(Container root, String name,
-          Class<T> type) {
+        Class<T> type) {
         for (Component child : root.getComponents()) {
             if (type.isInstance(child) && name.equals(child.getName())) {
                 return Optional.of(type.cast(child));

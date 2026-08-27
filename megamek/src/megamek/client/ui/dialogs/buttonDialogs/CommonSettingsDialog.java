@@ -120,13 +120,13 @@ import megamek.logging.MMLogger;
  * Each defaults to {@code false}; remove the line (or set {@code false}) to disable.
  */
 public class CommonSettingsDialog extends AbstractButtonDialog
-    implements ItemListener, ChangeListener {
+                                  implements ItemListener, ChangeListener {
     private final static MMLogger logger = MMLogger.create(CommonSettingsDialog.class);
     private static final SettingsTextProvider SETTINGS_TEXT = SettingsTextProvider.megaMek();
     private static final SettingsBadge IMPORTANT_BADGE = new SettingsBadge(0xE002, null,
-          Messages.getString("CommonSettingsDialog.legend.important"));
+        Messages.getString("CommonSettingsDialog.legend.important"));
     private static final int BEHAVIOR_OPTION_COLUMNS = 2;
-        private static final int SLIDER_VALUE_COLUMNS = 5;
+    private static final int SLIDER_VALUE_COLUMNS = 5;
     private static final int UNIT_DISPLAY_ORDER_COLUMNS = 3;
     private static final int BUTTON_ORDER_COLUMNS = 4;
     private static final String REORDER_LIST_CELL_WIDTH = "CommonSettingsDialog.reorderListCellWidth";
@@ -203,7 +203,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private final JCheckBox showArmorMiniVisTT = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.showArmorMiniVisTT"));
     private final JCheckBox showPilotPortraitTT = new JCheckBox(Messages.getString(
-          "CommonSettingsDialog.showPilotPortraitTT"));
+        "CommonSettingsDialog.showPilotPortraitTT"));
     private MMComboBox<WeaponSortOrder> comboDefaultWeaponSortOrder;
     private JSpinner tooltipDelay;
     private JSpinner tooltipDismissDelay;
@@ -256,7 +256,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private JComboBox<String> displayLocale;
     private final SettingsCheckBox showIPAddressesInChat = createShowIpAddressesInChatCheckBox();
     private final JCheckBox spritesOnly = new JCheckBox(Messages.getString(
-          "CommonSettingsDialog.spritesOnly"));
+        "CommonSettingsDialog.spritesOnly"));
     private final JCheckBox showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel"));
     private final JCheckBox showDamageDecal = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageDecal"));
     private final JCheckBox showMapSheets = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapsheets"));
@@ -347,21 +347,21 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     // Tactical Overlay Options
     private final JCheckBox fovInsideEnabled = new JCheckBox(Messages.getString(
-          "TacticalOverlaySettingsDialog.FovInsideEnabled"));
+        "TacticalOverlaySettingsDialog.FovInsideEnabled"));
     private JSlider fovHighlightAlpha;
-        private JSpinner fovHighlightOpacityPercent;
-        private FovHighlightRingsPanel fovHighlightRingsEditor;
+    private JSpinner fovHighlightOpacityPercent;
+    private FovHighlightRingsPanel fovHighlightRingsEditor;
     private final JCheckBox fovOutsideEnabled = new JCheckBox(Messages.getString(
-          "TacticalOverlaySettingsDialog.FovOutsideEnabled"));
+        "TacticalOverlaySettingsDialog.FovOutsideEnabled"));
     private JSlider fovDarkenAlpha;
-        private JSpinner fovDarkenOpacityPercent;
-        private JSpinner fovStripesSpinner;
+    private JSpinner fovDarkenOpacityPercent;
+    private JSpinner fovStripesSpinner;
     private JCheckBox fovGrayscaleEnabled;
 
     // Labels (there to make it possible to disable them)
     private JLabel darkenAlphaLabel;
     private JLabel numStripesLabel;
-        private JLabel fovHighlightRangesLabel;
+    private JLabel fovHighlightRangesLabel;
     private JLabel highlightAlphaLabel;
 
     private JLabel stampFormatLabel;
@@ -406,7 +406,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private List<String> tileSets;
     private MMComboBox<String> minimapTheme;
 
-        private final SettingsCheckBox keyBindTabNavigation = createKeyBindTabNavigationControl();
+    private final SettingsCheckBox keyBindTabNavigation = createKeyBindTabNavigationControl();
     private final SettingsButton defaultKeyBindButton = createKeyBindResetButton();
 
     private ColourSelectorButton csbUnitTooltipFGColor;
@@ -479,11 +479,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private final JCheckBox chkReportShowUnits = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.showReportUnitList"));
     private final JCheckBox chkReportShowKeywords = new JCheckBox(Messages.getString(
-          "CommonSettingsDialog.showReportKeywordsList"));
+        "CommonSettingsDialog.showReportKeywordsList"));
     private JTextArea reportKeywordsTextArea;
     private JTextArea reportFilterKeywordsTextArea;
     private final JCheckBox chkReportShowFilter = new JCheckBox(Messages.getString(
-          "CommonSettingsDialog.showReportFilterList"));
+        "CommonSettingsDialog.showReportFilterList"));
     private ColourSelectorButton csbReportLinkColor;
     private ColourSelectorButton csbReportSuccessColor;
     private ColourSelectorButton csbReportMissColor;
@@ -509,7 +509,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private final JCheckBox planetaryConditionsShowValues = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.planetaryConditionsShowValues"));
     private final JCheckBox planetaryConditionsShowIndicators = new JCheckBox(Messages.getString(
-          "CommonSettingsDialog.planetaryConditionsShowIndicators"));
+        "CommonSettingsDialog.planetaryConditionsShowIndicators"));
     private JSlider planetaryConditionsBackgroundTransparency;
 
     private final JCheckBox toastEnabled = new JCheckBox(Messages.getString("CommonSettingsDialog.toastEnabled"));
@@ -631,10 +631,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog
                     section("main.mml", 3), section("main.theme", 4)),
               optionPage("main.colours", path("main", "main.colours"), main,
                     section("main.statusColours", 5), section("main.unitColours", 6),
-                    section("main.playerColours", 7)),
+                section("main.playerColours", 7)),
               optionPage("main.behavior", path("main", "main.behavior"), main,
                     section("main.interface", 8), section("main.units", 9), section("main.logging", 10),
-                    section("main.privacy", 11)));
+                section("main.privacy", 11)));
 
         CommonSettingsPane.SectionedContent audio = sectionedContent(getAudioPanel(), "audio");
         addMappedPages(pages, "audio", audio,
@@ -647,7 +647,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
               optionPage("gameBoard.general", path("gameBoard", "gameBoard.general"), gameBoard,
                     section("gameBoard.tileset", 0), section("gameBoard.nags", 1), section("gameBoard.actions", 2),
                     section("gameBoard.controls", 3), section("gameBoard.pathfinder", 4),
-                    section("gameBoard.units", 5)),
+                section("gameBoard.units", 5)),
               optionPage("gameBoard.appearance", path("gameBoard", "gameBoard.appearance"), gameBoard,
                     section("gameBoard.rendering", 6), section("gameBoard.indicators", 7),
                     section("gameBoard.movement", 8), section("gameBoard.fire", 9)),
@@ -685,18 +685,18 @@ public class CommonSettingsDialog extends AbstractButtonDialog
                     section("autoDisplay.unit", 0), section("autoDisplay.minimap", 1),
                     section("autoDisplay.report", 2), section("autoDisplay.players", 3),
                     section("autoDisplay.force", 4), section("autoDisplay.bots", 5),
-                    section("autoDisplay.tabs", 6)));
+                section("autoDisplay.tabs", 6)));
 
         CommonSettingsPane.SectionedContent aiDisplay = sectionedContent(aiDisplayPanel(), "aiDisplay");
         addMappedPages(pages, "aiDisplay", aiDisplay,
               optionPage("aiDisplay", path("aiDisplay"), aiDisplay,
-                  section("aiDisplay.settings", 0)));
-          CommonSettingsPane.SectionedContent advanced = sectionedContent(getAdvancedSettingsPanel(), "advanced");
+                section("aiDisplay.settings", 0)));
+        CommonSettingsPane.SectionedContent advanced = sectionedContent(getAdvancedSettingsPanel(), "advanced");
           addMappedPages(pages, "advanced", advanced,
               optionPage("advanced", path("advanced"), List.of(
-                  optionSection("advanced.chat", advanced.groups().get(0), true),
-                  optionSection("advanced.timing", advanced.groups().get(1), true),
-                  optionSection("advanced.safety", advanced.groups().get(2), true))));
+                    optionSection("advanced.chat", advanced.groups().get(0), true),
+                    optionSection("advanced.timing", advanced.groups().get(1), true),
+                    optionSection("advanced.safety", advanced.groups().get(2), true))));
 
         return new CommonSettingsPane(pages);
     }
@@ -706,7 +706,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     }
 
     private CommonSettingsPane.OptionPage optionPage(String id, List<String> path,
-          CommonSettingsPane.SectionedContent content, SectionReference... references) {
+        CommonSettingsPane.SectionedContent content, SectionReference... references) {
         List<CommonSettingsPane.OptionSection> sections = new ArrayList<>();
         for (SectionReference reference : references) {
             if (reference.index() >= content.groups().size()) {
@@ -718,16 +718,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     }
 
     private CommonSettingsPane.OptionPage optionPage(String id, List<String> path,
-          List<CommonSettingsPane.OptionSection> sections) {
+        List<CommonSettingsPane.OptionSection> sections) {
         return new CommonSettingsPane.OptionPage(id, path, id.replace(".", ""), sections);
     }
 
     static void addMappedPages(List<CommonSettingsPane.OptionPage> pages, String contentId,
-          CommonSettingsPane.SectionedContent content, CommonSettingsPane.OptionPage... mappedPages) {
+        CommonSettingsPane.SectionedContent content, CommonSettingsPane.OptionPage... mappedPages) {
         List<JComponent> mappedGroups = Arrays.stream(mappedPages)
-              .flatMap(page -> Objects.requireNonNull(page).sections().stream())
-              .map(section -> Objects.requireNonNull(section).content())
-              .toList();
+            .flatMap(page -> Objects.requireNonNull(page).sections().stream())
+            .map(section -> Objects.requireNonNull(section).content())
+            .toList();
         boolean mappedExactlyOnce = mappedGroups.size() == content.groups().size()
               && content.groups().stream().allMatch(group -> mappedGroups.stream()
                     .filter(mappedGroup -> mappedGroup == group)
@@ -740,7 +740,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     private CommonSettingsPane.OptionSection optionSection(String id, JComponent content, boolean advanced) {
         return new CommonSettingsPane.OptionSection(id,
-              Messages.getString("CommonSettingsDialog.section." + id + ".title"),
+            Messages.getString("CommonSettingsDialog.section." + id + ".title"),
               Messages.getString("CommonSettingsDialog.section." + id + ".summary"), content, advanced);
     }
 
@@ -765,7 +765,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         okButton.setName("okButton");
         okButton.setToolTipText(resources.getString("Ok.toolTipText"));
         okButton.putClientProperty("FlatLaf.style",
-              "background: $Button.default.background; foreground: $Button.default.foreground");
+            "background: $Button.default.background; foreground: $Button.default.foreground");
         okButton.addActionListener(this::okButtonActionPerformed);
 
         JButton cancelButton = new JButton(resources.getString("Cancel.text"));
@@ -779,9 +779,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         actionButtons.add(cancelButton);
 
         JButton legendButton = SettingsIconLegend.createLegendButton(
-              Messages.getString("CommonSettingsDialog.legend.button"),
-              Messages.getString("CommonSettingsDialog.legend.tooltip"),
-              CommonSettingsPane.legendEntries());
+            Messages.getString("CommonSettingsDialog.legend.button"),
+            Messages.getString("CommonSettingsDialog.legend.tooltip"),
+            CommonSettingsPane.legendEntries());
         JPanel legendPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, gap, gap));
         legendPanel.add(legendButton);
 
@@ -821,21 +821,21 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     }
 
     static CommonSettingsPane.SectionedContent createAudioSettingsPanel(JLabel volumeLabel, JSlider volumeSlider,
-          JCheckBox chatMute, JTextField chatSoundFile,
-          JCheckBox myTurnMute, JTextField myTurnSoundFile,
-          JCheckBox otherTurnsMute, JTextField otherTurnsSoundFile) {
+        JCheckBox chatMute, JTextField chatSoundFile,
+        JCheckBox myTurnMute, JTextField myTurnSoundFile,
+        JCheckBox otherTurnsMute, JTextField otherTurnsSoundFile) {
         volumeLabel.setLabelFor(volumeSlider);
-          JPanel volumeControl = createMasterVolumeControl(volumeSlider);
+        JPanel volumeControl = createMasterVolumeControl(volumeSlider);
         SettingsFormPanel volumeGrid = createAudioControlGrid(
               "CommonSettingsAudioVolumeGrid", volumeLabel, volumeControl);
           JPanel chatSoundControl = createAudioFileControl(chatSoundFile, "btnChatSoundChooser",
-              Messages.getString("CommonSettingsDialog.soundMuteChat.chooser.title"));
+            Messages.getString("CommonSettingsDialog.soundMuteChat.chooser.title"));
           JPanel myTurnSoundControl = createAudioFileControl(myTurnSoundFile, "btnMyTurnSoundChooser",
-              Messages.getString("CommonSettingsDialog.soundMuteMyTurn.chooser.title"));
+            Messages.getString("CommonSettingsDialog.soundMuteMyTurn.chooser.title"));
           JPanel otherTurnsSoundControl = createAudioFileControl(otherTurnsSoundFile, "btnOtherTurnsSoundChooser",
-              Messages.getString("CommonSettingsDialog.soundMuteOthersTurn.chooser.title"));
+            Messages.getString("CommonSettingsDialog.soundMuteOthersTurn.chooser.title"));
         SettingsFormPanel notificationGrid = createAudioControlGrid(
-              "CommonSettingsAudioNotificationGrid",
+            "CommonSettingsAudioNotificationGrid",
               chatMute, chatSoundControl,
               myTurnMute, myTurnSoundControl,
               otherTurnsMute, otherTurnsSoundControl);
@@ -852,11 +852,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         return control;
     }
 
-        static JPanel createAudioFileControl(JTextField field, String buttonName, String chooserTitle) {
-          JButton chooser = applicationIconButton(buttonName, 0xE2C8, chooserTitle);
-          chooser.addActionListener(event -> fileChoose(field, chooser, chooserTitle, false));
-          return applicationPathControl(field, chooser);
-        }
+    static JPanel createAudioFileControl(JTextField field, String buttonName, String chooserTitle) {
+        JButton chooser = applicationIconButton(buttonName, 0xE2C8, chooserTitle);
+        chooser.addActionListener(event -> fileChoose(field, chooser, chooserTitle, false));
+        return applicationPathControl(field, chooser);
+    }
 
     static SettingsFormPanel createAudioControlGrid(String name, JComponent... controls) {
         SettingsFormPanel grid = new SettingsFormPanel(name,
@@ -888,9 +888,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     }
 
     static SettingsFormPanel createGameBoardControlsGrid(String name,
-          JLabel buttonsPerRowLabel, JComponent buttonsPerRowControl,
-          JLabel playersRemainingLabel, JComponent playersRemainingControl,
-          JComponent... options) {
+        JLabel buttonsPerRowLabel, JComponent buttonsPerRowControl,
+        JLabel playersRemainingLabel, JComponent playersRemainingControl,
+        JComponent... options) {
         SettingsFormPanel grid = new SettingsFormPanel(name, SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
         buttonsPerRowLabel.setLabelFor(buttonsPerRowControl);
         grid.addEqualWidthComponentGrid(2, buttonsPerRowLabel, buttonsPerRowControl);
@@ -902,7 +902,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     @SafeVarargs
     static SettingsFormPanel createGameBoardGroupedOptionGrid(String name,
-          List<? extends JComponent>... optionGroups) {
+        List<? extends JComponent>... optionGroups) {
         SettingsFormPanel grid = new SettingsFormPanel(name, SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
         for (List<? extends JComponent> optionGroup : optionGroups) {
             grid.addEqualWidthComponentGrid(2, optionGroup.toArray(JComponent[]::new));
@@ -910,100 +910,100 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         return grid;
     }
 
-        static JPanel createGameBoardFovField(String name, JLabel label, JComponent control) {
-          JPanel field = new JPanel(new BorderLayout(0, UIUtil.scaleForGUI(4)));
-          field.setName("pnl" + name);
-          field.setOpaque(false);
-                    Object labelTarget = control.getClientProperty("CommonSettingsDialog.labelFor");
-                    label.setLabelFor(labelTarget instanceof Component component ? component : control);
-          field.add(label, BorderLayout.NORTH);
-          field.add(control, BorderLayout.CENTER);
-          return field;
-        }
+    static JPanel createGameBoardFovField(String name, JLabel label, JComponent control) {
+        JPanel field = new JPanel(new BorderLayout(0, UIUtil.scaleForGUI(4)));
+        field.setName("pnl" + name);
+        field.setOpaque(false);
+        Object labelTarget = control.getClientProperty("CommonSettingsDialog.labelFor");
+        label.setLabelFor(labelTarget instanceof Component component ? component : control);
+        field.add(label, BorderLayout.NORTH);
+        field.add(control, BorderLayout.CENTER);
+        return field;
+    }
 
-                static JPanel createGameBoardFovOpacityControl(JSlider slider, JSpinner percentSpinner) {
-                    JPanel control = new JPanel(new BorderLayout(UIUtil.scaleForGUI(8), 0));
-                    control.setOpaque(false);
-                    slider.setPaintTicks(false);
-                    slider.setPaintLabels(false);
-                    control.add(slider, BorderLayout.CENTER);
+    static JPanel createGameBoardFovOpacityControl(JSlider slider, JSpinner percentSpinner) {
+        JPanel control = new JPanel(new BorderLayout(UIUtil.scaleForGUI(8), 0));
+        control.setOpaque(false);
+        slider.setPaintTicks(false);
+        slider.setPaintLabels(false);
+        control.add(slider, BorderLayout.CENTER);
 
-                    JPanel value = new JPanel(new BorderLayout(UIUtil.scaleForGUI(3), 0));
-                    value.setOpaque(false);
-                    configureSliderValueSpinner(percentSpinner);
-                    value.add(percentSpinner, BorderLayout.CENTER);
-                        JLabel percentLabel = new JLabel("%");
-                        percentSpinner.addPropertyChangeListener("enabled",
-                            event -> percentLabel.setEnabled(percentSpinner.isEnabled()));
-                        value.add(percentLabel, BorderLayout.EAST);
-                    control.add(value, BorderLayout.EAST);
-                    control.putClientProperty("CommonSettingsDialog.labelFor", slider);
+        JPanel value = new JPanel(new BorderLayout(UIUtil.scaleForGUI(3), 0));
+        value.setOpaque(false);
+        configureSliderValueSpinner(percentSpinner);
+        value.add(percentSpinner, BorderLayout.CENTER);
+        JLabel percentLabel = new JLabel("%");
+        percentSpinner.addPropertyChangeListener("enabled",
+            event -> percentLabel.setEnabled(percentSpinner.isEnabled()));
+        value.add(percentLabel, BorderLayout.EAST);
+        control.add(value, BorderLayout.EAST);
+        control.putClientProperty("CommonSettingsDialog.labelFor", slider);
 
-                    boolean[] synchronizing = { false };
-                    slider.addChangeListener(event -> {
-                            if (!synchronizing[0]) {
-                                    synchronizing[0] = true;
-                                    percentSpinner.setValue(fovAlphaToPercent(slider.getValue()));
-                                    synchronizing[0] = false;
-                            }
-                    });
-                    percentSpinner.addChangeListener(event -> {
-                            if (!synchronizing[0]) {
-                                    synchronizing[0] = true;
-                                    slider.setValue(fovPercentToAlpha((int) percentSpinner.getValue()));
-                                    synchronizing[0] = false;
-                            }
-                    });
-                    percentSpinner.setValue(fovAlphaToPercent(slider.getValue()));
-                    return control;
-                }
+        boolean[] synchronizing = { false };
+        slider.addChangeListener(event -> {
+            if (!synchronizing[0]) {
+                synchronizing[0] = true;
+                percentSpinner.setValue(fovAlphaToPercent(slider.getValue()));
+                synchronizing[0] = false;
+            }
+        });
+        percentSpinner.addChangeListener(event -> {
+            if (!synchronizing[0]) {
+                synchronizing[0] = true;
+                slider.setValue(fovPercentToAlpha((int) percentSpinner.getValue()));
+                synchronizing[0] = false;
+            }
+        });
+        percentSpinner.setValue(fovAlphaToPercent(slider.getValue()));
+        return control;
+    }
 
-                static int fovAlphaToPercent(int alpha) {
-                    return Math.round(Math.clamp(alpha, 0, 255) * 100.0f / 255.0f);
-                }
+    static int fovAlphaToPercent(int alpha) {
+        return Math.round(Math.clamp(alpha, 0, 255) * 100.0f / 255.0f);
+    }
 
-                static int fovPercentToAlpha(int percent) {
-                    return Math.round(Math.clamp(percent, 0, 100) * 255.0f / 100.0f);
-                }
+    static int fovPercentToAlpha(int percent) {
+        return Math.round(Math.clamp(percent, 0, 100) * 255.0f / 100.0f);
+    }
 
-        static SettingsFormPanel createGameBoardFovInsideGrid(JCheckBox enabled,
-                        JLabel opacityLabel, JComponent opacity,
-                        JLabel rangesLabel, JComponent ranges) {
-              SettingsFormPanel fields = new SettingsFormPanel("CommonSettingsGameBoardFovInsideFields",
+    static SettingsFormPanel createGameBoardFovInsideGrid(JCheckBox enabled,
+        JLabel opacityLabel, JComponent opacity,
+        JLabel rangesLabel, JComponent ranges) {
+        SettingsFormPanel fields = new SettingsFormPanel("CommonSettingsGameBoardFovInsideFields",
               SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-              fields.addEqualWidthComponentGrid(2,
-                                    createGameBoardFovField("FovInsideOpacity", opacityLabel, opacity));
-                            JPanel rangesField = createGameBoardFovField("FovInsideRanges", rangesLabel, ranges);
-                            Dimension rangesSize = rangesField.getPreferredSize();
-                            rangesField.setPreferredSize(new Dimension(fields.getPreferredSize().width, rangesSize.height));
+        fields.addEqualWidthComponentGrid(2,
+            createGameBoardFovField("FovInsideOpacity", opacityLabel, opacity));
+        JPanel rangesField = createGameBoardFovField("FovInsideRanges", rangesLabel, ranges);
+        Dimension rangesSize = rangesField.getPreferredSize();
+        rangesField.setPreferredSize(new Dimension(fields.getPreferredSize().width, rangesSize.height));
 
-              SettingsFormPanel grid = new SettingsFormPanel("CommonSettingsGameBoardFovInsideGrid", 0, 0);
-          grid.addCheckBox(enabled);
-              grid.addFullWidthComponent(fields);
-                            grid.addFullWidthComponent(rangesField);
-          return grid;
-        }
+        SettingsFormPanel grid = new SettingsFormPanel("CommonSettingsGameBoardFovInsideGrid", 0, 0);
+        grid.addCheckBox(enabled);
+        grid.addFullWidthComponent(fields);
+        grid.addFullWidthComponent(rangesField);
+        return grid;
+    }
 
-        static SettingsFormPanel createGameBoardFovOutsideGrid(JCheckBox enabled, JCheckBox grayscale,
-                        JLabel opacityLabel, JComponent opacity,
-                        JLabel stripesLabel, JComponent stripes) {
-              SettingsFormPanel options = new SettingsFormPanel("CommonSettingsGameBoardFovOutsideOptions",
+    static SettingsFormPanel createGameBoardFovOutsideGrid(JCheckBox enabled, JCheckBox grayscale,
+        JLabel opacityLabel, JComponent opacity,
+        JLabel stripesLabel, JComponent stripes) {
+        SettingsFormPanel options = new SettingsFormPanel("CommonSettingsGameBoardFovOutsideOptions",
               SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-              options.addEqualWidthComponentGrid(2, enabled, grayscale);
+        options.addEqualWidthComponentGrid(2, enabled, grayscale);
 
-              SettingsFormPanel fields = new SettingsFormPanel("CommonSettingsGameBoardFovOutsideFields",
+        SettingsFormPanel fields = new SettingsFormPanel("CommonSettingsGameBoardFovOutsideFields",
                   SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-              fields.addEqualWidthComponentGrid(2,
-              createGameBoardFovField("FovOutsideOpacity", opacityLabel, opacity),
-              createGameBoardFovField("FovOutsideStripes", stripesLabel, stripes));
+        fields.addEqualWidthComponentGrid(2,
+            createGameBoardFovField("FovOutsideOpacity", opacityLabel, opacity),
+            createGameBoardFovField("FovOutsideStripes", stripesLabel, stripes));
 
-              SettingsFormPanel grid = new SettingsFormPanel("CommonSettingsGameBoardFovOutsideGrid", 0, 0);
-              grid.addFullWidthComponent(options);
-              grid.addFullWidthComponent(fields);
-          return grid;
-        }
+        SettingsFormPanel grid = new SettingsFormPanel("CommonSettingsGameBoardFovOutsideGrid", 0, 0);
+        grid.addFullWidthComponent(options);
+        grid.addFullWidthComponent(fields);
+        return grid;
+    }
 
-        private JPanel getGameBoardPanel() {
+    private JPanel getGameBoardPanel() {
         List<List<Component>> comps = new ArrayList<>();
         ArrayList<Component> row;
 
@@ -1011,60 +1011,60 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         JLabel tileSetChoiceLabel = new JLabel(Messages.getString("CommonSettingsDialog.tileset"));
         tileSetChoice = new JComboBox<>();
         tileSetChoice.setMaximumSize(new Dimension(400, tileSetChoice.getMaximumSize().height));
-          comps.add(List.of(createGameBoardFieldGrid("CommonSettingsGameBoardTilesetGrid",
+        comps.add(List.of(createGameBoardFieldGrid("CommonSettingsGameBoardTilesetGrid",
               tileSetChoiceLabel, tileSetChoice)));
         addLineSpacer(comps);
 
-          configureCheckBox(nagForNoAction, Messages.getString("CommonSettingsDialog.nagForNoAction.tooltip"));
-          List.of(nagForPSR, nagForMASC, nagForSprint).forEach(checkBox -> configureCheckBox(checkBox, null));
-          configureCheckBox(nagForCrushingBuildings,
-              Messages.getString("CommonSettingsDialog.nagForCrushingBuildings.tooltip"));
-          configureCheckBox(nagForMechanicalJumpFallDamage,
-              Messages.getString("CommonSettingsDialog.nagForMechanicalJumpFallDamage.tooltip"));
-          configureCheckBox(nagForWiGELanding,
-              Messages.getString("CommonSettingsDialog.nagForWiGELanding.tooltip"));
-          configureCheckBox(nagForNoUnJamRAC,
-              Messages.getString("CommonSettingsDialog.nagForUnJamRAC.tooltip"));
-          configureCheckBox(nagForLaunchDoors,
-              Messages.getString("CommonSettingsDialog.nagForLaunchDoors.tooltip"));
-          configureCheckBox(nagForOverheat,
-              Messages.getString("CommonSettingsDialog.nagForOverheat.tooltip"));
-          configureCheckBox(nagForDishonor,
-              Messages.getString("CommonSettingsDialog.nagForDishonor.tooltip"));
-          configureCheckBox(nagForOddSizedBoard,
-              Messages.getString("CommonSettingsDialog.nagForOddSizedBoard.tooltip"));
-          comps.add(List.of(createGameBoardOptionGrid("CommonSettingsGameBoardConfirmationsGrid",
+        configureCheckBox(nagForNoAction, Messages.getString("CommonSettingsDialog.nagForNoAction.tooltip"));
+        List.of(nagForPSR, nagForMASC, nagForSprint).forEach(checkBox -> configureCheckBox(checkBox, null));
+        configureCheckBox(nagForCrushingBuildings,
+            Messages.getString("CommonSettingsDialog.nagForCrushingBuildings.tooltip"));
+        configureCheckBox(nagForMechanicalJumpFallDamage,
+            Messages.getString("CommonSettingsDialog.nagForMechanicalJumpFallDamage.tooltip"));
+        configureCheckBox(nagForWiGELanding,
+            Messages.getString("CommonSettingsDialog.nagForWiGELanding.tooltip"));
+        configureCheckBox(nagForNoUnJamRAC,
+            Messages.getString("CommonSettingsDialog.nagForUnJamRAC.tooltip"));
+        configureCheckBox(nagForLaunchDoors,
+            Messages.getString("CommonSettingsDialog.nagForLaunchDoors.tooltip"));
+        configureCheckBox(nagForOverheat,
+            Messages.getString("CommonSettingsDialog.nagForOverheat.tooltip"));
+        configureCheckBox(nagForDishonor,
+            Messages.getString("CommonSettingsDialog.nagForDishonor.tooltip"));
+        configureCheckBox(nagForOddSizedBoard,
+            Messages.getString("CommonSettingsDialog.nagForOddSizedBoard.tooltip"));
+        comps.add(List.of(createGameBoardOptionGrid("CommonSettingsGameBoardConfirmationsGrid",
               nagForNoAction, nagForPSR, nagForMASC, nagForSprint,
               nagForCrushingBuildings, nagForMechanicalJumpFallDamage, nagForWiGELanding,
               nagForNoUnJamRAC, nagForLaunchDoors, nagForOverheat, nagForDishonor, nagForOddSizedBoard)));
 
         addLineSpacer(comps);
 
-          List.of(getFocus, autoEndFiring).forEach(checkBox -> configureCheckBox(checkBox, null));
-          configureCheckBox(autoDeclareSearchlight,
-              Messages.getString("CommonSettingsDialog.autoDeclareSearchlight.tooltip"));
-          configureCheckBox(moveDefaultClimbMode,
-              Messages.getString("CommonSettingsDialog.moveDefaultClimbMode.tooltip"));
-          comps.add(List.of(createGameBoardOptionGrid("CommonSettingsGameBoardTurnActionsGrid",
+        List.of(getFocus, autoEndFiring).forEach(checkBox -> configureCheckBox(checkBox, null));
+        configureCheckBox(autoDeclareSearchlight,
+            Messages.getString("CommonSettingsDialog.autoDeclareSearchlight.tooltip"));
+        configureCheckBox(moveDefaultClimbMode,
+            Messages.getString("CommonSettingsDialog.moveDefaultClimbMode.tooltip"));
+        comps.add(List.of(createGameBoardOptionGrid("CommonSettingsGameBoardTurnActionsGrid",
               getFocus, autoEndFiring, autoDeclareSearchlight, moveDefaultClimbMode)));
 
         addLineSpacer(comps);
 
-          buttonsPerRow = createIntegerSpinner(GUIP.getButtonsPerRow(), 1, 1);
+        buttonsPerRow = createIntegerSpinner(GUIP.getButtonsPerRow(), 1, 1);
         JLabel buttonsPerRowLabel = new JLabel(Messages.getString("CommonSettingsDialog.buttonsPerRow"));
         buttonsPerRow.setToolTipText(Messages.getString("CommonSettingsDialog.buttonsPerRow.tooltip"));
 
-          playersRemainingToShow = createIntegerSpinner(GUIP.getPlayersRemainingToShow(), 0, 1);
+        playersRemainingToShow = createIntegerSpinner(GUIP.getPlayersRemainingToShow(), 0, 1);
         JLabel playersRemainingToShowLabel =
               new JLabel(Messages.getString("CommonSettingsDialog.playersRemainingToShow"));
         playersRemainingToShow.setToolTipText(
-              Messages.getString("CommonSettingsDialog.playersRemainingToShow.tooltip"));
+            Messages.getString("CommonSettingsDialog.playersRemainingToShow.tooltip"));
 
-                List.of(mouseWheelZoom, mouseWheelZoomFlip).forEach(checkBox -> configureCheckBox(checkBox, null));
+        List.of(mouseWheelZoom, mouseWheelZoomFlip).forEach(checkBox -> configureCheckBox(checkBox, null));
         String msg_tooltip = Messages.getString("CommonSettingsDialog.gameSummaryBV.tooltip",
-              Configuration.gameSummaryImagesBVDir());
-                configureCheckBox(gameSummaryBV, msg_tooltip);
-                comps.add(List.of(createGameBoardControlsGrid("CommonSettingsGameBoardControlsGrid",
+            Configuration.gameSummaryImagesBVDir());
+        configureCheckBox(gameSummaryBV, msg_tooltip);
+        comps.add(List.of(createGameBoardControlsGrid("CommonSettingsGameBoardControlsGrid",
               buttonsPerRowLabel, buttonsPerRow,
               playersRemainingToShowLabel, playersRemainingToShow,
               mouseWheelZoom, mouseWheelZoomFlip, gameSummaryBV)));
@@ -1073,66 +1073,66 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         JLabel maxPathfinderTimeLabel = new JLabel(Messages.getString("CommonSettingsDialog.pathFiderTimeLimit"));
         maxPathfinderTime = createIntegerSpinner(CLIENT_PREFERENCES.getMaxPathfinderTime(), 1, 1);
-                comps.add(List.of(createGameBoardFieldGrid("CommonSettingsGameBoardPathfinderGrid",
+        comps.add(List.of(createGameBoardFieldGrid("CommonSettingsGameBoardPathfinderGrid",
               maxPathfinderTimeLabel, maxPathfinderTime)));
 
         addLineSpacer(comps);
 
-                List.of(showDamageLevel, showDamageDecal, showUnitId)
-              .forEach(checkBox -> configureCheckBox(checkBox, null));
-                configureCheckBox(entityOwnerColor, Messages.getString("CommonSettingsDialog.entityOwnerColor.tooltip"));
-                configureCheckBox(useSoftCenter, Messages.getString("CommonSettingsDialog.useSoftCenter.tooltip"));
-                configureCheckBox(useAutoCenter, Messages.getString("CommonSettingsDialog.useAutoCenter.tooltip"));
-                configureCheckBox(useAutoSelectNext, Messages.getString("CommonSettingsDialog.useAutoSelectNext.tooltip"));
+        List.of(showDamageLevel, showDamageDecal, showUnitId)
+            .forEach(checkBox -> configureCheckBox(checkBox, null));
+        configureCheckBox(entityOwnerColor, Messages.getString("CommonSettingsDialog.entityOwnerColor.tooltip"));
+        configureCheckBox(useSoftCenter, Messages.getString("CommonSettingsDialog.useSoftCenter.tooltip"));
+        configureCheckBox(useAutoCenter, Messages.getString("CommonSettingsDialog.useAutoCenter.tooltip"));
+        configureCheckBox(useAutoSelectNext, Messages.getString("CommonSettingsDialog.useAutoSelectNext.tooltip"));
 
         csbUnitTextColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTextColor"));
         csbUnitTextColor.setColour(GUIP.getUnitTextColor());
         csbUnitValidColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitValidColor"));
         csbUnitValidColor.setColour(GUIP.getUnitValidColor());
         csbUnitSelectedColor = new ColourSelectorButton(Messages.getString(
-              "CommonSettingsDialog.colors.UnitSelectedColor"));
+            "CommonSettingsDialog.colors.UnitSelectedColor"));
         csbUnitSelectedColor.setColour(GUIP.getUnitSelectedColor());
         comps.add(List.of(createGameBoardGroupedOptionGrid("CommonSettingsGameBoardUnitsGrid",
               List.of(showDamageLevel, showDamageDecal, showUnitId, entityOwnerColor,
                     useSoftCenter, useAutoCenter, useAutoSelectNext),
-              List.of(csbUnitTextColor, csbUnitValidColor, csbUnitSelectedColor))));
+            List.of(csbUnitTextColor, csbUnitValidColor, csbUnitSelectedColor))));
 
         addLineSpacer(comps);
 
-          List.of(animateMove, showWrecks).forEach(checkBox -> configureCheckBox(checkBox, null));
-          configureCheckBox(chkHighQualityGraphics,
-              Messages.getString("CommonSettingsDialog.highQualityGraphics.tooltip"));
-          configureCheckBox(chkHighPerformanceGraphics,
-              Messages.getString("CommonSettingsDialog.highPerformanceGraphics.tooltip"));
-          configureCheckBox(showMapSheets, null);
+        List.of(animateMove, showWrecks).forEach(checkBox -> configureCheckBox(checkBox, null));
+        configureCheckBox(chkHighQualityGraphics,
+            Messages.getString("CommonSettingsDialog.highQualityGraphics.tooltip"));
+        configureCheckBox(chkHighPerformanceGraphics,
+            Messages.getString("CommonSettingsDialog.highPerformanceGraphics.tooltip"));
+        configureCheckBox(showMapSheets, null);
         csbMapSheetColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.MapSheetColor"));
         csbMapSheetColor.setColour(GUIP.getMapsheetColor());
 
-          configureCheckBox(aOHexShadows, Messages.getString("CommonSettingsDialog.aOHexSHadows.tooltip"));
-          configureCheckBox(shadowMap, Messages.getString("CommonSettingsDialog.useShadowMap.tooltip"));
-          configureCheckBox(hexInclines, Messages.getString("CommonSettingsDialog.useInclines.tooltip"));
-          configureCheckBox(levelHighlight, Messages.getString("CommonSettingsDialog.levelHighlight.tooltip"));
-          configureCheckBox(floatingIso, Messages.getString("CommonSettingsDialog.floatingIso.tooltip"));
-          configureCheckBox(darkenMapAtNight, null);
+        configureCheckBox(aOHexShadows, Messages.getString("CommonSettingsDialog.aOHexSHadows.tooltip"));
+        configureCheckBox(shadowMap, Messages.getString("CommonSettingsDialog.useShadowMap.tooltip"));
+        configureCheckBox(hexInclines, Messages.getString("CommonSettingsDialog.useInclines.tooltip"));
+        configureCheckBox(levelHighlight, Messages.getString("CommonSettingsDialog.levelHighlight.tooltip"));
+        configureCheckBox(floatingIso, Messages.getString("CommonSettingsDialog.floatingIso.tooltip"));
+        configureCheckBox(darkenMapAtNight, null);
         darkenMapAtNight.setSelected(GUIP.getDarkenMapAtNight());
-          configureCheckBox(translucentHiddenUnits, null);
+        configureCheckBox(translucentHiddenUnits, null);
         translucentHiddenUnits.setSelected(GUIP.getTranslucentHiddenUnits());
-          configureCheckBox(artilleryDisplayMisses,
-              Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryMisses.tooltip"));
+        configureCheckBox(artilleryDisplayMisses,
+            Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryMisses.tooltip"));
 
         // Artillery and bomb display choices
         artilleryDisplayMisses.setSelected(GUIP.getShowArtilleryMisses());
-          configureCheckBox(artilleryDisplayDriftedHits,
-              Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryDriftedHits.tooltip"));
+        configureCheckBox(artilleryDisplayDriftedHits,
+            Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryDriftedHits.tooltip"));
         artilleryDisplayDriftedHits.setSelected(GUIP.getShowArtilleryDrifts());
-          configureCheckBox(artilleryDisplayDriftArrows,
-              Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryDriftArrows.tooltip"));
+        configureCheckBox(artilleryDisplayDriftArrows,
+            Messages.getString("CommonSettingsDialog.hexes.ShowArtilleryDriftArrows.tooltip"));
         artilleryDisplayDriftArrows.setSelected(GUIP.getShowArtilleryDriftArrows());
-          configureCheckBox(bombsDisplayMisses,
-              Messages.getString("CommonSettingsDialog.hexes.ShowBombMisses.tooltip"));
+        configureCheckBox(bombsDisplayMisses,
+            Messages.getString("CommonSettingsDialog.hexes.ShowBombMisses.tooltip"));
         bombsDisplayMisses.setSelected(GUIP.getShowBombMisses());
-          configureCheckBox(bombsDisplayDrifts,
-              Messages.getString("CommonSettingsDialog.hexes.ShowBombDrifts.tooltip"));
+        configureCheckBox(bombsDisplayDrifts,
+            Messages.getString("CommonSettingsDialog.hexes.ShowBombDrifts.tooltip"));
         bombsDisplayDrifts.setSelected(GUIP.getShowBombDrifts());
 
         csbBoardTextColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.BoardTextColor"));
@@ -1151,20 +1151,20 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         csbLowFoliageColor.setColour(GUIP.getLowFoliageColor());
 
         csbDemolitionChargeColor = new ColourSelectorButton(Messages.getString(
-              "CommonSettingsDialog.colors.DemolitionChargeColor"));
+            "CommonSettingsDialog.colors.DemolitionChargeColor"));
         csbDemolitionChargeColor.setColour(GUIP.getDemolitionChargeColor());
-          configureCheckBox(demolitionChargeHazardOutline,
-              Messages.getString("CommonSettingsDialog.demolitionChargeHazardOutline.tooltip"));
+        configureCheckBox(demolitionChargeHazardOutline,
+            Messages.getString("CommonSettingsDialog.demolitionChargeHazardOutline.tooltip"));
 
-          comps.add(List.of(createGameBoardGroupedOptionGrid("CommonSettingsGameBoardRenderingGrid",
-              List.of(animateMove, showWrecks, chkHighQualityGraphics, chkHighPerformanceGraphics),
+        comps.add(List.of(createGameBoardGroupedOptionGrid("CommonSettingsGameBoardRenderingGrid",
+            List.of(animateMove, showWrecks, chkHighQualityGraphics, chkHighPerformanceGraphics),
               List.of(showMapSheets, aOHexShadows, shadowMap, hexInclines, levelHighlight, floatingIso,
                   darkenMapAtNight, translucentHiddenUnits,
                   artilleryDisplayMisses, artilleryDisplayDriftedHits, artilleryDisplayDriftArrows,
                   bombsDisplayMisses, bombsDisplayDrifts),
               List.of(csbMapSheetColor, csbBoardTextColor, csbBoardSpaceTextColor, csbBuildingTextColor,
                   csbLowFoliageColor, csbDemolitionChargeColor),
-              List.of(demolitionChargeHazardOutline))));
+            List.of(demolitionChargeHazardOutline))));
 
         addLineSpacer(comps);
 
@@ -1193,7 +1193,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         tmmPipModeCbo.addItem(Messages.getString("CommonSettingsDialog.tmmPipMode.ColoredPipsBigger"));
         tmmPipModeCbo.setSelectedIndex(GUIP.getTMMPipMode());
         JLabel tmmPipModeLabel = new JLabel(Messages.getString("CommonSettingsDialog.tmmPipMode"));
-          comps.add(List.of(createGameBoardFieldGrid("CommonSettingsGameBoardIndicatorsGrid",
+        comps.add(List.of(createGameBoardFieldGrid("CommonSettingsGameBoardIndicatorsGrid",
               attackArrowTransparencyLabel, attackArrowTransparency,
               ecmTransparencyLabel, ecmTransparency,
               tmmPipModeLabel, tmmPipModeCbo)));
@@ -1233,16 +1233,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         csbMoveBackColor.setColour(GUIP.getMoveBackColor());
 
         csbMoveSprintColor =
-              new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.MoveSprintColor"));
+            new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.MoveSprintColor"));
         csbMoveSprintColor.setColour(GUIP.getMoveSprintColor());
-      SettingsFormPanel movementGrid = createGameBoardFieldGrid("CommonSettingsGameBoardMovementGrid",
+        SettingsFormPanel movementGrid = createGameBoardFieldGrid("CommonSettingsGameBoardMovementGrid",
           moveFontTypeLabel, fontTypeChooserMoveFont,
           moveFontSizeLabel, moveFontSize,
           moveFontStyleLabel, fontStyleChooserMoveFont);
-      movementGrid.addEqualWidthComponentGrid(2,
+        movementGrid.addEqualWidthComponentGrid(2,
           csbMoveDefaultColor, csbMoveIllegalColor, csbMoveJumpColor, csbMoveMASCColor,
           csbMoveRunColor, csbMoveBackColor, csbMoveSprintColor);
-      comps.add(List.of(movementGrid));
+        comps.add(List.of(movementGrid));
 
         addLineSpacer(comps);
 
@@ -1273,9 +1273,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
               new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.SensorRangeColor"));
         csbSensorRangeColor.setColour(GUIP.getSensorRangeColor());
         csbVisualRangeColor =
-              new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.VisualRangeColor"));
+            new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.VisualRangeColor"));
         csbVisualRangeColor.setColour(GUIP.getVisualRangeColor());
-      comps.add(List.of(createGameBoardOptionGrid("CommonSettingsGameBoardFireRangesGrid",
+        comps.add(List.of(createGameBoardOptionGrid("CommonSettingsGameBoardFireRangesGrid",
           csbFireSolutionCanSeeColor, csbFireSolutionNoSeeColor,
           csbFieldOfFireMinColor, csbFieldOfFireShortColor,
           csbFieldOfFireMediumColor, csbFieldOfFireLongColor, csbFieldOfFireExtremeColor,
@@ -1284,59 +1284,59 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         addLineSpacer(comps);
 
         // Highlighting Radius inside FoV
-          configureCheckBox(fovInsideEnabled,
-              Messages.getString("TacticalOverlaySettingsDialog.FovInsideEnabled.tooltip"));
+        configureCheckBox(fovInsideEnabled,
+            Messages.getString("TacticalOverlaySettingsDialog.FovInsideEnabled.tooltip"));
 
         // Inside Opaqueness slider
         fovHighlightAlpha = new JSlider(0, 255);
         fovHighlightAlpha.addChangeListener(this);
         fovHighlightAlpha.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
-          fovHighlightOpacityPercent = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
-          fovHighlightOpacityPercent.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
-          JPanel fovHighlightOpacityControl = createGameBoardFovOpacityControl(
+        fovHighlightOpacityPercent = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
+        fovHighlightOpacityPercent.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
+        JPanel fovHighlightOpacityControl = createGameBoardFovOpacityControl(
               fovHighlightAlpha, fovHighlightOpacityPercent);
         highlightAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightAlpha"));
-          highlightAlphaLabel.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
+        highlightAlphaLabel.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
 
-          fovHighlightRangesLabel = new JLabel(Messages.getString(
-              "TacticalOverlaySettingsDialog.FovHighlightRanges"));
-          fovHighlightRangesLabel.setToolTipText(Messages.getString(
-              "TacticalOverlaySettingsDialog.FovHighlightRanges.tooltip"));
-          fovHighlightRingsEditor = new FovHighlightRingsPanel(
+        fovHighlightRangesLabel = new JLabel(Messages.getString(
+            "TacticalOverlaySettingsDialog.FovHighlightRanges"));
+        fovHighlightRangesLabel.setToolTipText(Messages.getString(
+            "TacticalOverlaySettingsDialog.FovHighlightRanges.tooltip"));
+        fovHighlightRingsEditor = new FovHighlightRingsPanel(
               GUIP.getFovHighlightRingsRadii(), GUIP.getFovHighlightRingsColorsHsb(),
-              this::saveFovHighlightRanges);
-          fovHighlightRingsEditor.setToolTipText(Messages.getString(
-              "TacticalOverlaySettingsDialog.FovHighlightRanges.tooltip"));
+            this::saveFovHighlightRanges);
+        fovHighlightRingsEditor.setToolTipText(Messages.getString(
+            "TacticalOverlaySettingsDialog.FovHighlightRanges.tooltip"));
 
-          comps.add(List.of(createGameBoardFovInsideGrid(fovInsideEnabled,
+        comps.add(List.of(createGameBoardFovInsideGrid(fovInsideEnabled,
               highlightAlphaLabel, fovHighlightOpacityControl,
               fovHighlightRangesLabel, fovHighlightRingsEditor)));
 
         addLineSpacer(comps);
 
         // Outside FoV Darkening
-          configureCheckBox(fovOutsideEnabled,
-              Messages.getString("TacticalOverlaySettingsDialog.FovOutsideEnabled.tooltip"));
+        configureCheckBox(fovOutsideEnabled,
+            Messages.getString("TacticalOverlaySettingsDialog.FovOutsideEnabled.tooltip"));
 
         fovDarkenAlpha = new JSlider(0, 255);
         fovDarkenAlpha.addChangeListener(this);
         fovDarkenAlpha.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
-          fovDarkenOpacityPercent = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
-          fovDarkenOpacityPercent.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
-          JPanel fovDarkenOpacityControl = createGameBoardFovOpacityControl(
+        fovDarkenOpacityPercent = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
+        fovDarkenOpacityPercent.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
+        JPanel fovDarkenOpacityControl = createGameBoardFovOpacityControl(
               fovDarkenAlpha, fovDarkenOpacityPercent);
         darkenAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovDarkenAlpha"));
         darkenAlphaLabel.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
 
-          fovStripesSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 50, 1));
-          fovStripesSpinner.addChangeListener(this);
-          fovStripesSpinner.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.FovStripesTooltip"));
+        fovStripesSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 50, 1));
+        fovStripesSpinner.addChangeListener(this);
+        fovStripesSpinner.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.FovStripesTooltip"));
         numStripesLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovStripes"));
         numStripesLabel.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.FovStripesTooltip"));
 
         fovGrayscaleEnabled = new JCheckBox(Messages.getString("TacticalOverlaySettingsDialog.FovGrayscale"));
-          configureCheckBox(fovGrayscaleEnabled,
-              Messages.getString("TacticalOverlaySettingsDialog.FovGrayscale.tooltip"));
+        configureCheckBox(fovGrayscaleEnabled,
+            Messages.getString("TacticalOverlaySettingsDialog.FovGrayscale.tooltip"));
 
           comps.add(List.of(createGameBoardFovOutsideGrid(fovOutsideEnabled, fovGrayscaleEnabled,
               darkenAlphaLabel, fovDarkenOpacityControl, numStripesLabel, fovStripesSpinner)));
@@ -1612,71 +1612,71 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         unitTooltipSeenByCbo.addItem(Messages.getString("CommonSettingsDialog.seenby.Player"));
         unitTooltipSeenByCbo.addItem(Messages.getString("CommonSettingsDialog.seenby.PlayerDetailed"));
         unitTooltipSeenByCbo.setSelectedIndex(GUIP.getUnitToolTipSeenByResolution());
-          String seenByToolTip = Messages.getString("CommonSettingsDialog.seenby.tooltip");
-          unitTooltipSeenByLabel.setToolTipText(seenByToolTip);
-          unitTooltipSeenByCbo.setToolTipText(seenByToolTip);
+        String seenByToolTip = Messages.getString("CommonSettingsDialog.seenby.tooltip");
+        unitTooltipSeenByLabel.setToolTipText(seenByToolTip);
+        unitTooltipSeenByCbo.setToolTipText(seenByToolTip);
 
         csbUnitDisplayHeatLevel1 = new ColourSelectorButton(Messages.getString(
-              "CommonSettingsDialog.unitDisplayHeatColor",
-              Messages.getString("CommonSettingsDialog.colors.UnitDisplayHeatLevel1")));
+            "CommonSettingsDialog.unitDisplayHeatColor",
+            Messages.getString("CommonSettingsDialog.colors.UnitDisplayHeatLevel1")));
         csbUnitDisplayHeatLevel1.setColour(GUIP.getUnitDisplayHeatLevel1());
-          unitDisplayHeatLevel1Spinner = createIntegerSpinner(GUIP.getUnitDisplayHeatValue1(), 0, 1);
+        unitDisplayHeatLevel1Spinner = createIntegerSpinner(GUIP.getUnitDisplayHeatValue1(), 0, 1);
         csbUnitDisplayHeatLevel2 = new ColourSelectorButton(Messages.getString(
-              "CommonSettingsDialog.unitDisplayHeatColor",
-              Messages.getString("CommonSettingsDialog.colors.UnitDisplayHeatLevel2")));
+            "CommonSettingsDialog.unitDisplayHeatColor",
+            Messages.getString("CommonSettingsDialog.colors.UnitDisplayHeatLevel2")));
         csbUnitDisplayHeatLevel2.setColour(GUIP.getUnitDisplayHeatLevel2());
-          unitDisplayHeatLevel2Spinner = createIntegerSpinner(GUIP.getUnitDisplayHeatValue2(), 0, 1);
+        unitDisplayHeatLevel2Spinner = createIntegerSpinner(GUIP.getUnitDisplayHeatValue2(), 0, 1);
         csbUnitDisplayHeatLevel3 = new ColourSelectorButton(Messages.getString(
-              "CommonSettingsDialog.unitDisplayHeatColor",
-              Messages.getString("CommonSettingsDialog.colors.UnitDisplayHeatLevel3")));
+            "CommonSettingsDialog.unitDisplayHeatColor",
+            Messages.getString("CommonSettingsDialog.colors.UnitDisplayHeatLevel3")));
         csbUnitDisplayHeatLevel3.setColour(GUIP.getUnitDisplayHeatLevel3());
-          unitDisplayHeatLevel3Spinner = createIntegerSpinner(GUIP.getUnitDisplayHeatValue3(), 0, 1);
+        unitDisplayHeatLevel3Spinner = createIntegerSpinner(GUIP.getUnitDisplayHeatValue3(), 0, 1);
         csbUnitDisplayHeatLevel4 = new ColourSelectorButton(Messages.getString(
-              "CommonSettingsDialog.unitDisplayHeatColor",
-              Messages.getString("CommonSettingsDialog.colors.UnitDisplayHeatLevel4")));
+            "CommonSettingsDialog.unitDisplayHeatColor",
+            Messages.getString("CommonSettingsDialog.colors.UnitDisplayHeatLevel4")));
         csbUnitDisplayHeatLevel4.setColour(GUIP.getUnitDisplayHeatLevel4());
-          unitDisplayHeatLevel4Spinner = createIntegerSpinner(GUIP.getUnitDisplayHeatValue4(), 0, 1);
+        unitDisplayHeatLevel4Spinner = createIntegerSpinner(GUIP.getUnitDisplayHeatValue4(), 0, 1);
         csbUnitDisplayHeatLevel5 = new ColourSelectorButton(Messages.getString(
-              "CommonSettingsDialog.unitDisplayHeatColor",
-              Messages.getString("CommonSettingsDialog.colors.UnitDisplayHeatLevel5")));
+            "CommonSettingsDialog.unitDisplayHeatColor",
+            Messages.getString("CommonSettingsDialog.colors.UnitDisplayHeatLevel5")));
         csbUnitDisplayHeatLevel5.setColour(GUIP.getUnitDisplayHeatLevel5());
-          unitDisplayHeatLevel5Spinner = createIntegerSpinner(GUIP.getUnitDisplayHeatValue5(), 0, 1);
+        unitDisplayHeatLevel5Spinner = createIntegerSpinner(GUIP.getUnitDisplayHeatValue5(), 0, 1);
         csbUnitDisplayHeatLevel6 = new ColourSelectorButton(Messages.getString(
-              "CommonSettingsDialog.unitDisplayHeatColor",
-              Messages.getString("CommonSettingsDialog.colors.UnitDisplayHeatLevel6")));
+            "CommonSettingsDialog.unitDisplayHeatColor",
+            Messages.getString("CommonSettingsDialog.colors.UnitDisplayHeatLevel6")));
         csbUnitDisplayHeatLevel6.setColour(GUIP.getUnitDisplayHeatLevel6());
-          unitDisplayHeatLevel6Spinner = createIntegerSpinner(GUIP.getUnitDisplayHeatValue6(), 0, 1);
+        unitDisplayHeatLevel6Spinner = createIntegerSpinner(GUIP.getUnitDisplayHeatValue6(), 0, 1);
         csbUnitDisplayHeatLevelOverheat = new ColourSelectorButton(Messages.getString(
-              "CommonSettingsDialog.unitDisplayHeatColor",
-              Messages.getString("CommonSettingsDialog.colors.UnitDisplayHeatLevelOverheat")));
+            "CommonSettingsDialog.unitDisplayHeatColor",
+            Messages.getString("CommonSettingsDialog.colors.UnitDisplayHeatLevelOverheat")));
         csbUnitDisplayHeatLevelOverheat.setColour(GUIP.getUnitDisplayHeatLevelOverheat());
 
-          String heatToolTip = Messages.getString("CommonSettingsDialog.unitDisplayHeatToolTip");
-          JSpinner[] heatSpinners = {
+        String heatToolTip = Messages.getString("CommonSettingsDialog.unitDisplayHeatToolTip");
+        JSpinner[] heatSpinners = {
             unitDisplayHeatLevel1Spinner, unitDisplayHeatLevel2Spinner, unitDisplayHeatLevel3Spinner,
             unitDisplayHeatLevel4Spinner, unitDisplayHeatLevel5Spinner, unitDisplayHeatLevel6Spinner
-          };
-          ColourSelectorButton[] heatColours = {
+        };
+        ColourSelectorButton[] heatColours = {
             csbUnitDisplayHeatLevel1, csbUnitDisplayHeatLevel2, csbUnitDisplayHeatLevel3,
             csbUnitDisplayHeatLevel4, csbUnitDisplayHeatLevel5, csbUnitDisplayHeatLevel6
-          };
-          JLabel[] heatLabels = new JLabel[heatSpinners.length];
-          for (int index = 0; index < heatSpinners.length; index++) {
+        };
+        JLabel[] heatLabels = new JLabel[heatSpinners.length];
+        for (int index = 0; index < heatSpinners.length; index++) {
             String levelName = Messages.getString("CommonSettingsDialog.colors.UnitDisplayHeatLevel" + (index + 1));
             heatLabels[index] = new JLabel(Messages.getString(
                 "CommonSettingsDialog.unitDisplayHeatMaximum", levelName));
             heatLabels[index].setToolTipText(heatToolTip);
             heatSpinners[index].setToolTipText(heatToolTip);
-          }
-          JLabel overheatLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayHeatAboveMaximum"));
-          overheatLabel.setToolTipText(heatToolTip);
+        }
+        JLabel overheatLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitDisplayHeatAboveMaximum"));
+        overheatLabel.setToolTipText(heatToolTip);
           comps.add(List.of(createUnitDisplayHeatGrid(unitTooltipSeenByLabel, unitTooltipSeenByCbo,
               heatLabels, heatSpinners, heatColours, overheatLabel, csbUnitDisplayHeatLevelOverheat)));
 
         addLineSpacer(comps);
 
-          loadUnitDisplayOrder(unitDisplayNonTabbed, savedUnitDisplayOrder());
-          comps.add(List.of(createUnitDisplayOrderGrid(unitDisplayNonTabbed)));
+        loadUnitDisplayOrder(unitDisplayNonTabbed, savedUnitDisplayOrder());
+        comps.add(List.of(createUnitDisplayOrderGrid(unitDisplayNonTabbed)));
 
         addLineSpacer(comps);
 
@@ -1692,54 +1692,54 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         JLabel weaponListHeightLabel = new JLabel(Messages.getString("CommonSettingsDialog.weaponListHeight"));
         unitDisplayWeaponListHeightSpinner = createIntegerSpinner(GUIP.getUnitDisplayWeaponListHeight(), 1, 1);
-          String weaponListHeightToolTip = Messages.getString("CommonSettingsDialog.weaponListHeight.tooltip");
-          weaponListHeightLabel.setToolTipText(weaponListHeightToolTip);
-          unitDisplayWeaponListHeightSpinner.setToolTipText(weaponListHeightToolTip);
-          comps.add(List.of(createGameBoardFieldGrid("CommonSettingsUnitDisplayWeaponsGrid",
+        String weaponListHeightToolTip = Messages.getString("CommonSettingsDialog.weaponListHeight.tooltip");
+        weaponListHeightLabel.setToolTipText(weaponListHeightToolTip);
+        unitDisplayWeaponListHeightSpinner.setToolTipText(weaponListHeightToolTip);
+        comps.add(List.of(createGameBoardFieldGrid("CommonSettingsUnitDisplayWeaponsGrid",
               defaultSortOrderLabel, comboDefaultWeaponSortOrder,
               weaponListHeightLabel, unitDisplayWeaponListHeightSpinner)));
 
         addLineSpacer(comps);
 
         JLabel unitDisplayMekArmorLargeFontSizeLabel = new JLabel(Messages.getString(
-              "CommonSettingsDialog.unitDisplayMekArmorLargeFontSize"));
+            "CommonSettingsDialog.unitDisplayMekArmorLargeFontSize"));
         unitDisplayMekArmorLargeFontSizeSpinner = createIntegerSpinner(
               GUIP.getUnitDisplayMekArmorLargeFontSize(), 1, 1);
 
         JLabel unitDisplayMekArmorMediumFontSizeLabel = new JLabel(Messages.getString(
-              "CommonSettingsDialog.unitDisplayMekArmorMediumFontSize"));
+            "CommonSettingsDialog.unitDisplayMekArmorMediumFontSize"));
         unitDisplayMekArmorMediumFontSizeSpinner = createIntegerSpinner(
               GUIP.getUnitDisplayMekArmorMediumFontSize(), 1, 1);
 
         JLabel unitDisplayMekArmorSmallFontSizeLabel = new JLabel(Messages.getString(
-              "CommonSettingsDialog.unitDisplayMekArmorSmallFontSize"));
+            "CommonSettingsDialog.unitDisplayMekArmorSmallFontSize"));
         unitDisplayMekArmorSmallFontSizeSpinner = createIntegerSpinner(
               GUIP.getUnitDisplayMekArmorSmallFontSize(), 1, 1);
 
         JLabel unitDisplayMekLargeFontSizeLabel = new JLabel(Messages.getString(
-              "CommonSettingsDialog.unitDisplayMekLargeFontSize"));
+            "CommonSettingsDialog.unitDisplayMekLargeFontSize"));
         unitDisplayMekLargeFontSizeSpinner = createIntegerSpinner(GUIP.getUnitDisplayMekLargeFontSize(), 1, 1);
 
         JLabel unitDisplayMekMediumFontSizeLabel = new JLabel(Messages.getString(
-              "CommonSettingsDialog.unitDisplayMekMediumFontSize"));
+            "CommonSettingsDialog.unitDisplayMekMediumFontSize"));
         unitDisplayMekMediumFontSizeSpinner = createIntegerSpinner(GUIP.getUnitDisplayMekMediumFontSize(), 1, 1);
 
         JLabel[] fontLabels = {
-            unitDisplayMekArmorLargeFontSizeLabel, unitDisplayMekArmorMediumFontSizeLabel,
-            unitDisplayMekArmorSmallFontSizeLabel, unitDisplayMekLargeFontSizeLabel,
-            unitDisplayMekMediumFontSizeLabel
+                                unitDisplayMekArmorLargeFontSizeLabel, unitDisplayMekArmorMediumFontSizeLabel,
+                                unitDisplayMekArmorSmallFontSizeLabel, unitDisplayMekLargeFontSizeLabel,
+                                unitDisplayMekMediumFontSizeLabel
         };
         JSpinner[] fontSpinners = {
-            unitDisplayMekArmorLargeFontSizeSpinner, unitDisplayMekArmorMediumFontSizeSpinner,
-            unitDisplayMekArmorSmallFontSizeSpinner, unitDisplayMekLargeFontSizeSpinner,
-            unitDisplayMekMediumFontSizeSpinner
+                                    unitDisplayMekArmorLargeFontSizeSpinner, unitDisplayMekArmorMediumFontSizeSpinner,
+                                    unitDisplayMekArmorSmallFontSizeSpinner, unitDisplayMekLargeFontSizeSpinner,
+                                    unitDisplayMekMediumFontSizeSpinner
         };
         String[] fontToolTipKeys = {
-            "CommonSettingsDialog.unitDisplayMekArmorLargeFontSize.tooltip",
-            "CommonSettingsDialog.unitDisplayMekArmorMediumFontSize.tooltip",
-            "CommonSettingsDialog.unitDisplayMekArmorSmallFontSize.tooltip",
-            "CommonSettingsDialog.unitDisplayMekLargeFontSize.tooltip",
-            "CommonSettingsDialog.unitDisplayMekMediumFontSize.tooltip"
+                                     "CommonSettingsDialog.unitDisplayMekArmorLargeFontSize.tooltip",
+                                     "CommonSettingsDialog.unitDisplayMekArmorMediumFontSize.tooltip",
+                                     "CommonSettingsDialog.unitDisplayMekArmorSmallFontSize.tooltip",
+                                     "CommonSettingsDialog.unitDisplayMekLargeFontSize.tooltip",
+                                     "CommonSettingsDialog.unitDisplayMekMediumFontSize.tooltip"
         };
         for (int index = 0; index < fontLabels.length; index++) {
             String fontToolTip = Messages.getString(fontToolTipKeys[index]);
@@ -1757,8 +1757,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     }
 
     static SettingsFormPanel createUnitDisplayHeatGrid(JLabel seenByLabel, JComponent seenByControl,
-          JLabel[] heatLabels, JSpinner[] heatSpinners, ColourSelectorButton[] heatColours,
-          JLabel overheatLabel, ColourSelectorButton overheatColour) {
+        JLabel[] heatLabels, JSpinner[] heatSpinners, ColourSelectorButton[] heatColours,
+        JLabel overheatLabel, ColourSelectorButton overheatColour) {
         if ((heatLabels.length != heatSpinners.length) || (heatLabels.length != heatColours.length)) {
             throw new IllegalArgumentException("Unit Display heat controls must have matching levels");
         }
@@ -1790,7 +1790,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         orderList.setToolTipText(Messages.getString("CommonSettingsDialog.unitDisplayOrder.tooltip"));
         JPanel panel = createReorderListPanel(orderList, UNIT_DISPLAY_ORDER_COLUMNS);
                 setPreferredReorderListCellWidth(orderList, Math.max(orderList.getFixedCellWidth(),
-              UIUtil.scaleForGUI((SettingsFormPanel.DEFAULT_LABEL_WIDTH * 2) / UNIT_DISPLAY_ORDER_COLUMNS)));
+                UIUtil.scaleForGUI((SettingsFormPanel.DEFAULT_LABEL_WIDTH * 2) / UNIT_DISPLAY_ORDER_COLUMNS)));
         return panel;
     }
 
@@ -1801,12 +1801,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     private static List<String> savedUnitDisplayOrder() {
         return List.of(
-              UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A1),
-              UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B1),
-              UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C1),
-              UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A2),
-              UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B2),
-              UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C2));
+            UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A1),
+            UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B1),
+            UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C1),
+            UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A2),
+            UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_B2),
+            UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_C2));
     }
 
     private JPanel getReportPanel() {
@@ -1830,11 +1830,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         fontTypeChooserReportFont = new JComboBox<>(new Vector<>(FontHandler.getAvailableNonSymbolFonts()));
         fontTypeChooserReportFont.setSelectedItem(GUIP.getReportFontType());
 
-          JLabel reportFontTypeLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportFontType"));
+        JLabel reportFontTypeLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportFontType"));
 
-          configureCheckBox(showReportSprites, null);
+        configureCheckBox(showReportSprites, null);
         showReportSprites.setSelected(GUIP.getMiniReportShowSprites());
-          comps.add(List.of(createReportAppearanceGrid(
+        comps.add(List.of(createReportAppearanceGrid(
               csbReportLinkColor, csbReportSuccessColor, csbReportMissColor, csbReportInfoColor,
               reportFontTypeLabel, fontTypeChooserReportFont, showReportSprites)));
 
@@ -1849,80 +1849,80 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         chkReportShowUnits.setSelected(GUIP.getMiniReportShowUnits());
 
         chkReportShowKeywords.setToolTipText(Messages.getString(
-              "CommonSettingsDialog.showReportKeywordsList.tooltip"));
+            "CommonSettingsDialog.showReportKeywordsList.tooltip"));
         chkReportShowKeywords.setSelected(GUIP.getMiniReportShowKeywords());
-          JLabel reportKeywordsLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportKeywords"));
-          String reportKeywordsHelp = Messages.getString("CommonSettingsDialog.reportKeywords.tooltip");
-          reportKeywordsLabel.setToolTipText(reportKeywordsHelp);
-          reportKeywordsTextArea = new JTextArea(6, 20);
-          JScrollPane reportKeywordsEditor = createReportKeywordEditor(reportKeywordsTextArea, reportKeywordsHelp);
-          comps.add(List.of(createReportSearchGrid(
+        JLabel reportKeywordsLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportKeywords"));
+        String reportKeywordsHelp = Messages.getString("CommonSettingsDialog.reportKeywords.tooltip");
+        reportKeywordsLabel.setToolTipText(reportKeywordsHelp);
+        reportKeywordsTextArea = new JTextArea(6, 20);
+        JScrollPane reportKeywordsEditor = createReportKeywordEditor(reportKeywordsTextArea, reportKeywordsHelp);
+        comps.add(List.of(createReportSearchGrid(
               chkReportShowPlayers, chkReportShowUnits, chkReportShowKeywords,
               reportKeywordsLabel, reportKeywordsTextArea, reportKeywordsEditor)));
 
-          addLineSpacer(comps);
+        addLineSpacer(comps);
 
         chkReportShowFilter.setToolTipText(Messages.getString(
               "CommonSettingsDialog.showReportFilterList.tooltip"));
         chkReportShowFilter.setSelected(GUIP.getMiniReportShowFilter());
 
-          JLabel reportFilterKeywordsLabel = new JLabel(Messages.getString(
-              "CommonSettingsDialog.reportFilterKeywords"));
-          String reportFilterKeywordsHelp = Messages.getString("CommonSettingsDialog.reportFilterKeywords.tooltip");
-          reportFilterKeywordsLabel.setToolTipText(reportFilterKeywordsHelp);
-          reportFilterKeywordsTextArea = new JTextArea(4, 20);
-          JScrollPane reportFilterKeywordsEditor = createReportKeywordEditor(
+        JLabel reportFilterKeywordsLabel = new JLabel(Messages.getString(
+            "CommonSettingsDialog.reportFilterKeywords"));
+        String reportFilterKeywordsHelp = Messages.getString("CommonSettingsDialog.reportFilterKeywords.tooltip");
+        reportFilterKeywordsLabel.setToolTipText(reportFilterKeywordsHelp);
+        reportFilterKeywordsTextArea = new JTextArea(4, 20);
+        JScrollPane reportFilterKeywordsEditor = createReportKeywordEditor(
               reportFilterKeywordsTextArea, reportFilterKeywordsHelp);
-          comps.add(List.of(createReportFilterGrid(
+        comps.add(List.of(createReportFilterGrid(
               chkReportShowFilter, reportFilterKeywordsLabel,
               reportFilterKeywordsTextArea, reportFilterKeywordsEditor)));
 
         return createSettingsPanel(comps);
     }
 
-        static SettingsFormPanel createReportAppearanceGrid(
-            JComponent linkColour, JComponent successColour, JComponent missColour, JComponent infoColour,
-            JLabel fontLabel, JComponent fontControl, JCheckBox showSprites) {
-          SettingsFormPanel grid = new SettingsFormPanel("CommonSettingsReportAppearanceGrid",
+    static SettingsFormPanel createReportAppearanceGrid(
+        JComponent linkColour, JComponent successColour, JComponent missColour, JComponent infoColour,
+        JLabel fontLabel, JComponent fontControl, JCheckBox showSprites) {
+        SettingsFormPanel grid = new SettingsFormPanel("CommonSettingsReportAppearanceGrid",
               SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-          fontLabel.setLabelFor(fontControl);
-          grid.addEqualWidthComponentGrid(2, linkColour, successColour, missColour, infoColour);
-          grid.addEqualWidthComponentGrid(2, fontLabel, fontControl);
-          grid.addEqualWidthComponentGrid(2, showSprites);
-          return grid;
-        }
+        fontLabel.setLabelFor(fontControl);
+        grid.addEqualWidthComponentGrid(2, linkColour, successColour, missColour, infoColour);
+        grid.addEqualWidthComponentGrid(2, fontLabel, fontControl);
+        grid.addEqualWidthComponentGrid(2, showSprites);
+        return grid;
+    }
 
-        static SettingsFormPanel createReportSearchGrid(
-            JCheckBox showPlayers, JCheckBox showUnits, JCheckBox showKeywords,
-            JLabel keywordsLabel, JTextArea keywordsEditor, JComponent keywordsControl) {
-          SettingsFormPanel grid = new SettingsFormPanel("CommonSettingsReportSearchGrid",
+    static SettingsFormPanel createReportSearchGrid(
+        JCheckBox showPlayers, JCheckBox showUnits, JCheckBox showKeywords,
+        JLabel keywordsLabel, JTextArea keywordsEditor, JComponent keywordsControl) {
+        SettingsFormPanel grid = new SettingsFormPanel("CommonSettingsReportSearchGrid",
               SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-          keywordsLabel.setLabelFor(keywordsEditor);
-          grid.addEqualWidthComponentGrid(2, showPlayers, showUnits);
-          grid.addEqualWidthComponentGrid(2, showKeywords);
-          grid.addEqualWidthComponentGrid(2, keywordsLabel, keywordsControl);
-          return grid;
-        }
+        keywordsLabel.setLabelFor(keywordsEditor);
+        grid.addEqualWidthComponentGrid(2, showPlayers, showUnits);
+        grid.addEqualWidthComponentGrid(2, showKeywords);
+        grid.addEqualWidthComponentGrid(2, keywordsLabel, keywordsControl);
+        return grid;
+    }
 
-        static SettingsFormPanel createReportFilterGrid(
-            JCheckBox showFilter, JLabel keywordsLabel, JTextArea keywordsEditor, JComponent keywordsControl) {
-          SettingsFormPanel grid = new SettingsFormPanel("CommonSettingsReportFilterGrid",
+    static SettingsFormPanel createReportFilterGrid(
+        JCheckBox showFilter, JLabel keywordsLabel, JTextArea keywordsEditor, JComponent keywordsControl) {
+        SettingsFormPanel grid = new SettingsFormPanel("CommonSettingsReportFilterGrid",
               SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-          keywordsLabel.setLabelFor(keywordsEditor);
-          grid.addEqualWidthComponentGrid(2, showFilter);
-          grid.addEqualWidthComponentGrid(2, keywordsLabel, keywordsControl);
-          return grid;
-        }
+        keywordsLabel.setLabelFor(keywordsEditor);
+        grid.addEqualWidthComponentGrid(2, showFilter);
+        grid.addEqualWidthComponentGrid(2, keywordsLabel, keywordsControl);
+        return grid;
+    }
 
-        static JScrollPane createReportKeywordEditor(JTextArea editor, String helpText) {
-          editor.setLineWrap(false);
-          editor.setToolTipText(helpText);
-          JScrollPane scrollPane = new JScrollPane(editor,
-              ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-              ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-          scrollPane.setToolTipText(helpText);
-          return scrollPane;
-        }
+    static JScrollPane createReportKeywordEditor(JTextArea editor, String helpText) {
+        editor.setLineWrap(false);
+        editor.setToolTipText(helpText);
+        JScrollPane scrollPane = new JScrollPane(editor,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setToolTipText(helpText);
+        return scrollPane;
+    }
 
     private JPanel getOverlaysPanel() {
         List<List<Component>> comps = new ArrayList<>();
@@ -1936,82 +1936,82 @@ public class CommonSettingsDialog extends AbstractButtonDialog
               "CommonSettingsDialog.colors.UnitOverviewConditionShadowColor"));
         csbUnitOverviewConditionShadowColor.setColour(GUIP.getUnitOverviewConditionShadowColor());
         csbUnitOverviewConditionShadowColor.setToolTipText(Messages.getString(
-              "CommonSettingsDialog.colors.UnitOverviewConditionShadowColor.tooltip"));
-          comps.add(List.of(createOverlayOverviewGrid(
+            "CommonSettingsDialog.colors.UnitOverviewConditionShadowColor.tooltip"));
+        comps.add(List.of(createOverlayOverviewGrid(
               csbUnitOverviewTextShadowColor, csbUnitOverviewConditionShadowColor)));
 
         addLineSpacer(comps);
 
         csbPlanetaryConditionsColorTitle = new ColourSelectorButton(Messages.getString(
-              "CommonSettingsDialog.colors.PlanetaryConditionsColorTitle"));
+            "CommonSettingsDialog.colors.PlanetaryConditionsColorTitle"));
         csbPlanetaryConditionsColorTitle.setColour(GUIP.getPlanetaryConditionsColorTitle());
-          csbPlanetaryConditionsColorTitle.setToolTipText(Messages.getString(
-              "CommonSettingsDialog.colors.PlanetaryConditionsColorTitle.tooltip"));
+        csbPlanetaryConditionsColorTitle.setToolTipText(Messages.getString(
+            "CommonSettingsDialog.colors.PlanetaryConditionsColorTitle.tooltip"));
         csbPlanetaryConditionsColorText = new ColourSelectorButton(Messages.getString(
-              "CommonSettingsDialog.colors.PlanetaryConditionsColorText"));
+            "CommonSettingsDialog.colors.PlanetaryConditionsColorText"));
         csbPlanetaryConditionsColorText.setColour(GUIP.getPlanetaryConditionsColorText());
-          csbPlanetaryConditionsColorText.setToolTipText(Messages.getString(
-              "CommonSettingsDialog.colors.PlanetaryConditionsColorText.tooltip"));
+        csbPlanetaryConditionsColorText.setToolTipText(Messages.getString(
+            "CommonSettingsDialog.colors.PlanetaryConditionsColorText.tooltip"));
         csbPlanetaryConditionsColorBackground = new ColourSelectorButton(Messages.getString(
-              "CommonSettingsDialog.colors.PlanetaryConditionsColorBackground"));
+            "CommonSettingsDialog.colors.PlanetaryConditionsColorBackground"));
         csbPlanetaryConditionsColorBackground.setColour(GUIP.getPlanetaryConditionsColorBackground());
-          csbPlanetaryConditionsColorBackground.setToolTipText(Messages.getString(
-              "CommonSettingsDialog.colors.PlanetaryConditionsColorBackground.tooltip"));
+        csbPlanetaryConditionsColorBackground.setToolTipText(Messages.getString(
+            "CommonSettingsDialog.colors.PlanetaryConditionsColorBackground.tooltip"));
         csbPlanetaryConditionsColorCold = new ColourSelectorButton(Messages.getString(
-              "CommonSettingsDialog.colors.PlanetaryConditionsColorCold"));
+            "CommonSettingsDialog.colors.PlanetaryConditionsColorCold"));
         csbPlanetaryConditionsColorCold.setColour(GUIP.getPlanetaryConditionsColorCold());
-          csbPlanetaryConditionsColorCold.setToolTipText(Messages.getString(
-              "CommonSettingsDialog.colors.PlanetaryConditionsColorCold.tooltip"));
+        csbPlanetaryConditionsColorCold.setToolTipText(Messages.getString(
+            "CommonSettingsDialog.colors.PlanetaryConditionsColorCold.tooltip"));
         csbPlanetaryConditionsColorHot = new ColourSelectorButton(Messages.getString(
-              "CommonSettingsDialog.colors.PlanetaryConditionsColorHot"));
+            "CommonSettingsDialog.colors.PlanetaryConditionsColorHot"));
         csbPlanetaryConditionsColorHot.setColour(GUIP.getPlanetaryConditionsColorHot());
-          csbPlanetaryConditionsColorHot.setToolTipText(Messages.getString(
-              "CommonSettingsDialog.colors.PlanetaryConditionsColorHot.tooltip"));
+        csbPlanetaryConditionsColorHot.setToolTipText(Messages.getString(
+            "CommonSettingsDialog.colors.PlanetaryConditionsColorHot.tooltip"));
 
           configureCheckBox(planetaryConditionsShowDefaults, Messages.getString(
-              "CommonSettingsDialog.planetaryConditionsShowDefaults.tooltip"));
+                "CommonSettingsDialog.planetaryConditionsShowDefaults.tooltip"));
         planetaryConditionsShowDefaults.setSelected(GUIP.getPlanetaryConditionsShowDefaults());
           configureCheckBox(planetaryConditionsShowHeader, Messages.getString(
-              "CommonSettingsDialog.planetaryConditionsShowHeader.tooltip"));
+                "CommonSettingsDialog.planetaryConditionsShowHeader.tooltip"));
         planetaryConditionsShowHeader.setSelected(GUIP.getPlanetaryConditionsShowHeader());
           configureCheckBox(planetaryConditionsShowLabels, Messages.getString(
-              "CommonSettingsDialog.planetaryConditionsShowLabels.tooltip"));
+                "CommonSettingsDialog.planetaryConditionsShowLabels.tooltip"));
         planetaryConditionsShowLabels.setSelected(GUIP.getPlanetaryConditionsShowLabels());
           configureCheckBox(planetaryConditionsShowValues, Messages.getString(
-              "CommonSettingsDialog.planetaryConditionsShowValues.tooltip"));
+                "CommonSettingsDialog.planetaryConditionsShowValues.tooltip"));
         planetaryConditionsShowValues.setSelected(GUIP.getPlanetaryConditionsShowValues());
           configureCheckBox(planetaryConditionsShowIndicators, Messages.getString(
-              "CommonSettingsDialog.planetaryConditionsShowIndicators.tooltip"));
+                "CommonSettingsDialog.planetaryConditionsShowIndicators.tooltip"));
         planetaryConditionsShowIndicators.setSelected(GUIP.getPlanetaryConditionsShowIndicators());
 
-          int planetaryOpacity = Math.clamp(GUIP.getPlanetaryConditionsBackgroundTransparency(), 0, 255);
-          planetaryConditionsBackgroundTransparency = new JSlider(0, 255, planetaryOpacity);
+        int planetaryOpacity = Math.clamp(GUIP.getPlanetaryConditionsBackgroundTransparency(), 0, 255);
+        planetaryConditionsBackgroundTransparency = new JSlider(0, 255, planetaryOpacity);
           JSpinner planetaryConditionsBackgroundOpacityPercent =
               new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
-          String planetaryOpacityHelp = Messages.getString(
-              "CommonSettingsDialog.colors.PlanetaryConditionsBackgroundTransparency.tooltip");
-          planetaryConditionsBackgroundTransparency.setToolTipText(planetaryOpacityHelp);
-          planetaryConditionsBackgroundOpacityPercent.setToolTipText(planetaryOpacityHelp);
-          JPanel planetaryConditionsBackgroundOpacityControl = createGameBoardFovOpacityControl(
+        String planetaryOpacityHelp = Messages.getString(
+            "CommonSettingsDialog.colors.PlanetaryConditionsBackgroundTransparency.tooltip");
+        planetaryConditionsBackgroundTransparency.setToolTipText(planetaryOpacityHelp);
+        planetaryConditionsBackgroundOpacityPercent.setToolTipText(planetaryOpacityHelp);
+        JPanel planetaryConditionsBackgroundOpacityControl = createGameBoardFovOpacityControl(
               planetaryConditionsBackgroundTransparency, planetaryConditionsBackgroundOpacityPercent);
-          planetaryConditionsBackgroundOpacityControl.setToolTipText(planetaryOpacityHelp);
+        planetaryConditionsBackgroundOpacityControl.setToolTipText(planetaryOpacityHelp);
         JLabel planetaryConditionsBackgroundTransparencyLabel = new JLabel(Messages.getString(
-              "CommonSettingsDialog.colors.PlanetaryConditionsBackgroundTransparency"));
-          planetaryConditionsBackgroundTransparencyLabel.setToolTipText(planetaryOpacityHelp);
-          comps.add(List.of(createOverlayPlanetaryGrid(
+            "CommonSettingsDialog.colors.PlanetaryConditionsBackgroundTransparency"));
+        planetaryConditionsBackgroundTransparencyLabel.setToolTipText(planetaryOpacityHelp);
+        comps.add(List.of(createOverlayPlanetaryGrid(
               csbPlanetaryConditionsColorTitle, csbPlanetaryConditionsColorText,
               csbPlanetaryConditionsColorBackground, csbPlanetaryConditionsColorCold,
               csbPlanetaryConditionsColorHot, planetaryConditionsShowDefaults,
               planetaryConditionsShowHeader, planetaryConditionsShowLabels,
               planetaryConditionsShowValues, planetaryConditionsShowIndicators,
-              planetaryConditionsBackgroundTransparencyLabel,
-              planetaryConditionsBackgroundTransparency,
-              planetaryConditionsBackgroundOpacityControl)));
+            planetaryConditionsBackgroundTransparencyLabel,
+            planetaryConditionsBackgroundTransparency,
+            planetaryConditionsBackgroundOpacityControl)));
 
         addLineSpacer(comps);
 
         toastEnabled.setSelected(GUIP.getToastEnabled());
-          configureCheckBox(toastEnabled, Messages.getString("CommonSettingsDialog.toastEnabled.tooltip"));
+        configureCheckBox(toastEnabled, Messages.getString("CommonSettingsDialog.toastEnabled.tooltip"));
 
         SpinnerNumberModel toastDurationModel = new SpinnerNumberModel(
               clampToastSeconds(GUIP.getToastDurationSeconds()),
@@ -2036,7 +2036,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         toastDripLabel.setToolTipText(Messages.getString("CommonSettingsDialog.toastDripSeconds.tooltip"));
 
         toastReportEvents.setSelected(GUIP.getToastReportEvents());
-          configureCheckBox(toastReportEvents, Messages.getString("CommonSettingsDialog.toastReportEvents.tooltip"));
+        configureCheckBox(toastReportEvents, Messages.getString("CommonSettingsDialog.toastReportEvents.tooltip"));
           comps.add(List.of(createOverlayToastGrid(toastEnabled, toastReportEvents,
               toastDurationLabel, toastDurationSpinner, toastDripLabel, toastDripSpinner)));
 
@@ -2045,74 +2045,74 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         addLineSpacer(comps);
 
         JLabel traceOverlayTransparencyLabel = new JLabel(Messages.getString(
-              "CommonSettingsDialog.TraceOverlayTransparency"));
-          String traceOpacityHelp = Messages.getString("CommonSettingsDialog.TraceOverlayTransparency.tooltip");
-          traceOverlayTransparencyLabel.setToolTipText(traceOpacityHelp);
+            "CommonSettingsDialog.TraceOverlayTransparency"));
+        String traceOpacityHelp = Messages.getString("CommonSettingsDialog.TraceOverlayTransparency.tooltip");
+        traceOverlayTransparencyLabel.setToolTipText(traceOpacityHelp);
           traceOverlayTransparencySlider = new JSlider(0, 255,
-              Math.clamp(GUIP.getTraceOverlayTransparency(), 0, 255));
+            Math.clamp(GUIP.getTraceOverlayTransparency(), 0, 255));
         traceOverlayTransparencySlider.addChangeListener(this);
-          traceOverlayTransparencySlider.setToolTipText(traceOpacityHelp);
-          JSpinner traceOverlayOpacityPercent = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
-          traceOverlayOpacityPercent.setToolTipText(traceOpacityHelp);
-          JPanel traceOverlayOpacityControl = createGameBoardFovOpacityControl(
+        traceOverlayTransparencySlider.setToolTipText(traceOpacityHelp);
+        JSpinner traceOverlayOpacityPercent = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
+        traceOverlayOpacityPercent.setToolTipText(traceOpacityHelp);
+        JPanel traceOverlayOpacityControl = createGameBoardFovOpacityControl(
               traceOverlayTransparencySlider, traceOverlayOpacityPercent);
-          traceOverlayOpacityControl.setToolTipText(traceOpacityHelp);
+        traceOverlayOpacityControl.setToolTipText(traceOpacityHelp);
 
         JLabel traceOverlayScaleLabel = new JLabel(Messages.getString("CommonSettingsDialog.TraceOverlayScale"));
-          String traceScaleHelp = Messages.getString("CommonSettingsDialog.TraceOverlayScale.tooltip");
-          traceOverlayScaleLabel.setToolTipText(traceScaleHelp);
-          int traceScale = Math.clamp(GUIP.getTraceOverlayScale(), 30, 150);
-          traceOverlayScaleSlider = new JSlider(30, 150, traceScale);
+        String traceScaleHelp = Messages.getString("CommonSettingsDialog.TraceOverlayScale.tooltip");
+        traceOverlayScaleLabel.setToolTipText(traceScaleHelp);
+        int traceScale = Math.clamp(GUIP.getTraceOverlayScale(), 30, 150);
+        traceOverlayScaleSlider = new JSlider(30, 150, traceScale);
         traceOverlayScaleSlider.addChangeListener(this);
-          traceOverlayScaleSlider.setToolTipText(traceScaleHelp);
-          JSpinner traceOverlayScalePercent = new JSpinner(new SpinnerNumberModel(traceScale, 30, 150, 1));
-          traceOverlayScalePercent.setToolTipText(traceScaleHelp);
-          JPanel traceOverlayScaleControl = createOverlayValueControl(
+        traceOverlayScaleSlider.setToolTipText(traceScaleHelp);
+        JSpinner traceOverlayScalePercent = new JSpinner(new SpinnerNumberModel(traceScale, 30, 150, 1));
+        traceOverlayScalePercent.setToolTipText(traceScaleHelp);
+        JPanel traceOverlayScaleControl = createOverlayValueControl(
               traceOverlayScaleSlider, traceOverlayScalePercent, "%");
-          traceOverlayScaleControl.setToolTipText(traceScaleHelp);
+        traceOverlayScaleControl.setToolTipText(traceScaleHelp);
 
-          JLabel traceOverlayOriginXLabel = new JLabel(Messages.getString("CommonSettingsDialog.TraceOverlayOriginX"));
-          String traceOriginXHelp = Messages.getString("CommonSettingsDialog.TraceOverlayOriginX.tooltip");
-          traceOverlayOriginXLabel.setToolTipText(traceOriginXHelp);
-          int traceOriginX = Math.clamp(GUIP.getTraceOverlayOriginX(), -1000, 2000);
-          traceOverlayOriginXSlider = new JSlider(-1000, 2000, traceOriginX);
+        JLabel traceOverlayOriginXLabel = new JLabel(Messages.getString("CommonSettingsDialog.TraceOverlayOriginX"));
+        String traceOriginXHelp = Messages.getString("CommonSettingsDialog.TraceOverlayOriginX.tooltip");
+        traceOverlayOriginXLabel.setToolTipText(traceOriginXHelp);
+        int traceOriginX = Math.clamp(GUIP.getTraceOverlayOriginX(), -1000, 2000);
+        traceOverlayOriginXSlider = new JSlider(-1000, 2000, traceOriginX);
         traceOverlayOriginXSlider.addChangeListener(this);
-          traceOverlayOriginXSlider.setToolTipText(traceOriginXHelp);
-          JSpinner traceOverlayOriginX = new JSpinner(new SpinnerNumberModel(traceOriginX, -1000, 2000, 10));
-          traceOverlayOriginX.setToolTipText(traceOriginXHelp);
-          JPanel traceOverlayOriginXControl = createOverlayValueControl(
+        traceOverlayOriginXSlider.setToolTipText(traceOriginXHelp);
+        JSpinner traceOverlayOriginX = new JSpinner(new SpinnerNumberModel(traceOriginX, -1000, 2000, 10));
+        traceOverlayOriginX.setToolTipText(traceOriginXHelp);
+        JPanel traceOverlayOriginXControl = createOverlayValueControl(
               traceOverlayOriginXSlider, traceOverlayOriginX, "px");
-          traceOverlayOriginXControl.setToolTipText(traceOriginXHelp);
+        traceOverlayOriginXControl.setToolTipText(traceOriginXHelp);
 
-          JLabel traceOverlayOriginYLabel = new JLabel(Messages.getString("CommonSettingsDialog.TraceOverlayOriginY"));
-          String traceOriginYHelp = Messages.getString("CommonSettingsDialog.TraceOverlayOriginY.tooltip");
-          traceOverlayOriginYLabel.setToolTipText(traceOriginYHelp);
-          int traceOriginY = Math.clamp(GUIP.getTraceOverlayOriginY(), -1000, 2000);
-          traceOverlayOriginYSlider = new JSlider(-1000, 2000, traceOriginY);
+        JLabel traceOverlayOriginYLabel = new JLabel(Messages.getString("CommonSettingsDialog.TraceOverlayOriginY"));
+        String traceOriginYHelp = Messages.getString("CommonSettingsDialog.TraceOverlayOriginY.tooltip");
+        traceOverlayOriginYLabel.setToolTipText(traceOriginYHelp);
+        int traceOriginY = Math.clamp(GUIP.getTraceOverlayOriginY(), -1000, 2000);
+        traceOverlayOriginYSlider = new JSlider(-1000, 2000, traceOriginY);
         traceOverlayOriginYSlider.addChangeListener(this);
-          traceOverlayOriginYSlider.setToolTipText(traceOriginYHelp);
-          JSpinner traceOverlayOriginY = new JSpinner(new SpinnerNumberModel(traceOriginY, -1000, 2000, 10));
-          traceOverlayOriginY.setToolTipText(traceOriginYHelp);
-          JPanel traceOverlayOriginYControl = createOverlayValueControl(
+        traceOverlayOriginYSlider.setToolTipText(traceOriginYHelp);
+        JSpinner traceOverlayOriginY = new JSpinner(new SpinnerNumberModel(traceOriginY, -1000, 2000, 10));
+        traceOverlayOriginY.setToolTipText(traceOriginYHelp);
+        JPanel traceOverlayOriginYControl = createOverlayValueControl(
               traceOverlayOriginYSlider, traceOverlayOriginY, "px");
-          traceOverlayOriginYControl.setToolTipText(traceOriginYHelp);
+        traceOverlayOriginYControl.setToolTipText(traceOriginYHelp);
 
         JLabel traceOverlayImageFileLabel =
               new JLabel(Messages.getString("CommonSettingsDialog.TraceOverlayImageFile"));
         traceOverlayImageFile = new JTextField(20);
         traceOverlayImageFile.setText(GUIP.getTraceOverlayImageFile());
-          String traceImageHelp = Messages.getString("CommonSettingsDialog.TraceOverlayImageFile.tooltip");
-          traceOverlayImageFileLabel.setToolTipText(traceImageHelp);
-          traceOverlayImageFile.setToolTipText(traceImageHelp);
-          String traceImageChooserTitle = Messages.getString("CommonSettingsDialog.TraceOverlayImageFile.chooser.title");
-          JButton traceOverlayImageFileChooser = applicationIconButton(
+        String traceImageHelp = Messages.getString("CommonSettingsDialog.TraceOverlayImageFile.tooltip");
+        traceOverlayImageFileLabel.setToolTipText(traceImageHelp);
+        traceOverlayImageFile.setToolTipText(traceImageHelp);
+        String traceImageChooserTitle = Messages.getString("CommonSettingsDialog.TraceOverlayImageFile.chooser.title");
+        JButton traceOverlayImageFileChooser = applicationIconButton(
               "btnTraceOverlayImageFileChooser", 0xE2C8, traceImageChooserTitle);
         traceOverlayImageFileChooser.addActionListener(
-              e -> selectTraceOverlayImageFile(traceOverlayImageFile, getFrame()));
-          JPanel traceOverlayImageFileControl = applicationPathControl(
+            e -> selectTraceOverlayImageFile(traceOverlayImageFile, getFrame()));
+        JPanel traceOverlayImageFileControl = applicationPathControl(
               traceOverlayImageFile, traceOverlayImageFileChooser);
 
-          comps.add(List.of(createOverlayTraceGrid(
+        comps.add(List.of(createOverlayTraceGrid(
               traceOverlayTransparencyLabel, traceOverlayTransparencySlider, traceOverlayOpacityControl,
               traceOverlayScaleLabel, traceOverlayScaleSlider, traceOverlayScaleControl,
               traceOverlayOriginXLabel, traceOverlayOriginXSlider, traceOverlayOriginXControl,
@@ -2122,102 +2122,102 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         return createSettingsPanel(comps);
     }
 
-        static SettingsFormPanel createOverlayOverviewGrid(JComponent textShadow, JComponent conditionShadow) {
-          SettingsFormPanel grid = new SettingsFormPanel(
+    static SettingsFormPanel createOverlayOverviewGrid(JComponent textShadow, JComponent conditionShadow) {
+        SettingsFormPanel grid = new SettingsFormPanel(
               "CommonSettingsOverlayOverviewGrid", SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-          grid.addEqualWidthComponentGrid(2, textShadow, conditionShadow);
-          return grid;
-        }
+        grid.addEqualWidthComponentGrid(2, textShadow, conditionShadow);
+        return grid;
+    }
 
-        static SettingsFormPanel createOverlayPlanetaryGrid(JComponent titleColor, JComponent textColor,
-            JComponent backgroundColor, JComponent coldColor, JComponent hotColor,
-            JCheckBox showDefaults, JCheckBox showHeader, JCheckBox showLabels,
-            JCheckBox showValues, JCheckBox showIndicators, JLabel opacityLabel,
-            JSlider opacitySlider, JComponent opacityControl) {
-          SettingsFormPanel grid = new SettingsFormPanel(
+    static SettingsFormPanel createOverlayPlanetaryGrid(JComponent titleColor, JComponent textColor,
+        JComponent backgroundColor, JComponent coldColor, JComponent hotColor,
+        JCheckBox showDefaults, JCheckBox showHeader, JCheckBox showLabels,
+        JCheckBox showValues, JCheckBox showIndicators, JLabel opacityLabel,
+        JSlider opacitySlider, JComponent opacityControl) {
+        SettingsFormPanel grid = new SettingsFormPanel(
               "CommonSettingsOverlayPlanetaryGrid", SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-          grid.addEqualWidthComponentGrid(2, titleColor, textColor, backgroundColor, coldColor, hotColor);
-          grid.addEqualWidthComponentGrid(2,
+        grid.addEqualWidthComponentGrid(2, titleColor, textColor, backgroundColor, coldColor, hotColor);
+        grid.addEqualWidthComponentGrid(2,
               showDefaults, showHeader, showLabels, showValues, showIndicators);
-          opacityLabel.setLabelFor(opacitySlider);
-          grid.addEqualWidthComponentGrid(2, opacityLabel, opacityControl);
-          return grid;
-        }
+        opacityLabel.setLabelFor(opacitySlider);
+        grid.addEqualWidthComponentGrid(2, opacityLabel, opacityControl);
+        return grid;
+    }
 
-        static SettingsFormPanel createOverlayToastGrid(JCheckBox enabled, JCheckBox reportEvents,
-            JLabel durationLabel, JComponent duration, JLabel gapLabel, JComponent gap) {
-          SettingsFormPanel grid = new SettingsFormPanel(
+    static SettingsFormPanel createOverlayToastGrid(JCheckBox enabled, JCheckBox reportEvents,
+        JLabel durationLabel, JComponent duration, JLabel gapLabel, JComponent gap) {
+        SettingsFormPanel grid = new SettingsFormPanel(
               "CommonSettingsOverlayToastGrid", SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-          grid.addEqualWidthComponentGrid(2, enabled, reportEvents);
-                    durationLabel.setLabelFor(duration);
-                    gapLabel.setLabelFor(gap);
-                    grid.addEqualWidthComponentGrid(2, durationLabel, duration, gapLabel, gap);
-          return grid;
-        }
+        grid.addEqualWidthComponentGrid(2, enabled, reportEvents);
+        durationLabel.setLabelFor(duration);
+        gapLabel.setLabelFor(gap);
+        grid.addEqualWidthComponentGrid(2, durationLabel, duration, gapLabel, gap);
+        return grid;
+    }
 
-        static SettingsFormPanel createOverlayTraceGrid(
-            JLabel opacityLabel, JSlider opacitySlider, JComponent opacityControl,
-            JLabel scaleLabel, JSlider scaleSlider, JComponent scaleControl,
-            JLabel originXLabel, JSlider originXSlider, JComponent originXControl,
-            JLabel originYLabel, JSlider originYSlider, JComponent originYControl,
-            JLabel imageLabel, JTextField imageField, JComponent imageControl) {
-          SettingsFormPanel grid = new SettingsFormPanel(
+    static SettingsFormPanel createOverlayTraceGrid(
+        JLabel opacityLabel, JSlider opacitySlider, JComponent opacityControl,
+        JLabel scaleLabel, JSlider scaleSlider, JComponent scaleControl,
+        JLabel originXLabel, JSlider originXSlider, JComponent originXControl,
+        JLabel originYLabel, JSlider originYSlider, JComponent originYControl,
+        JLabel imageLabel, JTextField imageField, JComponent imageControl) {
+        SettingsFormPanel grid = new SettingsFormPanel(
               "CommonSettingsOverlayTraceGrid", SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-          opacityControl.putClientProperty("CommonSettingsDialog.labelFor", opacitySlider);
-          scaleControl.putClientProperty("CommonSettingsDialog.labelFor", scaleSlider);
-          originXControl.putClientProperty("CommonSettingsDialog.labelFor", originXSlider);
-          originYControl.putClientProperty("CommonSettingsDialog.labelFor", originYSlider);
-          grid.addEqualWidthComponentGrid(2,
-              createGameBoardFovField("TraceOpacity", opacityLabel, opacityControl),
-              createGameBoardFovField("TraceScale", scaleLabel, scaleControl),
-              createGameBoardFovField("TraceOriginX", originXLabel, originXControl),
-              createGameBoardFovField("TraceOriginY", originYLabel, originYControl));
-          imageLabel.setLabelFor(imageField);
-          grid.addEqualWidthComponentGrid(2, imageLabel, imageControl);
-          return grid;
-        }
+        opacityControl.putClientProperty("CommonSettingsDialog.labelFor", opacitySlider);
+        scaleControl.putClientProperty("CommonSettingsDialog.labelFor", scaleSlider);
+        originXControl.putClientProperty("CommonSettingsDialog.labelFor", originXSlider);
+        originYControl.putClientProperty("CommonSettingsDialog.labelFor", originYSlider);
+        grid.addEqualWidthComponentGrid(2,
+            createGameBoardFovField("TraceOpacity", opacityLabel, opacityControl),
+            createGameBoardFovField("TraceScale", scaleLabel, scaleControl),
+            createGameBoardFovField("TraceOriginX", originXLabel, originXControl),
+            createGameBoardFovField("TraceOriginY", originYLabel, originYControl));
+        imageLabel.setLabelFor(imageField);
+        grid.addEqualWidthComponentGrid(2, imageLabel, imageControl);
+        return grid;
+    }
 
-        static JPanel createOverlayValueControl(JSlider slider, JSpinner spinner, String unit) {
-          JPanel control = new JPanel(new BorderLayout(UIUtil.scaleForGUI(8), 0));
-          control.setOpaque(false);
-          slider.setPaintTicks(false);
-          slider.setPaintLabels(false);
-          control.add(slider, BorderLayout.CENTER);
+    static JPanel createOverlayValueControl(JSlider slider, JSpinner spinner, String unit) {
+        JPanel control = new JPanel(new BorderLayout(UIUtil.scaleForGUI(8), 0));
+        control.setOpaque(false);
+        slider.setPaintTicks(false);
+        slider.setPaintLabels(false);
+        control.add(slider, BorderLayout.CENTER);
 
-          JPanel value = new JPanel(new BorderLayout(UIUtil.scaleForGUI(3), 0));
-          value.setOpaque(false);
-          configureSliderValueSpinner(spinner);
-          value.add(spinner, BorderLayout.CENTER);
-          JLabel unitLabel = new JLabel(unit);
-          spinner.addPropertyChangeListener("enabled", event -> unitLabel.setEnabled(spinner.isEnabled()));
-          value.add(unitLabel, BorderLayout.EAST);
-          control.add(value, BorderLayout.EAST);
-          control.putClientProperty("CommonSettingsDialog.labelFor", slider);
+        JPanel value = new JPanel(new BorderLayout(UIUtil.scaleForGUI(3), 0));
+        value.setOpaque(false);
+        configureSliderValueSpinner(spinner);
+        value.add(spinner, BorderLayout.CENTER);
+        JLabel unitLabel = new JLabel(unit);
+        spinner.addPropertyChangeListener("enabled", event -> unitLabel.setEnabled(spinner.isEnabled()));
+        value.add(unitLabel, BorderLayout.EAST);
+        control.add(value, BorderLayout.EAST);
+        control.putClientProperty("CommonSettingsDialog.labelFor", slider);
 
-          boolean[] synchronizing = { false };
-          slider.addChangeListener(event -> {
+        boolean[] synchronizing = { false };
+        slider.addChangeListener(event -> {
             if (!synchronizing[0]) {
                 synchronizing[0] = true;
                 spinner.setValue(slider.getValue());
                 synchronizing[0] = false;
             }
-          });
-          spinner.addChangeListener(event -> {
+        });
+        spinner.addChangeListener(event -> {
             if (!synchronizing[0]) {
                 synchronizing[0] = true;
                 slider.setValue((int) spinner.getValue());
                 synchronizing[0] = false;
             }
-          });
-          spinner.setValue(slider.getValue());
-          return control;
-        }
+        });
+        spinner.setValue(slider.getValue());
+        return control;
+    }
 
-                private static void configureSliderValueSpinner(JSpinner spinner) {
-                    JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner.getEditor();
-                    editor.getTextField().setColumns(SLIDER_VALUE_COLUMNS);
-                    editor.getTextField().setHorizontalAlignment(SwingConstants.RIGHT);
-                }
+    private static void configureSliderValueSpinner(JSpinner spinner) {
+        JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner.getEditor();
+        editor.getTextField().setColumns(SLIDER_VALUE_COLUMNS);
+        editor.getTextField().setHorizontalAlignment(SwingConstants.RIGHT);
+    }
 
     private static void selectTraceOverlayImageFile(JTextField textField, JFrame frame) {
           fileChoose(textField, frame,
@@ -2254,24 +2254,24 @@ public class CommonSettingsDialog extends AbstractButtonDialog
                 });
             }
         });
-              comps.add(List.of(createMiniMapThemeGrid(minimapTheme, boardImageLabel)));
+        comps.add(List.of(createMiniMapThemeGrid(minimapTheme, boardImageLabel)));
 
         addLineSpacer(comps);
 
-              configureCheckBox(mmSymbol, null);
+        configureCheckBox(mmSymbol, null);
               configureCheckBox(gameSummaryMM, Messages.getString("CommonSettingsDialog.gameSummaryMM.tooltip",
-                  Configuration.gameSummaryImagesMMDir()));
+                Configuration.gameSummaryImagesMMDir()));
         JLabel gifGameSummaryRecordingLabel =
               new JLabel(Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.name"));
         String gifRecordingTooltip = Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.tooltip",
               Configuration.gameSummaryImagesMMDir());
         gifGameSummaryRecordingLabel.setToolTipText(gifRecordingTooltip);
         gifGameSummaryRecording.setToolTipText(gifRecordingTooltip);
-              configureCheckBox(drawFacingArrowsOnMiniMap, null);
-              configureCheckBox(drawSensorRangeOnMiniMap, null);
-              configureCheckBox(paintBordersOnMiniMap, null);
-              configureCheckBox(showUnitDisplayNamesOnMinimap,
-                  Messages.getString("CommonSettingsDialog.showUnitDisplayNamesOnMinimap.tooltip"));
+        configureCheckBox(drawFacingArrowsOnMiniMap, null);
+        configureCheckBox(drawSensorRangeOnMiniMap, null);
+        configureCheckBox(paintBordersOnMiniMap, null);
+        configureCheckBox(showUnitDisplayNamesOnMinimap,
+            Messages.getString("CommonSettingsDialog.showUnitDisplayNamesOnMinimap.tooltip"));
 
         SpinnerNumberModel movePathPersistenceModel = new SpinnerNumberModel(GUIP.getMovePathPersistenceOnMiniMap(),
               0,
@@ -2282,9 +2282,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         movePathPersistenceOnMiniMap.setToolTipText(Messages.getString(
               "CommonSettingsDialog.movePathPersistence.tooltip"));
         JLabel movePathPersistenceOnMiniMapLabel = new JLabel(Messages.getString(
-              "CommonSettingsDialog.movePathPersistence"));
+            "CommonSettingsDialog.movePathPersistence"));
         movePathPersistenceOnMiniMapLabel.setLabelFor(movePathPersistenceOnMiniMap);
-          comps.add(List.of(createMiniMapDisplayGrid(
+        comps.add(List.of(createMiniMapDisplayGrid(
               mmSymbol, gameSummaryMM,
               gifGameSummaryRecordingLabel, gifGameSummaryRecording,
               drawFacingArrowsOnMiniMap, drawSensorRangeOnMiniMap,
@@ -2294,30 +2294,30 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         return createSettingsPanel(comps);
     }
 
-        static SettingsFormPanel createMiniMapThemeGrid(JComponent themeSelector, JComponent preview) {
-          SettingsFormPanel grid = new SettingsFormPanel("CommonSettingsMiniMapThemeGrid",
+    static SettingsFormPanel createMiniMapThemeGrid(JComponent themeSelector, JComponent preview) {
+        SettingsFormPanel grid = new SettingsFormPanel("CommonSettingsMiniMapThemeGrid",
               SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-          grid.addEqualWidthComponentGrid(2, themeSelector, preview);
-          return grid;
-        }
+        grid.addEqualWidthComponentGrid(2, themeSelector, preview);
+        return grid;
+    }
 
-        static SettingsFormPanel createMiniMapDisplayGrid(
-            JCheckBox symbols, JCheckBox summaryImage,
-            JLabel recordingLabel, JComponent recordingControl,
-            JCheckBox facingArrows, JCheckBox sensorRange,
-            JCheckBox borders, JCheckBox unitNames,
-            JLabel persistenceLabel, JComponent persistenceControl) {
-          SettingsFormPanel grid = new SettingsFormPanel("CommonSettingsMiniMapDisplayGrid",
+    static SettingsFormPanel createMiniMapDisplayGrid(
+        JCheckBox symbols, JCheckBox summaryImage,
+        JLabel recordingLabel, JComponent recordingControl,
+        JCheckBox facingArrows, JCheckBox sensorRange,
+        JCheckBox borders, JCheckBox unitNames,
+        JLabel persistenceLabel, JComponent persistenceControl) {
+        SettingsFormPanel grid = new SettingsFormPanel("CommonSettingsMiniMapDisplayGrid",
               SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-          recordingLabel.setLabelFor(recordingControl);
-          persistenceLabel.setLabelFor(persistenceControl);
-          grid.addEqualWidthComponentGrid(2, symbols, summaryImage);
-          grid.addEqualWidthComponentGrid(2, recordingLabel, recordingControl);
-          grid.addEqualWidthComponentGrid(2, facingArrows, sensorRange);
-          grid.addEqualWidthComponentGrid(2, borders, unitNames);
-          grid.addEqualWidthComponentGrid(2, persistenceLabel, persistenceControl);
-          return grid;
-        }
+        recordingLabel.setLabelFor(recordingControl);
+        persistenceLabel.setLabelFor(persistenceControl);
+        grid.addEqualWidthComponentGrid(2, symbols, summaryImage);
+        grid.addEqualWidthComponentGrid(2, recordingLabel, recordingControl);
+        grid.addEqualWidthComponentGrid(2, facingArrows, sensorRange);
+        grid.addEqualWidthComponentGrid(2, borders, unitNames);
+        grid.addEqualWidthComponentGrid(2, persistenceLabel, persistenceControl);
+        return grid;
+    }
 
     private static class PlayerColourHelper {
         PlayerColour pc;
@@ -2411,9 +2411,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         String mmlPathChooserTitle = Messages.getString("CommonSettingsDialog.mmlPath.chooser.title");
         JButton mmlPathChooser = applicationIconButton("btnMmlPathChooser", 0xE2C8, mmlPathChooserTitle);
         mmlPathChooser.addActionListener(e -> fileChoose(mmlPath,
-              getFrame(),
-              mmlPathChooserTitle,
-              false));
+            getFrame(),
+            mmlPathChooserTitle,
+            false));
         row = new ArrayList<>();
         row.add(mmlPathLabel);
         row.add(applicationPathControl(mmlPath, mmlPathChooser));
@@ -2528,7 +2528,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         gameLogFilenameLabel = new JLabel(Messages.getString("CommonSettingsDialog.logFileName"));
         gameLogFilename = new JTextField(15);
         JLabel autoResolveLogFilenameLabel = new JLabel(
-              Messages.getString("CommonSettingsDialog.autoResolveLogFileName"));
+            Messages.getString("CommonSettingsDialog.autoResolveLogFileName"));
         autoResolveLogFilename = new JTextField(15);
         configureCheckBox(stampFilenames, null);
 
@@ -2539,7 +2539,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
               datasetLogging, keepGameLog,
               gameLogFilenameLabel, gameLogFilename,
               autoResolveLogFilenameLabel, autoResolveLogFilename,
-              stampFilenames,
+            stampFilenames,
               stampFormatLabel, stampFormat));
         comps.add(row);
 
@@ -2972,13 +2972,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         csbUnitTooltipArmorMiniIntact.setColour(GUIP.getUnitTooltipArmorMiniColorIntact());
         csbUnitTooltipArmorMiniPartial.setColour(GUIP.getUnitTooltipArmorMiniColorPartialDamage());
         csbUnitTooltipArmorMiniDamaged.setColour(GUIP.getUnitTooltipArmorMiniColorDamaged());
-          selectTooltipSymbol(unitTooltipArmorMiniArmorCharCbo, GUIP.getUnitToolTipArmorMiniArmorChar());
-          selectTooltipSymbol(unitTooltipArmorMiniInternalStructureCharCbo, GUIP.getUnitToolTipArmorMiniISChar());
-          selectTooltipSymbol(unitTooltipArmorMiniCriticalCharCbo, GUIP.getUnitToolTipArmorMiniCriticalChar());
-          selectTooltipSymbol(unitTooltipArmorMiniDestroyedCharCbo, GUIP.getUnitToolTipArmorMiniDestroyedChar());
-          selectTooltipSymbol(unitTooltipArmorMiniCapArmorCharCbo, GUIP.getUnitToolTipArmorMiniCapArmorChar());
-          unitTooltipArmorMiniUnitsPerBlockSpinner.setValue(
-              Math.max(1, GUIP.getUnitToolTipArmorMiniUnitsPerBlock()));
+        selectTooltipSymbol(unitTooltipArmorMiniArmorCharCbo, GUIP.getUnitToolTipArmorMiniArmorChar());
+        selectTooltipSymbol(unitTooltipArmorMiniInternalStructureCharCbo, GUIP.getUnitToolTipArmorMiniISChar());
+        selectTooltipSymbol(unitTooltipArmorMiniCriticalCharCbo, GUIP.getUnitToolTipArmorMiniCriticalChar());
+        selectTooltipSymbol(unitTooltipArmorMiniDestroyedCharCbo, GUIP.getUnitToolTipArmorMiniDestroyedChar());
+        selectTooltipSymbol(unitTooltipArmorMiniCapArmorCharCbo, GUIP.getUnitToolTipArmorMiniCapArmorChar());
+        unitTooltipArmorMiniUnitsPerBlockSpinner.setValue(
+            Math.max(1, GUIP.getUnitToolTipArmorMiniUnitsPerBlock()));
         unitTooltipFontSizeModCbo.setSelectedItem(GUIP.getUnitToolTipFontSizeMod());
 
         csbReportLinkColor.setColour(GUIP.getReportLinkColor());
@@ -3169,8 +3169,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         CLIENT_PREFERENCES.setShowUnitId(showUnitId.isSelected());
         CLIENT_PREFERENCES.setShowAutoResolvePanel(showAutoResolvePanel.isSelected());
         CLIENT_PREFERENCES.setFavoritePrincessBehaviorSetting(
-              (String) favoritePrincessBehaviorSetting.getSelectedItem());
-          saveAdvancedSettingsControls();
+            (String) favoritePrincessBehaviorSetting.getSelectedItem());
+        saveAdvancedSettingsControls();
         if ((clientgui != null) && (clientgui.getBoardView() != null)) {
             clientgui.getBoardView().updateEntityLabels();
         }
@@ -3340,22 +3340,22 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             clientgui.updateButtonPanel(GamePhase.TARGETING);
         }
 
-                String[] unitDisplayPositions = {
+        String[] unitDisplayPositions = {
                         UnitDisplayPanel.NON_TABBED_A1, UnitDisplayPanel.NON_TABBED_B1, UnitDisplayPanel.NON_TABBED_C1,
                         UnitDisplayPanel.NON_TABBED_A2, UnitDisplayPanel.NON_TABBED_B2, UnitDisplayPanel.NON_TABBED_C2
-                };
-                boolean unitDisplayNonTabbedChanged = false;
-                int savedPositions = Math.min(unitDisplayNonTabbed.getSize(), unitDisplayPositions.length);
-                for (int index = 0; index < savedPositions; index++) {
-                        String position = unitDisplayPositions[index];
-                        String panelName = unitDisplayNonTabbed.get(index);
-                        if (!panelName.equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(position))) {
-                                UNIT_DISPLAY_ORDER_PREFERENCES.setValue(position, panelName);
-                                unitDisplayNonTabbedChanged = true;
-                        }
-                }
-                if (unitDisplayNonTabbedChanged && (clientgui != null) && !GUIP.getUnitDisplayStartTabbed()) {
-                        clientgui.getUnitDisplay().setDisplayNonTabbed();
+        };
+        boolean unitDisplayNonTabbedChanged = false;
+        int savedPositions = Math.min(unitDisplayNonTabbed.getSize(), unitDisplayPositions.length);
+        for (int index = 0; index < savedPositions; index++) {
+            String position = unitDisplayPositions[index];
+            String panelName = unitDisplayNonTabbed.get(index);
+            if (!panelName.equals(UNIT_DISPLAY_ORDER_PREFERENCES.getString(position))) {
+                UNIT_DISPLAY_ORDER_PREFERENCES.setValue(position, panelName);
+                unitDisplayNonTabbedChanged = true;
+            }
+        }
+        if (unitDisplayNonTabbedChanged && (clientgui != null) && !GUIP.getUnitDisplayStartTabbed()) {
+            clientgui.getUnitDisplay().setDisplayNonTabbed();
         }
 
         GUIP.setUnitDisplayAutoDisplayReportPhase(unitDisplayAutoDisplayReportCombo.getSelectedIndex());
@@ -3415,13 +3415,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setUnitTooltipArmorMiniColorIntact(csbUnitTooltipArmorMiniIntact.getColour());
         GUIP.setUnitTooltipArmorMiniColorPartialDamage(csbUnitTooltipArmorMiniPartial.getColour());
         GUIP.setUnitTooltipArmorMiniColorDamaged(csbUnitTooltipArmorMiniDamaged.getColour());
-          GUIP.setUnitToolTipArmorMiniArmorChar(selectedTooltipSymbol(unitTooltipArmorMiniArmorCharCbo));
-          GUIP.setUnitToolTipArmorMiniISChar(selectedTooltipSymbol(unitTooltipArmorMiniInternalStructureCharCbo));
-          GUIP.setUnitToolTipArmorMiniCriticalChar(selectedTooltipSymbol(unitTooltipArmorMiniCriticalCharCbo));
-          GUIP.setUnitTooltipArmorMiniDestroyedChar(selectedTooltipSymbol(unitTooltipArmorMiniDestroyedCharCbo));
-          GUIP.setUnitTooltipArmorMiniCapArmorChar(selectedTooltipSymbol(unitTooltipArmorMiniCapArmorCharCbo));
+        GUIP.setUnitToolTipArmorMiniArmorChar(selectedTooltipSymbol(unitTooltipArmorMiniArmorCharCbo));
+        GUIP.setUnitToolTipArmorMiniISChar(selectedTooltipSymbol(unitTooltipArmorMiniInternalStructureCharCbo));
+        GUIP.setUnitToolTipArmorMiniCriticalChar(selectedTooltipSymbol(unitTooltipArmorMiniCriticalCharCbo));
+        GUIP.setUnitTooltipArmorMiniDestroyedChar(selectedTooltipSymbol(unitTooltipArmorMiniDestroyedCharCbo));
+        GUIP.setUnitTooltipArmorMiniCapArmorChar(selectedTooltipSymbol(unitTooltipArmorMiniCapArmorCharCbo));
 
-          GUIP.setUnitTooltipArmorMiniUnitsPerBlock((int) unitTooltipArmorMiniUnitsPerBlockSpinner.getValue());
+        GUIP.setUnitTooltipArmorMiniUnitsPerBlock((int) unitTooltipArmorMiniUnitsPerBlockSpinner.getValue());
         GUIP.setUnitToolTipFontSize((String) unitTooltipFontSizeModCbo.getSelectedItem());
 
         Object unitToolTipFontSize = unitTooltipFontSizeModCbo.getSelectedItem();
@@ -3464,7 +3464,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setPlanetaryConditionsShowValues(planetaryConditionsShowValues.isSelected());
         GUIP.setPlanetaryConditionsShowIndicators(planetaryConditionsShowIndicators.isSelected());
         GUIP.setPlanetaryConditionsBackgroundTransparency(
-              planetaryConditionsBackgroundTransparency.getValue());
+            planetaryConditionsBackgroundTransparency.getValue());
 
         GUIP.setToastEnabled(toastEnabled.isSelected());
         GUIP.setToastDurationSeconds((Integer) toastDurationSpinner.getValue());
@@ -3559,14 +3559,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     static List<CommonSettingsPane.OptionSection> createKeyBindSections(JComponent content) {
         return List.of(new CommonSettingsPane.OptionSection("keyBinds.commands",
-              Messages.getString("CommonSettingsDialog.section.keyBinds.commands.title"),
-              Messages.getString("CommonSettingsDialog.section.keyBinds.commands.summary"),
+            Messages.getString("CommonSettingsDialog.section.keyBinds.commands.title"),
+            Messages.getString("CommonSettingsDialog.section.keyBinds.commands.summary"),
               content, false));
     }
 
     static SettingsCheckBox createKeyBindTabNavigationControl() {
         return new SettingsCheckBox(SETTINGS_TEXT, "CommonSettingsDialog.keyBinds.tabNavigation",
-              List.of(IMPORTANT_BADGE));
+            List.of(IMPORTANT_BADGE));
     }
 
     static SettingsButton createKeyBindResetButton() {
@@ -3579,21 +3579,21 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         keyBindTabNavigation.addActionListener(e -> updateKeybindsFocusTraversal());
 
         // Create header: labels for describing what each column does
-          JLabel commandHeader = new JLabel(Messages.getString("CommonSettingsDialog.keyBinds.column.command"),
-              SwingConstants.CENTER);
+        JLabel commandHeader = new JLabel(Messages.getString("CommonSettingsDialog.keyBinds.column.command"),
+            SwingConstants.CENTER);
         String msg_tooltipName = Messages.getString("CommonSettingsDialog.keyBinds.tooltipName");
-          commandHeader.setToolTipText(msg_tooltipName);
+        commandHeader.setToolTipText(msg_tooltipName);
         String modifierColumn = Messages.getString("CommonSettingsDialog.keyBinds.column.modifier");
-          JLabel modifierHeader = new JLabel(modifierColumn, SwingConstants.CENTER);
+        JLabel modifierHeader = new JLabel(modifierColumn, SwingConstants.CENTER);
         String msg_tooltipModifier = Messages.getString("CommonSettingsDialog.keyBinds.tooltipModifier");
-          modifierHeader.setToolTipText(msg_tooltipModifier);
+        modifierHeader.setToolTipText(msg_tooltipModifier);
         String keyColumn = Messages.getString("CommonSettingsDialog.keyBinds.column.key");
-          JLabel keyHeader = new JLabel(keyColumn, SwingConstants.CENTER);
+        JLabel keyHeader = new JLabel(keyColumn, SwingConstants.CENTER);
         String msg_tooltipKey = Messages.getString("CommonSettingsDialog.keyBinds.tooltipKey");
         String keyHelp = msg_tooltipKey + " " + msg_esc;
-          keyHeader.setToolTipText(keyHelp);
-          JPanel keyBinds = createKeyBindGrid(commandHeader, modifierHeader, keyHeader);
-          int keyBindRow = 2;
+        keyHeader.setToolTipText(keyHelp);
+        JPanel keyBinds = createKeyBindGrid(commandHeader, modifierHeader, keyHeader);
+        int keyBindRow = 2;
 
         // Create maps to retrieve the text fields for saving
         int numBinds = KeyCommandBind.values().length;
@@ -3701,7 +3701,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         }
         markDuplicateBinds();
         return createKeyBindSectionContent(keyBindTabNavigation, defaultKeyBindButton, keyBinds);
-        }
+    }
 
     static JPanel createKeyBindGrid(JComponent commandHeader, JComponent modifierHeader, JComponent keyHeader) {
         JPanel grid = new JPanel(new GridBagLayout());
@@ -3731,8 +3731,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         }
     }
 
-        static JPanel createKeyBindSectionContent(JComponent navigationControl, JComponent resetControl,
-          JComponent bindingsGrid) {
+    static JPanel createKeyBindSectionContent(JComponent navigationControl, JComponent resetControl,
+        JComponent bindingsGrid) {
         int gap = UIUtil.scaleForGUI(12);
         SettingsFormPanel actions = new SettingsFormPanel("CommonSettingsKeyBindingsActions", 0, 0);
         actions.addEqualWidthComponentGrid(2, navigationControl, resetControl);
@@ -3758,127 +3758,127 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     private JPanel aiDisplayPanel() {
         List<List<Component>> comps = new ArrayList<>();
-          configureCheckBox(showAutoResolvePanel,
-              Messages.getString("CommonSettingsDialog.showAutoResolvePanel.tooltip"));
+        configureCheckBox(showAutoResolvePanel,
+            Messages.getString("CommonSettingsDialog.showAutoResolvePanel.tooltip"));
         favoritePrincessBehaviorSetting = new MMComboBox<>("favoritePrincessBehaviorSetting",
-              BehaviorSettingsFactory.getInstance().getBehaviorNameList());
+            BehaviorSettingsFactory.getInstance().getBehaviorNameList());
         favoritePrincessBehaviorSetting.setToolTipText(Messages.getString(
-              "CommonSettingsDialog.favoritePrincessBehaviorSettingTooltip"));
+            "CommonSettingsDialog.favoritePrincessBehaviorSettingTooltip"));
         favoritePrincessBehaviorSetting.setSelectedItem(CLIENT_PREFERENCES.getFavoritePrincessBehaviorSetting());
-          configureCheckBox(enableExperimentalBotFeatures,
-              Messages.getString("CommonSettingsDialog.enableExperimentalBotFeatures.tooltip"));
+        configureCheckBox(enableExperimentalBotFeatures,
+            Messages.getString("CommonSettingsDialog.enableExperimentalBotFeatures.tooltip"));
 
-          JLabel favoriteBehaviorLabel = new JLabel(Messages.getString(
-              "CommonSettingsDialog.favoritePrincessBehaviorSetting"));
-          favoriteBehaviorLabel.setToolTipText(Messages.getString(
-              "CommonSettingsDialog.favoritePrincessBehaviorSettingTooltip"));
+        JLabel favoriteBehaviorLabel = new JLabel(Messages.getString(
+            "CommonSettingsDialog.favoritePrincessBehaviorSetting"));
+        favoriteBehaviorLabel.setToolTipText(Messages.getString(
+            "CommonSettingsDialog.favoritePrincessBehaviorSettingTooltip"));
           comps.add(List.of(createAiDisplayGrid(showAutoResolvePanel, enableExperimentalBotFeatures,
               favoriteBehaviorLabel, favoritePrincessBehaviorSetting)));
 
         return createSettingsPanel(comps);
     }
 
-        static SettingsFormPanel createAiDisplayGrid(JCheckBox autoResolve, JCheckBox experimental,
-            JLabel favoriteBehaviorLabel, JComponent favoriteBehaviorControl) {
-          SettingsFormPanel grid = new SettingsFormPanel(
+    static SettingsFormPanel createAiDisplayGrid(JCheckBox autoResolve, JCheckBox experimental,
+        JLabel favoriteBehaviorLabel, JComponent favoriteBehaviorControl) {
+        SettingsFormPanel grid = new SettingsFormPanel(
               "CommonSettingsAiDisplayGrid", SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-          grid.addEqualWidthComponentGrid(2, autoResolve, experimental);
-          favoriteBehaviorLabel.setLabelFor(favoriteBehaviorControl);
-          grid.addEqualWidthComponentGrid(2, favoriteBehaviorLabel, favoriteBehaviorControl);
-          return grid;
-        }
+        grid.addEqualWidthComponentGrid(2, autoResolve, experimental);
+        favoriteBehaviorLabel.setLabelFor(favoriteBehaviorControl);
+        grid.addEqualWidthComponentGrid(2, favoriteBehaviorLabel, favoriteBehaviorControl);
+        return grid;
+    }
 
     private JPanel getPhasePanel() {
         List<List<Component>> comps = new ArrayList<>();
 
-          JLabel unitDisplayReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases"));
+        JLabel unitDisplayReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases"));
         unitDisplayAutoDisplayReportCombo = createHideShowComboBox(GUIP.getUnitDisplayAutoDisplayReportPhase());
-          JLabel unitDisplayNonReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases"));
+        JLabel unitDisplayNonReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases"));
         unitDisplayAutoDisplayNonReportCombo = createHideShowComboBox(GUIP.getUnitDisplayAutoDisplayNonReportPhase());
-          comps.add(List.of(createAutoDisplayPhaseGrid("UnitDisplay",
+        comps.add(List.of(createAutoDisplayPhaseGrid("UnitDisplay",
               unitDisplayReportLabel, unitDisplayAutoDisplayReportCombo,
               unitDisplayNonReportLabel, unitDisplayAutoDisplayNonReportCombo)));
 
         addLineSpacer(comps);
 
-          JLabel miniMapReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases"));
+        JLabel miniMapReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases"));
         miniMapAutoDisplayReportCombo = createHideShowComboBox(GUIP.getMinimapAutoDisplayReportPhase());
-          JLabel miniMapNonReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases"));
+        JLabel miniMapNonReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases"));
         miniMapAutoDisplayNonReportCombo = createHideShowComboBox(GUIP.getMinimapAutoDisplayNonReportPhase());
-          comps.add(List.of(createAutoDisplayPhaseGrid("MiniMap",
+        comps.add(List.of(createAutoDisplayPhaseGrid("MiniMap",
               miniMapReportLabel, miniMapAutoDisplayReportCombo,
               miniMapNonReportLabel, miniMapAutoDisplayNonReportCombo)));
 
         addLineSpacer(comps);
 
-          JLabel miniReportReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases"));
+        JLabel miniReportReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases"));
         miniReportAutoDisplayReportCombo = createHideShowComboBox(GUIP.getMiniReportAutoDisplayReportPhase());
-          JLabel miniReportNonReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases"));
+        JLabel miniReportNonReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases"));
         miniReportAutoDisplayNonReportCombo = createHideShowComboBox(GUIP.getMiniReportAutoDisplayNonReportPhase());
-          comps.add(List.of(createAutoDisplayPhaseGrid("MiniReport",
+        comps.add(List.of(createAutoDisplayPhaseGrid("MiniReport",
               miniReportReportLabel, miniReportAutoDisplayReportCombo,
               miniReportNonReportLabel, miniReportAutoDisplayNonReportCombo)));
 
         addLineSpacer(comps);
 
-          JLabel playerListReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases"));
+        JLabel playerListReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases"));
         playerListAutoDisplayReportCombo = createHideShowComboBox(GUIP.getPlayerListAutoDisplayReportPhase());
-          JLabel playerListNonReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases"));
+        JLabel playerListNonReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases"));
         playerListAutoDisplayNonReportCombo = createHideShowComboBox(GUIP.getPlayerListAutoDisplayNonReportPhase());
-          comps.add(List.of(createAutoDisplayPhaseGrid("PlayerList",
+        comps.add(List.of(createAutoDisplayPhaseGrid("PlayerList",
               playerListReportLabel, playerListAutoDisplayReportCombo,
               playerListNonReportLabel, playerListAutoDisplayNonReportCombo)));
 
         addLineSpacer(comps);
 
-          JLabel forceDisplayReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases"));
+        JLabel forceDisplayReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases"));
         forceDisplayAutoDisplayReportCombo = createHideShowComboBox(GUIP.getForceDisplayAutoDisplayReportPhase());
-          JLabel forceDisplayNonReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases"));
+        JLabel forceDisplayNonReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases"));
         forceDisplayAutoDisplayNonReportCombo = createHideShowComboBox(GUIP.getForceDisplayAutoDisplayNonReportPhase());
-          comps.add(List.of(createAutoDisplayPhaseGrid("ForceDisplay",
+        comps.add(List.of(createAutoDisplayPhaseGrid("ForceDisplay",
               forceDisplayReportLabel, forceDisplayAutoDisplayReportCombo,
               forceDisplayNonReportLabel, forceDisplayAutoDisplayNonReportCombo)));
 
         addLineSpacer(comps);
 
-          JLabel botCommandsReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases"));
+        JLabel botCommandsReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases"));
         botCommandsAutoDisplayReportCombo = createHideShowComboBox(GUIP.getBotCommandsAutoDisplayReportPhase());
-          JLabel botCommandsNonReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases"));
+        JLabel botCommandsNonReportLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases"));
         botCommandsAutoDisplayNonReportCombo = createHideShowComboBox(GUIP.getBotCommandsAutoDisplayNonReportPhase());
-          comps.add(List.of(createAutoDisplayPhaseGrid("BotCommands",
+        comps.add(List.of(createAutoDisplayPhaseGrid("BotCommands",
               botCommandsReportLabel, botCommandsAutoDisplayReportCombo,
               botCommandsNonReportLabel, botCommandsAutoDisplayNonReportCombo)));
 
         addLineSpacer(comps);
 
-          displayMoveDisplayDuringMovePhases = new JCheckBox(
+        displayMoveDisplayDuringMovePhases = new JCheckBox(
               Messages.getString("CommonSettingsDialog.tabsMove"), GUIP.getMoveDisplayTabDuringMovePhases());
-          displayFireDisplayDuringFirePhases = new JCheckBox(
+        displayFireDisplayDuringFirePhases = new JCheckBox(
               Messages.getString("CommonSettingsDialog.tabsFire"), GUIP.getFireDisplayTabDuringFiringPhases());
-          comps.add(List.of(createAutoDisplayTabGrid(
+        comps.add(List.of(createAutoDisplayTabGrid(
               displayMoveDisplayDuringMovePhases, displayFireDisplayDuringFirePhases)));
 
         return createSettingsPanel(comps);
     }
 
-        static SettingsFormPanel createAutoDisplayPhaseGrid(String name,
-            JLabel reportLabel, JComponent reportControl,
-            JLabel nonReportLabel, JComponent nonReportControl) {
-          SettingsFormPanel grid = new SettingsFormPanel(
+    static SettingsFormPanel createAutoDisplayPhaseGrid(String name,
+        JLabel reportLabel, JComponent reportControl,
+        JLabel nonReportLabel, JComponent nonReportControl) {
+        SettingsFormPanel grid = new SettingsFormPanel(
               "CommonSettingsAutoDisplay" + name + "Grid", SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-          reportLabel.setLabelFor(reportControl);
-          nonReportLabel.setLabelFor(nonReportControl);
-          grid.addEqualWidthComponentGrid(2,
+        reportLabel.setLabelFor(reportControl);
+        nonReportLabel.setLabelFor(nonReportControl);
+        grid.addEqualWidthComponentGrid(2,
               reportLabel, reportControl, nonReportLabel, nonReportControl);
-          return grid;
-        }
+        return grid;
+    }
 
-        static SettingsFormPanel createAutoDisplayTabGrid(JCheckBox movement, JCheckBox firing) {
-          SettingsFormPanel grid = new SettingsFormPanel(
+    static SettingsFormPanel createAutoDisplayTabGrid(JCheckBox movement, JCheckBox firing) {
+        SettingsFormPanel grid = new SettingsFormPanel(
               "CommonSettingsAutoDisplayTabGrid", SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-          grid.addEqualWidthComponentGrid(2, movement, firing);
-          return grid;
-        }
+        grid.addEqualWidthComponentGrid(2, movement, firing);
+        return grid;
+    }
 
     private void updateKeybindsFocusTraversal() {
         for (KeyCommandBind kcb : KeyCommandBind.values()) {
@@ -3890,7 +3890,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     }
 
     static int configureKeyBindFieldsForTabNavigation(boolean enabled, int keyCode,
-          JTextField modifierField, JTextField keyField) {
+        JTextField modifierField, JTextField keyField) {
         modifierField.setFocusTraversalKeysEnabled(enabled);
         keyField.setFocusTraversalKeysEnabled(enabled);
         if (enabled && (keyCode == KeyEvent.VK_TAB)) {
@@ -4004,29 +4004,29 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         firingPhaseCommands = new DefaultListModel<>();
         physicalPhaseCommands = new DefaultListModel<>();
         targetingPhaseCommands = new DefaultListModel<>();
-          List<JList<PhaseCommand>> commandLists = new ArrayList<>();
-          JPanel movement = getButtonOrderPane(movePhaseCommands, MoveCommand.values(), commandLists);
-          JPanel deployment = getButtonOrderPane(
+        List<JList<PhaseCommand>> commandLists = new ArrayList<>();
+        JPanel movement = getButtonOrderPane(movePhaseCommands, MoveCommand.values(), commandLists);
+        JPanel deployment = getButtonOrderPane(
               deployPhaseCommands, DeploymentDisplay.DeployCommand.values(), commandLists);
-          JPanel firing = getButtonOrderPane(
+        JPanel firing = getButtonOrderPane(
               firingPhaseCommands, FiringDisplay.FiringCommand.values(), commandLists);
-          JPanel physical = getButtonOrderPane(
+        JPanel physical = getButtonOrderPane(
               physicalPhaseCommands, PhysicalDisplay.PhysicalCommand.values(), commandLists);
-          JPanel targeting = getButtonOrderPane(
+        JPanel targeting = getButtonOrderPane(
               targetingPhaseCommands, TargetingPhaseDisplay.TargetingCommand.values(), commandLists);
-          setUniformButtonOrderCellSize(commandLists);
+        setUniformButtonOrderCellSize(commandLists);
 
         return List.of(
-              optionSection("buttonOrder.movement", movement, false),
-              optionSection("buttonOrder.deployment", deployment, false),
-              optionSection("buttonOrder.firing", firing, false),
-              optionSection("buttonOrder.physical", physical, false),
-              optionSection("buttonOrder.targeting", targeting, false));
+            optionSection("buttonOrder.movement", movement, false),
+            optionSection("buttonOrder.deployment", deployment, false),
+            optionSection("buttonOrder.firing", firing, false),
+            optionSection("buttonOrder.physical", physical, false),
+            optionSection("buttonOrder.targeting", targeting, false));
     }
 
     /** Constructs the button ordering panel for one phase. */
-        private JPanel getButtonOrderPane(DefaultListModel<PhaseCommand> list,
-            StatusBarPhaseDisplay.PhaseCommand[] commands, List<JList<PhaseCommand>> commandLists) {
+    private JPanel getButtonOrderPane(DefaultListModel<PhaseCommand> list,
+        StatusBarPhaseDisplay.PhaseCommand[] commands, List<JList<PhaseCommand>> commandLists) {
         Arrays.sort(commands, cmdComp);
 
         for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
@@ -4053,7 +4053,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         list.addMouseMotionListener(reorderAdapter);
         list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         list.setVisibleRowCount(Math.max(1,
-              (list.getModel().getSize() + columnCount - 1) / columnCount));
+            (list.getModel().getSize() + columnCount - 1) / columnCount));
         setUniformButtonOrderCellSize(List.of(list));
 
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)) {
@@ -4064,10 +4064,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog
                 if (availableWidth > 0) {
                     int rowCount = Math.max(1, list.getVisibleRowCount());
                     int renderedColumns = Math.max(1,
-                          (list.getModel().getSize() + rowCount - 1) / rowCount);
+                        (list.getModel().getSize() + rowCount - 1) / rowCount);
                     int preferredCellWidth = (int) list.getClientProperty(REORDER_LIST_CELL_WIDTH);
                     int cellWidth = Math.min(preferredCellWidth,
-                          Math.max(1, availableWidth / renderedColumns));
+                        Math.max(1, availableWidth / renderedColumns));
                     if (cellWidth != list.getFixedCellWidth()) {
                         list.setFixedCellWidth(cellWidth);
                     }
@@ -4158,9 +4158,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     private static List<JComponent> swingComponents(List<Component> row) {
         return row.stream()
-              .filter(JComponent.class::isInstance)
-              .map(JComponent.class::cast)
-              .toList();
+            .filter(JComponent.class::isInstance)
+            .map(JComponent.class::cast)
+            .toList();
     }
 
     private static boolean isSingleCheckBox(List<JComponent> components) {
@@ -4211,13 +4211,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     }
 
     static JPanel createUnitDefaultsGrid(JLabel protoMekLabel, JComponent protoMekControl,
-          JCheckBox... checkBoxes) {
-          SettingsFormPanel grid = new SettingsFormPanel("CommonSettingsUnitDefaultsGrid",
+        JCheckBox... checkBoxes) {
+        SettingsFormPanel grid = new SettingsFormPanel("CommonSettingsUnitDefaultsGrid",
               SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-          protoMekLabel.setLabelFor(protoMekControl);
-          grid.addEqualWidthComponentGrid(BEHAVIOR_OPTION_COLUMNS, protoMekLabel, protoMekControl);
-          grid.addEqualWidthComponentGrid(BEHAVIOR_OPTION_COLUMNS, checkBoxes);
-          return grid;
+        protoMekLabel.setLabelFor(protoMekControl);
+        grid.addEqualWidthComponentGrid(BEHAVIOR_OPTION_COLUMNS, protoMekLabel, protoMekControl);
+        grid.addEqualWidthComponentGrid(BEHAVIOR_OPTION_COLUMNS, checkBoxes);
+        return grid;
     }
 
     static SettingsFormPanel createBehaviorOptionsGrid(String name, JComponent... options) {
@@ -4227,26 +4227,26 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     }
 
     static SettingsFormPanel createBehaviorLoggingGrid(String name,
-          JCheckBox datasetLogging, JCheckBox keepGameLog,
-          JLabel gameLogLabel, JComponent gameLogControl,
-          JLabel autoResolveLogLabel, JComponent autoResolveLogControl,
-          JCheckBox stampFilenames,
-          JLabel dateFormatLabel, JComponent dateFormatControl) {
-    SettingsFormPanel grid = new SettingsFormPanel(name, SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
+        JCheckBox datasetLogging, JCheckBox keepGameLog,
+        JLabel gameLogLabel, JComponent gameLogControl,
+        JLabel autoResolveLogLabel, JComponent autoResolveLogControl,
+        JCheckBox stampFilenames,
+        JLabel dateFormatLabel, JComponent dateFormatControl) {
+        SettingsFormPanel grid = new SettingsFormPanel(name, SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
         grid.addEqualWidthComponentGrid(BEHAVIOR_OPTION_COLUMNS, datasetLogging, keepGameLog);
         gameLogLabel.setLabelFor(gameLogControl);
         grid.addEqualWidthComponentGrid(BEHAVIOR_OPTION_COLUMNS, gameLogLabel, gameLogControl);
         autoResolveLogLabel.setLabelFor(autoResolveLogControl);
         grid.addEqualWidthComponentGrid(BEHAVIOR_OPTION_COLUMNS, autoResolveLogLabel, autoResolveLogControl);
         grid.addEqualWidthComponentGrid(BEHAVIOR_OPTION_COLUMNS, stampFilenames);
-    dateFormatLabel.setLabelFor(dateFormatControl);
-    grid.addEqualWidthComponentGrid(BEHAVIOR_OPTION_COLUMNS, dateFormatLabel, dateFormatControl);
-    return grid;
-}
+        dateFormatLabel.setLabelFor(dateFormatControl);
+        grid.addEqualWidthComponentGrid(BEHAVIOR_OPTION_COLUMNS, dateFormatLabel, dateFormatControl);
+        return grid;
+    }
 
     static SettingsCheckBox createShowIpAddressesInChatCheckBox() {
         return new SettingsCheckBox(SETTINGS_TEXT, "CommonSettingsDialog.showIPAddressesInChat",
-              List.of(IMPORTANT_BADGE));
+            List.of(IMPORTANT_BADGE));
     }
 
     private static JButton applicationIconButton(String name, int codePoint, String accessibleName) {
@@ -4274,10 +4274,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         labels.put(17, new JLabel("170%"));
         labels.put(21, new JLabel("210%"));
         labels.put(24, new JLabel("240%"));
-          slider.setLabelTable(labels);
-          slider.setPaintTicks(true);
-          slider.setPaintLabels(true);
-          slider.setToolTipText(Messages.getString("CommonSettingsDialog.guiScaleTT"));
+        slider.setLabelTable(labels);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+        slider.setToolTipText(Messages.getString("CommonSettingsDialog.guiScaleTT"));
         return slider;
     }
 
@@ -4285,7 +4285,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         String title = Messages.getString("UserDirHelpDialog.title");
         JButton button = applicationIconButton("btnUserDirHelp", 0xE887, title);
         configureUserFilesHelpButton(button, Configuration.docsDir(),
-              documentUrl -> new HelpDialog(title, documentUrl, this).setVisible(true));
+            documentUrl -> new HelpDialog(title, documentUrl, this).setVisible(true));
         return button;
     }
 
@@ -4365,10 +4365,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     private static void setUniformWidth(List<? extends JComponent> components) {
         int width = components.stream()
-              .map(component -> Objects.requireNonNull(component).getPreferredSize())
-              .mapToInt(dimension -> dimension.width)
-              .max()
-              .orElse(0);
+            .map(component -> Objects.requireNonNull(component).getPreferredSize())
+            .mapToInt(dimension -> dimension.width)
+            .max()
+            .orElse(0);
         for (JComponent component : components) {
             JComponent nonNullComponent = Objects.requireNonNull(component);
             Dimension preferred = nonNullComponent.getPreferredSize();
@@ -4389,149 +4389,149 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     }
 
     private JPanel getAdvancedSettingsPanel() {
-          List<List<Component>> comps = new ArrayList<>();
+        List<List<Component>> comps = new ArrayList<>();
 
-          String backgroundHelp = Messages.getString("AdvancedOptions.Chatbox2BackColor.tooltip");
-          advancedChatboxBackgroundColor = new ColourSelectorButton(
-              Messages.getString("AdvancedOptions.Chatbox2BackColor.name"));
-          advancedChatboxBackgroundColor.setColour(GUIP.getChatbox2BackColor());
-          advancedChatboxBackgroundColor.setToolTipText(backgroundHelp);
+        String backgroundHelp = Messages.getString("AdvancedOptions.Chatbox2BackColor.tooltip");
+        advancedChatboxBackgroundColor = new ColourSelectorButton(
+            Messages.getString("AdvancedOptions.Chatbox2BackColor.name"));
+        advancedChatboxBackgroundColor.setColour(GUIP.getChatbox2BackColor());
+        advancedChatboxBackgroundColor.setToolTipText(backgroundHelp);
 
-          String opacityHelp = Messages.getString("AdvancedOptions.Chatbox2Transparency.tooltip");
-          advancedChatboxOpacity = new JSlider(0, 255);
-          advancedChatboxOpacity.setToolTipText(opacityHelp);
-          JSpinner opacityPercent = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
-          opacityPercent.setToolTipText(opacityHelp);
-          JPanel opacityControl = createGameBoardFovOpacityControl(advancedChatboxOpacity, opacityPercent);
-          opacityControl.setToolTipText(opacityHelp);
-          JLabel opacityLabel = new JLabel(Messages.getString("AdvancedOptions.Chatbox2Transparency.name"));
-          opacityLabel.setToolTipText(opacityHelp);
+        String opacityHelp = Messages.getString("AdvancedOptions.Chatbox2Transparency.tooltip");
+        advancedChatboxOpacity = new JSlider(0, 255);
+        advancedChatboxOpacity.setToolTipText(opacityHelp);
+        JSpinner opacityPercent = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
+        opacityPercent.setToolTipText(opacityHelp);
+        JPanel opacityControl = createGameBoardFovOpacityControl(advancedChatboxOpacity, opacityPercent);
+        opacityControl.setToolTipText(opacityHelp);
+        JLabel opacityLabel = new JLabel(Messages.getString("AdvancedOptions.Chatbox2Transparency.name"));
+        opacityLabel.setToolTipText(opacityHelp);
 
-          advancedChatboxAutoSlideDown = new JCheckBox(
-              Messages.getString("AdvancedOptions.Chatbox2AutoSlideDown.name"));
-          advancedChatboxAutoSlideDown.setToolTipText(
-              Messages.getString("AdvancedOptions.Chatbox2AutoSlideDown.tooltip"));
-          comps.add(List.of(createAdvancedChatGrid(
+        advancedChatboxAutoSlideDown = new JCheckBox(
+            Messages.getString("AdvancedOptions.Chatbox2AutoSlideDown.name"));
+        advancedChatboxAutoSlideDown.setToolTipText(
+            Messages.getString("AdvancedOptions.Chatbox2AutoSlideDown.tooltip"));
+        comps.add(List.of(createAdvancedChatGrid(
               advancedChatboxBackgroundColor, advancedChatboxAutoSlideDown,
               opacityLabel, advancedChatboxOpacity, opacityControl)));
 
-          addLineSpacer(comps);
+        addLineSpacer(comps);
 
-          advancedKeyRepeatDelay = createBoundedIntegerSpinner(
+        advancedKeyRepeatDelay = createBoundedIntegerSpinner(
               GUIP.getInt(GUIPreferences.ADVANCED_KEY_REPEAT_DELAY), 0, Integer.MAX_VALUE, 10);
-          advancedKeyRepeatRate = createBoundedIntegerSpinner(
+        advancedKeyRepeatRate = createBoundedIntegerSpinner(
               GUIP.getInt(GUIPreferences.ADVANCED_KEY_REPEAT_RATE), 0, 100, 1);
-          advancedMoveStepDelay = createBoundedIntegerSpinner(
+        advancedMoveStepDelay = createBoundedIntegerSpinner(
               GUIP.getMoveStepDelay(), 0, Integer.MAX_VALUE, 10);
-          JLabel keyRepeatDelayLabel = advancedFieldLabel(
+        JLabel keyRepeatDelayLabel = advancedFieldLabel(
               "AdvancedOptions.KeyRepeatDelay", advancedKeyRepeatDelay);
-          JLabel keyRepeatRateLabel = advancedFieldLabel(
+        JLabel keyRepeatRateLabel = advancedFieldLabel(
               "AdvancedOptions.KeyRepeatRate", advancedKeyRepeatRate);
-          JLabel moveStepDelayLabel = advancedFieldLabel(
+        JLabel moveStepDelayLabel = advancedFieldLabel(
               "AdvancedOptions.MoveStepDelay", advancedMoveStepDelay);
-          comps.add(List.of(createAdvancedTimingGrid(
+        comps.add(List.of(createAdvancedTimingGrid(
               keyRepeatDelayLabel, advancedKeyRepeatDelay,
               keyRepeatRateLabel, advancedKeyRepeatRate,
               moveStepDelayLabel, advancedMoveStepDelay)));
 
-          addLineSpacer(comps);
+        addLineSpacer(comps);
 
-          advancedShowDrawTime = advancedCheckBox("AdvancedOptions.ShowFPS");
-          advancedSkipSavePrompt = advancedCheckBox("AdvancedOptions.NoSaveNag");
-          advancedSaveLobbyOnStart = advancedCheckBox("AdvancedOptions.SaveLobbyOnStart");
-          comps.add(List.of(createAdvancedSafetyGrid(
+        advancedShowDrawTime = advancedCheckBox("AdvancedOptions.ShowFPS");
+        advancedSkipSavePrompt = advancedCheckBox("AdvancedOptions.NoSaveNag");
+        advancedSaveLobbyOnStart = advancedCheckBox("AdvancedOptions.SaveLobbyOnStart");
+        comps.add(List.of(createAdvancedSafetyGrid(
               advancedShowDrawTime, advancedSkipSavePrompt, advancedSaveLobbyOnStart)));
 
-          loadAdvancedSettingsControls();
-          return createSettingsPanel(comps);
+        loadAdvancedSettingsControls();
+        return createSettingsPanel(comps);
     }
 
-        static SettingsFormPanel createAdvancedChatGrid(JComponent backgroundColor, JCheckBox autoSlide,
-            JLabel opacityLabel, JSlider opacitySlider, JComponent opacityControl) {
-          SettingsFormPanel grid = new SettingsFormPanel(
+    static SettingsFormPanel createAdvancedChatGrid(JComponent backgroundColor, JCheckBox autoSlide,
+        JLabel opacityLabel, JSlider opacitySlider, JComponent opacityControl) {
+        SettingsFormPanel grid = new SettingsFormPanel(
               "CommonSettingsAdvancedChatGrid", SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-          grid.addEqualWidthComponentGrid(2, backgroundColor, autoSlide);
-          opacityLabel.setLabelFor(opacitySlider);
-          grid.addEqualWidthComponentGrid(2, opacityLabel, opacityControl);
-          return grid;
-        }
+        grid.addEqualWidthComponentGrid(2, backgroundColor, autoSlide);
+        opacityLabel.setLabelFor(opacitySlider);
+        grid.addEqualWidthComponentGrid(2, opacityLabel, opacityControl);
+        return grid;
+    }
 
-        static SettingsFormPanel createAdvancedTimingGrid(JLabel repeatDelayLabel, JComponent repeatDelay,
-            JLabel repeatRateLabel, JComponent repeatRate,
-            JLabel moveDelayLabel, JComponent moveDelay) {
-          SettingsFormPanel grid = new SettingsFormPanel(
+    static SettingsFormPanel createAdvancedTimingGrid(JLabel repeatDelayLabel, JComponent repeatDelay,
+        JLabel repeatRateLabel, JComponent repeatRate,
+        JLabel moveDelayLabel, JComponent moveDelay) {
+        SettingsFormPanel grid = new SettingsFormPanel(
               "CommonSettingsAdvancedTimingGrid", SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-          repeatDelayLabel.setLabelFor(repeatDelay);
-          repeatRateLabel.setLabelFor(repeatRate);
-          moveDelayLabel.setLabelFor(moveDelay);
-          grid.addEqualWidthComponentGrid(2,
+        repeatDelayLabel.setLabelFor(repeatDelay);
+        repeatRateLabel.setLabelFor(repeatRate);
+        moveDelayLabel.setLabelFor(moveDelay);
+        grid.addEqualWidthComponentGrid(2,
               repeatDelayLabel, repeatDelay, repeatRateLabel, repeatRate, moveDelayLabel, moveDelay);
-          return grid;
-        }
+        return grid;
+    }
 
-        static SettingsFormPanel createAdvancedSafetyGrid(JCheckBox drawTime, JCheckBox skipSavePrompt,
-            JCheckBox saveLobby) {
-          SettingsFormPanel grid = new SettingsFormPanel(
+    static SettingsFormPanel createAdvancedSafetyGrid(JCheckBox drawTime, JCheckBox skipSavePrompt,
+        JCheckBox saveLobby) {
+        SettingsFormPanel grid = new SettingsFormPanel(
               "CommonSettingsAdvancedSafetyGrid", SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
-          grid.addEqualWidthComponentGrid(2, drawTime, skipSavePrompt, saveLobby);
-          return grid;
-        }
+        grid.addEqualWidthComponentGrid(2, drawTime, skipSavePrompt, saveLobby);
+        return grid;
+    }
 
-        static JSpinner createBoundedIntegerSpinner(int value, int minimum, int maximum, int stepSize) {
-          JSpinner spinner = new JSpinner(new SpinnerNumberModel(
+    static JSpinner createBoundedIntegerSpinner(int value, int minimum, int maximum, int stepSize) {
+        JSpinner spinner = new JSpinner(new SpinnerNumberModel(
               Math.clamp(value, minimum, maximum), minimum, maximum, stepSize));
-          JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spinner, "#");
-          editor.getTextField().setColumns(8);
-          spinner.setEditor(editor);
-          return spinner;
-        }
+        JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spinner, "#");
+        editor.getTextField().setColumns(8);
+        spinner.setEditor(editor);
+        return spinner;
+    }
 
-        private static JLabel advancedFieldLabel(String keyBase, JComponent control) {
-          String helpText = Messages.getString(keyBase + ".tooltip");
-          JLabel label = new JLabel(Messages.getString(keyBase + ".name"));
-          label.setToolTipText(helpText);
-          control.setToolTipText(helpText);
-          return label;
-        }
+    private static JLabel advancedFieldLabel(String keyBase, JComponent control) {
+        String helpText = Messages.getString(keyBase + ".tooltip");
+        JLabel label = new JLabel(Messages.getString(keyBase + ".name"));
+        label.setToolTipText(helpText);
+        control.setToolTipText(helpText);
+        return label;
+    }
 
-        private static JCheckBox advancedCheckBox(String keyBase) {
-          JCheckBox checkBox = new JCheckBox(Messages.getString(keyBase + ".name"));
-          checkBox.setToolTipText(Messages.getString(keyBase + ".tooltip"));
-          return checkBox;
-        }
+    private static JCheckBox advancedCheckBox(String keyBase) {
+        JCheckBox checkBox = new JCheckBox(Messages.getString(keyBase + ".name"));
+        checkBox.setToolTipText(Messages.getString(keyBase + ".tooltip"));
+        return checkBox;
+    }
 
-        private void loadAdvancedSettingsControls() {
-          advancedChatboxBackgroundColor.setColour(GUIP.getChatbox2BackColor());
-          advancedChatboxOpacity.setValue(Math.clamp(GUIP.getChatBox2Transparency(), 0, 255));
-          advancedChatboxAutoSlideDown.setSelected(GUIP.getChatbox2AutoSlideDown());
-          advancedKeyRepeatDelay.setValue(Math.max(0,
-              GUIP.getInt(GUIPreferences.ADVANCED_KEY_REPEAT_DELAY)));
-          advancedKeyRepeatRate.setValue(Math.clamp(
+    private void loadAdvancedSettingsControls() {
+        advancedChatboxBackgroundColor.setColour(GUIP.getChatbox2BackColor());
+        advancedChatboxOpacity.setValue(Math.clamp(GUIP.getChatBox2Transparency(), 0, 255));
+        advancedChatboxAutoSlideDown.setSelected(GUIP.getChatbox2AutoSlideDown());
+        advancedKeyRepeatDelay.setValue(Math.max(0,
+            GUIP.getInt(GUIPreferences.ADVANCED_KEY_REPEAT_DELAY)));
+        advancedKeyRepeatRate.setValue(Math.clamp(
               GUIP.getInt(GUIPreferences.ADVANCED_KEY_REPEAT_RATE), 0, 100));
-          advancedMoveStepDelay.setValue(Math.max(0, GUIP.getMoveStepDelay()));
-          advancedShowDrawTime.setSelected(GUIP.getShowFPS());
-          advancedSkipSavePrompt.setSelected(GUIP.getNoSaveNag());
-          advancedSaveLobbyOnStart.setSelected(GUIP.getSaveLobbyOnStart());
-        }
+        advancedMoveStepDelay.setValue(Math.max(0, GUIP.getMoveStepDelay()));
+        advancedShowDrawTime.setSelected(GUIP.getShowFPS());
+        advancedSkipSavePrompt.setSelected(GUIP.getNoSaveNag());
+        advancedSaveLobbyOnStart.setSelected(GUIP.getSaveLobbyOnStart());
+    }
 
-        private void saveAdvancedSettingsControls() {
-          GUIP.setColor(GUIPreferences.ADVANCED_CHATBOX2_BACKCOLOR,
-              advancedChatboxBackgroundColor.getColour());
-          GUIP.setValue(GUIPreferences.ADVANCED_CHATBOX2_TRANSPARENCY,
-              advancedChatboxOpacity.getValue());
-          GUIP.setValue(GUIPreferences.ADVANCED_CHATBOX2_AUTO_SLIDE_DOWN,
-              advancedChatboxAutoSlideDown.isSelected());
-          GUIP.setValue(GUIPreferences.ADVANCED_KEY_REPEAT_DELAY,
-              (int) advancedKeyRepeatDelay.getValue());
-          GUIP.setValue(GUIPreferences.ADVANCED_KEY_REPEAT_RATE,
-              (int) advancedKeyRepeatRate.getValue());
-          GUIP.setValue(GUIPreferences.ADVANCED_MOVE_STEP_DELAY,
-              (int) advancedMoveStepDelay.getValue());
-          GUIP.setValue(GUIPreferences.ADVANCED_SHOW_FPS, advancedShowDrawTime.isSelected());
-          GUIP.setValue(GUIPreferences.ADVANCED_NO_SAVE_NAG, advancedSkipSavePrompt.isSelected());
-          GUIP.setValue(GUIPreferences.ADVANCED_SAVE_LOBBY_ON_START,
-              advancedSaveLobbyOnStart.isSelected());
-        }
+    private void saveAdvancedSettingsControls() {
+        GUIP.setColor(GUIPreferences.ADVANCED_CHATBOX2_BACKCOLOR,
+            advancedChatboxBackgroundColor.getColour());
+        GUIP.setValue(GUIPreferences.ADVANCED_CHATBOX2_TRANSPARENCY,
+            advancedChatboxOpacity.getValue());
+        GUIP.setValue(GUIPreferences.ADVANCED_CHATBOX2_AUTO_SLIDE_DOWN,
+            advancedChatboxAutoSlideDown.isSelected());
+        GUIP.setValue(GUIPreferences.ADVANCED_KEY_REPEAT_DELAY,
+            (int) advancedKeyRepeatDelay.getValue());
+        GUIP.setValue(GUIPreferences.ADVANCED_KEY_REPEAT_RATE,
+            (int) advancedKeyRepeatRate.getValue());
+        GUIP.setValue(GUIPreferences.ADVANCED_MOVE_STEP_DELAY,
+            (int) advancedMoveStepDelay.getValue());
+        GUIP.setValue(GUIPreferences.ADVANCED_SHOW_FPS, advancedShowDrawTime.isSelected());
+        GUIP.setValue(GUIPreferences.ADVANCED_NO_SAVE_NAG, advancedSkipSavePrompt.isSelected());
+        GUIP.setValue(GUIPreferences.ADVANCED_SAVE_LOBBY_ON_START,
+            advancedSaveLobbyOnStart.isSelected());
+    }
 
     @Override
     public void stateChanged(ChangeEvent evt) {

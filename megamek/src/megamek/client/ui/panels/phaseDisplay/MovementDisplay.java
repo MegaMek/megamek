@@ -1914,8 +1914,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // If it was walk-on deployment, invalidate the deployment
         if ((cmd != null) && cmd.contains(MoveStepType.DEPLOY)) {
-            currentEntity().setDeployed(false);
-            currentEntity().setPosition(null);
+            currentlySelectedEntity.setDeployed(false);
+            currentlySelectedEntity.setPosition(null);
         }
 
         // create new current and considered paths
@@ -2646,14 +2646,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         if (Game.rulesManager.getRulesGame().isWalkOnDeployment() && currentlySelectedEntity != null && cmd != null) {
             if (!currentlySelectedEntity.isDeployed() && boardViewEvent.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
+                DeploymentHelper deploymentHelper = new DeploymentHelper(clientgui);
+                if (!deploymentHelper.checkDeployment(game.getBoard(boardViewEvent.getBoardId()),
+                                                      currentlySelectedEntity,
+                                                      boardViewEvent.getCoords(),
+                                                      false)) {
+                    return;
+                }
                 if (game.getBoard(boardViewEvent.getBoardId())
                         .isLegalDeployment(boardViewEvent.getCoords(), currentlySelectedEntity)) {
                     currentlySelectedEntity.setPosition(boardViewEvent.getCoords());
-                    addStepToMovePath(MoveStepType.DEPLOY);
+                    currentlySelectedEntity.setBoardId(boardViewEvent.getBoardId());
                     currentlySelectedEntity.setDeployed(true);
+                    addStepToMovePath(MoveStepType.DEPLOY);
                     clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
-                } else {
-                    // Message about choosing a legal deployment area
+                    clientgui.updateFiringArc(currentlySelectedEntity);
+                    clientgui.showSensorRanges(currentlySelectedEntity);
+                    clientgui.boardViews().forEach(IBoardView::repaint);
                 }
                 return;
 
@@ -2663,6 +2672,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // check for shifty goodness
         if (shiftHeld == ((boardViewEvent.getModifiers() & InputEvent.SHIFT_DOWN_MASK) == 0)) {
             shiftHeld = (boardViewEvent.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
+        }
+
+        // Check for deployment and shift held
+        if (shiftHeld) {
+            MoveStep lastStep = cmd.getLastStep();
+            if ((lastStep != null) && lastStep.getType() == MoveStepType.DEPLOY) {
+                processDeploymentTurn(currentlySelectedEntity, boardViewEvent.getCoords());
+                return;
+            }
         }
 
         Coords currPosition = cmd != null ?
@@ -8736,13 +8754,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setStatusBarText(Messages.getString(statusBarKey));
     }
 
-    private void processTurn(Entity entity,
-                             Coords coords) {
+    private void processDeploymentTurn(Entity entity,
+                                       Coords coords) {
         entity.setFacing(entity.getPosition().direction(coords));
         entity.setSecondaryFacing(entity.getFacing());
+        cmd.removeLastStep();
+        addStepToMovePath(MoveStepType.DEPLOY);
         clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(entity));
         clientgui.updateFiringArc(entity);
         clientgui.showSensorRanges(entity);
-        // turnMode = false;
     }
 }

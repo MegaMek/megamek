@@ -129,7 +129,6 @@ public class DeploymentHelper {
 
     private void showWrongBoardTypeMessage(Board board,
                                            Entity entity) {
-        String title = Messages.getString("DeploymentDisplay.alertDialog.title");
         String boardType = switch (board.getBoardType()) {
             case CAPITAL_RADAR, RADAR -> "Radar";
             case SKY, SKY_WITH_TERRAIN -> "Atmospheric";

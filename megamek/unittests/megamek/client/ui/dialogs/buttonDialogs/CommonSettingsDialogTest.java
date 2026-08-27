@@ -1459,7 +1459,7 @@ class CommonSettingsDialogTest {
         assertEquals(buttonName, chooser.getName());
         assertEquals(chooserTitle, chooser.getToolTipText());
         assertEquals(chooserTitle, chooser.getAccessibleContext().getAccessibleName());
-        assertTrue(chooser.getIcon() != null);
+        assertTrue((chooser.getIcon() != null) || "...".equals(chooser.getText()));
         assertEquals(field.getPreferredSize().height, chooser.getPreferredSize().width);
         assertEquals(field.getPreferredSize().height, chooser.getPreferredSize().height);
         assertEquals(1, chooser.getActionListeners().length);

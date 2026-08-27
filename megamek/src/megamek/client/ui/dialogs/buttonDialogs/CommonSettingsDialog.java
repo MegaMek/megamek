@@ -4256,6 +4256,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         button.getAccessibleContext().setAccessibleName(accessibleName);
         button.setIcon(FontHandler.symbolIcon(codePoint,
               button.getFont().getSize() + UIUtil.scaleForGUI(2), button.getForeground()));
+        if (button.getIcon() == null) {
+            button.setText("...");
+        }
         return button;
     }
 

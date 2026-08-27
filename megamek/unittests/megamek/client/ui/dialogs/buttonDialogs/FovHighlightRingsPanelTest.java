@@ -86,6 +86,18 @@ class FovHighlightRingsPanelTest {
     }
 
     @Test
+    void rejectsDistanceThatClampsOntoExistingRange() {
+        AtomicInteger changes = new AtomicInteger();
+        FovHighlightRingsPanel panel = new FovHighlightRingsPanel(
+              "5 60", "0.3 1.0 1.0 ; 0.6 1.0 1.0", changes::incrementAndGet);
+
+        panel.setDistance(0, 999);
+
+        assertEquals("5 60", panel.getRadiiValue());
+        assertEquals(0, changes.get());
+    }
+
+    @Test
     void sizesIconButtonsToTheAdjacentControlHeight() {
         JButton button = new JButton();
         JSpinner control = new JSpinner();

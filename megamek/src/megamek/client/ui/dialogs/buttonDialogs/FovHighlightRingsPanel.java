@@ -252,11 +252,12 @@ final class FovHighlightRingsPanel extends JPanel {
     }
 
     private void updateDistance(RingRange range, int distance, JSpinner source) {
-        if (adjusting || (range.distance == distance)) {
+        int clampedDistance = Math.clamp(distance, MIN_DISTANCE, MAX_DISTANCE);
+        if (adjusting || (range.distance == clampedDistance)) {
             return;
         }
         boolean duplicate = ranges.stream()
-            .anyMatch(candidate -> (candidate != range) && (candidate.distance == distance));
+            .anyMatch(candidate -> (candidate != range) && (candidate.distance == clampedDistance));
         if (duplicate) {
             Toolkit.getDefaultToolkit().beep();
             if (source != null) {
@@ -266,7 +267,7 @@ final class FovHighlightRingsPanel extends JPanel {
             }
             return;
         }
-        range.distance = Math.clamp(distance, MIN_DISTANCE, MAX_DISTANCE);
+        range.distance = clampedDistance;
         sortRanges();
         rebuildRows();
         notifyChanged();

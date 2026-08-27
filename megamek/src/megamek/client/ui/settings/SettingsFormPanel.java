@@ -76,7 +76,7 @@ import megamek.client.ui.util.UIUtil;
  * for accessibility.</p>
  */
 public class SettingsFormPanel extends JPanel {
-    public static final int DEFAULT_LABEL_WIDTH = 300;
+    public static final int DEFAULT_LABEL_WIDTH = 350;
     public static final int DEFAULT_CONTROL_WIDTH = 220;
     public static final int GRID_COLUMN_GAP = 32;
 

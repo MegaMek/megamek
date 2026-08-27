@@ -200,11 +200,14 @@ class CommonSettingsPaneTest {
     }
 
     private static File factionAssetsDirectory() {
-        File factionsDirectory = new File("data/images/universe/factions");
-        if (factionsDirectory.isDirectory()) {
-            return factionsDirectory;
-        }
-        return new File("megamek", factionsDirectory.getPath());
+        List<File> candidates = List.of(
+            new File("../mm-data/data/images/universe/factions"),
+            new File("data/images/universe/factions"),
+            new File("megamek/data/images/universe/factions"));
+        return candidates.stream()
+            .filter(File::isDirectory)
+            .findFirst()
+            .orElse(candidates.getFirst());
     }
 
     private static CommonSettingsPane pane(JPanel main, JPanel audio) {

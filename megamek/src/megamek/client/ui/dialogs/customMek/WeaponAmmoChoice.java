@@ -33,11 +33,14 @@
 package megamek.client.ui.dialogs.customMek;
 
 import java.util.ArrayList;
-import javax.swing.JComboBox;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import megamek.client.ui.GBC2;
+import megamek.client.ui.comboBoxes.SearchableComboBox;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
@@ -55,8 +58,11 @@ public class WeaponAmmoChoice {
 
     // the weapon being displayed in this row
     private final WeaponMounted weapon;
-    private final ArrayList<AmmoMounted> matchingAmmoBins = new ArrayList<>();
-    private final JComboBox<String> comboAmmoBins = new JComboBox<>();
+    private final List<AmmoMounted> matchingAmmoBins = new ArrayList<>();
+    /** Munitions chosen in the Carried Munitions panel but not yet applied to their bins, keyed by bin. */
+    private final Map<AmmoMounted, AmmoType> pendingAmmoTypes = new HashMap<>();
+    /** The bin chooser, or {@code null} when the weapon has no bins to choose from and the row is not shown. */
+    private final SearchableComboBox<AmmoMounted> comboAmmoBins;
     private final Entity entity;
 
     /**
@@ -94,9 +100,11 @@ public class WeaponAmmoChoice {
 
         // don't bother displaying the row if there's no ammo to be swapped
         if (matchingAmmoBins.isEmpty()) {
+            comboAmmoBins = null;
             return;
         }
 
+        comboAmmoBins = new SearchableComboBox<>("comboAmmoBins", matchingAmmoBins, this::displayName);
         String weaponName = "(%s) %s:"
               .formatted(weapon.getEntity().getLocationAbbr(weapon.getLocation()), weapon.getShortName());
         parentPanel.add(new JLabel(weaponName), gbc.forLabel());
@@ -110,72 +118,63 @@ public class WeaponAmmoChoice {
     }
 
     /**
-     * Worker function that refreshes the combo box with "up-to-date" ammo names.
+     * Shows the bins with their current names and selects the bin the weapon is loaded from.
      */
     public void refreshAmmoBinNames() {
-        int selectedIndex = comboAmmoBins.getSelectedIndex();
-        comboAmmoBins.removeAllItems();
-
-        int currentIndex = 0;
-        for (Mounted<?> ammoBin : matchingAmmoBins) {
-            boolean isInternal = ammoBin.isOneShotAmmo() || ammoBin.isOneShot() || (ammoBin.getLocation() == -1);
-            String prefix = isInternal ? "(Internal) " :
-                  "(" + ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) + ") ";
-            String ammoBinName = prefix + ammoBin.getName();
-            comboAmmoBins.addItem(ammoBinName);
-
-            if (weapon.getLinked() == ammoBin) {
-                selectedIndex = currentIndex;
-            }
-
-            currentIndex++;
+        if (comboAmmoBins == null) {
+            return;
         }
-
-        if (selectedIndex >= 0) {
-            comboAmmoBins.setSelectedIndex(selectedIndex);
+        comboAmmoBins.refreshDisplayTexts();
+        boolean isLinkedBinListed = (weapon.getLinked() instanceof AmmoMounted linkedBin)
+              && matchingAmmoBins.contains(linkedBin);
+        if (isLinkedBinListed) {
+            comboAmmoBins.setSelectedItem(weapon.getLinked());
         }
     }
 
     /**
-     * Refreshes a single item in the ammo type combo box to display the correct ammo type name. Because the underlying
-     * ammo bin hasn't been updated yet, we carry out the name swap "in-place".
+     * Shows a bin under the name of the munition just chosen for it. Because the underlying ammo bin hasn't been
+     * updated yet, the new name is remembered here and used until the choice is applied.
      *
      * @param ammoBin          The ammo bin whose ammo type has probably changed.
      * @param selectedAmmoType The new ammo type.
      */
     public void refreshAmmoBinName(Mounted<?> ammoBin, AmmoType selectedAmmoType) {
-        int index;
-        boolean matchFound = false;
-
-        for (index = 0; index < matchingAmmoBins.size(); index++) {
-            if (matchingAmmoBins.get(index) == ammoBin) {
-                matchFound = true;
-                break;
-            }
+        if ((comboAmmoBins == null) || !(ammoBin instanceof AmmoMounted renamedBin)) {
+            return;
         }
-
-        if (matchFound) {
-            int currentBinIndex = comboAmmoBins.getSelectedIndex();
-
-            comboAmmoBins.removeItemAt(index);
-            comboAmmoBins.insertItemAt("(" +
-                  ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) +
-                  ") " +
-                  selectedAmmoType.getName(), index);
-
-            if (currentBinIndex == index) {
-                comboAmmoBins.setSelectedIndex(index);
-            }
+        if (!matchingAmmoBins.contains(renamedBin)) {
+            return;
         }
+        pendingAmmoTypes.put(renamedBin, selectedAmmoType);
+        comboAmmoBins.refreshDisplayTexts();
+    }
+
+    /**
+     * @param ammoBin the bin to describe
+     *
+     * @return the bin's location prefix and munition name, using a munition chosen but not yet applied when there
+     *       is one
+     */
+    private String displayName(AmmoMounted ammoBin) {
+        boolean isInternal = ammoBin.isOneShotAmmo() || ammoBin.isOneShot() || (ammoBin.getLocation() == -1);
+        String prefix = isInternal ? "(Internal) " :
+              "(" + ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) + ") ";
+        AmmoType pendingAmmoType = pendingAmmoTypes.get(ammoBin);
+        String munitionName = (pendingAmmoType == null) ? ammoBin.getName() : pendingAmmoType.getName();
+        return prefix + munitionName;
     }
 
     /**
      * Common functionality that applies the panel's current ammo bin choice to the panel's weapon.
      */
     public void applyChoice() {
-        int selectedIndex = comboAmmoBins.getSelectedIndex();
-        if ((selectedIndex >= 0) && (selectedIndex < matchingAmmoBins.size())) {
-            entity.loadWeapon(weapon, matchingAmmoBins.get(selectedIndex));
+        if (comboAmmoBins == null) {
+            return;
+        }
+        AmmoMounted selectedBin = comboAmmoBins.getSelectedItem();
+        if (selectedBin != null) {
+            entity.loadWeapon(weapon, selectedBin);
         }
     }
 }

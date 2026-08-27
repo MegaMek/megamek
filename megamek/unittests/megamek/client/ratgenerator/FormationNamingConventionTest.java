@@ -203,7 +203,7 @@ class FormationNamingConventionTest {
 
     @Test
     void wordOfBlakeDeclaresNoConventionSoItInheritsComStar() {
-        FormationNamingConvention wordOfBlake = parseConvention("WoB.xml");
+        FormationNamingConvention wordOfBlake = parseConvention("WOB.xml");
         assertTrue(wordOfBlake.isEmpty(),
               "WoB is expected to inherit the ComStar convention through parent=\"CS\","
               + " not to declare its own");

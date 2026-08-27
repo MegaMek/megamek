@@ -34,6 +34,7 @@ package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -161,6 +162,9 @@ public class ForceNode extends RulesetNode {
                     case "formation":
                         if (null == fd.getFormation()
                               || rule.predicates.containsKey("ifFormation")) {
+                            // What the rule offered, captured before the pick applies its result and changes the
+                            // properties the predicates were judged against.
+                            fd.setEligibleFormations(offeredFormations(rule, fd));
                             valueNode = rule.selectOption(fd, true);
                             if (valueNode == null) {
                                 break;
@@ -384,6 +388,28 @@ public class ForceNode extends RulesetNode {
 
     public String getEchelonName() {
         return echelonName;
+    }
+
+    /**
+     * The formation types a rule is offering this node, mapped to the weight the ruleset gave each.
+     *
+     * <p>Options carrying the same formation name have their weights merged, so the result reads as one entry per
+     * formation with the odds the ruleset actually assigns it.</p>
+     *
+     * @param rule the formation property rule about to be applied
+     * @param fd   the node the rule is being applied to
+     *
+     * @return the offered formations and their weights, in the order the ruleset declares them
+     */
+    private static Map<String, Integer> offeredFormations(OptionGroupNode rule, ForceDescriptor fd) {
+        Map<String, Integer> offered = new LinkedHashMap<>();
+        for (ValueNode option : rule.matchingOptions(fd)) {
+            String formationName = option.getContent();
+            if ((formationName != null) && !formationName.isBlank()) {
+                offered.merge(formationName.trim(), option.getWeight(), Integer::sum);
+            }
+        }
+        return offered;
     }
 
     public static ForceNode createFromXml(Node node) {

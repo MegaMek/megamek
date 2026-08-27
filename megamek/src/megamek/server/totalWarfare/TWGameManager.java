@@ -3101,7 +3101,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (!Game.rulesManager.getRulesGame().includeInMovement(phase, entity)) {
                     includeInPhase = false;
                 }
-                if (!includeInPhase && Game.rulesManager.getRulesGame().walkOnDeployment()) {
+                if (!includeInPhase && Game.rulesManager.getRulesGame().isWalkOnDeployment()) {
                     continue;
                 }
                 if ((entity instanceof SpaceStation) &&

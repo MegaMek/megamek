@@ -160,12 +160,12 @@ public class TWRulesGame extends RulesGame {
     }
 
     /**
-     * {@inheritDoc} Should we allow walkOnDeployment
+     * {@inheritDoc} Should we allow Walk On Deployment
      *
-     * @return
+     * @return read the variable and return it (default False)
      */
     @Override
-    public boolean walkOnDeployment() {
+    public boolean isWalkOnDeployment() {
         return walkOn;
     }
 }

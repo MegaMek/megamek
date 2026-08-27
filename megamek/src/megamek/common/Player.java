@@ -517,7 +517,7 @@ public final class Player extends TurnOrdered {
     }
 
     public int getStartWidth() {
-        if (Game.rulesManager.getRulesGame().walkOnDeployment()
+        if (Game.rulesManager.getRulesGame().isWalkOnDeployment()
               && startingPos != Board.START_ANY
               && startingPos != Board.START_CENTER
               && startingPos <= Board.NUM_ZONES) {

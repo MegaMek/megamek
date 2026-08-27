@@ -639,7 +639,7 @@ class LobbyMekPopup {
 
             // Late deployment
             JMenu lateMenu = new JMenu("Deployment round");
-            if (Game.rulesManager.getRulesGame().walkOnDeployment()) {
+            if (Game.rulesManager.getRulesGame().isWalkOnDeployment()) {
                 lateMenu.add(menuItem("Pre-game start", LMP_DEPLOY + "|-1" + eIds, true, listener));
             }
             lateMenu.add(menuItem("At game start", LMP_DEPLOY + "|0" + eIds, true, listener));

@@ -896,7 +896,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             return;
         }
 
-        if (md.contains(MoveStepType.DEPLOY) && Game.rulesManager.getRulesGame().walkOnDeployment()) {
+        if (md.contains(MoveStepType.DEPLOY) && Game.rulesManager.getRulesGame().isWalkOnDeployment()) {
             entity.setDeployed(true);
             if (entity.getPosition() == null) {
                 // assume it is at 0, but lets make sure.

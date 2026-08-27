@@ -93,7 +93,7 @@ public abstract class RulesGame {
      *
      * @param toMinefields OptionsConstants.ADVANCED_MINEFIELDS
      *
-     * @return
+     * @return Allow in core or TO
      */
     public abstract boolean allowMinefields(boolean toMinefields);
 
@@ -133,9 +133,9 @@ public abstract class RulesGame {
     /**
      * Is walk on deployment supported?
      *
-     * @return Default to false.
+     * @return Can they walk ok
      */
-    public abstract boolean walkOnDeployment();
+    public abstract boolean isWalkOnDeployment();
 
     /**
      * For use by TW to enable walk on deployment. Not used by Core

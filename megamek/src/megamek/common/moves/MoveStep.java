@@ -830,7 +830,7 @@ public class MoveStep implements Serializable {
                   + "it must exit, turn, then re-enter (TO:AR p.19)", entity.getDisplayName());
             setHullDown(false);
         }
-        
+
         // Update the entity's total MP used.
         addMpUsed(getMp());
 
@@ -3119,7 +3119,7 @@ public class MoveStep implements Serializable {
         final int prevEl = prevStep.getElevation();
         final EntityMovementMode moveMode = getEntity().getMovementMode();
         final Entity en = getEntity();
-        final Hex srcHex = game.getBoard(boardId).getHex(prevStep.getPosition());
+        final Hex srcHex = game.getBoard(boardId).getHex(prev);
         final Hex destHex = game.getBoard(boardId).getHex(getPosition());
         final boolean isInfantry = getEntity() instanceof Infantry;
         final boolean isSuperHeavyMek = (getEntity() instanceof Mek mek) && mek.isSuperHeavy();
@@ -4653,7 +4653,7 @@ public class MoveStep implements Serializable {
     /**
      * Set it is deployment
      *
-     * @param isDeploying
+     * @param isDeploying is the entity deploying in this step
      */
     public void setDeploying(boolean isDeploying) {
         this.isDeploying = isDeploying;

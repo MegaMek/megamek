@@ -11362,7 +11362,7 @@ public abstract class Entity extends TurnOrdered
             if (!isDeployed() && phase.isSetArtilleryAutoHitHexes() && isEligibleForArtyAutoHitHexes()) {
                 LOGGER.debug("Artillery Units Present and Advanced PreDesignate option enabled");
             } else {
-                if (Game.rulesManager.getRulesGame().walkOnDeployment() && phase.isMovement()) {
+                if (Game.rulesManager.getRulesGame().isWalkOnDeployment() && phase.isMovement()) {
                     // If they have not deployed yet and it is movement phase and walk on initiative is active
                     if (!isDeployed() && deployRound > getGame().getCurrentRound()) {
                         // They should not be active yet if not deployed yet and are not supposed to deploy yet
@@ -18001,7 +18001,7 @@ public abstract class Entity extends TurnOrdered
                 return getOwner().getStartWidth();
             }
         }
-        if (Game.rulesManager.getRulesGame().walkOnDeployment()
+        if (Game.rulesManager.getRulesGame().isWalkOnDeployment()
               && startingPos != Board.START_ANY
               && startingPos != Board.START_CENTER
               && startingPos <= Board.NUM_ZONES) {

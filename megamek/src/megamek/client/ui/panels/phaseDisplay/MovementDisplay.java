@@ -618,7 +618,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         // If it has not deployed yet, draw the deployment
-        if (Game.rulesManager.getRulesGame().walkOnDeployment() && !selectedEntity.isDeployed()) {
+        if (Game.rulesManager.getRulesGame().isWalkOnDeployment() && !selectedEntity.isDeployed()) {
             clientgui.boardViews().forEach(bv -> ((BoardView) bv).markDeploymentHexesFor(selectedEntity));
         }
     }
@@ -2578,7 +2578,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if (Game.rulesManager.getRulesGame().walkOnDeployment() && currentlySelectedEntity != null && cmd != null) {
+        if (Game.rulesManager.getRulesGame().isWalkOnDeployment() && currentlySelectedEntity != null && cmd != null) {
             if (!currentlySelectedEntity.isDeployed() && boardViewEvent.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
                 if (game.getBoard(boardViewEvent.getBoardId())
                       .isLegalDeployment(boardViewEvent.getCoords(), currentlySelectedEntity)) {
@@ -6217,8 +6217,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
      *
      * <p>The warnings mark hexes where the unit's weight would bring a building down, and they are worked out once
      * when the unit is selected. A gamemaster removing a building, or changing its construction factor, changes the
-     * answer without the unit having moved, so they have to be worked out again - otherwise the marker sits over a
-     * hex whose building is no longer there.</p>
+     * answer without the unit having moved, so they have to be worked out again - otherwise the marker sits over a hex
+     * whose building is no longer there.</p>
      */
     @Override
     public void gameBoardChanged(GameBoardChangeEvent event) {

@@ -1,5 +1,3 @@
-package megamek.common.moves;
-
 /*
  * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
@@ -33,6 +31,8 @@ package megamek.common.moves;
  * affiliated with Microsoft.
  */
 
+package megamek.common.moves;
+
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -41,7 +41,13 @@ import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.units.Entity;
 
-public class DeployStep implements PhasePass {
+/**
+ * This class handles the deployment step for Walk On Deployment.
+ *
+ * @author James Magnan
+ * @since 0.51.01
+ */
+class DeployStep implements PhasePass {
     private static final EnumSet<MoveStepType> TYPES = EnumSet.of(MoveStepType.DEPLOY);
 
     @Override

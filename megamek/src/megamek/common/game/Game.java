@@ -526,7 +526,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             }
             if (loadedOption == OptionsConstants.RULES_TW) {
                 boolean shouldWalkOn = this.options.booleanOption(OptionsConstants.BASE_WALK_ON_DEPLOYMENT);
-                if (shouldWalkOn != Game.rulesManager.getRulesGame().walkOnDeployment()) {
+                if (shouldWalkOn != Game.rulesManager.getRulesGame().isWalkOnDeployment()) {
                     Game.rulesManager.getRulesGame().setWalkOnDeployment(shouldWalkOn);
                 }
             }

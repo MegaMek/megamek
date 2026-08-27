@@ -32,19 +32,18 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.Component;
+import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.Vector;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 
 import megamek.client.ui.GBC2;
 import megamek.client.ui.Messages;
+import megamek.client.ui.comboBoxes.SearchableComboBox;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.AmmoMounted;
@@ -59,7 +58,7 @@ import megamek.common.units.ProtoMek;
 public class MunitionChoice {
 
     private final List<AmmoType> ammoTypes;
-    private final JComboBox<AmmoType> comboAmmoTypes;
+    private final SearchableComboBox<AmmoType> comboAmmoTypes;
     private final JComboBox<String> comboNumberOfShots = new JComboBox<>();
     private final ItemListener numShotsListener;
     private ItemListener halfAmmoListener = evt -> {};
@@ -78,8 +77,7 @@ public class MunitionChoice {
         this.ammoMounted = ammoMounted;
         gameOptions = game.getOptions();
         AmmoType ammoType = ammoMounted.getType();
-        comboAmmoTypes = new JComboBox<>(ammoTypes);
-        comboAmmoTypes.setRenderer(new AmmoComboRenderer());
+        comboAmmoTypes = new SearchableComboBox<>("comboAmmoTypes", ammoTypes, MunitionChoice::displayName);
         comboAmmoTypes.setSelectedItem(ammoType);
 
         numShotsListener = evt -> {
@@ -92,13 +90,13 @@ public class MunitionChoice {
         };
         
         halfAmmoListener = evt -> {
-            int numberOfShotsPerTon = this.ammoTypes.get(comboAmmoTypes.getSelectedIndex()).getShots();
+            AmmoType selectedAmmoType = getSelectedAmmoType();
+            int numberOfShotsPerTon = selectedAmmoType.getShots();
             int currShots = 0;
 
             if (chHalfAmmo.isSelected() && !ammoMounted.isHalfLoadAmmo()) {
                 // Switch to a half load of ammo
                 // Only go down this if there is a munition mutator
-                AmmoType selectedAmmoType = this.ammoTypes.get(comboAmmoTypes.getSelectedIndex());
                 if (selectedAmmoType.getMutatorName() != null) {
                     // Check if the KgPerShot is different than the base (indicating a mutator)
                     double baseKgPerShot = selectedAmmoType.getBaseAmmo().getKgPerShot();
@@ -145,6 +143,9 @@ public class MunitionChoice {
         comboNumberOfShots.addItemListener(numShotsListener);
 
         comboAmmoTypes.addItemListener(evt -> {
+            if (evt.getStateChange() != ItemEvent.SELECTED) {
+                return;
+            }
             comboNumberOfShots.removeItemListener(numShotsListener);
 
             int currShots = 0;
@@ -154,7 +155,8 @@ public class MunitionChoice {
             }
 
             comboNumberOfShots.removeAllItems();
-            int numberOfShotsPerTon = this.ammoTypes.get(comboAmmoTypes.getSelectedIndex()).getShots();
+            AmmoType selectedAmmoType = getSelectedAmmoType();
+            int numberOfShotsPerTon = selectedAmmoType.getShots();
 
             // ProtoMeks are limited to number of shots added during construction
             if ((entity instanceof BattleArmor) || (entity instanceof ProtoMek)) {
@@ -175,8 +177,7 @@ public class MunitionChoice {
             chHalfAmmo.setSelected(false);
 
             for (WeaponAmmoChoice weaponAmmoChoice : weaponAmmoChoices) {
-                weaponAmmoChoice.refreshAmmoBinName(this.ammoMounted,
-                      this.ammoTypes.get(comboAmmoTypes.getSelectedIndex()));
+                weaponAmmoChoice.refreshAmmoBinName(this.ammoMounted, selectedAmmoType);
             }
 
             comboNumberOfShots.addItemListener(numShotsListener);
@@ -228,14 +229,13 @@ public class MunitionChoice {
     }
 
     public void applyChoice() {
-        int selectedIndex = comboAmmoTypes.getSelectedIndex();
+        AmmoType ammoType = comboAmmoTypes.getSelectedItem();
 
         // If there's no selection, there's nothing we can do
-        if (selectedIndex == -1) {
+        if (ammoType == null) {
             return;
         }
 
-        AmmoType ammoType = ammoTypes.get(selectedIndex);
         ammoMounted.changeAmmoType(ammoType);
 
         // set # shots only for non-one shot weapons
@@ -271,17 +271,21 @@ public class MunitionChoice {
         comboAmmoTypes.setEnabled(enabled);
     }
 
-    private static class AmmoComboRenderer extends DefaultListCellRenderer {
+    /**
+     * @return the munition currently chosen in the drop-down, falling back to the munition the bin already holds
+     *       when nothing is chosen
+     */
+    private AmmoType getSelectedAmmoType() {
+        AmmoType selectedAmmoType = comboAmmoTypes.getSelectedItem();
+        return (selectedAmmoType == null) ? ammoMounted.getType() : selectedAmmoType;
+    }
 
-        @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-              boolean cellHasFocus) {
-
-            if (value instanceof AmmoType ammoType) {
-                value = ammoType.getName().replace(" Ammo", "");
-
-            }
-            return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        }
+    /**
+     * @param ammoType the munition to describe
+     *
+     * @return the munition's name without the trailing "Ammo", as shown in the drop-down
+     */
+    private static String displayName(AmmoType ammoType) {
+        return ammoType.getName().replace(" Ammo", "");
     }
 }

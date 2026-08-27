@@ -52,6 +52,7 @@ import megamek.client.ui.util.PlayerColour;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.WeaponSortOrder;
+import megamek.common.preference.IPreferenceStore;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
 import megamek.common.units.EntityMovementType;
@@ -543,6 +544,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final String _TAB_ORDER = "_tabOrder";
     private static final String _WINDOW = "_window";
 
+    // Persisted typo used by older releases; this is not a valid localization key.
+    static final String LEGACY_PLAYER_COLOUR_BROWN = "layerColour.BROWN.text";
+
     protected static GUIPreferences instance = new GUIPreferences();
 
     public static final int HIDE = 0;
@@ -551,6 +555,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public static GUIPreferences getInstance() {
         return instance;
+    }
+
+    static void migrateLegacyBrownPlayerColour(IPreferenceStore preferenceStore) {
+        if (preferenceStore.hasProperty(LEGACY_PLAYER_COLOUR_BROWN)
+              && !preferenceStore.hasProperty(PlayerColour.PLAYER_COLOUR_BROWN)) {
+            preferenceStore.setValue(PlayerColour.PLAYER_COLOUR_BROWN,
+                preferenceStore.getString(LEGACY_PLAYER_COLOUR_BROWN));
+        }
     }
 
     protected GUIPreferences() {
@@ -623,6 +635,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(PlayerColour.PLAYER_COLOUR_CHARTREUSE, new Color(0x7FFF00));
         setDefault(PlayerColour.PLAYER_COLOUR_DEEP_PURPLE, new Color(0x9400D3));
         setDefault(PlayerColour.PLAYER_COLOUR_YELLOW, new Color(0xF2F261));
+        migrateLegacyBrownPlayerColour(store);
 
         setDefault(BOARD_MOVE_DEFAULT_CLIMB_MODE, true);
         setDefault(BOARD_MOVE_DEFAULT_COLOR, Color.CYAN);

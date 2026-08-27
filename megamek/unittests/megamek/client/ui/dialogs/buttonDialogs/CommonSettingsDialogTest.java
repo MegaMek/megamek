@@ -45,6 +45,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -811,6 +812,8 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
                             assertEquals(2, orderList.getVisibleRowCount());
                             assertEquals(ListSelectionModel.SINGLE_SELECTION, orderList.getSelectionMode());
                             assertTrue(orderList.getMouseMotionListeners().length > 0);
+                            orderGrid.setSize(orderGrid.getPreferredSize());
+                            layoutRecursively(orderGrid);
                             assertThreeColumnUnitDisplayOrderGrid(orderGrid);
             }
 
@@ -1357,17 +1360,6 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
     private static void assertAudioSectionsHaveAlignedControlColumns() {
         JLabel volumeLabel = new JLabel(Messages.getString("CommonSettingsDialog.masterVolume"));
         JSlider volumeSlider = new JSlider(0, 100);
-        volumeSlider.setMinorTickSpacing(5);
-        volumeSlider.setMajorTickSpacing(25);
-        Hashtable<Integer, JComponent> volumeLabels = new Hashtable<>();
-        volumeLabels.put(0, new JLabel("0%"));
-        volumeLabels.put(25, new JLabel("25%"));
-        volumeLabels.put(50, new JLabel("50%"));
-        volumeLabels.put(75, new JLabel("75%"));
-        volumeLabels.put(100, new JLabel("100%"));
-        volumeSlider.setLabelTable(volumeLabels);
-        volumeSlider.setPaintTicks(true);
-        volumeSlider.setPaintLabels(true);
         volumeSlider.setToolTipText("Master volume help");
         JCheckBox chatMute = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMuteChat"));
         JTextField chatSoundFile = new JTextField(5);
@@ -1402,8 +1394,18 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
         assertSame(volumeSection, volumeGrid);
         assertEquals(2, volumeGrid.getComponentCount());
         assertCell(volumeGrid, volumeLabel, 0, 0);
-        assertCell(volumeGrid, volumeSlider, 1, 0);
+        JPanel volumeControl = (JPanel) volumeGrid.getComponent(1);
+        assertCell(volumeGrid, volumeControl, 1, 0);
         assertSame(volumeSlider, volumeLabel.getLabelFor());
+        assertSame(volumeControl, volumeSlider.getParent());
+        JSpinner volumeSpinner = findComponent(volumeControl, JSpinner.class);
+        assertEquals("masterVolumeSpinner", volumeSpinner.getName());
+        assertFalse(volumeSlider.getPaintTicks());
+        assertFalse(volumeSlider.getPaintLabels());
+        volumeSlider.setValue(73);
+        assertEquals(73, volumeSpinner.getValue());
+        volumeSpinner.setValue(42);
+        assertEquals(42, volumeSlider.getValue());
 
         JPanel notificationGrid = findNamedPanel(notificationsSection,
               "pnlCommonSettingsAudioNotificationGrid");
@@ -1429,17 +1431,17 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
             assertEquals(xRelativeTo(volumeGrid, laidOutPane), xRelativeTo(notificationGrid, laidOutPane));
             assertEquals(volumeGrid.getWidth(), notificationGrid.getWidth());
             assertAlignedBalancedRows(laidOutPane, List.of(
-                  List.of(volumeLabel, volumeSlider),
+                List.of(volumeLabel, volumeControl),
                 List.of(chatMute, chatSoundControl),
                 List.of(myTurnMute, myTurnSoundControl),
                 List.of(otherTurnsMute, otherTurnsSoundControl)));
             GridBagConstraints volumeLabelConstraints =
                   ((GridBagLayout) volumeGrid.getLayout()).getConstraints(volumeLabel);
-            int columnGap = xRelativeTo(volumeSlider, laidOutPane)
+            int columnGap = xRelativeTo(volumeControl, laidOutPane)
                   - xRelativeTo(volumeLabel, laidOutPane) - volumeLabel.getWidth();
             assertEquals(volumeLabelConstraints.insets.right, columnGap);
             assertEquals(xRelativeTo(volumeGrid, laidOutPane) + volumeGrid.getWidth(),
-                  xRelativeTo(volumeSlider, laidOutPane) + volumeSlider.getWidth());
+                xRelativeTo(volumeControl, laidOutPane) + volumeControl.getWidth());
             assertTrue(otherTurnsMute.getWidth() >= otherTurnsMuteWidth);
         });
 
@@ -1712,8 +1714,10 @@ void laysOutGenericCheckBoxesAndOddFillerInBalancedProductionGrid() {
         JList<?> orderList = findComponent(orderGrid, JList.class);
         assertEquals(6, orderList.getModel().getSize());
         assertEquals(2, orderList.getVisibleRowCount());
-          assertEquals(UIUtil.scaleForGUI((SettingsFormPanel.DEFAULT_LABEL_WIDTH * 2) / 3),
-              orderList.getFixedCellWidth());
+        int preferredCellWidth = UIUtil.scaleForGUI((SettingsFormPanel.DEFAULT_LABEL_WIDTH * 2) / 3);
+        Insets insets = orderGrid.getInsets();
+        int availableWidth = orderGrid.getWidth() - insets.left - insets.right;
+        assertEquals(Math.min(preferredCellWidth, availableWidth / 3), orderList.getFixedCellWidth());
         assertTrue(orderList.getFixedCellHeight() > 0);
         assertComponentWithinParent(orderList);
     }

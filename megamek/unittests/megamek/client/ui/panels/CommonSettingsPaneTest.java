@@ -191,12 +191,21 @@ class CommonSettingsPaneTest {
 
     @Test
     void factionLogoMappingsResolveToSharedAssets() {
-        File factionsDir = new File(Configuration.universeImagesDir(), "factions");
+        File factionsDir = factionAssetsDirectory();
 
+        assertTrue(factionsDir.isDirectory(), "Faction logo directory does not exist: " + factionsDir);
         assertFalse(CommonSettingsPane.factionLogos().isEmpty());
         CommonSettingsPane.factionLogos().forEach((page, logo) ->
               assertTrue(new File(factionsDir, logo).isFile(), page + " logo does not exist: " + logo));
         assertTrue(new File(factionsDir, "logo_star_league.png").isFile());
+    }
+
+    private static File factionAssetsDirectory() {
+        File configuredDirectory = new File(Configuration.universeImagesDir(), "factions");
+        if (configuredDirectory.isDirectory() || configuredDirectory.isAbsolute()) {
+            return configuredDirectory;
+        }
+        return new File("megamek", configuredDirectory.getPath());
     }
 
     private static CommonSettingsPane pane(JPanel main, JPanel audio) {

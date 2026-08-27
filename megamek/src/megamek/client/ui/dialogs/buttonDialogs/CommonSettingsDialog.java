@@ -129,6 +129,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         private static final int SLIDER_VALUE_COLUMNS = 5;
     private static final int UNIT_DISPLAY_ORDER_COLUMNS = 3;
     private static final int BUTTON_ORDER_COLUMNS = 4;
+    private static final String REORDER_LIST_CELL_WIDTH = "CommonSettingsDialog.reorderListCellWidth";
 
     private static class ReorderListMouseAdapter extends MouseInputAdapter {
         private boolean mouseDragging = false;
@@ -806,20 +807,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     }
 
     private JPanel getAudioPanel() {
-        masterVolumeSlider = new JSlider();
-        masterVolumeSlider.setMinorTickSpacing(5);
-        masterVolumeSlider.setMajorTickSpacing(25);
-        masterVolumeSlider.setMinimum(0);
-        masterVolumeSlider.setMaximum(100);
-        Hashtable<Integer, JComponent> table = new Hashtable<>();
-        table.put(0, new JLabel("0%"));
-        table.put(25, new JLabel("25%"));
-        table.put(50, new JLabel("50%"));
-        table.put(75, new JLabel("75%"));
-        table.put(100, new JLabel("100%"));
-        masterVolumeSlider.setLabelTable(table);
-        masterVolumeSlider.setPaintTicks(true);
-        masterVolumeSlider.setPaintLabels(true);
+        masterVolumeSlider = new JSlider(0, 100);
         masterVolumeSlider.setToolTipText(Messages.getString("CommonSettingsDialog.masterVolumeTT"));
 
         tfSoundMuteChatFileName = new JTextField(5);
@@ -837,8 +825,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
           JCheckBox myTurnMute, JTextField myTurnSoundFile,
           JCheckBox otherTurnsMute, JTextField otherTurnsSoundFile) {
         volumeLabel.setLabelFor(volumeSlider);
+          JPanel volumeControl = createMasterVolumeControl(volumeSlider);
         SettingsFormPanel volumeGrid = createAudioControlGrid(
-              "CommonSettingsAudioVolumeGrid", volumeLabel, volumeSlider);
+              "CommonSettingsAudioVolumeGrid", volumeLabel, volumeControl);
           JPanel chatSoundControl = createAudioFileControl(chatSoundFile, "btnChatSoundChooser",
               Messages.getString("CommonSettingsDialog.soundMuteChat.chooser.title"));
           JPanel myTurnSoundControl = createAudioFileControl(myTurnSoundFile, "btnMyTurnSoundChooser",
@@ -851,6 +840,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog
               myTurnMute, myTurnSoundControl,
               otherTurnsMute, otherTurnsSoundControl);
         return new CommonSettingsPane.SectionedContent(List.of(volumeGrid, notificationGrid));
+    }
+
+    static JPanel createMasterVolumeControl(JSlider volumeSlider) {
+        JSpinner volumeSpinner = new JSpinner(new SpinnerNumberModel(
+              volumeSlider.getValue(), volumeSlider.getMinimum(), volumeSlider.getMaximum(), 1));
+        volumeSpinner.setName("masterVolumeSpinner");
+        volumeSpinner.setToolTipText(volumeSlider.getToolTipText());
+        JPanel control = createOverlayValueControl(volumeSlider, volumeSpinner, "%");
+        control.setName("pnlCommonSettingsMasterVolumeControl");
+        return control;
     }
 
         static JPanel createAudioFileControl(JTextField field, String buttonName, String chooserTitle) {
@@ -1790,7 +1789,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         orderList.setName("unitDisplayOrder");
         orderList.setToolTipText(Messages.getString("CommonSettingsDialog.unitDisplayOrder.tooltip"));
         JPanel panel = createReorderListPanel(orderList, UNIT_DISPLAY_ORDER_COLUMNS);
-        orderList.setFixedCellWidth(Math.max(orderList.getFixedCellWidth(),
+                setPreferredReorderListCellWidth(orderList, Math.max(orderList.getFixedCellWidth(),
               UIUtil.scaleForGUI((SettingsFormPanel.DEFAULT_LABEL_WIDTH * 2) / UNIT_DISPLAY_ORDER_COLUMNS)));
         return panel;
     }
@@ -4057,7 +4056,25 @@ public class CommonSettingsDialog extends AbstractButtonDialog
               (list.getModel().getSize() + columnCount - 1) / columnCount));
         setUniformButtonOrderCellSize(List.of(list));
 
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)) {
+            @Override
+            public void doLayout() {
+                Insets insets = getInsets();
+                int availableWidth = getWidth() - insets.left - insets.right;
+                if (availableWidth > 0) {
+                    int rowCount = Math.max(1, list.getVisibleRowCount());
+                    int renderedColumns = Math.max(1,
+                          (list.getModel().getSize() + rowCount - 1) / rowCount);
+                    int preferredCellWidth = (int) list.getClientProperty(REORDER_LIST_CELL_WIDTH);
+                    int cellWidth = Math.min(preferredCellWidth,
+                          Math.max(1, availableWidth / renderedColumns));
+                    if (cellWidth != list.getFixedCellWidth()) {
+                        list.setFixedCellWidth(cellWidth);
+                    }
+                }
+                super.doLayout();
+            }
+        };
         panel.setBorder(UIManager.getBorder("ScrollPane.border"));
         panel.add(list);
         return panel;
@@ -4078,9 +4095,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         }
         int paddedCellWidth = cellWidth + UIUtil.scaleForGUI(12);
         for (JList<T> list : lists) {
-            list.setFixedCellWidth(paddedCellWidth);
+            setPreferredReorderListCellWidth(list, paddedCellWidth);
             list.setFixedCellHeight(cellHeight);
         }
+    }
+
+    private static void setPreferredReorderListCellWidth(JList<?> list, int cellWidth) {
+        list.putClientProperty(REORDER_LIST_CELL_WIDTH, cellWidth);
+        list.setFixedCellWidth(cellWidth);
     }
 
     static JPanel createSettingsPanel(List<List<Component>> comps) {

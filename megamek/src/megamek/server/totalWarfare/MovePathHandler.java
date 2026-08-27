@@ -836,7 +836,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 int boardId = entity.getBoardId();
                 // The roll is made at the start of takeoff, so before the craft is moved off its hex (TO:AR p.54).
                 new TaintedAtmosphereHandler(gameManager).checkExhaustWashIgnition(entity, entity.getPosition(),
-                      boardId, entity.getFacing());
+                      boardId, entity.getFacing(),
+                      TaintedAtmosphereHandler.ExhaustWashMoment.TAKEOFF);
                 if (usingAeroOnGroundMovement()) {
                     entity.setPosition(entity.getPosition().translated(entity.getFacing(), aero.getTakeOffLength()));
                 } else {
@@ -864,7 +865,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     int boardId = entity.getBoardId();
                     // The roll is made at the start of takeoff, so before the craft leaves its hex (TO:AR p.54).
                     new TaintedAtmosphereHandler(gameManager).checkExhaustWashIgnition(entity, entity.getPosition(),
-                          boardId, entity.getFacing());
+                          boardId, entity.getFacing(),
+                          TaintedAtmosphereHandler.ExhaustWashMoment.TAKEOFF);
                     if (!usingAeroOnGroundMovement()) {
                         positionOnAtmosphericMap();
                     }
@@ -899,7 +901,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
             entity.setPosition(finalPosition);
             // The roll is made at the end of landing, so from the hex the craft comes to rest in (TO:AR p.54).
             new TaintedAtmosphereHandler(gameManager).checkExhaustWashIgnition(entity, finalPosition,
-                  md.getFinalBoardId(), md.getFinalFacing());
+                  md.getFinalBoardId(), md.getFinalFacing(),
+                  TaintedAtmosphereHandler.ExhaustWashMoment.LANDING);
             entity.setDone(true);
             gameManager.entityUpdate(entity.getId());
             return;

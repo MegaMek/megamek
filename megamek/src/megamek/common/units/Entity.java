@@ -914,7 +914,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * End Phases this unit has spent out in the open in a tainted atmosphere, TO:AR p.54. An {@code int} rather than a
      * state object so that a unit deserialized from a save written before this field existed simply starts its clock
-     * at zero instead of coming back null.
+     * at zero instead of coming back {@code null}.
      */
     private int taintedAtmosphereExposureTurns = 0;
 

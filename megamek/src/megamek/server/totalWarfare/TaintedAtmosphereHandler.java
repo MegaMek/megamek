@@ -77,6 +77,27 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
 
     private static final MMLogger LOGGER = MMLogger.create(TaintedAtmosphereHandler.class);
 
+    /**
+     * Which end of a flight an exhaust wash is being rolled for. The two read differently in the report, so each
+     * carries the message that names it.
+     */
+    enum ExhaustWashMoment {
+        /** The roll made at the start of a takeoff, from the hex the craft is still standing in. */
+        TAKEOFF(7720),
+        /** The roll made at the end of a landing, from the hex the craft comes to rest in. */
+        LANDING(7723);
+
+        private final int reportId;
+
+        ExhaustWashMoment(int reportId) {
+            this.reportId = reportId;
+        }
+
+        int reportId() {
+            return reportId;
+        }
+    }
+
     TaintedAtmosphereHandler(TWGameManager gameManager) {
         super(gameManager);
     }
@@ -451,8 +472,11 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
      * @param coords     the hex it takes off from or comes to rest in
      * @param boardId    the board that hex is on
      * @param facing     the facing the craft has at that moment, which decides where its rear arc lies
+     * @param moment     whether this is a takeoff or a landing, which the report names so a player reading the log
+     *                   can tell which end of the flight set the ground alight
      */
-    void checkExhaustWashIgnition(Entity aeroEntity, Coords coords, int boardId, int facing) {
+    void checkExhaustWashIgnition(Entity aeroEntity, Coords coords, int boardId, int facing,
+          ExhaustWashMoment moment) {
         if (!TaintedAtmosphereRules.causesExhaustWashIgnition(atmosphericTaint())) {
             return;
         }
@@ -474,7 +498,7 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
         }
 
         Roll diceRoll = Compute.rollD6(2);
-        Report report = new Report(7720);
+        Report report = new Report(moment.reportId());
         report.subject = aeroEntity.getId();
         report.addDesc(aeroEntity);
         report.add(TaintedAtmosphereRules.EXHAUST_WASH_IGNITION_TARGET);

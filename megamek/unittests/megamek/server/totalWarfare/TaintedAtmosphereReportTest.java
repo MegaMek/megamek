@@ -173,22 +173,35 @@ class TaintedAtmosphereReportTest {
     }
 
     @Test
-    @DisplayName("An exhaust wash names the target, the hex and the roll")
+    @DisplayName("An exhaust wash names the target, the hex, the roll and which end of the flight it was")
     void exhaustWashReadsCorrectly() {
-        Report report = new Report(7720);
-        report.subject = 7;
-        report.addDesc(reportingUnit());
-        report.add(6);
-        report.add("0811");
-        report.add(rollOf(8));
-        report.choose(true);
+        Report takeoffReport = new Report(TaintedAtmosphereHandler.ExhaustWashMoment.TAKEOFF.reportId());
+        takeoffReport.subject = 7;
+        takeoffReport.addDesc(reportingUnit());
+        takeoffReport.add(6);
+        takeoffReport.add("0811");
+        takeoffReport.add(rollOf(8));
+        takeoffReport.choose(true);
 
-        String renderedText = plainTextOf(report);
+        String takeoffText = plainTextOf(takeoffReport);
+        assertRendersCleanly(takeoffText);
+        assertTrue(takeoffText.contains("needs 6+"), "the target number should be 6: " + takeoffText);
+        assertTrue(takeoffText.contains("hex 0811"), "the hex should be named: " + takeoffText);
+        assertTrue(takeoffText.contains("takes off"), "a takeoff should say so: " + takeoffText);
+        assertTrue(takeoffText.contains("catch fire"), "the roll succeeded: " + takeoffText);
 
-        assertRendersCleanly(renderedText);
-        assertTrue(renderedText.contains("needs 6+"), "the target number should be 6: " + renderedText);
-        assertTrue(renderedText.contains("hex 0811"), "the hex should be named: " + renderedText);
-        assertTrue(renderedText.contains("catch fire"), "the roll succeeded: " + renderedText);
+        Report landingReport = new Report(TaintedAtmosphereHandler.ExhaustWashMoment.LANDING.reportId());
+        landingReport.subject = 7;
+        landingReport.addDesc(reportingUnit());
+        landingReport.add(6);
+        landingReport.add("0811");
+        landingReport.add(rollOf(4));
+        landingReport.choose(false);
+
+        String landingText = plainTextOf(landingReport);
+        assertRendersCleanly(landingText);
+        assertTrue(landingText.contains("lands"), "a landing should say so: " + landingText);
+        assertTrue(landingText.contains("no ignition"), "the roll failed: " + landingText);
     }
 
     @Test

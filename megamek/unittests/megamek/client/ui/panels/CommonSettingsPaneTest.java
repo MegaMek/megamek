@@ -201,7 +201,7 @@ class CommonSettingsPaneTest {
 
     private static File factionAssetsDirectory() {
         List<File> candidates = List.of(
-            new File("../mm-data/data/images/universe/factions"),
+            new File("../../mm-data/data/images/universe/factions"),
             new File("data/images/universe/factions"),
             new File("megamek/data/images/universe/factions"));
         return candidates.stream()

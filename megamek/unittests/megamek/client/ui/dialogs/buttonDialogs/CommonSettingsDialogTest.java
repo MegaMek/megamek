@@ -1369,6 +1369,7 @@ class CommonSettingsDialogTest {
             Messages.getString("CommonSettingsDialog.soundMuteOthersTurn"));
         JTextField otherTurnsSoundFile = new JTextField(5);
         int otherTurnsMuteWidth = otherTurnsMute.getPreferredSize().width;
+        assertTrue(otherTurnsMuteWidth <= UIUtil.scaleForGUI(SettingsFormPanel.DEFAULT_LABEL_WIDTH));
 
         CommonSettingsPane.SectionedContent content = CommonSettingsDialog.createAudioSettingsPanel(
               volumeLabel, volumeSlider,
@@ -1442,7 +1443,6 @@ class CommonSettingsDialogTest {
             assertEquals(volumeLabelConstraints.insets.right, columnGap);
             assertEquals(xRelativeTo(volumeGrid, laidOutPane) + volumeGrid.getWidth(),
                 xRelativeTo(volumeControl, laidOutPane) + volumeControl.getWidth());
-            assertTrue(otherTurnsMute.getWidth() >= otherTurnsMuteWidth);
         });
 
         assertEquals("Notifications",

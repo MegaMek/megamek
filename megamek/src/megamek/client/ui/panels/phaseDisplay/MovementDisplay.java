@@ -2645,18 +2645,31 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         if (Game.rulesManager.getRulesGame().isWalkOnDeployment() && currentlySelectedEntity != null && cmd != null) {
+            Coords coords = boardViewEvent.getCoords();
+            int boardId = boardViewEvent.getBoardId();
             if (!currentlySelectedEntity.isDeployed() && boardViewEvent.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
                 DeploymentHelper deploymentHelper = new DeploymentHelper(clientgui);
-                if (!deploymentHelper.checkDeployment(game.getBoard(boardViewEvent.getBoardId()),
+                if (!deploymentHelper.checkDeployment(game.getBoard(boardId),
                                                       currentlySelectedEntity,
-                                                      boardViewEvent.getCoords(),
+                                                      coords,
                                                       false)) {
                     return;
                 }
-                if (game.getBoard(boardViewEvent.getBoardId())
-                        .isLegalDeployment(boardViewEvent.getCoords(), currentlySelectedEntity)) {
-                    currentlySelectedEntity.setPosition(boardViewEvent.getCoords());
-                    currentlySelectedEntity.setBoardId(boardViewEvent.getBoardId());
+                Hex hex = game.getBoard(boardId).getHex(coords);
+                int elevation = hex.getLevel();
+                int depth = hex.depth();
+                if (depth > 0) {
+                    elevation = elevation - depth;
+                }
+                if (game.getBoard(boardId)
+                        .isLegalDeployment(coords,
+                                           currentlySelectedEntity) && !currentlySelectedEntity.isLocationProhibited(
+                        coords,
+                        boardId,
+                        elevation)) {
+                    currentlySelectedEntity.setPosition(coords);
+                    currentlySelectedEntity.setBoardId(boardId);
+                    currentlySelectedEntity.setElevation(elevation);
                     currentlySelectedEntity.setDeployed(true);
                     addStepToMovePath(MoveStepType.DEPLOY);
                     clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
@@ -6249,6 +6262,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         MovePath movePath = new MovePath(game, entity);
 
+        MoveStep step = cmd.getStep(0);
+        if ((step != null) && step.getType() == MoveStepType.DEPLOY) {
+            movePath.addStep(step);
+        }
         MoveStepType stepType = (movementGear == GEAR_BACKUP) ? MoveStepType.BACKWARDS : MoveStepType.FORWARDS;
         if (movementGear == GEAR_JUMP || movementGear == GEAR_DFA) {
             movePath.addStep(MoveStepType.START_JUMP);
@@ -6472,7 +6489,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 !((cmd.getLastStep() != null) &&
                   cmd.getLastStep().isFirstStep() &&
                   (cmd.getLastStep().getType() == MoveStepType.LAY_MINE))) {
-                clear();
+                MoveStep deployStep = cmd.getStep(0);
+                if ((deployStep != null) && deployStep.getType() == MoveStepType.DEPLOY) {
+                    int moveSize = cmd.length();
+                    if (moveSize > 1) {
+                        // We want to keep the original Deployment step.
+                        for (int removeStep = moveSize; removeStep > 1; removeStep--) {
+                            cmd.removeLastStep();
+                        }
+                    }
+                    cmd.getLastStep().setMovementType(EntityMovementType.MOVE_JUMP);
+                } else {
+                    clear();
+                }
             }
             gear = MovementDisplay.GEAR_JUMP;
             jumpSubGear = GEAR_SUB_STANDARD;

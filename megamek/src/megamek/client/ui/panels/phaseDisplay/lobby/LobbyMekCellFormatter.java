@@ -543,7 +543,7 @@ class LobbyMekCellFormatter {
             }
             int so = entity.getStartingOffset(true);
             int sw = entity.getStartingWidth(true);
-            if ((so != 0) || (sw != 3 || (sw != 1 && Game.rulesManager.getRulesGame().isWalkOnDeployment()))) {
+            if ((so != 0) || !(sw == 3 || (sw == 1 && Game.rulesManager.getRulesGame().isWalkOnDeployment()))) {
                 result.append(", ").append(so);
                 result.append(", ").append(sw);
             }

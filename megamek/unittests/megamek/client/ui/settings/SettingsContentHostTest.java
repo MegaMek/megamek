@@ -49,6 +49,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ListResourceBundle;
+import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -88,6 +89,26 @@ class SettingsContentHostTest {
 
         assertNotNull(label.getToolTipText());
         assertTrue(label.getToolTipText().equals(originalTooltip));
+    }
+
+    @Test
+    void onlyExplicitHelpProviderButtonsPopulateOptionDetails() {
+        SettingsButton settingsButton = new SettingsButton("settingsButton", TEXT, "field");
+        JButton ordinaryButton = new JButton("Ordinary");
+        ordinaryButton.setToolTipText("Ordinary tooltip");
+        JPanel content = new JPanel();
+        content.add(settingsButton);
+        content.add(ordinaryButton);
+        SettingsContentHost host = new SettingsContentHost(content, true);
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+
+        fireMouseEntered(ordinaryButton);
+        assertFalse(helpPane.getText().contains("Ordinary tooltip"), helpPane.getText());
+        assertEquals("Ordinary tooltip", ordinaryButton.getToolTipText());
+
+        fireMouseEntered(settingsButton);
+        assertTrue(helpPane.getText().contains("Raw field help"), helpPane.getText());
+        assertNull(settingsButton.getToolTipText());
     }
 
     @Test

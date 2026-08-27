@@ -519,19 +519,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         return row;
     }
 
-    /**
-     * Adds the transport panel and the post-generation composition summary as one row.
-     *
-     * <p>They share a {@link BorderLayout} container so the summary absorbs whatever horizontal slack the
-     * column-driven outer layout would otherwise leave between them: transport sits at its preferred width on the
-     * WEST, the summary fills the rest in the CENTER.</p>
-     *
-     * @param constraints the shared constraints
-     * @param startRow the first free grid row
-     * @param panTransport the transport panel built earlier
-     *
-     * @return the next free grid row
-     */
     /** The Composition Summary across the full width, now that the transport settings sit in the form above. */
     private int addCompositionSummary(GridBagConstraints constraints, int startRow) {
         int row = startRow;

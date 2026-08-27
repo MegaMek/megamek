@@ -31,7 +31,7 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.moves;
+package megamek.client.ui.panels.phaseDisplay;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;

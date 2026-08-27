@@ -33,26 +33,12 @@
 
 package megamek.client.ui.panels.phaseDisplay;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.MegaMekGUI;
-import megamek.client.ui.panels.phaseDisplay.DeploymentDisplay.BoardValidationResult;
 import megamek.client.ui.panels.phaseDisplay.DeploymentDisplay.DeploymentPosition;
+import megamek.client.ui.panels.phaseDisplay.DeploymentHelper.BoardValidationResult;
 import megamek.client.ui.util.MegaMekController;
 import megamek.common.GameBoardTestCase;
 import megamek.common.Player;
@@ -72,10 +58,25 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
 @DisplayName("DeploymentDisplay Unit Tests")
 public class DeploymentDisplayTest {
 
     private DeploymentDisplay deploymentDisplay;
+    private DeploymentHelper deploymentHelper;
     private ClientGUI mockClientGUI;
     private Client mockClient;
     private MockedStatic<MegaMekGUI> mockedMegaMekGUI;
@@ -106,6 +107,7 @@ public class DeploymentDisplayTest {
 
         // Create DeploymentDisplay with mocked dependencies
         deploymentDisplay = new DeploymentDisplay(mockClientGUI);
+        deploymentHelper = new DeploymentHelper(mockClientGUI);
     }
 
     @AfterEach
@@ -127,12 +129,12 @@ public class DeploymentDisplayTest {
 
         static {
             initializeBoard("BOARD", """
-                  size 2 2
-                  hex 0101 0 "" ""
-                  hex 0201 0 "" ""
-                  hex 0102 0 "" ""
-                  hex 0202 0 "" ""
-                  end"""
+                    size 2 2
+                    hex 0101 0 "" ""
+                    hex 0201 0 "" ""
+                    hex 0102 0 "" ""
+                    hex 0202 0 "" ""
+                    end"""
             );
         }
 
@@ -157,6 +159,7 @@ public class DeploymentDisplayTest {
 
             // Create DeploymentDisplay with mocked dependencies
             deploymentDisplay = new DeploymentDisplay(mockClientGUI);
+            deploymentHelper = new DeploymentHelper(mockClientGUI);
         }
 
         @Test
@@ -277,7 +280,7 @@ public class DeploymentDisplayTest {
     }
 
     /**
-     * Tests for {@link DeploymentDisplay#validateDeploymentBoard(Entity, Board, Coords)}
+     * Tests for DeploymentValidation
      * <br><br>
      * Note: {@link #getGame()} isn't {@link DeploymentDisplayTest#getGame()}
      */
@@ -287,9 +290,9 @@ public class DeploymentDisplayTest {
 
         static {
             initializeBoard("GROUND_BOARD", """
-                  size 1 1
-                  hex 0101 0 "" ""
-                  end"""
+                    size 1 1
+                    hex 0101 0 "" ""
+                    end"""
             );
         }
 
@@ -314,12 +317,12 @@ public class DeploymentDisplayTest {
         @DisplayName("should return VALID for normal ground deployment")
         void shouldReturnValid_ForNormalGroundDeployment() {
             // Act
-            BoardValidationResult result = deploymentDisplay.validateDeploymentBoard(
-                  groundEntity, groundBoard, coords);
+            BoardValidationResult result = deploymentHelper.validateDeploymentBoard(
+                    groundEntity, groundBoard, coords, false);
 
             // Assert
             assertEquals(BoardValidationResult.VALID, result,
-                  "Should return VALID for legal ground deployment");
+                         "Should return VALID for legal ground deployment");
         }
 
         @Test
@@ -330,12 +333,12 @@ public class DeploymentDisplayTest {
             when(spyEntity.isBoardProhibited(groundBoard)).thenReturn(true);
 
             // Act
-            BoardValidationResult result = deploymentDisplay.validateDeploymentBoard(
-                  spyEntity, groundBoard, coords);
+            BoardValidationResult result = deploymentHelper.validateDeploymentBoard(
+                    spyEntity, groundBoard, coords, false);
 
             // Assert
             assertEquals(BoardValidationResult.WRONG_BOARD_TYPE, result,
-                  "Should return WRONG_BOARD_TYPE when board is prohibited");
+                         "Should return WRONG_BOARD_TYPE when board is prohibited");
         }
 
         @Test
@@ -345,12 +348,12 @@ public class DeploymentDisplayTest {
             Coords illegalCoords = new Coords(-1, -1);
 
             // Act
-            BoardValidationResult result = deploymentDisplay.validateDeploymentBoard(
-                  groundEntity, groundBoard, illegalCoords);
+            BoardValidationResult result = deploymentHelper.validateDeploymentBoard(
+                    groundEntity, groundBoard, illegalCoords, false);
 
             // Assert
             assertEquals(BoardValidationResult.OUTSIDE_DEPLOYMENT_AREA, result,
-                  "Should return OUTSIDE_DEPLOYMENT_AREA for illegal coordinates");
+                         "Should return OUTSIDE_DEPLOYMENT_AREA for illegal coordinates");
         }
     }
 
@@ -373,11 +376,11 @@ public class DeploymentDisplayTest {
 
             // Assert
             assertEquals(2, groundUnit.getElevation(),
-                  "Ground unit elevation should be set to 2");
+                         "Ground unit elevation should be set to 2");
             assertEquals(3, groundUnit.getFacing(),
-                  "Ground unit facing should be set to 3");
+                         "Ground unit facing should be set to 3");
             assertEquals(0, groundUnit.getAltitude(),
-                  "Ground unit should not have altitude.");
+                         "Ground unit should not have altitude.");
         }
 
         @Test
@@ -392,11 +395,11 @@ public class DeploymentDisplayTest {
 
             // Assert
             assertEquals(5, aeroUnit.getAltitude(),
-                  "Aero unit altitude should be set to 5");
+                         "Aero unit altitude should be set to 5");
             assertEquals(2, aeroUnit.getFacing(),
-                  "Aero unit facing should be set to 2");
+                         "Aero unit facing should be set to 2");
             assertNotEquals(EntityMovementMode.WHEELED, aeroUnit.getMovementMode(),
-                  "Aero unit should not be wheeled (ground) movement mode.");
+                            "Aero unit should not be wheeled (ground) movement mode.");
         }
 
         @Test
@@ -411,11 +414,11 @@ public class DeploymentDisplayTest {
 
             // Assert
             assertEquals(0, aeroUnit.getAltitude(),
-                  "Aero unit altitude should be 0");
+                         "Aero unit altitude should be 0");
             assertEquals(4, aeroUnit.getFacing(),
-                  "Aero unit facing should be set to 4");
+                         "Aero unit facing should be set to 4");
             assertEquals(EntityMovementMode.WHEELED, aeroUnit.getMovementMode(),
-                  "Aero should be landed on ground");
+                         "Aero should be landed on ground");
         }
 
         @Test
@@ -430,7 +433,7 @@ public class DeploymentDisplayTest {
                 deploymentDisplay.applyDeploymentToEntity(entity, position);
 
                 assertEquals(facing, entity.getFacing(),
-                      "Entity facing should be set to " + facing);
+                             "Entity facing should be set to " + facing);
             }
         }
 
@@ -446,7 +449,7 @@ public class DeploymentDisplayTest {
 
             // Assert
             assertEquals(-2, entity.getElevation(),
-                  "Entity should have negative elevation for underwater deployment");
+                         "Entity should have negative elevation for underwater deployment");
         }
     }
 

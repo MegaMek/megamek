@@ -6722,6 +6722,19 @@ public class Compute {
           boolean isAttackThruBuilding, int attackerId, Vector<Report> vReport,
           int mgaSize) {
 
+        // An attack the atmosphere has turned into infantry-on-infantry damage skips the table completely: its
+        // damage is applied point for point (TW p.216, TO:AR p.54).
+        if (damageType == WeaponType.WEAPON_INFANTRY_ORIGIN) {
+            if (vReport != null) {
+                Report infantryOriginReport = new Report(7719);
+                infantryOriginReport.subject = attackerId;
+                infantryOriginReport.indent(2);
+                infantryOriginReport.add((int) damage);
+                vReport.add(infantryOriginReport);
+            }
+            return (int) Math.ceil(damage);
+        }
+
         // Report initial (original) damage
         Report r = new Report();
         r.subject = attackerId;

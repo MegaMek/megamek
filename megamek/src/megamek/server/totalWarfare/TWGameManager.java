@@ -107,6 +107,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.TaintedAtmosphereRules;
 import megamek.common.planetaryConditions.Wind;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
@@ -8703,11 +8704,7 @@ public class TWGameManager extends AbstractGameManager {
                   !entity.isProne() &&
                   (hex.terrainLevel(Terrains.WATER) <= partialWaterLevel)) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
-                    if (conditions.getAtmosphere().isLighterThan(Atmosphere.THIN) || aeroSpaceborne) {
-                        entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
-                    } else {
-                        entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
-                    }
+                    entity.setLocationStatus(loop, airExposureStatus(entity, loop, conditions, aeroSpaceborne));
                 }
                 entity.setLocationStatus(Mek.LOC_RIGHT_LEG, ILocationExposureStatus.WET);
                 entity.setLocationStatus(Mek.LOC_LEFT_LEG, ILocationExposureStatus.WET);
@@ -8724,13 +8721,11 @@ public class TWGameManager extends AbstractGameManager {
                     vPhaseReport.addAll(breachCheck(entity, Mek.LOC_CENTER_LEG, hex));
                 }
             } else {
-                int status = ILocationExposureStatus.WET;
-                if (entity.relHeight() >= 0) {
-                    status = conditions.getAtmosphere().isLighterThan(Atmosphere.THIN) ?
-                          ILocationExposureStatus.VACUUM :
-                          ILocationExposureStatus.NORMAL;
-                }
+                boolean isOutOfTheWater = entity.relHeight() >= 0;
                 for (int loop = 0; loop < entity.locations(); loop++) {
+                    int status = isOutOfTheWater ?
+                          airExposureStatus(entity, loop, conditions, aeroSpaceborne) :
+                          ILocationExposureStatus.WET;
                     entity.setLocationStatus(loop, status);
                     if (status == ILocationExposureStatus.WET) {
                         vPhaseReport.addAll(breachCheck(entity, loop, hex));
@@ -8739,14 +8734,33 @@ public class TWGameManager extends AbstractGameManager {
             }
         } else {
             for (int loop = 0; loop < entity.locations(); loop++) {
-                if (conditions.getAtmosphere().isLighterThan(Atmosphere.THIN) || aeroSpaceborne) {
-                    entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
-                } else {
-                    entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
-                }
+                entity.setLocationStatus(loop, airExposureStatus(entity, loop, conditions, aeroSpaceborne));
             }
         }
         return vPhaseReport;
+    }
+
+    /**
+     * The exposure status one location takes from the air around it. A vacuum or trace atmosphere exposes every
+     * location (TO:AR p.52); a tainted or toxic atmosphere exposes only the locations whose breach the rules give an
+     * effect to, which {@link TaintedAtmosphereRules#isLocationExposedToTaint} decides (TO:AR p.54).
+     *
+     * @param entity         the unit whose location is being set
+     * @param location       the location being set
+     * @param conditions     the planetary conditions in force
+     * @param aeroSpaceborne whether this is a non-aerospace unit that is nonetheless in space
+     *
+     * @return the {@link ILocationExposureStatus} value for this location's exposure to the air
+     */
+    private int airExposureStatus(Entity entity, int location, PlanetaryConditions conditions,
+          boolean aeroSpaceborne) {
+        if (conditions.getAtmosphere().isLighterThan(Atmosphere.THIN) || aeroSpaceborne) {
+            return ILocationExposureStatus.VACUUM;
+        }
+        if (TaintedAtmosphereRules.isLocationExposedToTaint(entity, location, conditions.getAtmosphericTaint())) {
+            return ILocationExposureStatus.TAINTED;
+        }
+        return ILocationExposureStatus.NORMAL;
     }
 
     /**
@@ -16253,6 +16267,14 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * End-phase resolution for Tainted and Toxic Atmospheres, TO:AR p.54. Delegates to
+     * {@link TaintedAtmosphereHandler} so the atmosphere rules do not add to this already very large class.
+     */
+    void checkTaintedAtmosphereEffects() {
+        new TaintedAtmosphereHandler(this).checkTaintedAtmosphereEffects();
+    }
+
+    /**
      * Places the objective markers that players designated in the lobby when the game starts. Delegates to
      * {@link ObjectivePlacementHandler} so the objectives rules do not add to this already very large class.
      */
@@ -21669,6 +21691,9 @@ public class TWGameManager extends AbstractGameManager {
                 r.subject = aero.getId();
                 reports.add(r);
                 reports.addAll(damageCrew(aero, 1));
+                // Caustic tainted air gets into the damaged crew compartment and burns the pilot a second time
+                // (TO:AR p.54).
+                reports.addAll(new TaintedAtmosphereHandler(this).resolveExtraCockpitCrewHit(aero));
                 // The pilot may have just expired.
                 if ((aero.getCrew().isDead() || aero.getCrew().isDoomed()) && !aero.getCrew().isEjected()) {
                     reports.addAll(destroyEntity(aero, "pilot death", true, true));
@@ -24256,7 +24281,13 @@ public class TWGameManager extends AbstractGameManager {
         r.add(entity.getLocationAbbr(loc));
         vDesc.addElement(r);
 
-        if (entity instanceof Tank) {
+        if (entity instanceof Tank tank) {
+            // A vehicle breached in a tainted or toxic atmosphere is not torn apart the way it is in a vacuum; what
+            // happens to the crew depends on how the air is fouled (TO:AR p.54).
+            if (entity.getLocationStatus(loc) == ILocationExposureStatus.TAINTED) {
+                vDesc.addAll(new TaintedAtmosphereHandler(this).resolveVehicleBreach(tank, loc));
+                return vDesc;
+            }
             vDesc.addAll(destroyEntity(entity, "hull breach", true, true));
             return vDesc;
         }
@@ -24310,6 +24341,8 @@ public class TWGameManager extends AbstractGameManager {
                 vDesc.addAll(destroyEntity(entity, "hull breach"));
                 if (entity.getLocationStatus(loc) == ILocationExposureStatus.WET) {
                     r = new Report(6355);
+                } else if (entity.getLocationStatus(loc) == ILocationExposureStatus.TAINTED) {
+                    r = new Report(7716);
                 } else {
                     r = new Report(6360);
                 }
@@ -25854,6 +25887,11 @@ public class TWGameManager extends AbstractGameManager {
 
         if (diceRoll.getIntValue() >= roll.getValue()) {
             ignite(c, boardId, Terrains.FIRE_LVL_NORMAL, vPhaseReport);
+            if (bInferno) {
+                // Flammable toxic air carries an inferno or explosive fire straight into every adjacent hex
+                // (TO:AR p.54).
+                new TaintedAtmosphereHandler(this).spreadExplosiveFire(c, boardId, entityId, vPhaseReport);
+            }
             return true;
         }
 
@@ -32980,6 +33018,9 @@ public class TWGameManager extends AbstractGameManager {
                 if (keep) {
                     keptAttacks.add(ah);
                 }
+                // In a flammable atmosphere every weapon attack on a non-water hex risks setting it alight,
+                // whether the shot hit or missed (TO:AR p.54).
+                new TaintedAtmosphereHandler(this).checkAccidentalWeaponFire(ah, handleAttackReports);
                 Report.addNewline(handleAttackReports);
             } else {
                 keptAttacks.add(ah);

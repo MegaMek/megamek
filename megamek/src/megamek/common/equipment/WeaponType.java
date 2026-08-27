@@ -749,6 +749,13 @@ public class WeaponType extends EquipmentType {
     public static final int CLASS_THUNDERBOLT = 27;
     public static final int CLASS_MORTAR = 28;
 
+    /**
+     * Not a row on the Non-Infantry Weapon Damage Against Infantry Table (TW p.217) but the instruction to skip that
+     * table entirely and apply the attack's damage point for point, the way damage from another infantry unit is
+     * applied (TW p.216). A flammable toxic atmosphere does this to every non-area-effect attack on conventional
+     * infantry (TO:AR p.54).
+     */
+    public static final int WEAPON_INFANTRY_ORIGIN = -1;
     public static final int WEAPON_DIRECT_FIRE = 0;
     public static final int WEAPON_CLUSTER_BALLISTIC = 1;
     public static final int WEAPON_PULSE = 2;

@@ -911,6 +911,13 @@ public abstract class Entity extends TurnOrdered
      */
     private int spotTargetId = Entity.NONE;
 
+    /**
+     * End Phases this unit has spent out in the open in a tainted atmosphere, TO:AR p.54. An {@code int} rather than a
+     * state object so that a unit deserialized from a save written before this field existed simply starts its clock
+     * at zero instead of coming back null.
+     */
+    private int taintedAtmosphereExposureTurns = 0;
+
     private boolean isCommander = false;
 
     protected boolean isCarefulStanding = false;
@@ -12582,6 +12589,24 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean doomedInVacuum() {
         return false;
+    }
+
+    /**
+     * Counts one more End Phase spent out in a tainted atmosphere and reports the running total, TO:AR p.54. A
+     * radiological or poisonous tainted atmosphere starts killing conventional infantry after 30 turns in the open and
+     * the crews of unsealed vehicles after 90.
+     *
+     * @return the number of turns this unit has now spent exposed to the atmosphere
+     */
+    public int advanceTaintedAtmosphereExposure() {
+        return ++taintedAtmosphereExposureTurns;
+    }
+
+    /**
+     * @return the number of End Phases this unit has spent out in a tainted atmosphere
+     */
+    public int getTaintedAtmosphereExposureTurns() {
+        return taintedAtmosphereExposureTurns;
     }
 
     /**

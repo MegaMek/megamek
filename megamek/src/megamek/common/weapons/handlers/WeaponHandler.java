@@ -58,6 +58,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.compute.ComputeTerrainMods;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -76,6 +77,7 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.TaintedAtmosphereRules;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
@@ -1280,6 +1282,49 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     /**
+     * How many rows this attack is shifted down the Non-Infantry Weapon Damage Against Infantry Table (TW p.217)
+     * before its damage against a conventional infantry platoon is read off it.
+     * <p>
+     * A direct blow shifts the attack by a third of its margin of success, as it always has. A flammable tainted
+     * atmosphere shifts it two rows further, because the burning air spreads the attack out over the platoon
+     * (TO:AR p.54).
+     *
+     * @return the number of rows to shift, which is zero for an ordinary attack in breathable air
+     */
+    protected int getInfantryDamageClassShift() {
+        int directBlowShift = bDirect ? (toHit.getMoS() / 3) : 0;
+        int atmosphereShift = TaintedAtmosphereRules.getInfantryDamageClassShift(
+              game.getPlanetaryConditions().getAtmosphericTaint());
+        return directBlowShift + atmosphereShift;
+    }
+
+    /**
+     * The row of the Non-Infantry Weapon Damage Against Infantry Table (TW p.217) this attack's damage against a
+     * conventional infantry platoon should be read off.
+     * <p>
+     * Normally that is simply the weapon's own damage class. In a flammable toxic atmosphere every non-area-effect
+     * attack by a non-infantry unit is instead resolved as though another infantry unit had made it, so its damage is
+     * applied point for point and the table is skipped (TO:AR p.54).
+     *
+     * @param baseDamageClass the damage class the weapon would use in breathable air
+     *
+     * @return the damage class to use, or {@link WeaponType#WEAPON_INFANTRY_ORIGIN} to bypass the table
+     */
+    protected int resolveInfantryDamageClass(int baseDamageClass) {
+        boolean isAtmosphereInfantryOrigin = TaintedAtmosphereRules.treatsAttacksOnInfantryAsInfantryDamage(
+              game.getPlanetaryConditions().getAtmosphericTaint());
+        if (!isAtmosphereInfantryOrigin) {
+            return baseDamageClass;
+        }
+        boolean isInfantryAttacker = (attackingEntity != null) && attackingEntity.isConventionalInfantry();
+        boolean isAreaEffectAttack = ComputeTerrainMods.isAreaEffectAgainstInfantry(weaponType, ammoType);
+        if (isInfantryAttacker || isAreaEffectAttack) {
+            return baseDamageClass;
+        }
+        return WeaponType.WEAPON_INFANTRY_ORIGIN;
+    }
+
+    /**
      * Calculate the damage per hit.
      *
      * @return an <code>int</code> representing the damage dealt per hit.
@@ -1304,8 +1349,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                   && !attackingEntity.isConventionalInfantry()
                   && damageType != DamageType.FLECHETTE;
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                  bDirect ? toHit.getMoS() / 3 : 0,
-                  weaponType.getInfantryDamageClass(),
+                  getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   isNonInfantryVsMechanized,
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {

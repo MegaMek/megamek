@@ -46,6 +46,7 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
 
     static final String TEMPERATURE = "temperature";
     static final String PRESSURE = "pressure";
+    static final String TAINT = "taint";
     static final String GRAVITY = "gravity";
     static final String EMI_TEXT = "emi";
     static final String BLOWING_SAND = "blowingsand";
@@ -64,6 +65,15 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
           "trace", Atmosphere.TRACE, "thin", Atmosphere.THIN,
           "standard", Atmosphere.STANDARD, "high", Atmosphere.HIGH,
           "very high", Atmosphere.VERY_HIGH);
+
+    static final Map<String, AtmosphericTaint> TAINT_VALUES = Map.of(
+          "breathable", AtmosphericTaint.BREATHABLE,
+          "caustic tainted", AtmosphericTaint.CAUSTIC_TAINTED,
+          "caustic toxic", AtmosphericTaint.CAUSTIC_TOXIC,
+          "radiological tainted", AtmosphericTaint.RADIOLOGICAL_TAINTED,
+          "radiological toxic", AtmosphericTaint.RADIOLOGICAL_TOXIC,
+          "flammable tainted", AtmosphericTaint.FLAMMABLE_TAINTED,
+          "flammable toxic", AtmosphericTaint.FLAMMABLE_TOXIC);
 
     static final Map<String, Fog> FOG_VALUES = Map.of("none", Fog.FOG_NONE,
           "light", Fog.FOG_LIGHT, "heavy", Fog.FOG_HEAVY);
@@ -132,6 +142,9 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
         }
         if (node.has(PRESSURE)) {
             result.setAtmosphere(PRESSURE_VALUES.get(node.get(PRESSURE).textValue()));
+        }
+        if (node.has(TAINT)) {
+            result.setAtmosphericTaint(TAINT_VALUES.get(node.get(TAINT).textValue()));
         }
         if (node.has(FOG)) {
             result.setFog(FOG_VALUES.get(node.get(FOG).textValue()));

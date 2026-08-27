@@ -834,6 +834,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
             } else {
                 IAero aero = (IAero) entity;
                 int boardId = entity.getBoardId();
+                // The roll is made at the start of takeoff, so before the craft is moved off its hex (TO:AR p.54).
+                new TaintedAtmosphereHandler(gameManager).checkExhaustWashIgnition(entity, entity.getPosition(),
+                      boardId, entity.getFacing());
                 if (usingAeroOnGroundMovement()) {
                     entity.setPosition(entity.getPosition().translated(entity.getFacing(), aero.getTakeOffLength()));
                 } else {
@@ -859,6 +862,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 rollTarget = aero.checkVerticalTakeOff();
                 if (gameManager.doVerticalTakeOffCheck(entity, rollTarget)) {
                     int boardId = entity.getBoardId();
+                    // The roll is made at the start of takeoff, so before the craft leaves its hex (TO:AR p.54).
+                    new TaintedAtmosphereHandler(gameManager).checkExhaustWashIgnition(entity, entity.getPosition(),
+                          boardId, entity.getFacing());
                     if (!usingAeroOnGroundMovement()) {
                         positionOnAtmosphericMap();
                     }
@@ -891,6 +897,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                   md.getFinalBoardId(), md.getFinalFacing());
             aero.land();
             entity.setPosition(finalPosition);
+            // The roll is made at the end of landing, so from the hex the craft comes to rest in (TO:AR p.54).
+            new TaintedAtmosphereHandler(gameManager).checkExhaustWashIgnition(entity, finalPosition,
+                  md.getFinalBoardId(), md.getFinalFacing());
             entity.setDone(true);
             gameManager.entityUpdate(entity.getId());
             return;
@@ -900,6 +909,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
         lastPos = entity.getPosition();
         curPos = entity.getPosition();
         curBoardId = entity.getBoardId();
+        // Held separately from lastPos, which moves with the unit: a flammable atmosphere can be set alight by jump
+        // exhaust at the hex the unit lifted off from as well as the one it lands in (TO:AR p.54).
+        final Coords jumpLiftOffCoords = entity.getPosition();
+        final int jumpLiftOffBoardId = entity.getBoardId();
         boolean tookMagmaDamageAtStart = false; // Used to check for start/end magma damage
         curFacing = entity.getFacing();
         curVTOLElevation = entity.getElevation();
@@ -1622,6 +1635,16 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 gameManager.getMainPhaseReport().addAll(gameManager.vehicleMotiveDamage((Tank) entity, modifier,
                       false, -1, true));
                 Report.addNewline(gameManager.getMainPhaseReport());
+            }
+
+            // Jump exhaust can set a flammable atmosphere alight at both ends of the jump (TO:AR p.54).
+            TaintedAtmosphereHandler taintedAtmosphereHandler = new TaintedAtmosphereHandler(gameManager);
+            taintedAtmosphereHandler.checkJumpIgnition(entity, jumpLiftOffCoords, jumpLiftOffBoardId,
+                  gameManager.getMainPhaseReport());
+            boolean landedElsewhere = !curPos.equals(jumpLiftOffCoords) || (curBoardId != jumpLiftOffBoardId);
+            if (landedElsewhere) {
+                taintedAtmosphereHandler.checkJumpIgnition(entity, curPos, curBoardId,
+                      gameManager.getMainPhaseReport());
             }
 
         } // End entity-is-jumping

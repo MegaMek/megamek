@@ -2727,7 +2727,11 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLEngineeringSuit");
         misc.damageDivisor = 1.0;
         misc.cost = 7500;
-        misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_ENCUMBERING, MiscTypeFlag.S_SPACE_SUIT);
+        misc.flags = misc.flags.or(F_INF_EQUIPMENT,
+              F_ARMOR_KIT,
+              MiscTypeFlag.S_ENCUMBERING,
+              MiscTypeFlag.S_SPACE_SUIT,
+              MiscTypeFlag.S_HAZARDOUS_LIQ);
         misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
@@ -2751,7 +2755,14 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLEnvironmentSuitLight");
         misc.damageDivisor = 1.0;
         misc.cost = 200;
-        misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_ENCUMBERING, MiscTypeFlag.S_SPACE_SUIT);
+        // A Light Environment Suit qualifies XCT Troops for a tainted atmosphere but not for a toxic one,
+        // TO:AUE p.162.
+        misc.flags = misc.flags.or(F_INF_EQUIPMENT,
+              F_ARMOR_KIT,
+              MiscTypeFlag.S_ENCUMBERING,
+              MiscTypeFlag.S_SPACE_SUIT,
+              MiscTypeFlag.S_HAZARDOUS_LIQ,
+              MiscTypeFlag.S_TAINTED_ATMOSPHERE);
         misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
@@ -2778,7 +2789,10 @@ public class MiscType extends EquipmentType {
               MiscTypeFlag.S_SPACE_SUIT,
               MiscTypeFlag.S_XCT_VACUUM,
               MiscTypeFlag.S_COLD_WEATHER,
-              MiscTypeFlag.S_HOT_WEATHER);
+              MiscTypeFlag.S_HOT_WEATHER,
+              MiscTypeFlag.S_HAZARDOUS_LIQ,
+              MiscTypeFlag.S_TAINTED_ATMOSPHERE,
+              MiscTypeFlag.S_TOXIC_ATMOSPHERE);
         misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
@@ -2806,7 +2820,10 @@ public class MiscType extends EquipmentType {
               MiscTypeFlag.S_SPACE_SUIT,
               MiscTypeFlag.S_XCT_VACUUM,
               MiscTypeFlag.S_COLD_WEATHER,
-              MiscTypeFlag.S_HOT_WEATHER);
+              MiscTypeFlag.S_HOT_WEATHER,
+              MiscTypeFlag.S_HAZARDOUS_LIQ,
+              MiscTypeFlag.S_TAINTED_ATMOSPHERE,
+              MiscTypeFlag.S_TOXIC_ATMOSPHERE);
 
         misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
@@ -3066,7 +3083,10 @@ public class MiscType extends EquipmentType {
               MiscTypeFlag.S_ENCUMBERING,
               MiscTypeFlag.S_SPACE_SUIT,
               MiscTypeFlag.S_XCT_VACUUM,
-              MiscTypeFlag.S_COLD_WEATHER);
+              MiscTypeFlag.S_COLD_WEATHER,
+              MiscTypeFlag.S_HAZARDOUS_LIQ,
+              MiscTypeFlag.S_TAINTED_ATMOSPHERE,
+              MiscTypeFlag.S_TOXIC_ATMOSPHERE);
         misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
@@ -3091,7 +3111,10 @@ public class MiscType extends EquipmentType {
               MiscTypeFlag.S_ENCUMBERING,
               MiscTypeFlag.S_SPACE_SUIT,
               MiscTypeFlag.S_XCT_VACUUM,
-              MiscTypeFlag.S_COLD_WEATHER);
+              MiscTypeFlag.S_COLD_WEATHER,
+              MiscTypeFlag.S_HAZARDOUS_LIQ,
+              MiscTypeFlag.S_TAINTED_ATMOSPHERE,
+              MiscTypeFlag.S_TOXIC_ATMOSPHERE);
 
         misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.ALL)

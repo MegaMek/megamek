@@ -33,6 +33,7 @@
 package megamek.client.ratgenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Method;
@@ -99,5 +100,86 @@ class ForceDescriptorTest {
         assertTrue(formattedTrace.contains("rating=B tableEntries=0"), "second attempt missing from trace");
         assertEquals(failureTrace.size(), formattedTrace.lines().filter(line -> line.contains("attempt:")).count(),
               "each attempt should appear exactly once");
+    }
+
+    @Test
+    void parseNameResolvesParentTokensThroughTheTree() {
+        ForceDescriptor regiment = new ForceDescriptor();
+        regiment.setName("Regiment");
+        ForceDescriptor battalion = new ForceDescriptor();
+        battalion.setName("{ordinal} Battalion");
+        ForceDescriptor company = new ForceDescriptor();
+        company.setName("{cardinal:parent}/{alpha} Company");
+        ForceDescriptor firstLance = new ForceDescriptor();
+        firstLance.setName("{alpha:parent}-{cardinal} Lance");
+        ForceDescriptor secondLance = new ForceDescriptor();
+        secondLance.setName("{alpha:parent}-{cardinal} Lance");
+
+        company.addSubForce(firstLance);
+        company.addSubForce(secondLance);
+        battalion.addSubForce(company);
+        regiment.addSubForce(battalion);
+        regiment.assignPositions();
+
+        assertEquals("First Battalion", battalion.parseName());
+        assertEquals("1/A Company", company.parseName());
+        assertEquals("A-1 Lance", firstLance.parseName());
+        assertEquals("A-2 Lance", secondLance.parseName());
+    }
+
+    /**
+     * A root node (or a child of an unnumbered parent) cannot resolve {@code :parent} tokens; the
+     * token must vanish together with its attached separator instead of leaving "/A Company".
+     */
+    @Test
+    void parseNameDropsUnresolvedParentTokensWithTheirSeparator() {
+        ForceDescriptor rootCompany = new ForceDescriptor();
+        rootCompany.setName("{cardinal:parent}/{alpha} Company");
+        assertEquals("Company", rootCompany.parseName(),
+              "a bare company keeps a clean name when generated as the root");
+
+        ForceDescriptor rootBattalion = new ForceDescriptor();
+        rootBattalion.setName("Battalion");
+        ForceDescriptor company = new ForceDescriptor();
+        company.setName("{cardinal:parent}/{alpha} Company");
+        rootBattalion.addSubForce(company);
+        rootBattalion.assignPositions();
+
+        assertEquals("A Company", company.parseName(),
+              "a company under an unnumbered root battalion drops only the parent token");
+    }
+
+    @Test
+    void includedDefaultsToTrue() {
+        assertTrue(new ForceDescriptor().isIncluded(), "a new descriptor should be included by default");
+    }
+
+    @Test
+    void setIncludedRecursivelyCascadesToSubForcesAndAttached() {
+        ForceDescriptor root = new ForceDescriptor();
+        ForceDescriptor subForce = new ForceDescriptor();
+        ForceDescriptor grandChild = new ForceDescriptor();
+        ForceDescriptor attached = new ForceDescriptor();
+        subForce.addSubForce(grandChild);
+        root.addSubForce(subForce);
+        root.addAttached(attached);
+
+        root.setIncludedRecursively(false);
+        assertFalse(root.isIncluded());
+        assertFalse(subForce.isIncluded());
+        assertFalse(grandChild.isIncluded(), "exclusion must cascade through nested subforces");
+        assertFalse(attached.isIncluded(), "exclusion must cascade to attached descriptors");
+
+        // Re-including a single leaf must not re-include its ancestors.
+        grandChild.setIncluded(true);
+        assertTrue(grandChild.isIncluded());
+        assertFalse(subForce.isIncluded());
+
+        // Re-including the root cascades back across the whole subtree.
+        root.setIncludedRecursively(true);
+        assertTrue(root.isIncluded());
+        assertTrue(subForce.isIncluded());
+        assertTrue(grandChild.isIncluded());
+        assertTrue(attached.isIncluded());
     }
 }

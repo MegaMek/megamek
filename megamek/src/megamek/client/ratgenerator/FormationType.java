@@ -453,7 +453,14 @@ public class FormationType {
      */
     private void applyFormationWeightClasses(Parameters parameters, List<Integer> groundRange,
           List<Integer> airRange) {
-        parameters.addRoles(missionRoles);
+        // Deliberately does NOT add this formation's own missionRoles to the caller's parameters. A mission role
+        // is a hard filter on the unit table, and forcing one in behind the caller's back made the two consumers
+        // of this class fight each other: the Formation Builder passes the formation's roles itself and means to,
+        // while the Force Generator passes the roles of the node being filled and means those. Anti-Air and
+        // Artillery Fire both declare MIXED_ARTILLERY, a role carried by 128 of 11,016 models and by none a 3067
+        // mercenary command can draw, so the injection cut their table to nothing and neither formation could ever
+        // be built by the generator - a Draconis Combine regiment offered Anti-Air sixty times and built it none.
+        // Each caller now gets the filter it asked for and no other.
         List<Integer> formationRange = (parameters.getUnitType() < UnitType.CONV_FIGHTER) ? groundRange : airRange;
         Collection<Integer> requested = parameters.getWeightClasses();
         if (requested.isEmpty()) {

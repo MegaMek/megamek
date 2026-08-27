@@ -58,8 +58,68 @@ public class TransportCalculator {
     // bays and docking hard points. Since this is a relatively expensive operation we will cache the results.
     private static final Map<MekSummary, Map<Integer, Integer>> bayTypeCache = new HashMap<>();
 
+    /** Cargo capacity is kept out of {@link #bayTypeCache} because it is tonnage, not a unit count. */
+    private static final Map<MekSummary, CargoCapacity> cargoCapacityCache = new HashMap<>();
+
     public static void dispose() {
         bayTypeCache.clear();
+        cargoCapacityCache.clear();
+    }
+
+    /**
+     * The cargo a craft can haul, split the same way MekHQ tracks it: liquid bays are counted
+     * separately because liquid cargo cannot be stowed in a dry hold and vice versa, so a hull with
+     * plenty of one is no help to a command that needs the other.
+     *
+     * @param solidTons  dry cargo tonnage - general, insulated, refrigerated and livestock holds
+     * @param liquidTons liquid cargo tonnage
+     */
+    public record CargoCapacity(double solidTons, double liquidTons) {
+
+        public static final CargoCapacity NONE = new CargoCapacity(0, 0);
+
+        /** @return the combined capacity of this and {@code other} */
+        public CargoCapacity plus(CargoCapacity other) {
+            return new CargoCapacity(solidTons + other.solidTons, liquidTons + other.liquidTons);
+        }
+
+        /** @return {@code true} when this craft can haul no cargo of either kind */
+        public boolean isEmpty() {
+            return (solidTons <= 0) && (liquidTons <= 0);
+        }
+    }
+
+    /**
+     * Reads the cargo holds of a craft. Quarters and seating are deliberately excluded: they are
+     * separate {@link Bay} types rather than subclasses of {@link CargoBay}, so berths for the crew
+     * are never mistaken for space to stow spares.
+     *
+     * @param mekSummary the craft to measure
+     *
+     * @return its cargo capacity, or {@link CargoCapacity#NONE} when it has none or cannot be loaded
+     */
+    public static CargoCapacity cargoCapacity(MekSummary mekSummary) {
+        return cargoCapacityCache.computeIfAbsent(mekSummary, summary -> {
+            try {
+                Entity entity = new MekFileParser(summary.getSourceFile(), summary.getEntryName()).getEntity();
+                double solid = 0;
+                double liquid = 0;
+                for (Bay bay : entity.getTransportBays()) {
+                    if (bay instanceof LiquidCargoBay) {
+                        liquid += bay.getCapacity();
+                    } else if ((bay instanceof CargoBay)
+                          || (bay instanceof InsulatedCargoBay)
+                          || (bay instanceof RefrigeratedCargoBay)
+                          || (bay instanceof LivestockCargoBay)) {
+                        solid += bay.getCapacity();
+                    }
+                }
+                return new CargoCapacity(solid, liquid);
+            } catch (EntityLoadingException exception) {
+                // Cache the failure so a unit that cannot be loaded is not re-parsed on every call.
+                return CargoCapacity.NONE;
+            }
+        });
     }
 
     private final ForceDescriptor fd;
@@ -122,7 +182,7 @@ public class TransportCalculator {
         UnitTable table = UnitTable.findTable(fd.getFactionRec(),
               UnitType.DROPSHIP,
               fd.getYear(),
-              fd.getRating(),
+              fd.ratGeneratorRating(),
               null,
               ModelRecord.NETWORK_NONE,
               EnumSet.noneOf(EntityMovementMode.class),
@@ -138,7 +198,8 @@ public class TransportCalculator {
             }
 
             while (unitCounts.get(unitType) * ratio > (double) (currentCapacity.getOrDefault(unitType, 0))) {
-                MekSummary dropship = table.generateUnit(ms -> hasBayFor(ms, unitType));
+                MekSummary dropship = table.generateUnit(ms -> hasBayFor(ms, unitType)
+                      && !isPredominantlyTanker(ms));
 
                 if (null == dropship) {
                     break; // Could not find any transport for the unit type; skip
@@ -164,7 +225,7 @@ public class TransportCalculator {
         UnitTable table = UnitTable.findTable(fd.getFactionRec(),
               UnitType.JUMPSHIP,
               fd.getYear(),
-              fd.getRating(),
+              fd.ratGeneratorRating(),
               null,
               ModelRecord.NETWORK_NONE,
               EnumSet.noneOf(EntityMovementMode.class),
@@ -209,7 +270,7 @@ public class TransportCalculator {
         UnitTable table = UnitTable.findTable(fd.getFactionRec(),
               UnitType.WARSHIP,
               fd.getYear(),
-              fd.getRating(),
+              fd.ratGeneratorRating(),
               null,
               ModelRecord.NETWORK_NONE,
               EnumSet.noneOf(EntityMovementMode.class),
@@ -234,13 +295,24 @@ public class TransportCalculator {
     }
 
     /**
-     * Determines whether potential transport has capacity for the type of unit.
+     * Whether a craft is a liquid tanker rather than a transport that happens to carry some liquid.
      *
-     * @param ms       A potential transporting unit
-     * @param unitType The unit to be carried
+     * <p>A tanker can qualify on a stray unit bay and then be drawn over and over, because each one
+     * contributes almost nothing toward the unit count being covered - a run that needed lift for a
+     * regiment produced sixteen Aqueducts and twenty-six thousand tons of liquid tankage nobody asked
+     * for. A hull whose holds are mostly liquid is not a troop transport, so it is kept out of the
+     * unit-transport draw; the cargo lift selects it separately when liquid capacity is what is
+     * wanted.</p>
      *
-     * @return True if the unit can be carried by the transporting unit.
+     * @param mekSummary the craft to test
+     *
+     * @return {@code true} when the craft's liquid capacity exceeds its dry capacity
      */
+    private static boolean isPredominantlyTanker(MekSummary mekSummary) {
+        CargoCapacity capacity = cargoCapacity(mekSummary);
+        return capacity.liquidTons() > capacity.solidTons();
+    }
+
     private boolean hasBayFor(MekSummary ms, int unitType) {
         if (getBayCount(ms, unitType) > 0) {
             return true;

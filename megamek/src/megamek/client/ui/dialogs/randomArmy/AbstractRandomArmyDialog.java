@@ -177,6 +177,11 @@ public abstract class AbstractRandomArmyDialog extends JDialog {
         gameOptions = newOptions;
         bvTab.setGameOptions(newOptions);
         ratGenTab.setGameOptions(newOptions);
+        // The force generator was left out, so it kept the defaults this dialog is built with and
+        // never saw the game's real rules. A force was then generated against one set of options while
+        // the lobby it went to used another - a rule the player had switched on was simply invisible
+        // to generation.
+        forceGeneratorPanel.setGameOptions(newOptions);
         updateYear();
     }
 

@@ -91,6 +91,15 @@ class Faction2Test {
     }
 
     @Test
+    void isMilitiaReflectsTheMilitiaTag() {
+        Faction2 faction = new Faction2();
+        assertFalse(faction.isMilitia());
+
+        faction.getTags().add(FactionTag.MILITIA);
+        assertTrue(faction.isMilitia());
+    }
+
+    @Test
     void sucsCodesParsedFromYamlPreservingOrder() {
         Factions2 testFactions = getTestFactions2();
         Faction2 laFaction = testFactions.getFaction("LA").orElseThrow();

@@ -33,6 +33,31 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.LayoutManager;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
+
 import com.formdev.flatlaf.extras.components.FlatTabbedPane;
 import megamek.client.Client;
 import megamek.client.ui.GBC;
@@ -75,25 +100,6 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.bayWeapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
 import megamek.server.ServerBoardHelper;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.NumberFormatter;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * A dialog that a player can use to customize his mek before battle. Currently, changing pilots, setting up C3
@@ -1961,10 +1967,6 @@ public class CustomMekDialog extends AbstractButtonDialog
                                                    choDeploymentZone.getSelectedIndex() < Board.NUM_ZONES;
             txtDeploymentOffset.setEnabled(enableDeploymentZoneControls);
             txtDeploymentWidth.setEnabled(enableDeploymentZoneControls);
-            if (enableDeploymentZoneControls && Game.rulesManager.getRulesGame()
-                                                                 .isWalkOnDeployment() && (choDeploymentZone.getSelectedIndex() != Board.START_CENTER && choDeploymentZone.getSelectedIndex() != Board.START_ANY)) {
-                txtDeploymentWidth.setEnabled(false);
-            }
         }
     }
 

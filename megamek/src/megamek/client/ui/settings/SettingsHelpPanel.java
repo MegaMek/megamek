@@ -112,6 +112,7 @@ public class SettingsHelpPanel extends JPanel {
 
     public void clearHelpText() {
         helpTextPane.setText("");
+        updateSearchHighlights();
     }
 
     void setSearchFilter(String normalizedFilter) {

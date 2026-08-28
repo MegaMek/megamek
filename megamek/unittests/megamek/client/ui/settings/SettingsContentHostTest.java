@@ -255,13 +255,26 @@ class SettingsContentHostTest {
         SettingsHelpPanel helpPanel = findComponent(host, "settingsHelpPanel", SettingsHelpPanel.class);
         assertEquals(1, helpPanel.getSearchHighlightCount());
         assertEquals(2, host.getHelpMatchBounds().size());
-          assertTrue(host.getHelpMatchBounds().stream()
+                assertTrue(host.getHelpMatchBounds().stream()
               .anyMatch(bounds -> bounds.width >= label.getWidth() + control.getWidth()));
 
         host.setSearchFilter("");
 
         assertEquals(0, helpPanel.getSearchHighlightCount());
         assertTrue(host.getHelpMatchBounds().isEmpty());
+    }
+
+    @Test
+    void blankHelpTextClearsSearchHighlights() {
+        SettingsHelpPanel helpPanel = new SettingsHelpPanel();
+        helpPanel.setSearchFilter("stand");
+        helpPanel.setHelpText("Attempt to stand up");
+
+        assertEquals(1, helpPanel.getSearchHighlightCount());
+
+        helpPanel.setHelpText("");
+
+        assertEquals(0, helpPanel.getSearchHighlightCount());
     }
 
     @Test

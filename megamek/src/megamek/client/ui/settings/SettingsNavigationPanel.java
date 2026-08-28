@@ -116,12 +116,12 @@ public class SettingsNavigationPanel extends JPanel {
               ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
               ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         navigationScrollPane.setName("settingsNavigationScrollPane");
-          searchingLabel.setName("lblSettingsSearching");
-          searchingLabel.setText(text.searching());
-          searchingLabel.setHorizontalAlignment(SwingConstants.CENTER);
-          navigationContent.setName("settingsNavigationContent");
-          navigationContent.add(navigationScrollPane, NAVIGATION_TREE_CARD);
-          navigationContent.add(searchingLabel, SEARCHING_CARD);
+                searchingLabel.setName("lblSettingsSearching");
+                searchingLabel.setText(text.searching());
+                searchingLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                navigationContent.setName("settingsNavigationContent");
+                navigationContent.add(navigationScrollPane, NAVIGATION_TREE_CARD);
+                navigationContent.add(searchingLabel, SEARCHING_CARD);
 
         int controlGap = UIUtil.scaleForGUI(CONTROL_GAP);
         JPanel searchRow = new JPanel(new BorderLayout(controlGap, 0));

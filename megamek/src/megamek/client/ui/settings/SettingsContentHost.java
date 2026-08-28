@@ -281,8 +281,8 @@ public class SettingsContentHost extends JPanel {
                     }
                 };
                 boolean suppressTooltip = swingComponent.getToolTipText() != null;
-                    HelpBinding binding = new HelpBinding(swingComponent, descendantHelpOwner,
-                        swingComponent.getToolTipText(), helpText, suppressTooltip, mouseListener, focusListener);
+                HelpBinding binding = new HelpBinding(swingComponent, descendantHelpOwner,
+                      swingComponent.getToolTipText(), helpText, suppressTooltip, mouseListener, focusListener);
                 swingComponent.addMouseListener(binding.mouseListener());
                 swingComponent.addFocusListener(binding.focusListener());
                 if (suppressTooltip) {

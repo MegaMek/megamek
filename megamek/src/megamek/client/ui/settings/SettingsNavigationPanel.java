@@ -35,6 +35,7 @@ package megamek.client.ui.settings;
 import static megamek.client.ui.util.FontHandler.symbolIcon;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -72,6 +73,8 @@ public class SettingsNavigationPanel extends JPanel {
 
     private static final int CONTENT_GAP = 6;
     private static final int CONTROL_GAP = 4;
+    private static final String NAVIGATION_TREE_CARD = "navigationTree";
+    private static final String SEARCHING_CARD = "searching";
 
     private final List<SettingsRoute> routes;
     private final Consumer<SettingsRoute> routeSelectionListener;
@@ -79,8 +82,12 @@ public class SettingsNavigationPanel extends JPanel {
     private final JTextField filterField = new JTextField();
     private final JLabel filterStatusLabel = new JLabel();
     private final JTree navigationTree = new JTree();
+    private final CardLayout navigationContentLayout = new CardLayout();
+    private final JPanel navigationContent = new JPanel(navigationContentLayout);
+    private final JLabel searchingLabel = new JLabel();
     private SettingsRoute currentRoute;
     private boolean syncingSelection;
+    private boolean searchInProgress;
     private Runnable searchIndexInitializer;
     private Consumer<String> filterChangeListener = filter -> { };
 
@@ -109,6 +116,12 @@ public class SettingsNavigationPanel extends JPanel {
               ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
               ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         navigationScrollPane.setName("settingsNavigationScrollPane");
+          searchingLabel.setName("lblSettingsSearching");
+          searchingLabel.setText(text.searching());
+          searchingLabel.setHorizontalAlignment(SwingConstants.CENTER);
+          navigationContent.setName("settingsNavigationContent");
+          navigationContent.add(navigationScrollPane, NAVIGATION_TREE_CARD);
+          navigationContent.add(searchingLabel, SEARCHING_CARD);
 
         int controlGap = UIUtil.scaleForGUI(CONTROL_GAP);
         JPanel searchRow = new JPanel(new BorderLayout(controlGap, 0));
@@ -123,7 +136,7 @@ public class SettingsNavigationPanel extends JPanel {
         filterPanel.add(searchRow, BorderLayout.NORTH);
         filterPanel.add(filterStatusLabel, BorderLayout.SOUTH);
         add(filterPanel, BorderLayout.NORTH);
-        add(navigationScrollPane, BorderLayout.CENTER);
+        add(navigationContent, BorderLayout.CENTER);
         buildNavigationTree("");
     }
 
@@ -239,7 +252,20 @@ public class SettingsNavigationPanel extends JPanel {
     }
 
     public void refreshFilter() {
-        buildNavigationTree(filterField.getText());
+        if (!searchInProgress) {
+            buildNavigationTree(filterField.getText());
+        }
+    }
+
+    void setSearchInProgress(boolean searchInProgress) {
+        this.searchInProgress = searchInProgress;
+        navigationTree.setEnabled(!searchInProgress);
+        if (searchInProgress) {
+            filterStatusLabel.setText("");
+            filterStatusLabel.setVisible(false);
+        }
+        navigationContentLayout.show(navigationContent,
+              searchInProgress ? SEARCHING_CARD : NAVIGATION_TREE_CARD);
     }
 
     /** @return the normalized active search filter */
@@ -266,7 +292,9 @@ public class SettingsNavigationPanel extends JPanel {
         if (searchIndexInitializer != null) {
             searchIndexInitializer.run();
         }
-        buildNavigationTree(filterField.getText());
+        if (!searchInProgress) {
+            buildNavigationTree(filterField.getText());
+        }
         filterChangeListener.accept(getActiveFilter());
     }
 

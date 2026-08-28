@@ -43,6 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -50,6 +52,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ListResourceBundle;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -219,6 +222,71 @@ class SettingsContentHostTest {
 
         assertFalse(host.getSearchHighlightBounds().isEmpty());
         assertEquals(originalText, label.getText());
+    }
+
+    @Test
+    void searchFilterRevealsTooltipOnlyMatchInOptionDetails() {
+        JPanel row = new JPanel(new GridBagLayout());
+        JLabel label = new JLabel("Get Up");
+        label.setToolTipText("Attempt to stand up from Prone position");
+        JTextField control = new JTextField("U");
+        GridBagConstraints labelLayout = new GridBagConstraints();
+        labelLayout.gridx = 0;
+        labelLayout.gridy = 0;
+        row.add(label, labelLayout);
+        GridBagConstraints controlLayout = new GridBagConstraints();
+        controlLayout.gridx = 1;
+        controlLayout.gridy = 0;
+        row.add(control, controlLayout);
+        JLabel secondLabel = new JLabel("Stand");
+        secondLabel.setToolTipText("Temporarily stand the unit upright");
+        GridBagConstraints secondLabelLayout = new GridBagConstraints();
+        secondLabelLayout.gridx = 0;
+        secondLabelLayout.gridy = 1;
+        row.add(secondLabel, secondLabelLayout);
+        SettingsContentHost host = new SettingsContentHost(row, true);
+        host.setSize(320, 240);
+        layoutTree(host);
+
+        host.setSearchFilter(SettingsRoute.normalizeSearchText("temp"));
+
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+        assertTrue(helpPane.getText().contains("Attempt to stand up from Prone position"), helpPane.getText());
+        SettingsHelpPanel helpPanel = findComponent(host, "settingsHelpPanel", SettingsHelpPanel.class);
+        assertEquals(1, helpPanel.getSearchHighlightCount());
+        assertEquals(2, host.getHelpMatchBounds().size());
+          assertTrue(host.getHelpMatchBounds().stream()
+              .anyMatch(bounds -> bounds.width >= label.getWidth() + control.getWidth()));
+
+        host.setSearchFilter("");
+
+        assertEquals(0, helpPanel.getSearchHighlightCount());
+        assertTrue(host.getHelpMatchBounds().isEmpty());
+    }
+
+    @Test
+    void helpMatchMarksOnlyMatchingCheckboxInSharedGridRow() {
+        JPanel row = new JPanel(new GridBagLayout());
+        JCheckBox first = new JCheckBox("First option");
+        first.setToolTipText("Unrelated details");
+        JCheckBox second = new JCheckBox("Second option");
+        second.setToolTipText("Matching needle details");
+        GridBagConstraints firstLayout = new GridBagConstraints();
+        firstLayout.gridx = 0;
+        firstLayout.gridy = 0;
+        row.add(first, firstLayout);
+        GridBagConstraints secondLayout = new GridBagConstraints();
+        secondLayout.gridx = 1;
+        secondLayout.gridy = 0;
+        row.add(second, secondLayout);
+        SettingsContentHost host = new SettingsContentHost(row, true);
+        host.setSize(480, 240);
+        layoutTree(host);
+
+        host.setSearchFilter(SettingsRoute.normalizeSearchText("needle"));
+
+        assertEquals(1, host.getHelpMatchBounds().size());
+        assertEquals(second.getWidth(), host.getHelpMatchBounds().getFirst().width);
     }
 
     @Test

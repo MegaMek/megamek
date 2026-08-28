@@ -33,9 +33,11 @@
 package megamek.client.ui.settings;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
@@ -45,6 +47,8 @@ import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
 
 import megamek.client.ui.util.UIUtil;
 import megamek.common.ui.FastJScrollPane;
@@ -57,6 +61,7 @@ public class SettingsHelpPanel extends JPanel {
     private static final int HELP_TEXT_HORIZONTAL_PADDING = 8;
 
     private final JEditorPane helpTextPane = new JEditorPane();
+    private String searchFilter = "";
 
     public SettingsHelpPanel() {
         super(new BorderLayout());
@@ -102,10 +107,38 @@ public class SettingsHelpPanel extends JPanel {
         }
         helpTextPane.setText(helpText);
         helpTextPane.setCaretPosition(0);
+        updateSearchHighlights();
     }
 
     public void clearHelpText() {
         helpTextPane.setText("");
+    }
+
+    void setSearchFilter(String normalizedFilter) {
+        searchFilter = normalizedFilter == null ? "" : normalizedFilter;
+        updateSearchHighlights();
+    }
+
+    int getSearchHighlightCount() {
+        return helpTextPane.getHighlighter().getHighlights().length;
+    }
+
+    private void updateSearchHighlights() {
+        helpTextPane.getHighlighter().removeAllHighlights();
+        List<String> tokens = SettingsSearchText.tokens(searchFilter);
+        if (tokens.isEmpty()) {
+            return;
+        }
+        SettingsSearchText.TextSource source = SettingsSearchText.from(helpTextPane);
+        Color color = SettingsSearchHighlightLayerUI.highlightColor();
+        var painter = new DefaultHighlighter.DefaultHighlightPainter(color);
+        for (SettingsSearchText.TextRange range : SettingsSearchText.ranges(source.text(), tokens)) {
+            try {
+                helpTextPane.getHighlighter().addHighlight(range.start(), range.end(), painter);
+            } catch (BadLocationException exception) {
+                // Ignore stale positions if the help document changes while highlights are being applied.
+            }
+        }
     }
 
     @Override

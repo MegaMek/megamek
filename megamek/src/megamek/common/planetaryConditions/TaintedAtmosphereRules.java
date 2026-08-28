@@ -177,18 +177,19 @@ public final class TaintedAtmosphereRules {
     }
 
     /**
-     * Whether a crewed unit that is not sealed against the outside air may not be fielded at all, TO:AR p.54. Only a
-     * toxic caustic or radiological atmosphere goes this far.
+     * Whether a vehicle without the Environmental Sealing chassis modification may not be fielded at all, TO:AR p.54.
+     * Only a toxic caustic or radiological atmosphere goes this far.
      * <p>
-     * The rules name vehicles without the Environmental Sealing chassis modification. The same reasoning reaches
-     * IndustrialMeks, which are the one kind of Mek not sealed by its basic construction and which buy the sealing
-     * for the same reason a vehicle does; a BattleMek's crew is never breathing this air.
+     * This bars vehicles only, including IndustrialMeks would be a house rule. The same table entry deals with Meks
+     * separately, and by leaving them on the field: "cockpit armor breaches in Meks instantly kill vehicle crews and
+     * MechWarriors". So an IndustrialMek without the sealing may be fielded in toxic air and dies to a cockpit
+     * breach like any other Mek, rather than being turned away at deployment.
      *
      * @param atmosphericTaint the air being fought in
      *
-     * @return {@code true} if unsealed units are barred from the field
+     * @return {@code true} if unsealed vehicles are barred from the field
      */
-    public static boolean barsUnsealedUnits(AtmosphericTaint atmosphericTaint) {
+    public static boolean barsUnsealedVehicles(AtmosphericTaint atmosphericTaint) {
         return atmosphericTaint.isToxic() && isHarmfulToPersonnel(atmosphericTaint);
     }
 

@@ -675,10 +675,9 @@ public class PlanetaryConditions implements Serializable {
                   MSG_DOOMED_TOXIC_ATMOSPHERE :
                   MSG_DOOMED_TAINTED_ATMOSPHERE;
         }
-        // Conventional infantry are answered by the XCT branch above, whatever gear they carry.
-        boolean isUnsealedCrewedUnit = !entity.isConventionalInfantry()
+        boolean isUnsealedVehicle = (entity instanceof Tank)
               && !EnvironmentalSealingRules.isSealedAgainstAtmosphere(entity);
-        if (isUnsealedCrewedUnit && TaintedAtmosphereRules.barsUnsealedUnits(getAtmosphericTaint())) {
+        if (isUnsealedVehicle && TaintedAtmosphereRules.barsUnsealedVehicles(getAtmosphericTaint())) {
             return MSG_DOOMED_TOXIC_ATMOSPHERE;
         }
         if (TaintedAtmosphereRules.barsJetPropelledCraft(entity, getAtmosphericTaint())) {

@@ -239,24 +239,17 @@ class PlanetaryConditionsAtmosphericTaintTest {
     }
 
     @Test
-    @DisplayName("Toxic air turns away an IndustrialMek without Environmental Sealing")
-    void toxicAirDoomsUnsealedIndustrialMeks() {
+    @DisplayName("Toxic air turns away unsealed vehicles but not Meks of any kind")
+    void toxicAirBarsVehiclesOnly() {
         PlanetaryConditions conditions = conditionsWith(AtmosphericTaint.CAUSTIC_TOXIC);
 
-        assertNotNull(conditions.whyDoomed(industrialMek(false), game),
-              "an IndustrialMek is not sealed by its construction, so its crew breathes this air");
-        assertNull(conditions.whyDoomed(industrialMek(true), game),
-              "the sealing is exactly what the IndustrialMek buys to be here");
+        assertNotNull(conditions.whyDoomed(vehicle(false), game),
+              "an unsealed vehicle may not be fielded in toxic air");
+        assertNull(conditions.whyDoomed(vehicle(true), game),
+              "the sealing chassis modification is what lets a vehicle be here");
         assertNull(conditions.whyDoomed(battleMek(), game),
               "a BattleMek is sealed as part of its basic construction");
-    }
-
-    @Test
-    @DisplayName("Merely tainted air still lets an unsealed IndustrialMek onto the field")
-    void taintedAirDoesNotDoomUnsealedIndustrialMeks() {
-        PlanetaryConditions conditions = conditionsWith(AtmosphericTaint.CAUSTIC_TAINTED);
-
         assertNull(conditions.whyDoomed(industrialMek(false), game),
-              "only the toxic strength bars unsealed units outright, exactly as for vehicles");
+              "TO:AR p.54 bars vehicles, not Meks - an IndustrialMek is fielded and dies to a cockpit breach");
     }
 }

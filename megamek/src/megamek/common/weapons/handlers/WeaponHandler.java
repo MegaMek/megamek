@@ -1300,15 +1300,17 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * The row of the Non-Infantry Weapon Damage Against Infantry Table (TW p.217) this attack's damage against a
      * conventional infantry platoon should be read off.
      * <p>
-     * Normally that is simply the weapon's own damage class. A flammable atmosphere changes it in one of two ways
-     * (TO:AR p.54).
+     * Normally that is simply the weapon's own damage class. A flammable atmosphere changes it, and because toxic
+     * air is the same taint at a worse level, both of the following apply there in order (TO:AR p.54).
      * <p>
-     * Tainted: the attack counts as two types better, to a maximum of the area-effect weapon. So direct fire is read
+     * First, the attack counts as two types better, to a maximum of the area-effect weapon. So direct fire is read
      * off the pulse row, cluster ballistic off the cluster missile row, and anything already at or past cluster
      * missile - the book's own example - lands on area-effect.
      * <p>
-     * Toxic: every non-area-effect attack by a non-infantry unit is instead resolved as though another infantry unit
-     * had made it, so its damage is applied point for point and the table is skipped altogether.
+     * Then, in toxic air only, a non-area-effect attack by a non-infantry unit is resolved as though another infantry
+     * unit had made it, so its damage is applied point for point and the table is skipped altogether. An attack that
+     * the shift has just moved onto area-effect is exempt, which is what stops toxic air resolving a cluster missile
+     * attack more gently than tainted air would.
      *
      * @param baseDamageClass the damage class the weapon would use in breathable air
      *
@@ -1317,19 +1319,34 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     protected int resolveInfantryDamageClass(int baseDamageClass) {
         AtmosphericTaint atmosphericTaint = game.getPlanetaryConditions().getAtmosphericTaint();
-        boolean isInfantryAttacker = (attackingEntity != null) && attackingEntity.isConventionalInfantry();
-        boolean isAreaEffectAttack = ComputeTerrainMods.isAreaEffectAgainstInfantry(weaponType, ammoType);
+        boolean isAreaEffectWeapon = ComputeTerrainMods.isAreaEffectAgainstInfantry(weaponType, ammoType);
+        int shiftedClass = shiftInfantryDamageClass(baseDamageClass, atmosphericTaint, isAreaEffectWeapon);
 
-        if (TaintedAtmosphereRules.treatsAttacksOnInfantryAsInfantryDamage(atmosphericTaint)) {
-            return (isInfantryAttacker || isAreaEffectAttack)
-                  ? baseDamageClass
-                  : WeaponType.WEAPON_INFANTRY_ORIGIN;
+        if (!TaintedAtmosphereRules.treatsAttacksOnInfantryAsInfantryDamage(atmosphericTaint)) {
+            return shiftedClass;
         }
+        boolean isInfantryAttacker = (attackingEntity != null) && attackingEntity.isConventionalInfantry();
+        boolean isAreaEffectAttack = isAreaEffectWeapon
+              || (shiftedClass == WeaponType.WEAPON_AREA_EFFECT_INFANTRY);
+        return (isInfantryAttacker || isAreaEffectAttack) ? shiftedClass : WeaponType.WEAPON_INFANTRY_ORIGIN;
+    }
 
+    /**
+     * Moves an attack the two rows down the infantry damage table that a flammable atmosphere calls for, stopping at
+     * area-effect (TO:AR p.54).
+     *
+     * @param baseDamageClass    the damage class the weapon would use in breathable air
+     * @param atmosphericTaint   the air the platoon is standing in
+     * @param isAreaEffectWeapon whether the weapon is area-effect in its own right, which the shift leaves alone
+     *
+     * @return the shifted damage class, or {@code baseDamageClass} when the air shifts nothing
+     */
+    private int shiftInfantryDamageClass(int baseDamageClass, AtmosphericTaint atmosphericTaint,
+          boolean isAreaEffectWeapon) {
         int rowsBetter = TaintedAtmosphereRules.getInfantryDamageClassShift(atmosphericTaint);
         boolean isOnTheBookLadder = (baseDamageClass >= WeaponType.WEAPON_DIRECT_FIRE)
               && (baseDamageClass <= WeaponType.WEAPON_CLUSTER_MISSILE);
-        if ((rowsBetter == 0) || isAreaEffectAttack || !isOnTheBookLadder) {
+        if ((rowsBetter == 0) || isAreaEffectWeapon || !isOnTheBookLadder) {
             return baseDamageClass;
         }
         int shiftedClass = baseDamageClass + rowsBetter;

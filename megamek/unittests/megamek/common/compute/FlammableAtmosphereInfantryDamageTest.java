@@ -201,4 +201,79 @@ class FlammableAtmosphereInfantryDamageTest {
               "the attack is off the table, so there is no row for a direct blow to shift it along");
         assertEquals(30, withDirectBlow, "and its damage is still applied point for point");
     }
+    /**
+     * The damage class an attack ends up on in the given air, mirroring {@code WeaponHandler.resolveInfantryDamageClass}
+     * for a non-infantry attacker firing a weapon that is not area-effect in its own right.
+     *
+     * @param baseDamageClass  the row the weapon would use in breathable air
+     * @param atmosphericTaint the air the platoon is standing in
+     *
+     * @return the row its damage should be read off instead
+     */
+    private int resolvedDamageClass(int baseDamageClass, AtmosphericTaint atmosphericTaint) {
+        int rowsBetter = TaintedAtmosphereRules.getInfantryDamageClassShift(atmosphericTaint);
+        boolean isOnTheBookLadder = (baseDamageClass >= WeaponType.WEAPON_DIRECT_FIRE)
+              && (baseDamageClass <= WeaponType.WEAPON_CLUSTER_MISSILE);
+        int shiftedClass = baseDamageClass;
+        if ((rowsBetter > 0) && isOnTheBookLadder) {
+            shiftedClass = baseDamageClass + rowsBetter;
+            if (shiftedClass > WeaponType.WEAPON_CLUSTER_MISSILE) {
+                shiftedClass = WeaponType.WEAPON_AREA_EFFECT_INFANTRY;
+            }
+        }
+        if (!TaintedAtmosphereRules.treatsAttacksOnInfantryAsInfantryDamage(atmosphericTaint)) {
+            return shiftedClass;
+        }
+        return (shiftedClass == WeaponType.WEAPON_AREA_EFFECT_INFANTRY)
+              ? shiftedClass
+              : WeaponType.WEAPON_INFANTRY_ORIGIN;
+    }
+
+    @Test
+    @DisplayName("Toxic air is never gentler on infantry than tainted air")
+    void toxicAirIsNeverGentlerThanTaintedAir() {
+        // Toxic air is the same taint at a worse level, so every row of the table has to come out at least as bad.
+        // Before the two-types-better shift was carried up to the toxic row, a 20-damage cluster missile attack hit
+        // for 40 in tainted air and only 20 in toxic air.
+        int damageValue = 50;
+
+        for (int baseDamageClass = WeaponType.WEAPON_DIRECT_FIRE;
+              baseDamageClass <= WeaponType.WEAPON_CLUSTER_MISSILE;
+              baseDamageClass++) {
+            int inTaintedAir = troopersHit(damageValue,
+                  resolvedDamageClass(baseDamageClass, AtmosphericTaint.FLAMMABLE_TAINTED), NO_MARGIN_OF_SUCCESS);
+            int inToxicAir = troopersHit(damageValue,
+                  resolvedDamageClass(baseDamageClass, AtmosphericTaint.FLAMMABLE_TOXIC), NO_MARGIN_OF_SUCCESS);
+
+            assertTrue(inToxicAir >= inTaintedAir,
+                  "damage class " + baseDamageClass + " came out gentler in toxic air: " + inToxicAir
+                        + " against " + inTaintedAir);
+        }
+    }
+
+    @Test
+    @DisplayName("A cluster missile attack keeps its area-effect damage in toxic air")
+    void clusterMissileStaysAreaEffectInToxicAir() {
+        // The shift moves it onto area-effect, and an area-effect attack is exempt from the toxic row's
+        // infantry-origin rule, so it keeps the doubled damage rather than dropping to point for point.
+        assertEquals(WeaponType.WEAPON_AREA_EFFECT_INFANTRY,
+              resolvedDamageClass(WeaponType.WEAPON_CLUSTER_MISSILE, AtmosphericTaint.FLAMMABLE_TOXIC));
+        assertEquals(resolvedDamageClass(WeaponType.WEAPON_CLUSTER_MISSILE, AtmosphericTaint.FLAMMABLE_TAINTED),
+              resolvedDamageClass(WeaponType.WEAPON_CLUSTER_MISSILE, AtmosphericTaint.FLAMMABLE_TOXIC),
+              "a cluster missile attack resolves the same way at either strength");
+    }
+
+    @Test
+    @DisplayName("A direct-fire attack still drops to infantry-origin damage in toxic air")
+    void directFireBecomesInfantryOriginInToxicAir() {
+        // Direct fire shifts two rows to pulse, which is not area-effect, so the toxic rule still catches it.
+        assertEquals(WeaponType.WEAPON_PULSE,
+              resolvedDamageClass(WeaponType.WEAPON_DIRECT_FIRE, AtmosphericTaint.FLAMMABLE_TAINTED));
+        assertEquals(WeaponType.WEAPON_INFANTRY_ORIGIN,
+              resolvedDamageClass(WeaponType.WEAPON_DIRECT_FIRE, AtmosphericTaint.FLAMMABLE_TOXIC));
+
+        assertTrue(troopersHit(50, WeaponType.WEAPON_INFANTRY_ORIGIN, NO_MARGIN_OF_SUCCESS)
+                    > troopersHit(50, WeaponType.WEAPON_PULSE, NO_MARGIN_OF_SUCCESS),
+              "which is much worse for the platoon than the pulse row it lands on in tainted air");
+    }
 }

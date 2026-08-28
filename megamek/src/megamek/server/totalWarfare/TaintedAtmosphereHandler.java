@@ -210,7 +210,7 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
         if (atmosphericTaint.isBreathable()) {
             return;
         }
-        if (atmosphericTaint == AtmosphericTaint.RADIOLOGICAL_TAINTED) {
+        if (atmosphericTaint.isRadiological()) {
             checkAtmosphericExposure();
         }
         if (TaintedAtmosphereRules.causesSpontaneousIgnition(atmosphericTaint)) {
@@ -220,8 +220,12 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
 
     /**
      * Advances the exposure clock of every conventional infantry platoon and unsealed vehicle standing in radiological
-     * or poisonous tainted air, TO:AR p.54. A platoon that has been out in it for more than 30 turns takes 1D6 damage
-     * every round after that; a vehicle without Environmental Sealing loses its crew after 90 turns.
+     * or poisonous air, TO:AR p.54. A platoon that has been out in it for more than 30 turns takes 1D6 damage every
+     * round after that; a vehicle without Environmental Sealing loses its crew after 90 turns.
+     * <p>
+     * Printed on the tainted row and carried up to the toxic one, which is the same taint at a worse level. Most units
+     * cannot be fielded in radiological toxic air at all, so in practice this catches the properly equipped XCT troops
+     * that can.
      */
     private void checkAtmosphericExposure() {
         for (Entity entity : getGame().inGameTWEntities()) {

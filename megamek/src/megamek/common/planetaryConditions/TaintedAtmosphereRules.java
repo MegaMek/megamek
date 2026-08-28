@@ -258,39 +258,44 @@ public final class TaintedAtmosphereRules {
 
     /**
      * Whether a MekWarrior or aerospace pilot takes one extra hit when the Cockpit or Crew location is damaged in
-     * combat. Caustic tainted air gets into the damaged cockpit and burns the pilot, TO:AR p.54.
+     * combat. Caustic air gets into the damaged cockpit and burns the pilot, TO:AR p.54 - printed on the tainted
+     * row and carried up to the toxic one, which is the same taint at a worse level.
      *
      * @param atmosphericTaint the air the unit is operating in
      *
      * @return {@code true} if an extra crew hit should be applied
      */
     public static boolean causesExtraCockpitCrewHit(AtmosphericTaint atmosphericTaint) {
-        return atmosphericTaint == AtmosphericTaint.CAUSTIC_TAINTED;
+        return atmosphericTaint.isCaustic();
     }
 
     /**
      * How many D6 of extra damage a weapon attack does to a conventional infantry platoon, over and above the attack's
-     * own damage. Caustic tainted air adds 1D6, applied as though it came from another infantry unit so that the
+     * own damage. Caustic air adds 1D6, applied as though it came from another infantry unit so that the
      * Non-Infantry Weapon Damage Against Infantry Table does not reduce it (TO:AR p.54, TW p.216).
+     * <p>
+     * Printed on the tainted row and carried up to the toxic one, because toxic air is the same taint at a worse
+     * level rather than a different taint: everything the tainted row does, the toxic row does too.
      *
      * @param atmosphericTaint the air the platoon is standing in
      *
      * @return the number of D6 to add, or {@code 0} when the air adds nothing
      */
     public static int getExtraInfantryAttackDamageDice(AtmosphericTaint atmosphericTaint) {
-        return (atmosphericTaint == AtmosphericTaint.CAUSTIC_TAINTED) ? 1 : 0;
+        return atmosphericTaint.isCaustic() ? 1 : 0;
     }
 
     /**
      * Whether conventional infantry take double damage from everything in this atmosphere, the way they already do in
-     * a vacuum. Radiological or poisonous tainted air does this, TO:AR p.54.
+     * a vacuum. Radiological or poisonous air does this, TO:AR p.54 - printed on the tainted row and carried up to
+     * the toxic one, which is the same taint at a worse level.
      *
      * @param atmosphericTaint the air the platoon is standing in
      *
      * @return {@code true} if damage to conventional infantry should be doubled
      */
     public static boolean doublesInfantryDamage(AtmosphericTaint atmosphericTaint) {
-        return atmosphericTaint == AtmosphericTaint.RADIOLOGICAL_TAINTED;
+        return atmosphericTaint.isRadiological();
     }
 
     /**
@@ -334,15 +339,19 @@ public final class TaintedAtmosphereRules {
 
     /**
      * How many rows better an attack on conventional infantry counts on the Non-Infantry Weapon Damage Against
-     * Infantry Table. In a flammable tainted atmosphere the burning air spreads the attack out, moving it two rows
-     * down the table towards area-effect (TO:AR p.54).
+     * Infantry Table. A flammable atmosphere spreads the attack out, moving it two rows down the table towards
+     * area-effect (TO:AR p.54).
+     * <p>
+     * Printed on the tainted row and carried up to the toxic one. This is what keeps toxic air from being gentler
+     * than tainted air: a cluster missile attack shifts up to area-effect at either strength, and an area-effect
+     * attack is then exempt from the toxic row's infantry-origin rule, so it keeps its doubled damage.
      *
      * @param atmosphericTaint the air the platoon is standing in
      *
      * @return the number of rows to shift, or {@code 0} when the air changes nothing
      */
     public static int getInfantryDamageClassShift(AtmosphericTaint atmosphericTaint) {
-        return (atmosphericTaint == AtmosphericTaint.FLAMMABLE_TAINTED) ? INFANTRY_DAMAGE_CLASS_SHIFT : 0;
+        return atmosphericTaint.isFlammable() ? INFANTRY_DAMAGE_CLASS_SHIFT : 0;
     }
 
     /**

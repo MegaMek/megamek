@@ -168,42 +168,47 @@ class TaintedAtmosphereRulesTest {
     }
 
     @Test
-    @DisplayName("Only caustic tainted air burns a pilot a second time through a damaged cockpit")
-    void extraCockpitCrewHitIsCausticTaintedOnly() {
+    @DisplayName("Caustic air burns a pilot a second time through a damaged cockpit, at either strength")
+    void extraCockpitCrewHitIsCausticAtEitherStrength() {
         assertTrue(TaintedAtmosphereRules.causesExtraCockpitCrewHit(AtmosphericTaint.CAUSTIC_TAINTED));
+        assertTrue(TaintedAtmosphereRules.causesExtraCockpitCrewHit(AtmosphericTaint.CAUSTIC_TOXIC),
+              "toxic air is the same taint at a worse level, so it does everything the tainted row does");
 
-        assertFalse(TaintedAtmosphereRules.causesExtraCockpitCrewHit(AtmosphericTaint.CAUSTIC_TOXIC));
         assertFalse(TaintedAtmosphereRules.causesExtraCockpitCrewHit(AtmosphericTaint.RADIOLOGICAL_TAINTED));
         assertFalse(TaintedAtmosphereRules.causesExtraCockpitCrewHit(AtmosphericTaint.BREATHABLE));
     }
 
     @Test
-    @DisplayName("Caustic tainted air adds 1D6 to a weapon attack on infantry; nothing else does")
-    void extraInfantryDamageDiceIsCausticTaintedOnly() {
+    @DisplayName("Caustic air adds 1D6 to a weapon attack on infantry, at either strength")
+    void extraInfantryDamageDiceIsCausticAtEitherStrength() {
         assertEquals(1, TaintedAtmosphereRules.getExtraInfantryAttackDamageDice(AtmosphericTaint.CAUSTIC_TAINTED));
+        assertEquals(1, TaintedAtmosphereRules.getExtraInfantryAttackDamageDice(AtmosphericTaint.CAUSTIC_TOXIC),
+              "toxic air is the same taint at a worse level, so it does everything the tainted row does");
 
-        assertEquals(0, TaintedAtmosphereRules.getExtraInfantryAttackDamageDice(AtmosphericTaint.CAUSTIC_TOXIC));
         assertEquals(0, TaintedAtmosphereRules.getExtraInfantryAttackDamageDice(
               AtmosphericTaint.RADIOLOGICAL_TAINTED));
         assertEquals(0, TaintedAtmosphereRules.getExtraInfantryAttackDamageDice(AtmosphericTaint.BREATHABLE));
     }
 
     @Test
-    @DisplayName("Radiological tainted air doubles damage to infantry; nothing else does")
-    void doubledInfantryDamageIsRadiologicalTaintedOnly() {
+    @DisplayName("Radiological air doubles damage to infantry, at either strength")
+    void doubledInfantryDamageIsRadiologicalAtEitherStrength() {
         assertTrue(TaintedAtmosphereRules.doublesInfantryDamage(AtmosphericTaint.RADIOLOGICAL_TAINTED));
+        assertTrue(TaintedAtmosphereRules.doublesInfantryDamage(AtmosphericTaint.RADIOLOGICAL_TOXIC),
+              "toxic air is the same taint at a worse level, so it does everything the tainted row does");
 
-        assertFalse(TaintedAtmosphereRules.doublesInfantryDamage(AtmosphericTaint.RADIOLOGICAL_TOXIC));
         assertFalse(TaintedAtmosphereRules.doublesInfantryDamage(AtmosphericTaint.CAUSTIC_TAINTED));
         assertFalse(TaintedAtmosphereRules.doublesInfantryDamage(AtmosphericTaint.BREATHABLE));
     }
 
     @Test
-    @DisplayName("Flammable tainted air shifts an attack on infantry two rows down the damage table")
-    void infantryDamageClassShiftIsFlammableTaintedOnly() {
+    @DisplayName("Flammable air shifts an attack on infantry two rows down the damage table, at either strength")
+    void infantryDamageClassShiftIsFlammableAtEitherStrength() {
         assertEquals(2, TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.FLAMMABLE_TAINTED));
+        assertEquals(2, TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.FLAMMABLE_TOXIC),
+              "the shift carries up to toxic air, which is what stops it resolving a cluster missile attack "
+                    + "more gently than tainted air would");
 
-        assertEquals(0, TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.FLAMMABLE_TOXIC));
         assertEquals(0, TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.CAUSTIC_TAINTED));
         assertEquals(0, TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.BREATHABLE));
     }

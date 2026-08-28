@@ -49,13 +49,16 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.AtmosphericTaint;
+import megamek.common.planetaryConditions.TaintedAtmosphereRules;
 import megamek.common.rolls.Roll;
+import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
@@ -256,5 +259,74 @@ class FlammableAtmosphereFireTest {
         handler.spreadExplosiveFire(CENTRE_OF_THE_WOODS, 0, 1, new Vector<>());
 
         assertEquals(0, burningNeighbourCount(CENTRE_OF_THE_WOODS), "breathable air does nothing of the sort");
+    }
+    /**
+     * An aerospace craft, either jet-propelled or flying on something else.
+     *
+     * @param isPropellerDriven whether the craft carries the Prop chassis modification, which is what makes a fixed
+     *                          wing support craft something other than jet-propelled
+     *
+     * @return the craft, ready to take off
+     */
+    private Entity aerospaceCraft(boolean isPropellerDriven) {
+        Entity craft = Mockito.mock(Entity.class);
+        Mockito.lenient().when(craft.getId()).thenReturn(2);
+        Mockito.lenient().when(craft.getShortName())
+              .thenReturn(isPropellerDriven ? "Prop Fixed Wing Support" : "Aerospace Fighter");
+        Mockito.lenient().when(craft.isAero()).thenReturn(true);
+        Mockito.lenient().when(craft.hasMisc(EquipmentTypeLookup.PROP_CHASSIS_MOD)).thenReturn(isPropellerDriven);
+
+        Crew crew = Mockito.mock(Crew.class);
+        Mockito.lenient().when(crew.getSize()).thenReturn(1);
+        Mockito.lenient().when(crew.getNickname()).thenReturn("");
+        Mockito.lenient().when(craft.getCrew()).thenReturn(crew);
+        Mockito.lenient().when(craft.getOwner()).thenReturn(game.getPlayer(0));
+        return craft;
+    }
+
+    private int burningHexCount() {
+        int burning = 0;
+        for (int column = 0; column < board.getWidth(); column++) {
+            for (int row = 0; row < board.getHeight(); row++) {
+                if (isOnFire(new Coords(column, row))) {
+                    burning++;
+                }
+            }
+        }
+        return burning;
+    }
+
+    @Test
+    @DisplayName("A jet-propelled craft taking off scorches the hexes behind it")
+    void aJetPropelledCraftLeavesAnExhaustWash() {
+        game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.FLAMMABLE_TAINTED);
+        Roll beatsTheTarget = rollOf(TaintedAtmosphereRules.EXHAUST_WASH_IGNITION_TARGET);
+        Entity aerospaceFighter = aerospaceCraft(false);
+
+        try (MockedStatic<Compute> mockedCompute = Mockito.mockStatic(Compute.class, Mockito.CALLS_REAL_METHODS)) {
+            mockedCompute.when(() -> Compute.rollD6(2)).thenReturn(beatsTheTarget);
+            handler.checkExhaustWashIgnition(aerospaceFighter, CENTRE_OF_THE_WOODS, 0, 0,
+                  TaintedAtmosphereHandler.ExhaustWashMoment.TAKEOFF);
+        }
+
+        assertTrue(burningHexCount() > 0, "a jet leaves a wash of exhaust hot enough to set the ground alight");
+    }
+
+    @Test
+    @DisplayName("A propeller-driven support craft leaves no exhaust wash at all")
+    void aPropellerDrivenCraftLeavesNoExhaustWash() {
+        // These are the craft still allowed to fly in flammable toxic air precisely because they are not
+        // jet-propelled, so setting the ground alight behind them would contradict the reason they are there.
+        game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.FLAMMABLE_TAINTED);
+        Roll wouldHaveBeatenTheTarget = rollOf(12);
+        Entity propellerCraft = aerospaceCraft(true);
+
+        try (MockedStatic<Compute> mockedCompute = Mockito.mockStatic(Compute.class, Mockito.CALLS_REAL_METHODS)) {
+            mockedCompute.when(() -> Compute.rollD6(2)).thenReturn(wouldHaveBeatenTheTarget);
+            handler.checkExhaustWashIgnition(propellerCraft, CENTRE_OF_THE_WOODS, 0, 0,
+                  TaintedAtmosphereHandler.ExhaustWashMoment.TAKEOFF);
+        }
+
+        assertEquals(0, burningHexCount(), "a propeller leaves nothing behind it that will burn");
     }
 }

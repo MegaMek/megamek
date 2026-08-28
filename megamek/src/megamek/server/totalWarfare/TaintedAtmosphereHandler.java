@@ -465,8 +465,13 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
      * In a flammable atmosphere one 2D6 roll is made - at the start of a takeoff or the end of a landing - and on a 6
      * or better every hex in the craft's rear arc out to two hexes catches fire.
      * <p>
-     * In toxic air the craft cannot take off at all, so in practice this is a landing rule there; see
-     * {@link TaintedAtmosphereRules#causesExhaustWashIgnition} for why it applies at both strengths.
+     * Only a jet-propelled craft leaves such a wash. A Prop, Ultra-Light or VSTOL fixed-wing support flies on
+     * something other than a jet and scorches nothing behind it, which matters because those are precisely the
+     * craft still permitted to fly in flammable toxic air.
+     * <p>
+     * In flammable toxic air a jet-propelled craft may not be fielded at all, so in practice this is a flammable
+     * tainted rule. The check covers both strengths so it does not quietly depend on that prohibition staying
+     * where it is.
      *
      * @param aeroEntity the craft taking off or landing
      * @param coords     the hex it takes off from or comes to rest in
@@ -478,6 +483,11 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
     void checkExhaustWashIgnition(Entity aeroEntity, Coords coords, int boardId, int facing,
           ExhaustWashMoment moment) {
         if (!TaintedAtmosphereRules.causesExhaustWashIgnition(atmosphericTaint())) {
+            return;
+        }
+        if (!TaintedAtmosphereRules.isJetPropelled(aeroEntity)) {
+            LOGGER.debug("[TaintedAtmosphere] {}: exhaust wash skipped - the craft is not jet-propelled",
+                  aeroEntity.getShortName());
             return;
         }
         if (!getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE)) {

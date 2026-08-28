@@ -138,24 +138,4 @@ public final class EnvironmentalSealingRules {
         return isSealedAgainstAtmosphere(entity) && hasSealedOperationEngine(entity);
     }
 
-    /**
-     * Whether a unit standing at the given elevation in the given hex is completely under the surface of the water,
-     * as opposed to wading with part of itself in the open air.
-     * <p>
-     * This is what separates the two water movement costs on the Terrain Table. A standing BattleMek is two levels
-     * tall, so in Depth 1 water it wades with its head out; a vehicle is one level tall and is already completely
-     * under in the same hex.
-     *
-     * @param entity        the unit to check
-     * @param elevation     the unit's elevation relative to the hex's surface level
-     * @param waterDepth    the depth of the water in the hex
-     *
-     * @return {@code true} if every part of the unit is below the surface
-     */
-    public static boolean isFullySubmergedAt(@Nullable Entity entity, int elevation, int waterDepth) {
-        if ((entity == null) || (waterDepth <= 0)) {
-            return false;
-        }
-        return (elevation + entity.height()) < 0;
-    }
 }

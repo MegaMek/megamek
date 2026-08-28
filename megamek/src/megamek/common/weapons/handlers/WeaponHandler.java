@@ -76,6 +76,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryConditions.AtmosphericTaint;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.TaintedAtmosphereRules;
 import megamek.common.rolls.Roll;
@@ -1285,43 +1286,56 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * How many rows this attack is shifted down the Non-Infantry Weapon Damage Against Infantry Table (TW p.217)
      * before its damage against a conventional infantry platoon is read off it.
      * <p>
-     * A direct blow shifts the attack by a third of its margin of success, as it always has. A flammable tainted
-     * atmosphere shifts it two rows further, because the burning air spreads the attack out over the platoon
-     * (TO:AR p.54).
+     * This is the direct blow's shift only, a third of its margin of success. What the atmosphere does to the row is
+     * settled by {@link #resolveInfantryDamageClass(int)} instead, because a flammable atmosphere can push an attack
+     * off the end of the table and that cannot be expressed as a number of rows.
      *
-     * @return the number of rows to shift, which is zero for an ordinary attack in breathable air
+     * @return the number of rows to shift, which is zero unless the attack was a direct blow
      */
     protected int getInfantryDamageClassShift() {
-        int directBlowShift = bDirect ? (toHit.getMoS() / 3) : 0;
-        int atmosphereShift = TaintedAtmosphereRules.getInfantryDamageClassShift(
-              game.getPlanetaryConditions().getAtmosphericTaint());
-        return directBlowShift + atmosphereShift;
+        return bDirect ? (toHit.getMoS() / 3) : 0;
     }
 
     /**
      * The row of the Non-Infantry Weapon Damage Against Infantry Table (TW p.217) this attack's damage against a
      * conventional infantry platoon should be read off.
      * <p>
-     * Normally that is simply the weapon's own damage class. In a flammable toxic atmosphere every non-area-effect
-     * attack by a non-infantry unit is instead resolved as though another infantry unit had made it, so its damage is
-     * applied point for point and the table is skipped (TO:AR p.54).
+     * Normally that is simply the weapon's own damage class. A flammable atmosphere changes it in one of two ways
+     * (TO:AR p.54).
+     * <p>
+     * Tainted: the attack counts as two types better, to a maximum of the area-effect weapon. So direct fire is read
+     * off the pulse row, cluster ballistic off the cluster missile row, and anything already at or past cluster
+     * missile - the book's own example - lands on area-effect.
+     * <p>
+     * Toxic: every non-area-effect attack by a non-infantry unit is instead resolved as though another infantry unit
+     * had made it, so its damage is applied point for point and the table is skipped altogether.
      *
      * @param baseDamageClass the damage class the weapon would use in breathable air
      *
-     * @return the damage class to use, or {@link WeaponType#WEAPON_INFANTRY_ORIGIN} to bypass the table
+     * @return the damage class to use, or one of {@link WeaponType#WEAPON_INFANTRY_ORIGIN} and
+     *       {@link WeaponType#WEAPON_AREA_EFFECT_INFANTRY} for the two rows that are not on the ladder
      */
     protected int resolveInfantryDamageClass(int baseDamageClass) {
-        boolean isAtmosphereInfantryOrigin = TaintedAtmosphereRules.treatsAttacksOnInfantryAsInfantryDamage(
-              game.getPlanetaryConditions().getAtmosphericTaint());
-        if (!isAtmosphereInfantryOrigin) {
-            return baseDamageClass;
-        }
+        AtmosphericTaint atmosphericTaint = game.getPlanetaryConditions().getAtmosphericTaint();
         boolean isInfantryAttacker = (attackingEntity != null) && attackingEntity.isConventionalInfantry();
         boolean isAreaEffectAttack = ComputeTerrainMods.isAreaEffectAgainstInfantry(weaponType, ammoType);
-        if (isInfantryAttacker || isAreaEffectAttack) {
+
+        if (TaintedAtmosphereRules.treatsAttacksOnInfantryAsInfantryDamage(atmosphericTaint)) {
+            return (isInfantryAttacker || isAreaEffectAttack)
+                  ? baseDamageClass
+                  : WeaponType.WEAPON_INFANTRY_ORIGIN;
+        }
+
+        int rowsBetter = TaintedAtmosphereRules.getInfantryDamageClassShift(atmosphericTaint);
+        boolean isOnTheBookLadder = (baseDamageClass >= WeaponType.WEAPON_DIRECT_FIRE)
+              && (baseDamageClass <= WeaponType.WEAPON_CLUSTER_MISSILE);
+        if ((rowsBetter == 0) || isAreaEffectAttack || !isOnTheBookLadder) {
             return baseDamageClass;
         }
-        return WeaponType.WEAPON_INFANTRY_ORIGIN;
+        int shiftedClass = baseDamageClass + rowsBetter;
+        return (shiftedClass > WeaponType.WEAPON_CLUSTER_MISSILE)
+              ? WeaponType.WEAPON_AREA_EFFECT_INFANTRY
+              : shiftedClass;
     }
 
     /**

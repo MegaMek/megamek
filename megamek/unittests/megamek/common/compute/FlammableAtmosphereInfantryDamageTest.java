@@ -61,13 +61,29 @@ class FlammableAtmosphereInfantryDamageTest {
      *
      * @param damage     the weapon's damage value
      * @param damageType the row of the table to read
-     * @param shift      how many rows to shift down the table first
+     * @param shift      how many rows a direct blow shifts it down the table first
      *
      * @return the number of troopers hit
      */
     private int troopersHit(int damage, int damageType, int shift) {
         return Compute.directBlowInfantryDamage(damage, shift, damageType, false, false,
               Entity.NONE, null, SINGLE_WEAPON);
+    }
+
+    /**
+     * The row a flammable tainted atmosphere moves an attack onto, applying the two-rows-better shift and its
+     * area-effect cap the same way {@code WeaponHandler.resolveInfantryDamageClass} does.
+     *
+     * @param baseDamageClass the row the weapon would use in breathable air
+     *
+     * @return the row its damage should be read off instead
+     */
+    private int shiftedByFlammableTaintedAir(int baseDamageClass) {
+        int rowsBetter = TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.FLAMMABLE_TAINTED);
+        int shiftedClass = baseDamageClass + rowsBetter;
+        return (shiftedClass > WeaponType.WEAPON_CLUSTER_MISSILE)
+              ? WeaponType.WEAPON_AREA_EFFECT_INFANTRY
+              : shiftedClass;
     }
 
     @Test
@@ -83,11 +99,12 @@ class FlammableAtmosphereInfantryDamageTest {
     @Test
     @DisplayName("Flammable tainted air shifts direct fire two rows, to the pulse row")
     void flammableTaintedAirShiftsDirectFireToPulse() {
-        int shift = TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.FLAMMABLE_TAINTED);
-        assertEquals(2, shift, "flammable tainted air shifts two rows");
+        assertEquals(2, TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.FLAMMABLE_TAINTED),
+              "flammable tainted air shifts two rows");
 
         int inBreathableAir = troopersHit(50, WeaponType.WEAPON_DIRECT_FIRE, NO_MARGIN_OF_SUCCESS);
-        int inFlammableAir = troopersHit(50, WeaponType.WEAPON_DIRECT_FIRE, shift);
+        int inFlammableAir = troopersHit(50, shiftedByFlammableTaintedAir(WeaponType.WEAPON_DIRECT_FIRE),
+              NO_MARGIN_OF_SUCCESS);
         int onThePulseRow = troopersHit(50, WeaponType.WEAPON_PULSE, NO_MARGIN_OF_SUCCESS);
 
         assertEquals(onThePulseRow, inFlammableAir,
@@ -98,13 +115,44 @@ class FlammableAtmosphereInfantryDamageTest {
     @Test
     @DisplayName("Flammable tainted air shifts cluster ballistic two rows, to the cluster missile row")
     void flammableTaintedAirShiftsClusterBallisticToClusterMissile() {
-        int shift = TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.FLAMMABLE_TAINTED);
-
-        int inFlammableAir = troopersHit(50, WeaponType.WEAPON_CLUSTER_BALLISTIC, shift);
+        int inFlammableAir = troopersHit(50, shiftedByFlammableTaintedAir(WeaponType.WEAPON_CLUSTER_BALLISTIC),
+              NO_MARGIN_OF_SUCCESS);
         int onTheClusterMissileRow = troopersHit(50, WeaponType.WEAPON_CLUSTER_MISSILE, NO_MARGIN_OF_SUCCESS);
 
         assertEquals(onTheClusterMissileRow, inFlammableAir,
               "cluster ballistic two rows down the table is the cluster missile row: damage / 5");
+    }
+
+    @Test
+    @DisplayName("The book's own example: a cluster missile attack in flammable tainted air becomes area-effect")
+    void clusterMissileIsCappedAtAreaEffect() {
+        // TO:AR p.54: "a Cluster (Missile) attack would be considered an area-effect attack for purposes of
+        // assigning damage". Two rows better than cluster missile runs off the end of the table, so it caps there.
+        int damageValue = 50;
+
+        int onTheClusterMissileRow = troopersHit(damageValue, WeaponType.WEAPON_CLUSTER_MISSILE,
+              NO_MARGIN_OF_SUCCESS);
+        int onTheAreaEffectRow = troopersHit(damageValue,
+              shiftedByFlammableTaintedAir(WeaponType.WEAPON_CLUSTER_MISSILE), NO_MARGIN_OF_SUCCESS);
+
+        assertEquals(WeaponType.WEAPON_AREA_EFFECT_INFANTRY,
+              shiftedByFlammableTaintedAir(WeaponType.WEAPON_CLUSTER_MISSILE),
+              "cluster missile shifted two rows caps at area-effect");
+
+        assertEquals(damageValue / 5, onTheClusterMissileRow, "cluster missile is damage / 5");
+        assertEquals(damageValue * 2, onTheAreaEffectRow, "area-effect is damage / .5, which is damage doubled");
+        assertTrue(onTheAreaEffectRow > onTheClusterMissileRow,
+              "the cap must be the harshest row on the table, not a step back down it");
+    }
+
+    @Test
+    @DisplayName("Area-effect damage cannot be shifted further by a direct blow")
+    void areaEffectIsAlreadyTheWorstRow() {
+        int withoutDirectBlow = troopersHit(30, WeaponType.WEAPON_AREA_EFFECT_INFANTRY, NO_MARGIN_OF_SUCCESS);
+        int withDirectBlow = troopersHit(30, WeaponType.WEAPON_AREA_EFFECT_INFANTRY, 2);
+
+        assertEquals(withoutDirectBlow, withDirectBlow, "there is no row past area-effect to shift onto");
+        assertEquals(60, withDirectBlow, "and it is still damage doubled");
     }
 
     @Test

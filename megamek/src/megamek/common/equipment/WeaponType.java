@@ -756,6 +756,13 @@ public class WeaponType extends EquipmentType {
      * infantry (TO:AR p.54).
      */
     public static final int WEAPON_INFANTRY_ORIGIN = -1;
+    /**
+     * The Area-Effect row of the Non-Infantry Weapon Damage Against Infantry Table (TW p.217), which kills
+     * {@code Damage Value / .5} troopers. MegaMek resolves area-effect attacks on infantry by doubling the damage
+     * rather than by a row of this ladder, so the row has no ordinary constant; this one exists for the flammable
+     * tainted atmosphere, which shifts an attack two rows down the table and caps it here (TO:AR p.54).
+     */
+    public static final int WEAPON_AREA_EFFECT_INFANTRY = -2;
     public static final int WEAPON_DIRECT_FIRE = 0;
     public static final int WEAPON_CLUSTER_BALLISTIC = 1;
     public static final int WEAPON_PULSE = 2;

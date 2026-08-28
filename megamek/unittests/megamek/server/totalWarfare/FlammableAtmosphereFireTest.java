@@ -44,18 +44,27 @@ import java.util.Vector;
 
 import megamek.common.Player;
 import megamek.common.Report;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.AtmosphericTaint;
+import megamek.common.rolls.Roll;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
+import megamek.common.weapons.handlers.AttackHandler;
 import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
@@ -121,6 +130,14 @@ class FlammableAtmosphereFireTest {
         handler = new TaintedAtmosphereHandler(gameManager);
     }
 
+    private Roll rollOf(int value) {
+        Roll roll = Mockito.mock(Roll.class);
+        Mockito.lenient().when(roll.getIntValue()).thenReturn(value);
+        Mockito.lenient().when(roll.toString()).thenReturn(String.valueOf(value));
+        Mockito.lenient().when(roll.getReport()).thenReturn(String.valueOf(value));
+        return roll;
+    }
+
     private boolean isOnFire(Coords coords) {
         return board.getHex(coords).containsTerrain(Terrains.FIRE);
     }
@@ -171,6 +188,64 @@ class FlammableAtmosphereFireTest {
         assertEquals(0, burningNeighbourCount(CENTRE_OF_THE_WOODS),
               "only toxic air carries a fire straight into the neighbouring hexes");
         assertTrue(reports.isEmpty(), "and nothing should be reported");
+    }
+
+    /**
+     * An attack by an explosive weapon on the given hex, which is what the accidental fire check inspects.
+     *
+     * @param targetHex the hex being fired at
+     *
+     * @return the resolved attack, ready to be handed to the accidental fire check
+     */
+    private AttackHandler explosiveAttackOn(Coords targetHex) {
+        Entity attacker = Mockito.mock(Entity.class);
+        Mockito.lenient().when(attacker.getId()).thenReturn(1);
+
+        WeaponType autocannon = Mockito.mock(WeaponType.class);
+        Mockito.lenient().when(autocannon.getFireTN()).thenReturn(4);
+        Mockito.lenient().when(autocannon.getName()).thenReturn("AC/20");
+        Mockito.lenient().when(autocannon.hasFlag(WeaponType.F_BALLISTIC)).thenReturn(true);
+        WeaponMounted weapon = Mockito.mock(WeaponMounted.class);
+        Mockito.lenient().when(weapon.getType()).thenReturn(autocannon);
+        Mockito.lenient().when(attacker.getEquipment(0)).thenAnswer(invocation -> weapon);
+
+        Targetable target = Mockito.mock(Targetable.class);
+        Mockito.lenient().when(target.getPosition()).thenReturn(targetHex);
+        Mockito.lenient().when(target.getBoardId()).thenReturn(0);
+        Mockito.lenient().when(target.isAirborne()).thenReturn(false);
+        Mockito.lenient().when(target.isAirborneVTOLorWIGE()).thenReturn(false);
+
+        WeaponAttackAction attackAction = Mockito.mock(WeaponAttackAction.class);
+        Mockito.lenient().when(attackAction.getTarget(game)).thenReturn(target);
+        Mockito.lenient().when(attackAction.getWeaponId()).thenReturn(0);
+        Mockito.lenient().when(attackAction.getAmmoId()).thenReturn(-1);
+
+        AttackHandler attackHandler = Mockito.mock(AttackHandler.class);
+        Mockito.lenient().when(attackHandler.getWeaponAttackAction()).thenReturn(attackAction);
+        Mockito.lenient().when(attackHandler.getAttacker()).thenReturn(attacker);
+        Mockito.lenient().when(attackHandler.getAttackerId()).thenReturn(1);
+        return attackHandler;
+    }
+
+    @Test
+    @DisplayName("An explosive round that starts an accidental fire spreads it in one step")
+    void anAccidentalFireFromExplosiveOrdnanceSpreadsAtOnce() {
+        // The whole chain, which is impractical to reach in a game: the accidental check needs 3 or below, and the
+        // ignition that follows still has to beat the terrain. Both rolls are forced here so the path can be seen.
+        game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.FLAMMABLE_TOXIC);
+        Vector<Report> reports = new Vector<>();
+        Roll passesTheAccidentalCheck = rollOf(2);
+        Roll beatsTheTerrain = rollOf(12);
+        AttackHandler explosiveAttack = explosiveAttackOn(CENTRE_OF_THE_WOODS);
+
+        try (MockedStatic<Compute> mockedCompute = Mockito.mockStatic(Compute.class, Mockito.CALLS_REAL_METHODS)) {
+            mockedCompute.when(() -> Compute.rollD6(2)).thenReturn(passesTheAccidentalCheck, beatsTheTerrain);
+            handler.checkAccidentalWeaponFire(explosiveAttack, reports);
+        }
+
+        assertTrue(isOnFire(CENTRE_OF_THE_WOODS), "the accidental fire should have caught in the target hex");
+        assertEquals(6, burningNeighbourCount(CENTRE_OF_THE_WOODS),
+              "an explosive round's fire takes every adjacent burnable hex with it");
     }
 
     @Test

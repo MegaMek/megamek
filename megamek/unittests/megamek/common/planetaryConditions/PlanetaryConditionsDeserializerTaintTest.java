@@ -34,6 +34,7 @@
 package megamek.common.planetaryConditions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
@@ -82,5 +83,15 @@ class PlanetaryConditionsDeserializerTaintTest {
 
         assertEquals(Atmosphere.THIN, conditions.getAtmosphere());
         assertEquals(AtmosphericTaint.FLAMMABLE_TOXIC, conditions.getAtmosphericTaint());
+    }
+    @Test
+    @DisplayName("A scenario that misspells the taint gets breathable air rather than a crash")
+    void anUnrecognisedTaintLeavesTheAirBreathable() throws IOException {
+        // Storing the unmatched lookup would leave the taint null, and every later getAtmosphericTaint() call
+        // dereferences it, so a typo in a scenario file would take the game down rather than be ignored.
+        PlanetaryConditions conditions = readConditions("taint: flamable toxic");
+
+        assertNotNull(conditions.getAtmosphericTaint(), "a misspelled taint must not leave the field null");
+        assertEquals(AtmosphericTaint.BREATHABLE, conditions.getAtmosphericTaint());
     }
 }

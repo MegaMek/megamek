@@ -41,6 +41,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import megamek.logging.MMLogger;
 
 public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryConditions> {
 
@@ -66,6 +67,8 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
           "standard", Atmosphere.STANDARD, "high", Atmosphere.HIGH,
           "very high", Atmosphere.VERY_HIGH);
 
+    private static final MMLogger LOGGER = MMLogger.create(PlanetaryConditionsDeserializer.class);
+
     static final Map<String, AtmosphericTaint> TAINT_VALUES = Map.of(
           "breathable", AtmosphericTaint.BREATHABLE,
           "caustic tainted", AtmosphericTaint.CAUSTIC_TAINTED,
@@ -144,7 +147,14 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
             result.setAtmosphere(PRESSURE_VALUES.get(node.get(PRESSURE).textValue()));
         }
         if (node.has(TAINT)) {
-            result.setAtmosphericTaint(TAINT_VALUES.get(node.get(TAINT).textValue()));
+            String taintName = node.get(TAINT).textValue();
+            AtmosphericTaint atmosphericTaint = TAINT_VALUES.get(taintName);
+            if (atmosphericTaint == null) {
+                LOGGER.warn("Unrecognised atmospheric taint \"{}\" in scenario file; leaving the air breathable. "
+                      + "Valid values are {}.", taintName, TAINT_VALUES.keySet());
+            } else {
+                result.setAtmosphericTaint(atmosphericTaint);
+            }
         }
         if (node.has(FOG)) {
             result.setFog(FOG_VALUES.get(node.get(FOG).textValue()));

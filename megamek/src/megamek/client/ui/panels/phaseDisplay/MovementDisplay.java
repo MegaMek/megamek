@@ -1912,14 +1912,32 @@ public class MovementDisplay extends ActionPhaseDisplay {
             currentlySelectedEntity.setMovementMode(EntityMovementMode.QUAD);
         }
 
+        MoveStep deployStep = null;
         // If it was walk-on deployment, invalidate the deployment
         if ((cmd != null) && cmd.contains(MoveStepType.DEPLOY)) {
-            currentlySelectedEntity.setDeployed(false);
-            currentlySelectedEntity.setPosition(null);
+            int stepLength = cmd.length();
+            if (stepLength > 1) {
+                if (cmd.getStep(0).getType() == MoveStepType.DEPLOY) {
+                    deployStep = cmd.getStep(0);
+                } else if ((stepLength == 2) && cmd.getStep(1).getType() == MoveStepType.DEPLOY) {
+                    deployStep = cmd.getStep(1);
+                }
+            }
+            if (deployStep == null) {
+                currentlySelectedEntity.setDeployed(false);
+                clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
+            }
         }
 
         // create new current and considered paths
         cmd = new MovePath(game, currentlySelectedEntity);
+        if (deployStep != null) {
+            if (deployStep.getMovementType(false) == EntityMovementType.MOVE_JUMP) {
+                initializeJumpMovePath();
+            }
+            addStepToMovePath(MoveStepType.DEPLOY);
+            clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
+        }
         clientgui.updateFiringArc(currentlySelectedEntity);
         clientgui.showSensorRanges(currentlySelectedEntity, cmd.getFinalCoords());
         computeCFWarningHexes(currentlySelectedEntity);
@@ -1998,14 +2016,22 @@ public class MovementDisplay extends ActionPhaseDisplay {
             LOGGER.warn("Cannot process removeLastStep() request, cmd is null!");
             return;
         }
-
-        cmd.removeLastStep();
-
         final Entity currentlySelectedEntity = currentEntity();
         if (currentlySelectedEntity == null) {
             LOGGER.warn("Cannot process removeLastStep for a null currentlySelectedEntity.");
             return;
-        } else if (cmd.length() == 0) {
+        }
+        if (cmd.getLastStep() == null) {
+            LOGGER.warn("No steps to remove.");
+            return;
+        }
+        if (cmd.getLastStep().getType() == MoveStepType.DEPLOY) {
+            currentlySelectedEntity.setDeployed(false);
+            clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
+        }
+        cmd.removeLastStep();
+
+        if (cmd.length() == 0) {
             clear();
             if ((gear == MovementDisplay.GEAR_JUMP) && !cmd.isJumping()) {
                 initializeJumpMovePath();
@@ -2644,7 +2670,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if (Game.rulesManager.getRulesGame().isWalkOnDeployment() && currentlySelectedEntity != null && cmd != null) {
+        if (Game.rulesManager.getRulesGame().isWalkOnDeployment() && currentlySelectedEntity != null) {
+            if (cmd == null) {
+                cmd = new MovePath(game, currentlySelectedEntity);
+            }
             Coords coords = boardViewEvent.getCoords();
             int boardId = boardViewEvent.getBoardId();
             if (!currentlySelectedEntity.isDeployed() && boardViewEvent.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
@@ -6262,10 +6291,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         MovePath movePath = new MovePath(game, entity);
 
+        /*
         MoveStep step = cmd.getStep(0);
         if ((step != null) && step.getType() == MoveStepType.DEPLOY) {
             movePath.addStep(step);
         }
+         */
+
         MoveStepType stepType = (movementGear == GEAR_BACKUP) ? MoveStepType.BACKWARDS : MoveStepType.FORWARDS;
         if (movementGear == GEAR_JUMP || movementGear == GEAR_DFA) {
             movePath.addStep(MoveStepType.START_JUMP);
@@ -6489,19 +6521,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 !((cmd.getLastStep() != null) &&
                   cmd.getLastStep().isFirstStep() &&
                   (cmd.getLastStep().getType() == MoveStepType.LAY_MINE))) {
-                MoveStep deployStep = cmd.getStep(0);
-                if ((deployStep != null) && deployStep.getType() == MoveStepType.DEPLOY) {
-                    int moveSize = cmd.length();
-                    if (moveSize > 1) {
-                        // We want to keep the original Deployment step.
-                        for (int removeStep = moveSize; removeStep > 1; removeStep--) {
-                            cmd.removeLastStep();
-                        }
-                    }
-                    cmd.getLastStep().setMovementType(EntityMovementType.MOVE_JUMP);
-                } else {
-                    clear();
-                }
+                clear();
             }
             gear = MovementDisplay.GEAR_JUMP;
             jumpSubGear = GEAR_SUB_STANDARD;

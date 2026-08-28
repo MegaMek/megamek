@@ -103,6 +103,11 @@ public final class EnvironmentalSealingRules {
             // Infantry are protected by their gear, not by sealing; the XCT rules cover them.
             return false;
         }
+        if (entity.isSupportVehicle()) {
+            // Support Vehicles buy the sealing as a chassis modification whatever their motive type, including
+            // the fixed-wing ones, which are aerospace units by class but Support Vehicles by construction.
+            return entity.hasEnvironmentalSealing();
+        }
         if ((entity instanceof ProtoMek) || (entity instanceof BattleArmor) || entity.isAero()) {
             return true;
         }

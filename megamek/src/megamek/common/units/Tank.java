@@ -1778,15 +1778,16 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         return Math.max(0, caseLocations.size() - explicit);
     }
 
+    /**
+     * A vehicle survives vacuum only if it is sealed and its engine runs with no outside air to breathe. The rules
+     * name fission, fusion and fuel cell engines for Combat Vehicles (TO:AUE p.115) and fission, fusion and electric
+     * engines for Support Vehicles (TM p.122); MegaMek's Support Vehicle "Electric" engine is the battery.
+     *
+     * @return {@code true} when this vehicle will not survive vacuum conditions
+     */
     @Override
     public boolean doomedInVacuum() {
-        if (hasEngine() &&
-              (getEngine().isFusion() ||
-                    getEngine().getEngineType() == Engine.FISSION ||
-                    getEngine().getEngineType() == Engine.FUEL_CELL)) {
-            return !hasEnvironmentalSealing();
-        }
-        return true;
+        return !EnvironmentalSealingRules.canOperateInVacuum(this);
     }
 
     @Override

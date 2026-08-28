@@ -3304,11 +3304,13 @@ public class MoveStep implements Serializable {
                 boolean isOnIceSurface = destHex.containsTerrain(Terrains.ICE)
                       && (nDestEl == destHex.getLevel());
                 if (inWaterColumn && !isOnIceSurface && (waterDepth > 0) && !isAmphibious) {
-                    // The Terrain Table's two water rows describe how deep the UNIT is, not how deep the water is.
-                    // A standing Mek is two levels tall, so in Depth 1 it wades with its head out and pays the
-                    // lower cost. A ground vehicle is one level tall and is already completely under the surface
-                    // in that same hex, so it pays the fully submerged cost at every depth it can enter.
-                    boolean isFullySubmerged = (entity instanceof Tank) || (waterDepth > 1);
+                    // "To be considered underwater, a unit must be completely submerged... 'Mechs must be in at
+                    // least Depth 2 water, or at least Depth 1 if prone" (TW p.56). Everything shorter than a Mek
+                    // is already completely under in Depth 1, so it pays the underwater cost there. Anything only
+                    // partly submerged is wading, and pays the lower Depth 1 cost from the Movement Costs Table.
+                    boolean isFullySubmerged = (entity instanceof Mek)
+                          ? ((waterDepth > 1) || (isProne() && (waterDepth > 0)))
+                          : (waterDepth > 0);
                     if (!isFullySubmerged) {
                         mp++;
                     } else if (getEntity().hasAbility(OptionsConstants.PILOT_TM_FROGMAN)

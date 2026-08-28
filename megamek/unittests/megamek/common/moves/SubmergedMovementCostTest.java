@@ -34,10 +34,13 @@
 package megamek.common.moves;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.GameBoardTestCase;
 import megamek.common.enums.MoveStepType;
+import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
@@ -115,9 +118,20 @@ class SubmergedMovementCostTest extends GameBoardTestCase {
         Game.rulesManager = originalRulesManager;
     }
 
+    private static Tank sealedTank(int engineType) throws LocationFullException {
+        Tank tank = new Tank();
+        tank.setWeight(50.0);
+        tank.setEngine(new Engine(200, engineType, Engine.TANK_ENGINE));
+        EquipmentType sealing = EquipmentType.get(CV_ENVIRONMENTAL_SEALING);
+        assertNotNull(sealing, "The Combat Vehicle Environmental Sealing chassis mod must exist");
+        tank.addEquipment(sealing, Tank.LOC_BODY);
+        return tank;
+    }
+
     private static Tank sealedTank() throws LocationFullException {
         Tank tank = new Tank();
         tank.setWeight(50.0);
+        tank.setEngine(new Engine(200, Engine.NORMAL_ENGINE, Engine.TANK_ENGINE));
         EquipmentType sealing = EquipmentType.get(CV_ENVIRONMENTAL_SEALING);
         assertNotNull(sealing, "The Combat Vehicle Environmental Sealing chassis mod must exist");
         tank.addEquipment(sealing, Tank.LOC_BODY);
@@ -178,5 +192,33 @@ class SubmergedMovementCostTest extends GameBoardTestCase {
 
         assertEquals(BASE_STEP_COST + SUBMERGED_COST_CORE_RULES, movePath.getMpUsed(),
               "The submerged vehicle still pays the submerged cost, at the Core Rules value");
+    }
+
+    @Test
+    void proneMekInDepthOneWaterIsUnderwater() {
+        setBoard("SHALLOW_WATER");
+        BipedMek mek = new BipedMek();
+        mek.setProne(true);
+
+        MovePath movePath = getMovePathFor(mek, SEABED_OF_DEPTH_ONE, EntityMovementMode.BIPED,
+              MoveStepType.FORWARDS);
+
+        assertEquals(BASE_STEP_COST + SUBMERGED_COST, movePath.getMpUsed(),
+              "A Mek is underwater in Depth 1 water once it is prone (TW p.56)");
+    }
+
+    @Test
+    void aSealedIceVehicleMayNotDriveIntoWater() throws LocationFullException {
+        setBoard("SHALLOW_WATER");
+
+        MovePath iceVehiclePath = getMovePathFor(sealedTank(Engine.COMBUSTION_ENGINE), SEABED_OF_DEPTH_ONE,
+              EntityMovementMode.TRACKED, MoveStepType.FORWARDS);
+        MovePath fusionVehiclePath = getMovePathFor(sealedTank(Engine.NORMAL_ENGINE), SEABED_OF_DEPTH_ONE,
+              EntityMovementMode.TRACKED, MoveStepType.FORWARDS);
+
+        assertFalse(iceVehiclePath.isMoveLegal(),
+              "An internal combustion engine will not run submerged, however well sealed (TM p.216)");
+        assertTrue(fusionVehiclePath.isMoveLegal(),
+              "Sealing plus a fusion engine lets the vehicle drive along the bottom");
     }
 }

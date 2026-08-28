@@ -5087,7 +5087,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     @Override
     public boolean isLocationDeadly(Coords c, int boardId) {
         return isIndustrial()
-              && !EnvironmentalSealingRules.hasSealedOperationEngine(this)
+              && !EnvironmentalSealingRules.canOperateFullySubmerged(this)
               && game.hasBoardLocation(c, boardId)
               && game.getHex(c, boardId).terrainLevel(Terrains.WATER) >= 2;
     }

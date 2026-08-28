@@ -3031,7 +3031,7 @@ public abstract class Entity extends TurnOrdered
             if (hex.containsTerrain(Terrains.WATER) &&
                   (assumedAlt < hex.getLevel()) &&
                   !((this instanceof Mek) || (this instanceof ProtoMek)) &&
-                  !(hasEnvironmentalSealing())) {
+                  !EnvironmentalSealingRules.canOperateFullySubmerged(this)) {
                 return false;
             }
             // can move on the ground unless its underwater

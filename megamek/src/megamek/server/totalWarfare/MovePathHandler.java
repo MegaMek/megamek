@@ -1962,12 +1962,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
         if (ram != null) {
             gameManager.send(gameManager.getPacketHelper().createChargeAttackPacket(ram));
         }
-        // An IndustrialMek drowns where it would be completely under the surface, unless its engine runs with no
-        // air to breathe. Environmental Sealing does not save an internal combustion engine here: full submersion
-        // needs both the sealing and a fission, fusion or fuel cell engine (TM p.216).
+        // An IndustrialMek may only be completely submerged if it mounts BOTH the Environmental Sealing and a
+        // fuel cell, fission or fusion power plant; lacking either, it is destroyed in the End Phase of the turn
+        // after the one it entered the water in (TW p.52, Movement Costs Table footnote 8).
         if ((entity instanceof Mek industrialMek)
               && industrialMek.isIndustrial()
-              && !EnvironmentalSealingRules.hasSealedOperationEngine(industrialMek)) {
+              && !EnvironmentalSealingRules.canOperateFullySubmerged(industrialMek)) {
             int waterDepth = getGame().getBoard(curBoardId).getHex(entity.getPosition())
                   .terrainLevel(Terrains.WATER);
             boolean isSubmergedStanding = !entity.isProne() && (waterDepth >= 2);

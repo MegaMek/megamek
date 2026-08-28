@@ -190,6 +190,20 @@ class EnvironmentalSealingRulesTest {
     }
 
     @Test
+    void everyKindOfElectricPowerPlantCountsAsSealedOperation() throws LocationFullException {
+        // "any kind of electric power plant - including external, battery, fuel cell and solar - or a fission
+        // power plant" (Tactical Operations errata, rewriting the Vacuum exceptions).
+        for (int electricEngine : new int[] { Engine.BATTERY, Engine.SOLAR, Engine.EXTERNAL, Engine.FUEL_CELL }) {
+            assertTrue(EnvironmentalSealingRules.hasSealedOperationEngine(supportVehicle(electricEngine, true)),
+                  "Engine type " + electricEngine + " is an electric power plant and needs no air");
+        }
+        assertFalse(EnvironmentalSealingRules.hasSealedOperationEngine(supportVehicle(Engine.STEAM, true)),
+              "A steam plant still has to burn something, so it needs air");
+        assertFalse(EnvironmentalSealingRules.hasSealedOperationEngine(supportVehicle(Engine.COMBUSTION_ENGINE, true)),
+              "An internal combustion engine needs air");
+    }
+
+    @Test
     void sealedElectricSupportVehicleSurvivesVacuum() throws LocationFullException {
         SupportTank electricSupportVehicle = supportVehicle(Engine.BATTERY, true);
 
@@ -230,5 +244,24 @@ class EnvironmentalSealingRulesTest {
 
         assertTrue(EnvironmentalSealingRules.isSealedAgainstAtmosphere(handheldWeapon),
               "A handheld weapon has no crew to poison, so no atmosphere rule should reach it");
+    }
+
+    @Test
+    void anUnsealedIndustrialMekMayNotBeFullySubmergedEvenOnAFusionEngine() throws LocationFullException {
+        BipedMek industrialMek = industrialMek(Engine.NORMAL_ENGINE, false);
+
+        assertFalse(EnvironmentalSealingRules.canOperateFullySubmerged(industrialMek),
+              "An IndustrialMek needs BOTH the sealing and the power plant to be submerged "
+                    + "(TW p.52, Movement Costs Table footnote 8)");
+    }
+
+    @Test
+    void aSealedVehicleNeedsANonBreathingEngineToDriveSubmerged() throws LocationFullException {
+        assertFalse(EnvironmentalSealingRules.canOperateFullySubmerged(combatVehicle(Engine.COMBUSTION_ENGINE, true)),
+              "An internal combustion engine will not run completely submerged, however well sealed (TM p.216)");
+        assertTrue(EnvironmentalSealingRules.canOperateFullySubmerged(combatVehicle(Engine.NORMAL_ENGINE, true)),
+              "Sealing plus a fusion engine puts the vehicle on the lake bed");
+        assertFalse(EnvironmentalSealingRules.canOperateFullySubmerged(combatVehicle(Engine.NORMAL_ENGINE, false)),
+              "The engine alone is not enough - the vehicle still has to be sealed");
     }
 }

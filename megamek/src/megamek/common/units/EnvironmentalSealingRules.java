@@ -59,10 +59,10 @@ public final class EnvironmentalSealingRules {
      * lets Environmental Sealing be any use in vacuum or fully submerged. An internal combustion engine and a steam
      * plant both have to breathe, so sealing alone never gets them off an airless world or onto a lake bed.
      * <p>
-     * The rules name fission, fusion and fuel cell engines for BattleMeks and Combat Vehicles (TO:AUE p.115), and
-     * fission, fusion and electric engines for Support Vehicles (TM p.122). MegaMek's Support Vehicle "Electric"
-     * engine is {@link Engine#BATTERY}, and a fuel cell is an electric powerplant too, so the union of the two lists
-     * is fission, fusion, fuel cell and battery.
+     * The Tactical Operations errata settles the list: any non-infantry unit that mounts the Environmental Sealing
+     * and "a fusion engine (or for applicable units, any kind of electric power plant - including external,
+     * battery, fuel cell and solar - or a fission power plant) ... can operate in a vacuum". An internal combustion
+     * engine and a steam plant both have to take in air to burn fuel, so neither qualifies (TM p.216).
      *
      * @param entity the unit to check
      *
@@ -74,10 +74,11 @@ public final class EnvironmentalSealingRules {
         }
         Engine engine = entity.getEngine();
         int engineType = engine.getEngineType();
-        return engine.isFusion()
-              || (engineType == Engine.FISSION)
-              || (engineType == Engine.FUEL_CELL)
-              || (engineType == Engine.BATTERY);
+        boolean isElectricPowerPlant = (engineType == Engine.FUEL_CELL)
+              || (engineType == Engine.BATTERY)
+              || (engineType == Engine.SOLAR)
+              || (engineType == Engine.EXTERNAL);
+        return engine.isFusion() || (engineType == Engine.FISSION) || isElectricPowerPlant;
     }
 
     /**

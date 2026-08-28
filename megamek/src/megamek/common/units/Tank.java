@@ -809,7 +809,9 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
 
         boolean hasFlotationHull = hasWorkingMisc(MiscType.F_FLOTATION_HULL);
         boolean isAmphibious = hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
-        boolean sealed = hasEnvironmentalSealing();
+        // Sealing alone does not put a vehicle on the lake bed: an engine that has to take in air to burn fuel
+        // will not run completely submerged, however well sealed the crew compartment is (TM p.216).
+        boolean canDriveSubmerged = EnvironmentalSealingRules.canOperateFullySubmerged(this);
         boolean hexHasRoad = hex.containsTerrain(Terrains.ROAD);
         // A bulldozer (or, under the unofficial rule, a backhoe) lets a vehicle enter a rubble hex its motive type
         // would normally bar, so it can clear it (TacOps). Only the rubble prohibition is lifted; other prohibiting
@@ -830,7 +832,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                     // Water, no ice, no amphibious measures... or magma?  Bad.
                     return ((hex.terrainLevel(Terrains.WATER) > 0) &&
                           !hex.containsTerrain(Terrains.ICE) &&
-                          !(hasFlotationHull || sealed || isAmphibious) ||
+                          !(hasFlotationHull || canDriveSubmerged || isAmphibious) ||
                           (hex.terrainLevel(Terrains.MAGMA) > 1));
                 }
 
@@ -838,7 +840,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                     return ((hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad) ||
                           ((hex.terrainLevel(Terrains.WATER) > 0) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
-                                !(hasFlotationHull || sealed || isAmphibious)) ||
+                                !(hasFlotationHull || canDriveSubmerged || isAmphibious)) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
                           (hex.terrainLevel(Terrains.MAGMA) > 1) ||
                           (hex.terrainLevel(Terrains.ROUGH) > 1) ||
@@ -847,7 +849,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                     return ((hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad) ||
                           ((hex.terrainLevel(Terrains.WATER) > 1) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
-                                !(hasFlotationHull || sealed || isAmphibious)) ||
+                                !(hasFlotationHull || canDriveSubmerged || isAmphibious)) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
                           (hex.terrainLevel(Terrains.MAGMA) > 1);
                 }
@@ -855,7 +857,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                 if (isCrossCountry && !isSuperHeavy()) {
                     return ((hex.terrainLevel(Terrains.WATER) > 0) &&
                           !hex.containsTerrain(Terrains.ICE) &&
-                          !(hasFlotationHull || sealed || isAmphibious)) ||
+                          !(hasFlotationHull || canDriveSubmerged || isAmphibious)) ||
                           hex.containsTerrain(Terrains.MAGMA) ||
                           ((hex.terrainLevel(Terrains.SNOW) > 1) && !hexHasRoad) ||
                           (hex.terrainLevel(Terrains.GEYSER) == 2);
@@ -866,7 +868,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                           (hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad) ||
                           ((hex.terrainLevel(Terrains.WATER) > 0) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
-                                !(hasFlotationHull || sealed || isAmphibious)) ||
+                                !(hasFlotationHull || canDriveSubmerged || isAmphibious)) ||
                           (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad && !rubblePassable) ||
                           hex.containsTerrain(Terrains.MAGMA) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
@@ -877,7 +879,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                           (hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad) ||
                           ((hex.terrainLevel(Terrains.WATER) > 1) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
-                                !(hasFlotationHull || sealed || isAmphibious)) ||
+                                !(hasFlotationHull || canDriveSubmerged || isAmphibious)) ||
                           (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad && !rubblePassable) ||
                           hex.containsTerrain(Terrains.MAGMA) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||

@@ -2912,11 +2912,11 @@ public class BasicPathRanker extends PathRanker {
             return UNIT_DESTRUCTION_FACTOR;
         }
 
-        // An IndustrialMek whose engine cannot run sealed off from the air will drown. Environmental Sealing alone
-        // does not help an internal combustion engine here (TM p.216).
+        // An IndustrialMek needs both the Environmental Sealing and a non-air-breathing engine to be completely
+        // submerged; lacking either, it drowns (TW p.52, Movement Costs Table footnote 8).
         if ((movingUnit instanceof Mek industrialMek) &&
               industrialMek.isIndustrial() &&
-              !EnvironmentalSealingRules.hasSealedOperationEngine(industrialMek) &&
+              !EnvironmentalSealingRules.canOperateFullySubmerged(industrialMek) &&
               hex.depth() >= 1 &&
               endsInHex) {
             double destructionFactor = hex.depth() >= 2 ? UNIT_DESTRUCTION_FACTOR : UNIT_DESTRUCTION_FACTOR * 0.5d;

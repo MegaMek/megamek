@@ -46,6 +46,7 @@ import megamek.common.game.Game;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
+import megamek.common.units.EnvironmentalSealingRules;
 import megamek.common.units.Infantry;
 import megamek.common.units.Jumpship;
 import megamek.common.units.Mek;
@@ -674,8 +675,10 @@ public class PlanetaryConditions implements Serializable {
                   MSG_DOOMED_TOXIC_ATMOSPHERE :
                   MSG_DOOMED_TAINTED_ATMOSPHERE;
         }
-        boolean isUnsealedVehicle = (entity instanceof Tank) && !entity.hasEnvironmentalSealing();
-        if (isUnsealedVehicle && TaintedAtmosphereRules.barsUnsealedVehicles(getAtmosphericTaint())) {
+        // Conventional infantry are answered by the XCT branch above, whatever gear they carry.
+        boolean isUnsealedCrewedUnit = !entity.isConventionalInfantry()
+              && !EnvironmentalSealingRules.isSealedAgainstAtmosphere(entity);
+        if (isUnsealedCrewedUnit && TaintedAtmosphereRules.barsUnsealedUnits(getAtmosphericTaint())) {
             return MSG_DOOMED_TOXIC_ATMOSPHERE;
         }
         if (TaintedAtmosphereRules.barsJetPropelledCraft(entity, getAtmosphericTaint())) {

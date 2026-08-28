@@ -43,6 +43,7 @@ import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
+import megamek.common.units.EnvironmentalSealingRules;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
@@ -176,14 +177,18 @@ public final class TaintedAtmosphereRules {
     }
 
     /**
-     * Whether a vehicle without the Environmental Sealing chassis modification may not be fielded at all, TO:AR p.54.
-     * Only a toxic caustic or radiological atmosphere goes this far.
+     * Whether a crewed unit that is not sealed against the outside air may not be fielded at all, TO:AR p.54. Only a
+     * toxic caustic or radiological atmosphere goes this far.
+     * <p>
+     * The rules name vehicles without the Environmental Sealing chassis modification. The same reasoning reaches
+     * IndustrialMeks, which are the one kind of Mek not sealed by its basic construction and which buy the sealing
+     * for the same reason a vehicle does; a BattleMek's crew is never breathing this air.
      *
      * @param atmosphericTaint the air being fought in
      *
-     * @return {@code true} if unsealed vehicles are barred from the field
+     * @return {@code true} if unsealed units are barred from the field
      */
-    public static boolean barsUnsealedVehicles(AtmosphericTaint atmosphericTaint) {
+    public static boolean barsUnsealedUnits(AtmosphericTaint atmosphericTaint) {
         return atmosphericTaint.isToxic() && isHarmfulToPersonnel(atmosphericTaint);
     }
 
@@ -310,7 +315,7 @@ public final class TaintedAtmosphereRules {
     public static boolean isShelteredFromAtmosphere(Entity entity) {
         if (entity.getTransportId() != Entity.NONE) {
             Entity transport = entity.getGame().getEntity(entity.getTransportId());
-            return (transport != null) && transport.hasEnvironmentalSealing();
+            return EnvironmentalSealingRules.isSealedAgainstAtmosphere(transport);
         }
         return isInFortifiedBuilding(entity);
     }

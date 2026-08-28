@@ -85,13 +85,13 @@ class TaintedAtmosphereRulesTest {
     @Test
     @DisplayName("Only toxic caustic or radiological air keeps unsealed vehicles off the field")
     void unsealedVehiclesAreBarredOnlyByToxicHarmfulAir() {
-        assertTrue(TaintedAtmosphereRules.barsUnsealedVehicles(AtmosphericTaint.CAUSTIC_TOXIC));
-        assertTrue(TaintedAtmosphereRules.barsUnsealedVehicles(AtmosphericTaint.RADIOLOGICAL_TOXIC));
+        assertTrue(TaintedAtmosphereRules.barsUnsealedUnits(AtmosphericTaint.CAUSTIC_TOXIC));
+        assertTrue(TaintedAtmosphereRules.barsUnsealedUnits(AtmosphericTaint.RADIOLOGICAL_TOXIC));
 
-        assertFalse(TaintedAtmosphereRules.barsUnsealedVehicles(AtmosphericTaint.CAUSTIC_TAINTED));
-        assertFalse(TaintedAtmosphereRules.barsUnsealedVehicles(AtmosphericTaint.RADIOLOGICAL_TAINTED));
-        assertFalse(TaintedAtmosphereRules.barsUnsealedVehicles(AtmosphericTaint.FLAMMABLE_TOXIC));
-        assertFalse(TaintedAtmosphereRules.barsUnsealedVehicles(AtmosphericTaint.BREATHABLE));
+        assertFalse(TaintedAtmosphereRules.barsUnsealedUnits(AtmosphericTaint.CAUSTIC_TAINTED));
+        assertFalse(TaintedAtmosphereRules.barsUnsealedUnits(AtmosphericTaint.RADIOLOGICAL_TAINTED));
+        assertFalse(TaintedAtmosphereRules.barsUnsealedUnits(AtmosphericTaint.FLAMMABLE_TOXIC));
+        assertFalse(TaintedAtmosphereRules.barsUnsealedUnits(AtmosphericTaint.BREATHABLE));
     }
 
     @Test

@@ -86,6 +86,15 @@ class PlanetaryConditionsAtmosphericTaintTest {
         return mek;
     }
 
+    private Mek industrialMek(boolean hasEnvironmentalSealing) {
+        Mek mek = mock(Mek.class);
+        lenient().when(mek.isConventionalInfantry()).thenReturn(false);
+        lenient().when(mek.isIndustrial()).thenReturn(true);
+        lenient().when(mek.hasEnvironmentalSealing()).thenReturn(hasEnvironmentalSealing);
+        lenient().when(mek.getMovementMode()).thenReturn(EntityMovementMode.BIPED);
+        return mek;
+    }
+
     private PlanetaryConditions conditionsWith(AtmosphericTaint atmosphericTaint) {
         PlanetaryConditions conditions = new PlanetaryConditions();
         conditions.setAtmosphericTaint(atmosphericTaint);
@@ -227,5 +236,27 @@ class PlanetaryConditionsAtmosphericTaintTest {
     @DisplayName("Conditions written before this setting existed come back as breathable air")
     void defaultIsBreathable() {
         assertEquals(AtmosphericTaint.BREATHABLE, new PlanetaryConditions().getAtmosphericTaint());
+    }
+
+    @Test
+    @DisplayName("Toxic air turns away an IndustrialMek without Environmental Sealing")
+    void toxicAirDoomsUnsealedIndustrialMeks() {
+        PlanetaryConditions conditions = conditionsWith(AtmosphericTaint.CAUSTIC_TOXIC);
+
+        assertNotNull(conditions.whyDoomed(industrialMek(false), game),
+              "an IndustrialMek is not sealed by its construction, so its crew breathes this air");
+        assertNull(conditions.whyDoomed(industrialMek(true), game),
+              "the sealing is exactly what the IndustrialMek buys to be here");
+        assertNull(conditions.whyDoomed(battleMek(), game),
+              "a BattleMek is sealed as part of its basic construction");
+    }
+
+    @Test
+    @DisplayName("Merely tainted air still lets an unsealed IndustrialMek onto the field")
+    void taintedAirDoesNotDoomUnsealedIndustrialMeks() {
+        PlanetaryConditions conditions = conditionsWith(AtmosphericTaint.CAUSTIC_TAINTED);
+
+        assertNull(conditions.whyDoomed(industrialMek(false), game),
+              "only the toxic strength bars unsealed units outright, exactly as for vehicles");
     }
 }

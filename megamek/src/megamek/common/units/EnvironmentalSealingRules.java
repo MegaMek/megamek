@@ -90,11 +90,16 @@ public final class EnvironmentalSealingRules {
      *
      * @param entity the unit to check
      *
-     * @return {@code true} if the outside air cannot reach the unit's crew
+     * @return {@code true} if the outside air cannot reach the unit's crew, or the unit has no crew at all
      */
     public static boolean isSealedAgainstAtmosphere(@Nullable Entity entity) {
         if (entity == null) {
             return false;
+        }
+        if (entity.defaultCrewType() == CrewType.NONE) {
+            // Nothing inside to poison - a handheld weapon or other carried object. Vacuously sealed, so that the
+            // rules which turn away units whose crew would be breathing the air never reach it.
+            return true;
         }
         if (entity instanceof Mek mek) {
             return !mek.isIndustrial() || mek.hasEnvironmentalSealing();

@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.equipment.Engine;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.exceptions.LocationFullException;
@@ -221,5 +222,13 @@ class EnvironmentalSealingRulesTest {
         assertTrue(fixedWingSupport.isSupportVehicle(), "A fixed-wing Support Vehicle is a Support Vehicle");
         assertFalse(EnvironmentalSealingRules.isSealedAgainstAtmosphere(fixedWingSupport),
               "Support Vehicles buy the sealing even when they are aerospace units by class");
+    }
+
+    @Test
+    void uncrewedCarriedObjectsAreNeverTurnedAwayByTheAir() {
+        HandheldWeapon handheldWeapon = new HandheldWeapon();
+
+        assertTrue(EnvironmentalSealingRules.isSealedAgainstAtmosphere(handheldWeapon),
+              "A handheld weapon has no crew to poison, so no atmosphere rule should reach it");
     }
 }

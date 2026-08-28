@@ -3308,8 +3308,7 @@ public class MoveStep implements Serializable {
                     // A standing Mek is two levels tall, so in Depth 1 it wades with its head out and pays the
                     // lower cost. A ground vehicle is one level tall and is already completely under the surface
                     // in that same hex, so it pays the fully submerged cost at every depth it can enter.
-                    boolean isFullySubmerged = (entity instanceof Tank)
-                          || (waterDepth > 1);
+                    boolean isFullySubmerged = (entity instanceof Tank) || (waterDepth > 1);
                     if (!isFullySubmerged) {
                         mp++;
                     } else if (getEntity().hasAbility(OptionsConstants.PILOT_TM_FROGMAN)

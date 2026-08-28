@@ -1962,20 +1962,23 @@ class MovePathHandler extends AbstractTWRuleHandler {
         if (ram != null) {
             gameManager.send(gameManager.getPacketHelper().createChargeAttackPacket(ram));
         }
-        if ((entity instanceof Mek) && entity.hasEngine() && ((Mek) entity).isIndustrial()
-              && !entity.hasEnvironmentalSealing()
-              && (entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
-            if ((!entity.isProne()
-                  && (getGame().getBoard(curBoardId).getHex(entity.getPosition())
-                  .terrainLevel(Terrains.WATER) >= 2))
-                  || (entity.isProne()
-                  && (getGame().getBoard(curBoardId).getHex(entity.getPosition())
-                  .terrainLevel(Terrains.WATER) == 1))) {
-                ((Mek) entity).setJustMovedIntoIndustrialKillingWater(true);
-
+        // An IndustrialMek drowns where it would be completely under the surface, unless its engine runs with no
+        // air to breathe. Environmental Sealing does not save an internal combustion engine here: full submersion
+        // needs both the sealing and a fission, fusion or fuel cell engine (TM p.216).
+        if ((entity instanceof Mek industrialMek)
+              && industrialMek.isIndustrial()
+              && !EnvironmentalSealingRules.hasSealedOperationEngine(industrialMek)) {
+            int waterDepth = getGame().getBoard(curBoardId).getHex(entity.getPosition())
+                  .terrainLevel(Terrains.WATER);
+            boolean isSubmergedStanding = !entity.isProne() && (waterDepth >= 2);
+            boolean isSubmergedProne = entity.isProne() && (waterDepth == 1);
+            if (isSubmergedStanding || isSubmergedProne) {
+                logger.debug("[EnvironmentalSealing] {}: submerged in depth {} water with an engine that cannot run "
+                      + "sealed - drowning at end of turn", entity.getShortName(), waterDepth);
+                industrialMek.setJustMovedIntoIndustrialKillingWater(true);
             } else {
-                ((Mek) entity).setJustMovedIntoIndustrialKillingWater(false);
-                ((Mek) entity).setShouldDieAtEndOfTurnBecauseOfWater(false);
+                industrialMek.setJustMovedIntoIndustrialKillingWater(false);
+                industrialMek.setShouldDieAtEndOfTurnBecauseOfWater(false);
             }
         }
 

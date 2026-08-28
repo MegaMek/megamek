@@ -63,7 +63,6 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.Engine;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponMounted;
@@ -2913,11 +2912,11 @@ public class BasicPathRanker extends PathRanker {
             return UNIT_DESTRUCTION_FACTOR;
         }
 
-        // Unsealed unit will drown.
-        if (movingUnit instanceof Mek &&
-              ((Mek) movingUnit).isIndustrial() &&
-              !movingUnit.hasEnvironmentalSealing() &&
-              (movingUnit.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) &&
+        // An IndustrialMek whose engine cannot run sealed off from the air will drown. Environmental Sealing alone
+        // does not help an internal combustion engine here (TM p.216).
+        if ((movingUnit instanceof Mek industrialMek) &&
+              industrialMek.isIndustrial() &&
+              !EnvironmentalSealingRules.hasSealedOperationEngine(industrialMek) &&
               hex.depth() >= 1 &&
               endsInHex) {
             double destructionFactor = hex.depth() >= 2 ? UNIT_DESTRUCTION_FACTOR : UNIT_DESTRUCTION_FACTOR * 0.5d;

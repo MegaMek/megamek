@@ -5087,11 +5087,21 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     @Override
     public boolean isLocationDeadly(Coords c, int boardId) {
         return isIndustrial()
-              && hasEngine()
-              && getEngine().isICE()
-              && !hasEnvironmentalSealing()
+              && !EnvironmentalSealingRules.hasSealedOperationEngine(this)
               && game.hasBoardLocation(c, boardId)
               && game.getHex(c, boardId).terrainLevel(Terrains.WATER) >= 2;
+    }
+
+    /**
+     * BattleMeks are sealed as part of their basic construction, which is why they may not install Environmental
+     * Sealing (TM p.216). IndustrialMeks are the exception: without the sealing, and without an engine that runs
+     * with no air to breathe, the crew does not survive an airless world.
+     *
+     * @return {@code true} when this Mek will not survive vacuum conditions
+     */
+    @Override
+    public boolean doomedInVacuum() {
+        return !EnvironmentalSealingRules.canOperateInVacuum(this);
     }
 
     /**

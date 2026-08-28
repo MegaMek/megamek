@@ -34,11 +34,6 @@
 
 package megamek.server.totalWarfare;
 
-import static megamek.common.bays.Bay.UNSET_BAY;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
@@ -89,10 +84,16 @@ import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
 import megamek.server.SmokeCloud;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static megamek.common.bays.Bay.UNSET_BAY;
+
 /**
  * Processes an Entity's MovePath when an ENTITY_MOVE packet is received.
  */
 class MovePathHandler extends AbstractTWRuleHandler {
+
     private static final MMLogger logger = MMLogger.create(MovePathHandler.class);
 
 
@@ -166,7 +167,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * @param losCache    A cache that stores Los between various Entities and targets. In double-blind games, we may
      *                    need to compute a lot of LosEffects, so caching them can really speed things up.
      */
-    MovePathHandler(TWGameManager gameManager, Entity entity, MovePath md, Map<UnitTargetPair, LosEffects> losCache) {
+    MovePathHandler(TWGameManager gameManager,
+                    Entity entity,
+                    MovePath md,
+                    Map<UnitTargetPair, LosEffects> losCache) {
         super(gameManager);
         this.entity = entity;
         this.md = md;
@@ -182,7 +186,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * @param curBoardId   the board the unit is on
      * @param curElevation the unit's elevation after the step
      */
-    private void moveElevatorPlatformWithEntity(MoveStep step, Coords curPos, int curBoardId, int curElevation) {
+    private void moveElevatorPlatformWithEntity(MoveStep step,
+                                                Coords curPos,
+                                                int curBoardId,
+                                                int curElevation) {
         if ((step.getType() != MoveStepType.ELEVATOR_ASCEND) && (step.getType() != MoveStepType.ELEVATOR_DESCEND)) {
             return;
         }
@@ -208,16 +215,19 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * @param curBoardId   the board the unit is on
      * @param curElevation the unit's elevation after the step
      * @param stepMoveType the movement type of this step
-     *
      * @return {@code true} if the unit fell, which ends its movement
      */
-    private boolean entityFallsDownElevatorShaft(MoveStep step, Hex curHex, Coords curPos, int curBoardId,
-          int curElevation, EntityMovementType stepMoveType) {
+    private boolean entityFallsDownElevatorShaft(MoveStep step,
+                                                 Hex curHex,
+                                                 Coords curPos,
+                                                 int curBoardId,
+                                                 int curElevation,
+                                                 EntityMovementType stepMoveType) {
         boolean isElevatorStep = (step.getType() == MoveStepType.ELEVATOR_ASCEND)
-              || (step.getType() == MoveStepType.ELEVATOR_DESCEND);
+                                 || (step.getType() == MoveStepType.ELEVATOR_DESCEND);
         if (!curHex.containsTerrain(Terrains.INDUSTRIAL_ELEVATOR)
-              || (stepMoveType == EntityMovementType.MOVE_JUMP)
-              || isElevatorStep) {
+            || (stepMoveType == EntityMovementType.MOVE_JUMP)
+            || isElevatorStep) {
             return false;
         }
         IndustrialElevator elevator = getGame().getIndustrialElevator(BoardLocation.of(curPos, curBoardId));
@@ -232,7 +242,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             return false;
         }
         logger.debug("[IndustrialElevator] {} entered shaft at {} with platform at level {}; falling {} levels",
-              entity.getShortName(), curPos, platformLevel, fallDistance);
+                     entity.getShortName(), curPos, platformLevel, fallDistance);
         Report fallReport = new Report(5298, Report.PUBLIC);
         fallReport.subject = entity.getId();
         fallReport.add(entity.getDisplayName());
@@ -253,13 +263,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * @param step         the move step being processed
      * @param curElevation the unit's elevation after the step
      */
-    private void reportElevatorUse(MoveStep step, int curElevation) {
+    private void reportElevatorUse(MoveStep step,
+                                   int curElevation) {
         if ((step.getType() != MoveStepType.ELEVATOR_ASCEND) && (step.getType() != MoveStepType.ELEVATOR_DESCEND)) {
             return;
         }
         String direction = (step.getType() == MoveStepType.ELEVATOR_ASCEND)
-              ? Messages.getString("IndustrialElevator.directionUp")
-              : Messages.getString("IndustrialElevator.directionDown");
+                           ? Messages.getString("IndustrialElevator.directionUp")
+                           : Messages.getString("IndustrialElevator.directionDown");
         Report elevatorReport = new Report(5299, Report.PUBLIC);
         elevatorReport.subject = entity.getId();
         elevatorReport.add(entity.getDisplayName());
@@ -276,15 +287,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * walked.
      *
      * @param entity the entity whose movement was just processed
-     *
      * @return {@code true} if the entity is airborne VTOL beast-mounted infantry that did not move this turn
      */
     static boolean mustSpendStationaryFlightMP(Entity entity) {
         return (entity instanceof ConvInfantry beastInfantry)
-              && (beastInfantry.getMount() != null)
-              && beastInfantry.getMount().movementMode().isVTOL()
-              && entity.isAirborneVTOLorWIGE()
-              && (entity.moved == EntityMovementType.MOVE_NONE);
+               && (beastInfantry.getMount() != null)
+               && beastInfantry.getMount().movementMode().isVTOL()
+               && entity.isAirborneVTOLorWIGE()
+               && (entity.moved == EntityMovementType.MOVE_NONE);
     }
 
     void processMovement() {
@@ -294,11 +304,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
         if (entity.isClimbing() && (entity instanceof Mek climbingMek)) {
             int climbableArms = ClimbingHelper.countClimbableArms(climbingMek);
             boolean cannotHoldOn = (climbableArms == 0)
-                  || (entity.isDangling() && (climbableArms < 2));
+                                   || (entity.isDangling() && (climbableArms < 2));
             if (cannotHoldOn) {
                 logger.debug("[FALL-TRACE] Climbing/dangling Mek {} lost required arms, auto-falling " +
-                            "from elevation {} in hex {}",
-                      entity.getDisplayName(), entity.getElevation(), entity.getPosition());
+                             "from elevation {} in hex {}",
+                             entity.getDisplayName(), entity.getElevation(), entity.getPosition());
                 // Surface as a special-report toast (kill-feed style) AND mirror to chat so the
                 // player sees the auto-fall immediately, not just buried in the round report.
                 // Matches the building-too-damaged path in TWGameManager.checkClimbingEntitiesOnBuilding.
@@ -309,8 +319,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 armsLostSpecial.add(armsLostReport);
                 gameManager.send(gameManager.createSpecialReportPacket(armsLostSpecial));
                 gameManager.sendServerChat(Messages.getString(
-                      "MovementDisplay.ClimbingDialog.armsLostChat",
-                      entity.getDisplayName()));
+                        "MovementDisplay.ClimbingDialog.armsLostChat",
+                        entity.getDisplayName()));
                 // Clear climbing/dangling flags BEFORE doEntityFallsInto so the entity
                 // updates pushed during fall processing carry the cleared state to clients.
                 // Otherwise the client copy retains isClimbing=true and the next-turn
@@ -319,9 +329,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 entity.setDangling(false);
                 entity.setClimbingLevelsChosen(0);
                 PilotingRollData autoFallRoll = new PilotingRollData(entity.getId(),
-                      TargetRoll.AUTOMATIC_FAIL, "climbing arms destroyed");
-                addReport(gameManager.doEntityFallsInto(entity, entity.getElevation(),
-                      entity.getPosition(), entity.getPosition(), autoFallRoll, true, 0));
+                                                                     TargetRoll.AUTOMATIC_FAIL,
+                                                                     "climbing arms destroyed");
+                addReport(gameManager.doEntityFallsInto(entity,
+                                                        entity.getElevation(),
+                                                        entity.getPosition(),
+                                                        entity.getPosition(),
+                                                        autoFallRoll,
+                                                        true,
+                                                        0));
                 addNewLines();
                 // The Mek just fell — terminate movement processing immediately. Without
                 // this return, processMovement would fall through to the edge-dangle block
@@ -351,18 +367,18 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // false-trigger the dangle handler — that would put the unit into a climbing state at
         // the destination, which it never was.
         boolean isJumpPath = md.contains(MoveStepType.START_JUMP)
-              || (md.getLastStepMovementType() == EntityMovementType.MOVE_JUMP);
+                             || (md.getLastStepMovementType() == EntityMovementType.MOVE_JUMP);
         // canClimb (1 arm) — not canDangle (2 arms) — so a one-armed Mek can still
         // initiate edge climb-down. Whether the chosen action is dangle vs climb-down
         // is determined later by entity.climbingLevelsChosen; dangle requires 2 arms
         // and the client dialog already filters that option.
         if (!entity.isClimbing() && !entity.isDangling()
-              && (entity instanceof Mek)
-              && ClimbingHelper.canClimb(entity)
-              && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
-              && md.getFinalClimbMode()
-              && md.contains(MoveStepType.FORWARDS)
-              && !isJumpPath) {
+            && (entity instanceof Mek)
+            && ClimbingHelper.canClimb(entity)
+            && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING)
+            && md.getFinalClimbMode()
+            && md.contains(MoveStepType.FORWARDS)
+            && !isJumpPath) {
             // Check if the FORWARDS step goes to a lower hex (3+ levels down)
             // Entity must not have moved (target must be adjacent to starting position)
             MoveStep lastStep = md.getLastStep();
@@ -379,13 +395,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // The entity's climbing/dangling state is server-controlled, so this also implicitly
         // validates that the prior dangle initiation was approved.
         boolean tacOpsClimbingEnabled = getGame().getOptions()
-              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING);
+                                                 .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING);
         boolean canProcessDangle = tacOpsClimbingEnabled
-              && (entity.isClimbing() || entity.isDangling()) && hasDownStep;
+                                   && (entity.isClimbing() || entity.isDangling()) && hasDownStep;
         logger.debug("[DANGLE-TRACE] processMovement check: canProcessDangle={}, isEdgeDangle={}, " +
-                    "hasDownStep={}, isClimbing={}, isDangling={}, elevation={}, climbMode={}, stepCount={}",
-              canProcessDangle, isEdgeDangle, hasDownStep, entity.isClimbing(), entity.isDangling(),
-              entity.getElevation(), md.getFinalClimbMode(), md.length());
+                     "hasDownStep={}, isClimbing={}, isDangling={}, elevation={}, climbMode={}, stepCount={}",
+                     canProcessDangle, isEdgeDangle, hasDownStep, entity.isClimbing(), entity.isDangling(),
+                     entity.getElevation(), md.getFinalClimbMode(), md.length());
         if (isEdgeDangle && (edgeDangleTargetPos != null)) {
             // Edge initiation: move entity to lower hex, face the cliff/building.
             // Discriminator: entity.climbingLevelsChosen > 0 = controlled climb-down (PSR per
@@ -398,7 +414,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             int facingToCliff = edgeDangleTargetPos.direction(originalPos);
             int chosenEdgeDescent = entity.getClimbingLevelsChosen();
             if ((chosenEdgeDescent > 0) && (entity instanceof Mek edgeMek)
-                  && ClimbingHelper.canClimb(entity)) {
+                && ClimbingHelper.canClimb(entity)) {
                 // EDGE CLIMB-DOWN (TO:AR p.20): PSR per level. On failure, fall from current
                 // descended elevation. Mek ends in lower hex at (cliffTopAlt - levelsDescended).
                 // Total drop measures to the destination hex's FLOOR — water bottom for water,
@@ -409,9 +425,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 int totalDrop = cliffTopAlt - destHex.floor();
                 int levelsToDescend = Math.min(chosenEdgeDescent, totalDrop);
                 logger.debug("[CLIMB-TRACE] Server processing EDGE climb-down: entity={}, "
-                            + "from={} (alt {}), to={} (level {}), levelsToDescend={}, costPerLevel={}",
-                      entity.getDisplayName(), originalPos, cliffTopAlt,
-                      edgeDangleTargetPos, destHex.getLevel(), levelsToDescend, costPerLevel);
+                             + "from={} (alt {}), to={} (level {}), levelsToDescend={}, costPerLevel={}",
+                             entity.getDisplayName(), originalPos, cliffTopAlt,
+                             edgeDangleTargetPos, destHex.getLevel(), levelsToDescend, costPerLevel);
                 // Move to lower hex first so the PSR rolls happen at the new position.
                 entity.setPosition(edgeDangleTargetPos);
                 entity.setFacing(facingToCliff);
@@ -421,15 +437,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 for (int i = 1; i <= levelsToDescend; i++) {
                     PilotingRollData psr = entity.getBasePilotingRoll(EntityMovementType.MOVE_WALK);
                     psr.append(new PilotingRollData(entity.getId(),
-                          ClimbingHelper.CLIMBING_PSR_MODIFIER,
-                          "climbing down (level " + i + " of " + levelsToDescend + ")"));
+                                                    ClimbingHelper.CLIMBING_PSR_MODIFIER,
+                                                    "climbing down (level " + i + " of " + levelsToDescend + ")"));
                     if (climbableArms == 1) {
                         psr.append(new PilotingRollData(entity.getId(),
-                              ClimbingHelper.ONE_ARM_PSR_MODIFIER, "climbing with one arm"));
+                                                        ClimbingHelper.ONE_ARM_PSR_MODIFIER, "climbing with one arm"));
                     }
                     int psrElevation = (cliffTopAlt - destHex.getLevel()) - levelsDescended;
                     if (gameManager.doSkillCheckWhileMoving(entity, psrElevation,
-                          edgeDangleTargetPos, edgeDangleTargetPos, psr, true) > 0) {
+                                                            edgeDangleTargetPos, edgeDangleTargetPos, psr, true) > 0) {
                         // PSR failed - fall from current climb-down elevation
                         entity.setClimbing(false);
                         entity.setDangling(false);
@@ -442,7 +458,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (!fellWhileDescending) {
                     int floorRelative = destHex.floor() - destHex.getLevel();
                     int finalElevation = Math.max(floorRelative,
-                          (cliffTopAlt - destHex.getLevel()) - levelsDescended);
+                                                  (cliffTopAlt - destHex.getLevel()) - levelsDescended);
                     entity.setElevation(finalElevation);
                     // Climbing flag clears only at the actual hex floor — for a water hex that
                     // means the water bottom, not the surface. Anywhere above the floor the Mek
@@ -475,7 +491,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (!ClimbingHelper.canDangle(entity)) {
                 logger.warn("[DANGLE-TRACE] Server rejecting EDGE dangle: entity={} lacks two "
                             + "functional climbing arms; chosenLevels was 0 (dangle path).",
-                      entity.getDisplayName());
+                            entity.getDisplayName());
                 entity.setDone(true);
                 entity.moved = EntityMovementType.MOVE_NONE;
                 entity.mpUsed = 0;
@@ -484,12 +500,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 return;
             }
             int dangleElevation = cliffTopAlt - ClimbingHelper.DANGLE_LEVELS_PER_TURN
-                  - destHex.getLevel();
+                                  - destHex.getLevel();
             dangleElevation = Math.max(0, dangleElevation);
             logger.debug("[DANGLE-TRACE] Server processing EDGE dangle: entity={}, " +
-                        "from={} (alt {}), to={} (level {}), dangleElevation={}",
-                  entity.getDisplayName(), originalPos, cliffTopAlt,
-                  edgeDangleTargetPos, destHex.getLevel(), dangleElevation);
+                         "from={} (alt {}), to={} (level {}), dangleElevation={}",
+                         entity.getDisplayName(), originalPos, cliffTopAlt,
+                         edgeDangleTargetPos, destHex.getLevel(), dangleElevation);
             Report dangleReport = new Report(6462, Report.PUBLIC);
             dangleReport.add(entity.getDisplayName());
             dangleReport.add(ClimbingHelper.DANGLE_LEVELS_PER_TURN);
@@ -518,8 +534,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
         if (canProcessDangle) {
             int downStepCount = (int) md.getStepVector().stream()
-                  .filter(s -> s.getType() == MoveStepType.DOWN)
-                  .count();
+                                        .filter(s -> s.getType() == MoveStepType.DOWN)
+                                        .count();
             // Controlled CLIMB DOWN (TO:AR p.20): same MP cost and PSRs as climbing up.
             // Discriminated from DANGLE (1 bare DOWN) and DROP (2 bare DOWN) by the
             // CLIMB_MODE_ON marker step the client adds before the DOWN steps.
@@ -527,7 +543,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // entity.climbingLevelsChosen isn't transmitted to the server — the path is.
             boolean hasClimbModeOnMarker = md.contains(MoveStepType.CLIMB_MODE_ON);
             if (hasClimbModeOnMarker && (downStepCount > 0) && (entity instanceof Mek descendingMek)
-                  && ClimbingHelper.canClimb(entity)) {
+                && ClimbingHelper.canClimb(entity)) {
                 int costPerLevel = ClimbingHelper.getClimbingMPCostPerLevel(descendingMek);
                 int climbableArms = ClimbingHelper.countClimbableArms(descendingMek);
                 int currentElevation = entity.getElevation();
@@ -545,27 +561,31 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     logger.warn("[CLIMB-TRACE] Server capping CLIMB_DOWN: entity={} requested {} "
                                 + "levels but {} walk MP at {} MP/level only allows {} (clinging at "
                                 + "intermediate elevation).",
-                          entity.getDisplayName(), requestedLevels, availableMP,
-                          costPerLevel, levelsToDescend);
+                                entity.getDisplayName(), requestedLevels, availableMP,
+                                costPerLevel, levelsToDescend);
                 }
                 logger.debug("[CLIMB-TRACE] Server processing CLIMB_DOWN: entity={}, " +
-                            "currentElevation={}, levelsToDescend={}, costPerLevel={}",
-                      entity.getDisplayName(), currentElevation, levelsToDescend, costPerLevel);
+                             "currentElevation={}, levelsToDescend={}, costPerLevel={}",
+                             entity.getDisplayName(), currentElevation, levelsToDescend, costPerLevel);
                 int levelsDescended = 0;
                 boolean fellWhileDescending = false;
                 for (int i = 1; i <= levelsToDescend; i++) {
                     PilotingRollData psr = entity.getBasePilotingRoll(EntityMovementType.MOVE_WALK);
                     psr.append(new PilotingRollData(entity.getId(),
-                          ClimbingHelper.CLIMBING_PSR_MODIFIER,
-                          "climbing down (level " + i + " of " + levelsToDescend + ")"));
+                                                    ClimbingHelper.CLIMBING_PSR_MODIFIER,
+                                                    "climbing down (level " + i + " of " + levelsToDescend + ")"));
                     if (climbableArms == 1) {
                         psr.append(new PilotingRollData(entity.getId(),
-                              ClimbingHelper.ONE_ARM_PSR_MODIFIER,
-                              "climbing with one arm"));
+                                                        ClimbingHelper.ONE_ARM_PSR_MODIFIER,
+                                                        "climbing with one arm"));
                     }
                     int psrElevation = currentElevation - levelsDescended;
-                    if (gameManager.doSkillCheckWhileMoving(entity, psrElevation,
-                          entity.getPosition(), entity.getPosition(), psr, true) > 0) {
+                    if (gameManager.doSkillCheckWhileMoving(entity,
+                                                            psrElevation,
+                                                            entity.getPosition(),
+                                                            entity.getPosition(),
+                                                            psr,
+                                                            true) > 0) {
                         // PSR failed - fall from current climb-down elevation
                         entity.setClimbing(false);
                         entity.setDangling(false);
@@ -577,7 +597,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
                 if (!fellWhileDescending) {
                     int newElevation = Math.max(floorRelativeForDescent,
-                          currentElevation - levelsDescended);
+                                                currentElevation - levelsDescended);
                     entity.setElevation(newElevation);
                     // Climbing flag clears only when the Mek truly hits the hex floor — water
                     // bottom counts, water surface doesn't. Above the floor the Mek is still
@@ -611,7 +631,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (availableMP < ClimbingHelper.DROP_MP_COST) {
                     logger.warn("[DANGLE-TRACE] Server rejecting DROP: entity={} has {} walk MP, "
                                 + "needs {} for drop. Treating as cling.",
-                          entity.getDisplayName(), availableMP, ClimbingHelper.DROP_MP_COST);
+                                entity.getDisplayName(), availableMP, ClimbingHelper.DROP_MP_COST);
                     entity.setDone(true);
                     entity.moved = EntityMovementType.MOVE_NONE;
                     entity.mpUsed = 0;
@@ -628,48 +648,56 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 int modifierReduction = entity.isDangling() ? ClimbingHelper.DANGLE_LEVELS_PER_TURN : 0;
                 int effectiveDistance = Math.max(0, dropDistance - modifierReduction);
                 logger.debug("[DANGLE-TRACE] Server processing DROP: entity={}, " +
-                            "dropDistance={}, effectiveDistance={}, isDangling={}, modifierReduction={}",
-                      entity.getDisplayName(), dropDistance, effectiveDistance,
-                      entity.isDangling(), modifierReduction);
+                             "dropDistance={}, effectiveDistance={}, isDangling={}, modifierReduction={}",
+                             entity.getDisplayName(), dropDistance, effectiveDistance,
+                             entity.isDangling(), modifierReduction);
 
                 // PSR 1: Leg damage check (modifier = 2 * effectiveDistance)
                 String legDamageDesc = entity.isDangling()
-                      ? String.format("hanging from level %d, effective height for leg damage roll %d",
-                      dropDistance, effectiveDistance)
-                      : String.format("dropping from level %d, leg damage roll", dropDistance);
+                                       ? String.format("hanging from level %d, effective height for leg damage roll %d",
+                                                       dropDistance, effectiveDistance)
+                                       : String.format("dropping from level %d, leg damage roll", dropDistance);
                 String fallDesc = entity.isDangling()
-                      ? String.format("hanging from level %d, effective height for fall roll %d",
-                      dropDistance, effectiveDistance)
-                      : String.format("dropping from level %d, fall roll", dropDistance);
+                                  ? String.format("hanging from level %d, effective height for fall roll %d",
+                                                  dropDistance, effectiveDistance)
+                                  : String.format("dropping from level %d, fall roll", dropDistance);
                 if (effectiveDistance > 0) {
                     rollTarget = entity.getBasePilotingRoll(EntityMovementType.MOVE_WALK);
                     entity.addPilotingModifierForTerrain(rollTarget, entity.getPosition(),
-                          entity.getBoardId());
+                                                         entity.getBoardId());
                     rollTarget.append(new PilotingRollData(entity.getId(),
-                          2 * effectiveDistance, legDamageDesc));
-                    if (0 < gameManager.doSkillCheckWhileMoving(entity, entity.getElevation(),
-                          entity.getPosition(), entity.getPosition(), rollTarget, false)) {
+                                                           2 * effectiveDistance, legDamageDesc));
+                    if (0 < gameManager.doSkillCheckWhileMoving(entity,
+                                                                entity.getElevation(),
+                                                                entity.getPosition(),
+                                                                entity.getPosition(),
+                                                                rollTarget,
+                                                                false)) {
                         // Leg damage equal to effective distance
                         addReport(gameManager.damageEntity(entity,
-                              new HitData(Mek.LOC_LEFT_LEG), effectiveDistance));
+                                                           new HitData(Mek.LOC_LEFT_LEG), effectiveDistance));
                         addReport(gameManager.damageEntity(entity,
-                              new HitData(Mek.LOC_RIGHT_LEG), effectiveDistance));
+                                                           new HitData(Mek.LOC_RIGHT_LEG), effectiveDistance));
                         addNewLines();
                         addReport(gameManager.criticalEntity(entity,
-                              Mek.LOC_LEFT_LEG, false, 0, 0));
+                                                             Mek.LOC_LEFT_LEG, false, 0, 0));
                         addNewLines();
                         addReport(gameManager.criticalEntity(entity,
-                              Mek.LOC_RIGHT_LEG, false, 0, 0));
+                                                             Mek.LOC_RIGHT_LEG, false, 0, 0));
                     }
 
                     // PSR 2: Fall check (modifier = effectiveDistance)
                     rollTarget = entity.getBasePilotingRoll(EntityMovementType.MOVE_WALK);
                     entity.addPilotingModifierForTerrain(rollTarget, entity.getPosition(),
-                          entity.getBoardId());
+                                                         entity.getBoardId());
                     rollTarget.append(new PilotingRollData(entity.getId(),
-                          effectiveDistance, fallDesc));
-                    if (0 < gameManager.doSkillCheckWhileMoving(entity, entity.getElevation(),
-                          entity.getPosition(), entity.getPosition(), rollTarget, true)) {
+                                                           effectiveDistance, fallDesc));
+                    if (0 < gameManager.doSkillCheckWhileMoving(entity,
+                                                                entity.getElevation(),
+                                                                entity.getPosition(),
+                                                                entity.getPosition(),
+                                                                rollTarget,
+                                                                true)) {
                         // Fall from elevation
                         entity.setDangling(false);
                         entity.setClimbing(false);
@@ -686,8 +714,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // through and settles on the floor below the surface.
                 Hex landingHex = getGame().getBoard(entity.getBoardId()).getHex(entity.getPosition());
                 int landingElevation = (landingHex != null)
-                      ? landingHex.floor() - landingHex.getLevel()
-                      : 0;
+                                       ? landingHex.floor() - landingHex.getLevel()
+                                       : 0;
                 entity.setElevation(landingElevation);
                 entity.setDangling(false);
                 entity.setClimbing(false);
@@ -707,11 +735,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 int dangleFloor = hexFloorRelative(entity);
                 int dangleableLevels = entity.getElevation() - dangleFloor;
                 int dangleLevels = Math.min(ClimbingHelper.DANGLE_LEVELS_PER_TURN,
-                      dangleableLevels);
+                                            dangleableLevels);
                 int newElevation = Math.max(dangleFloor, entity.getElevation() - dangleLevels);
                 logger.debug("[DANGLE-TRACE] Server processing dangle: entity={}, " +
-                            "currentElevation={}, dangleLevels={}, newElevation={}",
-                      entity.getDisplayName(), entity.getElevation(), dangleLevels, newElevation);
+                             "currentElevation={}, dangleLevels={}, newElevation={}",
+                             entity.getDisplayName(), entity.getElevation(), dangleLevels, newElevation);
                 Report dangleReport = new Report(6462, Report.PUBLIC);
                 dangleReport.add(entity.getDisplayName());
                 dangleReport.add(dangleLevels);
@@ -754,14 +782,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 Coords legalPos = entity.getPosition();
                 // Get the step so we can pass it in and get the abandon coords from it
                 for (final ListIterator<MoveStep> i = md.getSteps(); i
-                      .hasNext(); ) {
+                        .hasNext(); ) {
                     final MoveStep step = i.next();
                     if (step.getType() == MoveStepType.EJECT) {
                         legalPos = step.getTargetPosition();
                     }
                 }
                 addReport(gameManager.ejectSpacecraft(ship, ship.isSpaceborne(),
-                      (ship.isAirborne() && !ship.isSpaceborne()), legalPos));
+                                                      (ship.isAirborne() && !ship.isSpaceborne()), legalPos));
                 // If we're grounded or destroyed by crew loss, end movement
                 if (entity.isDoomed() || (!entity.isSpaceborne() && !entity.isAirborne())) {
                     return;
@@ -843,7 +871,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 aero.liftOff(1);
                 if (entity instanceof Dropship) {
                     gameManager.applyDropShipProximityDamage(md.getFinalCoords(), boardId, true, md.getFinalFacing(),
-                          entity);
+                                                             entity);
                 }
                 gameManager.checkForTakeoffDamage(aero);
             }
@@ -885,10 +913,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 gameManager.applyDropShipLandingDamage(md.getFinalCoords(), md.getFinalBoardId(), (Dropship) aero);
             }
             Coords finalPosition = isVertical ?
-                  md.getFinalCoords() :
-                  md.getFinalCoords().translated(md.getFinalFacing(), aero.getLandingLength());
+                                   md.getFinalCoords() :
+                                   md.getFinalCoords().translated(md.getFinalFacing(), aero.getLandingLength());
             gameManager.checkLandingTerrainEffects(aero, isVertical, md.getFinalCoords(), finalPosition,
-                  md.getFinalBoardId(), md.getFinalFacing());
+                                                   md.getFinalBoardId(), md.getFinalFacing());
             aero.land();
             entity.setPosition(finalPosition);
             entity.setDone(true);
@@ -897,7 +925,20 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
 
         if (md.contains(MoveStepType.DEPLOY) && Game.rulesManager.getRulesGame().isWalkOnDeployment()) {
-            entity.setDeployed(true);
+            DeploymentServerHelper deploymentProcess = new DeploymentServerHelper(gameManager);
+            // We don't set done in a walk on deployment
+            boolean setDone = false;
+            boolean assaultDrop = false;
+            Vector<Entity> loadVector = new Vector<>(entity.getLoadedUnits());
+            deploymentProcess.processDeployment(entity,
+                                                entity.getPosition(),
+                                                entity.getBoardId(),
+                                                entity.getFacing(),
+                                                entity.getElevation(),
+                                                loadVector,
+                                                assaultDrop,
+                                                setDone);
+
             if (entity.getPosition() == null) {
                 // assume it is at 0, but lets make sure.
                 MoveStep step = md.getStep(0);
@@ -951,8 +992,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
         if (md.getFlightPathHex() != null && !md.getFlightPathHex().isNoLocation()) {
             BoardLocation location = md.getFlightPathHex();
             entity.setPassedThrough(new Vector<>(BoardHelper.coordsLine(getGame().getBoard(location),
-                  location.coords(),
-                  md.getFinalFacing())));
+                                                                        location.coords(),
+                                                                        md.getFinalFacing())));
         }
 
         // get a list of coordinates that the unit passed through this turn
@@ -976,7 +1017,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         Hex startingHex = getGame().getHex(entity.getBoardLocation());
         if (startingHex == null) {
             logger.warn(String.format("Attempted to skip turn for %s (%s) which is not on the board!", entity,
-                  entity.getOwner().getName()));
+                                      entity.getOwner().getName()));
             return;
         }
 
@@ -1047,7 +1088,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
         // If a unit started & ended its turn in magma, let's damage it again (TO:AR 35) TODO: build report for end of move
         if (tookMagmaDamageAtStart && prevHex.terrainLevel(Terrains.MAGMA) == 2
-              && !(entity.getElevation() > 0 || entity.getMovementMode() == EntityMovementMode.HOVER)) {
+            && !(entity.getElevation() > 0 || entity.getMovementMode() == EntityMovementMode.HOVER)) {
             report = new Report(2404);
             report.addDesc(entity);
             report.subject = entity.getId();
@@ -1067,14 +1108,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
         if ((entity.isClimbing() || entity.isDangling()) && (entity.getElevation() == 0)) {
             Hex finalHex = getGame().getBoard(entity.getBoardId()).getHex(curPos);
             boolean onBuildingRoof = (finalHex != null)
-                  && finalHex.containsTerrain(Terrains.BUILDING)
-                  && (entity.getElevation() >= finalHex.terrainLevel(Terrains.BLDG_ELEV));
+                                     && finalHex.containsTerrain(Terrains.BUILDING)
+                                     && (entity.getElevation() >= finalHex.terrainLevel(Terrains.BLDG_ELEV));
             boolean clingingToAdjacentClimbable = entity.isClimbing()
-                  && isClingingToAdjacentClimbable(entity, curPos, finalHex);
+                                                  && isClingingToAdjacentClimbable(entity, curPos, finalHex);
             if (!onBuildingRoof && !clingingToAdjacentClimbable) {
                 logger.debug("[CLIMB-TRACE] Clearing stale climbing flags at end of move: entity={}, "
-                            + "climbing={}, dangling={}, elevation=0 in hex {}",
-                      entity.getDisplayName(), entity.isClimbing(), entity.isDangling(), curPos);
+                             + "climbing={}, dangling={}, elevation=0 in hex {}",
+                             entity.getDisplayName(), entity.isClimbing(), entity.isDangling(), curPos);
                 entity.setClimbing(false);
                 entity.setDangling(false);
                 entity.setClimbingLevelsChosen(0);
@@ -1083,7 +1124,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
         // set entity parameters
         logger.debug("End of movement: entity={}, curPos={}, climbing={}, elevation={}, curVTOLElevation={}",
-              entity.getDisplayName(), curPos, entity.isClimbing(), entity.getElevation(), curVTOLElevation);
+                     entity.getDisplayName(), curPos, entity.isClimbing(), entity.getElevation(), curVTOLElevation);
         entity.setPosition(curPos);
         entity.setFacing(curFacing);
         entity.setSecondaryFacing(curFacing);
@@ -1093,8 +1134,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
         if (md.isAllUnderwater(getGame())) {
             entity.underwaterRounds++;
             if ((entity instanceof ConvInfantry infantry) && (infantry.getMount() != null)
-                  && entity.getMovementMode().isSubmarine()
-                  && entity.underwaterRounds > infantry.getMount().getUWEndurance()) {
+                && entity.getMovementMode().isSubmarine()
+                && entity.underwaterRounds > infantry.getMount().getUWEndurance()) {
                 report = new Report(2412);
                 report.addDesc(entity);
                 addReport(report);
@@ -1109,7 +1150,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
         entity.setClimbMode(curClimbMode);
         if (!sideslipped && !fellDuringMovement && !crashedDuringMovement
-              && (entity.getMovementMode() == EntityMovementMode.VTOL)) {
+            && (entity.getMovementMode() == EntityMovementMode.VTOL)) {
             entity.setElevation(curVTOLElevation);
         }
         entity.setAltitude(curAltitude);
@@ -1125,8 +1166,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
         if ((md.getFlightPathHex() != null) && !md.getFlightPathHex().isNoLocation()) {
             BoardLocation location = md.getFlightPathHex();
             entity.setPassedThrough(new Vector<>(BoardHelper.coordsLine(getGame().getBoard(location),
-                  location.coords(),
-                  md.getFinalFacing())));
+                                                                        location.coords(),
+                                                                        md.getFinalFacing())));
             List<Integer> facings = new ArrayList<>();
             for (int i = 0; i < entity.getPassedThrough().size(); i++) {
                 facings.add(md.getFinalFacing());
@@ -1143,14 +1184,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
         // if we moved a hex with a destroyed leg, but it was not a run
         rollTarget = Game.rulesManager.getRulesPSR().checkWalkWithLegDestroyed(entity,
-              overallMoveType, md.getHexesMoved());
+                                                                               overallMoveType, md.getHexesMoved());
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
             gameManager.doSkillCheckInPlace(entity, rollTarget);
         }
 
         // if we sprinted with MASC or a supercharger, then we need a PSR
         rollTarget = entity.checkSprintingWithMASCXorSupercharger(overallMoveType,
-              entity.mpUsed);
+                                                                  entity.mpUsed);
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
             gameManager.doSkillCheckInPlace(entity, rollTarget);
         }
@@ -1158,7 +1199,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // if we used ProtoMek myomer booster, roll 2d6
         // pilot damage on a 2
         if ((entity instanceof ProtoMek) && ((ProtoMek) entity).hasMyomerBooster()
-              && (md.getMpUsed() > entity.getRunMP(MPCalculationSetting.NO_MYOMER_BOOSTER))) {
+            && (md.getMpUsed() > entity.getRunMP(MPCalculationSetting.NO_MYOMER_BOOSTER))) {
             report = new Report(2373);
             report.addDesc(entity);
             report.subject = entity.getId();
@@ -1180,7 +1221,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             gameManager.doSkillCheckInPlace(entity, rollTarget);
         }
         if ((md.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT)
-              && (md.hasActiveMASC() || md.hasActiveSupercharger()) && entity.canFall()) {
+            && (md.hasActiveMASC() || md.hasActiveSupercharger()) && entity.canFall()) {
             gameManager.doSkillCheckInPlace(entity, entity.getBasePilotingRoll(EntityMovementType.MOVE_SPRINT));
         }
 
@@ -1191,16 +1232,16 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // consume fuel
             if (((entity.isAero())
-                  && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_FUEL_CONSUMPTION))
-                  || (entity instanceof TeleMissile)) {
+                 && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_FUEL_CONSUMPTION))
+                || (entity instanceof TeleMissile)) {
                 int fuelUsed = ((IAero) entity).getFuelUsed(thrust);
 
                 // if we're a gas hog, aerospace fighter and going faster than walking, then use
                 // 2x fuel
                 if (((overallMoveType == EntityMovementType.MOVE_RUN) ||
-                      (overallMoveType == EntityMovementType.MOVE_SPRINT) ||
-                      (overallMoveType == EntityMovementType.MOVE_OVER_THRUST)) &&
-                      entity.hasQuirk(OptionsConstants.QUIRK_NEG_GAS_HOG)) {
+                     (overallMoveType == EntityMovementType.MOVE_SPRINT) ||
+                     (overallMoveType == EntityMovementType.MOVE_OVER_THRUST)) &&
+                    entity.hasQuirk(OptionsConstants.QUIRK_NEG_GAS_HOG)) {
                     fuelUsed *= 2;
                 }
 
@@ -1232,29 +1273,29 @@ class MovePathHandler extends AbstractTWRuleHandler {
             rollTarget = a.checkThrustSITotal(thrust, overallMoveType);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 getGame().addControlRoll(new PilotingRollData(entity.getId(), 0,
-                      "Thrust spent during turn exceeds SI"));
+                                                              "Thrust spent during turn exceeds SI"));
             }
 
             if (!getGame().getBoard(entity.getBoardId()).isSpace()) {
                 rollTarget = a.checkVelocityDouble(md.getFinalVelocity(),
-                      overallMoveType);
+                                                   overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     getGame().addControlRoll(new PilotingRollData(entity.getId(), 0,
-                          "Velocity greater than 2x safe thrust"));
+                                                                  "Velocity greater than 2x safe thrust"));
                 }
 
                 rollTarget = a.checkDown(md.getFinalNDown(), overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     getGame().addControlRoll(
-                          new PilotingRollData(entity.getId(), md.getFinalNDown(),
-                                "descended more than two altitudes"));
+                            new PilotingRollData(entity.getId(), md.getFinalNDown(),
+                                                 "descended more than two altitudes"));
                 }
 
                 // check for hovering
                 rollTarget = a.checkHover(md);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     getGame().addControlRoll(
-                          new PilotingRollData(entity.getId(), 0, "hovering"));
+                            new PilotingRollData(entity.getId(), 0, "hovering"));
                 }
 
                 // check for aero stall
@@ -1265,7 +1306,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     report.addDesc(entity);
                     addReport(report);
                     getGame().addControlRoll(new PilotingRollData(entity.getId(), 0,
-                          "stalled out"));
+                                                                  "stalled out"));
                     entity.setAltitude(entity.getAltitude() - 1);
                     // check for crash
                     if (gameManager.checkCrash(entity)) {
@@ -1275,7 +1316,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                 // check to see if spheroids should lose one altitude
                 if (a.isSpheroid() && !a.isSpaceborne()
-                      && a.isAirborne() && (md.getFinalNDown() == 0) && (md.getMpUsed() == 0)) {
+                    && a.isAirborne() && (md.getFinalNDown() == 0) && (md.getMpUsed() == 0)) {
                     report = new Report(9392);
                     report.subject = entity.getId();
                     report.addDesc(entity);
@@ -1289,7 +1330,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // Atmospheric Escape Pods that drop below velocity 2 lose altitude as dropping
                     // units
                     entity.setAltitude(entity.getAltitude()
-                          - getGame().getPlanetaryConditions().getDropRate());
+                                       - getGame().getPlanetaryConditions().getDropRate());
                     report = new Report(6676);
                     report.subject = entity.getId();
                     report.addDesc(entity);
@@ -1303,10 +1344,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // Tanks can just drive out of hull-down: if the tank was hull-down
         // and doesn't end hull-down we can remove the hull-down status
         if (entity.isHullDown() && !md.getFinalHullDown()
-              && (entity instanceof Tank
-              || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) {
+            && (entity instanceof Tank
+                || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) {
             logger.debug("[HullDown] {}: hull-down cleared on move - path did not end hull-down",
-                  entity.getDisplayName());
+                         entity.getDisplayName());
             entity.setHullDown(false);
         }
 
@@ -1389,8 +1430,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         report.add("3d6");
                         addReport(report);
                         addReport(gameManager.damageEntity(swarmer,
-                              swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT),
-                              Compute.d6(3)));
+                                                           swarmer.rollHitLocation(ToHitData.HIT_NORMAL,
+                                                                                   ToHitData.SIDE_FRONT),
+                                                           Compute.d6(3)));
                         addNewLines();
                         swarmer.setPosition(curPos);
                     }
@@ -1426,9 +1468,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // Mechanical jump boosters fall damage
             if (md.shouldMechanicalJumpCauseFallDamage()) {
                 gameManager.getMainPhaseReport().addAll(gameManager.doEntityFallsInto(entity,
-                      entity.getElevation(), md.getJumpPathHighestPoint(),
-                      curPos, entity.getBasePilotingRoll(overallMoveType),
-                      false, entity.getMechanicalJumpBoosterMP()));
+                                                                                      entity.getElevation(),
+                                                                                      md.getJumpPathHighestPoint(),
+                                                                                      curPos,
+                                                                                      entity.getBasePilotingRoll(
+                                                                                              overallMoveType),
+                                                                                      false,
+                                                                                      entity.getMechanicalJumpBoosterMP()));
             }
 
             // jumped into water?
@@ -1472,7 +1518,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     }
                 }
             } else if (!(prevStep.climbMode() && curHex.containsTerrain(Terrains.BRIDGE))
-                  && !(entity.getMovementMode().isHoverOrWiGE())) {
+                       && !(entity.getMovementMode().isHoverOrWiGE())) {
                 rollTarget = entity.checkWaterMove(waterLevel, overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     // For falling elevation, Entity must not on hex surface
@@ -1492,11 +1538,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // check for black ice
             boolean useBlackIce = getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE);
             boolean goodTemp = getGame().getPlanetaryConditions()
-                  .getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP;
+                                        .getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP;
             boolean goodWeather = getGame().getPlanetaryConditions().getWeather().isIceStorm();
             if ((useBlackIce && goodTemp) || goodWeather) {
                 if (ServerHelper.checkEnteringBlackIce(gameManager, curPos, curHex, useBlackIce, goodTemp,
-                      goodWeather)) {
+                                                       goodWeather)) {
                     rollTarget = entity.checkLandingOnBlackIce(overallMoveType, curHex);
                     if (!gameManager.doSkillCheckInPlace(entity, rollTarget)) {
                         entity.applyDamage();
@@ -1508,20 +1554,20 @@ class MovePathHandler extends AbstractTWRuleHandler {
             IBuilding bldg = getGame().getBoard(curBoardId).getBuildingAt(curPos);
             if (bldg != null) {
                 gameManager.checkForCollapse(bldg, curPos, true,
-                      gameManager.getMainPhaseReport());
+                                             gameManager.getMainPhaseReport());
             }
 
             // Don't interact with terrain when jumping onto a building or a bridge
             if (entity.getElevation() == 0) {
                 ServerHelper.checkAndApplyMagmaCrust(curHex, entity.getElevation(), entity, curPos, true,
-                      gameManager.getMainPhaseReport(), gameManager);
+                                                     gameManager.getMainPhaseReport(), gameManager);
                 ServerHelper.checkEnteringMagma(curHex, entity.getElevation(), entity, gameManager);
                 ServerHelper.checkEnteringHazardousLiquid(curHex, entity.getElevation(), entity, gameManager);
                 ServerHelper.checkEnteringUltraSublevel(curHex, entity.getElevation(), entity, gameManager);
 
                 // jumped into swamp? maybe stuck!
                 if (curHex.getBogDownModifier(entity.getMovementMode(),
-                      entity instanceof LargeSupportTank) != TargetRoll.AUTOMATIC_SUCCESS) {
+                                              entity instanceof LargeSupportTank) != TargetRoll.AUTOMATIC_SUCCESS) {
                     if (entity instanceof Mek) {
                         entity.setStuck(true);
                         report = new Report(2121);
@@ -1532,13 +1578,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         addReport(gameManager.checkQuickSand(curPos));
                     } else if (!entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
                         rollTarget = new PilotingRollData(entity.getId(),
-                              5, "entering boggy terrain");
+                                                          5, "entering boggy terrain");
                         rollTarget.append(new PilotingRollData(entity.getId(),
-                              curHex.getBogDownModifier(entity.getMovementMode(),
-                                    entity instanceof LargeSupportTank),
-                              "avoid bogging down"));
+                                                               curHex.getBogDownModifier(entity.getMovementMode(),
+                                                                                         entity instanceof LargeSupportTank),
+                                                               "avoid bogging down"));
                         if (0 < gameManager.doSkillCheckWhileMoving(entity, entity.getElevation(), curPos, curPos,
-                              rollTarget, false)) {
+                                                                    rollTarget, false)) {
                             entity.setStuck(true);
                             report = new Report(2081);
                             report.add(entity.getDisplayName());
@@ -1616,8 +1662,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             report.add("3d6");
                             addReport(report);
                             addReport(gameManager.damageEntity(swarmer,
-                                  swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT),
-                                  Compute.d6(3)));
+                                                               swarmer.rollHitLocation(ToHitData.HIT_NORMAL,
+                                                                                       ToHitData.SIDE_FRONT),
+                                                               Compute.d6(3)));
                             addNewLines();
                             swarmer.setPosition(curPos);
                         }
@@ -1633,8 +1680,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (entity instanceof Tank) {
                 int modifier = 0;
                 if (curHex.containsTerrain(Terrains.ROUGH)
-                      || curHex.containsTerrain(Terrains.WOODS)
-                      || curHex.containsTerrain(Terrains.JUNGLE)) {
+                    || curHex.containsTerrain(Terrains.WOODS)
+                    || curHex.containsTerrain(Terrains.JUNGLE)) {
                     modifier = 1;
                 }
                 report = new Report(2126);
@@ -1642,7 +1689,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 report.addDesc(entity);
                 gameManager.getMainPhaseReport().add(report);
                 gameManager.getMainPhaseReport().addAll(gameManager.vehicleMotiveDamage((Tank) entity, modifier,
-                      false, -1, true));
+                                                                                        false, -1, true));
                 Report.addNewline(gameManager.getMainPhaseReport());
             }
 
@@ -1654,7 +1701,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             report.subject = entity.getId();
             report.addDesc(entity);
             if (entity instanceof QuadVee && entity.isProne()
-                  && entity.getConversionMode() == QuadVee.CONV_MODE_MEK) {
+                && entity.getConversionMode() == QuadVee.CONV_MODE_MEK) {
                 // Fall while converting to vehicle mode cancels conversion.
                 entity.setConvertingNow(false);
                 report.messageId = 2454;
@@ -1662,7 +1709,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // LAMs converting from fighter mode need to have the elevation set properly.
                 if (entity.isAero()) {
                     if (md.getFinalConversionMode() == EntityMovementMode.WIGE
-                          && entity.getAltitude() > 0 && entity.getAltitude() <= 3) {
+                        && entity.getAltitude() > 0 && entity.getAltitude() <= 3) {
                         entity.setElevation(entity.getAltitude() * 10);
                         entity.setAltitude(0);
                     } else {
@@ -1679,7 +1726,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     report.messageId = 2455;
                     report.choose(entity.getMovementMode() == EntityMovementMode.TRACKED);
                 } else if (entity.getMovementMode() == EntityMovementMode.TRACKED
-                      || entity.getMovementMode() == EntityMovementMode.WHEELED) {
+                           || entity.getMovementMode() == EntityMovementMode.WHEELED) {
                     report.messageId = 2451;
                 } else if (entity.getMovementMode() == EntityMovementMode.WIGE) {
                     report.messageId = 2452;
@@ -1705,7 +1752,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
         // update entity's locations' exposure
         gameManager.addReport(gameManager.doSetLocationsExposure(entity,
-              getGame().getBoard(curBoardId).getHex(curPos), false, entity.getElevation()));
+                                                                 getGame().getBoard(curBoardId).getHex(curPos),
+                                                                 false,
+                                                                 entity.getElevation()));
 
         // Check the falls_end_movement option to see if it should be able to
         // move on.
@@ -1713,15 +1762,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // here because 'fellDuringMovement' is sometimes abused just to force
         // another turn and so doesn't reliably tell us.
         boolean continueTurnFromFall = !(getGame().getOptions()
-              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_FALLS_END_MOVEMENT)
-              && (entity instanceof Mek) && !wasProne && entity.isProne())
-              && (fellDuringMovement && !entity.isCarefulStand()) // Careful standing takes up the whole turn
-              && !turnOver && (entity.mpUsed < entity.getRunMP())
-              && (overallMoveType != EntityMovementType.MOVE_JUMP);
+                                                  .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_FALLS_END_MOVEMENT)
+                                         && (entity instanceof Mek) && !wasProne && entity.isProne())
+                                       && (fellDuringMovement && !entity.isCarefulStand()) // Careful standing takes up the whole turn
+                                       && !turnOver && (entity.mpUsed < entity.getRunMP())
+                                       && (overallMoveType != EntityMovementType.MOVE_JUMP);
         if ((continueTurnFromFall || continueTurnFromPBS || continueTurnFromFishtail || continueTurnFromLevelDrop
-              || continueTurnFromCliffAscent
-              || detectedHiddenHazard)
-              && entity.isSelectableThisTurn() && !entity.isDoomed()) {
+             || continueTurnFromCliffAscent
+             || detectedHiddenHazard)
+            && entity.isSelectableThisTurn() && !entity.isDoomed()) {
             entity.applyDamage();
             entity.setDone(false);
             entity.setTurnInterrupted(true);
@@ -1747,15 +1796,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     int elevation = (null == prevStep) ? entity.getElevation() : prevStep.getElevation();
                     if (entity.hasETypeFlag(Entity.ETYPE_LAND_AIR_MEK) && entity instanceof LandAirMek landAirMek) {
                         addReport(gameManager.landAirMek(landAirMek,
-                              entity.getPosition(),
-                              elevation,
-                              entity.delta_distance));
+                                                         entity.getPosition(),
+                                                         elevation,
+                                                         entity.delta_distance));
                     } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK) && entity instanceof ProtoMek protoMek) {
                         gameManager.getMainPhaseReport()
-                              .addAll(gameManager.landGliderPM(protoMek,
-                                    entity.getPosition(),
-                                    elevation,
-                                    entity.delta_distance));
+                                   .addAll(gameManager.landGliderPM(protoMek,
+                                                                    entity.getPosition(),
+                                                                    elevation,
+                                                                    entity.delta_distance));
                     } else {
                         report = new Report(2123);
                         report.addDesc(entity);
@@ -1767,7 +1816,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         IBuilding bldg = getGame().getBoard(curBoardId).getBuildingAt(entity.getPosition());
                         entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
                         gameManager.addAffectedBldg(bldg,
-                              gameManager.checkBuildingCollapseWhileMoving(bldg, entity, entity.getPosition()));
+                                                    gameManager.checkBuildingCollapseWhileMoving(bldg,
+                                                                                                 entity,
+                                                                                                 entity.getPosition()));
                     } else if (entity.isLocationProhibited(entity.getPosition(), 0) && !hex.hasPavement()) {
                         // crash
                         report = new Report(2124);
@@ -1784,19 +1835,23 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                     // Check for stacking violations in the target hex
                     Entity violation = Compute.stackingViolation(getGame(),
-                          entity, entity.getPosition(), null, entity.climbMode(), false);
+                                                                 entity,
+                                                                 entity.getPosition(),
+                                                                 null,
+                                                                 entity.climbMode(),
+                                                                 false);
                     if (violation != null) {
                         PilotingRollData prd = new PilotingRollData(
-                              violation.getId(), 2, "fallen on");
+                                violation.getId(), 2, "fallen on");
                         if (violation instanceof Dropship) {
                             violation = entity;
                             prd = null;
                         }
                         Coords targetDest = Compute.getValidDisplacement(getGame(),
-                              violation.getId(), entity.getPosition(), 0);
+                                                                         violation.getId(), entity.getPosition(), 0);
                         if (targetDest != null) {
                             addReport(gameManager.doEntityDisplacement(violation,
-                                  entity.getPosition(), targetDest, prd));
+                                                                       entity.getPosition(), targetDest, prd));
 
                             // Update the violating entity's position on the
                             // client.
@@ -1806,13 +1861,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             // suffer an ammo/power plant hit.
                             // TODO : a Mek suffers a Head Blown Off crit.
                             addReport(gameManager.destroyEntity(violation,
-                                  "impossible displacement",
-                                  violation instanceof Mek,
-                                  violation instanceof Mek));
+                                                                "impossible displacement",
+                                                                violation instanceof Mek,
+                                                                violation instanceof Mek));
                         }
                     }
                 } else if (!entity.hasETypeFlag(Entity.ETYPE_LAND_AIR_MEK)
-                      && !entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
+                           && !entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
 
                     // we didn't land, so we go to elevation 1 above the terrain
                     // features
@@ -1821,26 +1876,28 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // end up at one
 
                     entity.setElevation(Math.min(entity.getElevation(),
-                          1 + hex.maxTerrainFeatureElevation(
-                                getGame().getBoard(curBoardId).isLowAltitude())));
+                                                 1 + hex.maxTerrainFeatureElevation(
+                                                         getGame().getBoard(curBoardId).isLowAltitude())));
                 }
             }
 
             // If we've somehow gotten here as an airborne LAM with a destroyed side torso
             // (such as conversion while dropping), crash now.
             if (entity instanceof LandAirMek
-                  && (entity.isLocationBad(Mek.LOC_RIGHT_TORSO) || entity.isLocationBad(Mek.LOC_LEFT_TORSO))) {
+                && (entity.isLocationBad(Mek.LOC_RIGHT_TORSO) || entity.isLocationBad(Mek.LOC_LEFT_TORSO))) {
                 report = new Report(9710);
                 report.subject = entity.getId();
                 report.addDesc(entity);
                 if (entity.isAirborneVTOLorWIGE()) {
                     addReport(report);
-                    gameManager.crashAirMek(entity, new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL,
-                          "side torso destroyed"), gameManager.getMainPhaseReport());
+                    gameManager.crashAirMek(entity,
+                                            new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL,
+                                                                 "side torso destroyed"),
+                                            gameManager.getMainPhaseReport());
                 } else if (entity.isAirborne() && entity.isAero()) {
                     addReport(report);
                     addReport(gameManager.processCrash(entity, ((IAero) entity).getCurrentVelocity(),
-                          entity.getPosition()));
+                                                       entity.getPosition()));
                 }
             }
 
@@ -1860,7 +1917,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // If the hex is on fire, and the swarming infantry is
                 // *not* Battle Armor, it drops off.
                 if (!(swarmer instanceof BattleArmor) && getGame().getBoard(curBoardId)
-                      .getHex(curPos).containsTerrain(Terrains.FIRE)) {
+                                                                  .getHex(curPos).containsTerrain(Terrains.FIRE)) {
                     swarmer.setSwarmTargetId(Entity.NONE);
                     entity.setSwarmAttackerId(Entity.NONE);
                     report = new Report(2145);
@@ -1879,7 +1936,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             gameManager.entityUpdate(entity.getId(), movePath, true, losCache);
             if (entity.isDoomed()) {
                 gameManager.send(gameManager.createRemoveEntityPacket(entity.getId(),
-                      entity.getRemovalCondition()));
+                                                                      entity.getRemovalCondition()));
             }
         }
 
@@ -1946,7 +2003,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // if using double-blind, update the player on new units he might see
         if (gameManager.doBlind()) {
             gameManager.send(entity.getOwner().getId(),
-                  gameManager.createFilteredFullEntitiesPacket(entity.getOwner(), losCache));
+                             gameManager.createFilteredFullEntitiesPacket(entity.getOwner(), losCache));
         }
 
         // if we generated a charge attack, report it now
@@ -1959,14 +2016,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
             gameManager.send(gameManager.getPacketHelper().createChargeAttackPacket(ram));
         }
         if ((entity instanceof Mek) && entity.hasEngine() && ((Mek) entity).isIndustrial()
-              && !entity.hasEnvironmentalSealing()
-              && (entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
+            && !entity.hasEnvironmentalSealing()
+            && (entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
             if ((!entity.isProne()
-                  && (getGame().getBoard(curBoardId).getHex(entity.getPosition())
-                  .terrainLevel(Terrains.WATER) >= 2))
-                  || (entity.isProne()
-                  && (getGame().getBoard(curBoardId).getHex(entity.getPosition())
-                  .terrainLevel(Terrains.WATER) == 1))) {
+                 && (getGame().getBoard(curBoardId).getHex(entity.getPosition())
+                              .terrainLevel(Terrains.WATER) >= 2))
+                || (entity.isProne()
+                    && (getGame().getBoard(curBoardId).getHex(entity.getPosition())
+                                 .terrainLevel(Terrains.WATER) == 1))) {
                 ((Mek) entity).setJustMovedIntoIndustrialKillingWater(true);
 
             } else {
@@ -2020,10 +2077,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * @param entity the entity being checked
      * @param curPos the entity's current hex (source hex of an in-progress climb)
      * @param curHex the resolved hex for {@code curPos}, or null if the board doesn't have it
-     *
      * @return true if the facing hex has a climbable feature above the entity
      */
-    private boolean isClingingToAdjacentClimbable(Entity entity, Coords curPos, @Nullable Hex curHex) {
+    private boolean isClingingToAdjacentClimbable(Entity entity,
+                                                  Coords curPos,
+                                                  @Nullable Hex curHex) {
         if (curHex == null) {
             return false;
         }
@@ -2035,11 +2093,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
         int entityAbsAlt = curHex.getLevel() + entity.getElevation();
         int adjacentBase = adjacentHex.getLevel();
         if (adjacentHex.containsTerrain(Terrains.BRIDGE)
-              && (adjacentBase + adjacentHex.terrainLevel(Terrains.BRIDGE_ELEV)) > entityAbsAlt) {
+            && (adjacentBase + adjacentHex.terrainLevel(Terrains.BRIDGE_ELEV)) > entityAbsAlt) {
             return true;
         }
         if (adjacentHex.containsTerrain(Terrains.BUILDING)
-              && (adjacentBase + adjacentHex.terrainLevel(Terrains.BLDG_ELEV)) > entityAbsAlt) {
+            && (adjacentBase + adjacentHex.terrainLevel(Terrains.BLDG_ELEV)) > entityAbsAlt) {
             return true;
         }
         // Cliff edges count too: the climbable feature may be a bare elevation difference
@@ -2096,9 +2154,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // hidden enemies, or ground units ending their movement adjacent to a hex hiding an enemy (see
                     // next clause).
                     if ((dist == 0) && !continueTurnFromPBS &&
-                          (Compute.stackingViolation(getGame(), this.entity,
-                                step.getPosition(), null, this.entity.climbMode(), false
-                          ) != null)
+                        (Compute.stackingViolation(getGame(), this.entity,
+                                                   step.getPosition(), null, this.entity.climbMode(), false
+                        ) != null)
                     ) {
                         // Attempting to move into hex of a hidden unit detects the unit
                         hiddenEntity.setHidden(false);
@@ -2120,13 +2178,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         if (jumping) {
                             // handle domino effect; report immediately
                             addReport(
-                                  gameManager.doEntityDisplacement(
-                                        this.entity,
-                                        previousStep.getPosition(),
-                                        step.getPosition(),
-                                        new PilotingRollData(this.entity.getId(), 0,
-                                              "Domino effect from jumping into hidden unit!")
-                                  )
+                                    gameManager.doEntityDisplacement(
+                                            this.entity,
+                                            previousStep.getPosition(),
+                                            step.getPosition(),
+                                            new PilotingRollData(this.entity.getId(), 0,
+                                                                 "Domino effect from jumping into hidden unit!")
+                                    )
                             );
                         } else {
                             // Not domino effect from jumping so mover stops short of the occupied hex;
@@ -2163,9 +2221,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         //    (with or without Active Probe).
                         // and the revealed hidden unit has not already made a pointblank shot this turn.
                     } else if (
-                          (dist <= 1) && !hiddenEntity.madePointblankShot() &&
-                                ((!this.entity.isAirborne() && md.isEndStep(step)) ||
-                                      (this.entity.isAirborne() && (dist == ((this.entity.getBAPRange() > 0) ? 1 : 0))))
+                            (dist <= 1) && !hiddenEntity.madePointblankShot() &&
+                            ((!this.entity.isAirborne() && md.isEndStep(step)) ||
+                             (this.entity.isAirborne() && (dist == ((this.entity.getBAPRange() > 0) ? 1 : 0))))
                     ) {
                         // Hidden unit should always be revealed as the PBS trigger _is_ getting revealed.
                         hiddenEntity.setHidden(false);
@@ -2223,10 +2281,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     int elevation = (prevStep == null) ? entity.getElevation() : prevStep.getElevation();
                     if (entity instanceof LandAirMek) {
                         addReport(gameManager.landAirMek((LandAirMek) entity, step.getPosition(), elevation,
-                              distance));
+                                                         distance));
                     } else if (entity instanceof ProtoMek) {
                         addReport(gameManager.landGliderPM((ProtoMek) entity, step.getPosition(), elevation,
-                              distance));
+                                                           distance));
                     }
                     // landing always ends movement whether successful or not
                 }
@@ -2244,7 +2302,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // with
                     // likely reduced MP.
                     fellDuringMovement = gameManager.checkMASCFailure(entity, md)
-                          || gameManager.checkSuperchargerFailure(entity, md);
+                                         || gameManager.checkSuperchargerFailure(entity, md);
                 }
             }
 
@@ -2252,12 +2310,19 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 rollTarget = entity.checkGunningIt(overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     int mof = gameManager.doSkillCheckWhileMoving(entity, lastElevation, lastPos,
-                          curPos, rollTarget, false);
+                                                                  curPos, rollTarget, false);
                     if (mof > 0) {
                         // Since this is the first step, we don't have a previous step so we'll pass
                         // this one in case it's needed to process a skid.
-                        if (gameManager.processFailedVehicleManeuver(entity, curPos, 0, step,
-                              step.isThisStepBackwards(), lastStepMoveType, distance, 2, mof)) {
+                        if (gameManager.processFailedVehicleManeuver(entity,
+                                                                     curPos,
+                                                                     0,
+                                                                     step,
+                                                                     step.isThisStepBackwards(),
+                                                                     lastStepMoveType,
+                                                                     distance,
+                                                                     2,
+                                                                     mof)) {
                             if (md.hasActiveMASC() || md.hasActiveSupercharger()) {
                                 mpUsed = entity.getRunMP();
                             } else {
@@ -2288,15 +2353,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // and gunning does state explicitly that the roll is made before movement, this
             // implies the same for overdrive.
             if (firstStep && (overallMoveType == EntityMovementType.MOVE_SPRINT
-                  || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
+                              || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
                 rollTarget = entity.checkUsingOverdrive(EntityMovementType.MOVE_SPRINT);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     int mof = gameManager.doSkillCheckWhileMoving(entity, lastElevation, lastPos,
-                          curPos, rollTarget, false);
+                                                                  curPos, rollTarget, false);
                     if (mof > 0) {
                         if (gameManager.processFailedVehicleManeuver(entity, curPos, 0, step,
-                              step.isThisStepBackwards(),
-                              lastStepMoveType, distance, 2, mof)) {
+                                                                     step.isThisStepBackwards(),
+                                                                     lastStepMoveType, distance, 2, mof)) {
                             if (md.hasActiveMASC() || md.hasActiveSupercharger()) {
                                 mpUsed = entity.getRunMP();
                             } else {
@@ -2327,10 +2392,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // starting hex if they fail to make an anti-mek check.
                 // http://bg.battletech.com/forums/index.php?topic=55263.msg1271423#msg1271423
                 if (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_MEK
-                      && !entity.isOmni()) {
+                    && !entity.isOmni()) {
                     for (Entity rider : entity.getExternalUnits()) {
                         addReport(gameManager.checkDropBAFromConverting(entity, rider, curPos, curFacing,
-                              false, false, false));
+                                                                        false, false, false));
                     }
                 } else if ((entity.getEntityType() & Entity.ETYPE_LAND_AIR_MEK) != 0) {
                     // External units on LAMs, including swarmers, fall automatically and take
@@ -2338,12 +2403,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // and the LAM itself may take one or more criticalSlots.
                     for (Entity rider : entity.getExternalUnits()) {
                         addReport(gameManager.checkDropBAFromConverting(entity, rider, curPos, curFacing, true, true,
-                              true));
+                                                                        true));
                     }
                     final int swarmerId = entity.getSwarmAttackerId();
                     if (Entity.NONE != swarmerId) {
                         addReport(gameManager.checkDropBAFromConverting(entity, getGame().getEntity(swarmerId),
-                              curPos, curFacing, true, true, true));
+                                                                        curPos, curFacing, true, true, true));
                     }
                 }
 
@@ -2376,7 +2441,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // structural damage
                     rollTarget = a.checkThrustSI(thrustUsed, overallMoveType);
                     if ((rollTarget.getValue() != TargetRoll.CHECK_FALSE)
-                          && !(entity instanceof FighterSquadron) && !getGame().useVectorMove()) {
+                        && !(entity instanceof FighterSquadron) && !getGame().useVectorMove()) {
                         if (!gameManager.doSkillCheckInSpace(entity, rollTarget)) {
                             a.setSI(a.getSI() - 1);
                             if (entity instanceof LandAirMek) {
@@ -2388,27 +2453,27 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                 if (a instanceof LandAirMek lam) {
                                     // LAMs eject if the CT destroyed switch is on
                                     if (lam.isAutoEject()
-                                          && (!getGame().getOptions()
-                                          .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                                          || (getGame().getOptions()
-                                          .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                                          && lam.isCondEjectCTDest()))) {
+                                        && (!getGame().getOptions()
+                                                      .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                                            || (getGame().getOptions()
+                                                         .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                                                && lam.isCondEjectCTDest()))) {
                                         addReport(gameManager.ejectEntity(entity, true, false));
                                     }
                                 } else {
                                     // Aeros eject if the SI Destroyed switch is on
                                     Aero aero = (Aero) a;
                                     if (aero.isAutoEject()
-                                          && (!getGame().getOptions()
-                                          .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                                          || (getGame().getOptions()
-                                          .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                                          && aero.isCondEjectSIDest()))) {
+                                        && (!getGame().getOptions()
+                                                      .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                                            || (getGame().getOptions()
+                                                         .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                                                && aero.isCondEjectSIDest()))) {
                                         addReport(gameManager.ejectEntity(entity, true, false));
                                     }
                                 }
                                 addReport(gameManager.destroyEntity(entity, "Structural Integrity Collapse",
-                                      false));
+                                                                    false));
                             }
                         }
                     }
@@ -2418,9 +2483,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     int health = 6 - hits;
 
                     if ((thrustUsed > (2 * health)) && !getGame().useVectorMove()
-                          && !(entity instanceof TeleMissile)) {
+                        && !(entity instanceof TeleMissile)) {
                         int targetRoll = 2 + (thrustUsed - (2 * health))
-                              + (2 * hits);
+                                         + (2 * hits);
                         gameManager.resistGForce(entity, targetRoll);
                     }
 
@@ -2465,7 +2530,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     Vector<Report> maneuverSpecial = new Vector<>();
                     maneuverSpecial.add(maneuverReport);
                     maneuverSpecial.addAll(gameManager.getMainPhaseReport()
-                          .subList(reportsBefore, gameManager.getMainPhaseReport().size()));
+                                                      .subList(reportsBefore, gameManager.getMainPhaseReport().size()));
                     gameManager.sendSpecialReport(maneuverSpecial);
                     if (maneuverFailed) {
                         a.setFailedManeuver(true);
@@ -2544,7 +2609,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                         // ASF can actually include anything,
                                         // because we might
                                         // have combat dropping troops
-                                          potentialASF.addElement(id);
+                                            potentialASF.addElement(id);
                                 }
                             }
 
@@ -2675,15 +2740,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                 doorDamage = false;
                             }
                             int bonus = Math.max(0,
-                                  distribution[currentDoor] - 2);
+                                                 distribution[currentDoor] - 2);
 
                             Entity fighter = getGame().getEntity(fighterId);
                             if (!gameManager.launchUnit(entity, fighter, curPos, curFacing, step.getVelocity(),
-                                  step.getAltitude(), step.getVectors(), bonus)) {
+                                                        step.getAltitude(), step.getVectors(), bonus)) {
                                 logger.error("Server was told to unload {} from {} into {}",
-                                      fighter.getDisplayName(),
-                                      entity.getDisplayName(),
-                                      curPos.getBoardNum());
+                                             fighter.getDisplayName(),
+                                             entity.getDisplayName(),
+                                             curPos.getBoardNum());
                             }
                             if (doorReport != null) {
                                 addReport(doorReport);
@@ -2712,12 +2777,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             // check to see if we are in the same door
                             Entity ds = getGame().getEntity(dropShipId);
                             if (!gameManager.launchUnit(entity, ds, curPos, curFacing,
-                                  step.getVelocity(), step.getAltitude(),
-                                  step.getVectors(), 0)) {
+                                                        step.getVelocity(), step.getAltitude(),
+                                                        step.getVectors(), 0)) {
                                 logger.error("Error! Server was told to unload {} from {} into {}",
-                                      ds.getDisplayName(),
-                                      entity.getDisplayName(),
-                                      curPos.getBoardNum());
+                                             ds.getDisplayName(),
+                                             entity.getDisplayName(),
+                                             curPos.getBoardNum());
                             }
                         }
                     }
@@ -2773,8 +2838,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // Unless we're an ICE- or fuel cell-powered IndustrialMek,
                 // standing up may build heat.
                 if ((entity instanceof Mek) && entity.hasEngine() && !(((Mek) entity).isIndustrial()
-                      && ((entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
-                      || (entity.getEngine().getEngineType() == Engine.FUEL_CELL)))) {
+                                                                       && ((entity.getEngine()
+                                                                                  .getEngineType() == Engine.COMBUSTION_ENGINE)
+                                                                           || (entity.getEngine()
+                                                                                     .getEngineType() == Engine.FUEL_CELL)))) {
                     entity.heatBuildup += Game.rulesManager.getRulesHeat().standingHeat();
                 }
                 entity.setProne(false);
@@ -2821,7 +2888,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             if ((step.getType() == MoveStepType.SEARCHLIGHT)
-                  && entity.hasSearchlight()) {
+                && entity.hasSearchlight()) {
                 final boolean SearchOn = !entity.isUsingSearchlight();
                 entity.setSearchlightState(SearchOn);
                 if (gameManager.doBlind()) { // if double-blind, we may need to filter the
@@ -2831,19 +2898,19 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     for (Player p : playersVector) {
                         if (vCanSee.contains(p)) { // Player sees the unit
                             gameManager.sendServerChat(p.getId(),
-                                  entity.getDisplayName()
-                                        + " switched searchlight "
-                                        + (SearchOn ? "on" : "off") + '.');
+                                                       entity.getDisplayName()
+                                                       + " switched searchlight "
+                                                       + (SearchOn ? "on" : "off") + '.');
                         } else {
                             gameManager.sendServerChat(p.getId(),
-                                  "An unseen unit" + " switched searchlight "
-                                        + (SearchOn ? "on" : "off") + '.');
+                                                       "An unseen unit" + " switched searchlight "
+                                                       + (SearchOn ? "on" : "off") + '.');
                         }
                     }
                 } else { // No double-blind, everyone can see this
                     gameManager.sendServerChat(
-                          entity.getDisplayName() + " switched searchlight "
-                                + (SearchOn ? "on" : "off") + '.');
+                            entity.getDisplayName() + " switched searchlight "
+                            + (SearchOn ? "on" : "off") + '.');
                 }
             }
 
@@ -2854,60 +2921,60 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             if (cachedGravityLimit < 0) {
                 cachedGravityLimit = EntityMovementType.MOVE_JUMP == moveType
-                      ? (step.isUsingMekJumpBooster()
-                         ? entity.getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)
-                         : entity.getJumpMP(MPCalculationSetting.NO_GRAVITY))
-                      : entity.getRunningGravityLimit();
+                                     ? (step.isUsingMekJumpBooster()
+                                        ? entity.getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)
+                                        : entity.getJumpMP(MPCalculationSetting.NO_GRAVITY))
+                                     : entity.getRunningGravityLimit();
             }
             // check for charge
             if (step.getType() == MoveStepType.CHARGE) {
                 if (entity.canCharge()) {
                     gameManager.checkExtremeGravityMovement(entity, step, lastStepMoveType,
-                          curPos, cachedGravityLimit);
+                                                            curPos, cachedGravityLimit);
                     Targetable target = step.getTarget(getGame());
                     if (target != null) {
                         ChargeAttackAction caa = new ChargeAttackAction(
-                              entity.getId(), target.getTargetType(),
-                              target.getId(), target.getPosition());
+                                entity.getId(), target.getTargetType(),
+                                target.getId(), target.getPosition());
                         entity.setDisplacementAttack(caa);
                         getGame().addDisplacementAttack(caa);
                         charge = caa;
                     } else {
                         String message = "Illegal charge!! " + entity.getDisplayName() +
-                              " is attempting to charge a null target!";
+                                         " is attempting to charge a null target!";
                         logger.info(message);
                         gameManager.sendServerChat(message);
                         return;
                     }
                 } else if (entity.isAirborneVTOLorWIGE() && entity.canRam()) {
                     gameManager.checkExtremeGravityMovement(entity, step, lastStepMoveType,
-                          curPos, cachedGravityLimit);
+                                                            curPos, cachedGravityLimit);
                     Targetable target = step.getTarget(getGame());
                     if (target != null) {
                         AirMekRamAttackAction raa = new AirMekRamAttackAction(
-                              entity.getId(), target.getTargetType(),
-                              target.getId(), target.getPosition());
+                                entity.getId(), target.getTargetType(),
+                                target.getId(), target.getPosition());
                         entity.setDisplacementAttack(raa);
                         entity.setRamming(true);
                         getGame().addDisplacementAttack(raa);
                         charge = raa;
                     } else {
                         String message = "Illegal charge!! " + entity.getDisplayName()
-                              + " is attempting to charge a null target!";
+                                         + " is attempting to charge a null target!";
                         logger.info(message);
                         gameManager.sendServerChat(message);
                         return;
                     }
                 } else {
                     gameManager.sendServerChat("Illegal charge!! I don't think "
-                          + entity.getDisplayName()
-                          + " should be allowed to charge,"
-                          + " but the client of "
-                          + entity.getOwner().getName() + " disagrees.");
+                                               + entity.getDisplayName()
+                                               + " should be allowed to charge,"
+                                               + " but the client of "
+                                               + entity.getOwner().getName() + " disagrees.");
                     gameManager.sendServerChat("Please make sure "
-                          + entity.getOwner().getName()
-                          + " is running MegaMek " + MMConstants.VERSION
-                          + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
+                                               + entity.getOwner().getName()
+                                               + " is running MegaMek " + MMConstants.VERSION
+                                               + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
                 break;
@@ -2934,7 +3001,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         // A DFA step only carries a target position when the target hex was picked in a dialog, so
                         // report the hex the step lands in instead - that is the one the player is looking at.
                         String errorMessage = "Illegal DFA by " + entity.getDisplayName()
-                              + " against non-existent entity at " + step.getPosition();
+                                              + " against non-existent entity at " + step.getPosition();
                         gameManager.sendServerChat(errorMessage);
                         logger.error(errorMessage);
                         targetID = Entity.NONE;
@@ -2944,24 +3011,26 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     }
 
                     DfaAttackAction daa = new DfaAttackAction(entity.getId(),
-                          targetType, targetID,
-                          step.getPosition());
+                                                              targetType, targetID,
+                                                              step.getPosition());
                     entity.setDisplacementAttack(daa);
                     entity.setElevation(Game.rulesManager.getRulesMovement().getDFAElevation(entity.getGame(),
-                          entity.getId(), targetID, step));
+                                                                                             entity.getId(),
+                                                                                             targetID,
+                                                                                             step));
                     getGame().addDisplacementAttack(daa);
                     charge = daa;
 
                 } else {
                     gameManager.sendServerChat("Illegal DFA!! I don't think "
-                          + entity.getDisplayName()
-                          + " should be allowed to DFA,"
-                          + " but the client of "
-                          + entity.getOwner().getName() + " disagrees.");
+                                               + entity.getDisplayName()
+                                               + " should be allowed to DFA,"
+                                               + " but the client of "
+                                               + entity.getOwner().getName() + " disagrees.");
                     gameManager.sendServerChat("Please make sure "
-                          + entity.getOwner().getName()
-                          + " is running MegaMek " + MMConstants.VERSION
-                          + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
+                                               + entity.getOwner().getName()
+                                               + " is running MegaMek " + MMConstants.VERSION
+                                               + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
 
@@ -2973,21 +3042,21 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (entity.canRam()) {
                     Targetable target = step.getTarget(getGame());
                     RamAttackAction raa = new RamAttackAction(entity.getId(),
-                          target.getTargetType(), target.getId(),
-                          target.getPosition());
+                                                              target.getTargetType(), target.getId(),
+                                                              target.getPosition());
                     entity.setRamming(true);
                     getGame().addRam(raa);
                     ram = raa;
                 } else {
                     gameManager.sendServerChat("Illegal ram!! I don't think "
-                          + entity.getDisplayName()
-                          + " should be allowed to charge,"
-                          + " but the client of "
-                          + entity.getOwner().getName() + " disagrees.");
+                                               + entity.getDisplayName()
+                                               + " should be allowed to charge,"
+                                               + " but the client of "
+                                               + entity.getOwner().getName() + " disagrees.");
                     gameManager.sendServerChat("Please make sure "
-                          + entity.getOwner().getName()
-                          + " is running MegaMek " + MMConstants.VERSION
-                          + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
+                                               + entity.getOwner().getName()
+                                               + " is running MegaMek " + MMConstants.VERSION
+                                               + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
                 break;
@@ -3068,7 +3137,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // step is already gated client-side, so this is a defensive server-side enforcement.
                     if (!inf.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
                         logger.debug("[Fortify] {}: fortify rejected - no fieldworks-capable equipment "
-                              + "(F_TRENCH_CAPABLE)", entity.getDisplayName());
+                                     + "(F_TRENCH_CAPABLE)", entity.getDisplayName());
                         continue;
                     }
                     inf.beginFortify();
@@ -3089,20 +3158,20 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     processAbandonBridgeStep(inf);
                     continue;
                 } else if ((step.getType() != MoveStepType.TURN_LEFT)
-                      && (step.getType() != MoveStepType.TURN_RIGHT)) {
+                           && (step.getType() != MoveStepType.TURN_RIGHT)) {
                     // other movement clears dug in and hitting the deck status
                     inf.clearGroundPostures();
                 }
 
                 if (step.getType() == MoveStepType.TAKE_COVER) {
                     if (Infantry.hasValidCover(getGame(), step.getPosition(),
-                          step.getElevation())) {
+                                               step.getElevation())) {
                         inf.setTakingCover(true);
                     } else {
                         gameManager.sendServerChat(entity.getDisplayName()
-                              + " failed to take cover: "
-                              + "no valid unit found in "
-                              + step.getPosition());
+                                                   + " failed to take cover: "
+                                                   + "no valid unit found in "
+                                                   + step.getPosition());
                     }
                 }
             }
@@ -3114,7 +3183,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // Defensive server-side check mirroring the MoveStep legality.
                 if (!entity.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
                     logger.debug("[Fortify] {}: fortify rejected - no fieldworks-capable equipment "
-                          + "(F_TRENCH_CAPABLE)", entity.getDisplayName());
+                                 + "(F_TRENCH_CAPABLE)", entity.getDisplayName());
                 } else {
                     fortifier.beginFortify();
                 }
@@ -3125,23 +3194,23 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // If we have turned, check whether we have fulfilled any turn mode
             // requirements.
             if ((step.getType() == MoveStepType.TURN_LEFT
-                  || step.getType() == MoveStepType.TURN_RIGHT)
-                  && entity.usesTurnMode()) {
+                 || step.getType() == MoveStepType.TURN_RIGHT)
+                && entity.usesTurnMode()) {
                 int straight = 0;
                 if (prevStep != null) {
                     straight = prevStep.getNStraight();
                 }
                 rollTarget = entity.checkTurnModeFailure(overallMoveType, straight,
-                      md.getMpUsed(), step.getPosition());
+                                                         md.getMpUsed(), step.getPosition());
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     int mof = gameManager.doSkillCheckWhileMoving(entity, lastElevation, lastPos,
-                          curPos, rollTarget, false);
+                                                                  curPos, rollTarget, false);
                     if (mof > 0) {
                         if (gameManager.processFailedVehicleManeuver(entity, curPos,
-                              step.getFacing() - curFacing,
-                              (null == prevStep) ? step : prevStep,
-                              step.isThisStepBackwards(),
-                              lastStepMoveType, distance, mof, mof)) {
+                                                                     step.getFacing() - curFacing,
+                                                                     (null == prevStep) ? step : prevStep,
+                                                                     step.isThisStepBackwards(),
+                                                                     lastStepMoveType, distance, mof, mof)) {
                             if (md.hasActiveMASC() || md.hasActiveSupercharger()) {
                                 mpUsed = entity.getRunMP();
                             } else {
@@ -3166,13 +3235,19 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 entity.addPilotingModifierForTerrain(rollTarget);
                 rollTarget.addModifier(0, "bootlegger maneuver");
                 int mof = gameManager.doSkillCheckWhileMoving(entity, lastElevation,
-                      curPos, curPos, rollTarget, false);
+                                                              curPos, curPos, rollTarget, false);
                 if (mof > 0) {
                     // If the bootlegger maneuver fails, we treat it as a turn in a random
                     // direction.
-                    gameManager.processFailedVehicleManeuver(entity, curPos, Compute.d6() < 4 ? -1 : 1,
-                          (null == prevStep) ? step : prevStep,
-                          step.isThisStepBackwards(), lastStepMoveType, distance, 2, mof);
+                    gameManager.processFailedVehicleManeuver(entity,
+                                                             curPos,
+                                                             Compute.d6() < 4 ? -1 : 1,
+                                                             (null == prevStep) ? step : prevStep,
+                                                             step.isThisStepBackwards(),
+                                                             lastStepMoveType,
+                                                             distance,
+                                                             2,
+                                                             mof);
                     curFacing = entity.getFacing();
                     curPos = entity.getPosition();
                     break;
@@ -3221,33 +3296,34 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // check for automatic unstick
             if (entity.canUnstickByJumping() && entity.isStuck()
-                  && (moveType == EntityMovementType.MOVE_JUMP)) {
+                && (moveType == EntityMovementType.MOVE_JUMP)) {
                 entity.setStuck(false);
                 entity.setCanUnstickByJumping(false);
             }
 
             // check for leap
             if (!lastPos.equals(curPos)
-                  && (stepMoveType != EntityMovementType.MOVE_JUMP) && (entity instanceof Mek)
-                  && !entity.isAirborne() && (step.getClearance() <= 0) // Don't check airborne LAMs
-                  && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING)) {
+                && (stepMoveType != EntityMovementType.MOVE_JUMP) && (entity instanceof Mek)
+                && !entity.isAirborne() && (step.getClearance() <= 0) // Don't check airborne LAMs
+                && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING)) {
                 int leapDistance = (lastElevation
-                      + getGame().getBoard(curBoardId).getHex(lastPos).getLevel())
-                      - (curElevation + curHex.getLevel());
+                                    + getGame().getBoard(curBoardId).getHex(lastPos).getLevel())
+                                   - (curElevation + curHex.getLevel());
                 logger.debug("[LEAP-TRACE] Leap check: lastPos={}, curPos={}, lastElevation={}, " +
-                            "curElevation={}, leapDistance={}, isClimbing={}, isDangling={}",
-                      lastPos, curPos, lastElevation, curElevation, leapDistance,
-                      entity.isClimbing(), entity.isDangling());
+                             "curElevation={}, leapDistance={}, isClimbing={}, isDangling={}",
+                             lastPos, curPos, lastElevation, curElevation, leapDistance,
+                             entity.isClimbing(), entity.isDangling());
                 if (leapDistance > 2) {
                     logger.debug("[LEAP-TRACE] Leaping {} levels from {} to {}",
-                          leapDistance, lastPos, curPos);
+                                 leapDistance, lastPos, curPos);
                     // skill check for leg damage
                     rollTarget = entity.getBasePilotingRoll(stepMoveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos, step.getBoardId());
                     rollTarget.append(new PilotingRollData(entity.getId(),
-                          2 * leapDistance, Messages.getString("TacOps.leaping.leg_damage")));
+                                                           2 * leapDistance,
+                                                           Messages.getString("TacOps.leaping.leg_damage")));
                     if (0 < gameManager.doSkillCheckWhileMoving(entity, lastElevation,
-                          lastPos, curPos, rollTarget, false)) {
+                                                                lastPos, curPos, rollTarget, false)) {
                         // do leg damage
                         addReport(gameManager.damageEntity(entity, new HitData(Mek.LOC_LEFT_LEG), leapDistance));
                         addReport(gameManager.damageEntity(entity, new HitData(Mek.LOC_RIGHT_LEG), leapDistance));
@@ -3268,23 +3344,24 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     rollTarget = entity.getBasePilotingRoll(stepMoveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos, step.getBoardId());
                     rollTarget.append(new PilotingRollData(entity.getId(),
-                          leapDistance, Messages.getString("TacOps.leaping.fall_damage")));
+                                                           leapDistance,
+                                                           Messages.getString("TacOps.leaping.fall_damage")));
                     if (0 < gameManager.doSkillCheckWhileMoving(entity, lastElevation,
-                          lastPos, curPos, rollTarget, false)) {
+                                                                lastPos, curPos, rollTarget, false)) {
                         entity.setElevation(lastElevation);
                         addReport(gameManager.doEntityFallsInto(entity, lastElevation,
-                              lastPos, curPos,
-                              entity.getBasePilotingRoll(overallMoveType), false));
+                                                                lastPos, curPos,
+                                                                entity.getBasePilotingRoll(overallMoveType), false));
                     }
                 }
             }
 
             // Check for infantry gliding down terrain with glider wings (IO p.85)
             if (!lastPos.equals(curPos) && (entity instanceof ConvInfantry infantry)
-                  && infantry.hasAbility(OptionsConstants.MD_PL_GLIDER)
-                  && infantry.canUseGliderWings()) {
+                && infantry.hasAbility(OptionsConstants.MD_PL_GLIDER)
+                && infantry.canUseGliderWings()) {
                 int glideDistance = (lastElevation + getGame().getBoard(curBoardId).getHex(lastPos).getLevel())
-                      - (curElevation + curHex.getLevel());
+                                    - (curElevation + curHex.getLevel());
                 // Report if descending more than normal max (1 for regular infantry)
                 if (glideDistance > infantry.getMaxElevationChange()) {
                     Report r = new Report(2522);
@@ -3298,8 +3375,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // Check for skid.
             rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType,
-                  prevStep, step, prevFacing, curFacing, lastPos, curPos,
-                  isInfantry, distance - 1);
+                                          prevStep, step, prevFacing, curFacing, lastPos, curPos,
+                                          isInfantry, distance - 1);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 // Have an entity-meaningful PSR message.
                 boolean psrFailed;
@@ -3309,10 +3386,18 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // facing
                     entity.setFacing(curFacing);
                     psrFailed = (0 < gameManager.doSkillCheckWhileMoving(entity,
-                          lastElevation, lastPos, lastPos, rollTarget, true));
+                                                                         lastElevation,
+                                                                         lastPos,
+                                                                         lastPos,
+                                                                         rollTarget,
+                                                                         true));
                 } else {
                     psrFailed = (0 < gameManager.doSkillCheckWhileMoving(entity,
-                          lastElevation, lastPos, lastPos, rollTarget, false));
+                                                                         lastElevation,
+                                                                         lastPos,
+                                                                         lastPos,
+                                                                         rollTarget,
+                                                                         false));
                 }
 
                 // Does the entity skid?
@@ -3339,8 +3424,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     }
 
                     if (gameManager.processSkid(entity, curPos, prevStep.getElevation(),
-                          skidDirection, skidDistance, prevStep,
-                          lastStepMoveType)) {
+                                                skidDirection, skidDistance, prevStep,
+                                                lastStepMoveType)) {
                         return;
                     }
 
@@ -3372,24 +3457,24 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // check sideslip
             if ((entity instanceof VTOL)
-                  || (entity.getMovementMode() == EntityMovementMode.HOVER)
-                  || (entity.getMovementMode() == EntityMovementMode.WIGE
-                  && step.getClearance() > 0)) {
+                || (entity.getMovementMode() == EntityMovementMode.HOVER)
+                || (entity.getMovementMode() == EntityMovementMode.WIGE
+                    && step.getClearance() > 0)) {
                 rollTarget = entity.checkSideSlip(moveType, prevHex,
-                      overallMoveType, prevStep, prevFacing, curFacing,
-                      lastPos, curPos, distance, md.hasActiveMASC());
+                                                  overallMoveType, prevStep, prevFacing, curFacing,
+                                                  lastPos, curPos, distance, md.hasActiveMASC());
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     int moF = gameManager.doSkillCheckWhileMoving(entity, lastElevation,
-                          lastPos, curPos, rollTarget, false);
+                                                                  lastPos, curPos, rollTarget, false);
                     if (moF > 0) {
                         int elev;
                         int sideslipDistance;
                         int skidDirection;
                         Coords start;
                         if (step.getType() == MoveStepType.LATERAL_LEFT
-                              || step.getType() == MoveStepType.LATERAL_RIGHT
-                              || step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS
-                              || step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS) {
+                            || step.getType() == MoveStepType.LATERAL_RIGHT
+                            || step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS
+                            || step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS) {
                             // A failed controlled sideslip always results in moving one additional hex
                             // in the direction of the intentional sideslip.
                             elev = step.getElevation();
@@ -3412,20 +3497,20 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             addReport(report);
 
                             if (gameManager.processSkid(entity, start, elev, skidDirection,
-                                  sideslipDistance, (null == prevStep) ? step : prevStep,
-                                  lastStepMoveType)) {
+                                                        sideslipDistance, (null == prevStep) ? step : prevStep,
+                                                        lastStepMoveType)) {
                                 return;
                             }
 
                             if (!entity.isDestroyed() && !entity.isDoomed()
-                                  && (mpUsed < entity.getRunMP())) {
+                                && (mpUsed < entity.getRunMP())) {
                                 fellDuringMovement = true; // No, but it should
                                 // work...
                             }
 
                             if ((entity.getElevation() == 0)
-                                  && ((entity.getMovementMode() == EntityMovementMode.VTOL)
-                                  || (entity.getMovementMode() == EntityMovementMode.WIGE))) {
+                                && ((entity.getMovementMode() == EntityMovementMode.VTOL)
+                                    || (entity.getMovementMode() == EntityMovementMode.WIGE))) {
                                 turnOver = true;
                             }
                             // set entity parameters
@@ -3441,25 +3526,25 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // check if we've moved into rubble
             boolean isLastStep = step.equals(md.getLastStep());
             rollTarget = entity.checkRubbleMove(step, overallMoveType, curHex,
-                  lastPos, curPos, isLastStep, isPavementStep);
+                                                lastPos, curPos, isLastStep, isPavementStep);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 gameManager.doSkillCheckWhileMoving(entity, lastElevation, lastPos, curPos,
-                      rollTarget, true);
+                                                    rollTarget, true);
             }
 
             // check if we are using reckless movement
             rollTarget = entity.checkRecklessMove(step, overallMoveType, curHex,
-                  lastPos, curPos, prevHex);
+                                                  lastPos, curPos, prevHex);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 if (entity instanceof Mek) {
                     gameManager.doSkillCheckWhileMoving(entity, lastElevation, lastPos,
-                          curPos, rollTarget, true);
+                                                        curPos, rollTarget, true);
                 } else if (entity instanceof Tank) {
                     if (0 < gameManager.doSkillCheckWhileMoving(entity, lastElevation,
-                          lastPos, curPos, rollTarget, false)) {
+                                                                lastPos, curPos, rollTarget, false)) {
                         // assume VTOLs in flight are always in clear terrain
                         if ((0 == curHex.terrainsPresent())
-                              || (step.getClearance() > 0)) {
+                            || (step.getClearance() > 0)) {
                             if (entity instanceof VTOL) {
                                 report = new Report(2208);
                             } else {
@@ -3481,7 +3566,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         // for charge damage
                         HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                         addReport(gameManager.damageEntity(entity, hit, ChargeAttackAction
-                              .getDamageTakenBy(entity, entity)));
+                                .getDamageTakenBy(entity, entity)));
                         turnOver = true;
                         break;
                     }
@@ -3493,7 +3578,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (stepMoveType != EntityMovementType.MOVE_JUMP) {
                 if (!curPos.equals(lastPos)) {
                     ServerHelper.checkAndApplyMagmaCrust(curHex, step.getElevation(), entity, curPos, false,
-                          gameManager.getMainPhaseReport(), gameManager);
+                                                         gameManager.getMainPhaseReport(), gameManager);
                     ServerHelper.checkEnteringMagma(curHex, step.getElevation(), entity, gameManager);
                     ServerHelper.checkEnteringHazardousLiquid(curHex, step.getElevation(), entity, gameManager);
                     ServerHelper.checkEnteringUltraSublevel(curHex, entity.getElevation(), entity, gameManager);
@@ -3502,18 +3587,18 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             if (step.getType() == MoveStepType.CHAFF) {
                 List<Mounted<?>> chaffDispensers = entity.getMiscEquipment(MiscType.F_CHAFF_POD)
-                      .stream().filter(Mounted::isReady)
-                      .collect(Collectors.toList());
+                                                         .stream().filter(Mounted::isReady)
+                                                         .collect(Collectors.toList());
                 if (!chaffDispensers.isEmpty()) {
                     chaffDispensers.getFirst().setFired(true);
                     gameManager.createSmoke(curPos, getGame().getBoard(step.getBoardId()),
-                          SmokeCloud.SMOKE_CHAFF_LIGHT, 1);
+                                            SmokeCloud.SMOKE_CHAFF_LIGHT, 1);
                     Hex hex = getGame().getBoard(curBoardId).getHex(curPos);
                     hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_CHAFF_LIGHT));
                     gameManager.sendChangedHex(curPos);
                     report = new Report(2512)
-                          .addDesc(entity)
-                          .subject(entity.getId());
+                            .addDesc(entity)
+                            .subject(entity.getId());
 
                     addReport(report);
                 }
@@ -3527,10 +3612,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (curHex.terrainLevel(Terrains.MAGMA) != 2 || jumpedIntoMagma) {
                 // check if we've moved into a swamp
                 rollTarget = entity.checkBogDown(step, lastStepMoveType, curHex,
-                      lastPos, curPos, lastElevation, isPavementStep);
+                                                 lastPos, curPos, lastElevation, isPavementStep);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     if (0 < gameManager.doSkillCheckWhileMoving(entity, lastElevation, lastPos,
-                          curPos, rollTarget, false)) {
+                                                                curPos, rollTarget, false)) {
                         entity.setStuck(true);
                         entity.setCanUnstickByJumping(true);
                         report = new Report(2081);
@@ -3541,16 +3626,16 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         addReport(gameManager.checkQuickSand(curPos));
                         // check for accidental stacking violation (not ignoring hidden units here)
                         Entity violation = Compute.stackingViolation(getGame(),
-                              entity, curPos, null, entity.climbMode(), false);
+                                                                     entity, curPos, null, entity.climbMode(), false);
                         if (violation != null) {
                             // target gets displaced, because of low elevation
                             int direction = lastPos.direction(curPos);
                             Coords targetDest = Compute.getValidDisplacement(getGame(),
-                                  entity.getId(), curPos, direction);
+                                                                             entity.getId(), curPos, direction);
                             addReport(gameManager.doEntityDisplacement(violation, curPos,
-                                  targetDest,
-                                  new PilotingRollData(violation.getId(), 0,
-                                        "domino effect")));
+                                                                       targetDest,
+                                                                       new PilotingRollData(violation.getId(), 0,
+                                                                                            "domino effect")));
                             // Update the violating entity's position on the client.
                             gameManager.entityUpdate(violation.getId());
                         }
@@ -3563,15 +3648,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
             Hex lastHex = getGame().getBoard(curBoardId).getHex(lastPos);
             if (entity.tracksHeat() && !entity.isAirborne()) {
                 if (!lastPos.equals(curPos) && (prevStep != null)
-                      && ((lastHex.containsTerrain(Terrains.FIRE) && (prevStep.getElevation() <= 1))
-                      || (lastHex.containsTerrain(Terrains.MAGMA) && (prevStep.getElevation() == 0)))
-                      && ((stepMoveType != EntityMovementType.MOVE_JUMP)
-                      // Bug #828741 -- jumping bypasses fire, but not on the first step
-                      // getMpUsed -- total MP used to this step
-                      // getMp -- MP used in this step
-                      // the difference will always be 0 on the "first step" of a jump,
-                      // and >0 on a step in the midst of a jump
-                      || (0 == (step.getMpUsed() - step.getMp())))) {
+                    && ((lastHex.containsTerrain(Terrains.FIRE) && (prevStep.getElevation() <= 1))
+                        || (lastHex.containsTerrain(Terrains.MAGMA) && (prevStep.getElevation() == 0)))
+                    && ((stepMoveType != EntityMovementType.MOVE_JUMP)
+                        // Bug #828741 -- jumping bypasses fire, but not on the first step
+                        // getMpUsed -- total MP used to this step
+                        // getMp -- MP used in this step
+                        // the difference will always be 0 on the "first step" of a jump,
+                        // and >0 on a step in the midst of a jump
+                        || (0 == (step.getMpUsed() - step.getMp())))) {
                     int heat = 0;
                     if (lastHex.containsTerrain(Terrains.FIRE)) {
                         heat += 2;
@@ -3582,7 +3667,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         heat += 5;
                     }
                     boolean isMekWithHeatDissipatingArmor = (entity instanceof Mek)
-                          && ((Mek) entity).hasIntactHeatDissipatingArmor();
+                                                            && ((Mek) entity).hasIntactHeatDissipatingArmor();
                     if (isMekWithHeatDissipatingArmor) {
                         heat /= 2;
                     }
@@ -3602,19 +3687,21 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // check to see if we are not a mek and we've moved INTO fire
             if (!(entity instanceof Mek)) {
                 boolean underwater = getGame().getBoard(curBoardId).getHex(curPos)
-                      .containsTerrain(Terrains.WATER)
-                      && (getGame().getBoard(curBoardId).getHex(curPos).depth() > 0)
-                      && (step.getElevation() < getGame().getBoard(curBoardId).getHex(curPos).getLevel());
+                                              .containsTerrain(Terrains.WATER)
+                                     && (getGame().getBoard(curBoardId).getHex(curPos).depth() > 0)
+                                     && (step.getElevation() < getGame().getBoard(curBoardId)
+                                                                        .getHex(curPos)
+                                                                        .getLevel());
                 if (getGame().getBoard(curBoardId).getHex(curPos).containsTerrain(
-                      Terrains.FIRE) && !lastPos.equals(curPos)
-                      && (stepMoveType != EntityMovementType.MOVE_JUMP)
-                      && (step.getElevation() <= 1) && !underwater) {
+                        Terrains.FIRE) && !lastPos.equals(curPos)
+                    && (stepMoveType != EntityMovementType.MOVE_JUMP)
+                    && (step.getElevation() <= 1) && !underwater) {
                     gameManager.doFlamingDamage(entity, curPos);
                 }
             }
 
             if ((getGame().getBoard(curBoardId).getHex(curPos).terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_GREEN)
-                  && !stepMoveType.equals(EntityMovementType.MOVE_JUMP) && entity.antiTSMVulnerable()) {
+                && !stepMoveType.equals(EntityMovementType.MOVE_JUMP) && entity.antiTSMVulnerable()) {
                 addReport(gameManager.doGreenSmokeDamage(entity));
             }
 
@@ -3629,15 +3716,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // Also perform per-step Hidden Unit checks if TacOps Advanced Active Probe is enabled.
             // Aerospace BAP hidden unit detection also occurs here (with or without the above option)
             if ((getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_BAP) || entity.isAerospace())
-                  && !lastPos.equals(curPos)) {
+                && !lastPos.equals(curPos)) {
                 if (ServerHelper.detectMinefields(getGame(),
-                      entity,
-                      curPos,
-                      gameManager.getMainPhaseReport(),
-                      gameManager)
-                      ||
-                      ServerHelper.detectHiddenUnits(getGame(), entity, curPos, gameManager.getMainPhaseReport(),
-                            gameManager)) {
+                                                  entity,
+                                                  curPos,
+                                                  gameManager.getMainPhaseReport(),
+                                                  gameManager)
+                    ||
+                    ServerHelper.detectHiddenUnits(getGame(), entity, curPos, gameManager.getMainPhaseReport(),
+                                                   gameManager)) {
                     detectedHiddenHazard = true;
 
                     if (i.hasNext() && (stepMoveType != EntityMovementType.MOVE_JUMP)) {
@@ -3651,17 +3738,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // jumping units may end their movement with a turn but should still check at
             // end of movement
             if (!lastPos.equals(curPos) || (lastElevation != curElevation) ||
-                  ((stepMoveType == EntityMovementType.MOVE_JUMP) && !i.hasNext())) {
+                ((stepMoveType == EntityMovementType.MOVE_JUMP) && !i.hasNext())) {
                 boolean boom = false;
                 if (isOnGround) {
                     boom = gameManager.checkVibraBombs(entity, curPos, false, lastPos, curPos,
-                          gameManager.getMainPhaseReport());
+                                                       gameManager.getMainPhaseReport());
 
                     boom |= gameManager.handleTripwire(entity,
-                          lastPos,
-                          curPos,
-                          stepMoveType,
-                          gameManager.getMainPhaseReport());
+                                                       lastPos,
+                                                       curPos,
+                                                       stepMoveType,
+                                                       gameManager.getMainPhaseReport());
                     boom |= gameManager.handlePitfall(entity, curPos, gameManager.getMainPhaseReport());
 
                     // Collect EMP reports separately for popup, then add to main report
@@ -3670,7 +3757,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // Send popup FIRST with only EMP reports, before adding to mainPhaseReport
                     if (empBoom && !empReports.isEmpty()) {
                         gameManager.send(entity.getOwner().getId(),
-                              gameManager.createSpecialReportPacket(empReports));
+                                         gameManager.createSpecialReportPacket(empReports));
                         sentEMPPopupThisMove = true;
                     }
                     // Now add to main phase report for end-of-phase display
@@ -3683,7 +3770,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // when moving from clear into mined woods
                     entity.setPosition(curPos);
                     if (gameManager.enterMinefield(entity, curPos, step.getElevation(),
-                          isOnGround, gameManager.getMainPhaseReport())) {
+                                                   isOnGround, gameManager.getMainPhaseReport())) {
                         // resolve any piloting rolls from damage unless unit
                         // was jumping
                         if (stepMoveType != EntityMovementType.MOVE_JUMP) {
@@ -3731,7 +3818,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // check if we've moved into water
             rollTarget = entity.checkWaterMove(step, lastStepMoveType, curHex,
-                  lastPos, curPos, isPavementStep);
+                                               lastPos, curPos, isPavementStep);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 // Swarmers need special handling.
                 final int swarmerId = entity.getSwarmAttackerId();
@@ -3753,7 +3840,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                 // Do we need to remove a game turn for the swarmer
                 if (!swarmerDone && (swarmer != null)
-                      && (swarmer.isDoomed() || swarmer.isDestroyed())) {
+                    && (swarmer.isDoomed() || swarmer.isDestroyed())) {
                     // We have to diddle with the swarmer's
                     // status to get its turn removed.
                     swarmer.setDone(false);
@@ -3777,15 +3864,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // set dry if appropriate
             // TODO : possibly make the locations local and set later
             addReport(gameManager.doSetLocationsExposure(entity, curHex,
-                  stepMoveType == EntityMovementType.MOVE_JUMP,
-                  step.getElevation()));
+                                                         stepMoveType == EntityMovementType.MOVE_JUMP,
+                                                         step.getElevation()));
 
             // check for breaking ice by breaking through from below
             if ((lastElevation < 0) && (step.getElevation() == 0)
-                  && lastHex.containsTerrain(Terrains.ICE)
-                  && lastHex.containsTerrain(Terrains.WATER)
-                  && (stepMoveType != EntityMovementType.MOVE_JUMP)
-                  && !lastPos.equals(curPos)) {
+                && lastHex.containsTerrain(Terrains.ICE)
+                && lastHex.containsTerrain(Terrains.WATER)
+                && (stepMoveType != EntityMovementType.MOVE_JUMP)
+                && !lastPos.equals(curPos)) {
                 // need to temporarily reset entity's position so it doesn't
                 // fall in the ice
                 entity.setPosition(curPos);
@@ -3798,10 +3885,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
             // check for breaking ice by stepping on it
             if (curHex.containsTerrain(Terrains.ICE)
-                  && curHex.containsTerrain(Terrains.WATER)
-                  && (stepMoveType != EntityMovementType.MOVE_JUMP)
-                  && !lastPos.equals(curPos) && !(entity instanceof Infantry)
-                  && !(isPavementStep && curHex.containsTerrain(Terrains.BRIDGE))) {
+                && curHex.containsTerrain(Terrains.WATER)
+                && (stepMoveType != EntityMovementType.MOVE_JUMP)
+                && !lastPos.equals(curPos) && !(entity instanceof Infantry)
+                && !(isPavementStep && curHex.containsTerrain(Terrains.BRIDGE))) {
                 if (step.getElevation() == 0) {
                     Roll diceRoll = Compute.rollD6(1);
                     report = new Report(2118);
@@ -3852,7 +3939,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 } else {
                     // Randomly select a likely-looking entity from those in the allowed loading area
                     Iterator<Entity> entities = getGame().getEntities(
-                          Compute.getLoadableCoords(entity, curPos, curBoardId)
+                            Compute.getLoadableCoords(entity, curPos, curBoardId)
                     );
                     while (entities.hasNext()) {
 
@@ -3931,7 +4018,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     if (!entityToMountInto.canLoad(entity)) {
                         // Something is fishy in Denmark.
                         logger.error("(Mounted) {} can not load {}", entityToMountInto.getShortName(),
-                              entity.getShortName());
+                                     entity.getShortName());
                     } else {
                         // Have the indicated unit load this unit.
                         entity.setDone(true);
@@ -3956,9 +4043,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (step.getType() == MoveStepType.PICKUP_CARGO) {
                 var carryableObjects = getGame().getGroundObjects(step.getPosition());
                 carryableObjects.addAll(getGame().getEntitiesVector(step.getPosition())
-                      .stream()
-                      .filter(entity::canPickupCarryableObject)
-                      .toList());
+                                                 .stream()
+                                                 .filter(entity::canPickupCarryableObject)
+                                                 .toList());
                 Integer cargoPickupIndex;
 
                 // if there's only one object on the ground, let's just get that one and ignore
@@ -3973,30 +4060,31 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                 // there have to be objects on the ground, and we have to be trying to pick up one of them
                 if ((!carryableObjects.isEmpty()) &&
-                      (cargoPickupIndex != null) && (cargoPickupIndex >= 0)
-                      && (cargoPickupIndex < carryableObjects.size())) {
+                    (cargoPickupIndex != null) && (cargoPickupIndex >= 0)
+                    && (cargoPickupIndex < carryableObjects.size())) {
 
                     ICarryable pickupTarget = carryableObjects.get(cargoPickupIndex);
                     // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into that transporter.
                     if (entity.maxGroundObjectTonnage() >= pickupTarget.getTonnage() || ((entity.getTransports().size()
-                          > (Integer.MAX_VALUE - cargoPickupLocation))
-                          && (entity.getTransports()
-                          .get(Integer.MAX_VALUE - cargoPickupLocation) instanceof ExternalCargo externalCargo
-                          && externalCargo.canLoadCarryable(pickupTarget)))) {
+                                                                                          > (Integer.MAX_VALUE - cargoPickupLocation))
+                                                                                         && (entity.getTransports()
+                                                                                                   .get(Integer.MAX_VALUE - cargoPickupLocation) instanceof ExternalCargo externalCargo
+                                                                                             && externalCargo.canLoadCarryable(
+                            pickupTarget)))) {
                         pickupTarget.processPickupStep(step, cargoPickupLocation, gameManager, entity,
-                              overallMoveType);
+                                                       overallMoveType);
                     } else {
                         logger.warn(
-                              "{} attempted to pick up object but it is too heavy. Carry capacity: {}, object weight: {}",
-                              entity.getShortName(),
-                              entity.maxGroundObjectTonnage(),
-                              pickupTarget.getTonnage());
+                                "{} attempted to pick up object but it is too heavy. Carry capacity: {}, object weight: {}",
+                                entity.getShortName(),
+                                entity.maxGroundObjectTonnage(),
+                                pickupTarget.getTonnage());
                     }
                 } else {
                     logger.warn("{} attempted to pick up non existent object at coords {}, index {}",
-                          entity.getShortName(),
-                          step.getPosition(),
-                          cargoPickupIndex);
+                                entity.getShortName(),
+                                step.getPosition(),
+                                cargoPickupIndex);
                 }
             }
 
@@ -4011,7 +4099,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 } else if (entity.getCarriedObject(cargoLocation) != null) {
                     cargo = entity.getCarriedObject(cargoLocation);
                 } else if ((cargoLocation >= 0) && (Integer.MAX_VALUE - cargoLocation < entity.getTransports()
-                      .size())) {
+                                                                                              .size())) {
                     // FIXME #7640: Update once we can properly specify any transporter an entity has, and properly load into that transporter.
                     Transporter transporter = entity.getTransports().get(Integer.MAX_VALUE - cargoLocation);
                     if (transporter instanceof ExternalCargo externalCargo) {
@@ -4026,7 +4114,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 entity.dropCarriedObject(cargo, isLastStep);
                 if (cargo instanceof Entity carriedEntity) {
                     gameManager.unloadUnit(entity, carriedEntity, step.getPosition(), step.getFacing(),
-                          step.getElevation());
+                                           step.getElevation());
                 }
 
 
@@ -4098,7 +4186,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // damage unit
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                     addReport(gameManager.damageEntity(entity, hit,
-                          2 * (rollTarget.getValue() - diceRoll.getIntValue())));
+                                                       2 * (rollTarget.getValue() - diceRoll.getIntValue())));
                 } else {
                     report.choose(true);
                     addReport(report);
@@ -4135,11 +4223,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
 
                 if (!gameManager.unloadUnit(entity, unloaded, unloadPos, unloadFacing,
-                      step.getElevation())) {
+                                            step.getElevation())) {
                     logger.error("Server was told to unload {} from {} into {}",
-                          unloaded.getDisplayName(),
-                          entity.getDisplayName(),
-                          curPos.getBoardNum());
+                                 unloaded.getDisplayName(),
+                                 entity.getDisplayName(),
+                                 curPos.getBoardNum());
                 } else {
                     // Report unloading; anyone who can see the carrier should see the new unit too.
                     report = new Report(2514);
@@ -4166,7 +4254,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // craft/DropShip unloading
                 if ((entity instanceof SmallCraft) && (unloaded instanceof Entity)) {
                     if ((null != currentBay) && (!(unloaded.isInfantry()))
-                          && (Compute.d6(2) == 2)
+                        && (Compute.d6(2) == 2)
                     ) {
                         report = new Report(9390);
                         report.subject = entity.getId();
@@ -4183,7 +4271,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     if (!entity.getUnitsUnloadableFromBays().isEmpty()) {
                         dropshipStillUnloading = true;
                         GameTurn newTurn = new SpecificEntityTurn(
-                              entity.getOwner().getId(), entity.getId());
+                                entity.getOwner().getId(), entity.getId());
                         // Need to set the new turn's multiTurn state
                         newTurn.setMultiTurn(true);
                         getGame().insertNextTurn(newTurn);
@@ -4191,8 +4279,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // ok add another turn for the unloaded entity so that it can move
                     if (!(unloaded instanceof Infantry)) {
                         GameTurn newTurn = new SpecificEntityTurn(
-                              ((Entity) unloaded).getOwner().getId(),
-                              unloaded.getId());
+                                ((Entity) unloaded).getOwner().getId(),
+                                unloaded.getId());
                         // Need to set the new turn's multiTurn state
                         newTurn.setMultiTurn(true);
                         getGame().insertNextTurn(newTurn);
@@ -4214,28 +4302,30 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // button, so reaching here means the request did not come from it.
                 if (entity.isOffBoard()) {
                     logger.warn("[Train] refused to disconnect {} from {}: the train is off board",
-                          unloaded.getDisplayName(), entity.getDisplayName());
+                                unloaded.getDisplayName(), entity.getDisplayName());
                 } else if (!gameManager.disconnectUnit(entity, unloaded, unloadPos)) {
                     logger.error("Server was told to disconnect {} from {} into {}",
-                          unloaded.getDisplayName(),
-                          entity.getDisplayName(),
-                          curPos.getBoardNum());
+                                 unloaded.getDisplayName(),
+                                 entity.getDisplayName(),
+                                 curPos.getBoardNum());
                 }
             }
 
             // moving backwards over elevation change
             if (((step.getType() == MoveStepType.BACKWARDS)
-                  || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
-                  || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
-                  && !(md.isJumping() && step.isUsingMekJumpBooster())
-                  && (lastHex.getLevel() + lastElevation != curHex.getLevel() + step.getElevation())
-                  && !(entity instanceof VTOL)
-                  && !(curClimbMode
-                  && curHex.containsTerrain(Terrains.BRIDGE)
-                  && ((curHex.terrainLevel(Terrains.BRIDGE_ELEV) + curHex.getLevel()) == (prevHex.getLevel()
-                  + (prevHex.containsTerrain(Terrains.BRIDGE)
-                  ? prevHex.terrainLevel(Terrains.BRIDGE_ELEV)
-                  : 0))))) {
+                 || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
+                 || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
+                && !(md.isJumping() && step.isUsingMekJumpBooster())
+                && (lastHex.getLevel() + lastElevation != curHex.getLevel() + step.getElevation())
+                && !(entity instanceof VTOL)
+                && !(curClimbMode
+                     && curHex.containsTerrain(Terrains.BRIDGE)
+                     && ((curHex.terrainLevel(Terrains.BRIDGE_ELEV) + curHex.getLevel()) == (prevHex.getLevel()
+                                                                                             + (prevHex.containsTerrain(
+                    Terrains.BRIDGE)
+                                                                                                ? prevHex.terrainLevel(
+                    Terrains.BRIDGE_ELEV)
+                                                                                                : 0))))) {
 
                 // per TacOps, if the mek is walking backwards over an elevation change and
                 // falls
@@ -4243,12 +4333,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // PSR in this
                 // invocation of processMovement, then it can't fall again.
                 if ((entity instanceof Mek)
-                      && (curHex.getLevel() < getGame().getBoard(curBoardId).getHex(lastPos).getLevel())
-                      && !entity.hasFallen()) {
+                    && (curHex.getLevel() < getGame().getBoard(curBoardId).getHex(lastPos).getLevel())
+                    && !entity.hasFallen()) {
                     rollTarget = entity.getBasePilotingRoll(overallMoveType);
                     rollTarget.addModifier(0, "moving backwards over an elevation change");
                     gameManager.doSkillCheckWhileMoving(entity, entity.getElevation(),
-                          curPos, curPos, rollTarget, true);
+                                                        curPos, curPos, rollTarget, true);
                 } else if ((entity instanceof Mek) && !entity.hasFallen()) {
                     rollTarget = entity.getBasePilotingRoll(overallMoveType);
                     rollTarget.addModifier(0, "moving backwards over an elevation change");
@@ -4257,7 +4347,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     rollTarget = entity.getBasePilotingRoll(overallMoveType);
                     rollTarget.addModifier(0, "moving backwards over an elevation change");
                     if (gameManager.doSkillCheckWhileMoving(entity, entity.getElevation(), curPos, lastPos,
-                          rollTarget, false) < 0) {
+                                                            rollTarget, false) < 0) {
                         curPos = lastPos;
                     }
                 }
@@ -4292,14 +4382,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     String reason = getReason(bldgExited, bldgEntered);
 
                     gameManager.passBuildingWall(entity,
-                          bldgEntered,
-                          lastPos,
-                          curPos,
-                          distance,
-                          reason,
-                          step.isThisStepBackwards(),
-                          lastStepMoveType,
-                          true);
+                                                 bldgEntered,
+                                                 lastPos,
+                                                 curPos,
+                                                 distance,
+                                                 reason,
+                                                 step.isThisStepBackwards(),
+                                                 lastStepMoveType,
+                                                 true);
                     gameManager.addAffectedBldg(bldgEntered, collapsed);
                 }
 
@@ -4317,17 +4407,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             if (stepMoveType != EntityMovementType.MOVE_JUMP
-                  && (step.getClearance() == 0
-                  || (entity.getMovementMode().isWiGE() && (step.getClearance() == 1))
-                  || curElevation == curHex.terrainLevel(Terrains.BLDG_ELEV)
-                  || curElevation == curHex.terrainLevel(Terrains.BRIDGE_ELEV))) {
+                && (step.getClearance() == 0
+                    || (entity.getMovementMode().isWiGE() && (step.getClearance() == 1))
+                    || curElevation == curHex.terrainLevel(Terrains.BLDG_ELEV)
+                    || curElevation == curHex.terrainLevel(Terrains.BRIDGE_ELEV))) {
                 IBuilding bldg = getGame().getBoard(curBoardId).getBuildingAt(curPos);
                 if ((bldg != null) && (entity.getElevation() >= 0)) {
                     boolean wigeFlyingOver = entity.getMovementMode() == EntityMovementMode.WIGE
-                          && ((curHex.containsTerrain(Terrains.BLDG_ELEV)
-                          && curElevation > curHex.terrainLevel(Terrains.BLDG_ELEV)) ||
-                          (curHex.containsTerrain(Terrains.BRIDGE_ELEV)
-                                && curElevation > curHex.terrainLevel(Terrains.BRIDGE_ELEV)));
+                                             && ((curHex.containsTerrain(Terrains.BLDG_ELEV)
+                                                  && curElevation > curHex.terrainLevel(Terrains.BLDG_ELEV)) ||
+                                                 (curHex.containsTerrain(Terrains.BRIDGE_ELEV)
+                                                  && curElevation > curHex.terrainLevel(Terrains.BRIDGE_ELEV)));
                     boolean collapse = gameManager.checkBuildingCollapseWhileMoving(bldg, entity, curPos);
                     gameManager.addAffectedBldg(bldg, collapse);
                     // If the building is collapsed by a WiGE flying over it, the WiGE drops one
@@ -4352,30 +4442,30 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // Sheer Cliffs, TO p.39
             boolean vehicleAffectedByCliff = entity instanceof Tank
-                  && !entity.isAirborneVTOLorWIGE();
+                                             && !entity.isAirborneVTOLorWIGE();
             boolean quadveeVehMode = entity instanceof QuadVee
-                  && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
+                                     && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
             boolean mekAffectedByCliff = (entity instanceof Mek || entity instanceof ProtoMek)
-                  && moveType != EntityMovementType.MOVE_JUMP
-                  && !entity.isAero();
+                                         && moveType != EntityMovementType.MOVE_JUMP
+                                         && !entity.isAero();
             // Cliffs should only exist towards 1 or 2 level drops, check just to make sure
             // Everything that does not have a 1 or 2 level drop shouldn't be handled as a
             // cliff
             int stepHeight = curElevation + curHex.getLevel()
-                  - (lastElevation + prevHex.getLevel());
+                             - (lastElevation + prevHex.getLevel());
             boolean isUpCliff = !lastPos.equals(curPos)
-                  && curHex.hasCliffTopTowards(prevHex)
-                  && (stepHeight == 1 || stepHeight == 2);
+                                && curHex.hasCliffTopTowards(prevHex)
+                                && (stepHeight == 1 || stepHeight == 2);
             boolean isDownCliff = !lastPos.equals(curPos)
-                  && prevHex.hasCliffTopTowards(curHex)
-                  && (stepHeight == -1 || stepHeight == -2);
+                                  && prevHex.hasCliffTopTowards(curHex)
+                                  && (stepHeight == -1 || stepHeight == -2);
 
             // Vehicles (exc. WIGE/VTOL) moving down a cliff
             if (vehicleAffectedByCliff && isDownCliff && !isPavementStep) {
                 rollTarget = entity.getBasePilotingRoll(stepMoveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), 0, "moving down a sheer cliff"));
                 if (gameManager.doSkillCheckWhileMoving(entity, lastElevation,
-                      lastPos, curPos, rollTarget, false) > 0) {
+                                                        lastPos, curPos, rollTarget, false) > 0) {
                     addReport(gameManager.vehicleMotiveDamage((Tank) entity, 0));
                     addNewLines();
                     turnOver = true;
@@ -4389,7 +4479,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), -stepHeight - 1, "moving down a sheer cliff"));
                 if (gameManager.doSkillCheckWhileMoving(entity, lastElevation,
-                      lastPos, curPos, rollTarget, true) > 0) {
+                                                        lastPos, curPos, rollTarget, true) > 0) {
                     addNewLines();
                     turnOver = true;
                     break;
@@ -4401,7 +4491,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), stepHeight, "moving up a sheer cliff"));
                 if (gameManager.doSkillCheckWhileMoving(entity, lastElevation,
-                      lastPos, lastPos, rollTarget, false) > 0) {
+                                                        lastPos, lastPos, rollTarget, false) > 0) {
                     report = new Report(2209);
                     report.addDesc(entity);
                     report.subject = entity.getId();
@@ -4421,7 +4511,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // Multi-turn: if the climb costs more MP than available, only climb
             // affordable levels this turn and persist climbing state for next turn.
             if (step.isClimbing() && (entity instanceof Mek climbingMek)
-                  && (stepHeight > 0)) {
+                && (stepHeight > 0)) {
                 // Only process climbing PSRs for upward movement (stepHeight > 0)
                 // Downward movement is handled by leaping rules
                 int totalLevelsToClimb = Math.abs(stepHeight);
@@ -4458,22 +4548,22 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 int overallClimbHeight = levelsAlreadyClimbed + totalLevelsToClimb;
 
                 logger.debug("Climbing: totalLevels={}, affordableLevels={}, levelsThisTurn={}, " +
-                            "walkMP={}, availableMP={}, costPerLevel={}, nonClimbMpUsed={}, " +
-                            "levelsAlreadyClimbed={}, overallClimbHeight={}",
-                      totalLevelsToClimb, affordableLevels, levelsThisTurn,
-                      walkMP, availableMP, costPerLevel, nonClimbMpUsed,
-                      levelsAlreadyClimbed, overallClimbHeight);
+                             "walkMP={}, availableMP={}, costPerLevel={}, nonClimbMpUsed={}, " +
+                             "levelsAlreadyClimbed={}, overallClimbHeight={}",
+                             totalLevelsToClimb, affordableLevels, levelsThisTurn,
+                             walkMP, availableMP, costPerLevel, nonClimbMpUsed,
+                             levelsAlreadyClimbed, overallClimbHeight);
 
                 for (int levelClimbed = 1; levelClimbed <= levelsThisTurn; levelClimbed++) {
                     int overallLevel = levelsAlreadyClimbed + levelClimbed;
                     rollTarget = entity.getBasePilotingRoll(moveType);
                     rollTarget.append(new PilotingRollData(entity.getId(),
-                          ClimbingHelper.CLIMBING_PSR_MODIFIER,
-                          "climbing (level " + overallLevel + " of " + overallClimbHeight + ")"));
+                                                           ClimbingHelper.CLIMBING_PSR_MODIFIER,
+                                                           "climbing (level " + overallLevel + " of " + overallClimbHeight + ")"));
                     if (climbableArms == 1) {
                         rollTarget.append(new PilotingRollData(entity.getId(),
-                              ClimbingHelper.ONE_ARM_PSR_MODIFIER,
-                              "climbing with one arm"));
+                                                               ClimbingHelper.ONE_ARM_PSR_MODIFIER,
+                                                               "climbing with one arm"));
                     }
 
                     // When climbingElevation is 0 the Mek hasn't actually risen yet — failing
@@ -4483,12 +4573,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // "fall from the height it has currently reached" — height 0 = no fall.
                     boolean canFallFromHere = climbingElevation > 0;
                     if (gameManager.doSkillCheckWhileMoving(entity, climbingElevation,
-                          lastPos, lastPos, rollTarget, canFallFromHere) > 0) {
+                                                            lastPos, lastPos, rollTarget, canFallFromHere) > 0) {
                         if (!canFallFromHere) {
                             // Failed first PSR from elevation 0 — abort climb without fall.
                             logger.debug("[CLIMB-TRACE] Failed first climbing PSR from elevation 0; "
-                                        + "no fall (entity stays on ground). entity={}, lastPos={}",
-                                  entity.getDisplayName(), lastPos);
+                                         + "no fall (entity stays on ground). entity={}, lastPos={}",
+                                         entity.getDisplayName(), lastPos);
                             Report failReport = new Report(6464, Report.PUBLIC);
                             failReport.add(entity.getDisplayName());
                             addReport(failReport);
@@ -4515,17 +4605,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         curPos = entity.getPosition();
                         curVTOLElevation = entity.getElevation();
                         logger.debug("[FALL-TRACE] After doSkillCheckWhileMoving fall: " +
-                                    "entity.position={}, entity.elevation={}, entity.isProne={}, " +
-                                    "climbingElevation={}, lastPos={}, curPos={}, curVTOLElevation={}",
-                              entity.getPosition(), entity.getElevation(), entity.isProne(),
-                              climbingElevation, lastPos, curPos, curVTOLElevation);
+                                     "entity.position={}, entity.elevation={}, entity.isProne={}, " +
+                                     "climbingElevation={}, lastPos={}, curPos={}, curVTOLElevation={}",
+                                     entity.getPosition(), entity.getElevation(), entity.isProne(),
+                                     climbingElevation, lastPos, curPos, curVTOLElevation);
                         Hex fallHex = getGame().getBoard(entity.getBoardId()).getHex(entity.getPosition());
                         if (fallHex != null) {
                             logger.debug("[FALL-TRACE] Fall hex: level={}, ceiling={}, floor={}, depth={}, " +
-                                        "containsWater={}, isElevationValid={}",
-                                  fallHex.getLevel(), fallHex.ceiling(), fallHex.floor(), fallHex.depth(),
-                                  fallHex.containsTerrain(Terrains.WATER),
-                                  entity.isElevationValid(entity.getElevation(), fallHex));
+                                         "containsWater={}, isElevationValid={}",
+                                         fallHex.getLevel(), fallHex.ceiling(), fallHex.floor(), fallHex.depth(),
+                                         fallHex.containsTerrain(Terrains.WATER),
+                                         entity.isElevationValid(entity.getElevation(), fallHex));
                         }
                         fellWhileClimbing = true;
                         fellDuringMovement = true;
@@ -4542,8 +4632,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // The building being climbed is at the destination hex (curPos)
                     Hex climbHex = getGame().getBoard(entity.getBoardId()).getHex(curPos);
                     logger.debug("[FALL-TRACE] Building check: curPos={}, lastPos={}, " +
-                                "containsBuilding={}", curPos, lastPos,
-                          climbHex.containsTerrain(Terrains.BUILDING));
+                                 "containsBuilding={}", curPos, lastPos,
+                                 climbHex.containsTerrain(Terrains.BUILDING));
                     if (climbHex.containsTerrain(Terrains.BUILDING)) {
                         IBuilding climbBldg = getGame().getBoard(entity.getBoardId()).getBuildingAt(curPos);
                         if (climbBldg != null) {
@@ -4552,7 +4642,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             if ((levelClimbed == 1) && (levelsAlreadyClimbed == 0)) {
                                 int buildingDamage = (int) Math.ceil(entity.getWeight() / 10.0);
                                 logger.debug("[FALL-TRACE] Building climbing damage: {} points to {} at {}",
-                                      buildingDamage, climbBldg.getName(), curPos);
+                                             buildingDamage, climbBldg.getName(), curPos);
                                 addReport(gameManager.damageBuilding(climbBldg, buildingDamage, curPos));
                             }
 
@@ -4560,12 +4650,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             // due to damage from other sources)
                             int currentCF = climbBldg.getCurrentCF(curPos);
                             logger.debug("[FALL-TRACE] Building CF check: weight={}, CF={}",
-                                  entity.getWeight(),
-                                  currentCF);
+                                         entity.getWeight(),
+                                         currentCF);
                             if (entity.getWeight() > currentCF) {
                                 logger.debug("[FALL-TRACE] Building too weak for climbing entity: " +
-                                            "weight={}, CF={}, climbingElevation={}, curPos={}, lastPos={}",
-                                      entity.getWeight(), currentCF, climbingElevation, curPos, lastPos);
+                                             "weight={}, CF={}, climbingElevation={}, curPos={}, lastPos={}",
+                                             entity.getWeight(), currentCF, climbingElevation, curPos, lastPos);
                                 // Entity falls from climbing elevation before collapse
                                 entity.setClimbing(false);
                                 entity.setDangling(false);
@@ -4573,9 +4663,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                 entity.setPosition(lastPos);
                                 // Process the fall from climbing elevation
                                 PilotingRollData climbFallRoll = new PilotingRollData(entity.getId(),
-                                      TargetRoll.AUTOMATIC_FAIL, "building too weak");
+                                                                                      TargetRoll.AUTOMATIC_FAIL,
+                                                                                      "building too weak");
                                 addReport(gameManager.doEntityFallsInto(entity, climbingElevation,
-                                      lastPos, lastPos, climbFallRoll, true, 0));
+                                                                        lastPos, lastPos, climbFallRoll, true, 0));
                                 curPos = entity.getPosition();
                                 curVTOLElevation = entity.getElevation();
                                 fellWhileClimbing = true;
@@ -4607,8 +4698,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     curVTOLElevation = climbingElevation;
                     mpUsed = walkMP;
                     logger.debug("Climbing: partial climb, {} of {} levels. " +
-                                "Clinging at elevation {} in hex {}",
-                          levelsThisTurn, totalLevelsToClimb, climbingElevation, lastPos);
+                                 "Clinging at elevation {} in hex {}",
+                                 levelsThisTurn, totalLevelsToClimb, climbingElevation, lastPos);
                     // End movement - spent all MP climbing
                     turnOver = true;
                     break;
@@ -4635,7 +4726,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         entity.setClimbing(true);
                         entity.setElevation(climbingElevation);
                         logger.debug("Climbing: no levels to climb but still at elevation {}, keeping climbing state",
-                              climbingElevation);
+                                     climbingElevation);
                     } else {
                         entity.setClimbing(false);
                         entity.setDangling(false);
@@ -4709,7 +4800,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // Track this step's location.
             movePath.addElement(new UnitLocation(entity.getId(), curPos,
-                  curFacing, step.getElevation(), entity.getBoardLocation().boardId()));
+                                                 curFacing, step.getElevation(), entity.getBoardLocation().boardId()));
 
             // if the lastpos is not the same as the current position
             // then add the current position to the list of places passed
@@ -4744,15 +4835,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
      *
      * @param step         MoveStep to prompt for a PBS
      * @param hiddenEntity Candidate to fire PBS
-     *
      * @return Vector<Report> collection of reports; caller responsible for displaying these.
      */
-    protected Vector<Report> processPossiblePBS(MoveStep step, Entity hiddenEntity) {
+    protected Vector<Report> processPossiblePBS(MoveStep step,
+                                                Entity hiddenEntity) {
         Vector<Report> pbsReports = new Vector<>();
         Vector<Report> attackReports = new Vector<>();
         // Update hidden entity owner with current mover's position.
         gameManager.send(hiddenEntity.getOwnerId(),
-              gameManager.createEntityPacket(this.entity.getId(), null));
+                         gameManager.createEntityPacket(this.entity.getId(), null));
 
         // Allow for packet data read failure
         try {
@@ -4785,13 +4876,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
         return pbsReports;
     }
 
-    private String getReason(IBuilding bldgExited, IBuilding bldgEntered) {
+    private String getReason(IBuilding bldgExited,
+                             IBuilding bldgEntered) {
         String reason;
         if (bldgExited == null) {
             // If we're not leaving a building, just handle the "entered".
             reason = "entering";
         } else if (bldgExited.equals(bldgEntered) && !(entity instanceof ProtoMek)
-              && !(entity instanceof Infantry)) {
+                   && !(entity instanceof Infantry)) {
             // If we're moving within the same building, just handle the "within".
             reason = "moving in";
         } else {
@@ -4807,10 +4899,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
      *
      * @param position entity's current position
      * @param facing   entity's current facing
-     *
      * @return new coords that are on the board
      */
-    private Coords nudgeOntoBoard(Coords position, int facing) {
+    private Coords nudgeOntoBoard(Coords position,
+                                  int facing) {
         Coords newPosition = position;
 
         Game game = getGame();
@@ -4864,34 +4956,35 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * @param infantry the platoon starting the build
      * @param step     the BUILD_BRIDGE step carrying the site, orientation and bridge type
      */
-    private void processBuildBridgeStep(Infantry infantry, MoveStep step) {
+    private void processBuildBridgeStep(Infantry infantry,
+                                        MoveStep step) {
         if (!(infantry instanceof ConvInfantry convInfantry)) {
             logger.warn("[BuildBridge] BUILD_BRIDGE step ignored for {}: not a conventional infantry platoon",
-                  infantry.getShortName());
+                        infantry.getShortName());
             return;
         }
         if (step.getBridgeTargetCoords() == null) {
             logger.warn("[BuildBridge] BUILD_BRIDGE step ignored for {}: no target hex in the step data",
-                  convInfantry.getShortName());
+                        convInfantry.getShortName());
             return;
         }
         // Another platoon may have started/paused a bridge in this hex since the path was plotted; an in-progress
         // bridge places no terrain, so reject a second build in the same hex here.
         if (ConvInfantry.isBridgeTargetClaimed(getGame(), convInfantry.getBoardId(), step.getBridgeTargetCoords(),
-              convInfantry)) {
+                                               convInfantry)) {
             logger.warn("[BuildBridge] BUILD_BRIDGE step ignored for {}: another platoon already has a bridge in "
-                  + "progress at {}", convInfantry.getShortName(), step.getBridgeTargetCoords());
+                        + "progress at {}", convInfantry.getShortName(), step.getBridgeTargetCoords());
             return;
         }
         // A gap in an existing bridge (a destroyed section) is repaired rather than freshly built when the unofficial
         // bridge-repair option is on; the work is identical but the finished section matches the surviving span's deck.
         boolean repairAllowed = getGame().getOptions()
-              .booleanOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS);
+                                         .booleanOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS);
         boolean isRepair = repairAllowed && BridgeConstruction.isBridgeRepairSite(
-              getGame().getBoard(convInfantry.getBoardId()), step.getBridgeTargetCoords(), step.getBridgeExits());
+                getGame().getBoard(convInfantry.getBoardId()), step.getBridgeTargetCoords(), step.getBridgeExits());
         logger.info("[BuildBridge] {} begins a bridge {}: target {}, exits bitmask {}, type {} (1=light, 2=medium)",
-              convInfantry.getShortName(), isRepair ? "repair" : "build", step.getBridgeTargetCoords(),
-              step.getBridgeExits(), step.getBridgeType());
+                    convInfantry.getShortName(), isRepair ? "repair" : "build", step.getBridgeTargetCoords(),
+                    step.getBridgeExits(), step.getBridgeType());
         // Building a bridge is the platoon's sole action, so any other ground posture (dug in / hitting the deck) ends
         convInfantry.clearGroundPostures();
         if (isRepair) {
@@ -4923,18 +5016,18 @@ class MovePathHandler extends AbstractTWRuleHandler {
     private void processCancelBridgeStep(Infantry infantry) {
         if (!(infantry instanceof ConvInfantry convInfantry)) {
             logger.warn("[BuildBridge] CANCEL_BRIDGE step ignored for {}: not a conventional infantry platoon",
-                  infantry.getShortName());
+                        infantry.getShortName());
             return;
         }
         if (!convInfantry.isBuildingBridge()) {
             logger.warn("[BuildBridge] CANCEL_BRIDGE step ignored for {}: not currently building a bridge",
-                  convInfantry.getShortName());
+                        convInfantry.getShortName());
             return;
         }
         Coords target = convInfantry.getBridgeTargetCoords();
         convInfantry.startBridgeDismantle();
         logger.info("[BuildBridge] {} cancels its bridge build at {}: dismantling will take {} turn(s)",
-              convInfantry.getShortName(), target, convInfantry.getBridgeDismantleRequiredTurns());
+                    convInfantry.getShortName(), target, convInfantry.getBridgeDismantleRequiredTurns());
         Report report = new Report(4281);
         report.subject = convInfantry.getId();
         report.addDesc(convInfantry);
@@ -4956,19 +5049,19 @@ class MovePathHandler extends AbstractTWRuleHandler {
     private void processResumeBridgeStep(Infantry infantry) {
         if (!(infantry instanceof ConvInfantry convInfantry)) {
             logger.warn("[BuildBridge] RESUME_BRIDGE step ignored for {}: not a conventional infantry platoon",
-                  infantry.getShortName());
+                        infantry.getShortName());
             return;
         }
         if (!convInfantry.isDismantlingBridge() && !convInfantry.isBridgePaused()) {
             logger.warn("[BuildBridge] RESUME_BRIDGE step ignored for {}: not currently dismantling or paused",
-                  convInfantry.getShortName());
+                        convInfantry.getShortName());
             return;
         }
         Coords target = convInfantry.getBridgeTargetCoords();
         convInfantry.resumeBridgeBuild();
         logger.info("[BuildBridge] {} resumes its bridge build at {}: {} of {} turns built",
-              convInfantry.getShortName(), target, convInfantry.getBridgeBuildTurns(),
-              convInfantry.getBridgeBuildRequiredTurns());
+                    convInfantry.getShortName(), target, convInfantry.getBridgeBuildTurns(),
+                    convInfantry.getBridgeBuildRequiredTurns());
         Report report = new Report(4284);
         report.subject = convInfantry.getId();
         report.addDesc(convInfantry);
@@ -4986,19 +5079,19 @@ class MovePathHandler extends AbstractTWRuleHandler {
     private void processPauseBridgeStep(Infantry infantry) {
         if (!(infantry instanceof ConvInfantry convInfantry)) {
             logger.warn("[BuildBridge] PAUSE_BRIDGE step ignored for {}: not a conventional infantry platoon",
-                  infantry.getShortName());
+                        infantry.getShortName());
             return;
         }
         if (!convInfantry.isBuildingBridge()) {
             logger.warn("[BuildBridge] PAUSE_BRIDGE step ignored for {}: not currently building a bridge",
-                  convInfantry.getShortName());
+                        convInfantry.getShortName());
             return;
         }
         Coords target = convInfantry.getBridgeTargetCoords();
         convInfantry.pauseBridgeBuild();
         logger.info("[BuildBridge] {} pauses its bridge build at {}: {} of {} turns held",
-              convInfantry.getShortName(), target, convInfantry.getBridgeBuildTurns(),
-              convInfantry.getBridgeBuildRequiredTurns());
+                    convInfantry.getShortName(), target, convInfantry.getBridgeBuildTurns(),
+                    convInfantry.getBridgeBuildRequiredTurns());
         Report report = new Report(4286);
         report.subject = convInfantry.getId();
         report.addDesc(convInfantry);
@@ -5016,18 +5109,18 @@ class MovePathHandler extends AbstractTWRuleHandler {
     private void processAbandonBridgeStep(Infantry infantry) {
         if (!(infantry instanceof ConvInfantry convInfantry)) {
             logger.warn("[BuildBridge] ABANDON_BRIDGE step ignored for {}: not a conventional infantry platoon",
-                  infantry.getShortName());
+                        infantry.getShortName());
             return;
         }
         if (!convInfantry.hasBridgeInProgress()) {
             logger.warn("[BuildBridge] ABANDON_BRIDGE step ignored for {}: no bridge work in progress",
-                  convInfantry.getShortName());
+                        convInfantry.getShortName());
             return;
         }
         Coords target = convInfantry.getBridgeTargetCoords();
         convInfantry.abandonBridge();
         logger.info("[BuildBridge] {} abandons its bridge at {}; progress lost, points forfeit",
-              convInfantry.getShortName(), target);
+                    convInfantry.getShortName(), target);
         Report report = new Report(4287);
         report.subject = convInfantry.getId();
         report.addDesc(convInfantry);
@@ -5047,7 +5140,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
      * @param entity   the clearing unit (a {@link RubbleClearer})
      * @param position the rubble hex being cleared (the unit's own hex)
      */
-    private void beginRubbleClearing(Entity entity, Coords position) {
+    private void beginRubbleClearing(Entity entity,
+                                     Coords position) {
         if (!(entity instanceof RubbleClearer clearer)) {
             return;
         }
@@ -5055,13 +5149,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // under the unofficial rule) and a rubble hex.
         if (!BulldozerRules.canClearRubble(entity, getGame())) {
             logger.debug("[Bulldozer] {}: clear rubble rejected - no working rubble-clearing equipment / rule off",
-                  entity.getDisplayName());
+                         entity.getDisplayName());
             return;
         }
         Hex hex = getGame().getBoard(entity.getBoardId()).getHex(position);
         if ((hex == null) || (hex.terrainLevel(Terrains.RUBBLE) <= 0)) {
             logger.debug("[Bulldozer] {}: clear rubble rejected - hex at {} contains no rubble",
-                  entity.getDisplayName(), position);
+                         entity.getDisplayName(), position);
             return;
         }
         // Already clearing this same hex: leave the in-progress counter untouched so progress is not reset.
@@ -5083,8 +5177,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
         report.add(requiredTurns);
         addReport(report);
         gameManager.sendToast(GameToastEvent.Level.INFO,
-              Messages.getString("Bulldozer.beginClearToast", entity.getShortName(), requiredTurns), entity);
+                              Messages.getString("Bulldozer.beginClearToast", entity.getShortName(), requiredTurns),
+                              entity);
         logger.info("[Bulldozer] {} begins clearing rubble (level {}) at {}: {} turns required",
-              entity.getShortName(), rubbleLevel, position, requiredTurns);
+                    entity.getShortName(), rubbleLevel, position, requiredTurns);
     }
 }

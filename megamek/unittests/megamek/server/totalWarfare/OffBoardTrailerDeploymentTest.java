@@ -33,18 +33,6 @@
 
 package megamek.server.totalWarfare;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-
 import megamek.common.OffBoardDirection;
 import megamek.common.Player;
 import megamek.common.enums.GamePhase;
@@ -56,6 +44,16 @@ import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Tank;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Covers a trailer that is set to deploy off board while its tractor deploys onto the board.
@@ -76,6 +74,7 @@ class OffBoardTrailerDeploymentTest {
     private Player owner;
     private DeploymentProcessor deploymentProcessor;
     private int nextId = 1;
+    private DeploymentServerHelper deploymentServerHelper;
 
     @BeforeEach
     void setUp() {
@@ -94,9 +93,11 @@ class OffBoardTrailerDeploymentTest {
         gameManager.setGame(game);
 
         deploymentProcessor = new DeploymentProcessor(gameManager);
+        deploymentServerHelper = new DeploymentServerHelper(gameManager);
     }
 
-    private Tank buildVehicle(double tonnage, boolean isTrailer) throws Exception {
+    private Tank buildVehicle(double tonnage,
+                              boolean isTrailer) throws Exception {
         Tank vehicle = new Tank();
         vehicle.setId(nextId++);
         vehicle.setOwner(owner);
@@ -118,7 +119,8 @@ class OffBoardTrailerDeploymentTest {
         return tractor;
     }
 
-    private Entity trailerAt(Tank tractor, int trailerNumber) {
+    private Entity trailerAt(Tank tractor,
+                             int trailerNumber) {
         return game.getEntity(tractor.getAllTowedUnits().get(trailerNumber));
     }
 
@@ -134,9 +136,9 @@ class OffBoardTrailerDeploymentTest {
         setOffBoard(looseTrailer);
 
         assertFalse(looseTrailer.shouldDeploy(FIRST_ROUND),
-              "Off board units never take a deployment turn");
+                    "Off board units never take a deployment turn");
         assertTrue(looseTrailer.shouldOffBoardDeploy(FIRST_ROUND),
-              "but it does deploy itself off board, with no tractor involved");
+                   "but it does deploy itself off board, with no tractor involved");
     }
 
     @Test
@@ -145,7 +147,7 @@ class OffBoardTrailerDeploymentTest {
         Tank looseTrailer = buildVehicle(CARRIAGE_TONS, true);
         setOffBoard(looseTrailer);
 
-        deploymentProcessor.clearTrailerOffBoardSettings(tractor);
+        deploymentServerHelper.clearTrailerOffBoardSettings(tractor);
 
         assertEquals(Entity.NONE, looseTrailer.getTractor(), "It was never part of anyone's train");
         assertTrue(looseTrailer.isOffBoard(), "and its off board setting is left alone");
@@ -159,10 +161,10 @@ class OffBoardTrailerDeploymentTest {
         Entity gunTrailer = trailerAt(tractor, 1);
         setOffBoard(gunTrailer);
 
-        deploymentProcessor.clearTrailerOffBoardSettings(tractor);
+        deploymentServerHelper.clearTrailerOffBoardSettings(tractor);
 
         assertFalse(gunTrailer.isOffBoard(),
-              "A train deploys where its tractor does, so a trailer keeps no deployment of its own");
+                    "A train deploys where its tractor does, so a trailer keeps no deployment of its own");
         assertEquals(2, tractor.getAllTowedUnits().size(), "and the train stays whole");
         assertEquals(tractor.getId(), leadTrailer.getTractor());
     }

@@ -59,6 +59,7 @@ import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.common.units.CombatSuitRules;
 import megamek.client.ui.dialogs.iconChooser.PortraitChooserDialog;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.enums.Gender;
@@ -91,6 +92,8 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
     private final JTextField fldName = new JTextField(30);
     private final JTextField fldNick = new JTextField(30);
     private final JCheckBox chkClanPilot = new JCheckBox(Messages.getString("CustomMekDialog.chkClanPilot"));
+    private final JCheckBox chkCombatSuit = new JCheckBox(
+          Messages.getString("CustomMekDialog.chkCombatSuit"));
     private final JTextField fldGunnery = new JTextField(4);
     private final JTextField fldGunneryL = new JTextField(4);
     private final JTextField fldGunneryM = new JTextField(4);
@@ -160,6 +163,14 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
             // placing the flag after Commander Initiative.
             addClanPilotAdvancedRow();
         }
+        chkCombatSuit.setText("");
+        chkCombatSuit.setSelected(entity.getCrew().hasCombatSuit(slot));
+        chkCombatSuit.setToolTipText(Messages.getString("CustomMekDialog.chkCombatSuit.tooltip"));
+        boolean isCombatSuitRuleInPlay =
+              parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_COMBAT_SUITS);
+        if (isCombatSuitRuleInPlay && CombatSuitRules.canWearCombatSuit(entity)) {
+            addAdvancedRow(Messages.getString("CustomMekDialog.chkCombatSuit"), chkCombatSuit);
+        }
         if (parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
             addAdvancedRow(Messages.getString("CustomMekDialog.labTough"), fldTough);
         }
@@ -181,6 +192,7 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
             fldName.setEnabled(false);
             fldNick.setEnabled(false);
             chkClanPilot.setEnabled(false);
+            chkCombatSuit.setEnabled(false);
             fldGunnery.setEnabled(false);
             fldGunneryL.setEnabled(false);
             fldGunneryM.setEnabled(false);
@@ -569,6 +581,13 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
 
     public boolean isClanPilot() {
         return chkClanPilot.isSelected();
+    }
+
+    /**
+     * @return {@code true} if this crew member has been issued a MekWarrior Combat Suit
+     */
+    public boolean hasCombatSuit() {
+        return chkCombatSuit.isSelected();
     }
 
     public int getGunnery() {

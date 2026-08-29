@@ -379,6 +379,16 @@ public class ConvInfantry extends Infantry {
      *
      * @return {@code true} if this platoon may operate in a tainted atmosphere
      */
+    /**
+     * Whether this platoon wears a MekWarrior Combat Suit (TO:AUE p.129). On its own that only means the armor kit
+     * is fitted; what it protects against is decided by the optional rule.
+     *
+     * @return {@code true} if the platoon's armor kit is a combat suit
+     */
+    public boolean hasCombatSuit() {
+        return hasArmorKitFlag(MiscTypeFlag.S_COMBAT_SUIT);
+    }
+
     public boolean isXCTForTaintedAtmosphere() {
         return isXCT() && hasArmorKitFlag(MiscTypeFlag.S_TAINTED_ATMOSPHERE);
     }
@@ -1189,6 +1199,11 @@ public class ConvInfantry extends Infantry {
 
     @Override
     public boolean doomedInExtremeTemp() {
+        // An armored cooling suit handles heat, which is what it is built for, but not cold.
+        if ((game != null) && CombatSuitRules.protectsAgainstTemperature(this,
+              game.getPlanetaryConditions().getTemperature())) {
+            return false;
+        }
         // If there is no game object, count any temperature protection.
         if (getArmorKit() != null) {
             if (getArmorKit().hasFlag(MiscTypeFlag.S_XCT_VACUUM)) {

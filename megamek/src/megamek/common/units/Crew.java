@@ -78,6 +78,8 @@ public class Crew implements Serializable {
     private final String[] nicknames;
     private final Gender[] genders;
     private final boolean[] clanPilots;
+    /** Whether each crew member is wearing a MekWarrior Combat Suit, TO:AUE p.129. */
+    private final boolean[] combatSuits;
     private final Portrait[] portraits;
 
     private final int[] gunnery;
@@ -249,6 +251,7 @@ public class Crew implements Serializable {
         Arrays.fill(getGenders(), Gender.RANDOMIZE);
         setGender(gender, 0);
         clanPilots = new boolean[slots];
+        combatSuits = new boolean[slots];
         Arrays.fill(getClanPilots(), clanPilot);
         portraits = new Portrait[slots];
         for (int i = 0; i < slots; i++) {
@@ -398,6 +401,41 @@ public class Crew implements Serializable {
 
     public void setClanPilot(final boolean clanPilot, final int position) {
         getClanPilots()[position] = clanPilot;
+    }
+
+    public boolean[] getCombatSuits() {
+        return combatSuits;
+    }
+
+    /**
+     * Whether this crew member is wearing a MekWarrior Combat Suit (TO:AUE p.129), which under the optional rule
+     * keeps them breathing if they end up outside their unit.
+     *
+     * @param position the crew slot to ask about
+     *
+     * @return {@code true} if that crew member has a suit
+     */
+    public boolean hasCombatSuit(final int position) {
+        return (position < getCombatSuits().length) ? getCombatSuits()[position] : getCombatSuits()[0];
+    }
+
+    /**
+     * Whether anyone aboard is wearing a MekWarrior Combat Suit. A vehicle crew is treated as a single body, so
+     * one slot answers for all of them.
+     *
+     * @return {@code true} if any crew member has a suit
+     */
+    public boolean hasAnyCombatSuit() {
+        for (boolean hasSuit : getCombatSuits()) {
+            if (hasSuit) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setHasCombatSuit(final boolean hasCombatSuit, final int position) {
+        getCombatSuits()[position] = hasCombatSuit;
     }
 
     public Portrait[] getPortraits() {

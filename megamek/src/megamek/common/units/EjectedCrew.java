@@ -53,6 +53,10 @@ import megamek.logging.MMLogger;
  * @author Klaus Mittag
  */
 public class EjectedCrew extends ConvInfantry {
+    /** The internal name of the armor kit an ejecting crew may be wearing, TO:AUE p.129. */
+    // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
+    private static final String COMBAT_SUIT_NAME = "MechWarrior Combat Suit";
+
     private static final MMLogger logger = MMLogger.create(EjectedCrew.class);
 
     protected int originalRideId;
@@ -110,6 +114,27 @@ public class EjectedCrew extends ConvInfantry {
             } catch (Exception ex) {
                 logger.error("", ex);
             }
+        }
+        issueCombatSuitIfWorn(originalRide);
+    }
+
+    /**
+     * Puts the MekWarrior Combat Suit on the crew if the ride they left had them wearing one and the optional rule
+     * is in play. The suit travels as a real armor kit rather than a flag, so everything downstream that reads armor
+     * kits sees it.
+     *
+     * @param originalRide the unit this crew is leaving
+     */
+    private void issueCombatSuitIfWorn(Entity originalRide) {
+        if (!CombatSuitRules.isCrewWearingCombatSuit(originalRide, originalRide.getGame())) {
+            return;
+        }
+        try {
+            addEquipment(EquipmentType.get(COMBAT_SUIT_NAME), LOC_INFANTRY);
+            logger.debug("[CombatSuit] {}: left {} wearing a MekWarrior Combat Suit",
+                  getDisplayName(), originalRide.getDisplayName());
+        } catch (Exception exception) {
+            logger.error("Could not fit a MekWarrior Combat Suit to an ejected crew", exception);
         }
     }
 

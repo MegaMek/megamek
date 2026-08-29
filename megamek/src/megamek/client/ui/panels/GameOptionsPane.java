@@ -124,6 +124,7 @@ public class GameOptionsPane extends JPanel {
           OptionsConstants.ADVANCED_NO_IGNITE_CLEAR,
           OptionsConstants.ADVANCED_EXTREME_TEMPERATURE_SURVIVAL,
           OptionsConstants.ADVANCED_ARMED_MEKWARRIORS,
+          OptionsConstants.RPG_COMBAT_SUITS,
           OptionsConstants.ADVANCED_PILOTS_VISUAL_RANGE_ONE,
           OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT,
           OptionsConstants.ADVANCED_METAL_CONTENT,

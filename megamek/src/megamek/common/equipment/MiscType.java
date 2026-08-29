@@ -2910,7 +2910,7 @@ public class MiscType extends EquipmentType {
 
         misc.damageDivisor = 1.0;
         misc.cost = 20000;
-        misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
+        misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_COMBAT_SUIT);
         misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.E)

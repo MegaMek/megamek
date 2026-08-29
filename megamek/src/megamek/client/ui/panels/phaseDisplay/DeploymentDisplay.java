@@ -171,6 +171,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     // is the shift key held?
     private boolean turnMode = false;
     private boolean assaultDropPreference = false;
+    /** Whether the crews-will-die-if-they-eject warning has already been given this deployment phase. */
+    private boolean hasWarnedAboutAutoEjection = false;
     private final Set<ElevationOption> lastHexDeploymentOptions = new HashSet<>();
     private ElevationOption lastDeploymentOption = null;
 
@@ -471,11 +473,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
         }
 
-        if (GUIP.getNagForAutoEject() && willEjectAutomatically(entity)
-              && game.getPlanetaryConditions().isLethalToEjectedCrew()) {
-            logger.debug("[EnvironmentalSealing] {}: warning about auto-ejection - ejection is switched on and "
-                  + "the conditions would kill the crew", entity.getShortName());
-            if (askAboutAutoEjectIntoLethalConditions(entity)) {
+        if (shouldWarnAboutAutoEjection()) {
+            List<String> unitsThatWillEject = unitsThatWillEjectTheirCrew();
+            hasWarnedAboutAutoEjection = true;
+            logger.debug("[EnvironmentalSealing] warning about auto-ejection - {} unit(s) would eject their crew "
+                  + "into conditions that kill them", unitsThatWillEject.size());
+            if (askAboutAutoEjectIntoLethalConditions(unitsThatWillEject)) {
                 takeBackDeployment(entity,
                       Messages.getString("DeploymentDisplay.ConfirmAutoEject.cancelReason"));
                 return true;
@@ -558,13 +561,44 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
+     * Whether the player still needs telling that their crews will die if they eject here.
+     * <p>
+     * Asked once for the whole force rather than once per unit, because automatic ejection is switched on by default
+     * and the answer is the same for every unit on the board: the conditions cover the whole map.
+     *
+     * @return {@code true} if the warning is due
+     */
+    private boolean shouldWarnAboutAutoEjection() {
+        if (hasWarnedAboutAutoEjection || !GUIP.getNagForAutoEject()) {
+            return false;
+        }
+        if (!game.getPlanetaryConditions().isLethalToEjectedCrew()) {
+            return false;
+        }
+        return !unitsThatWillEjectTheirCrew().isEmpty();
+    }
+
+    /**
+     * The names of this player's units that are set to throw their crews out on their own initiative.
+     *
+     * @return the short names of every affected unit, in the order the game holds them
+     */
+    private List<String> unitsThatWillEjectTheirCrew() {
+        return game.getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
+              .stream()
+              .filter(this::willEjectAutomatically)
+              .map(Entity::getShortName)
+              .toList();
+    }
+
+    /**
      * Whether this unit is set to throw its crew out on its own initiative.
      * <p>
      * This mirrors the test the server itself makes before ejecting anyone: the master switch has to be on, and when
      * the Conditional Ejection game option is in play at least one of the individual triggers has to be armed as
      * well. Only BattleMeks and aerospace units have the setting at all.
      *
-     * @param entity the unit being deployed
+     * @param entity the unit to check
      *
      * @return {@code true} if the unit would eject its crew automatically
      */
@@ -585,21 +619,22 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * Warns that this unit will eject its crew into conditions that will kill them, and asks whether to go ahead.
+     * Warns that these units will eject their crews into conditions that will kill them, and asks whether to go
+     * ahead with the deployment.
      * <p>
-     * The unit itself is perfectly able to fight here; it is the pilot who cannot survive outside it. So the choice
-     * is only whether to deploy, and the fix the player usually wants is to turn ejection off in the unit's own
+     * The units themselves are perfectly able to fight here; it is the crews who cannot survive outside them. So the
+     * choice is only whether to deploy, and the fix a player usually wants is to turn ejection off in each unit's
      * configuration and try again.
      *
-     * @param entity the unit being deployed
+     * @param unitsThatWillEject the short names of the affected units
      *
      * @return {@code true} if the player wants to take the deployment back
      */
-    private boolean askAboutAutoEjectIntoLethalConditions(Entity entity) {
+    private boolean askAboutAutoEjectIntoLethalConditions(List<String> unitsThatWillEject) {
         JCheckBox dontAskAgain = new JCheckBox(
               Messages.getString("DeploymentDisplay.ConfirmAutoEject.dontAskAgain"));
         Object[] message = { Messages.getString("DeploymentDisplay.ConfirmAutoEject.message",
-              entity.getShortName()), dontAskAgain };
+              String.join(", ", unitsThatWillEject)), dontAskAgain };
         Object[] choices = { Messages.getString("DeploymentDisplay.ConfirmAutoEject.deployAnyway"),
               Messages.getString("DeploymentDisplay.ConfirmAutoEject.cancel") };
 
@@ -744,6 +779,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
 
         if (game.getPhase().isDeployment()) {
+            hasWarnedAboutAutoEjection = false;
             setStatusBarText(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase"));
         }
     }

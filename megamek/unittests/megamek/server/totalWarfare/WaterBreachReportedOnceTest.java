@@ -144,4 +144,19 @@ class WaterBreachReportedOnceTest {
         assertEquals(ILocationExposureStatus.BREACHED, tank.getLocationStatus(Tank.LOC_RIGHT),
               "a breach does not heal by moving, and leaving it marked is what stops the repeat");
     }
+
+    @Test
+    @DisplayName("A breach survives the unit leaving the water")
+    void aBreachSurvivesLeavingTheWater() {
+        Tank tank = tankWithStrippedRightSide();
+        gameManager.doSetLocationsExposure(tank, waterHex(), false, -1);
+
+        // Drive back out onto dry land.
+        tank.setElevation(0);
+        gameManager.doSetLocationsExposure(tank, new Hex(), false, 0);
+
+        assertEquals(ILocationExposureStatus.BREACHED, tank.getLocationStatus(Tank.LOC_RIGHT),
+              "\"Even if a unit exits the water, all limbs and equipment in the flooded location remain "
+                    + "non-functional\" (TW p.121) - climbing out does not close the hole");
+    }
 }

@@ -8739,6 +8739,11 @@ public class TWGameManager extends AbstractGameManager {
             }
         } else {
             for (int loop = 0; loop < entity.locations(); loop++) {
+                // "Even if a unit exits the water, all limbs and equipment in the flooded location remain
+                // non-functional" (TW p.121), so climbing out does not close the hole either.
+                if (entity.getLocationStatus(loop) == ILocationExposureStatus.BREACHED) {
+                    continue;
+                }
                 entity.setLocationStatus(loop, airExposureStatus(entity, loop, conditions, aeroSpaceborne));
             }
         }

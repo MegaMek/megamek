@@ -40,14 +40,17 @@ import megamek.common.options.OptionsConstants;
 /**
  * The optional MekWarrior Combat Suit rule: what the suit protects a crew from once they are outside their unit.
  * <p>
- * The suit is a real piece of equipment (TO:AUE p.129) but the book gives it only a damage divisor, so what follows is
- * an optional rule read off its description rather than a printed one, and it does nothing unless
- * {@link OptionsConstants#RPG_COMBAT_SUITS} is switched on.
+ * This is not a house rule. A Time of War p.294 gives the elite MekWarrior kit as a combat suit plus a combat
+ * neurohelmet, and states the helmet "may be sealed in hostile environments" with its own air supply. The tabletop
+ * has no equivalent - {@code MiscType} carries the suit with a damage divisor and nothing else - so this adapts the
+ * roleplaying equipment to the battlefield, and does nothing unless {@link OptionsConstants#RPG_COMBAT_SUITS} is
+ * switched on.
  * <p>
- * The description is specific about what the suit does. Its sealed helmet carries six hours of air from an internal
- * supply, which covers anything that would otherwise be breathed in, and it is built as an armoured cooling suit,
- * which covers heat. It also says plainly that the suit "is not pressurized for underwater or vacuum environments",
- * so those are left alone, along with extreme cold and the physical dangers of a storm or a tornado.
+ * What the kit protects against follows from what it is. The helmet's own air covers anything that would otherwise
+ * be breathed in, so a tainted or toxic atmosphere is survivable, and the suit is armoured cooling gear, so heat is
+ * too. It covers only the torso, arms and legs and is not pressurized, so vacuum, a trace atmosphere and water are
+ * left alone - holding pressure over a whole body is a different job from supplying air. Extreme cold and the
+ * physical dangers of a storm or a tornado are untouched for the same reason.
  * <p>
  * Both the client and the server ask these questions, so they live here rather than in either one.
  */
@@ -119,8 +122,8 @@ public final class CombatSuitRules {
     /**
      * Whether a suit keeps its wearer alive in air they would otherwise have to breathe.
      * <p>
-     * This is the suit's own air supply doing the work, so it answers for a tainted atmosphere and a toxic one
-     * alike. It says nothing about vacuum, where there is no pressure for the suit to hold.
+     * This is the kit's own air supply doing the work, so it answers for a tainted atmosphere and a toxic one alike.
+     * It says nothing about vacuum, which needs pressure held over the whole body rather than air to breathe.
      *
      * @param ejectedCrew the crew on the board, or {@code null}
      *

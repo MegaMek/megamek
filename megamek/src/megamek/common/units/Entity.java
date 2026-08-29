@@ -9233,8 +9233,13 @@ public abstract class Entity extends TurnOrdered
             mod = 1;
         }
 
-        if (waterLevel >=1 && overallMoveType == EntityMovementType.MOVE_RUN && !Game.rulesManager.getRulesMovement().cannotRunInWater(movementMode, false)) {
-            roll.append(new PilotingRollData(getId(), 0, "entering Depth " + waterLevel + " Water"));
+        // Running into water forces the check even where walking in would not, but adds nothing to the target
+        // number itself. It needs its own wording: sharing the depth entry's description below printed the same
+        // phrase twice in the report, which reads as the unit being penalised for the water twice over.
+        if (waterLevel >= 1
+              && (overallMoveType == EntityMovementType.MOVE_RUN)
+              && !Game.rulesManager.getRulesMovement().cannotRunInWater(movementMode, false)) {
+            roll.append(new PilotingRollData(getId(), 0, "running into Depth " + waterLevel + " Water"));
         }
 
         if ((waterLevel > 1) &&

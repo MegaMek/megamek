@@ -177,4 +177,44 @@ class LethalToEjectedCrewTest {
     void survivableConditionsNameNothing() {
         assertNull(survivableConditions().whyLethalToEjectedCrew());
     }
+
+    @Test
+    void twoConditionsAreBothNamed() {
+        PlanetaryConditions conditions = survivableConditions();
+        conditions.setAtmosphere(Atmosphere.VACUUM);
+        conditions.setTemperature(-40);
+
+        assertEquals("the vacuum and the extreme cold", conditions.whyLethalToEjectedCrew(),
+              "naming only the vacuum would invite the player to warm the map up and think the crew was safe");
+    }
+
+    @Test
+    void threeConditionsReadAsAList() {
+        PlanetaryConditions conditions = survivableConditions();
+        conditions.setAtmosphere(Atmosphere.VACUUM);
+        conditions.setWind(Wind.TORNADO_F1_TO_F3);
+        conditions.setTemperature(60);
+
+        assertEquals("the vacuum, the tornado and the extreme heat", conditions.whyLethalToEjectedCrew());
+    }
+
+    @Test
+    void aTaintIsNotNamedAlongsideVacuum() {
+        PlanetaryConditions conditions = survivableConditions();
+        conditions.setAtmosphere(Atmosphere.VACUUM);
+        conditions.setAtmosphericTaint(AtmosphericTaint.CAUSTIC_TOXIC);
+
+        assertEquals(Messages.getString("PlanetaryConditions.LethalToEjectedCrew.Vacuum"),
+              conditions.whyLethalToEjectedCrew(),
+              "with no atmosphere there is nothing for a taint to be carried in, so saying both repeats itself");
+    }
+
+    @Test
+    void aTornadoIsNamedInsteadOfAStormRatherThanAsWell() {
+        PlanetaryConditions conditions = survivableConditions();
+        conditions.setWind(Wind.TORNADO_F4);
+
+        assertEquals(Messages.getString("PlanetaryConditions.LethalToEjectedCrew.Tornado"),
+              conditions.whyLethalToEjectedCrew());
+    }
 }

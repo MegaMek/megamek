@@ -36,6 +36,8 @@ package megamek.common.planetaryConditions;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import megamek.common.Messages;
@@ -709,35 +711,59 @@ public class PlanetaryConditions implements Serializable {
     }
 
     /**
-     * What it is out there that would kill a crew that ejects, phrased to open a sentence.
+     * What it is out there that would kill a crew that ejects, phrased to sit inside a sentence.
      * <p>
-     * Naming the condition tells the player which one to change; "the conditions" leaves them guessing. Where more
-     * than one would do it, the first one found is named rather than all of them, because one reason is enough to
-     * make the decision and a list of them is not more useful.
+     * Every condition that would do it is named, not just the first. Naming one when two apply invites the player to
+     * fix that one and think the crew is safe, when the other is still lethal.
      *
-     * @return the condition that would kill an ejecting crew, or {@code null} if none would
+     * @return the conditions that would kill an ejecting crew, joined for reading, or {@code null} if none would
      */
     public @Nullable String whyLethalToEjectedCrew() {
-        if (getAtmosphere().isLighterThan(Atmosphere.THIN)) {
-            return Messages.getString("PlanetaryConditions.LethalToEjectedCrew.Vacuum");
+        List<String> lethalConditions = lethalToEjectedCrewConditions();
+        if (lethalConditions.isEmpty()) {
+            return null;
         }
-        if (TaintedAtmosphereRules.requiresXctInfantry(getAtmosphericTaint())) {
-            return getAtmosphericTaint().isToxic()
+        // Built from the end backwards so the joining words come from the bundle rather than being pasted on
+        // here: a properties value cannot carry a leading space, so " and " could not be a message of its own.
+        String joinedConditions = lethalConditions.getLast();
+        for (int index = lethalConditions.size() - 2; index >= 0; index--) {
+            String joinKey = (index == lethalConditions.size() - 2)
+                  ? "PlanetaryConditions.LethalToEjectedCrew.lastPair"
+                  : "PlanetaryConditions.LethalToEjectedCrew.listItem";
+            joinedConditions = Messages.getString(joinKey, lethalConditions.get(index), joinedConditions);
+        }
+        return joinedConditions;
+    }
+
+    /**
+     * Each condition in force that would kill a crew that ejects into it.
+     *
+     * @return the conditions, in the order they are checked; empty if an ejecting crew would survive
+     */
+    private List<String> lethalToEjectedCrewConditions() {
+        List<String> lethalConditions = new ArrayList<>();
+        boolean isAirTooThinToBreathe = getAtmosphere().isLighterThan(Atmosphere.THIN);
+        if (isAirTooThinToBreathe) {
+            lethalConditions.add(Messages.getString("PlanetaryConditions.LethalToEjectedCrew.Vacuum"));
+        }
+        // With no atmosphere to speak of there is nothing for a taint to be carried in, so naming it as well as the
+        // vacuum would be saying the same thing twice in different words.
+        if (!isAirTooThinToBreathe && TaintedAtmosphereRules.requiresXctInfantry(getAtmosphericTaint())) {
+            lethalConditions.add(getAtmosphericTaint().isToxic()
                   ? Messages.getString("PlanetaryConditions.LethalToEjectedCrew.ToxicAir")
-                  : Messages.getString("PlanetaryConditions.LethalToEjectedCrew.TaintedAir");
+                  : Messages.getString("PlanetaryConditions.LethalToEjectedCrew.TaintedAir"));
         }
         if (getWind().isTornadoF1ToF3() || getWind().isTornadoF4()) {
-            return Messages.getString("PlanetaryConditions.LethalToEjectedCrew.Tornado");
-        }
-        if (getWind().isStorm()) {
-            return Messages.getString("PlanetaryConditions.LethalToEjectedCrew.Storm");
+            lethalConditions.add(Messages.getString("PlanetaryConditions.LethalToEjectedCrew.Tornado"));
+        } else if (getWind().isStorm()) {
+            lethalConditions.add(Messages.getString("PlanetaryConditions.LethalToEjectedCrew.Storm"));
         }
         if (isExtremeTemperature()) {
-            return (getTemperature() > 0)
+            lethalConditions.add((getTemperature() > 0)
                   ? Messages.getString("PlanetaryConditions.LethalToEjectedCrew.ExtremeHeat")
-                  : Messages.getString("PlanetaryConditions.LethalToEjectedCrew.ExtremeCold");
+                  : Messages.getString("PlanetaryConditions.LethalToEjectedCrew.ExtremeCold"));
         }
-        return null;
+        return lethalConditions;
     }
 
     public boolean isBlowingSandActive() {

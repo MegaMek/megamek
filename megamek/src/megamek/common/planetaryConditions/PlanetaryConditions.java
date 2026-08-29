@@ -99,6 +99,11 @@ public class PlanetaryConditions implements Serializable {
           "PlanetaryConditions.Doomed.ToxicAtmosphere");
     private static final String MSG_CANNOT_LAUNCH = Messages.getString(
           "PlanetaryConditions.Doomed.CannotLaunch");
+    private static final String MSG_DOOMED_VACUUM = Messages.getString("PlanetaryConditions.Doomed.Vacuum");
+    private static final String MSG_DOOMED_TORNADO = Messages.getString("PlanetaryConditions.Doomed.Tornado");
+    private static final String MSG_DOOMED_STORM = Messages.getString("PlanetaryConditions.Doomed.Storm");
+    private static final String MSG_DOOMED_EXTREME_TEMPERATURE = Messages.getString(
+          "PlanetaryConditions.Doomed.ExtremeTemperature");
     private static final String MSG_INDICATOR_TEMPERATURE_COLD = "\u2744";
     private static final String MSG_INDICATOR_TEMPERATURE_HEAT = "\uD83D\uDD25";
     private static final String MSG_INDICATOR_TEMPERATURE_NORMAL = "\uD83C\uDF21";
@@ -621,24 +626,26 @@ public class PlanetaryConditions implements Serializable {
      */
     public String whyDoomed(Entity en, Game game) {
         if (getAtmosphere().isLighterThan(Atmosphere.THIN) && en.doomedInVacuum()) {
-            return "vacuum";
+            // "Vacuum" alone does not tell the player what to change, and three quite different things cause it.
+            String vacuumReason = EnvironmentalSealingRules.whyCannotOperateInVacuum(en);
+            return (vacuumReason != null) ? vacuumReason : MSG_DOOMED_VACUUM;
         }
         String taintReason = whyDoomedByAtmosphericTaint(en);
         if (taintReason != null) {
             return taintReason;
         }
         if (getWind().isTornadoF4() && !(en instanceof Mek)) {
-            return "tornado";
+            return MSG_DOOMED_TORNADO;
         }
         boolean doomF1ToF3Types = en.isConventionalInfantry() || en.getMovementMode().isHoverVTOLOrWiGE();
         if (getWind().isTornadoF1ToF3() && doomF1ToF3Types) {
-            return "tornado";
+            return MSG_DOOMED_TORNADO;
         }
         if (getWind().isStorm() && en.isConventionalInfantry()) {
-            return "storm";
+            return MSG_DOOMED_STORM;
         }
         if (isExtremeTemperature() && en.doomedInExtremeTemp() && !Compute.isInBuilding(game, en)) {
-            return "extreme temperature";
+            return MSG_DOOMED_EXTREME_TEMPERATURE;
         }
         return null;
     }

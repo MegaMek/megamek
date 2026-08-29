@@ -33,6 +33,7 @@
 
 package megamek.common.units;
 
+import megamek.common.Messages;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.Engine;
@@ -130,6 +131,36 @@ public final class EnvironmentalSealingRules {
      */
     public static boolean canOperateInVacuum(@Nullable Entity entity) {
         return isSealedAgainstAtmosphere(entity) && hasSealedOperationEngine(entity);
+    }
+
+    /**
+     * Why this unit cannot survive in vacuum, in the player's words, or {@code null} if it can.
+     * <p>
+     * "Vacuum" on its own does not tell a player what to change. Three quite different things doom a unit here - the
+     * way it moves, a missing chassis modification, and an engine that has to breathe - and only two of them can be
+     * fixed by picking a different unit of the same kind.
+     *
+     * @param entity the unit being deployed
+     *
+     * @return the reason, or {@code null} when the unit is fine in vacuum
+     */
+    public static @Nullable String whyCannotOperateInVacuum(@Nullable Entity entity) {
+        if (entity == null) {
+            return null;
+        }
+        if (entity.isConventionalInfantry()) {
+            return Messages.getString("EnvironmentalSealing.Vacuum.NoSpaceSuit");
+        }
+        if (entity.getMovementMode().isHoverVTOLOrWiGE()) {
+            return Messages.getString("EnvironmentalSealing.Vacuum.NothingToPushAgainst");
+        }
+        if (!isSealedAgainstAtmosphere(entity)) {
+            return Messages.getString("EnvironmentalSealing.Vacuum.NoSealing");
+        }
+        if (!hasSealedOperationEngine(entity)) {
+            return Messages.getString("EnvironmentalSealing.Vacuum.EngineNeedsAir");
+        }
+        return null;
     }
 
     /**

@@ -34,7 +34,9 @@
 package megamek.common.units;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.equipment.Engine;
@@ -277,5 +279,28 @@ class EnvironmentalSealingRulesTest {
             assertTrue(sealedFlyer.doomedInVacuum(),
                   airPushingMode + " has no air to push against, however well sealed (TO:AR p.35, footnote 31)");
         }
+    }
+
+    @Test
+    void eachCauseOfVacuumDeathGivesItsOwnReason() throws LocationFullException {
+        // The text itself is translatable and not worth pinning; what matters is that a player asking "why?" gets a
+        // different answer for each of the three quite different causes, and none at all when the unit is fine.
+        String noSealing = EnvironmentalSealingRules.whyCannotOperateInVacuum(
+              combatVehicle(Engine.NORMAL_ENGINE, false));
+        String engineNeedsAir = EnvironmentalSealingRules.whyCannotOperateInVacuum(
+              combatVehicle(Engine.COMBUSTION_ENGINE, true));
+        Tank sealedHovercraft = combatVehicle(Engine.NORMAL_ENGINE, true);
+        sealedHovercraft.setMovementMode(EntityMovementMode.HOVER);
+        String nothingToPushAgainst = EnvironmentalSealingRules.whyCannotOperateInVacuum(sealedHovercraft);
+
+        assertNotNull(noSealing, "an unsealed vehicle should be told it has no sealing");
+        assertNotNull(engineNeedsAir, "a sealed vehicle on an ICE should be told about its engine");
+        assertNotNull(nothingToPushAgainst, "a hovercraft should be told it has nothing to push against");
+        assertNotEquals(noSealing, engineNeedsAir, "missing sealing and a breathing engine are different problems");
+        assertNotEquals(engineNeedsAir, nothingToPushAgainst, "the engine and the movement type are different too");
+        assertNotEquals(noSealing, nothingToPushAgainst, "so are the sealing and the movement type");
+
+        assertNull(EnvironmentalSealingRules.whyCannotOperateInVacuum(combatVehicle(Engine.NORMAL_ENGINE, true)),
+              "a sealed, fusion-powered tracked vehicle has no reason to give");
     }
 }

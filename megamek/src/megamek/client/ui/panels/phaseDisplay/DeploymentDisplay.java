@@ -491,24 +491,45 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * Lifts a unit back off the board after the player declines to deploy it into conditions that would kill it.
+     * Takes a unit back off the board and moves on to the next one, after the player declines to deploy it into
+     * conditions that would kill it.
      * <p>
-     * Declining used to change nothing the player could see: the unit kept the position it had been given, the Deploy
-     * button stayed armed, and pressing it again asked the same question, which reads as a dialog that will not take
-     * No for an answer. Taking the unit back off the board ends that, and leaves the player free to place it
-     * somewhere else, pick a different unit, or come back and accept.
+     * Moving on is the whole point. The conditions that trigger this question - vacuum, a tainted atmosphere, a
+     * tornado - apply to the whole map, so there is no other hex the player could have placed the unit in that would
+     * have helped. Leaving it selected only invited them to try again and be asked the same question, which reads as
+     * a dialog that will not take No for an answer.
      *
      * @param entity the unit being taken back off the board
      * @param reason the reason the conditions would destroy it, as {@code whyDoomed} gave it
      */
     private void takeBackDeployment(Entity entity, String reason) {
-        entity.setPosition(null);
-        clientgui.boardViews().forEach(boardView -> ((BoardView) boardView).redrawEntity(entity));
-        clientgui.boardViews().forEach(IBoardView::repaint);
-        butDone.setEnabled(false);
         clientgui.addToast(ToastLevel.INFO,
               Messages.getString("DeploymentDisplay.doomedDeploymentCancelled", reason),
               entity);
+        moveOnToNextDeployableUnit();
+    }
+
+    /**
+     * Lifts the current unit back off the board, releases anything it picked up this turn, and selects the next unit
+     * waiting to deploy. This is what the Next button does, and what declining a doomed deployment does.
+     */
+    private void moveOnToNextDeployableUnit() {
+        final Client client = clientgui.getClient();
+        if (currentEntity() != null) {
+            currentEntity().setPosition(null);
+            clientgui.boardViews().forEach(boardView -> ((BoardView) boardView).redrawEntity(currentEntity()));
+            // Unload any units loaded during this turn, but leave the ones loaded back in the lobby alone.
+            List<Integer> lobbyLoadedUnits = currentEntity().getLoadedKeepers();
+            for (Entity other : currentEntity().getLoadedUnits()) {
+                if (!lobbyLoadedUnits.contains(other.getId())) {
+                    currentEntity().unload(other);
+                    other.setTransportId(Entity.NONE);
+                    other.newRound(client.getGame().getRoundCount());
+                }
+            }
+        }
+        clientgui.boardViews().forEach(IBoardView::repaint);
+        selectEntity(client.getNextDeployableEntityNum(cen));
     }
 
     /** Sends an entity removal to the server. */
@@ -951,21 +972,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
 
         if (actionCmd.equals(DeployCommand.DEPLOY_NEXT.getCmd())) {
-            if (currentEntity() != null) {
-                currentEntity().setPosition(null);
-                clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentEntity()));
-                // Unload any loaded units during this turn
-                List<Integer> lobbyLoadedUnits = currentEntity().getLoadedKeepers();
-                for (Entity other : currentEntity().getLoadedUnits()) {
-                    // Ignore units loaded before this turn
-                    if (!lobbyLoadedUnits.contains(other.getId())) {
-                        currentEntity().unload(other);
-                        other.setTransportId(Entity.NONE);
-                        other.newRound(client.getGame().getRoundCount());
-                    }
-                }
-            }
-            selectEntity(client.getNextDeployableEntityNum(cen));
+            moveOnToNextDeployableUnit();
         } else if (actionCmd.equals(DeployCommand.DEPLOY_TURN.getCmd())) {
             turnMode = true;
         } else if (actionCmd.equals(DeployCommand.DEPLOY_LOAD.getCmd())) {

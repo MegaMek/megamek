@@ -85,10 +85,12 @@ import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Aero;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
 import megamek.common.units.TrainLayout;
@@ -469,6 +471,17 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
         }
 
+        if (GUIP.getNagForAutoEject() && willEjectAutomatically(entity)
+              && game.getPlanetaryConditions().isLethalToEjectedCrew()) {
+            logger.debug("[EnvironmentalSealing] {}: warning about auto-ejection - ejection is switched on and "
+                  + "the conditions would kill the crew", entity.getShortName());
+            if (askAboutAutoEjectIntoLethalConditions(entity)) {
+                takeBackDeployment(entity,
+                      Messages.getString("DeploymentDisplay.ConfirmAutoEject.cancelReason"));
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -542,6 +555,68 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             // Closing the dialog with the window button lands here too, and means the same as Cancel.
             default -> DoomedDeploymentChoice.CANCEL;
         };
+    }
+
+    /**
+     * Whether this unit is set to throw its crew out on its own initiative.
+     * <p>
+     * This mirrors the test the server itself makes before ejecting anyone: the master switch has to be on, and when
+     * the Conditional Ejection game option is in play at least one of the individual triggers has to be armed as
+     * well. Only BattleMeks and aerospace units have the setting at all.
+     *
+     * @param entity the unit being deployed
+     *
+     * @return {@code true} if the unit would eject its crew automatically
+     */
+    private boolean willEjectAutomatically(Entity entity) {
+        boolean isConditionalEjectionInPlay =
+              game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION);
+        if (entity instanceof Mek mek) {
+            boolean isAnyTriggerArmed = mek.isCondEjectAmmo() || mek.isCondEjectEngine()
+                  || mek.isCondEjectCTDest() || mek.isCondEjectHeadshot();
+            return mek.isAutoEject() && (!isConditionalEjectionInPlay || isAnyTriggerArmed);
+        }
+        if (entity instanceof Aero aero) {
+            boolean isAnyTriggerArmed = aero.isCondEjectAmmo() || aero.isCondEjectFuel()
+                  || aero.isCondEjectSIDest();
+            return aero.isAutoEject() && (!isConditionalEjectionInPlay || isAnyTriggerArmed);
+        }
+        return false;
+    }
+
+    /**
+     * Warns that this unit will eject its crew into conditions that will kill them, and asks whether to go ahead.
+     * <p>
+     * The unit itself is perfectly able to fight here; it is the pilot who cannot survive outside it. So the choice
+     * is only whether to deploy, and the fix the player usually wants is to turn ejection off in the unit's own
+     * configuration and try again.
+     *
+     * @param entity the unit being deployed
+     *
+     * @return {@code true} if the player wants to take the deployment back
+     */
+    private boolean askAboutAutoEjectIntoLethalConditions(Entity entity) {
+        JCheckBox dontAskAgain = new JCheckBox(
+              Messages.getString("DeploymentDisplay.ConfirmAutoEject.dontAskAgain"));
+        Object[] message = { Messages.getString("DeploymentDisplay.ConfirmAutoEject.message",
+              entity.getShortName()), dontAskAgain };
+        Object[] choices = { Messages.getString("DeploymentDisplay.ConfirmAutoEject.deployAnyway"),
+              Messages.getString("DeploymentDisplay.ConfirmAutoEject.cancel") };
+
+        int chosenIndex = JOptionPane.showOptionDialog(clientgui.getFrame(),
+              message,
+              Messages.getString("DeploymentDisplay.ConfirmAutoEject.title"),
+              JOptionPane.DEFAULT_OPTION,
+              JOptionPane.WARNING_MESSAGE,
+              null,
+              choices,
+              choices[1]);
+
+        if (dontAskAgain.isSelected()) {
+            GUIP.setNagForAutoEject(false);
+        }
+        // Closing the dialog with the window button counts as cancelling, the same as the Cancel button.
+        return chosenIndex != 0;
     }
 
     /**

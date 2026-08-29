@@ -153,6 +153,9 @@ class EnvironmentalSealingRulesTest {
     private static Tank combatVehicle(int engineType, boolean sealed) throws LocationFullException {
         Tank tank = new Tank();
         tank.setWeight(50.0);
+        // A real vehicle's body carries no internal structure and reports zero armour even when undamaged; a bare
+        // Tank does not, so say so explicitly or the fixture is not the thing being modelled.
+        tank.initializeInternal(-1, Tank.LOC_BODY);
         tank.setEngine(new Engine(200, engineType, Engine.TANK_ENGINE));
         if (sealed) {
             EquipmentType sealing = EquipmentType.get(CV_ENVIRONMENTAL_SEALING);
@@ -351,5 +354,60 @@ class EnvironmentalSealingRulesTest {
               "and deeper still");
         assertFalse(EnvironmentalSealingRules.isMekCompletelySubmerged(true, 0),
               "Depth 0 covers nobody");
+    }
+
+    @Test
+    void aHealthyVehicleIsNotWarnedAboutWater() throws LocationFullException {
+        Tank tank = combatVehicle(Engine.NORMAL_ENGINE, true);
+        for (int location = 0; location < tank.locations(); location++) {
+            tank.initializeArmor(10, location);
+        }
+
+        assertFalse(EnvironmentalSealingRules.wouldBeDestroyedByWaterBreach(tank),
+              "a vehicle with its armour intact has nothing to fear from the water");
+    }
+
+    @Test
+    void aVehicleWithAStrippedSideIsDestroyedByWater() throws LocationFullException {
+        Tank tank = combatVehicle(Engine.NORMAL_ENGINE, true);
+        for (int location = 0; location < tank.locations(); location++) {
+            tank.initializeArmor(10, location);
+        }
+        tank.initializeArmor(0, Tank.LOC_RIGHT);
+
+        assertTrue(EnvironmentalSealingRules.wouldBeDestroyedByWaterBreach(tank),
+              "a location with no armour left breaches on contact with water, and that destroys a vehicle");
+    }
+
+    @Test
+    void aVehicleBodyWithNoArmourIsNotMistakenForDamage() throws LocationFullException {
+        // A vehicle body reports zero armour on a perfectly healthy unit, and has no internal structure. The breach
+        // code skips it for that reason, and so must the warning - otherwise every vehicle is warned about water.
+        Tank tank = combatVehicle(Engine.NORMAL_ENGINE, true);
+        for (int location = 0; location < tank.locations(); location++) {
+            tank.initializeArmor(10, location);
+        }
+        tank.initializeArmor(0, Tank.LOC_BODY);
+
+        assertFalse(EnvironmentalSealingRules.wouldBeDestroyedByWaterBreach(tank),
+              "the body is not a real location and never breaches");
+    }
+
+    @Test
+    void aMekIsOnlyDoomedByWaterWhenTheFatalLocationsAreBare() throws LocationFullException {
+        BipedMek mek = industrialMek(Engine.NORMAL_ENGINE, true);
+        for (int location = 0; location < mek.locations(); location++) {
+            mek.initializeArmor(10, location);
+        }
+
+        assertFalse(EnvironmentalSealingRules.wouldBeDestroyedByWaterBreach(mek), "intact, so no warning");
+
+        mek.initializeArmor(0, Mek.LOC_LEFT_ARM);
+        assertFalse(EnvironmentalSealingRules.wouldBeDestroyedByWaterBreach(mek),
+              "a flooded arm is bad, but it does not sink the Mek");
+
+        mek.initializeArmor(0, Mek.LOC_HEAD);
+        assertTrue(EnvironmentalSealingRules.wouldBeDestroyedByWaterBreach(mek),
+              "a breached head destroys the Mek and kills the MekWarrior");
     }
 }

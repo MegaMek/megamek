@@ -165,6 +165,54 @@ public final class EnvironmentalSealingRules {
     }
 
     /**
+     * Whether going under water would destroy this unit outright because damage it is already carrying has
+     * stripped a location bare.
+     * <p>
+     * "If all of a location's armor is destroyed (whether this occurred before the unit entered the water hex or
+     * while it is submerged), that location is automatically breached" (TW p.121). There is no roll to survive: a
+     * breached vehicle is torn apart, and a Mek breached in the head or centre torso is destroyed with it. A player
+     * driving a damaged unit into a river deserves to be told that before the water closes over it.
+     * <p>
+     * A location with no internal structure is skipped. A vehicle's body reports zero armour on a perfectly healthy
+     * unit, and the breach code passes over it for exactly that reason.
+     *
+     * @param entity the unit about to enter the water
+     *
+     * @return {@code true} if entering water would breach it somewhere fatal
+     */
+    public static boolean wouldBeDestroyedByWaterBreach(@Nullable Entity entity) {
+        if (entity == null) {
+            return false;
+        }
+        if (entity instanceof Mek) {
+            return isLocationStrippedBare(entity, Mek.LOC_HEAD)
+                  || isLocationStrippedBare(entity, Mek.LOC_CENTER_TORSO);
+        }
+        if (!(entity instanceof Tank)) {
+            return false;
+        }
+        for (int location = 0; location < entity.locations(); location++) {
+            if (isLocationStrippedBare(entity, location)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Whether this location is a real one that has lost all its armour, and would therefore breach on contact with
+     * water without any roll being made.
+     *
+     * @param entity   the unit to check
+     * @param location the location to check
+     *
+     * @return {@code true} if the location exists and has no armour left
+     */
+    private static boolean isLocationStrippedBare(Entity entity, int location) {
+        return (entity.getInternal(location) >= 0) && (entity.getArmor(location) <= 0);
+    }
+
+    /**
      * Whether a Mek in water of this depth is completely below the surface, rather than wading with part of itself
      * in the open air.
      * <p>

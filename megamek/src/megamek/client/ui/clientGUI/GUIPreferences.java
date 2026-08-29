@@ -393,6 +393,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String NAG_FOR_LAUNCH_DOORS = "NagForLaunchDoors";
     public static final String NAG_FOR_MECHANICAL_FALL_DAMAGE = "NagForMechanicalFallDamage";
     public static final String NAG_FOR_DOOMED = "NagForDoomed";
+    public static final String NAG_FOR_DOOMED_MOVE = "NagForDoomedMove";
+    public static final String NAG_FOR_AUTO_EJECT = "NagForAutoEject";
     public static final String NAG_FOR_DISHONOR = "NagForDishonor";
     public static final String NAG_FOR_WIGE_LANDING = "NagForWiGELanding";
     public static final String NAG_FOR_ODD_SIZED_BOARD = "NagForOddSizedBoard";
@@ -916,6 +918,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MOUSE_WHEEL_ZOOM_FLIP, true);
 
         store.setDefault(NAG_FOR_CRUSHING_BUILDINGS, true);
+        store.setDefault(NAG_FOR_DOOMED_MOVE, true);
+        store.setDefault(NAG_FOR_AUTO_EJECT, true);
         store.setDefault(NAG_FOR_MAP_ED_README, true);
         store.setDefault(NAG_FOR_MASC, true);
         store.setDefault(NAG_FOR_NO_ACTION, true);
@@ -1638,6 +1642,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getMouseWheelZoomFlip() {
         return store.getBoolean(MOUSE_WHEEL_ZOOM_FLIP);
+    }
+
+    public boolean getNagForDoomedMove() {
+        return store.getBoolean(NAG_FOR_DOOMED_MOVE);
+    }
+
+    public void setNagForDoomedMove(boolean shouldNag) {
+        store.setValue(NAG_FOR_DOOMED_MOVE, shouldNag);
+    }
+
+    public boolean getNagForAutoEject() {
+        return store.getBoolean(NAG_FOR_AUTO_EJECT);
+    }
+
+    public void setNagForAutoEject(boolean shouldNag) {
+        store.setValue(NAG_FOR_AUTO_EJECT, shouldNag);
     }
 
     public boolean getNagForCrushingBuildings() {

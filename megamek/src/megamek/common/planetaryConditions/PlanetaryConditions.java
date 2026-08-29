@@ -693,6 +693,24 @@ public class PlanetaryConditions implements Serializable {
         return null;
     }
 
+    /**
+     * Whether a crew that ejects into these conditions is killed by the environment alone.
+     * <p>
+     * An ejected MekWarrior or vehicle crew arrives on the board as a conventional infantry platoon with no space
+     * suit and no XCT gear, so every condition that kills unprotected foot troops kills them: unbreathable air, a
+     * tainted or toxic atmosphere, a storm or tornado, and extreme heat or cold. With auto-ejection switched on,
+     * a survivable ammunition explosion therefore becomes a dead pilot, which is the trap RFE #5579 asks the
+     * player be warned about before deploying.
+     *
+     * @return {@code true} if an ejecting crew would be killed by the conditions themselves
+     */
+    public boolean isLethalToEjectedCrew() {
+        boolean isAirUnbreathable = getAtmosphere().isLighterThan(Atmosphere.THIN);
+        boolean isAirPoisonous = TaintedAtmosphereRules.requiresXctInfantry(getAtmosphericTaint());
+        boolean isWindLethalToFootTroops = getWind().isStorm() || getWind().isStrongerThan(Wind.STORM);
+        return isAirUnbreathable || isAirPoisonous || isWindLethalToFootTroops || isExtremeTemperature();
+    }
+
     public boolean isBlowingSandActive() {
         return getBlowingSand().isBlowingSand() && getWind().isStrongerThan(Wind.LIGHT_GALE);
     }

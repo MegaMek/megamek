@@ -3309,7 +3309,7 @@ public class MoveStep implements Serializable {
                     // is already completely under in Depth 1, so it pays the underwater cost there. Anything only
                     // partly submerged is wading, and pays the lower Depth 1 cost from the Movement Costs Table.
                     boolean isFullySubmerged = (entity instanceof Mek)
-                          ? ((waterDepth > 1) || (isProne() && (waterDepth > 0)))
+                          ? EnvironmentalSealingRules.isMekCompletelySubmerged(isProne(), waterDepth)
                           : (waterDepth > 0);
                     if (!isFullySubmerged) {
                         mp++;

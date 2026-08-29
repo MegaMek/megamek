@@ -165,6 +165,24 @@ public final class EnvironmentalSealingRules {
     }
 
     /**
+     * Whether a Mek in water of this depth is completely below the surface, rather than wading with part of itself
+     * in the open air.
+     * <p>
+     * A standing Mek is two levels tall, so it takes Depth 2 water to cover it; lying down, Depth 1 is enough. Both
+     * the movement cost and the drowning rule turn on this same question, and the rules phrase it the same way each
+     * time - "a Depth 2 or greater water hex (or prone in a Depth 1 water hex)" (TW p.52), and "Meks must be in at
+     * least Depth 2 water, or at least Depth 1 if prone" (TW p.56).
+     *
+     * @param isProne    whether the Mek is lying down
+     * @param waterDepth the depth of the water it is in
+     *
+     * @return {@code true} if every part of the Mek is below the surface
+     */
+    public static boolean isMekCompletelySubmerged(boolean isProne, int waterDepth) {
+        return (waterDepth >= 2) || (isProne && (waterDepth >= 1));
+    }
+
+    /**
      * Whether this unit can be completely under water without drowning. The rules ask the same two questions as
      * vacuum does: an IndustrialMek "cannot be fully submerged unless [it] incorporate[s] both environmental sealing
      * and a Fission, Fusion or Fuel Cell engine" (TM p.216), and Support Vehicles may operate underwater on the same

@@ -334,4 +334,22 @@ class EnvironmentalSealingRulesTest {
         assertFalse(industrialMek.shouldDieAtEndOfTurnBecauseOfWater(),
               "a sealed IndustrialMek on a fusion engine is never marked to drown");
     }
+
+    @Test
+    void aProneMekIsSubmergedInShallowerWaterThanAStandingOne() {
+        // "a Depth 2 or greater water hex (or prone in a Depth 1 water hex)" (TW p.52). The Depth 2 clause has no
+        // stance qualifier, so lying down in deep water counts too - it is the shallow case the parenthetical adds.
+        assertFalse(EnvironmentalSealingRules.isMekCompletelySubmerged(false, 1),
+              "a standing Mek wades through Depth 1 with its head out");
+        assertTrue(EnvironmentalSealingRules.isMekCompletelySubmerged(true, 1),
+              "lying down in Depth 1 puts it under");
+        assertTrue(EnvironmentalSealingRules.isMekCompletelySubmerged(false, 2),
+              "Depth 2 covers a standing Mek");
+        assertTrue(EnvironmentalSealingRules.isMekCompletelySubmerged(true, 2),
+              "a prone Mek in Depth 2 is submerged as well - it does not escape the rule by lying down");
+        assertTrue(EnvironmentalSealingRules.isMekCompletelySubmerged(true, 5),
+              "and deeper still");
+        assertFalse(EnvironmentalSealingRules.isMekCompletelySubmerged(true, 0),
+              "Depth 0 covers nobody");
+    }
 }

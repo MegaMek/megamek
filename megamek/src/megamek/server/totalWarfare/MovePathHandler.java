@@ -1974,9 +1974,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
               && !EnvironmentalSealingRules.canOperateFullySubmerged(industrialMek)) {
             int waterDepth = getGame().getBoard(curBoardId).getHex(entity.getPosition())
                   .terrainLevel(Terrains.WATER);
-            boolean isSubmergedStanding = !entity.isProne() && (waterDepth >= 2);
-            boolean isSubmergedProne = entity.isProne() && (waterDepth == 1);
-            if (isSubmergedStanding || isSubmergedProne) {
+            // The Depth 2 clause of the rule carries no stance qualifier, so the parenthetical adds the shallow
+            // prone case rather than limiting the deep one to units still on their feet.
+            if (EnvironmentalSealingRules.isMekCompletelySubmerged(entity.isProne(), waterDepth)) {
                 logger.debug("[EnvironmentalSealing] {}: submerged in depth {} water with an engine that cannot run "
                       + "sealed - drowning at end of turn", entity.getShortName(), waterDepth);
                 industrialMek.setJustMovedIntoIndustrialKillingWater(true);

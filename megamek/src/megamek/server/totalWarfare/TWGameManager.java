@@ -8723,6 +8723,11 @@ public class TWGameManager extends AbstractGameManager {
             } else {
                 boolean isOutOfTheWater = entity.relHeight() >= 0;
                 for (int loop = 0; loop < entity.locations(); loop++) {
+                    // A breach does not heal by moving. Leaving it marked stops a later pass over the same water
+                    // resetting it to merely wet and announcing the same hole all over again.
+                    if (entity.getLocationStatus(loop) == ILocationExposureStatus.BREACHED) {
+                        continue;
+                    }
                     int status = isOutOfTheWater ?
                           airExposureStatus(entity, loop, conditions, aeroSpaceborne) :
                           ILocationExposureStatus.WET;
@@ -24288,6 +24293,10 @@ public class TWGameManager extends AbstractGameManager {
                 vDesc.addAll(new TaintedAtmosphereHandler(this).resolveVehicleBreach(tank, loc));
                 return vDesc;
             }
+            // Mark it before destroying the unit. Without this the location stays merely wet, and the guard at the
+            // top of this method cannot tell that it has already been breached - so the next exposure pass over
+            // the same water announces the same breach again.
+            entity.setLocationStatus(loc, ILocationExposureStatus.BREACHED);
             vDesc.addAll(destroyEntity(entity, "hull breach", true, true));
             return vDesc;
         }

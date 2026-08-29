@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.ToolTipManager;
 
@@ -57,7 +58,6 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.CollapseWarning;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
-import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DeployElevationChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DeployFacingChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.EntityChoiceDialog;
@@ -453,17 +453,18 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (GUIP.getNagForDoomed()) {
             String reason = game.getPlanetaryConditions().whyDoomed(entity, game);
             if (reason != null) {
-                String title = Messages.getString("DeploymentDisplay.ConfirmDoomed.title");
-                String body = Messages.getString("DeploymentDisplay.ConfirmDoomed.message", reason);
-                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
-                if (nag.getAnswer()) {
-                    // do they want to be bothered again?
-                    if (!nag.getShowAgain()) {
-                        GUIP.setNagForDoomed(false);
+                switch (askAboutDoomedDeployment(entity, reason)) {
+                    case DEPLOY_ANYWAY -> {
+                        // Fall through to the rest of the checks and deploy it.
                     }
-                } else {
-                    takeBackDeployment(entity, reason);
-                    return true;
+                    case REMOVE_FROM_GAME -> {
+                        remove();
+                        return true;
+                    }
+                    case CANCEL -> {
+                        takeBackDeployment(entity, reason);
+                        return true;
+                    }
                 }
             }
         }
@@ -490,28 +491,79 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         endMyTurn();
     }
 
+    /** What the player chose to do about a unit the planetary conditions would destroy. */
+    private enum DoomedDeploymentChoice {
+        /** Put it on the board anyway and accept the consequences. */
+        DEPLOY_ANYWAY,
+        /** Take it out of the game, so it stops being offered for deployment. */
+        REMOVE_FROM_GAME,
+        /** Neither - lift it back off the board and let the player think again. */
+        CANCEL
+    }
+
     /**
-     * Takes a unit back off the board and moves on to the next one, after the player declines to deploy it into
-     * conditions that would kill it.
+     * Asks what to do about a unit the planetary conditions would destroy.
      * <p>
-     * Moving on is the whole point. The conditions that trigger this question - vacuum, a tainted atmosphere, a
-     * tornado - apply to the whole map, so there is no other hex the player could have placed the unit in that would
-     * have helped. Leaving it selected only invited them to try again and be asked the same question, which reads as
-     * a dialog that will not take No for an answer.
+     * There are genuinely three answers here, not two. The conditions that raise this question - vacuum, a tainted
+     * atmosphere, a tornado - apply to the whole map, so a unit that cannot survive them cannot survive anywhere on
+     * this board, and the deployment phase keeps offering it until it is either deployed or taken out of the game.
+     * Removing it is therefore a real answer and needs its own button rather than being buried on the Remove button
+     * once the player works out that is what they need.
+     *
+     * @param entity the unit being deployed
+     * @param reason the reason the conditions would destroy it, as {@code whyDoomed} gave it
+     *
+     * @return what the player chose
+     */
+    private DoomedDeploymentChoice askAboutDoomedDeployment(Entity entity, String reason) {
+        JCheckBox dontAskAgain = new JCheckBox(
+              Messages.getString("DeploymentDisplay.ConfirmDoomed.dontAskAgain"));
+        Object[] message = { Messages.getString("DeploymentDisplay.ConfirmDoomed.message",
+              entity.getShortName(), reason), dontAskAgain };
+        Object[] choices = { Messages.getString("DeploymentDisplay.ConfirmDoomed.deployAnyway"),
+              Messages.getString("DeploymentDisplay.ConfirmDoomed.removeFromGame"),
+              Messages.getString("DeploymentDisplay.ConfirmDoomed.cancel") };
+
+        int chosenIndex = JOptionPane.showOptionDialog(clientgui.getFrame(),
+              message,
+              Messages.getString("DeploymentDisplay.ConfirmDoomed.title"),
+              JOptionPane.DEFAULT_OPTION,
+              JOptionPane.WARNING_MESSAGE,
+              null,
+              choices,
+              choices[2]);
+
+        if (dontAskAgain.isSelected()) {
+            GUIP.setNagForDoomed(false);
+        }
+        return switch (chosenIndex) {
+            case 0 -> DoomedDeploymentChoice.DEPLOY_ANYWAY;
+            case 1 -> DoomedDeploymentChoice.REMOVE_FROM_GAME;
+            // Closing the dialog with the window button lands here too, and means the same as Cancel.
+            default -> DoomedDeploymentChoice.CANCEL;
+        };
+    }
+
+    /**
+     * Lifts a unit back off the board after the player cancels out of deploying it into conditions that would kill
+     * it, leaving it selected so they can place it somewhere else or move on with the Next button.
      *
      * @param entity the unit being taken back off the board
      * @param reason the reason the conditions would destroy it, as {@code whyDoomed} gave it
      */
     private void takeBackDeployment(Entity entity, String reason) {
+        entity.setPosition(null);
+        clientgui.boardViews().forEach(boardView -> ((BoardView) boardView).redrawEntity(entity));
+        clientgui.boardViews().forEach(IBoardView::repaint);
+        butDone.setEnabled(false);
         clientgui.addToast(ToastLevel.INFO,
               Messages.getString("DeploymentDisplay.doomedDeploymentCancelled", reason),
               entity);
-        moveOnToNextDeployableUnit();
     }
 
     /**
      * Lifts the current unit back off the board, releases anything it picked up this turn, and selects the next unit
-     * waiting to deploy. This is what the Next button does, and what declining a doomed deployment does.
+     * waiting to deploy. This is what the Next button does.
      */
     private void moveOnToNextDeployableUnit() {
         final Client client = clientgui.getClient();

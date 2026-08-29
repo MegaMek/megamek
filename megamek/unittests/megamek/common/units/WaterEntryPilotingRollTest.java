@@ -33,6 +33,7 @@
 
 package megamek.common.units;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -74,38 +75,49 @@ class WaterEntryPilotingRollTest {
     }
 
     @Test
-    void runningIntoWaterReportsTheRunAndTheDepthSeparately() {
-        // Only the Core Rules let a Mek run in water at all, so this is the only ruleset where both entries appear
-        // and the duplicated wording was visible.
+    void runningIntoWaterReportsTheDepthOnce() {
+        // Under the Core Rules a Mek may use run MP in water, which is the only case where the removed entry used
+        // to appear. The report should now name the water once, not twice.
         Game.rulesManager = new CoreRulesManager();
 
         String report = runningMek().checkWaterMove(1, EntityMovementType.MOVE_RUN).getDesc().toLowerCase();
 
-        assertTrue(report.contains("running into depth 1 water"),
-              "the entry that forced the check should say the run is what forced it: " + report);
+        assertEquals(1, countOccurrences(report, "depth 1 water"),
+              "the water should be named once, not once to force the roll and again to modify it: " + report);
         assertTrue(report.contains("entering depth 1 water"),
               "the entry carrying the depth modifier keeps its wording, which Princess matches on: " + report);
     }
 
     @Test
-    void totalWarfareNeverAddsTheRunEntryBecauseMeksCannotRunInWater() {
-        Game.rulesManager = new TWRulesManager();
+    void runningStillForcesTheRollUnderCoreRules() {
+        // Removing the zero-modifier entry must not stop the roll happening. Under the Core Rules, walking into
+        // water needs no check and running does; psrForWaterEntry is what decides that, not the removed entry.
+        Game.rulesManager = new CoreRulesManager();
 
-        String report = runningMek().checkWaterMove(1, EntityMovementType.MOVE_RUN).getDesc().toLowerCase();
-
-        assertFalse(report.contains("running into"),
-              "Total Warfare does not let a Mek run in water, so nothing forced the check that way: " + report);
-        assertTrue(report.contains("entering depth 1 water"), "the depth is still reported: " + report);
+        assertFalse(runningMek().checkWaterMove(1, EntityMovementType.MOVE_RUN).getDesc().isEmpty(),
+              "running into water still requires the check");
+        assertTrue(runningMek().checkWaterMove(1, EntityMovementType.MOVE_WALK).getDesc()
+                    .toLowerCase().contains("no roll required for walk"),
+              "walking into water still requires no check under the Core Rules");
     }
 
     @Test
-    void walkingIntoWaterReportsOnlyTheDepth() {
+    void totalWarfareReportsTheDepthOnceToo() {
         Game.rulesManager = new TWRulesManager();
 
-        String report = runningMek().checkWaterMove(1, EntityMovementType.MOVE_WALK).getDesc().toLowerCase();
+        String report = runningMek().checkWaterMove(2, EntityMovementType.MOVE_RUN).getDesc().toLowerCase();
 
-        assertFalse(report.contains("running into"),
-              "a walking unit was not forced into the check by running: " + report);
-        assertTrue(report.contains("entering depth 1 water"), "the depth is still reported: " + report);
+        assertEquals(1, countOccurrences(report, "depth 2 water"),
+              "both entries used to read +0 at Depth 2, saying nothing twice: " + report);
+    }
+
+    private static int countOccurrences(String haystack, String needle) {
+        int count = 0;
+        int index = haystack.indexOf(needle);
+        while (index >= 0) {
+            count++;
+            index = haystack.indexOf(needle, index + needle.length());
+        }
+        return count;
     }
 }

@@ -27807,7 +27807,9 @@ public class TWGameManager extends AbstractGameManager {
                 return;
             }
 
-            LOGGER.debug("[EnvironmentalSealing] {}: automatic ejection set to {} by its owner",
+            // INFO, not DEBUG: this changes whether a crew lives or dies, and a playtest has to be able to
+            // confirm the setting reached the server without attaching a debugger.
+            LOGGER.info("[EnvironmentalSealing] {}: automatic ejection set to {} by its owner",
                   entity.getDisplayName(), shouldEject);
             entityUpdate(entityId);
         } catch (Exception exception) {

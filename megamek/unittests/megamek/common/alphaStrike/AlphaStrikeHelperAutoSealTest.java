@@ -26,7 +26,7 @@
  * InMediaRes Productions, LLC.
  *
  * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
- * Microsoft’s "Game Content Usage Rules"
+ * Microsoft's "Game Content Usage Rules"
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Which Alpha Strike element types carry Environmental Sealing without buying it. The rewritten SEAL conversion
  * entry (Strategic Operations errata v2.0) names the Mek, aerospace and ProtoMek element types plus Combat and
- * Support Vehicle submarines; the Commander’s Edition list (p. 85) names ProtoMeks too.
+ * Support Vehicle submarines; the Commander's Edition list (p. 85) names ProtoMeks too.
  */
 class AlphaStrikeHelperAutoSealTest {
 

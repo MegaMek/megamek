@@ -67,8 +67,10 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
           "standard", Atmosphere.STANDARD, "high", Atmosphere.HIGH,
           "very high", Atmosphere.VERY_HIGH);
 
-    private static final MMLogger LOGGER = MMLogger.create(PlanetaryConditionsDeserializer.class);
-
+    private static final MMLogger LOGGER = MMLogger.create(PlanetaryConditionsDeserializer.class);
+
+
+
     static final Map<String, AtmosphericTaint> TAINT_VALUES = Map.of(
           "breathable", AtmosphericTaint.BREATHABLE,
           "caustic tainted", AtmosphericTaint.CAUSTIC_TAINTED,

@@ -165,7 +165,8 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
         }
         chkCombatSuit.setText("");
         chkCombatSuit.setSelected(entity.getCrew().hasCombatSuit(slot));
-        chkCombatSuit.setToolTipText(Messages.getString("CustomMekDialog.chkCombatSuit.tooltip"));
+        chkCombatSuit.setToolTipText(
+              UIUtil.formatSideTooltip(Messages.getString("CustomMekDialog.chkCombatSuit.tooltip")));
         boolean isCombatSuitRuleInPlay =
               parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_COMBAT_SUITS);
         boolean isSuitInventedYet =
@@ -251,7 +252,11 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
         control.setMinimumSize(control.getPreferredSize());
         int pairIndex = advancedPairCount % ADVANCED_PAIRS_PER_ROW;
         int rowIndex = advancedPairCount / ADVANCED_PAIRS_PER_ROW;
-        advancedSection.add(new JLabel(labelText, SwingConstants.RIGHT),
+        JLabel pairLabel = new JLabel(labelText, SwingConstants.RIGHT);
+        // A tick box is a few pixels wide, so a tooltip only on the control is easy to miss. The label carries the
+        // same one, which is what a reader hovers over.
+        pairLabel.setToolTipText(control.getToolTipText());
+        advancedSection.add(pairLabel,
               GBC.std().gridX(pairIndex * 2).gridY(rowIndex)
                     .anchor(GridBagConstraints.EAST).insets((pairIndex == 0) ? 0 : 15, 0, 5, 2));
         advancedSection.add(control,

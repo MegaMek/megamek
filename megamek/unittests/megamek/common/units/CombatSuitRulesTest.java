@@ -43,6 +43,9 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryConditions.Atmosphere;
+import megamek.common.planetaryConditions.AtmosphericTaint;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -238,6 +241,45 @@ class CombatSuitRulesTest {
     void aFullKitCostsTheSumOfItsThreePieces() {
         assertEquals(20000 + 1400 + 175, CombatSuitRules.FULL_KIT_COST_C_BILLS,
               "combat suit, combat neurohelmet and plasteel boots (A Time of War p.294)");
+    }
+
+    private PlanetaryConditions conditions(Atmosphere atmosphere, AtmosphericTaint taint, int temperature) {
+        PlanetaryConditions conditions = new PlanetaryConditions();
+        conditions.setAtmosphere(atmosphere);
+        conditions.setAtmosphericTaint(taint);
+        conditions.setTemperature(temperature);
+        return conditions;
+    }
+
+    /**
+     * The ejection report only mentions the kit when it is actually doing something. Saying so in fair weather is
+     * noise, and saying it in vacuum would be a lie.
+     */
+    @Test
+    void theKitIsWorthMentioningOnlyWhereItHelps() {
+        assertTrue(CombatSuitRules.coversSomethingIn(
+                    conditions(Atmosphere.STANDARD, AtmosphericTaint.CAUSTIC_TAINTED, 20)),
+              "tainted air is exactly what the kit's own air supply answers");
+        assertTrue(CombatSuitRules.coversSomethingIn(
+                    conditions(Atmosphere.STANDARD, AtmosphericTaint.CAUSTIC_TOXIC, 20)),
+              "toxic air likewise");
+        assertTrue(CombatSuitRules.coversSomethingIn(
+                    conditions(Atmosphere.STANDARD, AtmosphericTaint.BREATHABLE, 60)),
+              "an armored cooling suit answers extreme heat");
+
+        assertFalse(CombatSuitRules.coversSomethingIn(
+                    conditions(Atmosphere.STANDARD, AtmosphericTaint.BREATHABLE, 20)),
+              "ordinary weather needs no comment");
+        assertFalse(CombatSuitRules.coversSomethingIn(
+                    conditions(Atmosphere.VACUUM, AtmosphericTaint.BREATHABLE, 20)),
+              "the kit holds no pressure, so vacuum must not be reported as survivable");
+        assertFalse(CombatSuitRules.coversSomethingIn(
+                    conditions(Atmosphere.VACUUM, AtmosphericTaint.CAUSTIC_TOXIC, 20)),
+              "with no atmosphere the taint is moot and the vacuum is still lethal");
+        assertFalse(CombatSuitRules.coversSomethingIn(
+                    conditions(Atmosphere.STANDARD, AtmosphericTaint.BREATHABLE, -40)),
+              "a cooling suit does nothing about extreme cold");
+        assertFalse(CombatSuitRules.coversSomethingIn(null));
     }
 
     @Test

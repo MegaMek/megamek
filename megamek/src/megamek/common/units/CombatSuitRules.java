@@ -37,6 +37,9 @@ import megamek.common.annotations.Nullable;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryConditions.Atmosphere;
+import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.TaintedAtmosphereRules;
 
 /**
  * The optional MekWarrior Combat Suit rule: what the suit protects a crew from once they are outside their unit.
@@ -182,6 +185,28 @@ public final class CombatSuitRules {
      */
     public static boolean protectsAgainstAtmosphericTaint(@Nullable Entity ejectedCrew) {
         return isWearingCombatSuit(ejectedCrew);
+    }
+
+    /**
+     * Whether there is anything out there for a suit to actually save its wearer from.
+     * <p>
+     * Used to decide whether the ejection report is worth adding a line to. A crew wearing a kit into ordinary
+     * weather does not need telling that it made no difference, and one ejecting into vacuum must not be told they
+     * are safe when they are not.
+     *
+     * @param conditions the conditions the crew is ejecting into, or {@code null}
+     *
+     * @return {@code true} if the conditions hold a hazard the kit answers
+     */
+    public static boolean coversSomethingIn(@Nullable PlanetaryConditions conditions) {
+        if (conditions == null) {
+            return false;
+        }
+        // A taint needs an atmosphere to be carried in; with none, the vacuum is the danger and the kit is no help.
+        boolean isAirPoisonous = !conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)
+              && TaintedAtmosphereRules.requiresXctInfantry(conditions.getAtmosphericTaint());
+        boolean isExtremeHeat = conditions.isExtremeTemperature() && (conditions.getTemperature() > 0);
+        return isAirPoisonous || isExtremeHeat;
     }
 
     /**

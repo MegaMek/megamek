@@ -122,7 +122,8 @@ public class CommonSettingsPane extends JPanel {
             getString("CommonSettingsDialog.SearchNoMatches"),
             getString("CommonSettingsDialog.SearchMatches"),
             getString("SettingsPagePanel.expandAll.text"),
-            getString("SettingsPagePanel.collapseAll.text"));
+            getString("SettingsPagePanel.collapseAll.text"),
+            getString("SettingsNavigation.searching"));
         settingsPane = new SettingsPane(routes, pageFactories, navigationText);
         add(settingsPane, BorderLayout.CENTER);
     }

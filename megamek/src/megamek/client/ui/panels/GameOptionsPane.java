@@ -270,7 +270,8 @@ public class GameOptionsPane extends JPanel {
               getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.SearchNoMatches"),
               getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.SearchMatches"),
               getTextAt(CLIENT_BUNDLE, "SettingsPagePanel.expandAll.text"),
-              getTextAt(CLIENT_BUNDLE, "SettingsPagePanel.collapseAll.text"));
+              getTextAt(CLIENT_BUNDLE, "SettingsPagePanel.collapseAll.text"),
+              getTextAt(CLIENT_BUNDLE, "SettingsNavigation.searching"));
         settingsPane = new SettingsPane(routes, pageFactories, navigationText);
         add(settingsPane, BorderLayout.CENTER);
     }

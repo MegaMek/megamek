@@ -61,6 +61,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.swing.JCheckBox;
@@ -179,27 +180,30 @@ class GameOptionsPaneTest {
 
     @Test
     void visibilityRefreshKeepsSectionSearchAndReplacesVisibleOptionIndex() throws Exception {
+        AtomicBoolean showBridgeRepair = new AtomicBoolean(false);
+        AtomicReference<GameOptionsPane> pane = new AtomicReference<>();
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
             DialogOptionComponentYPanel bridgeBuilding = component(
                   options.getOption(OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS));
             DialogOptionComponentYPanel bridgeRepair = component(
                   options.getOption(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS));
-            AtomicBoolean showBridgeRepair = new AtomicBoolean(false);
-            GameOptionsPane pane = pane("advancedRules", List.of(bridgeBuilding, bridgeRepair),
+            pane.set(pane("advancedRules", List.of(bridgeBuilding, bridgeRepair),
                   option -> !option.getName().equals(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS)
-                        || showBridgeRepair.get());
-            JTree tree = findComponent(pane, JTree.class);
+                        || showBridgeRepair.get()));
 
-            pane.setFilterText(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS);
+            pane.get().setFilterText(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS);
+        });
+        runOnEdt(() -> {
+            JTree tree = findComponent(pane.get(), JTree.class);
             assertTreePathDoesNotExist(tree, "Rules", "Terrain and Environment");
 
-            pane.setFilterText("Battlefield Engineering");
+            pane.get().setFilterText("Battlefield Engineering");
             assertTreePathExists(tree, "Rules", "Terrain and Environment");
 
             showBridgeRepair.set(true);
-            pane.refreshVisibility();
-            pane.setFilterText(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS);
+            pane.get().refreshVisibility();
+            pane.get().setFilterText(OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS);
             assertTreePathExists(tree, "Rules", "Terrain and Environment");
         });
     }

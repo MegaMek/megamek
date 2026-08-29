@@ -40,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.equipment.Engine;
+import megamek.common.game.Game;
 import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
@@ -302,5 +303,35 @@ class EnvironmentalSealingRulesTest {
 
         assertNull(EnvironmentalSealingRules.whyCannotOperateInVacuum(combatVehicle(Engine.NORMAL_ENGINE, true)),
               "a sealed, fusion-powered tracked vehicle has no reason to give");
+    }
+
+    @Test
+    void drowningWaitsOneFullRoundBeforeItKills() throws LocationFullException {
+        // "destroyed if they remain in a Depth 2 or greater water hex ... in the End Phase of the turn immediately
+        // following the turn in which they entered it" (TW p.52, Movement Costs Table footnote 8). The delay is
+        // carried by newRound copying one flag into the other, so a playtester has to sit through a whole extra
+        // round before the unit dies - which reads as "it survived" if you only look at the turn it waded in.
+        BipedMek industrialMek = industrialMek(Engine.NORMAL_ENGINE, false);
+        industrialMek.setGame(new Game());
+        industrialMek.setJustMovedIntoIndustrialKillingWater(true);
+
+        assertFalse(industrialMek.shouldDieAtEndOfTurnBecauseOfWater(),
+              "it survives the End Phase of the turn it entered the water");
+
+        industrialMek.newRound(1);
+
+        assertTrue(industrialMek.shouldDieAtEndOfTurnBecauseOfWater(),
+              "it dies in the End Phase of the following turn");
+    }
+
+    @Test
+    void aMekThatNeverEnteredKillingWaterIsNeverMarkedToDrown() throws LocationFullException {
+        BipedMek industrialMek = industrialMek(Engine.NORMAL_ENGINE, true);
+        industrialMek.setGame(new Game());
+
+        industrialMek.newRound(1);
+
+        assertFalse(industrialMek.shouldDieAtEndOfTurnBecauseOfWater(),
+              "a sealed IndustrialMek on a fusion engine is never marked to drown");
     }
 }

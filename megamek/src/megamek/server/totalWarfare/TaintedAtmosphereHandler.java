@@ -478,7 +478,9 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
      * where it is.
      *
      * @param aeroEntity the craft taking off or landing
-     * @param coords     the hex it takes off from or comes to rest in
+     * @param coords     the hex it takes off from, or for a landing the hex the landing was declared in - a
+     *                   horizontal landing slides on past that hex, but the craft is under power where it
+     *                   meets the ground and the pilot has pulled the power off by the time it stops
      * @param boardId    the board that hex is on
      * @param facing     the facing the craft has at that moment, which decides where its rear arc lies
      * @param moment     whether this is a takeoff or a landing, which the report names so a player reading the log

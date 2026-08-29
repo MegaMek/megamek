@@ -12726,22 +12726,15 @@ public abstract class Entity extends TurnOrdered
      *       context or invalid value
      */
     protected String getNeuralInterfaceMode() {
-        if (game == null) {
-            return OptionsConstants.NEURAL_INTERFACE_MODE_OFF;
-        }
-        IOption option = gameOptions().getOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE);
-        String mode = (option == null) ? null : option.stringValue();
-        if ((mode == null) || mode.isBlank()) {
-            return OptionsConstants.NEURAL_INTERFACE_MODE_OFF;
-        }
-        mode = mode.trim();
-        if (OptionsConstants.NEURAL_INTERFACE_MODE_OFF.equals(mode)
-              || OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY.equals(mode)
-              || OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING.equals(mode)) {
-            return mode;
-        }
-        LOGGER.warn("Unknown neural interface mode '{}'; defaulting to Off.", mode);
-        return OptionsConstants.NEURAL_INTERFACE_MODE_OFF;
+        return neuralInterfaceMode().optionValue();
+    }
+
+    /**
+     * @return the neural interface setting this unit's game is playing under, or
+     *       {@link NeuralInterfaceMode#OFF} when the unit is not in a game
+     */
+    protected NeuralInterfaceMode neuralInterfaceMode() {
+        return (game == null) ? NeuralInterfaceMode.OFF : NeuralInterfaceMode.from(gameOptions());
     }
 
     /**
@@ -12750,7 +12743,7 @@ public abstract class Entity extends TurnOrdered
      * @return true if neural interface mode is not Off
      */
     protected boolean isNeuralInterfaceEnabled() {
-        return !OptionsConstants.NEURAL_INTERFACE_MODE_OFF.equals(getNeuralInterfaceMode());
+        return neuralInterfaceMode().isOn();
     }
 
     /**
@@ -12759,7 +12752,7 @@ public abstract class Entity extends TurnOrdered
      * @return true if neural interface mode is Full Tracking
      */
     protected boolean isNeuralInterfaceFullTracking() {
-        return OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING.equals(getNeuralInterfaceMode());
+        return neuralInterfaceMode().requiresInterfaceHardware();
     }
 
     /**
@@ -12776,19 +12769,7 @@ public abstract class Entity extends TurnOrdered
      * @return true if the neural interface is considered active
      */
     private boolean isNeuralInterfaceActive(boolean hasImplant, boolean hasHardware) {
-        String mode = getNeuralInterfaceMode();
-        if (OptionsConstants.NEURAL_INTERFACE_MODE_OFF.equals(mode)) {
-            return false;
-        }
-        if (!hasImplant) {
-            return false;
-        }
-        // Pilot Abilities Only: implant alone provides benefits
-        if (OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY.equals(mode)) {
-            return true;
-        }
-        // Full Tracking: require the interface equipment
-        return hasHardware;
+        return neuralInterfaceMode().grantsBenefit(hasImplant, hasHardware);
     }
 
     /**

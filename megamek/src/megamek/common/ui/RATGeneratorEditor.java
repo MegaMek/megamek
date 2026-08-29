@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -1351,14 +1351,14 @@ public class RATGeneratorEditor extends JFrame {
             }
             int rating = (row - 1) % factionRec.getRatingLevels().size();
             return switch ((row - 1) / factionRec.getRatingLevels().size()) {
-                case CAT_OMNI_PCT -> factionRec.getPctTech(TechCategory.OMNI, era, rating);
-                case CAT_CLAN_PCT -> factionRec.getPctTech(TechCategory.CLAN, era, rating);
-                case CAT_SL_PCT -> factionRec.getPctTech(TechCategory.IS_ADVANCED, era, rating);
-                case CAT_OMNI_AERO_PCT -> factionRec.getPctTech(TechCategory.OMNI_AERO, era, rating);
-                case CAT_CLAN_AERO_PCT -> factionRec.getPctTech(TechCategory.CLAN_AERO, era, rating);
-                case CAT_SL_AERO_PCT -> factionRec.getPctTech(TechCategory.IS_ADVANCED_AERO, era, rating);
-                case CAT_CLAN_VEE_PCT -> factionRec.getPctTech(TechCategory.CLAN_VEE, era, rating);
-                case CAT_SL_VEE_PCT -> factionRec.getPctTech(TechCategory.IS_ADVANCED_VEE, era, rating);
+                case CAT_OMNI_PCT -> factionRec.getDeclaredPctTech(TechCategory.OMNI, era, rating);
+                case CAT_CLAN_PCT -> factionRec.getDeclaredPctTech(TechCategory.CLAN, era, rating);
+                case CAT_SL_PCT -> factionRec.getDeclaredPctTech(TechCategory.IS_ADVANCED, era, rating);
+                case CAT_OMNI_AERO_PCT -> factionRec.getDeclaredPctTech(TechCategory.OMNI_AERO, era, rating);
+                case CAT_CLAN_AERO_PCT -> factionRec.getDeclaredPctTech(TechCategory.CLAN_AERO, era, rating);
+                case CAT_SL_AERO_PCT -> factionRec.getDeclaredPctTech(TechCategory.IS_ADVANCED_AERO, era, rating);
+                case CAT_CLAN_VEE_PCT -> factionRec.getDeclaredPctTech(TechCategory.CLAN_VEE, era, rating);
+                case CAT_SL_VEE_PCT -> factionRec.getDeclaredPctTech(TechCategory.IS_ADVANCED_VEE, era, rating);
                 default -> "?";
             };
         }

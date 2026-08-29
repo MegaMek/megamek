@@ -899,8 +899,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
                   md.getFinalBoardId(), md.getFinalFacing());
             aero.land();
             entity.setPosition(finalPosition);
-            // The roll is made at the end of landing, so from the hex the craft comes to rest in (TO:AR p.54).
-            new TaintedAtmosphereHandler(gameManager).checkExhaustWashIgnition(entity, finalPosition,
+            // Taken from the hex the landing was declared in - where the craft meets the ground - not the hex
+            // it slides on to several hexes later. TO:AR p.54 fixes only WHEN the roll is made, at the end of
+            // the landing rather than the start, and says nothing about which hex the arc is measured from.
+            // The craft touches down under power; by the time it has rolled out the pilot has pulled the
+            // power off, so it is the ground behind the touchdown point that gets scorched.
+            new TaintedAtmosphereHandler(gameManager).checkExhaustWashIgnition(entity, md.getFinalCoords(),
                   md.getFinalBoardId(), md.getFinalFacing(),
                   TaintedAtmosphereHandler.ExhaustWashMoment.LANDING);
             entity.setDone(true);

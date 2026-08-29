@@ -27801,11 +27801,7 @@ public class TWGameManager extends AbstractGameManager {
                 return;
             }
 
-            if (entity instanceof Mek mek) {
-                mek.setAutoEject(shouldEject);
-            } else if (entity instanceof Aero aero) {
-                aero.setAutoEject(shouldEject);
-            } else {
+            if (!AutomaticEjectionRules.setAutomaticEjection(entity, shouldEject)) {
                 LOGGER.warn("Dropping an ejection setting change for {}: it has no ejection system",
                       entity.getDisplayName());
                 return;

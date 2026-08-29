@@ -57,6 +57,8 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.game.Game;
+import megamek.common.units.AutomaticEjectionRules;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
@@ -81,8 +83,10 @@ public class AutomaticEjectionDialog extends JDialog implements ActionListener {
     private static final int LIST_WIDTH = 520;
 
     private final ClientGUI clientGUI;
-    private final List<Entity> unitsThatWillEject;
+    private final Game game;
+    private final List<Entity> unitsWithEjectionSystems;
     private final Map<Integer, JCheckBox> ejectionBoxes = new HashMap<>();
+    private final Map<Integer, Boolean> settingsOnOpening = new HashMap<>();
     private final JCheckBox dontAskAgain =
           new JCheckBox(Messages.getString("AutomaticEjectionDialog.dontAskAgain"));
 
@@ -91,20 +95,21 @@ public class AutomaticEjectionDialog extends JDialog implements ActionListener {
     private boolean deploymentCancelled = true;
 
     /**
-     * @param parent             the frame to centre the dialog on
-     * @param clientGUI          the client that any changes are sent through
-     * @param unitsThatWillEject the player's units that would throw their crews out into these conditions
+     * @param parent                   the frame to centre the dialog on
+     * @param clientGUI                the client that any changes are sent through
+     * @param unitsWithEjectionSystems the player's units that have an ejection system, whether it is on or off
      */
-    public AutomaticEjectionDialog(JFrame parent, ClientGUI clientGUI, List<Entity> unitsThatWillEject) {
+    public AutomaticEjectionDialog(JFrame parent, ClientGUI clientGUI, List<Entity> unitsWithEjectionSystems) {
         super(parent, Messages.getString("AutomaticEjectionDialog.title"), true);
         this.clientGUI = clientGUI;
-        this.unitsThatWillEject = unitsThatWillEject;
+        this.game = clientGUI.getClient().getGame();
+        this.unitsWithEjectionSystems = unitsWithEjectionSystems;
 
         initializeUI();
         pack();
         setLocationRelativeTo(parent);
         LOGGER.debug("[EnvironmentalSealing] Automatic ejection dialog opened for {} unit(s)",
-              unitsThatWillEject.size());
+              unitsWithEjectionSystems.size());
     }
 
     private void initializeUI() {
@@ -125,7 +130,7 @@ public class AutomaticEjectionDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Builds the unit rows: one tick box each, ticked because every unit listed here is currently set to eject.
+     * Builds the unit rows: one tick box each, showing whether that unit is currently set to eject.
      *
      * @return the scrollable list of units
      */
@@ -146,22 +151,24 @@ public class AutomaticEjectionDialog extends JDialog implements ActionListener {
               + "</b></html>"), constraints);
 
         int row = 1;
-        for (Entity entity : unitsThatWillEject) {
+        for (Entity entity : unitsWithEjectionSystems) {
             constraints.gridy = row++;
 
             constraints.gridx = 0;
             unitPanel.add(new JLabel(entity.getShortName()), constraints);
 
             constraints.gridx = 1;
+            boolean willEject = AutomaticEjectionRules.willEjectAutomatically(entity, game);
             JCheckBox ejectionBox = new JCheckBox(Messages.getString("AutomaticEjectionDialog.ejectAutomatically"));
-            ejectionBox.setSelected(true);
+            ejectionBox.setSelected(willEject);
             ejectionBox.setToolTipText(Messages.getString("AutomaticEjectionDialog.ejectAutomatically.tooltip"));
             unitPanel.add(ejectionBox, constraints);
             ejectionBoxes.put(entity.getId(), ejectionBox);
+            settingsOnOpening.put(entity.getId(), willEject);
         }
 
         JScrollPane scrollPane = new JScrollPane(unitPanel);
-        int contentHeight = HEADER_ROW_HEIGHT + (unitsThatWillEject.size() * UNIT_ROW_HEIGHT);
+        int contentHeight = HEADER_ROW_HEIGHT + (unitsWithEjectionSystems.size() * UNIT_ROW_HEIGHT);
         int listHeight = Math.clamp(contentHeight, MINIMUM_LIST_HEIGHT, MAXIMUM_LIST_HEIGHT);
         scrollPane.setPreferredSize(UIUtil.scaleForGUI(LIST_WIDTH, listHeight));
         return scrollPane;
@@ -204,16 +211,20 @@ public class AutomaticEjectionDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Sends the server every setting the player turned off. Only the changes are sent, because the server's copy of
-     * the unit is the one that decides whether a crew is thrown clear.
+     * Sends the server every setting the player changed, in either direction. Only what changed is sent, because the
+     * server's copy of the unit is the one that decides whether a crew is thrown clear.
      */
     private void applyEjectionChanges() {
-        for (Entity entity : unitsThatWillEject) {
+        for (Entity entity : unitsWithEjectionSystems) {
             JCheckBox ejectionBox = ejectionBoxes.get(entity.getId());
-            if ((ejectionBox != null) && !ejectionBox.isSelected()) {
-                LOGGER.debug("[EnvironmentalSealing] {}: turning automatic ejection off at the player's request",
-                      entity.getShortName());
-                clientGUI.getClient().sendEjectionSettingChange(entity.getId(), false);
+            if (ejectionBox == null) {
+                continue;
+            }
+            boolean shouldEject = ejectionBox.isSelected();
+            if (shouldEject != settingsOnOpening.get(entity.getId())) {
+                LOGGER.debug("[EnvironmentalSealing] {}: automatic ejection set to {} at the player's request",
+                      entity.getShortName(), shouldEject);
+                clientGUI.getClient().sendEjectionSettingChange(entity.getId(), shouldEject);
             }
         }
     }

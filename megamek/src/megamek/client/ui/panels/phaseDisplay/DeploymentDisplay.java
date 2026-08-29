@@ -86,12 +86,11 @@ import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
-import megamek.common.units.Aero;
 import megamek.common.units.Dropship;
+import megamek.common.units.AutomaticEjectionRules;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.Infantry;
-import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
 import megamek.common.units.TrainLayout;
@@ -475,12 +474,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
 
         if (shouldWarnAboutAutoEjection()) {
-            List<Entity> unitsThatWillEject = unitsThatWillEjectTheirCrew();
+            List<Entity> unitsWithEjectionSystems = unitsWithAnEjectionSystem();
             hasWarnedAboutAutoEjection = true;
-            logger.debug("[EnvironmentalSealing] warning about auto-ejection - {} unit(s) would eject their crew "
-                  + "into conditions that kill them", unitsThatWillEject.size());
+            logger.debug("[EnvironmentalSealing] warning about auto-ejection - listing {} unit(s) with an ejection "
+                  + "system in conditions that would kill an ejected crew", unitsWithEjectionSystems.size());
             AutomaticEjectionDialog ejectionDialog = new AutomaticEjectionDialog(clientgui.getFrame(),
-                  clientgui, unitsThatWillEject);
+                  clientgui, unitsWithEjectionSystems);
             ejectionDialog.setVisible(true);
             if (ejectionDialog.isDeploymentCancelled()) {
                 takeBackDeployment(entity,
@@ -579,46 +578,24 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (!game.getPlanetaryConditions().isLethalToEjectedCrew()) {
             return false;
         }
-        return !unitsThatWillEjectTheirCrew().isEmpty();
+        return unitsWithAnEjectionSystem().stream()
+              .anyMatch(entity -> AutomaticEjectionRules.willEjectAutomatically(entity, game));
     }
 
     /**
-     * This player's units that are set to throw their crews out on their own initiative.
+     * Every unit of this player's that has an ejection system, whether or not it is currently switched on.
+     * <p>
+     * The dialog lists all of them rather than only the ones at risk, so the player can see the state of the whole
+     * force and change any of it. Hiding the units that are already safe would leave them wondering why a Mek they
+     * own is missing from the list.
      *
-     * @return every affected unit, in the order the game holds them
+     * @return every unit with an ejection system, in the order the game holds them
      */
-    private List<Entity> unitsThatWillEjectTheirCrew() {
+    private List<Entity> unitsWithAnEjectionSystem() {
         return game.getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
               .stream()
-              .filter(this::willEjectAutomatically)
+              .filter(AutomaticEjectionRules::hasEjectionSystem)
               .toList();
-    }
-
-    /**
-     * Whether this unit is set to throw its crew out on its own initiative.
-     * <p>
-     * This mirrors the test the server itself makes before ejecting anyone: the master switch has to be on, and when
-     * the Conditional Ejection game option is in play at least one of the individual triggers has to be armed as
-     * well. Only BattleMeks and aerospace units have the setting at all.
-     *
-     * @param entity the unit to check
-     *
-     * @return {@code true} if the unit would eject its crew automatically
-     */
-    private boolean willEjectAutomatically(Entity entity) {
-        boolean isConditionalEjectionInPlay =
-              game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION);
-        if (entity instanceof Mek mek) {
-            boolean isAnyTriggerArmed = mek.isCondEjectAmmo() || mek.isCondEjectEngine()
-                  || mek.isCondEjectCTDest() || mek.isCondEjectHeadshot();
-            return mek.isAutoEject() && (!isConditionalEjectionInPlay || isAnyTriggerArmed);
-        }
-        if (entity instanceof Aero aero) {
-            boolean isAnyTriggerArmed = aero.isCondEjectAmmo() || aero.isCondEjectFuel()
-                  || aero.isCondEjectSIDest();
-            return aero.isAutoEject() && (!isConditionalEjectionInPlay || isAnyTriggerArmed);
-        }
-        return false;
     }
 
     /**

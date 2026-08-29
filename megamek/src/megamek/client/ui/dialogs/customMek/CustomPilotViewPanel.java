@@ -168,7 +168,9 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
         chkCombatSuit.setToolTipText(Messages.getString("CustomMekDialog.chkCombatSuit.tooltip"));
         boolean isCombatSuitRuleInPlay =
               parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_COMBAT_SUITS);
-        if (isCombatSuitRuleInPlay && CombatSuitRules.canWearCombatSuit(entity)) {
+        boolean isSuitInventedYet =
+              CombatSuitRules.isCombatSuitAvailable(entity, parent.getClient().getGame());
+        if (isCombatSuitRuleInPlay && isSuitInventedYet && CombatSuitRules.canWearCombatSuit(entity)) {
             addAdvancedRow(Messages.getString("CustomMekDialog.chkCombatSuit"), chkCombatSuit);
         }
         if (parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {

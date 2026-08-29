@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.TechConstants;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
@@ -183,6 +184,60 @@ class CombatSuitRulesTest {
         assertTrue(platoon.hasArmor(), "wearing the suit counts as wearing armor");
         assertEquals(1.0, platoon.calcDamageDivisor(), 0.001,
               "the divisor comes from the kit itself, so it tracks whatever the equipment says");
+    }
+
+    private void setYear(int year) {
+        game.getOptions().getOption(OptionsConstants.ALLOWED_YEAR).setValue(year);
+    }
+
+    /**
+     * The rule defers to the equipment's own tech progression rather than repeating dates: TO:AUE p.129 puts Inner
+     * Sphere prototypes at 2690 and production at 2790, and has the Clans lose it in 2820.
+     */
+    @Test
+    void theSuitIsNotAvailableBeforeItIsInvented() {
+        setCombatSuitRule(true);
+        setYear(2600);
+        Mek mek = new BipedMek();
+        mek.getCrew().setHasCombatSuit(true, 0);
+
+        assertFalse(CombatSuitRules.isCombatSuitAvailable(mek, game),
+              "nobody had one in 2600");
+        assertFalse(CombatSuitRules.isCrewWearingCombatSuit(mek, game),
+              "a force carried into an earlier era must not bring suits with it");
+    }
+
+    @Test
+    void theSuitIsAvailableOnceInProduction() {
+        setCombatSuitRule(true);
+        setYear(3025);
+        Mek mek = new BipedMek();
+        mek.getCrew().setHasCombatSuit(true, 0);
+
+        assertTrue(CombatSuitRules.isCombatSuitAvailable(mek, game));
+        assertTrue(CombatSuitRules.isCrewWearingCombatSuit(mek, game));
+    }
+
+    /**
+     * The master equipment table gives the suit a technology base of All and no extinction date, so a Clan crew is
+     * as entitled to one as an Inner Sphere crew.
+     */
+    @Test
+    void aClanCrewMayHaveOneToo() {
+        setCombatSuitRule(true);
+        setYear(3025);
+        Mek clanMek = new BipedMek();
+        clanMek.setTechLevel(TechConstants.T_CLAN_TW);
+        clanMek.getCrew().setHasCombatSuit(true, 0);
+
+        assertTrue(CombatSuitRules.isCombatSuitAvailable(clanMek, game),
+              "the suit is All tech base and never goes extinct");
+    }
+
+    @Test
+    void aFullKitCostsTheSumOfItsThreePieces() {
+        assertEquals(20000 + 1400 + 175, CombatSuitRules.FULL_KIT_COST_C_BILLS,
+              "combat suit, combat neurohelmet and plasteel boots (A Time of War p.294)");
     }
 
     @Test

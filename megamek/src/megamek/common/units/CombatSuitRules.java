@@ -34,6 +34,7 @@
 package megamek.common.units;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 
@@ -56,7 +57,54 @@ import megamek.common.options.OptionsConstants;
  */
 public final class CombatSuitRules {
 
+    /** The internal name of the armor kit, which carries the cost and tech progression the rule defers to. */
+    // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
+    public static final String COMBAT_SUIT_NAME = "MechWarrior Combat Suit";
+
+    /**
+     * What a full kit costs, in C-bills. A crew is issued the whole elite MekWarrior kit rather than the suit on its
+     * own, because the sealing that makes the rule work belongs to the helmet: 20,000 for the combat suit, 1,400 for
+     * the combat neurohelmet and 175 for the plasteel boots (A Time of War p.294).
+     * <p>
+     * MegaMek charges nobody for crew equipment, so this is recorded for MekHQ, which buys the kit and issues it to
+     * a person before the battle starts.
+     */
+    public static final int FULL_KIT_COST_C_BILLS = 21_575;
+
     private CombatSuitRules() {
+    }
+
+    /**
+     * The suit as MegaMek already holds it, complete with its cost and tech progression.
+     *
+     * @return the equipment, or {@code null} if the equipment tables have not been loaded
+     */
+    public static @Nullable EquipmentType combatSuitEquipment() {
+        return EquipmentType.get(COMBAT_SUIT_NAME);
+    }
+
+    /**
+     * Whether the suit has been invented yet, and not yet gone extinct, in the year being played.
+     * <p>
+     * The dates are the equipment's own (TO:AUE p.129 puts Inner Sphere production at 2790 and the Clans losing it
+     * in 2820), so this defers to the tech progression already recorded rather than repeating it. The suit is the
+     * piece the kit is gated on, being the latest and least available of the three. Checked when the tick box is
+     * offered and again when the protection is read, so a force saved in one era cannot carry suits into another
+     * where they do not exist.
+     *
+     * @param entity the unit whose crew is being asked about, or {@code null}
+     * @param game   the game whose year applies, or {@code null}
+     *
+     * @return {@code true} if a crew may have a suit in this year
+     */
+    public static boolean isCombatSuitAvailable(@Nullable Entity entity, @Nullable Game game) {
+        EquipmentType combatSuit = combatSuitEquipment();
+        if ((combatSuit == null) || (game == null)) {
+            return false;
+        }
+        int year = game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
+        boolean isClanCrew = (entity != null) && entity.isClan();
+        return combatSuit.isAvailableIn(year, isClanCrew, false);
     }
 
     /**
@@ -90,6 +138,9 @@ public final class CombatSuitRules {
             return false;
         }
         if (!game.getOptions().booleanOption(OptionsConstants.RPG_COMBAT_SUITS)) {
+            return false;
+        }
+        if (!isCombatSuitAvailable(entity, game)) {
             return false;
         }
         return canWearCombatSuit(entity) && entity.getCrew().hasAnyCombatSuit();

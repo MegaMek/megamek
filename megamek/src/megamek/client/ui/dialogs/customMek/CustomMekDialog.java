@@ -1882,7 +1882,7 @@ public class CustomMekDialog extends AbstractButtonDialog
                 entity.setDeployRound(0);
             } else if (choDeploymentRound.getItemAt(0).equals(Messages.getString("CustomMekDialog.PreGame"))) {
                 // They chose a specific round and pre-game was an option
-                entity.setDeployRound(choDeploymentRound.getSelectedIndex() + 1);
+                entity.setDeployRound(choDeploymentRound.getSelectedIndex() - 1);
             } else {
                 // They chose a specific round and pre-game was not an option.
                 entity.setDeployRound(choDeploymentRound.getSelectedIndex());

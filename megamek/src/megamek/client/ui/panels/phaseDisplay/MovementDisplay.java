@@ -46,6 +46,7 @@ import megamek.client.ui.clientGUI.boardview.sprite.FlyOverSprite;
 import megamek.client.ui.dialogs.ChoiceDialog;
 import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.dialogs.phaseDisplay.*;
+import megamek.client.ui.panels.phaseDisplay.DeploymentDisplay.DeploymentPosition;
 import megamek.client.ui.panels.phaseDisplay.commands.MoveCommand;
 import megamek.client.ui.util.CommandAction;
 import megamek.client.ui.util.KeyCommandBind;
@@ -78,6 +79,7 @@ import megamek.common.board.BoardHelper;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.BridgeConstruction;
 import megamek.common.board.Coords;
+import megamek.common.board.ElevationOption;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.enums.MoveStepType;
@@ -173,6 +175,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private boolean isUnJammingRAC;
     private boolean isUsingChaff;
+
+    // Deployment settings.
+    private final Set<ElevationOption> lastHexDeploymentOptions = new HashSet<>();
+    private ElevationOption lastDeploymentOption = null;
 
     /**
      * True when selecting a hex for Combat Vehicle Escape Pod landing (TO:AUE p.121)
@@ -600,6 +606,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     public void selectEntity(int entityID) {
         final Entity selectedEntity = game.getEntity(entityID);
+        lastHexDeploymentOptions.clear();
+        lastDeploymentOption = null;
+
         if (selectedEntity == null) {
             LOGGER.error("Tried to select non-existent entity with id {}", entityID);
             return;
@@ -2685,11 +2694,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     return;
                 }
                 Hex hex = game.getBoard(boardId).getHex(coords);
-                int elevation = hex.getLevel();
-                int depth = hex.depth();
-                if (depth > 0) {
-                    elevation = elevation - depth;
+                DeploymentPosition deploymentPosition = deploymentHelper.determineDeploymentPosition(
+                        currentlySelectedEntity,
+                        coords,
+                        game.getBoard(boardId),
+                        lastHexDeploymentOptions,
+                        lastDeploymentOption);
+                if (deploymentPosition == null) {
+                    return;
                 }
+                int elevation = deploymentPosition.elevation();
+                int facing = deploymentPosition.facing();
                 if (game.getBoard(boardId)
                         .isLegalDeployment(coords,
                                            currentlySelectedEntity) && !currentlySelectedEntity.isLocationProhibited(
@@ -2699,6 +2714,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     currentlySelectedEntity.setPosition(coords);
                     currentlySelectedEntity.setBoardId(boardId);
                     currentlySelectedEntity.setElevation(elevation);
+                    currentlySelectedEntity.setFacing(facing);
                     currentlySelectedEntity.setDeployed(true);
                     addStepToMovePath(MoveStepType.DEPLOY);
                     clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));

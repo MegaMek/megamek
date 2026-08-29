@@ -42,10 +42,7 @@ import megamek.client.ui.clientGUI.boardview.CollapseWarning;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.ConfirmDialog;
-import megamek.client.ui.dialogs.phaseDisplay.DeployElevationChoiceDialog;
-import megamek.client.ui.dialogs.phaseDisplay.DeployFacingChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.EntityChoiceDialog;
-import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.CommandAction;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
@@ -54,13 +51,10 @@ import megamek.client.ui.widget.MekPanelTabStrip;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.ProtoMekClampMount;
 import megamek.common.bays.Bay;
-import megamek.common.board.AllowedDeploymentHelper;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
-import megamek.common.board.DeploymentElevationType;
 import megamek.common.board.ElevationOption;
-import megamek.common.board.FacingOption;
 import megamek.common.equipment.Transporter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -651,54 +645,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
     }
 
-    /**
-     * Determines the deployment position (elevation and facing) for an entity at the given coordinates. Handles user
-     * interaction for elevation and facing choices when multiple options are available.
-     *
-     * @param entity The entity being deployed
-     * @param coords The coordinates where deployment is attempted
-     * @param board  The board on which deployment is occurring
-     * @return DeploymentPosition with elevation and facing, or null if deployment was cancelled or invalid
-     */
-    private @Nullable DeploymentPosition determineDeploymentPosition(Entity entity,
-                                                                     Coords coords,
-                                                                     Board board) {
-        int finalElevation;
-        int finalFacing = entity.getFacing();
-        var deploymentHelper = new AllowedDeploymentHelper(entity, coords, board,
-                                                           board.getHex(coords), game);
-        List<ElevationOption> elevationOptions = deploymentHelper.findAllowedElevations();
-        int FACING_ELEVATION = 0; // If we care about facing at other altitudes or elevations ever...
-        FacingOption facingOptions = deploymentHelper.findAllowedFacings(FACING_ELEVATION);
-        boolean validFacings = facingOptions != null && facingOptions.hasValidFacings();
-
-        if (elevationOptions.isEmpty() && !validFacings) {
-            showCannotDeployHereMessage(coords);
-            return null;
-        } else if (elevationOptions.size() == 1) {
-            finalElevation = elevationOptions.getFirst().elevation();
-            updateDeploymentCache(elevationOptions, elevationOptions.getFirst());
-            finalFacing = promptForFacingIfNeeded(facingOptions, finalFacing);
-        } else if (useLastDeployElevation(elevationOptions) && !coords.equals(entity.getPosition())) {
-            // When the player clicks the same hex again, always ask for the elevation
-            finalElevation = entity.isAero() ? entity.getAltitude() : entity.getElevation();
-        } else if (elevationOptions.isEmpty() && validFacings) {
-            finalElevation = FACING_ELEVATION; // Only option in current implementation
-            finalFacing = promptForFacingIfNeeded(facingOptions, finalFacing);
-        } else {
-            ElevationOption elevationOption = showElevationChoiceDialog(elevationOptions);
-            if (elevationOption != null) {
-                updateDeploymentCache(elevationOptions, elevationOption);
-                finalElevation = elevationOption.elevation();
-                finalFacing = promptForFacingIfNeeded(facingOptions, finalFacing);
-            } else {
-                return null;
-            }
-        }
-
-        return new DeploymentPosition(finalElevation, finalFacing);
-    }
-
     //
     // BoardViewListener
     //
@@ -731,7 +677,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
 
             if (!board.isSpace()) {
-                DeploymentPosition deploymentPosition = determineDeploymentPosition(entity, coords, board);
+                DeploymentPosition deploymentPosition = deploymentHelper.determineDeploymentPosition(entity,
+                                                                                                     coords,
+                                                                                                     board,
+                                                                                                     lastHexDeploymentOptions,
+                                                                                                     lastDeploymentOption);
                 if (deploymentPosition == null) {
                     return;
                 }
@@ -742,82 +692,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         } finally {
             ToolTipManager.sharedInstance().setEnabled(true);
         }
-    }
-
-    private @Nullable ElevationOption showElevationChoiceDialog(List<ElevationOption> elevationOptions) {
-        var dlg = new DeployElevationChoiceDialog(clientgui.getFrame(), elevationOptions);
-        DialogResult result = dlg.showDialog();
-        if ((result == DialogResult.CONFIRMED) && (dlg.getFirstChoice() != null)) {
-            if (dlg.getFirstChoice().type() == DeploymentElevationType.ELEVATIONS_ABOVE) {
-                int elevation = showHighElevationChoiceDialog();
-                return (elevation == -1) ?
-                       null :
-                       new ElevationOption(elevation, DeploymentElevationType.ELEVATIONS_ABOVE);
-            } else {
-                return dlg.getFirstChoice();
-            }
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Shows a dialog allowing the user to choose a facing from the valid facings. For facing-dependent entities (like
-     * non-symmetrical multi-hex buildings), this allows the user to select which facing to deploy with.
-     *
-     * @param facingOption The FacingOption containing valid facings for the position
-     * @return The chosen facing (0-5), or -1 if cancelled or no valid facings
-     */
-    private int showFacingChoiceDialog(FacingOption facingOption) {
-        if (facingOption == null || !facingOption.hasValidFacings()) {
-            return -1;
-        }
-
-        var dlg = new DeployFacingChoiceDialog(clientgui.getFrame(), facingOption);
-        DialogResult result = dlg.showDialog();
-        if ((result == DialogResult.CONFIRMED) && (dlg.getChosenFacing() != -1)) {
-            return dlg.getChosenFacing();
-        } else {
-            return -1;
-        }
-    }
-
-    private int showHighElevationChoiceDialog() {
-        String msg = Messages.getString("DeploymentDisplay.elevationChoice");
-        String input = JOptionPane.showInputDialog(clientgui.getFrame(), msg);
-        try {
-            return Integer.parseInt(input);
-        } catch (Exception ex) {
-            return -1;
-        }
-    }
-
-    /**
-     * @return True when the last chosen elevation can be re-used without asking again. This is true when the options
-     * for the current hex have no option that the previous hex didn't and the previous deployment option is
-     * available in the new hex.
-     */
-    private boolean useLastDeployElevation(List<ElevationOption> currentOptions) {
-        return ((lastDeploymentOption != null) &&
-                (lastDeploymentOption.type() == DeploymentElevationType.ELEVATIONS_ABOVE) &&
-                isHighElevationAvailable(currentOptions, lastDeploymentOption.elevation())) ||
-               ((currentOptions.size() <= lastHexDeploymentOptions.size()) &&
-                lastHexDeploymentOptions.containsAll(currentOptions) &&
-                currentOptions.contains(lastDeploymentOption));
-    }
-
-    private boolean isHighElevationAvailable(List<ElevationOption> currentOptions,
-                                             int elevation) {
-        return currentOptions.stream()
-                             .filter(o -> o.type() == DeploymentElevationType.ELEVATIONS_ABOVE)
-                             .anyMatch(o -> o.elevation() <= elevation);
-    }
-
-    private void showCannotDeployHereMessage(Coords coords) {
-        String msg = Messages.getString("DeploymentDisplay.cantDeployInto",
-                                        currentEntity().getShortName(),
-                                        coords.getBoardNum());
-        clientgui.addToast(ToastLevel.ERROR, msg, currentEntity());
     }
 
     private void processTurn(Entity entity,
@@ -1185,49 +1059,5 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
         }
         return choices;
-    }
-
-    /**
-     * Updates the deployment cache with the given elevation options and chosen option. This tracks the last deployment
-     * state to enable automatic re-use when clicking adjacent hexes with identical deployment options.
-     *
-     * @param elevationOptions All available elevation options for the hex
-     * @param chosenOption     The elevation option that was chosen
-     */
-    private void updateDeploymentCache(List<ElevationOption> elevationOptions,
-                                       ElevationOption chosenOption) {
-        lastHexDeploymentOptions.clear();
-        lastHexDeploymentOptions.addAll(elevationOptions);
-        lastDeploymentOption = chosenOption;
-    }
-
-    /**
-     * Prompts the user to select a facing if needed, based on the available facing options. If all 6 facings are valid,
-     * no prompt is shown and the current facing is returned. If some facings are restricted, shows a dialog to let the
-     * user choose.
-     *
-     * @param facingOption  The FacingOption containing valid facings, or null if not applicable
-     * @param currentFacing The entity's current facing
-     * @return The chosen facing (0-5), or currentFacing if no selection was made
-     */
-    private int promptForFacingIfNeeded(FacingOption facingOption,
-                                        int currentFacing) {
-        if (facingOption == null || !facingOption.hasValidFacings()) {
-            return currentFacing;
-        }
-
-        // All 6 facings valid? Skip the dialog
-        if (facingOption.getValidFacingCount() == 6) {
-            return currentFacing;
-        }
-
-        // Only one choice? Pick it.
-        if (facingOption.getValidFacingCount() == 1) {
-            return (int) facingOption.getValidFacings().toArray()[0];
-        }
-
-        // Show facing choice dialog
-        int chosenFacing = showFacingChoiceDialog(facingOption);
-        return (chosenFacing != -1) ? chosenFacing : currentFacing;
     }
 }

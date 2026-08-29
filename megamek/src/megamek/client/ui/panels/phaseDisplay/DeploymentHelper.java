@@ -36,15 +36,32 @@ package megamek.client.ui.panels.phaseDisplay;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.phaseDisplay.DeployElevationChoiceDialog;
+import megamek.client.ui.dialogs.phaseDisplay.DeployFacingChoiceDialog;
+import megamek.client.ui.enums.DialogResult;
+import megamek.client.ui.panels.phaseDisplay.DeploymentDisplay.DeploymentPosition;
+import megamek.common.Hex;
+import megamek.common.annotations.Nullable;
+import megamek.common.board.AllowedDeploymentHelper;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.board.DeploymentElevationType;
+import megamek.common.board.ElevationOption;
+import megamek.common.board.FacingOption;
 import megamek.common.units.Entity;
+import megamek.common.units.Tank;
+import megamek.common.units.Terrains;
 import megamek.common.units.TrainLayout;
 import megamek.logging.MMLogger;
+
+import java.util.List;
+import java.util.Set;
 
 public class DeploymentHelper {
 
     private final ClientGUI clientgui;
+    private Entity currentEntity;
+
     private static final MMLogger logger = MMLogger.create(DeploymentHelper.class);
 
     public DeploymentHelper(ClientGUI clientGUI) {
@@ -112,14 +129,14 @@ public class DeploymentHelper {
         }
         // A hidden unit cannot start in a fortified hex - the fortification is visible terrain that would give
         // the position away. (A unit may, however, deploy both dug in and hidden in concealing terrain.)
-        megamek.common.Hex deployHex = board.getHex(coords);
-        if (entity.isHidden() && (deployHex != null) && deployHex.containsTerrain(megamek.common.units.Terrains.FORTIFIED)) {
+        Hex deployHex = board.getHex(coords);
+        if (entity.isHidden() && (deployHex != null) && deployHex.containsTerrain(Terrains.FORTIFIED)) {
             return BoardValidationResult.HIDDEN_IN_FORTIFIED;
         }
         // A vehicle set to deploy hull-down must start in a fortified ("infantry-built") hex; only that terrain lets
         // a vehicle take cover, and Large Vehicles cannot use it at all (TO:AR p.19).
-        if ((entity instanceof megamek.common.units.Tank deployingVehicle) && entity.isHullDown()) {
-            boolean fortifiedHex = (deployHex != null) && deployHex.containsTerrain(megamek.common.units.Terrains.FORTIFIED);
+        if ((entity instanceof Tank deployingVehicle) && entity.isHullDown()) {
+            boolean fortifiedHex = (deployHex != null) && deployHex.containsTerrain(Terrains.FORTIFIED);
             if (deployingVehicle.isLargeVehicleForHullDown() || !fortifiedHex) {
                 return BoardValidationResult.HULL_DOWN_NEEDS_FORTIFIED;
             }
@@ -189,5 +206,172 @@ public class DeploymentHelper {
          * A tractor's trailers would land outside the deployment area; the whole train has to fit
          */
         TRAIN_DOES_NOT_FIT
+    }
+
+    /**
+     * Determines the deployment position (elevation and facing) for an entity at the given coordinates. Handles user
+     * interaction for elevation and facing choices when multiple options are available.
+     *
+     * @param entity The entity being deployed
+     * @param coords The coordinates where deployment is attempted
+     * @param board  The board on which deployment is occurring
+     * @return DeploymentPosition with elevation and facing, or null if deployment was cancelled or invalid
+     */
+    public @Nullable DeploymentPosition determineDeploymentPosition(Entity entity,
+                                                                    Coords coords,
+                                                                    Board board,
+                                                                    Set<ElevationOption> lastHexDeploymentOptions,
+                                                                    ElevationOption lastDeploymentOption) {
+        currentEntity = entity;
+        int finalElevation;
+        int finalFacing = entity.getFacing();
+        var deploymentHelper = new AllowedDeploymentHelper(entity, coords, board,
+                                                           board.getHex(coords), entity.getGame());
+        java.util.List<ElevationOption> elevationOptions = deploymentHelper.findAllowedElevations();
+        int FACING_ELEVATION = 0; // If we care about facing at other altitudes or elevations ever...
+        FacingOption facingOptions = deploymentHelper.findAllowedFacings(FACING_ELEVATION);
+        boolean validFacings = facingOptions != null && facingOptions.hasValidFacings();
+
+        if (elevationOptions.isEmpty() && !validFacings) {
+            showCannotDeployHereMessage(coords);
+            return null;
+        } else if (elevationOptions.size() == 1) {
+            finalElevation = elevationOptions.getFirst().elevation();
+            lastHexDeploymentOptions.clear();
+            lastHexDeploymentOptions.addAll(elevationOptions);
+            lastDeploymentOption = elevationOptions.getFirst();
+            finalFacing = promptForFacingIfNeeded(facingOptions, finalFacing);
+        } else if (useLastDeployElevation(elevationOptions,
+                                          lastDeploymentOption,
+                                          lastHexDeploymentOptions) && !coords.equals(entity.getPosition())) {
+            // When the player clicks the same hex again, always ask for the elevation
+            finalElevation = entity.isAero() ? entity.getAltitude() : entity.getElevation();
+        } else if (elevationOptions.isEmpty() && validFacings) {
+            finalElevation = FACING_ELEVATION; // Only option in current implementation
+            finalFacing = promptForFacingIfNeeded(facingOptions, finalFacing);
+        } else {
+            ElevationOption elevationOption = showElevationChoiceDialog(elevationOptions);
+            if (elevationOption != null) {
+                lastHexDeploymentOptions.clear();
+                lastHexDeploymentOptions.addAll(elevationOptions);
+                lastDeploymentOption = elevationOption;
+                finalElevation = elevationOption.elevation();
+                finalFacing = promptForFacingIfNeeded(facingOptions, finalFacing);
+            } else {
+                return null;
+            }
+        }
+
+        return new DeploymentPosition(finalElevation, finalFacing);
+    }
+
+    private @Nullable ElevationOption showElevationChoiceDialog(List<ElevationOption> elevationOptions) {
+        var dlg = new DeployElevationChoiceDialog(clientgui.getFrame(),
+                                                  elevationOptions);
+        DialogResult result = dlg.showDialog();
+        if ((result == DialogResult.CONFIRMED) && (dlg.getFirstChoice() != null)) {
+            if (dlg.getFirstChoice().type() == megamek.common.board.DeploymentElevationType.ELEVATIONS_ABOVE) {
+                int elevation = showHighElevationChoiceDialog();
+                return (elevation == -1) ?
+                       null :
+                       new ElevationOption(elevation, DeploymentElevationType.ELEVATIONS_ABOVE);
+            } else {
+                return dlg.getFirstChoice();
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Shows a dialog allowing the user to choose a facing from the valid facings. For facing-dependent entities (like
+     * non-symmetrical multi-hex buildings), this allows the user to select which facing to deploy with.
+     *
+     * @param facingOption The FacingOption containing valid facings for the position
+     * @return The chosen facing (0-5), or -1 if cancelled or no valid facings
+     */
+    private int showFacingChoiceDialog(megamek.common.board.FacingOption facingOption) {
+        if (facingOption == null || !facingOption.hasValidFacings()) {
+            return -1;
+        }
+
+        var dlg = new DeployFacingChoiceDialog(clientgui.getFrame(),
+                                               facingOption);
+        DialogResult result = dlg.showDialog();
+        if ((result == DialogResult.CONFIRMED) && (dlg.getChosenFacing() != -1)) {
+            return dlg.getChosenFacing();
+        } else {
+            return -1;
+        }
+    }
+
+    private int showHighElevationChoiceDialog() {
+        String msg = Messages.getString("DeploymentDisplay.elevationChoice");
+        String input = javax.swing.JOptionPane.showInputDialog(clientgui.getFrame(), msg);
+        try {
+            return Integer.parseInt(input);
+        } catch (Exception ex) {
+            return -1;
+        }
+    }
+
+    /**
+     * @return True when the last chosen elevation can be re-used without asking again. This is true when the options
+     * for the current hex have no option that the previous hex didn't and the previous deployment option is
+     * available in the new hex.
+     */
+    private boolean useLastDeployElevation(List<ElevationOption> currentOptions,
+                                           ElevationOption lastDeploymentOption,
+                                           Set<ElevationOption> lastHexDeploymentOptions) {
+        return ((lastDeploymentOption != null) &&
+                (lastDeploymentOption.type() == megamek.common.board.DeploymentElevationType.ELEVATIONS_ABOVE) &&
+                isHighElevationAvailable(currentOptions, lastDeploymentOption.elevation())) ||
+               ((currentOptions.size() <= lastHexDeploymentOptions.size()) &&
+                lastHexDeploymentOptions.containsAll(currentOptions) &&
+                currentOptions.contains(lastDeploymentOption));
+    }
+
+    private boolean isHighElevationAvailable(List<ElevationOption> currentOptions,
+                                             int elevation) {
+        return currentOptions.stream()
+                             .filter(o -> o.type() == DeploymentElevationType.ELEVATIONS_ABOVE)
+                             .anyMatch(o -> o.elevation() <= elevation);
+    }
+
+    private void showCannotDeployHereMessage(Coords coords) {
+        String msg = Messages.getString("DeploymentDisplay.cantDeployInto",
+                                        currentEntity.getShortName(),
+                                        coords.getBoardNum());
+        clientgui.addToast(ToastLevel.ERROR, msg, currentEntity);
+    }
+
+    /**
+     * Prompts the user to select a facing if needed, based on the available facing options. If all 6 facings are valid,
+     * no prompt is shown and the current facing is returned. If some facings are restricted, shows a dialog to let the
+     * user choose.
+     *
+     * @param facingOption  The FacingOption containing valid facings, or null if not applicable
+     * @param currentFacing The entity's current facing
+     * @return The chosen facing (0-5), or currentFacing if no selection was made
+     */
+    private int promptForFacingIfNeeded(FacingOption facingOption,
+                                        int currentFacing) {
+        if (facingOption == null || !facingOption.hasValidFacings()) {
+            return currentFacing;
+        }
+
+        // All 6 facings valid? Skip the dialog
+        if (facingOption.getValidFacingCount() == 6) {
+            return currentFacing;
+        }
+
+        // Only one choice? Pick it.
+        if (facingOption.getValidFacingCount() == 1) {
+            return (int) facingOption.getValidFacings().toArray()[0];
+        }
+
+        // Show facing choice dialog
+        int chosenFacing = showFacingChoiceDialog(facingOption);
+        return (chosenFacing != -1) ? chosenFacing : currentFacing;
     }
 }

@@ -264,4 +264,18 @@ class EnvironmentalSealingRulesTest {
         assertFalse(EnvironmentalSealingRules.canOperateFullySubmerged(combatVehicle(Engine.NORMAL_ENGINE, false)),
               "The engine alone is not enough - the vehicle still has to be sealed");
     }
+
+    @Test
+    void airBreathingMovementModesAreDoomedInVacuumHoweverWellSealed() throws LocationFullException {
+        for (EntityMovementMode airPushingMode : new EntityMovementMode[] {
+              EntityMovementMode.HOVER, EntityMovementMode.WIGE, EntityMovementMode.VTOL }) {
+            Tank sealedFlyer = combatVehicle(Engine.NORMAL_ENGINE, true);
+            sealedFlyer.setMovementMode(airPushingMode);
+
+            assertTrue(EnvironmentalSealingRules.canOperateInVacuum(sealedFlyer),
+                  "The sealing rule alone says yes - it only knows about sealing and the engine");
+            assertTrue(sealedFlyer.doomedInVacuum(),
+                  airPushingMode + " has no air to push against, however well sealed (TO:AR p.35, footnote 31)");
+        }
+    }
 }

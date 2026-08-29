@@ -809,9 +809,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
 
         boolean hasFlotationHull = hasWorkingMisc(MiscType.F_FLOTATION_HULL);
         boolean isAmphibious = hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
-        // Sealing alone does not put a vehicle on the lake bed: an engine that has to take in air to burn fuel
-        // will not run completely submerged, however well sealed the crew compartment is (TM p.216).
-        boolean canDriveSubmerged = EnvironmentalSealingRules.canOperateFullySubmerged(this);
+        boolean sealed = hasEnvironmentalSealing();
         boolean hexHasRoad = hex.containsTerrain(Terrains.ROAD);
         // A bulldozer (or, under the unofficial rule, a backhoe) lets a vehicle enter a rubble hex its motive type
         // would normally bar, so it can clear it (TacOps). Only the rubble prohibition is lifted; other prohibiting
@@ -832,7 +830,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                     // Water, no ice, no amphibious measures... or magma?  Bad.
                     return ((hex.terrainLevel(Terrains.WATER) > 0) &&
                           !hex.containsTerrain(Terrains.ICE) &&
-                          !(hasFlotationHull || canDriveSubmerged || isAmphibious) ||
+                          !(hasFlotationHull || sealed || isAmphibious) ||
                           (hex.terrainLevel(Terrains.MAGMA) > 1));
                 }
 
@@ -840,7 +838,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                     return ((hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad) ||
                           ((hex.terrainLevel(Terrains.WATER) > 0) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
-                                !(hasFlotationHull || canDriveSubmerged || isAmphibious)) ||
+                                !(hasFlotationHull || sealed || isAmphibious)) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
                           (hex.terrainLevel(Terrains.MAGMA) > 1) ||
                           (hex.terrainLevel(Terrains.ROUGH) > 1) ||
@@ -849,7 +847,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                     return ((hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad) ||
                           ((hex.terrainLevel(Terrains.WATER) > 1) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
-                                !(hasFlotationHull || canDriveSubmerged || isAmphibious)) ||
+                                !(hasFlotationHull || sealed || isAmphibious)) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
                           (hex.terrainLevel(Terrains.MAGMA) > 1);
                 }
@@ -857,7 +855,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                 if (isCrossCountry && !isSuperHeavy()) {
                     return ((hex.terrainLevel(Terrains.WATER) > 0) &&
                           !hex.containsTerrain(Terrains.ICE) &&
-                          !(hasFlotationHull || canDriveSubmerged || isAmphibious)) ||
+                          !(hasFlotationHull || sealed || isAmphibious)) ||
                           hex.containsTerrain(Terrains.MAGMA) ||
                           ((hex.terrainLevel(Terrains.SNOW) > 1) && !hexHasRoad) ||
                           (hex.terrainLevel(Terrains.GEYSER) == 2);
@@ -868,7 +866,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                           (hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad) ||
                           ((hex.terrainLevel(Terrains.WATER) > 0) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
-                                !(hasFlotationHull || canDriveSubmerged || isAmphibious)) ||
+                                !(hasFlotationHull || sealed || isAmphibious)) ||
                           (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad && !rubblePassable) ||
                           hex.containsTerrain(Terrains.MAGMA) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
@@ -879,7 +877,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                           (hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad) ||
                           ((hex.terrainLevel(Terrains.WATER) > 1) &&
                                 !hex.containsTerrain(Terrains.ICE) &&
-                                !(hasFlotationHull || canDriveSubmerged || isAmphibious)) ||
+                                !(hasFlotationHull || sealed || isAmphibious)) ||
                           (hex.containsTerrain(Terrains.RUBBLE) && !hexHasRoad && !rubblePassable) ||
                           hex.containsTerrain(Terrains.MAGMA) ||
                           (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad) ||
@@ -1781,14 +1779,22 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     }
 
     /**
-     * A vehicle survives vacuum only if it is sealed and its engine runs with no outside air to breathe. The rules
-     * name fission, fusion and fuel cell engines for Combat Vehicles (TO:AUE p.115) and fission, fusion and electric
-     * engines for Support Vehicles (TM p.122); MegaMek's Support Vehicle "Electric" engine is the battery.
+     * A vehicle survives vacuum only if it can hold itself up without air to push against, and is sealed, and its
+     * engine runs with no outside air to breathe. The rules name fission, fusion and fuel cell engines for Combat
+     * Vehicles (TO:AUE p.115) and fission, fusion and electric engines for Support Vehicles (TM p.122); MegaMek's
+     * Support Vehicle "Electric" engine is the battery.
      *
      * @return {@code true} when this vehicle will not survive vacuum conditions
      */
     @Override
     public boolean doomedInVacuum() {
+        // Hovercraft, WiGEs and VTOLs all fly by pushing against air, so there is nothing for them to work with in a
+        // vacuum or a trace atmosphere however well sealed they are (TO:AR p.35, Expanded Movement Costs and
+        // Planetary Conditions Table, footnote 31; the ruling that hovercraft belong in that footnote alongside WiGEs
+        // and VTOLs is at battletech.com/forums topic 55634).
+        if (getMovementMode().isHoverVTOLOrWiGE()) {
+            return true;
+        }
         return !EnvironmentalSealingRules.canOperateInVacuum(this);
     }
 

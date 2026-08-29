@@ -42,6 +42,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -64,6 +65,7 @@ class CommonSettingsPaneTest {
 
     @Test
     void searchIndexesNestedLabelsAndTooltips() throws Exception {
+        AtomicReference<CommonSettingsPane> pane = new AtomicReference<>();
         runOnEdt(() -> {
             JPanel main = new JPanel();
             main.add(new JLabel("Display scale"));
@@ -71,25 +73,26 @@ class CommonSettingsPaneTest {
             JCheckBox mute = new JCheckBox("Mute notifications");
             mute.setToolTipText("Silence chat alerts");
             audio.add(mute);
-            CommonSettingsPane pane = pane(main, audio);
+            pane.set(pane(main, audio));
 
-            pane.setFilterText("chat alerts");
-
-            assertEquals("Audio", selectedTreeLabel(pane));
+            pane.get().setFilterText("chat alerts");
         });
+        finishSearchIndexing();
+        runOnEdt(() -> assertEquals("Audio", selectedTreeLabel(pane.get())));
     }
 
     @Test
     void searchIndexesListEntries() throws Exception {
+        AtomicReference<CommonSettingsPane> pane = new AtomicReference<>();
         runOnEdt(() -> {
             JPanel main = new JPanel();
             main.add(new JList<>(new String[] { "General option", "Experimental pathfinder" }));
-            CommonSettingsPane pane = pane(main, new JPanel());
+            pane.set(pane(main, new JPanel()));
 
-            pane.setFilterText("pathfinder");
-
-            assertEquals("Main", selectedTreeLabel(pane));
+            pane.get().setFilterText("pathfinder");
         });
+        finishSearchIndexing();
+        runOnEdt(() -> assertEquals("Main", selectedTreeLabel(pane.get())));
     }
 
     @Test
@@ -306,5 +309,10 @@ class CommonSettingsPaneTest {
             }
             throw exception;
         }
+    }
+
+    private static void finishSearchIndexing() throws Exception {
+        runOnEdt(() -> { });
+        runOnEdt(() -> { });
     }
 }

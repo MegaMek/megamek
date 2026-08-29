@@ -285,7 +285,14 @@ public enum PacketCommand {
      * there when the edit is done. The same packet puts a building where there was none, changes the one that is
      * there and takes it away; the server works out which by looking at the hex. Accepted only from a Game Master.
      */
-    BUILDING_EDIT;
+    BUILDING_EDIT,
+
+    /**
+     * A Client to Server packet turning one unit's automatic ejection on or off after the lobby has closed. Carries
+     * only that one setting, so the server's copy of the unit keeps every piece of state the sender does not own.
+     * Accepted only from the unit's owner.
+     */
+    ENTITY_EJECTION_SETTING_CHANGE;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

@@ -58,6 +58,7 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.CollapseWarning;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.phaseDisplay.AutomaticEjectionDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DeployElevationChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DeployFacingChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.EntityChoiceDialog;
@@ -474,11 +475,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
 
         if (shouldWarnAboutAutoEjection()) {
-            List<String> unitsThatWillEject = unitsThatWillEjectTheirCrew();
+            List<Entity> unitsThatWillEject = unitsThatWillEjectTheirCrew();
             hasWarnedAboutAutoEjection = true;
             logger.debug("[EnvironmentalSealing] warning about auto-ejection - {} unit(s) would eject their crew "
                   + "into conditions that kill them", unitsThatWillEject.size());
-            if (askAboutAutoEjectIntoLethalConditions(unitsThatWillEject)) {
+            AutomaticEjectionDialog ejectionDialog = new AutomaticEjectionDialog(clientgui.getFrame(),
+                  clientgui, unitsThatWillEject);
+            ejectionDialog.setVisible(true);
+            if (ejectionDialog.isDeploymentCancelled()) {
                 takeBackDeployment(entity,
                       Messages.getString("DeploymentDisplay.ConfirmAutoEject.cancelReason"));
                 return true;
@@ -579,15 +583,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * The names of this player's units that are set to throw their crews out on their own initiative.
+     * This player's units that are set to throw their crews out on their own initiative.
      *
-     * @return the short names of every affected unit, in the order the game holds them
+     * @return every affected unit, in the order the game holds them
      */
-    private List<String> unitsThatWillEjectTheirCrew() {
+    private List<Entity> unitsThatWillEjectTheirCrew() {
         return game.getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
               .stream()
               .filter(this::willEjectAutomatically)
-              .map(Entity::getShortName)
               .toList();
     }
 
@@ -616,42 +619,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             return aero.isAutoEject() && (!isConditionalEjectionInPlay || isAnyTriggerArmed);
         }
         return false;
-    }
-
-    /**
-     * Warns that these units will eject their crews into conditions that will kill them, and asks whether to go
-     * ahead with the deployment.
-     * <p>
-     * The units themselves are perfectly able to fight here; it is the crews who cannot survive outside them. So the
-     * choice is only whether to deploy, and the fix a player usually wants is to turn ejection off in each unit's
-     * configuration and try again.
-     *
-     * @param unitsThatWillEject the short names of the affected units
-     *
-     * @return {@code true} if the player wants to take the deployment back
-     */
-    private boolean askAboutAutoEjectIntoLethalConditions(List<String> unitsThatWillEject) {
-        JCheckBox dontAskAgain = new JCheckBox(
-              Messages.getString("DeploymentDisplay.ConfirmAutoEject.dontAskAgain"));
-        Object[] message = { Messages.getString("DeploymentDisplay.ConfirmAutoEject.message",
-              String.join(", ", unitsThatWillEject)), dontAskAgain };
-        Object[] choices = { Messages.getString("DeploymentDisplay.ConfirmAutoEject.deployAnyway"),
-              Messages.getString("DeploymentDisplay.ConfirmAutoEject.cancel") };
-
-        int chosenIndex = JOptionPane.showOptionDialog(clientgui.getFrame(),
-              message,
-              Messages.getString("DeploymentDisplay.ConfirmAutoEject.title"),
-              JOptionPane.DEFAULT_OPTION,
-              JOptionPane.WARNING_MESSAGE,
-              null,
-              choices,
-              choices[1]);
-
-        if (dontAskAgain.isSelected()) {
-            GUIP.setNagForAutoEject(false);
-        }
-        // Closing the dialog with the window button counts as cancelling, the same as the Cancel button.
-        return chosenIndex != 0;
     }
 
     /**

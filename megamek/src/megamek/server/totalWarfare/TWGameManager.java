@@ -1201,6 +1201,9 @@ public class TWGameManager extends AbstractGameManager {
                 case ENTITY_VARIABLE_RANGE_MODE_CHANGE:
                     receiveEntityVariableRangeModeChange(packet, connId);
                     break;
+                case ENTITY_EJECTION_SETTING_CHANGE:
+                    receiveEntityEjectionSettingChange(packet, connId);
+                    break;
                 case ENTITY_ABANDON_ANNOUNCE:
                     receiveEntityAbandonAnnounce(packet, connId);
                     break;
@@ -27776,6 +27779,46 @@ public class TWGameManager extends AbstractGameManager {
      * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet
      */
+    /**
+     * Turns one unit's automatic ejection on or off at its owner's request.
+     * <p>
+     * The server decides on its own copy of the unit whether a crew is thrown clear, so a change made only on the
+     * client would be ignored when the moment came. Only the owner may make it, and only BattleMeks and aerospace
+     * units carry the setting at all.
+     *
+     * @param packet    the packet holding the unit id and the new setting
+     * @param connIndex the connection the packet arrived on
+     */
+    private void receiveEntityEjectionSettingChange(Packet packet, int connIndex) {
+        try {
+            int entityId = packet.getIntValue(0);
+            boolean shouldEject = (Boolean) packet.getObject(1);
+            Entity entity = game.getEntity(entityId);
+
+            if ((entity == null) || (entity.getOwner() != game.getPlayer(connIndex))) {
+                LOGGER.warn("Dropping an ejection setting change for unit id {}: the sender does not own it",
+                      entityId);
+                return;
+            }
+
+            if (entity instanceof Mek mek) {
+                mek.setAutoEject(shouldEject);
+            } else if (entity instanceof Aero aero) {
+                aero.setAutoEject(shouldEject);
+            } else {
+                LOGGER.warn("Dropping an ejection setting change for {}: it has no ejection system",
+                      entity.getDisplayName());
+                return;
+            }
+
+            LOGGER.debug("[EnvironmentalSealing] {}: automatic ejection set to {} by its owner",
+                  entity.getDisplayName(), shouldEject);
+            entityUpdate(entityId);
+        } catch (Exception exception) {
+            LOGGER.error("Error processing an automatic ejection setting change", exception);
+        }
+    }
+
     private void receiveEntityVariableRangeModeChange(Packet packet, int connIndex) {
         try {
             int entityId = packet.getIntValue(0);

@@ -33,12 +33,14 @@
 
 package megamek.common.units;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.Messages;
 import megamek.common.equipment.Engine;
 import megamek.common.game.Game;
 import megamek.common.equipment.HandheldWeapon;
@@ -223,6 +225,19 @@ class EnvironmentalSealingRulesTest {
     void unsealedElectricSupportVehicleIsStillDoomedInVacuum() throws LocationFullException {
         assertTrue(supportVehicle(Engine.BATTERY, false).doomedInVacuum(),
               "The engine alone is not enough - the Support Vehicle still has to be sealed");
+    }
+
+    @Test
+    void anUnpoweredTrailerIsToldItHasNoEngineRatherThanABreathingOne() throws LocationFullException {
+        // The two canon sealed trailers, HMRV DeConAid and Galaport Ground, carry Environmental Sealing and no
+        // engine at all. Naming an engine they do not have sends their owner looking for the wrong thing.
+        SupportTank trailer = supportVehicle(Engine.NONE, true);
+
+        String reason = EnvironmentalSealingRules.whyCannotOperateInVacuum(trailer);
+
+        assertNotNull(reason, "A sealed trailer with no engine still cannot operate in vacuum");
+        assertEquals(Messages.getString("EnvironmentalSealing.Vacuum.NoEngine"), reason,
+              "It should be told it has no engine, not that its engine needs air");
     }
 
     @Test

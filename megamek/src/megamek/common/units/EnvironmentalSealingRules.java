@@ -158,6 +158,13 @@ public final class EnvironmentalSealingRules {
         if (!isSealedAgainstAtmosphere(entity)) {
             return Messages.getString("EnvironmentalSealing.Vacuum.NoSealing");
         }
+        boolean hasNoEngineAtAll = !entity.hasEngine()
+              || (entity.getEngine().getEngineType() == Engine.NONE);
+        if (hasNoEngineAtAll) {
+            // An unpowered trailer reaches this point. Telling its owner that "this engine needs air" names an
+            // engine the unit does not have, which sends them looking for the wrong thing to change.
+            return Messages.getString("EnvironmentalSealing.Vacuum.NoEngine");
+        }
         if (!hasSealedOperationEngine(entity)) {
             return Messages.getString("EnvironmentalSealing.Vacuum.EngineNeedsAir");
         }

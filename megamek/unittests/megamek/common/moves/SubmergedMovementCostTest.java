@@ -221,4 +221,25 @@ class SubmergedMovementCostTest extends GameBoardTestCase {
         assertTrue(fusionVehiclePath.isMoveLegal(),
               "Sealing plus a fusion engine lets the vehicle drive along the bottom");
     }
+
+    @Test
+    void theSubmersionGateIsTheSameUnderBothRulesets() throws LocationFullException {
+        // Only the MP cost differs between the rulesets. Who may be submerged at all is a construction question,
+        // and the Core Rules define nothing of their own for it, so the Total Warfare rule stands under both.
+        setBoard("SHALLOW_WATER");
+        for (RulesManager ruleset : new RulesManager[] { new TWRulesManager(), new CoreRulesManager() }) {
+            Game.rulesManager = ruleset;
+
+            MovePath iceVehiclePath = getMovePathFor(sealedTank(Engine.COMBUSTION_ENGINE), SEABED_OF_DEPTH_ONE,
+                  EntityMovementMode.TRACKED, MoveStepType.FORWARDS);
+            MovePath fusionVehiclePath = getMovePathFor(sealedTank(Engine.NORMAL_ENGINE), SEABED_OF_DEPTH_ONE,
+                  EntityMovementMode.TRACKED, MoveStepType.FORWARDS);
+
+            assertFalse(iceVehiclePath.isMoveLegal(),
+                  "A sealed internal combustion vehicle stays out of the water under " + ruleset.getClass()
+                        .getSimpleName());
+            assertTrue(fusionVehiclePath.isMoveLegal(),
+                  "A sealed fusion vehicle may still submerge under " + ruleset.getClass().getSimpleName());
+        }
+    }
 }

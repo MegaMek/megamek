@@ -151,7 +151,8 @@ public final class EnvironmentalSealingRules {
         if (entity.isConventionalInfantry()) {
             return Messages.getString("EnvironmentalSealing.Vacuum.NoSpaceSuit");
         }
-        if (entity.getMovementMode().isHoverVTOLOrWiGE()) {
+        EntityMovementMode movementMode = entity.getMovementMode();
+        if ((movementMode != null) && movementMode.isHoverVTOLOrWiGE()) {
             return Messages.getString("EnvironmentalSealing.Vacuum.NothingToPushAgainst");
         }
         if (!isSealedAgainstAtmosphere(entity)) {

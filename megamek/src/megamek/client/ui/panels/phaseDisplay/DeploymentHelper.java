@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -66,10 +66,6 @@ public class DeploymentHelper {
 
     public DeploymentHelper(ClientGUI clientGUI) {
         this.clientgui = clientGUI;
-    }
-
-    public DeploymentHelper() {
-        this.clientgui = null;
     }
 
     public boolean checkDeployment(Board board,
@@ -270,7 +266,7 @@ public class DeploymentHelper {
                                                   elevationOptions);
         DialogResult result = dlg.showDialog();
         if ((result == DialogResult.CONFIRMED) && (dlg.getFirstChoice() != null)) {
-            if (dlg.getFirstChoice().type() == megamek.common.board.DeploymentElevationType.ELEVATIONS_ABOVE) {
+            if (dlg.getFirstChoice().type() == DeploymentElevationType.ELEVATIONS_ABOVE) {
                 int elevation = showHighElevationChoiceDialog();
                 return (elevation == -1) ?
                        null :
@@ -290,7 +286,7 @@ public class DeploymentHelper {
      * @param facingOption The FacingOption containing valid facings for the position
      * @return The chosen facing (0-5), or -1 if cancelled or no valid facings
      */
-    private int showFacingChoiceDialog(megamek.common.board.FacingOption facingOption) {
+    private int showFacingChoiceDialog(FacingOption facingOption) {
         if (facingOption == null || !facingOption.hasValidFacings()) {
             return -1;
         }
@@ -324,7 +320,7 @@ public class DeploymentHelper {
                                            ElevationOption lastDeploymentOption,
                                            Set<ElevationOption> lastHexDeploymentOptions) {
         return ((lastDeploymentOption != null) &&
-                (lastDeploymentOption.type() == megamek.common.board.DeploymentElevationType.ELEVATIONS_ABOVE) &&
+                (lastDeploymentOption.type() == DeploymentElevationType.ELEVATIONS_ABOVE) &&
                 isHighElevationAvailable(currentOptions, lastDeploymentOption.elevation())) ||
                ((currentOptions.size() <= lastHexDeploymentOptions.size()) &&
                 lastHexDeploymentOptions.containsAll(currentOptions) &&

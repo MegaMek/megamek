@@ -33,10 +33,6 @@ package megamek.common.rules.core;
  */
 
 
-import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
-
-import java.util.EnumSet;
-
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
@@ -49,7 +45,12 @@ import megamek.common.units.Entity;
 import megamek.common.units.IBomber;
 import megamek.logging.MMLogger;
 
+import java.util.EnumSet;
+
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
+
 public class CoreRulesGame extends RulesGame {
+
     private static final MMLogger logger = MMLogger.create(CoreRulesGame.class);
 
     /**
@@ -65,7 +66,8 @@ public class CoreRulesGame extends RulesGame {
      * movement) Core p.183 Finding a club can use in physical phase Core p.79
      */
     @Override
-    public boolean eligibleForPhase(Entity entity, @Nullable GamePhase phase) {
+    public boolean eligibleForPhase(Entity entity,
+                                    @Nullable GamePhase phase) {
         if (phase != null) {
             if (entity.isImmobile() && phase.isMovement()) {
                 return false;
@@ -81,7 +83,10 @@ public class CoreRulesGame extends RulesGame {
      * {@inheritDoc} Front loaded initiative Core p.41
      */
     @Override
-    public int getInitiativeOrder(int[] num_turns, int index, int min, boolean frontLoadOption) {
+    public int getInitiativeOrder(int[] num_turns,
+                                  int index,
+                                  int min,
+                                  boolean frontLoadOption) {
         return ((int) Math.ceil(((double) num_turns[index]) / (double) min));
     }
 
@@ -91,8 +96,11 @@ public class CoreRulesGame extends RulesGame {
      * Core rules errata v0.1 https://www.battletech.com/forums/index.php/topic,91365.0.html
      */
     @Override
-    public double tagBVBump(Entity entity, CalculationReport bvReport, double adjustedBV,
-          long tagCount, boolean hasGuided) {
+    public double tagBVBump(Entity entity,
+                            CalculationReport bvReport,
+                            double adjustedBV,
+                            long tagCount,
+                            boolean hasGuided) {
         for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
             if ((otherEntity.getOwner() == null) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
                 continue;
@@ -100,12 +108,12 @@ public class CoreRulesGame extends RulesGame {
             for (Mounted<?> mounted : otherEntity.getWeaponList()) {
                 boolean foundHoming = false;
                 if (mounted.getType().hasFlag(WeaponTypeFlag.F_ARROW_IV) || mounted.getType()
-                      .hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
+                                                                                   .hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
                     for (Mounted<?> mountedAmmo : otherEntity.getAmmo()) {
                         AmmoType ammoType = (AmmoType) mountedAmmo.getType();
                         EnumSet<AmmoType.Munitions> munitionType = ammoType.getMunitionType();
                         if ((mountedAmmo.getUsableShotsLeft() > 0) &&
-                              (munitionType.contains(AmmoType.Munitions.M_HOMING))) {
+                            (munitionType.contains(AmmoType.Munitions.M_HOMING))) {
                             // Once we know it has homing ammo on this unit, we can break out
                             foundHoming = true;
                             break;
@@ -115,14 +123,14 @@ public class CoreRulesGame extends RulesGame {
                         // Each Arrow IV or artillery launcher with homing ammo adds 50 BV per TAG in the force
                         adjustedBV += 50 * tagCount;
                         bvReport.addLine("- " + equipmentDescriptor(mounted, entity),
-                              "+ " +
-                                    tagCount +
-                                    " x " +
-                                    formatForReport(50) +
-                                    " (" +
-                                    otherEntity.getShortName() +
-                                    ")",
-                              "= " + formatForReport(adjustedBV));
+                                         "+ " +
+                                         tagCount +
+                                         " x " +
+                                         formatForReport(50) +
+                                         " (" +
+                                         otherEntity.getShortName() +
+                                         ")",
+                                         "= " + formatForReport(adjustedBV));
                         hasGuided = true;
                     }
                 }
@@ -135,14 +143,14 @@ public class CoreRulesGame extends RulesGame {
                     if (homingCount > 0) {
                         adjustedBV += bomb.getBV(otherEntity) * homingCount * tagCount;
                         bvReport.addLine("- " + bomb.getName(),
-                              "+ " +
-                                    tagCount +
-                                    " x " +
-                                    formatForReport(bomb.getBV(otherEntity)) +
-                                    " (" +
-                                    otherEntity.getShortName() +
-                                    ")",
-                              "= " + formatForReport(adjustedBV));
+                                         "+ " +
+                                         tagCount +
+                                         " x " +
+                                         formatForReport(bomb.getBV(otherEntity)) +
+                                         " (" +
+                                         otherEntity.getShortName() +
+                                         ")",
+                                         "= " + formatForReport(adjustedBV));
                         hasGuided = true;
                     }
                 }
@@ -155,7 +163,9 @@ public class CoreRulesGame extends RulesGame {
      * {@inheritDoc} Core rules allows minefields
      */
     @Override
-    public boolean allowMinefields(boolean toMinefields) {return true;}
+    public boolean allowMinefields(boolean toMinefields) {
+        return true;
+    }
 
     /**
      * {@inheritDoc} Core has walk on initiative by default
@@ -168,13 +178,14 @@ public class CoreRulesGame extends RulesGame {
     }
 
     /**
-     * {@inheritDoc} Core omits immobile units from movement/inititative
+     * {@inheritDoc} Core omits immobile units from movement/initiative
      *
      * @return false if it should not include them
      */
     @Override
-    public boolean includeInMovement(GamePhase phase, Entity entity) {
-        return ((phase.isMovement() || phase.isInitiative()) && entity.isImmobile()) ? false : true;
+    public boolean includeInMovement(GamePhase phase,
+                                     Entity entity) {
+        return !((phase.isMovement() || phase.isInitiative()) && entity.isImmobile());
     }
 
     /**

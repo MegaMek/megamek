@@ -1757,12 +1757,7 @@ public class MovePath implements Cloneable,
                                  int maneuverType) {
         while (getFinalFacing() != destFacing) {
             final MoveStepType stepType = getDirection(getFinalFacing(), destFacing);
-            MoveStep lastStep = getLastStep();
-            if ((lastStep != null) && lastStep.isDeploying()) {
-                addStep(stepType, false, false, maneuverType);
-            } else {
-                addStep(stepType, isManeuver, isManeuver, maneuverType);
-            }
+            addStep(stepType, isManeuver, isManeuver, maneuverType);
         }
     }
 

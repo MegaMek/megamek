@@ -1961,8 +1961,9 @@ public class CustomMekDialog extends AbstractButtonDialog
                                                    choDeploymentZone.getSelectedIndex() < Board.NUM_ZONES;
             txtDeploymentOffset.setEnabled(enableDeploymentZoneControls);
             txtDeploymentWidth.setEnabled(enableDeploymentZoneControls);
-            if (enableDeploymentZoneControls && Game.rulesManager.getRulesGame()
-                                                                 .isWalkOnDeployment() && (choDeploymentZone.getSelectedIndex() != Board.START_CENTER && choDeploymentZone.getSelectedIndex() != Board.START_ANY)) {
+            int deploymentZone = choDeploymentZone.getSelectedIndex() - 1;
+            if (enableDeploymentZoneControls && Game.rulesManager.getRulesGame().isWalkOnDeployment() &&
+                (deploymentZone != Board.START_CENTER && deploymentZone != Board.START_ANY && deploymentZone <= megamek.common.board.Board.NUM_ZONES)) {
                 txtDeploymentWidth.setEnabled(false);
             }
         }

@@ -1921,32 +1921,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
             currentlySelectedEntity.setMovementMode(EntityMovementMode.QUAD);
         }
 
-        MoveStep deployStep = null;
-        // If it was walk-on deployment, invalidate the deployment
-        if ((cmd != null) && cmd.contains(MoveStepType.DEPLOY)) {
-            int stepLength = cmd.length();
-            if (stepLength > 1) {
-                if (cmd.getStep(0).getType() == MoveStepType.DEPLOY) {
-                    deployStep = cmd.getStep(0);
-                } else if ((stepLength == 2) && cmd.getStep(1).getType() == MoveStepType.DEPLOY) {
-                    deployStep = cmd.getStep(1);
-                }
-            }
-            if (deployStep == null) {
-                currentlySelectedEntity.setDeployed(false);
-                clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
-            }
-        }
 
         // create new current and considered paths
         cmd = new MovePath(game, currentlySelectedEntity);
-        if (deployStep != null) {
-            if (deployStep.getMovementType(false) == EntityMovementType.MOVE_JUMP) {
-                initializeJumpMovePath();
-            }
-            addStepToMovePath(MoveStepType.DEPLOY);
-            clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
-        }
+
         clientgui.updateFiringArc(currentlySelectedEntity);
         clientgui.showSensorRanges(currentlySelectedEntity, cmd.getFinalCoords());
         computeCFWarningHexes(currentlySelectedEntity);
@@ -2701,6 +2679,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         lastHexDeploymentOptions,
                         lastDeploymentOption);
                 if (deploymentPosition == null) {
+
                     return;
                 }
                 int elevation = deploymentPosition.elevation();
@@ -2721,6 +2700,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     clientgui.updateFiringArc(currentlySelectedEntity);
                     clientgui.showSensorRanges(currentlySelectedEntity);
                     clientgui.boardViews().forEach(IBoardView::repaint);
+                } else {
+                    String msg = Messages.getString("DeploymentDisplay.cantDeployInto",
+                                                    currentlySelectedEntity.getShortName(),
+                                                    coords.getBoardNum());
+                    clientgui.addToast(ToastLevel.ERROR, msg, currentlySelectedEntity);
                 }
                 return;
 
@@ -2733,7 +2717,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         // Check for deployment and shift held
-        if (shiftHeld) {
+        if (shiftHeld && cmd != null) {
             MoveStep lastStep = cmd.getLastStep();
             if ((lastStep != null) && lastStep.getType() == MoveStepType.DEPLOY) {
                 processDeploymentTurn(currentlySelectedEntity, boardViewEvent.getCoords());

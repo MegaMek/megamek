@@ -155,18 +155,19 @@ public abstract class RulesGame {
      * @return true if they can walk on, false if they cannot
      */
     public boolean canWalkOnThisRound(Entity entity) {
+        if (!isWalkOnDeployment()) {
+            return false;
+        }
+
         int deploymentRound = entity.getDeployRound();
         int currentRound = entity.getGame().getCurrentRound();
         int startingPos = entity.getStartingPos();
-        if (!entity.isDeployed() && deploymentRound >= 0
-            && deploymentRound <= currentRound
-            && startingPos != Board.START_ANY
-            && startingPos != Board.START_CENTER
-            && startingPos <= Board.NUM_ZONES
-            && !entity.getOwner().isBot()) {
-            return true;
-        }
-        return false;
+        return (!entity.isDeployed() && deploymentRound >= 0
+                && deploymentRound <= currentRound
+                && startingPos != Board.START_ANY
+                && startingPos != Board.START_CENTER
+                && startingPos <= Board.NUM_ZONES
+                && !entity.getOwner().isBot());
     }
 
     /**

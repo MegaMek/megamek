@@ -33,9 +33,12 @@
 
 package megamek.common.planetaryConditions;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.Messages;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -126,5 +129,52 @@ class LethalToEjectedCrewTest {
         PlanetaryConditions conditions = survivableConditions();
         conditions.setTemperature(-40);
         assertTrue(conditions.isLethalToEjectedCrew());
+    }
+
+    /**
+     * The dialog names the condition rather than saying "the conditions", so each one has to come back with its own
+     * wording. Heat and cold are told apart by the sign of the temperature, not by one shared "extreme" message.
+     */
+    @Test
+    void eachConditionNamesItself() {
+        PlanetaryConditions vacuum = survivableConditions();
+        vacuum.setAtmosphere(Atmosphere.VACUUM);
+        assertEquals(Messages.getString("PlanetaryConditions.LethalToEjectedCrew.Vacuum"),
+              vacuum.whyLethalToEjectedCrew());
+
+        PlanetaryConditions tainted = survivableConditions();
+        tainted.setAtmosphericTaint(AtmosphericTaint.CAUSTIC_TAINTED);
+        assertEquals(Messages.getString("PlanetaryConditions.LethalToEjectedCrew.TaintedAir"),
+              tainted.whyLethalToEjectedCrew());
+
+        PlanetaryConditions toxic = survivableConditions();
+        toxic.setAtmosphericTaint(AtmosphericTaint.CAUSTIC_TOXIC);
+        assertEquals(Messages.getString("PlanetaryConditions.LethalToEjectedCrew.ToxicAir"),
+              toxic.whyLethalToEjectedCrew());
+
+        PlanetaryConditions tornado = survivableConditions();
+        tornado.setWind(Wind.TORNADO_F1_TO_F3);
+        assertEquals(Messages.getString("PlanetaryConditions.LethalToEjectedCrew.Tornado"),
+              tornado.whyLethalToEjectedCrew());
+
+        PlanetaryConditions storm = survivableConditions();
+        storm.setWind(Wind.STORM);
+        assertEquals(Messages.getString("PlanetaryConditions.LethalToEjectedCrew.Storm"),
+              storm.whyLethalToEjectedCrew());
+
+        PlanetaryConditions heat = survivableConditions();
+        heat.setTemperature(60);
+        assertEquals(Messages.getString("PlanetaryConditions.LethalToEjectedCrew.ExtremeHeat"),
+              heat.whyLethalToEjectedCrew());
+
+        PlanetaryConditions cold = survivableConditions();
+        cold.setTemperature(-40);
+        assertEquals(Messages.getString("PlanetaryConditions.LethalToEjectedCrew.ExtremeCold"),
+              cold.whyLethalToEjectedCrew());
+    }
+
+    @Test
+    void survivableConditionsNameNothing() {
+        assertNull(survivableConditions().whyLethalToEjectedCrew());
     }
 }

@@ -85,6 +85,7 @@ public class AutomaticEjectionDialog extends JDialog implements ActionListener {
     private final ClientGUI clientGUI;
     private final Game game;
     private final List<Entity> unitsWithEjectionSystems;
+    private final String lethalCondition;
     private final Map<Integer, JCheckBox> ejectionBoxes = new HashMap<>();
     private final Map<Integer, Boolean> settingsOnOpening = new HashMap<>();
     private final JCheckBox dontAskAgain =
@@ -98,12 +99,16 @@ public class AutomaticEjectionDialog extends JDialog implements ActionListener {
      * @param parent                   the frame to centre the dialog on
      * @param clientGUI                the client that any changes are sent through
      * @param unitsWithEjectionSystems the player's units that have an ejection system, whether it is on or off
+     * @param lethalCondition          what it is out there that would kill an ejecting crew, phrased to open a
+     *                                 sentence
      */
-    public AutomaticEjectionDialog(JFrame parent, ClientGUI clientGUI, List<Entity> unitsWithEjectionSystems) {
+    public AutomaticEjectionDialog(JFrame parent, ClientGUI clientGUI, List<Entity> unitsWithEjectionSystems,
+          String lethalCondition) {
         super(parent, Messages.getString("AutomaticEjectionDialog.title"), true);
         this.clientGUI = clientGUI;
         this.game = clientGUI.getClient().getGame();
         this.unitsWithEjectionSystems = unitsWithEjectionSystems;
+        this.lethalCondition = lethalCondition;
 
         initializeUI();
         pack();
@@ -119,7 +124,8 @@ public class AutomaticEjectionDialog extends JDialog implements ActionListener {
         JPanel mainPanel = new JPanel(new BorderLayout(PADDING, PADDING));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING));
 
-        JLabel instructions = new JLabel(Messages.getString("AutomaticEjectionDialog.instructions"));
+        JLabel instructions = new JLabel(
+              Messages.getString("AutomaticEjectionDialog.instructions", lethalCondition));
         instructions.setBorder(BorderFactory.createEmptyBorder(0, 0, PADDING, 0));
         mainPanel.add(instructions, BorderLayout.NORTH);
 

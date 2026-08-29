@@ -705,10 +705,39 @@ public class PlanetaryConditions implements Serializable {
      * @return {@code true} if an ejecting crew would be killed by the conditions themselves
      */
     public boolean isLethalToEjectedCrew() {
-        boolean isAirUnbreathable = getAtmosphere().isLighterThan(Atmosphere.THIN);
-        boolean isAirPoisonous = TaintedAtmosphereRules.requiresXctInfantry(getAtmosphericTaint());
-        boolean isWindLethalToFootTroops = getWind().isStorm() || getWind().isStrongerThan(Wind.STORM);
-        return isAirUnbreathable || isAirPoisonous || isWindLethalToFootTroops || isExtremeTemperature();
+        return whyLethalToEjectedCrew() != null;
+    }
+
+    /**
+     * What it is out there that would kill a crew that ejects, phrased to open a sentence.
+     * <p>
+     * Naming the condition tells the player which one to change; "the conditions" leaves them guessing. Where more
+     * than one would do it, the first one found is named rather than all of them, because one reason is enough to
+     * make the decision and a list of them is not more useful.
+     *
+     * @return the condition that would kill an ejecting crew, or {@code null} if none would
+     */
+    public @Nullable String whyLethalToEjectedCrew() {
+        if (getAtmosphere().isLighterThan(Atmosphere.THIN)) {
+            return Messages.getString("PlanetaryConditions.LethalToEjectedCrew.Vacuum");
+        }
+        if (TaintedAtmosphereRules.requiresXctInfantry(getAtmosphericTaint())) {
+            return getAtmosphericTaint().isToxic()
+                  ? Messages.getString("PlanetaryConditions.LethalToEjectedCrew.ToxicAir")
+                  : Messages.getString("PlanetaryConditions.LethalToEjectedCrew.TaintedAir");
+        }
+        if (getWind().isTornadoF1ToF3() || getWind().isTornadoF4()) {
+            return Messages.getString("PlanetaryConditions.LethalToEjectedCrew.Tornado");
+        }
+        if (getWind().isStorm()) {
+            return Messages.getString("PlanetaryConditions.LethalToEjectedCrew.Storm");
+        }
+        if (isExtremeTemperature()) {
+            return (getTemperature() > 0)
+                  ? Messages.getString("PlanetaryConditions.LethalToEjectedCrew.ExtremeHeat")
+                  : Messages.getString("PlanetaryConditions.LethalToEjectedCrew.ExtremeCold");
+        }
+        return null;
     }
 
     public boolean isBlowingSandActive() {

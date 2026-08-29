@@ -479,7 +479,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             logger.debug("[EnvironmentalSealing] warning about auto-ejection - listing {} unit(s) with an ejection "
                   + "system in conditions that would kill an ejected crew", unitsWithEjectionSystems.size());
             AutomaticEjectionDialog ejectionDialog = new AutomaticEjectionDialog(clientgui.getFrame(),
-                  clientgui, unitsWithEjectionSystems);
+                  clientgui, unitsWithEjectionSystems,
+                  game.getPlanetaryConditions().whyLethalToEjectedCrew());
             ejectionDialog.setVisible(true);
             if (ejectionDialog.isDeploymentCancelled()) {
                 takeBackDeployment(entity,

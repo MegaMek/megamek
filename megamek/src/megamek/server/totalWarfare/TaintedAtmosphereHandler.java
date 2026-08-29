@@ -489,6 +489,8 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
     void checkExhaustWashIgnition(Entity aeroEntity, Coords coords, int boardId, int facing,
           ExhaustWashMoment moment) {
         if (!TaintedAtmosphereRules.causesExhaustWashIgnition(atmosphericTaint())) {
+            LOGGER.debug("[TaintedAtmosphere] {}: no exhaust wash - the air is {}, not flammable",
+                  aeroEntity.getShortName(), atmosphericTaint());
             return;
         }
         if (!TaintedAtmosphereRules.isJetPropelled(aeroEntity)) {

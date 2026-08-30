@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -148,7 +148,7 @@ public class AimedShotHandler implements ActionListener, ItemListener {
         }
     }
 
-    private boolean[] createEnabledMask(int length) {
+    boolean[] createEnabledMask(int length) {
         boolean[] mask = new boolean[length];
 
         Arrays.fill(mask, true);
@@ -268,41 +268,46 @@ public class AimedShotHandler implements ActionListener, ItemListener {
             mask[BattleArmor.LOC_SQUAD] = false;
         }
 
-        // remove locations hidden by partial cover
-        if ((partialCover & LosEffects.COVER_HORIZONTAL) != 0) {
-            mask[Mek.LOC_LEFT_LEG] = false;
-            mask[Mek.LOC_RIGHT_LEG] = false;
-        }
-        if (side == ToHitData.SIDE_FRONT) {
-            if ((partialCover & LosEffects.COVER_LOW_LEFT) != 0) {
+        // Partial cover hides a Mek's legs, arms and torsos, and the indexes below are Mek locations. A tank or a
+        // battle armor squad in cover (a short building, partial water) has fewer locations and none of them are
+        // hidden, so the cover rules apply to Meks only.
+        if (this.firingDisplay.getTarget() instanceof Mek) {
+            if ((partialCover & LosEffects.COVER_HORIZONTAL) != 0) {
+                mask[Mek.LOC_LEFT_LEG] = false;
                 mask[Mek.LOC_RIGHT_LEG] = false;
             }
-            if ((partialCover & LosEffects.COVER_LOW_RIGHT) != 0) {
-                mask[Mek.LOC_LEFT_LEG] = false;
+            if (side == ToHitData.SIDE_FRONT) {
+                if ((partialCover & LosEffects.COVER_LOW_LEFT) != 0) {
+                    mask[Mek.LOC_RIGHT_LEG] = false;
+                }
+                if ((partialCover & LosEffects.COVER_LOW_RIGHT) != 0) {
+                    mask[Mek.LOC_LEFT_LEG] = false;
+                }
+                if ((partialCover & LosEffects.COVER_LEFT) != 0) {
+                    mask[Mek.LOC_RIGHT_ARM] = false;
+                    mask[Mek.LOC_RIGHT_TORSO] = false;
+                }
+                if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
+                    mask[Mek.LOC_LEFT_ARM] = false;
+                    mask[Mek.LOC_LEFT_TORSO] = false;
+                }
+            } else {
+                if ((partialCover & LosEffects.COVER_LOW_LEFT) != 0) {
+                    mask[Mek.LOC_LEFT_LEG] = false;
+                }
+                if ((partialCover & LosEffects.COVER_LOW_RIGHT) != 0) {
+                    mask[Mek.LOC_RIGHT_LEG] = false;
+                }
+                if ((partialCover & LosEffects.COVER_LEFT) != 0) {
+                    mask[Mek.LOC_LEFT_ARM] = false;
+                    mask[Mek.LOC_LEFT_TORSO] = false;
+                }
+                if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
+                    mask[Mek.LOC_RIGHT_ARM] = false;
+                    mask[Mek.LOC_RIGHT_TORSO] = false;
+                }
             }
-            if ((partialCover & LosEffects.COVER_LEFT) != 0) {
-                mask[Mek.LOC_RIGHT_ARM] = false;
-                mask[Mek.LOC_RIGHT_TORSO] = false;
-            }
-            if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
-                mask[Mek.LOC_LEFT_ARM] = false;
-                mask[Mek.LOC_LEFT_TORSO] = false;
-            }
-        } else {
-            if ((partialCover & LosEffects.COVER_LOW_LEFT) != 0) {
-                mask[Mek.LOC_LEFT_LEG] = false;
-            }
-            if ((partialCover & LosEffects.COVER_LOW_RIGHT) != 0) {
-                mask[Mek.LOC_RIGHT_LEG] = false;
-            }
-            if ((partialCover & LosEffects.COVER_LEFT) != 0) {
-                mask[Mek.LOC_LEFT_ARM] = false;
-                mask[Mek.LOC_LEFT_TORSO] = false;
-            }
-            if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
-                mask[Mek.LOC_RIGHT_ARM] = false;
-                mask[Mek.LOC_RIGHT_TORSO] = false;
-            }
+
         }
 
         if (aimingMode.isTargetingComputer()) {

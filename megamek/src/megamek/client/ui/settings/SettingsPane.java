@@ -252,6 +252,7 @@ public class SettingsPane extends JPanel {
             return;
         }
         searchIndexInProgress = true;
+        navigationPanel.setSearchInProgress(true);
         int generation = ++searchIndexGeneration;
         List<SettingsRoute> pageRoutes = routes.stream()
               .filter(route -> pageFactories.containsKey(route.getId()))
@@ -263,6 +264,7 @@ public class SettingsPane extends JPanel {
         if (searchIndexInProgress) {
             searchIndexInProgress = false;
             searchIndexGeneration++;
+            navigationPanel.setSearchInProgress(false);
         }
     }
 
@@ -277,17 +279,19 @@ public class SettingsPane extends JPanel {
         if (index >= pageRoutes.size()) {
             searchIndexInProgress = false;
             searchIndexComplete = true;
+            navigationPanel.setSearchInProgress(false);
             navigationPanel.refreshFilter();
             return;
         }
         SettingsRoute route = pageRoutes.get(index);
         try {
             getPage(route);
-            navigationPanel.refreshFilter();
         } catch (RuntimeException exception) {
             searchIndexInProgress = false;
             searchIndexComplete = false;
             searchIndexGeneration++;
+            navigationPanel.setSearchInProgress(false);
+            navigationPanel.refreshFilter();
             LOGGER.error(exception, "Unable to index settings route " + route.getId());
             return;
         }

@@ -38,6 +38,8 @@ import java.awt.Container;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -76,11 +78,18 @@ final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
     private static final int HIGHLIGHT_ALPHA = 160;
     private static final int OUTLINE_ALPHA = 255;
     private static final int ARC_SIZE = 4;
+    private static final int ROW_HIGHLIGHT_ALPHA = 45;
 
     private List<String> tokens = List.of();
+    private List<JComponent> helpMatchComponents = List.of();
 
     void setFilter(String normalizedFilter, JLayer<JScrollPane> layer) {
         tokens = SettingsSearchText.tokens(normalizedFilter);
+        layer.repaint();
+    }
+
+    void setHelpMatchComponents(List<JComponent> components, JLayer<JScrollPane> layer) {
+        helpMatchComponents = List.copyOf(components);
         layer.repaint();
     }
 
@@ -96,8 +105,50 @@ final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
         if (root == null) {
             return;
         }
-        paintHighlights((Graphics2D) graphics,
-              collectHighlightBounds(layer, scrollPane, graphics.getClipBounds()));
+        Graphics2D graphics2D = (Graphics2D) graphics;
+        paintHelpMatches(graphics2D, collectHelpMatchBounds(layer, scrollPane));
+        paintHighlights(graphics2D, collectHighlightBounds(layer, scrollPane, graphics.getClipBounds()));
+    }
+
+    List<Rectangle> helpMatchBounds(JLayer<JScrollPane> layer) {
+        return List.copyOf(collectHelpMatchBounds(layer, layer.getView()));
+    }
+
+    private List<Rectangle> collectHelpMatchBounds(JLayer<?> layer, JScrollPane scrollPane) {
+        JViewport viewport = scrollPane.getViewport();
+        Rectangle viewportBounds = SwingUtilities.convertRectangle(viewport,
+              new Rectangle(0, 0, viewport.getWidth(), viewport.getHeight()), layer);
+        List<Rectangle> matches = new ArrayList<>();
+        for (JComponent component : helpMatchComponents) {
+            if (!component.isVisible() || !SwingUtilities.isDescendingFrom(component, layer)) {
+                continue;
+            }
+            Rectangle bounds = matchingRowBounds(component, layer).intersection(viewportBounds);
+            if (!bounds.isEmpty() && !matches.contains(bounds)) {
+                matches.add(bounds);
+            }
+        }
+        return matches;
+    }
+
+    private static Rectangle matchingRowBounds(JComponent component, JLayer<?> layer) {
+        if (component instanceof AbstractButton) {
+            return SwingUtilities.convertRectangle(component,
+                  new Rectangle(0, 0, component.getWidth(), component.getHeight()), layer);
+        }
+        Container parent = component.getParent();
+        if (parent == null || !(parent.getLayout() instanceof GridBagLayout layout)) {
+            return SwingUtilities.convertRectangle(component,
+                  new Rectangle(0, 0, component.getWidth(), component.getHeight()), layer);
+        }
+        GridBagConstraints target = layout.getConstraints(component);
+        Rectangle rowBounds = new Rectangle(component.getBounds());
+        for (Component sibling : parent.getComponents()) {
+            if (layout.getConstraints(sibling).gridy == target.gridy) {
+                rowBounds = rowBounds.union(sibling.getBounds());
+            }
+        }
+        return SwingUtilities.convertRectangle(parent, rowBounds, layer);
     }
 
     List<Rectangle> highlightBounds(JLayer<JScrollPane> layer) {
@@ -445,10 +496,7 @@ final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
         if (highlights.isEmpty()) {
             return;
         }
-        Color baseColor = UIManager.getColor(HIGHLIGHT_COLOR_KEY);
-        if (baseColor == null) {
-            baseColor = DEFAULT_HIGHLIGHT_COLOR;
-        }
+        Color baseColor = highlightColor();
         Color fillColor = new Color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), HIGHLIGHT_ALPHA);
         Color outlineColor = new Color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), OUTLINE_ALPHA);
         Graphics2D copy = (Graphics2D) graphics.create();
@@ -458,6 +506,25 @@ final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {
                 copy.fillRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, ARC_SIZE, ARC_SIZE);
                 copy.setColor(outlineColor);
                 copy.drawRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, ARC_SIZE, ARC_SIZE);
+            }
+        } finally {
+            copy.dispose();
+        }
+    }
+
+    static Color highlightColor() {
+        Color color = UIManager.getColor(HIGHLIGHT_COLOR_KEY);
+        return color == null ? DEFAULT_HIGHLIGHT_COLOR : color;
+    }
+
+    private static void paintHelpMatches(Graphics2D graphics, List<Rectangle> matches) {
+        Color color = highlightColor();
+        Color fill = new Color(color.getRed(), color.getGreen(), color.getBlue(), ROW_HIGHLIGHT_ALPHA);
+        Graphics2D copy = (Graphics2D) graphics.create();
+        try {
+            for (Rectangle bounds : matches) {
+                copy.setColor(fill);
+                copy.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
             }
         } finally {
             copy.dispose();

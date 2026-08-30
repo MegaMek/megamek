@@ -86,13 +86,13 @@ class PartialCoverEligibilityTest extends GameBoardTestCase {
     @Test
     @DisplayName("Only a Mek can receive partial cover")
     void onlyMeksReceivePartialCover() {
-        assertTrue(LosEffects.canReceivePartialCover(new BipedMek()), "a standing Mek receives partial cover");
-        assertFalse(LosEffects.canReceivePartialCover(new ProtoMek()), "ProtoMeks never benefit (TW p.102)");
-        assertFalse(LosEffects.canReceivePartialCover(new Tank()), "vehicles do not receive partial cover");
-        assertFalse(LosEffects.canReceivePartialCover(new LargeSupportTank()),
+        assertTrue(PartialCover.canReceive(new BipedMek()), "a standing Mek receives partial cover");
+        assertFalse(PartialCover.canReceive(new ProtoMek()), "ProtoMeks never benefit (TW p.102)");
+        assertFalse(PartialCover.canReceive(new Tank()), "vehicles do not receive partial cover");
+        assertFalse(PartialCover.canReceive(new LargeSupportTank()),
               "large support vehicles never receive partial cover, however tall (TW p.102)");
-        assertFalse(LosEffects.canReceivePartialCover(new BattleArmor()), "battle armor does not receive cover");
-        assertFalse(LosEffects.canReceivePartialCover(null), "no target, no cover");
+        assertFalse(PartialCover.canReceive(new BattleArmor()), "battle armor does not receive cover");
+        assertFalse(PartialCover.canReceive(null), "no target, no cover");
     }
 
     @Test

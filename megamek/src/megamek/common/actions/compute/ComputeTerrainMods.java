@@ -48,6 +48,7 @@ import megamek.client.ui.Messages;
 import megamek.common.ECMInfo;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
+import megamek.common.PartialCover;
 import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
@@ -242,7 +243,7 @@ public class ComputeTerrainMods {
         if ((entityTarget instanceof Mek) && entityTarget.isSuperHeavy()) {
             partialWaterLevel = 2;
         }
-        if (LosEffects.canReceivePartialCover(entityTarget)
+        if (PartialCover.canReceive(entityTarget)
               && targetInWater
               // target in partial water (a Mek standing in Depth 1 water, TW p.102)
               && (targetHex.terrainLevel(Terrains.WATER) == partialWaterLevel)

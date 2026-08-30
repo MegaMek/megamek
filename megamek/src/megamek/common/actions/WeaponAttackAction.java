@@ -46,6 +46,7 @@ import megamek.client.ui.Messages;
 import megamek.common.ECMInfo;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
+import megamek.common.PartialCover;
 import megamek.common.ToHitData;
 import megamek.common.actions.compute.ComputeAeroAttackerToHitMods;
 import megamek.common.actions.compute.ComputeAttackerToHitMods;
@@ -775,7 +776,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // A standing Mek in a Level 1 building, or one level below the roof of a taller one, has its upper half
         // above the roof and receives partial cover (TW p.171). Its top sits at roof level; a Mek lower in the
         // building is fully inside and gets none. Only Meks receive partial cover, and prone (height 0) is not standing.
-        return LosEffects.canReceivePartialCover(targetEntity) &&
+        return PartialCover.canReceive(targetEntity) &&
               targetHex.containsTerrain(Terrains.BUILDING) &&
               (targetEntity.getHeight() > 0) &&
               (targetEntity.relHeight() == targetHex.terrainLevel(Terrains.BLDG_ELEV));

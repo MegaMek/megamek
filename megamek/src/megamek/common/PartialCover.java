@@ -37,12 +37,13 @@ import megamek.common.units.Mek;
 import megamek.common.units.Targetable;
 
 /**
- * The partial cover rules that do not depend on line of sight.
+ * Which unit types can receive partial cover at all.
  * <p>
- * Partial cover is a Mek rule. Only a standing Mek can receive it; large support vehicles, grounded small craft and
- * DropShips never do, even though they rise more than one level, and ProtoMeks never do because they are only the
- * height of vehicles (TW p.102, p.171; TO:AR p.85). {@link LosEffects} applies this to cover from terrain; the
- * building and water checks in the to-hit code and the bots apply it through here.
+ * Partial cover is a Mek rule: large support vehicles, grounded small craft and DropShips never receive it, even
+ * though they rise more than one level, and ProtoMeks never do because they are only the height of vehicles (TW
+ * p.102, p.171; TO:AR p.85). This class decides eligibility by unit type only. Whether the Mek is standing, and
+ * whether the terrain, water or building actually covers it, is decided by the caller: {@link LosEffects} for terrain,
+ * the building and water checks in the to-hit code and the bots for the rest.
  */
 public final class PartialCover {
 
@@ -53,7 +54,8 @@ public final class PartialCover {
     /**
      * @param target the unit being shot at
      *
-     * @return {@code true} if the target's unit type can receive partial cover at all
+     * @return {@code true} if the target's unit type can receive partial cover at all. This says nothing about
+     *       whether it currently does - a prone Mek is eligible by type but is not covered.
      */
     public static boolean canReceive(@Nullable Targetable target) {
         return target instanceof Mek;

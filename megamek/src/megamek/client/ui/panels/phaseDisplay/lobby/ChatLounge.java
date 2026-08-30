@@ -1625,11 +1625,37 @@ public class ChatLounge extends AbstractPhaseDisplay
                 tablePlayers.addRowSelectionInterval(row, row);
             }
         }
-        // If no one is selected now (and the table isn't empty), select the first
-        // player
         if ((tablePlayers.getSelectedRowCount() == 0) && (tablePlayers.getRowCount() > 0)) {
-            tablePlayers.addRowSelectionInterval(0, 0);
+            selectLocalPlayerRow();
         }
+    }
+
+    /**
+     * Highlights the local player in the player table when nobody is highlighted.
+     *
+     * <p>The table lists players in the order they joined, so its first row is the host. Somebody who has just
+     * connected wants their own name highlighted, not the host's: Team, Camo, Set Up Player and the unit choosers
+     * all act on the highlighted player, and none of them should open pointed at somebody else.</p>
+     */
+    private void selectLocalPlayerRow() {
+        Player local = localPlayer();
+        if (local == null) {
+            // the player list can arrive before the server has told this client which player it is
+            tablePlayers.addRowSelectionInterval(0, 0);
+            LOGGER.info("[GMAddUnit] the local player is not known yet, so the lobby highlighted row 0 ({}) for now",
+                  playerModel.getPlayerAt(0).getName());
+            return;
+        }
+        for (int row = 0; row < playerModel.getRowCount(); row++) {
+            if (playerModel.getPlayerAt(row).getId() == local.getId()) {
+                tablePlayers.addRowSelectionInterval(row, row);
+                LOGGER.info("[GMAddUnit] lobby highlighted {} (row {}) as the default player", local.getName(), row);
+                return;
+            }
+        }
+        tablePlayers.addRowSelectionInterval(0, 0);
+        LOGGER.warn("[GMAddUnit] {} is not in the player table yet, so the lobby highlighted row 0 ({}) instead",
+              local.getName(), playerModel.getPlayerAt(0).getName());
     }
 
     /**
@@ -1920,13 +1946,42 @@ public class ChatLounge extends AbstractPhaseDisplay
      */
     private void addUnit() {
         clientgui.getMekSelectorDialog().updateOptionValues();
-        clientgui.getMekSelectorDialog().setPlayerFrom(getSelectedPlayer());
+        clientgui.getMekSelectorDialog().setPlayerFrom(permittedHighlightedPlayer());
         clientgui.getMekSelectorDialog().setVisible(true);
     }
 
     private void createArmy() {
-        clientgui.getRandomArmyDialog().setPlayerFrom(getSelectedPlayer());
+        clientgui.getRandomArmyDialog().setPlayerFrom(permittedHighlightedPlayer());
         clientgui.getRandomArmyDialog().setVisible(true);
+    }
+
+    /**
+     * The highlighted player, when the local player may add units to them.
+     *
+     * <p>Somebody who has just connected may well find the host highlighted, because the table lists players in
+     * the order they joined. Handing the host to a unit chooser would make it open on the host - and units picked
+     * without a second look would land in the host's force. So the highlighted player is passed on only when the
+     * local player may give them units; otherwise nobody is asked for and the chooser stays on the person using
+     * it.</p>
+     *
+     * @return the highlighted player when units may be added to them, otherwise {@code null}
+     */
+    private @Nullable Player permittedHighlightedPlayer() {
+        Player highlighted = getSelectedPlayer();
+        if (highlighted == null) {
+            LOGGER.info("[GMAddUnit] {} pressed a unit button with nobody highlighted; the chooser stays where it was",
+                  localPlayer().getName());
+            return null;
+        }
+        if (!mayActForPlayer(highlighted)) {
+            LOGGER.info("[GMAddUnit] {} pressed a unit button with {} highlighted, whom they may not add units to; "
+                        + "the chooser stays on {}", localPlayer().getName(), highlighted.getName(),
+                  localPlayer().getName());
+            return null;
+        }
+        LOGGER.info("[GMAddUnit] {} pressed a unit button with {} highlighted; asking the chooser for them",
+              localPlayer().getName(), highlighted.getName());
+        return highlighted;
     }
 
     public void loadRandomNames() {
@@ -2752,6 +2807,21 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     /**
+     * Whether the local player may act on the given player's force.
+     *
+     * <p>The same rule the unit choosers use, asked here as well: their chooser only offers players it is willing
+     * to act for, so the rule is enforced by what is in the list. The unit list buttons and the unit choosers act on
+     * whoever is highlighted in the player table, which is anyone at all, so they have to ask.</p>
+     *
+     * @param player The player whose force is to be acted on
+     *
+     * @return {@code true} when the local player may add units to, load or save that player's force
+     */
+    private boolean mayActForPlayer(Player player) {
+        return UnitRecipients.mayAddUnitsTo(localPlayer(), player, clientgui.getLocalBots().keySet());
+    }
+
+    /**
      * The player highlighted in the player table, whoever is running them.
      *
      * <p>Separate from {@link #getSelectedClient()} because most of what the lobby does to a player needs only
@@ -2761,23 +2831,6 @@ public class ChatLounge extends AbstractPhaseDisplay
      *
      * @return the selected player, or {@code null} when no row is selected
      */
-    /**
-     * Whether the local player may act on the given player's force.
-     *
-     * <p>The same rule the unit choosers use, asked here as well: their chooser only offers players it is willing
-     * to act for, so the rule is enforced by what is in the list. The unit list buttons act on whoever is selected
-     * in the player table, which is anyone at all, so they have to ask.</p>
-     *
-     * @param player The player whose force is to be acted on
-     *
-     * @return {@code true} when the local player may load or save that player's units
-     */
-    private boolean mayActForPlayer(Player player) {
-        return UnitRecipients.availableTo(localPlayer(),
-              clientgui.getClient().getGame().getPlayersList(),
-              clientgui.getLocalBots().keySet()).contains(player);
-    }
-
     @Nullable Player getSelectedPlayer() {
         if (tablePlayers.getSelectedRowCount() == 0) {
             return null;

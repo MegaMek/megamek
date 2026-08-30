@@ -60,16 +60,26 @@ class PartialCoverEligibilityTest extends GameBoardTestCase {
               hex 0101 0 "bldg_elev:1;building:2:8;bldg_cf:50" ""
               hex 0102 0 "" ""
               end""");
+        initializeBoard("BOARD_LEVEL_TWO_BUILDING", """
+              size 1 2
+              hex 0101 0 "bldg_elev:2;building:2:8;bldg_cf:50" ""
+              hex 0102 0 "" ""
+              end""");
     }
 
-    /** Puts the unit on the ground inside the Level 1 building in hex 0101. */
+    /** Puts the unit on the ground inside the building in hex 0101. */
     private <T extends Entity> T placeInBuilding(T unit) {
+        return placeInBuilding(unit, 0);
+    }
+
+    /** Puts the unit inside the building in hex 0101 at the given elevation above the ground. */
+    private <T extends Entity> T placeInBuilding(T unit, int elevation) {
         unit.setId(1);
         unit.setWeight(50.0);
         unit.setGame(getGame());
         getGame().addEntity(unit);
         unit.setPosition(new Coords(0, 0));
-        unit.setElevation(0);
+        unit.setElevation(elevation);
         return unit;
     }
 
@@ -93,6 +103,26 @@ class PartialCoverEligibilityTest extends GameBoardTestCase {
 
         assertTrue(WeaponAttackAction.targetInShortCoverBuilding(mek),
               "a standing Mek in a Level 1 building receives partial cover (TW p.171)");
+    }
+
+    @Test
+    @DisplayName("A Mek at the bottom of a Level 2 building is fully inside and gets no cover")
+    void mekAtGroundLevelOfTallBuildingHasNoCover() {
+        setBoard("BOARD_LEVEL_TWO_BUILDING");
+        BipedMek mek = placeInBuilding(new BipedMek(), 0);
+
+        assertFalse(WeaponAttackAction.targetInShortCoverBuilding(mek),
+              "two levels of building over a standing Mek is no partial cover (TW p.171)");
+    }
+
+    @Test
+    @DisplayName("A Mek one level below the roof of a Level 2 building gets cover")
+    void mekOneLevelBelowRoofHasShortBuildingCover() {
+        setBoard("BOARD_LEVEL_TWO_BUILDING");
+        BipedMek mek = placeInBuilding(new BipedMek(), 1);
+
+        assertTrue(WeaponAttackAction.targetInShortCoverBuilding(mek),
+              "a standing Mek one level below the roof receives partial cover (TW p.171)");
     }
 
     @Test

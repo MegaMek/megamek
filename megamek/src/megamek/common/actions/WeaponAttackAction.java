@@ -772,14 +772,13 @@ public class WeaponAttackAction extends AbstractAttackAction {
             return false;
         }
 
-        // the idea here is that we're in a building that provides partial cover
-        // if the unit is a Mek (only Meks receive partial cover, TW p.171)
-        // and its height above the hex ceiling (i.e. building roof) is 1
-        // the height determination takes being prone into account
+        // A standing Mek in a Level 1 building, or one level below the roof of a taller one, has its upper half
+        // above the roof and receives partial cover (TW p.171). Its top sits at roof level; a Mek lower in the
+        // building is fully inside and gets none. Only Meks receive partial cover, and prone (height 0) is not standing.
         return LosEffects.canReceivePartialCover(targetEntity) &&
               targetHex.containsTerrain(Terrains.BUILDING) &&
               (targetEntity.getHeight() > 0) &&
-              (targetEntity.relHeight() == 1);
+              (targetEntity.relHeight() == targetHex.terrainLevel(Terrains.BLDG_ELEV));
     }
 
     @Override

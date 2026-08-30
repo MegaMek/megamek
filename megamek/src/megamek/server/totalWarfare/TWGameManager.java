@@ -30603,17 +30603,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         vDesc.addAll(destroyEntity(entity, "ejection", true, true));
 
-        // Say so when the crew's kit is what stands between them and the air out there. Placed here, at the one
-        // exit every ejection passes through, so Mek pilots, vehicle crews and aerospace crews all get it. Only
-        // when it actually matters: nobody needs telling in ordinary weather, and a crew ejecting into vacuum must
-        // not be told they are safe when the kit holds no pressure.
-        if (CombatSuitRules.isCrewWearingCombatSuit(entity, game)
-              && CombatSuitRules.coversSomethingIn(game.getPlanetaryConditions())) {
-            Report combatSuitReport = new Report(6411);
-            combatSuitReport.subject = entity.getId();
-            combatSuitReport.indent(3);
-            vDesc.addElement(combatSuitReport);
-        }
+        reportCombatSuitProtection(entity, vDesc);
 
         // only remove the unit that ejected manually
         if (!autoEject) {
@@ -30872,6 +30862,29 @@ public class TWGameManager extends AbstractGameManager {
         entity.setDone(true);
         entityUpdate(entity.getId());
         return vDesc;
+    }
+
+    /**
+     * Adds a line to the ejection report when the crew's combat suit is what stands between them and the air out
+     * there.
+     * <p>
+     * Called from the one exit every ejection passes through, so Mek pilots, vehicle crews and aerospace crews all
+     * reach it. Only raised where the kit answers the danger: nobody needs telling in ordinary weather, and a crew
+     * ejecting into vacuum must not be told they are safe when the kit holds no pressure.
+     *
+     * @param entity  the unit the crew has just left
+     * @param reports the ejection reports being built
+     */
+    private void reportCombatSuitProtection(Entity entity, Vector<Report> reports) {
+        boolean isCrewSuited = CombatSuitRules.isCrewWearingCombatSuit(entity, game);
+        boolean isTheKitAnyUseHere = CombatSuitRules.coversSomethingIn(game.getPlanetaryConditions());
+        if (!isCrewSuited || !isTheKitAnyUseHere) {
+            return;
+        }
+        Report combatSuitReport = new Report(6411);
+        combatSuitReport.subject = entity.getId();
+        combatSuitReport.indent(3);
+        reports.addElement(combatSuitReport);
     }
 
     public static PilotingRollData getEjectModifiers(Game game, Entity entity, int crewPos, boolean autoEject) {

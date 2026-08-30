@@ -79,7 +79,9 @@ public class Crew implements Serializable {
     private final Gender[] genders;
     private final boolean[] clanPilots;
     /** Whether each crew member is wearing a MekWarrior Combat Suit, TO:AUE p.129. */
-    private final boolean[] combatSuits;
+    // Deliberately not final: a Crew deserialized from a stream written before this field existed restores as
+    // null, because Java deserialization skips field initializers. getCombatSuits() fills it in on first use.
+    private boolean[] combatSuits;
     private final Portrait[] portraits;
 
     private final int[] gunnery;
@@ -403,7 +405,14 @@ public class Crew implements Serializable {
         getClanPilots()[position] = clanPilot;
     }
 
+    /**
+     * @return one entry per crew slot, saying whether that crew member is wearing a combat suit
+     */
     public boolean[] getCombatSuits() {
+        if (combatSuits == null) {
+            // An older save game or a unit cached before this field existed. Nobody was wearing a suit then.
+            combatSuits = new boolean[getSlotCount()];
+        }
         return combatSuits;
     }
 

@@ -56,12 +56,12 @@ import megamek.common.planetaryConditions.TaintedAtmosphereRules;
  * wearing, and those existing answers apply. It does nothing unless {@link OptionsConstants#RPG_COMBAT_SUITS} is
  * switched on.
  * <p>
- * The MekWarrior Combat Suit is the one kit that needs more than its own flags. A Time of War p.294 gives it as a
- * combat suit plus a combat neurohelmet and says the helmet "may be sealed in hostile environments" with its own air
- * supply, but MegaMek's equipment entry carries only a damage divisor. Its flags cannot say what the book says, so
- * the interpretation lives here: air the crew would otherwise have to breathe, and heat, because the suit is armored
- * cooling gear. Not vacuum or water - it covers the torso, arms and legs and is not pressurized, and holding
- * pressure over a body is a different job from supplying air.
+ * The combat suit is the one thing that needs more than its own flags, and the kits carrying
+ * {@link MiscTypeFlag#S_COMBAT_SUIT} are what this class interprets. A Time of War p.294 pairs the suit with a
+ * combat neurohelmet and says the helmet "may be sealed in hostile environments" with its own air supply, so the
+ * kit answers air a crew would otherwise have to breathe, and heat, being armored cooling gear. It does not answer
+ * vacuum: the ensemble has no gloves, which the aerospace pilot kit lists as required to seal, so it never becomes
+ * pressure-tight. Holding pressure over a body is a different job from supplying air to breathe.
  */
 public final class CrewArmorKitRules {
 
@@ -94,10 +94,13 @@ public final class CrewArmorKitRules {
      * @return {@code true} if the crew may be issued an armor kit
      */
     public static boolean canWearArmorKit(@Nullable Entity entity) {
-        if ((entity == null) || (entity.defaultCrewType() == CrewType.NONE) || (entity instanceof Infantry)) {
+        if (entity == null) {
             return false;
         }
-        return (entity instanceof Mek) || (entity instanceof Tank) || entity.isAero();
+        boolean hasNobodyAboard = entity.defaultCrewType() == CrewType.NONE;
+        boolean wearsItsArmorOnTheUnit = entity instanceof Infantry;
+        boolean canLeaveOnFoot = (entity instanceof Mek) || (entity instanceof Tank) || entity.isAero();
+        return !hasNobodyAboard && !wearsItsArmorOnTheUnit && canLeaveOnFoot;
     }
 
     /**
@@ -135,10 +138,11 @@ public final class CrewArmorKitRules {
      * @return the kit, or {@code null} if the crew wear none or the rule is off
      */
     public static @Nullable EquipmentType crewArmorKit(@Nullable Entity entity, @Nullable Game game) {
-        if ((entity == null) || (entity.getCrew() == null) || !isRuleInPlay(game)) {
+        if (!isRuleInPlay(game)) {
             return null;
         }
-        if (!canWearArmorKit(entity)) {
+        boolean hasNoCrewToAskAbout = (entity == null) || (entity.getCrew() == null);
+        if (hasNoCrewToAskAbout || !canWearArmorKit(entity)) {
             return null;
         }
         String kitName = entity.getCrew().getAnyArmorKitName();

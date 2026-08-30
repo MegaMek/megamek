@@ -274,7 +274,13 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
         if (playerChooser.getItemCount() > 1) {
             playerChooser.setEnabled(true);
         }
-        playerChooser.setSelectedItem(selectionName);
+        if (selectionName == null) {
+            // the first opening has no previous choice to keep, and the local player is always first
+            playerChooser.setSelectedIndex(0);
+            LOGGER.debug("[GMAddUnit] no previous choice, so the chooser starts on {}", playerChooser.getItemAt(0));
+        } else {
+            playerChooser.setSelectedItem(selectionName);
+        }
         if (playerChooser.getSelectedIndex() < 0) {
             // never fall back in silence: units quietly going to the wrong player looks exactly like them going to
             // the right one, and is only noticed a turn later

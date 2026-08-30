@@ -258,7 +258,13 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         for (Player player : offered) {
             comboPlayer.addItem(player.getName());
         }
-        comboPlayer.setSelectedItem(selectionName);
+        if (selectionName == null) {
+            // the first opening has no previous choice to keep, and the local player is always first
+            comboPlayer.setSelectedIndex(0);
+            LOGGER.debug("[GMAddUnit] no previous choice, so the chooser starts on {}", comboPlayer.getItemAt(0));
+        } else {
+            comboPlayer.setSelectedItem(selectionName);
+        }
         if (comboPlayer.getSelectedIndex() < 0) {
             // never fall back in silence: units quietly going to the wrong player looks exactly like them going to
             // the right one, and is only noticed a turn later

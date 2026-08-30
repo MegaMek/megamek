@@ -59,9 +59,6 @@ import org.junit.jupiter.api.Test;
  */
 class CombatSuitRulesTest {
 
-    // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-    private static final String COMBAT_SUIT = "MechWarrior Combat Suit";
-
     private Game game;
 
     @BeforeAll
@@ -85,7 +82,7 @@ class CombatSuitRulesTest {
         platoon.setSquadSize(1);
         platoon.autoSetInternal();
         platoon.setGame(game);
-        EquipmentType suit = EquipmentType.get(COMBAT_SUIT);
+        EquipmentType suit = EquipmentType.get(CombatSuitRules.COMBAT_SUIT_NAME);
         assertNotNull(suit, "the MekWarrior Combat Suit equipment must exist");
         platoon.addEquipment(suit, ConvInfantry.LOC_INFANTRY);
         return platoon;

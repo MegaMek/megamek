@@ -53,9 +53,6 @@ import megamek.logging.MMLogger;
  * @author Klaus Mittag
  */
 public class EjectedCrew extends ConvInfantry {
-    /** The internal name of the armor kit an ejecting crew may be wearing, TO:AUE p.129. */
-    // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
-    private static final String COMBAT_SUIT_NAME = "MechWarrior Combat Suit";
 
     private static final MMLogger logger = MMLogger.create(EjectedCrew.class);
 
@@ -130,7 +127,7 @@ public class EjectedCrew extends ConvInfantry {
             return;
         }
         try {
-            addEquipment(EquipmentType.get(COMBAT_SUIT_NAME), LOC_INFANTRY);
+            addEquipment(EquipmentType.get(CombatSuitRules.COMBAT_SUIT_NAME), LOC_INFANTRY);
             logger.debug("[CombatSuit] {}: left {} wearing a MekWarrior Combat Suit",
                   getDisplayName(), originalRide.getDisplayName());
         } catch (Exception exception) {

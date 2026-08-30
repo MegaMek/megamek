@@ -379,6 +379,10 @@ public class ConvInfantry extends Infantry {
      *
      * @return {@code true} if this platoon may operate in a tainted atmosphere
      */
+    public boolean isXCTForTaintedAtmosphere() {
+        return isXCT() && hasArmorKitFlag(MiscTypeFlag.S_TAINTED_ATMOSPHERE);
+    }
+
     /**
      * Whether this platoon wears a MekWarrior Combat Suit (TO:AUE p.129). On its own that only means the armor kit
      * is fitted; what it protects against is decided by the optional rule.
@@ -387,10 +391,6 @@ public class ConvInfantry extends Infantry {
      */
     public boolean hasCombatSuit() {
         return hasArmorKitFlag(MiscTypeFlag.S_COMBAT_SUIT);
-    }
-
-    public boolean isXCTForTaintedAtmosphere() {
-        return isXCT() && hasArmorKitFlag(MiscTypeFlag.S_TAINTED_ATMOSPHERE);
     }
 
     /**

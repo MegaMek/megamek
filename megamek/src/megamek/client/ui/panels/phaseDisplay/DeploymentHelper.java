@@ -220,10 +220,11 @@ public class DeploymentHelper {
                                                                     ElevationOption lastDeploymentOption) {
         currentEntity = entity;
         int finalElevation;
-        int finalFacing = entity.getFacing();
+        // Face the center of the board by default.
+        int finalFacing = coords.direction(new Coords(board.getWidth() / 2, board.getHeight() / 2));
         var deploymentHelper = new AllowedDeploymentHelper(entity, coords, board,
                                                            board.getHex(coords), entity.getGame());
-        java.util.List<ElevationOption> elevationOptions = deploymentHelper.findAllowedElevations();
+        List<ElevationOption> elevationOptions = deploymentHelper.findAllowedElevations();
         int FACING_ELEVATION = 0; // If we care about facing at other altitudes or elevations ever...
         FacingOption facingOptions = deploymentHelper.findAllowedFacings(FACING_ELEVATION);
         boolean validFacings = facingOptions != null && facingOptions.hasValidFacings();

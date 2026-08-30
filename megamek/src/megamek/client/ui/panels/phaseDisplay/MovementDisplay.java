@@ -138,6 +138,10 @@ import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_T
 
 public class MovementDisplay extends ActionPhaseDisplay {
 
+    private record DeploymentAnchor(Coords coords, int boardId, int elevation, int facing) {
+
+    }
+
     private static final MMLogger LOGGER = MMLogger.create(MovementDisplay.class);
 
     @Serial
@@ -199,6 +203,22 @@ public class MovementDisplay extends ActionPhaseDisplay {
         SECTION,
         DIRECTION
     }
+
+    private @Nullable DeploymentAnchor deploymentAnchor(@Nullable MovePath path) {
+        if (path == null) {
+            return null;
+        }
+        for (MoveStep step : path.getStepVector()) {
+            if (step.getType() == MoveStepType.DEPLOY) {
+                return new DeploymentAnchor(step.getPosition(),
+                                            step.getBoardId(),
+                                            step.getElevation(),
+                                            step.getFacing());
+            }
+        }
+        return null;
+    }
+
 
     /**
      * One legal bridge a platoon could raise: the bridge occupies {@code middle} (adjacent to the engineer), with its
@@ -399,7 +419,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void cancel() {
-        clear();
+        boolean keepDeployment = ((cmd != null) && (cmd.length() > 1) && (deploymentAnchor(cmd) != null));
+        clear(keepDeployment);
         Entity currentEntity = currentEntity();
 
         if (currentEntity != null) {
@@ -1883,10 +1904,21 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     /**
-     * Clears out the currently selected movement data and resets it.
+     * Clears out the previous movement by calling the clear with deployment kept
      */
     @Override
     public void clear() {
+        clear(true);
+    }
+
+    /**
+     * Clears out the currently selected movement data and resets it.
+     */
+    private void clear(boolean keepDeployment) {
+        boolean wasWalkOn = (deploymentAnchor(cmd) != null);
+        DeploymentAnchor anchor = keepDeployment ? deploymentAnchor(cmd) : null;
+        int savedGear = gear;
+
         final Entity currentlySelectedEntity = currentEntity();
 
         // Cancel escape pod hex selection if active
@@ -1925,12 +1957,36 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // create new current and considered paths
         cmd = new MovePath(game, currentlySelectedEntity);
 
+        if (anchor != null) {
+            // Press escape once
+            currentlySelectedEntity.setPosition(anchor.coords());
+            currentlySelectedEntity.setBoardId(anchor.boardId());
+            currentlySelectedEntity.setElevation(anchor.elevation());
+            currentlySelectedEntity.setFacing(anchor.facing());
+            currentlySelectedEntity.setDeployed(true);
+            addStepToMovePath(MoveStepType.DEPLOY);
+            markDeploymentHexes(null);
+            if (savedGear == GEAR_JUMP) {
+                gear = GEAR_JUMP;
+                initializeJumpMovePath();
+            }
+        } else if (wasWalkOn) {
+            // Press escape twice
+            currentlySelectedEntity.setDeployed(false);
+            currentlySelectedEntity.setPosition(null);
+            markDeploymentHexes(currentlySelectedEntity);
+        }
+
         clientgui.updateFiringArc(currentlySelectedEntity);
         clientgui.showSensorRanges(currentlySelectedEntity, cmd.getFinalCoords());
         computeCFWarningHexes(currentlySelectedEntity);
 
-        // set to "walk," or the equivalent
-        gear = MovementDisplay.GEAR_LAND;
+        if (savedGear > MovementDisplay.GEAR_CLEAR_RUBBLE || savedGear < MovementDisplay.GEAR_LAND) {
+            // Gear not set yet
+            // set to "walk," or the equivalent
+            gear = MovementDisplay.GEAR_LAND;
+        }
+
         jumpSubGear = GEAR_SUB_STANDARD;
         clearFlightPath();
         Color walkColor = GUIP.getMoveDefaultColor();
@@ -2014,6 +2070,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         if (cmd.getLastStep().getType() == MoveStepType.DEPLOY) {
             currentlySelectedEntity.setDeployed(false);
+            currentlySelectedEntity.setPosition(null);
             clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
         }
         cmd.removeLastStep();
@@ -2695,17 +2752,21 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     currentlySelectedEntity.setElevation(elevation);
                     currentlySelectedEntity.setFacing(facing);
                     currentlySelectedEntity.setDeployed(true);
+                    cmd = new MovePath(game, currentlySelectedEntity);
                     addStepToMovePath(MoveStepType.DEPLOY);
-                    clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
-                    clientgui.updateFiringArc(currentlySelectedEntity);
-                    clientgui.showSensorRanges(currentlySelectedEntity);
-                    clientgui.boardViews().forEach(IBoardView::repaint);
+                    if (gear == GEAR_JUMP) {
+                        initializeJumpMovePath();
+                    }
                 } else {
                     String msg = Messages.getString("DeploymentDisplay.cantDeployInto",
                                                     currentlySelectedEntity.getShortName(),
                                                     coords.getBoardNum());
                     clientgui.addToast(ToastLevel.ERROR, msg, currentlySelectedEntity);
                 }
+                clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
+                clientgui.updateFiringArc(currentlySelectedEntity);
+                clientgui.showSensorRanges(currentlySelectedEntity);
+                clientgui.boardViews().forEach(IBoardView::repaint);
                 return;
 
             }
@@ -6291,13 +6352,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         MovePath movePath = new MovePath(game, entity);
 
-        /*
-        MoveStep step = cmd.getStep(0);
-        if ((step != null) && step.getType() == MoveStepType.DEPLOY) {
-            movePath.addStep(step);
-        }
-         */
-
         MoveStepType stepType = (movementGear == GEAR_BACKUP) ? MoveStepType.BACKWARDS : MoveStepType.FORWARDS;
         if (movementGear == GEAR_JUMP || movementGear == GEAR_DFA) {
             movePath.addStep(MoveStepType.START_JUMP);
@@ -8807,8 +8861,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                        Coords coords) {
         entity.setFacing(entity.getPosition().direction(coords));
         entity.setSecondaryFacing(entity.getFacing());
-        cmd.removeLastStep();
+        cmd = new MovePath(game, entity);
         addStepToMovePath(MoveStepType.DEPLOY);
+        if (gear == GEAR_JUMP) {
+            initializeJumpMovePath();
+        }
         clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(entity));
         clientgui.updateFiringArc(entity);
         clientgui.showSensorRanges(entity);

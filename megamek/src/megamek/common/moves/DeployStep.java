@@ -33,13 +33,13 @@
 
 package megamek.common.moves;
 
-import java.util.EnumSet;
-import java.util.Set;
-
 import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.units.Entity;
+
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * This class handles the deployment step for Walk On Deployment.
@@ -48,6 +48,7 @@ import megamek.common.units.Entity;
  * @since 0.51.01
  */
 class DeployStep implements PhasePass {
+
     private static final EnumSet<MoveStepType> TYPES = EnumSet.of(MoveStepType.DEPLOY);
 
     @Override
@@ -56,10 +57,14 @@ class DeployStep implements PhasePass {
     }
 
     @Override
-    public PhasePassResult preCompilation(final MoveStep moveStep, final Game game, final Entity entity, MoveStep prev,
-          final CachedEntityState cachedEntityState) {
+    public PhasePassResult preCompilation(final MoveStep moveStep,
+                                          final Game game,
+                                          final Entity entity,
+                                          MoveStep prev,
+                                          final CachedEntityState cachedEntityState) {
         moveStep.setDeploying(true);
-        moveStep.setDistance(1);
+        // Removing this for now. this step should actually add 1 to the distance anyways.
+        // moveStep.setDistance(1);
         return PhasePassResult.COMPILE;
     }
 }

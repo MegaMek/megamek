@@ -1129,7 +1129,7 @@ public class MoveStep implements Serializable {
     public void adjustFacing(MoveStepType stepType) {
         facing = MovePath.getAdjustedFacing(facing, stepType);
     }
-    
+
     /**
      * For yaws, reverse the current facing
      */

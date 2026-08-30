@@ -171,8 +171,8 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
 
         labTitle = new JLabel("Title");
 
-        tabStrip = new MekPanelTabStrip(this);
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
+        tabStrip = new MekPanelTabStrip(this, MekPanelTabStrip.classicTabs(udSpec));
         Image tile = getToolkit()
               .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, this);
@@ -551,19 +551,7 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
             ((CardLayout) displayP.getLayout()).show(displayP, s);
         }
 
-        if (MekPanelTabStrip.SUMMARY.equals(s)) {
-            tabStrip.setTab(MekPanelTabStrip.SUMMARY_INDEX);
-        } else if (MekPanelTabStrip.PILOT.equals(s)) {
-            tabStrip.setTab(MekPanelTabStrip.PILOT_INDEX);
-        } else if (MekPanelTabStrip.ARMOR.equals(s)) {
-            tabStrip.setTab(MekPanelTabStrip.ARMOR_INDEX);
-        } else if (MekPanelTabStrip.WEAPONS.equals(s)) {
-            tabStrip.setTab(MekPanelTabStrip.WEAPONS_INDEX);
-        } else if (MekPanelTabStrip.SYSTEMS.equals(s)) {
-            tabStrip.setTab(MekPanelTabStrip.SYSTEMS_INDEX);
-        } else if (MekPanelTabStrip.EXTRAS.equals(s)) {
-            tabStrip.setTab(MekPanelTabStrip.EXTRAS_INDEX);
-        }
+        tabStrip.setTab(s);
         displayP.revalidate();
         displayP.repaint();
     }
@@ -589,7 +577,7 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
             ((CardLayout) displayP.getLayout()).show(displayP, MekPanelTabStrip.SYSTEMS);
         }
 
-        tabStrip.setTab(MekPanelTabStrip.SYSTEMS_INDEX);
+        tabStrip.setTab(MekPanelTabStrip.SYSTEMS);
         sPan.selectLocation(loc);
         displayP.revalidate();
         displayP.repaint();

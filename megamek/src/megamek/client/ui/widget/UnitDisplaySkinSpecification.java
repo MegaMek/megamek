@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -54,6 +54,9 @@ public class UnitDisplaySkinSpecification {
     private String systemsTabActive = "tab_systems_active.gif";
     private String weaponsTabActive = "tab_weapon_active.gif";
     private String extraTabActive = "tab_extras_active.gif";
+    // The control tab has no art of its own yet; a skin that names none falls back to the systems images.
+    private String controlTabIdle = "tab_systems_idle.gif";
+    private String controlTabActive = "tab_systems_active.gif";
     private String cornerIdle = "idle_corner.gif";
     private String cornerActive = "active_corner.gif";
 
@@ -163,6 +166,28 @@ public class UnitDisplaySkinSpecification {
 
     public void setExtraTabActive(String extraTabActive) {
         this.extraTabActive = extraTabActive;
+    }
+
+    /**
+     * @return the idle image of the control tab; the systems tab image unless the skin names one
+     */
+    public String getControlTabIdle() {
+        return controlTabIdle;
+    }
+
+    public void setControlTabIdle(String controlTabIdle) {
+        this.controlTabIdle = controlTabIdle;
+    }
+
+    /**
+     * @return the active image of the control tab; the systems tab image unless the skin names one
+     */
+    public String getControlTabActive() {
+        return controlTabActive;
+    }
+
+    public void setControlTabActive(String controlTabActive) {
+        this.controlTabActive = controlTabActive;
     }
 
     public String getCornerIdle() {

@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,6 +38,7 @@ import java.awt.MediaTracker;
 import java.awt.Polygon;
 import java.awt.Toolkit;
 import java.io.Serial;
+import java.util.List;
 import java.util.Objects;
 
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
@@ -49,19 +49,28 @@ import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
+/**
+ * The strip of tabs across the top of the unit display.
+ * <p>
+ * The strip is built from a list of {@link TabDescriptor}s, one per tab, so the same class draws the classic six-tab
+ * strip and the three-tab control-layout strip. Each descriptor names the card it opens and the idle and active
+ * images that draw it; the images are loaded per strip, never shared between strips.
+ */
 public class MekPanelTabStrip extends PicMap {
     private static final MMLogger logger = MMLogger.create(MekPanelTabStrip.class);
 
     @Serial
     private static final long serialVersionUID = -1282343469769007184L;
-    protected static final int NUM_TABS = 6;
+
     public static final String SUMMARY = "summary";
     public static final String PILOT = "pilot";
     public static final String ARMOR = "armor";
     public static final String WEAPONS = "weapons";
     public static final String SYSTEMS = "systems";
     public static final String EXTRAS = "extras";
+    public static final String CONTROL = "control";
 
+    /** Positions of the tabs in the classic six-tab strip; see {@link #classicTabs}. */
     public static final int SUMMARY_INDEX = 0;
     public static final int PILOT_INDEX = 1;
     public static final int ARMOR_INDEX = 2;
@@ -69,26 +78,140 @@ public class MekPanelTabStrip extends PicMap {
     public static final int SYSTEMS_INDEX = 4;
     public static final int EXTRAS_INDEX = 5;
 
-    private static final Image[] idleImage = new Image[NUM_TABS];
-    private static final Image[] activeImage = new Image[NUM_TABS];
+    /** The corner images overlap the tab to their left by this much, drawn this far down the strip. */
+    private static final int CORNER_TOP = 4;
 
-    private final PMPicPolygonalArea[] tabs = new PMPicPolygonalArea[NUM_TABS];
-    private Image idleCorner, selectedCorner;
-    private int activeTab = 0;
-    UnitDisplayPanel md;
-
-    public MekPanelTabStrip(UnitDisplayPanel md) {
-        super();
-        this.md = md;
+    /**
+     * One tab of the strip.
+     *
+     * @param cardName    the name of the card the tab opens, as given to {@link UnitDisplayPanel#showPanel(String)}
+     * @param idleImage   the file name of the image drawn while the tab is not selected, under the widgets directory
+     * @param activeImage the file name of the image drawn while the tab is selected
+     */
+    public record TabDescriptor(String cardName, String idleImage, String activeImage) {
+        public TabDescriptor {
+            Objects.requireNonNull(cardName, "cardName");
+            Objects.requireNonNull(idleImage, "idleImage");
+            Objects.requireNonNull(activeImage, "activeImage");
+        }
     }
 
-    public void setTab(int i) {
-        if (i > 5) {
-            i = 5;
+    /**
+     * @param skin the unit display skin the images come from
+     *
+     * @return the six tabs of the classic layout, in {@link #SUMMARY_INDEX} … {@link #EXTRAS_INDEX} order
+     */
+    public static List<TabDescriptor> classicTabs(UnitDisplaySkinSpecification skin) {
+        return List.of(
+              new TabDescriptor(SUMMARY, skin.getGeneralTabIdle(), skin.getGeneralTabActive()),
+              new TabDescriptor(PILOT, skin.getPilotTabIdle(), skin.getPilotTabActive()),
+              new TabDescriptor(ARMOR, skin.getArmorTabIdle(), skin.getArmorTabActive()),
+              new TabDescriptor(WEAPONS, skin.getWeaponsTabIdle(), skin.getWeaponsTabActive()),
+              new TabDescriptor(SYSTEMS, skin.getSystemsTabIdle(), skin.getSystemsTabActive()),
+              new TabDescriptor(EXTRAS, skin.getExtrasTabIdle(), skin.getExtraTabActive()));
+    }
+
+    /**
+     * @param skin the unit display skin the images come from
+     *
+     * @return the three tabs of the control layout: General, Weapon, Control
+     */
+    public static List<TabDescriptor> controlTabs(UnitDisplaySkinSpecification skin) {
+        return List.of(
+              new TabDescriptor(SUMMARY, skin.getGeneralTabIdle(), skin.getGeneralTabActive()),
+              new TabDescriptor(WEAPONS, skin.getWeaponsTabIdle(), skin.getWeaponsTabActive()),
+              new TabDescriptor(CONTROL, skin.getControlTabIdle(), skin.getControlTabActive()));
+    }
+
+    private final List<TabDescriptor> descriptors;
+    private final Image[] idleImages;
+    private final Image[] activeImages;
+    private final PMPicPolygonalArea[] tabs;
+    private Image idleCorner;
+    private Image selectedCorner;
+    private int activeTab = 0;
+    private final UnitDisplayPanel unitDisplayPanel;
+
+    /**
+     * Creates a strip with the given tabs. The images are loaded when the strip is added to a window.
+     *
+     * @param unitDisplayPanel the display whose card a clicked tab opens
+     * @param descriptors      the tabs, left to right; at least one
+     */
+    public MekPanelTabStrip(UnitDisplayPanel unitDisplayPanel, List<TabDescriptor> descriptors) {
+        super();
+        if (descriptors.isEmpty()) {
+            throw new IllegalArgumentException("A tab strip needs at least one tab");
         }
-        activeTab = i;
+        this.unitDisplayPanel = unitDisplayPanel;
+        this.descriptors = List.copyOf(descriptors);
+        idleImages = new Image[descriptors.size()];
+        activeImages = new Image[descriptors.size()];
+        tabs = new PMPicPolygonalArea[descriptors.size()];
+    }
+
+    /**
+     * @return the number of tabs in the strip
+     */
+    public int getTabCount() {
+        return descriptors.size();
+    }
+
+    /**
+     * @param cardName the name of a card
+     *
+     * @return the position of the tab that opens the card, or -1 if no tab does
+     */
+    public int indexOf(String cardName) {
+        for (int index = 0; index < descriptors.size(); index++) {
+            if (descriptors.get(index).cardName().equals(cardName)) {
+                return index;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * @param index the position of a tab
+     *
+     * @return the name of the card the tab at that position opens
+     */
+    public String getCardName(int index) {
+        return descriptors.get(index).cardName();
+    }
+
+    /**
+     * @return the position of the selected tab
+     */
+    public int getActiveTab() {
+        return activeTab;
+    }
+
+    /**
+     * Selects the tab at the given position, clamped to the strip.
+     *
+     * @param index the position of the tab to select
+     */
+    public void setTab(int index) {
+        activeTab = Math.clamp(index, 0, descriptors.size() - 1);
         redrawImages();
         update();
+    }
+
+    /**
+     * Selects the tab that opens the given card. A card no tab opens leaves the selection alone.
+     *
+     * @param cardName the name of the card
+     *
+     * @return {@code true} if a tab opens the card
+     */
+    public boolean setTab(String cardName) {
+        int index = indexOf(cardName);
+        if (index == -1) {
+            return false;
+        }
+        setTab(index);
+        return true;
     }
 
     @Override
@@ -102,65 +225,46 @@ public class MekPanelTabStrip extends PicMap {
 
     private void setImages() {
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
-        MediaTracker mt = new MediaTracker(this);
-        Toolkit tk = getToolkit();
-        idleImage[SUMMARY_INDEX] = tk
-              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getGeneralTabIdle()).toString());
-        idleImage[PILOT_INDEX] = tk
-              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getPilotTabIdle()).toString());
-        idleImage[ARMOR_INDEX] = tk
-              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getArmorTabIdle()).toString());
-        idleImage[SYSTEMS_INDEX] = tk
-              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getSystemsTabIdle()).toString());
-        idleImage[WEAPONS_INDEX] = tk
-              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getWeaponsTabIdle()).toString());
-        idleImage[EXTRAS_INDEX] = tk
-              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getExtrasTabIdle()).toString());
-
-        activeImage[SUMMARY_INDEX] = tk
-              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getGeneralTabActive()).toString());
-        activeImage[PILOT_INDEX] = tk
-              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getPilotTabActive()).toString());
-        activeImage[ARMOR_INDEX] = tk
-              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getArmorTabActive()).toString());
-        activeImage[SYSTEMS_INDEX] = tk
-              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getSystemsTabActive()).toString());
-        activeImage[WEAPONS_INDEX] = tk
-              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getWeaponsTabActive()).toString());
-        activeImage[EXTRAS_INDEX] = tk
-              .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getExtraTabActive()).toString());
-        idleCorner = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getCornerIdle()).toString());
-        selectedCorner = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getCornerActive()).toString());
+        MediaTracker tracker = new MediaTracker(this);
+        Toolkit toolkit = getToolkit();
+        for (int index = 0; index < descriptors.size(); index++) {
+            idleImages[index] = loadWidgetImage(toolkit, descriptors.get(index).idleImage());
+            activeImages[index] = loadWidgetImage(toolkit, descriptors.get(index).activeImage());
+        }
+        idleCorner = loadWidgetImage(toolkit, udSpec.getCornerIdle());
+        selectedCorner = loadWidgetImage(toolkit, udSpec.getCornerActive());
 
         // If we don't flush, we might have stale data
         idleCorner.flush();
         selectedCorner.flush();
 
-        for (int i = 0; i < NUM_TABS; i++) {
+        for (int index = 0; index < descriptors.size(); index++) {
             // If we don't flush, we might have stale data
-            idleImage[i].flush();
-            activeImage[i].flush();
-            mt.addImage(idleImage[i], 0);
-            mt.addImage(activeImage[i], 0);
+            idleImages[index].flush();
+            activeImages[index].flush();
+            tracker.addImage(idleImages[index], 0);
+            tracker.addImage(activeImages[index], 0);
         }
-        mt.addImage(idleCorner, 0);
-        mt.addImage(selectedCorner, 0);
+        tracker.addImage(idleCorner, 0);
+        tracker.addImage(selectedCorner, 0);
         try {
-            mt.waitForAll();
+            tracker.waitForAll();
         } catch (Exception ex) {
             logger.error("", ex);
         }
 
-        if (mt.isErrorID(0)) {
+        if (tracker.isErrorID(0)) {
             logger.warn("Could not load image");
         }
 
-        for (int i = 0; i < NUM_TABS; i++) {
-            if (idleImage[i].getWidth(null) != activeImage[i].getWidth(null)) {
-                logger.warn("idleImage and activeImage do not match widths for image {}", i);
+        for (int index = 0; index < descriptors.size(); index++) {
+            if (idleImages[index].getWidth(null) != activeImages[index].getWidth(null)) {
+                logger.warn("idleImage and activeImage do not match widths for tab {}",
+                      descriptors.get(index).cardName());
             }
-            if (idleImage[i].getHeight(null) != activeImage[i].getHeight(null)) {
-                logger.warn("idleImage and activeImage do not match heights for image {}", i);
+            if (idleImages[index].getHeight(null) != activeImages[index].getHeight(null)) {
+                logger.warn("idleImage and activeImage do not match heights for tab {}",
+                      descriptors.get(index).cardName());
             }
         }
         if (idleCorner.getWidth(null) != selectedCorner.getWidth(null)) {
@@ -171,63 +275,44 @@ public class MekPanelTabStrip extends PicMap {
         }
     }
 
+    private static Image loadWidgetImage(Toolkit toolkit, String fileName) {
+        return toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), fileName).toString());
+    }
+
     private void setAreas() {
         int cornerWidth = idleCorner.getWidth(null);
 
-        for (int i = 0; i < idleImage.length; i++) {
-            int width = idleImage[i].getWidth(null);
-            int height = idleImage[i].getHeight(null);
+        for (int index = 0; index < descriptors.size(); index++) {
+            int width = idleImages[index].getWidth(null);
+            int height = idleImages[index].getHeight(null);
             int[] pointsX = new int[] { 0, width, width + cornerWidth, 0 };
             int[] pointsY = new int[] { 0, 0, height, height };
-            tabs[i] = new PMPicPolygonalArea(new Polygon(pointsX, pointsY, 4),
-                  createImage(width, height));
+            tabs[index] = new PMPicPolygonalArea(new Polygon(pointsX, pointsY, 4), createImage(width, height));
         }
 
-        int cumWidth = 0;
-        for (int i = 0; i < idleImage.length; i++) {
-            drawIdleImage(i);
-            tabs[i].translate(cumWidth, 0);
-            addElement(tabs[i]);
-            cumWidth += idleImage[i].getWidth(null);
+        int cumulativeWidth = 0;
+        for (int index = 0; index < descriptors.size(); index++) {
+            drawIdleImage(index);
+            tabs[index].translate(cumulativeWidth, 0);
+            addElement(tabs[index]);
+            cumulativeWidth += idleImages[index].getWidth(null);
         }
     }
 
     private void setListeners() {
-        tabs[SUMMARY_INDEX].addActionListener(e -> {
-            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
-                md.showPanel(SUMMARY);
-            }
-        });
-        tabs[PILOT_INDEX].addActionListener(e -> {
-            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
-                md.showPanel(PILOT);
-            }
-        });
-        tabs[ARMOR_INDEX].addActionListener(e -> {
-            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
-                md.showPanel(ARMOR);
-            }
-        });
-        tabs[SYSTEMS_INDEX].addActionListener(e -> {
-            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
-                md.showPanel(SYSTEMS);
-            }
-        });
-        tabs[WEAPONS_INDEX].addActionListener(e -> {
-            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
-                md.showPanel(WEAPONS);
-            }
-        });
-        tabs[EXTRAS_INDEX].addActionListener(e -> {
-            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
-                md.showPanel(EXTRAS);
-            }
-        });
+        for (int index = 0; index < descriptors.size(); index++) {
+            final String cardName = descriptors.get(index).cardName();
+            tabs[index].addActionListener(event -> {
+                if (Objects.equals(event.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
+                    unitDisplayPanel.showPanel(cardName);
+                }
+            });
+        }
     }
 
     private void redrawImages() {
-        for (int i = 0; i < NUM_TABS; i++) {
-            drawIdleImage(i);
+        for (int index = 0; index < descriptors.size(); index++) {
+            drawIdleImage(index);
         }
     }
 
@@ -236,19 +321,19 @@ public class MekPanelTabStrip extends PicMap {
             // hmm, display not initialized yet...
             return;
         }
-        Graphics g = tabs[tab].getIdleImage().getGraphics();
+        Graphics graphics = tabs[tab].getIdleImage().getGraphics();
 
         if (activeTab == tab) {
-            g.drawImage(activeImage[tab], 0, 0, null);
+            graphics.drawImage(activeImages[tab], 0, 0, null);
         } else {
-            g.drawImage(idleImage[tab], 0, 0, null);
+            graphics.drawImage(idleImages[tab], 0, 0, null);
             if ((tab - activeTab) == 1) {
-                g.drawImage(selectedCorner, 0, 4, null);
+                graphics.drawImage(selectedCorner, 0, CORNER_TOP, null);
             } else if (tab > 0) {
-                g.drawImage(idleCorner, 0, 4, null);
+                graphics.drawImage(idleCorner, 0, CORNER_TOP, null);
             }
         }
-        g.dispose();
+        graphics.dispose();
     }
 
     @Override

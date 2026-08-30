@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -139,6 +139,9 @@ public class SkinXMLHandler {
     public static final String SystemsTabActive = "tab_systems_active";
     public static final String WeaponsTabActive = "tab_weapon_active";
     public static final String ExtraTabActive = "tab_extras_active";
+    // optional: a skin without them uses the systems tab images for the control tab
+    public static final String ControlTabIdle = "tab_control_idle";
+    public static final String ControlTabActive = "tab_control_active";
     public static final String CornerIdle = "idle_corner";
     public static final String CornerActive = "active_corner";
 
@@ -474,6 +477,16 @@ public class SkinXMLHandler {
                   .getElementsByTagName(ExtraTabActive).item(0)
                   .getTextContent());
         }
+        if (border.getElementsByTagName(ControlTabIdle).getLength() > 0) {
+            udSpec.setControlTabIdle(border
+                  .getElementsByTagName(ControlTabIdle).item(0)
+                  .getTextContent());
+        }
+        if (border.getElementsByTagName(ControlTabActive).getLength() > 0) {
+            udSpec.setControlTabActive(border
+                  .getElementsByTagName(ControlTabActive).item(0)
+                  .getTextContent());
+        }
         if (border.getElementsByTagName(CornerIdle).getLength() > 0) {
             udSpec.setCornerIdle(border.getElementsByTagName(CornerIdle)
                   .item(0).getTextContent());
@@ -619,6 +632,14 @@ public class SkinXMLHandler {
         out.write("\t\t\t<" + ExtraTabActive + ">");
         out.write(udSpec.getExtraTabActive());
         out.write("</" + ExtraTabActive + ">\n");
+
+        out.write("\t\t\t<" + ControlTabIdle + ">");
+        out.write(udSpec.getControlTabIdle());
+        out.write("</" + ControlTabIdle + ">\n");
+
+        out.write("\t\t\t<" + ControlTabActive + ">");
+        out.write(udSpec.getControlTabActive());
+        out.write("</" + ControlTabActive + ">\n");
 
         out.write("\t\t\t<" + CornerIdle + ">");
         out.write(udSpec.getCornerIdle());

@@ -1638,14 +1638,9 @@ public class ChatLounge extends AbstractPhaseDisplay
      * all act on the highlighted player, and none of them should open pointed at somebody else.</p>
      */
     private void selectLocalPlayerRow() {
+        // the server names this client's player before it sends the phase that builds the lobby, so the local
+        // player is always known here - the selection listener below relies on the same thing
         Player local = localPlayer();
-        if (local == null) {
-            // the player list can arrive before the server has told this client which player it is
-            tablePlayers.addRowSelectionInterval(0, 0);
-            LOGGER.info("[GMAddUnit] the local player is not known yet, so the lobby highlighted row 0 ({}) for now",
-                  playerModel.getPlayerAt(0).getName());
-            return;
-        }
         for (int row = 0; row < playerModel.getRowCount(); row++) {
             if (playerModel.getPlayerAt(row).getId() == local.getId()) {
                 tablePlayers.addRowSelectionInterval(row, row);

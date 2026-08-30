@@ -30603,6 +30603,18 @@ public class TWGameManager extends AbstractGameManager {
         }
         vDesc.addAll(destroyEntity(entity, "ejection", true, true));
 
+        // Say so when the crew's kit is what stands between them and the air out there. Placed here, at the one
+        // exit every ejection passes through, so Mek pilots, vehicle crews and aerospace crews all get it. Only
+        // when it actually matters: nobody needs telling in ordinary weather, and a crew ejecting into vacuum must
+        // not be told they are safe when the kit holds no pressure.
+        if (CombatSuitRules.isCrewWearingCombatSuit(entity, game)
+              && CombatSuitRules.coversSomethingIn(game.getPlanetaryConditions())) {
+            Report combatSuitReport = new Report(6411);
+            combatSuitReport.subject = entity.getId();
+            combatSuitReport.indent(3);
+            vDesc.addElement(combatSuitReport);
+        }
+
         // only remove the unit that ejected manually
         if (!autoEject) {
             game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_EJECTED);
@@ -30855,16 +30867,6 @@ public class TWGameManager extends AbstractGameManager {
                 game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
-        }
-        // Say so when the crew's kit is what stands between them and the air out there. Only when it actually
-        // matters: nobody needs telling in ordinary weather, and a crew ejecting into vacuum must not be told they
-        // are safe when the kit holds no pressure.
-        if (CombatSuitRules.isCrewWearingCombatSuit(entity, game)
-              && CombatSuitRules.coversSomethingIn(game.getPlanetaryConditions())) {
-            Report combatSuitReport = new Report(6411);
-            combatSuitReport.subject = entity.getId();
-            combatSuitReport.indent(3);
-            vDesc.addElement(combatSuitReport);
         }
         // If we get here, end movement and return the report
         entity.setDone(true);

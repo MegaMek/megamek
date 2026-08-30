@@ -49,6 +49,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 
 import org.junit.jupiter.api.Test;
@@ -246,7 +247,7 @@ class SettingsPaneTest {
     }
 
     @Test
-    void searchIndexRefreshesResultsAfterEachPage() throws Exception {
+    void searchIndexPublishesResultsAtomically() throws Exception {
         AtomicInteger secondBuilds = new AtomicInteger();
         AtomicReference<SettingsPane> pane = new AtomicReference<>();
         runOnEdt(() -> {
@@ -259,13 +260,27 @@ class SettingsPaneTest {
                       return page("Needle section", null);
                   }), NAVIGATION_TEXT));
             pane.get().setFilterText("needle");
+
+            JLabel status = findComponent(pane.get(), "lblSettingsFilterStatus", JLabel.class);
+            JLabel searching = findComponent(pane.get(), "lblSettingsSearching", JLabel.class);
+            JTree tree = findComponent(pane.get(), "settingsNavigationTree", JTree.class);
+            assertFalse(status.isVisible());
+            assertEquals("Searching...", searching.getText());
+            assertTrue(searching.isVisible());
+            assertFalse(tree.isEnabled());
+            assertEquals(2, tree.getRowCount());
         });
         finishSearchIndexing();
 
         runOnEdt(() -> {
             JLabel status = findComponent(pane.get(), "lblSettingsFilterStatus", JLabel.class);
+            JLabel searching = findComponent(pane.get(), "lblSettingsSearching", JLabel.class);
+            JTree tree = findComponent(pane.get(), "settingsNavigationTree", JTree.class);
             assertEquals(1, secondBuilds.get());
             assertEquals("1 matches", status.getText());
+            assertFalse(searching.isVisible());
+            assertTrue(tree.isEnabled());
+            assertEquals(1, tree.getRowCount());
         });
     }
 

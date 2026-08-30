@@ -80,6 +80,7 @@ import megamek.client.ui.settings.SettingsButton;
 import megamek.client.ui.settings.SettingsCheckBox;
 import megamek.client.ui.settings.SettingsFormPanel;
 import megamek.client.ui.settings.SettingsPagePanel;
+import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.PlayerColour;
 import megamek.client.ui.util.UIUtil;
 import org.junit.jupiter.api.Test;
@@ -1340,6 +1341,14 @@ class CommonSettingsDialogTest {
         assertEquals(key.getPreferredSize().width, key.getWidth());
         assertTrue(command.getX() > 0);
         assertTrue(key.getX() + key.getWidth() < bindingsGrid.getWidth());
+    }
+
+    @Test
+    void everyKeyBindingHasLocalizedNameAndDescription() {
+        for (KeyCommandBind keyBind : KeyCommandBind.values()) {
+            assertTrue(Messages.keyExists("KeyBinds.cmdNames." + keyBind.cmd), keyBind.cmd);
+            assertTrue(Messages.keyExists("KeyBinds.cmdDesc." + keyBind.cmd), keyBind.cmd);
+        }
     }
 
     @Test

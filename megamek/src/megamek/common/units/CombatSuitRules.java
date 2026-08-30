@@ -44,8 +44,8 @@ import megamek.common.planetaryConditions.TaintedAtmosphereRules;
 /**
  * The optional MekWarrior Combat Suit rule: what the suit protects a crew from once they are outside their unit.
  * <p>
- * This is not a house rule. A Time of War p.294 gives the elite MekWarrior kit as a combat suit plus a combat
- * neurohelmet, and states the helmet "may be sealed in hostile environments" with its own air supply. The tabletop
+ * This is not a house rule. A Time of War p.294 gives the kit as a combat suit plus a combat neurohelmet, and
+ * states the helmet "may be sealed in hostile environments" with its own air supply. The tabletop
  * has no equivalent - {@code MiscType} carries the suit with a damage divisor and nothing else - so this adapts the
  * roleplaying equipment to the battlefield, and does nothing unless {@link OptionsConstants#RPG_COMBAT_SUITS} is
  * switched on.
@@ -65,9 +65,9 @@ public final class CombatSuitRules {
     public static final String COMBAT_SUIT_NAME = "MechWarrior Combat Suit";
 
     /**
-     * What a full kit costs, in C-bills. A crew is issued the whole elite MekWarrior kit rather than the suit on its
-     * own, because the sealing that makes the rule work belongs to the helmet: 20,000 for the combat suit, 1,400 for
-     * the combat neurohelmet and 175 for the plasteel boots (A Time of War p.294).
+     * What a full kit costs, in C-bills. A crew is issued the whole kit rather than the suit on its own, because the
+     * sealing that makes the rule work belongs to the helmet: 20,000 for the combat suit, 1,400 for the combat
+     * neurohelmet and 175 for the plasteel boots (A Time of War p.294).
      * <p>
      * MegaMek charges nobody for crew equipment, so this is recorded for MekHQ, which buys the kit and issues it to
      * a person before the battle starts.

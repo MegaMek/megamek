@@ -76,7 +76,6 @@ import megamek.common.jacksonAdapters.HexAreaDeserializer;
 import megamek.common.jacksonAdapters.MMUReader;
 import megamek.common.jacksonAdapters.MessageDeserializer;
 import megamek.common.jacksonAdapters.ObjectiveDeserializer;
-import megamek.server.victory.VictoryPointLevel;
 import megamek.common.jacksonAdapters.ObjectiveDeserializer.ObjectiveInfo;
 import megamek.common.jacksonAdapters.TriggerDeserializer;
 import megamek.common.jacksonAdapters.VictoryDeserializer;
@@ -90,6 +89,7 @@ import megamek.common.util.C3Util;
 import megamek.logging.MMLogger;
 import megamek.server.IGameManager;
 import megamek.server.scriptedEvents.GameEndTriggeredEvent;
+import megamek.server.victory.VictoryPointLevel;
 
 public class ScenarioV2 implements Scenario {
     private static final MMLogger logger = MMLogger.create(ScenarioV2.class);
@@ -324,7 +324,6 @@ public class ScenarioV2 implements Scenario {
             game.addPlayer(player.getId(), player);
         }
     }
-
 
     /**
      * Reads the scenario's graded victory scale ({@code victoryLevels:}): an ordered list of bands, each with a

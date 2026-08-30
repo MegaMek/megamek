@@ -35,6 +35,7 @@ package megamek.server.totalWarfare;
 import java.util.List;
 import java.util.Map;
 
+import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
@@ -44,8 +45,8 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
-import megamek.server.victory.VictoryPointVictory;
 import megamek.server.victory.VictoryPointTracker;
+import megamek.server.victory.VictoryPointVictory;
 
 /**
  * Places the objective markers that players designated in the lobby onto the board when the game starts. A marker
@@ -202,9 +203,7 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
         if (!usesObjectives || VictoryPointVictory.gameHasVictoryPointResolution(getGame())) {
             return;
         }
-        gameManager.sendServerChat("Use Objectives is enabled, but nothing can end this game - victory points "
-              + "will never resolve. Enable the game turn limit, a victory point threshold, or sudden death "
-              + "in the Victory Conditions.");
+        gameManager.sendServerChat(Messages.getString("VictoryHex.noEnderWarning"));
         VICTORY_HEX_LOGGER.warn("[Objective] use_objectives is on but the game has no ender - "
               + "victory points cannot resolve");
     }

@@ -296,7 +296,6 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
         return result;
     }
 
-
     /**
      * Declares the winner's victory level from the scenario's graded scale, when one is defined: the first band
      * whose bound covers the winner's final total names the victory (e.g. "Pyrrhic victory" up to 10, "Major

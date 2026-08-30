@@ -34,8 +34,16 @@
 package megamek.server.totalWarfare;
 
 import megamek.common.Hex;
-import megamek.common.units.Entity;
+import megamek.common.OffBoardDirection;
+import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
+import megamek.common.enums.BuildingType;
+import megamek.common.planetaryConditions.Atmosphere;
+import megamek.common.units.*;
 import megamek.logging.MMLogger;
+
+import java.util.List;
+import java.util.Vector;
 
 public class DeploymentServerHelper {
 
@@ -50,16 +58,16 @@ public class DeploymentServerHelper {
      * Process a deployment packet by... deploying the entity! We load any other specified entities inside of it too.
      * Also, check that the deployment is valid.
      */
-    public void processDeployment(megamek.common.units.Entity entity,
-                                  megamek.common.board.Coords coords,
+    public void processDeployment(Entity entity,
+                                  Coords coords,
                                   int boardId,
                                   int nFacing,
                                   int elevation,
-                                  java.util.Vector<megamek.common.units.Entity> loadVector,
+                                  Vector<Entity> loadVector,
                                   boolean assaultDrop,
                                   boolean setDone) {
-        for (megamek.common.units.Entity loaded : loadVector) {
-            if (loaded.getTransportId() != megamek.common.units.Entity.NONE) {
+        for (Entity loaded : loadVector) {
+            if (loaded.getTransportId() != Entity.NONE) {
                 // we probably already loaded this unit in the chat lounge
                 continue;
             }
@@ -77,7 +85,7 @@ public class DeploymentServerHelper {
          * best place to do it, but what are you going to do
          */
         if (entity.isAero() && gameManager.getGame().useVectorMove()) {
-            megamek.common.units.IAero a = (megamek.common.units.IAero) entity;
+            IAero a = (IAero) entity;
             int[] v = { 0, 0, 0, 0, 0, 0 };
 
             // if this is the entity's first time deploying, we want to respect the
@@ -106,7 +114,7 @@ public class DeploymentServerHelper {
 
         // For returning climb out units, restore the exit altitude
         // (entity was not never deployed if returning from off-map)
-        if (!entity.wasNeverDeployed() && entity instanceof megamek.common.units.IAero aeroReturning) {
+        if (!entity.wasNeverDeployed() && entity instanceof IAero aeroReturning) {
             int exitAlt = aeroReturning.getExitAltitude();
             if (exitAlt > 0) {
                 elevation = exitAlt;
@@ -115,7 +123,7 @@ public class DeploymentServerHelper {
         }
 
         // entity.isAero will check if a unit is a LAM in Fighter mode
-        if (entity instanceof megamek.common.units.IAero aero && entity.isAero()) {
+        if (entity instanceof IAero aero && entity.isAero()) {
             entity.setAltitude(elevation);
             if ((elevation == 0) && !entity.isSpaceborne()) {
                 aero.land();
@@ -131,13 +139,13 @@ public class DeploymentServerHelper {
             entity.setAltitude(1);
             // from the sky!
             entity.setAssaultDropInProgress(true);
-        } else if ((entity instanceof megamek.common.units.VTOL) && (entity.getExternalUnits().isEmpty())) {
-            while ((megamek.common.compute.Compute.stackingViolation(gameManager.getGame(),
-                                                                     entity,
-                                                                     coords,
-                                                                     null,
-                                                                     entity.climbMode(),
-                                                                     false) != null) &&
+        } else if ((entity instanceof VTOL) && (entity.getExternalUnits().isEmpty())) {
+            while ((Compute.stackingViolation(gameManager.getGame(),
+                                              entity,
+                                              coords,
+                                              null,
+                                              entity.climbMode(),
+                                              false) != null) &&
                    (entity.getElevation() <= 500)) {
                 entity.setElevation(entity.getElevation() + 1);
             }
@@ -148,12 +156,12 @@ public class DeploymentServerHelper {
             if (entity.isAirborne()) {
                 entity.setElevation(0);
             }
-            if (!entity.isSpaceborne() && entity instanceof megamek.common.units.IAero a) {
+            if (!entity.isSpaceborne() && entity instanceof IAero a) {
                 // all spheroid craft should have velocity of zero in atmosphere
                 // regardless of what was entered
                 if (a.isSpheroid() || gameManager.getGame().getPlanetaryConditions()
                                                  .getAtmosphere()
-                                                 .isLighterThan(megamek.common.planetaryConditions.Atmosphere.THIN)) {
+                                                 .isLighterThan(Atmosphere.THIN)) {
                     a.setCurrentVelocity(0);
                     a.setNextVelocity(0);
                 }
@@ -166,30 +174,30 @@ public class DeploymentServerHelper {
                 }
             }
         } else {
-            megamek.common.units.IBuilding bld = gameManager.getGame()
-                                                            .getBoard(boardId)
-                                                            .getBuildingAt(entity.getPosition());
-            if ((bld != null) && (bld.getBuildingType() == megamek.common.enums.BuildingType.WALL)) {
-                entity.setElevation(hex.terrainLevel(megamek.common.units.Terrains.BLDG_ELEV));
+            IBuilding bld = gameManager.getGame()
+                                       .getBoard(boardId)
+                                       .getBuildingAt(entity.getPosition());
+            if ((bld != null) && (bld.getBuildingType() == BuildingType.WALL)) {
+                entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
             }
 
         }
 
-        boolean wigeFlyover = entity.getMovementMode() == megamek.common.units.EntityMovementMode.WIGE &&
-                              hex.containsTerrain(megamek.common.units.Terrains.BLDG_ELEV) &&
-                              entity.getElevation() > hex.terrainLevel(megamek.common.units.Terrains.BLDG_ELEV);
+        boolean wigeFlyover = entity.getMovementMode() == EntityMovementMode.WIGE &&
+                              hex.containsTerrain(Terrains.BLDG_ELEV) &&
+                              entity.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV);
 
         // when first entering a building, we need to roll what type
         // of basement it has
-        megamek.common.units.IBuilding bldg = gameManager.getGame()
-                                                         .getBoard(boardId)
-                                                         .getBuildingAt(entity.getPosition());
+        IBuilding bldg = gameManager.getGame()
+                                    .getBoard(boardId)
+                                    .getBuildingAt(entity.getPosition());
         if ((bldg != null)) {
             if (bldg.rollBasement(entity.getPosition(),
                                   gameManager.getGame().getBoard(boardId),
                                   gameManager.getMainPhaseReport())) {
                 gameManager.sendChangedHex(entity.getPosition(), boardId);
-                java.util.Vector<megamek.common.units.IBuilding> buildings = new java.util.Vector<>();
+                Vector<IBuilding> buildings = new Vector<>();
                 buildings.add(bldg);
                 gameManager.sendChangedBuildings(buildings);
             }
@@ -205,7 +213,7 @@ public class DeploymentServerHelper {
         }
 
         // If deploying a BuildingEntity, add building terrain to all hexes it occupies
-        if (entity instanceof megamek.common.units.AbstractBuildingEntity buildingEntity) {
+        if (entity instanceof AbstractBuildingEntity buildingEntity) {
             buildingEntity.updateBuildingEntityHexes(boardId, gameManager);
         }
 
@@ -214,8 +222,8 @@ public class DeploymentServerHelper {
         // an illegal hull-down state, because combat code such as Tank.rollHitLocation keys off isHullDown() without
         // re-checking terrain, so a state from an old/crafted client or corrupted save could otherwise grant the
         // hull-down hit-location benefit on open ground.
-        if ((entity instanceof megamek.common.units.Tank deployingVehicle) && entity.isHullDown()) {
-            boolean fortifiedHex = hex.containsTerrain(megamek.common.units.Terrains.FORTIFIED);
+        if ((entity instanceof Tank deployingVehicle) && entity.isHullDown()) {
+            boolean fortifiedHex = hex.containsTerrain(Terrains.FORTIFIED);
             if (!deployingVehicle.isHullDownCapable() || !fortifiedHex) {
                 entity.setHullDown(false);
                 LOGGER.debug("[HullDown] {}: cleared illegal deploy hull-down - {}", entity.getDisplayName(),
@@ -228,10 +236,10 @@ public class DeploymentServerHelper {
         // Infantry deploying onto a fortified hex already gets the dug-in cover from the terrain, so it cannot also be
         // separately dug in (the two postures don't stack - TO:AR p.106 / TO:AUE p.153). Keep the fortified-hex state
         // and clear the redundant dug-in, mirroring what completeFortification does for co-located infantry.
-        if ((entity instanceof megamek.common.units.Infantry deployingInfantry)
-            && (deployingInfantry.getDugIn() != megamek.common.units.Infantry.DUG_IN_NONE)
-            && hex.containsTerrain(megamek.common.units.Terrains.FORTIFIED)) {
-            deployingInfantry.setDugIn(megamek.common.units.Infantry.DUG_IN_NONE);
+        if ((entity instanceof Infantry deployingInfantry)
+            && (deployingInfantry.getDugIn() != Infantry.DUG_IN_NONE)
+            && hex.containsTerrain(Terrains.FORTIFIED)) {
+            deployingInfantry.setDugIn(Infantry.DUG_IN_NONE);
             LOGGER.debug("[Fortify] {}: cleared redundant dug-in - deployed onto a fortified hex",
                          entity.getDisplayName());
         }
@@ -260,15 +268,15 @@ public class DeploymentServerHelper {
         clearTrailerOffBoardSettings(tractor);
 
         int trailerCount = tractor.getAllTowedUnits().size();
-        java.util.List<megamek.common.board.Coords> trainPath = megamek.common.units.TrainLayout.deploymentPath(tractor.getPosition(),
-                                                                                                                tractor.getFacing(),
-                                                                                                                trailerCount);
+        List<Coords> trainPath = TrainLayout.deploymentPath(tractor.getPosition(),
+                                                            tractor.getFacing(),
+                                                            trailerCount);
         java.util.List<Integer> trainFacings = new java.util.ArrayList<>();
         for (int step = 0; step < trainPath.size(); step++) {
             trainFacings.add(tractor.getFacing());
         }
 
-        java.util.List<megamek.common.units.TrainLayout.TrainPlacement> placements = megamek.common.units.TrainLayout.computeLayout(
+        List<TrainLayout.TrainPlacement> placements = TrainLayout.computeLayout(
                 gameManager.getGame(),
                 tractor,
                 tractor.getPosition(),
@@ -278,10 +286,10 @@ public class DeploymentServerHelper {
 
         // The footprint was checked against the deployment zone in receiveDeployment, before the tractor was placed.
 
-        megamek.common.units.TrainLayout.applyLayout(gameManager.getGame(), placements);
+        TrainLayout.applyLayout(gameManager.getGame(), placements);
 
-        for (megamek.common.units.TrainLayout.TrainPlacement placement : placements) {
-            megamek.common.units.Entity trailer = gameManager.getGame().getEntity(placement.entityId());
+        for (TrainLayout.TrainPlacement placement : placements) {
+            Entity trailer = gameManager.getGame().getEntity(placement.entityId());
             if (trailer == null) {
                 continue;
             }
@@ -311,10 +319,10 @@ public class DeploymentServerHelper {
         java.util.List<String> clearedTrailers = new java.util.ArrayList<>();
 
         for (int towedId : tractor.getAllTowedUnits()) {
-            megamek.common.units.Entity trailer = gameManager.getGame().getEntity(towedId);
+            Entity trailer = gameManager.getGame().getEntity(towedId);
 
             if ((trailer != null) && trailer.isOffBoard()) {
-                trailer.setOffBoard(0, megamek.common.OffBoardDirection.NONE);
+                trailer.setOffBoard(0, OffBoardDirection.NONE);
                 clearedTrailers.add(trailer.getDisplayName());
             }
         }

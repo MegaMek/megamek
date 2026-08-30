@@ -1200,7 +1200,7 @@ public class ConvInfantry extends Infantry {
     @Override
     public boolean doomedInExtremeTemp() {
         // An armored cooling suit handles heat, which is what it is built for, but not cold.
-        if ((game != null) && CombatSuitRules.protectsAgainstTemperature(this,
+        if ((game != null) && CrewArmorKitRules.protectsAgainstTemperature(this,
               game.getPlanetaryConditions().getTemperature())) {
             return false;
         }

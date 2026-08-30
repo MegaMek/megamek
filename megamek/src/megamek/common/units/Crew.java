@@ -80,8 +80,8 @@ public class Crew implements Serializable {
     private final boolean[] clanPilots;
     /** Whether each crew member is wearing a MekWarrior Combat Suit, TO:AUE p.129. */
     // Deliberately not final: a Crew deserialized from a stream written before this field existed restores as
-    // null, because Java deserialization skips field initializers. getCombatSuits() fills it in on first use.
-    private boolean[] combatSuits;
+    // null, because Java deserialization skips field initializers. getArmorKitNames() fills it in on first use.
+    private String[] armorKitNames;
     private final Portrait[] portraits;
 
     private final int[] gunnery;
@@ -253,7 +253,7 @@ public class Crew implements Serializable {
         Arrays.fill(getGenders(), Gender.RANDOMIZE);
         setGender(gender, 0);
         clanPilots = new boolean[slots];
-        combatSuits = new boolean[slots];
+        armorKitNames = new String[slots];
         Arrays.fill(getClanPilots(), clanPilot);
         portraits = new Portrait[slots];
         for (int i = 0; i < slots; i++) {
@@ -406,45 +406,50 @@ public class Crew implements Serializable {
     }
 
     /**
-     * @return one entry per crew slot, saying whether that crew member is wearing a combat suit
+     * @return one entry per crew slot, holding the internal name of the armor kit that crew member wears, or
+     *       {@code null} where they wear none
      */
-    public boolean[] getCombatSuits() {
-        if (combatSuits == null) {
-            // An older save game or a unit cached before this field existed. Nobody was wearing a suit then.
-            combatSuits = new boolean[getSlotCount()];
+    public String[] getArmorKitNames() {
+        if (armorKitNames == null) {
+            // An older save game or a unit cached before this field existed. Nobody was wearing anything then.
+            armorKitNames = new String[getSlotCount()];
         }
-        return combatSuits;
+        return armorKitNames;
     }
 
     /**
-     * Whether this crew member is wearing a MekWarrior Combat Suit (TO:AUE p.129), which under the optional rule
-     * keeps them breathing if they end up outside their unit.
+     * The armor kit this crew member wears, by internal name.
+     * <p>
+     * The name rather than the equipment itself, because a {@code Crew} travels to the server and into save games,
+     * and a name survives that trip where an {@code EquipmentType} reference does not. Whoever needs the kit's
+     * damage divisor or its flags looks it up.
      *
      * @param position the crew slot to ask about
      *
-     * @return {@code true} if that crew member has a suit
+     * @return the kit's internal name, or {@code null} if that crew member wears none
      */
-    public boolean hasCombatSuit(final int position) {
-        return (position < getCombatSuits().length) ? getCombatSuits()[position] : getCombatSuits()[0];
+    public @Nullable String getArmorKitName(final int position) {
+        String[] kits = getArmorKitNames();
+        return (position < kits.length) ? kits[position] : kits[0];
     }
 
     /**
-     * Whether anyone aboard is wearing a MekWarrior Combat Suit. A vehicle crew is treated as a single body, so
-     * one slot answers for all of them.
+     * The armor kit worn by anyone aboard. A vehicle or vessel crew is a single collective in MegaMek however many
+     * people MekHQ assigned to it, so one slot answers for all of them.
      *
-     * @return {@code true} if any crew member has a suit
+     * @return the first kit found, or {@code null} if nobody wears one
      */
-    public boolean hasAnyCombatSuit() {
-        for (boolean hasSuit : getCombatSuits()) {
-            if (hasSuit) {
-                return true;
+    public @Nullable String getAnyArmorKitName() {
+        for (String kitName : getArmorKitNames()) {
+            if ((kitName != null) && !kitName.isBlank()) {
+                return kitName;
             }
         }
-        return false;
+        return null;
     }
 
-    public void setHasCombatSuit(final boolean hasCombatSuit, final int position) {
-        getCombatSuits()[position] = hasCombatSuit;
+    public void setArmorKitName(final @Nullable String armorKitName, final int position) {
+        getArmorKitNames()[position] = armorKitName;
     }
 
     public Portrait[] getPortraits() {

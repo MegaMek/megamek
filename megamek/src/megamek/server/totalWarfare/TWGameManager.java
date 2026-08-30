@@ -30865,8 +30865,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Adds a line to the ejection report when the crew's combat suit is what stands between them and the air out
-     * there.
+     * Adds a line to the ejection report when what the crew is wearing is the difference between living and dying
+     * out there.
      * <p>
      * Called from the one exit every ejection passes through, so Mek pilots, vehicle crews and aerospace crews all
      * reach it. Only raised where the kit answers the danger: nobody needs telling in ordinary weather, and a crew
@@ -30876,9 +30876,8 @@ public class TWGameManager extends AbstractGameManager {
      * @param reports the ejection reports being built
      */
     private void reportCombatSuitProtection(Entity entity, Vector<Report> reports) {
-        boolean isCrewSuited = CombatSuitRules.isCrewWearingCombatSuit(entity, game);
-        boolean isTheKitAnyUseHere = CombatSuitRules.coversSomethingIn(game.getPlanetaryConditions());
-        if (!isCrewSuited || !isTheKitAnyUseHere) {
+        EquipmentType armorKit = CrewArmorKitRules.crewArmorKit(entity, game);
+        if (!CrewArmorKitRules.coversSomethingIn(armorKit, game.getPlanetaryConditions())) {
             return;
         }
         Report combatSuitReport = new Report(6411);

@@ -36,6 +36,8 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
+import java.util.HashMap;
+import java.util.Map;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.io.Serial;
@@ -59,9 +61,12 @@ import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.common.units.CombatSuitRules;
+import megamek.common.units.CrewArmorKitRules;
 import megamek.client.ui.dialogs.iconChooser.PortraitChooserDialog;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.annotations.Nullable;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.game.Game;
 import megamek.common.enums.Gender;
 import megamek.common.icons.Portrait;
 import megamek.common.options.OptionsConstants;
@@ -91,9 +96,9 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
     private final JCheckBox chkMissing = new JCheckBox(Messages.getString("CustomMekDialog.chkMissing"));
     private final JTextField fldName = new JTextField(30);
     private final JTextField fldNick = new JTextField(30);
+    private final Map<String, String> armorKitNamesByDisplayName = new HashMap<>();
     private final JCheckBox chkClanPilot = new JCheckBox(Messages.getString("CustomMekDialog.chkClanPilot"));
-    private final JCheckBox chkCombatSuit = new JCheckBox(
-          Messages.getString("CustomMekDialog.chkCombatSuit"));
+    private final JComboBox<String> choArmorKit = new JComboBox<>();
     private final JTextField fldGunnery = new JTextField(4);
     private final JTextField fldGunneryL = new JTextField(4);
     private final JTextField fldGunneryM = new JTextField(4);
@@ -163,16 +168,12 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
             // placing the flag after Commander Initiative.
             addClanPilotAdvancedRow();
         }
-        chkCombatSuit.setText("");
-        chkCombatSuit.setSelected(entity.getCrew().hasCombatSuit(slot));
-        chkCombatSuit.setToolTipText(
-              UIUtil.formatSideTooltip(Messages.getString("CustomMekDialog.chkCombatSuit.tooltip")));
-        boolean isCombatSuitRuleInPlay =
-              parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_COMBAT_SUITS);
-        boolean isSuitInventedYet =
-              CombatSuitRules.isCombatSuitAvailable(entity, parent.getClient().getGame());
-        if (isCombatSuitRuleInPlay && isSuitInventedYet && CombatSuitRules.canWearCombatSuit(entity)) {
-            addAdvancedRow(Messages.getString("CustomMekDialog.chkCombatSuit"), chkCombatSuit);
+        if (CrewArmorKitRules.isRuleInPlay(parent.getClient().getGame())
+              && CrewArmorKitRules.canWearArmorKit(entity)) {
+            populateArmorKitChoices(parent.getClient().getGame(), entity, slot);
+            choArmorKit.setToolTipText(
+                  UIUtil.formatSideTooltip(Messages.getString("CustomMekDialog.choArmorKit.tooltip")));
+            addAdvancedRow(Messages.getString("CustomMekDialog.choArmorKit"), choArmorKit);
         }
         if (parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
             addAdvancedRow(Messages.getString("CustomMekDialog.labTough"), fldTough);
@@ -195,7 +196,7 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
             fldName.setEnabled(false);
             fldNick.setEnabled(false);
             chkClanPilot.setEnabled(false);
-            chkCombatSuit.setEnabled(false);
+            choArmorKit.setEnabled(false);
             fldGunnery.setEnabled(false);
             fldGunneryL.setEnabled(false);
             fldGunneryM.setEnabled(false);
@@ -229,6 +230,29 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
                   .insets(0, 6, sectionGap, 0));
             sectionsRow.revalidate();
         }
+    }
+
+    /**
+     * Fills the armor kit chooser with every kit available in the year being played, plus an entry for wearing
+     * none, and selects whatever this crew member already wears.
+     *
+     * @param game   the game whose year decides what has been invented
+     * @param entity the unit whose crew is being configured
+     * @param slot   the crew slot this panel is for
+     */
+    private void populateArmorKitChoices(Game game, Entity entity, int slot) {
+        String noKit = Messages.getString("CustomMekDialog.choArmorKit.none");
+        choArmorKit.addItem(noKit);
+        for (EquipmentType armorKit : CrewArmorKitRules.availableArmorKits()) {
+            if (!CrewArmorKitRules.isAvailableIn(armorKit, entity, game)) {
+                continue;
+            }
+            armorKitNamesByDisplayName.put(armorKit.getName(), armorKit.getInternalName());
+            choArmorKit.addItem(armorKit.getName());
+        }
+        String wornKitName = entity.getCrew().getArmorKitName(slot);
+        EquipmentType wornKit = (wornKitName == null) ? null : EquipmentType.get(wornKitName);
+        choArmorKit.setSelectedItem((wornKit == null) ? noKit : wornKit.getName());
     }
 
     /**
@@ -591,10 +615,14 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
     }
 
     /**
-     * @return {@code true} if this crew member has been issued a MekWarrior Combat Suit
+     * @return the internal name of the armor kit chosen for this crew member, or {@code null} for none
      */
-    public boolean hasCombatSuit() {
-        return chkCombatSuit.isSelected();
+    public @Nullable String getArmorKitName() {
+        Object chosen = choArmorKit.getSelectedItem();
+        if ((chosen == null) || chosen.equals(Messages.getString("CustomMekDialog.choArmorKit.none"))) {
+            return null;
+        }
+        return armorKitNamesByDisplayName.get(chosen.toString());
     }
 
     public int getGunnery() {

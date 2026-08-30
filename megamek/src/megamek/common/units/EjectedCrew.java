@@ -112,27 +112,27 @@ public class EjectedCrew extends ConvInfantry {
                 logger.error("", ex);
             }
         }
-        issueCombatSuitIfWorn(originalRide);
+        issueArmorKitIfWorn(originalRide);
     }
 
     /**
-     * Puts the MekWarrior Combat Suit on the crew if the ride they left had them wearing one and the optional rule
-     * is in play. The suit travels as a real armor kit rather than a flag, so everything downstream that reads armor
-     * kits sees it.
+     * Dresses this crew in whatever they were wearing aboard their unit.
+     * <p>
+     * Fitted through {@link ConvInfantry#setArmorKit}, which is the method that owns the kit: it also applies the
+     * kit's derived state - the space suit flag, encumbrance, the sneak properties and the damage divisor - none of
+     * which happens if the equipment is merely added to the list. With that done, every existing rule about what
+     * conventional infantry survives reads the kit, and needs nothing new written for it.
      *
      * @param originalRide the unit this crew is leaving
      */
-    private void issueCombatSuitIfWorn(Entity originalRide) {
-        if (!CombatSuitRules.isCrewWearingCombatSuit(originalRide, originalRide.getGame())) {
+    private void issueArmorKitIfWorn(Entity originalRide) {
+        EquipmentType armorKit = CrewArmorKitRules.crewArmorKit(originalRide, originalRide.getGame());
+        if (armorKit == null) {
             return;
         }
-        try {
-            addEquipment(EquipmentType.get(CombatSuitRules.COMBAT_SUIT_NAME), LOC_INFANTRY);
-            logger.debug("[CombatSuit] {}: left {} wearing a MekWarrior Combat Suit",
-                  getDisplayName(), originalRide.getDisplayName());
-        } catch (Exception exception) {
-            logger.error("Could not fit a MekWarrior Combat Suit to an ejected crew", exception);
-        }
+        setArmorKit(armorKit);
+        logger.debug("[CrewArmorKit] {}: left {} wearing {}",
+              getDisplayName(), originalRide.getDisplayName(), armorKit.getName());
     }
 
     /**

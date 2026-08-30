@@ -52,6 +52,8 @@ import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.AtmosphericTaint;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
+import megamek.common.annotations.Nullable;
+import megamek.common.units.CrewArmorKitRules;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.utils.BoardLoader;
@@ -66,9 +68,11 @@ import org.mockito.Mockito;
  * This goes through {@code ejectEntity} rather than testing the condition in isolation, because the condition was
  * never the hard part: the line was first written into the wrong method and so never appeared in a game at all.
  */
-class CombatSuitEjectionReportTest {
+class CrewArmorKitEjectionReportTest {
 
-    private static final int COMBAT_SUIT_REPORT = 6411;
+    private static final int ARMOR_KIT_REPORT = 6411;
+    private static final String COMBAT_SUIT = CrewArmorKitRules.COMBAT_SUIT_NAME;
+    private static final String SPACESUIT = "Spacesuit";
     private static final String BOARD_DATA = """
           size 4 4
           hex 0101 0 "" ""
@@ -105,10 +109,10 @@ class CombatSuitEjectionReportTest {
         game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.CAUSTIC_TOXIC);
     }
 
-    private <T extends Entity> T deploy(T entity, int entityId, boolean issueCombatSuit) {
+    private <T extends Entity> T deploy(T entity, int entityId, @Nullable String armorKitName) {
         entity.setId(entityId);
         entity.setOwner(game.getPlayer(0));
-        entity.getCrew().setHasCombatSuit(issueCombatSuit, 0);
+        entity.getCrew().setArmorKitName(armorKitName, 0);
         game.addEntity(entity);
         entity.setPosition(new Coords(0, 0));
         entity.setDeployed(true);
@@ -119,59 +123,68 @@ class CombatSuitEjectionReportTest {
      * A Mek built the way ejection expects to find one. A bare {@code BipedMek} has no critical slots, so the
      * cockpit-destruction step that follows every ejection would fail on nothing rather than on the rule.
      */
-    private Mek deployedMek(int entityId, boolean issueCombatSuit) {
+    private Mek deployedMek(int entityId, @Nullable String armorKitName) {
         Mek mek = new BipedMek();
         mek.autoSetInternal();
         mek.addCockpit();
-        return deploy(mek, entityId, issueCombatSuit);
+        return deploy(mek, entityId, armorKitName);
     }
 
-    private boolean reportsTheCombatSuit(Vector<Report> reports) {
-        return reports.stream().anyMatch(report -> report.messageId == COMBAT_SUIT_REPORT);
+    private boolean reportsTheArmorKit(Vector<Report> reports) {
+        return reports.stream().anyMatch(report -> report.messageId == ARMOR_KIT_REPORT);
     }
 
     @Test
     void aSuitedMekPilotIsToldTheSuitWillKeepThemAlive() {
         setCausticToxicAir();
-        Mek mek = deployedMek(1, true);
+        Mek mek = deployedMek(1, COMBAT_SUIT);
 
-        assertTrue(reportsTheCombatSuit(gameManager.ejectEntity(mek, false, false)),
+        assertTrue(reportsTheArmorKit(gameManager.ejectEntity(mek, false, false)),
               "the report must say the suit is what saves them, or the player cannot tell it did anything");
     }
 
     @Test
     void aSuitedVehicleCrewIsToldTheSame() {
         setCausticToxicAir();
-        Tank tank = deploy(new Tank(), 2, true);
+        Tank tank = deploy(new Tank(), 2, COMBAT_SUIT);
 
-        assertTrue(reportsTheCombatSuit(gameManager.ejectEntity(tank, false, false)),
+        assertTrue(reportsTheArmorKit(gameManager.ejectEntity(tank, false, false)),
               "a vehicle crew abandons through the same method, so it must reach the same line");
     }
 
     @Test
     void anUnsuitedCrewIsToldNothing() {
         setCausticToxicAir();
-        Mek mek = deployedMek(3, false);
+        Mek mek = deployedMek(3, null);
 
-        assertFalse(reportsTheCombatSuit(gameManager.ejectEntity(mek, false, false)));
+        assertFalse(reportsTheArmorKit(gameManager.ejectEntity(mek, false, false)));
     }
 
     @Test
     void aSuitedCrewInOrdinaryWeatherIsToldNothing() {
         game.getPlanetaryConditions().setAtmosphere(Atmosphere.STANDARD);
         game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.BREATHABLE);
-        Mek mek = deployedMek(4, true);
+        Mek mek = deployedMek(4, COMBAT_SUIT);
 
-        assertFalse(reportsTheCombatSuit(gameManager.ejectEntity(mek, false, false)),
+        assertFalse(reportsTheArmorKit(gameManager.ejectEntity(mek, false, false)),
               "there is nothing out there for the suit to save them from");
+    }
+
+    @Test
+    void aCrewInASpacesuitIsToldItSavesThemInVacuum() {
+        game.getPlanetaryConditions().setAtmosphere(Atmosphere.VACUUM);
+        Mek mek = deployedMek(7, SPACESUIT);
+
+        assertTrue(reportsTheArmorKit(gameManager.ejectEntity(mek, false, false)),
+              "a spacesuit is sealed, which is exactly what vacuum asks for");
     }
 
     @Test
     void aSuitedCrewEjectingIntoVacuumIsNotToldTheyAreSafe() {
         game.getPlanetaryConditions().setAtmosphere(Atmosphere.VACUUM);
-        Mek mek = deployedMek(5, true);
+        Mek mek = deployedMek(5, COMBAT_SUIT);
 
-        assertFalse(reportsTheCombatSuit(gameManager.ejectEntity(mek, false, false)),
+        assertFalse(reportsTheArmorKit(gameManager.ejectEntity(mek, false, false)),
               "the kit holds no pressure, so saying they are protected would be a lie");
     }
 
@@ -179,8 +192,8 @@ class CombatSuitEjectionReportTest {
     void theReportStaysAwayWithTheOptionOff() {
         setCausticToxicAir();
         game.getOptions().getOption(OptionsConstants.RPG_COMBAT_SUITS).setValue(false);
-        Mek mek = deployedMek(6, true);
+        Mek mek = deployedMek(6, COMBAT_SUIT);
 
-        assertFalse(reportsTheCombatSuit(gameManager.ejectEntity(mek, false, false)));
+        assertFalse(reportsTheArmorKit(gameManager.ejectEntity(mek, false, false)));
     }
 }

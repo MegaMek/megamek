@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -55,6 +56,8 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
+import megamek.server.victory.VictoryPointTracker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -201,6 +204,62 @@ class ObjectivePlacementHandlerTest {
 
         assertTrue(alice.getGroundObjectsToPlace().isEmpty());
         assertTrue(bob.getGroundObjectsToPlace().isEmpty());
+    }
+
+    @Test
+    void testScenarioStartingVictoryPointsAreAwardedToEachSide() {
+        HashMap<String, Object> victoryContext = new HashMap<>();
+        when(game.getVictoryContext()).thenReturn(victoryContext);
+        boardContainingEverything();
+        alice.setTeam(2);
+        alice.setStartingVictoryPoints(3);
+        bob.setStartingVictoryPoints(1);
+
+        handler.placeLobbyObjectives();
+
+        VictoryPointTracker tracker = VictoryPointTracker.getTracker(game);
+        assertEquals(3, tracker.getTeamVictoryPoints(2), "a teamed player's points go to the team pool");
+        assertEquals(1, tracker.getPlayerVictoryPoints(bob.getId()), "a solo player scores for themselves");
+    }
+
+    @Test
+    void testNoStartingVictoryPointsAreAwardedWhenTheScenarioSetsNone() {
+        HashMap<String, Object> victoryContext = new HashMap<>();
+        when(game.getVictoryContext()).thenReturn(victoryContext);
+        boardContainingEverything();
+
+        handler.placeLobbyObjectives();
+
+        VictoryPointTracker tracker = VictoryPointTracker.getTracker(game);
+        assertEquals(0, tracker.getPlayerVictoryPoints(alice.getId()));
+        assertEquals(0, tracker.getPlayerVictoryPoints(bob.getId()));
+    }
+
+    @Test
+    void testTheChatWarnsWhenNothingCanEndAnObjectivesGame() {
+        GameOptions options = new GameOptions();
+        options.getOption(OptionsConstants.VICTORY_USE_OBJECTIVES).setValue(true);
+        when(game.getOptions()).thenReturn(options);
+        when(game.scriptedEvents()).thenReturn(List.of());
+        boardContainingEverything();
+
+        handler.placeLobbyObjectives();
+
+        verify(gameManager).sendServerChat(anyString());
+    }
+
+    @Test
+    void testTheChatStaysQuietWhenTheGameHasAnEnder() {
+        GameOptions options = new GameOptions();
+        options.getOption(OptionsConstants.VICTORY_USE_OBJECTIVES).setValue(true);
+        options.getOption(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT).setValue(true);
+        when(game.getOptions()).thenReturn(options);
+        when(game.scriptedEvents()).thenReturn(List.of());
+        boardContainingEverything();
+
+        handler.placeLobbyObjectives();
+
+        verify(gameManager, never()).sendServerChat(anyString());
     }
 
     private ObjectiveMarker markerFor(Player owner, Coords lobbyPosition) {

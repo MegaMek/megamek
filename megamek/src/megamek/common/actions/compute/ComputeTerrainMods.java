@@ -242,9 +242,9 @@ public class ComputeTerrainMods {
         if ((entityTarget instanceof Mek) && entityTarget.isSuperHeavy()) {
             partialWaterLevel = 2;
         }
-        if ((entityTarget != null)
+        if (LosEffects.canReceivePartialCover(entityTarget)
               && targetInWater
-              // target in partial water
+              // target in partial water (a Mek standing in Depth 1 water, TW p.102)
               && (targetHex.terrainLevel(Terrains.WATER) == partialWaterLevel)
               && (targEl == 0)
               && (entityTarget.height() > 0)) {

@@ -773,11 +773,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // the idea here is that we're in a building that provides partial cover
-        // if the unit involved is tall (at least 2 levels, e.g. mek or superheavy
-        // vehicle)
+        // if the unit is a Mek (only Meks receive partial cover, TW p.171)
         // and its height above the hex ceiling (i.e. building roof) is 1
         // the height determination takes being prone into account
-        return targetHex.containsTerrain(Terrains.BUILDING) &&
+        return LosEffects.canReceivePartialCover(targetEntity) &&
+              targetHex.containsTerrain(Terrains.BUILDING) &&
               (targetEntity.getHeight() > 0) &&
               (targetEntity.relHeight() == 1);
     }

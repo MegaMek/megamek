@@ -345,6 +345,19 @@ public class LosEffects {
     }
 
     /**
+     * Partial cover is a Mek rule. Only a standing Mek can receive partial cover; large support vehicles, grounded
+     * small craft and DropShips never do, even though they rise more than one level, and ProtoMeks never do because
+     * they are only the height of vehicles (TW p.102, p.171; TO:AR p.85).
+     *
+     * @param target the unit being shot at
+     *
+     * @return {@code true} if the target's unit type can receive partial cover at all
+     */
+    public static boolean canReceivePartialCover(@Nullable Targetable target) {
+        return target instanceof Mek;
+    }
+
+    /**
      * Setter for property targetCover.
      *
      * @param targetCover New value of property targetCover.

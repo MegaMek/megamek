@@ -1013,7 +1013,7 @@ public class FireControl {
         if (target instanceof Entity) {
             targetEntity = (Entity) target;
         }
-        if (null != targetEntity && targetHex.containsTerrain(Terrains.WATER)
+        if (LosEffects.canReceivePartialCover(targetEntity) && targetHex.containsTerrain(Terrains.WATER)
               && (1 == targetHex.terrainLevel(Terrains.WATER))
               && (0 < targetEntity.height())) {
             losEffects.setTargetCover(losEffects.getTargetCover() | LosEffects.COVER_HORIZONTAL);

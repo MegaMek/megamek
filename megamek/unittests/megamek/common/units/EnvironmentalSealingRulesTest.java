@@ -59,6 +59,7 @@ import org.junit.jupiter.api.Test;
  */
 class EnvironmentalSealingRulesTest {
 
+    // CHECKSTYLE IGNORE ForbiddenWords FOR 1 LINES
     private static final String MEK_ENVIRONMENTAL_SEALING = "Environmental Sealing (Mech)";
     private static final String CV_ENVIRONMENTAL_SEALING = "Environmental Sealed Chassis";
 

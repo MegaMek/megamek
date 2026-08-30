@@ -697,7 +697,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
 
         if (currentEntity() != null) {
-            clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
+            clientgui.getUnitDisplay().getWeaponTab().displayMek(currentEntity());
         }
         updateTarget();
 
@@ -2022,7 +2022,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
      * @param direction the secondary facing to twist to
      */
     private void applyTorsoTwist(int direction) {
-        WeaponMounted selectedWeapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        WeaponMounted selectedWeapon = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeapon();
         List<DirectionalMountFacingAction> mountFacings = pendingDirectionalMountFacings(NO_EXCLUDED_LOCATION);
         clearAttacks();
         addAttack(new TorsoTwistAction(currentEntity, direction));
@@ -2032,7 +2032,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
         refreshAll();
         if (selectedWeapon != null) {
-            clientgui.getUnitDisplay().wPan.selectWeapon(selectedWeapon);
+            clientgui.getUnitDisplay().getWeaponTab().selectWeapon(selectedWeapon);
         }
     }
 

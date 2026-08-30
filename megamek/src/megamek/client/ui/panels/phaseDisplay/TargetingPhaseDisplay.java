@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -337,7 +337,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
      */
     public void initializeListeners() {
         game.addGameListener(this);
-        clientgui.getUnitDisplay().wPan.weaponList.addListSelectionListener(this);
+        clientgui.getUnitDisplay().getWeaponTab().addWeaponSelectionListener(this);
     }
 
     @Override
@@ -552,7 +552,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
      * Fire Mode - Adds a Fire Mode Change to the current Attack Action
      */
     private void changeMode(boolean forward) {
-        WeaponMounted weaponMounted = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        WeaponMounted weaponMounted = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeapon();
 
         // Do nothing we have no unit selected or no weapon selected or if the weapon doesn't have modes
         if (currentEntity() == null || weaponMounted == null || !weaponMounted.hasModes()) {
@@ -581,8 +581,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
 
         updateTarget();
-        clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
-        clientgui.getUnitDisplay().wPan.selectWeapon(weaponMounted);
+        clientgui.getUnitDisplay().getWeaponTab().displayMek(currentEntity());
+        clientgui.getUnitDisplay().getWeaponTab().selectWeapon(weaponMounted);
     }
 
     private boolean checkNags() {
@@ -653,7 +653,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
      */
     private void fire() {
         // get the selected weapon num
-        int weaponNum = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+        int weaponNum = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeaponNum();
         Mounted<?> mounted = currentEntity().getEquipment(weaponNum);
 
         // validate
@@ -724,7 +724,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         mounted.setUsedThisRound(true);
 
         // find the next available weapon
-        int nextWeapon = clientgui.getUnitDisplay().wPan.selectNextWeapon();
+        int nextWeapon = clientgui.getUnitDisplay().getWeaponTab().selectNextWeapon();
 
         // check; if there are no ready weapons, you're done.
         if ((nextWeapon == -1) && GUIP.getAutoEndFiring()) {
@@ -733,8 +733,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
 
         // otherwise, display firing info for the next weapon
-        clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
-        clientgui.getUnitDisplay().wPan.selectWeapon(nextWeapon);
+        clientgui.getUnitDisplay().getWeaponTab().displayMek(currentEntity());
+        clientgui.getUnitDisplay().getWeaponTab().selectWeapon(nextWeapon);
         updateTarget();
         setDisengageEnabled(false);
     }
@@ -746,9 +746,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         if (currentEntity() == null) {
             return;
         }
-        int weaponId = clientgui.getUnitDisplay().wPan.selectNextWeapon();
-        if (currentEntity().getId() != clientgui.getUnitDisplay().wPan.getSelectedEntityId()) {
-            clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
+        int weaponId = clientgui.getUnitDisplay().getWeaponTab().selectNextWeapon();
+        if (currentEntity().getId() != clientgui.getUnitDisplay().getWeaponTab().getSelectedEntityId()) {
+            clientgui.getUnitDisplay().getWeaponTab().displayMek(currentEntity());
         }
 
         if (weaponId == -1) {
@@ -767,9 +767,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         if (currentEntity() == null) {
             return;
         }
-        int weaponId = clientgui.getUnitDisplay().wPan.selectPrevWeapon();
-        if (currentEntity().getId() != clientgui.getUnitDisplay().wPan.getSelectedEntityId()) {
-            clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
+        int weaponId = clientgui.getUnitDisplay().getWeaponTab().selectPrevWeapon();
+        if (currentEntity().getId() != clientgui.getUnitDisplay().getWeaponTab().getSelectedEntityId()) {
+            clientgui.getUnitDisplay().getWeaponTab().displayMek(currentEntity());
         }
 
         if (weaponId == -1) {
@@ -828,7 +828,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 removeAttack(o);
                 setDisengageEnabled(attacks.isEmpty() && currentEntity().isOffBoard() && currentEntity().canFlee(
                       currentEntity().getPosition()));
-                clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
+                clientgui.getUnitDisplay().getWeaponTab().displayMek(currentEntity());
                 game.removeAction(o);
                 clientgui.boardViews().forEach(bv -> ((BoardView) bv).refreshAttacks());
             }
@@ -847,7 +847,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         if (GUIP.getFireDisplayTabDuringFiringPhases()) {
             clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.WEAPONS);
         }
-        clientgui.getUnitDisplay().wPan.selectFirstWeapon();
+        clientgui.getUnitDisplay().getWeaponTab().selectFirstWeapon();
         updateTarget();
         clientgui.updateFiringArc(currentEntity());
     }
@@ -867,14 +867,14 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         setFireEnabled(false);
 
         // update target panel
-        final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-        final WeaponMounted selectedWeapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        final int weaponId = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeaponNum();
+        final WeaponMounted selectedWeapon = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeapon();
         if (selectedWeapon != null) {
             Entity weaponEntity = selectedWeapon.getEntity();
             Entity attacker = weaponEntity.getAttackingEntity();
             if ((attacker != null) && attacker.equals(clientgui.getUnitDisplay().getCurrentEntity())
                   && (target != null) && (weaponId != -1) && (attacker.getPosition() != null)) {
-                clientgui.getUnitDisplay().wPan.setTarget(target, null);
+                clientgui.getUnitDisplay().getWeaponTab().setTarget(target, null);
 
                 Mounted<?> weapon = attacker.getEquipment(weaponId);
                 int effectiveDistance = Compute.effectiveDistance(game, attacker, target);
@@ -889,41 +889,41 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                         distanceText += String.format(" (%d turns)", aaa.getTurnsTilHit());
                     }
                 }
-                clientgui.getUnitDisplay().wPan.wRangeR.setText(distanceText);
+                clientgui.getUnitDisplay().getWeaponTab().setRangeText(distanceText);
 
                 ToHitData toHit = WeaponAttackAction.toHit(game,
                       currentEntity, target, weaponId, Entity.LOC_NONE, AimingMode.NONE, false);
 
                 if (weapon.isUsedThisRound()) {
-                    clientgui.getUnitDisplay().wPan.setToHit(
+                    clientgui.getUnitDisplay().getWeaponTab().setToHit(
                           Messages.getString("TargetingPhaseDisplay.alreadyFired"));
                     setFireEnabled(false);
                 } else if (weapon.isInBearingsOnlyMode() && effectiveDistance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
-                    clientgui.getUnitDisplay().wPan.setToHit(
+                    clientgui.getUnitDisplay().getWeaponTab().setToHit(
                           Messages.getString("TargetingPhaseDisplay.bearingsOnlyMinRange"));
                     setFireEnabled(false);
                 } else if ((weapon.getType().hasFlag(WeaponType.F_AUTO_TARGET)
                       && !weapon.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
-                    clientgui.getUnitDisplay().wPan.setToHit(
+                    clientgui.getUnitDisplay().getWeaponTab().setToHit(
                           Messages.getString("TargetingPhaseDisplay.autoFiringWeapon"));
                     setFireEnabled(false);
                 } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                    clientgui.getUnitDisplay().wPan.setToHit(toHit);
+                    clientgui.getUnitDisplay().getWeaponTab().setToHit(toHit);
                     setFireEnabled(false);
                 } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
-                    clientgui.getUnitDisplay().wPan.setToHit(toHit);
+                    clientgui.getUnitDisplay().getWeaponTab().setToHit(toHit);
                     setFireEnabled(true);
                 } else {
-                    clientgui.getUnitDisplay().wPan.setToHit(toHit,
+                    clientgui.getUnitDisplay().getWeaponTab().setToHit(toHit,
                           attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY));
                     setFireEnabled(true);
                 }
             }
             setSkipEnabled(true);
         } else {
-            clientgui.getUnitDisplay().wPan.setTarget(null, null);
-            clientgui.getUnitDisplay().wPan.wRangeR.setText("---");
-            clientgui.getUnitDisplay().wPan.clearToHit();
+            clientgui.getUnitDisplay().getWeaponTab().setTarget(null, null);
+            clientgui.getUnitDisplay().getWeaponTab().clearRange();
+            clientgui.getUnitDisplay().getWeaponTab().clearToHit();
         }
         updateSearchlight();
         updateFlipMount();
@@ -1087,7 +1087,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
      * @param direction the secondary facing to twist to
      */
     private void applyTorsoTwist(int direction) {
-        WeaponMounted selectedWeapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        WeaponMounted selectedWeapon = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeapon();
         List<DirectionalMountFacingAction> mountFacings = pendingDirectionalMountFacings(NO_EXCLUDED_LOCATION);
         clearAttacks();
         addAttack(new TorsoTwistAction(currentEntity, direction));
@@ -1097,7 +1097,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
         refreshAll();
         if (selectedWeapon != null) {
-            clientgui.getUnitDisplay().wPan.selectWeapon(selectedWeapon);
+            clientgui.getUnitDisplay().getWeaponTab().selectWeapon(selectedWeapon);
         }
     }
 
@@ -1541,7 +1541,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     @Override
     public void removeAllListeners() {
         super.removeAllListeners();
-        clientgui.getUnitDisplay().wPan.weaponList.removeListSelectionListener(this);
+        clientgui.getUnitDisplay().getWeaponTab().removeWeaponSelectionListener(this);
     }
 
     @Override
@@ -1551,7 +1551,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
 
         if ((game.getPhase().isTargeting()) &&
-              (event.getSource().equals(clientgui.getUnitDisplay().wPan.weaponList))) {
+              clientgui.getUnitDisplay().getWeaponTab().isWeaponSelectionSource(event.getSource())) {
             // update target data in weapon display
             updateTarget();
         }

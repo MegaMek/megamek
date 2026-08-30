@@ -100,7 +100,7 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
     private final SummaryPanel mPan;
     private final PilotPanel pPan;
     private final ArmorPanel aPan;
-    public WeaponPanel wPan;
+    private final WeaponPanel wPan;
     private final SystemPanel sPan;
     private final ExtraPanel ePan;
     private final ClientGUI clientgui;
@@ -527,6 +527,13 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
         scrollPane.getVerticalScrollBar().setUnitIncrement(SCROLL_STEPS);
         scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(SCROLLBAR_WIDTH, Integer.MAX_VALUE));
         return scrollPane;
+    }
+
+    /**
+     * @return the Weapon tab, as the combat phase displays drive it
+     */
+    public WeaponTabView getWeaponTab() {
+        return wPan;
     }
 
     /**

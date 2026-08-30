@@ -46,6 +46,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.List;
 import java.util.Optional;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -72,6 +73,7 @@ import megamek.common.Configuration;
 import megamek.common.Hex;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
@@ -105,7 +107,8 @@ import megamek.logging.MMLogger;
 /**
  * This class contains the all the gizmos for firing the mek's weapons.
  */
-public class WeaponPanel extends PicMap implements ListSelectionListener, ActionListener, IPreferenceChangeListener {
+public class WeaponPanel extends PicMap implements WeaponTabView, ListSelectionListener, ActionListener,
+      IPreferenceChangeListener {
     private static final MMLogger logger = MMLogger.create(WeaponPanel.class);
 
     /**
@@ -186,7 +189,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private final Client client;
 
     private MMComboBox<WeaponSortOrder> comboWeaponSortOrder;
-    public JList<String> weaponList;
+    private JList<String> weaponList;
     /**
      * Keep track of the previous target, used for certain weapons (like VGLs) that will force a target. With this, we
      * can restore the previous target after the forced target.
@@ -194,7 +197,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private Targetable prevTarget = null;
     private JScrollPane tWeaponScroll;
     private JComboBox<String> m_chAmmo;
-    public JComboBox<String> m_chBayWeapon;
+    private JComboBox<String> m_chBayWeapon;
 
     private JLabel wBayWeapon;
     private JLabel wArcHeatL;
@@ -218,8 +221,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private JLabel wLongAVR;
     private JLabel wExtAVR;
     private JLabel currentHeatBuildupR;
-    public JLabel wTargetExtraInfo;
-    public JLabel wRangeR;
+    private JLabel wTargetExtraInfo;
+    private JLabel wRangeR;
     private JLabel wDamageTrooperL;
     private JLabel wDamageTrooperR;
     private JLabel wInfantryRange0L;
@@ -773,14 +776,17 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         addSubDisplay(parent, wTargetInfo, LINE_HEIGHT * 2, GridBagConstraints.BOTH);
     }
 
+    @Override
     public void clearToHit() {
         toHitText.setText("---");
     }
 
+    @Override
     public void setToHit(ToHitData toHit) {
         setToHit(toHit, false);
     }
 
+    @Override
     public void setToHit(ToHitData toHit, boolean natAptGunnery) {
         String txt = switch (toHit.getValue()) {
             case TargetRoll.IMPOSSIBLE, TargetRoll.AUTOMATIC_FAIL -> String.format("To Hit: (0%%) %s", toHit.getDesc());
@@ -796,10 +802,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         toHitText.setCaretPosition(0);
     }
 
+    @Override
     public void setToHit(String message) {
         toHitText.setText(UnitToolTip.wrapWithHTML(message));
     }
 
+    @Override
     public void setTarget(@Nullable Targetable target, @Nullable String extraInfo) {
         this.target = target;
         updateTargetInfo();
@@ -912,6 +920,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      * <p>
      * fix the ammo when it's added
      */
+    @Override
     public void displayMek(Entity en) {
         removeListeners();
 
@@ -925,81 +934,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         // update pointer to weapons
         entity = en;
 
-        // Check Game Options for max external heat
-        int max_ext_heat = game != null ?
-              game.getOptions().intOption(OptionsConstants.ADVANCED_COMBAT_MAX_EXTERNAL_HEAT)
-              :
-              15;
-        if (max_ext_heat < 0) {
-            max_ext_heat = 15; // Standard value specified in TW p.159
-        }
-
-        int currentHeatBuildup = (en.heat // heat from last round
-              + en.getEngineCritHeat() // heat engine crits will add
-              + Math.min(max_ext_heat, en.heatFromExternal) // heat from external sources
-              + en.heatBuildup) // heat we're building up this round
-              - Math.min(9, en.coolFromExternal); // cooling from external
-
-        // sources
-        if (en instanceof Mek) {
-            if (en.infernos.isStillBurning()) { // hit with inferno ammo
-                currentHeatBuildup += en.infernos.getHeat();
-            }
-
-            // extreme temperatures.
-            if ((game != null) && (game.getPlanetaryConditions().getTemperature() > 0)) {
-                int buildup = game.getPlanetaryConditions().getTemperatureDifference(50, -30);
-                if (((Mek) en).hasIntactHeatDissipatingArmor()) {
-                    buildup /= 2;
-                }
-                currentHeatBuildup += buildup;
-            } else if (game != null) {
-                currentHeatBuildup -= game.getPlanetaryConditions().getTemperatureDifference(50, -30);
-            }
-        }
-        Coords position = entity.getPosition();
-        if ((game != null) && !en.isOffBoard() && game.hasBoardLocation(position, entity.getBoardId())) {
-            Hex hex = game.getBoard(entity.getBoardId()).getHex(position);
-            if (hex != null) {
-                if (hex.containsTerrain(Terrains.FIRE) && (hex.getFireTurn() > 0)) {
-                    // standing in fire
-                    if ((en instanceof Mek) && ((Mek) en).hasIntactHeatDissipatingArmor()) {
-                        currentHeatBuildup += 2;
-                    } else {
-                        currentHeatBuildup += 5;
-                    }
-                }
-
-                if (hex.terrainLevel(Terrains.MAGMA) == 1) {
-                    if ((en instanceof Mek) && ((Mek) en).hasIntactHeatDissipatingArmor()) {
-                        currentHeatBuildup += 2;
-                    } else {
-                        currentHeatBuildup += 5;
-                    }
-                } else if (hex.terrainLevel(Terrains.MAGMA) == 2) {
-                    if ((en instanceof Mek) && ((Mek) en).hasIntactHeatDissipatingArmor()) {
-                        currentHeatBuildup += 5;
-                    } else {
-                        currentHeatBuildup += 10;
-                    }
-                }
-            } else {
-                logger.warn("An entity is not offboard but has a position not on board.");
-            }
-        }
-
-        if ((((en instanceof Mek) || (en instanceof Aero)) && en.isStealthActive())
-              || en.isNullSigActive() || en.isVoidSigActive()) {
-            currentHeatBuildup += 10; // active stealth/null sig/void sig heat
-        }
-
-        if ((en instanceof Mek) && en.isChameleonShieldOn()) {
-            currentHeatBuildup += 6;
-        }
-
-        if (((en instanceof Mek) || (en instanceof Aero)) && en.hasActiveNovaCEWS()) {
-            currentHeatBuildup += 2;
-        }
+        HeatForecast.Result heat = HeatForecast.forecast(en, game);
 
         // update weapon list
         weaponList.setModel(new WeaponListModel(this, en));
@@ -1009,15 +944,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         m_chBayWeapon.removeAllItems();
         m_chBayWeapon.setEnabled(false);
 
-        // on large craft we may need to take account of firing arcs
-        boolean[] usedFrontArc = new boolean[entity.locations()];
-        boolean[] usedRearArc = new boolean[entity.locations()];
-        for (int i = 0; i < entity.locations(); i++) {
-            usedFrontArc[i] = false;
-            usedRearArc[i] = false;
-        }
-
-        boolean hasFiredWeapons = false;
         for (int i = 0; i < entity.getWeaponListWithHHW().size(); i++) {
             WeaponMounted mounted = entity.getWeaponListWithHHW().get(i);
 
@@ -1031,60 +957,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             }
 
             ((WeaponListModel) weaponList.getModel()).addWeapon(mounted);
-            if (mounted.isUsedThisRound() && game != null
-                  && (game.getPhase() == mounted.usedInPhase())
-                  && game.getPhase().isFiring()) {
-                hasFiredWeapons = true;
-                // add heat from weapons fire to heat tracker
-                if (entity.isLargeCraft()) {
-                    // if using bay heat option then don't add total arc
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_HEAT_BY_BAY)) {
-                        currentHeatBuildup += mounted.getHeatByBay();
-                    } else {
-                        // check whether arc has fired
-                        int loc = mounted.getLocation();
-                        boolean rearMount = mounted.isRearMounted();
-                        if (!rearMount) {
-                            if (!usedFrontArc[loc]) {
-                                currentHeatBuildup += entity.getHeatInArc(loc, rearMount);
-                                usedFrontArc[loc] = true;
-                            }
-                        } else {
-                            if (!usedRearArc[loc]) {
-                                currentHeatBuildup += entity.getHeatInArc(loc, rearMount);
-                                usedRearArc[loc] = true;
-                            }
-                        }
-                    }
-                } else {
-                    if (!mounted.isBombMounted() && entity.equals(mounted.getEntity())) {
-                        currentHeatBuildup += mounted.getHeatByBay();
-                    }
-                }
-            }
         }
         comboWeaponSortOrder.setSelectedItem(entity.getWeaponSortOrder());
         setWeaponComparator(comboWeaponSortOrder.getSelectedItem());
 
-        if (en.hasDamagedRHS() && hasFiredWeapons) {
-            currentHeatBuildup++;
-        }
-
-        String combatComputerIndicator = "";
-        if (en.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
-            currentHeatBuildup -= 4;
-            combatComputerIndicator = " \uD83D\uDCBB";
-        }
-
-        // check for negative values due to extreme temp
-        if (currentHeatBuildup < 0) {
-            currentHeatBuildup = 0;
-        }
-
-        String heatText = Integer.toString(currentHeatBuildup);
-        UnitToolTip.HeatDisplayHelper hdh = UnitToolTip.getHeatCapacityForDisplay(en);
-        String heatCapacityStr = hdh.heatCapacityStr;
-        int heatOverCapacity = currentHeatBuildup - hdh.heatCapWater;
+        String combatComputerIndicator = heat.combatComputer() ? " \uD83D\uDCBB" : "";
+        String heatText = Integer.toString(heat.buildup());
+        String heatCapacityStr = heat.capacityText();
+        int heatOverCapacity = heat.overCapacity();
 
         String sheatOverCapacity = "";
         if (heatOverCapacity > 0) {
@@ -1096,7 +976,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         String heatMessage = heatText + " (" + heatCapacityStr + ')' + sheatOverCapacity;
         String tempIndicator = "";
 
-        if ((game != null) && (game.getPlanetaryConditions().isExtremeTemperature())) {
+        if (heat.extremeTemperature()) {
             tempIndicator = " " + game.getPlanetaryConditions().getTemperatureIndicator();
         }
 
@@ -1169,6 +1049,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         addListeners();
     }
 
+    @Override
     public int getSelectedEntityId() {
         return entity.getId();
     }
@@ -1176,6 +1057,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     /**
      * Selects the weapon with the specified weapon ID.
      */
+    @Override
     public void selectWeapon(int wn) {
         if (wn == -1) {
             weaponList.setSelectedIndex(-1);
@@ -1192,6 +1074,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         weaponList.repaint();
     }
 
+    @Override
     public void selectWeapon(WeaponMounted weapon) {
         if (weapon == null) {
             weaponList.setSelectedIndex(-1);
@@ -1211,6 +1094,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     /**
      * @return the Mounted for the selected weapon in the weapon list.
      */
+    @Override
     public WeaponMounted getSelectedWeapon() {
         int selected = weaponList.getSelectedIndex();
         if (selected == -1) {
@@ -1223,6 +1107,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      * @return the AmmoMounted currently selected by the ammo selector combo box, if any. The returned AmmoMounted may
      *       or may not be the ammo that is linked to the weapon.
      */
+    @Override
     public Optional<AmmoMounted> getSelectedAmmo() {
         int selected = m_chAmmo.getSelectedIndex();
         if ((selected == -1) || (vAmmo == null) || (selected >= vAmmo.size())) {
@@ -1235,6 +1120,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     /**
      * Returns the equipment ID number for the weapon currently selected
      */
+    @Override
     public int getSelectedWeaponNum() {
         int selected = weaponList.getSelectedIndex();
         if (selected == -1) {
@@ -1247,6 +1133,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     /**
      * Selects the first valid weapon in the weapon list.
      */
+    @Override
     public void selectFirstWeapon() {
         // Entity has no weapons, return -1;
         if (entity.getWeaponListWithHHW().isEmpty()
@@ -1334,6 +1221,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
     }
 
+    @Override
     public int getNextWeaponNum() {
         int selected = getNextWeaponListIdx();
         if ((selected >= 0) && (selected < entity.getWeaponListWithHHW().size())) {
@@ -1346,6 +1234,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
     }
 
+    @Override
     public WeaponMounted getNextWeapon() {
         int selected = getNextWeaponListIdx();
         if ((selected >= 0) && (selected < entity.getWeaponListWithHHW().size())) {
@@ -1361,6 +1250,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      *
      * @return The weaponId for the selected weapon
      */
+    @Override
     public int selectNextWeapon() {
         int selected = getNextWeaponListIdx();
         weaponList.setSelectedIndex(selected);
@@ -1378,6 +1268,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      *
      * @return The weaponId for the selected weapon
      */
+    @Override
     public int selectPrevWeapon() {
         int selected = getPrevWeaponListIdx();
         weaponList.setSelectedIndex(selected);
@@ -2720,12 +2611,49 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         listenerCounter--;
     }
 
+    @Override
     public Targetable getPrevTarget() {
         return prevTarget;
     }
 
+    @Override
     public void setPrevTarget(Targetable prevTarget) {
         this.prevTarget = prevTarget;
+    }
+
+    @Override
+    public void setRange(int effectiveDistance) {
+        wRangeR.setText(Integer.toString(effectiveDistance));
+    }
+
+    @Override
+    public void setRangeText(String rangeText) {
+        wRangeR.setText(rangeText);
+    }
+
+    @Override
+    public void clearRange() {
+        wRangeR.setText("---");
+    }
+
+    @Override
+    public void setDeclaredAttacks(List<WeaponAttackAction> declaredAttacks) {
+        // the classic Weapon tab does not show declared attacks
+    }
+
+    @Override
+    public void addWeaponSelectionListener(ListSelectionListener listener) {
+        weaponList.addListSelectionListener(listener);
+    }
+
+    @Override
+    public void removeWeaponSelectionListener(ListSelectionListener listener) {
+        weaponList.removeListSelectionListener(listener);
+    }
+
+    @Override
+    public boolean isWeaponSelectionSource(Object eventSource) {
+        return weaponList.equals(eventSource);
     }
 
     @Override
@@ -2745,6 +2673,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      *
      * @param entity - The weapon panel will update info based on the {@link Entity} provided.
      */
+    @Override
     public void updateForEntity(Entity entity) {
         if (entity == null) {
             return;

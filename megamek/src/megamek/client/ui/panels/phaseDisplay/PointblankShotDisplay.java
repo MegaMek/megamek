@@ -572,7 +572,7 @@ public class PointblankShotDisplay extends FiringDisplay {
     @Override
     public void fire() {
         // get the selected weapon num
-        final int weaponNum = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+        final int weaponNum = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeaponNum();
         WeaponMounted mounted = (WeaponMounted) currentEntity().getEquipment(weaponNum);
 
         // validate
@@ -638,7 +638,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         mounted.setUsedThisRound(true);
 
         // find the next available weapon
-        int nextWeapon = clientgui.getUnitDisplay().wPan.getNextWeaponNum();
+        int nextWeapon = clientgui.getUnitDisplay().getWeaponTab().getNextWeaponNum();
 
         // check; if there are no ready weapons, you're done.
         if ((nextWeapon == -1)
@@ -648,13 +648,13 @@ public class PointblankShotDisplay extends FiringDisplay {
         }
 
         // otherwise, display firing info for the next weapon
-        clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
+        clientgui.getUnitDisplay().getWeaponTab().displayMek(currentEntity());
         Mounted<?> nextMounted = currentEntity().getEquipment(nextWeapon);
         if (!mounted.getType().hasFlag(WeaponType.F_VGL) && (nextMounted != null)
               && nextMounted.getType().hasFlag(WeaponType.F_VGL)) {
-            clientgui.getUnitDisplay().wPan.setPrevTarget(target);
+            clientgui.getUnitDisplay().getWeaponTab().setPrevTarget(target);
         }
-        clientgui.getUnitDisplay().wPan.selectWeapon(nextWeapon);
+        clientgui.getUnitDisplay().getWeaponTab().selectWeapon(nextWeapon);
         updateTarget();
 
     }
@@ -667,7 +667,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         if (currentEntity() == null) {
             return;
         }
-        final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+        final int weaponId = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeaponNum();
         Mounted<?> weapon = currentEntity().getEquipment(weaponId);
         // Some weapons pick an automatic target
         if ((weapon != null) && weapon.getType().hasFlag(WeaponType.F_VGL)) {
@@ -703,7 +703,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         setFireEnabled(false);
 
         // update target panel
-        final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+        final int weaponId = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeaponNum();
         if ((currentEntity() != null) && currentEntity().equals(clientgui.getUnitDisplay().getCurrentEntity())
               && (target != null) && (target.getPosition() != null) && (weaponId != -1)) {
             ToHitData toHit;
@@ -716,7 +716,7 @@ public class PointblankShotDisplay extends FiringDisplay {
                           weaponId, ash.getAimingAt(), ash.getAimingMode(),
                           false, false, null, null, false, true,
                           WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
-                    clientgui.getUnitDisplay().wPan.setTarget(target,
+                    clientgui.getUnitDisplay().getWeaponTab().setTarget(target,
                           Messages.getFormattedString("MekDisplay.AimingAt", ash.getAimingLocation()));
 
                 } else {
@@ -724,7 +724,7 @@ public class PointblankShotDisplay extends FiringDisplay {
                           AimingMode.NONE, false, false,
                           null, null, false, true,
                           WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
-                    clientgui.getUnitDisplay().wPan.setTarget(target, null);
+                    clientgui.getUnitDisplay().getWeaponTab().setTarget(target, null);
                 }
                 ash.setPartialCover(toHit.getCover());
             } else {
@@ -732,39 +732,39 @@ public class PointblankShotDisplay extends FiringDisplay {
                       AimingMode.NONE, false, false, null,
                       null, false, true,
                       WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
-                clientgui.getUnitDisplay().wPan.setTarget(target, null);
+                clientgui.getUnitDisplay().getWeaponTab().setTarget(target, null);
             }
             int effectiveDistance = Compute.effectiveDistance(game, currentEntity(), target);
-            clientgui.getUnitDisplay().wPan.wRangeR.setText("" + effectiveDistance);
+            clientgui.getUnitDisplay().getWeaponTab().setRange(effectiveDistance);
             WeaponMounted m = currentEntity().getWeapon(weaponId);
             // If we have a Centurion Weapon System selected, we may need to
             // update ranges.
             if (m.getType().hasFlag(WeaponType.F_CWS)) {
-                clientgui.getUnitDisplay().wPan.selectWeapon(weaponId);
+                clientgui.getUnitDisplay().getWeaponTab().selectWeapon(weaponId);
             }
 
             if (m.isUsedThisRound()) {
-                clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.alreadyFired"));
+                clientgui.getUnitDisplay().getWeaponTab().setToHit(Messages.getString("FiringDisplay.alreadyFired"));
                 setFireEnabled(false);
             } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
-                clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.autoFiringWeapon"));
+                clientgui.getUnitDisplay().getWeaponTab().setToHit(Messages.getString("FiringDisplay.autoFiringWeapon"));
                 setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                clientgui.getUnitDisplay().wPan.setToHit(toHit);
+                clientgui.getUnitDisplay().getWeaponTab().setToHit(toHit);
                 setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
-                clientgui.getUnitDisplay().wPan.setToHit(toHit);
+                clientgui.getUnitDisplay().getWeaponTab().setToHit(toHit);
                 setFireEnabled(true);
             } else {
                 boolean natAptGunnery = currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-                clientgui.getUnitDisplay().wPan.setToHit(toHit, natAptGunnery);
+                clientgui.getUnitDisplay().getWeaponTab().setToHit(toHit, natAptGunnery);
                 setFireEnabled(true);
             }
             setSkipEnabled(true);
         } else {
-            clientgui.getUnitDisplay().wPan.setTarget(null, null);
-            clientgui.getUnitDisplay().wPan.wRangeR.setText("---");
-            clientgui.getUnitDisplay().wPan.clearToHit();
+            clientgui.getUnitDisplay().getWeaponTab().setTarget(null, null);
+            clientgui.getUnitDisplay().getWeaponTab().clearRange();
+            clientgui.getUnitDisplay().getWeaponTab().clearToHit();
         }
 
         if ((weaponId != -1) && (currentEntity() != null)) {
@@ -968,7 +968,7 @@ public class PointblankShotDisplay extends FiringDisplay {
             return;
         }
 
-        if (event.getSource() == clientgui.getUnitDisplay().wPan.weaponList) {
+        if (clientgui.getUnitDisplay().getWeaponTab().isWeaponSelectionSource(event.getSource())) {
             updateTarget();
         }
     }

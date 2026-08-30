@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -187,8 +187,8 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
             LOGGER.info("[DirTorsoMount] flip ignored - no current entity");
             return;
         }
-        WeaponMounted weapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
-        int weaponNumber = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+        WeaponMounted weapon = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeapon();
+        int weaponNumber = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeaponNum();
         if ((weapon == null) || (weaponNumber == -1)) {
             LOGGER.info("[DirTorsoMount] {}: flip ignored - no weapon selected (weaponNumber={})",
                   currentEntity().getShortName(), weaponNumber);
@@ -252,8 +252,8 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
         // is avoided here: it selects the first weapon and short-circuits the unit-display rebuild when the entity
         // object is unchanged, which is what dropped the selection and left the arc indicator stale.
         clientgui.onAllBoardViews(boardView -> boardView.redrawEntity(currentEntity()));
-        clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
-        clientgui.getUnitDisplay().wPan.selectWeapon(weapon);
+        clientgui.getUnitDisplay().getWeaponTab().displayMek(currentEntity());
+        clientgui.getUnitDisplay().getWeaponTab().selectWeapon(weapon);
         updateDonePanel();
         clientgui.updateFiringArc(currentEntity());
     }
@@ -291,7 +291,7 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
      * like a torso twist). Logs the decision for any directional-mount unit to aid playtesting.
      */
     protected void updateFlipMount() {
-        WeaponMounted weapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        WeaponMounted weapon = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeapon();
         if ((currentEntity() == null) || (weapon == null)) {
             setFlipMountEnabled(false);
             return;
@@ -336,7 +336,7 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
             }
             return;
         }
-        WeaponMounted weapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        WeaponMounted weapon = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeapon();
         if (weapon == null) {
             return;
         }
@@ -408,7 +408,7 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
         }
         setRotateTurretLabel(false);
         setRotateRearTurretEnabled(false);
-        WeaponMounted weapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        WeaponMounted weapon = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeapon();
         if (weapon == null) {
             setRotateTurretEnabled(false);
             return;

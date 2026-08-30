@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -219,7 +219,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
      */
     public void initializeListeners() {
         game().addGameListener(this);
-        clientgui.getUnitDisplay().wPan.weaponList.addListSelectionListener(this);
+        clientgui.getUnitDisplay().getWeaponTab().addWeaponSelectionListener(this);
     }
 
     @Override
@@ -428,7 +428,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
         if (GUIP.getFireDisplayTabDuringFiringPhases()) {
             clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.WEAPONS);
         }
-        clientgui.getUnitDisplay().wPan.selectFirstWeapon();
+        clientgui.getUnitDisplay().getWeaponTab().selectFirstWeapon();
     }
 
     /**
@@ -867,7 +867,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
     public void removeAllListeners() {
         game().removeGameListener(this);
         clientgui.boardViews().forEach(bv -> bv.removeBoardViewListener(this));
-        clientgui.getUnitDisplay().wPan.weaponList.removeListSelectionListener(this);
+        clientgui.getUnitDisplay().getWeaponTab().removeWeaponSelectionListener(this);
     }
 
     @Override

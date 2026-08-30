@@ -628,9 +628,9 @@ class SystemPanel extends PicMap
                                   m.getName(), m.curMode().getStateName(m.getType())));
                             clientgui.addToast(ToastLevel.INFO,
                                   m.getName() + ": " + m.curMode().getStateName(m.getType()), en);
-                            int weapon = this.unitDisplayPanel.wPan.getSelectedWeaponNum();
-                            this.unitDisplayPanel.wPan.displayMek(en);
-                            this.unitDisplayPanel.wPan.selectWeapon(weapon);
+                            int weapon = this.unitDisplayPanel.getWeaponTab().getSelectedWeaponNum();
+                            this.unitDisplayPanel.getWeaponTab().displayMek(en);
+                            this.unitDisplayPanel.getWeaponTab().selectWeapon(weapon);
                         } else {
                             String pendingModeName = m.pendingMode().getStateName(m.getType());
                             if (clientgui.getClient().getGame().getPhase().isDeployment()) {

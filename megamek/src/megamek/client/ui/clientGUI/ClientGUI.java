@@ -4260,12 +4260,12 @@ public class ClientGUI extends AbstractClientGUI
      * @return The weapon that is currently selected in the Unit Display, if any
      */
     public Optional<WeaponMounted> getDisplayedWeapon() {
-        WeaponMounted weapon = unitDisplayPanel.wPan.getSelectedWeapon();
+        WeaponMounted weapon = unitDisplayPanel.getWeaponTab().getSelectedWeapon();
         if ((getDisplayedUnit() == null) || (weapon == null) || (client.getGame().getEntity(getDisplayedUnit().getId())
               == null)) {
             return Optional.empty();
         }
-        Mounted<?> weaponOnUnit = getDisplayedUnit().getEquipment(unitDisplayPanel.wPan.getSelectedWeaponNum());
+        Mounted<?> weaponOnUnit = getDisplayedUnit().getEquipment(unitDisplayPanel.getWeaponTab().getSelectedWeaponNum());
         if (weaponOnUnit == weapon) {
             return Optional.of(weapon);
         } else if (weapon.getEntity() instanceof HandheldWeapon hhw && hhw.getAttackingEntity()
@@ -4273,14 +4273,14 @@ public class ClientGUI extends AbstractClientGUI
             return Optional.of(weapon);
         } else {
             logger.error("Unsafe selected weapon. Returning null instead. Equipment ID {} on unit {}",
-                  unitDisplayPanel.wPan.getSelectedWeaponNum(),
+                  unitDisplayPanel.getWeaponTab().getSelectedWeaponNum(),
                   getDisplayedUnit());
             return Optional.empty();
         }
     }
 
     public Optional<AmmoMounted> getDisplayedAmmo() {
-        return unitDisplayPanel.wPan.getSelectedAmmo();
+        return unitDisplayPanel.getWeaponTab().getSelectedAmmo();
     }
 
     @Override

@@ -298,7 +298,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         setButtons();
         setButtonsTooltips();
         setupButtonPanel();
-        clientgui.getUnitDisplay().wPan.weaponList.addListSelectionListener(this);
+        clientgui.getUnitDisplay().getWeaponTab().addWeaponSelectionListener(this);
         ash = new AimedShotHandler(this);
         registerKeyCommands();
     }
@@ -365,7 +365,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             if (GUIP.getFireDisplayTabDuringFiringPhases()) {
                 clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.WEAPONS);
             }
-            clientgui.getUnitDisplay().wPan.selectFirstWeapon();
+            clientgui.getUnitDisplay().getWeaponTab().selectFirstWeapon();
             target(en_Target);
         }
     }
@@ -586,7 +586,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 setRotateTurretEnabled(false);
                 setRotateRearTurretEnabled(false);
                 setStrafeEnabled(false);
-                clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.HiddenUnitMaySpot"));
+                clientgui.getUnitDisplay().getWeaponTab().setToHit(Messages.getString("FiringDisplay.HiddenUnitMaySpot"));
             }
         } else {
             logger.error("Tried to select non-existent entity {}", en);
@@ -705,7 +705,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      * Fire Mode - Adds a Fire Mode Change to the current Attack Action
      */
     protected void changeMode(boolean forward) {
-        WeaponMounted weaponMounted = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        WeaponMounted weaponMounted = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeapon();
 
         // Do nothing we have no unit selected or no weapon selected or if the weapon doesn't have modes
         if (currentEntity() == null || weaponMounted == null || !weaponMounted.hasModes()) {
@@ -742,15 +742,15 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
 
         updateTarget();
-        clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
-        clientgui.getUnitDisplay().wPan.selectWeapon(weaponMounted);
+        clientgui.getUnitDisplay().getWeaponTab().displayMek(currentEntity());
+        clientgui.getUnitDisplay().getWeaponTab().selectWeapon(weaponMounted);
     }
 
     /**
      * Charge Mode - Adds a Charge Mode Change to the current Attack Action
      */
     protected void changeChargeLevel() {
-        WeaponMounted weaponMounted = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        WeaponMounted weaponMounted = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeapon();
 
         // Do nothing we have no unit selected or no weapon selected or if the weapon is not a bombast laser
         if (currentEntity() == null || weaponMounted == null || !weaponMounted.getType().hasFlag(WeaponType.F_BOMBAST_LASER)) {
@@ -768,15 +768,15 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                   weaponMounted.getChargeState().getDescription()));
         
         updateTarget();
-        clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
-        clientgui.getUnitDisplay().wPan.selectWeapon(weaponMounted);
+        clientgui.getUnitDisplay().getWeaponTab().displayMek(currentEntity());
+        clientgui.getUnitDisplay().getWeaponTab().selectWeapon(weaponMounted);
     }
 
     /**
      * Called Shots - changes the current called shots selection
      */
     protected void changeCalled() {
-        int weaponNum = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+        int weaponNum = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeaponNum();
         Mounted<?> mounted = selectedEquipment(weaponNum);
         if (mounted == null) {
             return;
@@ -793,7 +793,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      * @param calledShot one of the {@link CalledShot} CALLED_ constants, e.g. {@link CalledShot#CALLED_HIGH}
      */
     protected void setCalledShot(int calledShot) {
-        int weaponNum = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+        int weaponNum = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeaponNum();
         Mounted<?> mounted = selectedEquipment(weaponNum);
         if (mounted == null) {
             CALLED_SHOT_LOGGER.debug("[CalledShot] no weapon to change: currentEntity={} selectedWeaponNum={}",
@@ -831,8 +831,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         clientgui.getClient().sendCalledShotChange(currentEntity, weaponNum, newCall);
 
         updateTarget();
-        clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
-        clientgui.getUnitDisplay().wPan.selectWeapon(weaponNum);
+        clientgui.getUnitDisplay().getWeaponTab().displayMek(currentEntity());
+        clientgui.getUnitDisplay().getWeaponTab().selectWeapon(weaponNum);
     }
 
     /**
@@ -919,7 +919,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             // Store target
             result = visibleTargets[lastTargetID];
             done = true;
-            int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+            int weaponId = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeaponNum();
             if (onlyValid && (weaponId != -1)) {
                 ToHitData toHit = WeaponAttackAction.toHit(game, attacker.getId(), result, weaponId, isStrafing);
                 done = (toHit.getValue() != TargetRoll.AUTOMATIC_FAIL)
@@ -1245,7 +1245,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         if (strafingUnit == null) {
             return;
         }
-        final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+        final int weaponId = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeaponNum();
         final Mounted<?> m = strafingUnit.getEquipment(weaponId);
         StringBuilder toHitSummary = new StringBuilder();
         setFireEnabled(true);
@@ -1283,7 +1283,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 }
             }
         }
-        clientgui.getUnitDisplay().wPan.setToHit(toHitSummary.toString());
+        clientgui.getUnitDisplay().getWeaponTab().setToHit(toHitSummary.toString());
     }
 
     private HashMap<String, BombLoadout> getBombPayloads(boolean isSpace, int limit) {
@@ -1359,8 +1359,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      */
     public void fire() {
         // get the selected weaponnum
-        final int weaponNum = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-        WeaponMounted mounted = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        final int weaponNum = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeaponNum();
+        WeaponMounted mounted = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeapon();
 
         // validate
         if ((currentEntity() == null)
@@ -1507,7 +1507,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         // tried to fire.
         WeaponMounted nextWeapon = mounted.getType().hasFlag(WeaponType.F_SOLO_ATTACK)
               ? null
-              : clientgui.getUnitDisplay().wPan.getNextWeapon();
+              : clientgui.getUnitDisplay().getWeaponTab().getNextWeapon();
 
         // we fired a weapon, can't clear turret jams or weapon jams anymore
         updateClearTurret();
@@ -1522,21 +1522,21 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 return;
             } else {
                 // Update the display even if we're out of weapons
-                clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
+                clientgui.getUnitDisplay().getWeaponTab().displayMek(currentEntity());
             }
         } else {
             Entity weaponEntity = nextWeapon.getEntity();
 
             // otherwise, display firing info for the next weapon
-            clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
+            clientgui.getUnitDisplay().getWeaponTab().displayMek(currentEntity());
             Mounted<?> nextMounted = weaponEntity.getEquipment(nextWeapon.equipmentIndex());
             if (!mounted.getType().hasFlag(WeaponType.F_VGL)
                   && (nextMounted != null)
                   && nextMounted.getType() instanceof WeaponType
                   && nextMounted.getType().hasFlag(WeaponType.F_VGL)) {
-                clientgui.getUnitDisplay().wPan.setPrevTarget(target);
+                clientgui.getUnitDisplay().getWeaponTab().setPrevTarget(target);
             }
-            clientgui.getUnitDisplay().wPan.selectWeapon(nextWeapon);
+            clientgui.getUnitDisplay().getWeaponTab().selectWeapon(nextWeapon);
         }
         updateTarget();
     }
@@ -1548,10 +1548,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         if (currentEntity() == null) {
             return;
         }
-        clientgui.getUnitDisplay().wPan.selectNextWeapon();
+        clientgui.getUnitDisplay().getWeaponTab().selectNextWeapon();
 
-        if (currentEntity().getId() != clientgui.getUnitDisplay().wPan.getSelectedEntityId()) {
-            clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
+        if (currentEntity().getId() != clientgui.getUnitDisplay().getWeaponTab().getSelectedEntityId()) {
+            clientgui.getUnitDisplay().getWeaponTab().displayMek(currentEntity());
         }
 
         updateTarget();
@@ -1565,10 +1565,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             return;
         }
 
-        clientgui.getUnitDisplay().wPan.selectPrevWeapon();
+        clientgui.getUnitDisplay().getWeaponTab().selectPrevWeapon();
 
-        if (currentEntity().getId() != clientgui.getUnitDisplay().wPan.getSelectedEntityId()) {
-            clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
+        if (currentEntity().getId() != clientgui.getUnitDisplay().getWeaponTab().getSelectedEntityId()) {
+            clientgui.getUnitDisplay().getWeaponTab().displayMek(currentEntity());
         }
 
         updateTarget();
@@ -1651,7 +1651,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             phaseInternalBombs = ((IBomber) currentEntity()).getUsedInternalBombs();
         }
 
-        clientgui.getUnitDisplay().wPan.updateForEntity(currentEntity());
+        clientgui.getUnitDisplay().getWeaponTab().updateForEntity(currentEntity());
     }
 
     /**
@@ -1673,7 +1673,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 currentEntity().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
                 decrementInternalBombs(waa);
                 removeAttack(o);
-                clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
+                clientgui.getUnitDisplay().getWeaponTab().displayMek(currentEntity());
                 game.removeAction(o);
                 clientgui.onAllBoardViews(BoardView::refreshAttacks);
             }
@@ -1692,7 +1692,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         if (GUIP.getFireDisplayTabDuringFiringPhases()) {
             clientgui.getUnitDisplay().showPanel(MekPanelTabStrip.WEAPONS);
         }
-        clientgui.getUnitDisplay().wPan.selectFirstWeapon();
+        clientgui.getUnitDisplay().getWeaponTab().selectFirstWeapon();
         if (currentEntity().isMakingVTOLGroundAttack()) {
             updateVTOLGroundTarget();
         }
@@ -1750,7 +1750,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             return;
         }
 
-        final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+        final int weaponId = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeaponNum();
         Mounted<?> weapon = currentEntity().getEquipment(weaponId);
         // Some weapons pick an automatic target
         if ((weapon != null) && weapon.getType() instanceof WeaponType && weapon.getType().hasFlag(WeaponType.F_VGL)) {
@@ -1814,9 +1814,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
         // update target panel
 
-        final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+        final int weaponId = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeaponNum();
         if (isStrafing && weaponId != -1) {
-            clientgui.getUnitDisplay().wPan.setTarget(target, Messages
+            clientgui.getUnitDisplay().getWeaponTab().setTarget(target, Messages
                   .getString("FiringDisplay.Strafing.TargetLabel"));
 
             updateStrafingTargets();
@@ -1825,7 +1825,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
               && (weaponId != -1)) {
             ToHitData toHit;
 
-            WeaponMounted weapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+            WeaponMounted weapon = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeapon();
             int attackingId = weapon.getEntity().getId();
 
             if (!ash.getAimingMode().isNone()) {
@@ -1836,73 +1836,73 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                     toHit = WeaponAttackAction.toHit(game, attackingId, target,
                           weaponId, ash.getAimingAt(), ash.getAimingMode(),
                           false);
-                    clientgui.getUnitDisplay().wPan.setTarget(target,
+                    clientgui.getUnitDisplay().getWeaponTab().setTarget(target,
                           Messages.getFormattedString("MekDisplay.AimingAt", ash.getAimingLocation()));
                 } else {
                     toHit = WeaponAttackAction.toHit(game, attackingId, target, weaponId, Entity.LOC_NONE,
                           AimingMode.NONE, false);
-                    clientgui.getUnitDisplay().wPan.setTarget(target, null);
+                    clientgui.getUnitDisplay().getWeaponTab().setTarget(target, null);
 
                 }
                 ash.setPartialCover(toHit.getCover());
             } else {
                 toHit = WeaponAttackAction.toHit(game, attackingId, target, weaponId,
                       Entity.LOC_NONE, AimingMode.NONE, false);
-                clientgui.getUnitDisplay().wPan.setTarget(target, null);
+                clientgui.getUnitDisplay().getWeaponTab().setTarget(target, null);
             }
             int effectiveDistance = Compute.effectiveDistance(game, attacker, target);
-            clientgui.getUnitDisplay().wPan.wRangeR.setText("" + effectiveDistance);
+            clientgui.getUnitDisplay().getWeaponTab().setRange(effectiveDistance);
 
-            WeaponMounted wm = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+            WeaponMounted wm = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeapon();
             if (wm != null) {
                 // If we have a Centurion Weapon System selected, we may need to
                 // update ranges.
                 if (wm.getType().hasFlag(WeaponType.F_CWS)) {
-                    clientgui.getUnitDisplay().wPan.selectWeapon(weaponId);
+                    clientgui.getUnitDisplay().getWeaponTab().selectWeapon(weaponId);
                 }
                 if (wm.isUsedThisRound()) {
-                    clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.alreadyFired"));
+                    clientgui.getUnitDisplay().getWeaponTab().setToHit(Messages.getString("FiringDisplay.alreadyFired"));
                     setFireEnabled(false);
                 } else if ((wm.getType().hasFlag(WeaponType.F_AUTO_TARGET)
                       && !wm.curMode().equals(Weapon.MODE_AMS_MANUAL))
                       || (wm.hasModes() && wm.curMode().equals("Point Defense"))) {
-                    clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.autoFiringWeapon"));
+                    clientgui.getUnitDisplay().getWeaponTab().setToHit(Messages.getString("FiringDisplay.autoFiringWeapon"));
                     setFireEnabled(false);
                 } else if (wm.isInBearingsOnlyMode()) {
-                    clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.bearingsOnlyWrongPhase"));
+                    clientgui.getUnitDisplay().getWeaponTab().setToHit(Messages.getString("FiringDisplay.bearingsOnlyWrongPhase"));
                     setFireEnabled(false);
                 } else if (wm.isInternalBomb() && phaseInternalBombs >= 6) {
-                    clientgui.getUnitDisplay().wPan
+                    clientgui.getUnitDisplay().getWeaponTab()
                           .setToHit(Messages.getString("WeaponAttackAction.AlreadyUsedMaxInternalBombs"));
                     setFireEnabled(false);
                 } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                    clientgui.getUnitDisplay().wPan.setToHit(toHit);
+                    clientgui.getUnitDisplay().getWeaponTab().setToHit(toHit);
                     setFireEnabled(false);
                 } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
-                    clientgui.getUnitDisplay().wPan.setToHit(toHit);
+                    clientgui.getUnitDisplay().getWeaponTab().setToHit(toHit);
                     setFireEnabled(true);
                 } else {
                     boolean natAptGunnery = attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-                    clientgui.getUnitDisplay().wPan.setToHit(toHit, natAptGunnery);
+                    clientgui.getUnitDisplay().getWeaponTab().setToHit(toHit, natAptGunnery);
 
                     setFireEnabled(true);
                 }
             }
             setSkipEnabled(true);
         } else {
-            clientgui.getUnitDisplay().wPan.setTarget(null, null);
-            clientgui.getUnitDisplay().wPan.wRangeR.setText("---");
-            clientgui.getUnitDisplay().wPan.clearToHit();
+            clientgui.getUnitDisplay().getWeaponTab().setTarget(null, null);
+            clientgui.getUnitDisplay().getWeaponTab().clearRange();
+            clientgui.getUnitDisplay().getWeaponTab().clearToHit();
         }
 
         if ((clientgui.getDisplayedUnit() != null) && (clientgui.getDisplayedUnit().equals(attacker))
               && !isStrafing && (weaponId != -1)) {
-            adaptFireModeEnabled(clientgui.getUnitDisplay().wPan.getSelectedWeapon());
+            adaptFireModeEnabled(clientgui.getUnitDisplay().getWeaponTab().getSelectedWeapon());
         } else {
             setFireModeEnabled(false);
         }
 
-        WeaponMounted wm = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        WeaponMounted wm = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeapon();
         if ((clientgui.getDisplayedUnit() !=null) && (wm != null) && clientgui.getDisplayedUnit().equals(attacker) &&
             wm.getType().hasFlag(WeaponType.F_BOMBAST_LASER)) {
             setFireChargeLevelEnabled(true);
@@ -1926,7 +1926,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             setFindClubEnabled(false);
             setFlipArmsEnabled(false);
             setStrafeEnabled(false);
-            clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.HiddenUnitMaySpot"));
+            clientgui.getUnitDisplay().getWeaponTab().setToHit(Messages.getString("FiringDisplay.HiddenUnitMaySpot"));
         }
     }
 
@@ -1984,7 +1984,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         if (direction != currentEntity().getSecondaryFacing()) {
             // Keep the player's selected weapon selected across the twist; updateForNewAction() -> refreshAll()
             // would otherwise jump the weapon list back to the first weapon.
-            WeaponMounted selectedWeapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+            WeaponMounted selectedWeapon = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeapon();
             // A Directional Torso Mount arc (BMM p.83) is declared independently of the twist, so preserve it:
             // clearAttacks() would otherwise drop the mount facing action while rebuilding the attacks.
             List<DirectionalMountFacingAction> mountFacings = pendingDirectionalMountFacings(NO_EXCLUDED_LOCATION);
@@ -1996,7 +1996,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             }
             updateForNewAction();
             if (selectedWeapon != null) {
-                clientgui.getUnitDisplay().wPan.selectWeapon(selectedWeapon);
+                clientgui.getUnitDisplay().getWeaponTab().selectWeapon(selectedWeapon);
             }
         }
     }
@@ -2337,7 +2337,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         // currently selected weapon, which their FIRE_ENGINEERS specialization routes to the extinguisher path.
         for (WeaponMounted weapon : currentEntity().getWeaponList()) {
             if (weapon.getType().hasFlag(WeaponType.F_EXTINGUISHER) && !weapon.isUsedThisRound()) {
-                clientgui.getUnitDisplay().wPan.selectWeapon(weapon);
+                clientgui.getUnitDisplay().getWeaponTab().selectWeapon(weapon);
                 break;
             }
         }
@@ -2681,7 +2681,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         if (event.getValueIsAdjusting()) {
             return;
         }
-        if ((event.getSource() == clientgui.getUnitDisplay().wPan.weaponList) && game.getPhase().isFiring()) {
+        if (clientgui.getUnitDisplay().getWeaponTab().isWeaponSelectionSource(event.getSource()) && game.getPhase().isFiring()) {
             // If we aren't in the firing phase, there's no guarantee that cen is set properly, hence we can't update
             //  target data in weapon display
             updateTarget();
@@ -2691,7 +2691,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     @Override
     public void removeAllListeners() {
         super.removeAllListeners();
-        clientgui.getUnitDisplay().wPan.weaponList.removeListSelectionListener(this);
+        clientgui.getUnitDisplay().getWeaponTab().removeWeaponSelectionListener(this);
     }
 
     /**
@@ -2704,7 +2704,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         // Assume that we have *no* choice.
         Targetable choice = null;
 
-        int wn = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
+        int wn = clientgui.getUnitDisplay().getWeaponTab().getSelectedWeaponNum();
         Mounted<?> weapon = currentEntity().getEquipment(wn);
 
         // Check for weapon/ammo types that should automatically target hexes

@@ -697,10 +697,16 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                     sensorDesc = UnitToolTip.getSensorDesc(en);
                 }
                 String tmpStr = Messages.getString("MekDisplay.CurrentSensors") + " " + sensorDesc;
-                tmpStr = String.format("<html><div WIDTH=%d>%s</div></html>", 250, tmpStr);
+                if (flat) {
+                    // the flat layout's labels are bold, and this one is rewritten as the sensors change
+                    tmpStr = String.format("<html><div WIDTH=%d><b>%s</b></div></html>", 250, tmpStr);
+                } else {
+                    tmpStr = String.format("<html><div WIDTH=%d>%s</div></html>", 250, tmpStr);
+                }
                 curSensorsL.setText(tmpStr);
             } else {
-                curSensorsL.setText((Messages.getString("MekDisplay.CurrentSensors")).concat(" "));
+                String label = Messages.getString("MekDisplay.CurrentSensors").concat(" ");
+                curSensorsL.setText(flat ? "<html><b>" + label.trim() + "</b></html>" : label);
             }
         }
 

@@ -47,12 +47,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
 import javax.swing.KeyStroke;
 
 import megamek.client.event.MekDisplayEvent;
@@ -63,7 +60,6 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.UnitDisplayOrderPreferences;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.util.KeyCommandBind;
-import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.MekPanelTabStrip;
@@ -111,7 +107,7 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
     /** Whether this display uses the control layout (General, Weapon, Control) or the classic six tabs. */
     private final boolean controlLayout;
     /** The Control tab's card, under the control layout; {@code null} under the classic layout. */
-    private final JComponent controlCard;
+    private final ControlTabPanel controlTab;
     private Entity currentlyDisplaying;
     private final JLabel labTitle;
     private final List<MekDisplayListener> eventListeners = new ArrayList<>();
@@ -201,7 +197,7 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
         wPan = new WeaponPanel(this, clientgui != null ? clientgui.getClient() : null);
         sPan = new SystemPanel(this);
         ePan = new ExtraPanel(this);
-        controlCard = controlLayout ? createControlCard() : null;
+        controlTab = controlLayout ? new ControlTabPanel(this, sPan, pPan, ePan) : null;
         JScrollPane scrollPane = new JScrollPane(displayP);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -358,7 +354,8 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
         if (controlLayout) {
             displayP.add(MekPanelTabStrip.SUMMARY, mPanScroll);
             displayP.add(MekPanelTabStrip.WEAPONS, wPanScroll);
-            displayP.add(MekPanelTabStrip.CONTROL, controlCard);
+            controlTab.displayMek(currentlyDisplaying);
+            displayP.add(MekPanelTabStrip.CONTROL, controlTab);
         } else {
             displayP.add(MekPanelTabStrip.SUMMARY, mPanScroll);
             displayP.add(MekPanelTabStrip.PILOT, pPanScroll);
@@ -396,6 +393,14 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
         wPanScroll.setVisible(true);
         sPanScroll.setVisible(true);
         ePanScroll.setVisible(true);
+
+        if (controlLayout) {
+            // the Control tab borrowed these panels; the six-panel view wants them back in their own panes
+            sPanScroll.setViewportView(sPan);
+            pPanScroll.setViewportView(pPan);
+            ePanScroll.setViewportView(ePan);
+            sPan.setLocationListVisible(true);
+        }
 
         linkParentChild(UnitDisplayPanel.NON_TABBED_A1,
               UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A1));
@@ -542,27 +547,14 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
     }
 
     /**
-     * Builds the Control tab's card. Until the Control tab lands this is a placeholder that names what it will be.
-     *
-     * @return the card to show under the Control tab
-     */
-    private JComponent createControlCard() {
-        JPanel card = new JPanel(new BorderLayout());
-        JLabel placeholder = new JLabel(Messages.getString("UnitDisplay.controlTab.placeholder"), SwingConstants.CENTER);
-        int inset = UIUtil.scaleForGUI(12);
-        placeholder.setBorder(new EmptyBorder(inset, inset, inset, inset));
-        card.add(placeholder, BorderLayout.CENTER);
-        return card;
-    }
-
-    /**
-     * Brings the given part of the Control tab forward. The placeholder card has no parts; the Control tab fills this
-     * in.
+     * Brings the given part of the Control tab forward.
      *
      * @param focus the part to bring forward
      */
     private void focusControlTab(ControlFocus focus) {
-        // nothing to focus on the placeholder card
+        if (controlTab != null) {
+            controlTab.focus(focus);
+        }
     }
 
     @Override
@@ -605,6 +597,10 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
         wPan.displayMek(currentlyDisplaying);
         sPan.displayMek(currentlyDisplaying);
         ePan.displayMek(currentlyDisplaying);
+        // after the panels it borrows have the unit; the six-panel view has those panels itself
+        if ((controlTab != null) && GUI_PREFERENCES.getUnitDisplayStartTabbed()) {
+            controlTab.displayMek(currentlyDisplaying);
+        }
 
         displayP.revalidate();
         displayP.repaint();
@@ -665,6 +661,7 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
         if (controlLayout) {
             showControlTab(ControlFocus.DIAGRAM);
             sPan.selectLocation(loc);
+            controlTab.selectLocation(loc);
             return;
         }
         if (GUI_PREFERENCES.getUnitDisplayStartTabbed()) {

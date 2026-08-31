@@ -359,11 +359,25 @@ class SystemPanel extends PicMap
         addListeners();
     }
 
-    public void selectLocation(int loc) {
+    /**
+     * Lists the slots of the given location.
+     *
+     * @param loc the location
+     *
+     * @return {@code true} if the location has slots to list; {@code false} leaves the list as it was
+     */
+    public boolean selectLocation(int loc) {
         int listed = listedLocations.indexOf(loc);
-        if (listed != -1) {
-            locList.setSelectedIndex(listed + LOC_OFFSET);
+        if (listed == -1) {
+            return false;
         }
+        locList.setSelectedIndex(listed + LOC_OFFSET);
+        return true;
+    }
+
+    /** Lists every piece of equipment on the unit, in place of one location's slots. */
+    public void showAllEquipment() {
+        locList.setSelectedIndex(LOC_ALL_EQUIP);
     }
 
     /**

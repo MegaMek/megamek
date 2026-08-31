@@ -80,7 +80,7 @@ public abstract class AbstractLocationDiagram extends JSplitPane implements Loca
     private static final double MAX_SCREEN_FRACTION = 0.7;
     private static final String LOCATION_CARD_PREFIX = "location-";
 
-    private final Entity entity;
+    private Entity entity;
     private final ArmorPanel paperdoll;
     private final JPanel panCards = new JPanel();
     private final CardLayout cardLayout = new CardLayout();
@@ -266,6 +266,23 @@ public abstract class AbstractLocationDiagram extends JSplitPane implements Loca
      */
     public Entity getEntity() {
         return entity;
+    }
+
+    /**
+     * Replaces the unit shown with a fresh copy of it - the server sends a new object after every change. The cards
+     * were built for the unit's locations, so the copy must have the same number of them; a different unit needs a
+     * new diagram.
+     *
+     * @param replacement the unit, as it now is
+     *
+     * @throws IllegalArgumentException if the replacement does not have the locations the cards were built for
+     */
+    public void setEntity(Entity replacement) {
+        if (replacement.locations() != entity.locations()) {
+            throw new IllegalArgumentException("The replacement has " + replacement.locations()
+                  + " locations; the cards were built for " + entity.locations());
+        }
+        entity = replacement;
     }
 
     /**

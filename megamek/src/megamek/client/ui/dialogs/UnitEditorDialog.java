@@ -159,6 +159,17 @@ public class UnitEditorDialog extends JDialog {
         initComponents();
     }
 
+    /**
+     * Brings the given location's controls forward, as a click on the diagram would.
+     *
+     * @param location the location to show
+     */
+    public void showLocation(int location) {
+        if (diagram != null) {
+            diagram.selectLocation(location);
+        }
+    }
+
     private void initComponents() {
         getContentPane().setLayout(new BorderLayout());
 

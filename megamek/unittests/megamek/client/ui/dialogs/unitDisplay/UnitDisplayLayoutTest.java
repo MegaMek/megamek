@@ -39,12 +39,20 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.GraphicsEnvironment;
 
 import megamek.client.Client;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel.ControlFocus;
+import megamek.common.Player;
 import megamek.common.game.Game;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewType;
+import megamek.common.units.Mek;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,6 +69,7 @@ class UnitDisplayLayoutTest {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private boolean savedSetting;
+    private boolean savedTabbed;
 
     @BeforeAll
     static void requireDisplay() {
@@ -70,19 +79,55 @@ class UnitDisplayLayoutTest {
     @BeforeEach
     void rememberSetting() {
         savedSetting = GUIP.getUnitDisplayControlLayout();
+        savedTabbed = GUIP.getUnitDisplayStartTabbed();
     }
 
     @AfterEach
     void restoreSetting() {
         GUIP.setUnitDisplayControlLayout(savedSetting);
+        GUIP.setUnitDisplayStartTabbed(savedTabbed);
     }
 
     private static ClientGUI clientGuiOverNewGame() {
+        return clientGuiOver(new Game(), null);
+    }
+
+    private static ClientGUI clientGuiOver(Game game, Player localPlayer) {
         Client client = mock(Client.class);
-        when(client.getGame()).thenReturn(new Game());
+        when(client.getGame()).thenReturn(game);
+        when(client.getLocalPlayer()).thenReturn(localPlayer);
         ClientGUI clientGui = mock(ClientGUI.class);
         when(clientGui.getClient()).thenReturn(client);
+        when(clientGui.getUnitDisplayDialog()).thenReturn(mock(UnitDisplayDialog.class));
         return clientGui;
+    }
+
+    private static BipedMek createMek(Game game, Player owner) {
+        BipedMek mek = new BipedMek();
+        mek.setGame(game);
+        mek.setId(1);
+        mek.setOwner(owner);
+        mek.setChassis("Test Mek");
+        mek.setModel("Standard");
+        mek.setWeight(50);
+        mek.setCrew(new Crew(CrewType.SINGLE));
+        mek.autoSetInternal();
+        for (int location = 0; location < mek.locations(); location++) {
+            mek.initializeArmor(16, location);
+        }
+        return mek;
+    }
+
+    private static ControlTabPanel findControlTab(Container root) {
+        for (Component child : root.getComponents()) {
+            if (child instanceof ControlTabPanel controlTab) {
+                return controlTab;
+            }
+            if ((child instanceof Container container) && (findControlTab(container) != null)) {
+                return findControlTab(container);
+            }
+        }
+        return null;
     }
 
     @Test
@@ -132,5 +177,27 @@ class UnitDisplayLayoutTest {
 
         assertTrue(display.isControlLayout(), "a change applies to the next game, not this display");
         assertEquals(false, GUIP.getUnitDisplayControlLayout());
+    }
+
+    @Test
+    @DisplayName("Under the control layout, showing a unit fills the Control tab and a location click lands on it")
+    void controlLayoutShowsTheUnitOnTheControlTab() {
+        GUIP.setUnitDisplayControlLayout(true);
+        GUIP.setUnitDisplayStartTabbed(true);
+        Game game = new Game();
+        Player owner = new Player(0, "Tester");
+        game.addPlayer(0, owner);
+        UnitDisplayPanel display = new UnitDisplayPanel(clientGuiOver(game, owner), null);
+
+        display.displayEntity(createMek(game, owner));
+
+        ControlTabPanel controlTab = findControlTab(display);
+        assertTrue(controlTab != null, "the Control tab is a card of the display");
+        display.showSpecificSystem(Mek.LOC_LEFT_ARM);
+        display.showControlTab(ControlFocus.CREW);
+        display.showControlTab(ControlFocus.EXTRAS);
+        display.showControlTab(ControlFocus.DIAGRAM);
+        display.setDisplayNonTabbed();
+        display.displayEntity(createMek(game, owner));
     }
 }

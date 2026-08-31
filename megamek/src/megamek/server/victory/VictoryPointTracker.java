@@ -63,7 +63,7 @@ public class VictoryPointTracker implements Serializable {
     /** The key under which the tracker is stored in the game's victory context map. */
     public static final String VICTORY_CONTEXT_KEY = "VictoryPointTracker";
 
-    private static final MMLogger LOGGER = MMLogger.create(VictoryPointTracker.class);
+    private static final MMLogger LOGGER = MMLogger.create("megamek.feature.VictoryHex");
     private static final long serialVersionUID = 1L;
 
     /** The type of recipient of a victory point award. */

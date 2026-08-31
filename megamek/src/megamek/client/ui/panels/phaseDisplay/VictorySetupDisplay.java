@@ -213,19 +213,51 @@ public class VictorySetupDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void hexMoused(BoardViewEvent event) {
-        boolean isLeftClickOnHex = !isIgnoringEvents() && isMyTurn()
-              && (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED)
+        if (isIgnoringEvents()) {
+            return;
+        }
+        boolean isLeftClickOnHex = (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED)
               && (event.getButton() == MouseEvent.BUTTON1);
         if (!isLeftClickOnHex) {
+            // pointer movement and right clicks are not attempts to place anything; they pass quietly
+            return;
+        }
+        if (!isMyTurn()) {
+            explainClickOutsideMyTurn(event.getCoords());
             return;
         }
         BoardLocation location = event.getBoardLocation();
         // control points live on the ground map, like the ground objects they are
         if (!game().hasBoardLocation(location) || !game().isOnGroundMap(location)) {
             clientgui.addToast(ToastLevel.ERROR, Messages.getString("VictorySetupDisplay.notGroundMap"));
+            VICTORY_HEX_LOGGER.debug("[VictoryHex] click ignored: {} is not a hex on the ground map",
+                  location);
             return;
         }
         handleHexClick(location.coords());
+    }
+
+    /**
+     * Tells the player why their click did nothing, rather than swallowing it. A player who owns no units
+     * is marked an observer when the phase begins and never receives a turn in it at all, so without this
+     * their clicks are silent and neither the screen nor the log explains why.
+     *
+     * @param coords The hex that was clicked, for the diagnostic log, or {@code null} when the click
+     *               carried no hex
+     */
+    private void explainClickOutsideMyTurn(@Nullable Coords coords) {
+        Player localPlayer = clientgui.getClient().getLocalPlayer();
+        boolean isObserver = (localPlayer != null) && localPlayer.isObserver();
+        String messageKey = isObserver
+              ? "VictorySetupDisplay.observerCannotPlace"
+              : "VictorySetupDisplay.notYourTurn";
+        clientgui.addToast(ToastLevel.WARNING, Messages.getString(messageKey));
+        VICTORY_HEX_LOGGER.debug("[VictoryHex] click on {} ignored for {}: {}",
+              (coords == null) ? "no hex" : coords.getBoardNum(),
+              (localPlayer == null) ? "unknown player" : localPlayer.getName(),
+              isObserver
+                    ? "observer - owns no units, so takes no turn in this phase"
+                    : "not this player's turn yet");
     }
 
     @Override

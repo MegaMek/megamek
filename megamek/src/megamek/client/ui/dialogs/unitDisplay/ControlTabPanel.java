@@ -33,12 +33,20 @@
 package megamek.client.ui.dialogs.unitDisplay;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
 import java.io.Serial;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.dialogs.UnitEditorDialog;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel.ControlFocus;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.units.Entity;
@@ -47,9 +55,11 @@ import megamek.common.units.Entity;
  * The Control tab of the unit display: the unit diagram with, for whichever location is clicked, its equipment, plus
  * the crew and the extras. It folds the classic Pilot, Armor, Systems and Extras tabs into one.
  * <p>
- * The tab keeps one {@link ControlDiagram} per unit shown and rebuilds it when a different unit is displayed. The
- * Pilot and Extras panels are the unit display's own, borrowed while the tabbed view shows this tab; the six-panel
- * view takes them back.
+ * A unit that carries others gets a Unit chooser above the diagram, as the Systems tab's unit list did: choosing a
+ * carried unit shows that unit's diagram, panels, crew and status.
+ * <p>
+ * The tab keeps one {@link ControlDiagram} for the unit shown and rebuilds it when another unit is displayed. Its
+ * crew and status panels are its own, so the display's six-panel view keeps its own untouched.
  */
 public class ControlTabPanel extends JPanel {
 
@@ -59,18 +69,48 @@ public class ControlTabPanel extends JPanel {
     private final UnitDisplayPanel unitDisplayPanel;
     private final PilotPanel crew;
     private final ExtraPanel extras;
+    private final JComboBox<Entity> unitChooser = new JComboBox<>();
+    private final JPanel panChooser;
     private ControlDiagram diagram;
+    /** The unit the display is showing, which carries whatever else the chooser offers. */
+    private Entity carrier;
+    /** The id of the unit whose panels are shown, so a refresh does not drop back to the carrier. */
+    private int shownId = Entity.NONE;
+    private boolean choosing = false;
 
-    ControlTabPanel(UnitDisplayPanel unitDisplayPanel, PilotPanel crew, ExtraPanel extras) {
+    ControlTabPanel(UnitDisplayPanel unitDisplayPanel) {
         super(new BorderLayout());
         this.unitDisplayPanel = unitDisplayPanel;
-        this.crew = crew;
-        this.extras = extras;
+        // The tab has its own crew and status panels rather than borrowing the display's, so the six-panel view
+        // keeps its own in its own look and neither view has to hand components back to the other.
+        this.crew = new PilotPanel(unitDisplayPanel);
+        this.extras = new ExtraPanel(unitDisplayPanel, true);
+
+        unitChooser.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+                  boolean cellHasFocus) {
+                Component renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Entity unit) {
+                    setText(unit.equals(carrier) ? Messages.getString("MekDisplay.Ego") : unit.getShortName());
+                }
+                return renderer;
+            }
+        });
+        unitChooser.addActionListener(event -> {
+            if (!choosing && (unitChooser.getSelectedItem() instanceof Entity chosen)) {
+                showEntity(chosen);
+            }
+        });
+        panChooser = new JPanel(new FlowLayout(FlowLayout.LEFT, UIUtil.scaleForGUI(5), UIUtil.scaleForGUI(2)));
+        panChooser.add(new JLabel(Messages.getString("MekDisplay.Unit")));
+        panChooser.add(unitChooser);
+        panChooser.setVisible(false);
+        add(panChooser, BorderLayout.PAGE_START);
     }
 
     /**
-     * Shows the given unit. A unit already shown is refreshed in place; another unit gets a new diagram. Call after
-     * the Pilot and Extras panels have been given the unit, since this borrows them.
+     * Shows the given unit. A unit already shown is refreshed in place; another unit gets a new diagram.
      *
      * @param entity the unit to show, or {@code null} for none yet
      */
@@ -78,6 +118,33 @@ public class ControlTabPanel extends JPanel {
         if (entity == null) {
             return;
         }
+        carrier = entity;
+        Entity toShow = entity;
+        choosing = true;
+        try {
+            unitChooser.removeAllItems();
+            unitChooser.addItem(entity);
+            for (Entity loaded : entity.getLoadedUnits()) {
+                unitChooser.addItem(loaded);
+                // a refresh while a carried unit is shown keeps showing it
+                if (loaded.getId() == shownId) {
+                    toShow = loaded;
+                }
+            }
+            unitChooser.setSelectedItem(toShow);
+        } finally {
+            choosing = false;
+        }
+        // the chooser is only worth its row when the unit actually carries something
+        panChooser.setVisible(unitChooser.getItemCount() > 1);
+        showEntity(toShow);
+    }
+
+    /** Shows the unit chosen: its diagram, its panels, its crew and its status. */
+    private void showEntity(Entity entity) {
+        shownId = entity.getId();
+        crew.displayMek(entity);
+        extras.displayMek(entity);
         if ((diagram == null) || !diagram.showsSameUnit(entity)) {
             if (diagram != null) {
                 remove(diagram);

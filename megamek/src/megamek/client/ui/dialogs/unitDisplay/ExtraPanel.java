@@ -47,6 +47,7 @@ import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.comboBoxes.MMComboBox;
 import megamek.client.ui.dialogs.SliderDialog;
 import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
+import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
@@ -54,6 +55,7 @@ import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.Configuration;
 import megamek.common.Player;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.ComputeECM;
@@ -78,6 +80,14 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
     private final UnitDisplayPanel unitDisplayPanel;
 
     private final JPanel panelMain;
+    /**
+     * Whether this panel is laid out like the gamemaster's damage dialog - a bold label and its control per row,
+     * inside a titled border, in the look and feel's own colors - for the unit display's Control tab. The classic
+     * Extras tab keeps its centered white-on-tile layout.
+     */
+    private final boolean flat;
+    /** The next row of the flat layout. */
+    private int flatRow = 0;
     private final JLabel curSensorsL;
     private final JTextArea unusedR;
     private final JTextArea carriesR;
@@ -102,40 +112,50 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
     MMComboBox<GamePhase> comboActivateHiddenPhase = new MMComboBox<>("comboActivateHiddenPhase");
 
     ExtraPanel(UnitDisplayPanel unitDisplayPanel) {
+        this(unitDisplayPanel, false);
+    }
+
+    /**
+     * @param unitDisplayPanel the display this panel belongs to
+     * @param flat             {@code true} to lay the panel out like the gamemaster's damage dialog, for the
+     *                         Control tab; {@code false} for the classic Extras tab
+     */
+    ExtraPanel(UnitDisplayPanel unitDisplayPanel, boolean flat) {
         this.unitDisplayPanel = unitDisplayPanel;
+        this.flat = flat;
         prompt = null;
 
         JLabel narcLabel = new JLabel(Messages.getString("MekDisplay.AffectedBy"), SwingConstants.CENTER);
         narcLabel.setOpaque(false);
-        narcLabel.setForeground(Color.WHITE);
+        narcLabel.setForeground(labelColor());
 
         narcList = new JList<>(new DefaultListModel<>());
 
         JLabel unusedL = new JLabel(Messages.getString("MekDisplay.UnusedSpace"), SwingConstants.CENTER);
         unusedL.setOpaque(false);
-        unusedL.setForeground(Color.WHITE);
+        unusedL.setForeground(labelColor());
         unusedR = new JTextArea("", 2, 25);
         unusedR.setEditable(false);
         unusedR.setOpaque(false);
-        unusedR.setForeground(Color.WHITE);
+        unusedR.setForeground(labelColor());
 
         JLabel carriesL = new JLabel(Messages.getString("MekDisplay.Carryng"), SwingConstants.CENTER);
         carriesL.setOpaque(false);
-        carriesL.setForeground(Color.WHITE);
+        carriesL.setForeground(labelColor());
         carriesR = new JTextArea("", 4, 25);
         carriesR.setEditable(false);
         carriesR.setOpaque(false);
-        carriesR.setForeground(Color.WHITE);
+        carriesR.setForeground(labelColor());
 
         JLabel sinksL = new JLabel(
               Messages.getString("MekDisplay.activeSinksLabel"),
               SwingConstants.CENTER);
         sinksL.setOpaque(false);
-        sinksL.setForeground(Color.WHITE);
+        sinksL.setForeground(labelColor());
         sinksR = new JTextArea("", 1, 25);
         sinksR.setEditable(false);
         sinksR.setOpaque(false);
-        sinksR.setForeground(Color.WHITE);
+        sinksR.setForeground(labelColor());
 
         sinks2B = new JButton(
               Messages.getString("MekDisplay.configureActiveSinksLabel"));
@@ -148,26 +168,26 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
         JLabel heatL = new JLabel(Messages.getString("MekDisplay.HeatEffects"), SwingConstants.CENTER);
         heatL.setOpaque(false);
-        heatL.setForeground(Color.WHITE);
+        heatL.setForeground(labelColor());
         heatR = new JTextArea("", 4, 25);
         heatR.setEditable(false);
         heatR.setOpaque(false);
-        heatR.setForeground(Color.WHITE);
+        heatR.setForeground(labelColor());
 
         JLabel lblLastTarget = new JLabel(Messages.getString("MekDisplay.LastTarget"),
               SwingConstants.CENTER);
-        lblLastTarget.setForeground(Color.WHITE);
+        lblLastTarget.setForeground(labelColor());
         lblLastTarget.setOpaque(false);
         lastTargetR = new JTextArea("", 4, 25);
         lastTargetR.setLineWrap(true);
         lastTargetR.setWrapStyleWord(true);
         lastTargetR.setEditable(false);
         lastTargetR.setOpaque(false);
-        lastTargetR.setForeground(Color.WHITE);
+        lastTargetR.setForeground(labelColor());
 
         curSensorsL = new JLabel(Messages.getString("MekDisplay.CurrentSensors").concat(" "),
               SwingConstants.CENTER);
-        curSensorsL.setForeground(Color.WHITE);
+        curSensorsL.setForeground(labelColor());
         curSensorsL.setOpaque(false);
 
         chSensors = new JComboBox<>();
@@ -197,84 +217,150 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         unitReadout.addActionListener(this);
 
         // layout choice panel
-        GridBagLayout gridBagLayout;
-        GridBagConstraints c;
+        panelMain = new JPanel(new GridBagLayout());
+        JScrollPane narcScroll = new JScrollPane(narcList);
+        narcScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-        gridBagLayout = new GridBagLayout();
-        c = new GridBagConstraints();
-        panelMain = new JPanel(gridBagLayout);
+        if (flat) {
+            // the gamemaster dialog's shape: a titled panel of bold-label rows
+            panelMain.setBorder(BorderFactory.createEtchedBorder());
+            addFlatTitle(Messages.getString("UnitDisplay.controlTab.status"));
+            addFlatRow(curSensorsL, chSensors);
+            addFlatRow(narcLabel, narcScroll);
+            addFlatRow(unusedL, unusedR);
+            addFlatRow(carriesL, carriesR);
+            addFlatRow(null, dumpBombs);
+            addFlatRow(sinksL, sinksR);
+            addFlatRow(null, sinks2B);
+            addFlatRow(heatL, heatR);
+            addFlatRow(lblLastTarget, lastTargetR);
+            addFlatRow(null, activateHidden);
+            addFlatRow(null, comboActivateHiddenPhase);
+            addFlatRow(null, unitReadout);
+        } else {
+            GridBagConstraints c = new GridBagConstraints();
 
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(5, 9, 1, 9);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.weighty = 0;
-        c.gridy = 0;
-        c.gridx = 0;
-        panelMain.add(curSensorsL, c);
-        c.gridy++;
-        panelMain.add(chSensors, c);
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.insets = new Insets(5, 9, 1, 9);
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.NORTHWEST;
+            c.weighty = 0;
+            c.gridy = 0;
+            c.gridx = 0;
+            panelMain.add(curSensorsL, c);
+            c.gridy++;
+            panelMain.add(chSensors, c);
 
-        c.gridy++;
-        panelMain.add(narcLabel, c);
-        c.gridy++;
-        c.insets = new Insets(1, 9, 1, 9);
-        JScrollPane scrollPane = new JScrollPane(narcList);
-        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        panelMain.add(scrollPane, c);
+            c.gridy++;
+            panelMain.add(narcLabel, c);
+            c.gridy++;
+            c.insets = new Insets(1, 9, 1, 9);
+            panelMain.add(narcScroll, c);
 
-        c.gridy++;
-        panelMain.add(unusedL, c);
-        c.gridy++;
-        panelMain.add(unusedR, c);
+            c.gridy++;
+            panelMain.add(unusedL, c);
+            c.gridy++;
+            panelMain.add(unusedR, c);
 
-        c.gridy++;
-        panelMain.add(carriesL, c);
-        c.gridy++;
-        panelMain.add(carriesR, c);
+            c.gridy++;
+            panelMain.add(carriesL, c);
+            c.gridy++;
+            panelMain.add(carriesR, c);
 
-        c.gridy++;
-        panelMain.add(dumpBombs, c);
+            c.gridy++;
+            panelMain.add(dumpBombs, c);
 
-        c.gridy++;
-        panelMain.add(sinksL, c);
-        c.gridy++;
-        panelMain.add(sinksR, c);
-        c.gridy++;
-        panelMain.add(sinks2B, c);
+            c.gridy++;
+            panelMain.add(sinksL, c);
+            c.gridy++;
+            panelMain.add(sinksR, c);
+            c.gridy++;
+            panelMain.add(sinks2B, c);
 
-        c.gridy++;
-        panelMain.add(heatL, c);
-        c.gridy++;
-        c.insets = new Insets(1, 9, 5, 9);
-        panelMain.add(heatR, c);
+            c.gridy++;
+            panelMain.add(heatL, c);
+            c.gridy++;
+            c.insets = new Insets(1, 9, 5, 9);
+            panelMain.add(heatR, c);
 
-        c.gridy++;
-        c.insets = new Insets(0, 0, 0, 0);
-        panelMain.add(lblLastTarget, c);
-        c.gridy++;
-        c.insets = new Insets(1, 9, 5, 9);
-        panelMain.add(lastTargetR, c);
+            c.gridy++;
+            c.insets = new Insets(0, 0, 0, 0);
+            panelMain.add(lblLastTarget, c);
+            c.gridy++;
+            c.insets = new Insets(1, 9, 5, 9);
+            panelMain.add(lastTargetR, c);
 
-        c.gridy++;
-        c.insets = new Insets(1, 9, 6, 9);
-        panelMain.add(activateHidden, c);
-        c.gridy++;
-        panelMain.add(comboActivateHiddenPhase, c);
+            c.gridy++;
+            c.insets = new Insets(1, 9, 6, 9);
+            panelMain.add(activateHidden, c);
+            c.gridy++;
+            panelMain.add(comboActivateHiddenPhase, c);
 
-        c.gridy++;
-        panelMain.add(unitReadout, c);
+            c.gridy++;
+            panelMain.add(unitReadout, c);
 
-        c.weightx = 1;
-        c.weighty = 1;
-        panelMain.add(new Label(" "), c);
+            c.weightx = 1;
+            c.weighty = 1;
+            panelMain.add(new Label(" "), c);
+
+        }
 
         setLayout(new BorderLayout());
         add(panelMain, BorderLayout.NORTH);
         panelMain.setOpaque(false);
 
-        setBackGround();
+        if (!flat) {
+            setBackGround();
+        }
         onResize();
+    }
+
+    /** The color of this panel's labels: the tile layout needs white, the flat layout follows the theme. */
+    private Color labelColor() {
+        return flat ? UIManager.getColor("Label.foreground") : Color.WHITE;
+    }
+
+    /** Adds the flat layout's centered bold heading, as the gamemaster dialog's panels have. */
+    private void addFlatTitle(String text) {
+        JLabel title = new JLabel(text, SwingConstants.CENTER);
+        title.setFont(title.getFont().deriveFont(Font.BOLD));
+        int inset = UIUtil.scaleForGUI(2);
+        int sideInset = UIUtil.scaleForGUI(5);
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridx = 0;
+        constraints.gridy = flatRow++;
+        constraints.gridwidth = 2;
+        constraints.insets = new Insets(inset, sideInset, inset * 3, sideInset);
+        constraints.anchor = GridBagConstraints.CENTER;
+        panelMain.add(title, constraints);
+    }
+
+    /**
+     * Adds one row of the flat layout: a bold label and its control, as
+     * {@code UnitDamagePanelBuilder.addLabeledRow} lays out the gamemaster dialog.
+     *
+     * @param label   the row's label, or {@code null} for a control that stands on its own
+     * @param control the control
+     */
+    private void addFlatRow(@Nullable JLabel label, JComponent control) {
+        int inset = UIUtil.scaleForGUI(1);
+        int sideInset = UIUtil.scaleForGUI(5);
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridy = flatRow++;
+        constraints.insets = new Insets(inset, sideInset, inset, sideInset);
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.gridx = 0;
+        if (label == null) {
+            constraints.gridwidth = 2;
+        } else {
+            label.setText("<html><b>" + label.getText().trim() + "</b></html>");
+            label.setHorizontalAlignment(SwingConstants.LEFT);
+            panelMain.add(label, constraints);
+            constraints.gridx = 1;
+        }
+        constraints.weightx = 1.0;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        panelMain.add(control, constraints);
     }
 
     @Override

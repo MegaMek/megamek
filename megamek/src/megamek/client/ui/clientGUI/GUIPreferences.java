@@ -217,6 +217,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String UNIT_DISPLAY_NONTABBED_POS_X = "UnitDisplayNontabbedPosX";
     public static final String UNIT_DISPLAY_NONTABBED_POS_Y = "UnitDisplayNontabbedPosY";
     public static final String UNIT_DISPLAY_START_TABBED = "UnitDisplayStartTabbed";
+    public static final String UNIT_DISPLAY_CONTROL_LAYOUT = "UnitDisplayControlLayout";
     public static final String UNIT_DISPLAY_SPLIT_ABC_LOC = "UnitDisplaySplitABCLoc";
     public static final String UNIT_DISPLAY_SPLIT_BC_LOC = "UnitDisplaySplitBCLoc";
     public static final String UNIT_DISPLAY_SPLIT_A1_LOC = "UnitDisplaySplitA1Loc";
@@ -749,6 +750,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_DISPLAY_NONTABBED_SIZE_HEIGHT, 900);
         store.setDefault(UNIT_DISPLAY_NONTABBED_SIZE_WIDTH, 900);
         store.setDefault(UNIT_DISPLAY_START_TABBED, true);
+        store.setDefault(UNIT_DISPLAY_CONTROL_LAYOUT, true);
         store.setDefault(UNIT_DISPLAY_SPLIT_ABC_LOC, 300);
         store.setDefault(UNIT_DISPLAY_SPLIT_BC_LOC, 300);
         store.setDefault(UNIT_DISPLAY_SPLIT_A1_LOC, 900);
@@ -1127,6 +1129,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getUnitDisplayStartTabbed() {
         return store.getBoolean(UNIT_DISPLAY_START_TABBED);
+    }
+
+    /**
+     * @return {@code true} for the control layout of the in-game unit display - General, Weapon and Control tabs -
+     *       and {@code false} for the classic six-tab display. Read once when a display is built; a change applies to
+     *       the next game.
+     */
+    public boolean getUnitDisplayControlLayout() {
+        return store.getBoolean(UNIT_DISPLAY_CONTROL_LAYOUT);
     }
 
     public int getUnitDisplaySplitABCLoc() {
@@ -2052,6 +2063,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setUnitDisplayStartTabbed(boolean state) {
         store.setValue(UNIT_DISPLAY_START_TABBED, state);
+    }
+
+    public void setUnitDisplayControlLayout(boolean state) {
+        store.setValue(UNIT_DISPLAY_CONTROL_LAYOUT, state);
     }
 
     public void setUnitDisplaySplitABCLoc(int i) {

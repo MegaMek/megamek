@@ -377,6 +377,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
           Messages.getString("CommonSettingsDialog.gifGameSummaryRecording.never") });
     private final JCheckBox showUnitDisplayNamesOnMinimap = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.showUnitDisplayNamesOnMinimap.name"));
+    private final JCheckBox unitDisplayControlLayout = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.unitDisplayControlLayout.name"));
     private JComboBox<String> skinFiles;
     private JComboBox<UITheme> uiThemes;
 
@@ -1675,6 +1677,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         addLineSpacer(comps);
 
+        comps.add(checkboxEntry(unitDisplayControlLayout,
+              Messages.getString("CommonSettingsDialog.unitDisplayControlLayout.tooltip")));
+        addLineSpacer(comps);
+
         loadUnitDisplayOrder(unitDisplayNonTabbed, savedUnitDisplayOrder());
         comps.add(List.of(createUnitDisplayOrderGrid(unitDisplayNonTabbed)));
 
@@ -2945,6 +2951,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         unitDisplayHeatLevel6Spinner.setValue(GUIP.getUnitDisplayHeatValue6());
 
         unitTooltipSeenByCbo.setSelectedIndex(GUIP.getUnitToolTipSeenByResolution());
+        unitDisplayControlLayout.setSelected(GUIP.getUnitDisplayControlLayout());
         unitDisplayWeaponListHeightSpinner.setValue(GUIP.getUnitDisplayWeaponListHeight());
 
         unitDisplayMekArmorLargeFontSizeSpinner.setValue(GUIP.getUnitDisplayMekArmorLargeFontSize());
@@ -3388,6 +3395,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setUnitDisplayHeatColorValue6((Integer) unitDisplayHeatLevel6Spinner.getValue());
 
         GUIP.setUnitToolTipSeenByResolution(unitTooltipSeenByCbo.getSelectedIndex());
+        GUIP.setUnitDisplayControlLayout(unitDisplayControlLayout.isSelected());
         GUIP.setUnitDisplayWeaponListHeight((Integer) unitDisplayWeaponListHeightSpinner.getValue());
 
         GUIP.setUnitDisplayMekArmorLargeFontSize((Integer) unitDisplayMekArmorLargeFontSizeSpinner.getValue());

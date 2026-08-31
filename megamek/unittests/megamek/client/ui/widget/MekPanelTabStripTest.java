@@ -71,7 +71,7 @@ class MekPanelTabStripTest {
     }
 
     @Test
-    @DisplayName("The classic layout has six tabs in the keybind order, the control layout three")
+    @DisplayName("The classic layout has six tabs in the F1-F6 order, the control layout three")
     void layoutsAreListsOfDescriptors() {
         UnitDisplaySkinSpecification skin = new UnitDisplaySkinSpecification();
 
@@ -79,12 +79,12 @@ class MekPanelTabStripTest {
         List<TabDescriptor> control = MekPanelTabStrip.controlTabs(skin);
 
         assertEquals(6, classic.size());
-        assertEquals(MekPanelTabStrip.SUMMARY, classic.get(MekPanelTabStrip.SUMMARY_INDEX).cardName());
-        assertEquals(MekPanelTabStrip.PILOT, classic.get(MekPanelTabStrip.PILOT_INDEX).cardName());
-        assertEquals(MekPanelTabStrip.ARMOR, classic.get(MekPanelTabStrip.ARMOR_INDEX).cardName());
-        assertEquals(MekPanelTabStrip.WEAPONS, classic.get(MekPanelTabStrip.WEAPONS_INDEX).cardName());
-        assertEquals(MekPanelTabStrip.SYSTEMS, classic.get(MekPanelTabStrip.SYSTEMS_INDEX).cardName());
-        assertEquals(MekPanelTabStrip.EXTRAS, classic.get(MekPanelTabStrip.EXTRAS_INDEX).cardName());
+        assertEquals(MekPanelTabStrip.SUMMARY, classic.get(0).cardName());
+        assertEquals(MekPanelTabStrip.PILOT, classic.get(1).cardName());
+        assertEquals(MekPanelTabStrip.ARMOR, classic.get(2).cardName());
+        assertEquals(MekPanelTabStrip.WEAPONS, classic.get(3).cardName());
+        assertEquals(MekPanelTabStrip.SYSTEMS, classic.get(4).cardName());
+        assertEquals(MekPanelTabStrip.EXTRAS, classic.get(5).cardName());
         assertEquals(List.of(MekPanelTabStrip.SUMMARY, MekPanelTabStrip.WEAPONS, MekPanelTabStrip.CONTROL),
               control.stream().map(TabDescriptor::cardName).toList());
     }

@@ -71,12 +71,29 @@ public class MekPanelTabStrip extends PicMap {
     public static final String EXTRAS = "extras";
     public static final String CONTROL = "control";
 
-    /** Positions of the tabs in the classic six-tab strip; see {@link #classicTabs}. */
+    /**
+     * Positions of the tabs in the classic six-tab strip; see {@link #classicTabs}. A strip is a list of tabs and the
+     * control layout has three, so select tabs by card name ({@link #setTab(String)}) rather than by these positions.
+     *
+     * @deprecated since 0.51.01, for removal; use the card names ({@link #SUMMARY} and so on) with
+     *       {@link #setTab(String)} or {@link #indexOf(String)}.
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public static final int SUMMARY_INDEX = 0;
+    /** @deprecated since 0.51.01, for removal; see {@link #SUMMARY_INDEX}. */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public static final int PILOT_INDEX = 1;
+    /** @deprecated since 0.51.01, for removal; see {@link #SUMMARY_INDEX}. */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public static final int ARMOR_INDEX = 2;
+    /** @deprecated since 0.51.01, for removal; see {@link #SUMMARY_INDEX}. */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public static final int WEAPONS_INDEX = 3;
+    /** @deprecated since 0.51.01, for removal; see {@link #SUMMARY_INDEX}. */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public static final int SYSTEMS_INDEX = 4;
+    /** @deprecated since 0.51.01, for removal; see {@link #SUMMARY_INDEX}. */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public static final int EXTRAS_INDEX = 5;
 
     /** The corner images overlap the tab to their left by this much, drawn this far down the strip. */
@@ -192,8 +209,16 @@ public class MekPanelTabStrip extends PicMap {
      * Selects the tab at the given position, clamped to the strip.
      *
      * @param index the position of the tab to select
+     *
+     * @deprecated since 0.51.01, for removal; a position only means something for one layout. Use
+     *       {@link #setTab(String)} with the card name.
      */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public void setTab(int index) {
+        selectTab(index);
+    }
+
+    private void selectTab(int index) {
         activeTab = Math.clamp(index, 0, descriptors.size() - 1);
         redrawImages();
         update();
@@ -211,7 +236,7 @@ public class MekPanelTabStrip extends PicMap {
         if (index == -1) {
             return false;
         }
-        setTab(index);
+        selectTab(index);
         return true;
     }
 

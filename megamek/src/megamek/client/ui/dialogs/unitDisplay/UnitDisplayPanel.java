@@ -47,9 +47,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 import javax.swing.KeyStroke;
 
 import megamek.client.event.MekDisplayEvent;
@@ -60,6 +63,7 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.UnitDisplayOrderPreferences;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.util.KeyCommandBind;
+import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.MekPanelTabStrip;
@@ -104,6 +108,10 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
     private final SystemPanel sPan;
     private final ExtraPanel ePan;
     private final ClientGUI clientgui;
+    /** Whether this display uses the control layout (General, Weapon, Control) or the classic six tabs. */
+    private final boolean controlLayout;
+    /** The Control tab's card, under the control layout; {@code null} under the classic layout. */
+    private final JComponent controlCard;
     private Entity currentlyDisplaying;
     private final JLabel labTitle;
     private final List<MekDisplayListener> eventListeners = new ArrayList<>();
@@ -168,11 +176,15 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
           @Nullable MegaMekController controller) {
         super(new GridBagLayout());
         this.clientgui = clientGui;
+        // The layout is read once: switching it re-parents every panel, so a change applies to the next game. A display
+        // with no client GUI is a viewer (the report window) and keeps the classic layout, which shows everything.
+        controlLayout = (clientGui != null) && GUI_PREFERENCES.getUnitDisplayControlLayout();
 
         labTitle = new JLabel("Title");
 
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
-        tabStrip = new MekPanelTabStrip(this, MekPanelTabStrip.classicTabs(udSpec));
+        tabStrip = new MekPanelTabStrip(this,
+              controlLayout ? MekPanelTabStrip.controlTabs(udSpec) : MekPanelTabStrip.classicTabs(udSpec));
         Image tile = getToolkit()
               .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, this);
@@ -189,6 +201,7 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
         wPan = new WeaponPanel(this, clientgui != null ? clientgui.getClient() : null);
         sPan = new SystemPanel(this);
         ePan = new ExtraPanel(this);
+        controlCard = controlLayout ? createControlCard() : null;
         JScrollPane scrollPane = new JScrollPane(displayP);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -342,14 +355,20 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
         panC1.removeAll();
         panC2.removeAll();
 
-        displayP.add(MekPanelTabStrip.SUMMARY, mPanScroll);
-        displayP.add(MekPanelTabStrip.PILOT, pPanScroll);
-        displayP.add(MekPanelTabStrip.ARMOR, aPanScroll);
-        displayP.add(MekPanelTabStrip.WEAPONS, wPanScroll);
-        displayP.add(MekPanelTabStrip.SYSTEMS, sPanScroll);
-        displayP.add(MekPanelTabStrip.EXTRAS, ePanScroll);
+        if (controlLayout) {
+            displayP.add(MekPanelTabStrip.SUMMARY, mPanScroll);
+            displayP.add(MekPanelTabStrip.WEAPONS, wPanScroll);
+            displayP.add(MekPanelTabStrip.CONTROL, controlCard);
+        } else {
+            displayP.add(MekPanelTabStrip.SUMMARY, mPanScroll);
+            displayP.add(MekPanelTabStrip.PILOT, pPanScroll);
+            displayP.add(MekPanelTabStrip.ARMOR, aPanScroll);
+            displayP.add(MekPanelTabStrip.WEAPONS, wPanScroll);
+            displayP.add(MekPanelTabStrip.SYSTEMS, sPanScroll);
+            displayP.add(MekPanelTabStrip.EXTRAS, ePanScroll);
+        }
 
-        tabStrip.setTab(MekPanelTabStrip.SUMMARY_INDEX);
+        tabStrip.setTab(MekPanelTabStrip.SUMMARY);
 
         displayP.revalidate();
         displayP.repaint();
@@ -464,16 +483,86 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
           final MegaMekController controller) {
         controller.registerCommandAction(KeyCommandBind.UD_GENERAL, ud::isVisible,
               () -> showPanel(MekPanelTabStrip.SUMMARY));
-        controller.registerCommandAction(KeyCommandBind.UD_PILOT, ud::isVisible,
-              () -> showPanel(MekPanelTabStrip.PILOT));
-        controller.registerCommandAction(KeyCommandBind.UD_ARMOR, ud::isVisible,
-              () -> showPanel(MekPanelTabStrip.ARMOR));
-        controller.registerCommandAction(KeyCommandBind.UD_SYSTEMS, ud::isVisible,
-              () -> showPanel(MekPanelTabStrip.SYSTEMS));
         controller.registerCommandAction(KeyCommandBind.UD_WEAPONS, ud::isVisible,
               () -> showPanel(MekPanelTabStrip.WEAPONS));
-        controller.registerCommandAction(KeyCommandBind.UD_EXTRAS, ud::isVisible,
-              () -> showPanel(MekPanelTabStrip.EXTRAS));
+        if (controlLayout) {
+            // The Pilot, Armor, Systems and Extras tabs are all inside the Control tab now; their keys still land
+            // where a player expects, on the part of the Control tab that replaced them.
+            controller.registerCommandAction(KeyCommandBind.UD_PILOT, ud::isVisible,
+                  () -> showControlTab(ControlFocus.CREW));
+            controller.registerCommandAction(KeyCommandBind.UD_ARMOR, ud::isVisible,
+                  () -> showControlTab(ControlFocus.DIAGRAM));
+            controller.registerCommandAction(KeyCommandBind.UD_SYSTEMS, ud::isVisible,
+                  () -> showControlTab(ControlFocus.DIAGRAM));
+            controller.registerCommandAction(KeyCommandBind.UD_EXTRAS, ud::isVisible,
+                  () -> showControlTab(ControlFocus.EXTRAS));
+        } else {
+            controller.registerCommandAction(KeyCommandBind.UD_PILOT, ud::isVisible,
+                  () -> showPanel(MekPanelTabStrip.PILOT));
+            controller.registerCommandAction(KeyCommandBind.UD_ARMOR, ud::isVisible,
+                  () -> showPanel(MekPanelTabStrip.ARMOR));
+            controller.registerCommandAction(KeyCommandBind.UD_SYSTEMS, ud::isVisible,
+                  () -> showPanel(MekPanelTabStrip.SYSTEMS));
+            controller.registerCommandAction(KeyCommandBind.UD_EXTRAS, ud::isVisible,
+                  () -> showPanel(MekPanelTabStrip.EXTRAS));
+        }
+    }
+
+    /**
+     * The part of the Control tab a key or a click asks for. The Control tab folds the classic Pilot, Armor, Systems
+     * and Extras tabs into one; these name the places their keys now go.
+     */
+    public enum ControlFocus {
+        /** The unit diagram - what the Armor and Systems tabs showed. */
+        DIAGRAM,
+        /** The crew - what the Pilot tab showed. */
+        CREW,
+        /** The pinned extras: sensors, heat sinks, hidden-unit activation - what the Extras tab showed. */
+        EXTRAS
+    }
+
+    /**
+     * @return {@code true} if this display uses the control layout: General, Weapon and Control tabs
+     */
+    public boolean isControlLayout() {
+        return controlLayout;
+    }
+
+    /**
+     * Shows the Control tab, focused on the given part of it. Does nothing under the classic layout.
+     *
+     * @param focus the part of the Control tab to bring forward
+     */
+    public void showControlTab(ControlFocus focus) {
+        if (!controlLayout) {
+            return;
+        }
+        showPanel(MekPanelTabStrip.CONTROL);
+        focusControlTab(focus);
+    }
+
+    /**
+     * Builds the Control tab's card. Until the Control tab lands this is a placeholder that names what it will be.
+     *
+     * @return the card to show under the Control tab
+     */
+    private JComponent createControlCard() {
+        JPanel card = new JPanel(new BorderLayout());
+        JLabel placeholder = new JLabel(Messages.getString("UnitDisplay.controlTab.placeholder"), SwingConstants.CENTER);
+        int inset = UIUtil.scaleForGUI(12);
+        placeholder.setBorder(new EmptyBorder(inset, inset, inset, inset));
+        card.add(placeholder, BorderLayout.CENTER);
+        return card;
+    }
+
+    /**
+     * Brings the given part of the Control tab forward. The placeholder card has no parts; the Control tab fills this
+     * in.
+     *
+     * @param focus the part to bring forward
+     */
+    private void focusControlTab(ControlFocus focus) {
+        // nothing to focus on the placeholder card
     }
 
     @Override
@@ -573,6 +662,11 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
      * @param loc the location to show
      */
     public void showSpecificSystem(int loc) {
+        if (controlLayout) {
+            showControlTab(ControlFocus.DIAGRAM);
+            sPan.selectLocation(loc);
+            return;
+        }
         if (GUI_PREFERENCES.getUnitDisplayStartTabbed()) {
             ((CardLayout) displayP.getLayout()).show(displayP, MekPanelTabStrip.SYSTEMS);
         }

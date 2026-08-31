@@ -72,12 +72,12 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     //region Variable Declarations
     private final ClientGUI clientGUI;
     /**
-     * The player a gamemaster tool asked this dialog to open on, or {@code null} when it was opened by itself.
+     * The player a caller asked this dialog to open on, or {@code null} when it was opened by itself.
      *
-     * <p>Such a player is always offered, even when the ordinary rules would leave them out. A gamemaster who has
-     * just put somebody on a team and pressed a reinforcement button has said plainly who the units are for, and the
-     * team change does not reach the board until the end of the round - so the rule that hides players who cannot
-     * deploy yet would otherwise hide the very person being set up.</p>
+     * <p>{@link UnitRecipients} decides what being asked for is worth: a gamemaster tool naming a player who is on
+     * no team yet gets them offered anyway, while an ordinary player whose lobby happened to have the host
+     * highlighted does not get the host. The decision is made there, once, so that this dialog and the random army
+     * dialog can never answer it differently.</p>
      */
     private Player explicitlyRequestedPlayer;
 
@@ -187,18 +187,39 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     }
 
     /**
-     * @return the player the chosen units should belong to, which is the local player when the chooser holds
-     *       something no longer in the game
+     * The player the chosen units should belong to.
+     *
+     * <p>That is whoever the chooser names, when they are still in the game and the local player may add units to
+     * them. Otherwise it is the local player: the chooser only offers permitted players, so anything else here
+     * means the game changed under the open dialog, and units must not go to somebody else on the strength of a
+     * stale entry.</p>
+     *
+     * @return the player who will own the units
      */
     private Player chosenOwner() {
+        Player localPlayer = clientGUI.getClient().getLocalPlayer();
         String chosenName = (String) comboPlayer.getSelectedItem();
-        return clientGUI.getClient()
+        Player chosen = clientGUI.getClient()
               .getGame()
               .getPlayersList()
               .stream()
               .filter(player -> player.getName().equals(chosenName))
               .findFirst()
-              .orElse(clientGUI.getClient().getLocalPlayer());
+              .orElse(null);
+        if (chosen == null) {
+            LOGGER.warn("[GMAddUnit] the chooser names {}, who is no longer in the game; the units go to {} instead",
+                  chosenName, localPlayer.getName());
+            return localPlayer;
+        }
+        boolean isPermitted = UnitRecipients.mayAddUnitsTo(localPlayer, chosen, clientGUI.getLocalBots().keySet());
+        if (!isPermitted) {
+            LOGGER.warn("[GMAddUnit] the chooser names {}, whom {} may not add units to; the units go to {} instead",
+                  chosen.getName(), localPlayer.getName(), localPlayer.getName());
+            return localPlayer;
+        }
+        LOGGER.info("[GMAddUnit] {} is adding units owned by {}, sent over their own connection",
+              localPlayer.getName(), chosen.getName());
+        return chosen;
     }
 
     private void autoSetSkillsAndName(Entity e, Player player) {
@@ -229,15 +250,21 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     private void updatePlayerChoice(String selectionName) {
         comboPlayer.setEnabled(false);
         comboPlayer.removeAllItems();
-        List<Player> offered = new ArrayList<>(UnitRecipients.availableTo(clientGUI.getClient().getLocalPlayer(),
+        List<Player> offered = UnitRecipients.availableTo(clientGUI.getClient().getLocalPlayer(),
               clientGUI.getClient().getGame().getPlayersList(),
               clientGUI.getLocalBots().keySet(),
-              !clientGUI.getClient().getGame().getPhase().isLounge()));
-        addExplicitlyRequestedPlayer(offered);
+              !clientGUI.getClient().getGame().getPhase().isLounge(),
+              explicitlyRequestedPlayer);
         for (Player player : offered) {
             comboPlayer.addItem(player.getName());
         }
-        comboPlayer.setSelectedItem(selectionName);
+        if (selectionName == null) {
+            // the first opening has no previous choice to keep, and the local player is always first
+            comboPlayer.setSelectedIndex(0);
+            LOGGER.debug("[GMAddUnit] no previous choice, so the chooser starts on {}", comboPlayer.getItemAt(0));
+        } else {
+            comboPlayer.setSelectedItem(selectionName);
+        }
         if (comboPlayer.getSelectedIndex() < 0) {
             // never fall back in silence: units quietly going to the wrong player looks exactly like them going to
             // the right one, and is only noticed a turn later
@@ -250,24 +277,6 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         }
     }
 
-    /**
-     * Puts the player a gamemaster tool asked for into the list when the ordinary rules left them out.
-     *
-     * @param offered The players the rules offer, added to in place
-     */
-    private void addExplicitlyRequestedPlayer(List<Player> offered) {
-        if (explicitlyRequestedPlayer == null) {
-            return;
-        }
-        boolean alreadyThere = offered.stream()
-              .anyMatch(player -> player.getId() == explicitlyRequestedPlayer.getId());
-        if (!alreadyThere) {
-            LOGGER.info("[GMAddUnit] offering {} because a gamemaster tool asked for them by name",
-                  explicitlyRequestedPlayer.getName());
-            offered.add(explicitlyRequestedPlayer);
-        }
-    }
-
     private void updatePlayerChoice() {
         String lastChoice = (String) comboPlayer.getSelectedItem();
         updatePlayerChoice(lastChoice);
@@ -276,13 +285,18 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     /**
      * Points the player chooser at the given player, so a dialog opened from a chosen player opens on them.
      *
+     * <p>Asking is not the same as getting: if the local player may not add units to that player, the chooser is
+     * left on the person using it, and the log says why.</p>
+     *
      * @param player The player to select, or {@code null} to leave the chooser where it was
      */
     public void setPlayerFrom(@Nullable Player player) {
         explicitlyRequestedPlayer = player;
         if (player == null) {
+            LOGGER.debug("[GMAddUnit] unit selector opened with no player asked for; the chooser stays where it was");
             updatePlayerChoice();
         } else {
+            LOGGER.debug("[GMAddUnit] unit selector opened asking for {}", player.getName());
             updatePlayerChoice(player.getName());
         }
     }

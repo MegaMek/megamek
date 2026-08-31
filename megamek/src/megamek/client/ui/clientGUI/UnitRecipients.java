@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Set;
 
 import megamek.common.Player;
+import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 /**
@@ -97,18 +98,65 @@ public final class UnitRecipients {
      */
     public static List<Player> availableTo(Player localPlayer, Collection<Player> allPlayers,
           Set<String> localBotNames, boolean isInGame) {
+        return availableTo(localPlayer, allPlayers, localBotNames, isInGame, null);
+    }
+
+    /**
+     * The players the local player may add units to, with one player asked for by name.
+     *
+     * <p>A gamemaster tool that has just put somebody on a team and pressed a reinforcement button has said plainly
+     * who the units are for, and the team change does not reach the board until the end of the round - so the rule
+     * that hides players who cannot deploy yet would otherwise hide the very person being set up. The player asked
+     * for is therefore offered even when they are on no team.</p>
+     *
+     * <p>Being asked for does not get anyone past the ownership rule, though. The lobby hands over whichever player
+     * happens to be highlighted in its player table, and for somebody who has just connected that is the host: an
+     * ordinary player asking for the host is refused, and the chooser stays on the person using it.</p>
+     *
+     * @param localPlayer         The player at this screen
+     * @param allPlayers          Every player in the game
+     * @param localBotNames       The names of the bots being run from this machine
+     * @param isInGame            Whether the game is under way, rather than still in the lobby
+     * @param explicitlyRequested The player a caller asked for by name, or {@code null} when nobody was asked for
+     *
+     * @return the players that may be given units, local player first
+     */
+    public static List<Player> availableTo(Player localPlayer, Collection<Player> allPlayers,
+          Set<String> localBotNames, boolean isInGame, @Nullable Player explicitlyRequested) {
         List<Player> recipients = new ArrayList<>();
         recipients.add(localPlayer);
         List<String> notYetPlaying = new ArrayList<>();
+        boolean requestedPlayerFound = false;
         for (Player player : allPlayers) {
-            if (!mayBeGivenUnits(player, localPlayer, localBotNames)) {
+            boolean isTheRequestedPlayer = (explicitlyRequested != null)
+                  && (player.getId() == explicitlyRequested.getId());
+            requestedPlayerFound |= isTheRequestedPlayer;
+            if (player.getId() == localPlayer.getId()) {
+                // already first in the list; a second entry would offer the same person twice
                 continue;
             }
-            if (isInGame && (player.getTeam() == Player.TEAM_UNASSIGNED)) {
+            if (!mayAddUnitsTo(localPlayer, player, localBotNames)) {
+                if (isTheRequestedPlayer) {
+                    LOGGER.info("[GMAddUnit] refusing to offer {} although they were asked for by name: {} is not "
+                                + "a gamemaster, and {} is neither them nor a bot they run",
+                          player.getName(), localPlayer.getName(), player.getName());
+                }
+                continue;
+            }
+            boolean cannotDeployYet = isInGame && (player.getTeam() == Player.TEAM_UNASSIGNED);
+            if (cannotDeployYet && !isTheRequestedPlayer) {
                 notYetPlaying.add(player.getName());
                 continue;
             }
+            if (cannotDeployYet) {
+                LOGGER.info("[GMAddUnit] offering {} on no team because a gamemaster tool asked for them by name",
+                      player.getName());
+            }
             recipients.add(player);
+        }
+        if ((explicitlyRequested != null) && !requestedPlayerFound) {
+            LOGGER.info("[GMAddUnit] {} was asked for by name but is no longer in the game, so they are not offered",
+                  explicitlyRequested.getName());
         }
         if (!notYetPlaying.isEmpty()) {
             LOGGER.info("[GMAddUnit] not offering {} - on no team, so units given to them could never deploy; "
@@ -123,18 +171,24 @@ public final class UnitRecipients {
     }
 
     /**
-     * @param player        The player being considered
+     * Whether the local player may add units to one particular player.
+     *
+     * <p>This is the whole ownership rule, asked about a single player and without any logging, for the places
+     * that need a quiet yes or no: the lobby deciding whether the highlighted player may be handed to a unit
+     * chooser, and a dialog checking one last time who it is about to send units for.</p>
+     *
      * @param localPlayer   The player at this screen
+     * @param recipient     The player who would receive the units
      * @param localBotNames The names of the bots being run from this machine
      *
-     * @return {@code true} when the local player may add units to that player, other than to themselves
+     * @return {@code true} when the recipient is the local player, a bot run from this machine, or anyone at all
+     *       when the local player holds the gamemaster role
      */
-    private static boolean mayBeGivenUnits(Player player, Player localPlayer, Set<String> localBotNames) {
-        if (player.getId() == localPlayer.getId()) {
-            // already first in the list; a second entry would offer the same person twice
-            return false;
+    public static boolean mayAddUnitsTo(Player localPlayer, Player recipient, Set<String> localBotNames) {
+        if (recipient.getId() == localPlayer.getId()) {
+            return true;
         }
-        boolean isABotFromThisMachine = localBotNames.contains(player.getName());
+        boolean isABotFromThisMachine = localBotNames.contains(recipient.getName());
         return isABotFromThisMachine || localPlayer.isGameMaster();
     }
 }

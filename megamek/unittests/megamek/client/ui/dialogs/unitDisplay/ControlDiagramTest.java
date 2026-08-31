@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JSpinner;
 
 import megamek.client.ui.Messages;
@@ -59,7 +60,9 @@ import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Tank;
+import megamek.common.units.InfantryCompartment;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -258,5 +261,51 @@ class ControlDiagramTest {
         fixture.diagram.selectCard(ControlDiagram.CREW_KEY);
         assertTrue(fixture.crew.isVisible());
         assertEquals(fixture.diagram.getCardsPanel(), fixture.crew.getParent());
+    }
+
+    @Test
+    @DisplayName("A carrier offers its carried units in the Unit chooser, the Systems tab's unit list")
+    void carriedUnitsAreOffered() throws Exception {
+        BipedMek carrier = createMek(1);
+        Game game = carrier.getGame();
+        game.addPlayer(0, carrier.getOwner());
+        carrier.addTransporter(new InfantryCompartment(10));
+        ConvInfantry platoon = new ConvInfantry();
+        platoon.setGame(game);
+        platoon.setId(2);
+        platoon.setOwner(carrier.getOwner());
+        platoon.setChassis("Rifle Platoon");
+        platoon.setModel("");
+        platoon.setSquadCount(3);
+        platoon.setSquadSize(7);
+        platoon.autoSetInternal();
+        game.addEntity(carrier);
+        game.addEntity(platoon);
+        carrier.load(platoon);
+        assertEquals(1, carrier.getLoadedUnits().size(), "the platoon is aboard");
+
+        ControlTabPanel tab = new ControlTabPanel(new UnitDisplayPanel(null, null));
+        tab.displayMek(carrier);
+
+        JComboBox<?> chooser = descendantsOfType(tab, JComboBox.class).getFirst();
+        assertEquals(2, chooser.getItemCount(), "the carrier and its passenger");
+        assertEquals(carrier, chooser.getItemAt(0));
+        assertEquals(platoon, chooser.getItemAt(1));
+
+        chooser.setSelectedIndex(1);
+        assertEquals(platoon, descendantsOfType(tab, ControlDiagram.class).getFirst().getEntity(),
+              "choosing the passenger shows the passenger");
+    }
+
+    @Test
+    @DisplayName("A unit that carries nothing has no Unit chooser row")
+    void loneUnitHasNoChooserRow() throws Exception {
+        ControlTabPanel tab = new ControlTabPanel(new UnitDisplayPanel(null, null));
+
+        tab.displayMek(createMek(1));
+
+        JComboBox<?> chooser = descendantsOfType(tab, JComboBox.class).getFirst();
+        assertEquals(1, chooser.getItemCount());
+        assertFalse(chooser.getParent().isVisible(), "the row is hidden when there is nothing to choose");
     }
 }

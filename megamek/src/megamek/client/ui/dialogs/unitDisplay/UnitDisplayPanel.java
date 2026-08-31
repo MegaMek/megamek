@@ -197,7 +197,7 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
         wPan = new WeaponPanel(this, clientgui != null ? clientgui.getClient() : null);
         sPan = new SystemPanel(this);
         ePan = new ExtraPanel(this);
-        controlTab = controlLayout ? new ControlTabPanel(this, pPan, ePan) : null;
+        controlTab = controlLayout ? new ControlTabPanel(this) : null;
         JScrollPane scrollPane = new JScrollPane(displayP);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -394,12 +394,6 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
         sPanScroll.setVisible(true);
         ePanScroll.setVisible(true);
 
-        if (controlLayout) {
-            // the Control tab borrowed these panels; the six-panel view wants them back in their own panes
-            pPanScroll.setViewportView(pPan);
-            ePanScroll.setViewportView(ePan);
-        }
-
         linkParentChild(UnitDisplayPanel.NON_TABBED_A1,
               UNIT_DISPLAY_ORDER_PREFERENCES.getString(UnitDisplayPanel.NON_TABBED_A1));
         linkParentChild(UnitDisplayPanel.NON_TABBED_B1,
@@ -595,7 +589,6 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
         wPan.displayMek(currentlyDisplaying);
         sPan.displayMek(currentlyDisplaying);
         ePan.displayMek(currentlyDisplaying);
-        // after the panels it borrows have the unit; the six-panel view has those panels itself
         if ((controlTab != null) && GUI_PREFERENCES.getUnitDisplayStartTabbed()) {
             controlTab.displayMek(currentlyDisplaying);
         }

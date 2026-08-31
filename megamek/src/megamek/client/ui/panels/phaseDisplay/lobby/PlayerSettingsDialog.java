@@ -827,6 +827,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
              currentPlayerStartPos != Board.START_ANY &&
              currentPlayerStartPos < Board.NUM_ZONES)) {
             txtWidth.setEnabled(false);
+        } else {
+            txtWidth.setEnabled(true);
         }
 
         MapSettings ms = clientgui.getClient().getMapSettings();

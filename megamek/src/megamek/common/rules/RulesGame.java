@@ -34,6 +34,7 @@ package megamek.common.rules;
 
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.enums.GamePhase;
@@ -180,5 +181,29 @@ public abstract class RulesGame {
     public boolean includeInMovement(GamePhase phase,
                                      Entity entity) {
         return true;
+    }
+
+    /**
+     * This gets the deployment width. It is called from both Player and Entity
+     *
+     * @param player          What player's deployment area (used for bot check)
+     * @param deploymentArea  what deployment area
+     * @param deploymentWidth what deployment width
+     * @return the updated deployment width (1 for walk-on)
+     */
+    public int getDeploymentWidth(Player player,
+                                  int deploymentArea,
+                                  int deploymentWidth) {
+        if (isWalkOnDeployment()) {
+            int width = 1;
+            if (deploymentArea == Board.START_ANY ||
+                deploymentArea == Board.START_CENTER ||
+                deploymentArea > Board.NUM_ZONES ||
+                player.isBot()) {
+                width = deploymentWidth;
+            }
+            return width;
+        }
+        return deploymentWidth;
     }
 }

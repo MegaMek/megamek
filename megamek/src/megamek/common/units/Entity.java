@@ -18211,16 +18211,7 @@ public abstract class Entity extends TurnOrdered
                 return getOwner().getStartWidth();
             }
         }
-        if (Game.rulesManager.getRulesGame().isWalkOnDeployment()
-            && startingPos != Board.START_ANY
-            && startingPos != Board.START_CENTER
-            && startingPos <= Board.NUM_ZONES) {
-            startingWidth = 1;
-        } else {
-            startingWidth = 3;
-        }
-
-        return startingWidth;
+        return Game.rulesManager.getRulesGame().getDeploymentWidth(getOwner(), getStartingPos(), startingWidth);
     }
 
     public void setStartingWidth(int startingWidth) {

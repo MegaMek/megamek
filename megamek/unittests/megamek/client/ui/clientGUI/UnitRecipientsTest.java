@@ -164,4 +164,71 @@ class UnitRecipientsTest {
 
         assertTrue(offeredInLobby.contains("Blue"), "building forces before a game starts is the normal case");
     }
+
+    @Test
+    void anOrdinaryPlayerAskingForTheHostIsNotGivenTheHost() {
+        // the lobby hands a unit chooser whichever player is highlighted in its table, and for somebody who has just
+        // connected that is the host - the table is in joining order. Being asked for must not get the host past
+        // the ownership rule, or every joining player's Add Unit dialog opens pointed at the host
+        DAVE.setGameMaster(false);
+
+        List<String> offered = UnitRecipients.availableTo(DAVE, EVERYONE, DAVES_BOTS, false, BLUE)
+              .stream().map(Player::getName).toList();
+
+        assertEquals(List.of("Dave", "Princess-1"), offered,
+              "asking for Blue changes nothing for a player who may not add units to Blue");
+    }
+
+    @Test
+    void aGamemasterToolMayAskForAPlayerOnNoTeamDuringAGame() {
+        // a gamemaster who has just put a latecomer on a team wants to roll them a force before the team change
+        // reaches the board, so the player asked for is offered although the no-team rule would hide them
+        DAVE.setGameMaster(true);
+        BLUE.setTeam(Player.TEAM_UNASSIGNED);
+
+        List<String> withoutAsking = UnitRecipients.availableTo(DAVE, EVERYONE, DAVES_BOTS, true)
+              .stream().map(Player::getName).toList();
+        List<String> whenAskedFor = UnitRecipients.availableTo(DAVE, EVERYONE, DAVES_BOTS, true, BLUE)
+              .stream().map(Player::getName).toList();
+
+        assertFalse(withoutAsking.contains("Blue"), "unasked, a teamless player stays hidden during a game");
+        assertTrue(whenAskedFor.contains("Blue"), "asked for by a gamemaster, they are offered");
+    }
+
+    @Test
+    void aRequestedPlayerWhoHasLeftTheGameIsNotOffered() {
+        DAVE.setGameMaster(true);
+
+        List<String> offered = UnitRecipients.availableTo(DAVE, List.of(DAVE, BLUE), DAVES_BOTS, false, GREEN)
+              .stream().map(Player::getName).toList();
+
+        assertFalse(offered.contains("Green"),
+              "a player who is gone cannot take delivery, however plainly they were asked for");
+    }
+
+    @Test
+    void askingForYourselfDoesNotOfferYouTwice() {
+        DAVE.setGameMaster(false);
+
+        List<String> offered = UnitRecipients.availableTo(DAVE, EVERYONE, DAVES_BOTS, false, DAVE)
+              .stream().map(Player::getName).toList();
+
+        assertEquals(1, offered.stream().filter("Dave"::equals).count(),
+              "the highlighted player is usually yourself, and that must not add a second entry");
+    }
+
+    @Test
+    void theSinglePlayerRuleMatchesTheList() {
+        // the lobby asks this about the highlighted player before handing them to a chooser, and each dialog asks it
+        // once more about the chosen owner just before sending - so it must agree with the list in every case
+        DAVE.setGameMaster(false);
+        assertTrue(UnitRecipients.mayAddUnitsTo(DAVE, DAVE, DAVES_BOTS), "yourself, always");
+        assertTrue(UnitRecipients.mayAddUnitsTo(DAVE, PRINCESS_ONE, DAVES_BOTS), "a bot you run");
+        assertFalse(UnitRecipients.mayAddUnitsTo(DAVE, BLUE, DAVES_BOTS), "not another human");
+        assertFalse(UnitRecipients.mayAddUnitsTo(DAVE, PRINCESS_TWO, DAVES_BOTS), "not another human's bot");
+
+        DAVE.setGameMaster(true);
+        assertTrue(UnitRecipients.mayAddUnitsTo(DAVE, BLUE, DAVES_BOTS), "a gamemaster may add units to anyone");
+        assertTrue(UnitRecipients.mayAddUnitsTo(DAVE, PRINCESS_TWO, DAVES_BOTS), "including another human's bot");
+    }
 }

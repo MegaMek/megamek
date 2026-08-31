@@ -332,6 +332,10 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 // Resolve objective control and score victory points before the victory check so the
                 // check sees this round's tally
                 gameManager.resolveObjectives();
+                // resolution writes this round's controller and counters onto the markers; without this
+                // the clients keep the copy they were sent at the end of the physical phase, so anything
+                // drawn from that state - the flag counter, the zone colour - would be a round behind
+                gameManager.sendGroundObjectUpdate();
 
                 boolean victory = gameManager.victory(); // note this may add reports
                 // check phase report

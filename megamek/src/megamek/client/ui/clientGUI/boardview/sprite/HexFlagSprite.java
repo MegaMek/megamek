@@ -69,11 +69,17 @@ public class HexFlagSprite extends HexSprite {
 
     private static final int LABEL_FONT_SIZE = 14;
     private static final int LABEL_Y = 66;
+    private static final int PROGRESS_FONT_SIZE = 13;
+    private static final int PROGRESS_Y = 80;
     private static final Color LABEL_COLOR = new Color(255, 255, 255, 230);
 
     private final Color flagColor;
     // the one-word scheme label under the flag; null for no label (MM @Nullable is not applicable to fields)
     private final String label;
+    // the counter under the label, e.g. "2/3"; null for a scheme with nothing to count
+    private final String progress;
+    // what this point wants, shown on hover; null for none
+    private String tooltip;
 
     /**
      * @param boardView the board view this sprite is displayed on
@@ -82,9 +88,22 @@ public class HexFlagSprite extends HexSprite {
      * @param label     a short word drawn under the flag (the point's scheme), or {@code null} for none
      */
     public HexFlagSprite(BoardView boardView, Coords location, Color flagColor, @Nullable String label) {
+        this(boardView, location, flagColor, label, null);
+    }
+
+    /**
+     * @param boardView The board view to draw on
+     * @param location  The hex the flag stands in
+     * @param flagColor The banner colour, the owning player's
+     * @param label     A short word drawn under the flag (the point's scheme), or {@code null} for none
+     * @param progress  A counter drawn under the label, e.g. {@code "2/3"}, or {@code null} for none
+     */
+    public HexFlagSprite(BoardView boardView, Coords location, Color flagColor, @Nullable String label,
+          @Nullable String progress) {
         super(boardView, location);
         this.flagColor = flagColor;
         this.label = label;
+        this.progress = progress;
     }
 
     @Override
@@ -123,7 +142,33 @@ public class HexFlagSprite extends HexSprite {
                   .draw(graph);
         }
 
+        if (progress != null) {
+            // how far along this point is, under its scheme word - the reading a player would otherwise
+            // have to wait for the End Phase report to see
+            new StringDrawer(progress)
+                  .at(HexTileset.HEX_W / 2, PROGRESS_Y)
+                  .color(LABEL_COLOR)
+                  .fontSize(PROGRESS_FONT_SIZE)
+                  .absoluteCenter().outline(OUTLINE_COLOR, 1.5f)
+                  .draw(graph);
+        }
+
         graph.dispose();
+    }
+
+    /**
+     * Sets what this point asks of the players, shown when the cursor rests on the hex. The board can
+     * only spare a word and a counter; the rest of the story goes here.
+     *
+     * @param tooltip The description, or {@code null} for no tooltip
+     */
+    public void setTooltip(@Nullable String tooltip) {
+        this.tooltip = tooltip;
+    }
+
+    @Override
+    public StringBuffer getTooltip() {
+        return (tooltip == null) ? super.getTooltip() : new StringBuffer(tooltip);
     }
 
     /** The flag should be displayed on top of buildings and bridges in isometric view. */

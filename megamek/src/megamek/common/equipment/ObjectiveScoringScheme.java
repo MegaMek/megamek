@@ -34,6 +34,8 @@ package megamek.common.equipment;
 
 import java.io.Serial;
 import java.io.Serializable;
+
+import megamek.common.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -403,5 +405,25 @@ public class ObjectiveScoringScheme implements Serializable {
         } else {
             byPlayer.put(playerId, value);
         }
+    }
+
+    /**
+     * A compact progress reading for the board, e.g. {@code "2/3"} for a Hold point two turns into the
+     * three it needs, or {@code "1/2"} for a Defend point that has lost half its grip. Standard and Raid
+     * have no running counter and return {@code null}; so does a point already decided, whose state no
+     * longer changes.
+     *
+     * @return The progress as {@code "done/needed"}, or {@code null} when this scheme has nothing to show
+     */
+    public @Nullable String progressLabel() {
+        if (isDecided()) {
+            return null;
+        }
+        return switch (preset) {
+            case HOLD -> bestHeldTurns() + "/" + threshold;
+            case DEFEND -> defendGrip + "/" + threshold;
+            case CAPTURE -> bestCaptureProgress() + "/" + threshold;
+            case STANDARD, RAID -> null;
+        };
     }
 }

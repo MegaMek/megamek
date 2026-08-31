@@ -111,6 +111,21 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
         this.rangeBracket = rangeBracket;
     }
 
+    /**
+     * Draws the same bordered zone in a caller-chosen colour rather than a weapon range bracket's. Used
+     * for objective control zones, which are tinted by whoever currently holds the point.
+     *
+     * @param boardView1 The board view to draw on
+     * @param zoneColor  The colour to fill the zone with
+     * @param l          The hex this piece of the zone covers
+     * @param borders    Bit field of which of the six edges lie on the zone's outside
+     */
+    public FieldOfFireSprite(BoardView boardView1, Color zoneColor, Coords l, int borders) {
+        super(boardView1, Color.BLACK, l, borders);
+        fillColor = new Color(zoneColor.getRed(), zoneColor.getGreen(), zoneColor.getBlue(), borderOpacity);
+        this.rangeBracket = RangeType.RANGE_MEDIUM;
+    }
+
     public static Color getFieldOfFireColor(int rangeBracket) {
         // colors for Min,S,M,L,E ranges
         return switch (rangeBracket) {

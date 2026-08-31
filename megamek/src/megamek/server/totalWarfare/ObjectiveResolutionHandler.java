@@ -79,6 +79,15 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     /** Feature logger for the victory hex/objective diagnostics; enabled via the log4j2.xml VictoryHex block. */
     private static final MMLogger LOGGER = MMLogger.create("megamek.feature.VictoryHex");
 
+    /** "Objective standings at the start of this round:" */
+    private static final int REPORT_STANDINGS_INTRO = 7112;
+
+    /** "<data> at <data> is <data> (<data>)" - one standings line per point. */
+    private static final int REPORT_STANDING_LINE = 7113;
+
+    /** "Victory Conditions" - the heading above the objective block in the End Phase report. */
+    private static final int REPORT_VICTORY_CONDITIONS_HEADER = 7111;
+
     private static final int REPORT_OBJECTIVE_CONTROLLED = 7117;
     private static final int REPORT_OBJECTIVE_UNCONTROLLED = 7118;
     private static final int REPORT_OBJECTIVE_POINTS_AWARDED = 7119;
@@ -148,6 +157,10 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             LOGGER.debug("[Objective] No scorable objectives - no control resolution");
             return;
         }
+
+        // the objective lines used to run straight on from whatever the End Phase had just reported,
+        // with nothing to say where they began
+        addReport(new Report(REPORT_VICTORY_CONDITIONS_HEADER, Report.PUBLIC));
 
         List<Entity> entities = getGame().getEntitiesVector();
         VictoryPointTracker tracker = VictoryPointTracker.getTracker(getGame());
@@ -696,5 +709,76 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         }
         Player player = getGame().getPlayer(side.id());
         return (player == null) ? "Player " + side.id() : player.getName();
+    }
+
+    /**
+     * Reports every control point's standing at the start of a round: who holds it, and how far along its
+     * counter is. The End Phase already reports each change as it happens, but a player deciding where to
+     * move wants the picture before they commit, not after.
+     */
+    void reportObjectiveStandings() {
+        if (!getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
+            return;
+        }
+        List<PlacedObjective> objectives = findAllObjectives();
+        if (objectives.isEmpty()) {
+            return;
+        }
+        addReport(new Report(REPORT_VICTORY_CONDITIONS_HEADER, Report.PUBLIC));
+        addReport(new Report(REPORT_STANDINGS_INTRO, Report.PUBLIC));
+        for (PlacedObjective objective : objectives) {
+            ObjectiveMarker marker = objective.marker();
+            Report report = new Report(REPORT_STANDING_LINE, Report.PUBLIC);
+            report.indent();
+            report.add(marker.generalName());
+            report.add(objective.position().getBoardNum());
+            report.add(standingHolder(marker));
+            report.add(standingProgress(marker));
+            addReport(report);
+        }
+    }
+
+    /**
+     * @param marker the objective marker to describe
+     *
+     * @return who holds this point right now, in words a player reads rather than an id
+     */
+    private String standingHolder(ObjectiveMarker marker) {
+        ObjectiveScoringScheme scheme = marker.getScoringScheme();
+        if (scheme.isDecided()) {
+            int securedTeam = scheme.getSecuredTeam();
+            int securedPlayer = scheme.getSecuredPlayerId();
+            String securedBy = (securedTeam != ObjectiveScoringScheme.NO_SIDE)
+                  ? "Team " + securedTeam
+                  : playerName(securedPlayer);
+            return "secured by " + securedBy;
+        }
+        if (marker.getControllingTeam() != ObjectiveMarker.NO_CONTROLLER) {
+            return "held by Team " + marker.getControllingTeam();
+        }
+        if (marker.getControllingPlayerId() != ObjectiveMarker.NO_CONTROLLER) {
+            return "held by " + playerName(marker.getControllingPlayerId());
+        }
+        return "uncontrolled";
+    }
+
+    /**
+     * @param marker the objective marker to describe
+     *
+     * @return the counter reading for schemes that have one, or a dash for those that do not
+     */
+    private String standingProgress(ObjectiveMarker marker) {
+        String progress = marker.getScoringScheme().progressLabel();
+        return (progress == null) ? "-" : progress;
+    }
+
+    /**
+     * @param playerId a player id
+     *
+     * @return that player's name, or a readable placeholder when this client does not know them
+     */
+    private String playerName(int playerId) {
+        Player player = getGame().getPlayer(playerId);
+        return (player == null) ? "Player " + playerId : player.getName();
     }
 }

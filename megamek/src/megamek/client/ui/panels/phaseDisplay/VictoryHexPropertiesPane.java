@@ -283,4 +283,17 @@ public final class VictoryHexPropertiesPane {
             return this;
         }
     }
+
+    /**
+     * The same "what it does / how to make it work" wording the setup pane shows, for a scheme already
+     * configured. The board tooltip uses it so a point explains itself the same way in both places.
+     *
+     * @param scheme The scheme to describe
+     *
+     * @return The description, ready to display
+     */
+    public static String describeScheme(ObjectiveScoringScheme scheme) {
+        return describeConfiguredPreset(scheme.getPreset(), scheme.getThreshold(), scheme.getRatePerTurn(),
+              scheme.getHoldCounting());
+    }
 }

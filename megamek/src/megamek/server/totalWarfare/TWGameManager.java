@@ -491,6 +491,9 @@ public class TWGameManager extends AbstractGameManager {
         getGame().reset();
         send(createEntitiesPacket());
         send(new Packet(PacketCommand.SENDING_MINEFIELDS, new Vector<>()));
+        // the reset above clears the board's ground objects on the server; say so, or every connected
+        // client keeps drawing the objective flags it was last sent
+        sendGroundObjectUpdate();
 
         // remove ghosts
         List<Player> ghosts = new ArrayList<>();
@@ -3376,6 +3379,8 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 }
             }
+
+            reportObjectiveStandings();
 
             if (!doBlind()) {
                 // The turn order is different in movement phase
@@ -16276,6 +16281,15 @@ public class TWGameManager extends AbstractGameManager {
      */
     void resolveObjectives() {
         new ObjectiveResolutionHandler(this).resolveObjectives();
+    }
+
+    /**
+     * Reports where each control point stands as the round begins, under the teams in the initiative
+     * report. Delegates to {@link ObjectiveResolutionHandler} so the objectives rules do not add to this
+     * already very large class.
+     */
+    void reportObjectiveStandings() {
+        new ObjectiveResolutionHandler(this).reportObjectiveStandings();
     }
 
     /**

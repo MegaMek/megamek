@@ -45,6 +45,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -111,6 +112,12 @@ public class UnitDamagePanelBuilder {
     private final UnitDamageControls controls;
     /** Whether the gamemaster-only controls are offered: refilling ammo bins and temporary skill modifiers. */
     private final boolean offerGameMasterTools;
+    /**
+     * Whether the panels are built for the unit display's Control tab rather than the editor: armor, structure,
+     * crits and conditions only show the unit's state, and the equipment's mode choosers, on/off switches and dump
+     * buttons act on the unit at once instead of waiting for OK.
+     */
+    private final boolean liveControls;
 
     public UnitDamagePanelBuilder(Entity entity, UnitDamageControls controls) {
         this(entity, controls, false);
@@ -124,9 +131,38 @@ public class UnitDamagePanelBuilder {
      *                 own count of what is in a bin, as campaign stock, and has no game to run modifiers in.
      */
     public UnitDamagePanelBuilder(Entity entity, UnitDamageControls controls, boolean offerGameMasterTools) {
+        this(entity, controls, offerGameMasterTools, false);
+    }
+
+    /**
+     * @param entity               the unit to build the controls for
+     * @param controls             the controls to fill in
+     * @param offerGameMasterTools whether the gamemaster-only controls are offered
+     * @param liveControls         {@code true} for the unit display's Control tab: values and crits are shown, not
+     *                             edited, and the equipment switches act at once
+     */
+    public UnitDamagePanelBuilder(Entity entity, UnitDamageControls controls, boolean offerGameMasterTools,
+          boolean liveControls) {
         this.entity = entity;
         this.controls = controls;
         this.offerGameMasterTools = offerGameMasterTools;
+        this.liveControls = liveControls;
+    }
+
+    /** In live mode a value control only shows the unit's state; the editor lets it be changed. */
+    private <T extends JComponent> T asValue(T control) {
+        if (liveControls) {
+            control.setEnabled(false);
+        }
+        return control;
+    }
+
+    /** In live mode a crit panel only shows the hits; the editor lets them be ticked. */
+    private CheckCritPanel asCrit(CheckCritPanel crit) {
+        if (liveControls) {
+            crit.setIndicatorOnly();
+        }
+        return crit;
     }
 
     /** Builds every control of the editor for the unit, filling in the controls this builder was given. */
@@ -161,7 +197,7 @@ public class UnitDamagePanelBuilder {
             if (editsInternal) {
                 int originalInternal = entity.getOInternal(location);
                 int internal = Math.min(Math.max(entity.getInternal(location), 0), originalInternal);
-                controls.spnInternal[location] = new JSpinner(new SpinnerNumberModel(internal, 0, originalInternal, 1));
+                controls.spnInternal[location] = asValue(new JSpinner(new SpinnerNumberModel(internal, 0, originalInternal, 1)));
                 addLabeledRow(controls.locationPanels[location],
                       Messages.getString("UnitEditorDialog.internal"),
                       controls.spnInternal[location]);
@@ -169,7 +205,7 @@ public class UnitDamagePanelBuilder {
 
             if (editsArmor) {
                 int armor = Math.min(Math.max(entity.getArmor(location, false), 0), originalArmor);
-                controls.spnArmor[location] = new JSpinner(new SpinnerNumberModel(armor, 0, originalArmor, 1));
+                controls.spnArmor[location] = asValue(new JSpinner(new SpinnerNumberModel(armor, 0, originalArmor, 1)));
                 boolean hasRear = entity.hasRearArmor(location);
                 addLabeledRow(controls.locationPanels[location],
                       Messages.getString(hasRear ? "UnitEditorDialog.armorFront" : "UnitEditorDialog.armor"),
@@ -177,7 +213,7 @@ public class UnitDamagePanelBuilder {
                 if (hasRear) {
                     int originalRear = Math.max(entity.getOArmor(location, true), 0);
                     int rear = Math.min(Math.max(entity.getArmor(location, true), 0), originalRear);
-                    controls.spnRear[location] = new JSpinner(new SpinnerNumberModel(rear, 0, originalRear, 1));
+                    controls.spnRear[location] = asValue(new JSpinner(new SpinnerNumberModel(rear, 0, originalRear, 1)));
                     addLabeledRow(controls.locationPanels[location],
                           Messages.getString("UnitEditorDialog.armorRear"),
                           controls.spnRear[location]);
@@ -188,7 +224,7 @@ public class UnitDamagePanelBuilder {
         if (isAero) {
             Aero aero = (Aero) entity;
             int structuralIntegrity = Math.max(aero.getSI(), 0);
-            controls.spnInternal[0] = new JSpinner(new SpinnerNumberModel(structuralIntegrity, 0, aero.getOSI(), 1));
+            controls.spnInternal[0] = asValue(new JSpinner(new SpinnerNumberModel(structuralIntegrity, 0, aero.getOSI(), 1)));
             controls.structuralIntegrityLabel = new JLabel("<html><b>" +
                   Messages.getString("UnitEditorDialog.structuralIntegrity") +
                   "</b></html>");
@@ -371,16 +407,16 @@ public class UnitDamagePanelBuilder {
         }
 
         if (entity instanceof Aero aero) {
-            controls.spnFuel = new JSpinner(new SpinnerNumberModel(Math.max(aero.getCurrentFuel(), 0),
+            controls.spnFuel = asValue(new JSpinner(new SpinnerNumberModel(Math.max(aero.getCurrentFuel(), 0),
                   0,
                   Math.max(aero.getFuel(), aero.getCurrentFuel()),
-                  1));
+                  1)));
             addLabeledRow(generalPanel(), Messages.getString("UnitEditorDialog.status.fuel"), controls.spnFuel);
         }
     }
 
     private JCheckBox addStatusRow(String labelKey, boolean selected) {
-        JCheckBox checkBox = new JCheckBox();
+        JCheckBox checkBox = asValue(new JCheckBox());
         checkBox.setSelected(selected);
         // A status checkbox only shows the current state, so its tooltip names the state and the action the next
         // click performs - "The unit is prone. Click to stand it up." - and follows the checkbox as it is toggled.
@@ -418,10 +454,10 @@ public class UnitDamagePanelBuilder {
             if (crew.isMissing(slot)) {
                 continue;
             }
-            controls.spnCrewHits[slot] = new JSpinner(new SpinnerNumberModel(Math.min(crew.getHits(slot), MAX_CREW_HITS),
+            controls.spnCrewHits[slot] = asValue(new JSpinner(new SpinnerNumberModel(Math.min(crew.getHits(slot), MAX_CREW_HITS),
                   0,
                   MAX_CREW_HITS,
-                  1));
+                  1)));
             String label = (crew.getSlotCount() > 1)
                   ? String.format(Messages.getString("UnitEditorDialog.crewHitsFor"), crew.getNameAndRole(slot))
                   : Messages.getString("UnitEditorDialog.crewHits");
@@ -434,7 +470,7 @@ public class UnitDamagePanelBuilder {
         if (!entity.tracksHeat()) {
             return;
         }
-        controls.spnHeat = new JSpinner(new SpinnerNumberModel(Math.max(entity.heat, 0), 0, MAX_HEAT, 1));
+        controls.spnHeat = asValue(new JSpinner(new SpinnerNumberModel(Math.max(entity.heat, 0), 0, MAX_HEAT, 1)));
         addLabeledRow(targetPanel(heatLocation()), Messages.getString("UnitEditorDialog.heat"), controls.spnHeat);
     }
 
@@ -456,10 +492,10 @@ public class UnitDamagePanelBuilder {
         controls.spnRear = new JSpinner[entity.locations()];
 
         int men = Math.max(infantry.getShootingStrength(), 0);
-        controls.spnInternal[0] = new JSpinner(new SpinnerNumberModel(men,
+        controls.spnInternal[0] = asValue(new JSpinner(new SpinnerNumberModel(men,
               0,
               infantry.getSquadCount() * infantry.getSquadSize(),
-              1));
+              1)));
         JPanel panel = createTitledPanel(new JLabel(Messages.getString("UnitEditorDialog.troopersLeft")));
         addLabeledRow(panel, Messages.getString("UnitEditorDialog.menLeft"), controls.spnInternal[0]);
         if (offersSkillModifiers()) {
@@ -518,6 +554,7 @@ public class UnitDamagePanelBuilder {
 
     /** Adds a crit control to a location's panel, and remembers which location it belongs to. */
     private void addCritRow(int location, String labelText, CheckCritPanel crit) {
+        asCrit(crit);
         controls.addCritOfLocation(location, crit);
         addLabeledRow(targetPanel(location), labelText, crit);
     }
@@ -594,7 +631,7 @@ public class UnitDamagePanelBuilder {
                     hits = 1;
                 }
             }
-            CheckCritPanel crit = new CheckCritPanel(nCrits, hits);
+            CheckCritPanel crit = asCrit(new CheckCritPanel(nCrits, hits));
             controls.equipCrits.put(equipmentNumber, crit);
             String label = mounted.getName();
             if (mounted.isSplit()) {
@@ -605,6 +642,8 @@ public class UnitDamagePanelBuilder {
             JComponent control = crit;
             if (offerGameMasterTools && (mounted instanceof AmmoMounted ammoBin)) {
                 control = ammoControl(equipmentNumber, ammoBin, crit);
+            } else if (liveControls && (mounted instanceof AmmoMounted ammoBin)) {
+                control = liveAmmoControl(equipmentNumber, ammoBin, crit);
             }
             if (offersEquipmentSettings() && (mounted.getType() instanceof WeaponType weaponType)
                   && weaponType.hasFlag(WeaponType.F_MG)
@@ -615,6 +654,13 @@ public class UnitDamagePanelBuilder {
                 if (isChargeSwitchable(mounted)) {
                     control = withChargeToggle(equipmentNumber, mounted, control);
                 } else if (isOnOffSwitchable(mounted)) {
+                    control = withOnOffToggle(equipmentNumber, mounted, control);
+                } else if (offersModeChooser(mounted)) {
+                    control = withModeChooser(equipmentNumber, mounted, control);
+                }
+            } else if (offersLiveSettings()) {
+                // a capacitor's charge is one of its modes, so the switch and the chooser cover it live
+                if (isOnOffSwitchable(mounted)) {
                     control = withOnOffToggle(equipmentNumber, mounted, control);
                 } else if (offersModeChooser(mounted)) {
                     control = withModeChooser(equipmentNumber, mounted, control);
@@ -631,6 +677,33 @@ public class UnitDamagePanelBuilder {
      */
     private boolean offersEquipmentSettings() {
         return offerGameMasterTools && (entity.getGame() != null) && !entity.getGame().getPhase().isLounge();
+    }
+
+    /**
+     * Whether the player's live equipment switches are offered: only on the Control tab, in a running game. The
+     * lobby's Configure dialog owns the settings before then.
+     */
+    private boolean offersLiveSettings() {
+        return liveControls && (entity.getGame() != null) && !entity.getGame().getPhase().isLounge();
+    }
+
+    /**
+     * Builds the live view of an ammo bin: its crits, the shots left, and a button that dumps the ammo or cancels
+     * a dump under way. The Control tab wires the button.
+     */
+    private JComponent liveAmmoControl(int equipmentNumber, AmmoMounted ammoBin, CheckCritPanel crit) {
+        JPanel control = new JPanel(new FlowLayout(FlowLayout.LEFT, UIUtil.scaleForGUI(5), 0));
+        control.add(crit);
+        control.add(new JLabel(ammoBin.getBaseShotsLeft() + " " + Messages.getString("UnitEditorDialog.shots")));
+        if (offersLiveSettings()) {
+            JButton dump = new JButton(Messages.getString(ammoBin.isPendingDump()
+                  ? "UnitDisplay.controlTab.stopDumping"
+                  : "UnitDisplay.controlTab.dump"));
+            dump.setToolTipText(Messages.getString("UnitDisplay.controlTab.dump.tooltip"));
+            controls.ammoDump.put(equipmentNumber, dump);
+            control.add(dump);
+        }
+        return control;
     }
 
     /** Appends a burst fire checkbox to a machine gun's row, prefilled with the gun's current setting. */
@@ -811,7 +884,8 @@ public class UnitDamagePanelBuilder {
      * illegal combination. The apply side backs this up for edits that arrive without the dialog's help.
      */
     private void dropStealthWhenNoEcmRemains() {
-        if ((controls.chkStealth == null) || !controls.chkStealth.isSelected()) {
+        // the live Stealth box only shows the state; the server takes stealth down with the ECM itself
+        if (liveControls || (controls.chkStealth == null) || !controls.chkStealth.isSelected()) {
             return;
         }
         for (Map.Entry<Integer, UnitDamageControls.ModeSwitch> onOff : controls.equipmentOnOff.entrySet()) {

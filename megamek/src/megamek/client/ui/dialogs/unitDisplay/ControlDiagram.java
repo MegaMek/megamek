@@ -32,36 +32,48 @@
  */
 package megamek.client.ui.dialogs.unitDisplay;
 
-import java.awt.CardLayout;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.io.Serial;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.IntConsumer;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.buttons.StateToggleButton;
+import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.dialogs.unitEditor.UnitDamageControls;
+import megamek.client.ui.dialogs.unitEditor.UnitDamagePanelBuilder;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.EquipmentMode;
+import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 
 /**
- * The Control tab's diagram: the unit on the left; on the right, a card per location with its armor and structure,
- * the Systems panel showing that location's equipment, the Pilot panel in place of it when the crew is chosen, and
- * the Extras panel pinned under whichever of those is showing.
+ * The Control tab's diagram: the unit on the left; on the right, the GM damage editor's panels for whichever
+ * location is chosen - built by the same {@link UnitDamagePanelBuilder}, in its live mode - with the General panel
+ * and the Extras under them, and the Pilot panel when the crew is chosen.
  * <p>
- * The Systems, Pilot and Extras panels belong to the unit display and are borrowed with {@link #attachPanels()};
- * the display's six-panel view can take them back, so the tab attaches them again each time it shows a unit.
+ * Live mode means the armor, structure and critical-hit boxes only show the unit's state, while the mode choosers,
+ * on/off switches and ammo dump buttons act at once, through {@link EquipmentActions}, exactly as the classic
+ * Systems tab did. The panels are rebuilt from the unit on every refresh, since the server sends a fresh copy of
+ * the unit after every change; the chosen location survives the rebuild.
+ * <p>
+ * The Pilot and Extras panels belong to the unit display and are borrowed with {@link #attachPanels()}; the
+ * display's six-panel view can take them back, so the tab attaches them again each time it shows a unit.
  */
 class ControlDiagram extends AbstractLocationDiagram {
 
@@ -70,44 +82,46 @@ class ControlDiagram extends AbstractLocationDiagram {
 
     /** The chooser entry for the crew. */
     static final String CREW_KEY = "crew";
-    /** The chooser entry that lists every piece of equipment on the unit. */
-    static final String ALL_EQUIPMENT_KEY = "all-equipment";
 
-    private static final String SYSTEMS_CARD = "systems";
-    private static final String CREW_CARD = "crew";
     private static final double DIAGRAM_SHARE = 0.45;
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    private final SystemPanel systems;
+    private final UnitDisplayPanel unitDisplayPanel;
     private final PilotPanel crew;
     private final ExtraPanel extras;
     private final boolean gameMaster;
     private final IntConsumer editDamage;
-    private final CardLayout detailLayout = new CardLayout();
-    private final JPanel panDetail = new JPanel(detailLayout);
     private final JPanel panGeneral = new JPanel();
-    private final List<LocationCard> locationCards = new ArrayList<>();
+    private UnitDamageControls controls;
+    private boolean acting = false;
 
     /**
-     * @param entity     the unit shown
-     * @param game       the game, or {@code null} outside one
-     * @param systems    the unit display's Systems panel, shown for the chosen location
-     * @param crew       the unit display's Pilot panel, shown when the crew is chosen
-     * @param extras     the unit display's Extras panel, pinned under the other two
-     * @param gameMaster whether to offer the GM's damage editor on each location
-     * @param editDamage opens the damage editor at a location; only called when {@code gameMaster}
+     * @param entity           the unit shown
+     * @param unitDisplayPanel the display, whose client carries out the live actions
+     * @param crew             the unit display's Pilot panel, shown when the crew is chosen
+     * @param extras           the unit display's Extras panel, pinned under the General panel
+     * @param gameMaster       whether to offer the GM's damage editor on each location
+     * @param editDamage       opens the damage editor at a location; only called when {@code gameMaster}
      */
-    ControlDiagram(Entity entity, @Nullable Game game, SystemPanel systems, PilotPanel crew, ExtraPanel extras,
+    ControlDiagram(Entity entity, UnitDisplayPanel unitDisplayPanel, PilotPanel crew, ExtraPanel extras,
           boolean gameMaster, IntConsumer editDamage) {
-        super(entity, game);
-        this.systems = systems;
+        super(entity, gameOf(unitDisplayPanel));
+        this.unitDisplayPanel = unitDisplayPanel;
         this.crew = crew;
         this.extras = extras;
         this.gameMaster = gameMaster;
         this.editDamage = editDamage;
         getPaperdoll().setFitToWindow(true);
         setResizeWeight(DIAGRAM_SHARE);
+        panGeneral.setLayout(new BoxLayout(panGeneral, BoxLayout.PAGE_AXIS));
+        buildControls();
         buildCards();
         attachPanels();
+    }
+
+    private static @Nullable Game gameOf(UnitDisplayPanel unitDisplayPanel) {
+        ClientGUI clientGui = unitDisplayPanel.getClientGUI();
+        return (clientGui == null) ? null : clientGui.getClient().getGame();
     }
 
     /**
@@ -124,36 +138,39 @@ class ControlDiagram extends AbstractLocationDiagram {
     }
 
     /**
-     * Borrows the Systems, Pilot and Extras panels into this diagram. Safe to call again; a panel already here stays
-     * where it is.
+     * Borrows the Pilot and Extras panels into this diagram. Safe to call again; a panel already here stays where
+     * it is.
      */
     void attachPanels() {
-        panDetail.add(systems, SYSTEMS_CARD);
-        panDetail.add(crew, CREW_CARD);
+        if (getEntity().getCrew() != null) {
+            getCardsPanel().add(crew, CREW_KEY);
+        }
+        extras.setAlignmentX(Component.LEFT_ALIGNMENT);
         panGeneral.add(extras);
-        // the diagram picks the location, so the Systems panel's own location list would only repeat it
-        systems.setLocationListVisible(false);
     }
 
-    /** Redraws the diagram and the location cards from the unit, and re-applies the chosen card to the panels. */
+    /**
+     * Rebuilds the panels from the unit as it now is and redraws the diagram. The chosen location stays chosen.
+     */
     void refresh() {
-        for (LocationCard card : locationCards) {
-            card.refresh();
-        }
+        buildControls();
+        rebuildCards();
+        attachPanels();
         refreshDiagram();
-        DiagramChoice shown = getShownChoice();
-        if (shown != null) {
-            onCardShown(shown);
-        }
     }
 
-    /** Brings the locations forward if the crew or the equipment list is showing instead. */
+    /** Brings the locations forward if the crew is showing instead. */
     void showLocations() {
         DiagramChoice shown = getShownChoice();
-        if ((shown == null) || (shown.location() != Entity.LOC_NONE) || locationCards.isEmpty()) {
+        if ((shown == null) || (shown.location() != Entity.LOC_NONE)) {
             return;
         }
-        selectLocation(locationCards.getFirst().location);
+        for (int location = 0; location < getEntity().locations(); location++) {
+            if (controls.locationPanels[location] != null) {
+                selectLocation(location);
+                return;
+            }
+        }
     }
 
     /** Scrolls the pinned Extras panel into view. */
@@ -161,134 +178,183 @@ class ControlDiagram extends AbstractLocationDiagram {
         extras.scrollRectToVisible(new Rectangle(0, 0, extras.getWidth(), extras.getHeight()));
     }
 
+    UnitDamageControls getControls() {
+        return controls;
+    }
+
+    // ---- building ----
+
+    /** Builds the GM editor's panels for the unit in live mode, and wires the live controls. */
+    private void buildControls() {
+        Entity entity = getEntity();
+        controls = new UnitDamageControls();
+        UnitDamagePanelBuilder builder = new UnitDamagePanelBuilder(entity, controls, false, true);
+        if (entity.isConventionalInfantry()) {
+            controls.locationPanels = new JPanel[entity.locations()];
+            controls.locationLabels = new JLabel[entity.locations()];
+            controls.panGeneral = builder.initInfantryPanel();
+        } else {
+            builder.build();
+        }
+        colorLocationLabels();
+        wireLiveControls();
+    }
+
     @Override
     protected @Nullable JComponent createLocationCard(int location) {
-        Entity entity = getEntity();
-        boolean hasArmor = entity.getOArmor(location) > 0;
-        boolean hasStructure = entity.getOInternal(location) > 0;
-        boolean hasSlots = entity.getNumberOfCriticalSlots(location) > 0;
-        if (!hasArmor && !hasStructure && !hasSlots) {
+        JPanel panel = controls.locationPanels[location];
+        if (panel == null) {
             return null;
         }
-        LocationCard card = new LocationCard(location);
-        locationCards.add(card);
+        if (!gameMaster) {
+            return panel;
+        }
+        JPanel card = new JPanel(new BorderLayout());
+        card.add(panel, BorderLayout.CENTER);
+        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, UIUtil.scaleForGUI(5), UIUtil.scaleForGUI(2)));
+        JButton edit = new JButton(Messages.getString("UnitDisplay.controlTab.editDamage"));
+        edit.setToolTipText(Messages.getString("UnitDisplay.controlTab.editDamage.tooltip"));
+        edit.addActionListener(event -> editDamage.accept(location));
+        row.add(edit);
+        card.add(row, BorderLayout.PAGE_END);
         return card;
     }
 
     @Override
     protected List<DiagramChoice> createExtraChoices() {
-        return List.of(DiagramChoice.extra(CREW_KEY, Messages.getString("UnitDisplay.controlTab.crew")),
-              DiagramChoice.extra(ALL_EQUIPMENT_KEY, Messages.getString("UnitDisplay.controlTab.allEquipment")));
+        if (getEntity().getCrew() == null) {
+            return List.of();
+        }
+        return List.of(DiagramChoice.extra(CREW_KEY, Messages.getString("UnitDisplay.controlTab.crew")));
     }
 
     @Override
     protected @Nullable JComponent createExtraCard(DiagramChoice choice) {
-        // the crew and the equipment list are shown by the borrowed panels below; the card itself is empty
-        return new JPanel();
+        return CREW_KEY.equals(choice.key()) ? crew : null;
     }
 
     @Override
     protected @Nullable JComponent createGeneralCard() {
-        panGeneral.setLayout(new BoxLayout(panGeneral, BoxLayout.PAGE_AXIS));
-        panDetail.setAlignmentX(Component.LEFT_ALIGNMENT);
-        extras.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panGeneral.add(panDetail);
+        panGeneral.removeAll();
+        if (controls.panGeneral != null) {
+            controls.panGeneral.setAlignmentX(Component.LEFT_ALIGNMENT);
+            panGeneral.add(controls.panGeneral);
+        }
         return panGeneral;
     }
 
-    @Override
-    protected void onCardShown(DiagramChoice choice) {
-        if (choice.location() != Entity.LOC_NONE) {
-            detailLayout.show(panDetail, SYSTEMS_CARD);
-            // a location with no critical slots (a vehicle's) has nothing of its own to list
-            if (!systems.selectLocation(choice.location())) {
-                systems.showAllEquipment();
+    /** Colors each location's title by how damaged the location is, as the GM editor does. */
+    private void colorLocationLabels() {
+        Entity entity = getEntity();
+        for (int location = 0; location < entity.locations(); location++) {
+            JLabel label = controls.locationLabels[location];
+            if (label == null) {
+                continue;
             }
-        } else if (CREW_KEY.equals(choice.key())) {
-            detailLayout.show(panDetail, CREW_CARD);
-        } else if (ALL_EQUIPMENT_KEY.equals(choice.key())) {
-            detailLayout.show(panDetail, SYSTEMS_CARD);
-            systems.showAllEquipment();
+            Color worst = damageColor(entity.getArmor(location, false), entity.getOArmor(location, false), null);
+            if (entity.hasRearArmor(location)) {
+                worst = damageColor(entity.getArmor(location, true), entity.getOArmor(location, true), worst);
+            }
+            worst = damageColor(entity.getInternal(location), entity.getOInternal(location), worst);
+            if (worst != null) {
+                label.setForeground(worst);
+            }
         }
     }
 
-    /** A location's armor and structure, and for a GM the way into the damage editor for it. */
-    private final class LocationCard extends JPanel {
-
-        @Serial
-        private static final long serialVersionUID = 1L;
-
-        private final int location;
-        private final JLabel armor = new JLabel();
-        private final JLabel rear = new JLabel();
-        private final JLabel structure = new JLabel();
-
-        LocationCard(int location) {
-            super(new GridBagLayout());
-            this.location = location;
-            int inset = UIUtil.scaleForGUI(4);
-            GridBagConstraints constraints = new GridBagConstraints();
-            constraints.anchor = GridBagConstraints.LINE_START;
-            constraints.insets = new Insets(inset, inset * 2, inset, inset * 2);
-            constraints.gridx = 0;
-            constraints.gridy = 0;
-            constraints.gridwidth = 2;
-
-            JLabel title = new JLabel(getEntity().getLocationName(location));
-            title.setFont(title.getFont().deriveFont(Font.BOLD));
-            add(title, constraints);
-
-            constraints.gridwidth = 1;
-            constraints.gridy++;
-            add(new JLabel(Messages.getString("UnitDisplay.controlTab.armor")), constraints);
-            constraints.gridx = 1;
-            add(armor, constraints);
-
-            if (getEntity().hasRearArmor(location)) {
-                constraints.gridx = 0;
-                constraints.gridy++;
-                add(new JLabel(Messages.getString("UnitDisplay.controlTab.rear")), constraints);
-                constraints.gridx = 1;
-                add(rear, constraints);
-            }
-
-            constraints.gridx = 0;
-            constraints.gridy++;
-            add(new JLabel(Messages.getString("UnitDisplay.controlTab.structure")), constraints);
-            constraints.gridx = 1;
-            add(structure, constraints);
-
-            if (gameMaster) {
-                constraints.gridx = 0;
-                constraints.gridy++;
-                constraints.gridwidth = 2;
-                JButton edit = new JButton(Messages.getString("UnitDisplay.controlTab.editDamage"));
-                edit.setToolTipText(Messages.getString("UnitDisplay.controlTab.editDamage.tooltip"));
-                edit.addActionListener(event -> editDamage.accept(location));
-                add(edit, constraints);
-            }
-
-            // take only the height the rows need, so the panels below sit right under the card
-            constraints.gridx = 0;
-            constraints.gridy++;
-            constraints.weightx = 1.0;
-            constraints.weighty = 1.0;
-            add(new JLabel(), constraints);
-            refresh();
+    private static @Nullable Color damageColor(int current, int original, @Nullable Color worstSoFar) {
+        if (original <= 0) {
+            return worstSoFar;
         }
-
-        void refresh() {
-            Entity entity = getEntity();
-            armor.setText(valueText(entity.getArmor(location, false), entity.getOArmor(location, false)));
-            rear.setText(valueText(entity.getArmor(location, true), entity.getOArmor(location, true)));
-            structure.setText(valueText(entity.getInternal(location), entity.getOInternal(location)));
+        Color color;
+        if (current <= 0) {
+            color = GUIP.getUnitTooltipArmorMiniColorDamaged();
+        } else if (current < original) {
+            color = GUIP.getUnitTooltipArmorMiniColorPartialDamage();
+        } else {
+            color = GUIP.getUnitTooltipArmorMiniColorIntact();
         }
+        if (worstSoFar == null) {
+            return color;
+        }
+        Color damaged = GUIP.getUnitTooltipArmorMiniColorDamaged();
+        Color partial = GUIP.getUnitTooltipArmorMiniColorPartialDamage();
+        if (damaged.equals(color) || damaged.equals(worstSoFar)) {
+            return damaged;
+        }
+        if (partial.equals(color) || partial.equals(worstSoFar)) {
+            return partial;
+        }
+        return color;
+    }
 
-        private String valueText(int current, int original) {
-            if (original <= 0) {
-                return Messages.getString("UnitDisplay.controlTab.none");
+    // ---- live controls ----
+
+    /** Makes the mode choosers, on/off switches and dump buttons act on the unit at once. */
+    private void wireLiveControls() {
+        Entity entity = getEntity();
+        for (Map.Entry<Integer, JComboBox<EquipmentMode>> entry : controls.equipmentModes.entrySet()) {
+            Mounted<?> mounted = entity.getEquipment(entry.getKey());
+            JComboBox<EquipmentMode> chooser = entry.getValue();
+            chooser.addActionListener(event -> {
+                if (acting) {
+                    return;
+                }
+                int modeIndex = chooser.getSelectedIndex();
+                if (!EquipmentActions.changeMode(unitDisplayPanel, entity, mounted, modeIndex)) {
+                    acting = true;
+                    try {
+                        chooser.setSelectedItem(mounted.curMode());
+                    } finally {
+                        acting = false;
+                    }
+                    return;
+                }
+                refreshLater();
+            });
+        }
+        for (Map.Entry<Integer, UnitDamageControls.ModeSwitch> entry : controls.equipmentOnOff.entrySet()) {
+            Mounted<?> mounted = entity.getEquipment(entry.getKey());
+            UnitDamageControls.ModeSwitch onOff = entry.getValue();
+            StateToggleButton toggle = onOff.toggle();
+            toggle.addItemListener(event -> {
+                if (acting) {
+                    return;
+                }
+                int modeIndex = modeIndex(mounted, onOff.chosenMode());
+                if ((modeIndex < 0) || !EquipmentActions.changeMode(unitDisplayPanel, entity, mounted, modeIndex)) {
+                    acting = true;
+                    try {
+                        toggle.setSelected(!toggle.isSelected());
+                    } finally {
+                        acting = false;
+                    }
+                    return;
+                }
+                refreshLater();
+            });
+        }
+        for (Map.Entry<Integer, JButton> entry : controls.ammoDump.entrySet()) {
+            Mounted<?> mounted = entity.getEquipment(entry.getKey());
+            entry.getValue().addActionListener(event -> {
+                if (EquipmentActions.toggleDump(unitDisplayPanel, entity, mounted)) {
+                    refreshLater();
+                }
+            });
+        }
+    }
+
+    private static int modeIndex(Mounted<?> mounted, String modeName) {
+        for (int index = 0; index < mounted.getType().getModesCount(mounted); index++) {
+            if (mounted.getType().getMode(index).getName().equals(modeName)) {
+                return index;
             }
-            return Math.max(current, 0) + " / " + original;
         }
+        return -1;
+    }
+
+    /** Rebuilds after the control that asked for the change has finished with its event. */
+    private void refreshLater() {
+        SwingUtilities.invokeLater(this::refresh);
     }
 }

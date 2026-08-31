@@ -199,7 +199,7 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
         weaponTab = controlLayout ? new WeaponTabPanel(this, client) : new WeaponPanel(this, client);
         sPan = new SystemPanel(this);
         ePan = new ExtraPanel(this);
-        controlTab = controlLayout ? new ControlTabPanel(this, sPan, pPan, ePan) : null;
+        controlTab = controlLayout ? new ControlTabPanel(this, pPan, ePan) : null;
         JScrollPane scrollPane = new JScrollPane(displayP);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -398,10 +398,8 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
 
         if (controlLayout) {
             // the Control tab borrowed these panels; the six-panel view wants them back in their own panes
-            sPanScroll.setViewportView(sPan);
             pPanScroll.setViewportView(pPan);
             ePanScroll.setViewportView(ePan);
-            sPan.setLocationListVisible(true);
         }
 
         linkParentChild(UnitDisplayPanel.NON_TABBED_A1,

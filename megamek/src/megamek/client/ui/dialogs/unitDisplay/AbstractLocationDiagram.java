@@ -161,6 +161,30 @@ public abstract class AbstractLocationDiagram extends JSplitPane implements Loca
         }
     }
 
+    /**
+     * Throws the cards away and asks the subclass for them again - for a unit whose state has changed. The card
+     * that was showing shows again if it is still there.
+     */
+    protected final void rebuildCards() {
+        DiagramChoice shown = getShownChoice();
+        panCards.removeAll();
+        choices.clear();
+        choosing = true;
+        try {
+            comboLocation.removeAllItems();
+        } finally {
+            choosing = false;
+        }
+        panPanels.removeAll();
+        panPanels.add(panCards);
+        buildCards();
+        if (shown != null) {
+            selectCard(shown.key());
+        }
+        panPanels.revalidate();
+        panPanels.repaint();
+    }
+
     private void addCard(DiagramChoice choice, JComponent card) {
         choices.add(choice);
         panCards.add(card, choice.key());

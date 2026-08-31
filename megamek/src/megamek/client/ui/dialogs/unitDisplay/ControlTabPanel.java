@@ -41,7 +41,6 @@ import megamek.client.ui.dialogs.UnitEditorDialog;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel.ControlFocus;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
-import megamek.common.game.Game;
 import megamek.common.units.Entity;
 
 /**
@@ -49,8 +48,8 @@ import megamek.common.units.Entity;
  * the crew and the extras. It folds the classic Pilot, Armor, Systems and Extras tabs into one.
  * <p>
  * The tab keeps one {@link ControlDiagram} per unit shown and rebuilds it when a different unit is displayed. The
- * Systems, Pilot and Extras panels are the unit display's own, borrowed while the tabbed view shows this tab; the
- * six-panel view takes them back.
+ * Pilot and Extras panels are the unit display's own, borrowed while the tabbed view shows this tab; the six-panel
+ * view takes them back.
  */
 public class ControlTabPanel extends JPanel {
 
@@ -58,22 +57,20 @@ public class ControlTabPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     private final UnitDisplayPanel unitDisplayPanel;
-    private final SystemPanel systems;
     private final PilotPanel crew;
     private final ExtraPanel extras;
     private ControlDiagram diagram;
 
-    ControlTabPanel(UnitDisplayPanel unitDisplayPanel, SystemPanel systems, PilotPanel crew, ExtraPanel extras) {
+    ControlTabPanel(UnitDisplayPanel unitDisplayPanel, PilotPanel crew, ExtraPanel extras) {
         super(new BorderLayout());
         this.unitDisplayPanel = unitDisplayPanel;
-        this.systems = systems;
         this.crew = crew;
         this.extras = extras;
     }
 
     /**
      * Shows the given unit. A unit already shown is refreshed in place; another unit gets a new diagram. Call after
-     * the Systems, Pilot and Extras panels have been given the unit, since this borrows them.
+     * the Pilot and Extras panels have been given the unit, since this borrows them.
      *
      * @param entity the unit to show, or {@code null} for none yet
      */
@@ -85,13 +82,12 @@ public class ControlTabPanel extends JPanel {
             if (diagram != null) {
                 remove(diagram);
             }
-            diagram = new ControlDiagram(entity, game(), systems, crew, extras, isGameMaster(), this::editDamage);
+            diagram = new ControlDiagram(entity, unitDisplayPanel, crew, extras, isGameMaster(), this::editDamage);
             add(diagram, BorderLayout.CENTER);
         } else {
             diagram.setEntity(entity);
+            diagram.refresh();
         }
-        diagram.attachPanels();
-        diagram.refresh();
         revalidate();
         repaint();
     }
@@ -121,11 +117,6 @@ public class ControlTabPanel extends JPanel {
         if (diagram != null) {
             diagram.selectLocation(location);
         }
-    }
-
-    private @Nullable Game game() {
-        ClientGUI clientGui = unitDisplayPanel.getClientGUI();
-        return (clientGui == null) ? null : clientGui.getClient().getGame();
     }
 
     private boolean isGameMaster() {

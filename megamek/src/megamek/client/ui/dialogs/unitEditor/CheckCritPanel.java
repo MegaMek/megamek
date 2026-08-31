@@ -76,6 +76,15 @@ public class CheckCritPanel extends JPanel {
         }
     }
 
+    /**
+     * Makes the boxes show hits without taking any: the Control tab reads the unit's state, it does not edit it.
+     */
+    public void setIndicatorOnly() {
+        for (JCheckBox check : checks) {
+            check.setEnabled(false);
+        }
+    }
+
     public int getHits() {
         int hits = 0;
         for (JCheckBox check : checks) {

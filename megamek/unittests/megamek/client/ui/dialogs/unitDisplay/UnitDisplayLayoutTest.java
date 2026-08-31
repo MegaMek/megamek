@@ -200,4 +200,14 @@ class UnitDisplayLayoutTest {
         display.setDisplayNonTabbed();
         display.displayEntity(createMek(game, owner));
     }
+
+    @Test
+    @DisplayName("The layout picks the Weapon tab: the new panel under control, the classic panel otherwise")
+    void layoutPicksTheWeaponTab() {
+        GUIP.setUnitDisplayControlLayout(true);
+        assertTrue(new UnitDisplayPanel(clientGuiOverNewGame(), null).getWeaponTab() instanceof WeaponTabPanel);
+
+        GUIP.setUnitDisplayControlLayout(false);
+        assertTrue(new UnitDisplayPanel(clientGuiOverNewGame(), null).getWeaponTab() instanceof WeaponPanel);
+    }
 }

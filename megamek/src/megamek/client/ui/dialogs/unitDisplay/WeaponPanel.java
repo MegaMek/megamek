@@ -187,6 +187,8 @@ public class WeaponPanel extends PicMap implements WeaponTabView, ListSelectionL
 
     final UnitDisplayPanel unitDisplayPanel;
     private final Client client;
+    /** Whether a tab around this panel shows the heat, range, to-hit and target itself. */
+    private final boolean embedded;
 
     private MMComboBox<WeaponSortOrder> comboWeaponSortOrder;
     private JList<String> weaponList;
@@ -263,8 +265,19 @@ public class WeaponPanel extends PicMap implements WeaponTabView, ListSelectionL
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     WeaponPanel(UnitDisplayPanel unitDisplayPanel, Client client) {
+        this(unitDisplayPanel, client, false);
+    }
+
+    /**
+     * @param unitDisplayPanel the display this panel is part of
+     * @param client           the client, or {@code null} for a viewer
+     * @param embedded         {@code true} to build only the weapon list, the ammo and bay choosers and the range
+     *                         and damage table, for a tab that shows heat, range, to-hit and target itself
+     */
+    WeaponPanel(UnitDisplayPanel unitDisplayPanel, Client client, boolean embedded) {
         this.unitDisplayPanel = unitDisplayPanel;
         this.client = client;
+        this.embedded = embedded;
 
         JPanel panelTop = new JPanel();
         panelTop.setOpaque(false);
@@ -278,42 +291,48 @@ public class WeaponPanel extends PicMap implements WeaponTabView, ListSelectionL
         createWeaponList(panelTop);
         createWeaponDisplay(panelTop);
         createRangeDisplay(panelTop);
-        createToHitDisplay(panelTop);
+        if (embedded) {
+            // the tab around this panel shows heat, range, to-hit and target itself
+            this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            this.add(panelTop);
+        } else {
+            createToHitDisplay(panelTop);
 
-        JPanel panelText = new JPanel();
-        panelText.setOpaque(false);
-        panelText.setLayout(new GridBagLayout());
-        gridY = 0;
-        panelText.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panelText.setAlignmentY(Component.TOP_ALIGNMENT);
-        panelText.setPreferredSize(new Dimension(INTERNAL_PANE_WIDTH, 20));
-        panelText.setMaximumSize(null);
-        createToHitText(panelText);
+            JPanel panelText = new JPanel();
+            panelText.setOpaque(false);
+            panelText.setLayout(new GridBagLayout());
+            gridY = 0;
+            panelText.setAlignmentX(Component.LEFT_ALIGNMENT);
+            panelText.setAlignmentY(Component.TOP_ALIGNMENT);
+            panelText.setPreferredSize(new Dimension(INTERNAL_PANE_WIDTH, 20));
+            panelText.setMaximumSize(null);
+            createToHitText(panelText);
 
-        JSplitPane splitPaneMain = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panelTop, panelText);
-        splitPaneMain.setOpaque(false);
+            JSplitPane splitPaneMain = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panelTop, panelText);
+            splitPaneMain.setOpaque(false);
 
-        JPanel panelMain = new JPanel();
-        panelMain.setOpaque(false);
-        panelMain.setLayout(new BoxLayout(panelMain, BoxLayout.Y_AXIS));
-        panelMain.add(splitPaneMain);
+            JPanel panelMain = new JPanel();
+            panelMain.setOpaque(false);
+            panelMain.setLayout(new BoxLayout(panelMain, BoxLayout.Y_AXIS));
+            panelMain.add(splitPaneMain);
 
-        JPanel panelLower = new JPanel();
-        panelLower.setOpaque(false);
-        panelLower.setLayout(new GridBagLayout());
-        gridY = 0;
-        panelLower.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panelLower.setAlignmentY(Component.TOP_ALIGNMENT);
-        panelLower.setPreferredSize(new Dimension(INTERNAL_PANE_WIDTH, 20));
-        panelLower.setMaximumSize(null);
+            JPanel panelLower = new JPanel();
+            panelLower.setOpaque(false);
+            panelLower.setLayout(new GridBagLayout());
+            gridY = 0;
+            panelLower.setAlignmentX(Component.LEFT_ALIGNMENT);
+            panelLower.setAlignmentY(Component.TOP_ALIGNMENT);
+            panelLower.setPreferredSize(new Dimension(INTERNAL_PANE_WIDTH, 20));
+            panelLower.setMaximumSize(null);
 
-        createTargetDisplay(panelLower);
+            createTargetDisplay(panelLower);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panelMain, panelLower);
-        splitPane.setOpaque(false);
-        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        this.add(splitPane);
+            JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panelMain, panelLower);
+            splitPane.setOpaque(false);
+            this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            this.add(splitPane);
 
+        }
         addListeners();
         GUIP.addPreferenceChangeListener(this);
 
@@ -778,6 +797,9 @@ public class WeaponPanel extends PicMap implements WeaponTabView, ListSelectionL
 
     @Override
     public void clearToHit() {
+        if (embedded) {
+            return;
+        }
         toHitText.setText("---");
     }
 
@@ -788,6 +810,9 @@ public class WeaponPanel extends PicMap implements WeaponTabView, ListSelectionL
 
     @Override
     public void setToHit(ToHitData toHit, boolean natAptGunnery) {
+        if (embedded) {
+            return;
+        }
         String txt = switch (toHit.getValue()) {
             case TargetRoll.IMPOSSIBLE, TargetRoll.AUTOMATIC_FAIL -> String.format("To Hit: (0%%) %s", toHit.getDesc());
             case TargetRoll.AUTOMATIC_SUCCESS -> String.format("To Hit: (100%%) %s", toHit.getDesc());
@@ -804,12 +829,18 @@ public class WeaponPanel extends PicMap implements WeaponTabView, ListSelectionL
 
     @Override
     public void setToHit(String message) {
+        if (embedded) {
+            return;
+        }
         toHitText.setText(UnitToolTip.wrapWithHTML(message));
     }
 
     @Override
     public void setTarget(@Nullable Targetable target, @Nullable String extraInfo) {
         this.target = target;
+        if (embedded) {
+            return;
+        }
         updateTargetInfo();
         String txt = "";
 
@@ -982,8 +1013,10 @@ public class WeaponPanel extends PicMap implements WeaponTabView, ListSelectionL
 
         heatMessage += combatComputerIndicator + tempIndicator;
 
-        currentHeatBuildupR.setForeground(GUIP.getColorForHeat(heatOverCapacity, Color.WHITE));
-        currentHeatBuildupR.setText(heatMessage);
+        if (!embedded) {
+            currentHeatBuildupR.setForeground(GUIP.getColorForHeat(heatOverCapacity, Color.WHITE));
+            currentHeatBuildupR.setText(heatMessage);
+        }
 
         // change what is visible based on type
         if (entity.usesWeaponBays()) {
@@ -2623,16 +2656,25 @@ public class WeaponPanel extends PicMap implements WeaponTabView, ListSelectionL
 
     @Override
     public void setRange(int effectiveDistance) {
+        if (embedded) {
+            return;
+        }
         wRangeR.setText(Integer.toString(effectiveDistance));
     }
 
     @Override
     public void setRangeText(String rangeText) {
+        if (embedded) {
+            return;
+        }
         wRangeR.setText(rangeText);
     }
 
     @Override
     public void clearRange() {
+        if (embedded) {
+            return;
+        }
         wRangeR.setText("---");
     }
 

@@ -46,12 +46,14 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 
+import megamek.client.Client;
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.event.MekDisplayListener;
 import megamek.client.ui.Messages;
@@ -67,7 +69,6 @@ import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.client.ui.widget.picmap.PMUtil;
-import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.units.Entity;
@@ -100,7 +101,7 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
     private final SummaryPanel mPan;
     private final PilotPanel pPan;
     private final ArmorPanel aPan;
-    private final WeaponPanel wPan;
+    private final WeaponTabView weaponTab;
     private final SystemPanel sPan;
     private final ExtraPanel ePan;
     private final ClientGUI clientgui;
@@ -194,7 +195,8 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
         aPan = new ArmorPanel(clientgui != null ? clientgui.getClient().getGame() : null, this);
         // fill the panel with the diagram instead of leaving it small in a large empty area
         aPan.setFitToWindow(true);
-        wPan = new WeaponPanel(this, clientgui != null ? clientgui.getClient() : null);
+        Client client = (clientgui != null) ? clientgui.getClient() : null;
+        weaponTab = controlLayout ? new WeaponTabPanel(this, client) : new WeaponPanel(this, client);
         sPan = new SystemPanel(this);
         ePan = new ExtraPanel(this);
         controlTab = controlLayout ? new ControlTabPanel(this, sPan, pPan, ePan) : null;
@@ -206,7 +208,7 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
         mPanScroll = createConfiguredScrollPane(mPan);
         pPanScroll = createConfiguredScrollPane(pPan);
         aPanScroll = createConfiguredScrollPane(aPan);
-        wPanScroll = createConfiguredScrollPane(wPan);
+        wPanScroll = createConfiguredScrollPane((JComponent) weaponTab);
         sPanScroll = createConfiguredScrollPane(sPan);
         ePanScroll = createConfiguredScrollPane(ePan);
 
@@ -594,7 +596,7 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
         mPan.displayMek(currentlyDisplaying);
         pPan.displayMek(currentlyDisplaying);
         aPan.displayMek(currentlyDisplaying);
-        wPan.displayMek(currentlyDisplaying);
+        weaponTab.displayMek(currentlyDisplaying);
         sPan.displayMek(currentlyDisplaying);
         ePan.displayMek(currentlyDisplaying);
         // after the panels it borrows have the unit; the six-panel view has those panels itself
@@ -606,8 +608,8 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
         displayP.repaint();
     }
 
-    private JScrollPane createConfiguredScrollPane(PicMap picMap) {
-        JScrollPane scrollPane = new JScrollPane(picMap);
+    private JScrollPane createConfiguredScrollPane(JComponent view) {
+        JScrollPane scrollPane = new JScrollPane(view);
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(SCROLL_STEPS);
         scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(SCROLLBAR_WIDTH, Integer.MAX_VALUE));
@@ -618,7 +620,7 @@ public class UnitDisplayPanel extends JPanel implements LocationSelectListener {
      * @return the Weapon tab, as the combat phase displays drive it
      */
     public WeaponTabView getWeaponTab() {
-        return wPan;
+        return weaponTab;
     }
 
     /**

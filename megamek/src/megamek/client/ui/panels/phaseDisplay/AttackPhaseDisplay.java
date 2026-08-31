@@ -43,6 +43,7 @@ import megamek.client.ui.clientGUI.tooltip.EntityActionLog;
 import megamek.client.ui.dialogs.TurretFacingDialog;
 import megamek.common.actions.DirectionalMountFacingAction;
 import megamek.common.actions.EntityAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.annotations.Nullable;
@@ -92,12 +93,30 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
 
     @Override
     protected void updateDonePanel() {
+        publishDeclaredAttacks();
         if (attacks.isEmpty() || ((attacks.size() == 1) && (attacks.firstElement() instanceof TorsoTwistAction))) {
             // a torso twist alone should not trigger Done button
             updateDonePanelButtons(getDoneButtonLabel(), getSkipTurnButtonLabel(), false, null);
         } else {
             updateDonePanelButtons(getDoneButtonLabel(), getSkipTurnButtonLabel(), true, attacks.getDescriptions());
         }
+    }
+
+    /**
+     * Tells the unit display's Weapon tab which weapon attacks are declared so far, so it can list them. Called
+     * whenever the attacks change.
+     */
+    protected void publishDeclaredAttacks() {
+        if (clientgui.getUnitDisplay() == null) {
+            return;
+        }
+        List<WeaponAttackAction> declared = new ArrayList<>();
+        for (EntityAction action : attacks) {
+            if (action instanceof WeaponAttackAction weaponAttack) {
+                declared.add(weaponAttack);
+            }
+        }
+        clientgui.getUnitDisplay().getWeaponTab().setDeclaredAttacks(declared);
     }
 
     protected void removeAttack(EntityAction o) {

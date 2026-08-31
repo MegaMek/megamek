@@ -46,9 +46,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.Serial;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -57,9 +55,7 @@ import javax.swing.event.ListSelectionListener;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.ChoiceDialog;
-import megamek.client.ui.dialogs.phaseDisplay.EcmSuiteChoiceDialog;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
@@ -601,93 +597,11 @@ class SystemPanel extends PicMap
                 if ((m != null) && m.hasModes()) {
                     int nMode = m_chMode.getSelectedIndex();
                     if (nMode >= 0) {
-                        if ((m.getType() instanceof MiscType miscType) &&
-                              miscType.isBoobyTrap()) {
-                            // Verify is it is in the correct phase to arm it
-                            // This should be controlled by the equipment itself
-                            // TODO: Refactor so the equipment knows the phase they can be armed/disarmed
-
-                            if ((clientgui.getClient().getGame().getPhase().isFiring() ||
-                                  clientgui.getClient().getGame().getPhase().isPhysical())) {
-                                if (nMode == 1) {
-                                    if (!clientgui.doYesNoDialog(Messages.getString("MekDisplay.BoobyTrapWarningTitle"),
-                                          Messages.getString("MekDisplay.BoobyTrapWarning"))) {
-                                        return;
-                                    }
-                                }
-                            } else {
-                                clientgui.addToast(ToastLevel.WARNING,
-                                      Messages.getString("MekDisplay.BoobyTrapMode"));
-                                return;
-                            }
+                        if (EquipmentActions.changeMode(unitDisplayPanel, en, m, nMode)) {
+                            int loc = slotList.getSelectedIndex();
+                            displaySlots();
+                            slotList.setSelectedIndex(loc);
                         }
-
-                        if ((m.getType() instanceof MiscType)
-                              && ((MiscType) m.getType()).hasFlag(MiscType.F_SHIELD)
-                              && !Game.rulesManager.getRulesPhysical().phaseChangeShield()
-                              && !clientgui.getClient().getGame().getPhase().isFiring()) {
-                            clientgui.systemMessage(Messages.getString("MekDisplay.ShieldModePhase"));
-                            return;
-                        }
-
-                        if ((m.getType() instanceof MiscType)
-                              && ((MiscType) m.getType()).isVibroblade()
-                              && !clientgui.getClient().getGame().getPhase().isPhysical()) {
-                            clientgui.systemMessage(Messages.getString("MekDisplay.VibrobladeModePhase"));
-                            return;
-                        }
-
-                        if ((m.getType() instanceof MiscType)
-                              && m.getType().hasFlag(MiscTypeFlag.S_RETRACTABLE_BLADE)
-                              && !clientgui.getClient().getGame().getPhase().isMovement()) {
-                            clientgui.systemMessage(Messages.getString("MekDisplay.RetractableBladeModePhase"));
-                            return;
-                        }
-
-                        // Can only charge a capacitor if the weapon has not been fired.
-                        if ((m.getType() instanceof MiscType)
-                              && (m.getLinked() != null)
-                              && m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
-                              && m.getLinked().isUsedThisRound()
-                              && (nMode == 1)) {
-                            clientgui.systemMessage(Messages.getString("MekDisplay.CapacitorCharging"));
-                            return;
-                        }
-
-                        if (!resolveEcmSuiteConflict(clientgui, m, nMode)) {
-                            return;
-                        }
-
-                        m.setMode(nMode);
-                        // send the event to the server
-                        clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);
-
-                        // notify the player
-                        // These report the state the equipment has reached, or will reach, so they take the
-                        // state label rather than the label the player picked from the dropdown
-                        if (m.canInstantSwitch(nMode)) {
-                            clientgui.systemMessage(Messages.getString("MekDisplay.switched",
-                                  m.getName(), m.curMode().getStateName(m.getType())));
-                            clientgui.addToast(ToastLevel.INFO,
-                                  m.getName() + ": " + m.curMode().getStateName(m.getType()), en);
-                            int weapon = this.unitDisplayPanel.getWeaponTab().getSelectedWeaponNum();
-                            this.unitDisplayPanel.getWeaponTab().displayMek(en);
-                            this.unitDisplayPanel.getWeaponTab().selectWeapon(weapon);
-                        } else {
-                            String pendingModeName = m.pendingMode().getStateName(m.getType());
-                            if (clientgui.getClient().getGame().getPhase().isDeployment()) {
-                                clientgui.systemMessage(Messages.getString("MekDisplay.willSwitchAtStart",
-                                      m.getName(), pendingModeName));
-                            } else {
-                                clientgui.systemMessage(Messages.getString("MekDisplay.willSwitchAtEnd",
-                                      m.getName(), pendingModeName));
-                            }
-                            clientgui.addToast(ToastLevel.INFO,
-                                  m.getName() + " -> " + pendingModeName, en);
-                        }
-                        int loc = slotList.getSelectedIndex();
-                        displaySlots();
-                        slotList.setSelectedIndex(loc);
                     }
                 }
                 // Note: EI Interface modes are now handled via equipment modes, not cockpit system
@@ -698,84 +612,6 @@ class SystemPanel extends PicMap
         }
     }
 
-    /**
-     * Asks the player which ECM suite to leave on when the mode they just picked would put a second one into use, and
-     * switches off the suites they did not keep. A unit may use only one ECM suite at a time, of any type (TM p.213,
-     * CO p.200), and every mode other than {@code "Off"} counts as using the suite - ECCM and Ghost Targets included.
-     *
-     * <p>The choice is always between the suite already in use and the one the player just switched, so keeping the
-     * suite that was already on means abandoning the requested switch. Cancelling does the same.</p>
-     *
-     * @param clientgui        the client GUI, used for the parent frame and to send the switches that are applied
-     * @param changedEquipment the equipment whose mode the player just picked
-     * @param newMode          the requested mode index
-     *
-     * @return {@code true} if the requested mode change should go ahead, {@code false} if it should be abandoned
-     */
-    private boolean resolveEcmSuiteConflict(ClientGUI clientgui, Mounted<?> changedEquipment, int newMode) {
-        if (!(changedEquipment instanceof MiscMounted changedSuite)
-              || !changedSuite.getType().hasFlag(MiscType.F_ECM)) {
-            return true;
-        }
-        if ((newMode < 0) || (newMode >= changedSuite.getType().getModesCount())) {
-            return true;
-        }
-        EquipmentMode requestedMode = changedSuite.getType().getMode(newMode);
-        if (requestedMode.equals(Mounted.MODE_OFF)) {
-            return true;
-        }
-
-        // Walk the mounts rather than appending the changed suite to the list of those already in use, so the
-        // dialog offers the suites in mount order and its numbering runs 1, 2, 3 down the list
-        List<MiscMounted> alreadyInUse = EquipmentActivation.ecmSuitesInUseNextRound(en);
-        List<MiscMounted> suitesInUse = new ArrayList<>();
-        for (MiscMounted suite : en.getMisc()) {
-            if (suite.equals(changedSuite) || alreadyInUse.contains(suite)) {
-                suitesInUse.add(suite);
-            }
-        }
-        if (suitesInUse.size() < 2) {
-            return true;
-        }
-
-        // Making room for this suite means switching another one off, which the server refuses for any ECM suite
-        // while stealth armor is engaged or engaging - so there is no choice to offer here
-        if (EquipmentActivation.isStealthOnOrActivating(en)) {
-            clientgui.systemMessage(Messages.getString("MekDisplay.EcmSuiteStealthEngaged",
-                  EquipmentActivation.ecmSuiteLabel(en, changedSuite)));
-            return false;
-        }
-
-        // The mode the player just picked has not been applied yet, so it has to be named for the dialog rather
-        // than read back off the equipment
-        Map<MiscMounted, String> suiteModeNames = new LinkedHashMap<>();
-        for (MiscMounted suite : suitesInUse) {
-            suiteModeNames.put(suite, suite.equals(changedSuite)
-                  ? requestedMode.getStateName(changedSuite.getType())
-                  : suite.modeNextRound().getStateName(suite.getType()));
-        }
-        MiscMounted keptSuite = EcmSuiteChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(), en,
-              suiteModeNames);
-        if (!changedSuite.equals(keptSuite)) {
-            clientgui.systemMessage(Messages.getString("MekDisplay.EcmSuiteNotSwitched",
-                  EquipmentActivation.ecmSuiteLabel(en, changedSuite)));
-            return false;
-        }
-
-        for (MiscMounted suite : suitesInUse) {
-            if (suite.equals(keptSuite)) {
-                continue;
-            }
-            int offModeIndex = suite.setMode(Mounted.MODE_OFF);
-            if (offModeIndex >= 0) {
-                clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(suite), offModeIndex);
-                clientgui.systemMessage(Messages.getString("MekDisplay.willSwitchAtEnd",
-                      EquipmentActivation.ecmSuiteLabel(en, suite),
-                      suite.pendingMode().getStateName(suite.getType())));
-            }
-        }
-        return true;
-    }
 
     @Override
     public void actionPerformed(ActionEvent ae) {
@@ -787,62 +623,11 @@ class SystemPanel extends PicMap
             }
             if ("dump".equals(ae.getActionCommand())) {
                 Mounted<?> m = getSelectedEquipment();
-                boolean bOwner = clientgui.getClient().getLocalPlayer().equals(en.getOwner());
-                if ((m == null) || !bOwner) {
+                if (m == null) {
                     return;
                 }
 
-                // Check for BA dumping SRM launchers
-                if ((en instanceof BattleArmor) && (!m.isMissing())
-                      && m.isBodyMounted()
-                      && m.getType().hasFlag(WeaponType.F_MISSILE)
-                      && (m.getLinked() != null)
-                      && (m.getLinked().getUsableShotsLeft() > 0)) {
-                    boolean isDumping = !m.isPendingDump();
-                    m.setPendingDump(isDumping);
-                    clientgui.getClient().sendModeChange(en.getId(),
-                          en.getEquipmentNum(m), isDumping ? -1 : 0);
-                    int selIdx = slotList.getSelectedIndex();
-                    displaySlots();
-                    slotList.setSelectedIndex(selIdx);
-                }
-
-                if (((!(m.getType() instanceof AmmoType) || (m.getUsableShotsLeft() <= 0))
-                      && !m.isDWPMounted()) || (m.isDWPMounted() && m.isMissing())) {
-                    return;
-                }
-
-                boolean bDumping;
-                boolean bConfirmed;
-
-                if (m.isPendingDump()) {
-                    bDumping = false;
-                    if (m.getType() instanceof AmmoType) {
-                        String title = Messages.getString("MekDisplay.CancelDumping.title");
-                        String body = Messages.getString("MekDisplay.CancelDumping.message", m.getName());
-                        bConfirmed = clientgui.doYesNoDialog(title, body);
-                    } else {
-                        String title = Messages.getString("MekDisplay.CancelJettison.title");
-                        String body = Messages.getString("MekDisplay.CancelJettison.message", m.getName());
-                        bConfirmed = clientgui.doYesNoDialog(title, body);
-                    }
-                } else {
-                    bDumping = true;
-                    if (m.getType() instanceof AmmoType) {
-                        String title = Messages.getString("MekDisplay.Dump.title");
-                        String body = Messages.getString("MekDisplay.Dump.message", m.getName());
-                        bConfirmed = clientgui.doYesNoDialog(title, body);
-                    } else {
-                        String title = Messages.getString("MekDisplay.Jettison.title");
-                        String body = Messages.getString("MekDisplay.Jettison.message", m.getName());
-                        bConfirmed = clientgui.doYesNoDialog(title, body);
-                    }
-                }
-
-                if (bConfirmed) {
-                    m.setPendingDump(bDumping);
-                    clientgui.getClient().sendModeChange(en.getId(),
-                          en.getEquipmentNum(m), bDumping ? -1 : 0);
+                if (EquipmentActions.toggleDump(unitDisplayPanel, en, m)) {
                     int selIdx = slotList.getSelectedIndex();
                     displaySlots();
                     slotList.setSelectedIndex(selIdx);

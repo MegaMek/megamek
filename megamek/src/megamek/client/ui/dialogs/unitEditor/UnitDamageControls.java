@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -89,6 +90,8 @@ public class UnitDamageControls {
 
     /** The shots left in each ammo bin, by its equipment number. Only a gamemaster edits these. */
     public final Map<Integer, JSpinner> ammoShots = new HashMap<>();
+    /** The live mode's dump buttons, one per ammo bin, keyed by equipment number. */
+    public final Map<Integer, JButton> ammoDump = new HashMap<>();
 
     /** Burst fire on each machine gun, by its equipment number. Only a gamemaster's in-game editor builds these. */
     public final Map<Integer, JCheckBox> mgBurst = new HashMap<>();

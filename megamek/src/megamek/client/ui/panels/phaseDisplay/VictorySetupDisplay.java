@@ -37,7 +37,10 @@ import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.swing.JOptionPane;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -301,10 +304,48 @@ public class VictorySetupDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void ready() {
+        if (!confirmLeavingPointsUnplaced()) {
+            return;
+        }
         endMyTurn();
         // sending the ground objects is this phase's turn action: the server stores them, rebroadcasts,
         // and ends the turn
         clientgui.getClient().sendDeployGroundObjects(game().getGroundObjects());
+    }
+
+    /**
+     * Asks before ending a turn that placed nothing, the way the minefield phase asks about undeployed
+     * mines. The phase is easy to click straight through, and a player who does gets a game with victory
+     * points enabled and nothing on the board to score them.
+     *
+     * @return {@code true} to go ahead and end the turn, {@code false} to stay in the phase
+     */
+    private boolean confirmLeavingPointsUnplaced() {
+        int pointsOnBoard = 0;
+        for (List<ICarryable> hexObjects : game().getGroundObjects().values()) {
+            for (ICarryable groundObject : hexObjects) {
+                if ((groundObject instanceof ObjectiveMarker marker) && (marker.getOwnerId() == player.getId())) {
+                    pointsOnBoard++;
+                }
+            }
+        }
+        int pointsStillToPlace = player.getGroundObjectsToPlace().size();
+        if ((pointsOnBoard > 0) && (pointsStillToPlace == 0)) {
+            return true;
+        }
+        String message = (pointsStillToPlace > 0)
+              ? Messages.getString("VictorySetupDisplay.unplacedPoints", pointsStillToPlace)
+              : Messages.getString("VictorySetupDisplay.noPointsPlaced");
+        int choice = JOptionPane.showConfirmDialog(clientgui.getFrame(), message,
+              Messages.getString("VictorySetupDisplay.unplacedTitle"),
+              JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        boolean isGoingAhead = choice == JOptionPane.YES_OPTION;
+        if (!isGoingAhead) {
+            VICTORY_HEX_LOGGER.debug("[VictoryHex] {} stayed in the phase rather than end the turn with "
+                  + "{} point(s) placed and {} still to place", player.getName(), pointsOnBoard,
+                  pointsStillToPlace);
+        }
+        return isGoingAhead;
     }
 
     @Override

@@ -117,11 +117,10 @@ public final class VictoryHexPropertiesPane {
         rateSpinner.addChangeListener(event -> refreshSchemeRows(controls));
         refreshSchemeRows(controls);
 
+        // the order a player decides these in: what kind of point is this, how is it won, how big is
+        // it, what is it worth. The scheme comes first because it decides which of the rows below even
+        // appear - with it third, two values had to be filled in before learning what else would be asked
         JPanel propertiesPanel = new JPanel(new GridLayout(0, 2));
-        propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.radius")));
-        propertiesPanel.add(radiusSpinner);
-        propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.victoryPoints")));
-        propertiesPanel.add(victoryPointSpinner);
         propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.scheme")));
         propertiesPanel.add(schemeCombo);
         propertiesPanel.add(thresholdLabel);
@@ -130,6 +129,10 @@ public final class VictoryHexPropertiesPane {
         propertiesPanel.add(countingCombo);
         propertiesPanel.add(rateLabel);
         propertiesPanel.add(rateSpinner);
+        propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.radius")));
+        propertiesPanel.add(radiusSpinner);
+        propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.victoryPoints")));
+        propertiesPanel.add(victoryPointSpinner);
 
         JPanel editorPanel = new JPanel();
         editorPanel.setLayout(new BoxLayout(editorPanel, BoxLayout.PAGE_AXIS));

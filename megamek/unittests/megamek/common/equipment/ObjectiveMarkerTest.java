@@ -35,6 +35,7 @@ package megamek.common.equipment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -248,5 +249,49 @@ class ObjectiveMarkerTest {
         assertEquals(HoldCounting.CUMULATIVE, restoredScheme.getHoldCounting());
         assertEquals(3, restoredScheme.getHeldTurns(2, ObjectiveScoringScheme.NO_SIDE));
         assertFalse(restoredScheme.isDecided());
+    }
+
+    // --- the board's compact progress reading (shown under the flag) ---
+
+    @Test
+    void testStandardAndRaidHaveNoProgressToShow() {
+        assertNull(ObjectiveScoringScheme.standard().progressLabel(),
+              "the printed per-turn scheme has no running counter");
+        assertNull(ObjectiveScoringScheme.raid().progressLabel(),
+              "raid scores once at the end and counts nothing on the way");
+    }
+
+    @Test
+    void testHoldShowsTurnsHeldAgainstTurnsNeeded() {
+        ObjectiveScoringScheme scheme = ObjectiveScoringScheme.hold(3,
+              ObjectiveScoringScheme.HoldCounting.CONSECUTIVE);
+        assertEquals("0/3", scheme.progressLabel());
+        scheme.setHeldTurns(1, ObjectiveScoringScheme.NO_SIDE, 2);
+        assertEquals("2/3", scheme.progressLabel());
+    }
+
+    @Test
+    void testDefendShowsTheGripThatIsLeft() {
+        ObjectiveScoringScheme scheme = ObjectiveScoringScheme.defend(4, 1);
+        assertEquals("4/4", scheme.progressLabel());
+        scheme.setDefendGrip(1);
+        assertEquals("1/4", scheme.progressLabel());
+    }
+
+    @Test
+    void testCaptureShowsTheMeter() {
+        ObjectiveScoringScheme scheme = ObjectiveScoringScheme.capture(2, 1);
+        assertEquals("0/2", scheme.progressLabel());
+        scheme.setCaptureProgress(1, ObjectiveScoringScheme.NO_SIDE, 1);
+        assertEquals("1/2", scheme.progressLabel());
+    }
+
+    @Test
+    void testADecidedPointStopsShowingProgress() {
+        ObjectiveScoringScheme scheme = ObjectiveScoringScheme.hold(2,
+              ObjectiveScoringScheme.HoldCounting.CONSECUTIVE);
+        scheme.setHeldTurns(1, ObjectiveScoringScheme.NO_SIDE, 2);
+        scheme.setSecuredBy(1, ObjectiveScoringScheme.NO_SIDE);
+        assertNull(scheme.progressLabel(), "a settled point has no progress left to make");
     }
 }

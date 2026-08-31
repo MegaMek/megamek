@@ -421,7 +421,7 @@ public class ObjectiveScoringScheme implements Serializable {
         }
         return switch (preset) {
             case HOLD -> bestHeldTurns() + "/" + threshold;
-            case DEFEND -> defendGrip + "/" + threshold;
+            case DEFEND -> getDefendGrip() + "/" + threshold;
             case CAPTURE -> bestCaptureProgress() + "/" + threshold;
             case STANDARD, RAID -> null;
         };

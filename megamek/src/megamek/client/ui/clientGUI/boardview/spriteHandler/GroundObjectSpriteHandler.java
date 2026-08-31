@@ -211,6 +211,9 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
             }
         }
         if (controllingTeam != ObjectiveMarker.NO_CONTROLLER) {
+            // teams have no colour of their own, so the zone borrows one from a member. Where a team's
+            // players have chosen different colours this picks the first, which is arbitrary but stable:
+            // the same team always reads the same way for the whole game
             for (Player player : game.getPlayersList()) {
                 if (player.getTeam() == controllingTeam) {
                     return player.getColour().getColour();

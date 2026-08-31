@@ -98,6 +98,9 @@ class SystemPanel extends PicMap
 
     private final JList<String> slotList;
     private final JList<String> locList;
+    private final JLabel locLabel;
+    /** The location shown at each index of the location list from {@link #LOC_OFFSET} on. */
+    private final List<Integer> listedLocations = new ArrayList<>();
     private final JList<String> unitList;
 
     private final JComboBox<String> m_chMode;
@@ -108,7 +111,7 @@ class SystemPanel extends PicMap
 
     SystemPanel(UnitDisplayPanel unitDisplayPanel) {
         this.unitDisplayPanel = unitDisplayPanel;
-        JLabel locLabel = new JLabel(Messages.getString("MekDisplay.Location"), SwingConstants.CENTER);
+        locLabel = new JLabel(Messages.getString("MekDisplay.Location"), SwingConstants.CENTER);
         locLabel.setOpaque(false);
         locLabel.setForeground(Color.WHITE);
         JLabel slotLabel = new JLabel(Messages.getString("MekDisplay.Slot"), SwingConstants.CENTER);
@@ -266,9 +269,8 @@ class SystemPanel extends PicMap
               || (locList.getSelectedIndex() == LOC_SPACER)) {
             return null;
         }
-        int loc = locList.getSelectedIndex();
+        int loc = selectedLocation();
         int slot = slotList.getSelectedIndex();
-        loc -= LOC_OFFSET;
         if ((loc == -1) || (slot == -1)) {
             return null;
         }
@@ -358,7 +360,29 @@ class SystemPanel extends PicMap
     }
 
     public void selectLocation(int loc) {
-        locList.setSelectedIndex(loc + LOC_OFFSET);
+        int listed = listedLocations.indexOf(loc);
+        if (listed != -1) {
+            locList.setSelectedIndex(listed + LOC_OFFSET);
+        }
+    }
+
+    /**
+     * Shows or hides the location list. A panel driven from a unit diagram that picks the location has no use
+     * for its own list.
+     *
+     * @param visible whether the location list and its heading show
+     */
+    public void setLocationListVisible(boolean visible) {
+        locLabel.setVisible(visible);
+        locList.setVisible(visible);
+    }
+
+    /**
+     * @return the location whose slots are listed, or -1 for the all-equipment and all-weapons views
+     */
+    private int selectedLocation() {
+        int listed = locList.getSelectedIndex() - LOC_OFFSET;
+        return ((listed >= 0) && (listed < listedLocations.size())) ? listedLocations.get(listed) : -1;
     }
 
     private void displayLocations() {
@@ -370,10 +394,11 @@ class SystemPanel extends PicMap
         locModel.insertElementAt(
               Messages.getString("MekDisplay.AllWeapons"), LOC_ALL_WEAPONS);
         locModel.insertElementAt("-----", LOC_SPACER);
+        listedLocations.clear();
         for (int loc = 0; loc < en.locations(); loc++) {
-            int idx = loc + LOC_OFFSET;
             if (en.getNumberOfCriticalSlots(loc) > 0) {
-                locModel.insertElementAt(en.getLocationName(loc), idx);
+                locModel.addElement(en.getLocationName(loc));
+                listedLocations.add(loc);
             }
         }
         locList.setSelectedIndex(0);
@@ -407,7 +432,10 @@ class SystemPanel extends PicMap
         }
 
         // Standard location handling
-        loc -= LOC_OFFSET;
+        loc = selectedLocation();
+        if (loc == -1) {
+            return;
+        }
         for (int i = 0; i < en.getNumberOfCriticalSlots(loc); i++) {
             final CriticalSlot cs = en.getCritical(loc, i);
             StringBuilder sb = new StringBuilder(32);

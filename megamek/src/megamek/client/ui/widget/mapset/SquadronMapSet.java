@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -49,14 +49,17 @@ import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.client.ui.widget.picmap.PMAreasGroup;
+import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.client.ui.widget.picmap.PMPicArea;
 import megamek.client.ui.widget.picmap.PMSimpleLabel;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PMValueLabel;
 import megamek.common.Configuration;
+import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
+import megamek.common.units.Aero;
 import megamek.common.units.FighterSquadron;
 import megamek.common.units.IAero;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -92,6 +95,7 @@ public class SquadronMapSet implements DisplayMapSet {
     private final PMSimpleLabel[] pilotCritLabel;
     private final Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     private final PMAreasGroup content = new PMAreasGroup();
+    private final LocationSelectListener locationSelectListener;
 
     private final int squareSize = 7;
     private final int armorRows = 6;
@@ -102,6 +106,17 @@ public class SquadronMapSet implements DisplayMapSet {
     private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 9);
 
     public SquadronMapSet(JComponent c, Game g) {
+        this(c, g, null);
+    }
+
+    /**
+     * @param c                      the component the set draws into
+     * @param g                      the game, for the squadron's fighters
+     * @param locationSelectListener who to tell when a fighter's armor is clicked, or {@code null} for nobody. A
+     *                               squadron has one location, the nose, reported for every fighter.
+     */
+    public SquadronMapSet(JComponent c, Game g, @Nullable LocationSelectListener locationSelectListener) {
+        this.locationSelectListener = locationSelectListener;
         jComponent = c;
 
         /*
@@ -233,7 +248,7 @@ public class SquadronMapSet implements DisplayMapSet {
     private void setAreas() {
         for (int i = 0; i < max_size; i++) {
             armorImage[i] = jComponent.createImage(armorCols * (squareSize + 1), armorRows * (squareSize + 1));
-            armorArea[i] = new PMPicArea(armorImage[i]);
+            armorArea[i] = new PMPicArea(armorImage[i], locationSelectListener, Aero.LOC_NOSE);
 
             avCritImage[i] = jComponent.createImage(3 * (squareSize + 1), squareSize + 1);
             avCritArea[i] = new PMPicArea(avCritImage[i]);

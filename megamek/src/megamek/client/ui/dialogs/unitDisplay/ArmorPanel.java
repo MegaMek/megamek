@@ -134,8 +134,8 @@ public class ArmorPanel extends PicMap {
         super.addNotify();
         tank = new TankMapSet(this, locationSelectListener);
         mek = new MekMapSet(this, locationSelectListener);
-        infantry = new InfantryMapSet(this);
-        battleArmor = new BattleArmorMapSet(this);
+        infantry = new InfantryMapSet(this, locationSelectListener);
+        battleArmor = new BattleArmorMapSet(this, locationSelectListener);
         proto = new ProtoMekMapSet(this, locationSelectListener);
         vtol = new VTOLMapSet(this, locationSelectListener);
         quad = new QuadMapSet(this, locationSelectListener);
@@ -144,11 +144,11 @@ public class ArmorPanel extends PicMap {
         largeSupportTank = new LargeSupportTankMapSet(this, locationSelectListener);
         superHeavyTank = new SuperHeavyTankMapSet(this, locationSelectListener);
         aero = new AeroMapSet(this, locationSelectListener);
-        capFighter = new CapitalFighterMapSet(this);
+        capFighter = new CapitalFighterMapSet(this, locationSelectListener);
         sphere = new SpheroidMapSet(this, locationSelectListener);
         jump = new JumpshipMapSet(this, locationSelectListener);
         warship = new WarshipMapSet(this, locationSelectListener);
-        squad = new SquadronMapSet(this, game);
+        squad = new SquadronMapSet(this, game, locationSelectListener);
     }
 
     @Override

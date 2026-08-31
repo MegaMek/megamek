@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -50,11 +50,14 @@ import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.client.ui.widget.picmap.PMAreasGroup;
+import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.client.ui.widget.picmap.PMPicArea;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PMValueLabel;
 import megamek.common.Configuration;
+import megamek.common.annotations.Nullable;
 import megamek.common.units.ConvInfantry;
+import megamek.common.units.Infantry;
 import megamek.common.units.EjectedCrew;
 import megamek.common.units.Entity;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -71,6 +74,7 @@ public class InfantryMapSet implements DisplayMapSet {
     private final PMPicArea[] areas = new PMPicArea[EjectedCrew.EJ_CREW_MAX_MEN];
     // Main areas group that will be passing to PicMap
     private final PMAreasGroup content = new PMAreasGroup();
+    private final LocationSelectListener locationSelectListener;
     // JLabel
     private PMValueLabel label;
     // JLabel
@@ -84,7 +88,17 @@ public class InfantryMapSet implements DisplayMapSet {
           GUIP.getUnitDisplayMekArmorMediumFontSize());
 
     public InfantryMapSet(JComponent c) {
+        this(c, null);
+    }
+
+    /**
+     * @param c                      the component the set draws into
+     * @param locationSelectListener who to tell when a trooper is clicked, or {@code null} for nobody. Infantry has
+     *                               one location, so every trooper reports it.
+     */
+    public InfantryMapSet(JComponent c, @Nullable LocationSelectListener locationSelectListener) {
         jComponent = c;
+        this.locationSelectListener = locationSelectListener;
         setAreas();
         setBackGround();
     }
@@ -135,7 +149,7 @@ public class InfantryMapSet implements DisplayMapSet {
         for (int i = 0; i < EjectedCrew.EJ_CREW_MAX_MEN; i++) {
             int shiftX = (i % 5) * stepX;
             int shiftY = (i / 5) * stepY;
-            areas[i] = new PMPicArea(infImage);
+            areas[i] = new PMPicArea(infImage, locationSelectListener, ConvInfantry.LOC_INFANTRY);
             areas[i].translate(shiftX, shiftY);
             content.addArea(areas[i]);
         }

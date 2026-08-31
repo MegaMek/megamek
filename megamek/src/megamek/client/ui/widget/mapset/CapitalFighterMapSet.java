@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -49,11 +49,13 @@ import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.client.ui.widget.picmap.PMAreasGroup;
+import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.client.ui.widget.picmap.PMPicArea;
 import megamek.client.ui.widget.picmap.PMSimpleLabel;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PMValueLabel;
 import megamek.common.Configuration;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
@@ -90,6 +92,7 @@ public class CapitalFighterMapSet implements DisplayMapSet {
     private PMSimpleLabel pilotCritLabel;
     private final Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     private final PMAreasGroup content = new PMAreasGroup();
+    private final LocationSelectListener locationSelectListener;
 
     private final int squareSize = 7;
     private final int armorRows = 8;
@@ -101,6 +104,16 @@ public class CapitalFighterMapSet implements DisplayMapSet {
           GUIP.getUnitDisplayMekArmorSmallFontSize());
 
     public CapitalFighterMapSet(JComponent c) {
+        this(c, null);
+    }
+
+    /**
+     * @param c                      the component the set draws into
+     * @param locationSelectListener who to tell when the armor is clicked, or {@code null} for nobody. A capital
+     *                               fighter's armor is one pool, reported as the nose.
+     */
+    public CapitalFighterMapSet(JComponent c, @Nullable LocationSelectListener locationSelectListener) {
+        this.locationSelectListener = locationSelectListener;
         jComponent = c;
         setAreas();
         setLabels();
@@ -172,7 +185,7 @@ public class CapitalFighterMapSet implements DisplayMapSet {
 
     private void setAreas() {
         armorImage = jComponent.createImage(armorCols * (squareSize + 1), armorRows * (squareSize + 1));
-        armorArea = new PMPicArea(armorImage);
+        armorArea = new PMPicArea(armorImage, locationSelectListener, Aero.LOC_NOSE);
 
         avCritImage = jComponent.createImage(3 * (squareSize + 1), squareSize + 1);
         avCritArea = new PMPicArea(avCritImage);

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2002 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,6 +43,9 @@ import java.awt.Shape;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
+import megamek.common.annotations.Nullable;
+import megamek.common.units.Entity;
+
 /**
  * Simple rectangle hot are for PicMap component. Show single image when idle and "hoghlite" image when mouse is over
  * this area.
@@ -58,6 +61,8 @@ public class PMPicArea implements PMHotArea {
     private boolean selected = false;
     private boolean visible = true;
     private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
+    private LocationSelectListener locationSelectListener = null;
+    private int location = Entity.LOC_NONE;
 
     public PMPicArea(Image idle, Image active) {
         this.idleImage = idle;
@@ -68,6 +73,26 @@ public class PMPicArea implements PMHotArea {
     public PMPicArea(Image im) {
         this(im, null);
         highlight = false;
+    }
+
+    /**
+     * A picture that stands for a location of the unit: clicking it tells the listener which location.
+     *
+     * @param im                     the picture
+     * @param locationSelectListener who to tell when the picture is clicked, or {@code null} for nobody
+     * @param location               the location the picture stands for
+     */
+    public PMPicArea(Image im, @Nullable LocationSelectListener locationSelectListener, int location) {
+        this(im);
+        this.locationSelectListener = locationSelectListener;
+        this.location = location;
+    }
+
+    /**
+     * @return the location this picture stands for, or {@link Entity#LOC_NONE} if it stands for none
+     */
+    public int getLocation() {
+        return location;
     }
 
     // PMElement interface methods
@@ -131,7 +156,12 @@ public class PMPicArea implements PMHotArea {
 
     @Override
     public void onMouseClick(MouseEvent e) {
-
+        if ((locationSelectListener == null) || (location == Entity.LOC_NONE)) {
+            return;
+        }
+        if ((e.getClickCount() >= 2) || locationSelectListener.selectsOnSingleClick()) {
+            locationSelectListener.locationSelected(location);
+        }
     }
 
     @Override

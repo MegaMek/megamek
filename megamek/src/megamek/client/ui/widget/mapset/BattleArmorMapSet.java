@@ -50,10 +50,12 @@ import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
 import megamek.client.ui.widget.picmap.PMAreasGroup;
+import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.client.ui.widget.picmap.PMPicArea;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.client.ui.widget.picmap.PMValueLabel;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.annotations.Nullable;
 import megamek.common.Configuration;
 import megamek.common.units.Entity;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -74,6 +76,7 @@ public class BattleArmorMapSet implements DisplayMapSet {
     private final PMValueLabel[] armorLabels = new PMValueLabel[BattleArmor.BA_MAX_MEN];
     // Content group which will be sent to PicMap component
     private final PMAreasGroup content = new PMAreasGroup();
+    private final LocationSelectListener locationSelectListener;
     // Set of Background drawers which will be sent to PicMap component
     private final Vector<BackGroundDrawer> bgDrawers = new Vector<>();
 
@@ -86,7 +89,16 @@ public class BattleArmorMapSet implements DisplayMapSet {
      * This constructor can only be called from the addNotify method
      */
     public BattleArmorMapSet(JComponent c) {
+        this(c, null);
+    }
+
+    /**
+     * @param c                      the component the set draws into
+     * @param locationSelectListener who to tell when a trooper is clicked, or {@code null} for nobody
+     */
+    public BattleArmorMapSet(JComponent c, @Nullable LocationSelectListener locationSelectListener) {
         jComponent = c;
+        this.locationSelectListener = locationSelectListener;
         setAreas();
         setBackGround();
     }
@@ -101,12 +113,12 @@ public class BattleArmorMapSet implements DisplayMapSet {
         for (int i = 0; i < BattleArmor.BA_MAX_MEN; i++) {
             int stepY = 53;
             int shiftY = i * stepY;
-            unitAreas[i] = new PMPicArea(battleArmorImage);
+            unitAreas[i] = new PMPicArea(battleArmorImage, locationSelectListener, BattleArmor.LOC_TROOPER_1 + i);
             unitAreas[i].translate(0, shiftY);
             content.addArea(unitAreas[i]);
 
             armorImage[i] = jComponent.createImage(105, 12);
-            armorAreas[i] = new PMPicArea(armorImage[i]);
+            armorAreas[i] = new PMPicArea(armorImage[i], locationSelectListener, BattleArmor.LOC_TROOPER_1 + i);
             armorAreas[i].translate(45, shiftY + 12);
             content.addArea(armorAreas[i]);
 

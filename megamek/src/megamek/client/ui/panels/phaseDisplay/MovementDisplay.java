@@ -419,7 +419,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void cancel() {
-        boolean keepDeployment = ((cmd != null) && (cmd.length() > 1) && (deploymentAnchor(cmd) != null));
+        boolean keepDeployment = true;
+        if (cmd != null) {
+            boolean jumpDeploy = (cmd.length() == 2 &&
+                                  cmd.getLastStep().getType() == MoveStepType.START_JUMP);
+            keepDeployment = ((cmd.length() > 1) && !jumpDeploy && (deploymentAnchor(cmd) != null));
+        }
         clear(keepDeployment);
         Entity currentEntity = currentEntity();
 
@@ -2102,9 +2107,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void initializeJumpMovePath() {
-        addStepToMovePath(MoveStepType.START_JUMP);
-        if (jumpSubGear == GEAR_SUB_MEK_BOOSTERS) {
-            addStepToMovePath(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER);
+        Entity currentlySelectedEntity = currentEntity();
+        if ((currentlySelectedEntity != null) && currentlySelectedEntity.isDeployed()) {
+            addStepToMovePath(MoveStepType.START_JUMP);
+            if (jumpSubGear == GEAR_SUB_MEK_BOOSTERS) {
+                addStepToMovePath(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER);
+            }
         }
     }
 
@@ -2741,9 +2749,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 }
                 int elevation = deploymentPosition.elevation();
                 int facing = deploymentPosition.facing();
-                if (game.getBoard(boardId)
-                        .isLegalDeployment(coords,
-                                           currentlySelectedEntity) && !currentlySelectedEntity.isLocationProhibited(
+                if (game.getBoard(boardId).isLegalDeployment(coords, currentlySelectedEntity)
+                    && !currentlySelectedEntity.isLocationProhibited(
                         coords,
                         boardId,
                         elevation)) {
@@ -2751,6 +2758,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     currentlySelectedEntity.setBoardId(boardId);
                     currentlySelectedEntity.setElevation(elevation);
                     currentlySelectedEntity.setFacing(facing);
+                    currentlySelectedEntity.setSecondaryFacing(facing);
                     currentlySelectedEntity.setDeployed(true);
                     cmd = new MovePath(game, currentlySelectedEntity);
                     addStepToMovePath(MoveStepType.DEPLOY);
@@ -2780,6 +2788,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // Check for deployment and shift held
         if (shiftHeld && cmd != null) {
             MoveStep lastStep = cmd.getLastStep();
+            if (lastStep.getType() == MoveStepType.START_JUMP) {
+                lastStep = cmd.getStep(0);
+            }
             if ((lastStep != null) && lastStep.getType() == MoveStepType.DEPLOY) {
                 processDeploymentTurn(currentlySelectedEntity, boardViewEvent.getCoords());
                 return;

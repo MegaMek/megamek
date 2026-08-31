@@ -630,8 +630,9 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         result.add(txtOffset, GBC.eol());
         result.add(lblWidth, GBC.std());
         result.add(txtWidth, GBC.eol());
-        if (Game.rulesManager.getRulesGame()
-                             .isWalkOnDeployment() && (currentPlayerStartPos != Board.START_CENTER && currentPlayerStartPos != Board.START_ANY)) {
+        if (Game.rulesManager.getRulesGame().isWalkOnDeployment() &&
+            (currentPlayerStartPos != Board.START_CENTER && currentPlayerStartPos != Board.START_ANY)
+            && !player.isBot()) {
             txtWidth.setEnabled(false);
         } else {
             txtWidth.setEnabled(true);
@@ -825,7 +826,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         if (Game.rulesManager.getRulesGame().isWalkOnDeployment() &&
             (currentPlayerStartPos != Board.START_CENTER &&
              currentPlayerStartPos != Board.START_ANY &&
-             currentPlayerStartPos < Board.NUM_ZONES)) {
+             currentPlayerStartPos < Board.NUM_ZONES) &&
+            !player.isBot()) {
             txtWidth.setEnabled(false);
         } else {
             txtWidth.setEnabled(true);
@@ -960,6 +962,24 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
         butText.get(currentPlayerStartPos).append(UIUtil.fontHTML(GUIPreferences.getInstance().getMyUnitColor()));
         butText.get(currentPlayerStartPos).append("\u2B24</FONT>");
+
+        if (Game.rulesManager.getRulesGame().isWalkOnDeployment() &&
+            (currentPlayerStartPos != Board.START_CENTER &&
+             currentPlayerStartPos != Board.START_ANY &&
+             currentPlayerStartPos <= Board.NUM_ZONES) &&
+            !player.isBot()) {
+            txtWidth.setValue(Game.rulesManager.getRulesGame()
+                                               .getDeploymentWidth(player,
+                                                                   currentPlayerStartPos,
+                                                                   (int) txtWidth.getValue()));
+            txtWidth.setEnabled(false);
+        } else {
+            txtWidth.setValue(Game.rulesManager.getRulesGame()
+                                               .getDeploymentWidth(player,
+                                                                   currentPlayerStartPos,
+                                                                   player.getStartWidth()));
+            txtWidth.setEnabled(true);
+        }
 
         // Turn off custom deployment if start is not Any
         if (currentPlayerStartPos == Board.START_ANY) {

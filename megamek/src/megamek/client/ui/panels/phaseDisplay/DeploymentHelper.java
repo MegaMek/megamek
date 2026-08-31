@@ -222,6 +222,10 @@ public class DeploymentHelper {
         int finalElevation;
         // Face the center of the board by default.
         int finalFacing = coords.direction(new Coords(board.getWidth() / 2, board.getHeight() / 2));
+        if (entity.getStartingPos() == Board.START_CENTER) {
+            // Center start facing outwards, not inwards.
+            finalFacing = (finalFacing + 3) % 6;
+        }
         var deploymentHelper = new AllowedDeploymentHelper(entity, coords, board,
                                                            board.getHex(coords), entity.getGame());
         List<ElevationOption> elevationOptions = deploymentHelper.findAllowedElevations();

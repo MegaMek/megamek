@@ -37,7 +37,9 @@ import java.awt.GridLayout;
 import java.util.Locale;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -47,6 +49,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 import megamek.client.ui.Messages;
+import megamek.common.Player;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
@@ -81,7 +84,7 @@ public final class VictoryHexPropertiesPane {
      *
      * @return what the user chose; on {@link Result#REMOVED} the caller removes the marker itself
      */
-    public static Result edit(JFrame frame, ObjectiveMarker marker) {
+    public static Result edit(JFrame frame, ObjectiveMarker marker, List<Player> players) {
         ObjectiveScoringScheme scheme = marker.getScoringScheme();
         JSpinner radiusSpinner = new JSpinner(
               new SpinnerNumberModel(marker.getControlRadius(), 0, ObjectiveMarker.MAX_CONTROL_RADIUS, 1));
@@ -117,7 +120,24 @@ public final class VictoryHexPropertiesPane {
         rateSpinner.addChangeListener(event -> refreshSchemeRows(controls));
         refreshSchemeRows(controls);
 
+        // who holds this point when the game begins, and whether it stays held once the zone empties.
+        // The two go together: without retention, resolution would set a starting controller back to
+        // nobody at the first End Phase and the choice would look broken
+        JComboBox<ControlChoice> startingControlCombo = new JComboBox<>();
+        startingControlCombo.addItem(ControlChoice.NOBODY);
+        for (Player player : players) {
+            startingControlCombo.addItem(new ControlChoice(player.getId(), player.getName()));
+        }
+        selectStartingControl(startingControlCombo, marker);
+        JCheckBox retainControlCheckbox = new JCheckBox();
+        retainControlCheckbox.setSelected(scheme.retainsControlWhenEmpty());
+        retainControlCheckbox.setToolTipText(Messages.getString("VictoryHex.retainControl.tooltip"));
+
         JPanel propertiesPanel = new JPanel(new GridLayout(0, 2));
+        propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.startingControl")));
+        propertiesPanel.add(startingControlCombo);
+        propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.retainControl")));
+        propertiesPanel.add(retainControlCheckbox);
         propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.radius")));
         propertiesPanel.add(radiusSpinner);
         propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.victoryPoints")));
@@ -148,6 +168,11 @@ public final class VictoryHexPropertiesPane {
         }
         if (result != 0) {
             return Result.CANCELLED;
+        }
+        scheme.setRetainsControlWhenEmpty(retainControlCheckbox.isSelected());
+        ControlChoice startingControl = (ControlChoice) startingControlCombo.getSelectedItem();
+        if (startingControl != null) {
+            marker.setController(ObjectiveMarker.NO_CONTROLLER, startingControl.playerId());
         }
         marker.setControlRadius((Integer) radiusSpinner.getValue());
         marker.setVictoryPointValue((Integer) victoryPointSpinner.getValue());
@@ -282,5 +307,40 @@ public final class VictoryHexPropertiesPane {
             }
             return this;
         }
+    }
+
+    /**
+     * One entry in the starting-control dropdown: a player, or nobody at all.
+     *
+     * @param playerId The player who starts in control, or {@link ObjectiveMarker#NO_CONTROLLER} for none
+     * @param label    What the dropdown shows
+     */
+    private record ControlChoice(int playerId, String label) {
+
+        static final ControlChoice NOBODY = new ControlChoice(ObjectiveMarker.NO_CONTROLLER,
+              Messages.getString("VictoryHex.startingControl.nobody"));
+
+        @Override
+        public String toString() {
+            return label;
+        }
+    }
+
+    /**
+     * Preselects whoever already holds the point, so reopening the pane shows the truth rather than
+     * resetting the choice.
+     *
+     * @param combo  The starting-control dropdown
+     * @param marker The point being edited
+     */
+    private static void selectStartingControl(JComboBox<ControlChoice> combo, ObjectiveMarker marker) {
+        int controllingPlayerId = marker.getControllingPlayerId();
+        for (int index = 0; index < combo.getItemCount(); index++) {
+            if (combo.getItemAt(index).playerId() == controllingPlayerId) {
+                combo.setSelectedIndex(index);
+                return;
+            }
+        }
+        combo.setSelectedItem(ControlChoice.NOBODY);
     }
 }

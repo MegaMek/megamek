@@ -190,7 +190,8 @@ public class VictorySetupDisplay extends StatusBarPhaseDisplay {
     }
 
     private void editMarker(Coords coords, ObjectiveMarker marker) {
-        VictoryHexPropertiesPane.Result result = VictoryHexPropertiesPane.edit(clientgui.getFrame(), marker);
+        VictoryHexPropertiesPane.Result result = VictoryHexPropertiesPane.edit(clientgui.getFrame(), marker,
+              game().getPlayersList());
         if (result == VictoryHexPropertiesPane.Result.REMOVED) {
             game().removeGroundObject(coords, marker);
             VICTORY_HEX_LOGGER.info("[VictoryHex] {} removed in the Victory Setup phase", coords.getBoardNum());

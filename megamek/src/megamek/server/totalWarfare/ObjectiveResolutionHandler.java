@@ -628,6 +628,11 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
      */
     private void storeControllerOnMarker(ObjectiveMarker marker, @Nullable Side controller) {
         if (controller == null) {
+            if (marker.getScoringScheme().retainsControlWhenEmpty()) {
+                // the point keeps whoever last held it: an empty zone is not the same as a lost one, which
+                // is what lets a mission use more points than a side has units to garrison
+                return;
+            }
             marker.setController(ObjectiveMarker.NO_CONTROLLER, ObjectiveMarker.NO_CONTROLLER);
         } else if (controller.isTeam()) {
             marker.setController(controller.id(), ObjectiveMarker.NO_CONTROLLER);

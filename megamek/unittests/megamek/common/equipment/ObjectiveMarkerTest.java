@@ -249,4 +249,36 @@ class ObjectiveMarkerTest {
         assertEquals(3, restoredScheme.getHeldTurns(2, ObjectiveScoringScheme.NO_SIDE));
         assertFalse(restoredScheme.isDecided());
     }
+
+    // --- control retention (a mission with more points than units) ---
+
+    @Test
+    void testControlIsNotRetainedByDefault() {
+        ObjectiveScoringScheme scheme = ObjectiveScoringScheme.hold(2,
+              ObjectiveScoringScheme.HoldCounting.CONSECUTIVE);
+        assertFalse(scheme.retainsControlWhenEmpty(),
+              "today's behaviour must be the default: an empty zone goes neutral");
+    }
+
+    @Test
+    void testRetentionSurvivesSerialization() throws Exception {
+        ObjectiveMarker marker = new ObjectiveMarker();
+        marker.getScoringScheme().setRetainsControlWhenEmpty(true);
+        marker.setController(ObjectiveMarker.NO_CONTROLLER, 3);
+
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream objectOutput = new ObjectOutputStream(bytes)) {
+            objectOutput.writeObject(marker);
+        }
+        ObjectiveMarker restored;
+        try (ObjectInputStream objectInput = new ObjectInputStream(
+              new ByteArrayInputStream(bytes.toByteArray()))) {
+            restored = (ObjectiveMarker) objectInput.readObject();
+        }
+
+        assertTrue(restored.getScoringScheme().retainsControlWhenEmpty(),
+              "a point set to keep its controller must still do so after being sent to a client");
+        assertEquals(3, restored.getControllingPlayerId(),
+              "and it must still remember who holds it");
+    }
 }

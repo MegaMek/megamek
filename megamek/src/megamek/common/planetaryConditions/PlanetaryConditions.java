@@ -39,6 +39,7 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import megamek.common.Messages;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
@@ -79,6 +80,7 @@ public class PlanetaryConditions implements Serializable {
     private boolean shiftWindStrength = false;
     private boolean isSleeting = false;
     private Atmosphere atmosphere = Atmosphere.STANDARD;
+    private AtmosphericTaint atmosphericTaint = AtmosphericTaint.BREATHABLE;
     private Fog fog = Fog.FOG_NONE;
     private int temperature = 25;
     private int oldTemperature = 25;
@@ -90,6 +92,12 @@ public class PlanetaryConditions implements Serializable {
           "PlanetaryConditions.DisplayableName.Temperature.ExtremeCold");
     private static final String MSG_NAME_TEMPERATURE_HEAT = Messages.getString(
           "PlanetaryConditions.DisplayableName.Temperature.ExtremeHeat");
+    private static final String MSG_DOOMED_TAINTED_ATMOSPHERE = Messages.getString(
+          "PlanetaryConditions.Doomed.TaintedAtmosphere");
+    private static final String MSG_DOOMED_TOXIC_ATMOSPHERE = Messages.getString(
+          "PlanetaryConditions.Doomed.ToxicAtmosphere");
+    private static final String MSG_CANNOT_LAUNCH = Messages.getString(
+          "PlanetaryConditions.Doomed.CannotLaunch");
     private static final String MSG_INDICATOR_TEMPERATURE_COLD = "\u2744";
     private static final String MSG_INDICATOR_TEMPERATURE_HEAT = "\uD83D\uDD25";
     private static final String MSG_INDICATOR_TEMPERATURE_NORMAL = "\uD83C\uDF21";
@@ -115,6 +123,7 @@ public class PlanetaryConditions implements Serializable {
         shiftWindDirection = other.shiftWindDirection;
         shiftWindStrength = other.shiftWindStrength;
         atmosphere = other.atmosphere;
+        atmosphericTaint = other.atmosphericTaint;
         temperature = other.temperature;
         gravity = other.gravity;
         emi = other.emi;
@@ -140,6 +149,7 @@ public class PlanetaryConditions implements Serializable {
         shiftWindDirection = conditions.shiftWindDirection;
         shiftWindStrength = conditions.shiftWindStrength;
         atmosphere = conditions.atmosphere;
+        atmosphericTaint = conditions.atmosphericTaint;
         temperature = conditions.temperature;
         gravity = conditions.gravity;
         emi = conditions.emi;
@@ -211,6 +221,24 @@ public class PlanetaryConditions implements Serializable {
 
     public Atmosphere getAtmosphere() {
         return atmosphere;
+    }
+
+    /**
+     * Sets how badly the air is fouled and in what way, per Tainted and Toxic Atmospheres (TO:AR p.54). This is
+     * independent of {@link #setAtmosphere(Atmosphere)}, which sets how much air there is rather than what is in it.
+     *
+     * @param atmosphericTaint the taint category and severity to use
+     */
+    public void setAtmosphericTaint(AtmosphericTaint atmosphericTaint) {
+        this.atmosphericTaint = atmosphericTaint;
+    }
+
+    /**
+     * @return how badly the air is fouled and in what way, per Tainted and Toxic Atmospheres (TO:AR p.54).
+     *       {@link AtmosphericTaint#BREATHABLE} is the default and has no effect on play.
+     */
+    public AtmosphericTaint getAtmosphericTaint() {
+        return atmosphericTaint;
     }
 
     public Fog getFog() {
@@ -454,6 +482,10 @@ public class PlanetaryConditions implements Serializable {
             mod += getTemperatureDifference(30, -30);
         }
 
+        // A flammable atmosphere makes fires easier to start, TO:AR p.54. The modifier is negative because ignition
+        // succeeds on a roll at or above the target number.
+        mod += getAtmosphericTaint().getIgniteModifier();
+
         return mod;
     }
 
@@ -590,6 +622,10 @@ public class PlanetaryConditions implements Serializable {
         if (getAtmosphere().isLighterThan(Atmosphere.THIN) && en.doomedInVacuum()) {
             return "vacuum";
         }
+        String taintReason = whyDoomedByAtmosphericTaint(en);
+        if (taintReason != null) {
+            return taintReason;
+        }
         if (getWind().isTornadoF4() && !(en instanceof Mek)) {
             return "tornado";
         }
@@ -602,6 +638,48 @@ public class PlanetaryConditions implements Serializable {
         }
         if (isExtremeTemperature() && en.doomedInExtremeTemp() && !Compute.isInBuilding(game, en)) {
             return "extreme temperature";
+        }
+        return null;
+    }
+
+    /**
+     * The unit prohibitions imposed by a tainted or toxic atmosphere, TO:AR p.54.
+     * <p>
+     * A tainted atmosphere requires every conventional infantry platoon in play to be XCT Troops equipped for tainted
+     * air. A toxic atmosphere additionally bars any vehicle without the Environmental Sealing chassis modification, and
+     * raises the infantry gear requirement to the stricter toxic standard. Infantry with the right XCT gear stay on the
+     * field in both cases, because TO:AUE p.163 states that appropriately equipped XCT Troops "may operate in
+     * environments where conventional infantry might otherwise be disallowed", and its construction rules
+     * (TO:AUE p.162) define toxic-atmosphere gear specifically.
+     * <p>
+     * BattleMeks, ProtoMeks, battle armor and aerospace units are sealed by construction and so are never barred.
+     *
+     * @param entity the unit to check
+     *
+     * @return the reason this unit cannot be fielded in this atmosphere, or {@code null} if it can
+     */
+    private @Nullable String whyDoomedByAtmosphericTaint(Entity entity) {
+        if (getAtmosphericTaint().isBreathable()) {
+            return null;
+        }
+        if (entity.isConventionalInfantry() && TaintedAtmosphereRules.requiresXctInfantry(getAtmosphericTaint())) {
+            boolean isEquippedForTheAir = (entity instanceof ConvInfantry convInfantry) &&
+                  (getAtmosphericTaint().isToxic() ?
+                        convInfantry.isXCTForToxicAtmosphere() :
+                        convInfantry.isXCTForTaintedAtmosphere());
+            if (isEquippedForTheAir) {
+                return null;
+            }
+            return getAtmosphericTaint().isToxic() ?
+                  MSG_DOOMED_TOXIC_ATMOSPHERE :
+                  MSG_DOOMED_TAINTED_ATMOSPHERE;
+        }
+        boolean isUnsealedVehicle = (entity instanceof Tank) && !entity.hasEnvironmentalSealing();
+        if (isUnsealedVehicle && TaintedAtmosphereRules.barsUnsealedVehicles(getAtmosphericTaint())) {
+            return MSG_DOOMED_TOXIC_ATMOSPHERE;
+        }
+        if (TaintedAtmosphereRules.barsJetPropelledCraft(entity, getAtmosphericTaint())) {
+            return MSG_CANNOT_LAUNCH;
         }
         return null;
     }
@@ -943,6 +1021,7 @@ public class PlanetaryConditions implements Serializable {
               ((temperature != 25) ? "; Temperature: " + temperature : "") +
               ((gravity != 1) ? "; Gravity: " + gravity : "") +
               (!atmosphere.isStandard() ? "; Pressure:" + atmosphere : "") +
+              (!atmosphericTaint.isBreathable() ? "; Taint:" + atmosphericTaint : "") +
               (!fog.isFogNone() ? "; Fog:" + fog : "") +
               (isBlowingSand() ? "; Blowing Sand" : "") +
               (isEMI() ? "; EMI" : "") +

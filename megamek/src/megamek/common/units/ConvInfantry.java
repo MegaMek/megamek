@@ -371,6 +371,40 @@ public class ConvInfantry extends Infantry {
         return hasSpecialization(XCT);
     }
 
+    /**
+     * Whether this platoon is Xenoplanetary Condition-Trained for a tainted atmosphere, TO:AUE p.162. That needs both
+     * the XCT specialization and an armor kit rated for tainted air: an Environment Suit (Light, Hostile or Marine) or
+     * a Spacesuit of any kind. Troops outfitted for one hazardous environment cannot be deployed in another, so the
+     * armor kit has to be checked as well as the specialization.
+     *
+     * @return {@code true} if this platoon may operate in a tainted atmosphere
+     */
+    public boolean isXCTForTaintedAtmosphere() {
+        return isXCT() && hasArmorKitFlag(MiscTypeFlag.S_TAINTED_ATMOSPHERE);
+    }
+
+    /**
+     * Whether this platoon is Xenoplanetary Condition-Trained for a toxic atmosphere, TO:AUE p.162. That needs both the
+     * XCT specialization and an armor kit rated for toxic air: an Environment Suit (Hostile or Marine) or a Spacesuit
+     * of any kind. A Light Environment Suit is enough for tainted air but not for toxic air, which is why this is a
+     * separate check from {@link #isXCTForTaintedAtmosphere()}.
+     *
+     * @return {@code true} if this platoon may operate in a toxic atmosphere
+     */
+    public boolean isXCTForToxicAtmosphere() {
+        return isXCT() && hasArmorKitFlag(MiscTypeFlag.S_TOXIC_ATMOSPHERE);
+    }
+
+    /**
+     * @param flag the armor kit flag to look for
+     *
+     * @return {@code true} if this platoon wears an armor kit carrying the given flag
+     */
+    private boolean hasArmorKitFlag(MiscTypeFlag flag) {
+        EquipmentType armorKit = getArmorKit();
+        return (armorKit != null) && armorKit.hasFlag(flag);
+    }
+
     @Override
     public double getPriceMultiplier() {
         double priceMultiplier = 1.0;

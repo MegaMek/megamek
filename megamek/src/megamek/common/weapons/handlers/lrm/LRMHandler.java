@@ -462,8 +462,8 @@ public class LRMHandler extends MissileWeaponHandler {
 
             // Get base infantry damage
             double toReturn = Compute.directBlowInfantryDamage(
-                  effectiveRack, bDirect ? toHit.getMoS() / 3 : 0,
-                  weaponType.getInfantryDamageClass(),
+                  effectiveRack, getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
 

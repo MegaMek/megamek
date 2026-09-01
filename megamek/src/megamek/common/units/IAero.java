@@ -57,6 +57,7 @@ import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryConditions.TaintedAtmosphereRules;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.logging.MMLogger;
@@ -731,7 +732,27 @@ public interface IAero {
     }
 
     default boolean canTakeOffHorizontally() {
-        return !isSpheroid() && (getCurrentThrust() > 0);
+        return !isSpheroid() && (getCurrentThrust() > 0) && !isLaunchProhibitedByAtmosphere();
+    }
+
+    /**
+     * Whether the air outside forbids this unit from launching at all. A flammable toxic atmosphere would be set
+     * alight by the exhaust, so jet-propelled units may not launch in the lower atmosphere (TO:AR p.54).
+     * <p>
+     * This sits on {@link IAero} rather than on the server so that the movement display greys the takeoff button out
+     * for exactly the cases the server would refuse.
+     *
+     * @return {@code true} if the atmosphere prohibits launching
+     */
+    default boolean isLaunchProhibitedByAtmosphere() {
+        Entity self = (Entity) this;
+        Game game = self.getGame();
+        if (game == null) {
+            return false;
+        }
+        boolean atmosphereBarsLaunching = TaintedAtmosphereRules.prohibitsLaunching(
+              game.getPlanetaryConditions().getAtmosphericTaint());
+        return atmosphereBarsLaunching && TaintedAtmosphereRules.isJetPropelled(self);
     }
 
     default boolean canLandHorizontally() {
@@ -745,6 +766,9 @@ public interface IAero {
         // only VSTOL and spheroids, which contradicted the vertical-liftoff roll's own "+2,
         // Fighter making vertical liftoff" modifier a few lines above. Aerodyne DropShips
         // (vacuum-only rule) have their own override.
+        if (isLaunchProhibitedByAtmosphere()) {
+            return false;
+        }
         if (getCurrentThrust() < 2) {
             return false;
         }

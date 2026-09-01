@@ -462,6 +462,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         GUIP.setNagForDoomed(false);
                     }
                 } else {
+                    takeBackDeployment(entity, reason);
                     return true;
                 }
             }
@@ -487,6 +488,27 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             clientgui.getClient().sendEntityWeaponOrderUpdate(entity);
         }
         endMyTurn();
+    }
+
+    /**
+     * Lifts a unit back off the board after the player declines to deploy it into conditions that would kill it.
+     * <p>
+     * Declining used to change nothing the player could see: the unit kept the position it had been given, the Deploy
+     * button stayed armed, and pressing it again asked the same question, which reads as a dialog that will not take
+     * No for an answer. Taking the unit back off the board ends that, and leaves the player free to place it
+     * somewhere else, pick a different unit, or come back and accept.
+     *
+     * @param entity the unit being taken back off the board
+     * @param reason the reason the conditions would destroy it, as {@code whyDoomed} gave it
+     */
+    private void takeBackDeployment(Entity entity, String reason) {
+        entity.setPosition(null);
+        clientgui.boardViews().forEach(boardView -> ((BoardView) boardView).redrawEntity(entity));
+        clientgui.boardViews().forEach(IBoardView::repaint);
+        butDone.setEnabled(false);
+        clientgui.addToast(ToastLevel.INFO,
+              Messages.getString("DeploymentDisplay.doomedDeploymentCancelled", reason),
+              entity);
     }
 
     /** Sends an entity removal to the server. */

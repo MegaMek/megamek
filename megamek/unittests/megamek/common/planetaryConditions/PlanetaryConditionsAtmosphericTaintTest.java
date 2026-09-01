@@ -105,7 +105,7 @@ class PlanetaryConditionsAtmosphericTaintTest {
     @Test
     @DisplayName("Tainted air turns away infantry without the XCT gear for it")
     void taintedAirDoomsInfantryWithoutTaintedGear() {
-        PlanetaryConditions conditions = conditionsWith(AtmosphericTaint.CAUSTIC_TAINTED);
+        PlanetaryConditions conditions = conditionsWith(AtmosphericTaint.TAINTED_CAUSTIC);
 
         assertNotNull(conditions.whyDoomed(platoon(false, false), game),
               "A platoon with no tainted-atmosphere gear cannot be fielded");
@@ -116,7 +116,7 @@ class PlanetaryConditionsAtmosphericTaintTest {
     @Test
     @DisplayName("Toxic air needs the stricter XCT gear; tainted-only gear is not enough")
     void toxicAirNeedsToxicGear() {
-        PlanetaryConditions conditions = conditionsWith(AtmosphericTaint.RADIOLOGICAL_TOXIC);
+        PlanetaryConditions conditions = conditionsWith(AtmosphericTaint.TOXIC_POISON);
 
         assertNotNull(conditions.whyDoomed(platoon(true, false), game),
               "A Light Environment Suit is not enough for toxic air");
@@ -127,11 +127,11 @@ class PlanetaryConditionsAtmosphericTaintTest {
     @Test
     @DisplayName("Tainted air leaves vehicles alone; toxic air turns away the unsealed ones")
     void toxicAirDoomsUnsealedVehicles() {
-        PlanetaryConditions taintedConditions = conditionsWith(AtmosphericTaint.CAUSTIC_TAINTED);
+        PlanetaryConditions taintedConditions = conditionsWith(AtmosphericTaint.TAINTED_CAUSTIC);
         assertNull(taintedConditions.whyDoomed(vehicle(false), game),
               "A tainted atmosphere does not bar an unsealed vehicle");
 
-        PlanetaryConditions toxicConditions = conditionsWith(AtmosphericTaint.CAUSTIC_TOXIC);
+        PlanetaryConditions toxicConditions = conditionsWith(AtmosphericTaint.TOXIC_CAUSTIC);
         assertNotNull(toxicConditions.whyDoomed(vehicle(false), game),
               "A toxic atmosphere bars a vehicle without Environmental Sealing");
         assertNull(toxicConditions.whyDoomed(vehicle(true), game),
@@ -144,7 +144,7 @@ class PlanetaryConditionsAtmosphericTaintTest {
         // The footnote that bars hover, WiGE and VTOL vehicles belongs to vacuum and trace atmospheres. Official
         // ruling: "WIGEs, VTOLs, and hovercraft would work fine in uninhabitable atmospheres of sufficient
         // thickness." A tainted or toxic atmosphere has air, so only the Environmental Sealing requirement applies.
-        PlanetaryConditions conditions = conditionsWith(AtmosphericTaint.CAUSTIC_TOXIC);
+        PlanetaryConditions conditions = conditionsWith(AtmosphericTaint.TOXIC_CAUSTIC);
 
         for (EntityMovementMode movementMode : List.of(EntityMovementMode.HOVER,
               EntityMovementMode.WIGE,
@@ -174,8 +174,8 @@ class PlanetaryConditionsAtmosphericTaintTest {
     @Test
     @DisplayName("A flammable atmosphere bars nobody; it burns the ground, not the crews")
     void flammableAirDoomsNobody() {
-        PlanetaryConditions taintedConditions = conditionsWith(AtmosphericTaint.FLAMMABLE_TAINTED);
-        PlanetaryConditions toxicConditions = conditionsWith(AtmosphericTaint.FLAMMABLE_TOXIC);
+        PlanetaryConditions taintedConditions = conditionsWith(AtmosphericTaint.TAINTED_FLAME);
+        PlanetaryConditions toxicConditions = conditionsWith(AtmosphericTaint.TOXIC_FLAME);
 
         assertNull(taintedConditions.whyDoomed(vehicle(false), game));
         assertNull(toxicConditions.whyDoomed(vehicle(false), game));
@@ -185,8 +185,8 @@ class PlanetaryConditionsAtmosphericTaintTest {
     @DisplayName("A flammable atmosphere makes fires easier to start, on top of the weather")
     void flammableAirLowersTheIgnitionTarget() {
         PlanetaryConditions breathable = conditionsWith(AtmosphericTaint.BREATHABLE);
-        PlanetaryConditions flammableTainted = conditionsWith(AtmosphericTaint.FLAMMABLE_TAINTED);
-        PlanetaryConditions flammableToxic = conditionsWith(AtmosphericTaint.FLAMMABLE_TOXIC);
+        PlanetaryConditions flammableTainted = conditionsWith(AtmosphericTaint.TAINTED_FLAME);
+        PlanetaryConditions flammableToxic = conditionsWith(AtmosphericTaint.TOXIC_FLAME);
 
         int baseModifier = breathable.getIgniteModifiers();
         assertEquals(baseModifier - 2, flammableTainted.getIgniteModifiers());
@@ -196,20 +196,20 @@ class PlanetaryConditionsAtmosphericTaintTest {
     @Test
     @DisplayName("The taint setting survives being copied to a client")
     void taintSurvivesCopying() {
-        PlanetaryConditions original = conditionsWith(AtmosphericTaint.RADIOLOGICAL_TAINTED);
+        PlanetaryConditions original = conditionsWith(AtmosphericTaint.TAINTED_POISON);
 
         PlanetaryConditions copy = new PlanetaryConditions(original);
-        assertEquals(AtmosphericTaint.RADIOLOGICAL_TAINTED, copy.getAtmosphericTaint());
+        assertEquals(AtmosphericTaint.TAINTED_POISON, copy.getAtmosphericTaint());
 
         PlanetaryConditions altered = new PlanetaryConditions();
         altered.alterConditions(original);
-        assertEquals(AtmosphericTaint.RADIOLOGICAL_TAINTED, altered.getAtmosphericTaint());
+        assertEquals(AtmosphericTaint.TAINTED_POISON, altered.getAtmosphericTaint());
     }
 
     @Test
     @DisplayName("The taint setting survives the Java serialization used to send conditions to clients")
     void taintSurvivesSerialization() throws IOException, ClassNotFoundException {
-        PlanetaryConditions original = conditionsWith(AtmosphericTaint.FLAMMABLE_TOXIC);
+        PlanetaryConditions original = conditionsWith(AtmosphericTaint.TOXIC_FLAME);
 
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         try (ObjectOutputStream objectOutput = new ObjectOutputStream(bytes)) {
@@ -220,7 +220,7 @@ class PlanetaryConditionsAtmosphericTaintTest {
             restored = (PlanetaryConditions) objectInput.readObject();
         }
 
-        assertEquals(AtmosphericTaint.FLAMMABLE_TOXIC, restored.getAtmosphericTaint());
+        assertEquals(AtmosphericTaint.TOXIC_FLAME, restored.getAtmosphericTaint());
     }
 
     @Test

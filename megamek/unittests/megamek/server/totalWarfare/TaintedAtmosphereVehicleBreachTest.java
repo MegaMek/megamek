@@ -92,7 +92,7 @@ class TaintedAtmosphereVehicleBreachTest {
     @Test
     @DisplayName("The first breach in toxic air kills the crew")
     void firstBreachKillsTheCrew() {
-        Tank tank = vehicleInAir(AtmosphericTaint.CAUSTIC_TOXIC);
+        Tank tank = vehicleInAir(AtmosphericTaint.TOXIC_CAUSTIC);
 
         Vector<Report> reports = handler.resolveVehicleBreach(tank, Tank.LOC_RIGHT);
 
@@ -106,7 +106,7 @@ class TaintedAtmosphereVehicleBreachTest {
     @Test
     @DisplayName("Later breaches in the same salvo do not kill an already dead crew again")
     void aSecondBreachDoesNotKillTheCrewTwice() {
-        Tank tank = vehicleInAir(AtmosphericTaint.CAUSTIC_TOXIC);
+        Tank tank = vehicleInAir(AtmosphericTaint.TOXIC_CAUSTIC);
         handler.resolveVehicleBreach(tank, Tank.LOC_RIGHT);
 
         Vector<Report> secondBreachReports = handler.resolveVehicleBreach(tank, Tank.LOC_FRONT);
@@ -120,7 +120,7 @@ class TaintedAtmosphereVehicleBreachTest {
     @Test
     @DisplayName("A breach in caustic tainted air stuns the crew instead of killing it")
     void aBreachInTaintedAirStunsTheCrew() {
-        Tank tank = vehicleInAir(AtmosphericTaint.CAUSTIC_TAINTED);
+        Tank tank = vehicleInAir(AtmosphericTaint.TAINTED_CAUSTIC);
 
         Vector<Report> reports = handler.resolveVehicleBreach(tank, Tank.LOC_RIGHT);
 
@@ -133,7 +133,7 @@ class TaintedAtmosphereVehicleBreachTest {
     @Test
     @DisplayName("A breach in air that the rules give no breach effect for harms nobody")
     void aBreachInFlammableAirHarmsNobody() {
-        Tank tank = vehicleInAir(AtmosphericTaint.FLAMMABLE_TAINTED);
+        Tank tank = vehicleInAir(AtmosphericTaint.TAINTED_FLAME);
 
         Vector<Report> reports = handler.resolveVehicleBreach(tank, Tank.LOC_RIGHT);
 

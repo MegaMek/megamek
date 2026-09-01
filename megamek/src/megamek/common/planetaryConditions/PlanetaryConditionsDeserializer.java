@@ -69,16 +69,14 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
 
     private static final MMLogger LOGGER = MMLogger.create(PlanetaryConditionsDeserializer.class);
 
-
-
     static final Map<String, AtmosphericTaint> TAINT_VALUES = Map.of(
           "breathable", AtmosphericTaint.BREATHABLE,
-          "caustic tainted", AtmosphericTaint.CAUSTIC_TAINTED,
-          "caustic toxic", AtmosphericTaint.CAUSTIC_TOXIC,
-          "radiological tainted", AtmosphericTaint.RADIOLOGICAL_TAINTED,
-          "radiological toxic", AtmosphericTaint.RADIOLOGICAL_TOXIC,
-          "flammable tainted", AtmosphericTaint.FLAMMABLE_TAINTED,
-          "flammable toxic", AtmosphericTaint.FLAMMABLE_TOXIC);
+          "tainted caustic", AtmosphericTaint.TAINTED_CAUSTIC,
+          "tainted poison", AtmosphericTaint.TAINTED_POISON,
+          "tainted flame", AtmosphericTaint.TAINTED_FLAME,
+          "toxic caustic", AtmosphericTaint.TOXIC_CAUSTIC,
+          "toxic poison", AtmosphericTaint.TOXIC_POISON,
+          "toxic flame", AtmosphericTaint.TOXIC_FLAME);
 
     static final Map<String, Fog> FOG_VALUES = Map.of("none", Fog.FOG_NONE,
           "light", Fog.FOG_LIGHT, "heavy", Fog.FOG_HEAVY);

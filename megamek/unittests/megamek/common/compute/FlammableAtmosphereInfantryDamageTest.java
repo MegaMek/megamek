@@ -79,7 +79,7 @@ class FlammableAtmosphereInfantryDamageTest {
      * @return the row its damage should be read off instead
      */
     private int shiftedByFlammableTaintedAir(int baseDamageClass) {
-        int rowsBetter = TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.FLAMMABLE_TAINTED);
+        int rowsBetter = TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.TAINTED_FLAME);
         int shiftedClass = baseDamageClass + rowsBetter;
         return (shiftedClass > WeaponType.WEAPON_CLUSTER_MISSILE)
               ? WeaponType.WEAPON_AREA_EFFECT_INFANTRY
@@ -99,7 +99,7 @@ class FlammableAtmosphereInfantryDamageTest {
     @Test
     @DisplayName("Flammable tainted air shifts direct fire two rows, to the pulse row")
     void flammableTaintedAirShiftsDirectFireToPulse() {
-        assertEquals(2, TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.FLAMMABLE_TAINTED),
+        assertEquals(2, TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.TAINTED_FLAME),
               "flammable tainted air shifts two rows");
 
         int inBreathableAir = troopersHit(50, WeaponType.WEAPON_DIRECT_FIRE, NO_MARGIN_OF_SUCCESS);
@@ -158,7 +158,7 @@ class FlammableAtmosphereInfantryDamageTest {
     @Test
     @DisplayName("A direct blow and a flammable atmosphere shift the same attack together")
     void aDirectBlowAndTheAtmosphereBothShift() {
-        int atmosphereShift = TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.FLAMMABLE_TAINTED);
+        int atmosphereShift = TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.TAINTED_FLAME);
         int directBlowShift = 1;
 
         int shiftedByBoth = troopersHit(50, WeaponType.WEAPON_DIRECT_FIRE, directBlowShift + atmosphereShift);
@@ -171,7 +171,7 @@ class FlammableAtmosphereInfantryDamageTest {
     @Test
     @DisplayName("Flammable toxic air applies an attack's damage point for point, skipping the table")
     void flammableToxicAirAppliesDamageDirectly() {
-        assertTrue(TaintedAtmosphereRules.treatsAttacksOnInfantryAsInfantryDamage(AtmosphericTaint.FLAMMABLE_TOXIC),
+        assertTrue(TaintedAtmosphereRules.treatsAttacksOnInfantryAsInfantryDamage(AtmosphericTaint.TOXIC_FLAME),
               "flammable toxic air resolves attacks as though infantry had made them");
 
         int damageValue = 50;
@@ -241,9 +241,9 @@ class FlammableAtmosphereInfantryDamageTest {
               baseDamageClass <= WeaponType.WEAPON_CLUSTER_MISSILE;
               baseDamageClass++) {
             int inTaintedAir = troopersHit(damageValue,
-                  resolvedDamageClass(baseDamageClass, AtmosphericTaint.FLAMMABLE_TAINTED), NO_MARGIN_OF_SUCCESS);
+                  resolvedDamageClass(baseDamageClass, AtmosphericTaint.TAINTED_FLAME), NO_MARGIN_OF_SUCCESS);
             int inToxicAir = troopersHit(damageValue,
-                  resolvedDamageClass(baseDamageClass, AtmosphericTaint.FLAMMABLE_TOXIC), NO_MARGIN_OF_SUCCESS);
+                  resolvedDamageClass(baseDamageClass, AtmosphericTaint.TOXIC_FLAME), NO_MARGIN_OF_SUCCESS);
 
             assertTrue(inToxicAir >= inTaintedAir,
                   "damage class " + baseDamageClass + " came out gentler in toxic air: " + inToxicAir
@@ -257,9 +257,9 @@ class FlammableAtmosphereInfantryDamageTest {
         // The shift moves it onto area-effect, and an area-effect attack is exempt from the toxic row's
         // infantry-origin rule, so it keeps the doubled damage rather than dropping to point for point.
         assertEquals(WeaponType.WEAPON_AREA_EFFECT_INFANTRY,
-              resolvedDamageClass(WeaponType.WEAPON_CLUSTER_MISSILE, AtmosphericTaint.FLAMMABLE_TOXIC));
-        assertEquals(resolvedDamageClass(WeaponType.WEAPON_CLUSTER_MISSILE, AtmosphericTaint.FLAMMABLE_TAINTED),
-              resolvedDamageClass(WeaponType.WEAPON_CLUSTER_MISSILE, AtmosphericTaint.FLAMMABLE_TOXIC),
+              resolvedDamageClass(WeaponType.WEAPON_CLUSTER_MISSILE, AtmosphericTaint.TOXIC_FLAME));
+        assertEquals(resolvedDamageClass(WeaponType.WEAPON_CLUSTER_MISSILE, AtmosphericTaint.TAINTED_FLAME),
+              resolvedDamageClass(WeaponType.WEAPON_CLUSTER_MISSILE, AtmosphericTaint.TOXIC_FLAME),
               "a cluster missile attack resolves the same way at either strength");
     }
 
@@ -268,9 +268,9 @@ class FlammableAtmosphereInfantryDamageTest {
     void directFireBecomesInfantryOriginInToxicAir() {
         // Direct fire shifts two rows to pulse, which is not area-effect, so the toxic rule still catches it.
         assertEquals(WeaponType.WEAPON_PULSE,
-              resolvedDamageClass(WeaponType.WEAPON_DIRECT_FIRE, AtmosphericTaint.FLAMMABLE_TAINTED));
+              resolvedDamageClass(WeaponType.WEAPON_DIRECT_FIRE, AtmosphericTaint.TAINTED_FLAME));
         assertEquals(WeaponType.WEAPON_INFANTRY_ORIGIN,
-              resolvedDamageClass(WeaponType.WEAPON_DIRECT_FIRE, AtmosphericTaint.FLAMMABLE_TOXIC));
+              resolvedDamageClass(WeaponType.WEAPON_DIRECT_FIRE, AtmosphericTaint.TOXIC_FLAME));
 
         assertTrue(troopersHit(50, WeaponType.WEAPON_INFANTRY_ORIGIN, NO_MARGIN_OF_SUCCESS)
                     > troopersHit(50, WeaponType.WEAPON_PULSE, NO_MARGIN_OF_SUCCESS),

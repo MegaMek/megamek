@@ -156,4 +156,32 @@ class VictorySetupPhaseTest {
         realGame.changeToNextTurn();
         assertFalse(realGame.isCurrentPhasePlayable());
     }
+
+    // --- scenario games (they never execute the starting phase, only end it) ---
+
+    @Test
+    void testAScenarioRunsTheObjectivesPassOnItsWayOutOfTheStartingPhase() {
+        gameOptions.getOption(OptionsConstants.VICTORY_USE_OBJECTIVES).setValue(true);
+        when(game.getPhase()).thenReturn(GamePhase.STARTING_SCENARIO);
+
+        phaseEndManager.managePhase();
+
+        // a scenario sets its phase with the plain setter, so executeCurrentPhase never runs for it;
+        // putting the pass anywhere but here leaves scenario starting victory points unawarded
+        verify(gameManager).placeLobbyObjectives();
+        verify(gameManager).changePhase(GamePhase.VICTORY_SETUP);
+    }
+
+    @Test
+    void testAScenarioStillRunsTheObjectivesPassWithTheOptionOff() {
+        gameOptions.getOption(OptionsConstants.VICTORY_USE_OBJECTIVES).setValue(false);
+        when(game.getPhase()).thenReturn(GamePhase.STARTING_SCENARIO);
+
+        phaseEndManager.managePhase();
+
+        // the pass also carries the warning that nothing can end the game, which is worth saying
+        // whether or not this particular game reaches the setup phase
+        verify(gameManager).placeLobbyObjectives();
+        verify(gameManager).changePhase(GamePhase.SET_ARTILLERY_AUTO_HIT_HEXES);
+    }
 }

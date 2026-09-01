@@ -62,6 +62,12 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 break;
             case EXCHANGE:
             case STARTING_SCENARIO:
+                // A scenario sets this phase with the plain setter rather than changePhase, so
+                // executeCurrentPhase never runs for it and anything put there is dead code for the one
+                // path that needs it. The phase END does run - it is what moves the game on - so the
+                // objectives pass belongs here: it applies scenario starting victory points and warns
+                // when nothing can end the game. Markers themselves arrive with the scenario file.
+                gameManager.placeLobbyObjectives();
                 gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                 // objectives are placed before artillery is pre-sighted and mines are laid: both of those
                 // decisions depend on knowing where the objectives are

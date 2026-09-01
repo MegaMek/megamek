@@ -2362,14 +2362,6 @@ public class TWGameManager extends AbstractGameManager {
                 datasetLogger.append(game.getMapSettings(), true);
                 datasetLogger.append(game.getPlanetaryConditions(), true);
                 break;
-            case STARTING_SCENARIO:
-                // scenario-started games never run the Exchange bookkeeping above, but the objectives
-                // pass must still run: it places markers assigned to players before launch (the MekHQ
-                // path), applies scenario starting victory points, and warns when nothing can end the
-                // game (scenario files place their own objectives: markers at load, so those are
-                // unaffected either way)
-                placeLobbyObjectives();
-                break;
             case MOVEMENT:
                 // write Movement Phase header to report
                 addReport(new Report(2000, Report.PUBLIC));

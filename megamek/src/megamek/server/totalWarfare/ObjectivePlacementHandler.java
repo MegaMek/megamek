@@ -175,16 +175,17 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
                 continue;
             }
             boolean isTeamed = player.getTeam() != Player.TEAM_NONE;
-            String sideName;
             if (isTeamed) {
                 tracker.awardToTeam(player.getTeam(), startingPoints, getGame().getCurrentRound(),
                       "scenario starting victory points of " + player.getName());
-                sideName = "Team " + player.getTeam();
             } else {
                 tracker.awardToPlayer(player.getId(), startingPoints, getGame().getCurrentRound(),
                       "scenario starting victory points");
-                sideName = player.getName();
             }
+            // the points go to the team's pool when there is a team, but the report names the faction
+            // that brought them: teams have no names of their own, only "Team 1", "Team 2" and so on,
+            // which tells a player nothing about whose mission this is
+            String sideName = player.getName();
             Report report = new Report(REPORT_STARTING_VICTORY_POINTS, Report.PUBLIC);
             report.add(sideName);
             report.add(startingPoints);

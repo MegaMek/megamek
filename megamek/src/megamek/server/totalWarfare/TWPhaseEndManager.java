@@ -73,10 +73,11 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 // game on. Markers themselves arrive with the scenario file; what this pass adds is the
                 // scenario's starting victory points and the warning that nothing can end the game.
                 gameManager.placeLobbyObjectives();
+                // deliberately not cleared afterwards: nothing reports again until the first initiative
+                // report, so these lines have to survive in the phase report until then. Clearing here
+                // removed them from the round report entirely. The cost is that intermediate phase ends
+                // copy them into the stored round report more than once
                 gameManager.getGame().addReports(gameManager.getMainPhaseReport());
-                // and clear them, or every later pre-game phase end copies the same lines into the round
-                // report again - the starting points were reported three times before this
-                gameManager.clearReports();
                 leaveTheStartingPhase();
                 break;
             case VICTORY_SETUP:

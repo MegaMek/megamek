@@ -41,9 +41,13 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.Entity;
+import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
 
 record TWPhaseEndManager(TWGameManager gameManager) {
+
+    /** Feature logger for the objectives diagnostics; enabled via the log4j2.xml VictoryHex block. */
+    private static final MMLogger VICTORY_HEX_LOGGER = MMLogger.create("megamek.feature.VictoryHex");
 
     void managePhase() {
         switch (gameManager.getGame().getPhase()) {
@@ -400,6 +404,11 @@ record TWPhaseEndManager(TWGameManager gameManager) {
      * decisions depend on knowing where the objectives are.
      */
     private void leaveTheStartingPhase() {
+        // which starting phase a game leaves from decides whether the objectives pass ran: a lobby game
+        // goes through EXCHANGE, a scenario through STARTING_SCENARIO. Without this the log cannot say
+        // which route was taken, and the two failures look identical
+        VICTORY_HEX_LOGGER.debug("[Objective] leaving the starting phase {}",
+              gameManager.getGame().getPhase());
         boolean usesObjectives = gameManager.getGame().getOptions()
               .booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES);
         // the ground-object map is keyed by hex alone, with no board id, so objectives can only address

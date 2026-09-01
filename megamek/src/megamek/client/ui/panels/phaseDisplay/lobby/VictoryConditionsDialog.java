@@ -36,6 +36,7 @@ package megamek.client.ui.panels.phaseDisplay.lobby;
 import java.awt.Container;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Set;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.BorderFactory;
@@ -45,8 +46,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JTabbedPane;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.panels.VictoryOptionLayout;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.clientGUI.DialogOptionListener;
@@ -57,6 +60,7 @@ import megamek.common.options.BasicOption;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
+import megamek.common.options.OptionsConstants;
 import megamek.common.options.IOptionGroup;
 
 /**
@@ -74,10 +78,21 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
      */
     public static final String VICTORY_OPTIONS_GROUP_NAME = "victory";
 
+    /**
+     * The objective options, which get a tab of their own. Everything else in the victory group is the
+     * long-standing set and stays on the first tab.
+     */
+    private static final Set<String> OBJECTIVE_OPTIONS = Set.of(
+          OptionsConstants.VICTORY_USE_OBJECTIVES,
+          OptionsConstants.VICTORY_VP_WIN_THRESHOLD,
+          OptionsConstants.VICTORY_VP_LOSS_THRESHOLD,
+          OptionsConstants.VICTORY_VP_SUDDEN_DEATH);
+
     private final ClientGUI clientGui;
     private final JPanel victoryOptionsPanel = new JPanel();
     private final List<DialogOptionComponentYPanel> victoryOptionComps = new ArrayList<>();
     private final JTextField fieldPassword = new JTextField(15);
+    private final JPanel objectiveOptionsPanel = new JPanel();
 
     public VictoryConditionsDialog(ClientGUI clientGui) {
         super(clientGui.getFrame(), "VictoryConditionsDialog", "VictoryConditionsDialog.title");
@@ -89,6 +104,7 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
     /** Refreshes the victory option values from the game options; call before showing the dialog. */
     public void refreshLobbyState() {
         victoryOptionsPanel.removeAll();
+        objectiveOptionsPanel.removeAll();
         victoryOptionComps.clear();
         for (Enumeration<IOptionGroup> groups = clientGui.getClient().getGame().getOptions().getGroups();
               groups.hasMoreElements(); ) {
@@ -101,10 +117,19 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
                 IOption option = optionsEnumeration.nextElement();
                 DialogOptionComponentYPanel optionComponent = new DialogOptionComponentYPanel(this, option, true);
                 victoryOptionComps.add(optionComponent);
-                victoryOptionsPanel.add(optionComponent);
+                if (OBJECTIVE_OPTIONS.contains(option.getName())) {
+                    objectiveOptionsPanel.add(optionComponent);
+                } else {
+                    victoryOptionsPanel.add(optionComponent);
+                }
             }
         }
+        // bounded number fields, and greying out for anything that needs a master switch - the same rules
+        // the game options pane applies, so the two places agree about what a legal setting is
+        VictoryOptionLayout.apply(victoryOptionComps);
+        objectiveOptionsPanel.add(new JLabel(Messages.getString("VictoryConditionsDialog.objectivesNote")));
         victoryOptionsPanel.revalidate();
+        objectiveOptionsPanel.revalidate();
     }
 
     @Override
@@ -114,18 +139,24 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         result.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
 
         victoryOptionsPanel.setLayout(new BoxLayout(victoryOptionsPanel, BoxLayout.PAGE_AXIS));
-        JScrollPane victoryOptionsScroll = new JScrollPane(victoryOptionsPanel);
-        victoryOptionsScroll.setBorder(BorderFactory.createTitledBorder(
-              Messages.getString("VictoryConditionsDialog.victoryOptions")));
+        objectiveOptionsPanel.setLayout(new BoxLayout(objectiveOptionsPanel, BoxLayout.PAGE_AXIS));
+
+        // two tabs: the long-standing victory conditions, and the objectives that used to be buried at the
+        // bottom of the same flat list with nothing to mark them out as a different kind of decision
+        JTabbedPane tabs = new JTabbedPane();
+        tabs.addTab(Messages.getString("VictoryConditionsDialog.tab.conditions"),
+              new JScrollPane(victoryOptionsPanel));
+        tabs.addTab(Messages.getString("VictoryConditionsDialog.tab.objectives"),
+              new JScrollPane(objectiveOptionsPanel));
         // without a preferred size, pack() squeezes the option rows into a double-scrollbar box; the user
         // can still resize the dialog, and the size is remembered while MegaMek runs (saved on normal exit)
-        victoryOptionsScroll.setPreferredSize(UIUtil.scaleForGUI(560, 420));
+        tabs.setPreferredSize(UIUtil.scaleForGUI(560, 420));
 
         JPanel passwordPanel = new FixedYPanel();
         passwordPanel.add(new JLabel(Messages.getString("VictoryConditionsDialog.password")));
         passwordPanel.add(fieldPassword);
 
-        result.add(victoryOptionsScroll);
+        result.add(tabs);
         result.add(Box.createVerticalStrut(5));
         result.add(passwordPanel);
         return result;

@@ -47,9 +47,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Partial cover is a Mek rule: only a standing Mek receives it (TW p.102), including from a Level 1 building
- * (TW p.171). Large support vehicles, small craft and DropShips never do even though they are tall, and ProtoMeks
- * never do. These tests pin the rule itself and the short-building check that used to hand cover to any tall unit.
+ * Partial cover is a Mek rule: only a standing Mek receives it (TW p.102; Core p.66), including from a Level 1
+ * building (TW p.171; Core p.66, p.136). Large support vehicles, small craft and DropShips never do even though they
+ * are tall, and ProtoMeks never do. Extending that to a Mek one level below the roof of a taller building is
+ * TW p.171 only - the Core Rulebook states the Level 1 case alone. These tests pin the rule itself and the
+ * short-building check that used to hand cover to any tall unit.
  */
 @DisplayName("Partial cover eligibility")
 class PartialCoverEligibilityTest extends GameBoardTestCase {
@@ -87,10 +89,10 @@ class PartialCoverEligibilityTest extends GameBoardTestCase {
     @DisplayName("Only a Mek can receive partial cover")
     void onlyMeksReceivePartialCover() {
         assertTrue(PartialCover.canReceive(new BipedMek()), "a standing Mek receives partial cover");
-        assertFalse(PartialCover.canReceive(new ProtoMek()), "ProtoMeks never benefit (TW p.102)");
+        assertFalse(PartialCover.canReceive(new ProtoMek()), "ProtoMeks never benefit (TW p.102; Core p.66)");
         assertFalse(PartialCover.canReceive(new Tank()), "vehicles do not receive partial cover");
         assertFalse(PartialCover.canReceive(new LargeSupportTank()),
-              "large support vehicles never receive partial cover, however tall (TW p.102)");
+              "large support vehicles never receive partial cover, however tall (TW p.102; Core p.66)");
         assertFalse(PartialCover.canReceive(new BattleArmor()), "battle armor does not receive cover");
         assertFalse(PartialCover.canReceive(null), "no target, no cover");
     }
@@ -102,7 +104,7 @@ class PartialCoverEligibilityTest extends GameBoardTestCase {
         BipedMek mek = placeInBuilding(new BipedMek());
 
         assertTrue(WeaponAttackAction.targetInShortCoverBuilding(mek),
-              "a standing Mek in a Level 1 building receives partial cover (TW p.171)");
+              "a standing Mek in a Level 1 building receives partial cover (TW p.171; Core p.66, p.136)");
     }
 
     @Test
@@ -112,7 +114,7 @@ class PartialCoverEligibilityTest extends GameBoardTestCase {
         BipedMek mek = placeInBuilding(new BipedMek(), 0);
 
         assertFalse(WeaponAttackAction.targetInShortCoverBuilding(mek),
-              "two levels of building over a standing Mek is no partial cover (TW p.171)");
+              "two levels of building over a standing Mek is no partial cover (TW p.171; Core p.66, p.136)");
     }
 
     @Test
@@ -122,7 +124,7 @@ class PartialCoverEligibilityTest extends GameBoardTestCase {
         BipedMek mek = placeInBuilding(new BipedMek(), 1);
 
         assertTrue(WeaponAttackAction.targetInShortCoverBuilding(mek),
-              "a standing Mek one level below the roof receives partial cover (TW p.171)");
+              "a standing Mek one level below the roof receives partial cover (TW p.171 only)");
     }
 
     @Test
@@ -132,6 +134,6 @@ class PartialCoverEligibilityTest extends GameBoardTestCase {
         LargeSupportTank tank = placeInBuilding(new LargeSupportTank());
 
         assertFalse(WeaponAttackAction.targetInShortCoverBuilding(tank),
-              "a large support vehicle never receives partial cover, however tall (TW p.102)");
+              "a large support vehicle never receives partial cover, however tall (TW p.102; Core p.66)");
     }
 }

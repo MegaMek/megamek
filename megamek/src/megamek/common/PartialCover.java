@@ -41,9 +41,9 @@ import megamek.common.units.Targetable;
  * <p>
  * Partial cover is a Mek rule: large support vehicles, grounded small craft and DropShips never receive it, even
  * though they rise more than one level, and ProtoMeks never do because they are only the height of vehicles (TW
- * p.102, p.171; TO:AR p.85). This class decides eligibility by unit type only. Whether the Mek is standing, and
- * whether the terrain, water or building actually covers it, is decided by the caller: {@link LosEffects} for terrain,
- * the building and water checks in the to-hit code and the bots for the rest.
+ * p.102, p.171; Core p.66, p.136; TO:AR p.85). This class decides eligibility by unit type only. Whether the Mek is
+ * standing, and whether the terrain, water or building actually covers it, is decided by the caller:
+ * {@link LosEffects} for terrain, the building and water checks in the to-hit code and the bots for the rest.
  */
 public final class PartialCover {
 

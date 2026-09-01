@@ -46,8 +46,10 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
 import megamek.MMConstants;
@@ -174,6 +176,14 @@ public class EntityListFile {
                 output.append("\" " + MULParser.ATTR_RFMG + "=\"true");
             }
 
+            if (mount.isAutocannonHit()) {
+                output.append("\" " + MULParser.ATTR_AUTOCANNON_HIT + "=\"true");
+            }
+
+            if (mount.isDirectionalMountLocked()) {
+                output.append("\" " + MULParser.ATTR_DIRECTIONAL_MOUNT_LOCKED + "=\"true");
+            }
+
             if (mount.countQuirks() > 0) {
                 output.append("\" " + MULParser.ATTR_QUIRKS + "=\"").append(mount.getQuirkList("::"));
             }
@@ -241,6 +251,8 @@ public class EntityListFile {
         StringBuilder output = new StringBuilder();
         StringBuilder thisLoc = new StringBuilder();
         boolean isDestroyed = false;
+
+        Set<Mounted<?>> flaggedMountsWritten = new HashSet<>();
 
         // Walk through the locations for the entity,
         // and only record damage and ammo.
@@ -519,6 +531,21 @@ public class EntityListFile {
                               slot.isMissing(),
                               slotHasDepletedArmor(slot),
                               indentLvl + 1));
+                        haveSlot = true;
+                    } else if ((mount != null) &&
+                          !mount.isHit() &&
+                          !mount.isDestroyed() &&
+                          (mount.isAutocannonHit() || mount.isDirectionalMountLocked()) &&
+                          !flaggedMountsWritten.contains(mount)) {
+                        thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
+                              mount,
+                              slot.isHit(),
+                              slot.isDestroyed(),
+                              slot.isRepairable(),
+                              slot.isMissing(),
+                              slotHasDepletedArmor(slot),
+                              indentLvl + 1));
+                        flaggedMountsWritten.add(mount);
                         haveSlot = true;
                     }
 
@@ -1629,6 +1656,8 @@ public class EntityListFile {
         output.write(crew.getNickname(pos).replace("\"", "&quot;"));
         output.write("\" " + MULParser.ATTR_GENDER + "=\"" + crew.getGender(pos).name());
         output.write("\" " + MULParser.ATTR_CLAN_PILOT + "=\"" + crew.isClanPilot(pos));
+        String armorKitName = crew.getArmorKitName(pos);
+        output.write("\" " + MULParser.ATTR_ARMOR_KIT + "=\"" + ((armorKitName == null) ? "" : armorKitName));
 
         if ((null != entity.getGame()) &&
               entity.gameOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {

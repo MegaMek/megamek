@@ -1808,6 +1808,11 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISFlakConcealedInfArmor());
         EquipmentType.addType(MiscType.createISHeatSuitInfArmor());
         EquipmentType.addType(MiscType.createISMekWarriorCombatSuitInfArmor());
+        EquipmentType.addType(MiscType.createMekWarriorKitBasicInfArmor());
+        EquipmentType.addType(MiscType.createMekWarriorKitAdvancedInfArmor());
+        EquipmentType.addType(MiscType.createMekWarriorKitClanInfArmor());
+        EquipmentType.addType(MiscType.createAerospacePilotKitInfArmor());
+        EquipmentType.addType(MiscType.createTankersSmockInfArmor());
         EquipmentType.addType(MiscType.createISMekWarriorCoolingSuitInfArmor());
         EquipmentType.addType(MiscType.createMekWarriorCoolingVestInfArmor());
         EquipmentType.addType(MiscType.createMyomerSuitInfArmor());
@@ -2727,7 +2732,11 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLEngineeringSuit");
         misc.damageDivisor = 1.0;
         misc.cost = 7500;
-        misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_ENCUMBERING, MiscTypeFlag.S_SPACE_SUIT);
+        misc.flags = misc.flags.or(F_INF_EQUIPMENT,
+              F_ARMOR_KIT,
+              MiscTypeFlag.S_ENCUMBERING,
+              MiscTypeFlag.S_SPACE_SUIT,
+              MiscTypeFlag.S_HAZARDOUS_LIQ);
         misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
@@ -2751,7 +2760,14 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLEnvironmentSuitLight");
         misc.damageDivisor = 1.0;
         misc.cost = 200;
-        misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_ENCUMBERING, MiscTypeFlag.S_SPACE_SUIT);
+        // A Light Environment Suit qualifies XCT Troops for a tainted atmosphere but not for a toxic one,
+        // TO:AUE p.162.
+        misc.flags = misc.flags.or(F_INF_EQUIPMENT,
+              F_ARMOR_KIT,
+              MiscTypeFlag.S_ENCUMBERING,
+              MiscTypeFlag.S_SPACE_SUIT,
+              MiscTypeFlag.S_HAZARDOUS_LIQ,
+              MiscTypeFlag.S_TAINTED_ATMOSPHERE);
         misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
@@ -2778,7 +2794,10 @@ public class MiscType extends EquipmentType {
               MiscTypeFlag.S_SPACE_SUIT,
               MiscTypeFlag.S_XCT_VACUUM,
               MiscTypeFlag.S_COLD_WEATHER,
-              MiscTypeFlag.S_HOT_WEATHER);
+              MiscTypeFlag.S_HOT_WEATHER,
+              MiscTypeFlag.S_HAZARDOUS_LIQ,
+              MiscTypeFlag.S_TAINTED_ATMOSPHERE,
+              MiscTypeFlag.S_TOXIC_ATMOSPHERE);
         misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.D)
@@ -2806,7 +2825,10 @@ public class MiscType extends EquipmentType {
               MiscTypeFlag.S_SPACE_SUIT,
               MiscTypeFlag.S_XCT_VACUUM,
               MiscTypeFlag.S_COLD_WEATHER,
-              MiscTypeFlag.S_HOT_WEATHER);
+              MiscTypeFlag.S_HOT_WEATHER,
+              MiscTypeFlag.S_HAZARDOUS_LIQ,
+              MiscTypeFlag.S_TAINTED_ATMOSPHERE,
+              MiscTypeFlag.S_TOXIC_ATMOSPHERE);
 
         misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
@@ -2893,7 +2915,7 @@ public class MiscType extends EquipmentType {
 
         misc.damageDivisor = 1.0;
         misc.cost = 20000;
-        misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT);
+        misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_COMBAT_SUIT);
         misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 129);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.E)
@@ -2904,6 +2926,155 @@ public class MiscType extends EquipmentType {
               .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.DC);
+        return misc;
+    }
+
+    /**
+     * The everyday Inner Sphere MekWarrior kit: a cooling vest, a standard neurohelmet, shorts and plasteel boots
+     * (A Time of War p.294).
+     * <p>
+     * Converted by the rules for carrying personal armor to the Total Warfare scale: only torso coverage counts
+     * toward the damage divisor, so the vest's BAR of 1/2/0/1 sums to 4, divides to 0.4 and rounds to nothing, which
+     * the rule then floors at 0.5. The neurohelmet is described as encumbering, and that carries to the kit. The
+     * ratings are the most restrictive of the four pieces and the cost is their sum.
+     */
+    public static MiscType createMekWarriorKitBasicInfArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = "MekWarrior Kit (Basic)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("MekWarriorKitBasic");
+        misc.damageDivisor = 0.5;
+        misc.cost = 1281;
+        misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_ENCUMBERING);
+
+        misc.rulesRefs = rulesRefs(SourceBookCode.ATOW, 294);
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
+              .setISAdvancement(2440, 2460, 2461, DATE_NONE, DATE_NONE)
+              .setClanAdvancement(2440, 2460, 2461, DATE_NONE, DATE_NONE);
+        return misc;
+    }
+
+    /**
+     * The Inner Sphere elite and ComStar MekWarrior kit: a combat suit, a combat neurohelmet and plasteel boots
+     * (A Time of War p.294).
+     * <p>
+     * The suit's torso BAR of 2/5/1/3 sums to 11 and divides to a damage divisor of 1, and the helmet's encumbrance
+     * carries to the kit. The helmet "may be sealed in hostile environments" with an hour of its own air, which is
+     * why the kit answers air a crew would otherwise have to breathe. It has no gloves, which the aerospace kit
+     * lists as required to seal, so the ensemble never becomes pressure-tight and does not answer vacuum. What that
+     * protection amounts to is decided by the optional rule in {@code CrewArmorKitRules}.
+     */
+    public static MiscType createMekWarriorKitAdvancedInfArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = "MekWarrior Kit (Advanced)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("MekWarriorKitAdvanced");
+        misc.damageDivisor = 1.0;
+        misc.cost = 21575;
+        misc.flags = misc.flags.or(F_INF_EQUIPMENT,
+              F_ARMOR_KIT,
+              MiscTypeFlag.S_ENCUMBERING,
+              MiscTypeFlag.S_COMBAT_SUIT);
+
+        misc.rulesRefs = rulesRefs(SourceBookCode.ATOW, 294);
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.E)
+              .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
+              .setISAdvancement(2690, 2790, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setISApproximate(true, false, false, false, false)
+              .setClanAdvancement(2690, 2790, 2820, DATE_NONE, DATE_NONE)
+              .setClanApproximate(true, false, false, false, false)
+              .setPrototypeFactions(Faction.TH)
+              .setProductionFactions(Faction.DC);
+        return misc;
+    }
+
+    /**
+     * The Clan MekWarrior kit: a cooling suit, a Clan neurohelmet and boots (A Time of War p.294).
+     * <p>
+     * The cooling suit's torso BAR of 2/2/1/1 sums to 6 and divides to a damage divisor of 1. Nothing in the kit is
+     * described as encumbering. It is cooling gear, so it answers heat, and its dates follow the Clan cooling suit
+     * MegaMek already carries.
+     */
+    public static MiscType createMekWarriorKitClanInfArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = "MekWarrior Kit (Clan)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("MekWarriorKitClan");
+        misc.damageDivisor = 1.0;
+        misc.cost = 10100;
+        misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_HOT_WEATHER);
+
+        misc.rulesRefs = rulesRefs(SourceBookCode.ATOW, 294);
+        misc.techAdvancement.setTechBase(TechBase.CLAN)
+              .setTechRating(TechRating.F)
+              .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.B)
+              .setClanAdvancement(2480, 2500, 3065, DATE_NONE, DATE_NONE)
+              .setClanApproximate(true, false, false, false, false);
+        return misc;
+    }
+
+    /**
+     * The aerospace fighter pilot's kit: a combat flight suit, a pilot's neurohelmet, flight gloves and boots
+     * (A Time of War p.294).
+     * <p>
+     * The flight suit's torso BAR of 2/3/2/2 sums to 9 and divides to a damage divisor of 1. Unlike the MekWarrior
+     * kits this one closes completely, the table listing the gloves and boots as required to seal it, and it carries
+     * forty-eight hours of life support. By the conversion rule for sealed armor its wearer can therefore operate in
+     * vacuum, which puts it alongside the combat spacesuit rather than alongside the combat suit.
+     */
+    public static MiscType createAerospacePilotKitInfArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Aerospace Fighter Pilot Kit";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("AerospacePilotKit");
+        misc.damageDivisor = 1.0;
+        misc.cost = 4275;
+        misc.flags = misc.flags.or(F_INF_EQUIPMENT,
+              F_ARMOR_KIT,
+              MiscTypeFlag.S_SPACE_SUIT,
+              MiscTypeFlag.S_XCT_VACUUM,
+              MiscTypeFlag.S_TAINTED_ATMOSPHERE,
+              MiscTypeFlag.S_TOXIC_ATMOSPHERE);
+
+        misc.rulesRefs = rulesRefs(SourceBookCode.ATOW, 294);
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
+              .setISAdvancement(2190, 2200, 2200, DATE_NONE, DATE_NONE)
+              .setClanAdvancement(2190, 2200, 2200, DATE_NONE, DATE_NONE);
+        return misc;
+    }
+
+    /**
+     * A tanker's smock, which replaces the torso armor of standard infantry attire and carries cooling systems
+     * (A Time of War p.295).
+     * <p>
+     * Its torso BAR of 3/5/5/3 sums to 16 and divides to 1.6, which rounds to a damage divisor of 2. Being a single
+     * torso garment it is not encumbering, and its cooling answers heat.
+     */
+    public static MiscType createTankersSmockInfArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Tanker's Smock";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("TankersSmock");
+        misc.damageDivisor = 2.0;
+        misc.cost = 275;
+        misc.flags = misc.flags.or(F_INF_EQUIPMENT, F_ARMOR_KIT, MiscTypeFlag.S_HOT_WEATHER);
+
+        misc.rulesRefs = rulesRefs(SourceBookCode.ATOW, 295);
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.C)
+              .setISAdvancement(2440, 2460, 2461, DATE_NONE, DATE_NONE)
+              .setClanAdvancement(2440, 2460, 2461, DATE_NONE, DATE_NONE);
         return misc;
     }
 
@@ -2921,9 +3092,9 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
-              .setISAdvancement(2680, 2800, 3065, 2850, 3050)
+              .setISAdvancement(2480, 2500, 3065, 2850, 3050)
               .setISApproximate(true, false, false, true, false)
-              .setClanAdvancement(2480, 2800, 3065, DATE_NONE, DATE_NONE)
+              .setClanAdvancement(2480, 2500, 3065, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.CS);
@@ -3066,7 +3237,10 @@ public class MiscType extends EquipmentType {
               MiscTypeFlag.S_ENCUMBERING,
               MiscTypeFlag.S_SPACE_SUIT,
               MiscTypeFlag.S_XCT_VACUUM,
-              MiscTypeFlag.S_COLD_WEATHER);
+              MiscTypeFlag.S_COLD_WEATHER,
+              MiscTypeFlag.S_HAZARDOUS_LIQ,
+              MiscTypeFlag.S_TAINTED_ATMOSPHERE,
+              MiscTypeFlag.S_TOXIC_ATMOSPHERE);
         misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.C)
@@ -3091,7 +3265,10 @@ public class MiscType extends EquipmentType {
               MiscTypeFlag.S_ENCUMBERING,
               MiscTypeFlag.S_SPACE_SUIT,
               MiscTypeFlag.S_XCT_VACUUM,
-              MiscTypeFlag.S_COLD_WEATHER);
+              MiscTypeFlag.S_COLD_WEATHER,
+              MiscTypeFlag.S_HAZARDOUS_LIQ,
+              MiscTypeFlag.S_TAINTED_ATMOSPHERE,
+              MiscTypeFlag.S_TOXIC_ATMOSPHERE);
 
         misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 130);
         misc.techAdvancement.setTechBase(TechBase.ALL)

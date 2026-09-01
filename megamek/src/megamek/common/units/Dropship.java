@@ -813,6 +813,9 @@ public class Dropship extends SmallCraft {
      */
     @Override
     public boolean canTakeOffVertically() {
+        if (isLaunchProhibitedByAtmosphere()) {
+            return false;
+        }
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         boolean spheroidOrLessThanThin = isSpheroid()
               || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);

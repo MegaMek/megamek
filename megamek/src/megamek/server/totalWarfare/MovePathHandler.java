@@ -834,6 +834,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
             } else {
                 IAero aero = (IAero) entity;
                 int boardId = entity.getBoardId();
+                // The roll is made at the start of takeoff, so before the craft is moved off its hex (TO:AR p.54).
+                new TaintedAtmosphereHandler(gameManager).checkExhaustWashIgnition(entity, entity.getPosition(),
+                      boardId, entity.getFacing(),
+                      TaintedAtmosphereHandler.ExhaustWashMoment.TAKEOFF);
                 if (usingAeroOnGroundMovement()) {
                     entity.setPosition(entity.getPosition().translated(entity.getFacing(), aero.getTakeOffLength()));
                 } else {
@@ -859,6 +863,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 rollTarget = aero.checkVerticalTakeOff();
                 if (gameManager.doVerticalTakeOffCheck(entity, rollTarget)) {
                     int boardId = entity.getBoardId();
+                    // The roll is made at the start of takeoff, so before the craft leaves its hex (TO:AR p.54).
+                    new TaintedAtmosphereHandler(gameManager).checkExhaustWashIgnition(entity, entity.getPosition(),
+                          boardId, entity.getFacing(),
+                          TaintedAtmosphereHandler.ExhaustWashMoment.TAKEOFF);
                     if (!usingAeroOnGroundMovement()) {
                         positionOnAtmosphericMap();
                     }
@@ -891,6 +899,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
                   md.getFinalBoardId(), md.getFinalFacing());
             aero.land();
             entity.setPosition(finalPosition);
+            // Taken from the hex the landing was declared in - where the craft meets the ground - not the hex
+            // it slides on to several hexes later. TO:AR p.54 fixes only WHEN the roll is made, at the end of
+            // the landing rather than the start, and says nothing about which hex the arc is measured from.
+            // The craft touches down under power; by the time it has rolled out the pilot has pulled the
+            // power off, so it is the ground behind the touchdown point that gets scorched.
+            new TaintedAtmosphereHandler(gameManager).checkExhaustWashIgnition(entity, md.getFinalCoords(),
+                  md.getFinalBoardId(), md.getFinalFacing(),
+                  TaintedAtmosphereHandler.ExhaustWashMoment.LANDING);
             entity.setDone(true);
             gameManager.entityUpdate(entity.getId());
             return;
@@ -900,6 +916,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
         lastPos = entity.getPosition();
         curPos = entity.getPosition();
         curBoardId = entity.getBoardId();
+        // Held separately from lastPos, which moves with the unit: a flammable atmosphere can be set alight by jump
+        // exhaust at the hex the unit lifted off from as well as the one it lands in (TO:AR p.54).
+        final Coords jumpLiftOffCoords = entity.getPosition();
+        final int jumpLiftOffBoardId = entity.getBoardId();
         boolean tookMagmaDamageAtStart = false; // Used to check for start/end magma damage
         curFacing = entity.getFacing();
         curVTOLElevation = entity.getElevation();
@@ -1624,6 +1644,16 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 Report.addNewline(gameManager.getMainPhaseReport());
             }
 
+            // Jump exhaust can set a flammable atmosphere alight at both ends of the jump (TO:AR p.54).
+            TaintedAtmosphereHandler taintedAtmosphereHandler = new TaintedAtmosphereHandler(gameManager);
+            taintedAtmosphereHandler.checkJumpIgnition(entity, jumpLiftOffCoords, jumpLiftOffBoardId,
+                  gameManager.getMainPhaseReport());
+            boolean landedElsewhere = !curPos.equals(jumpLiftOffCoords) || (curBoardId != jumpLiftOffBoardId);
+            if (landedElsewhere) {
+                taintedAtmosphereHandler.checkJumpIgnition(entity, curPos, curBoardId,
+                      gameManager.getMainPhaseReport());
+            }
+
         } // End entity-is-jumping
 
         // If converting to another mode, set the final movement mode and report it
@@ -1936,20 +1966,23 @@ class MovePathHandler extends AbstractTWRuleHandler {
         if (ram != null) {
             gameManager.send(gameManager.getPacketHelper().createChargeAttackPacket(ram));
         }
-        if ((entity instanceof Mek) && entity.hasEngine() && ((Mek) entity).isIndustrial()
-              && !entity.hasEnvironmentalSealing()
-              && (entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
-            if ((!entity.isProne()
-                  && (getGame().getBoard(curBoardId).getHex(entity.getPosition())
-                  .terrainLevel(Terrains.WATER) >= 2))
-                  || (entity.isProne()
-                  && (getGame().getBoard(curBoardId).getHex(entity.getPosition())
-                  .terrainLevel(Terrains.WATER) == 1))) {
-                ((Mek) entity).setJustMovedIntoIndustrialKillingWater(true);
-
+        // An IndustrialMek may only be completely submerged if it mounts BOTH the Environmental Sealing and a
+        // fuel cell, fission or fusion power plant; lacking either, it is destroyed in the End Phase of the turn
+        // after the one it entered the water in (TW p.52, Movement Costs Table footnote 8).
+        if ((entity instanceof Mek industrialMek)
+              && industrialMek.isIndustrial()
+              && !EnvironmentalSealingRules.canOperateFullySubmerged(industrialMek)) {
+            int waterDepth = getGame().getBoard(curBoardId).getHex(entity.getPosition())
+                  .terrainLevel(Terrains.WATER);
+            // The Depth 2 clause of the rule carries no stance qualifier, so the parenthetical adds the shallow
+            // prone case rather than limiting the deep one to units still on their feet.
+            if (EnvironmentalSealingRules.isMekCompletelySubmerged(entity.isProne(), waterDepth)) {
+                logger.debug("[EnvironmentalSealing] {}: submerged in depth {} water with an engine that cannot run "
+                      + "sealed - drowning at end of turn", entity.getShortName(), waterDepth);
+                industrialMek.setJustMovedIntoIndustrialKillingWater(true);
             } else {
-                ((Mek) entity).setJustMovedIntoIndustrialKillingWater(false);
-                ((Mek) entity).setShouldDieAtEndOfTurnBecauseOfWater(false);
+                industrialMek.setJustMovedIntoIndustrialKillingWater(false);
+                industrialMek.setShouldDieAtEndOfTurnBecauseOfWater(false);
             }
         }
 

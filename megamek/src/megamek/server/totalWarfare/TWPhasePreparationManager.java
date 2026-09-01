@@ -252,6 +252,7 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.resolveHarJelRepairs();
                 gameManager.resolveEmergencyCoolantSystem();
                 gameManager.checkForSuffocation();
+                gameManager.checkTaintedAtmosphereEffects();
                 gameManager.getGame().getPlanetaryConditions().determineWind();
                 gameManager.send(gameManager.getPacketHelper().createPlanetaryConditionsPacket());
 

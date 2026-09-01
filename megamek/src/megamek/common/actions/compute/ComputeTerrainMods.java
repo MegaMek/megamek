@@ -419,8 +419,7 @@ public class ComputeTerrainMods {
      * @return {@code true} for artillery (including Arrow IV and artillery cannons), bombs, and fuel-air explosive
      *       munitions
      */
-    // Package-private for unit testing.
-    static boolean isAreaEffectAgainstInfantry(WeaponType weaponType, @Nullable AmmoType ammoType) {
+    public static boolean isAreaEffectAgainstInfantry(WeaponType weaponType, @Nullable AmmoType ammoType) {
         boolean isArtillery = weaponType.hasFlag(WeaponType.F_ARTILLERY)
               || (weaponType instanceof ArtilleryCannonWeapon);
         boolean isBomb = weaponType.hasAnyFlag(WeaponType.F_ALT_BOMB, WeaponType.F_DIVE_BOMB,

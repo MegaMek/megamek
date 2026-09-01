@@ -106,7 +106,7 @@ class CrewArmorKitEjectionReportTest {
 
     private void setCausticToxicAir() {
         game.getPlanetaryConditions().setAtmosphere(Atmosphere.STANDARD);
-        game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.CAUSTIC_TOXIC);
+        game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.TOXIC_CAUSTIC);
     }
 
     private <T extends Entity> T deploy(T entity, int entityId, @Nullable String armorKitName) {

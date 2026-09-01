@@ -163,7 +163,7 @@ class CrewArmorKitRulesTest {
     @Test
     void whatEachKitAnswers() {
         PlanetaryConditions vacuum = conditions(Atmosphere.VACUUM, AtmosphericTaint.BREATHABLE, 20);
-        PlanetaryConditions toxicAir = conditions(Atmosphere.STANDARD, AtmosphericTaint.CAUSTIC_TOXIC, 20);
+        PlanetaryConditions toxicAir = conditions(Atmosphere.STANDARD, AtmosphericTaint.TOXIC_CAUSTIC, 20);
         PlanetaryConditions extremeHeat = conditions(Atmosphere.STANDARD, AtmosphericTaint.BREATHABLE, 60);
         PlanetaryConditions extremeCold = conditions(Atmosphere.STANDARD, AtmosphericTaint.BREATHABLE, -40);
         PlanetaryConditions fairWeather = conditions(Atmosphere.STANDARD, AtmosphericTaint.BREATHABLE, 20);

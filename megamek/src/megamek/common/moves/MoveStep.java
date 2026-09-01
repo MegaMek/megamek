@@ -3299,18 +3299,25 @@ public class MoveStep implements Serializable {
                 // surface. A Mek crossing a bridge over water (nDestEl above the hex level) is
                 // never wading through anything, so the water-depth MP shouldn't be charged.
                 boolean inWaterColumn = nDestEl <= destHex.getLevel();
+                int waterDepth = destHex.terrainLevel(Terrains.WATER);
                 // no additional cost when moving on surface of ice.
-                if (inWaterColumn
-                      && (!destHex.containsTerrain(Terrains.ICE) || (nDestEl < destHex.getLevel()))) {
-                    if ((destHex.terrainLevel(Terrains.WATER) == 1) && !isAmphibious) {
+                boolean isOnIceSurface = destHex.containsTerrain(Terrains.ICE)
+                      && (nDestEl == destHex.getLevel());
+                if (inWaterColumn && !isOnIceSurface && (waterDepth > 0) && !isAmphibious) {
+                    // "To be considered underwater, a unit must be completely submerged... 'Mechs must be in at
+                    // least Depth 2 water, or at least Depth 1 if prone" (TW p.56). Everything shorter than a Mek
+                    // is already completely under in Depth 1, so it pays the underwater cost there. Anything only
+                    // partly submerged is wading, and pays the lower Depth 1 cost from the Movement Costs Table.
+                    boolean isFullySubmerged = (entity instanceof Mek)
+                          ? EnvironmentalSealingRules.isMekCompletelySubmerged(isProne(), waterDepth)
+                          : (waterDepth > 0);
+                    if (!isFullySubmerged) {
                         mp++;
-                    } else if ((destHex.terrainLevel(Terrains.WATER) > 1) && !isAmphibious) {
-                        if (getEntity().hasAbility(OptionsConstants.PILOT_TM_FROGMAN) &&
-                              ((entity instanceof Mek) || (entity instanceof ProtoMek))) {
-                            mp += 2;
-                        } else {
-                            mp += Game.rulesManager.getRulesMovement().getUnderwaterMPCost();
-                        }
+                    } else if (getEntity().hasAbility(OptionsConstants.PILOT_TM_FROGMAN)
+                          && ((entity instanceof Mek) || (entity instanceof ProtoMek))) {
+                        mp += 2;
+                    } else {
+                        mp += Game.rulesManager.getRulesMovement().getUnderwaterMPCost();
                     }
                 }
                 // if using non-careful movement on ice then reduce cost

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -53,7 +53,6 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.units.Entity;
 import megamek.common.units.LargeSupportTank;
 import megamek.common.units.Mek;
-import megamek.common.units.ProtoMek;
 import megamek.common.units.SuperHeavyTank;
 import megamek.common.units.Tank;
 
@@ -126,8 +125,6 @@ public class AimedShotHandler implements ActionListener, ItemListener {
                 if (side == ToHitData.SIDE_FRONT) {
                     aimingAt = Tank.LOC_FRONT;
                 }
-            } else if (this.firingDisplay.getTarget() instanceof ProtoMek) {
-                aimingAt = ProtoMek.LOC_TORSO;
             } else if (this.firingDisplay.getTarget() instanceof BattleArmor) {
                 aimingAt = BattleArmor.LOC_TROOPER_1;
             } else {
@@ -148,7 +145,7 @@ public class AimedShotHandler implements ActionListener, ItemListener {
         }
     }
 
-    private boolean[] createEnabledMask(int length) {
+    boolean[] createEnabledMask(int length) {
         boolean[] mask = new boolean[length];
 
         Arrays.fill(mask, true);
@@ -255,58 +252,56 @@ public class AimedShotHandler implements ActionListener, ItemListener {
             }
         }
 
-        // remove main gun on protos that don't have one
-        if (this.firingDisplay.getTarget() instanceof ProtoMek) {
-            if (!((ProtoMek) this.firingDisplay.getTarget()).hasMainGun()) {
-                mask[ProtoMek.LOC_MAIN_GUN] = false;
-            }
-        }
-
         // remove squad location on BAs
         // also remove dead troopers
         if (this.firingDisplay.getTarget() instanceof BattleArmor) {
             mask[BattleArmor.LOC_SQUAD] = false;
         }
 
-        // remove locations hidden by partial cover
-        if ((partialCover & LosEffects.COVER_HORIZONTAL) != 0) {
-            mask[Mek.LOC_LEFT_LEG] = false;
-            mask[Mek.LOC_RIGHT_LEG] = false;
-        }
-        if (side == ToHitData.SIDE_FRONT) {
-            if ((partialCover & LosEffects.COVER_LOW_LEFT) != 0) {
+        // Partial cover hides a Mek's legs, arms and torsos, and the indexes below are Mek locations. A tank or a
+        // battle armor squad in cover (a short building, partial water) has fewer locations and none of them are
+        // hidden, so the cover rules apply to Meks only.
+        if (this.firingDisplay.getTarget() instanceof Mek) {
+            if ((partialCover & LosEffects.COVER_HORIZONTAL) != 0) {
+                mask[Mek.LOC_LEFT_LEG] = false;
                 mask[Mek.LOC_RIGHT_LEG] = false;
             }
-            if ((partialCover & LosEffects.COVER_LOW_RIGHT) != 0) {
-                mask[Mek.LOC_LEFT_LEG] = false;
+            if (side == ToHitData.SIDE_FRONT) {
+                if ((partialCover & LosEffects.COVER_LOW_LEFT) != 0) {
+                    mask[Mek.LOC_RIGHT_LEG] = false;
+                }
+                if ((partialCover & LosEffects.COVER_LOW_RIGHT) != 0) {
+                    mask[Mek.LOC_LEFT_LEG] = false;
+                }
+                if ((partialCover & LosEffects.COVER_LEFT) != 0) {
+                    mask[Mek.LOC_RIGHT_ARM] = false;
+                    mask[Mek.LOC_RIGHT_TORSO] = false;
+                }
+                if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
+                    mask[Mek.LOC_LEFT_ARM] = false;
+                    mask[Mek.LOC_LEFT_TORSO] = false;
+                }
+            } else {
+                if ((partialCover & LosEffects.COVER_LOW_LEFT) != 0) {
+                    mask[Mek.LOC_LEFT_LEG] = false;
+                }
+                if ((partialCover & LosEffects.COVER_LOW_RIGHT) != 0) {
+                    mask[Mek.LOC_RIGHT_LEG] = false;
+                }
+                if ((partialCover & LosEffects.COVER_LEFT) != 0) {
+                    mask[Mek.LOC_LEFT_ARM] = false;
+                    mask[Mek.LOC_LEFT_TORSO] = false;
+                }
+                if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
+                    mask[Mek.LOC_RIGHT_ARM] = false;
+                    mask[Mek.LOC_RIGHT_TORSO] = false;
+                }
             }
-            if ((partialCover & LosEffects.COVER_LEFT) != 0) {
-                mask[Mek.LOC_RIGHT_ARM] = false;
-                mask[Mek.LOC_RIGHT_TORSO] = false;
-            }
-            if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
-                mask[Mek.LOC_LEFT_ARM] = false;
-                mask[Mek.LOC_LEFT_TORSO] = false;
-            }
-        } else {
-            if ((partialCover & LosEffects.COVER_LOW_LEFT) != 0) {
-                mask[Mek.LOC_LEFT_LEG] = false;
-            }
-            if ((partialCover & LosEffects.COVER_LOW_RIGHT) != 0) {
-                mask[Mek.LOC_RIGHT_LEG] = false;
-            }
-            if ((partialCover & LosEffects.COVER_LEFT) != 0) {
-                mask[Mek.LOC_LEFT_ARM] = false;
-                mask[Mek.LOC_LEFT_TORSO] = false;
-            }
-            if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
-                mask[Mek.LOC_RIGHT_ARM] = false;
-                mask[Mek.LOC_RIGHT_TORSO] = false;
-            }
+
         }
 
-        if (aimingMode.isTargetingComputer()) {
-            // Can't target head with targeting computer.
+        if (aimingMode.isTargetingComputer() && (firingDisplay.getTarget() instanceof Mek)) {
+            // Can't target head with targeting computer (TW p.143).
             mask[Mek.LOC_HEAD] = false;
         }
         return mask;
@@ -376,12 +371,12 @@ public class AimedShotHandler implements ActionListener, ItemListener {
             return;
         }
 
-        // TC against a mek
+        // TC against a mek, tank or battle armor. Not against a ProtoMek: they are too small for a targeting
+        // computer to pick a hit location, though the TC's usual -1 still applies (TW p.185).
         allowAim = ((this.firingDisplay.getTarget() != null) && (attacker != null)
               && attacker.hasAimModeTargComp() && ((this.firingDisplay.getTarget() instanceof Mek)
               || (this.firingDisplay.getTarget() instanceof Tank)
-              || (this.firingDisplay.getTarget() instanceof BattleArmor)
-              || (this.firingDisplay.getTarget() instanceof ProtoMek)));
+              || (this.firingDisplay.getTarget() instanceof BattleArmor)));
         if (allowAim) {
             aimingMode = AimingMode.TARGETING_COMPUTER;
             return;

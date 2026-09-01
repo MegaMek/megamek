@@ -399,7 +399,12 @@ class TaintedAtmosphereHandler extends AbstractTWRuleHandler {
         if (!TaintedAtmosphereRules.causesExtraCockpitCrewHit(atmosphericTaint())) {
             return reports;
         }
-        if (entity.getCrew().isDead()) {
+        // The same hit that damaged the cockpit can have breached it, which in toxic air kills the crew and
+        // destroys the unit outright. Burning the crew of a wreck adds a line saying the air got in, followed by
+        // "is already dead, so no damage is dealt" - two lines that tell the player nothing about what killed it.
+        if (entity.isDestroyed() || entity.isDoomed() || entity.getCrew().isDead()) {
+            LOGGER.debug("[TaintedAtmosphere] {}: no extra crew hit - the unit or its crew is already lost",
+                  entity.getShortName());
             return reports;
         }
         LOGGER.info("[TaintedAtmosphere] {}: cockpit damaged in caustic air - one extra crew hit",

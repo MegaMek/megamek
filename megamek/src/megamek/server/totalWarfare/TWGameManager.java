@@ -1201,6 +1201,9 @@ public class TWGameManager extends AbstractGameManager {
                 case ENTITY_VARIABLE_RANGE_MODE_CHANGE:
                     receiveEntityVariableRangeModeChange(packet, connId);
                     break;
+                case ENTITY_EJECTION_SETTING_CHANGE:
+                    receiveEntityEjectionSettingChange(packet, connId);
+                    break;
                 case ENTITY_ABANDON_ANNOUNCE:
                     receiveEntityAbandonAnnounce(packet, connId);
                     break;
@@ -8723,6 +8726,11 @@ public class TWGameManager extends AbstractGameManager {
             } else {
                 boolean isOutOfTheWater = entity.relHeight() >= 0;
                 for (int loop = 0; loop < entity.locations(); loop++) {
+                    // A breach does not heal by moving. Leaving it marked stops a later pass over the same water
+                    // resetting it to merely wet and announcing the same hole all over again.
+                    if (entity.getLocationStatus(loop) == ILocationExposureStatus.BREACHED) {
+                        continue;
+                    }
                     int status = isOutOfTheWater ?
                           airExposureStatus(entity, loop, conditions, aeroSpaceborne) :
                           ILocationExposureStatus.WET;
@@ -8734,6 +8742,11 @@ public class TWGameManager extends AbstractGameManager {
             }
         } else {
             for (int loop = 0; loop < entity.locations(); loop++) {
+                // "Even if a unit exits the water, all limbs and equipment in the flooded location remain
+                // non-functional" (TW p.121), so climbing out does not close the hole either.
+                if (entity.getLocationStatus(loop) == ILocationExposureStatus.BREACHED) {
+                    continue;
+                }
                 entity.setLocationStatus(loop, airExposureStatus(entity, loop, conditions, aeroSpaceborne));
             }
         }
@@ -24288,6 +24301,10 @@ public class TWGameManager extends AbstractGameManager {
                 vDesc.addAll(new TaintedAtmosphereHandler(this).resolveVehicleBreach(tank, loc));
                 return vDesc;
             }
+            // Mark it before destroying the unit. Without this the location stays merely wet, and the guard at the
+            // top of this method cannot tell that it has already been breached - so the next exposure pass over
+            // the same water announces the same breach again.
+            entity.setLocationStatus(loc, ILocationExposureStatus.BREACHED);
             vDesc.addAll(destroyEntity(entity, "hull breach", true, true));
             return vDesc;
         }
@@ -27762,6 +27779,44 @@ public class TWGameManager extends AbstractGameManager {
      * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet
      */
+    /**
+     * Turns one unit's automatic ejection on or off at its owner's request.
+     * <p>
+     * The server decides on its own copy of the unit whether a crew is thrown clear, so a change made only on the
+     * client would be ignored when the moment came. Only the owner may make it, and only BattleMeks and aerospace
+     * units carry the setting at all.
+     *
+     * @param packet    the packet holding the unit id and the new setting
+     * @param connIndex the connection the packet arrived on
+     */
+    private void receiveEntityEjectionSettingChange(Packet packet, int connIndex) {
+        try {
+            int entityId = packet.getIntValue(0);
+            boolean shouldEject = (Boolean) packet.getObject(1);
+            Entity entity = game.getEntity(entityId);
+
+            if ((entity == null) || (entity.getOwner() != game.getPlayer(connIndex))) {
+                LOGGER.warn("Dropping an ejection setting change for unit id {}: the sender does not own it",
+                      entityId);
+                return;
+            }
+
+            if (!AutomaticEjectionRules.setAutomaticEjection(entity, shouldEject)) {
+                LOGGER.warn("Dropping an ejection setting change for {}: it has no ejection system",
+                      entity.getDisplayName());
+                return;
+            }
+
+            // INFO, not DEBUG: this changes whether a crew lives or dies, and a playtest has to be able to
+            // confirm the setting reached the server without attaching a debugger.
+            LOGGER.info("[EnvironmentalSealing] {}: automatic ejection set to {} by its owner",
+                  entity.getDisplayName(), shouldEject);
+            entityUpdate(entityId);
+        } catch (Exception exception) {
+            LOGGER.error("Error processing an automatic ejection setting change", exception);
+        }
+    }
+
     private void receiveEntityVariableRangeModeChange(Packet packet, int connIndex) {
         try {
             int entityId = packet.getIntValue(0);

@@ -86,6 +86,15 @@ class PlanetaryConditionsAtmosphericTaintTest {
         return mek;
     }
 
+    private Mek industrialMek(boolean hasEnvironmentalSealing) {
+        Mek mek = mock(Mek.class);
+        lenient().when(mek.isConventionalInfantry()).thenReturn(false);
+        lenient().when(mek.isIndustrial()).thenReturn(true);
+        lenient().when(mek.hasEnvironmentalSealing()).thenReturn(hasEnvironmentalSealing);
+        lenient().when(mek.getMovementMode()).thenReturn(EntityMovementMode.BIPED);
+        return mek;
+    }
+
     private PlanetaryConditions conditionsWith(AtmosphericTaint atmosphericTaint) {
         PlanetaryConditions conditions = new PlanetaryConditions();
         conditions.setAtmosphericTaint(atmosphericTaint);
@@ -227,5 +236,20 @@ class PlanetaryConditionsAtmosphericTaintTest {
     @DisplayName("Conditions written before this setting existed come back as breathable air")
     void defaultIsBreathable() {
         assertEquals(AtmosphericTaint.BREATHABLE, new PlanetaryConditions().getAtmosphericTaint());
+    }
+
+    @Test
+    @DisplayName("Toxic air turns away unsealed vehicles but not Meks of any kind")
+    void toxicAirBarsVehiclesOnly() {
+        PlanetaryConditions conditions = conditionsWith(AtmosphericTaint.TOXIC_CAUSTIC);
+
+        assertNotNull(conditions.whyDoomed(vehicle(false), game),
+              "an unsealed vehicle may not be fielded in toxic air");
+        assertNull(conditions.whyDoomed(vehicle(true), game),
+              "the sealing chassis modification is what lets a vehicle be here");
+        assertNull(conditions.whyDoomed(battleMek(), game),
+              "a BattleMek is sealed as part of its basic construction");
+        assertNull(conditions.whyDoomed(industrialMek(false), game),
+              "TO:AR p.54 bars vehicles, not Meks - an IndustrialMek is fielded and dies to a cockpit breach");
     }
 }

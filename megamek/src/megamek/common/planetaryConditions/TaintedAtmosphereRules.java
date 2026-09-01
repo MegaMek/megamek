@@ -43,6 +43,7 @@ import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
+import megamek.common.units.EnvironmentalSealingRules;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
@@ -178,6 +179,11 @@ public final class TaintedAtmosphereRules {
     /**
      * Whether a vehicle without the Environmental Sealing chassis modification may not be fielded at all, TO:AR p.54.
      * Only a toxic caustic or radiological atmosphere goes this far.
+     * <p>
+     * This bars vehicles only. Extending it to IndustrialMeks would be a house rule: the same table entry deals with
+     * Meks separately, and does so by leaving them on the field - "cockpit armor breaches in Meks instantly kill
+     * vehicle crews and MechWarriors". An IndustrialMek without the sealing may therefore be fielded in toxic air,
+     * and dies to a cockpit breach like any other Mek rather than being turned away at deployment.
      *
      * @param atmosphericTaint the air being fought in
      *
@@ -310,7 +316,7 @@ public final class TaintedAtmosphereRules {
     public static boolean isShelteredFromAtmosphere(Entity entity) {
         if (entity.getTransportId() != Entity.NONE) {
             Entity transport = entity.getGame().getEntity(entity.getTransportId());
-            return (transport != null) && transport.hasEnvironmentalSealing();
+            return EnvironmentalSealingRules.isSealedAgainstAtmosphere(transport);
         }
         return isInFortifiedBuilding(entity);
     }

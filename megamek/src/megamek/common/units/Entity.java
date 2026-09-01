@@ -3031,7 +3031,7 @@ public abstract class Entity extends TurnOrdered
             if (hex.containsTerrain(Terrains.WATER) &&
                   (assumedAlt < hex.getLevel()) &&
                   !((this instanceof Mek) || (this instanceof ProtoMek)) &&
-                  !(hasEnvironmentalSealing())) {
+                  !EnvironmentalSealingRules.canOperateFullySubmerged(this)) {
                 return false;
             }
             // can move on the ground unless its underwater
@@ -9231,10 +9231,6 @@ public abstract class Entity extends TurnOrdered
             mod = 0;
         } else {
             mod = 1;
-        }
-
-        if (waterLevel >=1 && overallMoveType == EntityMovementType.MOVE_RUN && !Game.rulesManager.getRulesMovement().cannotRunInWater(movementMode, false)) {
-            roll.append(new PilotingRollData(getId(), 0, "entering Depth " + waterLevel + " Water"));
         }
 
         if ((waterLevel > 1) &&

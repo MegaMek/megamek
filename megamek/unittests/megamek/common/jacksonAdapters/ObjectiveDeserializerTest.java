@@ -240,4 +240,30 @@ class ObjectiveDeserializerTest {
               scheme: conquer
               """)));
     }
+
+    @Test
+    void testANullSchemeNumberFallsBackToItsDefault() throws Exception {
+        // a key written with no value is a null node: it is present, but reading it as a number gives 0,
+        // which would secure a Hold point the moment the first End Phase ran
+        ObjectiveInfo info = ObjectiveDeserializer.parse(parseYaml("""
+              name: Relay Station
+              at: [ 4, 4 ]
+              scheme: hold
+              turns:
+              """));
+        assertEquals(1, info.marker().getScoringScheme().getThreshold(),
+              "an empty turns: must fall back to the default, not to zero");
+    }
+
+    @Test
+    void testANullCountingModeFallsBackToConsecutive() throws Exception {
+        ObjectiveInfo info = ObjectiveDeserializer.parse(parseYaml("""
+              name: Relay Station
+              at: [ 4, 4 ]
+              scheme: hold
+              turns: 3
+              counting:
+              """));
+        assertEquals(HoldCounting.CONSECUTIVE, info.marker().getScoringScheme().getHoldCounting());
+    }
 }

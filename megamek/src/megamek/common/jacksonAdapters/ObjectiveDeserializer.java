@@ -171,21 +171,21 @@ public final class ObjectiveDeserializer {
             case SCHEME_STANDARD -> ObjectiveScoringScheme.standard();
             case SCHEME_RAID -> ObjectiveScoringScheme.raid();
             case SCHEME_HOLD -> ObjectiveScoringScheme.hold(
-                  node.has(HOLD_TURNS) ? node.get(HOLD_TURNS).asInt() : 1,
+                  node.hasNonNull(HOLD_TURNS) ? node.get(HOLD_TURNS).asInt() : 1,
                   parseCounting(marker, node));
             case SCHEME_DEFEND -> ObjectiveScoringScheme.defend(
-                  node.has(DEFEND_GRIP) ? node.get(DEFEND_GRIP).asInt() : 1,
-                  node.has(DEFEND_DRAIN) ? node.get(DEFEND_DRAIN).asInt() : 1);
+                  node.hasNonNull(DEFEND_GRIP) ? node.get(DEFEND_GRIP).asInt() : 1,
+                  node.hasNonNull(DEFEND_DRAIN) ? node.get(DEFEND_DRAIN).asInt() : 1);
             case SCHEME_CAPTURE -> ObjectiveScoringScheme.capture(
-                  node.has(CAPTURE_POINTS) ? node.get(CAPTURE_POINTS).asInt() : 1,
-                  node.has(CAPTURE_RATE) ? node.get(CAPTURE_RATE).asInt() : 1);
+                  node.hasNonNull(CAPTURE_POINTS) ? node.get(CAPTURE_POINTS).asInt() : 1,
+                  node.hasNonNull(CAPTURE_RATE) ? node.get(CAPTURE_RATE).asInt() : 1);
             default -> throw new IllegalArgumentException("Unknown scoring scheme " + scheme
                   + " for objective " + marker.generalName());
         });
     }
 
     private static HoldCounting parseCounting(ObjectiveMarker marker, JsonNode node) {
-        if (!node.has(HOLD_COUNTING)) {
+        if (!node.hasNonNull(HOLD_COUNTING)) {
             return HoldCounting.CONSECUTIVE;
         }
         return switch (node.get(HOLD_COUNTING).asText()) {

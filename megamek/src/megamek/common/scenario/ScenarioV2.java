@@ -338,7 +338,9 @@ public class ScenarioV2 implements Scenario {
         List<VictoryPointLevel> levels = new ArrayList<>();
         for (JsonNode levelNode : node.get(VICTORY_LEVELS)) {
             MMUReader.requireFields("VictoryLevel", levelNode, LEVEL_NAME);
-            int upTo = levelNode.has(LEVEL_UP_TO)
+            // a key present but null passes has() and asInt() then yields 0, which would make the band
+            // cover only totals of zero or less rather than being unbounded
+            int upTo = levelNode.hasNonNull(LEVEL_UP_TO)
                   ? levelNode.get(LEVEL_UP_TO).asInt()
                   : VictoryPointLevel.NO_UPPER_BOUND;
             levels.add(new VictoryPointLevel(upTo, levelNode.get(LEVEL_NAME).asText()));
@@ -432,7 +434,7 @@ public class ScenarioV2 implements Scenario {
             parseDeployment(playerNode, player);
             parsePlayerVictories(game, playerNode, player.getName());
 
-            if (playerNode.has(STARTING_VICTORY_POINTS)) {
+            if (playerNode.hasNonNull(STARTING_VICTORY_POINTS)) {
                 player.setStartingVictoryPoints(playerNode.get(STARTING_VICTORY_POINTS).asInt());
             }
 

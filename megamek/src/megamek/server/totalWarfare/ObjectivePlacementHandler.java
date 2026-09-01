@@ -171,6 +171,11 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
         VictoryPointTracker tracker = VictoryPointTracker.getTracker(getGame());
         for (Player player : getGame().getPlayersList()) {
             int startingPoints = player.getStartingVictoryPoints();
+            // logged for every player, zero included: when a scenario's starting points do not appear,
+            // the question is always whether this pass ran at all or ran and saw nothing, and without
+            // this line the two look identical from the log
+            VICTORY_HEX_LOGGER.debug("[Objective] {} has {} scenario starting victory point(s)",
+                  player.getName(), startingPoints);
             if (startingPoints == 0) {
                 continue;
             }

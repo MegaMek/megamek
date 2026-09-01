@@ -41,6 +41,7 @@ import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.event.GameToastEvent;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.options.OptionsConstants;
@@ -203,7 +204,12 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
         if (!usesObjectives || VictoryPointVictory.gameHasVictoryPointResolution(getGame())) {
             return;
         }
-        gameManager.sendServerChat(Messages.getString("VictoryHex.noEnderWarning"));
+        // both, deliberately: the chat line is the durable record a player can scroll back to, and the
+        // toast is what anyone actually notices - this warning arrives while the board is still loading,
+        // which is exactly when the chat pane is least likely to be read
+        String warning = Messages.getString("VictoryHex.noEnderWarning");
+        gameManager.sendServerChat(warning);
+        gameManager.sendToast(GameToastEvent.Level.WARNING, warning, null);
         VICTORY_HEX_LOGGER.warn("[Objective] use_objectives is on but the game has no ender - "
               + "victory points cannot resolve");
     }

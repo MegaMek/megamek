@@ -38,6 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -55,6 +57,7 @@ import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.game.Game;
+import megamek.common.event.GameToastEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.server.victory.VictoryPointTracker;
@@ -246,6 +249,8 @@ class ObjectivePlacementHandlerTest {
         handler.placeLobbyObjectives();
 
         verify(gameManager).sendServerChat(anyString());
+        // the chat line is easy to miss while the board loads, so it is raised as a toast as well
+        verify(gameManager).sendToast(eq(GameToastEvent.Level.WARNING), anyString(), isNull());
     }
 
     @Test
@@ -260,6 +265,7 @@ class ObjectivePlacementHandlerTest {
         handler.placeLobbyObjectives();
 
         verify(gameManager, never()).sendServerChat(anyString());
+        verify(gameManager, never()).sendToast(any(), anyString(), any());
     }
 
     private ObjectiveMarker markerFor(Player owner, Coords lobbyPosition) {

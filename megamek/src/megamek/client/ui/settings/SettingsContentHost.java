@@ -42,8 +42,11 @@ import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -75,6 +78,7 @@ public class SettingsContentHost extends JPanel {
     private final SettingsHelpPanel helpPanel;
     private final List<HelpBinding> activeHelpBindings = new ArrayList<>();
     private Component currentContent;
+    private String activeSearchFilter = "";
 
     public SettingsContentHost(Component content, boolean showHelpPanel) {
         super(new BorderLayout());
@@ -116,7 +120,7 @@ public class SettingsContentHost extends JPanel {
         currentContent = content;
         contentPanel.add(content, BorderLayout.CENTER);
         if (showHelp) {
-            bindHelp(content, null);
+            bindHelp(content, null, null);
         }
         contentPanel.revalidate();
         contentPanel.repaint();
@@ -130,7 +134,8 @@ public class SettingsContentHost extends JPanel {
         unbindHelp();
         helpPanel.clearHelpText();
         if (helpPanel.isVisible() && currentContent != null) {
-            bindHelp(currentContent, null);
+            bindHelp(currentContent, null, null);
+            revealMatchingHelp(activeSearchFilter);
         }
     }
 
@@ -140,12 +145,52 @@ public class SettingsContentHost extends JPanel {
 
     /** Updates the non-mutating text highlights painted over the current settings content. */
     public void setSearchFilter(String normalizedFilter) {
-        searchHighlightLayerUI.setFilter(normalizedFilter, searchHighlightLayer);
+        activeSearchFilter = normalizedFilter == null ? "" : normalizedFilter;
+        searchHighlightLayerUI.setFilter(activeSearchFilter, searchHighlightLayer);
+        helpPanel.clearHelpText();
+        helpPanel.setSearchFilter(activeSearchFilter);
+        revealMatchingHelp(activeSearchFilter);
+    }
+
+    private void revealMatchingHelp(String normalizedFilter) {
+        if (!helpPanel.isVisible() || normalizedFilter == null || normalizedFilter.isBlank()) {
+            searchHighlightLayerUI.setHelpMatchComponents(List.of(), searchHighlightLayer);
+            return;
+        }
+        List<String> tokens = SettingsSearchText.tokens(normalizedFilter);
+        Set<JComponent> matchingOwners = Collections.newSetFromMap(new IdentityHashMap<>());
+        HelpBinding firstMatch = null;
+        for (HelpBinding binding : activeHelpBindings) {
+            String normalizedHelp = SettingsRoute.normalizeSearchText(binding.helpText());
+            if (tokens.stream().allMatch(normalizedHelp::contains)) {
+                matchingOwners.add(binding.helpOwner());
+                if (firstMatch == null) {
+                    firstMatch = binding;
+                }
+            }
+        }
+        searchHighlightLayerUI.setHelpMatchComponents(List.copyOf(matchingOwners), searchHighlightLayer);
+        if (firstMatch == null) {
+            return;
+        }
+        setHelpText(firstMatch.helpText());
+        JComponent firstMatchOwner = firstMatch.helpOwner();
+        SwingUtilities.invokeLater(() -> {
+            if (normalizedFilter.equals(activeSearchFilter)
+                  && SwingUtilities.isDescendingFrom(firstMatchOwner, contentPanel)) {
+                firstMatchOwner.scrollRectToVisible(new Rectangle(
+                      0, 0, firstMatchOwner.getWidth(), firstMatchOwner.getHeight()));
+            }
+        });
     }
 
     /** Exposes painted bounds for headless overlay tests. */
     List<Rectangle> getSearchHighlightBounds() {
         return searchHighlightLayerUI.highlightBounds(searchHighlightLayer);
+    }
+
+    List<Rectangle> getHelpMatchBounds() {
+        return searchHighlightLayerUI.helpMatchBounds(searchHighlightLayer);
     }
 
     /**
@@ -208,8 +253,10 @@ public class SettingsContentHost extends JPanel {
         return pagePanel == null ? defaultShowHelpPanel : pagePanel.shouldShowDetailsPanel();
     }
 
-    private void bindHelp(Component component, @Nullable String inheritedHelpText) {
+    private void bindHelp(Component component, @Nullable String inheritedHelpText,
+          @Nullable JComponent inheritedHelpOwner) {
         String descendantHelpText = inheritedHelpText;
+        JComponent descendantHelpOwner = inheritedHelpOwner;
         boolean supportsHelp = !(component instanceof JButton) || component instanceof SettingsHelpProvider;
         if (component instanceof JComponent swingComponent && supportsHelp) {
             String ownHelpText = component instanceof SettingsHelpProvider provider
@@ -217,8 +264,9 @@ public class SettingsContentHost extends JPanel {
                   : swingComponent.getToolTipText();
             if (ownHelpText != null && !ownHelpText.isBlank()) {
                 descendantHelpText = ownHelpText;
+                descendantHelpOwner = swingComponent;
             }
-            if (descendantHelpText != null && !descendantHelpText.isBlank()) {
+            if (descendantHelpText != null && !descendantHelpText.isBlank() && descendantHelpOwner != null) {
                 String helpText = descendantHelpText;
                 MouseAdapter mouseListener = new MouseAdapter() {
                     @Override
@@ -233,8 +281,8 @@ public class SettingsContentHost extends JPanel {
                     }
                 };
                 boolean suppressTooltip = swingComponent.getToolTipText() != null;
-                HelpBinding binding = new HelpBinding(swingComponent, swingComponent.getToolTipText(),
-                      suppressTooltip, mouseListener, focusListener);
+                HelpBinding binding = new HelpBinding(swingComponent, descendantHelpOwner,
+                      swingComponent.getToolTipText(), helpText, suppressTooltip, mouseListener, focusListener);
                 swingComponent.addMouseListener(binding.mouseListener());
                 swingComponent.addFocusListener(binding.focusListener());
                 if (suppressTooltip) {
@@ -245,7 +293,7 @@ public class SettingsContentHost extends JPanel {
         }
         if (component instanceof Container container) {
             for (Component child : container.getComponents()) {
-                bindHelp(child, descendantHelpText);
+                bindHelp(child, descendantHelpText, descendantHelpOwner);
             }
         }
     }
@@ -271,12 +319,12 @@ public class SettingsContentHost extends JPanel {
     public void addNotify() {
         super.addNotify();
         if (helpPanel.isVisible() && activeHelpBindings.isEmpty() && currentContent != null) {
-            bindHelp(currentContent, null);
+            bindHelp(currentContent, null, null);
         }
     }
 
-    private record HelpBinding(JComponent component, String originalTooltip, boolean suppressTooltip,
-                               MouseAdapter mouseListener, FocusAdapter focusListener) {
+    private record HelpBinding(JComponent component, JComponent helpOwner, String originalTooltip, String helpText,
+                               boolean suppressTooltip, MouseAdapter mouseListener, FocusAdapter focusListener) {
     }
 
     private static class SettingsContentPanel extends JPanel implements Scrollable {

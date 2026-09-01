@@ -153,7 +153,7 @@ class FlammableAtmosphereFireTest {
     @Test
     @DisplayName("In flammable toxic air an explosive fire takes every burnable hex around it at once")
     void anExplosiveFireSpreadsToEveryAdjacentHex() {
-        game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.FLAMMABLE_TOXIC);
+        game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.TOXIC_FLAME);
         Vector<Report> reports = new Vector<>();
 
         handler.spreadExplosiveFire(CENTRE_OF_THE_WOODS, 0, 1, reports);
@@ -166,7 +166,7 @@ class FlammableAtmosphereFireTest {
     @Test
     @DisplayName("Water beside the fire is left alone")
     void waterDoesNotCatch() {
-        game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.FLAMMABLE_TOXIC);
+        game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.TOXIC_FLAME);
         Coords woodsBesideTheWater = new Coords(2, 2);
 
         handler.spreadExplosiveFire(woodsBesideTheWater, 0, 1, new Vector<>());
@@ -183,7 +183,7 @@ class FlammableAtmosphereFireTest {
     @Test
     @DisplayName("Flammable tainted air spreads a fire no faster than usual")
     void taintedAirDoesNotSpreadExplosiveFires() {
-        game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.FLAMMABLE_TAINTED);
+        game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.TAINTED_FLAME);
         Vector<Report> reports = new Vector<>();
 
         handler.spreadExplosiveFire(CENTRE_OF_THE_WOODS, 0, 1, reports);
@@ -235,7 +235,7 @@ class FlammableAtmosphereFireTest {
     void anAccidentalFireFromExplosiveOrdnanceSpreadsAtOnce() {
         // The whole chain, which is impractical to reach in a game: the accidental check needs 3 or below, and the
         // ignition that follows still has to beat the terrain. Both rolls are forced here so the path can be seen.
-        game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.FLAMMABLE_TOXIC);
+        game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.TOXIC_FLAME);
         Vector<Report> reports = new Vector<>();
         Roll passesTheAccidentalCheck = rollOf(2);
         Roll beatsTheTerrain = rollOf(12);
@@ -299,7 +299,7 @@ class FlammableAtmosphereFireTest {
     @Test
     @DisplayName("A jet-propelled craft taking off scorches the hexes behind it")
     void aJetPropelledCraftLeavesAnExhaustWash() {
-        game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.FLAMMABLE_TAINTED);
+        game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.TAINTED_FLAME);
         Roll beatsTheTarget = rollOf(TaintedAtmosphereRules.EXHAUST_WASH_IGNITION_TARGET);
         Entity aerospaceFighter = aerospaceCraft(false);
 
@@ -317,7 +317,7 @@ class FlammableAtmosphereFireTest {
     void aPropellerDrivenCraftLeavesNoExhaustWash() {
         // These are the craft still allowed to fly in flammable toxic air precisely because they are not
         // jet-propelled, so setting the ground alight behind them would contradict the reason they are there.
-        game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.FLAMMABLE_TAINTED);
+        game.getPlanetaryConditions().setAtmosphericTaint(AtmosphericTaint.TAINTED_FLAME);
         Roll wouldHaveBeatenTheTarget = rollOf(12);
         Entity propellerCraft = aerospaceCraft(true);
 

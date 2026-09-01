@@ -34,6 +34,7 @@
 package megamek.common.alphaStrike;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.EnumMap;
 import java.util.stream.Collectors;
 
@@ -109,7 +110,10 @@ public class ASSpecialAbilityCollection implements Serializable, ASSpecialAbilit
             if (specialAbilities.get(sua) instanceof Integer) {
                 specialAbilities.put(sua, (int) specialAbilities.get(sua) + intAbilityValue);
             } else if (specialAbilities.get(sua) instanceof Double) {
-                specialAbilities.put(sua, (double) specialAbilities.get(sua) + intAbilityValue);
+                double resultingValue = BigDecimal.valueOf((double) specialAbilities.get(sua))
+                      .add(BigDecimal.valueOf(intAbilityValue))
+                      .doubleValue();
+                specialAbilities.put(sua, resultingValue);
             }
         }
     }
@@ -120,21 +124,24 @@ public class ASSpecialAbilityCollection implements Serializable, ASSpecialAbilit
      * it will be converted to a Double type value. If the resulting value would be 0, the SUA is removed.
      */
     public void mergeSUA(BattleForceSUA sua, double doubleValue) {
-        double resultingValue = doubleValue;
+        // Add the source decimal values rather than their binary approximations. Otherwise valid sums such as
+        // 21.5 + 10.44 can leak onto unit cards as 31.939999999999998.
+        BigDecimal resultingValue = BigDecimal.valueOf(doubleValue);
         if (specialAbilities.containsKey(sua)) {
             if (specialAbilities.get(sua) instanceof Integer) {
-                resultingValue += (int) specialAbilities.get(sua);
+                resultingValue = resultingValue.add(BigDecimal.valueOf((int) specialAbilities.get(sua)));
             } else if (specialAbilities.get(sua) instanceof Double) {
-                resultingValue += (double) specialAbilities.get(sua);
+                resultingValue = resultingValue.add(BigDecimal.valueOf((double) specialAbilities.get(sua)));
             }
         }
-        if (resultingValue <= 0) {
+        if (resultingValue.signum() <= 0) {
             specialAbilities.remove(sua);
         } else {
-            if ((int) resultingValue == resultingValue) {
-                specialAbilities.put(sua, (int) resultingValue);
+            double result = resultingValue.doubleValue();
+            if ((int) result == result) {
+                specialAbilities.put(sua, (int) result);
             } else {
-                specialAbilities.put(sua, resultingValue);
+                specialAbilities.put(sua, result);
             }
         }
     }

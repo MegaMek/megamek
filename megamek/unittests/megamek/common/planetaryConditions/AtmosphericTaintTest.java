@@ -35,10 +35,13 @@ package megamek.common.planetaryConditions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * Tests the seven atmospheric taint settings of TO:AR p.54 and the questions the rules ask of them.
@@ -90,18 +93,18 @@ class AtmosphericTaintTest {
     @DisplayName("A flammable atmosphere makes fires easier to start, by 2 when tainted and 4 when toxic")
     void flammableAtmosphereEasesIgnition() {
         // Ignition succeeds on a roll at or above the target, so an easier fire is a negative modifier.
-        assertEquals(-2, AtmosphericTaint.FLAMMABLE_TAINTED.getIgniteModifier());
-        assertEquals(-4, AtmosphericTaint.FLAMMABLE_TOXIC.getIgniteModifier());
+        assertEquals(-2, AtmosphericTaint.TAINTED_FLAME.getIgniteModifier());
+        assertEquals(-4, AtmosphericTaint.TOXIC_FLAME.getIgniteModifier());
     }
 
     @Test
     @DisplayName("An atmosphere that is not flammable does not change ignition rolls")
     void otherAtmospheresDoNotChangeIgnition() {
         assertEquals(0, AtmosphericTaint.BREATHABLE.getIgniteModifier());
-        assertEquals(0, AtmosphericTaint.CAUSTIC_TAINTED.getIgniteModifier());
-        assertEquals(0, AtmosphericTaint.CAUSTIC_TOXIC.getIgniteModifier());
-        assertEquals(0, AtmosphericTaint.RADIOLOGICAL_TAINTED.getIgniteModifier());
-        assertEquals(0, AtmosphericTaint.RADIOLOGICAL_TOXIC.getIgniteModifier());
+        assertEquals(0, AtmosphericTaint.TAINTED_CAUSTIC.getIgniteModifier());
+        assertEquals(0, AtmosphericTaint.TOXIC_CAUSTIC.getIgniteModifier());
+        assertEquals(0, AtmosphericTaint.TAINTED_POISON.getIgniteModifier());
+        assertEquals(0, AtmosphericTaint.TOXIC_POISON.getIgniteModifier());
     }
 
     @Test
@@ -118,5 +121,51 @@ class AtmosphericTaintTest {
     @DisplayName("An unknown external id falls back to breathable air rather than failing")
     void unknownExternalIdFallsBackToBreathable() {
         assertEquals(AtmosphericTaint.BREATHABLE, AtmosphericTaint.getAtmosphericTaint("NOT_A_REAL_TAINT"));
+    }
+
+    @Test
+    @DisplayName("Every atmosphere reads back from its own name, whatever the casing")
+    void planetaryDataNameRoundTrips() {
+        for (AtmosphericTaint atmosphericTaint : AtmosphericTaint.values()) {
+            assertEquals(atmosphericTaint, AtmosphericTaint.fromString(atmosphericTaint.name()));
+            assertEquals(atmosphericTaint, AtmosphericTaint.fromString(atmosphericTaint.name().toLowerCase()));
+            assertEquals(atmosphericTaint, AtmosphericTaint.fromString("  " + atmosphericTaint.name() + "  "),
+                  atmosphericTaint + " should survive stray whitespace in the data file");
+        }
+    }
+
+    /**
+     * Every value the planetary system data has ever recorded in its {@code atmosphere} field. The six unpunctuated
+     * spellings predate the underscored names and still appear in player-customised system files, so a world
+     * carrying one has to keep loading.
+     */
+    @ParameterizedTest(name = "{0} reads as {1}")
+    @CsvSource({ "NONE, BREATHABLE", "BREATHABLE, BREATHABLE",
+                 "TAINTED_CAUSTIC, TAINTED_CAUSTIC", "TAINTEDCAUSTIC, TAINTED_CAUSTIC",
+                 "TAINTED_POISON, TAINTED_POISON", "TAINTEDPOISON, TAINTED_POISON",
+                 "TAINTED_FLAME, TAINTED_FLAME", "TAINTEDFLAME, TAINTED_FLAME",
+                 "TOXIC_CAUSTIC, TOXIC_CAUSTIC", "TOXICCAUSTIC, TOXIC_CAUSTIC",
+                 "TOXIC_POISON, TOXIC_POISON", "TOXICPOISON, TOXIC_POISON",
+                 "TOXIC_FLAME, TOXIC_FLAME", "TOXICFLAME, TOXIC_FLAME" })
+    @DisplayName("Every atmosphere spelling used in planetary system data still loads")
+    void planetaryDataSpellingsAllLoad(String recordedValue, AtmosphericTaint expected) {
+        assertEquals(expected, AtmosphericTaint.fromString(recordedValue));
+    }
+
+    @Test
+    @DisplayName("A world with no atmosphere is not treated as a taint - vacuum is carried by the pressure setting")
+    void anAbsentAtmosphereIsNotATaint() {
+        // The planetary data records NONE for an airless world, and the pressure recorded beside it already says
+        // VACUUM. Reading NONE as a taint of its own would let the conditions hold a standard pressure and an
+        // absent atmosphere at once.
+        assertEquals(AtmosphericTaint.BREATHABLE, AtmosphericTaint.fromString("NONE"));
+    }
+
+    @Test
+    @DisplayName("An unreadable atmosphere value fails loudly rather than quietly leaving the air clean")
+    void anUnknownAtmosphereValueThrows() {
+        assertThrows(IllegalArgumentException.class, () -> AtmosphericTaint.fromString("SLIGHTLY_SPICY"));
+        assertThrows(IllegalArgumentException.class, () -> AtmosphericTaint.fromString(""));
+        assertThrows(IllegalArgumentException.class, () -> AtmosphericTaint.fromString(null));
     }
 }

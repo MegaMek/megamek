@@ -81,9 +81,9 @@ class TaintedAtmospherePacketTest {
         assertEquals(AtmosphericTaint.BREATHABLE, game.getPlanetaryConditions().getAtmosphericTaint(),
               "a new game should start with breathable air");
 
-        sendConditionsAsPacket(AtmosphericTaint.RADIOLOGICAL_TOXIC);
+        sendConditionsAsPacket(AtmosphericTaint.TOXIC_POISON);
 
-        assertEquals(AtmosphericTaint.RADIOLOGICAL_TOXIC, game.getPlanetaryConditions().getAtmosphericTaint(),
+        assertEquals(AtmosphericTaint.TOXIC_POISON, game.getPlanetaryConditions().getAtmosphericTaint(),
               "the taint sent from the lobby should be the taint the server is now using");
     }
 
@@ -101,12 +101,12 @@ class TaintedAtmospherePacketTest {
     @Test
     @DisplayName("Conditions sent after deployment has begun are ignored, taint included")
     void taintCannotBeChangedOnceDeploymentHasStarted() {
-        sendConditionsAsPacket(AtmosphericTaint.CAUSTIC_TAINTED);
+        sendConditionsAsPacket(AtmosphericTaint.TAINTED_CAUSTIC);
         game.setPhase(GamePhase.DEPLOYMENT);
 
-        sendConditionsAsPacket(AtmosphericTaint.FLAMMABLE_TOXIC);
+        sendConditionsAsPacket(AtmosphericTaint.TOXIC_FLAME);
 
-        assertEquals(AtmosphericTaint.CAUSTIC_TAINTED, game.getPlanetaryConditions().getAtmosphericTaint(),
+        assertEquals(AtmosphericTaint.TAINTED_CAUSTIC, game.getPlanetaryConditions().getAtmosphericTaint(),
               "the server should refuse a conditions change once deployment has begun");
     }
 }

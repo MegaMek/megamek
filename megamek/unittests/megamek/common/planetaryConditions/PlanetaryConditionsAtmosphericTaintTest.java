@@ -241,7 +241,7 @@ class PlanetaryConditionsAtmosphericTaintTest {
     @Test
     @DisplayName("Toxic air turns away unsealed vehicles but not Meks of any kind")
     void toxicAirBarsVehiclesOnly() {
-        PlanetaryConditions conditions = conditionsWith(AtmosphericTaint.CAUSTIC_TOXIC);
+        PlanetaryConditions conditions = conditionsWith(AtmosphericTaint.TOXIC_CAUSTIC);
 
         assertNotNull(conditions.whyDoomed(vehicle(false), game),
               "an unsealed vehicle may not be fielded in toxic air");

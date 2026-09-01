@@ -94,7 +94,7 @@ class TaintedAtmosphereCockpitHitTest {
     @Test
     @DisplayName("Caustic air burns the crew through a damaged cockpit")
     void causticAirBurnsTheCrew() {
-        BipedMek mek = mekInAir(AtmosphericTaint.CAUSTIC_TAINTED);
+        BipedMek mek = mekInAir(AtmosphericTaint.TAINTED_CAUSTIC);
 
         assertTrue(reportsTheAirGettingIn(handler.resolveExtraCockpitCrewHit(mek)),
               "a live crew in a damaged cockpit takes the extra hit");
@@ -103,7 +103,7 @@ class TaintedAtmosphereCockpitHitTest {
     @Test
     @DisplayName("A destroyed unit is not burned a second time")
     void aDestroyedUnitIsNotBurned() {
-        BipedMek mek = mekInAir(AtmosphericTaint.CAUSTIC_TOXIC);
+        BipedMek mek = mekInAir(AtmosphericTaint.TOXIC_CAUSTIC);
         mek.setDestroyed(true);
 
         assertFalse(reportsTheAirGettingIn(handler.resolveExtraCockpitCrewHit(mek)),
@@ -114,7 +114,7 @@ class TaintedAtmosphereCockpitHitTest {
     @Test
     @DisplayName("A crew already lost is not burned again")
     void aCrewAlreadyLostIsNotBurned() {
-        BipedMek mek = mekInAir(AtmosphericTaint.CAUSTIC_TOXIC);
+        BipedMek mek = mekInAir(AtmosphericTaint.TOXIC_CAUSTIC);
         mek.getCrew().setDead(true);
 
         assertFalse(reportsTheAirGettingIn(handler.resolveExtraCockpitCrewHit(mek)),
@@ -124,7 +124,7 @@ class TaintedAtmosphereCockpitHitTest {
     @Test
     @DisplayName("Air that is not caustic burns nobody")
     void nonCausticAirBurnsNobody() {
-        BipedMek mek = mekInAir(AtmosphericTaint.RADIOLOGICAL_TAINTED);
+        BipedMek mek = mekInAir(AtmosphericTaint.TAINTED_POISON);
 
         assertFalse(reportsTheAirGettingIn(handler.resolveExtraCockpitCrewHit(mek)),
               "only caustic air gets into the cockpit and burns the crew");

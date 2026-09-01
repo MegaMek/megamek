@@ -85,14 +85,14 @@ class LethalToEjectedCrewTest {
     @Test
     void taintedAirKillsAnEjectingCrew() {
         PlanetaryConditions conditions = survivableConditions();
-        conditions.setAtmosphericTaint(AtmosphericTaint.CAUSTIC_TAINTED);
+        conditions.setAtmosphericTaint(AtmosphericTaint.TAINTED_CAUSTIC);
         assertTrue(conditions.isLethalToEjectedCrew());
     }
 
     @Test
     void toxicAirKillsAnEjectingCrew() {
         PlanetaryConditions conditions = survivableConditions();
-        conditions.setAtmosphericTaint(AtmosphericTaint.CAUSTIC_TOXIC);
+        conditions.setAtmosphericTaint(AtmosphericTaint.TOXIC_CAUSTIC);
         assertTrue(conditions.isLethalToEjectedCrew());
     }
 
@@ -143,12 +143,12 @@ class LethalToEjectedCrewTest {
               vacuum.whyLethalToEjectedCrew());
 
         PlanetaryConditions tainted = survivableConditions();
-        tainted.setAtmosphericTaint(AtmosphericTaint.CAUSTIC_TAINTED);
+        tainted.setAtmosphericTaint(AtmosphericTaint.TAINTED_CAUSTIC);
         assertEquals(Messages.getString("PlanetaryConditions.LethalToEjectedCrew.TaintedAir"),
               tainted.whyLethalToEjectedCrew());
 
         PlanetaryConditions toxic = survivableConditions();
-        toxic.setAtmosphericTaint(AtmosphericTaint.CAUSTIC_TOXIC);
+        toxic.setAtmosphericTaint(AtmosphericTaint.TOXIC_CAUSTIC);
         assertEquals(Messages.getString("PlanetaryConditions.LethalToEjectedCrew.ToxicAir"),
               toxic.whyLethalToEjectedCrew());
 
@@ -202,7 +202,7 @@ class LethalToEjectedCrewTest {
     void aTaintIsNotNamedAlongsideVacuum() {
         PlanetaryConditions conditions = survivableConditions();
         conditions.setAtmosphere(Atmosphere.VACUUM);
-        conditions.setAtmosphericTaint(AtmosphericTaint.CAUSTIC_TOXIC);
+        conditions.setAtmosphericTaint(AtmosphericTaint.TOXIC_CAUSTIC);
 
         assertEquals(Messages.getString("PlanetaryConditions.LethalToEjectedCrew.Vacuum"),
               conditions.whyLethalToEjectedCrew(),

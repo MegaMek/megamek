@@ -35,6 +35,7 @@ package megamek.server.totalWarfare;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -169,6 +170,19 @@ class VictorySetupPhaseTest {
         // a scenario sets its phase with the plain setter, so executeCurrentPhase never runs for it;
         // putting the pass anywhere but here leaves scenario starting victory points unawarded
         verify(gameManager).placeLobbyObjectives();
+        verify(gameManager).changePhase(GamePhase.VICTORY_SETUP);
+    }
+
+    @Test
+    void testALobbyGameDoesNotRunTheObjectivesPassTwice() {
+        gameOptions.getOption(OptionsConstants.VICTORY_USE_OBJECTIVES).setValue(true);
+        when(game.getPhase()).thenReturn(GamePhase.EXCHANGE);
+
+        phaseEndManager.managePhase();
+
+        // a lobby game already ran the pass in executeCurrentPhase; running it again here would place
+        // a player's markers and award their starting points a second time
+        verify(gameManager, never()).placeLobbyObjectives();
         verify(gameManager).changePhase(GamePhase.VICTORY_SETUP);
     }
 

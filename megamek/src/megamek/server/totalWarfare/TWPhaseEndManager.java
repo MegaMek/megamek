@@ -61,27 +61,23 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.changePhase(GamePhase.EXCHANGE);
                 break;
             case EXCHANGE:
+                // a lobby game has already run the objectives pass in executeCurrentPhase; running it
+                // again here would place a player's markers and award their starting points twice
+                gameManager.getGame().addReports(gameManager.getMainPhaseReport());
+                leaveTheStartingPhase();
+                break;
             case STARTING_SCENARIO:
-                // A scenario sets this phase with the plain setter rather than changePhase, so
-                // executeCurrentPhase never runs for it and anything put there is dead code for the one
-                // path that needs it. The phase END does run - it is what moves the game on - so the
-                // objectives pass belongs here: it applies scenario starting victory points and warns
-                // when nothing can end the game. Markers themselves arrive with the scenario file.
+                // A scenario sets this phase with the plain setter rather than changePhase, and only
+                // changePhase runs executeCurrentPhase - so the objectives pass placed there is dead
+                // code for the one path that needs it. The phase END does run; it is what moves the
+                // game on. Markers themselves arrive with the scenario file; what this pass adds is the
+                // scenario's starting victory points and the warning that nothing can end the game.
                 gameManager.placeLobbyObjectives();
                 gameManager.getGame().addReports(gameManager.getMainPhaseReport());
-                // objectives are placed before artillery is pre-sighted and mines are laid: both of those
-                // decisions depend on knowing where the objectives are
-                boolean usesObjectives = gameManager.getGame().getOptions()
-                      .booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES);
-                // the ground-object map is keyed by hex alone, with no board id, so objectives can only
-                // address a single-board ground game; multi-board games skip the phase
-                boolean isSingleGroundBoardGame = (gameManager.getGame().getBoards().size() == 1)
-                      && gameManager.getGame().getBoard().isGround();
-                if (usesObjectives && isSingleGroundBoardGame) {
-                    gameManager.changePhase(GamePhase.VICTORY_SETUP);
-                } else {
-                    gameManager.changePhase(GamePhase.SET_ARTILLERY_AUTO_HIT_HEXES);
-                }
+                // and clear them, or every later pre-game phase end copies the same lines into the round
+                // report again - the starting points were reported three times before this
+                gameManager.clearReports();
+                leaveTheStartingPhase();
                 break;
             case VICTORY_SETUP:
                 gameManager.getGame().addReports(gameManager.getMainPhaseReport());
@@ -395,5 +391,24 @@ record TWPhaseEndManager(TWGameManager gameManager) {
 
     private boolean isStandardGhostTargetMode() {
         return gameManager.getGame().usesStandardGhostTargetMode();
+    }
+
+    /**
+     * Moves a game out of its starting phase, whether it began in the lobby or from a scenario file.
+     * Objectives are set up before artillery is pre-sighted and mines are laid, because both of those
+     * decisions depend on knowing where the objectives are.
+     */
+    private void leaveTheStartingPhase() {
+        boolean usesObjectives = gameManager.getGame().getOptions()
+              .booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES);
+        // the ground-object map is keyed by hex alone, with no board id, so objectives can only address
+        // a single-board ground game; multi-board games skip the phase
+        boolean isSingleGroundBoardGame = (gameManager.getGame().getBoards().size() == 1)
+              && gameManager.getGame().getBoard().isGround();
+        if (usesObjectives && isSingleGroundBoardGame) {
+            gameManager.changePhase(GamePhase.VICTORY_SETUP);
+        } else {
+            gameManager.changePhase(GamePhase.SET_ARTILLERY_AUTO_HIT_HEXES);
+        }
     }
 }

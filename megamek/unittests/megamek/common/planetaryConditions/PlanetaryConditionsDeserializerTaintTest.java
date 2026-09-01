@@ -57,16 +57,12 @@ class PlanetaryConditionsDeserializerTaintTest {
     @Test
     @DisplayName("A scenario that names a taint gets that taint")
     void taintIsReadFromTheScenario() throws IOException {
-        assertEquals(AtmosphericTaint.CAUSTIC_TAINTED, readConditions("taint: caustic tainted").getAtmosphericTaint());
-        assertEquals(AtmosphericTaint.CAUSTIC_TOXIC, readConditions("taint: caustic toxic").getAtmosphericTaint());
-        assertEquals(AtmosphericTaint.RADIOLOGICAL_TAINTED,
-              readConditions("taint: radiological tainted").getAtmosphericTaint());
-        assertEquals(AtmosphericTaint.RADIOLOGICAL_TOXIC,
-              readConditions("taint: radiological toxic").getAtmosphericTaint());
-        assertEquals(AtmosphericTaint.FLAMMABLE_TAINTED,
-              readConditions("taint: flammable tainted").getAtmosphericTaint());
-        assertEquals(AtmosphericTaint.FLAMMABLE_TOXIC,
-              readConditions("taint: flammable toxic").getAtmosphericTaint());
+        assertEquals(AtmosphericTaint.TAINTED_CAUSTIC, readConditions("taint: tainted caustic").getAtmosphericTaint());
+        assertEquals(AtmosphericTaint.TAINTED_POISON, readConditions("taint: tainted poison").getAtmosphericTaint());
+        assertEquals(AtmosphericTaint.TAINTED_FLAME, readConditions("taint: tainted flame").getAtmosphericTaint());
+        assertEquals(AtmosphericTaint.TOXIC_CAUSTIC, readConditions("taint: toxic caustic").getAtmosphericTaint());
+        assertEquals(AtmosphericTaint.TOXIC_POISON, readConditions("taint: toxic poison").getAtmosphericTaint());
+        assertEquals(AtmosphericTaint.TOXIC_FLAME, readConditions("taint: toxic flame").getAtmosphericTaint());
         assertEquals(AtmosphericTaint.BREATHABLE, readConditions("taint: breathable").getAtmosphericTaint());
     }
 
@@ -79,11 +75,12 @@ class PlanetaryConditionsDeserializerTaintTest {
     @Test
     @DisplayName("The taint is independent of the atmospheric pressure")
     void taintAndPressureAreSetSeparately() throws IOException {
-        PlanetaryConditions conditions = readConditions("pressure: thin\ntaint: flammable toxic");
+        PlanetaryConditions conditions = readConditions("pressure: thin\ntaint: toxic flame");
 
         assertEquals(Atmosphere.THIN, conditions.getAtmosphere());
-        assertEquals(AtmosphericTaint.FLAMMABLE_TOXIC, conditions.getAtmosphericTaint());
+        assertEquals(AtmosphericTaint.TOXIC_FLAME, conditions.getAtmosphericTaint());
     }
+
     @Test
     @DisplayName("A scenario that misspells the taint gets breathable air rather than a crash")
     void anUnrecognisedTaintLeavesTheAirBreathable() throws IOException {

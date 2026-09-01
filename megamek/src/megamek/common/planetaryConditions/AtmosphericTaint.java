@@ -33,6 +33,10 @@
 
 package megamek.common.planetaryConditions;
 
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import megamek.common.Messages;
 
 /**
@@ -46,32 +50,33 @@ import megamek.common.Messages;
  * nonetheless breathable, and a value pair would let one be configured.
  * <p>
  * Breathable air is the default and has no effect on play at all.
+ * <p>
+ * The value names match the {@code atmosphere} field recorded against every world in the planetary system data,
+ * so a campaign can hand a planet's recorded air straight to a battle without translating between two
+ * vocabularies. {@link Atmosphere}, which carries the air <i>pressure</i> for the same worlds, is read from that
+ * data the same way.
  */
 public enum AtmosphericTaint {
     /** Safe for prolonged exposure; no effect in game play. */
     BREATHABLE("BREATHABLE", "PlanetaryConditions.DisplayableName.AtmosphericTaint.Breathable", "\u25CB"),
     /** Corrosive or burning to organic tissues, at the level that requires safeguards. */
-    CAUSTIC_TAINTED("CAUSTIC_TAINTED",
-          "PlanetaryConditions.DisplayableName.AtmosphericTaint.CausticTainted",
+    TAINTED_CAUSTIC("TAINTED_CAUSTIC",
+          "PlanetaryConditions.DisplayableName.AtmosphericTaint.TaintedCaustic",
+          "\u25D1"),
+    /** Unbreathable or poisoned air (including nuclear fallout), at the level that requires safeguards. */
+    TAINTED_POISON("TAINTED_POISON",
+          "PlanetaryConditions.DisplayableName.AtmosphericTaint.TaintedPoison",
+          "\u25D1"),
+    /** Air that is more conducive to starting or spreading fires, at the level that requires safeguards. */
+    TAINTED_FLAME("TAINTED_FLAME",
+          "PlanetaryConditions.DisplayableName.AtmosphericTaint.TaintedFlame",
           "\u25D1"),
     /** Corrosive or burning to organic tissues, at the level that only full environmental sealing can negate. */
-    CAUSTIC_TOXIC("CAUSTIC_TOXIC", "PlanetaryConditions.DisplayableName.AtmosphericTaint.CausticToxic", "\u2620"),
-    /** Unbreathable or poisoned air (including nuclear fallout), at the level that requires safeguards. */
-    RADIOLOGICAL_TAINTED("RADIOLOGICAL_TAINTED",
-          "PlanetaryConditions.DisplayableName.AtmosphericTaint.RadiologicalTainted",
-          "\u25D1"),
+    TOXIC_CAUSTIC("TOXIC_CAUSTIC", "PlanetaryConditions.DisplayableName.AtmosphericTaint.ToxicCaustic", "\u2620"),
     /** Unbreathable or poisoned air, at the level that only full environmental sealing can negate. */
-    RADIOLOGICAL_TOXIC("RADIOLOGICAL_TOXIC",
-          "PlanetaryConditions.DisplayableName.AtmosphericTaint.RadiologicalToxic",
-          "\u2620"),
-    /** Air that is more conducive to starting or spreading fires, at the level that requires safeguards. */
-    FLAMMABLE_TAINTED("FLAMMABLE_TAINTED",
-          "PlanetaryConditions.DisplayableName.AtmosphericTaint.FlammableTainted",
-          "\u25D1"),
+    TOXIC_POISON("TOXIC_POISON", "PlanetaryConditions.DisplayableName.AtmosphericTaint.ToxicPoison", "\u2620"),
     /** Air that is more conducive to starting or spreading fires, at its most extreme. */
-    FLAMMABLE_TOXIC("FLAMMABLE_TOXIC",
-          "PlanetaryConditions.DisplayableName.AtmosphericTaint.FlammableToxic",
-          "\u2620");
+    TOXIC_FLAME("TOXIC_FLAME", "PlanetaryConditions.DisplayableName.AtmosphericTaint.ToxicFlame", "\u2620");
 
     private final String externalId;
     private final String name;
@@ -103,12 +108,12 @@ public enum AtmosphericTaint {
 
     /** @return {@code true} if the air is fouled to the "tainted" degree - safeguards needed, but survivable. */
     public boolean isTainted() {
-        return (this == CAUSTIC_TAINTED) || (this == RADIOLOGICAL_TAINTED) || (this == FLAMMABLE_TAINTED);
+        return (this == TAINTED_CAUSTIC) || (this == TAINTED_POISON) || (this == TAINTED_FLAME);
     }
 
     /** @return {@code true} if the air is fouled to the "toxic" degree - only full environmental sealing helps. */
     public boolean isToxic() {
-        return (this == CAUSTIC_TOXIC) || (this == RADIOLOGICAL_TOXIC) || (this == FLAMMABLE_TOXIC);
+        return (this == TOXIC_CAUSTIC) || (this == TOXIC_POISON) || (this == TOXIC_FLAME);
     }
 
     /** @return {@code true} for any atmosphere that is not breathable, whether tainted or toxic. */
@@ -118,17 +123,17 @@ public enum AtmosphericTaint {
 
     /** @return {@code true} if the taint is corrosive or burning to organic tissues. */
     public boolean isCaustic() {
-        return (this == CAUSTIC_TAINTED) || (this == CAUSTIC_TOXIC);
+        return (this == TAINTED_CAUSTIC) || (this == TOXIC_CAUSTIC);
     }
 
     /** @return {@code true} if the taint is unbreathable air, poison or nuclear fallout. */
     public boolean isRadiological() {
-        return (this == RADIOLOGICAL_TAINTED) || (this == RADIOLOGICAL_TOXIC);
+        return (this == TAINTED_POISON) || (this == TOXIC_POISON);
     }
 
     /** @return {@code true} if the taint makes fires easier to start and spread. */
     public boolean isFlammable() {
-        return (this == FLAMMABLE_TAINTED) || (this == FLAMMABLE_TOXIC);
+        return (this == TAINTED_FLAME) || (this == TOXIC_FLAME);
     }
 
     /**
@@ -139,9 +144,9 @@ public enum AtmosphericTaint {
      * @return the ignition modifier to apply, or {@code 0} for any atmosphere that is not flammable
      */
     public int getIgniteModifier() {
-        if (this == FLAMMABLE_TAINTED) {
+        if (this == TAINTED_FLAME) {
             return -2;
-        } else if (this == FLAMMABLE_TOXIC) {
+        } else if (this == TOXIC_FLAME) {
             return -4;
         }
         return 0;
@@ -168,5 +173,55 @@ public enum AtmosphericTaint {
             }
         }
         return AtmosphericTaint.BREATHABLE;
+    }
+
+    /**
+     * Spellings used in older planetary system data files, kept readable so that player-customised systems written
+     * before the underscored names were introduced still load.
+     * <p>
+     * {@code NONE} is the recorded value for a world with no atmosphere at all. That is not a taint, and the air
+     * pressure recorded alongside it already says {@link Atmosphere#VACUUM}, so it maps to {@link #BREATHABLE}
+     * rather than becoming an eighth value here. Were it kept, the planetary conditions could hold a standard
+     * pressure and an absent atmosphere at the same time and nothing would reject the contradiction.
+     */
+    private static final Map<String, AtmosphericTaint> LEGACY_ALIASES = Map.of("NONE", BREATHABLE,
+          "TAINTEDCAUSTIC", TAINTED_CAUSTIC,
+          "TAINTEDPOISON", TAINTED_POISON,
+          "TAINTEDFLAME", TAINTED_FLAME,
+          "TOXICCAUSTIC", TOXIC_CAUSTIC,
+          "TOXICPOISON", TOXIC_POISON,
+          "TOXICFLAME", TOXIC_FLAME);
+
+    /**
+     * Reads an {@link AtmosphericTaint} from the {@code atmosphere} field of the planetary system data, accepting
+     * the canonical names in any casing as well as the legacy spellings in {@link #LEGACY_ALIASES}.
+     *
+     * @param value the string to parse
+     *
+     * @return the matching {@link AtmosphericTaint}, never {@code null}
+     *
+     * @throws IllegalArgumentException if the value is blank or cannot be mapped
+     */
+    @JsonCreator
+    public static AtmosphericTaint fromString(String value) {
+        if ((value == null) || value.isBlank()) {
+            throw new IllegalArgumentException("Atmospheric taint value must not be null or blank");
+        }
+
+        String trimmed = value.strip();
+
+        for (AtmosphericTaint atmosphericTaint : values()) {
+            if (atmosphericTaint.name().equalsIgnoreCase(trimmed)) {
+                return atmosphericTaint;
+            }
+        }
+
+        for (Map.Entry<String, AtmosphericTaint> alias : LEGACY_ALIASES.entrySet()) {
+            if (alias.getKey().equalsIgnoreCase(trimmed)) {
+                return alias.getValue();
+            }
+        }
+
+        throw new IllegalArgumentException("Unknown atmospheric taint value: '" + value + "'");
     }
 }

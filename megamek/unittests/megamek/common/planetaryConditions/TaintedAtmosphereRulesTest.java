@@ -61,65 +61,65 @@ class TaintedAtmosphereRulesTest {
     @Test
     @DisplayName("Caustic and radiological air are dangerous to people; flammable air is dangerous to the ground")
     void onlyCausticAndRadiologicalAirHarmsPeople() {
-        assertTrue(TaintedAtmosphereRules.isHarmfulToPersonnel(AtmosphericTaint.CAUSTIC_TAINTED));
-        assertTrue(TaintedAtmosphereRules.isHarmfulToPersonnel(AtmosphericTaint.CAUSTIC_TOXIC));
-        assertTrue(TaintedAtmosphereRules.isHarmfulToPersonnel(AtmosphericTaint.RADIOLOGICAL_TAINTED));
-        assertTrue(TaintedAtmosphereRules.isHarmfulToPersonnel(AtmosphericTaint.RADIOLOGICAL_TOXIC));
+        assertTrue(TaintedAtmosphereRules.isHarmfulToPersonnel(AtmosphericTaint.TAINTED_CAUSTIC));
+        assertTrue(TaintedAtmosphereRules.isHarmfulToPersonnel(AtmosphericTaint.TOXIC_CAUSTIC));
+        assertTrue(TaintedAtmosphereRules.isHarmfulToPersonnel(AtmosphericTaint.TAINTED_POISON));
+        assertTrue(TaintedAtmosphereRules.isHarmfulToPersonnel(AtmosphericTaint.TOXIC_POISON));
 
-        assertFalse(TaintedAtmosphereRules.isHarmfulToPersonnel(AtmosphericTaint.FLAMMABLE_TAINTED));
-        assertFalse(TaintedAtmosphereRules.isHarmfulToPersonnel(AtmosphericTaint.FLAMMABLE_TOXIC));
+        assertFalse(TaintedAtmosphereRules.isHarmfulToPersonnel(AtmosphericTaint.TAINTED_FLAME));
+        assertFalse(TaintedAtmosphereRules.isHarmfulToPersonnel(AtmosphericTaint.TOXIC_FLAME));
         assertFalse(TaintedAtmosphereRules.isHarmfulToPersonnel(AtmosphericTaint.BREATHABLE));
     }
 
     @Test
     @DisplayName("Caustic and radiological air demand XCT infantry; flammable air demands nothing")
     void xctInfantryIsRequiredOnlyWhereTheAirHarmsPeople() {
-        assertTrue(TaintedAtmosphereRules.requiresXctInfantry(AtmosphericTaint.CAUSTIC_TAINTED));
-        assertTrue(TaintedAtmosphereRules.requiresXctInfantry(AtmosphericTaint.RADIOLOGICAL_TOXIC));
+        assertTrue(TaintedAtmosphereRules.requiresXctInfantry(AtmosphericTaint.TAINTED_CAUSTIC));
+        assertTrue(TaintedAtmosphereRules.requiresXctInfantry(AtmosphericTaint.TOXIC_POISON));
 
-        assertFalse(TaintedAtmosphereRules.requiresXctInfantry(AtmosphericTaint.FLAMMABLE_TAINTED));
-        assertFalse(TaintedAtmosphereRules.requiresXctInfantry(AtmosphericTaint.FLAMMABLE_TOXIC));
+        assertFalse(TaintedAtmosphereRules.requiresXctInfantry(AtmosphericTaint.TAINTED_FLAME));
+        assertFalse(TaintedAtmosphereRules.requiresXctInfantry(AtmosphericTaint.TOXIC_FLAME));
         assertFalse(TaintedAtmosphereRules.requiresXctInfantry(AtmosphericTaint.BREATHABLE));
     }
 
     @Test
     @DisplayName("Only toxic caustic or radiological air keeps unsealed vehicles off the field")
     void unsealedVehiclesAreBarredOnlyByToxicHarmfulAir() {
-        assertTrue(TaintedAtmosphereRules.barsUnsealedVehicles(AtmosphericTaint.CAUSTIC_TOXIC));
-        assertTrue(TaintedAtmosphereRules.barsUnsealedVehicles(AtmosphericTaint.RADIOLOGICAL_TOXIC));
+        assertTrue(TaintedAtmosphereRules.barsUnsealedVehicles(AtmosphericTaint.TOXIC_CAUSTIC));
+        assertTrue(TaintedAtmosphereRules.barsUnsealedVehicles(AtmosphericTaint.TOXIC_POISON));
 
-        assertFalse(TaintedAtmosphereRules.barsUnsealedVehicles(AtmosphericTaint.CAUSTIC_TAINTED));
-        assertFalse(TaintedAtmosphereRules.barsUnsealedVehicles(AtmosphericTaint.RADIOLOGICAL_TAINTED));
-        assertFalse(TaintedAtmosphereRules.barsUnsealedVehicles(AtmosphericTaint.FLAMMABLE_TOXIC));
+        assertFalse(TaintedAtmosphereRules.barsUnsealedVehicles(AtmosphericTaint.TAINTED_CAUSTIC));
+        assertFalse(TaintedAtmosphereRules.barsUnsealedVehicles(AtmosphericTaint.TAINTED_POISON));
+        assertFalse(TaintedAtmosphereRules.barsUnsealedVehicles(AtmosphericTaint.TOXIC_FLAME));
         assertFalse(TaintedAtmosphereRules.barsUnsealedVehicles(AtmosphericTaint.BREATHABLE));
     }
 
     @Test
     @DisplayName("Vehicles roll for breaches in caustic air and in toxic radiological air, and nowhere else")
     void vehicleBreachesHappenOnlyWhereTheRulesGiveThemAnEffect() {
-        assertTrue(TaintedAtmosphereRules.causesVehicleBreaches(AtmosphericTaint.CAUSTIC_TAINTED));
-        assertTrue(TaintedAtmosphereRules.causesVehicleBreaches(AtmosphericTaint.CAUSTIC_TOXIC));
-        assertTrue(TaintedAtmosphereRules.causesVehicleBreaches(AtmosphericTaint.RADIOLOGICAL_TOXIC));
+        assertTrue(TaintedAtmosphereRules.causesVehicleBreaches(AtmosphericTaint.TAINTED_CAUSTIC));
+        assertTrue(TaintedAtmosphereRules.causesVehicleBreaches(AtmosphericTaint.TOXIC_CAUSTIC));
+        assertTrue(TaintedAtmosphereRules.causesVehicleBreaches(AtmosphericTaint.TOXIC_POISON));
 
         assertFalse(TaintedAtmosphereRules.causesVehicleBreaches(AtmosphericTaint.BREATHABLE));
-        assertFalse(TaintedAtmosphereRules.causesVehicleBreaches(AtmosphericTaint.RADIOLOGICAL_TAINTED));
-        assertFalse(TaintedAtmosphereRules.causesVehicleBreaches(AtmosphericTaint.FLAMMABLE_TAINTED));
-        assertFalse(TaintedAtmosphereRules.causesVehicleBreaches(AtmosphericTaint.FLAMMABLE_TOXIC));
+        assertFalse(TaintedAtmosphereRules.causesVehicleBreaches(AtmosphericTaint.TAINTED_POISON));
+        assertFalse(TaintedAtmosphereRules.causesVehicleBreaches(AtmosphericTaint.TAINTED_FLAME));
+        assertFalse(TaintedAtmosphereRules.causesVehicleBreaches(AtmosphericTaint.TOXIC_FLAME));
     }
 
     @Test
     @DisplayName("A breached vehicle is stunned in caustic tainted air and killed in toxic air")
     void vehicleBreachEffectMatchesTheTable() {
         assertEquals(VehicleBreachEffect.CREW_STUNNED,
-              TaintedAtmosphereRules.getVehicleBreachEffect(AtmosphericTaint.CAUSTIC_TAINTED));
+              TaintedAtmosphereRules.getVehicleBreachEffect(AtmosphericTaint.TAINTED_CAUSTIC));
         assertEquals(VehicleBreachEffect.CREW_KILLED,
-              TaintedAtmosphereRules.getVehicleBreachEffect(AtmosphericTaint.CAUSTIC_TOXIC));
+              TaintedAtmosphereRules.getVehicleBreachEffect(AtmosphericTaint.TOXIC_CAUSTIC));
         assertEquals(VehicleBreachEffect.CREW_KILLED,
-              TaintedAtmosphereRules.getVehicleBreachEffect(AtmosphericTaint.RADIOLOGICAL_TOXIC));
+              TaintedAtmosphereRules.getVehicleBreachEffect(AtmosphericTaint.TOXIC_POISON));
         assertEquals(VehicleBreachEffect.NONE,
-              TaintedAtmosphereRules.getVehicleBreachEffect(AtmosphericTaint.RADIOLOGICAL_TAINTED));
+              TaintedAtmosphereRules.getVehicleBreachEffect(AtmosphericTaint.TAINTED_POISON));
         assertEquals(VehicleBreachEffect.NONE,
-              TaintedAtmosphereRules.getVehicleBreachEffect(AtmosphericTaint.FLAMMABLE_TOXIC));
+              TaintedAtmosphereRules.getVehicleBreachEffect(AtmosphericTaint.TOXIC_FLAME));
         assertEquals(VehicleBreachEffect.NONE,
               TaintedAtmosphereRules.getVehicleBreachEffect(AtmosphericTaint.BREATHABLE));
     }
@@ -130,16 +130,16 @@ class TaintedAtmosphereRulesTest {
         Mek mek = mock(Mek.class);
 
         assertTrue(TaintedAtmosphereRules.isLocationExposedToTaint(mek, Mek.LOC_HEAD,
-              AtmosphericTaint.CAUSTIC_TOXIC));
+              AtmosphericTaint.TOXIC_CAUSTIC));
         assertTrue(TaintedAtmosphereRules.isLocationExposedToTaint(mek, Mek.LOC_HEAD,
-              AtmosphericTaint.RADIOLOGICAL_TOXIC));
+              AtmosphericTaint.TOXIC_POISON));
 
         assertFalse(TaintedAtmosphereRules.isLocationExposedToTaint(mek, Mek.LOC_CENTER_TORSO,
-              AtmosphericTaint.CAUSTIC_TOXIC));
+              AtmosphericTaint.TOXIC_CAUSTIC));
         assertFalse(TaintedAtmosphereRules.isLocationExposedToTaint(mek, Mek.LOC_HEAD,
-              AtmosphericTaint.CAUSTIC_TAINTED));
+              AtmosphericTaint.TAINTED_CAUSTIC));
         assertFalse(TaintedAtmosphereRules.isLocationExposedToTaint(mek, Mek.LOC_HEAD,
-              AtmosphericTaint.FLAMMABLE_TOXIC));
+              AtmosphericTaint.TOXIC_FLAME));
     }
 
     @Test
@@ -148,11 +148,11 @@ class TaintedAtmosphereRulesTest {
         Tank tank = mock(Tank.class);
 
         assertTrue(TaintedAtmosphereRules.isLocationExposedToTaint(tank, Tank.LOC_FRONT,
-              AtmosphericTaint.CAUSTIC_TAINTED));
+              AtmosphericTaint.TAINTED_CAUSTIC));
         assertTrue(TaintedAtmosphereRules.isLocationExposedToTaint(tank, Tank.LOC_REAR,
-              AtmosphericTaint.CAUSTIC_TAINTED));
+              AtmosphericTaint.TAINTED_CAUSTIC));
         assertFalse(TaintedAtmosphereRules.isLocationExposedToTaint(tank, Tank.LOC_FRONT,
-              AtmosphericTaint.FLAMMABLE_TAINTED));
+              AtmosphericTaint.TAINTED_FLAME));
     }
 
     @Test
@@ -170,64 +170,64 @@ class TaintedAtmosphereRulesTest {
     @Test
     @DisplayName("Caustic air burns a pilot a second time through a damaged cockpit, at either strength")
     void extraCockpitCrewHitIsCausticAtEitherStrength() {
-        assertTrue(TaintedAtmosphereRules.causesExtraCockpitCrewHit(AtmosphericTaint.CAUSTIC_TAINTED));
-        assertTrue(TaintedAtmosphereRules.causesExtraCockpitCrewHit(AtmosphericTaint.CAUSTIC_TOXIC),
+        assertTrue(TaintedAtmosphereRules.causesExtraCockpitCrewHit(AtmosphericTaint.TAINTED_CAUSTIC));
+        assertTrue(TaintedAtmosphereRules.causesExtraCockpitCrewHit(AtmosphericTaint.TOXIC_CAUSTIC),
               "toxic air is the same taint at a worse level, so it does everything the tainted row does");
 
-        assertFalse(TaintedAtmosphereRules.causesExtraCockpitCrewHit(AtmosphericTaint.RADIOLOGICAL_TAINTED));
+        assertFalse(TaintedAtmosphereRules.causesExtraCockpitCrewHit(AtmosphericTaint.TAINTED_POISON));
         assertFalse(TaintedAtmosphereRules.causesExtraCockpitCrewHit(AtmosphericTaint.BREATHABLE));
     }
 
     @Test
     @DisplayName("Caustic air adds 1D6 to a weapon attack on infantry, at either strength")
     void extraInfantryDamageDiceIsCausticAtEitherStrength() {
-        assertEquals(1, TaintedAtmosphereRules.getExtraInfantryAttackDamageDice(AtmosphericTaint.CAUSTIC_TAINTED));
-        assertEquals(1, TaintedAtmosphereRules.getExtraInfantryAttackDamageDice(AtmosphericTaint.CAUSTIC_TOXIC),
+        assertEquals(1, TaintedAtmosphereRules.getExtraInfantryAttackDamageDice(AtmosphericTaint.TAINTED_CAUSTIC));
+        assertEquals(1, TaintedAtmosphereRules.getExtraInfantryAttackDamageDice(AtmosphericTaint.TOXIC_CAUSTIC),
               "toxic air is the same taint at a worse level, so it does everything the tainted row does");
 
         assertEquals(0, TaintedAtmosphereRules.getExtraInfantryAttackDamageDice(
-              AtmosphericTaint.RADIOLOGICAL_TAINTED));
+              AtmosphericTaint.TAINTED_POISON));
         assertEquals(0, TaintedAtmosphereRules.getExtraInfantryAttackDamageDice(AtmosphericTaint.BREATHABLE));
     }
 
     @Test
     @DisplayName("Radiological air doubles damage to infantry, at either strength")
     void doubledInfantryDamageIsRadiologicalAtEitherStrength() {
-        assertTrue(TaintedAtmosphereRules.doublesInfantryDamage(AtmosphericTaint.RADIOLOGICAL_TAINTED));
-        assertTrue(TaintedAtmosphereRules.doublesInfantryDamage(AtmosphericTaint.RADIOLOGICAL_TOXIC),
+        assertTrue(TaintedAtmosphereRules.doublesInfantryDamage(AtmosphericTaint.TAINTED_POISON));
+        assertTrue(TaintedAtmosphereRules.doublesInfantryDamage(AtmosphericTaint.TOXIC_POISON),
               "toxic air is the same taint at a worse level, so it does everything the tainted row does");
 
-        assertFalse(TaintedAtmosphereRules.doublesInfantryDamage(AtmosphericTaint.CAUSTIC_TAINTED));
+        assertFalse(TaintedAtmosphereRules.doublesInfantryDamage(AtmosphericTaint.TAINTED_CAUSTIC));
         assertFalse(TaintedAtmosphereRules.doublesInfantryDamage(AtmosphericTaint.BREATHABLE));
     }
 
     @Test
     @DisplayName("Flammable air shifts an attack on infantry two rows down the damage table, at either strength")
     void infantryDamageClassShiftIsFlammableAtEitherStrength() {
-        assertEquals(2, TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.FLAMMABLE_TAINTED));
-        assertEquals(2, TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.FLAMMABLE_TOXIC),
+        assertEquals(2, TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.TAINTED_FLAME));
+        assertEquals(2, TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.TOXIC_FLAME),
               "the shift carries up to toxic air, which is what stops it resolving a cluster missile attack "
                     + "more gently than tainted air would");
 
-        assertEquals(0, TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.CAUSTIC_TAINTED));
+        assertEquals(0, TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.TAINTED_CAUSTIC));
         assertEquals(0, TaintedAtmosphereRules.getInfantryDamageClassShift(AtmosphericTaint.BREATHABLE));
     }
 
     @Test
     @DisplayName("Flammable toxic air turns attacks on infantry into infantry-on-infantry damage")
-    void infantryOriginDamageIsFlammableToxicOnly() {
-        assertTrue(TaintedAtmosphereRules.treatsAttacksOnInfantryAsInfantryDamage(AtmosphericTaint.FLAMMABLE_TOXIC));
+    void infantryOriginDamageIsToxicFlameOnly() {
+        assertTrue(TaintedAtmosphereRules.treatsAttacksOnInfantryAsInfantryDamage(AtmosphericTaint.TOXIC_FLAME));
 
         assertFalse(TaintedAtmosphereRules.treatsAttacksOnInfantryAsInfantryDamage(
-              AtmosphericTaint.FLAMMABLE_TAINTED));
+              AtmosphericTaint.TAINTED_FLAME));
         assertFalse(TaintedAtmosphereRules.treatsAttacksOnInfantryAsInfantryDamage(AtmosphericTaint.BREATHABLE));
     }
 
     @Test
     @DisplayName("Jump jets light a flammable toxic hex automatically, but only risk it in tainted air")
     void jumpJetIgnition() {
-        assertTrue(TaintedAtmosphereRules.jumpJetsAlwaysIgnite(AtmosphericTaint.FLAMMABLE_TOXIC));
-        assertFalse(TaintedAtmosphereRules.jumpJetsAlwaysIgnite(AtmosphericTaint.FLAMMABLE_TAINTED));
+        assertTrue(TaintedAtmosphereRules.jumpJetsAlwaysIgnite(AtmosphericTaint.TOXIC_FLAME));
+        assertFalse(TaintedAtmosphereRules.jumpJetsAlwaysIgnite(AtmosphericTaint.TAINTED_FLAME));
 
         assertEquals(7, TaintedAtmosphereRules.getJumpIgnitionTarget(false));
         assertEquals(9, TaintedAtmosphereRules.getJumpIgnitionTarget(true));
@@ -236,11 +236,11 @@ class TaintedAtmosphereRulesTest {
     @Test
     @DisplayName("A damaged battle armor suit is only lethal in toxic caustic or radiological air")
     void battleArmorSuitBreachIsToxicOnly() {
-        assertTrue(TaintedAtmosphereRules.killsBattleArmorInDamagedSuits(AtmosphericTaint.CAUSTIC_TOXIC));
-        assertTrue(TaintedAtmosphereRules.killsBattleArmorInDamagedSuits(AtmosphericTaint.RADIOLOGICAL_TOXIC));
+        assertTrue(TaintedAtmosphereRules.killsBattleArmorInDamagedSuits(AtmosphericTaint.TOXIC_CAUSTIC));
+        assertTrue(TaintedAtmosphereRules.killsBattleArmorInDamagedSuits(AtmosphericTaint.TOXIC_POISON));
 
-        assertFalse(TaintedAtmosphereRules.killsBattleArmorInDamagedSuits(AtmosphericTaint.FLAMMABLE_TOXIC));
-        assertFalse(TaintedAtmosphereRules.killsBattleArmorInDamagedSuits(AtmosphericTaint.CAUSTIC_TAINTED));
+        assertFalse(TaintedAtmosphereRules.killsBattleArmorInDamagedSuits(AtmosphericTaint.TOXIC_FLAME));
+        assertFalse(TaintedAtmosphereRules.killsBattleArmorInDamagedSuits(AtmosphericTaint.TAINTED_CAUSTIC));
         assertFalse(TaintedAtmosphereRules.killsBattleArmorInDamagedSuits(AtmosphericTaint.BREATHABLE));
     }
 
@@ -283,9 +283,9 @@ class TaintedAtmosphereRulesTest {
         Entity fighter = mock(Entity.class);
         when(fighter.isAero()).thenReturn(true);
 
-        assertTrue(TaintedAtmosphereRules.barsJetPropelledCraft(fighter, AtmosphericTaint.FLAMMABLE_TOXIC),
+        assertTrue(TaintedAtmosphereRules.barsJetPropelledCraft(fighter, AtmosphericTaint.TOXIC_FLAME),
               "nothing on jet thrust can operate in flammable toxic air");
-        assertFalse(TaintedAtmosphereRules.barsJetPropelledCraft(fighter, AtmosphericTaint.FLAMMABLE_TAINTED),
+        assertFalse(TaintedAtmosphereRules.barsJetPropelledCraft(fighter, AtmosphericTaint.TAINTED_FLAME),
               "only toxic air bars launching");
         assertFalse(TaintedAtmosphereRules.barsJetPropelledCraft(fighter, AtmosphericTaint.BREATHABLE),
               "breathable air bars nothing");
@@ -293,25 +293,25 @@ class TaintedAtmosphereRulesTest {
         Entity propellerCraft = mock(Entity.class);
         when(propellerCraft.isAero()).thenReturn(true);
         when(propellerCraft.hasMisc(EquipmentTypeLookup.PROP_CHASSIS_MOD)).thenReturn(true);
-        assertFalse(TaintedAtmosphereRules.barsJetPropelledCraft(propellerCraft, AtmosphericTaint.FLAMMABLE_TOXIC),
+        assertFalse(TaintedAtmosphereRules.barsJetPropelledCraft(propellerCraft, AtmosphericTaint.TOXIC_FLAME),
               "a propeller-driven support vehicle may still fly");
     }
 
     @Test
     @DisplayName("Only flammable toxic air bars jet-propelled units from launching")
-    void launchProhibitionIsFlammableToxicOnly() {
-        assertTrue(TaintedAtmosphereRules.prohibitsLaunching(AtmosphericTaint.FLAMMABLE_TOXIC));
+    void launchProhibitionIsToxicFlameOnly() {
+        assertTrue(TaintedAtmosphereRules.prohibitsLaunching(AtmosphericTaint.TOXIC_FLAME));
 
-        assertFalse(TaintedAtmosphereRules.prohibitsLaunching(AtmosphericTaint.FLAMMABLE_TAINTED));
+        assertFalse(TaintedAtmosphereRules.prohibitsLaunching(AtmosphericTaint.TAINTED_FLAME));
         assertFalse(TaintedAtmosphereRules.prohibitsLaunching(AtmosphericTaint.BREATHABLE));
     }
 
     @Test
     @DisplayName("Only flammable toxic air spreads an explosive fire to every adjacent hex")
-    void explosiveFireSpreadIsFlammableToxicOnly() {
-        assertTrue(TaintedAtmosphereRules.spreadsExplosiveFiresInstantly(AtmosphericTaint.FLAMMABLE_TOXIC));
+    void explosiveFireSpreadIsToxicFlameOnly() {
+        assertTrue(TaintedAtmosphereRules.spreadsExplosiveFiresInstantly(AtmosphericTaint.TOXIC_FLAME));
 
-        assertFalse(TaintedAtmosphereRules.spreadsExplosiveFiresInstantly(AtmosphericTaint.FLAMMABLE_TAINTED));
+        assertFalse(TaintedAtmosphereRules.spreadsExplosiveFiresInstantly(AtmosphericTaint.TAINTED_FLAME));
         assertFalse(TaintedAtmosphereRules.spreadsExplosiveFiresInstantly(AtmosphericTaint.BREATHABLE));
     }
 
@@ -358,12 +358,12 @@ class TaintedAtmosphereRulesTest {
     @DisplayName("A hot unit can set its own hex alight in flammable air at either strength")
     void spontaneousIgnitionAppliesToBothFlammableStrengths() {
         // Printed on the tainted row only, like the exhaust wash, and read here the same way.
-        assertTrue(TaintedAtmosphereRules.causesSpontaneousIgnition(AtmosphericTaint.FLAMMABLE_TAINTED));
-        assertTrue(TaintedAtmosphereRules.causesSpontaneousIgnition(AtmosphericTaint.FLAMMABLE_TOXIC));
+        assertTrue(TaintedAtmosphereRules.causesSpontaneousIgnition(AtmosphericTaint.TAINTED_FLAME));
+        assertTrue(TaintedAtmosphereRules.causesSpontaneousIgnition(AtmosphericTaint.TOXIC_FLAME));
 
         assertFalse(TaintedAtmosphereRules.causesSpontaneousIgnition(AtmosphericTaint.BREATHABLE));
-        assertFalse(TaintedAtmosphereRules.causesSpontaneousIgnition(AtmosphericTaint.CAUSTIC_TAINTED));
-        assertFalse(TaintedAtmosphereRules.causesSpontaneousIgnition(AtmosphericTaint.RADIOLOGICAL_TOXIC));
+        assertFalse(TaintedAtmosphereRules.causesSpontaneousIgnition(AtmosphericTaint.TAINTED_CAUSTIC));
+        assertFalse(TaintedAtmosphereRules.causesSpontaneousIgnition(AtmosphericTaint.TOXIC_POISON));
     }
 
     @Test
@@ -371,12 +371,12 @@ class TaintedAtmosphereRulesTest {
     void exhaustWashAppliesToBothFlammableStrengths() {
         // The book gives this rule on the tainted row only and then bars launching on the toxic row, which would
         // leave a craft landing in the worse air scorching nothing. Treated here as an oversight.
-        assertTrue(TaintedAtmosphereRules.causesExhaustWashIgnition(AtmosphericTaint.FLAMMABLE_TAINTED));
-        assertTrue(TaintedAtmosphereRules.causesExhaustWashIgnition(AtmosphericTaint.FLAMMABLE_TOXIC));
+        assertTrue(TaintedAtmosphereRules.causesExhaustWashIgnition(AtmosphericTaint.TAINTED_FLAME));
+        assertTrue(TaintedAtmosphereRules.causesExhaustWashIgnition(AtmosphericTaint.TOXIC_FLAME));
 
         assertFalse(TaintedAtmosphereRules.causesExhaustWashIgnition(AtmosphericTaint.BREATHABLE));
-        assertFalse(TaintedAtmosphereRules.causesExhaustWashIgnition(AtmosphericTaint.CAUSTIC_TAINTED));
-        assertFalse(TaintedAtmosphereRules.causesExhaustWashIgnition(AtmosphericTaint.RADIOLOGICAL_TOXIC));
+        assertFalse(TaintedAtmosphereRules.causesExhaustWashIgnition(AtmosphericTaint.TAINTED_CAUSTIC));
+        assertFalse(TaintedAtmosphereRules.causesExhaustWashIgnition(AtmosphericTaint.TOXIC_POISON));
     }
 
     @Test

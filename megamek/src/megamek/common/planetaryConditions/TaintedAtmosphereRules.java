@@ -256,7 +256,7 @@ public final class TaintedAtmosphereRules {
         if (atmosphericTaint.isToxic() && isHarmfulToPersonnel(atmosphericTaint)) {
             return VehicleBreachEffect.CREW_KILLED;
         }
-        if (atmosphericTaint == AtmosphericTaint.CAUSTIC_TAINTED) {
+        if (atmosphericTaint == AtmosphericTaint.TAINTED_CAUSTIC) {
             return VehicleBreachEffect.CREW_STUNNED;
         }
         return VehicleBreachEffect.NONE;
@@ -370,7 +370,7 @@ public final class TaintedAtmosphereRules {
      * @return {@code true} if the attack should be treated as infantry-on-infantry damage
      */
     public static boolean treatsAttacksOnInfantryAsInfantryDamage(AtmosphericTaint atmosphericTaint) {
-        return atmosphericTaint == AtmosphericTaint.FLAMMABLE_TOXIC;
+        return atmosphericTaint == AtmosphericTaint.TOXIC_FLAME;
     }
 
     /**
@@ -382,7 +382,7 @@ public final class TaintedAtmosphereRules {
      * @return {@code true} if a fire starts automatically
      */
     public static boolean jumpJetsAlwaysIgnite(AtmosphericTaint atmosphericTaint) {
-        return atmosphericTaint == AtmosphericTaint.FLAMMABLE_TOXIC;
+        return atmosphericTaint == AtmosphericTaint.TOXIC_FLAME;
     }
 
     /**
@@ -459,7 +459,7 @@ public final class TaintedAtmosphereRules {
      * @return {@code true} if such a fire spreads to all adjacent hexes immediately
      */
     public static boolean spreadsExplosiveFiresInstantly(AtmosphericTaint atmosphericTaint) {
-        return atmosphericTaint == AtmosphericTaint.FLAMMABLE_TOXIC;
+        return atmosphericTaint == AtmosphericTaint.TOXIC_FLAME;
     }
 
     /**
@@ -496,7 +496,7 @@ public final class TaintedAtmosphereRules {
      * @return {@code true} if launching is prohibited
      */
     public static boolean prohibitsLaunching(AtmosphericTaint atmosphericTaint) {
-        return atmosphericTaint == AtmosphericTaint.FLAMMABLE_TOXIC;
+        return atmosphericTaint == AtmosphericTaint.TOXIC_FLAME;
     }
 
     /**

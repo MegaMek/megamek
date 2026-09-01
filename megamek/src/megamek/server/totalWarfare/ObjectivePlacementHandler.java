@@ -207,9 +207,11 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
         // both, deliberately: the chat line is the durable record a player can scroll back to, and the
         // toast is what anyone actually notices - this warning arrives while the board is still loading,
         // which is exactly when the chat pane is least likely to be read
-        String warning = Messages.getString("VictoryHex.noEnderWarning");
-        gameManager.sendServerChat(warning);
-        gameManager.sendToast(GameToastEvent.Level.WARNING, warning, null);
+        // the toast is drawn on one line and sized to it, so it carries the short form; the chat line
+        // keeps the full text, including what to switch on to fix it
+        gameManager.sendServerChat(Messages.getString("VictoryHex.noEnderWarning"));
+        gameManager.sendToast(GameToastEvent.Level.WARNING,
+              Messages.getString("VictoryHex.noEnderToast"), null);
         VICTORY_HEX_LOGGER.warn("[Objective] use_objectives is on but the game has no ender - "
               + "victory points cannot resolve");
     }

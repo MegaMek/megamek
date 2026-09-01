@@ -48,6 +48,7 @@ import megamek.client.ui.Messages;
 import megamek.common.ECMInfo;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
+import megamek.common.PartialCover;
 import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
@@ -242,9 +243,10 @@ public class ComputeTerrainMods {
         if ((entityTarget instanceof Mek) && entityTarget.isSuperHeavy()) {
             partialWaterLevel = 2;
         }
-        if ((entityTarget != null)
+        if (PartialCover.canReceive(entityTarget)
               && targetInWater
-              // target in partial water
+              // target in partial water: a Mek standing in Depth 1 water, or a superheavy Mek in Depth 2
+              // (TW p.102; Core p.66)
               && (targetHex.terrainLevel(Terrains.WATER) == partialWaterLevel)
               && (targEl == 0)
               && (entityTarget.height() > 0)) {
@@ -418,8 +420,7 @@ public class ComputeTerrainMods {
      * @return {@code true} for artillery (including Arrow IV and artillery cannons), bombs, and fuel-air explosive
      *       munitions
      */
-    // Package-private for unit testing.
-    static boolean isAreaEffectAgainstInfantry(WeaponType weaponType, @Nullable AmmoType ammoType) {
+    public static boolean isAreaEffectAgainstInfantry(WeaponType weaponType, @Nullable AmmoType ammoType) {
         boolean isArtillery = weaponType.hasFlag(WeaponType.F_ARTILLERY)
               || (weaponType instanceof ArtilleryCannonWeapon);
         boolean isBomb = weaponType.hasAnyFlag(WeaponType.F_ALT_BOMB, WeaponType.F_DIVE_BOMB,

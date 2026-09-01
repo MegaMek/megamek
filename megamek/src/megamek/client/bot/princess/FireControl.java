@@ -41,6 +41,7 @@ import megamek.client.bot.princess.coverage.Builder;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.LosEffects;
+import megamek.common.PartialCover;
 import megamek.common.Messages;
 import megamek.common.Player;
 import megamek.common.RangeType;
@@ -1013,7 +1014,7 @@ public class FireControl {
         if (target instanceof Entity) {
             targetEntity = (Entity) target;
         }
-        if (null != targetEntity && targetHex.containsTerrain(Terrains.WATER)
+        if (PartialCover.canReceive(targetEntity) && targetHex.containsTerrain(Terrains.WATER)
               && (1 == targetHex.terrainLevel(Terrains.WATER))
               && (0 < targetEntity.height())) {
             losEffects.setTargetCover(losEffects.getTargetCover() | LosEffects.COVER_HORIZONTAL);

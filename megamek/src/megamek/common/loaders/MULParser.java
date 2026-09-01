@@ -174,6 +174,7 @@ public class MULParser {
     public static final String ATTR_EXT_ID = "externalId";
     public static final String ATTR_PICKUP_ID = "pickUpId";
     public static final String ATTR_CLAN_PILOT = "clanperson";
+    public static final String ATTR_ARMOR_KIT = "armorkit";
     public static final String ATTR_NICK = "nick";
     public static final String ATTR_GENDER = "gender";
     public static final String ATTR_CAT_PORTRAIT = "portraitCat";
@@ -292,6 +293,8 @@ public class MULParser {
     public static final String ATTR_DISPOSABLE_WEAPON_FIRED = "disposableWeaponFired";
     public static final String ATTR_INF_SQUAD_NUM = "squadNum";
     public static final String ATTR_RFMG = "rfmg";
+    public static final String ATTR_AUTOCANNON_HIT = "autocannonHit";
+    public static final String ATTR_DIRECTIONAL_MOUNT_LOCKED = "directionalMountLocked";
     public static final String ATTR_LINK = "link";
     public static final String ATTR_ID = "id";
     public static final String ATTR_NUMBER = "number";
@@ -1758,6 +1761,13 @@ public class MULParser {
                 crew.setClanPilot(Boolean.parseBoolean(attributes.get(ATTR_CLAN_PILOT)), slot);
             }
 
+            // This is the seam MekHQ hands personal equipment across on: a campaign issues a kit to a person,
+            // writes its name here, and MegaMek reads it back when the battle starts. An older file simply has no
+            // attribute and the crew member goes without.
+            if ((attributes.containsKey(ATTR_ARMOR_KIT)) && !attributes.get(ATTR_ARMOR_KIT).isBlank()) {
+                crew.setArmorKitName(attributes.get(ATTR_ARMOR_KIT), slot);
+            }
+
             if ((attributes.containsKey(ATTR_CAT_PORTRAIT)) && !attributes.get(ATTR_CAT_PORTRAIT).isBlank()) {
                 crew.getPortrait(slot).setCategory(attributes.get(ATTR_CAT_PORTRAIT));
             }
@@ -1991,6 +2001,8 @@ public class MULParser {
         String quirks = slotTag.getAttribute(ATTR_QUIRKS);
         String trooperMiss = slotTag.getAttribute(ATTR_TROOPER_MISS);
         String rfmg = slotTag.getAttribute(ATTR_RFMG);
+        String autocannonHit = slotTag.getAttribute(ATTR_AUTOCANNON_HIT);
+        String directionalMountLocked = slotTag.getAttribute(ATTR_DIRECTIONAL_MOUNT_LOCKED);
         String bayIndex = slotTag.getAttribute(ATTR_WEAPONS_BAY_INDEX);
 
         // Did we find required attributes?
@@ -2196,6 +2208,16 @@ public class MULParser {
                 mounted.setRepairable(repairFlag);
 
                 mounted.setRapidFire(Boolean.parseBoolean(rfmg));
+
+                // Non-crit-slot combat damage flags (CORE first autocannon crit, locked Directional Torso Mount) that
+                // the writer stored on the slot; blank when the attribute was absent, leaving the default false.
+                if (!autocannonHit.isBlank()) {
+                    mounted.setAutocannonHit(Boolean.parseBoolean(autocannonHit));
+                }
+
+                if (!directionalMountLocked.isBlank()) {
+                    mounted.setDirectionalMountLocked(Boolean.parseBoolean(directionalMountLocked));
+                }
 
                 // Is the mounted a type of ammo?
                 if (mounted instanceof AmmoMounted) {

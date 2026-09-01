@@ -181,6 +181,10 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         return GUIP.getNagForCrushingBuildings() && !isTimerExpired();
     }
 
+    protected boolean needNagForDoomedMove() {
+        return GUIP.getNagForDoomedMove() && !isTimerExpired();
+    }
+
     protected boolean needNagForWiGELanding() {
         return GUIP.getNagForWiGELanding() && !isTimerExpired();
     }
@@ -212,6 +216,10 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
 
     protected boolean checkNagForNoAction(String title, String body) {
         return doYesNoBotherDialog(title, body, () -> GUIP.setNagForNoAction(false));
+    }
+
+    protected boolean checkNagForDoomedMove(String title, String body) {
+        return doYesNoBotherDialog(title, body, () -> GUIP.setNagForDoomedMove(false));
     }
 
     protected boolean checkNagForNoUnJamRAC(String title, String body) {

@@ -45,6 +45,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.units.CrewArmorKitRules;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
@@ -677,7 +678,11 @@ public class PlanetaryConditions implements Serializable {
                   (getAtmosphericTaint().isToxic() ?
                         convInfantry.isXCTForToxicAtmosphere() :
                         convInfantry.isXCTForTaintedAtmosphere());
-            if (isEquippedForTheAir) {
+            // A combat suit answers separately from the XCT gear above. XCT is an infantry specialization that a
+            // MekWarrior will never have, so requiring it as well would make the suit useless to the very people
+            // it is worn by.
+            boolean isBreathingItsOwnAir = CrewArmorKitRules.protectsAgainstAtmosphericTaint(entity);
+            if (isEquippedForTheAir || isBreathingItsOwnAir) {
                 return null;
             }
             return getAtmosphericTaint().isToxic() ?

@@ -30658,6 +30658,8 @@ public class TWGameManager extends AbstractGameManager {
         }
         vDesc.addAll(destroyEntity(entity, "ejection", true, true));
 
+        reportCombatSuitProtection(entity, vDesc);
+
         // only remove the unit that ejected manually
         if (!autoEject) {
             game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_EJECTED);
@@ -30915,6 +30917,28 @@ public class TWGameManager extends AbstractGameManager {
         entity.setDone(true);
         entityUpdate(entity.getId());
         return vDesc;
+    }
+
+    /**
+     * Adds a line to the ejection report when what the crew is wearing is the difference between living and dying
+     * out there.
+     * <p>
+     * Called from the one exit every ejection passes through, so Mek pilots, vehicle crews and aerospace crews all
+     * reach it. Only raised where the kit answers the danger: nobody needs telling in ordinary weather, and a crew
+     * ejecting into vacuum must not be told they are safe when the kit holds no pressure.
+     *
+     * @param entity  the unit the crew has just left
+     * @param reports the ejection reports being built
+     */
+    private void reportCombatSuitProtection(Entity entity, Vector<Report> reports) {
+        EquipmentType armorKit = CrewArmorKitRules.crewArmorKit(entity, game);
+        if (!CrewArmorKitRules.coversSomethingIn(armorKit, game.getPlanetaryConditions())) {
+            return;
+        }
+        Report combatSuitReport = new Report(6411);
+        combatSuitReport.subject = entity.getId();
+        combatSuitReport.indent(3);
+        reports.addElement(combatSuitReport);
     }
 
     public static PilotingRollData getEjectModifiers(Game game, Entity entity, int crewPos, boolean autoEject) {

@@ -384,6 +384,16 @@ public class ConvInfantry extends Infantry {
     }
 
     /**
+     * Whether this platoon wears a MekWarrior Combat Suit (TO:AUE p.129). On its own that only means the armor kit
+     * is fitted; what it protects against is decided by the optional rule.
+     *
+     * @return {@code true} if the platoon's armor kit is a combat suit
+     */
+    public boolean hasCombatSuit() {
+        return hasArmorKitFlag(MiscTypeFlag.S_COMBAT_SUIT);
+    }
+
+    /**
      * Whether this platoon is Xenoplanetary Condition-Trained for a toxic atmosphere, TO:AUE p.162. That needs both the
      * XCT specialization and an armor kit rated for toxic air: an Environment Suit (Hostile or Marine) or a Spacesuit
      * of any kind. A Light Environment Suit is enough for tainted air but not for toxic air, which is why this is a
@@ -1189,6 +1199,11 @@ public class ConvInfantry extends Infantry {
 
     @Override
     public boolean doomedInExtremeTemp() {
+        // An armored cooling suit handles heat, which is what it is built for, but not cold.
+        if ((game != null) && CrewArmorKitRules.protectsAgainstTemperature(this,
+              game.getPlanetaryConditions().getTemperature())) {
+            return false;
+        }
         // If there is no game object, count any temperature protection.
         if (getArmorKit() != null) {
             if (getArmorKit().hasFlag(MiscTypeFlag.S_XCT_VACUUM)) {

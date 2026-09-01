@@ -292,6 +292,8 @@ public class MULParser {
     public static final String ATTR_DISPOSABLE_WEAPON_FIRED = "disposableWeaponFired";
     public static final String ATTR_INF_SQUAD_NUM = "squadNum";
     public static final String ATTR_RFMG = "rfmg";
+    public static final String ATTR_AUTOCANNON_HIT = "autocannonHit";
+    public static final String ATTR_DIRECTIONAL_MOUNT_LOCKED = "directionalMountLocked";
     public static final String ATTR_LINK = "link";
     public static final String ATTR_ID = "id";
     public static final String ATTR_NUMBER = "number";
@@ -1991,6 +1993,8 @@ public class MULParser {
         String quirks = slotTag.getAttribute(ATTR_QUIRKS);
         String trooperMiss = slotTag.getAttribute(ATTR_TROOPER_MISS);
         String rfmg = slotTag.getAttribute(ATTR_RFMG);
+        String autocannonHit = slotTag.getAttribute(ATTR_AUTOCANNON_HIT);
+        String directionalMountLocked = slotTag.getAttribute(ATTR_DIRECTIONAL_MOUNT_LOCKED);
         String bayIndex = slotTag.getAttribute(ATTR_WEAPONS_BAY_INDEX);
 
         // Did we find required attributes?
@@ -2196,6 +2200,16 @@ public class MULParser {
                 mounted.setRepairable(repairFlag);
 
                 mounted.setRapidFire(Boolean.parseBoolean(rfmg));
+
+                // Non-crit-slot combat damage flags (CORE first autocannon crit, locked Directional Torso Mount) that
+                // the writer stored on the slot; blank when the attribute was absent, leaving the default false.
+                if (!autocannonHit.isBlank()) {
+                    mounted.setAutocannonHit(Boolean.parseBoolean(autocannonHit));
+                }
+
+                if (!directionalMountLocked.isBlank()) {
+                    mounted.setDirectionalMountLocked(Boolean.parseBoolean(directionalMountLocked));
+                }
 
                 // Is the mounted a type of ammo?
                 if (mounted instanceof AmmoMounted) {

@@ -78,6 +78,10 @@ public class Crew implements Serializable {
     private final String[] nicknames;
     private final Gender[] genders;
     private final boolean[] clanPilots;
+    /** Whether each crew member is wearing a MekWarrior Combat Suit, TO:AUE p.129. */
+    // Deliberately not final: a Crew deserialized from a stream written before this field existed restores as
+    // null, because Java deserialization skips field initializers. getArmorKitNames() fills it in on first use.
+    private String[] armorKitNames;
     private final Portrait[] portraits;
 
     private final int[] gunnery;
@@ -249,6 +253,7 @@ public class Crew implements Serializable {
         Arrays.fill(getGenders(), Gender.RANDOMIZE);
         setGender(gender, 0);
         clanPilots = new boolean[slots];
+        armorKitNames = new String[slots];
         Arrays.fill(getClanPilots(), clanPilot);
         portraits = new Portrait[slots];
         for (int i = 0; i < slots; i++) {
@@ -398,6 +403,53 @@ public class Crew implements Serializable {
 
     public void setClanPilot(final boolean clanPilot, final int position) {
         getClanPilots()[position] = clanPilot;
+    }
+
+    /**
+     * @return one entry per crew slot, holding the internal name of the armor kit that crew member wears, or
+     *       {@code null} where they wear none
+     */
+    public String[] getArmorKitNames() {
+        if (armorKitNames == null) {
+            // An older save game or a unit cached before this field existed. Nobody was wearing anything then.
+            armorKitNames = new String[getSlotCount()];
+        }
+        return armorKitNames;
+    }
+
+    /**
+     * The armor kit this crew member wears, by internal name.
+     * <p>
+     * The name rather than the equipment itself, because a {@code Crew} travels to the server and into save games,
+     * and a name survives that trip where an {@code EquipmentType} reference does not. Whoever needs the kit's
+     * damage divisor or its flags looks it up.
+     *
+     * @param position the crew slot to ask about
+     *
+     * @return the kit's internal name, or {@code null} if that crew member wears none
+     */
+    public @Nullable String getArmorKitName(final int position) {
+        String[] kits = getArmorKitNames();
+        return (position < kits.length) ? kits[position] : kits[0];
+    }
+
+    /**
+     * The armor kit worn by anyone aboard. A vehicle or vessel crew is a single collective in MegaMek however many
+     * people MekHQ assigned to it, so one slot answers for all of them.
+     *
+     * @return the first kit found, or {@code null} if nobody wears one
+     */
+    public @Nullable String getAnyArmorKitName() {
+        for (String kitName : getArmorKitNames()) {
+            if ((kitName != null) && !kitName.isBlank()) {
+                return kitName;
+            }
+        }
+        return null;
+    }
+
+    public void setArmorKitName(final @Nullable String armorKitName, final int position) {
+        getArmorKitNames()[position] = armorKitName;
     }
 
     public Portrait[] getPortraits() {

@@ -434,4 +434,11 @@ public enum MiscTypeFlag implements EquipmentFlag {
     // Flag for LAM fuel tanks
     F_LAM_FUEL_TANK,
 
+    /**
+     * Marks the MekWarrior Combat Suit so a crew wearing one can be recognised. It grants nothing on its own: what
+     * the suit protects against is decided by the optional rule in {@code CrewArmorKitRules}, so a platoon that simply
+     * wears one is unaffected.
+     */
+    S_COMBAT_SUIT,
+
 }

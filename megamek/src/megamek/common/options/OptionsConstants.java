@@ -583,6 +583,7 @@ public class OptionsConstants {
     public static final String RPG_ARTILLERY_SKILL = "artillery_skill";
     public static final String RPG_TOUGHNESS = "toughness";
     public static final String RPG_CONDITIONAL_EJECTION = "conditional_ejection";
+    public static final String RPG_COMBAT_SUITS = "combat_suits";
     public static final String RPG_BEGIN_SHUTDOWN = "begin_shutdown";
     public static final String SEARCHLIGHTS_ON = "searchlights_on";
     public static final String RULES_TW = "Total Warfare";

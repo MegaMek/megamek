@@ -174,6 +174,7 @@ public class MULParser {
     public static final String ATTR_EXT_ID = "externalId";
     public static final String ATTR_PICKUP_ID = "pickUpId";
     public static final String ATTR_CLAN_PILOT = "clanperson";
+    public static final String ATTR_ARMOR_KIT = "armorkit";
     public static final String ATTR_NICK = "nick";
     public static final String ATTR_GENDER = "gender";
     public static final String ATTR_CAT_PORTRAIT = "portraitCat";
@@ -1758,6 +1759,13 @@ public class MULParser {
 
             if ((attributes.containsKey(ATTR_CLAN_PILOT)) && !attributes.get(ATTR_CLAN_PILOT).isBlank()) {
                 crew.setClanPilot(Boolean.parseBoolean(attributes.get(ATTR_CLAN_PILOT)), slot);
+            }
+
+            // This is the seam MekHQ hands personal equipment across on: a campaign issues a kit to a person,
+            // writes its name here, and MegaMek reads it back when the battle starts. An older file simply has no
+            // attribute and the crew member goes without.
+            if ((attributes.containsKey(ATTR_ARMOR_KIT)) && !attributes.get(ATTR_ARMOR_KIT).isBlank()) {
+                crew.setArmorKitName(attributes.get(ATTR_ARMOR_KIT), slot);
             }
 
             if ((attributes.containsKey(ATTR_CAT_PORTRAIT)) && !attributes.get(ATTR_CAT_PORTRAIT).isBlank()) {

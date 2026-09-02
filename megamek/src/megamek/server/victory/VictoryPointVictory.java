@@ -65,7 +65,7 @@ import megamek.logging.MMLogger;
  */
 public class VictoryPointVictory implements VictoryCondition, Serializable {
 
-    private static final MMLogger LOGGER = MMLogger.create(VictoryPointVictory.class);
+    private static final MMLogger LOGGER = MMLogger.create("megamek.feature.VictoryHex");
     private static final long serialVersionUID = 1L;
 
     private static final int REPORT_VICTORY_POINT_TOTAL = 7115;

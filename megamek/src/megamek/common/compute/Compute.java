@@ -6722,6 +6722,34 @@ public class Compute {
           boolean isAttackThruBuilding, int attackerId, Vector<Report> vReport,
           int mgaSize) {
 
+        // An attack the atmosphere has pushed onto the Area-Effect row kills Damage Value / .5 troopers, the same
+        // doubling MegaMek applies to a real area-effect attack (TW p.217, TO:AR p.54).
+        if (damageType == WeaponType.WEAPON_AREA_EFFECT_INFANTRY) {
+            int areaEffectDamage = (int) Math.ceil(damage * 2);
+            if (vReport != null) {
+                Report areaEffectReport = new Report(7724);
+                areaEffectReport.subject = attackerId;
+                areaEffectReport.indent(2);
+                areaEffectReport.add(areaEffectDamage);
+                vReport.add(areaEffectReport);
+            }
+            return areaEffectDamage;
+        }
+
+        // An attack the atmosphere has turned into infantry-on-infantry damage skips the table completely: its
+        // damage is applied point for point (TW p.216, TO:AR p.54).
+        if (damageType == WeaponType.WEAPON_INFANTRY_ORIGIN) {
+            int appliedDamage = (int) Math.ceil(damage);
+            if (vReport != null) {
+                Report infantryOriginReport = new Report(7719);
+                infantryOriginReport.subject = attackerId;
+                infantryOriginReport.indent(2);
+                infantryOriginReport.add(appliedDamage);
+                vReport.add(infantryOriginReport);
+            }
+            return appliedDamage;
+        }
+
         // Report initial (original) damage
         Report r = new Report();
         r.subject = attackerId;

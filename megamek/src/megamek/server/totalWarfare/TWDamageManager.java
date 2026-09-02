@@ -55,6 +55,8 @@ import megamek.common.game.Game;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
+import megamek.common.planetaryConditions.AtmosphericTaint;
+import megamek.common.planetaryConditions.TaintedAtmosphereRules;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
@@ -1229,6 +1231,9 @@ public class TWDamageManager implements IDamageManager {
                 } else {
                     Report.addNewline(reportVec);
                     reportVec.addAll(manager.damageCrew(mek, 1));
+                    // Caustic tainted air gets into the damaged cockpit and burns the MekWarrior a second time
+                    // (TO:AR p.54).
+                    reportVec.addAll(new TaintedAtmosphereHandler(manager).resolveExtraCockpitCrewHit(mek));
                 }
             }
 
@@ -2330,6 +2335,11 @@ public class TWDamageManager implements IDamageManager {
             // check for breaching
             reportVec.addAll(manager.breachCheck(battleArmor, hit.getLocation(), null, underWater));
 
+            // A damaged suit lets a toxic atmosphere in, which can kill the trooper whatever armor is left (TO:AR
+            // p.54).
+            reportVec.addAll(new TaintedAtmosphereHandler(manager).resolveBattleArmorSuitBreach(battleArmor,
+                  hit.getLocation()));
+
             // Special crits
             dealSpecialCritEffects(battleArmor, reportVec, hit, mods, damageType);
 
@@ -2368,6 +2378,47 @@ public class TWDamageManager implements IDamageManager {
      * @param nukeS2S       Whether damage is from a nuclear weapon
      * @param mods          damage modifiers and state tracking
      */
+    /**
+     * Applies what a tainted atmosphere does to damage a conventional infantry platoon is taking, TO:AR p.54.
+     * Radiological or poisonous tainted air doubles the damage the way a vacuum already does, and caustic tainted air
+     * adds 1D6 on top of any weapon attack. Neither applies to damage that is already infantry-origin - the platoon's
+     * own exposure damage, for instance - which is what {@link HitData#isIgnoreInfantryDoubleDamage()} marks.
+     *
+     * @param infantry  the platoon taking the damage
+     * @param reportVec the phase reports, appended to when the atmosphere changes the damage
+     * @param damage    the damage worked out so far
+     * @param hit       the hit being resolved
+     *
+     * @return the damage after the atmosphere has had its say
+     */
+    private int applyAtmosphericTaintToInfantryDamage(ConvInfantry infantry, Vector<Report> reportVec, int damage,
+          HitData hit) {
+        if (infantry.isDestroyed() || infantry.isDoomed() || hit.isIgnoreInfantryDoubleDamage()) {
+            return damage;
+        }
+        AtmosphericTaint atmosphericTaint = game.getPlanetaryConditions().getAtmosphericTaint();
+
+        if (TaintedAtmosphereRules.doublesInfantryDamage(atmosphericTaint)) {
+            damage *= 2;
+            Report report = new Report(7717);
+            report.subject = infantry.getId();
+            report.indent(2);
+            reportVec.addElement(report);
+        }
+
+        int extraDamageDice = TaintedAtmosphereRules.getExtraInfantryAttackDamageDice(atmosphericTaint);
+        if (extraDamageDice > 0) {
+            int extraDamage = Compute.d6(extraDamageDice);
+            damage += extraDamage;
+            Report report = new Report(7718);
+            report.subject = infantry.getId();
+            report.indent(2);
+            report.add(extraDamage);
+            reportVec.addElement(report);
+        }
+        return damage;
+    }
+
     public void damageInfantry(Vector<Report> reportVec, ConvInfantry infantry, HitData hit, int damage,
           boolean ammoExplosion, DamageType damageType, boolean areaSatArty, boolean throughFront, boolean underWater,
           boolean nukeS2S, ModsInfo mods) {
@@ -2437,6 +2488,8 @@ public class TWDamageManager implements IDamageManager {
             report.indent(2);
             reportVec.addElement(report);
         }
+
+        damage = applyAtmosphericTaintToInfantryDamage(infantry, reportVec, damage, hit);
 
         // infantry armor can reduce damage
         if (infantry.calcDamageDivisor() != 1.0) {

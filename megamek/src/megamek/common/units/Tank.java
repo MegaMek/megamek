@@ -1778,15 +1778,24 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         return Math.max(0, caseLocations.size() - explicit);
     }
 
+    /**
+     * A vehicle survives vacuum only if it can hold itself up without air to push against, and is sealed, and its
+     * engine runs with no outside air to breathe. The rules name fission, fusion and fuel cell engines for Combat
+     * Vehicles (TO:AUE p.115) and fission, fusion and electric engines for Support Vehicles (TM p.122); MegaMek's
+     * Support Vehicle "Electric" engine is the battery.
+     *
+     * @return {@code true} when this vehicle will not survive vacuum conditions
+     */
     @Override
     public boolean doomedInVacuum() {
-        if (hasEngine() &&
-              (getEngine().isFusion() ||
-                    getEngine().getEngineType() == Engine.FISSION ||
-                    getEngine().getEngineType() == Engine.FUEL_CELL)) {
-            return !hasEnvironmentalSealing();
+        // Hovercraft, WiGEs and VTOLs all fly by pushing against air, so there is nothing for them to work with in a
+        // vacuum or a trace atmosphere however well sealed they are (TO:AR p.35, Expanded Movement Costs and
+        // Planetary Conditions Table, footnote 31; the ruling that hovercraft belong in that footnote alongside WiGEs
+        // and VTOLs is at battletech.com/forums topic 55634).
+        if (getMovementMode().isHoverVTOLOrWiGE()) {
+            return true;
         }
-        return true;
+        return !EnvironmentalSealingRules.canOperateInVacuum(this);
     }
 
     @Override

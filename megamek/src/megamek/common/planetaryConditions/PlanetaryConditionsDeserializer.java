@@ -41,11 +41,13 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import megamek.logging.MMLogger;
 
 public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryConditions> {
 
     static final String TEMPERATURE = "temperature";
     static final String PRESSURE = "pressure";
+    static final String TAINT = "taint";
     static final String GRAVITY = "gravity";
     static final String EMI_TEXT = "emi";
     static final String BLOWING_SAND = "blowingsand";
@@ -64,6 +66,17 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
           "trace", Atmosphere.TRACE, "thin", Atmosphere.THIN,
           "standard", Atmosphere.STANDARD, "high", Atmosphere.HIGH,
           "very high", Atmosphere.VERY_HIGH);
+
+    private static final MMLogger LOGGER = MMLogger.create(PlanetaryConditionsDeserializer.class);
+
+    static final Map<String, AtmosphericTaint> TAINT_VALUES = Map.of(
+          "breathable", AtmosphericTaint.BREATHABLE,
+          "tainted caustic", AtmosphericTaint.TAINTED_CAUSTIC,
+          "tainted poison", AtmosphericTaint.TAINTED_POISON,
+          "tainted flame", AtmosphericTaint.TAINTED_FLAME,
+          "toxic caustic", AtmosphericTaint.TOXIC_CAUSTIC,
+          "toxic poison", AtmosphericTaint.TOXIC_POISON,
+          "toxic flame", AtmosphericTaint.TOXIC_FLAME);
 
     static final Map<String, Fog> FOG_VALUES = Map.of("none", Fog.FOG_NONE,
           "light", Fog.FOG_LIGHT, "heavy", Fog.FOG_HEAVY);
@@ -132,6 +145,16 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
         }
         if (node.has(PRESSURE)) {
             result.setAtmosphere(PRESSURE_VALUES.get(node.get(PRESSURE).textValue()));
+        }
+        if (node.has(TAINT)) {
+            String taintName = node.get(TAINT).textValue();
+            AtmosphericTaint atmosphericTaint = TAINT_VALUES.get(taintName);
+            if (atmosphericTaint == null) {
+                LOGGER.warn("Unrecognised atmospheric taint \"{}\" in scenario file; leaving the air breathable. "
+                      + "Valid values are {}.", taintName, TAINT_VALUES.keySet());
+            } else {
+                result.setAtmosphericTaint(atmosphericTaint);
+            }
         }
         if (node.has(FOG)) {
             result.setFog(FOG_VALUES.get(node.get(FOG).textValue()));

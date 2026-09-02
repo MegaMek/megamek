@@ -192,6 +192,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private final JCheckBox nagForSprint = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForSprint"));
     private final JCheckBox nagForOddSizedBoard =
           new JCheckBox(Messages.getString("CommonSettingsDialog.nagForOddSizedBoard"));
+    private final JCheckBox nagForDoomedDeployment = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.nagForDoomedDeployment"));
+    private final JCheckBox nagForDoomedMove = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.nagForDoomedMove"));
+    private final JCheckBox nagForAutoEject = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.nagForAutoEject"));
     private final JCheckBox animateMove = new JCheckBox(Messages.getString("CommonSettingsDialog.animateMove"));
     private final JCheckBox showWrecks = new JCheckBox(Messages.getString("CommonSettingsDialog.showWrecks"));
     private final JCheckBox chkHighQualityGraphics = new JCheckBox(Messages.getString(
@@ -1033,10 +1039,17 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             Messages.getString("CommonSettingsDialog.nagForDishonor.tooltip"));
         configureCheckBox(nagForOddSizedBoard,
             Messages.getString("CommonSettingsDialog.nagForOddSizedBoard.tooltip"));
+        configureCheckBox(nagForDoomedDeployment,
+            Messages.getString("CommonSettingsDialog.nagForDoomedDeployment.tooltip"));
+        configureCheckBox(nagForDoomedMove,
+            Messages.getString("CommonSettingsDialog.nagForDoomedMove.tooltip"));
+        configureCheckBox(nagForAutoEject,
+            Messages.getString("CommonSettingsDialog.nagForAutoEject.tooltip"));
         comps.add(List.of(createGameBoardOptionGrid("CommonSettingsGameBoardConfirmationsGrid",
               nagForNoAction, nagForPSR, nagForMASC, nagForSprint,
               nagForCrushingBuildings, nagForMechanicalJumpFallDamage, nagForWiGELanding,
-              nagForNoUnJamRAC, nagForLaunchDoors, nagForOverheat, nagForDishonor, nagForOddSizedBoard)));
+              nagForNoUnJamRAC, nagForLaunchDoors, nagForOverheat, nagForDishonor, nagForOddSizedBoard,
+              nagForDoomedDeployment, nagForDoomedMove, nagForAutoEject)));
 
         addLineSpacer(comps);
 
@@ -2616,6 +2629,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             nagForLaunchDoors.setSelected(GUIP.getNagForLaunchDoors());
             nagForSprint.setSelected(GUIP.getNagForSprint());
             nagForOddSizedBoard.setSelected(GUIP.getNagForOddSizedBoard());
+            nagForDoomedDeployment.setSelected(GUIP.getNagForDoomed());
+            nagForDoomedMove.setSelected(GUIP.getNagForDoomedMove());
+            nagForAutoEject.setSelected(GUIP.getNagForAutoEject());
             animateMove.setSelected(GUIP.getShowMoveStep());
             showWrecks.setSelected(GUIP.getShowWrecks());
             tooltipDelay.setValue(Math.max(0, GUIP.getTooltipDelay()));
@@ -3044,6 +3060,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setNagForLaunchDoors(nagForLaunchDoors.isSelected());
         GUIP.setNagForSprint(nagForSprint.isSelected());
         GUIP.setNagForOddSizedBoard(nagForOddSizedBoard.isSelected());
+        GUIP.setNagForDoomed(nagForDoomedDeployment.isSelected());
+        GUIP.setNagForDoomedMove(nagForDoomedMove.isSelected());
+        GUIP.setNagForAutoEject(nagForAutoEject.isSelected());
         GUIP.setShowMoveStep(animateMove.isSelected());
         GUIP.setShowWrecks(showWrecks.isSelected());
         GUIP.setShowWpsInTT(showWpsInTT.isSelected());

@@ -207,6 +207,20 @@
         </Logger>
         -->
         <!--
+          Tainted and Toxic Atmospheres diagnostics (TO:AR p.54). All messages are tagged [TaintedAtmosphere]; grep
+          logs/megamek.log for that tag to follow the whole feature flow. The events that change the game - a hex set
+          alight, a crew killed by the air, a platoon poisoned past its exposure limit - are logged at INFO and appear
+          via the parent "megamek" logger with this block commented out. What the block below adds at debug is the
+          reasons nothing happened: whether the End Phase pass ran at all, how many heat-tracking units were hot
+          enough to roll for igniting their own hex, why a breach or an ignition was skipped. Uncomment it when a
+          playtest reports that an atmosphere effect did not fire.
+        -->
+        <!--
+        <Logger name="megamek.server.totalWarfare.TaintedAtmosphereHandler" level="debug" additivity="false">
+            <AppenderRef ref="MegaMekLog" />
+        </Logger>
+        -->
+        <!--
           Bridge-Layer (AVLB) diagnostics (TM p.242 / TW). All messages are tagged [AVLB]; grep logs/megamek.log
           for that tag to follow the whole feature flow. This is a dedicated logger (megamek.feature.AVLB), not a
           host class, so enabling it at debug surfaces the eligibility-gate reasons (why the Deploy Bridge button is

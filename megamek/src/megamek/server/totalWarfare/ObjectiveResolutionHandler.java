@@ -767,12 +767,12 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             int securedTeam = scheme.getSecuredTeam();
             int securedPlayer = scheme.getSecuredPlayerId();
             String securedBy = (securedTeam != ObjectiveScoringScheme.NO_SIDE)
-                  ? "Team " + securedTeam
+                  ? teamDisplayName(securedTeam)
                   : playerName(securedPlayer);
             return "secured by " + securedBy;
         }
         if (marker.getControllingTeam() != ObjectiveMarker.NO_CONTROLLER) {
-            return "held by Team " + marker.getControllingTeam();
+            return "held by " + teamDisplayName(marker.getControllingTeam());
         }
         if (marker.getControllingPlayerId() != ObjectiveMarker.NO_CONTROLLER) {
             return "held by " + playerName(marker.getControllingPlayerId());

@@ -53,6 +53,7 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveScoringScheme;
+import megamek.common.icons.Camouflage;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
@@ -192,10 +193,13 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
             // the same team always reads the same way for the whole game
             for (Player player : game.getPlayersList()) {
                 if (player.getTeam() == controllingTeam) {
+                    // a diagnostic must never be what crashes the board: the camouflage can be null
+                    Camouflage camouflage = player.getCamouflage();
                     VICTORY_HEX_LOGGER.debug("[VictoryHex] team {} colour taken from {} (id {}): colour field={},"
-                                + " camouflage={}/{}, display={}", controllingTeam, player.getName(),
-                          player.getId(), player.getColour(), player.getCamouflage().getCategory(),
-                          player.getCamouflage().getFilename(), player.getDisplayColour());
+                                + " camouflage={}, display={}", controllingTeam, player.getName(),
+                          player.getId(), player.getColour(),
+                          (camouflage == null) ? "none" : camouflage.getCategory() + "/" + camouflage.getFilename(),
+                          player.getDisplayColour());
                     return player.getDisplayColour().getColour();
                 }
             }

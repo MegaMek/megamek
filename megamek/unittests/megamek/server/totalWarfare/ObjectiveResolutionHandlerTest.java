@@ -789,6 +789,14 @@ class ObjectiveResolutionHandlerTest {
         assertTrue(ids.contains(7112), "then the standings intro");
         assertTrue(ids.contains(7113) || ids.contains(7114), "then a line per point");
         assertTrue(ids.indexOf(7149) < ids.indexOf(7112), "totals come before the per-point lines");
+        // the per-point line names the holder the same way the totals above it do - by the team's
+        // members, not "Team 1", which tells a player nothing about whose point this is
+        Report standing = reports.getAllValues().stream()
+              .filter(report -> (report.messageId == 7113) || (report.messageId == 7114))
+              .findFirst().orElseThrow();
+        assertTrue(standing.text().contains("Alice"),
+              () -> "the standings line should name the holder, got: " + standing.text());
+        assertFalse(standing.text().contains("Team 1"), "not the team number");
     }
 
     @Test

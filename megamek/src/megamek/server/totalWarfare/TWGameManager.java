@@ -1008,6 +1008,12 @@ public class TWGameManager extends AbstractGameManager {
                 send(connId, packetHelper.createAttackPacket(getGame().getTeleMissileAttacksVector(), true));
             }
 
+            // a player joining a scenario mid-way through a pre-game player-turn phase has no turn in an
+            // order built before they connected; give them one now, and tell everyone the order changed
+            if (new LateJoinTurnHandler(this).giveTurnIfPhaseHasPassedThemBy(player)) {
+                send(packetHelper.createTurnListPacket());
+            }
+
             if (getGame().getPhase().usesTurns() && getGame().hasMoreTurns()) {
                 send(connId, packetHelper.createTurnListPacket());
                 send(connId, packetHelper.createTurnIndexPacket(connId));

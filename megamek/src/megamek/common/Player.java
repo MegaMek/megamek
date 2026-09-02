@@ -123,6 +123,9 @@ public final class Player extends TurnOrdered {
     // initiative collectively
     // if they are then we pick the best non-zero bonuses
     private int constantInitBonus = 0;
+
+    // victory points this player's side starts the game with, from a scenario's faction definition
+    private int startingVictoryPoints = 0;
     private int streakCompensationBonus = 0;
 
     private Camouflage camouflage = new Camouflage(Camouflage.COLOUR_CAMOUFLAGE, PlayerColour.BLUE.name());
@@ -714,6 +717,18 @@ public final class Player extends TurnOrdered {
     }
 
     /**
+     * @return The victory points this player's side starts the game with, as set by a scenario's faction
+     *       definition; 0 unless a scenario set it
+     */
+    public int getStartingVictoryPoints() {
+        return startingVictoryPoints;
+    }
+
+    public void setStartingVictoryPoints(int startingVictoryPoints) {
+        this.startingVictoryPoints = startingVictoryPoints;
+    }
+
+    /**
      * @return the bonus to this player's initiative rolls granted by his units
      */
     public int getTurnInitBonus() {
@@ -1113,6 +1128,7 @@ public final class Player extends TurnOrdered {
         copy.initialBV = initialBV;
 
         copy.constantInitBonus = constantInitBonus;
+        copy.startingVictoryPoints = startingVictoryPoints;
         copy.streakCompensationBonus = streakCompensationBonus;
 
         copy.camouflage = camouflage;

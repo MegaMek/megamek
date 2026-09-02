@@ -41,6 +41,7 @@ import megamek.client.bot.princess.coverage.Builder;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.LosEffects;
+import megamek.common.PartialCover;
 import megamek.common.Messages;
 import megamek.common.Player;
 import megamek.common.RangeType;
@@ -1008,15 +1009,18 @@ public class FireControl {
         final LosEffects losEffects = getLosEffects(game, shooter, target, shooterState.getPosition(),
               targetState.getPosition(), false);
 
-        // water is a separate los effect
+        // Water is a separate los effect. Use the same predicate the server does, so the shot Princess rates is the
+        // shot she gets. The elevation comes from the state being evaluated, so a target guessed onto a bridge is
+        // scored there; the height comes from the entity, matching what the predicate itself measures against.
         Entity targetEntity = null;
         if (target instanceof Entity) {
             targetEntity = (Entity) target;
         }
-        if (null != targetEntity && targetHex.containsTerrain(Terrains.WATER)
-              && (1 == targetHex.terrainLevel(Terrains.WATER))
-              && (0 < targetEntity.height())) {
-            losEffects.setTargetCover(losEffects.getTargetCover() | LosEffects.COVER_HORIZONTAL);
+        if (targetEntity != null) {
+            int targetRelativeHeight = targetState.getElevation() + targetEntity.height();
+            if (PartialCover.isInPartialWater(targetEntity, targetHex, targetRelativeHeight)) {
+                losEffects.setTargetCover(losEffects.getTargetCover() | LosEffects.COVER_HORIZONTAL);
+            }
         }
 
         // Can we still hit after taking into account LoS?

@@ -48,6 +48,7 @@ import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.EnvironmentalSealingRules;
 import megamek.common.units.Infantry;
 import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
@@ -239,7 +240,8 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         List<ElevationOption> result = new ArrayList<>();
         boolean hasFlotationHull = entity.hasWorkingMisc(MiscType.F_FLOTATION_HULL);
         boolean isAmphibious = entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
-        boolean sealed = entity.hasEnvironmentalSealing();
+        // Being sealed is not enough to sit on the sea floor - the engine must also run without air (TM p.216).
+        boolean canDriveSubmerged = EnvironmentalSealingRules.canOperateFullySubmerged(entity);
         int depth = hex.terrainLevel(Terrains.WATER);
         // Ice matters only when there is water
         boolean hasIce = hex.containsTerrain(Terrains.ICE);
@@ -258,7 +260,7 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         } else if (!moveMode.isTrackedWheeledOrHover() && (!hasIce || (depth > entity.height()))) {
             // when there is ice over depth 1 water, don't allow standing Meks to deploy under the ice
             result.add(new ElevationOption(hex.floor() - hex.getLevel(), ON_SEAFLOOR));
-        } else if (hasFlotationHull || sealed || isAmphibious) {
+        } else if (hasFlotationHull || canDriveSubmerged || isAmphibious) {
             result.add(new ElevationOption(hex.floor() - hex.getLevel(), ON_SEAFLOOR));
         }
         if (hasIce && !entity.getMovementMode().isSubmarine()) {

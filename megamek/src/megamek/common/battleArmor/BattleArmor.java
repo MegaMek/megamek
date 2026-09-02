@@ -1851,6 +1851,37 @@ public class BattleArmor extends Infantry {
         this.clanExoWithoutHarJel = clanExoWithoutHarJel;
     }
 
+    /**
+     * Whether this squad's suits seal themselves with HarJel because of how they were built, rather than because a
+     * HarJel system was mounted in a location.
+     * <p>
+     * Clan power armor and battle armor of 401 kilograms or more incorporate HarJel automatically, as do Clan
+     * exoskeletons built on a Clan chassis (TechManual 8th printing, p.256). Only an exoskeleton may decline it, and
+     * it does so to buy the lighter Inner Sphere chassis instead, which is what {@link #isClanExoWithoutHarJel()}
+     * records.
+     *
+     * @return {@code true} if every suit in this squad is HarJel-sealed by construction
+     */
+    public boolean hasHarJelByConstruction() {
+        if (!isClan()) {
+            return false;
+        }
+        boolean isExoskeletonOnInnerSphereChassis = isExoskeleton() && isClanExoWithoutHarJel();
+        return !isExoskeletonOnInnerSphereChassis;
+    }
+
+    /**
+     * Whether the suit in the given location is sealed by HarJel, whether it mounts a HarJel system or is one of the
+     * Clan designs that incorporate HarJel by construction.
+     *
+     * @param location the trooper location to check
+     *
+     * @return {@code true} if that suit reseals itself
+     */
+    public boolean hasHarJelProtection(int location) {
+        return hasHarJelIn(location) || hasHarJelByConstruction();
+    }
+
     @Override
     public String getLocationDamage(int loc) {
         StringBuilder toReturn = new StringBuilder();

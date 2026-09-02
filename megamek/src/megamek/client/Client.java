@@ -1099,6 +1099,19 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Turns one unit's automatic ejection on or off after the lobby has closed. The lobby's unit configuration is the
+     * only other way to reach this setting, and it cannot be opened once play has begun, so without this a player who
+     * is warned at deployment that ejecting will kill their crews has no way to act on it.
+     *
+     * @param entityId     the unit whose setting is changing
+     * @param shouldEject  {@code true} to eject the crew automatically, {@code false} to ride it out
+     */
+    public void sendEjectionSettingChange(int entityId, boolean shouldEject) {
+        LOGGER.debug("Sending automatic ejection setting {} for unit id {}", shouldEject, entityId);
+        send(new Packet(PacketCommand.ENTITY_EJECTION_SETTING_CHANGE, entityId, shouldEject));
+    }
+
+    /**
      * Sends a unit abandonment announcement to the server. For Meks (TacOps:AR p.165): Must be prone and shutdown. For
      * Vehicles (TacOps): Can be abandoned anytime. The abandonment will execute during the End Phase of the following
      * turn.

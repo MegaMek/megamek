@@ -319,8 +319,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
             double toReturn = Compute.directBlowInfantryDamage(
-                  weaponType.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
-                  weaponType.getInfantryDamageClass(),
+                  weaponType.getRackSize(), getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
             toReturn = applyGlancingBlowModifier(toReturn, false);

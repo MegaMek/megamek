@@ -38,8 +38,8 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
-import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -90,10 +90,8 @@ public class BombISRLP10 extends MissileWeapon {
               .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
-              .setISAdvancement(DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
-              .setISApproximate(true, false, false, false, false)
-              .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
-              .setClanApproximate(true, false, false, true, false)
+              .setAdvancement(2320, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setApproximate(true, false, false, false, false)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

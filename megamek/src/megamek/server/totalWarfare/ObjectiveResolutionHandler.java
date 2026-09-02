@@ -82,6 +82,9 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     /** "Objective standings at the start of this round:" */
     private static final int REPORT_STANDINGS_INTRO = 7112;
 
+    /** "<data> has <data> victory point(s)." - one per scoring side, at the top of the standings. */
+    private static final int REPORT_VICTORY_POINT_TOTAL_SO_FAR = 7149;
+
     /** "<data> at <data> is <data> (<data>)" - one standings line per point. */
     private static final int REPORT_STANDING_LINE = 7113;
 
@@ -731,6 +734,7 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             return;
         }
         addReport(new Report(REPORT_VICTORY_CONDITIONS_HEADER, Report.PUBLIC));
+        reportVictoryPointTotals();
         addReport(new Report(REPORT_STANDINGS_INTRO, Report.PUBLIC));
         for (PlacedObjective objective : objectives) {
             ObjectiveMarker marker = objective.marker();
@@ -794,5 +798,48 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     private String playerName(int playerId) {
         Player player = getGame().getPlayer(playerId);
         return (player == null) ? "Player " + playerId : player.getName();
+    }
+
+    /**
+     * Reports every scoring side's running victory point total at the start of the round. Until this,
+     * the total appeared nowhere during play - only in the end-of-game report - so a player could not
+     * tell whether they were ahead, and a scenario's starting points were invisible until the game was
+     * over. Sides with nothing scored yet are not listed.
+     */
+    private void reportVictoryPointTotals() {
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(getGame().getVictoryContext());
+        if ((tracker == null) || !tracker.hasAnyScore()) {
+            return;
+        }
+        for (int teamId : tracker.getScoringTeams()) {
+            Report report = new Report(REPORT_VICTORY_POINT_TOTAL_SO_FAR, Report.PUBLIC);
+            report.indent();
+            report.add(teamDisplayName(teamId));
+            report.add(tracker.getTeamVictoryPoints(teamId));
+            addReport(report);
+        }
+        for (int playerId : tracker.getScoringPlayers()) {
+            Report report = new Report(REPORT_VICTORY_POINT_TOTAL_SO_FAR, Report.PUBLIC);
+            report.indent();
+            report.add(playerName(playerId));
+            report.add(tracker.getPlayerVictoryPoints(playerId));
+            addReport(report);
+        }
+    }
+
+    /**
+     * @param teamId a team id
+     *
+     * @return the team's members by name, e.g. "Defenders" or "Alice, Bob" - teams have no names of their
+     *       own, and "Team 1" tells a player nothing about whose points these are
+     */
+    private String teamDisplayName(int teamId) {
+        List<String> members = new ArrayList<>();
+        for (Player player : getGame().getPlayersList()) {
+            if ((player.getTeam() == teamId) && !player.isObserver()) {
+                members.add(player.getName());
+            }
+        }
+        return members.isEmpty() ? "Team " + teamId : String.join(", ", members);
     }
 }

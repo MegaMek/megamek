@@ -267,6 +267,13 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
             return sideColor(scheme.getSecuredTeam(), scheme.getSecuredPlayerId());
         }
         double fraction = scheme.progressFraction();
+        // a point that is held with nothing counted against it is simply its holder's: it was given to
+        // them at setup, or they kept it after walking away. It is theirs until someone challenges it,
+        // and paints in their full colour - the tint only starts once a counter does
+        boolean isHeldWithNothingCounted = hasController(marker) && (fraction == 0.0);
+        if (isHeldWithNothingCounted) {
+            return controllerColor(marker);
+        }
         return switch (scheme.getPreset()) {
             // the holder's colour arrives as the hold is counted
             case HOLD -> {
@@ -333,5 +340,15 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
     private Color ownerColor(ObjectiveMarker marker) {
         Player owner = game.getPlayer(marker.getOwnerId());
         return (owner != null) ? owner.getDisplayColour().getColour() : NEUTRAL_COLOR;
+    }
+
+    /**
+     * @param marker the point
+     *
+     * @return {@code true} when some side currently holds it, by team or as an unteamed player
+     */
+    private static boolean hasController(ObjectiveMarker marker) {
+        return (marker.getControllingTeam() != ObjectiveMarker.NO_CONTROLLER)
+              || (marker.getControllingPlayerId() != ObjectiveMarker.NO_CONTROLLER);
     }
 }

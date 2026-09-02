@@ -37,7 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -45,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import megamek.common.Report;
 import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
@@ -63,6 +66,7 @@ import megamek.server.victory.VictoryPointTracker;
 import megamek.server.victory.VictoryPointVictory;
 import megamek.server.victory.VictoryResult;
 import org.junit.jupiter.api.BeforeEach;
+import org.mockito.ArgumentCaptor;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -77,6 +81,7 @@ class ObjectiveResolutionHandlerTest {
     private Game game;
     private GameOptions gameOptions;
     private ObjectiveResolutionHandler handler;
+    private TWGameManager gameManager;
     private Player teamOnePlayer;
     private Player teamTwoPlayer;
     private int nextEntityId = 1;
@@ -84,7 +89,7 @@ class ObjectiveResolutionHandlerTest {
     @BeforeEach
     void setUp() {
         game = mock(Game.class);
-        TWGameManager gameManager = mock(TWGameManager.class);
+        gameManager = mock(TWGameManager.class);
         when(gameManager.getGame()).thenReturn(game);
         handler = new ObjectiveResolutionHandler(gameManager);
 
@@ -758,5 +763,69 @@ class ObjectiveResolutionHandlerTest {
 
         assertTrue(result.isVictory());
         assertEquals(2, result.getWinningTeam());
+    }
+
+    // --- the Initiative standings (what a player sees before the round is played) ---
+
+    @Test
+    void testStandingsReportEveryPointAndTheRunningTotals() {
+        Coords position = new Coords(2, 2);
+        PlacedObjective objective = objectiveAt(position, 1, teamOnePlayer);
+        objective.marker().setController(1, ObjectiveMarker.NO_CONTROLLER);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(position, new ArrayList<>(List.of(objective.marker())));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        when(game.getPlayersList()).thenReturn(List.of(teamOnePlayer, teamTwoPlayer));
+        VictoryPointTracker.getTracker(game).awardToTeam(1, 2, 0, "scenario starting victory points");
+
+        handler.reportObjectiveStandings();
+
+        ArgumentCaptor<Report> reports = ArgumentCaptor.forClass(Report.class);
+        verify(gameManager, atLeastOnce()).addReport(reports.capture());
+        List<Integer> ids = reports.getAllValues().stream().map(report -> report.messageId).toList();
+        // header, then the totals, then the standings intro, then one line per point
+        assertEquals(7111, ids.get(0), "the block opens with the Victory Conditions header");
+        assertTrue(ids.contains(7149), "the running victory point total is reported before the round");
+        assertTrue(ids.contains(7112), "then the standings intro");
+        assertTrue(ids.contains(7113) || ids.contains(7114), "then a line per point");
+        assertTrue(ids.indexOf(7149) < ids.indexOf(7112), "totals come before the per-point lines");
+    }
+
+    @Test
+    void testStandingsNameTheTeamByItsMembersNotItsNumber() {
+        Coords position = new Coords(2, 2);
+        PlacedObjective objective = objectiveAt(position, 1, teamOnePlayer);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(position, new ArrayList<>(List.of(objective.marker())));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        when(game.getPlayersList()).thenReturn(List.of(teamOnePlayer, teamTwoPlayer));
+        VictoryPointTracker.getTracker(game).awardToTeam(1, 2, 0, "scenario starting victory points");
+
+        handler.reportObjectiveStandings();
+
+        ArgumentCaptor<Report> reports = ArgumentCaptor.forClass(Report.class);
+        verify(gameManager, atLeastOnce()).addReport(reports.capture());
+        Report totals = reports.getAllValues().stream()
+              .filter(report -> report.messageId == 7149)
+              .findFirst().orElseThrow();
+        // "Team 1" tells a player nothing about whose points these are
+        assertTrue(totals.text().contains("Alice"), () -> "expected the member's name, got: " + totals.text());
+    }
+
+    @Test
+    void testStandingsSayNothingAboutTotalsWhenNobodyHasScored() {
+        Coords position = new Coords(2, 2);
+        PlacedObjective objective = objectiveAt(position, 1, teamOnePlayer);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(position, new ArrayList<>(List.of(objective.marker())));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        when(game.getPlayersList()).thenReturn(List.of(teamOnePlayer, teamTwoPlayer));
+
+        handler.reportObjectiveStandings();
+
+        ArgumentCaptor<Report> reports = ArgumentCaptor.forClass(Report.class);
+        verify(gameManager, atLeastOnce()).addReport(reports.capture());
+        assertFalse(reports.getAllValues().stream().anyMatch(report -> report.messageId == 7149),
+              "no totals line when there is nothing to total");
     }
 }

@@ -36,11 +36,14 @@ package megamek.common.scenario;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -89,6 +92,7 @@ import megamek.common.util.C3Util;
 import megamek.logging.MMLogger;
 import megamek.server.IGameManager;
 import megamek.server.scriptedEvents.GameEndTriggeredEvent;
+import megamek.server.victory.VictoryPointLevel;
 
 public class ScenarioV2 implements Scenario {
     private static final MMLogger logger = MMLogger.create(ScenarioV2.class);
@@ -96,6 +100,7 @@ public class ScenarioV2 implements Scenario {
     private static final String OPTIONS_FILE = "file";
     private static final String OPTIONS_ON = "on";
     private static final String OPTIONS_OFF = "off";
+    private static final String OPTIONS_LOCKED = "locked";
     private static final String DEPLOY = "deploy";
     private static final String DEPLOY_EDGE = "edge";
     private static final String DEPLOY_OFFSET = "offset";
@@ -106,6 +111,10 @@ public class ScenarioV2 implements Scenario {
     private static final String OPTIONS = "options";
     private static final String OBJECTS = "objects";
     private static final String OBJECTIVES = "objectives";
+    private static final String VICTORY_LEVELS = "victoryLevels";
+    private static final String LEVEL_UP_TO = "upTo";
+    private static final String LEVEL_NAME = "name";
+    private static final String STARTING_VICTORY_POINTS = "startingVictoryPoints";
     private static final String MESSAGES = "messages";
     private static final String END = "end";
     private static final String TRIGGER = "trigger";
@@ -116,6 +125,7 @@ public class ScenarioV2 implements Scenario {
 
     private final JsonNode node;
     private final File scenariofile;
+    private final Set<String> lockedGameOptions = new LinkedHashSet<>();
     private final Map<String, BotParser.BotInfo> botInfo = new HashMap<>();
 
     private final List<HexArea> deploymentAreas = new ArrayList<>();
@@ -158,6 +168,11 @@ public class ScenarioV2 implements Scenario {
     }
 
     @Override
+    public Set<String> lockedGameOptions() {
+        return Collections.unmodifiableSet(lockedGameOptions);
+    }
+
+    @Override
     public boolean hasFixedGameOptions() {
         return !node.has(PARAM_GAME_OPTIONS_FIXED) || node.get(PARAM_GAME_OPTIONS_FIXED).booleanValue();
     }
@@ -178,6 +193,7 @@ public class ScenarioV2 implements Scenario {
         IGame game = selectGameType();
         game.setPhase(GamePhase.STARTING_SCENARIO);
         parseOptions(game);
+        parseVictoryPointLevels(game);
         parsePlayers(game);
         parseMessages(game);
         parseGameEndEvents(game);
@@ -319,6 +335,29 @@ public class ScenarioV2 implements Scenario {
         }
     }
 
+    /**
+     * Reads the scenario's graded victory scale ({@code victoryLevels:}): an ordered list of bands, each with a
+     * {@code name:} and an {@code upTo:} bound on the winner's final victory point total; the last band may omit
+     * {@code upTo:} to catch every higher total. Example: up to 10 "Pyrrhic victory", up to 20 "Minor victory",
+     * unbounded "Overwhelming victory".
+     */
+    private void parseVictoryPointLevels(IGame game) {
+        if (!node.has(VICTORY_LEVELS) || !(game instanceof Game twGame)) {
+            return;
+        }
+        List<VictoryPointLevel> levels = new ArrayList<>();
+        for (JsonNode levelNode : node.get(VICTORY_LEVELS)) {
+            MMUReader.requireFields("VictoryLevel", levelNode, LEVEL_NAME);
+            // a key present but null passes has() and asInt() then yields 0, which would make the band
+            // cover only totals of zero or less rather than being unbounded
+            int upTo = levelNode.hasNonNull(LEVEL_UP_TO)
+                  ? levelNode.get(LEVEL_UP_TO).asInt()
+                  : VictoryPointLevel.NO_UPPER_BOUND;
+            levels.add(new VictoryPointLevel(upTo, levelNode.get(LEVEL_NAME).asText()));
+        }
+        twGame.setVictoryPointLevels(levels);
+    }
+
     private void parseOptions(IGame game) {
         var gameOptions = ((GameOptions) game.getOptions());
         gameOptions.initialize();
@@ -338,6 +377,17 @@ public class ScenarioV2 implements Scenario {
             if (optionsNode.has(OPTIONS_OFF)) {
                 JsonNode offNode = optionsNode.get(OPTIONS_OFF);
                 offNode.iterator().forEachRemaining(n -> game.getOptions().getOption(n.textValue()).setValue(false));
+            }
+            if (optionsNode.hasNonNull(OPTIONS_LOCKED)) {
+                for (JsonNode lockedNode : optionsNode.get(OPTIONS_LOCKED)) {
+                    String optionName = lockedNode.textValue();
+                    if (game.getOptions().getOption(optionName) == null) {
+                        throw new IllegalArgumentException("Cannot lock unknown game option " + optionName);
+                    }
+                    lockedGameOptions.add(optionName);
+                }
+                logger.info("[LockedOptions] scenario locks {} game option(s): {}", lockedGameOptions.size(),
+                      lockedGameOptions);
             }
         }
     }
@@ -404,6 +454,10 @@ public class ScenarioV2 implements Scenario {
 
             parseDeployment(playerNode, player);
             parsePlayerVictories(game, playerNode, player.getName());
+
+            if (playerNode.hasNonNull(STARTING_VICTORY_POINTS)) {
+                player.setStartingVictoryPoints(playerNode.get(STARTING_VICTORY_POINTS).asInt());
+            }
 
             if (playerNode.has(PARAM_CAMO)) {
                 String camoPath = playerNode.get(PARAM_CAMO).textValue();

@@ -36,10 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -56,10 +56,11 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
-import megamek.common.event.GameToastEvent;
 import megamek.common.game.Game;
-import megamek.common.options.OptionsConstants;
+import megamek.common.event.GameToastEvent;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
+import megamek.server.victory.VictoryPointTracker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -206,6 +207,81 @@ class ObjectivePlacementHandlerTest {
 
         assertTrue(alice.getGroundObjectsToPlace().isEmpty());
         assertTrue(bob.getGroundObjectsToPlace().isEmpty());
+    }
+
+    @Test
+    void testResetForgetsWhoHeldEachPoint() {
+        when(game.getPlayer(alice.getId())).thenReturn(alice);
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        ObjectiveMarker marker = markerFor(alice, null);
+        marker.setController(1, ObjectiveMarker.NO_CONTROLLER);
+        groundMap.put(new Coords(2, 2), new ArrayList<>(List.of(marker)));
+
+        handler.returnObjectivesToLobby();
+
+        // a controller carried across the reset survives a lobby save, and the next game then starts
+        // with the zone already held before anyone has stood in it
+        assertEquals(ObjectiveMarker.NO_CONTROLLER, marker.getControllingTeam());
+        assertEquals(ObjectiveMarker.NO_CONTROLLER, marker.getControllingPlayerId());
+    }
+
+    @Test
+    void testScenarioStartingVictoryPointsAreAwardedToEachSide() {
+        HashMap<String, Object> victoryContext = new HashMap<>();
+        when(game.getVictoryContext()).thenReturn(victoryContext);
+        boardContainingEverything();
+        alice.setTeam(2);
+        alice.setStartingVictoryPoints(3);
+        bob.setStartingVictoryPoints(1);
+
+        handler.placeLobbyObjectives();
+
+        VictoryPointTracker tracker = VictoryPointTracker.getTracker(game);
+        assertEquals(3, tracker.getTeamVictoryPoints(2), "a teamed player's points go to the team pool");
+        assertEquals(1, tracker.getPlayerVictoryPoints(bob.getId()), "a solo player scores for themselves");
+    }
+
+    @Test
+    void testNoStartingVictoryPointsAreAwardedWhenTheScenarioSetsNone() {
+        HashMap<String, Object> victoryContext = new HashMap<>();
+        when(game.getVictoryContext()).thenReturn(victoryContext);
+        boardContainingEverything();
+
+        handler.placeLobbyObjectives();
+
+        VictoryPointTracker tracker = VictoryPointTracker.getTracker(game);
+        assertEquals(0, tracker.getPlayerVictoryPoints(alice.getId()));
+        assertEquals(0, tracker.getPlayerVictoryPoints(bob.getId()));
+    }
+
+    @Test
+    void testTheChatWarnsWhenNothingCanEndAnObjectivesGame() {
+        GameOptions options = new GameOptions();
+        options.getOption(OptionsConstants.VICTORY_USE_OBJECTIVES).setValue(true);
+        when(game.getOptions()).thenReturn(options);
+        when(game.scriptedEvents()).thenReturn(List.of());
+        boardContainingEverything();
+
+        handler.placeLobbyObjectives();
+
+        verify(gameManager).sendServerChat(anyString());
+        // the chat line is easy to miss while the board loads, so it is raised as a toast as well
+        verify(gameManager).sendToast(eq(GameToastEvent.Level.WARNING), anyString(), isNull());
+    }
+
+    @Test
+    void testTheChatStaysQuietWhenTheGameHasAnEnder() {
+        GameOptions options = new GameOptions();
+        options.getOption(OptionsConstants.VICTORY_USE_OBJECTIVES).setValue(true);
+        options.getOption(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT).setValue(true);
+        when(game.getOptions()).thenReturn(options);
+        when(game.scriptedEvents()).thenReturn(List.of());
+        boardContainingEverything();
+
+        handler.placeLobbyObjectives();
+
+        verify(gameManager, never()).sendServerChat(anyString());
+        verify(gameManager, never()).sendToast(any(), anyString(), any());
     }
 
     @Test

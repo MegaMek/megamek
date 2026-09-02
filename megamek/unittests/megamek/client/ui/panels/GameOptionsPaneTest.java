@@ -1086,20 +1086,17 @@ class GameOptionsPaneTest {
                   options.getOption(OptionsConstants.VICTORY_GAME_KILL_COUNT));
             DialogOptionComponentYPanel winThreshold = component(
                   options.getOption(OptionsConstants.VICTORY_VP_WIN_THRESHOLD));
-            DialogOptionComponentYPanel lossThreshold = component(
-                  options.getOption(OptionsConstants.VICTORY_VP_LOSS_THRESHOLD));
 
             pane("victory", List.of(conditions, destroyedPercent, ratioPercent, turnLimit, killCount,
-                  winThreshold, lossThreshold), option -> true);
+                  winThreshold), option -> true);
 
             assertIntegerSpinner(conditions, 1, 100, 1);
             assertIntegerSpinner(destroyedPercent, 1, 100, 100);
             assertIntegerSpinner(ratioPercent, 1, 10_000, 300);
             assertIntegerSpinner(turnLimit, 1, 10_000, 10);
             assertIntegerSpinner(killCount, 1, 10_000, 4);
-            // zero is how a threshold is switched off, so it is the floor rather than one
+            // zero is how the threshold is switched off, so it is the floor rather than one
             assertIntegerSpinner(winThreshold, 0, 10_000, 0);
-            assertIntegerSpinner(lossThreshold, 0, 10_000, 0);
         });
     }
 

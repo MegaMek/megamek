@@ -34,6 +34,7 @@
 package megamek.client.ui.panels.phaseDisplay.lobby;
 
 import java.awt.Container;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -85,8 +86,10 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
     private static final Set<String> OBJECTIVE_OPTIONS = Set.of(
           OptionsConstants.VICTORY_USE_OBJECTIVES,
           OptionsConstants.VICTORY_VP_WIN_THRESHOLD,
-          OptionsConstants.VICTORY_VP_LOSS_THRESHOLD,
           OptionsConstants.VICTORY_VP_SUDDEN_DEATH);
+
+    /** Unscaled width the objectives note wraps at, a little under the tab's preferred width. */
+    private static final int NOTE_WIDTH = 500;
 
     private final ClientGUI clientGui;
     private final JPanel victoryOptionsPanel = new JPanel();
@@ -127,7 +130,15 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
         // bounded number fields, and greying out for anything that needs a master switch - the same rules
         // the game options pane applies, so the two places agree about what a legal setting is
         VictoryOptionLayout.apply(victoryOptionComps);
-        objectiveOptionsPanel.add(new JLabel(Messages.getString("VictoryConditionsDialog.objectivesNote")));
+        // the same row shape as the option rows above it, or the box layout lines the bare label's left edge
+        // up with the rows' centre line and the note lands on the right-hand side
+        JPanel notePanel = new FixedYPanel(new FlowLayout(FlowLayout.LEFT));
+        // a label only wraps HTML that is given a width; this one is the tab's width less its margins
+        String wrappedNote = "<html><div width=" + UIUtil.scaleForGUI(NOTE_WIDTH) + ">"
+              + Messages.getString("VictoryConditionsDialog.objectivesNote") + "</div></html>";
+        notePanel.add(new JLabel(wrappedNote));
+        objectiveOptionsPanel.add(Box.createVerticalStrut(UIUtil.scaleForGUI(8)));
+        objectiveOptionsPanel.add(notePanel);
         victoryOptionsPanel.revalidate();
         objectiveOptionsPanel.revalidate();
     }

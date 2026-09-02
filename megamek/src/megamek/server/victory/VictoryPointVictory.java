@@ -74,7 +74,6 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
     private static final int REPORT_RAID_OBJECTIVE_SCORED = 7131;
     private static final int REPORT_SUDDEN_DEATH = 7143;
     private static final int REPORT_WIN_THRESHOLD_REACHED = 7144;
-    private static final int REPORT_LOSS_THRESHOLD_REACHED = 7145;
     private static final int REPORT_VICTORY_LEVEL = 7146;
 
     @Override
@@ -88,8 +87,8 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
 
     /**
      * Checks the mid-game enders: sudden death (the game ends the moment any control point is decided) and the
-     * victory point win and loss thresholds. All of them resolve the running tally into a winner immediately
-     * instead of waiting for the game clock.
+     * victory point win threshold. Both resolve the running tally into a winner immediately instead of waiting
+     * for the game clock.
      *
      * @param game    The current {@link Game}
      * @param context The victory context holding the {@link VictoryPointTracker}
@@ -124,18 +123,6 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
             return result;
         }
 
-        int lossThreshold = game.getOptions().intOption(OptionsConstants.VICTORY_VP_LOSS_THRESHOLD);
-        boolean isLossThresholdReached = (lossThreshold > 0) && anySideIsAtOrBelow(tracker, -lossThreshold);
-        if (isLossThresholdReached) {
-            LOGGER.info("[VP] A side fell to the victory point loss threshold of -{} - resolving now",
-                  lossThreshold);
-            VictoryResult result = checkAtGameEnd(game, context);
-            Report report = new Report(REPORT_LOSS_THRESHOLD_REACHED, Report.PUBLIC);
-            report.add(lossThreshold);
-            result.addReport(report);
-            return result;
-        }
-
         return VictoryResult.noResult();
     }
 
@@ -151,16 +138,6 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
         int best = totals.stream().mapToInt(Integer::intValue).max().orElse(Integer.MIN_VALUE);
         long sidesAtBest = totals.stream().filter(total -> total == best).count();
         return (best >= threshold) && (sidesAtBest == 1);
-    }
-
-    /**
-     * @param tracker the tally
-     * @param limit   the (negative) score at which a side loses
-     *
-     * @return {@code true} when any side's total is at or below the limit
-     */
-    private boolean anySideIsAtOrBelow(VictoryPointTracker tracker, int limit) {
-        return allSideTotals(tracker).stream().anyMatch(total -> total <= limit);
     }
 
     /** @return every scoring side's current total, players and teams alike */
@@ -179,15 +156,14 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
      * @param game the game, using its final (post-lobby) options and scripted events
      *
      * @return {@code true} when the game has any way to resolve scored victory points into a result: the game
-     *       turn limit, a victory point win or loss threshold, sudden death, or a game-ending scripted event
+     *       turn limit, the victory point win threshold, sudden death, or a game-ending scripted event
      */
     public static boolean gameHasVictoryPointResolution(Game game) {
         boolean hasTurnLimit = game.getOptions().booleanOption(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT);
         boolean hasWinThreshold = game.getOptions().intOption(OptionsConstants.VICTORY_VP_WIN_THRESHOLD) > 0;
-        boolean hasLossThreshold = game.getOptions().intOption(OptionsConstants.VICTORY_VP_LOSS_THRESHOLD) > 0;
         boolean hasSuddenDeath = game.getOptions().booleanOption(OptionsConstants.VICTORY_VP_SUDDEN_DEATH);
         boolean hasGameEndEvent = game.scriptedEvents().stream().anyMatch(TriggeredEvent::isGameEnding);
-        return hasTurnLimit || hasWinThreshold || hasLossThreshold || hasSuddenDeath || hasGameEndEvent;
+        return hasTurnLimit || hasWinThreshold || hasSuddenDeath || hasGameEndEvent;
     }
 
     /**

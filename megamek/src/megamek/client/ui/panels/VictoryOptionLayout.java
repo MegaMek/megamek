@@ -76,16 +76,14 @@ public final class VictoryOptionLayout {
         BOUNDS.put(OptionsConstants.VICTORY_BV_RATIO_PERCENT, new int[] { 1, MAX_RATIO_PERCENT });
         BOUNDS.put(OptionsConstants.VICTORY_GAME_TURN_LIMIT, new int[] { 1, MAX_COUNT });
         BOUNDS.put(OptionsConstants.VICTORY_GAME_KILL_COUNT, new int[] { 1, MAX_COUNT });
-        // zero is meaningful for both thresholds: it is how they are switched off
+        // zero is meaningful for the threshold: it is how it is switched off
         BOUNDS.put(OptionsConstants.VICTORY_VP_WIN_THRESHOLD, new int[] { 0, MAX_COUNT });
-        BOUNDS.put(OptionsConstants.VICTORY_VP_LOSS_THRESHOLD, new int[] { 0, MAX_COUNT });
 
         DEPENDS_ON.put(OptionsConstants.VICTORY_BV_DESTROYED_PERCENT, OptionsConstants.VICTORY_USE_BV_DESTROYED);
         DEPENDS_ON.put(OptionsConstants.VICTORY_BV_RATIO_PERCENT, OptionsConstants.VICTORY_USE_BV_RATIO);
         DEPENDS_ON.put(OptionsConstants.VICTORY_GAME_TURN_LIMIT, OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT);
         DEPENDS_ON.put(OptionsConstants.VICTORY_GAME_KILL_COUNT, OptionsConstants.VICTORY_USE_KILL_COUNT);
         DEPENDS_ON.put(OptionsConstants.VICTORY_VP_WIN_THRESHOLD, OptionsConstants.VICTORY_USE_OBJECTIVES);
-        DEPENDS_ON.put(OptionsConstants.VICTORY_VP_LOSS_THRESHOLD, OptionsConstants.VICTORY_USE_OBJECTIVES);
         DEPENDS_ON.put(OptionsConstants.VICTORY_VP_SUDDEN_DEATH, OptionsConstants.VICTORY_USE_OBJECTIVES);
     }
 

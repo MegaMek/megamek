@@ -52,7 +52,7 @@ import org.junit.jupiter.api.Test;
 class VictoryOptionLayoutTest {
 
     @Test
-    void theVictoryPointThresholdsStartAtZeroBecauseZeroSwitchesThemOff() {
+    void theVictoryPointThresholdStartsAtZeroBecauseZeroSwitchesItOff() {
         assertArrayEquals(new int[] { 0, VictoryOptionLayout.MAX_COUNT },
               VictoryOptionLayout.boundsFor(OptionsConstants.VICTORY_VP_WIN_THRESHOLD));
         assertArrayEquals(new int[] { 1, VictoryOptionLayout.MAX_COUNT },
@@ -63,7 +63,7 @@ class VictoryOptionLayoutTest {
     @Test
     void everyVictoryPointSettingHangsOffUseObjectives() {
         for (String optionName : List.of(OptionsConstants.VICTORY_VP_WIN_THRESHOLD,
-              OptionsConstants.VICTORY_VP_LOSS_THRESHOLD, OptionsConstants.VICTORY_VP_SUDDEN_DEATH)) {
+              OptionsConstants.VICTORY_VP_SUDDEN_DEATH)) {
             assertTrue(VictoryOptionLayout.isDependent(optionName), optionName);
         }
         assertFalse(VictoryOptionLayout.isDependent(OptionsConstants.VICTORY_USE_OBJECTIVES), "the master itself");

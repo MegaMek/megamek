@@ -225,7 +225,6 @@ final class GameOptionsPresentation {
               OptionsConstants.VICTORY_GAME_KILL_COUNT,
               OptionsConstants.VICTORY_USE_OBJECTIVES,
               OptionsConstants.VICTORY_VP_WIN_THRESHOLD,
-              OptionsConstants.VICTORY_VP_LOSS_THRESHOLD,
               OptionsConstants.VICTORY_VP_SUDDEN_DEATH);
 
         register(ALLOWED_UNITS, GENERAL_UNITS_AND_TECHNOLOGY, "allowedUnits.availability",

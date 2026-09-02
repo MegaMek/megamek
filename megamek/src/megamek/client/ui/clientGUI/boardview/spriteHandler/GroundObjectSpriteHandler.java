@@ -189,6 +189,10 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
             // the same team always reads the same way for the whole game
             for (Player player : game.getPlayersList()) {
                 if (player.getTeam() == controllingTeam) {
+                    VICTORY_HEX_LOGGER.debug("[VictoryHex] team {} colour taken from {} (id {}): colour field={},"
+                                + " camouflage={}/{}, display={}", controllingTeam, player.getName(),
+                          player.getId(), player.getColour(), player.getCamouflage().getCategory(),
+                          player.getCamouflage().getFilename(), player.getDisplayColour());
                     return player.getDisplayColour().getColour();
                 }
             }

@@ -36,8 +36,8 @@ package megamek.client.ui.panels.phaseDisplay.lobby;
 import java.awt.Container;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Set;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -45,8 +45,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.panels.VictoryOptionLayout;
@@ -60,8 +60,8 @@ import megamek.common.options.BasicOption;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
-import megamek.common.options.OptionsConstants;
 import megamek.common.options.IOptionGroup;
+import megamek.common.options.OptionsConstants;
 
 /**
  * The lobby victory conditions dialog. It holds the victory game options that formerly lived on the Victory

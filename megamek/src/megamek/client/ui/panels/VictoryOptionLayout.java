@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.panels;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,10 +45,10 @@ import megamek.common.options.OptionsConstants;
  * same way: which number fields are bounded and to what, and which options are only meaningful while their
  * master switch is on.
  * <p>
- * These rules used to live only in the game options pane, so the lobby's Victory dialog offered the same
- * settings as unbounded free text with no greying out at all - a player could type any number into
- * "Victory points needed to win immediately", and set a victory point threshold while Use Objectives was
- * off, where it does nothing.
+ * Before this the bounds lived only in the game options pane and the greying nowhere, so the lobby's
+ * Victory dialog offered the same settings as unbounded free text - a player could type any number into
+ * "Victory points needed to win immediately" - and both dialogs let a victory point threshold be set
+ * while Use Objectives was off, where it does nothing. Both dialogs now read these rules.
  */
 public final class VictoryOptionLayout {
 
@@ -109,6 +110,13 @@ public final class VictoryOptionLayout {
      */
     public static boolean isDependent(String optionName) {
         return DEPENDS_ON.containsKey(optionName);
+    }
+
+    /**
+     * @return every dependent option mapped to the master switch it needs, in display order
+     */
+    public static Map<String, String> dependencies() {
+        return Collections.unmodifiableMap(DEPENDS_ON);
     }
 
     /**

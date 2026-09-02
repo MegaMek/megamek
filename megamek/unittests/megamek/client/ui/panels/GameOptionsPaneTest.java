@@ -1084,15 +1084,48 @@ class GameOptionsPaneTest {
                   options.getOption(OptionsConstants.VICTORY_GAME_TURN_LIMIT));
             DialogOptionComponentYPanel killCount = component(
                   options.getOption(OptionsConstants.VICTORY_GAME_KILL_COUNT));
+            DialogOptionComponentYPanel winThreshold = component(
+                  options.getOption(OptionsConstants.VICTORY_VP_WIN_THRESHOLD));
+            DialogOptionComponentYPanel lossThreshold = component(
+                  options.getOption(OptionsConstants.VICTORY_VP_LOSS_THRESHOLD));
 
-            pane("victory", List.of(conditions, destroyedPercent, ratioPercent, turnLimit, killCount),
-                  option -> true);
+            pane("victory", List.of(conditions, destroyedPercent, ratioPercent, turnLimit, killCount,
+                  winThreshold, lossThreshold), option -> true);
 
             assertIntegerSpinner(conditions, 1, 100, 1);
             assertIntegerSpinner(destroyedPercent, 1, 100, 100);
             assertIntegerSpinner(ratioPercent, 1, 10_000, 300);
             assertIntegerSpinner(turnLimit, 1, 10_000, 10);
             assertIntegerSpinner(killCount, 1, 10_000, 4);
+            // zero is how a threshold is switched off, so it is the floor rather than one
+            assertIntegerSpinner(winThreshold, 0, 10_000, 0);
+            assertIntegerSpinner(lossThreshold, 0, 10_000, 0);
+        });
+    }
+
+    @Test
+    void victoryNumbersAreGreyedUntilTheirMasterSwitchIsOn() throws Exception {
+        // a turn limit with "Force game end at turn limit" off does nothing, as does a victory point
+        // threshold with Use Objectives off; the pane used to offer both as if they counted
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel useTurnLimit = component(
+                  options.getOption(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT));
+            DialogOptionComponentYPanel turnLimit = component(
+                  options.getOption(OptionsConstants.VICTORY_GAME_TURN_LIMIT));
+            DialogOptionComponentYPanel useObjectives = component(
+                  options.getOption(OptionsConstants.VICTORY_USE_OBJECTIVES));
+            DialogOptionComponentYPanel suddenDeath = component(
+                  options.getOption(OptionsConstants.VICTORY_VP_SUDDEN_DEATH));
+
+            pane("victory", List.of(useTurnLimit, turnLimit, useObjectives, suddenDeath), option -> true);
+
+            assertFalse(turnLimit.getEditable());
+            assertFalse(suddenDeath.getEditable());
+            useTurnLimit.settingsCheckBox().setSelected(true);
+            useObjectives.settingsCheckBox().setSelected(true);
+            assertTrue(turnLimit.getEditable());
+            assertTrue(suddenDeath.getEditable());
         });
     }
 

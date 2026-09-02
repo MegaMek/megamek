@@ -71,6 +71,9 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
      */
     private static final Color NEUTRAL_COLOR = Color.WHITE;
 
+    /** Exponent applied to a point's progress fraction before it tints the colour; below 1 front-loads. */
+    private static final double TINT_CURVE_EXPONENT = 0.5;
+
     /** Feature logger for the victory hex designation diagnostics; enabled via the log4j2.xml VictoryHex block. */
     private static final MMLogger VICTORY_HEX_LOGGER = MMLogger.create("megamek.feature.VictoryHex");
 
@@ -292,7 +295,11 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
      * @return the colour that fraction of the way between them
      */
     private static Color blend(Color from, Color to, double fraction) {
-        double clamped = Math.max(0.0, Math.min(1.0, fraction));
+        // a straight line makes the first steps invisible - one turn of ten is a 10% tint on white,
+        // which is nothing. A square root front-loads the change: 10% of the way reads as about a third
+        // of the colour, half way as 70%, and the last stretch tightens toward solid. Early progress is
+        // seen, and a point on the brink is still visibly not there yet
+        double clamped = Math.pow(Math.max(0.0, Math.min(1.0, fraction)), TINT_CURVE_EXPONENT);
         int red = (int) Math.round(from.getRed() + (to.getRed() - from.getRed()) * clamped);
         int green = (int) Math.round(from.getGreen() + (to.getGreen() - from.getGreen()) * clamped);
         int blue = (int) Math.round(from.getBlue() + (to.getBlue() - from.getBlue()) * clamped);

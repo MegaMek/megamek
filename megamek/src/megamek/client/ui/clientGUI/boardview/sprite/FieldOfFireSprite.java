@@ -67,11 +67,13 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
     private static final int borderOpacity = 120;
 
     /**
-     * Objective control zones are drawn more strongly than a weapon range band. A range bracket is
-     * background information you read past; a control zone is telling you who currently holds a point
-     * you are fighting over, and at the range opacity the owner's colour is hard to make out at all.
+     * Objective control zones are drawn solid, where a weapon range band is translucent. A range bracket
+     * is background information you read past; a control zone is telling you who currently holds a point
+     * you are fighting over. The default player palette is pale - Player Blue is 134,134,191 - and blended
+     * over terrain at any transparency it reads as grey, so the holder could not be told from nobody. The
+     * band is only the hex edge, so painting it solid hides almost no terrain.
      */
-    private static final int CONTROL_ZONE_OPACITY = 190;
+    private static final int CONTROL_ZONE_OPACITY = 255;
 
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();

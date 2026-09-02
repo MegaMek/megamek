@@ -37,7 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import javax.swing.SwingUtilities;
 
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.common.options.GameOptions;
@@ -70,34 +72,50 @@ class VictoryOptionLayoutTest {
     }
 
     @Test
-    void applyingTheRulesGreysADependentUntilItsMasterIsTicked() {
-        GameOptions options = new GameOptions();
-        DialogOptionComponentYPanel useObjectives = component(
-              options.getOption(OptionsConstants.VICTORY_USE_OBJECTIVES));
-        DialogOptionComponentYPanel suddenDeath = component(
-              options.getOption(OptionsConstants.VICTORY_VP_SUDDEN_DEATH));
-        DialogOptionComponentYPanel winThreshold = component(
-              options.getOption(OptionsConstants.VICTORY_VP_WIN_THRESHOLD));
+    void applyingTheRulesGreysADependentUntilItsMasterIsTicked() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel useObjectives = component(
+                  options.getOption(OptionsConstants.VICTORY_USE_OBJECTIVES));
+            DialogOptionComponentYPanel suddenDeath = component(
+                  options.getOption(OptionsConstants.VICTORY_VP_SUDDEN_DEATH));
+            DialogOptionComponentYPanel winThreshold = component(
+                  options.getOption(OptionsConstants.VICTORY_VP_WIN_THRESHOLD));
 
-        VictoryOptionLayout.apply(List.of(useObjectives, suddenDeath, winThreshold));
+            VictoryOptionLayout.apply(List.of(useObjectives, suddenDeath, winThreshold));
 
-        assertFalse(suddenDeath.getEditable());
-        assertFalse(winThreshold.getEditable());
-        useObjectives.settingsCheckBox().setSelected(true);
-        assertTrue(suddenDeath.getEditable());
-        assertTrue(winThreshold.getEditable());
+            assertFalse(suddenDeath.getEditable());
+            assertFalse(winThreshold.getEditable());
+            useObjectives.settingsCheckBox().setSelected(true);
+            assertTrue(suddenDeath.getEditable());
+            assertTrue(winThreshold.getEditable());
+        });
     }
 
     @Test
-    void aDependentWhoseMasterIsNotOnDisplayIsLeftAlone() {
+    void aDependentWhoseMasterIsNotOnDisplayIsLeftAlone() throws Exception {
         // a caller showing one option on its own must not have it greyed for a switch nobody can see
-        GameOptions options = new GameOptions();
-        DialogOptionComponentYPanel suddenDeath = component(
-              options.getOption(OptionsConstants.VICTORY_VP_SUDDEN_DEATH));
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel suddenDeath = component(
+                  options.getOption(OptionsConstants.VICTORY_VP_SUDDEN_DEATH));
 
-        VictoryOptionLayout.apply(List.of(suddenDeath));
+            VictoryOptionLayout.apply(List.of(suddenDeath));
 
-        assertTrue(suddenDeath.getEditable());
+            assertTrue(suddenDeath.getEditable());
+        });
+    }
+
+    /** Swing components are built and clicked on the Event Dispatch Thread, the way the pane tests do it. */
+    private static void runOnEdt(Runnable test) throws Exception {
+        try {
+            SwingUtilities.invokeAndWait(test);
+        } catch (InvocationTargetException exception) {
+            if (exception.getCause() instanceof Error error) {
+                throw error;
+            }
+            throw exception;
+        }
     }
 
     private static DialogOptionComponentYPanel component(IOption option) {

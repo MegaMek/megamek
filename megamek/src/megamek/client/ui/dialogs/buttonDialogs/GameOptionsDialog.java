@@ -1176,12 +1176,15 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         for (String optionName : lockedOptionNames) {
             List<DialogOptionComponentYPanel> components = optionComponents.get(optionName);
             if (components == null) {
+                LOGGER.warn("[LockedOptions] {} is locked by the scenario but is not shown in this dialog,"
+                      + " so there is nothing to grey out", optionName);
                 continue;
             }
             for (DialogOptionComponentYPanel component : components) {
                 component.setEditable(false);
                 component.setToolTipText(getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.lockedByScenario"));
             }
+            LOGGER.debug("[LockedOptions] {} greyed out ({} component(s))", optionName, components.size());
         }
     }
 }

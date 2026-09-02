@@ -214,12 +214,14 @@ final class GameOptionsPresentation {
               OptionsConstants.VICTORY_BV_DESTROYED_PERCENT,
               OptionsConstants.VICTORY_USE_BV_RATIO,
               OptionsConstants.VICTORY_BV_RATIO_PERCENT);
+        // the two kill conditions share a row; Use Objectives comes last on its own so it renders as a
+        // full-width row rather than being packed into the right-hand column where it went unseen
         register(VICTORY, GENERAL_VICTORY_AND_GAME_MASTER, "victory.alternate",
               OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT,
               OptionsConstants.VICTORY_GAME_TURN_LIMIT,
+              OptionsConstants.VICTORY_COMMANDER_KILLED,
               OptionsConstants.VICTORY_USE_KILL_COUNT,
               OptionsConstants.VICTORY_GAME_KILL_COUNT,
-              OptionsConstants.VICTORY_COMMANDER_KILLED,
               OptionsConstants.VICTORY_USE_OBJECTIVES);
 
         register(ALLOWED_UNITS, GENERAL_UNITS_AND_TECHNOLOGY, "allowedUnits.availability",

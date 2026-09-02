@@ -358,6 +358,8 @@ public class ScenarioV2 implements Scenario {
                     }
                     lockedGameOptions.add(optionName);
                 }
+                logger.info("[LockedOptions] scenario locks {} game option(s): {}", lockedGameOptions.size(),
+                      lockedGameOptions);
             }
         }
     }

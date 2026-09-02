@@ -33,6 +33,7 @@
 
 package megamek.common.scenario;
 
+import java.util.Set;
 import java.io.IOException;
 
 import megamek.common.game.GameType;
@@ -112,6 +113,19 @@ public interface Scenario {
     boolean isSinglePlayer();
 
     boolean hasFixedGameOptions();
+
+    /**
+     * The game options this scenario does not let a player change at load. A scenario file used to face an
+     * all-or-nothing choice: fix every option, so a player could not set even an unrelated one, or fix none,
+     * so the mission itself could be changed - including switching objectives off, which silently turns
+     * every control point in the file into decoration. This is the middle: the options that <em>are</em>
+     * the mission stay as written, and everything else stays open.
+     *
+     * @return The names of the locked options; empty when nothing is locked
+     */
+    default Set<String> lockedGameOptions() {
+        return Set.of();
+    }
 
     boolean hasFixedPlanetaryConditions();
 

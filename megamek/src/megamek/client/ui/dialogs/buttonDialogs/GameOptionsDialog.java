@@ -114,6 +114,9 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
      */
     private Map<String, List<DialogOptionComponentYPanel>> optionComps = new HashMap<>();
 
+    /** Options a scenario has locked; these stay uneditable whatever the dialog's editable state. */
+    private Set<String> lockedOptionNames = Set.of();
+
     private final JPanel panOptions = new JPanel(new BorderLayout());
     private GameOptionsPane gameOptionsPane;
 
@@ -374,6 +377,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     public void update(GameOptions options) {
         this.options = options;
         refreshOptions();
+        applyLockedOptions();
     }
 
     private void send() {
@@ -1121,6 +1125,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
         this.editable = editable;
         applyRulesSystemEditability();
+        applyLockedOptions();
 
         // If the panel is editable, the player can commit or reset.
         texPass.setEnabled(editable);
@@ -1142,5 +1147,29 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
      */
     public boolean isEditable() {
         return editable;
+    }
+
+    /**
+     * Locks the named options so a player cannot change them here: the scenario wrote them as its mission.
+     * They are shown, greyed out, and keep the values the scenario gave them. Locking survives a refresh.
+     *
+     * @param optionNames The option names to lock; an empty set unlocks everything
+     */
+    public void lockOptions(Set<String> optionNames) {
+        lockedOptionNames = Set.copyOf(optionNames);
+        applyLockedOptions();
+    }
+
+    private void applyLockedOptions() {
+        for (String optionName : lockedOptionNames) {
+            List<DialogOptionComponentYPanel> components = optionComps.get(optionName);
+            if (components == null) {
+                continue;
+            }
+            for (DialogOptionComponentYPanel component : components) {
+                component.setEditable(false);
+                component.setToolTipText(getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.lockedByScenario"));
+            }
+        }
     }
 }

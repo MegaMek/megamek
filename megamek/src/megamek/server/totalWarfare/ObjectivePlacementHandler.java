@@ -43,7 +43,6 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.event.GameToastEvent;
 import megamek.common.equipment.ICarryable;
-import megamek.common.event.GameToastEvent;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;

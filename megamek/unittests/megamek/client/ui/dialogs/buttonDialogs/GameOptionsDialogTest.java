@@ -109,17 +109,22 @@ class GameOptionsDialogTest {
         // must still find it greyed out afterwards, while an unlocked TW-only option is re-enabled as before
         GameOptions options = new GameOptions();
         Map<String, List<DialogOptionComponentYPanel>> optionComponents = new LinkedHashMap<>();
-        optionComponents.put(OptionsConstants.ADVANCED_MINEFIELDS,
-              List.of(component(options.getOption(OptionsConstants.ADVANCED_MINEFIELDS))));
-        optionComponents.put(OptionsConstants.ADVANCED_ALTERNATE_MASC,
-              List.of(component(options.getOption(OptionsConstants.ADVANCED_ALTERNATE_MASC))));
-        Set<String> lockedOptions = Set.of(OptionsConstants.ADVANCED_MINEFIELDS);
+        DialogOptionComponentYPanel minefields = component(options.getOption(OptionsConstants.ADVANCED_MINEFIELDS));
+        DialogOptionComponentYPanel alternateMasc = component(
+              options.getOption(OptionsConstants.ADVANCED_ALTERNATE_MASC));
+        optionComponents.put(OptionsConstants.ADVANCED_MINEFIELDS, List.of(minefields));
+        optionComponents.put(OptionsConstants.ADVANCED_ALTERNATE_MASC, List.of(alternateMasc));
 
+        GameOptionsDialog.applyLockedOptions(optionComponents, Set.of(OptionsConstants.ADVANCED_MINEFIELDS));
         GameOptionsDialog.applyRulesSystemEditability(optionComponents, true, OptionsConstants.RULES_TW);
-        GameOptionsDialog.applyLockedOptions(optionComponents, lockedOptions);
+        minefields.setEditable(true);
 
-        assertFalse(optionComponents.get(OptionsConstants.ADVANCED_MINEFIELDS).getFirst().getEditable());
-        assertTrue(optionComponents.get(OptionsConstants.ADVANCED_ALTERNATE_MASC).getFirst().getEditable());
+        assertFalse(minefields.getEditable(), "neither the ruleset pass nor a plain setEditable re-enables a lock");
+        assertTrue(minefields.isLockedByScenario());
+        assertTrue(minefields.getSettingsHelpText().contains("scenario"),
+              "the reason sits under the help text, which is what the Option Details panel shows on hover");
+        assertTrue(alternateMasc.getEditable());
+        assertFalse(alternateMasc.isLockedByScenario());
     }
 
     @Test

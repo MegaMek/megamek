@@ -66,6 +66,13 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
     private static final int borderWidth = 10;
     private static final int borderOpacity = 120;
 
+    /**
+     * Objective control zones are drawn more strongly than a weapon range band. A range bracket is
+     * background information you read past; a control zone is telling you who currently holds a point
+     * you are fighting over, and at the range opacity the owner's colour is hard to make out at all.
+     */
+    private static final int CONTROL_ZONE_OPACITY = 190;
+
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     // thin line
@@ -122,7 +129,8 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
      */
     public FieldOfFireSprite(BoardView boardView1, Color zoneColor, Coords l, int borders) {
         super(boardView1, Color.BLACK, l, borders);
-        fillColor = new Color(zoneColor.getRed(), zoneColor.getGreen(), zoneColor.getBlue(), borderOpacity);
+        fillColor = new Color(zoneColor.getRed(), zoneColor.getGreen(), zoneColor.getBlue(),
+              CONTROL_ZONE_OPACITY);
         this.rangeBracket = RangeType.RANGE_MEDIUM;
     }
 

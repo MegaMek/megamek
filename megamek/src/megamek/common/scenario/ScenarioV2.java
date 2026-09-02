@@ -36,11 +36,14 @@ package megamek.common.scenario;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -97,6 +100,7 @@ public class ScenarioV2 implements Scenario {
     private static final String OPTIONS_FILE = "file";
     private static final String OPTIONS_ON = "on";
     private static final String OPTIONS_OFF = "off";
+    private static final String OPTIONS_LOCKED = "locked";
     private static final String DEPLOY = "deploy";
     private static final String DEPLOY_EDGE = "edge";
     private static final String DEPLOY_OFFSET = "offset";
@@ -121,6 +125,7 @@ public class ScenarioV2 implements Scenario {
 
     private final JsonNode node;
     private final File scenariofile;
+    private final Set<String> lockedGameOptions = new LinkedHashSet<>();
     private final Map<String, BotParser.BotInfo> botInfo = new HashMap<>();
 
     private final List<HexArea> deploymentAreas = new ArrayList<>();
@@ -160,6 +165,11 @@ public class ScenarioV2 implements Scenario {
     @Override
     public boolean isSinglePlayer() {
         return !node.has(PARAM_SINGLEPLAYER) || node.get(PARAM_SINGLEPLAYER).booleanValue();
+    }
+
+    @Override
+    public Set<String> lockedGameOptions() {
+        return Collections.unmodifiableSet(lockedGameOptions);
     }
 
     @Override
@@ -367,6 +377,17 @@ public class ScenarioV2 implements Scenario {
             if (optionsNode.has(OPTIONS_OFF)) {
                 JsonNode offNode = optionsNode.get(OPTIONS_OFF);
                 offNode.iterator().forEachRemaining(n -> game.getOptions().getOption(n.textValue()).setValue(false));
+            }
+            if (optionsNode.hasNonNull(OPTIONS_LOCKED)) {
+                for (JsonNode lockedNode : optionsNode.get(OPTIONS_LOCKED)) {
+                    String optionName = lockedNode.textValue();
+                    if (game.getOptions().getOption(optionName) == null) {
+                        throw new IllegalArgumentException("Cannot lock unknown game option " + optionName);
+                    }
+                    lockedGameOptions.add(optionName);
+                }
+                logger.info("[LockedOptions] scenario locks {} game option(s): {}", lockedGameOptions.size(),
+                      lockedGameOptions);
             }
         }
     }

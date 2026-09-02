@@ -1431,6 +1431,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             GameOptionsDialog god = new GameOptionsDialog(frame, twGame.getOptions(), false);
             god.update(twGame.getOptions());
             god.setEditable(true);
+            // the options the scenario calls its mission stay as written; the rest are the player's
+            god.lockOptions(scenario.lockedGameOptions());
             god.setVisible(true);
             for (IBasicOption opt : god.getOptions()) {
                 IOption orig = game.getOptions().getOption(opt.getName());

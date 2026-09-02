@@ -1048,6 +1048,29 @@ class GameOptionsPaneTest {
     }
 
     @Test
+    void useObjectivesIsAFullWidthRowOfItsOwn() throws Exception {
+        // packed after Enemy Commander Destroyed it landed in the right-hand column and went unseen; the
+        // two kill conditions now share the grid and Use Objectives stands alone under them
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel commanderKilled = component(
+                  options.getOption(OptionsConstants.VICTORY_COMMANDER_KILLED));
+            DialogOptionComponentYPanel useKillCount = component(
+                  options.getOption(OptionsConstants.VICTORY_USE_KILL_COUNT));
+            DialogOptionComponentYPanel killCount = component(
+                  options.getOption(OptionsConstants.VICTORY_GAME_KILL_COUNT));
+            DialogOptionComponentYPanel useObjectives = component(
+                  options.getOption(OptionsConstants.VICTORY_USE_OBJECTIVES));
+
+            pane("victory", List.of(commanderKilled, useKillCount, killCount, useObjectives), option -> true);
+
+            assertTwoColumnCheckBoxGrid(commanderKilled, useKillCount);
+            assertLabelControlRow(killCount);
+            assertStandaloneCheckBox(useObjectives);
+        });
+    }
+
+    @Test
     void victoryNumericOptionsUseBoundedSpinnersAndKeepDefaults() throws Exception {
         runOnEdt(() -> {
             GameOptions options = new GameOptions();

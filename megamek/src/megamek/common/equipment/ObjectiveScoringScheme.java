@@ -426,4 +426,78 @@ public class ObjectiveScoringScheme implements Serializable {
             case STANDARD, RAID -> null;
         };
     }
+
+    /**
+     * A side identified the way the counters are keyed: by team, or by an unteamed player.
+     *
+     * @param team     The team id, or {@link #NO_SIDE} when the side is an unteamed player
+     * @param playerId The player id, or {@link #NO_SIDE} when the side is a team
+     */
+    public record CountedSide(int team, int playerId) {
+        /** @return {@code true} when this names a team rather than a single player */
+        public boolean isTeam() {
+            return team != NO_SIDE;
+        }
+    }
+
+    /**
+     * How far this point is toward being decided, as a fraction from 0 (nothing counted) to 1 (decided).
+     * Hold reads turns held against turns needed, Capture reads the meter against the target, Defend
+     * reads how much of the starting grip has been drained. Standard and Raid have no counter and are
+     * always fully whatever they currently are, so they return 1.
+     *
+     * @return The fraction, 0 to 1
+     */
+    public double progressFraction() {
+        if (isDecided()) {
+            return 1.0;
+        }
+        if (threshold <= 0) {
+            return 1.0;
+        }
+        return switch (preset) {
+            case HOLD -> Math.min(1.0, bestHeldTurns() / (double) threshold);
+            case CAPTURE -> Math.min(1.0, bestCaptureProgress() / (double) threshold);
+            case DEFEND -> Math.min(1.0, (threshold - getDefendGrip()) / (double) threshold);
+            case STANDARD, RAID -> 1.0;
+        };
+    }
+
+    /**
+     * @return The side furthest along on this point's counter - the one with the most held turns or the
+     *       most capture progress - or {@code null} when nobody has counted anything yet. Defend has no
+     *       per-side counter (any enemy drains the grip) and returns {@code null}.
+     */
+    public @Nullable CountedSide leadingSide() {
+        Map<Integer, Integer> byTeam;
+        Map<Integer, Integer> byPlayer;
+        switch (preset) {
+            case HOLD -> {
+                byTeam = heldTurnsByTeam();
+                byPlayer = heldTurnsByPlayer();
+            }
+            case CAPTURE -> {
+                byTeam = captureProgressByTeam();
+                byPlayer = captureProgressByPlayer();
+            }
+            default -> {
+                return null;
+            }
+        }
+        CountedSide leader = null;
+        int best = 0;
+        for (Map.Entry<Integer, Integer> entry : byTeam.entrySet()) {
+            if (entry.getValue() > best) {
+                best = entry.getValue();
+                leader = new CountedSide(entry.getKey(), NO_SIDE);
+            }
+        }
+        for (Map.Entry<Integer, Integer> entry : byPlayer.entrySet()) {
+            if (entry.getValue() > best) {
+                best = entry.getValue();
+                leader = new CountedSide(NO_SIDE, entry.getKey());
+            }
+        }
+        return leader;
+    }
 }

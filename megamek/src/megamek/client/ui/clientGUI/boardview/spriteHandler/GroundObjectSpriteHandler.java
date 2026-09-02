@@ -52,6 +52,7 @@ import megamek.common.RangeType;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
+import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
@@ -162,9 +163,8 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
                         + marker.getScoringScheme().getPreset().name().toLowerCase(Locale.ROOT))
                   : null;
             String progress = showOverlays ? marker.getScoringScheme().progressLabel() : null;
-            // the banner shows who holds the point, the same answer the zone gives; who placed it is in
-            // the tooltip. Two colours side by side have to mean one thing
-            return new HexFlagSprite(boardView, coords, controllerColor(marker), schemeWord, progress);
+            // the banner shows the same colour as the zone: a point reads as one thing
+            return new HexFlagSprite(boardView, coords, tracedControllerColor(marker), schemeWord, progress);
         }
         return new GroundObjectSprite(boardView, coords);
     }
@@ -209,7 +209,7 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
      *       first question is whether the marker arrived with a controller set or without one
      */
     private Color tracedControllerColor(ObjectiveMarker marker) {
-        Color chosen = controllerColor(marker);
+        Color chosen = pointColor(marker);
         VICTORY_HEX_LOGGER.debug("[VictoryHex] zone colour for {}: team={}, player={} -> {}",
               marker.generalName(), marker.getControllingTeam(), marker.getControllingPlayerId(), chosen);
         return chosen;
@@ -245,5 +245,86 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
     @Override
     public void gameBoardChanged(GameBoardChangeEvent e) {
         setGroundObjectSprites(game.getGroundObjects());
+    }
+
+    /**
+     * The colour a point is shown in, flag and zone alike. A point is not painted in a side's full colour
+     * until that side has actually won it: while a counter is running, the colour moves from where the
+     * point started toward where it is going, in proportion to the counter. One turn into a ten-turn
+     * hold is a barely tinted white; nine turns in is nearly solid. So the shade itself says how close
+     * the point is, and a one-turn hold and a ten-turn hold look different at the same moment.
+     *
+     * @param marker the point to colour
+     *
+     * @return the blended colour
+     */
+    private Color pointColor(ObjectiveMarker marker) {
+        ObjectiveScoringScheme scheme = marker.getScoringScheme();
+        if (scheme.isDecided()) {
+            return sideColor(scheme.getSecuredTeam(), scheme.getSecuredPlayerId());
+        }
+        double fraction = scheme.progressFraction();
+        return switch (scheme.getPreset()) {
+            // the holder's colour arrives as the hold is counted
+            case HOLD -> {
+                ObjectiveScoringScheme.CountedSide leader = scheme.leadingSide();
+                Color target = (leader == null) ? controllerColor(marker) : sideColor(leader.team(), leader.playerId());
+                yield blend(NEUTRAL_COLOR, target, fraction);
+            }
+            // the attacker's colour takes over the owner's as the meter fills
+            case CAPTURE -> {
+                ObjectiveScoringScheme.CountedSide leader = scheme.leadingSide();
+                Color attacker = (leader == null) ? ownerColor(marker) : sideColor(leader.team(), leader.playerId());
+                yield blend(ownerColor(marker), attacker, fraction);
+            }
+            // the owner's colour drains toward white with the grip
+            case DEFEND -> blend(ownerColor(marker), NEUTRAL_COLOR, fraction);
+            // control is instantaneous and is painted in full
+            case STANDARD, RAID -> controllerColor(marker);
+        };
+    }
+
+    /**
+     * @param from     the colour at fraction 0
+     * @param to       the colour at fraction 1
+     * @param fraction how far from one to the other, 0 to 1
+     *
+     * @return the colour that fraction of the way between them
+     */
+    private static Color blend(Color from, Color to, double fraction) {
+        double clamped = Math.max(0.0, Math.min(1.0, fraction));
+        int red = (int) Math.round(from.getRed() + (to.getRed() - from.getRed()) * clamped);
+        int green = (int) Math.round(from.getGreen() + (to.getGreen() - from.getGreen()) * clamped);
+        int blue = (int) Math.round(from.getBlue() + (to.getBlue() - from.getBlue()) * clamped);
+        return new Color(red, green, blue);
+    }
+
+    /**
+     * @param team     a team id, or {@link ObjectiveScoringScheme#NO_SIDE}
+     * @param playerId a player id, or {@link ObjectiveScoringScheme#NO_SIDE}
+     *
+     * @return that side's colour: a player's own, or the first member's for a team; white when unknown
+     */
+    private Color sideColor(int team, int playerId) {
+        if (playerId != ObjectiveScoringScheme.NO_SIDE) {
+            Player player = game.getPlayer(playerId);
+            return (player != null) ? player.getDisplayColour().getColour() : NEUTRAL_COLOR;
+        }
+        for (Player player : game.getPlayersList()) {
+            if (player.getTeam() == team) {
+                return player.getDisplayColour().getColour();
+            }
+        }
+        return NEUTRAL_COLOR;
+    }
+
+    /**
+     * @param marker the point
+     *
+     * @return the colour of the player who placed it, or white when this client does not know them
+     */
+    private Color ownerColor(ObjectiveMarker marker) {
+        Player owner = game.getPlayer(marker.getOwnerId());
+        return (owner != null) ? owner.getDisplayColour().getColour() : NEUTRAL_COLOR;
     }
 }

@@ -50,10 +50,10 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.panels.VictoryOptionLayout;
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.clientGUI.DialogOptionListener;
+import megamek.client.ui.panels.VictoryOptionLayout;
+import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 import megamek.client.ui.panels.DialogOptionComponentYPanel;
 import megamek.client.ui.util.UIUtil.FixedYPanel;

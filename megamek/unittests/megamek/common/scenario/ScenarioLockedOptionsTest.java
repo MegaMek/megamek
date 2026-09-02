@@ -34,6 +34,7 @@ package megamek.common.scenario;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -60,6 +61,18 @@ class ScenarioLockedOptionsTest {
               scenario.lockedGameOptions());
         // locking is not fixing: the rest of the options dialog still opens for the player
         assertFalse(scenario.hasFixedGameOptions());
+    }
+
+    @Test
+    void aMisspelledLockRefusesToLoadRatherThanSilentlyLockingNothing() throws Exception {
+        // a typo that was ignored would leave the mission open without anyone knowing; the fixture is
+        // LockedOptions.mms with its locked entry misspelled
+        Scenario scenario = new ScenarioLoader(
+              new File("testresources/data/scenarios/test_setups/LockedOptionsMisspelled.mms")).load();
+
+        IllegalArgumentException refusal = assertThrows(IllegalArgumentException.class, scenario::createGame);
+
+        assertTrue(refusal.getMessage().contains("use_objectivez"), refusal.getMessage());
     }
 
     @Test

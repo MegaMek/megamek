@@ -36,14 +36,14 @@ package megamek.common.scenario;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -96,8 +96,6 @@ import megamek.server.scriptedEvents.GameEndTriggeredEvent;
 public class ScenarioV2 implements Scenario {
     private static final MMLogger logger = MMLogger.create(ScenarioV2.class);
 
-    private final Set<String> lockedGameOptions = new LinkedHashSet<>();
-
     private static final String OPTIONS_FILE = "file";
     private static final String OPTIONS_ON = "on";
     private static final String OPTIONS_OFF = "off";
@@ -122,6 +120,7 @@ public class ScenarioV2 implements Scenario {
 
     private final JsonNode node;
     private final File scenariofile;
+    private final Set<String> lockedGameOptions = new LinkedHashSet<>();
     private final Map<String, BotParser.BotInfo> botInfo = new HashMap<>();
 
     private final List<HexArea> deploymentAreas = new ArrayList<>();

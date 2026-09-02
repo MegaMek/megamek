@@ -33,8 +33,8 @@
 
 package megamek.common.scenario;
 
-import java.util.Set;
 import java.io.IOException;
+import java.util.Set;
 
 import megamek.common.game.GameType;
 import megamek.common.game.IGame;

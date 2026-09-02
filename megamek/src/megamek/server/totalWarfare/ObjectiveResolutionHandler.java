@@ -85,6 +85,9 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     /** "<data> at <data> is <data> (<data>)" - one standings line per point. */
     private static final int REPORT_STANDING_LINE = 7113;
 
+    /** "<data> is <data> (<data>)" - the same line for a point named after its own hex. */
+    private static final int REPORT_STANDING_LINE_NO_POSITION = 7114;
+
     /** "Victory Conditions" - the heading above the objective block in the End Phase report. */
     private static final int REPORT_VICTORY_CONDITIONS_HEADER = 7111;
 
@@ -731,10 +734,18 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         addReport(new Report(REPORT_STANDINGS_INTRO, Report.PUBLIC));
         for (PlacedObjective objective : objectives) {
             ObjectiveMarker marker = objective.marker();
-            Report report = new Report(REPORT_STANDING_LINE, Report.PUBLIC);
+            // an unnamed point is called after its own hex, so naming the position again reads as
+            // "Objective 0810 at 0810"; a point the scenario named still wants to say where it is
+            String boardNumber = objective.position().getBoardNum();
+            boolean nameAlreadySaysWhere = marker.generalName().contains(boardNumber);
+            Report report = new Report(nameAlreadySaysWhere
+                  ? REPORT_STANDING_LINE_NO_POSITION
+                  : REPORT_STANDING_LINE, Report.PUBLIC);
             report.indent();
             report.add(marker.generalName());
-            report.add(objective.position().getBoardNum());
+            if (!nameAlreadySaysWhere) {
+                report.add(boardNumber);
+            }
             report.add(standingHolder(marker));
             report.add(standingProgress(marker));
             addReport(report);

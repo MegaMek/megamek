@@ -67,10 +67,14 @@ public class HexFlagSprite extends HexSprite {
     private static final BasicStroke OUTLINE_STROKE =
           new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
-    private static final int LABEL_FONT_SIZE = 14;
-    private static final int LABEL_Y = 66;
+    // Both lines must sit inside the hex image, which is HexTileset.HEX_H (72) tall: anything drawn
+    // below that is silently clipped and simply never appears. These are the centre points of the text,
+    // so half the glyph height falls below them - leave room for the descenders of the lower line, or
+    // the counter is drawn with its bottom shaved off.
+    private static final int LABEL_FONT_SIZE = 13;
+    private static final int LABEL_Y = 53;
     private static final int PROGRESS_FONT_SIZE = 13;
-    private static final int PROGRESS_Y = 80;
+    private static final int PROGRESS_Y = 66;
     private static final Color LABEL_COLOR = new Color(255, 255, 255, 230);
 
     private final Color flagColor;

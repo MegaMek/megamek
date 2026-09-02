@@ -105,7 +105,9 @@ class LateJoinTurnHandler extends AbstractTWRuleHandler {
     }
 
     private static boolean hasTurnRemaining(Game game, Player player) {
-        for (int index = game.getTurnIndex(); index < game.getTurnsList().size(); index++) {
+        // before the first turn is dispatched the index sits at -1; every turn is still to come
+        int firstRemaining = Math.max(0, game.getTurnIndex());
+        for (int index = firstRemaining; index < game.getTurnsList().size(); index++) {
             if (game.getTurnsList().get(index).playerId() == player.getId()) {
                 return true;
             }

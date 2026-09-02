@@ -111,6 +111,21 @@ class LateJoinTurnHandlerTest {
     }
 
     @Test
+    void testAPlayerConnectingBeforeTheFirstTurnIsDispatchedIsStillGivenOne() {
+        // the turn index sits at -1 until the phase hands out its first turn; a player connecting in that
+        // window must not crash the server, and must still get a turn
+        when(game.getPhase()).thenReturn(GamePhase.VICTORY_SETUP);
+        when(game.getTurnIndex()).thenReturn(-1);
+        unitOwnedBy(host);
+        unitOwnedBy(lateJoiner);
+
+        assertTrue(handler.giveTurnIfPhaseHasPassedThemBy(lateJoiner));
+
+        assertEquals(2, turns.size());
+        assertEquals(lateJoiner.getId(), turns.get(0).playerId(), "inserted at the front, before turn 0");
+    }
+
+    @Test
     void testTheOtherPreGamePlayerTurnPhasesAreCoveredToo() {
         unitOwnedBy(lateJoiner);
         for (GamePhase phase : List.of(GamePhase.SET_ARTILLERY_AUTO_HIT_HEXES, GamePhase.DEPLOY_MINEFIELDS)) {

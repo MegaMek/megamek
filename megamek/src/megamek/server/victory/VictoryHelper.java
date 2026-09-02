@@ -153,12 +153,13 @@ public class VictoryHelper implements Serializable {
         if (!game.getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
             return;
         }
-        boolean hasTurnLimit = game.getOptions().booleanOption(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT);
-        boolean hasGameEndEvent = game.scriptedEvents().stream().anyMatch(TriggeredEvent::isGameEnding);
-        if (!hasTurnLimit && !hasGameEndEvent) {
-            LOGGER.warn("[VP] Objective victory points are enabled, but neither the game turn limit victory option "
-                  + "nor a game-ending scripted event is set - victory points will never be resolved. Enable "
-                  + "\"Force game end at turn limit\" or add a game end event to the scenario.");
+        // one shared answer to "can these points ever resolve", so this warning and the game chat warning
+        // in ObjectivePlacementHandler cannot disagree - they did, and a game whose only ender was sudden
+        // death was told here that its points would never resolve while the chat correctly stayed quiet
+        if (!VictoryPointVictory.gameHasVictoryPointResolution(game)) {
+            LOGGER.warn("[VP] Objective victory points are enabled, but nothing can end this game - victory "
+                  + "points will never be resolved. Enable \"Force game end at turn limit\", a victory point "
+                  + "threshold, or sudden death, or add a game end event to the scenario.");
         }
     }
 

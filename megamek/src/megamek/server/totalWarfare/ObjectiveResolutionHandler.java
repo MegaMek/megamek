@@ -337,6 +337,7 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         scheme.setSecuredBy(decidingSide.isTeam() ? decidingSide.id() : ObjectiveScoringScheme.NO_SIDE,
               decidingSide.isTeam() ? ObjectiveScoringScheme.NO_SIDE : decidingSide.id());
         int points = objective.marker().getVictoryPointValue();
+        tracker.setPointDecided();
         if (!scheme.isVictoryPointsAwarded()) {
             scheme.setVictoryPointsAwarded(true);
             if (decidingSide.isTeam()) {

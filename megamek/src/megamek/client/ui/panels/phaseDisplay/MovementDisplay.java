@@ -683,6 +683,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // If it has not deployed yet, draw the deployment
         if (Game.rulesManager.getRulesGame().isWalkOnDeployment() && !selectedEntity.isDeployed()) {
             markDeploymentHexes(selectedEntity);
+            DeploymentHelper facingHelper = new DeploymentHelper(clientgui);
+            if (game != null && Game.rulesManager.getRulesGame().canWalkOnThisRound(selectedEntity)) {
+                facingHelper.setStartingFacing(selectedEntity, game.getPlayersList());
+            }
         } else if (Game.rulesManager.getRulesGame().isWalkOnDeployment() && selectedEntity.isDeployed()) {
             markDeploymentHexes(null);
         }
@@ -2147,21 +2151,21 @@ public class MovementDisplay extends ActionPhaseDisplay {
      *
      * @param movingEntity the unit being moved, or {@code null} if none is selected
      * @param movePath     the move being considered
-     *
      * @return {@code true} if the move ends the unit's war
      */
-    private boolean movesIntoWaterThatWouldDestroyIt(@Nullable Entity movingEntity, MovePath movePath) {
+    private boolean movesIntoWaterThatWouldDestroyIt(@Nullable Entity movingEntity,
+                                                     MovePath movePath) {
         if (!EnvironmentalSealingRules.wouldBeDestroyedByWaterBreach(movingEntity)) {
             return false;
         }
         for (MoveStep step : movePath.getStepVector()) {
             Hex hex = game.getHex(step.getPosition(), step.getBoardId());
             boolean goesUnderTheSurface = (hex != null)
-                  && (hex.terrainLevel(Terrains.WATER) > 0)
-                  && (step.getElevation() < hex.getLevel());
+                                          && (hex.terrainLevel(Terrains.WATER) > 0)
+                                          && (step.getElevation() < hex.getLevel());
             if (goesUnderTheSurface) {
                 LOGGER.debug("[EnvironmentalSealing] {}: warning about a doomed move - a location has no armour "
-                      + "left and hex {} puts it under water", movingEntity.getShortName(), step.getPosition());
+                             + "left and hex {} puts it under water", movingEntity.getShortName(), step.getPosition());
                 return true;
             }
         }
@@ -2317,7 +2321,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (movesIntoWaterThatWouldDestroyIt(currentlySelectedEntity, cmd)) {
                 String title = Messages.getString("MovementDisplay.areYouSure");
                 String body = Messages.getString("MovementDisplay.ConfirmDoomedMove",
-                      currentlySelectedEntity.getShortName());
+                                                 currentlySelectedEntity.getShortName());
                 if (checkNagForDoomedMove(title, body)) {
                     return true;
                 }

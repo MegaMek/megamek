@@ -41,6 +41,7 @@ import megamek.client.ui.dialogs.phaseDisplay.DeployFacingChoiceDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.phaseDisplay.DeploymentDisplay.DeploymentPosition;
 import megamek.common.Hex;
+import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.AllowedDeploymentHelper;
 import megamek.common.board.Board;
@@ -54,6 +55,7 @@ import megamek.common.units.Terrains;
 import megamek.common.units.TrainLayout;
 import megamek.logging.MMLogger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -220,12 +222,7 @@ public class DeploymentHelper {
                                                                     ElevationOption lastDeploymentOption) {
         currentEntity = entity;
         int finalElevation;
-        // Face the center of the board by default.
-        int finalFacing = coords.direction(new Coords(board.getWidth() / 2, board.getHeight() / 2));
-        if (entity.getStartingPos() == Board.START_CENTER) {
-            // Center start facing outwards, not inwards.
-            finalFacing = (finalFacing + 3) % 6;
-        }
+        int finalFacing = entity.getFacing();
         var deploymentHelper = new AllowedDeploymentHelper(entity, coords, board,
                                                            board.getHex(coords), entity.getGame());
         List<ElevationOption> elevationOptions = deploymentHelper.findAllowedElevations();
@@ -374,5 +371,115 @@ public class DeploymentHelper {
         // Show facing choice dialog
         int chosenFacing = showFacingChoiceDialog(facingOption);
         return (chosenFacing != -1) ? chosenFacing : currentFacing;
+    }
+
+    public void setStartingFacing(Entity entity,
+                                  List<Player> players) {
+        int playerStartingPos = entity.getStartingPos();
+        int enemyStartingPos = -1;
+        int enemyTeamNumber = -1;
+        int teamCount = 0;
+        int offsetFacing = 0;
+        List<Player> enemiesList = new ArrayList<Player>();
+        for (Player player : players) {
+            if (player.getId() == entity.getOwnerId()) {
+                continue;
+            }
+            if (entity.getOwner().isEnemyOf(player)) {
+                enemiesList.add(player);
+                if (enemyTeamNumber != player.getTeam()) {
+                    enemyTeamNumber = player.getTeam();
+                    teamCount++;
+                }
+            }
+        }
+        if (teamCount == 1) {
+            // All the enemies share the same starting team, and assuming starting position
+            enemyStartingPos = enemiesList.get(0).getStartingPos();
+            int startingDiff = 0;
+            if (playerStartingPos >= enemyStartingPos) {
+                startingDiff = playerStartingPos - enemyStartingPos;
+            } else {
+                startingDiff = enemyStartingPos - playerStartingPos;
+            }
+            if (enemyStartingPos != Board.START_CENTER &&
+                enemyStartingPos != Board.START_ANY &&
+                enemyStartingPos != Board.START_EDGE &&
+                enemyStartingPos < Board.NUM_ZONES) {
+                switch (startingDiff) {
+                    case 4:
+                    case 3:
+                        // Opposite side, so face the enemy
+                        offsetFacing = 0;
+                        break;
+                    default:
+                        /**
+                         * This we care about direction.
+                         * Player higher than enemy gives us a clockwise offset. 
+                         * If it is a diff higher than 3, then we are on the other side of the board 
+                         * and need to go counter-clockwise.
+                         * Never a reason to offset more than 1, as it would turn us to face off-board.
+                         */
+                        if (playerStartingPos > enemyStartingPos ||
+                            (playerStartingPos == Board.START_NW && enemyStartingPos == Board.START_W) || startingDiff > 3) {
+                            offsetFacing = 1;
+                        } else {
+                            offsetFacing = -1;
+                        }
+                        break;
+                }
+            }
+            if (playerStartingPos == Board.START_CENTER) {
+                switch (enemyStartingPos) {
+                    case Board.START_W:
+                    case Board.START_NW:
+                        offsetFacing = -1;
+                    case Board.START_E:
+                    case Board.START_NE:
+                        offsetFacing = 1;
+                    case Board.START_SE:
+                        offsetFacing = 2;
+                    case Board.START_S:
+                        offsetFacing = 3;
+                    case Board.START_SW:
+                        offsetFacing = -2;
+                    default:
+                        offsetFacing = 0;
+                        break;
+                }
+            }
+        }
+        // With multiple opposing teams, it is likely a free for all, so go with default facing.
+        // set facing according to starting position
+        switch (playerStartingPos) {
+            case Board.START_W:
+            case Board.START_SW:
+                entity.setFacing(1 + offsetFacing);
+                entity.setSecondaryFacing(1 + offsetFacing);
+                break;
+            case Board.START_SE:
+            case Board.START_E:
+                entity.setFacing(5 + offsetFacing);
+                entity.setSecondaryFacing(5 + offsetFacing);
+                break;
+            case Board.START_NE:
+                entity.setFacing(4 + offsetFacing);
+                entity.setSecondaryFacing(4 + offsetFacing);
+                break;
+            case Board.START_N:
+                entity.setFacing(3 + offsetFacing);
+                entity.setSecondaryFacing(3 + offsetFacing);
+                break;
+            case Board.START_NW:
+                entity.setFacing(2 + offsetFacing);
+                entity.setSecondaryFacing(2 + offsetFacing);
+                break;
+            default:
+                // Handle offsets that wrap around the 0-5 facing range
+                offsetFacing = (offsetFacing < 0) ? 6 + offsetFacing : offsetFacing;
+                entity.setFacing(0 + offsetFacing);
+                entity.setSecondaryFacing(0 + offsetFacing);
+                break;
+        }
     }
 }

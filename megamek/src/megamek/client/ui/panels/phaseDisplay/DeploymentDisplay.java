@@ -33,23 +33,6 @@
  */
 package megamek.client.ui.panels.phaseDisplay;
 
-import static megamek.common.bays.Bay.UNSET_BAY;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-import javax.swing.JCheckBox;
-import javax.swing.JOptionPane;
-import javax.swing.ToolTipManager;
-
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -58,10 +41,7 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.CollapseWarning;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
-import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.dialogs.phaseDisplay.AutomaticEjectionDialog;
-import megamek.client.ui.dialogs.phaseDisplay.DeployElevationChoiceDialog;
-import megamek.client.ui.dialogs.phaseDisplay.DeployFacingChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.EntityChoiceDialog;
 import megamek.client.ui.util.CommandAction;
 import megamek.client.ui.util.KeyCommandBind;
@@ -82,8 +62,8 @@ import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
-import megamek.common.units.Dropship;
 import megamek.common.units.AutomaticEjectionRules;
+import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.Infantry;
@@ -181,7 +161,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     // is the shift key held?
     private boolean turnMode = false;
     private boolean assaultDropPreference = false;
-    /** Whether the crews-will-die-if-they-eject warning has already been given this deployment phase. */
+    /**
+     * Whether the crews-will-die-if-they-eject warning has already been given this deployment phase.
+     */
     private boolean hasWarnedAboutAutoEjection = false;
     private final Set<ElevationOption> lastHexDeploymentOptions = new HashSet<>();
     private ElevationOption lastDeploymentOption = null;
@@ -300,35 +282,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         setTurnEnabled(true);
         butDone.setEnabled(false);
         markDeploymentHexes(entity);
-        // set facing according to starting position
-        switch (entity.getStartingPos()) {
-            case Board.START_W:
-            case Board.START_SW:
-                entity.setFacing(1);
-                entity.setSecondaryFacing(1);
-                break;
-            case Board.START_SE:
-            case Board.START_E:
-                entity.setFacing(5);
-                entity.setSecondaryFacing(5);
-                break;
-            case Board.START_NE:
-                entity.setFacing(4);
-                entity.setSecondaryFacing(4);
-                break;
-            case Board.START_N:
-                entity.setFacing(3);
-                entity.setSecondaryFacing(3);
-                break;
-            case Board.START_NW:
-                entity.setFacing(2);
-                entity.setSecondaryFacing(2);
-                break;
-            default:
-                entity.setFacing(0);
-                entity.setSecondaryFacing(0);
-                break;
+        DeploymentHelper facingHelper = new DeploymentHelper(clientgui);
+        if (game != null) {
+            facingHelper.setStartingFacing(entity, game.getPlayersList());
         }
+        
         boolean assaultDropOption = game.getOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP);
         setAssaultDropEnabled(entity.canAssaultDrop() && assaultDropOption);
         if (!entity.canAssaultDrop() && assaultDropOption) {
@@ -480,14 +438,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             List<Entity> unitsWithEjectionSystems = unitsWithAnEjectionSystem();
             hasWarnedAboutAutoEjection = true;
             logger.debug("[EnvironmentalSealing] warning about auto-ejection - listing {} unit(s) with an ejection "
-                  + "system in conditions that would kill an ejected crew", unitsWithEjectionSystems.size());
+                         + "system in conditions that would kill an ejected crew", unitsWithEjectionSystems.size());
             AutomaticEjectionDialog ejectionDialog = new AutomaticEjectionDialog(clientgui.getFrame(),
-                  clientgui, unitsWithEjectionSystems,
-                  game.getPlanetaryConditions().whyLethalToEjectedCrew());
+                                                                                 clientgui, unitsWithEjectionSystems,
+                                                                                 game.getPlanetaryConditions()
+                                                                                     .whyLethalToEjectedCrew());
             ejectionDialog.setVisible(true);
             if (ejectionDialog.isDeploymentCancelled()) {
                 takeBackDeployment(entity,
-                      Messages.getString("DeploymentDisplay.ConfirmAutoEject.cancelReason"));
+                                   Messages.getString("DeploymentDisplay.ConfirmAutoEject.cancelReason"));
                 return true;
             }
         }
@@ -514,13 +473,21 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         endMyTurn();
     }
 
-    /** What the player chose to do about a unit the planetary conditions would destroy. */
+    /**
+     * What the player chose to do about a unit the planetary conditions would destroy.
+     */
     private enum DoomedDeploymentChoice {
-        /** Put it on the board anyway and accept the consequences. */
+        /**
+         * Put it on the board anyway and accept the consequences.
+         */
         DEPLOY_ANYWAY,
-        /** Take it out of the game, so it stops being offered for deployment. */
+        /**
+         * Take it out of the game, so it stops being offered for deployment.
+         */
         REMOVE_FROM_GAME,
-        /** Neither - lift it back off the board and let the player think again. */
+        /**
+         * Neither - lift it back off the board and let the player think again.
+         */
         CANCEL
     }
 
@@ -535,26 +502,30 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      *
      * @param entity the unit being deployed
      * @param reason the reason the conditions would destroy it, as {@code whyDoomed} gave it
-     *
      * @return what the player chose
      */
-    private DoomedDeploymentChoice askAboutDoomedDeployment(Entity entity, String reason) {
+    private DoomedDeploymentChoice askAboutDoomedDeployment(Entity entity,
+                                                            String reason) {
         JCheckBox dontAskAgain = new JCheckBox(
-              Messages.getString("DeploymentDisplay.ConfirmDoomed.dontAskAgain"));
-        Object[] message = { Messages.getString("DeploymentDisplay.ConfirmDoomed.message",
-              entity.getShortName(), reason), dontAskAgain };
-        Object[] choices = { Messages.getString("DeploymentDisplay.ConfirmDoomed.deployAnyway"),
-              Messages.getString("DeploymentDisplay.ConfirmDoomed.removeFromGame"),
-              Messages.getString("DeploymentDisplay.ConfirmDoomed.cancel") };
+                Messages.getString("DeploymentDisplay.ConfirmDoomed.dontAskAgain"));
+        Object[] message = {
+                Messages.getString("DeploymentDisplay.ConfirmDoomed.message",
+                                   entity.getShortName(), reason), dontAskAgain
+        };
+        Object[] choices = {
+                Messages.getString("DeploymentDisplay.ConfirmDoomed.deployAnyway"),
+                Messages.getString("DeploymentDisplay.ConfirmDoomed.removeFromGame"),
+                Messages.getString("DeploymentDisplay.ConfirmDoomed.cancel")
+        };
 
         int chosenIndex = JOptionPane.showOptionDialog(clientgui.getFrame(),
-              message,
-              Messages.getString("DeploymentDisplay.ConfirmDoomed.title"),
-              JOptionPane.DEFAULT_OPTION,
-              JOptionPane.WARNING_MESSAGE,
-              null,
-              choices,
-              choices[2]);
+                                                       message,
+                                                       Messages.getString("DeploymentDisplay.ConfirmDoomed.title"),
+                                                       JOptionPane.DEFAULT_OPTION,
+                                                       JOptionPane.WARNING_MESSAGE,
+                                                       null,
+                                                       choices,
+                                                       choices[2]);
 
         if (dontAskAgain.isSelected()) {
             GUIP.setNagForDoomed(false);
@@ -583,7 +554,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             return false;
         }
         return unitsWithAnEjectionSystem().stream()
-              .anyMatch(entity -> AutomaticEjectionRules.willEjectAutomatically(entity, game));
+                                          .anyMatch(entity -> AutomaticEjectionRules.willEjectAutomatically(entity,
+                                                                                                            game));
     }
 
     /**
@@ -597,9 +569,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      */
     private List<Entity> unitsWithAnEjectionSystem() {
         return game.getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
-              .stream()
-              .filter(AutomaticEjectionRules::hasEjectionSystem)
-              .toList();
+                   .stream()
+                   .filter(AutomaticEjectionRules::hasEjectionSystem)
+                   .toList();
     }
 
     /**
@@ -609,14 +581,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      * @param entity the unit being taken back off the board
      * @param reason the reason the conditions would destroy it, as {@code whyDoomed} gave it
      */
-    private void takeBackDeployment(Entity entity, String reason) {
+    private void takeBackDeployment(Entity entity,
+                                    String reason) {
         entity.setPosition(null);
         clientgui.boardViews().forEach(boardView -> ((BoardView) boardView).redrawEntity(entity));
         clientgui.boardViews().forEach(IBoardView::repaint);
         butDone.setEnabled(false);
         clientgui.addToast(ToastLevel.INFO,
-              Messages.getString("DeploymentDisplay.doomedDeploymentCancelled", reason),
-              entity);
+                           Messages.getString("DeploymentDisplay.doomedDeploymentCancelled", reason),
+                           entity);
     }
 
     /**
@@ -642,7 +615,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         selectEntity(client.getNextDeployableEntityNum(cen));
     }
 
-    /** Sends an entity removal to the server. */
+    /**
+     * Sends an entity removal to the server.
+     */
     private void remove() {
         disableButtons();
         clientgui.getClient().sendDeleteEntity(cen);

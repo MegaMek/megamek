@@ -107,6 +107,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.TaintedAtmosphereRules;
 import megamek.common.planetaryConditions.Wind;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
@@ -1199,6 +1200,9 @@ public class TWGameManager extends AbstractGameManager {
                     break;
                 case ENTITY_VARIABLE_RANGE_MODE_CHANGE:
                     receiveEntityVariableRangeModeChange(packet, connId);
+                    break;
+                case ENTITY_EJECTION_SETTING_CHANGE:
+                    receiveEntityEjectionSettingChange(packet, connId);
                     break;
                 case ENTITY_ABANDON_ANNOUNCE:
                     receiveEntityAbandonAnnounce(packet, connId);
@@ -8703,11 +8707,7 @@ public class TWGameManager extends AbstractGameManager {
                   !entity.isProne() &&
                   (hex.terrainLevel(Terrains.WATER) <= partialWaterLevel)) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
-                    if (conditions.getAtmosphere().isLighterThan(Atmosphere.THIN) || aeroSpaceborne) {
-                        entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
-                    } else {
-                        entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
-                    }
+                    entity.setLocationStatus(loop, airExposureStatus(entity, loop, conditions, aeroSpaceborne));
                 }
                 entity.setLocationStatus(Mek.LOC_RIGHT_LEG, ILocationExposureStatus.WET);
                 entity.setLocationStatus(Mek.LOC_LEFT_LEG, ILocationExposureStatus.WET);
@@ -8724,13 +8724,16 @@ public class TWGameManager extends AbstractGameManager {
                     vPhaseReport.addAll(breachCheck(entity, Mek.LOC_CENTER_LEG, hex));
                 }
             } else {
-                int status = ILocationExposureStatus.WET;
-                if (entity.relHeight() >= 0) {
-                    status = conditions.getAtmosphere().isLighterThan(Atmosphere.THIN) ?
-                          ILocationExposureStatus.VACUUM :
-                          ILocationExposureStatus.NORMAL;
-                }
+                boolean isOutOfTheWater = entity.relHeight() >= 0;
                 for (int loop = 0; loop < entity.locations(); loop++) {
+                    // A breach does not heal by moving. Leaving it marked stops a later pass over the same water
+                    // resetting it to merely wet and announcing the same hole all over again.
+                    if (entity.getLocationStatus(loop) == ILocationExposureStatus.BREACHED) {
+                        continue;
+                    }
+                    int status = isOutOfTheWater ?
+                          airExposureStatus(entity, loop, conditions, aeroSpaceborne) :
+                          ILocationExposureStatus.WET;
                     entity.setLocationStatus(loop, status);
                     if (status == ILocationExposureStatus.WET) {
                         vPhaseReport.addAll(breachCheck(entity, loop, hex));
@@ -8739,14 +8742,38 @@ public class TWGameManager extends AbstractGameManager {
             }
         } else {
             for (int loop = 0; loop < entity.locations(); loop++) {
-                if (conditions.getAtmosphere().isLighterThan(Atmosphere.THIN) || aeroSpaceborne) {
-                    entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
-                } else {
-                    entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
+                // "Even if a unit exits the water, all limbs and equipment in the flooded location remain
+                // non-functional" (TW p.121), so climbing out does not close the hole either.
+                if (entity.getLocationStatus(loop) == ILocationExposureStatus.BREACHED) {
+                    continue;
                 }
+                entity.setLocationStatus(loop, airExposureStatus(entity, loop, conditions, aeroSpaceborne));
             }
         }
         return vPhaseReport;
+    }
+
+    /**
+     * The exposure status one location takes from the air around it. A vacuum or trace atmosphere exposes every
+     * location (TO:AR p.52); a tainted or toxic atmosphere exposes only the locations whose breach the rules give an
+     * effect to, which {@link TaintedAtmosphereRules#isLocationExposedToTaint} decides (TO:AR p.54).
+     *
+     * @param entity         the unit whose location is being set
+     * @param location       the location being set
+     * @param conditions     the planetary conditions in force
+     * @param aeroSpaceborne whether this is a non-aerospace unit that is nonetheless in space
+     *
+     * @return the {@link ILocationExposureStatus} value for this location's exposure to the air
+     */
+    private int airExposureStatus(Entity entity, int location, PlanetaryConditions conditions,
+          boolean aeroSpaceborne) {
+        if (conditions.getAtmosphere().isLighterThan(Atmosphere.THIN) || aeroSpaceborne) {
+            return ILocationExposureStatus.VACUUM;
+        }
+        if (TaintedAtmosphereRules.isLocationExposedToTaint(entity, location, conditions.getAtmosphericTaint())) {
+            return ILocationExposureStatus.TAINTED;
+        }
+        return ILocationExposureStatus.NORMAL;
     }
 
     /**
@@ -16253,6 +16280,14 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * End-phase resolution for Tainted and Toxic Atmospheres, TO:AR p.54. Delegates to
+     * {@link TaintedAtmosphereHandler} so the atmosphere rules do not add to this already very large class.
+     */
+    void checkTaintedAtmosphereEffects() {
+        new TaintedAtmosphereHandler(this).checkTaintedAtmosphereEffects();
+    }
+
+    /**
      * Places the objective markers that players designated in the lobby when the game starts. Delegates to
      * {@link ObjectivePlacementHandler} so the objectives rules do not add to this already very large class.
      */
@@ -21669,6 +21704,9 @@ public class TWGameManager extends AbstractGameManager {
                 r.subject = aero.getId();
                 reports.add(r);
                 reports.addAll(damageCrew(aero, 1));
+                // Caustic tainted air gets into the damaged crew compartment and burns the pilot a second time
+                // (TO:AR p.54).
+                reports.addAll(new TaintedAtmosphereHandler(this).resolveExtraCockpitCrewHit(aero));
                 // The pilot may have just expired.
                 if ((aero.getCrew().isDead() || aero.getCrew().isDoomed()) && !aero.getCrew().isEjected()) {
                     reports.addAll(destroyEntity(aero, "pilot death", true, true));
@@ -24256,7 +24294,17 @@ public class TWGameManager extends AbstractGameManager {
         r.add(entity.getLocationAbbr(loc));
         vDesc.addElement(r);
 
-        if (entity instanceof Tank) {
+        if (entity instanceof Tank tank) {
+            // A vehicle breached in a tainted or toxic atmosphere is not torn apart the way it is in a vacuum; what
+            // happens to the crew depends on how the air is fouled (TO:AR p.54).
+            if (entity.getLocationStatus(loc) == ILocationExposureStatus.TAINTED) {
+                vDesc.addAll(new TaintedAtmosphereHandler(this).resolveVehicleBreach(tank, loc));
+                return vDesc;
+            }
+            // Mark it before destroying the unit. Without this the location stays merely wet, and the guard at the
+            // top of this method cannot tell that it has already been breached - so the next exposure pass over
+            // the same water announces the same breach again.
+            entity.setLocationStatus(loc, ILocationExposureStatus.BREACHED);
             vDesc.addAll(destroyEntity(entity, "hull breach", true, true));
             return vDesc;
         }
@@ -24310,6 +24358,8 @@ public class TWGameManager extends AbstractGameManager {
                 vDesc.addAll(destroyEntity(entity, "hull breach"));
                 if (entity.getLocationStatus(loc) == ILocationExposureStatus.WET) {
                     r = new Report(6355);
+                } else if (entity.getLocationStatus(loc) == ILocationExposureStatus.TAINTED) {
+                    r = new Report(7716);
                 } else {
                     r = new Report(6360);
                 }
@@ -25854,6 +25904,11 @@ public class TWGameManager extends AbstractGameManager {
 
         if (diceRoll.getIntValue() >= roll.getValue()) {
             ignite(c, boardId, Terrains.FIRE_LVL_NORMAL, vPhaseReport);
+            if (bInferno) {
+                // Flammable toxic air carries an inferno or explosive fire straight into every adjacent hex
+                // (TO:AR p.54).
+                new TaintedAtmosphereHandler(this).spreadExplosiveFire(c, boardId, entityId, vPhaseReport);
+            }
             return true;
         }
 
@@ -27724,6 +27779,44 @@ public class TWGameManager extends AbstractGameManager {
      * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet
      */
+    /**
+     * Turns one unit's automatic ejection on or off at its owner's request.
+     * <p>
+     * The server decides on its own copy of the unit whether a crew is thrown clear, so a change made only on the
+     * client would be ignored when the moment came. Only the owner may make it, and only BattleMeks and aerospace
+     * units carry the setting at all.
+     *
+     * @param packet    the packet holding the unit id and the new setting
+     * @param connIndex the connection the packet arrived on
+     */
+    private void receiveEntityEjectionSettingChange(Packet packet, int connIndex) {
+        try {
+            int entityId = packet.getIntValue(0);
+            boolean shouldEject = (Boolean) packet.getObject(1);
+            Entity entity = game.getEntity(entityId);
+
+            if ((entity == null) || (entity.getOwner() != game.getPlayer(connIndex))) {
+                LOGGER.warn("Dropping an ejection setting change for unit id {}: the sender does not own it",
+                      entityId);
+                return;
+            }
+
+            if (!AutomaticEjectionRules.setAutomaticEjection(entity, shouldEject)) {
+                LOGGER.warn("Dropping an ejection setting change for {}: it has no ejection system",
+                      entity.getDisplayName());
+                return;
+            }
+
+            // INFO, not DEBUG: this changes whether a crew lives or dies, and a playtest has to be able to
+            // confirm the setting reached the server without attaching a debugger.
+            LOGGER.info("[EnvironmentalSealing] {}: automatic ejection set to {} by its owner",
+                  entity.getDisplayName(), shouldEject);
+            entityUpdate(entityId);
+        } catch (Exception exception) {
+            LOGGER.error("Error processing an automatic ejection setting change", exception);
+        }
+    }
+
     private void receiveEntityVariableRangeModeChange(Packet packet, int connIndex) {
         try {
             int entityId = packet.getIntValue(0);
@@ -30565,6 +30658,8 @@ public class TWGameManager extends AbstractGameManager {
         }
         vDesc.addAll(destroyEntity(entity, "ejection", true, true));
 
+        reportCombatSuitProtection(entity, vDesc);
+
         // only remove the unit that ejected manually
         if (!autoEject) {
             game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_EJECTED);
@@ -30822,6 +30917,28 @@ public class TWGameManager extends AbstractGameManager {
         entity.setDone(true);
         entityUpdate(entity.getId());
         return vDesc;
+    }
+
+    /**
+     * Adds a line to the ejection report when what the crew is wearing is the difference between living and dying
+     * out there.
+     * <p>
+     * Called from the one exit every ejection passes through, so Mek pilots, vehicle crews and aerospace crews all
+     * reach it. Only raised where the kit answers the danger: nobody needs telling in ordinary weather, and a crew
+     * ejecting into vacuum must not be told they are safe when the kit holds no pressure.
+     *
+     * @param entity  the unit the crew has just left
+     * @param reports the ejection reports being built
+     */
+    private void reportCombatSuitProtection(Entity entity, Vector<Report> reports) {
+        EquipmentType armorKit = CrewArmorKitRules.crewArmorKit(entity, game);
+        if (!CrewArmorKitRules.coversSomethingIn(armorKit, game.getPlanetaryConditions())) {
+            return;
+        }
+        Report combatSuitReport = new Report(6411);
+        combatSuitReport.subject = entity.getId();
+        combatSuitReport.indent(3);
+        reports.addElement(combatSuitReport);
     }
 
     public static PilotingRollData getEjectModifiers(Game game, Entity entity, int crewPos, boolean autoEject) {
@@ -32980,6 +33097,9 @@ public class TWGameManager extends AbstractGameManager {
                 if (keep) {
                     keptAttacks.add(ah);
                 }
+                // In a flammable atmosphere every weapon attack on a non-water hex risks setting it alight,
+                // whether the shot hit or missed (TO:AR p.54).
+                new TaintedAtmosphereHandler(this).checkAccidentalWeaponFire(ah, handleAttackReports);
                 Report.addNewline(handleAttackReports);
             } else {
                 keptAttacks.add(ah);

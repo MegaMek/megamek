@@ -53,6 +53,7 @@ import megamek.logging.MMLogger;
  * @author Klaus Mittag
  */
 public class EjectedCrew extends ConvInfantry {
+
     private static final MMLogger logger = MMLogger.create(EjectedCrew.class);
 
     protected int originalRideId;
@@ -111,6 +112,27 @@ public class EjectedCrew extends ConvInfantry {
                 logger.error("", ex);
             }
         }
+        issueArmorKitIfWorn(originalRide);
+    }
+
+    /**
+     * Dresses this crew in whatever they were wearing aboard their unit.
+     * <p>
+     * Fitted through {@link ConvInfantry#setArmorKit}, which is the method that owns the kit: it also applies the
+     * kit's derived state - the space suit flag, encumbrance, the sneak properties and the damage divisor - none of
+     * which happens if the equipment is merely added to the list. With that done, every existing rule about what
+     * conventional infantry survives reads the kit, and needs nothing new written for it.
+     *
+     * @param originalRide the unit this crew is leaving
+     */
+    private void issueArmorKitIfWorn(Entity originalRide) {
+        EquipmentType armorKit = CrewArmorKitRules.crewArmorKit(originalRide, originalRide.getGame());
+        if (armorKit == null) {
+            return;
+        }
+        setArmorKit(armorKit);
+        logger.debug("[CrewArmorKit] {}: left {} wearing {}",
+              getDisplayName(), originalRide.getDisplayName(), armorKit.getName());
     }
 
     /**

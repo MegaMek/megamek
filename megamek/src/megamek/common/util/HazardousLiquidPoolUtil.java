@@ -176,7 +176,7 @@ public class HazardousLiquidPoolUtil {
         // BA take damage as normal.
         if (entity instanceof ConvInfantry inf) {
             if (inf.hasSpecialization(ConvInfantry.XCT) && inf.getArmorKit() != null
-                  && inf.getArmorKit().hasFlag(MiscTypeFlag.S_TOXIC_ATMOSPHERE)) {
+                  && inf.getArmorKit().hasFlag(MiscTypeFlag.S_HAZARDOUS_LIQ)) {
                 return 3.0;
             } else {
                 return .5;

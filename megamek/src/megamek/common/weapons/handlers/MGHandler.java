@@ -90,8 +90,8 @@ public class MGHandler extends AmmoWeaponHandler {
         } else {
             if (target.isConventionalInfantry()) {
                 toReturn = Compute.directBlowInfantryDamage(
-                      weaponType.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
-                      weaponType.getInfantryDamageClass(),
+                      weaponType.getDamage(), getInfantryDamageClassShift(),
+                      resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                       ((Infantry) target).isMechanized(),
                       toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport);
 

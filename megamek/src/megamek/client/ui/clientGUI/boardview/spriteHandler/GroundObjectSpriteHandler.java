@@ -200,9 +200,9 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
      */
     private Color tracedControllerColor(ObjectiveMarker marker) {
         Color chosen = controllerColor(marker);
-        VICTORY_HEX_LOGGER.debug("[VictoryHex] zone colour for {}: controllingTeam={}, controllingPlayer={},"
-                    + " colour={}", marker.generalName(), marker.getControllingTeam(),
-              marker.getControllingPlayerId(), chosen);
+        VICTORY_HEX_LOGGER.debug("[VictoryHex] [5 client-colour] {}: team={}, player={}, identity={} -> {}",
+              marker.generalName(), marker.getControllingTeam(), marker.getControllingPlayerId(),
+              System.identityHashCode(marker), chosen);
         return chosen;
     }
 
@@ -244,6 +244,8 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
 
     @Override
     public void gameBoardChanged(GameBoardChangeEvent e) {
+        VICTORY_HEX_LOGGER.debug("[VictoryHex] [4 client-refresh] board change event - rebuilding sprites "
+              + "from the game's {} ground object hex(es)", game.getGroundObjects().size());
         setGroundObjectSprites(game.getGroundObjects());
     }
 }

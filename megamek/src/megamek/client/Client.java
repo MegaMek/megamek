@@ -76,6 +76,7 @@ import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.equipment.Flare;
+import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.Mounted;
@@ -128,6 +129,9 @@ import megamek.server.SmokeCloud;
  */
 public class Client extends AbstractClient {
     private final static MMLogger LOGGER = MMLogger.create(Client.class);
+
+    /** Objectives diagnostics; enabled via the log4j2.xml VictoryHex block. */
+    private static final MMLogger VICTORY_HEX_LOGGER = MMLogger.create("megamek.feature.VictoryHex");
 
     /**
      * The game state object: this object is not ever replaced during a game, only updated. A reference can therefore be
@@ -783,7 +787,18 @@ public class Client extends AbstractClient {
     }
 
     protected void receiveUpdateGroundObjects(Packet packet) throws InvalidPacketDataException {
-        game.setGroundObjects(packet.getCoordsWithGroundObjectListMap(0));
+        Map<Coords, List<ICarryable>> received = packet.getCoordsWithGroundObjectListMap(0);
+        for (Map.Entry<Coords, List<ICarryable>> hexObjects : received.entrySet()) {
+            for (ICarryable groundObject : hexObjects.getValue()) {
+                if (groundObject instanceof ObjectiveMarker marker) {
+                    VICTORY_HEX_LOGGER.debug("[VictoryHex] [3 client-receive] {} at {}: team={}, player={}, "
+                                + "identity={}", marker.generalName(), hexObjects.getKey(),
+                          marker.getControllingTeam(), marker.getControllingPlayerId(),
+                          System.identityHashCode(marker));
+                }
+            }
+        }
+        game.setGroundObjects(received);
         game.processGameEvent(new GameBoardChangeEvent(this));
     }
 

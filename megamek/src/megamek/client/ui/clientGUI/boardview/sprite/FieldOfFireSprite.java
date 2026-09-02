@@ -48,6 +48,7 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.board.Coords;
+import megamek.logging.MMLogger;
 import megamek.common.RangeType;
 
 /**
@@ -72,6 +73,9 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
      * you are fighting over, and at the range opacity the owner's colour is hard to make out at all.
      */
     private static final int CONTROL_ZONE_OPACITY = 190;
+
+    /** Objectives diagnostics; enabled via the log4j2.xml VictoryHex block. */
+    private static final MMLogger ZONE_TRACE = MMLogger.create("megamek.feature.VictoryHex");
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -216,6 +220,8 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
         Image buffer = createNewHexImage();
         if (usesOwnColor) {
             ownImage = buffer;
+            ZONE_TRACE.debug("[VictoryHex] [6 sprite-paint] control zone hex {} borders={} painting with {}",
+                  getPosition(), borders, fillColor);
         } else {
             images[borders][rangeBracket] = buffer;
         }

@@ -49,6 +49,11 @@ import megamek.logging.MMLogger;
  * <p>
  * The fix is small: when a player connects during one of those phases, owns units, and has no turn in the
  * remaining order, one is inserted after the current turn so they act next.
+ * <p>
+ * It reaches a player who joins <em>during</em> the phase, not one who joins after it. A ghost seat has no
+ * turn, so with only the host connected the phase ends the moment they press Done, and a player arriving
+ * afterwards has missed it. Holding the phase open for unconnected seats that own units is a separate
+ * decision - the game deliberately does not block on seats that may never arrive.
  */
 class LateJoinTurnHandler extends AbstractTWRuleHandler {
 

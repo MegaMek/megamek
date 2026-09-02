@@ -1743,6 +1743,7 @@ public class CustomMekDialog extends AbstractButtonDialog
                 // crew hits are damage, so they are edited in the damage editor rather than here
                 entity.getCrew().setGender(gender, i);
                 entity.getCrew().setClanPilot(panCrewMember[i].isClanPilot(), i);
+                entity.getCrew().setArmorKitName(panCrewMember[i].getArmorKitName(), i);
                 if (clientGUI != null) {
                     entity.getCrew().setPortrait(panCrewMember[i].getPortrait().clone(), i);
                 }

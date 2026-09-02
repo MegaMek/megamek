@@ -262,15 +262,15 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
                 // Compute maximum damage potential for cluster weapons
                 toReturn = howManyShots * weaponType.getDamage();
                 toReturn = Compute.directBlowInfantryDamage(toReturn,
-                      bDirect ? toHit.getMoS() / 3 : 0,
-                      WeaponType.WEAPON_CLUSTER_BALLISTIC, // treat as cluster
+                      getInfantryDamageClassShift(),
+                      resolveInfantryDamageClass(WeaponType.WEAPON_CLUSTER_BALLISTIC), // treat as cluster
                       ((Infantry) target).isMechanized(),
                       toHit.getThruBldg() != null, weaponEntity.getId(),
                       calcDmgPerHitReport);
             } else { // No - only one shot fired
                 toReturn = Compute.directBlowInfantryDamage(weaponType.getDamage(),
-                      bDirect ? toHit.getMoS() / 3 : 0,
-                      weaponType.getInfantryDamageClass(),
+                      getInfantryDamageClassShift(),
+                      resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                       ((Infantry) target).isMechanized(),
                       toHit.getThruBldg() != null, weaponEntity.getId(),
                       calcDmgPerHitReport);

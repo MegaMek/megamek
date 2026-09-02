@@ -287,7 +287,8 @@ final class GameOptionsPresentation {
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_EJECTED_PILOTS_FLEE,
               OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT,
-              OptionsConstants.RPG_CONDITIONAL_EJECTION);
+              OptionsConstants.RPG_CONDITIONAL_EJECTION,
+              OptionsConstants.RPG_COMBAT_SUITS);
         register(ADVANCED_RULES, RULES_SPECIAL_SYSTEMS, "rules.specialSystems.systems",
               OptionsConstants.ADVANCED_TAC_OPS_MOBILE_HQS,
               OptionsConstants.ADVANCED_TAC_OPS_SELF_DESTRUCT,

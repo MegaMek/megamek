@@ -35,12 +35,15 @@ package megamek.server.totalWarfare;
 import java.util.List;
 import java.util.Map;
 
+import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
+import megamek.common.event.GameToastEvent;
 import megamek.common.equipment.ObjectiveMarker;
+import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 
 /**
@@ -98,6 +101,36 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
         if (anyPlaced) {
             gameManager.sendGroundObjectUpdate();
         }
+        warnWhenObjectivesAreOnTheBoardButSwitchedOff();
+    }
+
+    /**
+     * Tells the players when there are control points on the board but objective scoring is switched off.
+     * Everything still looks right - the flags are drawn, their schemes and values are set - and nothing
+     * happens: the Victory Setup phase is skipped, no control is resolved and no points are ever scored.
+     * A scenario can carry a whole mission this way and give no sign that it is inert, which is exactly
+     * how an afternoon of testing was lost.
+     */
+    private void warnWhenObjectivesAreOnTheBoardButSwitchedOff() {
+        if (getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
+            return;
+        }
+        int markerCount = 0;
+        for (List<ICarryable> hexObjects : getGame().getGroundObjects().values()) {
+            for (ICarryable groundObject : hexObjects) {
+                if (groundObject instanceof ObjectiveMarker) {
+                    markerCount++;
+                }
+            }
+        }
+        if (markerCount == 0) {
+            return;
+        }
+        gameManager.sendServerChat(Messages.getString("VictoryHex.objectivesOffWarning", markerCount));
+        gameManager.sendToast(GameToastEvent.Level.WARNING,
+              Messages.getString("VictoryHex.objectivesOffToast"), null);
+        VICTORY_HEX_LOGGER.warn("[Objective] {} control point(s) are on the board but use_objectives is "
+              + "off - none of them will resolve or score", markerCount);
     }
 
     /**

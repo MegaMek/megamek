@@ -36,6 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -53,7 +56,10 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
+import megamek.common.event.GameToastEvent;
 import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
+import megamek.common.options.GameOptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -68,6 +74,7 @@ class ObjectivePlacementHandlerTest {
     @BeforeEach
     void setUp() {
         game = mock(Game.class);
+        when(game.getOptions()).thenReturn(new GameOptions());
         gameManager = mock(TWGameManager.class);
         when(gameManager.getGame()).thenReturn(game);
         handler = new ObjectivePlacementHandler(gameManager);
@@ -199,6 +206,36 @@ class ObjectivePlacementHandlerTest {
 
         assertTrue(alice.getGroundObjectsToPlace().isEmpty());
         assertTrue(bob.getGroundObjectsToPlace().isEmpty());
+    }
+
+    @Test
+    void testTheChatWarnsWhenControlPointsAreOnTheBoardButScoringIsOff() {
+        GameOptions options = new GameOptions();
+        options.getOption(OptionsConstants.VICTORY_USE_OBJECTIVES).setValue(false);
+        when(game.getOptions()).thenReturn(options);
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        groundMap.put(new Coords(3, 3), List.of(markerFor(alice, new Coords(3, 3))));
+        boardContainingEverything();
+
+        handler.placeLobbyObjectives();
+
+        // the flags are drawn and nothing happens: no setup phase, no control, no scoring. Without this
+        // the only sign is one log line, and a whole scenario can be inert without saying so
+        verify(gameManager).sendServerChat(anyString());
+        verify(gameManager).sendToast(eq(GameToastEvent.Level.WARNING), anyString(), isNull());
+    }
+
+    @Test
+    void testNoWarningWhenThereAreNoControlPointsToBeInert() {
+        GameOptions options = new GameOptions();
+        options.getOption(OptionsConstants.VICTORY_USE_OBJECTIVES).setValue(false);
+        when(game.getOptions()).thenReturn(options);
+        installRealGroundObjectMap();
+        boardContainingEverything();
+
+        handler.placeLobbyObjectives();
+
+        verify(gameManager, never()).sendServerChat(anyString());
     }
 
     private ObjectiveMarker markerFor(Player owner, Coords lobbyPosition) {

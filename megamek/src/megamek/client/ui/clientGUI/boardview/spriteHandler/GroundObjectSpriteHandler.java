@@ -64,12 +64,11 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     /**
-     * Outline colour for a control zone nobody currently holds. Deliberately dark and clearly not a
-     * player colour: the default player palette is pale and desaturated (Player Blue is 134,134,191), so
-     * a light grey neutral was almost indistinguishable from a held zone, and a point changing hands
-     * could not be seen to change at all.
+     * The colour of a control point nobody holds: white, as the neutral state a point starts in and
+     * returns to. Flag and zone both use it, so a point reads as one thing - whoever holds it, or no one -
+     * rather than the flag showing who placed it while the zone shows who holds it.
      */
-    private static final Color UNCONTROLLED_ZONE_COLOR = new Color(60, 60, 60);
+    private static final Color NEUTRAL_COLOR = Color.WHITE;
 
     /** Feature logger for the victory hex designation diagnostics; enabled via the log4j2.xml VictoryHex block. */
     private static final MMLogger VICTORY_HEX_LOGGER = MMLogger.create("megamek.feature.VictoryHex");
@@ -163,7 +162,9 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
                         + marker.getScoringScheme().getPreset().name().toLowerCase(Locale.ROOT))
                   : null;
             String progress = showOverlays ? marker.getScoringScheme().progressLabel() : null;
-            return new HexFlagSprite(boardView, coords, ownerColor(marker), schemeWord, progress);
+            // the banner shows who holds the point, the same answer the zone gives; who placed it is in
+            // the tooltip. Two colours side by side have to mean one thing
+            return new HexFlagSprite(boardView, coords, controllerColor(marker), schemeWord, progress);
         }
         return new GroundObjectSprite(boardView, coords);
     }
@@ -193,7 +194,7 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
             }
         }
         // nobody holds it: a neutral outline, so an uncontested point reads differently from a held one
-        return UNCONTROLLED_ZONE_COLOR;
+        return NEUTRAL_COLOR;
     }
 
     /**
@@ -210,15 +211,6 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
         return chosen;
     }
 
-    /**
-     * @param marker the objective marker to colour
-     *
-     * @return the owning player's color, or yellow when the owner is unknown to this client
-     */
-    private Color ownerColor(ObjectiveMarker marker) {
-        Player owner = game.getPlayer(marker.getOwnerId());
-        return (owner != null) ? owner.getDisplayColour().getColour() : Color.YELLOW;
-    }
 
     @Override
     public void clear() {

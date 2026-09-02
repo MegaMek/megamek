@@ -555,6 +555,8 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
     private void applyRulesSystemEditability() {
         applyRulesSystemEditability(optionComps, editable, selectedRulesSystem());
+        // switching to Total Warfare re-enables the TW-only options; a scenario's lock still wins
+        applyLockedOptions();
     }
 
     static void applyRulesSystemEditability(Map<String, List<DialogOptionComponentYPanel>> optionComponents,
@@ -1161,8 +1163,18 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     }
 
     private void applyLockedOptions() {
+        applyLockedOptions(optionComps, lockedOptionNames);
+    }
+
+    /**
+     * Greys out the components of every locked option. Runs last on each pass that touches editability, so
+     * a lock wins over the dialog's own rules - in particular over the ruleset switch, which re-enables the
+     * Total Warfare-only options when the combo moves to Total Warfare.
+     */
+    static void applyLockedOptions(Map<String, List<DialogOptionComponentYPanel>> optionComponents,
+          Set<String> lockedOptionNames) {
         for (String optionName : lockedOptionNames) {
-            List<DialogOptionComponentYPanel> components = optionComps.get(optionName);
+            List<DialogOptionComponentYPanel> components = optionComponents.get(optionName);
             if (components == null) {
                 continue;
             }

@@ -104,6 +104,25 @@ class GameOptionsDialogTest {
     }
 
     @Test
+    void aScenarioLockOutlivesTheRulesetSwitch() {
+        // minefields is one of the options the Total Warfare switch re-enables; a scenario that locked it
+        // must still find it greyed out afterwards, while an unlocked TW-only option is re-enabled as before
+        GameOptions options = new GameOptions();
+        Map<String, List<DialogOptionComponentYPanel>> optionComponents = new LinkedHashMap<>();
+        optionComponents.put(OptionsConstants.ADVANCED_MINEFIELDS,
+              List.of(component(options.getOption(OptionsConstants.ADVANCED_MINEFIELDS))));
+        optionComponents.put(OptionsConstants.ADVANCED_ALTERNATE_MASC,
+              List.of(component(options.getOption(OptionsConstants.ADVANCED_ALTERNATE_MASC))));
+        Set<String> lockedOptions = Set.of(OptionsConstants.ADVANCED_MINEFIELDS);
+
+        GameOptionsDialog.applyRulesSystemEditability(optionComponents, true, OptionsConstants.RULES_TW);
+        GameOptionsDialog.applyLockedOptions(optionComponents, lockedOptions);
+
+        assertFalse(optionComponents.get(OptionsConstants.ADVANCED_MINEFIELDS).getFirst().getEditable());
+        assertTrue(optionComponents.get(OptionsConstants.ADVANCED_ALTERNATE_MASC).getFirst().getEditable());
+    }
+
+    @Test
     void loadingOptionsPreservesCallerExcludedValues() {
         GameOptions loadedOptions = new GameOptions();
         loadedOptions.getOption(OptionsConstants.ALLOWED_YEAR).setValue(3150);

@@ -293,9 +293,10 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         if (controller.equals(owningSide)) {
             int progressBeforePushback = scheme.bestCaptureProgress();
             scheme.pushBackAllCaptureProgress(scheme.getRatePerTurn());
-            LOGGER.debug("[Objective] {} at {}: the owner holds the point - capture progress pushed back",
-                  objective.marker().generalName(), objective.position());
             if (progressBeforePushback > 0) {
+                LOGGER.debug("[Objective] {} at {}: the owner holds the point - capture progress pushed back "
+                      + "from {} to {}", objective.marker().generalName(), objective.position(),
+                      progressBeforePushback, scheme.bestCaptureProgress());
                 Report report = new Report(REPORT_CAPTURE_PUSHED_BACK, Report.PUBLIC);
                 report.add(displayName(controller));
                 report.add(objective.marker().generalName());
@@ -567,7 +568,9 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             }
         }
         if (controllers.isEmpty()) {
-            LOGGER.debug("[Objective] No objective is controlled this round - no victory points awarded");
+            LOGGER.debug("[Objective] No Standard-scheme objective is controlled this round - no pairing "
+                  + "victory points awarded. Points using another scheme score through their own counter "
+                  + "and are not part of this pass");
             return;
         }
 

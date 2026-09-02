@@ -39,7 +39,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.panels.phaseDisplay.VictoryHexPropertiesPane;
 import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
@@ -54,7 +53,6 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
-import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -160,40 +158,9 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
                         + marker.getScoringScheme().getPreset().name().toLowerCase(Locale.ROOT))
                   : null;
             String progress = showOverlays ? marker.getScoringScheme().progressLabel() : null;
-            HexFlagSprite flagSprite = new HexFlagSprite(boardView, coords, ownerColor(marker), schemeWord,
-                  progress);
-            flagSprite.setTooltip(flagTooltip(marker));
-            return flagSprite;
+            return new HexFlagSprite(boardView, coords, ownerColor(marker), schemeWord, progress);
         }
         return new GroundObjectSprite(boardView, coords);
-    }
-
-    /**
-     * Describes what a point asks of the players, for the hover tooltip: its owner, what it is worth, how
-     * far along it is, and the scheme's own explanation of how it is won - the same wording the properties
-     * pane shows when the point is set up.
-     *
-     * @param marker the objective marker to describe
-     *
-     * @return the tooltip text
-     */
-    private String flagTooltip(ObjectiveMarker marker) {
-        ObjectiveScoringScheme scheme = marker.getScoringScheme();
-        Player owner = game.getPlayer(marker.getOwnerId());
-        StringBuilder tooltip = new StringBuilder("<html>");
-        tooltip.append("<b>").append(marker.generalName()).append("</b>");
-        if (owner != null) {
-            tooltip.append(" &mdash; ").append(owner.getName());
-        }
-        tooltip.append("<br>").append(Messages.getString("VictoryHex.tooltip.worth",
-              marker.getVictoryPointValue(), marker.getControlRadius()));
-        String progress = scheme.progressLabel();
-        if (progress != null) {
-            tooltip.append("<br>").append(Messages.getString("VictoryHex.tooltip.progress", progress));
-        }
-        tooltip.append("<br>").append(VictoryHexPropertiesPane.describeScheme(scheme));
-        tooltip.append("</html>");
-        return tooltip.toString();
     }
 
     /**

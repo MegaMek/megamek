@@ -109,6 +109,17 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
     private Color fillColor;
     private final int rangeBracket;
 
+    /**
+     * Set for a zone drawn in a caller-chosen colour rather than a range bracket's. Those cannot use the
+     * shared image cache: it is keyed by border pattern and range bracket alone, so every control zone
+     * would land in one slot and reuse whichever colour happened to fill it first - which is exactly what
+     * happened, and the zone never changed colour with its controller.
+     */
+    private Image ownImage;
+
+    /** {@code true} when this sprite draws its own colour and must not share the cached images. */
+    private boolean usesOwnColor;
+
     public FieldOfFireSprite(BoardView boardView1, int rangeBracket, Coords l,
           int borders) {
         // the color of the super doesn't matter
@@ -129,6 +140,7 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
      */
     public FieldOfFireSprite(BoardView boardView1, Color zoneColor, Coords l, int borders) {
         super(boardView1, Color.BLACK, l, borders);
+        this.usesOwnColor = true;
         fillColor = new Color(zoneColor.getRed(), zoneColor.getGreen(), zoneColor.getBlue(),
               CONTROL_ZONE_OPACITY);
         this.rangeBracket = RangeType.RANGE_MEDIUM;
@@ -197,11 +209,17 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
         if (bv.getScale() != oldZoom) {
             oldZoom = bv.getScale();
             images = new Image[64][COLORS_MAX];
+            ownImage = null;
         }
 
         // create image for buffer
-        images[borders][rangeBracket] = createNewHexImage();
-        Graphics2D graph = (Graphics2D) images[borders][rangeBracket].getGraphics();
+        Image buffer = createNewHexImage();
+        if (usesOwnColor) {
+            ownImage = buffer;
+        } else {
+            images[borders][rangeBracket] = buffer;
+        }
+        Graphics2D graph = (Graphics2D) buffer.getGraphics();
         UIUtil.setHighQualityRendering(graph);
 
         // scale the following draws according to board zoom
@@ -297,19 +315,21 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
 
     @Override
     public boolean isReady() {
-        return (bv.getScale() == oldZoom) && (images[borders][rangeBracket] != null);
+        Image prepared = usesOwnColor ? ownImage : images[borders][rangeBracket];
+        return (bv.getScale() == oldZoom) && (prepared != null);
     }
 
     @Override
     public void drawOnto(Graphics g, int x, int y, ImageObserver observer, boolean makeTranslucent) {
         if (isReady()) {
+            Image prepared = usesOwnColor ? ownImage : images[borders][rangeBracket];
             if (makeTranslucent) {
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-                g2.drawImage(images[borders][rangeBracket], x, y, observer);
+                g2.drawImage(prepared, x, y, observer);
                 g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
             } else {
-                g.drawImage(images[borders][rangeBracket], x, y, observer);
+                g.drawImage(prepared, x, y, observer);
             }
         } else {
             prepare();

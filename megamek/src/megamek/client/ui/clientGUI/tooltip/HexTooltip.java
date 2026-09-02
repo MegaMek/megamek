@@ -59,6 +59,9 @@ import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.enums.BasementType;
 import megamek.common.equipment.FuelTank;
+import megamek.common.equipment.ObjectiveMarker;
+import megamek.common.equipment.ObjectiveScoringScheme;
+import megamek.client.ui.panels.phaseDisplay.VictoryHexPropertiesPane;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
 import megamek.common.game.Game;
@@ -230,7 +233,9 @@ public final class HexTooltip {
         if ((game != null) && !game.getGroundObjects(mcoords).isEmpty()) {
             for (ICarryable groundObject : game.getGroundObjects(mcoords)) {
                 result.append("&nbsp");
-                String groundObj = groundObject.specificName();
+                String groundObj = (groundObject instanceof ObjectiveMarker marker)
+                      ? describeControlPoint(marker, game)
+                      : groundObject.specificName();
                 String attr = String.format("FACE=Dialog COLOR=%s",
                       UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
                 groundObj = UIUtil.tag("FONT", attr, groundObj);
@@ -558,4 +563,34 @@ public final class HexTooltip {
     }
 
     private HexTooltip() {}
+
+    /**
+     * Describes a control point for the hex tooltip: what it is worth, how far along it is, who holds it,
+     * and what its scheme asks of the players - the same wording the setup pane shows, so a point explains
+     * itself the same way wherever it is read. Without this a marker rendered only as its own name, which
+     * says nothing about what to do with it.
+     *
+     * @param marker The control point under the cursor
+     * @param game   The game, for resolving the owning player
+     *
+     * @return The description, as tooltip HTML
+     */
+    private static String describeControlPoint(ObjectiveMarker marker, Game game) {
+        ObjectiveScoringScheme scheme = marker.getScoringScheme();
+        Player owner = game.getPlayer(marker.getOwnerId());
+        StringBuilder description = new StringBuilder("<B>");
+        description.append(marker.generalName()).append("</B>");
+        if (owner != null) {
+            description.append(" &mdash; ").append(owner.getName());
+        }
+        description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.worth",
+              marker.getVictoryPointValue(), marker.getControlRadius()));
+        String progress = scheme.progressLabel();
+        if (progress != null) {
+            description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.progress",
+                  progress));
+        }
+        description.append("<BR>&nbsp;").append(VictoryHexPropertiesPane.describeScheme(scheme));
+        return description.toString();
+    }
 }

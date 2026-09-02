@@ -82,8 +82,6 @@ public class HexFlagSprite extends HexSprite {
     private final String label;
     // the counter under the label, e.g. "2/3"; null for a scheme with nothing to count
     private final String progress;
-    // what this point wants, shown on hover; null for none
-    private String tooltip;
 
     /**
      * @param boardView the board view this sprite is displayed on
@@ -158,21 +156,6 @@ public class HexFlagSprite extends HexSprite {
         }
 
         graph.dispose();
-    }
-
-    /**
-     * Sets what this point asks of the players, shown when the cursor rests on the hex. The board can
-     * only spare a word and a counter; the rest of the story goes here.
-     *
-     * @param tooltip The description, or {@code null} for no tooltip
-     */
-    public void setTooltip(@Nullable String tooltip) {
-        this.tooltip = tooltip;
-    }
-
-    @Override
-    public StringBuffer getTooltip() {
-        return (tooltip == null) ? super.getTooltip() : new StringBuffer(tooltip);
     }
 
     /** The flag should be displayed on top of buildings and bridges in isometric view. */

@@ -354,6 +354,9 @@ public class OptionsConstants {
     public static final String VICTORY_GAME_KILL_COUNT = "game_kill_count";
     public static final String VICTORY_COMMANDER_KILLED = "commander_killed";
     public static final String VICTORY_USE_OBJECTIVES = "use_objectives";
+    public static final String VICTORY_VP_WIN_THRESHOLD = "vp_win_threshold";
+    public static final String VICTORY_VP_LOSS_THRESHOLD = "vp_loss_threshold";
+    public static final String VICTORY_VP_SUDDEN_DEATH = "vp_sudden_death";
 
     public static final String ALLOWED_CANON_ONLY = "canon_only";
     public static final String ALLOWED_YEAR = "year";

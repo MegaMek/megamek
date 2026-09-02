@@ -35,6 +35,7 @@ package megamek.common.equipment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -248,5 +249,86 @@ class ObjectiveMarkerTest {
         assertEquals(HoldCounting.CUMULATIVE, restoredScheme.getHoldCounting());
         assertEquals(3, restoredScheme.getHeldTurns(2, ObjectiveScoringScheme.NO_SIDE));
         assertFalse(restoredScheme.isDecided());
+    }
+
+    // --- the board's compact progress reading (shown under the flag) ---
+
+    @Test
+    void testStandardAndRaidHaveNoProgressToShow() {
+        assertNull(ObjectiveScoringScheme.standard().progressLabel(),
+              "the printed per-turn scheme has no running counter");
+        assertNull(ObjectiveScoringScheme.raid().progressLabel(),
+              "raid scores once at the end and counts nothing on the way");
+    }
+
+    @Test
+    void testHoldShowsTurnsHeldAgainstTurnsNeeded() {
+        ObjectiveScoringScheme scheme = ObjectiveScoringScheme.hold(3,
+              ObjectiveScoringScheme.HoldCounting.CONSECUTIVE);
+        assertEquals("0/3", scheme.progressLabel());
+        scheme.setHeldTurns(1, ObjectiveScoringScheme.NO_SIDE, 2);
+        assertEquals("2/3", scheme.progressLabel());
+    }
+
+    @Test
+    void testDefendShowsTheGripThatIsLeft() {
+        ObjectiveScoringScheme scheme = ObjectiveScoringScheme.defend(4, 1);
+        assertEquals("4/4", scheme.progressLabel());
+        scheme.setDefendGrip(1);
+        assertEquals("1/4", scheme.progressLabel());
+    }
+
+    @Test
+    void testCaptureShowsTheMeter() {
+        ObjectiveScoringScheme scheme = ObjectiveScoringScheme.capture(2, 1);
+        assertEquals("0/2", scheme.progressLabel());
+        scheme.setCaptureProgress(1, ObjectiveScoringScheme.NO_SIDE, 1);
+        assertEquals("1/2", scheme.progressLabel());
+    }
+
+    @Test
+    void testADecidedPointStopsShowingProgress() {
+        ObjectiveScoringScheme scheme = ObjectiveScoringScheme.hold(2,
+              ObjectiveScoringScheme.HoldCounting.CONSECUTIVE);
+        scheme.setHeldTurns(1, ObjectiveScoringScheme.NO_SIDE, 2);
+        scheme.setSecuredBy(1, ObjectiveScoringScheme.NO_SIDE);
+        assertNull(scheme.progressLabel(), "a settled point has no progress left to make");
+    }
+
+    // --- how far along a point is, for the board's tint ---
+
+    @Test
+    void testHoldFractionGrowsWithTurnsHeldAndTheHolderLeads() {
+        ObjectiveScoringScheme scheme = ObjectiveScoringScheme.hold(10,
+              ObjectiveScoringScheme.HoldCounting.CONSECUTIVE);
+        assertEquals(0.0, scheme.progressFraction(), 0.001);
+        scheme.setHeldTurns(2, ObjectiveScoringScheme.NO_SIDE, 1);
+        assertEquals(0.1, scheme.progressFraction(), 0.001, "one turn of ten is a tenth of the way");
+        scheme.setHeldTurns(2, ObjectiveScoringScheme.NO_SIDE, 9);
+        assertEquals(0.9, scheme.progressFraction(), 0.001);
+        assertEquals(new ObjectiveScoringScheme.CountedSide(2, ObjectiveScoringScheme.NO_SIDE),
+              scheme.leadingSide());
+    }
+
+    @Test
+    void testDefendFractionIsHowMuchGripHasDrained() {
+        ObjectiveScoringScheme scheme = ObjectiveScoringScheme.defend(4, 1);
+        assertEquals(0.0, scheme.progressFraction(), 0.001, "full grip, nothing drained");
+        scheme.setDefendGrip(1);
+        assertEquals(0.75, scheme.progressFraction(), 0.001, "three of four drained");
+    }
+
+    @Test
+    void testStandardIsAlwaysFullyWhateverItIs() {
+        assertEquals(1.0, ObjectiveScoringScheme.standard().progressFraction(), 0.001);
+        assertNull(ObjectiveScoringScheme.standard().leadingSide());
+    }
+
+    @Test
+    void testADecidedPointIsFullyDecided() {
+        ObjectiveScoringScheme scheme = ObjectiveScoringScheme.hold(3,
+              ObjectiveScoringScheme.HoldCounting.CONSECUTIVE);
+        scheme.setSecuredBy(1, ObjectiveScoringScheme.NO_SIDE);
+        assertEquals(1.0, scheme.progressFraction(), 0.001);
     }
 }

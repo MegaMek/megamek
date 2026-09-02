@@ -119,7 +119,7 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
      */
     private List<FieldOfFireSprite> zoneOutlineSprites(BoardView boardView, @Nullable Board board,
           Coords center, int radius, ObjectiveMarker marker) {
-        Color zoneColor = controllerColor(marker);
+        Color zoneColor = tracedControllerColor(marker);
         List<FieldOfFireSprite> outlineSprites = new ArrayList<>();
         if ((radius <= 0) || (board == null) || (board.getWidth() == 0)) {
             return outlineSprites;
@@ -189,6 +189,21 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
         }
         // nobody holds it: a neutral outline, so an uncontested point reads differently from a held one
         return UNCONTROLLED_ZONE_COLOR;
+    }
+
+    /**
+     * @param marker the objective marker whose zone is being drawn
+     *
+     * @return the colour chosen for its zone, logging what the client believes about who holds it. The
+     *       zone colour depends on the controller reaching this client at all, so when it looks wrong the
+     *       first question is whether the marker arrived with a controller set or without one
+     */
+    private Color tracedControllerColor(ObjectiveMarker marker) {
+        Color chosen = controllerColor(marker);
+        VICTORY_HEX_LOGGER.debug("[VictoryHex] zone colour for {}: controllingTeam={}, controllingPlayer={},"
+                    + " colour={}", marker.generalName(), marker.getControllingTeam(),
+              marker.getControllingPlayerId(), chosen);
+        return chosen;
     }
 
     /**

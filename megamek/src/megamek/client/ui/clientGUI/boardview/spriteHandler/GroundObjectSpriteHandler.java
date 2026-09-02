@@ -63,8 +63,13 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    /** Outline colour for a control zone nobody currently holds. */
-    private static final Color UNCONTROLLED_ZONE_COLOR = new Color(190, 190, 190);
+    /**
+     * Outline colour for a control zone nobody currently holds. Deliberately dark and clearly not a
+     * player colour: the default player palette is pale and desaturated (Player Blue is 134,134,191), so
+     * a light grey neutral was almost indistinguishable from a held zone, and a point changing hands
+     * could not be seen to change at all.
+     */
+    private static final Color UNCONTROLLED_ZONE_COLOR = new Color(60, 60, 60);
 
     /** Feature logger for the victory hex designation diagnostics; enabled via the log4j2.xml VictoryHex block. */
     private static final MMLogger VICTORY_HEX_LOGGER = MMLogger.create("megamek.feature.VictoryHex");
@@ -200,9 +205,8 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
      */
     private Color tracedControllerColor(ObjectiveMarker marker) {
         Color chosen = controllerColor(marker);
-        VICTORY_HEX_LOGGER.debug("[VictoryHex] [5 client-colour] {}: team={}, player={}, identity={} -> {}",
-              marker.generalName(), marker.getControllingTeam(), marker.getControllingPlayerId(),
-              System.identityHashCode(marker), chosen);
+        VICTORY_HEX_LOGGER.debug("[VictoryHex] zone colour for {}: team={}, player={} -> {}",
+              marker.generalName(), marker.getControllingTeam(), marker.getControllingPlayerId(), chosen);
         return chosen;
     }
 
@@ -244,8 +248,6 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
 
     @Override
     public void gameBoardChanged(GameBoardChangeEvent e) {
-        VICTORY_HEX_LOGGER.debug("[VictoryHex] [4 client-refresh] board change event - rebuilding sprites "
-              + "from the game's {} ground object hex(es)", game.getGroundObjects().size());
         setGroundObjectSprites(game.getGroundObjects());
     }
 }

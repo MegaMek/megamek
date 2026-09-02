@@ -646,9 +646,6 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
      * (objective control conditions) can read it without re-running the control algorithm.
      */
     private void storeControllerOnMarker(ObjectiveMarker marker, @Nullable Side controller) {
-        LOGGER.debug("[VictoryHex] [1 server-resolve] {}: storing controller {} (was team={}, player={})",
-              marker.generalName(), controller, marker.getControllingTeam(),
-              marker.getControllingPlayerId());
         if (controller == null) {
             marker.setController(ObjectiveMarker.NO_CONTROLLER, ObjectiveMarker.NO_CONTROLLER);
         } else if (controller.isTeam()) {

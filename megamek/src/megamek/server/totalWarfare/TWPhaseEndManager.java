@@ -41,26 +41,9 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.Entity;
-import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
 
 record TWPhaseEndManager(TWGameManager gameManager) {
-
-    /** Objectives diagnostics; enabled via the log4j2.xml VictoryHex block. */
-    private static final MMLogger VICTORY_HEX_LOGGER = MMLogger.create("megamek.feature.VictoryHex");
-
-    /** Logs every control point's controller as the server holds it, tagged with where in the flow. */
-    private void logMarkerControllers(String stage) {
-        for (var hexObjects : gameManager.getGame().getGroundObjects().entrySet()) {
-            for (var groundObject : hexObjects.getValue()) {
-                if (groundObject instanceof megamek.common.equipment.ObjectiveMarker marker) {
-                    VICTORY_HEX_LOGGER.debug("[VictoryHex] {} {} at {}: team={}, player={}, identity={}",
-                          stage, marker.generalName(), hexObjects.getKey(), marker.getControllingTeam(),
-                          marker.getControllingPlayerId(), System.identityHashCode(marker));
-                }
-            }
-        }
-    }
 
     void managePhase() {
         switch (gameManager.getGame().getPhase()) {
@@ -352,7 +335,6 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 // resolution writes this round's controller and counters onto the markers; without this
                 // the clients keep the copy they were sent at the end of the physical phase, so anything
                 // drawn from that state - the flag counter, the zone colour - would be a round behind
-                logMarkerControllers("[2 server-broadcast] sending ground objects after End Phase resolution");
                 gameManager.sendGroundObjectUpdate();
 
                 boolean victory = gameManager.victory(); // note this may add reports

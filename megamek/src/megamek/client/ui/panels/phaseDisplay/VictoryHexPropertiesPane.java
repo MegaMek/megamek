@@ -126,7 +126,8 @@ public final class VictoryHexPropertiesPane {
         JComboBox<ControlChoice> startingControlCombo = new JComboBox<>();
         startingControlCombo.addItem(ControlChoice.NOBODY);
         for (Player player : players) {
-            startingControlCombo.addItem(new ControlChoice(player.getId(), player.getName()));
+            int team = (player.getTeam() == Player.TEAM_NONE) ? ObjectiveMarker.NO_CONTROLLER : player.getTeam();
+            startingControlCombo.addItem(new ControlChoice(player.getId(), team, player.getName()));
         }
         selectStartingControl(startingControlCombo, marker);
         JCheckBox retainControlCheckbox = new JCheckBox();
@@ -172,7 +173,10 @@ public final class VictoryHexPropertiesPane {
         scheme.setRetainsControlWhenEmpty(retainControlCheckbox.isSelected());
         ControlChoice startingControl = (ControlChoice) startingControlCombo.getSelectedItem();
         if (startingControl != null) {
-            marker.setController(ObjectiveMarker.NO_CONTROLLER, startingControl.playerId());
+            // control is keyed the way scoring keys it: by team for a teamed player, by player otherwise.
+            // Writing a teamed player's id as an unteamed controller would look right on the board and
+            // never match the side the End Phase resolves
+            marker.setController(startingControl.team(), startingControl.unteamedPlayerId());
         }
         marker.setControlRadius((Integer) radiusSpinner.getValue());
         marker.setVictoryPointValue((Integer) victoryPointSpinner.getValue());
@@ -315,10 +319,15 @@ public final class VictoryHexPropertiesPane {
      * @param playerId The player who starts in control, or {@link ObjectiveMarker#NO_CONTROLLER} for none
      * @param label    What the dropdown shows
      */
-    private record ControlChoice(int playerId, String label) {
+    private record ControlChoice(int playerId, int team, String label) {
 
         static final ControlChoice NOBODY = new ControlChoice(ObjectiveMarker.NO_CONTROLLER,
-              Messages.getString("VictoryHex.startingControl.nobody"));
+              ObjectiveMarker.NO_CONTROLLER, Messages.getString("VictoryHex.startingControl.nobody"));
+
+        /** @return The player id to store as the controller, or none when the player is on a team */
+        int unteamedPlayerId() {
+            return (team != ObjectiveMarker.NO_CONTROLLER) ? ObjectiveMarker.NO_CONTROLLER : playerId;
+        }
 
         @Override
         public String toString() {
@@ -334,9 +343,13 @@ public final class VictoryHexPropertiesPane {
      * @param marker The point being edited
      */
     private static void selectStartingControl(JComboBox<ControlChoice> combo, ObjectiveMarker marker) {
-        int controllingPlayerId = marker.getControllingPlayerId();
         for (int index = 0; index < combo.getItemCount(); index++) {
-            if (combo.getItemAt(index).playerId() == controllingPlayerId) {
+            ControlChoice choice = combo.getItemAt(index);
+            boolean matchesPlayer = (marker.getControllingPlayerId() != ObjectiveMarker.NO_CONTROLLER)
+                  && (choice.playerId() == marker.getControllingPlayerId());
+            boolean matchesTeam = (marker.getControllingTeam() != ObjectiveMarker.NO_CONTROLLER)
+                  && (choice.team() == marker.getControllingTeam());
+            if (matchesPlayer || matchesTeam) {
                 combo.setSelectedIndex(index);
                 return;
             }

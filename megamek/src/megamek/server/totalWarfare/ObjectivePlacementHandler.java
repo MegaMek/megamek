@@ -132,8 +132,12 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
                     continue;
                 }
                 marker.setLobbyPosition(hexObjects.getKey());
-                // a fresh game starts with fresh counters - the setup values on the scheme remain
+                // a fresh game starts with fresh counters - the setup values on the scheme remain - and
+                // with nobody holding the point. The controller lives on the marker, not the scheme, and
+                // it was being carried across the reset: a lobby save then preserved it, and the next
+                // game began with the zone already "held" before anyone had stood in it
                 marker.getScoringScheme().resetState();
+                marker.setController(ObjectiveMarker.NO_CONTROLLER, ObjectiveMarker.NO_CONTROLLER);
                 owner.getGroundObjectsToPlace().add(marker);
                 returnedCount++;
                 VICTORY_HEX_LOGGER.debug("[Objective] Returned {} at {} to the lobby designations of {}",

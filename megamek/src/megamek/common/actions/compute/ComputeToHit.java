@@ -1369,16 +1369,9 @@ public class ComputeToHit {
             Entity oldEnt = game.getEntity(swarmSecondaryTarget.getId());
             if (oldEnt != null) {
                 toHit.append(Compute.getTargetMovementModifier(game, oldEnt.getId()));
-                // target in partial water - depth 1 for most units
-                int partialWaterLevel = 1;
-                // Depth 2 for superheavy meks
-                if ((target instanceof Mek) && ((Mek) target).isSuperHeavy()) {
-                    partialWaterLevel = 2;
-                }
-                if (targHex.containsTerrain(Terrains.WATER) &&
-                      (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) &&
-                      (targEl == 0) &&
-                      (oldEnt.height() > 0)) {
+                // Partial water cover is read off the secondary target, which is the unit being shot at here -
+                // the depth that covers it depends on its own height, not the swarm's original target.
+                if (PartialCover.isInPartialWater(oldEnt, targHex, targEl)) {
                     toHit.setCover(toHit.getCover() | LosEffects.COVER_HORIZONTAL);
                 }
                 // Prone

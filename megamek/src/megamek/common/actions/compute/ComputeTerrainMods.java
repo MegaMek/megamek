@@ -239,17 +239,7 @@ public class ComputeTerrainMods {
 
         // target in water?
         boolean targetInWater = (targetHex != null) && targetHex.containsTerrain(Terrains.WATER);
-        int partialWaterLevel = 1;
-        if ((entityTarget instanceof Mek) && entityTarget.isSuperHeavy()) {
-            partialWaterLevel = 2;
-        }
-        if (PartialCover.canReceive(entityTarget)
-              && targetInWater
-              // target in partial water: a Mek standing in Depth 1 water, or a superheavy Mek in Depth 2
-              // (TW p.102; Core p.66)
-              && (targetHex.terrainLevel(Terrains.WATER) == partialWaterLevel)
-              && (targEl == 0)
-              && (entityTarget.height() > 0)) {
+        if (PartialCover.isInPartialWater(entityTarget, targetHex, targEl)) {
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
         }
 

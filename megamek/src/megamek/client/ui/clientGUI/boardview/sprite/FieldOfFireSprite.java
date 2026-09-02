@@ -63,7 +63,14 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
     // ### Control values
 
     // thick border
-    private static final int borderWidth = 10;
+    /** Band width of a weapon range bracket. */
+    private static final int RANGE_BAND_WIDTH = 10;
+
+    /**
+     * Band width of an objective control zone: half a range band. A range band is a broad wash the eye
+     * reads past; a control zone is a boundary, and at full width it swallowed the hex edge it marks.
+     */
+    private static final int CONTROL_ZONE_BAND_WIDTH = RANGE_BAND_WIDTH / 2;
     private static final int borderOpacity = 120;
 
     /**
@@ -111,6 +118,7 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
     // individual sprite values
     private Color fillColor;
     private final int rangeBracket;
+    private final int borderWidth;
 
     /**
      * Set for a zone drawn in a caller-chosen colour rather than a range bracket's. Those cannot use the
@@ -130,6 +138,7 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
         Color c = getFieldOfFireColor(rangeBracket);
         fillColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), borderOpacity);
         this.rangeBracket = rangeBracket;
+        this.borderWidth = RANGE_BAND_WIDTH;
     }
 
     /**
@@ -147,6 +156,7 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
         fillColor = new Color(zoneColor.getRed(), zoneColor.getGreen(), zoneColor.getBlue(),
               CONTROL_ZONE_OPACITY);
         this.rangeBracket = RangeType.RANGE_MEDIUM;
+        this.borderWidth = CONTROL_ZONE_BAND_WIDTH;
     }
 
     public static Color getFieldOfFireColor(int rangeBracket) {

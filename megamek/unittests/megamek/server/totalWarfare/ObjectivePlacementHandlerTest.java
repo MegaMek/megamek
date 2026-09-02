@@ -201,6 +201,22 @@ class ObjectivePlacementHandlerTest {
         assertTrue(bob.getGroundObjectsToPlace().isEmpty());
     }
 
+    @Test
+    void testResetForgetsWhoHeldEachPoint() {
+        when(game.getPlayer(alice.getId())).thenReturn(alice);
+        Map<Coords, List<ICarryable>> groundMap = installRealGroundObjectMap();
+        ObjectiveMarker marker = markerFor(alice, null);
+        marker.setController(1, ObjectiveMarker.NO_CONTROLLER);
+        groundMap.put(new Coords(2, 2), new ArrayList<>(List.of(marker)));
+
+        handler.returnObjectivesToLobby();
+
+        // a controller carried across the reset survives a lobby save, and the next game then starts
+        // with the zone already held before anyone has stood in it
+        assertEquals(ObjectiveMarker.NO_CONTROLLER, marker.getControllingTeam());
+        assertEquals(ObjectiveMarker.NO_CONTROLLER, marker.getControllingPlayerId());
+    }
+
     private ObjectiveMarker markerFor(Player owner, Coords lobbyPosition) {
         ObjectiveMarker marker = new ObjectiveMarker();
         marker.setName("Objective");

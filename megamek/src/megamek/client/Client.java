@@ -129,7 +129,6 @@ import megamek.server.SmokeCloud;
 public class Client extends AbstractClient {
     private final static MMLogger LOGGER = MMLogger.create(Client.class);
 
-
     /**
      * The game state object: this object is not ever replaced during a game, only updated. A reference can therefore be
      * cached by other objects.

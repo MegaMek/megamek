@@ -152,6 +152,7 @@ import megamek.server.victory.VictoryResult;
  * Manages the Game and processes player actions.
  */
 public class TWGameManager extends AbstractGameManager {
+
     private static final MMLogger LOGGER = MMLogger.create(TWGameManager.class);
 
     /** Hidden-unit probe detection diagnostics ([HiddenUnits] tag; shared feature logger, see ServerHelper). */

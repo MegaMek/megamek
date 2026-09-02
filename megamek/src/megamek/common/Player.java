@@ -496,6 +496,22 @@ public final class Player extends TurnOrdered {
         return colour;
     }
 
+    /**
+     * The colour this player is actually shown in. A player picks a colour in the lobby by choosing a
+     * colour camouflage, and that choice lives on the camouflage - {@link #getColour()} is a separate
+     * field that the lobby never sets, so it stays at its default for most players and cannot be trusted
+     * to say what the player looks like. Anything drawing something in a player's colour wants this.
+     *
+     * @return The colour of this player's colour camouflage, or the plain colour field when the camouflage
+     *       is an image rather than a colour
+     */
+    public PlayerColour getDisplayColour() {
+        if ((camouflage != null) && camouflage.isColourCamouflage()) {
+            return PlayerColour.parseFromString(camouflage.getFilename());
+        }
+        return colour;
+    }
+
     public void setColour(PlayerColour colour) {
         this.colour = Objects.requireNonNull(colour, "Colour cannot be set to null");
     }

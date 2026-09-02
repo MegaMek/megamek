@@ -179,7 +179,7 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
         if (controllingPlayerId != ObjectiveMarker.NO_CONTROLLER) {
             Player controller = game.getPlayer(controllingPlayerId);
             if (controller != null) {
-                return controller.getColour().getColour();
+                return controller.getDisplayColour().getColour();
             }
         }
         if (controllingTeam != ObjectiveMarker.NO_CONTROLLER) {
@@ -188,7 +188,7 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
             // the same team always reads the same way for the whole game
             for (Player player : game.getPlayersList()) {
                 if (player.getTeam() == controllingTeam) {
-                    return player.getColour().getColour();
+                    return player.getDisplayColour().getColour();
                 }
             }
         }
@@ -217,7 +217,7 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
      */
     private Color ownerColor(ObjectiveMarker marker) {
         Player owner = game.getPlayer(marker.getOwnerId());
-        return (owner != null) ? owner.getColour().getColour() : Color.YELLOW;
+        return (owner != null) ? owner.getDisplayColour().getColour() : Color.YELLOW;
     }
 
     @Override

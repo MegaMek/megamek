@@ -30,16 +30,26 @@ import megamek.common.units.Terrains;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Tests for terrain-specific rule differences between Core and Total Warfare rule sets.
+ *
+ * The tests aim to mirror the documented style used in the planetary conditions tests: small helper
+ * constructors for test fixtures, clear DisplayName annotations and explanatory assertion messages.
+ */
 @DisplayName("RulesTerrain rules variants")
 class RulesTerrainTest {
+
+    private Hex roadHex() {
+        return new Hex(0, new Terrain[] {new Terrain(Terrains.ROAD, 1)}, null);
+    }
 
     @Test
     @DisplayName("core and total warfare road and elevation logic differ by rule set")
     void coreAndTotalWarfareTerrainLogicDiffersByRuleSet() {
         CoreRulesTerrain core = new CoreRulesTerrain();
         TWRulesTerrain totalWarfare = new TWRulesTerrain();
-        Hex roadA = new Hex(0, new Terrain[] {new Terrain(Terrains.ROAD, 1)}, null);
-        Hex roadB = new Hex(0, new Terrain[] {new Terrain(Terrains.ROAD, 1)}, null);
+        Hex roadA = roadHex();
+        Hex roadB = roadHex();
 
         assertNotNull(core, "Core rules implementation should be constructible.");
         assertNotNull(totalWarfare, "Total warfare rules implementation should be constructible.");

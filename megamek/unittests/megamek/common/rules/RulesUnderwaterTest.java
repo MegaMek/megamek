@@ -31,25 +31,41 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+/**
+ * Tests for underwater weapon range translation and LOS behavior across Core and Total Warfare rules.
+ *
+ * Patterned after the documented planetary conditions tests: helper builders, clear DisplayNames, and
+ * descriptive assertion messages so failures are easy to interpret.
+ */
 @DisplayName("RulesUnderwater rules variants")
 class RulesUnderwaterTest {
+
+    private WeaponType mockEnergyWeapon() {
+        WeaponType wt = Mockito.mock(WeaponType.class);
+        Mockito.when(wt.hasFlag(WeaponType.F_ENERGY)).thenReturn(true);
+        Mockito.when(wt.getShortRange()).thenReturn(4);
+        Mockito.when(wt.getMediumRange()).thenReturn(8);
+        Mockito.when(wt.getLongRange()).thenReturn(12);
+        return wt;
+    }
+
+    private WeaponType mockSolidWeapon() {
+        WeaponType wt = Mockito.mock(WeaponType.class);
+        Mockito.when(wt.hasFlag(WeaponType.F_ENERGY)).thenReturn(false);
+        Mockito.when(wt.getWShortRange()).thenReturn(3);
+        Mockito.when(wt.getWMediumRange()).thenReturn(6);
+        Mockito.when(wt.getWLongRange()).thenReturn(9);
+        Mockito.when(wt.getWExtremeRange()).thenReturn(12);
+        return wt;
+    }
 
     @Test
     @DisplayName("core and total warfare underwater rules apply different LOS and range behavior")
     void coreAndTotalWarfareUnderwaterRulesApplyDistinctRules() {
         CoreRulesUnderwater core = new CoreRulesUnderwater();
         TWRulesUnderwater totalWarfare = new TWRulesUnderwater();
-        WeaponType energyWeapon = Mockito.mock(WeaponType.class);
-        WeaponType solidWeapon = Mockito.mock(WeaponType.class);
-        Mockito.when(energyWeapon.hasFlag(WeaponType.F_ENERGY)).thenReturn(true);
-        Mockito.when(energyWeapon.getShortRange()).thenReturn(4);
-        Mockito.when(energyWeapon.getMediumRange()).thenReturn(8);
-        Mockito.when(energyWeapon.getLongRange()).thenReturn(12);
-        Mockito.when(solidWeapon.hasFlag(WeaponType.F_ENERGY)).thenReturn(false);
-        Mockito.when(solidWeapon.getWShortRange()).thenReturn(3);
-        Mockito.when(solidWeapon.getWMediumRange()).thenReturn(6);
-        Mockito.when(solidWeapon.getWLongRange()).thenReturn(9);
-        Mockito.when(solidWeapon.getWExtremeRange()).thenReturn(12);
+        WeaponType energyWeapon = mockEnergyWeapon();
+        WeaponType solidWeapon = mockSolidWeapon();
 
         assertNotNull(core, "Core rules implementation should be constructible.");
         assertNotNull(totalWarfare, "Total warfare rules implementation should be constructible.");

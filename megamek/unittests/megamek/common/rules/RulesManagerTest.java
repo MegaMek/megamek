@@ -28,6 +28,11 @@ import megamek.common.rules.totalwarfare.TWRulesTarget;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Smoke tests for the RulesManager implementations ensuring each manager exposes the expected
+ * concrete rule implementations. The style mirrors documented tests: clear intent and helpful
+ * assertion messages for quick diagnosis.
+ */
 @DisplayName("RulesManager rules variants")
 class RulesManagerTest {
 

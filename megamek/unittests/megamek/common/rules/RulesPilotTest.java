@@ -27,6 +27,11 @@ import megamek.common.rules.totalwarfare.TWRulesPilot;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Tests for pilot-related rule differences between Core and Total Warfare rule sets.
+ *
+ * Matches the documented test style: short helpers and clear, explanatory assertions.
+ */
 @DisplayName("RulesPilot rules variants")
 class RulesPilotTest {
 
@@ -43,10 +48,16 @@ class RulesPilotTest {
 
         assertEquals(1, core.getExplosionPilotHits(), "Core explosions cause one pilot hit.");
         assertEquals(2, totalWarfare.getExplosionPilotHits(), "Total Warfare explosions cause two pilot hits.");
+
+        // Gyro modifier differences
         assertEquals(7, core.getSeatbeltGyroModifier(7), "Core gyro checks are not modified.");
         assertEquals(13, totalWarfare.getSeatbeltGyroModifier(7), "Total Warfare gyro checks add six.");
+
+        // Leg modifier differences
         assertEquals(7, core.getSeatbeltLegModifier(7, 1), "Core legs do not modify seatbelt checks.");
         assertEquals(17, totalWarfare.getSeatbeltLegModifier(7, 2), "Total Warfare two destroyed legs add ten.");
+
+        // Shutdown checks
         assertEquals(7, core.getSeatbeltShutdown(7), "Core shutdown seatbelt checks are unchanged.");
         assertEquals(10, totalWarfare.getSeatbeltShutdown(7), "Total Warfare shutdown seatbelt checks are +3.");
     }

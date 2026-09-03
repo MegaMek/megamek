@@ -26,6 +26,10 @@ import megamek.common.rules.totalwarfare.TWRulesEnvironment;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Simple construct-and-inherit checks for environment rule implementations. Kept concise but adopting the
+ * documented test layout used elsewhere: descriptive DisplayNames and clear messages for assertions.
+ */
 @DisplayName("RulesEnvironment rules variants")
 class RulesEnvironmentTest {
 

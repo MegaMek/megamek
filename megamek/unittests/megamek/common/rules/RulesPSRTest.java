@@ -18,30 +18,24 @@
  */
 package megamek.common.rules;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.ArrayList;
-
-import megamek.common.game.Game;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rules.core.CoreRulesPSR;
 import megamek.common.rules.totalwarfare.TWRulesPSR;
-import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
-import megamek.common.units.MekWithArms;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+
+import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RulesPSRTest {
+
     @Test
     void coreAndTotalWarfareRulesExercisePSRLogic() {
         CoreRulesPSR core = new CoreRulesPSR();
         TWRulesPSR total = new TWRulesPSR();
-        Entity entity = Mockito.mock(Entity.class);
-        MekWithArms arms = Mockito.mock(MekWithArms.class);
         PilotingRollData roll = new PilotingRollData(1, 0, "test", 0);
-        Game game = Mockito.mock(Game.class);
         ArrayList<PilotingRollData> list = new ArrayList<>();
         list.add(new PilotingRollData(1, 2, "first", 0));
         list.add(new PilotingRollData(2, 1, "second", 0));

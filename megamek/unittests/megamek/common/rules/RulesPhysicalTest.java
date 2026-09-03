@@ -18,31 +18,25 @@
  */
 package megamek.common.rules;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import megamek.common.ToHitData;
-import megamek.common.board.Coords;
-import megamek.common.equipment.Mounted;
-import megamek.common.game.Game;
 import megamek.common.rules.core.CoreRulesPhysical;
 import megamek.common.rules.totalwarfare.TWRulesPhysical;
 import megamek.common.units.Entity;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 class RulesPhysicalTest {
+
     @Test
     void coreAndTotalWarfareRulesExercisePhysicalLogic() {
         CoreRulesPhysical core = new CoreRulesPhysical();
         TWRulesPhysical total = new TWRulesPhysical();
         Entity attacker = Mockito.mock(Entity.class);
         Entity target = Mockito.mock(Entity.class);
-        Mounted<?> mounted = Mockito.mock(Mounted.class);
-        ToHitData toHit = new ToHitData();
-        Game game = Mockito.mock(Game.class);
-
+        
         Mockito.when(attacker.getWeight()).thenReturn(50.0);
         Mockito.when(target.getWeight()).thenReturn(40.0);
         Mockito.when(attacker.getLocationStatus(1)).thenReturn(0);

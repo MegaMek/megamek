@@ -35,8 +35,12 @@ package megamek.client.ratgenerator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.ToIntFunction;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
+import megamek.common.units.UnitType;
 import megamek.logging.MMLogger;
 
 /**
@@ -47,7 +51,7 @@ import megamek.logging.MMLogger;
  * a Mek battalion lists its carrier under "Vehicle Company" rather than beside the battalion's DropShips, and it
  * looks as though the carrier never came. This moves every roll's ships into a single branch under the command's
  * top node: the first roll's branch is kept, and later rolls' ships are filed into its categories - WarShips,
- * JumpShips, Troopships - by name, with a category created when the branch has none of that kind yet.</p>
+ * JumpShips, DropShips - by name, with a category created when the branch has none of that kind yet.</p>
  *
  * <p>Ships keep their own nodes, so a carrier keeps the fighter complement nested under it. The flotillas each roll
  * brought are kept as they were rather than re-dealt, so the branch reads as the ships each roll added.</p>
@@ -86,6 +90,107 @@ public final class TransportBranchMerger {
         // echelon becomes the new top, and the branch moves up with it.
         detach(commandBranch);
         modelTop.addAttached(commandBranch);
+        // A DropShip from one roll and a JumpShip with a spare collar from another only meet here.
+        int docked = dockLooseDropShips(commandBranch, TransportBranchMerger::collarsOf);
+        if (docked > 0) {
+            LOGGER.debug("[ForceGen][Naval] docked {} DropShip(s) left loose by earlier rolls", docked);
+        }
+    }
+
+    /**
+     * Docks every DropShip in the branch that is not under a carrier onto a JumpShip or WarShip in the branch with a
+     * collar to spare, then drops the groups left empty - a DropShips category whose only ship has just moved.
+     *
+     * @param branch    the command's naval branch
+     * @param collarsOf how many docking collars a ship element has
+     *
+     * @return how many DropShips were docked
+     */
+    static int dockLooseDropShips(ForceDescriptor branch, ToIntFunction<ForceDescriptor> collarsOf) {
+        List<ForceDescriptor> collarShips = new ArrayList<>();
+        List<ForceDescriptor> looseDropShips = new ArrayList<>();
+        sortShips(branch, null, collarShips, looseDropShips, collarsOf);
+        int docked = 0;
+        for (ForceDescriptor dropShip : looseDropShips) {
+            for (ForceDescriptor ship : collarShips) {
+                int freeCollars = collarsOf.applyAsInt(ship) - dockedDropShips(ship);
+                if (freeCollars > 0) {
+                    detach(dropShip);
+                    ship.addAttached(dropShip);
+                    docked++;
+                    break;
+                }
+            }
+        }
+        if (docked > 0) {
+            pruneEmptyGroups(branch);
+        }
+        return docked;
+    }
+
+    /**
+     * Walks the branch sorting ship elements into those with collars and DropShips not sitting under a carrier.
+     *
+     * @param carrier the nearest ship element above {@code node}, or {@code null} outside any
+     */
+    private static void sortShips(ForceDescriptor node, @Nullable ForceDescriptor carrier,
+          List<ForceDescriptor> collarShips, List<ForceDescriptor> looseDropShips,
+          ToIntFunction<ForceDescriptor> collarsOf) {
+        ForceDescriptor carrierForChildren = carrier;
+        if (node.isElement()) {
+            if (collarsOf.applyAsInt(node) > 0) {
+                collarShips.add(node);
+            }
+            if (isDropShip(node) && (carrier == null)) {
+                looseDropShips.add(node);
+            }
+            carrierForChildren = node;
+        }
+        for (ForceDescriptor child : new ArrayList<>(node.getSubForces())) {
+            sortShips(child, carrierForChildren, collarShips, looseDropShips, collarsOf);
+        }
+        for (ForceDescriptor child : new ArrayList<>(node.getAttached())) {
+            sortShips(child, carrierForChildren, collarShips, looseDropShips, collarsOf);
+        }
+    }
+
+    private static boolean isDropShip(ForceDescriptor node) {
+        return (node.getUnitType() != null) && (node.getUnitType() == UnitType.DROPSHIP);
+    }
+
+    private static int dockedDropShips(ForceDescriptor ship) {
+        int docked = 0;
+        for (ForceDescriptor attached : ship.getAttached()) {
+            if (isDropShip(attached)) {
+                docked++;
+            }
+        }
+        return docked;
+    }
+
+    /** Removes every formation node under the branch that no longer holds anything, bottom up. */
+    private static void pruneEmptyGroups(ForceDescriptor node) {
+        for (ForceDescriptor child : new ArrayList<>(node.getSubForces())) {
+            pruneEmptyGroups(child);
+        }
+        for (ForceDescriptor child : new ArrayList<>(node.getAttached())) {
+            pruneEmptyGroups(child);
+        }
+        boolean isEmptyGroup = !node.isElement() && node.getSubForces().isEmpty() && node.getAttached().isEmpty();
+        if (isEmptyGroup && !node.isTransportRoot()) {
+            detach(node);
+        }
+    }
+
+    /**
+     * @return how many docking collars the ship element's design has; 0 for anything that is not a known ship
+     */
+    private static int collarsOf(ForceDescriptor ship) {
+        if (!ship.isElement() || (ship.getModelName() == null)) {
+            return 0;
+        }
+        MekSummary summary = MekSummaryCache.getInstance().getMek(ship.getModelName());
+        return (summary == null) ? 0 : TransportCalculator.dockingCollars(summary);
     }
 
     /**

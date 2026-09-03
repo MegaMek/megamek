@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,6 +61,7 @@ class CarrierLoadingConfiguratorTest {
     private static final String FIGHTER = "Cheetah F-11";
     private static final String MEK = "Atlas AS7-D";
     private static final String TANK = "Bulldog Medium Tank";
+    private static final String WARSHIP = "Aegis Heavy Cruiser (2372)";
 
     private Player owner;
     private ForceDescriptor root;
@@ -145,6 +147,32 @@ class CarrierLoadingConfiguratorTest {
 
         assertEquals(2, carried);
         assertEquals(Entity.NONE, tank.getTransportId());
+    }
+
+    @Test
+    void dropShipsDockToAJumpShipWithCollarsToSpare() throws Exception {
+        // An Aegis has four collars. Five DropShips: four dock, the fifth is left in space.
+        ForceDescriptor jumpShips = formation("JumpShips");
+        Entity aegis = load(WARSHIP, true);
+        jumpShips.addSubForce(unit(aegis));
+        root.getAttached().get(0).addSubForce(jumpShips);
+        ForceDescriptor flotilla = formation("Flotilla");
+        List<Entity> leopards = new ArrayList<>();
+        for (int count = 0; count < 4; count++) {
+            Entity anotherLeopard = load(DROPSHIP, true);
+            leopards.add(anotherLeopard);
+            flotilla.addSubForce(unit(anotherLeopard));
+        }
+        root.getAttached().get(0).addSubForce(flotilla);
+
+        int carried = CarrierLoadingConfigurator.configure(root, entity -> true);
+
+        assertEquals(2 + 4, carried, "two fighters aboard the Leopard, four DropShips docked");
+        assertEquals(aegis.getId(), leopard.getTransportId(), "the first Leopard docks");
+        long docked = leopards.stream().filter(ship -> ship.getTransportId() == aegis.getId()).count();
+        assertEquals(3, docked, "three more fill the collars");
+        assertEquals(1, leopards.stream().filter(ship -> ship.getTransportId() == Entity.NONE).count(),
+              "the fifth has no collar");
     }
 
     @Test

@@ -39,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import megamek.common.units.UnitType;
+
 import org.junit.jupiter.api.Test;
 
 /**
@@ -49,11 +51,11 @@ class TransportBranchMergerTest {
     @Test
     void aLaterRollsShipsJoinTheCommandsNavalBranch() throws Exception {
         ForceDescriptor battalion = formation("Mek Battalion");
-        ForceDescriptor battalionShips = navalBranch(battalion, "Troopships", "Flotilla");
+        ForceDescriptor battalionShips = navalBranch(battalion, "DropShips", "Flotilla");
         ForceDescriptor overlord = battalionShips.getSubForces().get(0).getSubForces().get(0).getSubForces().get(0);
 
         ForceDescriptor company = formation("Vehicle Company");
-        ForceDescriptor companyShips = navalBranch(company, "Troopships", "Flotilla");
+        ForceDescriptor companyShips = navalBranch(company, "DropShips", "Flotilla");
         ForceDescriptor gazelle = companyShips.getSubForces().get(0).getSubForces().get(0).getSubForces().get(0);
 
         // The view nests a lower-echelon roll under the current top before folding.
@@ -63,7 +65,7 @@ class TransportBranchMergerTest {
         assertTrue(company.getAttached().isEmpty(), "the company no longer carries a naval branch of its own");
         assertEquals(List.of(battalionShips), battalion.getAttached(), "one naval branch, at the top");
         ForceDescriptor troopships = battalionShips.getSubForces().get(0);
-        assertEquals(2, troopships.getSubForces().size(), "both flotillas sit under one Troopships category");
+        assertEquals(2, troopships.getSubForces().size(), "both flotillas sit under one DropShips category");
         assertSame(overlord, troopships.getSubForces().get(0).getSubForces().get(0));
         assertSame(gazelle, troopships.getSubForces().get(1).getSubForces().get(0));
         assertSame(troopships, gazelle.getParent().getParent(), "the moved flotilla knows its new parent");
@@ -72,7 +74,7 @@ class TransportBranchMergerTest {
     @Test
     void aCategoryTheCommandLacksIsAddedWhole() throws Exception {
         ForceDescriptor battalion = formation("Mek Battalion");
-        ForceDescriptor battalionShips = navalBranch(battalion, "Troopships", "Flotilla");
+        ForceDescriptor battalionShips = navalBranch(battalion, "DropShips", "Flotilla");
         ForceDescriptor company = formation("Vehicle Company");
         navalBranch(company, "JumpShips", "Flotilla");
 
@@ -80,13 +82,13 @@ class TransportBranchMergerTest {
         TransportBranchMerger.foldInto(battalion, company);
 
         List<String> categories = battalionShips.getSubForces().stream().map(ForceDescriptor::parseName).toList();
-        assertEquals(List.of("Troopships", "JumpShips"), categories);
+        assertEquals(List.of("DropShips", "JumpShips"), categories);
     }
 
     @Test
     void theBranchMovesUpWhenALaterRollBecomesTheTop() throws Exception {
         ForceDescriptor company = formation("Vehicle Company");
-        ForceDescriptor companyShips = navalBranch(company, "Troopships", "Flotilla");
+        ForceDescriptor companyShips = navalBranch(company, "DropShips", "Flotilla");
         ForceDescriptor regiment = formation("Mek Regiment");
 
         // A higher-echelon roll takes the earlier command under it and becomes the top.
@@ -100,7 +102,7 @@ class TransportBranchMergerTest {
     @Test
     void aRollWithoutShipsChangesNothing() throws Exception {
         ForceDescriptor battalion = formation("Mek Battalion");
-        ForceDescriptor battalionShips = navalBranch(battalion, "Troopships", "Flotilla");
+        ForceDescriptor battalionShips = navalBranch(battalion, "DropShips", "Flotilla");
         ForceDescriptor company = formation("Vehicle Company");
 
         battalion.addSubForce(company);
@@ -108,6 +110,44 @@ class TransportBranchMergerTest {
 
         assertEquals(List.of(battalionShips), battalion.getAttached());
         assertEquals(1, battalionShips.getSubForces().get(0).getSubForces().size());
+    }
+
+    @Test
+    void aLooseDropShipDocksOnASpareCollarAndItsEmptyGroupGoes() throws Exception {
+        ForceDescriptor battalion = formation("Mek Battalion");
+        ForceDescriptor branch = navalBranch(battalion, "DropShips", "Flotilla");
+        ForceDescriptor overlord = branch.getSubForces().get(0).getSubForces().get(0).getSubForces().get(0);
+        overlord.setUnitType(UnitType.DROPSHIP);
+        ForceDescriptor jumpShips = formation("JumpShips");
+        ForceDescriptor flotilla = formation("Flotilla");
+        ForceDescriptor merchant = formation("Merchant");
+        merchant.setElement(true);
+        merchant.setUnitType(UnitType.JUMPSHIP);
+        ForceDescriptor gazelle = formation("Gazelle");
+        gazelle.setElement(true);
+        gazelle.setUnitType(UnitType.DROPSHIP);
+        merchant.addAttached(gazelle);
+        flotilla.addSubForce(merchant);
+        jumpShips.addSubForce(flotilla);
+        branch.addSubForce(jumpShips);
+
+        // A Merchant has two collars; the Gazelle holds one.
+        int docked = TransportBranchMerger.dockLooseDropShips(branch, ship -> (ship == merchant) ? 2 : 0);
+
+        assertEquals(1, docked);
+        assertSame(merchant, overlord.getParent(), "the Overlord takes the spare collar");
+        assertEquals(List.of(jumpShips), branch.getSubForces(), "the emptied DropShips category is gone");
+    }
+
+    @Test
+    void aDropShipWithNoCollarToGoToStaysWhereItIs() throws Exception {
+        ForceDescriptor battalion = formation("Mek Battalion");
+        ForceDescriptor branch = navalBranch(battalion, "DropShips", "Flotilla");
+        ForceDescriptor overlord = branch.getSubForces().get(0).getSubForces().get(0).getSubForces().get(0);
+        overlord.setUnitType(UnitType.DROPSHIP);
+
+        assertEquals(0, TransportBranchMerger.dockLooseDropShips(branch, ship -> 0));
+        assertEquals(1, branch.getSubForces().size());
     }
 
     private static ForceDescriptor formation(String name) {

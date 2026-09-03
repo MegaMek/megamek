@@ -41,6 +41,7 @@ import java.util.Map;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.bays.*;
+import megamek.common.compute.Compute;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.loaders.MekSummary;
@@ -90,6 +91,12 @@ public class TransportCalculator {
     private static final int MIN_HULL_USE = 2;
 
     /**
+     * The chance, in percent, that a draw takes the one hull that is exactly the size of what is still needed
+     * rather than building the lift up from smaller hulls.
+     */
+    private static final int EXACT_FIT_CHANCE = 50;
+
+    /**
      * When no hull fits the need, the fallback draws from hulls up to this many times the size of the smallest that
      * would do, or down to this fraction of the largest there is, so the fallback keeps some variety.
      */
@@ -105,6 +112,7 @@ public class TransportCalculator {
     public static void dispose() {
         bayTypeCache.clear();
         cargoCapacityCache.clear();
+        dockingCollarCache.clear();
     }
 
     /**
@@ -348,7 +356,8 @@ public class TransportCalculator {
     /**
      * Draws a hull that suits what is still to be carried.
      *
-     * <p>Three tries, each wider than the last, and every one weighted by faction availability within it: a hull
+     * <p>A hull that carries exactly what is still needed, and that the force would mostly use, is taken first. Then
+     * three tries, each wider than the last, and every one weighted by faction availability within it: a hull
      * that is a {@link #isReasonableFit(int, int) reasonable fit} for the need and whose bays the force would
      * {@link BayLedger#wouldMostlyUse(Map) mostly use}; failing that, the smallest hulls that cover the need on
      * their own, for the one vehicle left over that no hull is small enough for; failing that, the largest hulls
@@ -369,7 +378,20 @@ public class TransportCalculator {
      */
     private @Nullable MekSummary drawHullFor(UnitTable table, int unitType, BayLedger ledger) {
         int stillNeeded = ledger.unmet(unitType);
-        MekSummary hull = drawPreferringUsed(table, ledger, candidate -> carries(candidate, unitType)
+        // Half the time, one hull that is exactly the job - an Overlord for a battalion, a Union for a company - when
+        // the table has such a hull and the force would fill it; the other half, the lift is built up from smaller
+        // hulls that are each filled. Either way no hull sails with empty bays, and a battalion is not always an
+        // Overlord nor always three Unions.
+        MekSummary hull = null;
+        if (Compute.randomInt(100) < EXACT_FIT_CHANCE) {
+            hull = table.generateUnit(candidate -> carries(candidate, unitType)
+                  && (capacityFor(candidate, unitType) == stillNeeded)
+                  && ledger.wouldMostlyUse(baysOf(candidate)));
+        }
+        if (hull != null) {
+            return hull;
+        }
+        hull = drawPreferringUsed(table, ledger, candidate -> carries(candidate, unitType)
               && isReasonableFit(capacityFor(candidate, unitType), stillNeeded));
         if (hull != null) {
             return hull;
@@ -815,13 +837,27 @@ public class TransportCalculator {
      * @return The number of docking hard points on the unit.
      */
     private int countHardpoints(MekSummary ms) {
-        try {
-            Entity entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-            // TODO: count drop shuttle bays
-            return entity.getDockingCollars().size();
-        } catch (EntityLoadingException ex) {
-            return 0;
-        }
+        return dockingCollars(ms);
+    }
+
+    /** Docking collars per hull, loaded once; a hull that cannot be loaded counts as having none. */
+    private static final Map<MekSummary, Integer> dockingCollarCache = new HashMap<>();
+
+    /**
+     * @param hull the ship
+     *
+     * @return how many docking collars it has, or 0 when it has none or cannot be loaded
+     */
+    public static int dockingCollars(MekSummary hull) {
+        return dockingCollarCache.computeIfAbsent(hull, summary -> {
+            try {
+                Entity entity = new MekFileParser(summary.getSourceFile(), summary.getEntryName()).getEntity();
+                // TODO: count drop shuttle bays
+                return entity.getDockingCollars().size();
+            } catch (EntityLoadingException exception) {
+                return 0;
+            }
+        });
     }
 
 }

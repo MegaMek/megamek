@@ -1366,9 +1366,40 @@ public class ForceDescriptor {
         StringBuilder result = new StringBuilder();
         for (int i = ancestors.size() - 1; i >= 0; i--) {
             ForceDescriptor ancestor = ancestors.get(i);
+            if (ancestor.forceId < 0) {
+                // A holder that was never given a force id - the wrapper an accumulated command model sits in -
+                // is not a force the game should see.
+                continue;
+            }
             result.append(ancestor.getCombinedDisplayName()).append('|').append(ancestor.forceId).append("||");
         }
         return result.toString();
+    }
+
+    /**
+     * Renumbers every formation under this node and rewrites the force string of every unit beneath it, so the
+     * game rebuilds the tree as it stands now.
+     *
+     * <p>Needed once rolls have been accumulated into one command: each roll numbered its own formations from one
+     * and stamped its units when it was generated, so two rolls sent together would collide on the same ids and
+     * the second roll's units would be filed into the first roll's formations. Renumbering from this node also
+     * leaves any wrapper above it out of the force strings.</p>
+     */
+    public void refreshForceStrings() {
+        assignForceIds(1);
+        restampForceStrings();
+    }
+
+    private void restampForceStrings() {
+        if (entity != null) {
+            entity.setForceString(getForceString());
+        }
+        for (ForceDescriptor sub : subForces) {
+            sub.restampForceStrings();
+        }
+        for (ForceDescriptor attachedForce : attached) {
+            attachedForce.restampForceStrings();
+        }
     }
 
     /**
@@ -1731,15 +1762,19 @@ public class ForceDescriptor {
         if (isClan) {
             addClanCategory(transports, warships, "WarShip Stars");
             addClanCategory(transports, jumpships, "JumpShip Stars");
-            // Named for what they are for: these hulls are generated to carry the command's
-            // combat units, and are kept distinct from the cargo hulls a consumer adds later to
-            // haul supplies.
-            addClanCategory(transports, dropships, "Troopship Stars");
         } else {
             addISCategory(transports, warships, "WarShips");
             addISCategory(transports, jumpships, "JumpShips");
-            // See the Clan branch above: these carry units, not cargo.
-            addISCategory(transports, dropships, "Troopships");
+        }
+        // A DropShip with a docking collar to go to is listed under the JumpShip or WarShip that carries it, the
+        // way a carrier's fighters are listed under the carrier, so the tree says what is docked to what. Only the
+        // DropShips left without a collar form a category of their own, so the branch reads WarShips, JumpShips,
+        // DropShips, each ship followed by what it carries.
+        List<MekSummary> undocked = dockUnderCollarShips(transports, dropships);
+        if (isClan) {
+            addClanCategory(transports, undocked, "DropShip Stars");
+        } else {
+            addISCategory(transports, undocked, "DropShips");
         }
 
         transports.assignCommanders();
@@ -1825,7 +1860,7 @@ public class ForceDescriptor {
      * by the consumer's naming convention, so naval formations follow the same scheme as the rest of
      * the force instead of a hardcoded one of their own.</p>
      *
-     * @param parent The category node ("WarShips" / "JumpShips" / "Troopships") that receives the hierarchy
+     * @param parent The category node ("WarShips" / "JumpShips" / "DropShips") that receives the hierarchy
      * @param ships  The ships to add (must be non-empty; callers should pre-filter)
      */
     private void addNavalHierarchy(ForceDescriptor parent, List<MekSummary> ships) {
@@ -1905,11 +1940,43 @@ public class ForceDescriptor {
      * Adds an element-level (echelon 1) child for an individual vessel.
      */
     private void addShipElement(ForceDescriptor parent, MekSummary ms) {
-        ForceDescriptor sub = parent.createChild(parent.getSubForces().size());
+        parent.addSubForce(shipElement(parent, ms));
+    }
+
+    private ForceDescriptor shipElement(ForceDescriptor parent, MekSummary ms) {
+        ForceDescriptor sub = parent.createChild(parent.getSubForces().size() + parent.getAttached().size());
         sub.setUnit(RATGenerator.getInstance().getModelRecord(ms.getName()));
         sub.setEchelon(1);
         sub.setCoRank(33);
-        parent.addSubForce(sub);
+        return sub;
+    }
+
+    /**
+     * Docks DropShips to the JumpShips and WarShips already in the naval branch, in order, each ship taking as many
+     * as it has collars. A docked DropShip becomes an attached child of the ship that carries it.
+     *
+     * @param transports the naval branch, with its WarShip and JumpShip categories already built
+     * @param dropships  the DropShips to dock, in the order they were drawn
+     *
+     * @return the DropShips no ship had a collar for, in the same order
+     */
+    private List<MekSummary> dockUnderCollarShips(ForceDescriptor transports, List<MekSummary> dropships) {
+        List<ForceDescriptor> collarShips = new ArrayList<>();
+        transports.collectCarriers(collarShips);
+        List<MekSummary> undocked = new ArrayList<>(dropships);
+        for (ForceDescriptor ship : collarShips) {
+            MekSummary shipSummary = MekSummaryCache.getInstance().getMek(ship.getModelName());
+            int collars = (shipSummary == null) ? 0 : TransportCalculator.dockingCollars(shipSummary);
+            while ((collars > 0) && !undocked.isEmpty()) {
+                ForceDescriptor docked = shipElement(ship, undocked.removeFirst());
+                // Crew it here: the force-wide commander pass does not descend into what hangs off a ship
+                // element, and without a crew loadEntities has nothing to build the entity's crew from.
+                docked.assignCommanders();
+                ship.addAttached(docked);
+                collars--;
+            }
+        }
+        return undocked;
     }
 
     public static int decodeWeightClass(String code) {
@@ -2814,7 +2881,7 @@ public class ForceDescriptor {
               || (unitType == UnitType.DROPSHIP) || (unitType == UnitType.JUMPSHIP)
               || (unitType == UnitType.SPACE_STATION))) {
             carriers.add(this);
-            return;
+            // Keep going: a DropShip docked to a JumpShip sits beneath it and is a carrier in its own right.
         }
         for (ForceDescriptor sub : subForces) {
             sub.collectCarriers(carriers);

@@ -943,8 +943,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      * columns.
      * <p>For Battle Armor each entity represents one Squad/Point (5 Clan Elementals, 4-5 IS), so cells show
      * "N (M)" where N is the squad count and M is the total trooper count. Other unit types show plain N.</p>
+     *
+     * <p>Public so a host that accumulates rolls into one command can show the whole command here rather than
+     * the roll that just landed.</p>
+     *
+     * @param fd the force to summarise
      */
-    private void updateSummaryTable(ForceDescriptor fd) {
+    public void updateSummaryTable(ForceDescriptor fd) {
         summaryModel.setRowCount(0);
         if (fd == null) {
             return;

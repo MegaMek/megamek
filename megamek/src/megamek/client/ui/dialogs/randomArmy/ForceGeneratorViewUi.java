@@ -148,10 +148,11 @@ public class ForceGeneratorViewUi implements ActionListener {
     /** Told of every roll and every Clear Force, with the rolled force or {@code null} for a clear. */
     private Consumer<ForceDescriptor> forceGeneratedListener = null;
 
-    // When set by a host (e.g. MekHQ's Command Designer), each Generate appends its rolled force to an
-    // accumulating Model root rather than replacing the tree, so the player can mix-and-match several
-    // rolls into one command before committing. modelRoot holds the accumulated command.
-    private boolean accumulateModel = false;
+    // Each Generate appends its rolled force to an accumulating Model root rather than replacing the tree, so
+    // the player builds one command from several rolls - a Mek battalion, then the vehicle company that goes
+    // with it - before adding it to a game or committing it to a campaign. On by default so every host behaves
+    // the same way; Clear Force empties the model. modelRoot holds the accumulated command.
+    private boolean accumulateModel = true;
     // Thin wrapper root that always holds exactly one child: the current top command (modelTop). The
     // wrapper exists so the commit walker (which merges the passed root into the campaign's own
     // formation and flattens its children) preserves modelTop as a distinct formation - so a rolled
@@ -355,6 +356,8 @@ public class ForceGeneratorViewUi implements ActionListener {
         // host that commits the tree instead and so never reads that table. Both live in the panel; one is shown.
         chosenUnitsPane = scroll;
         leftPanel.add(chosenUnitsPane);
+        // The model is on by default, so its status line and title have to be right from the first paint.
+        refreshCommandModelChrome();
     }
 
     /**
@@ -506,9 +509,9 @@ public class ForceGeneratorViewUi implements ActionListener {
 
     /**
      * Enables Model-accumulation mode: each Generate appends its rolled force to an in-dialog Model
-     * root rather than replacing the tree, so a host (e.g. MekHQ's Command Designer) can let the player
-     * build one command from several rolls before committing. Defaults to {@code false} (standalone
-     * Random Army replaces the tree on each Generate).
+     * root rather than replacing the tree, so the player can build one command from several rolls before
+     * adding or committing it. Defaults to {@code true}; a host that wants each Generate to replace the last
+     * roll turns it off.
      *
      * @param enabled {@code true} to accumulate rolls into a Model
      */
@@ -522,7 +525,7 @@ public class ForceGeneratorViewUi implements ActionListener {
      * Applies (or clears) the Command Designer's design-stage chrome around the tree. In accumulate
      * mode the tree gets a "Command Model (Design)" titled border - so it never reads as the live TOE -
      * and the status line under it shows either the empty-state hint or the running model size with a
-     * "not yet committed" reminder. In standalone mode the border and status line are removed.
+     * "not yet placed" reminder. With the model off, the border and status line are removed.
      */
     private void refreshCommandModelChrome() {
         if (paneForceTree == null || lblModelStatus == null) {
@@ -624,6 +627,12 @@ public class ForceGeneratorViewUi implements ActionListener {
             }
             entities.add(e);
         }
+        // Rolls accumulated into one command each numbered their own formations from one; renumber the command
+        // as it stands so the game files every unit into the right formation and sees no wrapper above the top.
+        ForceDescriptor commandTop = (accumulateModel && (modelTop != null)) ? modelTop : generatedForce;
+        if (commandTop != null) {
+            commandTop.refreshForceStrings();
+        }
         // After the owners are set, because a carrier only takes units on its own side, and before the
         // batch goes out, because the server translates the ids written here when it adds the units.
         CarrierLoadingConfigurator.configure(generatedForce, modelChosen::hasEntity);
@@ -685,6 +694,11 @@ public class ForceGeneratorViewUi implements ActionListener {
                   accumulateModel, fd != null);
         }
         forceTree.setModel(new ForceTreeModel(displayRoot));
+        if (accumulateModel && (displayRoot != null)) {
+            // The options panel summarised the roll that just landed; the player is building a command, so the
+            // summary should count everything accumulated so far.
+            panControls.updateSummaryTable(displayRoot);
+        }
         expandTopLevels();
         // A new force invalidates the previous search; clearing the field re-runs the (now empty)
         // search via the document listener, resetting the match list and status.
@@ -1558,8 +1572,9 @@ public class ForceGeneratorViewUi implements ActionListener {
                 if ((en != null) && en.isLargeCraft()) {
                     // Large craft (WarShip, DropShip, JumpShip, Space Station) read better
                     // ship-first, the way a fleet roster is listed: ship name and class on
-                    // the top line, commander (skill) beneath.
-                    String shipClass = "<i>" + en.getChassis() + "</i>";
+                    // the top line, commander (skill) beneath. Chassis and model, like every other
+                    // node: a Union (2708) carries Meks and a Union (2710) (CV) carries none.
+                    String shipClass = "<i>" + en.getShortName() + "</i>";
                     String shipName = fd.getFluffName();
                     String topLine = ((shipName != null) && !shipName.isBlank())
                           ? "<b>" + shipName + "</b>, " + shipClass

@@ -33,10 +33,13 @@
 package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
@@ -51,9 +54,10 @@ import megamek.logging.MMLogger;
  * beneath a carrier names that carrier as its transport. The server does the loading, and clears the
  * transport id of anything that does not fit once it has counted the bays.</p>
  *
- * <p>Only what the tree nests under a carrier goes aboard. The troopships the DropShip Percentage setting
- * adds are sized to lift the force, but the tree never says which Mek rides in which hull, so those units
- * stay on the ground where a lobby game expects them.</p>
+ * <p>What the tree nests under a carrier goes aboard, and a DropShip with no ship of its own docks to a JumpShip
+ * or WarShip in the batch that has a collar free. The troopships the DropShip Percentage setting adds are sized
+ * to lift the force, but the tree never says which Mek rides in which hull, so those units stay on the ground
+ * where a lobby game expects them.</p>
  */
 public final class CarrierLoadingConfigurator {
 
@@ -92,6 +96,7 @@ public final class CarrierLoadingConfigurator {
         }
 
         int carried = boardBeneath(root, null, isIncluded);
+        carried += dock(included);
         if (carried > 0) {
             LOGGER.info("[ForceGen][Carrier] {} unit(s) under '{}' will board their carrier when added to the game",
                   carried, root.parseName());
@@ -149,6 +154,44 @@ public final class CarrierLoadingConfigurator {
             carried += boardBeneath(child, carrierForChildren, isIncluded);
         }
         return carried;
+    }
+
+    /**
+     * Docks every DropShip still without a ship to a JumpShip or WarShip in the batch with a collar to spare, in
+     * the order they appear. The tree lists JumpShips and DropShips as separate categories rather than nesting one
+     * under the other, so this is where the collars the transport stage counted are actually taken.
+     *
+     * @param included every unit in the batch, in tree order
+     *
+     * @return how many DropShips were docked
+     */
+    private static int dock(List<Entity> included) {
+        Map<Entity, Integer> freeCollars = new LinkedHashMap<>();
+        for (Entity entity : included) {
+            if (!entity.getDockingCollars().isEmpty()) {
+                freeCollars.put(entity, entity.getDockingCollars().size());
+            }
+        }
+        if (freeCollars.isEmpty()) {
+            return 0;
+        }
+        int docked = 0;
+        for (Entity entity : included) {
+            boolean isUndockedDropship = (entity instanceof Dropship) && (entity.getTransportId() == Entity.NONE);
+            if (!isUndockedDropship) {
+                continue;
+            }
+            for (Map.Entry<Entity, Integer> ship : freeCollars.entrySet()) {
+                boolean hasCollarFree = ship.getValue() > 0;
+                if (hasCollarFree && ship.getKey().canLoad(entity, false)) {
+                    entity.setTransportId(ship.getKey().getId());
+                    ship.setValue(ship.getValue() - 1);
+                    docked++;
+                    break;
+                }
+            }
+        }
+        return docked;
     }
 
     /**

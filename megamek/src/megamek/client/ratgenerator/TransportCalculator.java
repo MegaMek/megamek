@@ -809,27 +809,19 @@ public class TransportCalculator {
      * @return the unit type key, or {@link #NOT_A_UNIT_BAY} when the bay holds no units
      */
     static int bayType(Bay bay) {
-        if (bay instanceof MekBay) {
-            return UnitType.MEK;
-        } else if (bay instanceof ProtoMekBay) {
-            return UnitType.PROTOMEK;
-        } else if (bay instanceof HeavyVehicleBay) {
-            return UnitType.TANK;
-        } else if (bay instanceof LightVehicleBay) {
-            return UnitType.VTOL;
-        } else if (bay instanceof SuperHeavyVehicleBay) {
-            return UnitType.NAVAL;
-        } else if (bay instanceof BattleArmorBay) {
-            return UnitType.BATTLE_ARMOR;
-        } else if (bay instanceof InfantryBay) {
-            // Infantry bays are measured in tons, the same unit the platoon demand is counted in.
-            return UnitType.INFANTRY;
-        } else if (bay instanceof ASFBay) {
-            return UnitType.AEROSPACE_FIGHTER;
-        } else if (bay instanceof SmallCraftBay) {
-            return UnitType.SMALL_CRAFT;
-        }
-        return NOT_A_UNIT_BAY;
+        // Infantry bays are measured in tons, the same unit the platoon demand is counted in.
+        return switch (bay) {
+            case MekBay mekBay -> UnitType.MEK;
+            case ProtoMekBay protoMekBay -> UnitType.PROTOMEK;
+            case HeavyVehicleBay heavyVehicleBay -> UnitType.TANK;
+            case LightVehicleBay lightVehicleBay -> UnitType.VTOL;
+            case SuperHeavyVehicleBay superHeavyVehicleBay -> UnitType.NAVAL;
+            case BattleArmorBay battleArmorBay -> UnitType.BATTLE_ARMOR;
+            case InfantryBay infantryBay -> UnitType.INFANTRY;
+            case ASFBay fighterBay -> UnitType.AEROSPACE_FIGHTER;
+            case SmallCraftBay smallCraftBay -> UnitType.SMALL_CRAFT;
+            default -> NOT_A_UNIT_BAY;
+        };
     }
 
     /**

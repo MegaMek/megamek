@@ -87,7 +87,6 @@ public class BombISRL10 extends MissileWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TM, 229);
         this.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_ES, 3064, 3067, DATE_NONE, DATE_NONE)

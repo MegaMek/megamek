@@ -79,7 +79,6 @@ public class CLStreakSRM6Prototype extends CLPrototypeStreakSRMWeapon {
         flags = flags.or(F_PROTOTYPE).andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(2819, DATE_NONE, DATE_NONE, 2826, DATE_NONE)

@@ -77,7 +77,6 @@ public class ISNarcOS extends NarcWeapon {
         techAdvancement
               .setTechBase(TechBase.ALL)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2665, 26767, 3045, 2795, 3035)

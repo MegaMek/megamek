@@ -86,7 +86,6 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
         );
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(true)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)

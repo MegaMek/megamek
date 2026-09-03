@@ -82,7 +82,7 @@ public class CLBAERPulseLaserSmall extends PulseLaserWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TM, 258);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false).setUnofficial(false).setTechRating(TechRating.F)
+              .setIntroLevel(false).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(DATE_NONE, 3057, 3082, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)

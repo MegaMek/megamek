@@ -84,7 +84,6 @@ public class ISERLaserMedium extends LaserWeapon {
         // December 2021 - Errata request to change common date
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(3052, 3058, 3062, DATE_NONE, DATE_NONE)

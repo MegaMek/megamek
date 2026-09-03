@@ -76,7 +76,6 @@ public class ISTAG extends TAGWeapon {
         flags = flags.andNot(F_PROTO_WEAPON).andNot(F_BA_WEAPON);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2593, 2600, 3045, 2835, 3044)

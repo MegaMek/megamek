@@ -83,7 +83,6 @@ public class ISERLaserLarge extends LaserWeapon {
         );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2610, 2620, 3045, 2950, 3037)

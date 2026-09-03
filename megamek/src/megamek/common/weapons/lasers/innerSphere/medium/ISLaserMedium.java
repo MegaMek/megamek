@@ -82,7 +82,6 @@ public class ISLaserMedium extends LaserWeapon {
         );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(true)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(2290, 2300, 2310, DATE_NONE, DATE_NONE)

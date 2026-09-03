@@ -84,7 +84,6 @@ public class ISBAPlasmaRifle extends Weapon {
         );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(3063, 3065, 3074, DATE_NONE, DATE_NONE)

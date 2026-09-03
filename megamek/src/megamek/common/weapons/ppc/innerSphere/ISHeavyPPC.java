@@ -87,7 +87,6 @@ public class ISHeavyPPC extends PPCWeapon {
         flags = flags.or(F_PPC_CAPACITOR_COMPATIBLE);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.C)
               .setISAdvancement(3062, 3067, 3068, DATE_NONE, DATE_NONE)

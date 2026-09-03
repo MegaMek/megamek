@@ -76,7 +76,6 @@ public class CLAdvancedSRM6OS extends AdvancedSRMWeapon {
         );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setClanAdvancement(3052, 3056, 3066, DATE_NONE, DATE_NONE)

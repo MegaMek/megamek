@@ -82,7 +82,6 @@ public abstract class ThunderboltWeapon extends MissileWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 159);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)

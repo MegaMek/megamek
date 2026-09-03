@@ -76,7 +76,6 @@ public class CLSRT2OS extends SRTWeapon {
         );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2665, 2676, 3045, 2800, 3030)

@@ -83,7 +83,6 @@ public class CLHAG20 extends HAGWeapon {
         //Jan 22 - Errata issued by CGL (Greekfire) for HAGs        
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(DATE_NONE, 3062, 3068, DATE_NONE, DATE_NONE)

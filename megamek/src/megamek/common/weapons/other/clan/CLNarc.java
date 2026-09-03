@@ -76,7 +76,6 @@ public class CLNarc extends NarcWeapon {
         );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
               .setClanAdvancement(2820, 2828, 2830, DATE_NONE, DATE_NONE)

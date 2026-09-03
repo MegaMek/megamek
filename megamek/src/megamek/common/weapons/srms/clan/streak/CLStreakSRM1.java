@@ -80,7 +80,6 @@ public class CLStreakSRM1 extends StreakSRMWeapon {
         );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)

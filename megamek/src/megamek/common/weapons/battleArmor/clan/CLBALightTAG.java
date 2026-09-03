@@ -82,7 +82,6 @@ public class CLBALightTAG extends TAGWeapon {
         );
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3051, 3053, 3057, DATE_NONE, DATE_NONE)

@@ -78,7 +78,6 @@ public class CLBASRM2OS extends SRMWeapon {
         );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(2865, 2868, 2870, DATE_NONE, DATE_NONE)

@@ -84,7 +84,6 @@ public class ISBAGrenadeLauncherMicro extends Weapon {
         );
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_ES, DATE_ES, 3050, DATE_NONE, DATE_NONE)

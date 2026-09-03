@@ -81,7 +81,6 @@ public class CLMG extends MGWeapon {
         );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.A)
               .setClanAdvancement(2821, 2825, 2830, DATE_NONE, DATE_NONE)

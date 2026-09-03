@@ -85,7 +85,6 @@ public class ISHeavyMG extends MGWeapon {
         );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(3063, 3068, 3070, DATE_NONE, DATE_NONE)

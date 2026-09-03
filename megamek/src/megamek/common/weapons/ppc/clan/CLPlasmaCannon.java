@@ -94,7 +94,6 @@ public class CLPlasmaCannon extends AmmoWeapon {
         );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(3068, 3069, 3070, DATE_NONE, DATE_NONE)

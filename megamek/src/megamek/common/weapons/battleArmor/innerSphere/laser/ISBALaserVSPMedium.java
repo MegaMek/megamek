@@ -85,7 +85,6 @@ public class ISBALaserVSPMedium extends VariableSpeedPulseLaserWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 133);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3070, 3072, 3080, DATE_NONE, DATE_NONE)

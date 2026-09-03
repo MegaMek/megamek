@@ -73,7 +73,6 @@ public class CLMekMortar4 extends MekMortarWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 136);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
               .setClanAdvancement(2835, 2840, DATE_NONE, DATE_NONE, DATE_NONE)

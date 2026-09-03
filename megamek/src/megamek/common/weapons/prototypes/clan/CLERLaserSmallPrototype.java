@@ -79,7 +79,6 @@ public class CLERLaserSmallPrototype extends LaserWeapon {
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 91);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(2819, DATE_NONE, DATE_NONE, 2825, DATE_NONE)

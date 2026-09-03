@@ -78,7 +78,6 @@ public class ISLRT20IOS extends LRTWeapon {
         );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3056, 3081, 3085, DATE_NONE, DATE_NONE)

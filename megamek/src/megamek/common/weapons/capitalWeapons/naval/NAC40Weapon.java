@@ -73,7 +73,6 @@ public class NAC40Weapon extends NavalACWeapon {
         techAdvancement
               .setTechBase(TechBase.ALL)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_ES, 2201, DATE_NONE, 2950, 3051)

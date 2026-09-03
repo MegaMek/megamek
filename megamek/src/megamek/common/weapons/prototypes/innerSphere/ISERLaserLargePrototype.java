@@ -93,7 +93,6 @@ public class ISERLaserLargePrototype extends LaserWeapon {
         flags = flags.or(F_PROTOTYPE);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(3030, DATE_NONE, DATE_NONE, 3037, DATE_NONE)

@@ -92,7 +92,6 @@ public class ISLB10XACPrototype extends LBXACWeapon {
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 66);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2590, DATE_NONE, DATE_NONE, 2595, 3035)

@@ -87,7 +87,6 @@ public class ISMML7 extends MMLWeapon {
         // March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)

@@ -78,7 +78,6 @@ public class CLBALaserERMicro extends LaserWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TM, 258);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3064, DATE_NONE, DATE_NONE)

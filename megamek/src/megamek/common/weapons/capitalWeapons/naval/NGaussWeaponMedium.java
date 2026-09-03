@@ -78,7 +78,6 @@ public class NGaussWeaponMedium extends NGaussWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 145);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.X)
               .setISAdvancement(2440, 2448, DATE_NONE, 2950, 3052)

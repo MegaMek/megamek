@@ -72,7 +72,6 @@ public class ISMekMortar8 extends MekMortarWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 136);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(2526, 2531, 3052, 2819, 3043)

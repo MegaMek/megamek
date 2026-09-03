@@ -83,7 +83,6 @@ public class ISBAGaussRifleTsunami extends Weapon {
         );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(3054, 3056, 3058, DATE_NONE, DATE_NONE)

@@ -88,7 +88,6 @@ public class ISLAAMissileWeapon extends ThunderboltWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 171);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)

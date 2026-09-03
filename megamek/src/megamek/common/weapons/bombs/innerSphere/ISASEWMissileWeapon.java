@@ -99,7 +99,6 @@ public class ISASEWMissileWeapon extends ThunderboltWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 170);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(3067, 3073, DATE_NONE, DATE_NONE, DATE_NONE)

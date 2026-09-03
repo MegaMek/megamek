@@ -73,7 +73,6 @@ public class NAC20Weapon extends NavalACWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 143);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_ES, 2195, DATE_NONE, 2950, 3051)

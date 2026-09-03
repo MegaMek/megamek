@@ -79,7 +79,6 @@ public class ISBAGaussRifleGrandMauler extends Weapon {
         rulesRefs = rulesRefs(SourceBookCode.TM, 255);
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.E)
               .setISAdvancement(3055, 3059, 3060, DATE_NONE, DATE_NONE)

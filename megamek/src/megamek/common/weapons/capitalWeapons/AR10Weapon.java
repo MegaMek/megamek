@@ -81,7 +81,6 @@ public class AR10Weapon extends CapitalMissileWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TM, 210);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2540, 2550, 3055, 2950, 3051)

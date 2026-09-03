@@ -76,7 +76,7 @@ public class CLBAFlamerHeavy extends BAFlamerWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 124);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false).setUnofficial(false).setTechRating(TechRating.C)
+              .setIntroLevel(false).setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setAdvancement(DATE_NONE, 3070, 3073, DATE_NONE, DATE_NONE)
               .setApproximate(false, true, false, false, false)

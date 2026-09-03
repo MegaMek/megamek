@@ -75,7 +75,6 @@ public class NPPCWeaponHeavy extends NPPCWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 146);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(2350, 2356, DATE_NONE, 2950, 3052)

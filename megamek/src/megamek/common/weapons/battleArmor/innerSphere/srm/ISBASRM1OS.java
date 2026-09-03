@@ -72,7 +72,6 @@ public class ISBASRM1OS extends SRMWeapon {
         );
         techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.B)
               .setISAdvancement(3050, 3050, 3051, DATE_NONE, DATE_NONE)

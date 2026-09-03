@@ -80,7 +80,6 @@ public class CLUAC10 extends UACWeapon {
         );
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
               .setClanAdvancement(2825, 2827, 2829, DATE_NONE, DATE_NONE)

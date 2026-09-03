@@ -90,7 +90,6 @@ public class CLBAMicroBomb extends Weapon {
         rulesRefs = rulesRefs(SourceBookCode.TM, 253);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)

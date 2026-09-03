@@ -81,7 +81,6 @@ public class ISFlamer extends FlamerWeapon {
         );
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(true)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.A)
               .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)

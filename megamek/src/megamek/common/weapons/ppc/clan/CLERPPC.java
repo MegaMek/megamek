@@ -84,7 +84,6 @@ public class CLERPPC extends PPCWeapon {
         flags = flags.or(F_PPC_CAPACITOR_COMPATIBLE);
         techAdvancement.setTechBase(TechBase.CLAN)
               .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setClanAdvancement(2823, 2826, 2828, DATE_NONE, DATE_NONE)

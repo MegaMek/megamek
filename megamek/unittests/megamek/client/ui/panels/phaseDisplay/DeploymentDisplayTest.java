@@ -369,7 +369,7 @@ public class DeploymentDisplayTest {
         void shouldSetElevation_ForGroundUnit() {
             // Arrange
             Entity groundUnit = new BipedMek();
-            DeploymentPosition position = new DeploymentPosition(2, 3);
+            DeploymentPosition position = new DeploymentPosition(2, 3, null);
 
             // Act
             deploymentDisplay.applyDeploymentToEntity(groundUnit, position);
@@ -388,7 +388,7 @@ public class DeploymentDisplayTest {
         void shouldSetAltitude_ForAeroUnitNonZero() {
             // Arrange
             SmallCraft aeroUnit = new SmallCraft();
-            DeploymentPosition position = new DeploymentPosition(5, 2);
+            DeploymentPosition position = new DeploymentPosition(5, 2, null);
 
             // Act
             deploymentDisplay.applyDeploymentToEntity(aeroUnit, position);
@@ -407,7 +407,7 @@ public class DeploymentDisplayTest {
         void shouldLandAero_AtZeroElevation() {
             // Arrange
             SmallCraft aeroUnit = new SmallCraft();
-            DeploymentPosition position = new DeploymentPosition(0, 4);
+            DeploymentPosition position = new DeploymentPosition(0, 4, null);
 
             // Act
             deploymentDisplay.applyDeploymentToEntity(aeroUnit, position);
@@ -429,7 +429,7 @@ public class DeploymentDisplayTest {
 
             // Act & Assert
             for (int facing = 0; facing < 6; facing++) {
-                DeploymentPosition position = new DeploymentPosition(1, facing);
+                DeploymentPosition position = new DeploymentPosition(1, facing, null);
                 deploymentDisplay.applyDeploymentToEntity(entity, position);
 
                 assertEquals(facing, entity.getFacing(),
@@ -442,7 +442,7 @@ public class DeploymentDisplayTest {
         void shouldHandleNegativeElevation_ForUnderwater() {
             // Arrange
             Entity entity = new BipedMek();
-            DeploymentPosition position = new DeploymentPosition(-2, 0);
+            DeploymentPosition position = new DeploymentPosition(-2, 0, null);
 
             // Act
             deploymentDisplay.applyDeploymentToEntity(entity, position);
@@ -464,7 +464,7 @@ public class DeploymentDisplayTest {
         @DisplayName("should create DeploymentPosition with correct values")
         void shouldCreateDeploymentPosition() {
             // Arrange & Act
-            DeploymentPosition position = new DeploymentPosition(3, 4);
+            DeploymentPosition position = new DeploymentPosition(3, 4, null);
 
             // Assert
             assertEquals(3, position.elevation(), "Elevation should be 3");
@@ -475,9 +475,9 @@ public class DeploymentDisplayTest {
         @DisplayName("should support equality comparison")
         void shouldSupportEquality() {
             // Arrange
-            DeploymentPosition pos1 = new DeploymentPosition(2, 3);
-            DeploymentPosition pos2 = new DeploymentPosition(2, 3);
-            DeploymentPosition pos3 = new DeploymentPosition(2, 4);
+            DeploymentPosition pos1 = new DeploymentPosition(2, 3, null);
+            DeploymentPosition pos2 = new DeploymentPosition(2, 3, null);
+            DeploymentPosition pos3 = new DeploymentPosition(2, 4, null);
 
             // Act & Assert
             assertEquals(pos1, pos2, "Same values should be equal");

@@ -968,7 +968,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      * <p>Public so a host that accumulates rolls into one command can show the whole command here rather than
      * the roll that just landed.</p>
      *
-     * @param fd the force to summarise
+     * @param force the force to summarise
      */
     public void updateSummaryTable(ForceDescriptor force) {
         summaryModel.setRowCount(0);

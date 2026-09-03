@@ -962,15 +962,6 @@ public class TechAdvancement implements ITechnology {
         return Math.min(d1, d2);
     }
 
-    public TechAdvancement setIntroLevel(boolean intro) {
-        if (intro) {
-            staticTechLevel = SimpleTechLevel.INTRO;
-        } else if (staticTechLevel == SimpleTechLevel.INTRO) {
-            staticTechLevel = SimpleTechLevel.STANDARD;
-        }
-        return this;
-    }
-
     @Override
     public SimpleTechLevel getStaticTechLevel() {
         return staticTechLevel;

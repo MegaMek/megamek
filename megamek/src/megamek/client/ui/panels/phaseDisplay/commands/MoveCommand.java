@@ -53,7 +53,8 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
     MOVE_WALK("moveWalk", MovementDisplay.CMD_GROUND),
     MOVE_JUMP("moveJump",
           MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK | MovementDisplay.CMD_INF | MovementDisplay.CMD_PROTOMEK),
-    MOVE_BACK_UP("moveBackUp", MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK | MovementDisplay.CMD_VTOL | MovementDisplay.CMD_PROTOMEK),
+    MOVE_BACK_UP("moveBackUp",
+          MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK | MovementDisplay.CMD_VTOL | MovementDisplay.CMD_PROTOMEK),
     MOVE_GET_UP("moveGetUp", MovementDisplay.CMD_MEK),
     MOVE_FORWARD_INI("moveForwardIni", MovementDisplay.CMD_ALL),
     MOVE_CHARGE("moveCharge", MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK),
@@ -244,7 +245,6 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
             default:
                 break;
         }
-
         return result;
     }
 

@@ -176,6 +176,28 @@ class CarrierLoadingConfiguratorTest {
     }
 
     @Test
+    void aCollarTakenByANestedDropShipIsNotGivenAway() throws Exception {
+        // An Aegis with four DropShips docked beneath it in the tree has no collar left for a loose fifth.
+        ForceDescriptor jumpShips = formation("JumpShips");
+        Entity aegis = load(WARSHIP, true);
+        ForceDescriptor aegisNode = unit(aegis);
+        List<Entity> dockedLeopards = new ArrayList<>();
+        for (int count = 0; count < 4; count++) {
+            Entity dockedLeopard = load(DROPSHIP, true);
+            dockedLeopards.add(dockedLeopard);
+            aegisNode.addAttached(unit(dockedLeopard));
+        }
+        jumpShips.addSubForce(aegisNode);
+        root.getAttached().get(0).addSubForce(jumpShips);
+
+        int carried = CarrierLoadingConfigurator.configure(root, entity -> true);
+
+        assertEquals(2 + 4, carried, "two fighters aboard the loose Leopard, four DropShips docked by the tree");
+        assertEquals(4, dockedLeopards.stream().filter(ship -> ship.getTransportId() == aegis.getId()).count());
+        assertEquals(Entity.NONE, leopard.getTransportId(), "the loose Leopard finds every collar taken");
+    }
+
+    @Test
     void aMissingForceIsIgnored() {
         assertEquals(0, CarrierLoadingConfigurator.configure(null, entity -> true));
     }

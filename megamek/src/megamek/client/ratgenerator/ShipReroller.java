@@ -194,11 +194,17 @@ public final class ShipReroller {
         return count;
     }
 
+    /**
+     * Takes the ship's attached nodes of one unit type out of the tree. Each comes away with no parent, so a
+     * node that is dropped does not keep pointing at the ship; {@code addAttached} sets the parent again on
+     * the ones that go back.
+     */
     private static List<ForceDescriptor> detachAttachedOfType(ForceDescriptor ship, int unitType) {
         List<ForceDescriptor> detached = new ArrayList<>();
         for (ForceDescriptor attached : new ArrayList<>(ship.getAttached())) {
             if ((attached.getUnitType() != null) && (attached.getUnitType() == unitType)) {
                 ship.getAttached().remove(attached);
+                attached.setParent(null);
                 detached.add(attached);
             }
         }

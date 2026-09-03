@@ -33,6 +33,7 @@
 package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,8 +159,8 @@ public final class CarrierLoadingConfigurator {
 
     /**
      * Docks every DropShip still without a ship to a JumpShip or WarShip in the batch with a collar to spare, in
-     * the order they appear. The tree lists JumpShips and DropShips as separate categories rather than nesting one
-     * under the other, so this is where the collars the transport stage counted are actually taken.
+     * the order they appear. DropShips the tree nests under a ship were docked to it by {@link #boardBeneath};
+     * their collars are taken before any loose DropShip is given one, so a ship is never docked past its collars.
      *
      * @param included every unit in the batch, in tree order
      *
@@ -167,13 +168,22 @@ public final class CarrierLoadingConfigurator {
      */
     private static int dock(List<Entity> included) {
         Map<Entity, Integer> freeCollars = new LinkedHashMap<>();
+        Map<Integer, Entity> collarShipsById = new HashMap<>();
         for (Entity entity : included) {
             if (!entity.getDockingCollars().isEmpty()) {
                 freeCollars.put(entity, entity.getDockingCollars().size());
+                collarShipsById.put(entity.getId(), entity);
             }
         }
         if (freeCollars.isEmpty()) {
             return 0;
+        }
+        for (Entity entity : included) {
+            boolean isDockedDropship = (entity instanceof Dropship) && (entity.getTransportId() != Entity.NONE);
+            Entity carrier = isDockedDropship ? collarShipsById.get(entity.getTransportId()) : null;
+            if (carrier != null) {
+                freeCollars.merge(carrier, -1, Integer::sum);
+            }
         }
         int docked = 0;
         for (Entity entity : included) {

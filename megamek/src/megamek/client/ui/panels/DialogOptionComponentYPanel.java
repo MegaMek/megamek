@@ -107,6 +107,10 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     private boolean settingsControlInitialized;
     private boolean requestedEditable;
     private boolean dependencyEditable = true;
+    /** Set once a scenario locks this option; no later editability request re-enables it. */
+    private boolean lockedByScenario;
+    /** The reason shown under the help text while locked, or {@code null} when not locked. */
+    private String lockNote;
     /** Short marker appended to the displayable name (e.g. " (P)" for partially implemented SPAs). */
     private String nameSuffix = "";
     private final DialogOptionListener dialogOptionListener;
@@ -405,7 +409,40 @@ public class DialogOptionComponentYPanel extends FixedYPanel
 
     @Override
     public String getSettingsHelpText() {
-        return settingsHelpText == null ? option.getDescription() : settingsHelpText;
+        String helpText = settingsHelpText == null ? option.getDescription() : settingsHelpText;
+        return lockNote == null ? helpText : helpText + "\n\n" + lockNote;
+    }
+
+    /**
+     * Locks this option on a scenario's behalf. It stays disabled whatever editability the dialog asks for
+     * afterwards - a later {@code setEditable(true)}, the ruleset switch re-enabling the Total Warfare-only
+     * options - and the reason is added under its help text, so the Option Details panel and the legacy
+     * tooltips both say why it cannot be changed.
+     *
+     * @param note The reason, in the player's words
+     */
+    public void lockWithNote(String note) {
+        lockedByScenario = true;
+        lockNote = note;
+        applyEditable();
+        String tooltip = convertToHtml(getSettingsHelpText());
+        if (checkbox != null) {
+            checkbox.setToolTipText(tooltip);
+        }
+        if (optionLabel != null) {
+            optionLabel.setToolTipText(tooltip);
+        }
+        JComponent control = valueControl();
+        if (control != null) {
+            control.setToolTipText(tooltip);
+        }
+    }
+
+    /**
+     * @return {@code true} once a scenario has locked this option
+     */
+    public boolean isLockedByScenario() {
+        return lockedByScenario;
     }
 
     /**
@@ -650,7 +687,7 @@ public class DialogOptionComponentYPanel extends FixedYPanel
     }
 
     private void applyEditable() {
-        boolean editable = requestedEditable && dependencyEditable;
+        boolean editable = requestedEditable && dependencyEditable && !lockedByScenario;
         if (torsoMultiSelect) {
             torsoCheckboxes.values().forEach(box -> box.setEnabled(editable));
             return;

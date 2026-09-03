@@ -152,6 +152,7 @@ import megamek.server.victory.VictoryResult;
  * Manages the Game and processes player actions.
  */
 public class TWGameManager extends AbstractGameManager {
+
     private static final MMLogger LOGGER = MMLogger.create(TWGameManager.class);
 
     /** Hidden-unit probe detection diagnostics ([HiddenUnits] tag; shared feature logger, see ServerHelper). */
@@ -492,6 +493,9 @@ public class TWGameManager extends AbstractGameManager {
         getGame().reset();
         send(createEntitiesPacket());
         send(new Packet(PacketCommand.SENDING_MINEFIELDS, new Vector<>()));
+        // the reset above clears the board's ground objects on the server; say so, or every connected
+        // client keeps drawing the objective flags it was last sent
+        sendGroundObjectUpdate();
 
         // remove ghosts
         List<Player> ghosts = new ArrayList<>();
@@ -1008,8 +1012,19 @@ public class TWGameManager extends AbstractGameManager {
                 send(connId, packetHelper.createAttackPacket(getGame().getTeleMissileAttacksVector(), true));
             }
 
+            // a player joining a scenario mid-way through a pre-game player-turn phase has no turn in an
+            // order built before they connected; give them one now, and tell everyone the order changed.
+            // The broadcast reaches the joiner too, so the per-connection copy below is skipped for them
+            boolean turnOrderAlreadySent = false;
+            if (new LateJoinTurnHandler(this).giveTurnIfPhaseHasPassedThemBy(player)) {
+                send(packetHelper.createTurnListPacket());
+                turnOrderAlreadySent = true;
+            }
+
             if (getGame().getPhase().usesTurns() && getGame().hasMoreTurns()) {
-                send(connId, packetHelper.createTurnListPacket());
+                if (!turnOrderAlreadySent) {
+                    send(connId, packetHelper.createTurnListPacket());
+                }
                 send(connId, packetHelper.createTurnIndexPacket(connId));
             } else if (!getGame().getPhase().isLounge() && !getGame().getPhase().isStartingScenario()) {
                 endCurrentPhase();
@@ -3389,6 +3404,8 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 }
             }
+
+            reportObjectiveStandings();
 
             if (!doBlind()) {
                 // The turn order is different in movement phase
@@ -16320,6 +16337,15 @@ public class TWGameManager extends AbstractGameManager {
      */
     void resolveObjectives() {
         new ObjectiveResolutionHandler(this).resolveObjectives();
+    }
+
+    /**
+     * Reports where each control point stands as the round begins, under the teams in the initiative
+     * report. Delegates to {@link ObjectiveResolutionHandler} so the objectives rules do not add to this
+     * already very large class.
+     */
+    void reportObjectiveStandings() {
+        new ObjectiveResolutionHandler(this).reportObjectiveStandings();
     }
 
     /**

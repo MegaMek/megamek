@@ -102,6 +102,7 @@ import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
 import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryHelper;
+import megamek.server.victory.VictoryPointLevel;
 import megamek.server.victory.VictoryResult;
 
 import java.io.Serial;
@@ -223,6 +224,9 @@ public final class Game extends AbstractGame implements Serializable,
     private HashSet<Coords> illuminatedPositions = new HashSet<>();
 
     private HashMap<String, Object> victoryContext = null;
+
+    // the scenario's graded victory scale (e.g. Pyrrhic / minor / major); empty when the scenario defines none
+    private List<VictoryPointLevel> victoryPointLevels = new ArrayList<>();
 
     // internal integer value for an external game id link
     private int externalGameId = 0;
@@ -3112,6 +3116,23 @@ public final class Game extends AbstractGame implements Serializable,
 
     public void setVictoryContext(HashMap<String, Object> ctx) {
         victoryContext = ctx;
+    }
+
+    /**
+     * @return The scenario's graded victory scale - ordered bands mapping the winner's final victory point
+     *       total to a victory name (e.g. "Pyrrhic victory" up to 10, "Major victory" above) - or an empty
+     *       list when the scenario defines none. Never {@code null}: saves from before this field existed
+     *       restore it lazily.
+     */
+    public List<VictoryPointLevel> getVictoryPointLevels() {
+        if (victoryPointLevels == null) {
+            victoryPointLevels = new ArrayList<>();
+        }
+        return victoryPointLevels;
+    }
+
+    public void setVictoryPointLevels(List<VictoryPointLevel> victoryPointLevels) {
+        this.victoryPointLevels = new ArrayList<>(victoryPointLevels);
     }
 
     /**

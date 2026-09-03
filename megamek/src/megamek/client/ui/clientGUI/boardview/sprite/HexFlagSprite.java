@@ -67,13 +67,21 @@ public class HexFlagSprite extends HexSprite {
     private static final BasicStroke OUTLINE_STROKE =
           new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
-    private static final int LABEL_FONT_SIZE = 14;
-    private static final int LABEL_Y = 66;
+    // Both lines must sit inside the hex image, which is HexTileset.HEX_H (72) tall: anything drawn
+    // below that is silently clipped and simply never appears. These are the centre points of the text,
+    // so half the glyph height falls below them - leave room for the descenders of the lower line, or
+    // the counter is drawn with its bottom shaved off.
+    private static final int LABEL_FONT_SIZE = 13;
+    private static final int LABEL_Y = 53;
+    private static final int PROGRESS_FONT_SIZE = 13;
+    private static final int PROGRESS_Y = 66;
     private static final Color LABEL_COLOR = new Color(255, 255, 255, 230);
 
     private final Color flagColor;
     // the one-word scheme label under the flag; null for no label (MM @Nullable is not applicable to fields)
     private final String label;
+    // the counter under the label, e.g. "2/3"; null for a scheme with nothing to count
+    private final String progress;
 
     /**
      * @param boardView the board view this sprite is displayed on
@@ -82,9 +90,22 @@ public class HexFlagSprite extends HexSprite {
      * @param label     a short word drawn under the flag (the point's scheme), or {@code null} for none
      */
     public HexFlagSprite(BoardView boardView, Coords location, Color flagColor, @Nullable String label) {
+        this(boardView, location, flagColor, label, null);
+    }
+
+    /**
+     * @param boardView The board view to draw on
+     * @param location  The hex the flag stands in
+     * @param flagColor The banner colour, the owning player's
+     * @param label     A short word drawn under the flag (the point's scheme), or {@code null} for none
+     * @param progress  A counter drawn under the label, e.g. {@code "2/3"}, or {@code null} for none
+     */
+    public HexFlagSprite(BoardView boardView, Coords location, Color flagColor, @Nullable String label,
+          @Nullable String progress) {
         super(boardView, location);
         this.flagColor = flagColor;
         this.label = label;
+        this.progress = progress;
     }
 
     @Override
@@ -119,6 +140,17 @@ public class HexFlagSprite extends HexSprite {
                   .at(HexTileset.HEX_W / 2, LABEL_Y)
                   .color(LABEL_COLOR)
                   .fontSize(LABEL_FONT_SIZE)
+                  .absoluteCenter().outline(OUTLINE_COLOR, 1.5f)
+                  .draw(graph);
+        }
+
+        if (progress != null) {
+            // how far along this point is, under its scheme word - the reading a player would otherwise
+            // have to wait for the End Phase report to see
+            new StringDrawer(progress)
+                  .at(HexTileset.HEX_W / 2, PROGRESS_Y)
+                  .color(LABEL_COLOR)
+                  .fontSize(PROGRESS_FONT_SIZE)
                   .absoluteCenter().outline(OUTLINE_COLOR, 1.5f)
                   .draw(graph);
         }

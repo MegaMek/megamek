@@ -35,13 +35,19 @@ package megamek.server.totalWarfare;
 import java.util.List;
 import java.util.Map;
 
+import megamek.client.ui.Messages;
 import megamek.common.Player;
+import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.event.GameToastEvent;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
+import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
+import megamek.server.victory.VictoryPointTracker;
+import megamek.server.victory.VictoryPointVictory;
 
 /**
  * Places the objective markers that players designated in the lobby onto the board when the game starts. A marker
@@ -56,6 +62,8 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
     /** Feature logger for the victory hex designation diagnostics; enabled via the log4j2.xml VictoryHex block. */
     private static final MMLogger VICTORY_HEX_LOGGER = MMLogger.create("megamek.feature.VictoryHex");
 
+    private static final int REPORT_STARTING_VICTORY_POINTS = 7147;
+
     ObjectivePlacementHandler(TWGameManager gameManager) {
         super(gameManager);
     }
@@ -65,6 +73,8 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
      * objects to all clients. Called once when the game starts (the EXCHANGE phase), when the real game board exists.
      */
     void placeLobbyObjectives() {
+        warnWhenVictoryPointsCannotResolve();
+        applyStartingVictoryPoints();
         Board board = getGame().getBoard();
         boolean anyPlaced = false;
         for (Player player : getGame().getPlayersList()) {
@@ -122,8 +132,12 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
                     continue;
                 }
                 marker.setLobbyPosition(hexObjects.getKey());
-                // a fresh game starts with fresh counters - the setup values on the scheme remain
+                // a fresh game starts with fresh counters - the setup values on the scheme remain - and
+                // with nobody holding the point. The controller lives on the marker, not the scheme, and
+                // it was being carried across the reset: a lobby save then preserved it, and the next
+                // game began with the zone already "held" before anyone had stood in it
                 marker.getScoringScheme().resetState();
+                marker.setController(ObjectiveMarker.NO_CONTROLLER, ObjectiveMarker.NO_CONTROLLER);
                 owner.getGroundObjectsToPlace().add(marker);
                 returnedCount++;
                 VICTORY_HEX_LOGGER.debug("[Objective] Returned {} at {} to the lobby designations of {}",
@@ -150,5 +164,65 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
             }
         }
         return null;
+    }
+
+    /**
+     * Applies each faction's scenario-defined starting victory points to the fresh tally at game start. Teamed
+     * players contribute to their team's pool, solo players to their own; the round report names each grant.
+     * The victory context is reset every game start, so a lobby round trip cannot double-award.
+     */
+    private void applyStartingVictoryPoints() {
+        VictoryPointTracker tracker = VictoryPointTracker.getTracker(getGame());
+        for (Player player : getGame().getPlayersList()) {
+            int startingPoints = player.getStartingVictoryPoints();
+            // logged for every player, zero included: when a scenario's starting points do not appear,
+            // the question is always whether this pass ran at all or ran and saw nothing, and without
+            // this line the two look identical from the log
+            VICTORY_HEX_LOGGER.debug("[Objective] {} has {} scenario starting victory point(s)",
+                  player.getName(), startingPoints);
+            if (startingPoints == 0) {
+                continue;
+            }
+            boolean isTeamed = player.getTeam() != Player.TEAM_NONE;
+            if (isTeamed) {
+                tracker.awardToTeam(player.getTeam(), startingPoints, getGame().getCurrentRound(),
+                      "scenario starting victory points of " + player.getName());
+            } else {
+                tracker.awardToPlayer(player.getId(), startingPoints, getGame().getCurrentRound(),
+                      "scenario starting victory points");
+            }
+            // the points go to the team's pool when there is a team, but the report names the faction
+            // that brought them: teams have no names of their own, only "Team 1", "Team 2" and so on,
+            // which tells a player nothing about whose mission this is
+            String sideName = player.getName();
+            Report report = new Report(REPORT_STARTING_VICTORY_POINTS, Report.PUBLIC);
+            report.add(sideName);
+            report.add(startingPoints);
+            addReport(report);
+            VICTORY_HEX_LOGGER.info("[Objective] {} starts the game with {} victory point(s)",
+                  sideName, startingPoints);
+        }
+    }
+
+    /**
+     * Tells the players in the game chat when objective victory points are enabled but nothing can end the game
+     * to resolve them - the log-only warning proved too easy to miss in playtesting, and "I enabled objectives
+     * and nothing happens" was the predictable report.
+     */
+    private void warnWhenVictoryPointsCannotResolve() {
+        boolean usesObjectives = getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES);
+        if (!usesObjectives || VictoryPointVictory.gameHasVictoryPointResolution(getGame())) {
+            return;
+        }
+        // both, deliberately: the chat line is the durable record a player can scroll back to, and the
+        // toast is what anyone actually notices - this warning arrives while the board is still loading,
+        // which is exactly when the chat pane is least likely to be read
+        // the toast is drawn on one line and sized to it, so it carries the short form; the chat line
+        // keeps the full text, including what to switch on to fix it
+        gameManager.sendServerChat(Messages.getString("VictoryHex.noEnderWarning"));
+        gameManager.sendToast(GameToastEvent.Level.WARNING,
+              Messages.getString("VictoryHex.noEnderToast"), null);
+        VICTORY_HEX_LOGGER.warn("[Objective] use_objectives is on but the game has no ender - "
+              + "victory points cannot resolve");
     }
 }

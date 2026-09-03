@@ -58,6 +58,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import javax.swing.*;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
@@ -99,6 +100,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     private Consumer<ForceDescriptor> onExportMUL;
     private Consumer<FactionRecord> onFactionChanged;
+    /**
+     * Where a roll learns what lift the force already owns, asked at the moment of each Generate so it reflects the
+     * ships brought by earlier rolls. Defaults to none.
+     */
+    private Supplier<ExistingLift> existingLiftSupplier = () -> ExistingLift.NONE;
 
     private ForceDescriptor forceDesc = new ForceDescriptor();
 
@@ -853,6 +859,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         txtCargoPct.setText(String.valueOf(cargoPct));
 
         fd.setFighterComplement(chkFighterComplement.isSelected());
+        // Asked now rather than cached: the ships an earlier roll brought are what this roll starts from.
+        fd.setExistingLift(existingLiftSupplier.get());
 
         return fd;
     }
@@ -1467,6 +1475,17 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     public void setOnExportMUL(Consumer<ForceDescriptor> handler) {
         this.onExportMUL = handler;
+    }
+
+    /**
+     * Tells the panel where to learn what lift the force already owns - the free bays and docking collars on ships
+     * from earlier rolls, a running game or a campaign hangar - so each roll generates only the lift it still lacks.
+     * The supplier is asked at every Generate.
+     *
+     * @param supplier the source of existing lift, or {@code null} to start every roll from nothing
+     */
+    public void setExistingLiftSupplier(@Nullable Supplier<ExistingLift> supplier) {
+        this.existingLiftSupplier = (supplier == null) ? () -> ExistingLift.NONE : supplier;
     }
 
     /**

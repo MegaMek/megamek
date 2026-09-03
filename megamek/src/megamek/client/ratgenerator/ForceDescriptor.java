@@ -175,6 +175,10 @@ public class ForceDescriptor {
     private double dropshipPct = 0.0;
     private double jumpshipPct = 0.0;
     private double warshipPct = 0.0;
+    /** What the force already owns to carry it before this run; only the shortfall is generated. */
+    private ExistingLift existingLift = ExistingLift.NONE;
+    /** Whether this node is the "Naval Units" branch the transport stage attaches to a force. */
+    private boolean transportRoot = false;
     /**
      * How much of the command's cargo requirement to provision hauling for, as a percentage.
      * 100 covers everything it has to carry; above 100 buys headroom for cargo picked up later.
@@ -1718,6 +1722,7 @@ public class ForceDescriptor {
         //   Clan: Stars of 5 vessels each
         //   IS/Periphery/SLDF: Strategic Operations hierarchy — Flotilla (2) / Division (3 Flotillas) / Squadron (3 Divisions)
         transports.setName("Naval Units");
+        transports.transportRoot = true;
         // TODO: put this in the faction files
         transports.setEchelon(isClan ? 7 : ECHELON_NAVAL_ROOT);
         transports.setCoRank(35);
@@ -2817,6 +2822,31 @@ public class ForceDescriptor {
         for (ForceDescriptor attachedForce : attached) {
             attachedForce.collectCarriers(carriers);
         }
+    }
+
+    /**
+     * @return {@code true} when this node is the branch holding the ships the transport stage generated for a force
+     */
+    public boolean isTransportRoot() {
+        return transportRoot;
+    }
+
+    /**
+     * @return the lift the force already owns before this one is generated; {@link ExistingLift#NONE} for the first
+     *       layer of a command or a standalone force
+     */
+    public ExistingLift getExistingLift() {
+        return existingLift;
+    }
+
+    /**
+     * Hands the transport stage the ships an earlier layer of the command already brought, so this one draws only
+     * the lift it still lacks.
+     *
+     * @param existingLift the free bays and docking collars already owned; {@code null} means none
+     */
+    public void setExistingLift(@Nullable ExistingLift existingLift) {
+        this.existingLift = (existingLift == null) ? ExistingLift.NONE : existingLift;
     }
 
     public double getDropshipPct() {

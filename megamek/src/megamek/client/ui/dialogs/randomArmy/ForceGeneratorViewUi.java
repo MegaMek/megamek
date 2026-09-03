@@ -57,6 +57,7 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -72,12 +73,15 @@ import javax.swing.tree.TreePath;
 
 import megamek.client.Client;
 import megamek.client.ratgenerator.C3NetworkConfigurator;
+import megamek.client.ratgenerator.CarrierLoadingConfigurator;
 import megamek.client.ratgenerator.CrewDescriptor;
+import megamek.client.ratgenerator.ExistingLift;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.FormationType;
 import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
+import megamek.client.ratgenerator.TransportBranchMerger;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
@@ -165,6 +169,12 @@ public class ForceGeneratorViewUi implements ActionListener {
     // draft ("... - not yet committed.") and reports its running size. Hidden in standalone mode.
     private JLabel lblModelStatus;
 
+    /**
+     * Where the host says what lift the force owns outside this view - the ships in a running game or a campaign
+     * hangar. Added to whatever the accumulated model already holds, see {@link #existingLift()}.
+     */
+    private Supplier<ExistingLift> hostLiftSupplier = () -> ExistingLift.NONE;
+
     protected TableRowSorter<ChosenEntityModel> sorterChosen;
 
     static final String FGV_BV = "FGV_BV";
@@ -176,7 +186,33 @@ public class ForceGeneratorViewUi implements ActionListener {
     public ForceGeneratorViewUi(JFrame parentFrame, GameOptions gameOptions) {
         this.parentFrame = parentFrame;
         panControls = new ForceGeneratorOptionsView(this::setGeneratedForce, gameOptions);
+        panControls.setExistingLiftSupplier(this::existingLift);
         initUi();
+    }
+
+    /**
+     * Tells the view what lift the force owns outside it, so a roll generates only the lift it still lacks: the
+     * Random Army dialog reports the ships the player already has in the game, MekHQ's Command Designer the ships in
+     * the hangar. What earlier rolls in an accumulated model brought is counted by the view itself.
+     *
+     * @param supplier the source of the host's lift, asked at every Generate; {@code null} for none
+     */
+    public void setHostLiftSupplier(@Nullable Supplier<ExistingLift> supplier) {
+        this.hostLiftSupplier = (supplier == null) ? () -> ExistingLift.NONE : supplier;
+    }
+
+    /**
+     * @return the lift the next roll starts from: the free bays and collars among the rolls accumulated so far, plus
+     *       whatever the host reports
+     */
+    private ExistingLift existingLift() {
+        ExistingLift inModel = accumulateModel ? ExistingLift.of(modelRoot) : ExistingLift.NONE;
+        ExistingLift lift = inModel.plus(hostLiftSupplier.get());
+        if (!lift.isEmpty()) {
+            logger.info("[ForceGen][Lift] next roll starts from free bays {} and {} free docking collar(s)",
+                  lift.freeBays(), lift.freeDockingCollars());
+        }
+        return lift;
     }
 
     private void initUi() {
@@ -560,13 +596,10 @@ public class ForceGeneratorViewUi implements ActionListener {
      * Adds the chosen units to the game
      */
     public void addChosenUnits(Player owner, ClientGUI clientGui) {
-        if ((null != forceTree.getModel().getRoot())
-              && (forceTree.getModel().getRoot() instanceof ForceDescriptor)) {
-            // Only the units the user actually took are wired; the rest of the model is not going
-            // into the game.
-            C3NetworkConfigurator.configure((ForceDescriptor) forceTree.getModel().getRoot(),
-                  modelChosen::hasEntity);
-        }
+        ForceDescriptor generatedForce = getGeneratedForce();
+        // Only the units the user actually took are wired; the rest of the model is not going
+        // into the game.
+        C3NetworkConfigurator.configure(generatedForce, modelChosen::hasEntity);
 
         List<Entity> entities = new ArrayList<>(modelChosen.allEntities().size());
         // the units belong to the player that was chosen; they are sent over this machine's own connection,
@@ -591,6 +624,9 @@ public class ForceGeneratorViewUi implements ActionListener {
             }
             entities.add(e);
         }
+        // After the owners are set, because a carrier only takes units on its own side, and before the
+        // batch goes out, because the server translates the ids written here when it adds the units.
+        CarrierLoadingConfigurator.configure(generatedForce, modelChosen::hasEntity);
         localClient.sendAddEntity(entities);
 
         String msg = clientGui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: "
@@ -633,6 +669,8 @@ public class ForceGeneratorViewUi implements ActionListener {
             // echelon name ("Battalion"); stamp the unit type in so it reads "Battle Armor Battalion".
             ensureDescriptiveName(fd);
             modelTop = accumulateIntoModel(modelTop, fd);
+            // Every roll brings its own ships; the command lists them in one place, under its top node.
+            TransportBranchMerger.foldInto(modelTop, fd);
             // Keep the wrapper holding exactly the current top command.
             modelRoot.getSubForces().clear();
             modelRoot.addSubForce(modelTop);

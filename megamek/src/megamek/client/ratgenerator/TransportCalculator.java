@@ -33,19 +33,23 @@
 package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.bays.*;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.loaders.MekSummary;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Infantry;
 import megamek.common.units.PlatoonType;
 import megamek.common.units.UnitType;
+import megamek.logging.MMLogger;
 
 /**
  * Generates drop-ships and jump ships to fulfill transport requirements for a unit.
@@ -53,6 +57,43 @@ import megamek.common.units.UnitType;
  * @author Neoancient
  */
 public class TransportCalculator {
+
+    private static final MMLogger LOGGER = MMLogger.create(TransportCalculator.class);
+
+    /**
+     * The bays each kind of unit may ride in: its own first, then the larger bays it also fits. A light vehicle fits
+     * a heavy or super-heavy vehicle bay and a heavy vehicle a super-heavy one; everything else needs its own kind.
+     */
+    private static final Map<Integer, List<Integer>> BAYS_THAT_FIT = Map.of(
+          UnitType.VTOL, List.of(UnitType.VTOL, UnitType.TANK, UnitType.NAVAL),
+          UnitType.TANK, List.of(UnitType.TANK, UnitType.NAVAL));
+
+    /**
+     * The order lift is arranged in. The vehicles with the fewest bay options claim theirs first, so a light vehicle
+     * only takes a heavy bay the heavy vehicles left over rather than one they still need.
+     */
+    static final List<Integer> LIFT_ORDER = List.of(UnitType.NAVAL, UnitType.TANK, UnitType.VTOL,
+          UnitType.MEK, UnitType.PROTOMEK, UnitType.BATTLE_ARMOR, UnitType.INFANTRY, UnitType.AEROSPACE_FIGHTER,
+          UnitType.SMALL_CRAFT);
+
+    /**
+     * A hull is worth drawing when it carries at least this share of what is still needed, so a battalion is lifted
+     * by Unions and Overlords rather than a string of Leopards.
+     */
+    private static final int SMALLEST_USEFUL_SHARE = 3;
+
+    /**
+     * At least this fraction of a hull's bays, across every kind it has, must be put to use by what the force still
+     * needs. A lone tank company then gets vehicle carriers, not an Overlord Combined Arms with twenty-four Mek
+     * bays and six fighter bays sailing empty; the same hull is a fine draw for a battalion with an armour company.
+     */
+    private static final int MIN_HULL_USE = 2;
+
+    /**
+     * When no hull fits the need, the fallback draws from hulls up to this many times the size of the smallest that
+     * would do, or down to this fraction of the largest there is, so the fallback keeps some variety.
+     */
+    private static final int FALLBACK_SPREAD = 2;
 
     // In order to determine the transport capacity of generated units we need to load the Entity and look at the
     // bays and docking hard points. Since this is a relatively expensive operation we will cache the results.
@@ -122,25 +163,60 @@ public class TransportCalculator {
         });
     }
 
-    private final ForceDescriptor fd;
+    /** The faction whose ship tables are drawn from; {@code null} for the general tables. */
+    private final FactionRecord factionRecord;
+    /** The faction's name for the log; {@code null} when unknown. */
+    private final String factionName;
+    private final int year;
+    /** The force's rating; {@code null} for any. */
+    private final String rating;
     private final Map<Integer, Integer> unitCounts;
+    /** The lift the force already owns before this run; only the shortfall is generated. */
+    private final ExistingLift existingLift;
 
     public TransportCalculator(ForceDescriptor fd) {
-        this.fd = fd;
-        this.unitCounts = getUnitTypeCounts();
+        this(fd.getFactionRec(), fd.getFaction(), fd.getYear(), fd.ratGeneratorRating(), unitsOf(fd),
+              fd.getExistingLift());
+    }
+
+    /**
+     * Sizes lift for units that are not a generated force - the whole hangar of a campaign, say - starting from the
+     * lift they already own.
+     *
+     * @param factionRecord the faction whose ship tables are drawn from; {@code null} for the general tables
+     * @param factionName   the faction's name, for the log; {@code null} when unknown
+     * @param year          the year the ships are drawn for
+     * @param rating        the force's rating, or {@code null} for any
+     * @param units         the units wanting lift; ships among them are counted for docking collars, not bays
+     * @param existingLift  the free bays and docking collars already owned
+     */
+    public TransportCalculator(@Nullable FactionRecord factionRecord, @Nullable String factionName, int year,
+          @Nullable String rating, Collection<Entity> units, ExistingLift existingLift) {
+        this.factionRecord = factionRecord;
+        this.factionName = factionName;
+        this.year = year;
+        this.rating = rating;
+        this.unitCounts = liftDemand(units);
+        this.existingLift = existingLift;
+    }
+
+    private static List<Entity> unitsOf(ForceDescriptor fd) {
+        List<Entity> allUnits = new ArrayList<>();
+        fd.addAllEntities(allUnits);
+        return allUnits;
     }
 
     /**
      * Determines number of each type of unit based on transport requirements.
      *
+     * @param units the units wanting lift
+     *
      * @return The number of units of each type mapped to its UnitType. UnitType.VTOL is used for light vehicle bays and
-     *       UnitType.NAVAL for super heavy vehicles.
+     *       UnitType.NAVAL for super heavy vehicles; infantry is counted in tons of bay.
      */
-    private Map<Integer, Integer> getUnitTypeCounts() {
+    static Map<Integer, Integer> liftDemand(Collection<Entity> units) {
         Map<Integer, Integer> unitCounts = new HashMap<>();
-        List<Entity> allUnits = new ArrayList<>();
-        fd.addAllEntities(allUnits);
-        for (Entity en : allUnits) {
+        for (Entity en : units) {
             if (en.hasETypeFlag(Entity.ETYPE_MEK)) {
                 unitCounts.merge(UnitType.MEK, 1, Integer::sum);
             } else if (en.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
@@ -155,11 +231,9 @@ public class TransportCalculator {
                 }
             } else if (en.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
                 unitCounts.merge(UnitType.BATTLE_ARMOR, 1, Integer::sum);
-            } else if (en.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
+            } else if (en instanceof Infantry infantry) {
                 // Here we need to count the transport weight of the platoon rather than just the number
-                unitCounts.merge(UnitType.INFANTRY,
-                      PlatoonType.getPlatoonType(en).getWeight(),
-                      Integer::sum);
+                unitCounts.merge(UnitType.INFANTRY, infantryLiftTons(infantry), Integer::sum);
             } else if (en.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
                 unitCounts.merge(UnitType.DROPSHIP, 1, Integer::sum);
             } else if (en.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
@@ -172,45 +246,334 @@ public class TransportCalculator {
     }
 
     /**
+     * The bay tonnage a platoon takes, the way {@code InfantryBay} charges for it: foot, jump and motorized platoons
+     * take one cubicle of their type's weight, while a mechanized platoon takes one per squad. An infantry bay is
+     * built for one type but, by tonnage, carries any of them.
+     *
+     * @param infantry the platoon
+     *
+     * @return the tons of infantry bay it needs
+     */
+    static int infantryLiftTons(Infantry infantry) {
+        PlatoonType type = PlatoonType.getPlatoonType(infantry);
+        if (type == PlatoonType.MECHANIZED) {
+            return type.getWeight() * infantry.getSquadCount();
+        }
+        return type.getWeight();
+    }
+
+    /**
      * Generates dropships to provide enough capacity to transport the given ratio of the formation.
+     *
+     * <p>Lift is arranged one kind of unit at a time in {@link #LIFT_ORDER}. Each hull drawn is booked in a
+     * {@link BayLedger}, so bays one kind of unit leaves free carry the kinds that fit them: the heavy vehicle bays
+     * an armour company does not fill take its light vehicles, and no second hull is drawn for them. Hulls are
+     * drawn to suit what is still needed, see {@link #drawHullFor(UnitTable, int, BayLedger)}.</p>
      *
      * @param ratio The ratio of dropships to generate to the total needs of the unit
      *
      * @return A list of generated dropships
      */
     public List<MekSummary> calcDropships(double ratio) {
-        UnitTable table = UnitTable.findTable(fd.getFactionRec(),
+        UnitTable table = UnitTable.findTable(factionRecord,
               UnitType.DROPSHIP,
-              fd.getYear(),
-              fd.ratGeneratorRating(),
+              year,
+              rating,
               null,
               ModelRecord.NETWORK_NONE,
               EnumSet.noneOf(EntityMovementMode.class),
               EnumSet.noneOf(MissionRole.class),
               0);
         List<MekSummary> retVal = new ArrayList<>();
-        Map<Integer, Integer> currentCapacity = new HashMap<>();
-        for (Integer unitType : unitCounts.keySet()) {
-            // We counted dropships so we include them in the jump ship calculation, but we're not looking for
-            // transport bays for them.
-            if (UnitType.DROPSHIP == unitType) {
-                continue;
-            }
-
-            while (unitCounts.get(unitType) * ratio > (double) (currentCapacity.getOrDefault(unitType, 0))) {
-                MekSummary dropship = table.generateUnit(ms -> hasBayFor(ms, unitType)
-                      && !isPredominantlyTanker(ms));
-
-                if (null == dropship) {
-                    break; // Could not find any transport for the unit type; skip
-                }
-
-                bayTypeCache.get(dropship).forEach((k, v) -> currentCapacity.merge(k, v, Integer::sum));
-
-                retVal.add(dropship);
+        // DropShips were counted for the JumpShip calculation; they need docking collars, not bays, and are not in
+        // the lift order.
+        Map<Integer, Integer> needed = new HashMap<>();
+        for (int unitType : LIFT_ORDER) {
+            int count = (int) Math.ceil(unitCounts.getOrDefault(unitType, 0) * ratio);
+            if (count > 0) {
+                needed.put(unitType, count);
             }
         }
+        BayLedger ledger = new BayLedger(needed);
+        // A later layer of a command starts from the ships the earlier layers brought.
+        ledger.add(existingLift.freeBays());
+        if (!existingLift.isEmpty()) {
+            LOGGER.debug("[ForceGen][Lift] starting from existing lift: free bays {} and {} free docking collar(s)",
+                  existingLift.freeBays(), existingLift.freeDockingCollars());
+        }
+        StringBuilder summary = new StringBuilder();
+        for (int unitType : LIFT_ORDER) {
+            if (!needed.containsKey(unitType)) {
+                continue;
+            }
+            int hullsBefore = retVal.size();
+            while (ledger.unmet(unitType) > 0) {
+                MekSummary dropship = drawHullFor(table, unitType, ledger);
+                if (null == dropship) {
+                    LOGGER.debug("[ForceGen][Lift] no DropShip in the {} {} table carries {}; "
+                                + "{} of {} left without lift",
+                          factionName, year, UnitType.getTypeName(unitType),
+                          ledger.unmet(unitType), needed.get(unitType));
+                    break;
+                }
+                ledger.add(baysOf(dropship));
+                retVal.add(dropship);
+            }
+            int freeBeforeClaim = ledger.free(unitType);
+            ledger.claim(unitType, Math.min(needed.get(unitType), freeBeforeClaim));
+            summary.append(UnitType.getTypeName(unitType)).append(": needed ").append(needed.get(unitType))
+                  .append(", had ").append(freeBeforeClaim).append(", drew ").append(retVal.size() - hullsBefore)
+                  .append(" hull(s); ");
+        }
+        LOGGER.debug("[ForceGen][Lift] {} DropShip(s) for {}% lift - {}", retVal.size(), Math.round(ratio * 100),
+              summary);
+        LOGGER.debug("[ForceGen][Lift] hulls drawn: {}", () -> describeHulls(retVal));
         return retVal;
+    }
+
+    /**
+     * @return the hulls by name, for the log
+     */
+    private static String describeHulls(List<MekSummary> hulls) {
+        StringBuilder description = new StringBuilder();
+        for (MekSummary hull : hulls) {
+            if (!description.isEmpty()) {
+                description.append(", ");
+            }
+            description.append(hull.getName());
+        }
+        return description.toString();
+    }
+
+    /**
+     * Draws a hull that suits what is still to be carried.
+     *
+     * <p>Three tries, each wider than the last, and every one weighted by faction availability within it: a hull
+     * that is a {@link #isReasonableFit(int, int) reasonable fit} for the need and whose bays the force would
+     * {@link BayLedger#wouldMostlyUse(Map) mostly use}; failing that, the smallest hulls that cover the need on
+     * their own, for the one vehicle left over that no hull is small enough for; failing that, the largest hulls
+     * that carry the kind at all, for a need bigger than any single hull. Any hull that carries the kind is accepted
+     * only when the table holds no unit entries to size against.</p>
+     *
+     * <p>A hull's own era availability code (the D/X-E-D-D line of its record sheet) is not consulted: MegaMek
+     * composes it from the DropShip construction rules and the hull's components, and the construction rules rate
+     * every DropShip "very rare" for the whole Succession Wars, so in 3025 a Union and an Excalibur carry the same
+     * code. The faction availability numbers in the force generator's era files are what tell them apart, and the
+     * table is already weighted by those.</p>
+     *
+     * @param table    the DropShip table for the faction and year
+     * @param unitType the kind of unit lift is wanted for
+     * @param ledger   what has been drawn and berthed so far, and what is still needed
+     *
+     * @return the hull drawn, or {@code null} when nothing in the table carries the kind
+     */
+    private @Nullable MekSummary drawHullFor(UnitTable table, int unitType, BayLedger ledger) {
+        int stillNeeded = ledger.unmet(unitType);
+        MekSummary hull = drawPreferringUsed(table, ledger, candidate -> carries(candidate, unitType)
+              && isReasonableFit(capacityFor(candidate, unitType), stillNeeded));
+        if (hull != null) {
+            return hull;
+        }
+
+        int smallestCover = Integer.MAX_VALUE;
+        int largest = 0;
+        for (int index = 0; index < table.getNumEntries(); index++) {
+            MekSummary entry = table.getMekSummary(index);
+            if ((entry == null) || !carries(entry, unitType)) {
+                continue;
+            }
+            int capacity = capacityFor(entry, unitType);
+            largest = Math.max(largest, capacity);
+            if (capacity >= stillNeeded) {
+                smallestCover = Math.min(smallestCover, capacity);
+            }
+        }
+        if (smallestCover < Integer.MAX_VALUE) {
+            int ceiling = smallestCover * FALLBACK_SPREAD;
+            hull = drawPreferringUsed(table, ledger, candidate -> carries(candidate, unitType)
+                  && (capacityFor(candidate, unitType) >= stillNeeded)
+                  && (capacityFor(candidate, unitType) <= ceiling));
+        } else if (largest > 0) {
+            int floor = largest / FALLBACK_SPREAD;
+            hull = drawPreferringUsed(table, ledger, candidate -> carries(candidate, unitType)
+                  && (capacityFor(candidate, unitType) >= floor));
+        }
+        if (hull != null) {
+            return hull;
+        }
+        return table.generateUnit(candidate -> carries(candidate, unitType));
+    }
+
+    /**
+     * Draws from the hulls the size filter accepts, taking one the force would mostly use when there is one, so a
+     * combined-arms hull goes to a combined-arms force and a lone company gets a hull built for its own kind.
+     *
+     * @param table  the DropShip table for the faction and year
+     * @param ledger what is still needed
+     * @param sized  which hulls are the right size for the kind being drawn for
+     *
+     * @return the hull drawn, or {@code null} when the size filter accepts nothing
+     */
+    private @Nullable MekSummary drawPreferringUsed(UnitTable table, BayLedger ledger, UnitTable.UnitFilter sized) {
+        MekSummary drawn = table.generateUnit(hull -> sized.include(hull) && ledger.wouldMostlyUse(baysOf(hull)));
+        return (drawn != null) ? drawn : table.generateUnit(sized);
+    }
+
+    /**
+     * Whether a hull is a sensible size for what is still to be carried: it carries at least a
+     * {@link #SMALLEST_USEFUL_SHARE third} of it and no more than all of it. Hulls that would sail with empty bays
+     * are left alone, so a force is lifted by two or three hulls it fills rather than one it rattles around in; a
+     * single big hull is drawn only when it is the size of the whole job.
+     *
+     * @param hullCapacity how many of the kind the hull carries
+     * @param stillNeeded  how many of the kind have no bay yet
+     *
+     * @return {@code true} when the hull is worth drawing for that need
+     */
+    static boolean isReasonableFit(int hullCapacity, int stillNeeded) {
+        boolean carriesAUsefulShare = (hullCapacity * SMALLEST_USEFUL_SHARE) >= stillNeeded;
+        boolean wouldBeFilled = hullCapacity <= stillNeeded;
+        return carriesAUsefulShare && wouldBeFilled;
+    }
+
+    /**
+     * Books the bays of the hulls drawn so far against the units given a berth, honouring which bays each kind of
+     * unit may ride in, and keeps count of what the force still needs.
+     */
+    static final class BayLedger {
+
+        private final Map<Integer, Integer> needed;
+        private final Map<Integer, Integer> capacity = new HashMap<>();
+        private final Map<Integer, Integer> used = new HashMap<>();
+        private final Map<Integer, Integer> berthed = new HashMap<>();
+
+        /**
+         * @param needed how many of each kind of unit want a berth
+         */
+        BayLedger(Map<Integer, Integer> needed) {
+            this.needed = needed;
+        }
+
+        /**
+         * Adds a hull's bays.
+         *
+         * @param bays bay capacity by the unit type the bay is built for
+         */
+        void add(Map<Integer, Integer> bays) {
+            bays.forEach((bayType, count) -> capacity.merge(bayType, count, Integer::sum));
+        }
+
+        /**
+         * @param unitType the kind of unit
+         *
+         * @return how many of that kind have neither a berth nor a bay waiting for them
+         */
+        int unmet(int unitType) {
+            int outstanding = needed.getOrDefault(unitType, 0) - berthed.getOrDefault(unitType, 0);
+            return Math.max(0, outstanding - free(unitType));
+        }
+
+        /**
+         * Whether the force would put at least {@link #MIN_HULL_USE half} of a hull's bays, across every kind it
+         * has, to use.
+         *
+         * @param hullBays the hull's bay capacity by the unit type each bay is built for
+         *
+         * @return {@code true} when enough of the hull would be used to be worth drawing
+         */
+        boolean wouldMostlyUse(Map<Integer, Integer> hullBays) {
+            int berths = 0;
+            int berthsUsed = 0;
+            for (Map.Entry<Integer, Integer> bay : hullBays.entrySet()) {
+                int bayBerths = asBerths(bay.getKey(), bay.getValue());
+                berths += bayBerths;
+                berthsUsed += Math.min(bayBerths, asBerths(bay.getKey(), unmetThatFit(bay.getKey())));
+            }
+            return (berthsUsed * MIN_HULL_USE) >= berths;
+        }
+
+        /**
+         * Infantry bays and infantry demand are counted in tons while every other kind is a berth per unit. A foot
+         * platoon's tonnage stands for one berth, so a hull's bays of every kind can be added up together.
+         *
+         * @param bayType the kind of bay
+         * @param amount  a capacity or a demand in that bay's own unit of measure
+         *
+         * @return the same amount in berths
+         */
+        private static int asBerths(int bayType, int amount) {
+            if (bayType == UnitType.INFANTRY) {
+                return (int) Math.ceil(amount / (double) PlatoonType.FOOT.getWeight());
+            }
+            return amount;
+        }
+
+        /**
+         * @return how many units without a bay could ride in the given kind of bay
+         */
+        private int unmetThatFit(int bayType) {
+            int fit = 0;
+            for (int unitType : needed.keySet()) {
+                if (baysThatFit(unitType).contains(bayType)) {
+                    fit += unmet(unitType);
+                }
+            }
+            return fit;
+        }
+
+        /**
+         * @param unitType the kind of unit
+         *
+         * @return how many of that kind still have a bay available, counting every bay type it fits
+         */
+        int free(int unitType) {
+            int free = 0;
+            for (int bayType : baysThatFit(unitType)) {
+                free += capacity.getOrDefault(bayType, 0) - used.getOrDefault(bayType, 0);
+            }
+            return free;
+        }
+
+        /**
+         * @return the bays nothing has claimed, by the unit type each bay is built for
+         */
+        Map<Integer, Integer> freeByBayType() {
+            Map<Integer, Integer> free = new HashMap<>();
+            capacity.forEach((bayType, count) -> {
+                int unclaimed = count - used.getOrDefault(bayType, 0);
+                if (unclaimed > 0) {
+                    free.put(bayType, unclaimed);
+                }
+            });
+            return free;
+        }
+
+        /**
+         * Gives units berths, filling their own kind of bay before borrowing a larger one.
+         *
+         * @param unitType the kind of unit
+         * @param count    how many to berth; no more than {@link #free(int)}
+         */
+        void claim(int unitType, int count) {
+            berthed.merge(unitType, count, Integer::sum);
+            int remaining = count;
+            for (int bayType : baysThatFit(unitType)) {
+                if (remaining == 0) {
+                    return;
+                }
+                int available = capacity.getOrDefault(bayType, 0) - used.getOrDefault(bayType, 0);
+                int taken = Math.min(available, remaining);
+                used.merge(bayType, taken, Integer::sum);
+                remaining -= taken;
+            }
+        }
+    }
+
+    /**
+     * @return the bay types a kind of unit may ride in, its own first
+     */
+    private static List<Integer> baysThatFit(int unitType) {
+        return BAYS_THAT_FIT.getOrDefault(unitType, List.of(unitType));
     }
 
     /**
@@ -222,10 +585,10 @@ public class TransportCalculator {
      * @return A list of generated jump ships
      */
     public List<MekSummary> calcJumpShips(double ratio, int transportCollars) {
-        UnitTable table = UnitTable.findTable(fd.getFactionRec(),
+        UnitTable table = UnitTable.findTable(factionRecord,
               UnitType.JUMPSHIP,
-              fd.getYear(),
-              fd.ratGeneratorRating(),
+              year,
+              rating,
               null,
               ModelRecord.NETWORK_NONE,
               EnumSet.noneOf(EntityMovementMode.class),
@@ -233,10 +596,7 @@ public class TransportCalculator {
               0);
         List<MekSummary> retVal = new ArrayList<>();
         int currentCapacity = 0;
-
-        if (unitCounts.containsKey(UnitType.DROPSHIP)) {
-            transportCollars += unitCounts.get(UnitType.DROPSHIP);
-        }
+        transportCollars = collarsStillNeeded(transportCollars);
 
         while (transportCollars * ratio > (double) currentCapacity) {
             // It's possible to have a jump ship with no docking collars, e.g. for scout use
@@ -267,10 +627,10 @@ public class TransportCalculator {
         if (ratio <= 0) {
             return new ArrayList<>();
         }
-        UnitTable table = UnitTable.findTable(fd.getFactionRec(),
+        UnitTable table = UnitTable.findTable(factionRecord,
               UnitType.WARSHIP,
-              fd.getYear(),
-              fd.ratGeneratorRating(),
+              year,
+              rating,
               null,
               ModelRecord.NETWORK_NONE,
               EnumSet.noneOf(EntityMovementMode.class),
@@ -278,10 +638,7 @@ public class TransportCalculator {
               0);
         List<MekSummary> retVal = new ArrayList<>();
         int currentCapacity = 0;
-
-        if (unitCounts.containsKey(UnitType.DROPSHIP)) {
-            transportCollars += unitCounts.get(UnitType.DROPSHIP);
-        }
+        transportCollars = collarsStillNeeded(transportCollars);
 
         while (transportCollars * ratio > (double) currentCapacity) {
             MekSummary warship = table.generateUnit(ms -> countHardpoints(ms) > 0);
@@ -292,6 +649,19 @@ public class TransportCalculator {
             retVal.add(warship);
         }
         return retVal;
+    }
+
+    /**
+     * The docking collars still to be found for the DropShips generated here and those the force already had,
+     * after the collars the force already owns are used.
+     *
+     * @param generatedDropships how many DropShips the transport stage drew
+     *
+     * @return how many docking collars JumpShips and WarShips have to provide
+     */
+    private int collarsStillNeeded(int generatedDropships) {
+        int dropships = generatedDropships + unitCounts.getOrDefault(UnitType.DROPSHIP, 0);
+        return Math.max(0, dropships - existingLift.freeDockingCollars());
     }
 
     /**
@@ -313,16 +683,22 @@ public class TransportCalculator {
         return capacity.liquidTons() > capacity.solidTons();
     }
 
-    private boolean hasBayFor(MekSummary ms, int unitType) {
-        if (getBayCount(ms, unitType) > 0) {
-            return true;
+    /**
+     * @return {@code true} when the hull is a troop transport with at least one bay the kind of unit fits
+     */
+    private boolean carries(MekSummary hull, int unitType) {
+        return (capacityFor(hull, unitType) > 0) && !isPredominantlyTanker(hull);
+    }
+
+    /**
+     * @return how many of the kind of unit the hull carries, counting every bay type it fits
+     */
+    private int capacityFor(MekSummary hull, int unitType) {
+        int capacity = 0;
+        for (int bayType : baysThatFit(unitType)) {
+            capacity += getBayCount(hull, bayType);
         }
-        if (unitType == UnitType.VTOL) {
-            return (getBayCount(ms, UnitType.TANK) > 0) || (getBayCount(ms, UnitType.NAVAL) > 0);
-        } else if (unitType == UnitType.TANK) {
-            return getBayCount(ms, UnitType.NAVAL) > 0;
-        }
-        return false;
+        return capacity;
     }
 
     /**
@@ -349,10 +725,17 @@ public class TransportCalculator {
     }
 
     private int getBayCount(MekSummary ms, int unitType) {
-        if (bayTypeCache.containsKey(ms) || countBays(ms)) {
-            return bayTypeCache.get(ms).getOrDefault(unitType, 0);
+        return baysOf(ms).getOrDefault(unitType, 0);
+    }
+
+    /**
+     * @return the hull's bay capacity by the unit type each bay is built for; empty when the unit cannot be loaded
+     */
+    private Map<Integer, Integer> baysOf(MekSummary hull) {
+        if (bayTypeCache.containsKey(hull) || countBays(hull)) {
+            return bayTypeCache.get(hull);
         }
-        return 0;
+        return Map.of();
     }
 
     /**
@@ -382,27 +765,46 @@ public class TransportCalculator {
     private static Map<Integer, Integer> countBays(Entity entity) {
         Map<Integer, Integer> bayCount = new HashMap<>();
         for (Bay bay : entity.getTransportBays()) {
-            if (bay instanceof MekBay) {
-                bayCount.merge(UnitType.MEK, (int) bay.getCapacity(), Integer::sum);
-            } else if (bay instanceof ProtoMekBay) {
-                bayCount.merge(UnitType.PROTOMEK, (int) bay.getCapacity(), Integer::sum);
-            } else if (bay instanceof HeavyVehicleBay) {
-                bayCount.merge(UnitType.TANK, (int) bay.getCapacity(), Integer::sum);
-            } else if (bay instanceof LightVehicleBay) {
-                bayCount.merge(UnitType.VTOL, (int) bay.getCapacity(), Integer::sum);
-            } else if (bay instanceof SuperHeavyVehicleBay) {
-                bayCount.merge(UnitType.NAVAL, (int) bay.getCapacity(), Integer::sum);
-            } else if (bay instanceof BattleArmorBay) {
-                bayCount.merge(UnitType.BATTLE_ARMOR, (int) bay.getCapacity(), Integer::sum);
-            } else if (bay instanceof InfantryBay) {
-                bayCount.merge(UnitType.BATTLE_ARMOR, (int) bay.getCapacity(), Integer::sum);
-            } else if (bay instanceof ASFBay) {
-                bayCount.merge(UnitType.AEROSPACE_FIGHTER, (int) bay.getCapacity(), Integer::sum);
-            } else if (bay instanceof SmallCraftBay) {
-                bayCount.merge(UnitType.SMALL_CRAFT, (int) bay.getCapacity(), Integer::sum);
+            int bayType = bayType(bay);
+            if (bayType != NOT_A_UNIT_BAY) {
+                bayCount.merge(bayType, (int) bay.getCapacity(), Integer::sum);
             }
         }
         return bayCount;
+    }
+
+    /** What {@link #bayType(Bay)} returns for a bay that holds no units: cargo, quarters and the like. */
+    static final int NOT_A_UNIT_BAY = -1;
+
+    /**
+     * The kind of unit a bay is built for, as the {@link UnitType} the lift ledger keys on.
+     *
+     * @param bay the bay
+     *
+     * @return the unit type key, or {@link #NOT_A_UNIT_BAY} when the bay holds no units
+     */
+    static int bayType(Bay bay) {
+        if (bay instanceof MekBay) {
+            return UnitType.MEK;
+        } else if (bay instanceof ProtoMekBay) {
+            return UnitType.PROTOMEK;
+        } else if (bay instanceof HeavyVehicleBay) {
+            return UnitType.TANK;
+        } else if (bay instanceof LightVehicleBay) {
+            return UnitType.VTOL;
+        } else if (bay instanceof SuperHeavyVehicleBay) {
+            return UnitType.NAVAL;
+        } else if (bay instanceof BattleArmorBay) {
+            return UnitType.BATTLE_ARMOR;
+        } else if (bay instanceof InfantryBay) {
+            // Infantry bays are measured in tons, the same unit the platoon demand is counted in.
+            return UnitType.INFANTRY;
+        } else if (bay instanceof ASFBay) {
+            return UnitType.AEROSPACE_FIGHTER;
+        } else if (bay instanceof SmallCraftBay) {
+            return UnitType.SMALL_CRAFT;
+        }
+        return NOT_A_UNIT_BAY;
     }
 
     /**

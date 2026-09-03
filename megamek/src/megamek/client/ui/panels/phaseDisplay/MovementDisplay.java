@@ -2781,7 +2781,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       false)) {
                     return;
                 }
-                Hex hex = game.getBoard(boardId).getHex(coords);
                 DeploymentPosition deploymentPosition = deploymentHelper.determineDeploymentPosition(
                       currentlySelectedEntity,
                       coords,

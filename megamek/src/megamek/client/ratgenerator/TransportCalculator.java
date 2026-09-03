@@ -802,6 +802,22 @@ public class TransportCalculator {
     static final int NOT_A_UNIT_BAY = -1;
 
     /**
+     * The kind of unit each bay class is built for, keyed by the exact class. Every bay class is {@code final},
+     * so the exact class is the whole story. Infantry bays are measured in tons, the same unit the platoon demand
+     * is counted in.
+     */
+    private static final Map<Class<? extends Bay>, Integer> UNIT_TYPE_BY_BAY_CLASS = Map.of(
+          MekBay.class, UnitType.MEK,
+          ProtoMekBay.class, UnitType.PROTOMEK,
+          HeavyVehicleBay.class, UnitType.TANK,
+          LightVehicleBay.class, UnitType.VTOL,
+          SuperHeavyVehicleBay.class, UnitType.NAVAL,
+          BattleArmorBay.class, UnitType.BATTLE_ARMOR,
+          InfantryBay.class, UnitType.INFANTRY,
+          ASFBay.class, UnitType.AEROSPACE_FIGHTER,
+          SmallCraftBay.class, UnitType.SMALL_CRAFT);
+
+    /**
      * The kind of unit a bay is built for, as the {@link UnitType} the lift ledger keys on.
      *
      * @param bay the bay
@@ -809,19 +825,7 @@ public class TransportCalculator {
      * @return the unit type key, or {@link #NOT_A_UNIT_BAY} when the bay holds no units
      */
     static int bayType(Bay bay) {
-        // Infantry bays are measured in tons, the same unit the platoon demand is counted in.
-        return switch (bay) {
-            case MekBay mekBay -> UnitType.MEK;
-            case ProtoMekBay protoMekBay -> UnitType.PROTOMEK;
-            case HeavyVehicleBay heavyVehicleBay -> UnitType.TANK;
-            case LightVehicleBay lightVehicleBay -> UnitType.VTOL;
-            case SuperHeavyVehicleBay superHeavyVehicleBay -> UnitType.NAVAL;
-            case BattleArmorBay battleArmorBay -> UnitType.BATTLE_ARMOR;
-            case InfantryBay infantryBay -> UnitType.INFANTRY;
-            case ASFBay fighterBay -> UnitType.AEROSPACE_FIGHTER;
-            case SmallCraftBay smallCraftBay -> UnitType.SMALL_CRAFT;
-            default -> NOT_A_UNIT_BAY;
-        };
+        return UNIT_TYPE_BY_BAY_CLASS.getOrDefault(bay.getClass(), NOT_A_UNIT_BAY);
     }
 
     /**

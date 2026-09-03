@@ -175,7 +175,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      * Represents the result of determining a deployment position. Contains the final elevation and facing for
      * deployment, or null if deployment was cancelled.
      */
-    record DeploymentPosition(int elevation, int facing) {
+    record DeploymentPosition(int elevation, int facing, ElevationOption lastDeploymentOption) {
 
     }
 
@@ -286,7 +286,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (game != null) {
             facingHelper.setStartingFacing(entity, game.getPlayersList());
         }
-        
+
         boolean assaultDropOption = game.getOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP);
         setAssaultDropEnabled(entity.canAssaultDrop() && assaultDropOption);
         if (!entity.canAssaultDrop() && assaultDropOption) {
@@ -760,6 +760,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             entity.setElevation(deploymentPosition.elevation());
         }
         entity.setFacing(deploymentPosition.facing());
+        lastDeploymentOption = deploymentPosition.lastDeploymentOption();
     }
 
     /**

@@ -260,7 +260,7 @@ public class DeploymentHelper {
             }
         }
 
-        return new DeploymentPosition(finalElevation, finalFacing);
+        return new DeploymentPosition(finalElevation, finalFacing, lastDeploymentOption);
     }
 
     private @Nullable ElevationOption showElevationChoiceDialog(List<ElevationOption> elevationOptions) {

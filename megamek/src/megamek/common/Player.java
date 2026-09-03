@@ -515,7 +515,7 @@ public final class Player extends TurnOrdered {
      * to say what the player looks like. Anything drawing something in a player's colour wants this.
      *
      * @return The colour of this player's colour camouflage, or the plain colour field when the camouflage
-     *       is an image rather than a colour
+     * is an image rather than a colour
      */
     public PlayerColour getDisplayColour() {
         if ((camouflage != null) && camouflage.isColourCamouflage()) {
@@ -545,7 +545,7 @@ public final class Player extends TurnOrdered {
     }
 
     public int getStartWidth() {
-        return Game.rulesManager.getRulesGame().getDeploymentWidth(this, getStartingPos(), startWidth);
+        return startWidth;
     }
 
     public void setStartWidth(int startWidth) {
@@ -726,7 +726,7 @@ public final class Player extends TurnOrdered {
 
     /**
      * @return The victory points this player's side starts the game with, as set by a scenario's faction
-     *       definition; 0 unless a scenario set it
+     * definition; 0 unless a scenario set it
      */
     public int getStartingVictoryPoints() {
         return startingVictoryPoints;

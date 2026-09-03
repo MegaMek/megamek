@@ -346,6 +346,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     private final JFormattedTextField txtOffset;
     private final JFormattedTextField txtWidth;
+    private final JLabel labWalkOn = new JLabel();
+    private final JLabel labWalkOnMore = new JLabel();
     private JSpinner spinStartingAnyNWx;
     private JSpinner spinStartingAnyNWy;
     private JSpinner spinStartingAnySEx;
@@ -622,7 +624,6 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         lblOffset.setToolTipText(Messages.getString("CustomMekDialog.labDeploymentOffsetTip"));
         JLabel lblWidth = new JLabel(Messages.getString("CustomMekDialog.labDeploymentWidth"));
         lblWidth.setToolTipText(Messages.getString("CustomMekDialog.labDeploymentWidthTip"));
-
         txtOffset.setColumns(4);
         txtWidth.setColumns(4);
 
@@ -630,11 +631,18 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         result.add(txtOffset, GBC.eol());
         result.add(lblWidth, GBC.std());
         result.add(txtWidth, GBC.eol());
+        result.add(labWalkOn, GBC.eol());
+        result.add(labWalkOnMore, GBC.eol());
+        if (Game.rulesManager.getRulesGame().isWalkOnDeployment()) {
+            labWalkOn.setText(Messages.getString("PlayerSettingsDialog.labWalkOnDeployment"));
+        }
         if (Game.rulesManager.getRulesGame().isWalkOnDeployment() &&
             (currentPlayerStartPos != Board.START_CENTER && currentPlayerStartPos != Board.START_ANY)
             && !player.isBot()) {
+            labWalkOnMore.setText(Messages.getString("PlayerSettingsDialog.labDeploymentWidthWalkOn"));
             txtWidth.setEnabled(false);
         } else {
+            labWalkOnMore.setText("");
             txtWidth.setEnabled(true);
         }
 
@@ -968,16 +976,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
              currentPlayerStartPos != Board.START_ANY &&
              currentPlayerStartPos <= Board.NUM_ZONES) &&
             !player.isBot()) {
-            txtWidth.setValue(Game.rulesManager.getRulesGame()
-                                               .getDeploymentWidth(player,
-                                                                   currentPlayerStartPos,
-                                                                   (int) txtWidth.getValue()));
             txtWidth.setEnabled(false);
+            labWalkOnMore.setText(Messages.getString("PlayerSettingsDialog.labDeploymentWidthWalkOn"));
         } else {
-            txtWidth.setValue(Game.rulesManager.getRulesGame()
-                                               .getDeploymentWidth(player,
-                                                                   currentPlayerStartPos,
-                                                                   player.getStartWidth()));
+            labWalkOnMore.setText("");
             txtWidth.setEnabled(true);
         }
 

@@ -971,15 +971,6 @@ public class TechAdvancement implements ITechnology {
         return this;
     }
 
-    public TechAdvancement setUnofficial(boolean unofficial) {
-        if (unofficial) {
-            staticTechLevel = SimpleTechLevel.UNOFFICIAL;
-        } else if (staticTechLevel == SimpleTechLevel.UNOFFICIAL) {
-            staticTechLevel = null;
-        }
-        return this;
-    }
-
     @Override
     public SimpleTechLevel getStaticTechLevel() {
         return staticTechLevel;

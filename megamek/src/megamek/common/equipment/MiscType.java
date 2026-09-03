@@ -5801,7 +5801,7 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(DATE_NONE, 3058, 3082, DATE_NONE, DATE_NONE)
@@ -12148,7 +12148,7 @@ public class MiscType extends EquipmentType {
         // Left over from older Infantry rules.
 
         misc.techAdvancement.setTechBase(TechBase.IS);
-        misc.techAdvancement.setUnofficial(true);
+        misc.techAdvancement.setStaticTechLevel(SimpleTechLevel.UNOFFICIAL);
         misc.techAdvancement.setISAdvancement(DATE_NONE, 2100, DATE_NONE);
         misc.techAdvancement.setTechRating(TechRating.D);
         misc.techAdvancement.setAvailability(AvailabilityValue.D,
@@ -12174,7 +12174,7 @@ public class MiscType extends EquipmentType {
         // Since this is BA Equipment I'm setting the date for Nighthawk use.
 
         misc.techAdvancement.setTechBase(TechBase.IS);
-        misc.techAdvancement.setUnofficial(true);
+        misc.techAdvancement.setStaticTechLevel(SimpleTechLevel.UNOFFICIAL);
         misc.techAdvancement.setISAdvancement(DATE_NONE, 2720, DATE_NONE);
         misc.techAdvancement.setTechRating(TechRating.D);
         misc.techAdvancement.setAvailability(AvailabilityValue.D,

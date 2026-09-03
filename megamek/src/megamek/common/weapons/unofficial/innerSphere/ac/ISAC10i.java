@@ -83,7 +83,7 @@ public class ISAC10i extends ACWeapon {
         // Since this is an unofficial Weapon I'm using the Normal AC10 Stats
         rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2443, 2460, 2465, DATE_NONE, DATE_NONE)

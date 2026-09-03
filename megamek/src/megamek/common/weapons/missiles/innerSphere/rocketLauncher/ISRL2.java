@@ -69,7 +69,7 @@ public class ISRL2 extends RLWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TM, 229);
         techAdvancement.setTechBase(TechBase.ALL)
               .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_ES, 3064, 3067, DATE_NONE, DATE_NONE)

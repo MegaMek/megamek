@@ -282,10 +282,11 @@ public class FighterSquadron extends AeroSpaceFighter {
     }
 
     @Override
-    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, boolean ignoreTAG,
+          CalculationReport calculationReport) {
         int bv = 0;
         for (Entity fighter : getActiveSubEntities()) {
-            bv += fighter.calculateBattleValue(ignoreC3, ignoreSkill);
+            bv += fighter.calculateBattleValue(ignoreC3, ignoreSkill, ignoreTAG);
         }
         return bv;
     }

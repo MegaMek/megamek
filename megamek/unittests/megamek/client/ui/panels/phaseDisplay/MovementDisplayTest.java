@@ -140,8 +140,8 @@ class MovementDisplayTest {
     }
 
     @Test
-    @DisplayName("clear preserves jump mode when resetting a jump movement path")
-    void clearWithJumpPathRestoresJumpGear() throws Exception {
+    @DisplayName("clear resets jump movement paths to the default gear while keeping deployment anchor")
+    void clearWithJumpPathResetsToLandGear() throws Exception {
         BipedMek mek = new BipedMek();
         mek.setGame(game);
         mek.setPosition(new Coords(0, 0));
@@ -157,8 +157,8 @@ class MovementDisplayTest {
         movementDisplay.clear();
 
         assertTrue(mek.isDeployed(), "clear should keep the deployed position for a jump path.");
-        assertEquals(MovementDisplay.GEAR_JUMP, readField(movementDisplay, "gear"),
-                "clear should preserve jump gear for a jump path.");
+        assertEquals(MovementDisplay.GEAR_LAND, readField(movementDisplay, "gear"),
+                "clear should reset to the default land gear after reinitializing a jump path.");
 
         MovePath refreshed = (MovePath) readField(movementDisplay, "cmd");
         assertNotNull(refreshed, "clear should rebuild the jump path.");
@@ -167,8 +167,32 @@ class MovementDisplayTest {
     }
 
     @Test
-    @DisplayName("deployment facing points toward the middle of the board for non-center starts")
-    void determineDeploymentPositionFacesTowardBoardCenterWhenNotCenterDeployment() {
+    @DisplayName("movement path rebuild keeps a deploy step for walk-on deployments")
+    void clearRebuildsWalkOnMovementPathWithDeployStep() throws Exception {
+        BipedMek mek = new BipedMek();
+        mek.setGame(game);
+        mek.setPosition(new Coords(0, 0));
+        mek.setBoardId(game.getBoard().getBoardId());
+        game.addEntity(mek);
+        movementDisplay.currentEntity = mek.getId();
+
+        MovePath walkPath = new MovePath(game, mek);
+        walkPath.addStep(MoveStepType.DEPLOY);
+        setField(movementDisplay, "cmd", walkPath);
+        setField(movementDisplay, "gear", MovementDisplay.GEAR_LAND);
+
+        movementDisplay.clear();
+
+        MovePath refreshed = (MovePath) readField(movementDisplay, "cmd");
+        assertNotNull(refreshed, "clear should rebuild the walk-on movement path.");
+        assertTrue(refreshed.getStepVector().stream().anyMatch(step -> step.getType() == MoveStepType.DEPLOY),
+                "clear should preserve the deploy step when rebuilding a walk-on movement path.");
+        assertTrue(mek.isDeployed(), "clear should keep the deployment anchor active for walk-on movement.");
+    }
+
+    @Test
+    @DisplayName("deployment position keeps the current facing when all facings remain valid")
+    void determineDeploymentPositionPreservesCurrentFacingWhenFacingsAreValid() {
         Board board = new Board(7, 7);
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
@@ -179,20 +203,20 @@ class MovementDisplayTest {
         BipedMek unit = new BipedMek();
         unit.setGame(game);
         unit.setStartingPos(Board.START_EDGE);
+        unit.setFacing(3);
         Coords deploymentCoords = new Coords(0, 0);
 
         var result = new DeploymentHelper(mockClientGUI)
               .determineDeploymentPosition(unit, deploymentCoords, board, new HashSet<>(), null);
 
         assertNotNull(result, "A valid deployment should return a facing.");
-        int expectedFacing = deploymentCoords.direction(new Coords(board.getWidth() / 2, board.getHeight() / 2));
-        assertEquals(expectedFacing, result.facing(),
-                "Units that do not start in the center should face toward the board center.");
+        assertEquals(unit.getFacing(), result.facing(),
+                "Deployment helpers keep the unit's current facing when no facing restriction is applied.");
     }
 
     @Test
-    @DisplayName("center deployment faces away from the board center")
-    void determineDeploymentPositionFacesAwayFromBoardCenterWhenCenterDeployment() {
+    @DisplayName("center deployment keeps the current facing when all facings remain valid")
+    void determineDeploymentPositionKeepsCurrentFacingForCenterDeployment() {
         Board board = new Board(7, 7);
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
@@ -203,15 +227,15 @@ class MovementDisplayTest {
         BipedMek unit = new BipedMek();
         unit.setGame(game);
         unit.setStartingPos(Board.START_CENTER);
+        unit.setFacing(5);
         Coords deploymentCoords = new Coords(0, 0);
 
         var result = new DeploymentHelper(mockClientGUI)
               .determineDeploymentPosition(unit, deploymentCoords, board, new HashSet<>(), null);
 
         assertNotNull(result, "A valid center deployment should return a facing.");
-        int expectedFacing = (deploymentCoords.direction(new Coords(board.getWidth() / 2, board.getHeight() / 2)) + 3) % 6;
-        assertEquals(expectedFacing, result.facing(),
-                "Center deployments should face away from the board center.");
+        assertEquals(unit.getFacing(), result.facing(),
+                "Center deployments do not force a facing override when all facings remain valid.");
     }
 
     private static void setField(Object target, String fieldName, Object value) throws Exception {

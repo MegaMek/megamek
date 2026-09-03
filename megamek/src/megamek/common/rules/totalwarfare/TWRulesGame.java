@@ -152,7 +152,7 @@ public class TWRulesGame extends RulesGame {
     public boolean allowMinefields(boolean toMinefields) {return toMinefields;}
 
     /**
-     * {@inheritDoc} TW will allow walk-on initiative with the right option
+     * {@inheritDoc} TW will allow walk-on deployment with the right option
      */
     @Override
     public void setWalkOnDeployment(final boolean walkOn) {

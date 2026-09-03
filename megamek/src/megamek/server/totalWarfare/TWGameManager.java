@@ -3101,10 +3101,6 @@ public class TWGameManager extends AbstractGameManager {
                         includeInPhase = false;
                     }
                 }
-                // Do not include immobile entities in movement or init
-                if (!Game.rulesManager.getRulesGame().includeInMovement(phase, entity)) {
-                    includeInPhase = false;
-                }
                 if (!includeInPhase && Game.rulesManager.getRulesGame().isWalkOnDeployment()) {
                     continue;
                 }
@@ -16293,8 +16289,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * End-phase resolution for Tainted and Toxic Atmospheres, TO:AR p.54. Delegates to
-     * {@link TaintedAtmosphereHandler} so the atmosphere rules do not add to this already very large class.
+     * End-phase resolution for Tainted and Toxic Atmospheres, TO:AR p.54. Delegates to {@link TaintedAtmosphereHandler}
+     * so the atmosphere rules do not add to this already very large class.
      */
     void checkTaintedAtmosphereEffects() {
         new TaintedAtmosphereHandler(this).checkTaintedAtmosphereEffects();
@@ -27796,8 +27792,8 @@ public class TWGameManager extends AbstractGameManager {
      * Turns one unit's automatic ejection on or off at its owner's request.
      * <p>
      * The server decides on its own copy of the unit whether a crew is thrown clear, so a change made only on the
-     * client would be ignored when the moment came. Only the owner may make it, and only BattleMeks and aerospace
-     * units carry the setting at all.
+     * client would be ignored when the moment came. Only the owner may make it, and only BattleMeks and aerospace units
+     * carry the setting at all.
      *
      * @param packet    the packet holding the unit id and the new setting
      * @param connIndex the connection the packet arrived on
@@ -30933,8 +30929,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Adds a line to the ejection report when what the crew is wearing is the difference between living and dying
-     * out there.
+     * Adds a line to the ejection report when what the crew is wearing is the difference between living and dying out
+     * there.
      * <p>
      * Called from the one exit every ejection passes through, so Mek pilots, vehicle crews and aerospace crews all
      * reach it. Only raised where the kit answers the danger: nobody needs telling in ordinary weather, and a crew

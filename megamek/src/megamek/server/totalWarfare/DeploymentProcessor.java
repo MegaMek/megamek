@@ -33,9 +33,12 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
 import megamek.common.Hex;
 import megamek.common.OffBoardDirection;
-import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.game.GameTurn;
 import megamek.common.net.packets.InvalidPacketDataException;
@@ -44,12 +47,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.turns.SpecificEntityTurn;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
-import megamek.common.units.TrainLayout;
 import megamek.logging.MMLogger;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 
 /**
  * Handles unit deployment for the TWGameManager (not minefields or arty auto hexes)
@@ -66,7 +64,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
      * Receives a deployment packet from a Client connection. If valid, executes it and ends the current turn.
      */
     void receiveDeployment(Packet packet,
-                           int connId) throws InvalidPacketDataException {
+          int connId) throws InvalidPacketDataException {
         Entity entity = getGame().getEntity(packet.getIntValue(0));
 
         if (entity == null) {
@@ -102,15 +100,14 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
             turn = getGame().getTurnForPlayer(connId);
         }
 
-        boolean isLegalLocation = getGame().hasBoardLocation(coords, boardId)
-                                  && getGame().getBoard(boardId).isLegalDeployment(coords, entity)
-                                  && isLegalTrainFootprint(entity, coords, boardId, nFacing);
+        DeploymentServerHelper deploymentServerHelper = new DeploymentServerHelper(gameManager);
+        boolean isLegalLocation = deploymentServerHelper.isLegalDeployment(coords, boardId, entity, nFacing);
 
         if ((turn == null) || !turn.isValid(connId, entity, getGame())
-            // FIXME: The combination with assault drop and the assault drop check dont look right:
-            || !(isLegalLocation
-                 || (assaultDrop && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP)
-                     && entity.canAssaultDrop()))) {
+              // FIXME: The combination with assault drop and the assault drop check dont look right:
+              || !(isLegalLocation
+              || (assaultDrop && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP)
+              && entity.canAssaultDrop()))) {
 
             String msg = "server got invalid deployment packet from connection " + connId;
             msg += ", Entity: " + entity.getShortName();
@@ -125,15 +122,14 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
 
         // looks like mostly everything's okay
         boolean setDone = true;
-        DeploymentServerHelper deploymentServerHelper = new DeploymentServerHelper(gameManager);
         deploymentServerHelper.processDeployment(entity,
-                                                 coords,
-                                                 boardId,
-                                                 nFacing,
-                                                 elevation,
-                                                 loadVector,
-                                                 assaultDrop,
-                                                 setDone);
+              coords,
+              boardId,
+              nFacing,
+              elevation,
+              loadVector,
+              assaultDrop,
+              setDone);
         Hex hex = gameManager.getGame().getBoard(boardId).getHex(coords);
         addReport(gameManager.doSetLocationsExposure(entity, hex, false, entity.getElevation()));
 
@@ -157,7 +153,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
      * @param connId the id for connection that received the packet.
      */
     void receiveDeploymentUnload(Packet packet,
-                                 int connId) throws InvalidPacketDataException {
+          int connId) throws InvalidPacketDataException {
         Entity loader = getGame().getEntity(packet.getIntValue(0));
         Entity loaded = getGame().getEntity(packet.getIntValue(1));
 
@@ -173,8 +169,8 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
 
         if (!getGame().getPhase().isDeployment()) {
             String msg = "server received deployment unload packet " +
-                         "outside of deployment phase from connection " +
-                         connId;
+                  "outside of deployment phase from connection " +
+                  connId;
             msg += ", Entity: " + loader.getShortName();
             LOGGER.error(msg);
             return;
@@ -205,40 +201,8 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
         // Turn forced to be immediate to avoid messy turn ordering issues
         // (aka, how do we add the turn with individual initiative?)
         getGame().insertTurnAfter(new SpecificEntityTurn(loaded.getOwnerId(), loaded.getId()),
-                                  getGame().getTurnIndex() - 1);
+              getGame().getTurnIndex() - 1);
         gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
-    }
-
-    /**
-     * Whether every hex a train would occupy is a legal deployment hex, not just the tractor's own.
-     * <p>
-     * The client refuses such a placement before sending it, but the placement arrives from the client, so the server
-     * has to decide for itself rather than trust it. A unit towing nothing is always its own footprint.
-     * </p>
-     *
-     * @param tractor the unit being deployed
-     * @param coords  the hex it is being placed in
-     * @param boardId the board it is being placed on
-     * @param facing  the facing it is being placed with
-     * @return true when the whole train fits in the deployment zone
-     */
-    private boolean isLegalTrainFootprint(Entity tractor,
-                                          Coords coords,
-                                          int boardId,
-                                          int facing) {
-        if (tractor.getAllTowedUnits().isEmpty()) {
-            return true;
-        }
-
-        Board board = getGame().getBoard(boardId);
-        for (Coords trainHex : TrainLayout.deploymentFootprint(getGame(), tractor, coords, facing)) {
-            if (!getGame().hasBoardLocation(trainHex, boardId) || !board.isLegalDeployment(trainHex, tractor)) {
-                LOGGER.warn("[Train] rejected deployment of {} at {} facing {}: trailer hex {} is not a legal "
-                            + "deployment hex", tractor.getDisplayName(), coords, facing, trainHex);
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -246,8 +210,8 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
      * whole rather than being split between the board and the map edge.
      * <p>
      * Runs before deployment turns are generated. Without it a trailer behind an off board tractor would never be
-     * placed at all: an off board tractor takes no deployment turn, so nothing would run to position its trailers,
-     * and the trailer no longer deploys itself. See RFE #8506.
+     * placed at all: an off board tractor takes no deployment turn, so nothing would run to position its trailers, and
+     * the trailer no longer deploys itself. See RFE #8506.
      * </p>
      */
     void followTractorsOffBoard() {
@@ -255,9 +219,9 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
 
         for (Entity tractor : getGame().getEntitiesVector()) {
             if (!tractor.isOffBoard()
-                || tractor.getAllTowedUnits().isEmpty()
-                || (tractor.getOffBoardDistance() <= 0)
-                || (tractor.getOffBoardDirection() == OffBoardDirection.NONE)) {
+                  || tractor.getAllTowedUnits().isEmpty()
+                  || (tractor.getOffBoardDistance() <= 0)
+                  || (tractor.getOffBoardDirection() == OffBoardDirection.NONE)) {
                 continue;
             }
             for (int towedId : tractor.getAllTowedUnits()) {
@@ -272,7 +236,7 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
 
         if (!trailersFollowingOffBoard.isEmpty()) {
             LOGGER.info("[Train] {} trailer(s) follow their tractor off board: {}",
-                        trailersFollowingOffBoard.size(), String.join(", ", trailersFollowingOffBoard));
+                  trailersFollowingOffBoard.size(), String.join(", ", trailersFollowingOffBoard));
         }
     }
 }

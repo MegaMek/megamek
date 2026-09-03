@@ -1943,9 +1943,12 @@ public class ForceDescriptor {
         parent.addSubForce(shipElement(parent, ms));
     }
 
-    private ForceDescriptor shipElement(ForceDescriptor parent, MekSummary ms) {
+    private ForceDescriptor shipElement(ForceDescriptor parent, MekSummary hull) {
         ForceDescriptor sub = parent.createChild(parent.getSubForces().size() + parent.getAttached().size());
-        sub.setUnit(RATGenerator.getInstance().getModelRecord(ms.getName()));
+        // A child inherits its parent's unit type, and setUnit only fills one in when there is none, so a
+        // DropShip created under a JumpShip element would be typed as a JumpShip. Clear it so the design decides.
+        sub.setUnitType(null);
+        sub.setUnit(RATGenerator.getInstance().getModelRecord(hull.getName()));
         sub.setEchelon(1);
         sub.setCoRank(33);
         return sub;

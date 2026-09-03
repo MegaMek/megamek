@@ -81,6 +81,7 @@ import megamek.client.ratgenerator.FormationType;
 import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
+import megamek.client.ratgenerator.ShipReroller;
 import megamek.client.ratgenerator.TransportBranchMerger;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
@@ -210,7 +211,9 @@ public class ForceGeneratorViewUi implements ActionListener {
         ExistingLift inModel = accumulateModel ? ExistingLift.of(modelRoot) : ExistingLift.NONE;
         ExistingLift lift = inModel.plus(hostLiftSupplier.get());
         if (!lift.isEmpty()) {
-            logger.info("[ForceGen][Lift] next roll starts from free bays {} and {} free docking collar(s)",
+            // DEBUG: a host reads the panel far more often than it rolls, and the transport stage logs the lift a
+            // roll actually starts from at INFO.
+            logger.debug("[ForceGen][Lift] next roll starts from free bays {} and {} free docking collar(s)",
                   lift.freeBays(), lift.freeDockingCollars());
         }
         return lift;
@@ -867,6 +870,33 @@ public class ForceGeneratorViewUi implements ActionListener {
     }
 
     /**
+     * Swaps the ship for another design that does the same job, then shows the tree and the chosen-units table as
+     * they now stand. The old ship and the complement it carried leave the chosen list, since those entities no
+     * longer exist in the tree; the player picks the new ones if they want them.
+     *
+     * @param ship the ship node the player right-clicked
+     */
+    private void rerollShip(ForceDescriptor ship) {
+        List<Entity> before = new ArrayList<>();
+        ship.addAllEntities(before);
+        ShipReroller.Outcome outcome = ShipReroller.reroll(ship);
+        if (outcome == null) {
+            return;
+        }
+        modelChosen.removeEntities(before);
+        Object root = forceTree.getModel().getRoot();
+        if (root instanceof ForceDescriptor rootDescriptor) {
+            forceTree.setModel(new ForceTreeModel(rootDescriptor));
+            expandTopLevels();
+            if (accumulateModel) {
+                panControls.updateSummaryTable(rootDescriptor);
+            }
+        }
+        fireToeChanged();
+        refreshCommandModelChrome();
+    }
+
+    /**
      * Runs the order-of-battle search against the current field text and jumps to the first match. Matches are
      * case-insensitive substring hits on each node's unit name/chassis/model, pilot name, ship fluff name, and
      * formation/cluster name. Non-destructive: the tree is only expanded and selected, never rebuilt or filtered.
@@ -985,6 +1015,12 @@ public class ForceGeneratorViewUi implements ActionListener {
                         refreshCommandModelChrome();
                     });
                     menu.add(toggleItem);
+                    if (ShipReroller.isShip(fd)) {
+                        JMenuItem rerollItem = new JMenuItem(Messages.getString("ForceGeneratorDialog.rerollShip"));
+                        rerollItem.setToolTipText(Messages.getString("ForceGeneratorDialog.rerollShip.tooltip"));
+                        rerollItem.addActionListener(actionEvent -> rerollShip(fd));
+                        menu.add(rerollItem);
+                    }
 
                     menu.add(buildChangeFormationMenu(fd));
                     menu.add(buildAddSubForceMenu(fd));
@@ -1665,6 +1701,20 @@ public class ForceGeneratorViewUi implements ActionListener {
         public void clearData() {
             entityIds.clear();
             entities.clear();
+            fireTableDataChanged();
+        }
+
+        /**
+         * Drops the given entities from the chosen list, ignoring any that are not in it.
+         *
+         * @param gone the entities that no longer exist in the tree
+         */
+        public void removeEntities(Collection<Entity> gone) {
+            for (Entity entity : gone) {
+                entityIds.remove(entity.getExternalIdAsString());
+            }
+            entities = entities.stream().filter(entity -> entityIds.contains(entity.getExternalIdAsString()))
+                  .collect(Collectors.toList());
             fireTableDataChanged();
         }
 

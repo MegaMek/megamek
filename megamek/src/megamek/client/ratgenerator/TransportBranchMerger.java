@@ -80,7 +80,7 @@ public final class TransportBranchMerger {
             commandBranch = rollBranch;
         } else if (rollBranch != null) {
             int moved = mergeCategories(rollBranch, commandBranch);
-            LOGGER.debug("[ForceGen][Naval] folded {} ship group(s) from '{}' into the command's naval branch",
+            LOGGER.info("[ForceGen][Naval] folded {} ship group(s) from '{}' into the command's naval branch",
                   moved, roll.parseName());
         }
         if (commandBranch == null) {
@@ -93,7 +93,7 @@ public final class TransportBranchMerger {
         // A DropShip from one roll and a JumpShip with a spare collar from another only meet here.
         int docked = dockLooseDropShips(commandBranch, TransportBranchMerger::collarsOf);
         if (docked > 0) {
-            LOGGER.debug("[ForceGen][Naval] docked {} DropShip(s) left loose by earlier rolls", docked);
+            LOGGER.info("[ForceGen][Naval] docked {} DropShip(s) left loose by earlier rolls", docked);
         }
     }
 

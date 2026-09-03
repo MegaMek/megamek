@@ -816,6 +816,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     public ForceDescriptor buildForceDescriptor() {
+        logger.info("[ForceGen] roll requested: unitType={} ({}), combo shows {} ({}), echelon={} faction={} rating={}",
+              forceDesc.getUnitType(), unitTypeLabel(forceDesc.getUnitType()),
+              cbUnitType.getSelectedItem(), unitTypeLabel((Integer) cbUnitType.getSelectedItem()),
+              forceDesc.getEchelon(), forceDesc.getFaction(), forceDesc.getRating());
         ForceDescriptor fd = new ForceDescriptor();
         fd.setTopLevel(true);
         fd.setYear(forceDesc.getYear());
@@ -863,6 +867,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         fd.setExistingLift(existingLiftSupplier.get());
 
         return fd;
+    }
+
+    /** The name the unit type combo shows for a code, for the log; "Combined" for {@code null}. */
+    private static String unitTypeLabel(@Nullable Integer unitType) {
+        return (unitType == null) ? Messages.getString("ForceGeneratorDialog.combined")
+              : UnitType.getTypeDisplayableName(unitType);
     }
 
     private void generateForce() {
@@ -1376,7 +1386,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             }
             refreshUnitTypes();
         } else if (ev.getSource() == cbUnitType) {
-            logger.debug("cbUnitType action: selected={}", cbUnitType.getSelectedItem());
+            // INFO on purpose: a roll that comes back as the wrong kind of unit is only diagnosable from the log if
+            // it says what was picked, and a pick is a one-off event.
+            logger.info("[ForceGen] unit type picked: {} ({})", cbUnitType.getSelectedItem(),
+                  unitTypeLabel((Integer) cbUnitType.getSelectedItem()));
             forceDesc.setUnitType((Integer) cbUnitType.getSelectedItem());
             refreshFormations();
         } else if (ev.getSource() == cbFormation) {

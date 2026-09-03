@@ -70,7 +70,6 @@ public class ISNailAndRivetGun extends NailRivetGunWeapon {
               rulesRef(SourceBookCode.TW, 138)
         );
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2309, 2310, 2312, DATE_NONE, DATE_NONE)

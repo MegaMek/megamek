@@ -82,7 +82,6 @@ public class ISLightMG extends MGWeapon {
               rulesRef(SourceBookCode.TW, 303)
         );
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(3064, 3068, 3070, DATE_NONE, DATE_NONE)

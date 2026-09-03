@@ -92,7 +92,6 @@ public class CLGaussRifle extends GaussWeapon {
               rulesRef(SourceBookCode.TW, 135)
         );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(2822, 2828, 2830, DATE_NONE, DATE_NONE)

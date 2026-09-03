@@ -80,7 +80,7 @@ public class ISAC20 extends ACWeapon {
               rulesRef(SourceBookCode.CORE, 182),
               rulesRef(SourceBookCode.TW, 303)
         );
-        techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(true).setTechRating(TechRating.C)
+        techAdvancement.setTechBase(TechBase.ALL).setStaticTechLevel(SimpleTechLevel.INTRO).setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2488, 2500, 2502, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)

@@ -78,7 +78,6 @@ public class CLLB5XACPrototype extends CLLBXACPrototypeWeapon {
         maxRange = RANGE_LONG;
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 91);
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2825, DATE_NONE)

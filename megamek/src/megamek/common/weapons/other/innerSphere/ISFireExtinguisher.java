@@ -88,7 +88,6 @@ public class ISFireExtinguisher extends Weapon {
         setInstantModeSwitch(true);
         techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.B)
-              .setIntroLevel(false)
               .setISAdvancement(DATE_NONE, DATE_NONE, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_NONE, 2820, DATE_NONE, DATE_NONE, DATE_NONE)

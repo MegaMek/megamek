@@ -36,6 +36,7 @@ package megamek.common.weapons.unofficial.clan;
 
 import java.io.Serial;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.SourceBookCode;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
@@ -75,7 +76,6 @@ public class CLPlasmaRifle extends PlasmaMFUKWeapon {
         // Gonna use the same tech info as the Cannon
         rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)

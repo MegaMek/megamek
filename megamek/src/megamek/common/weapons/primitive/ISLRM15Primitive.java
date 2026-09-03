@@ -89,7 +89,6 @@ public class ISLRM15Primitive extends LRMWeapon {
         // they would always be around. This to cover some of the back worlds in the Periphery.
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 112);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2295, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)

@@ -89,7 +89,7 @@ public class ISAC2 extends ACWeapon {
               rulesRef(SourceBookCode.TW, 303)
         );
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2290, 2300, 2305, DATE_NONE, DATE_NONE)

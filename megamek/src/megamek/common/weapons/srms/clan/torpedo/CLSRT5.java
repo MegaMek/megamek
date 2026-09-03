@@ -84,7 +84,6 @@ public class CLSRT5 extends SRTWeapon {
               rulesRef(SourceBookCode.TW, 138)
         );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)

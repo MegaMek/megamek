@@ -79,7 +79,6 @@ public class ISBALaserMedium extends LaserWeapon {
         maxRange = RANGE_SHORT;
         rulesRefs = rulesRefs(SourceBookCode.TM, 258);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(3050, 3050, 3050, DATE_NONE, DATE_NONE)

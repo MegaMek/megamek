@@ -36,6 +36,7 @@ package megamek.common.weapons.unofficial.innerSphere.ac;
 
 import java.io.Serial;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;

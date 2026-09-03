@@ -85,7 +85,6 @@ public class CLPulseLaserSmall extends PulseLaserWeapon {
               rulesRef(SourceBookCode.TW, 304)
         );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2825, 2829, 2831, DATE_NONE, DATE_NONE)

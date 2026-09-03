@@ -78,7 +78,6 @@ public class CLERLaserMediumPrototype extends LaserWeapon {
         flags = flags.or(F_PROTOTYPE).andNot(F_PROTO_WEAPON);
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 91);
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(2819, DATE_NONE, DATE_NONE, 2824, DATE_NONE)

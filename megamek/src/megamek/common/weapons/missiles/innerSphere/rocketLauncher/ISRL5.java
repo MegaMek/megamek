@@ -36,6 +36,7 @@ package megamek.common.weapons.missiles.innerSphere.rocketLauncher;
 
 import java.io.Serial;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -72,7 +73,6 @@ public class ISRL5 extends RLWeapon {
         criticalSlots = 2;
         rulesRefs = rulesRefs(SourceBookCode.TM, 229);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
               .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)

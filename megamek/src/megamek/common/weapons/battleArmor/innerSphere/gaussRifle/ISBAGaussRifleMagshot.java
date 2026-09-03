@@ -71,7 +71,6 @@ public class ISBAGaussRifleMagshot extends Weapon {
               rulesRef(SourceBookCode.TW, 305)
         );
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3057, 3059, 3060, DATE_NONE, DATE_NONE)

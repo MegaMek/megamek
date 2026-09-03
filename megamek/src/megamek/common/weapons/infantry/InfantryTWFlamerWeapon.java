@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry;
 
 import java.io.Serial;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;

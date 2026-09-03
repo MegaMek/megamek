@@ -75,7 +75,6 @@ public class CLNarcOS extends NarcWeapon {
               rulesRef(SourceBookCode.TW, 113)
         );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
               .setClanAdvancement(2820, 2828, 2830, DATE_NONE, DATE_NONE)

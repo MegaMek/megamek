@@ -81,7 +81,6 @@ public class CapMissBarracudaWeapon extends CapitalMissileWeapon {
               rulesRef(SourceBookCode.TW, 304)
         );
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2200, 2305, 3055, 2950, 3051)

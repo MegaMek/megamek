@@ -81,7 +81,6 @@ public class SubCapMissilePiranhaWeapon extends SubCapMissileWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 156);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X,
                     AvailabilityValue.X,

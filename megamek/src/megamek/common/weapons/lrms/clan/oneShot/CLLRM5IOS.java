@@ -75,7 +75,6 @@ public class CLLRM5IOS extends LRMWeapon {
               rulesRef(SourceBookCode.CORE, 182)
         );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3058, 3081, 3085, DATE_NONE, DATE_NONE)

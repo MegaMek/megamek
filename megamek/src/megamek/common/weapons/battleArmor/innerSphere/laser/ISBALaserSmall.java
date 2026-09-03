@@ -82,7 +82,6 @@ public class ISBALaserSmall extends LaserWeapon {
         atClass = CLASS_POINT_DEFENSE;
         rulesRefs = rulesRefs(SourceBookCode.TM, 258);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(3050, 3050, 3050, DATE_NONE, DATE_NONE)

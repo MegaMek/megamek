@@ -81,8 +81,7 @@ public class CLBAERPulseLaserSmall extends PulseLaserWeapon {
               andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = rulesRefs(SourceBookCode.TM, 258);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false).setTechRating(TechRating.F)
+        techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(DATE_NONE, 3057, 3082, DATE_NONE, DATE_NONE)
               .setClanApproximate(false, false, false, false, false)

@@ -83,7 +83,6 @@ public class CLSRM4OS extends SRMWeapon {
               rulesRef(SourceBookCode.TW, 113)
         );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2820, 2824, 3045, DATE_NONE, DATE_NONE)

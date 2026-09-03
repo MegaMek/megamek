@@ -72,7 +72,6 @@ public class NL35Weapon extends NLWeapon {
         this.maxRange = RANGE_LONG;
         rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 145);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_ES, 2305, DATE_NONE, 2950, 3051)

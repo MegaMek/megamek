@@ -36,6 +36,7 @@ package megamek.common.weapons.ppc.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -77,7 +78,6 @@ public class ISKinsSlaughterPPC extends PPCWeapon {
         rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         flags = flags.or(F_PPC_CAPACITOR_COMPATIBLE);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
               .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)

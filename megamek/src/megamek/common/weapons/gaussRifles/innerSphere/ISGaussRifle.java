@@ -95,7 +95,6 @@ public class ISGaussRifle extends GaussWeapon {
         );
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2587, 2590, 3045, 2865, 3040)

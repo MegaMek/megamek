@@ -82,7 +82,6 @@ public class ISUAC2 extends UACWeapon {
               rulesRef(SourceBookCode.TW, 303)
         );
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3057, 3060, DATE_NONE, DATE_NONE)

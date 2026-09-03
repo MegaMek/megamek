@@ -84,7 +84,7 @@ public class ISAC5 extends ACWeapon {
               rulesRef(SourceBookCode.CORE, 182),
               rulesRef(SourceBookCode.TW, 303)
         );
-        techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(true).setTechRating(TechRating.C)
+        techAdvancement.setTechBase(TechBase.ALL).setStaticTechLevel(SimpleTechLevel.INTRO).setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2240, 2250, 2255, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)

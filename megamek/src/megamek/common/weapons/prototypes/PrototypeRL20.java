@@ -72,7 +72,6 @@ public class PrototypeRL20 extends PrototypeRLWeapon {
         flags = flags.or(F_PROTOTYPE);
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 67);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)

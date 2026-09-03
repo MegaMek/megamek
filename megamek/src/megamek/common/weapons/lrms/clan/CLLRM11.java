@@ -68,7 +68,6 @@ public class CLLRM11 extends LRMWeapon {
         cost = 110000;
         rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)

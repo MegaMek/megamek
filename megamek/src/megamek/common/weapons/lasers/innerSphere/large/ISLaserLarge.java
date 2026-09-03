@@ -82,7 +82,7 @@ public class ISLaserLarge extends LaserWeapon {
               rulesRef(SourceBookCode.TW, 303)
         );
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(true)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(2306, 2316, 2320, DATE_NONE, DATE_NONE)

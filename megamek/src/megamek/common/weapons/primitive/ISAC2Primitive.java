@@ -104,7 +104,6 @@ public class ISAC2Primitive extends ACWeapon {
         // Periphery.
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 112);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2290, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)

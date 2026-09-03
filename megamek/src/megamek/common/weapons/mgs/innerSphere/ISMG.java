@@ -82,7 +82,7 @@ public class ISMG extends MGWeapon {
               rulesRef(SourceBookCode.TW, 304)
         );
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)

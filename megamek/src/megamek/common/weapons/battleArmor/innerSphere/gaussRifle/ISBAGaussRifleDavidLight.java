@@ -71,7 +71,6 @@ public class ISBAGaussRifleDavidLight extends Weapon {
         cost = 22500;
         rulesRefs = rulesRefs(SourceBookCode.TM, 255);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3058, 3063, 3065, DATE_NONE, DATE_NONE)

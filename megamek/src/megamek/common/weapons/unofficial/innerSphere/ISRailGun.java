@@ -36,6 +36,7 @@ package megamek.common.weapons.unofficial.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -73,7 +74,6 @@ public class ISRailGun extends GaussWeapon {
         // This appears to be like the Heavy Gauss using those stats.
         rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
               .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)

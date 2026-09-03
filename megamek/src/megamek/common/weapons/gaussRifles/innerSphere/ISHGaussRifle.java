@@ -98,7 +98,6 @@ public class ISHGaussRifle extends GaussWeapon {
               rulesRef(SourceBookCode.TW, 136)
         );
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3051, 3061, 3067, DATE_NONE, DATE_NONE)

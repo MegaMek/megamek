@@ -77,7 +77,6 @@ public class ISAPDS extends AmmoWeapon {
         cost = 200000;
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 85);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
               .setISAdvancement(3134, 3137, DATE_NONE, DATE_NONE, DATE_NONE)

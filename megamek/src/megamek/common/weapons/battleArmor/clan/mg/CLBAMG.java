@@ -78,7 +78,6 @@ public class CLBAMG extends BAMGWeapon {
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = rulesRefs(SourceBookCode.TM, 258);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)

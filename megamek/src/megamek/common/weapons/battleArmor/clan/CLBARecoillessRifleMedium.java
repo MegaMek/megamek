@@ -88,7 +88,6 @@ public class CLBARecoillessRifleMedium extends Weapon {
         cost = 3000;
         rulesRefs = rulesRefs(SourceBookCode.TM, 268);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(3052, 3054, 3056, DATE_NONE, DATE_NONE)

@@ -76,7 +76,6 @@ public class SubCapCannonWeaponLight extends SubCapCannonWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 155);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3068, 3073, DATE_NONE, DATE_NONE)

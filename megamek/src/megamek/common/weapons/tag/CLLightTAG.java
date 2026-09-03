@@ -76,7 +76,6 @@ public class CLLightTAG extends TAGWeapon {
               rulesRef(SourceBookCode.TW, 304)
         );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setClanAdvancement(3051, 3054, 3059, DATE_NONE, DATE_NONE)

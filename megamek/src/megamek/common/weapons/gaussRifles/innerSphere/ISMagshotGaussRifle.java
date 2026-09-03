@@ -78,7 +78,6 @@ public class ISMagshotGaussRifle extends GaussWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 126);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(3059, 3072, 3078, DATE_NONE, DATE_NONE)

@@ -36,6 +36,7 @@ package megamek.common.weapons.unofficial.innerSphere.thb;
 
 import java.io.Serial;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -77,7 +78,6 @@ public class ISTHBLB5XAC extends LBXACWeapon {
         // Since this are the Tactical Handbook Weapons I'm using the TM Stats.
         rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
               .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)

@@ -86,7 +86,6 @@ public class ISMRM10OS extends MRMWeapon {
               rulesRef(SourceBookCode.TW, 113)
         );
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3052, 3058, 3063, DATE_NONE, DATE_NONE)

@@ -76,7 +76,6 @@ public class ISStreakSRM6 extends StreakSRMWeapon {
               rulesRef(SourceBookCode.TW, 138)
         );
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)

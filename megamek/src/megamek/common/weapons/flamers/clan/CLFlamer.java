@@ -78,7 +78,6 @@ public class CLFlamer extends FlamerWeapon {
               rulesRef(SourceBookCode.TW, 304)
         );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.A, AvailabilityValue.A)
               .setClanAdvancement(2820, 2827, 2828, DATE_NONE, DATE_NONE)

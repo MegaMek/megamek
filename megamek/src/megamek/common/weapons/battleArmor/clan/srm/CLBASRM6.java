@@ -87,7 +87,6 @@ public class CLBASRM6 extends SRMWeapon {
               rulesRef(SourceBookCode.TW, 305)
         );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(2865, 2868, 2870, DATE_NONE, DATE_NONE)

@@ -85,7 +85,6 @@ public class CLATM9 extends ATMWeapon {
               rulesRef(SourceBookCode.TW, 138)
         );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3052, 3053, 3054, DATE_NONE, DATE_NONE)

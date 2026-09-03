@@ -88,7 +88,6 @@ public class ISHeavyFlamer extends VehicleFlamerWeapon {
         );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3068, 3079, DATE_NONE, DATE_NONE)

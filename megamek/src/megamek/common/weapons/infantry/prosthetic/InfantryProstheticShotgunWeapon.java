@@ -67,7 +67,6 @@ public class InfantryProstheticShotgunWeapon extends InfantryWeapon {
         // Weapons in IO blended with the rating for the limb itself
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 78);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)

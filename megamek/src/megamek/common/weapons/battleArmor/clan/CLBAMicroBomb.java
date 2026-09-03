@@ -89,7 +89,6 @@ public class CLBAMicroBomb extends Weapon {
         cost = 30000;
         rulesRefs = rulesRefs(SourceBookCode.TM, 253);
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)

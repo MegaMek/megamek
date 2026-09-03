@@ -82,7 +82,6 @@ public class CLHeavyMG extends MGWeapon {
               rulesRef(SourceBookCode.TW, 304)
         );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(3054, 3059, 3070, DATE_NONE, DATE_NONE)

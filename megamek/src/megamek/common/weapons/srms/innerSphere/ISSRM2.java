@@ -86,7 +86,7 @@ public class ISSRM2 extends SRMWeapon {
         );
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)

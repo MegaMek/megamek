@@ -75,7 +75,6 @@ public class ISNarc extends NarcWeapon {
               rulesRef(SourceBookCode.TW, 138)
         );
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2580, 2587, 3049, 2795, 3035)

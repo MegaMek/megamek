@@ -176,7 +176,7 @@ spotless {
         trimTrailingWhitespace()
         endWithNewline()
 
-        // Honour the same fence IntelliJ uses (ij_formatter_off_tag / ij_formatter_on_tag).
+        // Same fence the code already uses (see MDAugmentationType) and that .editorconfig configures for IntelliJ.
         toggleOffOn('@formatter:off', '@formatter:on')
     }
 }

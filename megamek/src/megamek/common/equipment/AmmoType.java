@@ -526,8 +526,7 @@ public class AmmoType extends EquipmentType {
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setClanAdvancement(3053)
-                .setPrototypeFactions(Faction.FS, Faction.LC)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
+                .setPrototypeFactions(Faction.FS, Faction.LC),
           rulesRefs(SourceBookCode.TO_AUE, 179));
 
     private static final MunitionMutator CLAN_HEAT_SEEKING_MUNITIONS_MUTATOR = new MunitionMutator("(Clan) "
@@ -585,8 +584,7 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(2757, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)
-                .setProductionFactions(Faction.FS)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
+                .setProductionFactions(Faction.FS),
           rulesRefs(SourceBookCode.TO_AUE, 184));
 
     private static final MunitionMutator CLAN_ANTI_TSM_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
@@ -600,8 +598,7 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3026, 3027, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.FS)
-                .setProductionFactions(Faction.FS)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
+                .setProductionFactions(Faction.FS),
           rulesRefs(SourceBookCode.IO_AE, 98));
 
     private static final MunitionMutator CLAN_ARTEMIS_CAPABLE_MUNITION_MUTATOR_FOR_SRM = new MunitionMutator(
@@ -671,8 +668,7 @@ public class AmmoType extends EquipmentType {
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X)
                 .setClanAdvancement(3037, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(Faction.FS, Faction.LC)
-                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL),
+                .setPrototypeFactions(Faction.FS, Faction.LC),
           rulesRefs(SourceBookCode.TM, 230));
 
     private static final MunitionMutator CLAN_MINE_CLEARANCE_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
@@ -686,8 +682,7 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3065, 3069, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.FS)
-                .setProductionFactions(Faction.FS)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+                .setProductionFactions(Faction.FS),
           rulesRefs(SourceBookCode.TO_AUE, 182));
 
     private static final MunitionMutator CLAN_NARC_CAPABLE_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
@@ -699,8 +694,7 @@ public class AmmoType extends EquipmentType {
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 2828, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),
+                .setClanApproximate(false, false, false, false, false),
           rulesRefs(SourceBookCode.TW, 142));
 
     private static final MunitionMutator FOLLOW_THE_LEADER_MUNITION_MUTATOR = new MunitionMutator("Follow The Leader"
@@ -930,8 +924,7 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3053, 3057, 3065, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.FW)
-                .setProductionFactions(Faction.FW)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),
+                .setProductionFactions(Faction.FW),
           rulesRefs(SourceBookCode.TM, 231));
 
     private static final MunitionMutator CLAN_SMOKE_STANDARD_MUNITION_MUTATOR = new MunitionMutator("(Clan) Smoke",
@@ -972,8 +965,7 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3052, 3057, 3066, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.FW)
-                .setProductionFactions(Faction.FW)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+                .setProductionFactions(Faction.FW),
           rulesRefs(SourceBookCode.TO_AUE, 183));
 
     private static final MunitionMutator CLAN_THUNDER_ADV_MUNITION_MUTATOR = new MunitionMutator("(Clan) Thunder",
@@ -1002,8 +994,7 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3054, 3058, 3064, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CC)
-                .setProductionFactions(Faction.CC)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+                .setProductionFactions(Faction.CC),
           rulesRefs(SourceBookCode.TO_AUE, 185));
 
     private static final MunitionMutator CLAN_THUNDER_AUGMENTED_MUNITION_MUTATOR = new MunitionMutator(
@@ -1017,8 +1008,7 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3054, 3057, 3064, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CC)
-                .setProductionFactions(Faction.CC)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+                .setProductionFactions(Faction.CC),
           rulesRefs(SourceBookCode.TO_AUE, 185));
 
     private static final MunitionMutator CLAN_THUNDER_VIBRABOMB_MUNITION_MUTATOR = new MunitionMutator(
@@ -1032,8 +1022,7 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3054, 3056, 3064, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CC)
-                .setProductionFactions(Faction.CC)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+                .setProductionFactions(Faction.CC),
           rulesRefs(SourceBookCode.TO_AUE, 185));
 
     private static final MunitionMutator CLAN_THUNDER_INFORMATION_MUNITION_MUTATOR = new MunitionMutator(
@@ -1047,8 +1036,7 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3054, 3056, 3062, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CC)
-                .setProductionFactions(Faction.CC)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+                .setProductionFactions(Faction.CC),
           rulesRefs(SourceBookCode.TO_AUE, 185));
 
     private static final MunitionMutator CLAN_ARTEMIS_CAPABLE_MUNITION_MUTATOR_FOR_LRM = new MunitionMutator(
@@ -1092,8 +1080,7 @@ public class AmmoType extends EquipmentType {
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3052, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(Faction.DC)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
+                .setPrototypeFactions(Faction.DC),
           rulesRefs(SourceBookCode.IO_AE, 125));
 
     private static final MunitionMutator ARMOR_PIERCING_MUNITION_MUTATOR = new MunitionMutator("Armor-Piercing", "AP",
@@ -1219,8 +1206,7 @@ public class AmmoType extends EquipmentType {
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3053, 3055, 3058, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false)
-                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL),
+                .setClanApproximate(false, false, false, false, false),
           rulesRefs(SourceBookCode.CORE, 190));
 
     private static final MunitionMutator CLAN_IMPROVED_TRACER_MUNITION_MUTATOR = new MunitionMutator("Tracer",
@@ -1299,8 +1285,7 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3070, 3073, 3145, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CBS)
-                .setProductionFactions(Faction.CBS)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),
+                .setProductionFactions(Faction.CBS),
           rulesRefs(SourceBookCode.CORE, 190));
 
     private static final MunitionMutator CLAN_TRACER_MUNITION_MUTATOR_FOR_PROTO = new MunitionMutator("Tracer",
@@ -1543,8 +1528,7 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3053, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.CC)
-                .setProductionFactions(Faction.CC)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+                .setProductionFactions(Faction.CC),
           rulesRefs(SourceBookCode.TO_AUE, 168));
 
     private static final MunitionMutator CLAN_LASER_INHIBITING_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
@@ -1558,8 +1542,7 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3053, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.FS, Faction.LC)
-                .setProductionFactions(Faction.FS, Faction.LC)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
+                .setProductionFactions(Faction.FS, Faction.LC),
           rulesRefs(SourceBookCode.TO_AUE, 168));
 
     private static final MunitionMutator CLAN_SMOKE_MUNITION_MUTATOR_FOR_ARROW_IV = new MunitionMutator("Smoke",
@@ -1603,8 +1586,7 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3056, 3065, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.CC)
-                .setProductionFactions(Faction.CC)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+                .setProductionFactions(Faction.CC),
           rulesRefs(SourceBookCode.TO_AUE, 169));
 
     private static final MunitionMutator CLAN_CHAFF_VEE_MUNITION_MUTATOR = new MunitionMutator("Chaff",
@@ -1874,8 +1856,7 @@ public class AmmoType extends EquipmentType {
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(3055, 3064, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+                .setClanApproximate(true, false, false, false, false),
           rulesRefs(SourceBookCode.TO_AUE, 186));
 
     private static final MunitionMutator CLAN_FLARE_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Flare",

@@ -203,6 +203,7 @@ class AmmoTypeTest {
     void clanSemiGuidedAmmoIsUnofficial() {
         EquipmentType.initializeTypes();
 
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 2 LINES
         for (String internalName : new String[] {
               "Clan Ammo ProtoMech LRM-12 (Clan) Semi-Guided",
               "Clan Ammo ProtoMech LRM-12 (Clan) Semi-Guided w/ Incendiary"

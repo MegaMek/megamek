@@ -35,7 +35,6 @@ class RulesPSRTest {
     void coreAndTotalWarfareRulesExercisePSRLogic() {
         CoreRulesPSR core = new CoreRulesPSR();
         TWRulesPSR total = new TWRulesPSR();
-        PilotingRollData roll = new PilotingRollData(1, 0, "test", 0);
         ArrayList<PilotingRollData> list = new ArrayList<>();
         list.add(new PilotingRollData(1, 2, "first", 0));
         list.add(new PilotingRollData(2, 1, "second", 0));

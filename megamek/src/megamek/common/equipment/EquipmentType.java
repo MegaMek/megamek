@@ -1142,7 +1142,6 @@ public class EquipmentType implements ITechnology {
                 2439,
                 2505)
           .setApproximate(true, false, false)
-          .setIntroLevel(true)
           .setTechRating(TechRating.D)
           .setAvailability(AvailabilityValue.C,
                 AvailabilityValue.C,

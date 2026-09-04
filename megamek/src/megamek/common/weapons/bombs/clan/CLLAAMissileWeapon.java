@@ -87,8 +87,6 @@ public class CLLAAMissileWeapon extends ThunderboltWeapon {
         this.missileArmor = 6;
         rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 171);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)

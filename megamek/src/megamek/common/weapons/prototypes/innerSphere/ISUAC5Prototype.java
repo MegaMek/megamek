@@ -90,8 +90,6 @@ public class ISUAC5Prototype extends UACWeapon {
         flags = flags.or(F_PROTOTYPE);
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 98);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(3029, DATE_NONE, DATE_NONE, 3035, DATE_NONE)

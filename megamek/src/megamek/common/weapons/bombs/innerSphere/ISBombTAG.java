@@ -72,8 +72,6 @@ public class ISBombTAG extends TAGWeapon {
         flags = flags.or(F_BOMB_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
         rulesRefs = rulesRefs(SourceBookCode.TM, 238);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2600, 2605, 2645, 2835, 3035)

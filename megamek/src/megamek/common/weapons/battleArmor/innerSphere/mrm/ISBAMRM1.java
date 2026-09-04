@@ -84,8 +84,6 @@ public class ISBAMRM1 extends MRMWeapon {
               rulesRef(SourceBookCode.TW, 305)
         );
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.B)
               .setISAdvancement(3058, 3060, 3067, DATE_NONE, DATE_NONE)

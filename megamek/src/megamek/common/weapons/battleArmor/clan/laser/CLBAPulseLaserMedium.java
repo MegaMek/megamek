@@ -84,8 +84,6 @@ public class CLBAPulseLaserMedium extends PulseLaserWeapon {
               .andNot(F_PROTO_WEAPON);
         rulesRefs = rulesRefs(SourceBookCode.TM, 258);
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.C)
               .setClanAdvancement(2870, 2872, 2880, DATE_NONE, DATE_NONE)

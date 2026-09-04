@@ -96,8 +96,6 @@ public class ISPulseLaserMediumRecovered extends PulseLaserWeapon {
         cost = 240000;
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 97);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(3031, DATE_NONE, DATE_NONE, 3037, DATE_NONE)

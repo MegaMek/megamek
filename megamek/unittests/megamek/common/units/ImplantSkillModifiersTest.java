@@ -171,6 +171,16 @@ class ImplantSkillModifiersTest {
         assertEquals("4*/4*/4*/3*", CrewSkillSummaryUtil.getEffectiveSkillsAsString(mek, true));
     }
 
+    /** The lowest skill in BattleTech is 0, so an implant on a 0/0 warrior is marked but never shown below it. */
+    @Test
+    void anAdjustedSkillNeverShowsBelowZero() {
+        Mek mek = mekWithImplants(OptionsConstants.MD_PROTO_DNI);
+        mek.getCrew().setGunnery(0, 0);
+        mek.getCrew().setPiloting(1, 0);
+
+        assertEquals("0*/0*", CrewSkillSummaryUtil.getEffectiveSkillsAsString(mek, false));
+    }
+
     /** A single warrior's marked skills come with the legend that explains the marks. */
     @Test
     void aMarkedWarriorGetsTheLegend() {

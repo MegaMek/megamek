@@ -97,6 +97,9 @@ public class CrewSkillSummaryUtil {
     /** Marks a skill number that an implant has changed from the stored value. */
     public static final String IMPLANT_ADJUSTED_MARK = "*";
 
+    /** The lowest skill BattleTech has; an implant cannot show a number below it. */
+    private static final int LOWEST_SKILL = 0;
+
     /**
      * The skills a single warrior actually rolls against, with every number an implant has changed marked with
      * {@link #IMPLANT_ADJUSTED_MARK}: a Gunnery 5, Piloting 4 warrior with a VDNI shows Gunnery 4* and Piloting 3*,
@@ -163,11 +166,15 @@ public class CrewSkillSummaryUtil {
         return modifiers.isAny() && isSingleWarrior;
     }
 
+    /**
+     * @return the stored skill with the modifier applied and marked, never shown below {@code 0} because no skill in
+     *       BattleTech goes lower; the mark still says an implant is at work
+     */
     private static String adjustedSkill(int storedSkill, int modifier) {
         if (modifier == 0) {
             return Integer.toString(storedSkill);
         }
-        return (storedSkill + modifier) + IMPLANT_ADJUSTED_MARK;
+        return Math.max(LOWEST_SKILL, storedSkill + modifier) + IMPLANT_ADJUSTED_MARK;
     }
 
     private static String signed(int modifier) {

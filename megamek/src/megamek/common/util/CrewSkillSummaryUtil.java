@@ -111,8 +111,7 @@ public class CrewSkillSummaryUtil {
     public static String getEffectiveSkillsAsString(Entity entity, boolean rpgGunnery) {
         Crew crew = entity.getCrew();
         ImplantSkillModifiers modifiers = ImplantSkillModifiers.of(entity);
-        boolean isSingleWarrior = (crew.getSlotCount() == 1) && !(crew instanceof LAMPilot);
-        if (!modifiers.isAny() || !isSingleWarrior) {
+        if (!marksImplantAdjustments(crew, modifiers)) {
             return crew.getSkillsAsString(rpgGunnery);
         }
         String piloting = adjustedSkill(crew.getPiloting(), modifiers.piloting());
@@ -129,15 +128,16 @@ public class CrewSkillSummaryUtil {
 
     /**
      * Spells out what the {@link #IMPLANT_ADJUSTED_MARK} on a skill means, one entry per implant, for a tooltip or a
-     * detail line: {@code * Implants: VDNI (Gunnery -1, Piloting -1)}.
+     * detail line: {@code * Implants: VDNI (Gunnery -1, Piloting -1)}. Follows the same rule as
+     * {@link #getEffectiveSkillsAsString(Entity, boolean)}, so a crew whose skills are shown unmarked gets no legend.
      *
      * @param entity the unit whose crew is shown
      *
-     * @return the description, or an empty string when no implant changes a skill
+     * @return the description, or an empty string when no skill is marked
      */
     public static String getImplantAdjustmentsDescription(Entity entity) {
         ImplantSkillModifiers modifiers = ImplantSkillModifiers.of(entity);
-        if (!modifiers.isAny()) {
+        if (!marksImplantAdjustments(entity.getCrew(), modifiers)) {
             return "";
         }
         List<String> sources = new ArrayList<>();
@@ -152,6 +152,15 @@ public class CrewSkillSummaryUtil {
             sources.add(Messages.getString("CrewSkillSummary.implantSource", source.name(), String.join(", ", parts)));
         }
         return Messages.getString("CrewSkillSummary.implantAdjustments", String.join("; ", sources));
+    }
+
+    /**
+     * @return {@code true} if the crew's skills are shown with implant marks: an implant changes a number, and the
+     *       crew is a single warrior, since a multi-slot crew or a LAM pilot carries more than one set of numbers
+     */
+    private static boolean marksImplantAdjustments(Crew crew, ImplantSkillModifiers modifiers) {
+        boolean isSingleWarrior = (crew.getSlotCount() == 1) && !(crew instanceof LAMPilot);
+        return modifiers.isAny() && isSingleWarrior;
     }
 
     private static String adjustedSkill(int storedSkill, int modifier) {

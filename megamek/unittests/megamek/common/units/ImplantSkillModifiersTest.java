@@ -171,6 +171,27 @@ class ImplantSkillModifiersTest {
         assertEquals("4*/4*/4*/3*", CrewSkillSummaryUtil.getEffectiveSkillsAsString(mek, true));
     }
 
+    /** A single warrior's marked skills come with the legend that explains the marks. */
+    @Test
+    void aMarkedWarriorGetsTheLegend() {
+        Mek mek = mekWithImplants(OptionsConstants.MD_VDNI);
+
+        assertFalse(CrewSkillSummaryUtil.getImplantAdjustmentsDescription(mek).isEmpty());
+        assertEquals("", CrewSkillSummaryUtil.getImplantAdjustmentsDescription(mekWithImplants()));
+    }
+
+    /** A multi-slot crew is shown unmarked, so it gets no legend either; a legend without marks would mislead. */
+    @Test
+    void aMultiSlotCrewGetsNeitherMarksNorLegend() {
+        Mek mek = mekWithImplants();
+        mek.setCrew(crewWithImplants(CrewType.DUAL, OptionsConstants.MD_VDNI));
+
+        assertTrue(ImplantSkillModifiers.of(mek).isAny(), "the implant itself is still active");
+        assertEquals(mek.getCrew().getSkillsAsString(false),
+              CrewSkillSummaryUtil.getEffectiveSkillsAsString(mek, false));
+        assertEquals("", CrewSkillSummaryUtil.getImplantAdjustmentsDescription(mek));
+    }
+
     /** A vehicle crew gets the gunnery bonus, but the engine gives it no driving bonus, so driving is unmarked. */
     @Test
     void aVehicleCrewGetsGunneryButNotDriving() {

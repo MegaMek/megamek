@@ -47,8 +47,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.Vector;
-import javax.xml.parsers.DocumentBuilderFactory;
 
+import megamek.utilities.xml.MMXMLUtility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -264,7 +264,7 @@ class GameOptionsTest {
     /** @return the child nodes of a {@code gameOptions} element, as {@link GameOptions#writeToXML} lays them out */
     private static NodeList campaignGameOptionNodes(String gameOptionNodes) throws Exception {
         String xml = "<gameOptions>" + gameOptionNodes + "</gameOptions>";
-        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+        Document document = MMXMLUtility.newSafeDocumentBuilder()
               .parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
         return document.getDocumentElement().getChildNodes();
     }

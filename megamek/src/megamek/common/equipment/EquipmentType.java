@@ -1157,11 +1157,25 @@ public class EquipmentType implements ITechnology {
         if (at == T_STRUCTURE_STANDARD) {
             return TA_STANDARD_STRUCTURE;
         }
+        if (!isKnownStructureType(at)) {
+            // Battle armor and conventional infantry have no internal structure type. Looking "UNKNOWN" up by name
+            // missed the lookup table and fell through to a scan of every equipment type, on every such unit loaded.
+            return TA_NONE;
+        }
         EquipmentType structure = EquipmentType.getStructureFromName(EquipmentType.getStructureTypeName(at, clan));
         if (structure != null) {
             return structure.getTechAdvancement();
         }
         return TA_NONE;
+    }
+
+    /**
+     * @param structureType a structure type index
+     *
+     * @return {@code true} if the index names a structure type this class has a name for
+     */
+    private static boolean isKnownStructureType(int structureType) {
+        return (structureType >= 0) && (structureType < structureNames.length);
     }
 
     /**

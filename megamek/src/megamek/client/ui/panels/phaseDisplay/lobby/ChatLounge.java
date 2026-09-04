@@ -148,6 +148,7 @@ import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.NeuralInterfaceMode;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -1564,8 +1565,9 @@ public class ChatLounge extends AbstractPhaseDisplay
                 entity.getCrew().clearOptions(PilotOptions.EDGE_ADVANTAGES);
             }
 
-            if (!opts.booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) {
+            if (!NeuralInterfaceMode.from(opts).allowsImplants()) {
                 entity.getCrew().clearOptions(PilotOptions.MD_ADVANTAGES);
+                entity.getCrew().clearOptions(PilotOptions.EI_ADVANTAGES);
             }
 
             if (!opts.booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIAL_REPAIRS)) {

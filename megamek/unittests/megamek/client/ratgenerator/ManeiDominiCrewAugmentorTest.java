@@ -106,7 +106,10 @@ class ManeiDominiCrewAugmentorTest {
 
     private static GameOptions maneiDominiRule(boolean enabled) {
         GameOptions options = new GameOptions();
-        options.getOption(OptionsConstants.RPG_MANEI_DOMINI).setValue(enabled);
+        String implantsSetting = enabled
+              ? OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY
+              : OptionsConstants.NEURAL_INTERFACE_MODE_OFF;
+        options.getOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE).setValue(implantsSetting);
         return options;
     }
 

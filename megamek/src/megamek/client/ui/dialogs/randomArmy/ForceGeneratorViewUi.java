@@ -57,6 +57,7 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -72,12 +73,16 @@ import javax.swing.tree.TreePath;
 
 import megamek.client.Client;
 import megamek.client.ratgenerator.C3NetworkConfigurator;
+import megamek.client.ratgenerator.CarrierLoadingConfigurator;
 import megamek.client.ratgenerator.CrewDescriptor;
+import megamek.client.ratgenerator.ExistingLift;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.FormationType;
 import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
+import megamek.client.ratgenerator.ShipReroller;
+import megamek.client.ratgenerator.TransportBranchMerger;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
@@ -144,10 +149,11 @@ public class ForceGeneratorViewUi implements ActionListener {
     /** Told of every roll and every Clear Force, with the rolled force or {@code null} for a clear. */
     private Consumer<ForceDescriptor> forceGeneratedListener = null;
 
-    // When set by a host (e.g. MekHQ's Command Designer), each Generate appends its rolled force to an
-    // accumulating Model root rather than replacing the tree, so the player can mix-and-match several
-    // rolls into one command before committing. modelRoot holds the accumulated command.
-    private boolean accumulateModel = false;
+    // Each Generate appends its rolled force to an accumulating Model root rather than replacing the tree, so
+    // the player builds one command from several rolls - a Mek battalion, then the vehicle company that goes
+    // with it - before adding it to a game or committing it to a campaign. On by default so every host behaves
+    // the same way; Clear Force empties the model. modelRoot holds the accumulated command.
+    private boolean accumulateModel = true;
     // Thin wrapper root that always holds exactly one child: the current top command (modelTop). The
     // wrapper exists so the commit walker (which merges the passed root into the campaign's own
     // formation and flattens its children) preserves modelTop as a distinct formation - so a rolled
@@ -165,6 +171,12 @@ public class ForceGeneratorViewUi implements ActionListener {
     // draft ("... - not yet committed.") and reports its running size. Hidden in standalone mode.
     private JLabel lblModelStatus;
 
+    /**
+     * Where the host says what lift the force owns outside this view - the ships in a running game or a campaign
+     * hangar. Added to whatever the accumulated model already holds, see {@link #existingLift()}.
+     */
+    private Supplier<ExistingLift> hostLiftSupplier = () -> ExistingLift.NONE;
+
     protected TableRowSorter<ChosenEntityModel> sorterChosen;
 
     static final String FGV_BV = "FGV_BV";
@@ -176,7 +188,35 @@ public class ForceGeneratorViewUi implements ActionListener {
     public ForceGeneratorViewUi(JFrame parentFrame, GameOptions gameOptions) {
         this.parentFrame = parentFrame;
         panControls = new ForceGeneratorOptionsView(this::setGeneratedForce, gameOptions);
+        panControls.setExistingLiftSupplier(this::existingLift);
         initUi();
+    }
+
+    /**
+     * Tells the view what lift the force owns outside it, so a roll generates only the lift it still lacks: the
+     * Random Army dialog reports the ships the player already has in the game, MekHQ's Command Designer the ships in
+     * the hangar. What earlier rolls in an accumulated model brought is counted by the view itself.
+     *
+     * @param supplier the source of the host's lift, asked at every Generate; {@code null} for none
+     */
+    public void setHostLiftSupplier(@Nullable Supplier<ExistingLift> supplier) {
+        this.hostLiftSupplier = (supplier == null) ? () -> ExistingLift.NONE : supplier;
+    }
+
+    /**
+     * @return the lift the next roll starts from: the free bays and collars among the rolls accumulated so far, plus
+     *       whatever the host reports
+     */
+    private ExistingLift existingLift() {
+        ExistingLift inModel = accumulateModel ? ExistingLift.of(modelRoot) : ExistingLift.NONE;
+        ExistingLift lift = inModel.plus(hostLiftSupplier.get());
+        if (!lift.isEmpty()) {
+            // DEBUG: a host reads the panel far more often than it rolls, and the transport stage logs the lift a
+            // roll actually starts from at INFO.
+            logger.debug("[ForceGen][Lift] next roll starts from free bays {} and {} free docking collar(s)",
+                  lift.freeBays(), lift.freeDockingCollars());
+        }
+        return lift;
     }
 
     private void initUi() {
@@ -319,6 +359,8 @@ public class ForceGeneratorViewUi implements ActionListener {
         // host that commits the tree instead and so never reads that table. Both live in the panel; one is shown.
         chosenUnitsPane = scroll;
         leftPanel.add(chosenUnitsPane);
+        // The model is on by default, so its status line and title have to be right from the first paint.
+        refreshCommandModelChrome();
     }
 
     /**
@@ -470,9 +512,9 @@ public class ForceGeneratorViewUi implements ActionListener {
 
     /**
      * Enables Model-accumulation mode: each Generate appends its rolled force to an in-dialog Model
-     * root rather than replacing the tree, so a host (e.g. MekHQ's Command Designer) can let the player
-     * build one command from several rolls before committing. Defaults to {@code false} (standalone
-     * Random Army replaces the tree on each Generate).
+     * root rather than replacing the tree, so the player can build one command from several rolls before
+     * adding or committing it. Defaults to {@code true}; a host that wants each Generate to replace the last
+     * roll turns it off.
      *
      * @param enabled {@code true} to accumulate rolls into a Model
      */
@@ -486,7 +528,7 @@ public class ForceGeneratorViewUi implements ActionListener {
      * Applies (or clears) the Command Designer's design-stage chrome around the tree. In accumulate
      * mode the tree gets a "Command Model (Design)" titled border - so it never reads as the live TOE -
      * and the status line under it shows either the empty-state hint or the running model size with a
-     * "not yet committed" reminder. In standalone mode the border and status line are removed.
+     * "not yet placed" reminder. With the model off, the border and status line are removed.
      */
     private void refreshCommandModelChrome() {
         if (paneForceTree == null || lblModelStatus == null) {
@@ -560,13 +602,10 @@ public class ForceGeneratorViewUi implements ActionListener {
      * Adds the chosen units to the game
      */
     public void addChosenUnits(Player owner, ClientGUI clientGui) {
-        if ((null != forceTree.getModel().getRoot())
-              && (forceTree.getModel().getRoot() instanceof ForceDescriptor)) {
-            // Only the units the user actually took are wired; the rest of the model is not going
-            // into the game.
-            C3NetworkConfigurator.configure((ForceDescriptor) forceTree.getModel().getRoot(),
-                  modelChosen::hasEntity);
-        }
+        ForceDescriptor generatedForce = getGeneratedForce();
+        // Only the units the user actually took are wired; the rest of the model is not going
+        // into the game.
+        C3NetworkConfigurator.configure(generatedForce, modelChosen::hasEntity);
 
         List<Entity> entities = new ArrayList<>(modelChosen.allEntities().size());
         // the units belong to the player that was chosen; they are sent over this machine's own connection,
@@ -591,6 +630,15 @@ public class ForceGeneratorViewUi implements ActionListener {
             }
             entities.add(e);
         }
+        // Rolls accumulated into one command each numbered their own formations from one; renumber the command
+        // as it stands so the game files every unit into the right formation and sees no wrapper above the top.
+        ForceDescriptor commandTop = (accumulateModel && (modelTop != null)) ? modelTop : generatedForce;
+        if (commandTop != null) {
+            commandTop.refreshForceStrings();
+        }
+        // After the owners are set, because a carrier only takes units on its own side, and before the
+        // batch goes out, because the server translates the ids written here when it adds the units.
+        CarrierLoadingConfigurator.configure(generatedForce, modelChosen::hasEntity);
         localClient.sendAddEntity(entities);
 
         String msg = clientGui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: "
@@ -633,6 +681,8 @@ public class ForceGeneratorViewUi implements ActionListener {
             // echelon name ("Battalion"); stamp the unit type in so it reads "Battle Armor Battalion".
             ensureDescriptiveName(fd);
             modelTop = accumulateIntoModel(modelTop, fd);
+            // Every roll brings its own ships; the command lists them in one place, under its top node.
+            TransportBranchMerger.foldInto(modelTop, fd);
             // Keep the wrapper holding exactly the current top command.
             modelRoot.getSubForces().clear();
             modelRoot.addSubForce(modelTop);
@@ -647,6 +697,11 @@ public class ForceGeneratorViewUi implements ActionListener {
                   accumulateModel, fd != null);
         }
         forceTree.setModel(new ForceTreeModel(displayRoot));
+        if (accumulateModel && (displayRoot != null)) {
+            // The options panel summarised the roll that just landed; the player is building a command, so the
+            // summary should count everything accumulated so far.
+            panControls.updateSummaryTable(displayRoot);
+        }
         expandTopLevels();
         // A new force invalidates the previous search; clearing the field re-runs the (now empty)
         // search via the document listener, resetting the match list and status.
@@ -815,6 +870,33 @@ public class ForceGeneratorViewUi implements ActionListener {
     }
 
     /**
+     * Swaps the ship for another design that does the same job, then shows the tree and the chosen-units table as
+     * they now stand. The old ship and the complement it carried leave the chosen list, since those entities no
+     * longer exist in the tree; the player picks the new ones if they want them.
+     *
+     * @param ship the ship node the player right-clicked
+     */
+    private void rerollShip(ForceDescriptor ship) {
+        List<Entity> before = new ArrayList<>();
+        ship.addAllEntities(before);
+        ShipReroller.Outcome outcome = ShipReroller.reroll(ship);
+        if (outcome == null) {
+            return;
+        }
+        modelChosen.removeEntities(before);
+        Object root = forceTree.getModel().getRoot();
+        if (root instanceof ForceDescriptor rootDescriptor) {
+            forceTree.setModel(new ForceTreeModel(rootDescriptor));
+            expandTopLevels();
+            if (accumulateModel) {
+                panControls.updateSummaryTable(rootDescriptor);
+            }
+        }
+        fireToeChanged();
+        refreshCommandModelChrome();
+    }
+
+    /**
      * Runs the order-of-battle search against the current field text and jumps to the first match. Matches are
      * case-insensitive substring hits on each node's unit name/chassis/model, pilot name, ship fluff name, and
      * formation/cluster name. Non-destructive: the tree is only expanded and selected, never rebuilt or filtered.
@@ -933,6 +1015,12 @@ public class ForceGeneratorViewUi implements ActionListener {
                         refreshCommandModelChrome();
                     });
                     menu.add(toggleItem);
+                    if (ShipReroller.isShip(fd)) {
+                        JMenuItem rerollItem = new JMenuItem(Messages.getString("ForceGeneratorDialog.rerollShip"));
+                        rerollItem.setToolTipText(Messages.getString("ForceGeneratorDialog.rerollShip.tooltip"));
+                        rerollItem.addActionListener(actionEvent -> rerollShip(fd));
+                        menu.add(rerollItem);
+                    }
 
                     menu.add(buildChangeFormationMenu(fd));
                     menu.add(buildAddSubForceMenu(fd));
@@ -1520,8 +1608,9 @@ public class ForceGeneratorViewUi implements ActionListener {
                 if ((en != null) && en.isLargeCraft()) {
                     // Large craft (WarShip, DropShip, JumpShip, Space Station) read better
                     // ship-first, the way a fleet roster is listed: ship name and class on
-                    // the top line, commander (skill) beneath.
-                    String shipClass = "<i>" + en.getChassis() + "</i>";
+                    // the top line, commander (skill) beneath. Chassis and model, like every other
+                    // node: a Union (2708) carries Meks and a Union (2710) (CV) carries none.
+                    String shipClass = "<i>" + en.getShortName() + "</i>";
                     String shipName = fd.getFluffName();
                     String topLine = ((shipName != null) && !shipName.isBlank())
                           ? "<b>" + shipName + "</b>, " + shipClass
@@ -1612,6 +1701,20 @@ public class ForceGeneratorViewUi implements ActionListener {
         public void clearData() {
             entityIds.clear();
             entities.clear();
+            fireTableDataChanged();
+        }
+
+        /**
+         * Drops the given entities from the chosen list, ignoring any that are not in it.
+         *
+         * @param gone the entities that no longer exist in the tree
+         */
+        public void removeEntities(Collection<Entity> gone) {
+            for (Entity entity : gone) {
+                entityIds.remove(entity.getExternalIdAsString());
+            }
+            entities = entities.stream().filter(entity -> entityIds.contains(entity.getExternalIdAsString()))
+                  .collect(Collectors.toList());
             fireTableDataChanged();
         }
 

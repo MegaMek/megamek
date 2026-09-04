@@ -49,6 +49,7 @@ import javax.swing.SwingConstants;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
+import megamek.client.ratgenerator.ExistingLift;
 import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
@@ -110,6 +111,21 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
         setGameOptions(client.getGame().getOptions());
         tabbedPane.addChangeListener(
               ev -> skillsButton.setEnabled(tabbedPane.getSelectedIndex() != TAB_FORCE_GENERATOR));
+        forceGeneratorPanel.setHostLiftSupplier(this::liftAlreadyInGame);
+    }
+
+    /**
+     * The free bays and docking collars on the ships the chosen player already has in the game, so a force generated
+     * on top of an earlier one draws only the lift it still lacks.
+     *
+     * @return the lift already in the game for the player who will own the units
+     */
+    private ExistingLift liftAlreadyInGame() {
+        Player owner = selectedPlayer();
+        List<Entity> owned = client.getGame().getEntitiesVector().stream()
+              .filter(entity -> entity.getOwnerId() == owner.getId())
+              .toList();
+        return ExistingLift.of(owned);
     }
 
     @Override

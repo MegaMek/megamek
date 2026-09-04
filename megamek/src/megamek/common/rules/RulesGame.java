@@ -159,7 +159,7 @@ public abstract class RulesGame {
         if (!isWalkOnDeployment() || entity.getGame() == null) {
             return false;
         }
-
+        
         int deploymentRound = entity.getDeployRound();
         int currentRound = entity.getGame().getCurrentRound();
         int startingPos = entity.getStartingPos();

@@ -953,7 +953,9 @@ public class Board implements Serializable {
         int startingWidth = e.getGame().rulesManager.getRulesGame()
                                                     .getDeploymentWidth(e.getOwner(),
                                                                         e.getStartingPos(), e.getStartingWidth());
-
+        if (e.isDropShip()) {
+            startingWidth = e.getStartingWidth();
+        }
         return isLegalDeployment(c,
                                  e.getStartingPos(),
                                  startingWidth,

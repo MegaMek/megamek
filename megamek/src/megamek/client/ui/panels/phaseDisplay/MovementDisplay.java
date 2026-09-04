@@ -4626,6 +4626,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private void updateLoadButton() {
         final Entity currentEntity = currentEntity();
+        if (!currentEntity.isDeployed()) {
+            setLoadEnabled(false);
+            return;
+        }
         if ((currentEntity == null) || (currentEntity.getWalkMP() <= 0 && !currentEntity.isAerospace()) || (
                 currentEntity.isAerospace()
                 && currentEntity.isAirborne())) {
@@ -4653,6 +4657,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private void updateUnloadButton() {
         final Entity currentEntity = currentEntity();
+        if (!currentEntity.isDeployed()) {
+            setUnloadEnabled(false);
+            return;
+        }
         if (currentEntity == null) {
             setUnloadEnabled(false);
             return;

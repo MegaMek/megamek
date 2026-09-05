@@ -206,8 +206,4 @@ public abstract class RulesGame {
         }
         return deploymentWidth;
     }
-
-    public boolean isWalkOnDw() {
-        return false;
-    }
 }

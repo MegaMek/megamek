@@ -33,16 +33,6 @@
  */
 package megamek.common.moves;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
-import java.util.Vector;
-
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.IndustrialElevator;
@@ -70,6 +60,17 @@ import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.lang.System;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
+import java.util.Vector;
 
 /**
  * A single step in the entity's movement. Since the path planner uses shallow copies of MovePaths, multiple paths may
@@ -168,7 +169,6 @@ public class MoveStep implements Serializable {
     private boolean isHittingDeck = false;
     private boolean isClearingRubble = false;
     private boolean isClimbing = false;
-    private boolean isDeploying = false;
     private int climbingTotalLevels = 0;
     private int climbingChargedLevels = 0;
     private boolean isTakingCover = false;
@@ -3348,19 +3348,20 @@ public class MoveStep implements Serializable {
                 int waterDepth = destHex.terrainLevel(Terrains.WATER);
                 // no additional cost when moving on surface of ice.
                 boolean isOnIceSurface = destHex.containsTerrain(Terrains.ICE)
-                      && (nDestEl == destHex.getLevel());
+                                         && (nDestEl == destHex.getLevel());
                 if (inWaterColumn && !isOnIceSurface && (waterDepth > 0) && !isAmphibious) {
                     // "To be considered underwater, a unit must be completely submerged... 'Mechs must be in at
                     // least Depth 2 water, or at least Depth 1 if prone" (TW p.56). Everything shorter than a Mek
                     // is already completely under in Depth 1, so it pays the underwater cost there. Anything only
                     // partly submerged is wading, and pays the lower Depth 1 cost from the Movement Costs Table.
                     boolean isFullySubmerged = (entity instanceof Mek)
-                          ? EnvironmentalSealingRules.isMekCompletelySubmerged(isProne(), waterDepth)
-                          : (waterDepth > 0);
+                                               ? EnvironmentalSealingRules.isMekCompletelySubmerged(isProne(),
+                                                                                                    waterDepth)
+                                               : (waterDepth > 0);
                     if (!isFullySubmerged) {
                         mp++;
                     } else if (getEntity().hasAbility(OptionsConstants.PILOT_TM_FROGMAN)
-                          && ((entity instanceof Mek) || (entity instanceof ProtoMek))) {
+                               && ((entity instanceof Mek) || (entity instanceof ProtoMek))) {
                         mp += 2;
                     } else {
                         mp += Game.rulesManager.getRulesMovement().getUnderwaterMPCost();
@@ -4716,23 +4717,5 @@ public class MoveStep implements Serializable {
      */
     public boolean isClimbMode() {
         return (type == MoveStepType.CLIMB_MODE_ON) || (type == MoveStepType.CLIMB_MODE_OFF);
-    }
-
-    /**
-     * Set it is deployment
-     *
-     * @param isDeploying is the entity deploying in this step
-     */
-    public void setDeploying(boolean isDeploying) {
-        this.isDeploying = isDeploying;
-    }
-
-    /**
-     * get deployment state of this step
-     *
-     * @return isDeploying
-     */
-    public boolean isDeploying() {
-        return isDeploying;
     }
 }

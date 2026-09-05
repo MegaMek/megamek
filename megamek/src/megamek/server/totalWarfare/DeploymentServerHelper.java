@@ -33,9 +33,6 @@
 
 package megamek.server.totalWarfare;
 
-import java.util.List;
-import java.util.Vector;
-
 import megamek.common.Hex;
 import megamek.common.OffBoardDirection;
 import megamek.common.board.Board;
@@ -47,10 +44,16 @@ import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
 
+import java.util.List;
+import java.util.Vector;
+
+/**
+ * Helper class for processing deployment whether it is from Deployment Phase or Movement Phase.
+ */
 public class DeploymentServerHelper {
 
     private static final MMLogger LOGGER = MMLogger.create(DeploymentServerHelper.class);
-    private TWGameManager gameManager;
+    private final TWGameManager gameManager;
 
     DeploymentServerHelper(TWGameManager gameManager) {
         this.gameManager = gameManager;
@@ -61,13 +64,13 @@ public class DeploymentServerHelper {
      * Also, check that the deployment is valid.
      */
     public void processDeployment(Entity entity,
-          Coords coords,
-          int boardId,
-          int nFacing,
-          int elevation,
-          Vector<Entity> loadVector,
-          boolean assaultDrop,
-          boolean setDone) {
+                                  Coords coords,
+                                  int boardId,
+                                  int nFacing,
+                                  int elevation,
+                                  Vector<Entity> loadVector,
+                                  boolean assaultDrop,
+                                  boolean setDone) {
         for (Entity loaded : loadVector) {
             if (loaded.getTransportId() != Entity.NONE) {
                 // we probably already loaded this unit in the chat lounge
@@ -143,12 +146,12 @@ public class DeploymentServerHelper {
             entity.setAssaultDropInProgress(true);
         } else if ((entity instanceof VTOL) && (entity.getExternalUnits().isEmpty())) {
             while ((Compute.stackingViolation(gameManager.getGame(),
-                  entity,
-                  coords,
-                  null,
-                  entity.climbMode(),
-                  false) != null) &&
-                  (entity.getElevation() <= 500)) {
+                                              entity,
+                                              coords,
+                                              null,
+                                              entity.climbMode(),
+                                              false) != null) &&
+                   (entity.getElevation() <= 500)) {
                 entity.setElevation(entity.getElevation() + 1);
             }
         } else if (entity.isAero()) {
@@ -162,23 +165,23 @@ public class DeploymentServerHelper {
                 // all spheroid craft should have velocity of zero in atmosphere
                 // regardless of what was entered
                 if (a.isSpheroid() || gameManager.getGame().getPlanetaryConditions()
-                      .getAtmosphere()
-                      .isLighterThan(Atmosphere.THIN)) {
+                                                 .getAtmosphere()
+                                                 .isLighterThan(Atmosphere.THIN)) {
                     a.setCurrentVelocity(0);
                     a.setNextVelocity(0);
                 }
                 // make sure that entity is above the level of the hex if in
                 // atmosphere
                 if (gameManager.getGame().getBoard(boardId).isLowAltitude()
-                      && (entity.getAltitude() <= hex.ceiling(true))) {
+                    && (entity.getAltitude() <= hex.ceiling(true))) {
                     // you can't be grounded on low atmosphere map
                     entity.setAltitude(hex.ceiling(true) + 1);
                 }
             }
         } else {
             IBuilding bld = gameManager.getGame()
-                  .getBoard(boardId)
-                  .getBuildingAt(entity.getPosition());
+                                       .getBoard(boardId)
+                                       .getBuildingAt(entity.getPosition());
             if ((bld != null) && (bld.getBuildingType() == BuildingType.WALL)) {
                 entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
             }
@@ -186,18 +189,18 @@ public class DeploymentServerHelper {
         }
 
         boolean wigeFlyover = entity.getMovementMode() == EntityMovementMode.WIGE &&
-              hex.containsTerrain(Terrains.BLDG_ELEV) &&
-              entity.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV);
+                              hex.containsTerrain(Terrains.BLDG_ELEV) &&
+                              entity.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV);
 
         // when first entering a building, we need to roll what type
         // of basement it has
         IBuilding bldg = gameManager.getGame()
-              .getBoard(boardId)
-              .getBuildingAt(entity.getPosition());
+                                    .getBoard(boardId)
+                                    .getBuildingAt(entity.getPosition());
         if ((bldg != null)) {
             if (bldg.rollBasement(entity.getPosition(),
-                  gameManager.getGame().getBoard(boardId),
-                  gameManager.getMainPhaseReport())) {
+                                  gameManager.getGame().getBoard(boardId),
+                                  gameManager.getMainPhaseReport())) {
                 gameManager.sendChangedHex(entity.getPosition(), boardId);
                 Vector<IBuilding> buildings = new Vector<>();
                 buildings.add(bldg);
@@ -229,9 +232,9 @@ public class DeploymentServerHelper {
             if (!deployingVehicle.isHullDownCapable() || !fortifiedHex) {
                 entity.setHullDown(false);
                 LOGGER.debug("[HullDown] {}: cleared illegal deploy hull-down - {}", entity.getDisplayName(),
-                      !deployingVehicle.isHullDownCapable() ?
-                            "vehicle type cannot hull down" :
-                            "deploy hex is not fortified");
+                             !deployingVehicle.isHullDownCapable() ?
+                             "vehicle type cannot hull down" :
+                             "deploy hex is not fortified");
             } else {
                 LOGGER.debug("[HullDown] {}: deployed hull-down on a fortified hex", entity.getDisplayName());
             }
@@ -241,11 +244,11 @@ public class DeploymentServerHelper {
         // separately dug in (the two postures don't stack - TO:AR p.106 / TO:AUE p.153). Keep the fortified-hex state
         // and clear the redundant dug-in, mirroring what completeFortification does for co-located infantry.
         if ((entity instanceof Infantry deployingInfantry)
-              && (deployingInfantry.getDugIn() != Infantry.DUG_IN_NONE)
-              && hex.containsTerrain(Terrains.FORTIFIED)) {
+            && (deployingInfantry.getDugIn() != Infantry.DUG_IN_NONE)
+            && hex.containsTerrain(Terrains.FORTIFIED)) {
             deployingInfantry.setDugIn(Infantry.DUG_IN_NONE);
             LOGGER.debug("[Fortify] {}: cleared redundant dug-in - deployed onto a fortified hex",
-                  entity.getDisplayName());
+                         entity.getDisplayName());
         }
 
         entity.setDone(setDone);
@@ -273,20 +276,20 @@ public class DeploymentServerHelper {
 
         int trailerCount = tractor.getAllTowedUnits().size();
         List<Coords> trainPath = TrainLayout.deploymentPath(tractor.getPosition(),
-              tractor.getFacing(),
-              trailerCount);
+                                                            tractor.getFacing(),
+                                                            trailerCount);
         java.util.List<Integer> trainFacings = new java.util.ArrayList<>();
         for (int step = 0; step < trainPath.size(); step++) {
             trainFacings.add(tractor.getFacing());
         }
 
         List<TrainLayout.TrainPlacement> placements = TrainLayout.computeLayout(
-              gameManager.getGame(),
-              tractor,
-              tractor.getPosition(),
-              tractor.getFacing(),
-              trainPath,
-              trainFacings);
+                gameManager.getGame(),
+                tractor,
+                tractor.getPosition(),
+                tractor.getFacing(),
+                trainPath,
+                trainFacings);
 
         // The footprint was checked against the deployment zone in receiveDeployment, before the tractor was placed.
 
@@ -306,7 +309,7 @@ public class DeploymentServerHelper {
         }
 
         LOGGER.info("[Train] {} deployed at {} with {} trailer(s) placed behind it",
-              tractor.getDisplayName(), tractor.getPosition(), trailerCount);
+                    tractor.getDisplayName(), tractor.getPosition(), trailerCount);
     }
 
     /**
@@ -333,7 +336,7 @@ public class DeploymentServerHelper {
 
         if (!clearedTrailers.isEmpty()) {
             LOGGER.info("[Train] {} trailer(s) had an off board setting of their own; a train deploys with {}: {}",
-                  clearedTrailers.size(), tractor.getDisplayName(), String.join(", ", clearedTrailers));
+                        clearedTrailers.size(), tractor.getDisplayName(), String.join(", ", clearedTrailers));
         }
     }
 
@@ -348,13 +351,12 @@ public class DeploymentServerHelper {
      * @param coords  the hex it is being placed in
      * @param boardId the board it is being placed on
      * @param facing  the facing it is being placed with
-     *
      * @return true when the whole train fits in the deployment zone
      */
     private boolean isLegalTrainFootprint(Entity tractor,
-          Coords coords,
-          int boardId,
-          int facing) {
+                                          Coords coords,
+                                          int boardId,
+                                          int facing) {
         if (tractor.getAllTowedUnits().isEmpty()) {
             return true;
         }
@@ -363,22 +365,25 @@ public class DeploymentServerHelper {
         Board board = game.getBoard(boardId);
         for (Coords trainHex : TrainLayout.deploymentFootprint(game, tractor, coords, facing)) {
             if (!game.hasBoardLocation(trainHex, boardId) || !board.isLegalDeployment(trainHex,
-                  tractor)) {
+                                                                                      tractor)) {
                 LOGGER.warn("[Train] rejected deployment of {} at {} facing {}: trailer hex {} is not a legal "
-                      + "deployment hex", tractor.getDisplayName(), coords, facing, trainHex);
+                            + "deployment hex", tractor.getDisplayName(), coords, facing, trainHex);
                 return false;
             }
         }
         return true;
     }
 
-    public boolean isLegalDeployment(Coords coords, int boardId, Entity entity, int nFacing) {
+    public boolean isLegalDeployment(Coords coords,
+                                     int boardId,
+                                     Entity entity,
+                                     int nFacing) {
         Game game = gameManager.getGame();
         if (game == null) {
             return false;
         }
         return game.hasBoardLocation(coords, boardId)
-              && game.getBoard(boardId).isLegalDeployment(coords, entity)
-              && isLegalTrainFootprint(entity, coords, boardId, nFacing);
+               && game.getBoard(boardId).isLegalDeployment(coords, entity)
+               && isLegalTrainFootprint(entity, coords, boardId, nFacing);
     }
 }

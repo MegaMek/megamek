@@ -77,19 +77,19 @@ public class MoveCommand extends ClientCommand {
                 return "Move aborted, all movement data cleared.";
             } else if (args[1].equalsIgnoreCase("HELP")) {
                 return """
-                      Available commands:
-                      #move ABORT = aborts planed move and deselect unit.
-                      #move SELECT unitID = Selects the unit named unit ID for movement. This is a prerequisite for all commands listed after this. Also changed current hex.
-                      #move COMMIT = commits the planed movement.
-                      #move JUMP = clears all movement and starts jump movement. Either the entire move is a jump or the entire move is a walk. switching gears will cancel all planned movement (but leave the unit selected).
-                      #move BACK [x y] = Start walking backwards, can be followed by a coordinate.
-                      #move WALK [x y] = Start walking/running forwards, this is the default. Can be followed by a coordinate.
-                      #move TURN [x y] = Starts turning towards target coordinate. Can be followed by a coordinate.
-                      #move CLIP = Clips to path to what is actually possible, and reports on what will happen if committed.
-                      #move GETUP = Attempt to stand up. Will require a piloting roll.
-                      #move CAREFUL = Attempt to stand up. Will require a piloting roll.
-                      #move x y = move towards coordinate in the current gear. It will do pathfinding for least cost path. Note that the entity will try to move to each coordinate supplied in order.
-                      """;
+                        Available commands:
+                        #move ABORT = aborts planed move and deselect unit.
+                        #move SELECT unitID = Selects the unit named unit ID for movement. This is a prerequisite for all commands listed after this. Also changed current hex.
+                        #move COMMIT = commits the planed movement.
+                        #move JUMP = clears all movement and starts jump movement. Either the entire move is a jump or the entire move is a walk. switching gears will cancel all planned movement (but leave the unit selected).
+                        #move BACK [x y] = Start walking backwards, can be followed by a coordinate.
+                        #move WALK [x y] = Start walking/running forwards, this is the default. Can be followed by a coordinate.
+                        #move TURN [x y] = Starts turning towards target coordinate. Can be followed by a coordinate.
+                        #move CLIP = Clips to path to what is actually possible, and reports on what will happen if committed.
+                        #move GETUP = Attempt to stand up. Will require a piloting roll.
+                        #move CAREFUL = Attempt to stand up. Will require a piloting roll.
+                        #move x y = move towards coordinate in the current gear. It will do pathfinding for least cost path. Note that the entity will try to move to each coordinate supplied in order.
+                        """;
             } else if (args[1].equalsIgnoreCase("SELECT")) {
                 try {
                     clearAllMoves();
@@ -102,7 +102,7 @@ public class MoveCommand extends ClientCommand {
 
                     getClientGUI().setCurrentHex(currentEntity().getPosition());
                     return "Entity " + currentEntity().toString()
-                          + " selected for movement.";
+                           + " selected for movement.";
                 } catch (Exception e) {
                     return "Not an entity ID or valid number." + e;
                 }
@@ -134,13 +134,13 @@ public class MoveCommand extends ClientCommand {
                 } else if (args[1].equalsIgnoreCase("CLIP")) {
                     cmd.clipToPossible();
                     return "Path clipped to whats actually possible. "
-                          + currentEntity().toString() + " is now in gear "
-                          + gearName(gear) + " heading towards "
-                          + cmd.getFinalCoords().toFriendlyString()
-                          + " with a final facing of "
-                          + getDirection(cmd.getFinalFacing())
-                          + ". Total mp used: " + cmd.getMpUsed()
-                          + " for a movement of: " + cmd.getHexesMoved();
+                           + currentEntity().toString() + " is now in gear "
+                           + gearName(gear) + " heading towards "
+                           + cmd.getFinalCoords().toFriendlyString()
+                           + " with a final facing of "
+                           + getDirection(cmd.getFinalFacing())
+                           + ". Total mp used: " + cmd.getMpUsed()
+                           + " for a movement of: " + cmd.getHexesMoved();
                 } else if (args[1].equalsIgnoreCase("GETUP")) {
                     if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
                         cmd.addStep(MoveStepType.GET_UP);
@@ -150,7 +150,7 @@ public class MoveCommand extends ClientCommand {
                     return "Trying to get up but the Mek is not prone.";
                 } else if (args[1].equalsIgnoreCase("CAREFULSTAND")) {
                     if (cmd.getFinalProne() || cmd.getFinalHullDown() && getClient().getGame().getOptions()
-                          .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CAREFUL_STAND)) {
+                                                                                    .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CAREFUL_STAND)) {
                         cmd.addStep(MoveStepType.CAREFUL_STAND);
                         return "Mek will try to stand up. this requires a piloting roll.";
                     }
@@ -167,11 +167,11 @@ public class MoveCommand extends ClientCommand {
                 currentMove(target);
 
                 return "Commands accepted " + currentEntity().toString()
-                      + " is now in gear " + gearName(gear)
-                      + " heading towards "
-                      + cmd.getFinalCoords().toFriendlyString()
-                      + ". Total mp used: " + cmd.getMpUsed()
-                      + " for a movement of: " + cmd.getHexesMoved();
+                       + " is now in gear " + gearName(gear)
+                       + " heading towards "
+                       + cmd.getFinalCoords().toFriendlyString()
+                       + ". Total mp used: " + cmd.getMpUsed()
+                       + " for a movement of: " + cmd.getHexesMoved();
             }
         }
         clearAllMoves();
@@ -230,13 +230,6 @@ public class MoveCommand extends ClientCommand {
             } else if (currentEntity().getMovementMode().isQuadSwim()) {
                 currentEntity().setMovementMode(EntityMovementMode.QUAD);
             }
-            /*
-            if (cmd.contains(MoveStepType.DEPLOY)) {
-                currentEntity().setDeployed(false);
-                currentEntity().setPosition(null);
-            }
-             */
-
             cmd = new MovePath(getClient().getGame(), currentEntity());
         } else {
             cmd = null;

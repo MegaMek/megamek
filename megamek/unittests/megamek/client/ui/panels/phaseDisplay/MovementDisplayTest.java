@@ -33,19 +33,6 @@
 
 package megamek.client.ui.panels.phaseDisplay;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
-
-import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.List;
-
 import megamek.client.Client;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.CommonMenuBar;
@@ -65,6 +52,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
+
+import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 @DisplayName("MovementDisplay Unit Tests")
 class MovementDisplayTest {
@@ -131,12 +131,12 @@ class MovementDisplayTest {
 
         assertTrue(mek.isDeployed(), "Walk-on clear should keep the deployment anchor intact.");
         assertEquals(MovementDisplay.GEAR_LAND, readField(movementDisplay, "gear"),
-                "clear should reset gear to walk after a walk-on move path.");
+                     "clear should reset gear to walk after a walk-on move path.");
 
         MovePath refreshed = (MovePath) readField(movementDisplay, "cmd");
         assertNotNull(refreshed, "clear should rebuild the move path.");
         assertTrue(refreshed.getStepVector().stream().anyMatch(step -> step.getType() == MoveStepType.DEPLOY),
-                "clear should preserve the deployment step on a walk path.");
+                   "clear should preserve the deployment step on a walk path.");
     }
 
     @Test
@@ -157,13 +157,13 @@ class MovementDisplayTest {
         movementDisplay.clear();
 
         assertTrue(mek.isDeployed(), "clear should keep the deployed position for a jump path.");
-        assertEquals(MovementDisplay.GEAR_LAND, readField(movementDisplay, "gear"),
-                "clear should reset to the default land gear after reinitializing a jump path.");
+        assertEquals(MovementDisplay.GEAR_JUMP, readField(movementDisplay, "gear"),
+                     "clear should reset to jumping after reinitializing a jump path.");
 
         MovePath refreshed = (MovePath) readField(movementDisplay, "cmd");
         assertNotNull(refreshed, "clear should rebuild the jump path.");
         assertTrue(refreshed.getStepVector().stream().anyMatch(step -> step.getType() == MoveStepType.DEPLOY),
-                "clear should retain the deployment step before a jump move is reinitialized.");
+                   "clear should retain the deployment step before a jump move is reinitialized.");
     }
 
     @Test
@@ -186,7 +186,7 @@ class MovementDisplayTest {
         MovePath refreshed = (MovePath) readField(movementDisplay, "cmd");
         assertNotNull(refreshed, "clear should rebuild the walk-on movement path.");
         assertTrue(refreshed.getStepVector().stream().anyMatch(step -> step.getType() == MoveStepType.DEPLOY),
-                "clear should preserve the deploy step when rebuilding a walk-on movement path.");
+                   "clear should preserve the deploy step when rebuilding a walk-on movement path.");
         assertTrue(mek.isDeployed(), "clear should keep the deployment anchor active for walk-on movement.");
     }
 
@@ -207,11 +207,11 @@ class MovementDisplayTest {
         Coords deploymentCoords = new Coords(0, 0);
 
         var result = new DeploymentHelper(mockClientGUI)
-              .determineDeploymentPosition(unit, deploymentCoords, board, new HashSet<>(), null);
+                .determineDeploymentPosition(unit, deploymentCoords, board, new HashSet<>(), null);
 
         assertNotNull(result, "A valid deployment should return a facing.");
         assertEquals(unit.getFacing(), result.facing(),
-                "Deployment helpers keep the unit's current facing when no facing restriction is applied.");
+                     "Deployment helpers keep the unit's current facing when no facing restriction is applied.");
     }
 
     @Test
@@ -231,20 +231,23 @@ class MovementDisplayTest {
         Coords deploymentCoords = new Coords(0, 0);
 
         var result = new DeploymentHelper(mockClientGUI)
-              .determineDeploymentPosition(unit, deploymentCoords, board, new HashSet<>(), null);
+                .determineDeploymentPosition(unit, deploymentCoords, board, new HashSet<>(), null);
 
         assertNotNull(result, "A valid center deployment should return a facing.");
         assertEquals(unit.getFacing(), result.facing(),
-                "Center deployments do not force a facing override when all facings remain valid.");
+                     "Center deployments do not force a facing override when all facings remain valid.");
     }
 
-    private static void setField(Object target, String fieldName, Object value) throws Exception {
+    private static void setField(Object target,
+                                 String fieldName,
+                                 Object value) throws Exception {
         Field field = MovementDisplay.class.getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(target, value);
     }
 
-    private static Object readField(Object target, String fieldName) throws Exception {
+    private static Object readField(Object target,
+                                    String fieldName) throws Exception {
         Field field = MovementDisplay.class.getDeclaredField(fieldName);
         field.setAccessible(true);
         return field.get(target);

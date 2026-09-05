@@ -665,7 +665,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(Faction.FS),
           rulesRefs(SourceBookCode.TO_AUE, 182));
 
-    private static final MunitionMutator CLAN_NARC_CAPABLE_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
+    private static final MunitionMutator CLAN_NARC_CAPABLE_MUNITION_MUTATOR = new MunitionMutator(
           "(Clan) Narc-capable", "Narc",
           1,
           Munitions.M_NARC_CAPABLE,
@@ -1740,7 +1740,7 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           rulesRefs(SourceBookCode.TO_AUE, 173));
 
-    private static final MunitionMutator CLAN_NARC_CAPABLE_MUNITION_MUTATOR_FOR_MISSILE = new MunitionMutator(
+    private static final MunitionMutator CLAN_NARC_CAPABLE_MUNITION_MUTATOR_FOR_LRM = new MunitionMutator(
           "(Clan) Narc-capable", "Narc",
           1,
           Munitions.M_NARC_CAPABLE,
@@ -3427,7 +3427,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(CLAN_FRAGMENTATION_MUNITION_MUTATOR);
         munitions.add(CLAN_LISTEN_KILL_MUNITION_MUTATOR_UNOFFICIAL);
         munitions.add(CLAN_MINE_CLEARANCE_MUNITION_MUTATOR_UNOFFICIAL);
-        munitions.add(CLAN_NARC_CAPABLE_MUNITION_MUTATOR_UNOFFICIAL);
+        munitions.add(CLAN_NARC_CAPABLE_MUNITION_MUTATOR);
         AmmoType.createMunitions(clanSrmAmmos, munitions);
         AmmoType.createMunitions(clanImprovedSRMsAmmo, munitions);
 
@@ -3499,7 +3499,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(CLAN_FRAGMENTATION_MUNITION_MUTATOR);
         munitions.add(CLAN_LISTEN_KILL_MUNITION_MUTATOR_UNOFFICIAL);
         munitions.add(CLAN_MINE_CLEARANCE_MUNITION_MUTATOR_UNOFFICIAL);
-        munitions.add(CLAN_NARC_CAPABLE_MUNITION_MUTATOR_FOR_MISSILE);
+        munitions.add(CLAN_NARC_CAPABLE_MUNITION_MUTATOR_FOR_LRM);
         AmmoType.createMunitions(clanLrmAmmos, munitions);
         AmmoType.createMunitions(clanImprovedLRMsAmmo, munitions);
 

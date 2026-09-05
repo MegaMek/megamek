@@ -174,6 +174,9 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             Map<Side, Integer> presenceBySide = countEligiblePresence(objective, entities);
             Side controller = leadingSide(objective, presenceBySide);
             boolean contested = (controller == null) && !presenceBySide.isEmpty();
+            if (presenceBySide.isEmpty()) {
+                controller = retainedHolder(objective, controller);
+            }
             Side owningSide = sideOfPlayerId(objective.marker().getOwnerId());
             storeControllerOnMarker(objective.marker(), controller);
             reportObjectiveControl(objective, controller, contested);
@@ -643,6 +646,38 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         addReport(report);
     }
 
+
+    /**
+     * The side an empty zone still belongs to. A point set to keep control when empty stays with whoever
+     * last held it, and that holder goes on scoring and counting as though a unit were standing there -
+     * which is what lets a mission field more control points than either side has units to garrison, and
+     * lets a point begin the game already held. Any other point, or one nobody has held yet, is nobody's.
+     *
+     * @param objective         The empty point
+     * @param presentController The controller the units present decided, {@code null} for an empty zone
+     *
+     * @return The retained holder, or {@code presentController} when the point does not retain control
+     */
+    private @Nullable Side retainedHolder(PlacedObjective objective, @Nullable Side presentController) {
+        ObjectiveMarker marker = objective.marker();
+        if (!marker.getScoringScheme().retainsControlWhenEmpty()) {
+            return presentController;
+        }
+        Side holder = null;
+        if (marker.getControllingTeam() != ObjectiveMarker.NO_CONTROLLER) {
+            holder = new Side(true, marker.getControllingTeam());
+        } else if (marker.getControllingPlayerId() != ObjectiveMarker.NO_CONTROLLER) {
+            holder = new Side(false, marker.getControllingPlayerId());
+        }
+        if (holder == null) {
+            LOGGER.debug("[Objective] {} is empty and keeps control when empty, but nobody has held it yet",
+                  objective.position().getBoardNum());
+            return presentController;
+        }
+        LOGGER.debug("[Objective] {} is empty but stays with {} - it keeps control when empty",
+              objective.position().getBoardNum(), displayName(holder));
+        return holder;
+    }
 
     /**
      * Records the resolved controller on the marker itself, so state-based victory triggers

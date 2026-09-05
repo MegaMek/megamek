@@ -182,8 +182,13 @@ public final class VictoryHexPropertiesPane {
         if (result != 0) {
             return Result.CANCELLED;
         }
-        scheme.setRetainsControlWhenEmpty(retainControlCheckbox.isSelected());
-        ControlChoice startingControl = (ControlChoice) startingControlCombo.getSelectedItem();
+        boolean retainsControl = retainControlCheckbox.isSelected();
+        scheme.setRetainsControlWhenEmpty(retainsControl);
+        // a greyed dropdown keeps whatever it last showed, so its choice only counts while retention is on;
+        // without retention the first End Phase would clear a starting holder anyway
+        ControlChoice startingControl = retainsControl
+              ? (ControlChoice) startingControlCombo.getSelectedItem()
+              : ControlChoice.NOBODY;
         if (startingControl != null) {
             // control is keyed the way scoring keys it: by team for a teamed player, by player otherwise.
             // Writing a teamed player's id as an unteamed controller would look right on the board and

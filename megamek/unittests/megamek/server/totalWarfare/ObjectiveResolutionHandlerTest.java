@@ -35,8 +35,8 @@ package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -47,8 +47,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.Report;
 import megamek.common.Player;
+import megamek.common.Report;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
@@ -66,8 +66,8 @@ import megamek.server.victory.VictoryPointTracker;
 import megamek.server.victory.VictoryPointVictory;
 import megamek.server.victory.VictoryResult;
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.ArgumentCaptor;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 /**
  * Tests the End-Phase objective control algorithm (eligibility exclusions, control radius, strict majority, ties) and
@@ -397,6 +397,79 @@ class ObjectiveResolutionHandlerTest {
         assertEquals(1, leftObjective.marker().getControllingTeam());
         assertEquals(1, rightObjective.marker().getControllingTeam());
         assertEquals(ObjectiveMarker.NO_CONTROLLER, leftObjective.marker().getControllingPlayerId());
+    }
+
+    // --- control retention: a point that keeps its holder once the zone empties ---
+
+    @Test
+    void testARetainedPointKeepsScoringForItsHolderAfterTheZoneEmpties() {
+        Coords leftPosition = new Coords(2, 2);
+        Coords rightPosition = new Coords(12, 2);
+        PlacedObjective leftObjective = objectiveAt(leftPosition, 1, teamOnePlayer);
+        PlacedObjective rightObjective = objectiveAt(rightPosition, 1, teamTwoPlayer);
+        // team 1 took the left point earlier and has since moved everyone away to take the right one
+        leftObjective.marker().setController(1, ObjectiveMarker.NO_CONTROLLER);
+        leftObjective.marker().getScoringScheme().setRetainsControlWhenEmpty(true);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(leftPosition, new ArrayList<>(List.of(leftObjective.marker())));
+        groundObjects.put(rightPosition, new ArrayList<>(List.of(rightObjective.marker())));
+        List<Entity> entities = List.of(groundUnit(teamOnePlayer, rightPosition));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        when(game.getEntitiesVector()).thenReturn(entities);
+
+        handler.resolveObjectives();
+
+        // the empty left point is still team 1's, so team 1 controls both points and scores for all of them
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(2, tracker.getTeamVictoryPoints(1));
+        assertEquals(1, leftObjective.marker().getControllingTeam(),
+              "an empty zone is not a lost one when the point keeps control");
+    }
+
+    @Test
+    void testWithoutRetentionAnEmptyPointGoesNeutralAndStopsScoring() {
+        Coords leftPosition = new Coords(2, 2);
+        Coords rightPosition = new Coords(12, 2);
+        PlacedObjective leftObjective = objectiveAt(leftPosition, 1, teamOnePlayer);
+        PlacedObjective rightObjective = objectiveAt(rightPosition, 1, teamTwoPlayer);
+        leftObjective.marker().setController(1, ObjectiveMarker.NO_CONTROLLER);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(leftPosition, new ArrayList<>(List.of(leftObjective.marker())));
+        groundObjects.put(rightPosition, new ArrayList<>(List.of(rightObjective.marker())));
+        List<Entity> entities = List.of(groundUnit(teamOnePlayer, rightPosition));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        when(game.getEntitiesVector()).thenReturn(entities);
+
+        handler.resolveObjectives();
+
+        // today's rule: the left point went neutral, so team 1 holds only an enemy point and scores nothing
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(0, tracker.getTeamVictoryPoints(1));
+        assertEquals(ObjectiveMarker.NO_CONTROLLER, leftObjective.marker().getControllingTeam());
+    }
+
+    @Test
+    void testAPointCanStartTheGameHeldAndScoreFromTheFirstEndPhase() {
+        Coords leftPosition = new Coords(2, 2);
+        Coords rightPosition = new Coords(12, 2);
+        PlacedObjective leftObjective = objectiveAt(leftPosition, 1, teamOnePlayer);
+        PlacedObjective rightObjective = objectiveAt(rightPosition, 1, teamTwoPlayer);
+        // set in the Victory Setup phase: team 2 begins in possession of both points
+        leftObjective.marker().setController(2, ObjectiveMarker.NO_CONTROLLER);
+        leftObjective.marker().getScoringScheme().setRetainsControlWhenEmpty(true);
+        rightObjective.marker().setController(2, ObjectiveMarker.NO_CONTROLLER);
+        rightObjective.marker().getScoringScheme().setRetainsControlWhenEmpty(true);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(leftPosition, new ArrayList<>(List.of(leftObjective.marker())));
+        groundObjects.put(rightPosition, new ArrayList<>(List.of(rightObjective.marker())));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        when(game.getEntitiesVector()).thenReturn(List.of());
+
+        handler.resolveObjectives();
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(2, tracker.getTeamVictoryPoints(2), "nobody is on the board yet and team 2 already scores");
+        assertEquals(0, tracker.getTeamVictoryPoints(1));
     }
 
     @Test

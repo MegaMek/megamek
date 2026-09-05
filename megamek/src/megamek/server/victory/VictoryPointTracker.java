@@ -88,6 +88,7 @@ public class VictoryPointTracker implements Serializable {
     private final Map<Integer, Integer> teamVictoryPoints = new HashMap<>();
     private final List<VictoryPointAward> awardLog = new ArrayList<>();
     private boolean endScoringDone = false;
+    private boolean pointDecided = false;
 
     /**
      * @return {@code true} once the one-time end-of-mission scoring (Objective Raid) has been performed, so the
@@ -95,6 +96,19 @@ public class VictoryPointTracker implements Serializable {
      */
     public boolean isEndScoringDone() {
         return endScoringDone;
+    }
+
+    /**
+     * @return {@code true} when any control point has been decided this game - a Hold point secured, a Defend
+     *       point fallen or a Capture point taken. This is the sudden death trigger.
+     */
+    public boolean isPointDecided() {
+        return pointDecided;
+    }
+
+    /** Records that a control point was decided; once set it stays set for the rest of the game. */
+    public void setPointDecided() {
+        pointDecided = true;
     }
 
     public void setEndScoringDone(boolean endScoringDone) {

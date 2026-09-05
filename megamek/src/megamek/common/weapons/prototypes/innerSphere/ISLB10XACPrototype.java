@@ -91,8 +91,6 @@ public class ISLB10XACPrototype extends LBXACWeapon {
         cost = 2000000; // Cost in the AoW is 160000 but not making another version for one field.
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 66);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2590, DATE_NONE, DATE_NONE, 2595, 3035)

@@ -62,7 +62,6 @@ public class ISTSEMPOneShot extends TSEMPWeapon {
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 84);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false).setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
               .setISAdvancement(3095, 3100, DATE_NONE, DATE_NONE, DATE_NONE)

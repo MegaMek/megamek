@@ -93,8 +93,6 @@ public class ISLGaussRifle extends GaussWeapon {
               rulesRef(SourceBookCode.TW, 136)
         );
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3049, 3056, 3065, DATE_NONE, DATE_NONE)

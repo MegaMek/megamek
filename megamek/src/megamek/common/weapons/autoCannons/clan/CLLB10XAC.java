@@ -80,7 +80,6 @@ public class CLLB10XAC extends LBXACWeapon {
               rulesRef(SourceBookCode.TW, 304)
         );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(2824, 2826, 2828, DATE_NONE, DATE_NONE)

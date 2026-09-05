@@ -73,8 +73,6 @@ public class CLIATM12 extends CLIATMWeapon {
         this.maxRange = RANGE_MED;
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 59);
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3054, 3070, DATE_NONE, DATE_NONE, DATE_NONE)

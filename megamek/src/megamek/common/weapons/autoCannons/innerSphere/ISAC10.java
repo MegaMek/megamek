@@ -36,6 +36,7 @@ package megamek.common.weapons.autoCannons.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -82,12 +83,15 @@ public class ISAC10 extends ACWeapon {
               rulesRef(SourceBookCode.CORE, 182),
               rulesRef(SourceBookCode.TW, 303)
         );
-        techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(true).setTechRating(TechRating.C)
+        techAdvancement.setTechBase(TechBase.ALL)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
+              .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2443, 2460, 2465, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2443, 2460, 2465, 2850, DATE_NONE)
-              .setClanApproximate(false, false, false, true, false).setPrototypeFactions(Faction.TH)
+              .setClanApproximate(false, false, false, true, false)
+              .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH);
     }
 }

@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import megamek.client.ui.util.PlayerColour;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ObjectiveMarker;
+import megamek.common.icons.Camouflage;
 import org.junit.jupiter.api.Test;
 
 class PlayerTest {
@@ -75,5 +76,25 @@ class PlayerTest {
         // the copied list must be independent of the original
         copy.getGroundObjectsToPlace().clear();
         assertFalse(player.getGroundObjectsToPlace().isEmpty());
+    }
+
+    @Test
+    void testDisplayColourFollowsTheColourChosenInTheLobby() {
+        Player player = new Player(0, "Hammershome");
+        // the lobby stores a chosen colour as a colour camouflage and never touches the colour field
+        player.setCamouflage(Camouflage.of(PlayerColour.SPRING_GREEN));
+
+        assertEquals(PlayerColour.BLUE, player.getColour(), "the plain field stays at its default");
+        assertEquals(PlayerColour.SPRING_GREEN, player.getDisplayColour(),
+              "but what the player is shown in is what they picked");
+    }
+
+    @Test
+    void testDisplayColourFallsBackToTheColourFieldForAnImageCamouflage() {
+        Player player = new Player(0, "Hammershome");
+        player.setColour(PlayerColour.RED);
+        player.setCamouflage(new Camouflage("Clans", "Wolf.jpg"));
+
+        assertEquals(PlayerColour.RED, player.getDisplayColour());
     }
 }

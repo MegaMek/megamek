@@ -8293,7 +8293,7 @@ public abstract class Entity extends TurnOrdered
      *       this unit uses a manual BV value
      */
     public final int calculateBattleValue() {
-        return manualOrCalculateBV(false, false, new DummyCalculationReport());
+        return manualOrCalculateBV(false, false, false, new DummyCalculationReport());
     }
 
     /**
@@ -8307,7 +8307,22 @@ public abstract class Entity extends TurnOrdered
      * @return The Battle Value of this unit
      */
     public final int calculateBattleValue(boolean ignoreC3, boolean ignoreSkill) {
-        return manualOrCalculateBV(ignoreC3, ignoreSkill, new DummyCalculationReport());
+        return manualOrCalculateBV(ignoreC3, ignoreSkill, false, new DummyCalculationReport());
+    }
+
+    /**
+     * Calculates the Battle Value of this unit. The parameters can be used to control C3 / skill / TAG based changes to
+     * the BV. Note that when a unit has a manual BV value set in its definition file, this manual BV value is returned
+     * instead of a calculated BV value.
+     *
+     * @param ignoreC3    When {@code true}, the BV contributions of any C3 computers are not added
+     * @param ignoreSkill When {@code true}, the skill of the crew / pilot is not taken into account for BV
+     * @param ignoreTAG   When {@code true}, the force bonus for friendly guided munitions (TAG/homing) is not added
+     *
+     * @return The Battle Value of this unit
+     */
+    public final int calculateBattleValue(boolean ignoreC3, boolean ignoreSkill, boolean ignoreTAG) {
+        return manualOrCalculateBV(ignoreC3, ignoreSkill, ignoreTAG, new DummyCalculationReport());
     }
 
     /**
@@ -8321,7 +8336,7 @@ public abstract class Entity extends TurnOrdered
      *       this unit uses a manual BV value
      */
     public int calculateBattleValue(CalculationReport calculationReport) {
-        return manualOrCalculateBV(false, false, calculationReport);
+        return manualOrCalculateBV(false, false, false, calculationReport);
     }
 
     /**
@@ -8337,21 +8352,41 @@ public abstract class Entity extends TurnOrdered
      * @return The Battle Value of this unit
      */
     public int calculateBattleValue(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return manualOrCalculateBV(ignoreC3, ignoreSkill, calculationReport);
+        return manualOrCalculateBV(ignoreC3, ignoreSkill, false, calculationReport);
+    }
+
+    /**
+     * Calculates the Battle Value of this unit. The parameters can be used to control C3 / skill / TAG based changes to
+     * the BV. Note that when a unit has a manual BV value set in its definition file, this manual BV value is returned
+     * instead of a calculated BV value and no calculation report info will be generated.
+     *
+     * @param ignoreC3          When {@code true}, the BV contributions of any C3 computers are not added
+     * @param ignoreSkill       When {@code true}, the skill of the crew / pilot is not taken into account for BV
+     * @param ignoreTAG         When {@code true}, the force bonus for friendly guided munitions (TAG/homing) is not
+     *                          added
+     * @param calculationReport A CalculationReport to write the BV calculation to
+     *
+     * @return The Battle Value of this unit
+     */
+    public int calculateBattleValue(boolean ignoreC3, boolean ignoreSkill, boolean ignoreTAG,
+          CalculationReport calculationReport) {
+        return manualOrCalculateBV(ignoreC3, ignoreSkill, ignoreTAG, calculationReport);
     }
 
     /**
      * Checks if this unit uses a manual BV and if so, returns it. Otherwise, forwards to the actual BV calculation
      * method.
      *
-     * @param ignoreC3          When true, the BV contributions of any C3 computers are not added
-     * @param ignoreSkill       When true, the skill of the crew / pilot is not taken into account for BV
+     * @param ignoreC3          When {@code true}, the BV contributions of any C3 computers are not added
+     * @param ignoreSkill       When {@code true}, the skill of the crew / pilot is not taken into account for BV
+     * @param ignoreTAG         When {@code true}, the force bonus for friendly guided munitions (TAG/homing) is not added
      * @param calculationReport A CalculationReport to write the BV calculation to
      *
      * @return The Battle Value of this unit
      */
-    private int manualOrCalculateBV(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return useManualBV ? manualBV : doBattleValueCalculation(ignoreC3, ignoreSkill, calculationReport);
+    private int manualOrCalculateBV(boolean ignoreC3, boolean ignoreSkill, boolean ignoreTAG,
+          CalculationReport calculationReport) {
+        return useManualBV ? manualBV : doBattleValueCalculation(ignoreC3, ignoreSkill, ignoreTAG, calculationReport);
     }
 
     /**
@@ -8359,14 +8394,16 @@ public abstract class Entity extends TurnOrdered
      * overridden by subclasses of Entity to provide a unit type specific calculation of the Battle Value. A report of
      * the calculation should be written to the given calculationReport.
      *
-     * @param ignoreC3          When true, the BV contributions of any C3 computers are not added
-     * @param ignoreSkill       When true, the skill of the crew / pilot is not taken into account for BV
+     * @param ignoreC3          When {@code true}, the BV contributions of any C3 computers are not added
+     * @param ignoreSkill       When {@code true}, the skill of the crew / pilot is not taken into account for BV
+     * @param ignoreTAG         When {@code true}, the force bonus for friendly guided munitions (TAG/homing) is not added
      * @param calculationReport A CalculationReport to write the BV calculation to
      *
      * @return The Battle Value of this unit calculated from its current state
      */
-    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return getBvCalculator().calculateBV(ignoreC3, ignoreSkill, calculationReport);
+    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, boolean ignoreTAG,
+          CalculationReport calculationReport) {
+        return getBvCalculator().calculateBV(ignoreC3, ignoreSkill, ignoreTAG, calculationReport);
     }
 
     /**

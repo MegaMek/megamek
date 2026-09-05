@@ -86,12 +86,10 @@ public class BombISRL10 extends MissileWeapon {
         this.ammoType = AmmoType.AmmoTypeEnum.RL_BOMB;
         rulesRefs = rulesRefs(SourceBookCode.TM, 229);
         this.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
-              .setISAdvancement(3060, 3064, 3067, DATE_NONE, DATE_NONE)
-              .setISApproximate(true, false, false, false, false)
+              .setISAdvancement(DATE_ES, 3064, 3067, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.MH)
               .setProductionFactions(Faction.MH);
     }

@@ -44,7 +44,9 @@ import megamek.logging.MMLogger;
  * <p>Whether a warrior's implant does anything is a game option, not a property of the warrior: the
  * same implanted pilot in the same machine is inert in one game and not in another. The option carries
  * three settings, and the difference between the two that are on is whether the machine has to carry
- * the interface hardware as well - so a pilot who is fine under one is inert under the other.</p>
+ * the interface hardware as well - so a pilot who is fine under one is inert under the other. The same
+ * option is also the only switch for Manei Domini implants of every kind: Off means a warrior may carry
+ * none, and either setting that is on allows the whole implant group.</p>
  *
  * <p>The setting is stored as a display string, and reading it was written out separately everywhere it
  * was needed. Both applications and the engine ask this instead, so the bridge from implant to benefit
@@ -116,6 +118,17 @@ public enum NeuralInterfaceMode {
      */
     public boolean isOn() {
         return this != OFF;
+    }
+
+    /**
+     * Whether a warrior may carry Manei Domini implants at all. The old separate Manei Domini switch was folded
+     * into this setting, so the answer is the same as {@link #isOn()}: Off means no implants of any kind, and
+     * either setting that is on allows the whole implant group, neural or not.
+     *
+     * @return {@code true} if Manei Domini implants are allowed in this game
+     */
+    public boolean allowsImplants() {
+        return isOn();
     }
 
     /**

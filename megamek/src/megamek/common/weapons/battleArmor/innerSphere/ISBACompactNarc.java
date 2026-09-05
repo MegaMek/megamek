@@ -73,8 +73,6 @@ public class ISBACompactNarc extends NarcWeapon {
         cost = 15000;
         rulesRefs = rulesRefs(SourceBookCode.TM, 263);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, DATE_NONE, 3060, DATE_NONE, DATE_NONE)

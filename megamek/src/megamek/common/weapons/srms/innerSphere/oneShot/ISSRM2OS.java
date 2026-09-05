@@ -84,8 +84,6 @@ public class ISSRM2OS extends SRMWeapon {
               rulesRef(SourceBookCode.TW, 113)
         );
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C)
               //From TM pg 230 - "curious concept that did not so much go extinct in the

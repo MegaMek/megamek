@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.clan.mg;
 
 import java.io.Serial;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -77,8 +78,7 @@ public class CLBAMGBearhunterSuperheavyACi extends Weapon {
               .or(F_BA_WEAPON).or(F_BURST_FIRE);
         rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setClanAdvancement(3060, 3062, 3065, DATE_NONE, DATE_NONE)

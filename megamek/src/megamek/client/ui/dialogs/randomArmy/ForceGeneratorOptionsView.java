@@ -58,7 +58,10 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -99,6 +102,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     private Consumer<ForceDescriptor> onExportMUL;
     private Consumer<FactionRecord> onFactionChanged;
+    /**
+     * Where a roll learns what lift the force already owns, asked at the moment of each Generate so it reflects the
+     * ships brought by earlier rolls. Defaults to none.
+     */
+    private Supplier<ExistingLift> existingLiftSupplier = () -> ExistingLift.NONE;
 
     private ForceDescriptor forceDesc = new ForceDescriptor();
 
@@ -421,6 +429,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         chkFighterComplement = new JCheckBox(Messages.getString("ForceGeneratorDialog.fighterComplement"));
         chkFighterComplement.setToolTipText(Messages.getString("ForceGeneratorDialog.fighterComplement.tooltip"));
+        // The complement fills bays on ships the roll brings, so the option follows the fields that bring them.
+        DocumentListener shipsMayChange = onTextChange(this::refreshFighterComplementEnabled);
+        txtDropshipPct.getDocument().addDocumentListener(shipsMayChange);
+        txtJumpshipPct.getDocument().addDocumentListener(shipsMayChange);
+        txtWarshipPct.getDocument().addDocumentListener(shipsMayChange);
+        refreshFighterComplementEnabled();
         cell.gridx = column;
         cell.insets = new Insets(0, 0, 0, 0);
         cell.weightx = 1.0;
@@ -852,12 +866,27 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         fd.setCargoPct(cargoPct);
         txtCargoPct.setText(String.valueOf(cargoPct));
 
-        fd.setFighterComplement(chkFighterComplement.isSelected());
+        // A tick left behind from before the ships were removed must not count.
+        fd.setFighterComplement(chkFighterComplement.isSelected() && chkFighterComplement.isEnabled());
+        // Asked now rather than cached: the ships an earlier roll brought are what this roll starts from.
+        fd.setExistingLift(existingLiftSupplier.get());
 
         return fd;
     }
 
+    /** The name the unit type combo shows for a code, for the log; "Combined" for {@code null}. */
+    private static String unitTypeLabel(@Nullable Integer unitType) {
+        return (unitType == null) ? Messages.getString("ForceGeneratorDialog.combined")
+              : UnitType.getTypeDisplayableName(unitType);
+    }
+
     private void generateForce() {
+        // Logged here rather than in buildForceDescriptor, which a host also calls to read the panel without
+        // rolling; this line means a roll is actually starting.
+        logger.info("[ForceGen] roll requested: unitType={} ({}), combo shows {} ({}), echelon={} faction={} rating={}",
+              forceDesc.getUnitType(), unitTypeLabel(forceDesc.getUnitType()),
+              cbUnitType.getSelectedItem(), unitTypeLabel((Integer) cbUnitType.getSelectedItem()),
+              forceDesc.getEchelon(), forceDesc.getFaction(), forceDesc.getRating());
         ForceDescriptor fd = buildForceDescriptor();
 
         ProgressMonitor monitor = new ProgressMonitor(this,
@@ -935,14 +964,19 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      * columns.
      * <p>For Battle Armor each entity represents one Squad/Point (5 Clan Elementals, 4-5 IS), so cells show
      * "N (M)" where N is the squad count and M is the total trooper count. Other unit types show plain N.</p>
+     *
+     * <p>Public so a host that accumulates rolls into one command can show the whole command here rather than
+     * the roll that just landed.</p>
+     *
+     * @param force the force to summarise
      */
-    private void updateSummaryTable(ForceDescriptor fd) {
+    public void updateSummaryTable(ForceDescriptor force) {
         summaryModel.setRowCount(0);
-        if (fd == null) {
+        if (force == null) {
             return;
         }
         ArrayList<Entity> entities = new ArrayList<>();
-        fd.addAllEntities(entities);
+        force.addAllEntities(entities);
         // Per (unitType, weightClassColumn): [0]=squad/entity count, [1]=trooper count (BA only).
         Map<Integer, int[][]> counts = new TreeMap<>();
         for (Entity entity : entities) {
@@ -967,7 +1001,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // At Galaxy echelon and above (constants.txt: GALAXY/BRIGADE=7, TOUMAN/DIVISION=8, ...) a force
         // holds hundreds of units, so raw per-cell counts are unreadable. Show each weight class as a
         // percentage of that unit type's total instead. Smaller forces keep the exact counts.
-        Integer echelon = fd.getEchelon();
+        Integer echelon = force.getEchelon();
         boolean asPercent = (echelon != null) && (echelon >= LARGE_ECHELON_PERCENT_THRESHOLD);
         // Column totals count units (squads for Battle Armor) so the bottom row adds up across types.
         int[] columnTotals = new int[4];
@@ -1155,7 +1189,66 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             forceDesc.setUnitType(unitType);
         }
         refreshFormations();
+        refreshFighterComplementEnabled();
         cbUnitType.addActionListener(this);
+    }
+
+    /**
+     * Offers the Carried Fighter Complement only when the roll will have ships whose fighter bays it could fill: a
+     * DropShip, JumpShip or WarShip percentage above zero, or a force that is itself ships. With neither, the
+     * option would do nothing, so it is greyed out and the tooltip says what would enable it.
+     */
+    private void refreshFighterComplementEnabled() {
+        if (chkFighterComplement == null) {
+            return;
+        }
+        boolean wantsTransports = (percentageIn(txtDropshipPct) > 0) || (percentageIn(txtJumpshipPct) > 0)
+              || (percentageIn(txtWarshipPct) > 0);
+        boolean isShipForce = isShipType(forceDesc.getUnitType());
+        boolean canHaveShips = wantsTransports || isShipForce;
+        chkFighterComplement.setEnabled(canHaveShips);
+        chkFighterComplement.setToolTipText(Messages.getString(canHaveShips
+              ? "ForceGeneratorDialog.fighterComplement.tooltip"
+              : "ForceGeneratorDialog.fighterComplement.noShips.tooltip"));
+        if (!canHaveShips) {
+            logger.debug("[ForceGen][Fighters] Carried Fighter Complement greyed out: every transport percentage is"
+                  + " 0 and unit type {} is not ships", unitTypeLabel(forceDesc.getUnitType()));
+        }
+    }
+
+    private static double percentageIn(@Nullable JTextField field) {
+        return (field == null) ? 0 : MathUtility.parseDouble(field.getText(), 0.0);
+    }
+
+    /**
+     * @return {@code true} for the unit types that are ships with bays of their own
+     */
+    private static boolean isShipType(@Nullable Integer unitType) {
+        if (unitType == null) {
+            return false;
+        }
+        return (unitType == UnitType.DROPSHIP) || (unitType == UnitType.JUMPSHIP) || (unitType == UnitType.WARSHIP)
+              || (unitType == UnitType.SPACE_STATION);
+    }
+
+    /** A document listener that runs the same action on every kind of change. */
+    private static DocumentListener onTextChange(Runnable action) {
+        return new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent event) {
+                action.run();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent event) {
+                action.run();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent event) {
+                action.run();
+            }
+        };
     }
 
     private void refreshFormations() {
@@ -1363,9 +1456,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             }
             refreshUnitTypes();
         } else if (ev.getSource() == cbUnitType) {
-            logger.debug("cbUnitType action: selected={}", cbUnitType.getSelectedItem());
+            // INFO on purpose: a roll that comes back as the wrong kind of unit is only diagnosable from the log if
+            // it says what was picked, and a pick is a one-off event.
+            logger.info("[ForceGen] unit type picked: {} ({})", cbUnitType.getSelectedItem(),
+                  unitTypeLabel((Integer) cbUnitType.getSelectedItem()));
             forceDesc.setUnitType((Integer) cbUnitType.getSelectedItem());
             refreshFormations();
+            refreshFighterComplementEnabled();
         } else if (ev.getSource() == cbFormation) {
             String echelon = (String) cbFormation.getSelectedItem();
             if (echelon != null) {
@@ -1467,6 +1564,17 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     public void setOnExportMUL(Consumer<ForceDescriptor> handler) {
         this.onExportMUL = handler;
+    }
+
+    /**
+     * Tells the panel where to learn what lift the force already owns - the free bays and docking collars on ships
+     * from earlier rolls, a running game or a campaign hangar - so each roll generates only the lift it still lacks.
+     * The supplier is asked at every Generate.
+     *
+     * @param supplier the source of existing lift, or {@code null} to start every roll from nothing
+     */
+    public void setExistingLiftSupplier(@Nullable Supplier<ExistingLift> supplier) {
+        this.existingLiftSupplier = (supplier == null) ? () -> ExistingLift.NONE : supplier;
     }
 
     /**

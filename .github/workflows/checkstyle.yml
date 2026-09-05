@@ -36,6 +36,34 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6.3.0
 
+      # Formatting first: it finishes in about a minute and reports every violation in one run.
+      # The ratchet in build.gradle compares against origin/main, which a shallow checkout does not have.
+      - name: Fetch main for the formatting ratchet
+        working-directory: megamek
+        run: git fetch --depth=1 origin main
+
+      - name: Formatting (Spotless)
+        working-directory: megamek
+        run: |
+          ./gradlew spotlessApply
+          if git diff --quiet; then
+            echo "Formatting clean."
+            exit 0
+          fi
+          {
+            echo "## Formatting violations"
+            echo
+            echo "Run \`./gradlew spotlessApply\` and commit the result. Every file below is fixed by that one command."
+            echo
+            echo '```diff'
+            git diff | head -c 900000
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          git diff --name-only | while read -r changedFile; do
+            echo "::error file=${changedFile}::Formatting violation. Run ./gradlew spotlessApply"
+          done
+          exit 1
+
       - name: Checkstyle
         working-directory: megamek
         run: ./gradlew checkstyleMain checkstyleTest

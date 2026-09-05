@@ -33,13 +33,18 @@
 package megamek.client.ui.panels.phaseDisplay;
 
 import java.awt.Component;
-import java.awt.GridLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import java.util.List;
 import java.util.Locale;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -47,9 +52,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 
 import megamek.client.ui.Messages;
 import megamek.common.Player;
+import megamek.client.ui.util.UIUtil;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
@@ -122,7 +130,8 @@ public final class VictoryHexPropertiesPane {
 
         // who holds this point when the game begins, and whether it stays held once the zone empties.
         // The two go together: without retention, resolution would set a starting controller back to
-        // nobody at the first End Phase and the choice would look broken
+        // nobody at the first End Phase and the choice would look broken - so the dropdown wakes only
+        // once retention is ticked
         JComboBox<ControlChoice> startingControlCombo = new JComboBox<>();
         startingControlCombo.addItem(ControlChoice.NOBODY);
         for (Player player : players) {
@@ -133,24 +142,27 @@ public final class VictoryHexPropertiesPane {
         JCheckBox retainControlCheckbox = new JCheckBox();
         retainControlCheckbox.setSelected(scheme.retainsControlWhenEmpty());
         retainControlCheckbox.setToolTipText(Messages.getString("VictoryHex.retainControl.tooltip"));
+        startingControlCombo.setEnabled(retainControlCheckbox.isSelected());
+        retainControlCheckbox.addActionListener(event ->
+              startingControlCombo.setEnabled(retainControlCheckbox.isSelected()));
 
-        JPanel propertiesPanel = new JPanel(new GridLayout(0, 2));
-        propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.startingControl")));
-        propertiesPanel.add(startingControlCombo);
-        propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.retainControl")));
-        propertiesPanel.add(retainControlCheckbox);
-        propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.radius")));
-        propertiesPanel.add(radiusSpinner);
-        propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.victoryPoints")));
-        propertiesPanel.add(victoryPointSpinner);
-        propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.scheme")));
-        propertiesPanel.add(schemeCombo);
-        propertiesPanel.add(thresholdLabel);
-        propertiesPanel.add(thresholdSpinner);
-        propertiesPanel.add(countingLabel);
-        propertiesPanel.add(countingCombo);
-        propertiesPanel.add(rateLabel);
-        propertiesPanel.add(rateSpinner);
+        // the order a player decides these in: what kind of point is this, how is it won, who holds it
+        // to begin with, how big is it, what is it worth. The scheme comes first because it decides
+        // which of the rows below even appear - with it third, two values had to be filled in before
+        // learning what else would be asked. A grid bag rather than a plain grid: a plain grid keeps a
+        // cell for every hidden row, so a scheme with no rows of its own (Standard) left three empty rows
+        // between the scheme and the radius
+        JPanel propertiesPanel = new JPanel(new GridBagLayout());
+        addRow(propertiesPanel, 0, new JLabel(Messages.getString("VictoryHex.scheme")), schemeCombo);
+        addRow(propertiesPanel, 1, thresholdLabel, thresholdSpinner);
+        addRow(propertiesPanel, 2, countingLabel, countingCombo);
+        addRow(propertiesPanel, 3, rateLabel, rateSpinner);
+        addRow(propertiesPanel, 4, new JLabel(Messages.getString("VictoryHex.retainControl")), retainControlCheckbox);
+        addRow(propertiesPanel, 5, new JLabel(Messages.getString("VictoryHex.startingControl")),
+              startingControlCombo);
+        addRow(propertiesPanel, 6, new JLabel(Messages.getString("VictoryHex.radius")), radiusSpinner);
+        addRow(propertiesPanel, 7, new JLabel(Messages.getString("VictoryHex.victoryPoints")), victoryPointSpinner);
+        pinRowsToTheTop(propertiesPanel, 8);
 
         JPanel editorPanel = new JPanel();
         editorPanel.setLayout(new BoxLayout(editorPanel, BoxLayout.PAGE_AXIS));
@@ -206,12 +218,36 @@ public final class VictoryHexPropertiesPane {
           JLabel countingLabel, JLabel schemeDescription) {}
 
     /**
+     * Adds one label-and-control row to the properties grid. Both cells share the row's width equally, so the
+     * labels line up on the left and the controls on the right whichever rows are currently visible.
+     *
+     * @param panel   the grid panel
+     * @param row     the grid row
+     * @param label   the row's label
+     * @param control the row's editing control
+     */
+    private static void addRow(JPanel panel, int row, JLabel label, Component control) {
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridy = row;
+        constraints.weightx = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        int padding = UIUtil.scaleForGUI(2);
+        constraints.insets = new Insets(padding, padding, padding, padding);
+        constraints.gridx = 0;
+        panel.add(label, constraints);
+        constraints.gridx = 1;
+        panel.add(control, constraints);
+    }
+
+    /**
      * Rewrites the scheme-dependent rows for the currently selected preset: which rows are visible, what the
      * threshold and rate spinners mean, and the plain-words description of the point as actually configured.
      *
      * @param controls the pane's scheme-dependent controls
      */
     private static void refreshSchemeRows(SchemeControls controls) {
+        Window window = SwingUtilities.getWindowAncestor(controls.schemeCombo());
+        Dimension sizeNeededBefore = (window == null) ? null : window.getPreferredSize();
         SchemePreset preset = (SchemePreset) controls.schemeCombo().getSelectedItem();
         // the description reflects the CONFIGURED point: the chosen mode and the actual numbers,
         // not a generic text covering every possibility
@@ -236,6 +272,45 @@ public final class VictoryHexPropertiesPane {
         controls.rateSpinner().setVisible(usesRate);
         controls.countingLabel().setVisible(usesCounting);
         controls.countingCombo().setVisible(usesCounting);
+        resizeDialogToFit(window, sizeNeededBefore);
+    }
+
+    /**
+     * Re-packs the dialog when its content needs a different size than it did before the refresh. The dialog
+     * is sized once when it opens; without this, a scheme with more rows is squeezed into the old height and
+     * one with fewer has its rows re-centred in the leftover space, so the scheme selector jumps up and down
+     * as schemes are tried. Packing keeps the top-left corner where it is, so the selector stays put and the
+     * dialog grows or shrinks beneath it. A refresh that changes nothing about the size, such as a spinner
+     * tick, leaves the dialog alone.
+     *
+     * @param window           the dialog, or {@code null} while the pane is still being built
+     * @param sizeNeededBefore the size the content asked for before the refresh, or {@code null} with no dialog
+     */
+    private static void resizeDialogToFit(@Nullable Window window, @Nullable Dimension sizeNeededBefore) {
+        if (window == null) {
+            return;
+        }
+        boolean isSizeNeededUnchanged = window.getPreferredSize().equals(sizeNeededBefore);
+        if (isSizeNeededUnchanged) {
+            return;
+        }
+        window.pack();
+    }
+
+    /**
+     * Adds an empty, stretchable last row so that any spare height goes below the rows instead of being shared
+     * around them, which would float the rows toward the middle of the panel.
+     *
+     * @param panel the grid panel
+     * @param row   the first unused grid row
+     */
+    private static void pinRowsToTheTop(JPanel panel, int row) {
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridx = 0;
+        constraints.gridy = row;
+        constraints.gridwidth = 2;
+        constraints.weighty = 1;
+        panel.add(Box.createVerticalGlue(), constraints);
     }
 
     /**
@@ -355,5 +430,18 @@ public final class VictoryHexPropertiesPane {
             }
         }
         combo.setSelectedItem(ControlChoice.NOBODY);
+    }
+
+    /**
+     * The same "what it does / how to make it work" wording the setup pane shows, for a scheme already
+     * configured. The board tooltip uses it so a point explains itself the same way in both places.
+     *
+     * @param scheme The scheme to describe
+     *
+     * @return The description, ready to display
+     */
+    public static String describeScheme(ObjectiveScoringScheme scheme) {
+        return describeConfiguredPreset(scheme.getPreset(), scheme.getThreshold(), scheme.getRatePerTurn(),
+              scheme.getHoldCounting());
     }
 }

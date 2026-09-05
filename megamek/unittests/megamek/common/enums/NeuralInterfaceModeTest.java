@@ -103,6 +103,16 @@ class NeuralInterfaceModeTest {
         assertEquals(NeuralInterfaceMode.OFF, NeuralInterfaceMode.from(null));
     }
 
+    /** The old Manei Domini switch lives here now: Off forbids every implant, either on setting allows them all. */
+    @Test
+    void offForbidsImplantsAndEitherOnSettingAllowsThem() {
+        assertFalse(NeuralInterfaceMode.OFF.allowsImplants());
+        assertTrue(NeuralInterfaceMode.PILOT_ABILITIES_ONLY.allowsImplants());
+        assertTrue(NeuralInterfaceMode.FULL_TRACKING.allowsImplants());
+        assertFalse(NeuralInterfaceMode.from(null).allowsImplants(),
+              "with no game to read, implants are not allowed");
+    }
+
     /** Stored values carry stray whitespace often enough to be worth tolerating. */
     @Test
     void aStoredValueIsTrimmedBeforeItIsRead() {

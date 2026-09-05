@@ -88,8 +88,6 @@ public abstract class BPodWeapon extends AmmoWeapon {
               rulesRef(SourceBookCode.TW, 130)
         );
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3068, 3068, 3070, DATE_NONE, DATE_NONE)

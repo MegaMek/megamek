@@ -47,6 +47,7 @@ import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
+import megamek.server.scriptedEvents.TriggeredEvent;
 
 /**
  * Resolves the winner of a game by cumulative Victory Points (VP), as used by objective-based missions: VP are awarded
@@ -71,14 +72,98 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
     private static final int REPORT_VICTORY_POINT_TOTAL = 7115;
     private static final int REPORT_VICTORY_POINTS_TIED = 7116;
     private static final int REPORT_RAID_OBJECTIVE_SCORED = 7131;
+    private static final int REPORT_SUDDEN_DEATH = 7143;
+    private static final int REPORT_WIN_THRESHOLD_REACHED = 7144;
+    private static final int REPORT_VICTORY_LEVEL = 7146;
 
     @Override
     public VictoryResult checkVictory(Game game, Map<String, Object> context) {
-        if (!game.gameTimerIsExpired()) {
+        if (game.gameTimerIsExpired()) {
+            LOGGER.debug("[VP] Game turn limit reached; resolving victory points");
+            return checkAtGameEnd(game, context);
+        }
+        return checkEarlyEnd(game, context);
+    }
+
+    /**
+     * Checks the mid-game enders: sudden death (the game ends the moment any control point is decided) and the
+     * victory point win threshold. Both resolve the running tally into a winner immediately instead of waiting
+     * for the game clock.
+     *
+     * @param game    The current {@link Game}
+     * @param context The victory context holding the {@link VictoryPointTracker}
+     *
+     * @return The resolved result when an ender fired; {@link VictoryResult#noResult()} otherwise
+     */
+    private VictoryResult checkEarlyEnd(Game game, Map<String, Object> context) {
+        if (!game.getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
             return VictoryResult.noResult();
         }
-        LOGGER.debug("[VP] Game turn limit reached; resolving victory points");
-        return checkAtGameEnd(game, context);
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(context);
+        if (tracker == null) {
+            return VictoryResult.noResult();
+        }
+
+        boolean isSuddenDeath = game.getOptions().booleanOption(OptionsConstants.VICTORY_VP_SUDDEN_DEATH);
+        if (isSuddenDeath && tracker.isPointDecided()) {
+            LOGGER.info("[VP] Sudden death: a control point was decided - resolving victory points now");
+            VictoryResult result = checkAtGameEnd(game, context);
+            result.addReport(new Report(REPORT_SUDDEN_DEATH, Report.PUBLIC));
+            return result;
+        }
+
+        int winThreshold = game.getOptions().intOption(OptionsConstants.VICTORY_VP_WIN_THRESHOLD);
+        boolean isWinThresholdReached = (winThreshold > 0) && soleLeaderIsAtOrAbove(tracker, winThreshold);
+        if (isWinThresholdReached) {
+            LOGGER.info("[VP] The victory point win threshold of {} was reached - resolving now", winThreshold);
+            VictoryResult result = checkAtGameEnd(game, context);
+            Report report = new Report(REPORT_WIN_THRESHOLD_REACHED, Report.PUBLIC);
+            report.add(winThreshold);
+            result.addReport(report);
+            return result;
+        }
+
+        return VictoryResult.noResult();
+    }
+
+    /**
+     * @param tracker   the tally
+     * @param threshold the win threshold, above zero
+     *
+     * @return {@code true} when exactly one side holds the highest total and that total is at or above the
+     *       threshold - a shared high score keeps the game going, first to pull ahead at the score wins
+     */
+    private boolean soleLeaderIsAtOrAbove(VictoryPointTracker tracker, int threshold) {
+        List<Integer> totals = allSideTotals(tracker);
+        int best = totals.stream().mapToInt(Integer::intValue).max().orElse(Integer.MIN_VALUE);
+        long sidesAtBest = totals.stream().filter(total -> total == best).count();
+        return (best >= threshold) && (sidesAtBest == 1);
+    }
+
+    /** @return every scoring side's current total, players and teams alike */
+    private List<Integer> allSideTotals(VictoryPointTracker tracker) {
+        List<Integer> totals = new ArrayList<>();
+        for (int playerId : tracker.getScoringPlayers()) {
+            totals.add(tracker.getPlayerVictoryPoints(playerId));
+        }
+        for (int teamId : tracker.getScoringTeams()) {
+            totals.add(tracker.getTeamVictoryPoints(teamId));
+        }
+        return totals;
+    }
+
+    /**
+     * @param game the game, using its final (post-lobby) options and scripted events
+     *
+     * @return {@code true} when the game has any way to resolve scored victory points into a result: the game
+     *       turn limit, the victory point win threshold, sudden death, or a game-ending scripted event
+     */
+    public static boolean gameHasVictoryPointResolution(Game game) {
+        boolean hasTurnLimit = game.getOptions().booleanOption(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT);
+        boolean hasWinThreshold = game.getOptions().intOption(OptionsConstants.VICTORY_VP_WIN_THRESHOLD) > 0;
+        boolean hasSuddenDeath = game.getOptions().booleanOption(OptionsConstants.VICTORY_VP_SUDDEN_DEATH);
+        boolean hasGameEndEvent = game.scriptedEvents().stream().anyMatch(TriggeredEvent::isGameEnding);
+        return hasTurnLimit || hasWinThreshold || hasSuddenDeath || hasGameEndEvent;
     }
 
     /**
@@ -182,8 +267,41 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
         } else {
             LOGGER.info("[VP] Game ends by victory points; winning player ID: {}, winning team: {}",
                   result.getWinningPlayer(), result.getWinningTeam());
+            declareVictoryLevel(game, tracker, result);
         }
         return result;
+    }
+
+    /**
+     * Declares the winner's victory level from the scenario's graded scale, when one is defined: the first band
+     * whose bound covers the winner's final total names the victory (e.g. "Pyrrhic victory" up to 10, "Major
+     * victory" above 20). Games without a scale keep the plain result.
+     */
+    private void declareVictoryLevel(Game game, VictoryPointTracker tracker, VictoryResult result) {
+        List<VictoryPointLevel> levels = game.getVictoryPointLevels();
+        if (levels.isEmpty()) {
+            return;
+        }
+        int winnerPoints = (result.getWinningTeam() != Player.TEAM_NONE)
+              ? tracker.getTeamVictoryPoints(result.getWinningTeam())
+              : tracker.getPlayerVictoryPoints(result.getWinningPlayer());
+        String winnerName = (result.getWinningTeam() != Player.TEAM_NONE)
+              ? "Team " + result.getWinningTeam()
+              : playerDisplayName(game, result.getWinningPlayer());
+        for (VictoryPointLevel level : levels) {
+            if (winnerPoints <= level.getUpTo()) {
+                Report report = new Report(REPORT_VICTORY_LEVEL, Report.PUBLIC);
+                report.add(winnerName);
+                report.add(level.getName());
+                report.add(winnerPoints);
+                result.addReport(report);
+                LOGGER.info("[VP] {} achieves a {} ({} victory points)", winnerName, level.getName(),
+                      winnerPoints);
+                return;
+            }
+        }
+        LOGGER.warn("[VP] The winner's total of {} is above every victory level bound - no level declared; "
+              + "give the last level no upTo bound to catch every total", winnerPoints);
     }
 
     private String playerDisplayName(Game game, int playerId) {

@@ -74,8 +74,6 @@ public class CLUAC10Prototype extends CLPrototypeUACWeapon {
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 92);
         flags = flags.or(F_PROTOTYPE).andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
               .setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2825, DATE_NONE)

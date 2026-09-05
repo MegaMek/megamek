@@ -72,8 +72,6 @@ public class CLAdvancedSRM2OS extends AdvancedSRMWeapon {
               rulesRef(SourceBookCode.TW, 305)
         );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setClanAdvancement(3052, 3056, 3066, DATE_NONE, DATE_NONE)

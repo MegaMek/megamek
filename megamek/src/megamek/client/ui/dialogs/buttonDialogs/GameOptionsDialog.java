@@ -114,6 +114,9 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
      */
     private Map<String, List<DialogOptionComponentYPanel>> optionComps = new HashMap<>();
 
+    /** Options a scenario has locked; these stay uneditable whatever the dialog's editable state. */
+    private Set<String> lockedOptionNames = Set.of();
+
     private final JPanel panOptions = new JPanel(new BorderLayout());
     private GameOptionsPane gameOptionsPane;
 
@@ -462,6 +465,8 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             }
             groups.add(new GameOptionsPane.OptionGroup(group.getName(), group.getDisplayableName(), groupComponents));
         }
+        // before the pane is built: it captures each option's help text as it lays the page out
+        applyLockedOptions(optionComps, lockedOptionNames);
         gameOptionsPane = new GameOptionsPane(groups, this::shouldShow, excludedOptionNames);
         panOptions.add(gameOptionsPane, BorderLayout.CENTER);
         synchronizeRuleToggles();
@@ -1142,5 +1147,39 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
      */
     public boolean isEditable() {
         return editable;
+    }
+
+    /**
+     * Locks the named options so a player cannot change them here: the scenario wrote them as its mission.
+     * They are shown greyed out with the reason under their help text, and keep the values the scenario gave
+     * them. The set replaces any earlier one and the page is rebuilt, so an empty set unlocks everything.
+     *
+     * @param optionNames The option names to lock
+     */
+    public void lockOptions(Set<String> optionNames) {
+        lockedOptionNames = Set.copyOf(optionNames);
+        refreshOptions();
+    }
+
+    /**
+     * Locks every named option on its component, which then stays disabled through every later editability
+     * pass - the ruleset switch included. Runs before the pane lays the page out, because that is when the
+     * help text (and the lock's reason under it) is captured for the Option Details panel.
+     */
+    static void applyLockedOptions(Map<String, List<DialogOptionComponentYPanel>> optionComponents,
+          Set<String> lockedOptionNames) {
+        String reason = getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.lockedByScenario");
+        for (String optionName : lockedOptionNames) {
+            List<DialogOptionComponentYPanel> components = optionComponents.get(optionName);
+            if (components == null) {
+                LOGGER.warn("[LockedOptions] {} is locked by the scenario but is not shown in this dialog,"
+                      + " so there is nothing to grey out", optionName);
+                continue;
+            }
+            for (DialogOptionComponentYPanel component : components) {
+                component.lockWithNote(reason);
+            }
+            LOGGER.debug("[LockedOptions] {} locked ({} component(s))", optionName, components.size());
+        }
     }
 }

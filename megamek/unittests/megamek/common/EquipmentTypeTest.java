@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,6 +47,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.StructureType;
+import megamek.common.interfaces.ITechnology;
 import megamek.common.weapons.bayWeapons.TeleOperatedMissileBayWeapon;
 import org.junit.jupiter.api.Test;
 
@@ -94,6 +95,21 @@ class EquipmentTypeTest {
         assertEquals(EquipmentType.T_STRUCTURE_INDUSTRIAL, industrialStructure.getStructureTypeId());
         assertEquals(EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL, heavyIndustrialArmor.getArmorType());
         assertEquals(EquipmentType.T_STRUCTURE_UNKNOWN, EquipmentType.getStructureType(standardArmor));
+    }
+
+    @Test
+    void structureTechAdvancementForUnitsWithoutStructureIsBlank() {
+        EquipmentType.initializeTypes();
+
+        // Battle armor and conventional infantry carry no internal structure type; the answer must be a blank
+        // advancement rather than a name lookup that scans every equipment type and misses anyway.
+        TechAdvancement unknownStructure = EquipmentType.getStructureTechAdvancement(
+              EquipmentType.T_STRUCTURE_UNKNOWN, false);
+        TechAdvancement endoSteel = EquipmentType.getStructureTechAdvancement(
+              EquipmentType.T_STRUCTURE_ENDO_STEEL, false);
+
+        assertEquals(ITechnology.DATE_NONE, unknownStructure.getIntroductionDate());
+        assertTrue(endoSteel.getIntroductionDate() > 0, "a real structure type still resolves");
     }
 
     @Test

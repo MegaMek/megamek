@@ -36,6 +36,7 @@ package megamek.common.weapons.mgs.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
@@ -82,8 +83,7 @@ public class ISMG extends MGWeapon {
               rulesRef(SourceBookCode.TW, 304)
         );
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
-              .setUnofficial(false)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)

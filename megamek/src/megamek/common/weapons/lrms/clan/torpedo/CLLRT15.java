@@ -75,8 +75,6 @@ public class CLLRT15 extends LRTWeapon {
               rulesRef(SourceBookCode.TW, 138)
         );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)

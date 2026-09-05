@@ -81,7 +81,6 @@ public class CLLB20XAC extends LBXACWeapon {
         );
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(2824, 2826, 2828, DATE_NONE, DATE_NONE)

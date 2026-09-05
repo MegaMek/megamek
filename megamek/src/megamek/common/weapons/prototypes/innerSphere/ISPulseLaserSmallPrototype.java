@@ -93,8 +93,6 @@ public class ISPulseLaserSmallPrototype extends PulseLaserWeapon {
         this.flags = flags.or(F_BURST_FIRE).or(F_PROTOTYPE);
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 67);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2595, DATE_NONE, DATE_NONE, 2609, DATE_NONE)

@@ -74,8 +74,6 @@ public class ISBAFiredrakeNeedler extends Weapon {
               .andNot(F_PROTO_WEAPON);
         rulesRefs = rulesRefs(SourceBookCode.TM, 266);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(3058, 3060, 3068, DATE_NONE, DATE_NONE)

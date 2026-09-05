@@ -72,8 +72,6 @@ public class NAC25Weapon extends NavalACWeapon {
         this.maxRange = RANGE_LONG;
         rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 143);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2950, 3051)

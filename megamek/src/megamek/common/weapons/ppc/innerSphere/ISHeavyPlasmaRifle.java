@@ -85,8 +85,6 @@ public class ISHeavyPlasmaRifle extends AmmoWeapon {
         atClass = CLASS_PLASMA;
         rulesRefs = rulesRefs(SourceBookCode.CORE, 189);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3061, 3068, 3072, DATE_NONE, DATE_NONE)

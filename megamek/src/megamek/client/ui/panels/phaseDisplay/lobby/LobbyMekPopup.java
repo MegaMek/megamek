@@ -331,8 +331,11 @@ class LobbyMekPopup {
         popup.add(menuItem("Convert to SBF Formation", LMP_SBF_FORMATION + "|" + foToken(forces) + eIds,
               lobby.isForceView(), listener));
         popup.add(ScalingPopup.spacer());
+        // Enabled whenever anything is selected, forces included: the handler deletes selected forces with their
+        // units after asking, exactly as the Delete key does, so the menu must not stay greyed out in the force
+        // view while the key works.
         popup.add(menuItem("Delete", LMP_DELETE + "|" + foToken(forces) + seIds,
-              !entities.isEmpty() && forces.isEmpty(), listener, KeyEvent.VK_D));
+              !entities.isEmpty() || !forces.isEmpty(), listener, KeyEvent.VK_D));
 
         return popup;
     }

@@ -73,8 +73,6 @@ public class ISPrototypeTAG extends TAGWeapon {
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 67);
         flags = flags.or(F_PROTOTYPE);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2593, DATE_NONE, DATE_NONE, 2600, DATE_NONE)

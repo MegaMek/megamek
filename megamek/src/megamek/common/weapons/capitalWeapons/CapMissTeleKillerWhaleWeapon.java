@@ -83,8 +83,6 @@ public class CapMissTeleKillerWhaleWeapon extends CapitalMissileWeapon {
               rulesRef(SourceBookCode.TW, 251)
         );
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3053, 3056, 3060, DATE_NONE, DATE_NONE)

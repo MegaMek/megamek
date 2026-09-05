@@ -88,8 +88,6 @@ public class CLBAMortarLight extends Weapon {
               rulesRef(SourceBookCode.TW, 305)
         );
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(3054, 3057, 3063, DATE_NONE, DATE_NONE)

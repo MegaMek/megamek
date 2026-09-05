@@ -38,8 +38,8 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.AugmentedUnitType;
 import megamek.common.enums.ManeiDominiAugmentationRank;
 import megamek.common.enums.ManeiDominiImplants;
+import megamek.common.enums.NeuralInterfaceMode;
 import megamek.common.options.IGameOptions;
-import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.universe.RankSystem;
 import megamek.common.universe.Ranks;
@@ -71,7 +71,7 @@ public final class ManeiDominiCrewAugmentor {
      * Manei Domini.
      *
      * @param root        the generated force; {@code null} is ignored
-     * @param gameOptions the options the force is being generated for, read for the Manei Domini rule
+     * @param gameOptions the options the force is being generated for, read for the Pilot Implants option
      */
     public static void augment(@Nullable ForceDescriptor root, @Nullable IGameOptions gameOptions) {
         if (root == null) {
@@ -79,10 +79,10 @@ public final class ManeiDominiCrewAugmentor {
         }
         String faction = root.getFaction();
         boolean isShadowDivision = SHADOW_DIVISION_FACTION_KEY.equalsIgnoreCase(faction);
-        boolean gameAllowsImplants = (gameOptions != null)
-              && gameOptions.booleanOption(OptionsConstants.RPG_MANEI_DOMINI);
+        boolean gameAllowsImplants = NeuralInterfaceMode.from(gameOptions).allowsImplants();
         LOGGER.info("[ManeiDomini] ENTER: faction='{}' (Shadow Divisions key '{}'),"
-                    + " Manei Domini rule={}", faction, SHADOW_DIVISION_FACTION_KEY, gameAllowsImplants);
+                    + " Pilot Implants option allows implants={}", faction, SHADOW_DIVISION_FACTION_KEY,
+              gameAllowsImplants);
 
         if (!isShadowDivision) {
             LOGGER.info("[ManeiDomini] SKIPPED - '{}' is not the Word of Blake Shadow Divisions."
@@ -91,7 +91,7 @@ public final class ManeiDominiCrewAugmentor {
             return;
         }
         if (!gameAllowsImplants) {
-            LOGGER.info("[ManeiDomini] SKIPPED - the Manei Domini rule is off in this game's options,"
+            LOGGER.info("[ManeiDomini] SKIPPED - the Pilot Implants option is Off in this game's options,"
                         + " so any implants fitted would be stripped when the unit reached the lobby.");
             return;
         }

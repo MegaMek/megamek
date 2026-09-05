@@ -86,8 +86,6 @@ public class ISLightPPC extends PPCWeapon {
         );
         flags = flags.or(F_PPC_CAPACITOR_COMPATIBLE);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3064, 3067, 3068, DATE_NONE, DATE_NONE)

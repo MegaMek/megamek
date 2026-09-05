@@ -49,9 +49,10 @@ public class BattlefieldSupportAssetBVCalculator extends BVCalculator {
     }
 
     @Override
-    public int calculateBV(boolean ignoreC3, boolean ignoreSkill, CalculationReport bvReport) {
+    public int calculateBV(boolean ignoreC3, boolean ignoreSkill, boolean ignoreTAG, CalculationReport bvReport) {
         this.ignoreC3 = ignoreC3;
         this.ignoreSkill = ignoreSkill;
+        this.ignoreTAG = ignoreTAG;
         int bv = (entity instanceof BattlefieldSupportAsset asset)
               ? (ignoreSkill ? asset.getBv() : asset.getEffectiveBv())
               : 0;

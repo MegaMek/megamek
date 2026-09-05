@@ -59,7 +59,6 @@ import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
-import megamek.common.units.UnitRole;
 import megamek.common.units.UnitType;
 
 /**
@@ -652,7 +651,8 @@ public class BattlefieldSupportAsset extends Entity {
     }
 
     @Override
-    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
+    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, boolean ignoreTAG,
+          CalculationReport calculationReport) {
         // Asset BV is a designer-set cost (BSP x 20), not an equipment/skill computation. The Regular/Veteran crew
         // level selects between the two static costs; ignoreSkill forces the Regular (base) value.
         return (!ignoreSkill && isVeteranCrew()) ? getVeteranBv() : getBv();

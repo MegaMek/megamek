@@ -80,8 +80,6 @@ public class SubCapMissileSwordfishWeapon extends SubCapMissileWeapon {
         rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 156);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X,
                     AvailabilityValue.X,

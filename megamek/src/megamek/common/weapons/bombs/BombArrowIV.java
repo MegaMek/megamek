@@ -72,8 +72,6 @@ public class BombArrowIV extends ArtilleryWeapon {
         flags = flags.or(F_BOMB_WEAPON);
         rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 171);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(2622, 2623, DATE_NONE, 2850, 3047)

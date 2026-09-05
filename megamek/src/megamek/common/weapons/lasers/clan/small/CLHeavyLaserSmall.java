@@ -85,8 +85,6 @@ public class CLHeavyLaserSmall extends LaserWeapon {
         );
         //Jan 22 - Errata issued by CGL (Greekfire) for Heavy Lasers
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3057, 3058, 3059, DATE_NONE, DATE_NONE)

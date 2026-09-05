@@ -74,6 +74,7 @@ public abstract class BVCalculator {
     protected CalculationReport bvReport;
     protected boolean ignoreC3;
     protected boolean ignoreSkill;
+    protected boolean ignoreTAG;
 
     protected int runMP;
     protected int jumpMP;
@@ -128,7 +129,7 @@ public abstract class BVCalculator {
      * @return The newly calculated battle value.
      */
     public int calculateBV(boolean ignoreC3, boolean ignoreSkill) {
-        return calculateBV(ignoreC3, ignoreSkill, new DummyCalculationReport());
+        return calculateBV(ignoreC3, ignoreSkill, false, new DummyCalculationReport());
     }
 
     /**
@@ -142,8 +143,25 @@ public abstract class BVCalculator {
      * @return The newly calculated battle value.
      */
     public int calculateBV(boolean ignoreC3, boolean ignoreSkill, CalculationReport bvReport) {
+        return calculateBV(ignoreC3, ignoreSkill, false, bvReport);
+    }
+
+    /**
+     * Calculate and return the current battle value of the entity of this calculator. Depending on the parameters C3
+     * bonuses, pilot skill and/or the TAG force bonus may be removed from the calculation. The given report is filled
+     * in.
+     *
+     * @param ignoreC3    When true, the force bonus for C3 connections is not added.
+     * @param ignoreSkill When true, the pilot skill (including MD) is not factored in.
+     * @param ignoreTAG   When true, the force bonus for friendly guided munitions (TAG/homing) is not added.
+     * @param bvReport    The report to fill in with the calculation.
+     *
+     * @return The newly calculated battle value.
+     */
+    public int calculateBV(boolean ignoreC3, boolean ignoreSkill, boolean ignoreTAG, CalculationReport bvReport) {
         this.ignoreC3 = ignoreC3;
         this.ignoreSkill = ignoreSkill;
+        this.ignoreTAG = ignoreTAG;
         calculateBaseBV(bvReport);
         adjustBV();
         return (int) Math.round(adjustedBV);
@@ -1237,7 +1255,9 @@ public abstract class BVCalculator {
         List<String> pilotModifiers = new ArrayList<>();
         double pilotFactor = ignoreSkill ? 1 : BVCalculator.bvMultiplier(entity, pilotModifiers);
 
-        processTagBonus();
+        if (!ignoreTAG) {
+            processTagBonus();
+        }
 
         if (c3Bonus > 0) {
             adjustedBV += c3Bonus;

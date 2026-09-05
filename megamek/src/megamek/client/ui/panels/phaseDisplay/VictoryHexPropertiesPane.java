@@ -52,6 +52,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
@@ -124,8 +125,8 @@ public final class VictoryHexPropertiesPane {
 
         // the order a player decides these in: what kind of point is this, how is it won, how big is
         // it, what is it worth. The scheme comes first because it decides which of the rows below even
-        // appear - with it third, two values had to be filled in before learning what else would be asked
-        // a grid bag rather than a plain grid: a plain grid keeps a cell for every hidden row, so a scheme with
+        // appear - with it third, two values had to be filled in before learning what else would be asked.
+        // A grid bag rather than a plain grid: a plain grid keeps a cell for every hidden row, so a scheme with
         // no rows of its own (Standard) left three empty rows between the scheme and the radius
         JPanel propertiesPanel = new JPanel(new GridBagLayout());
         addRow(propertiesPanel, 0, new JLabel(Messages.getString("VictoryHex.scheme")), schemeCombo);
@@ -195,7 +196,8 @@ public final class VictoryHexPropertiesPane {
         constraints.gridy = row;
         constraints.weightx = 1;
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.insets = new Insets(2, 2, 2, 2);
+        int padding = UIUtil.scaleForGUI(2);
+        constraints.insets = new Insets(padding, padding, padding, padding);
         constraints.gridx = 0;
         panel.add(label, constraints);
         constraints.gridx = 1;

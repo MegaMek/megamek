@@ -72,8 +72,6 @@ public class ISBAAPDS extends Weapon {
         cost = 50000;
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 85);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
               .setISAdvancement(3132, 3134, DATE_NONE, DATE_NONE, DATE_NONE)

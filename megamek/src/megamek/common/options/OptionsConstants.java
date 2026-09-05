@@ -356,7 +356,6 @@ public class OptionsConstants {
     public static final String VICTORY_COMMANDER_KILLED = "commander_killed";
     public static final String VICTORY_USE_OBJECTIVES = "use_objectives";
     public static final String VICTORY_VP_WIN_THRESHOLD = "vp_win_threshold";
-    public static final String VICTORY_VP_LOSS_THRESHOLD = "vp_loss_threshold";
     public static final String VICTORY_VP_SUDDEN_DEATH = "vp_sudden_death";
 
     public static final String ALLOWED_CANON_ONLY = "canon_only";
@@ -580,6 +579,13 @@ public class OptionsConstants {
     public static final String INIT_FRONT_LOAD_INITIATIVE = "front_load_initiative";
     public static final String INIT_INITIATIVE_STREAK_COMPENSATION = "initiative_streak_compensation";
     public static final String RPG_PILOT_ADVANTAGES = "pilot_advantages";
+    /**
+     * @deprecated The separate Manei Domini switch was folded into {@link #ADVANCED_NEURAL_INTERFACE_MODE}: any
+     *       setting other than {@link #NEURAL_INTERFACE_MODE_OFF} allows Manei Domini implants. Read it through
+     *       {@code NeuralInterfaceMode.from(options).allowsImplants()}. The option is no longer registered, so
+     *       {@code getOption(RPG_MANEI_DOMINI)} returns {@code null}; a saved value is migrated on load.
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public static final String RPG_MANEI_DOMINI = "manei_domini";
     public static final String RPG_INDIVIDUAL_INITIATIVE = "individual_initiative";
     public static final String RPG_COMMAND_INIT = "command_init";

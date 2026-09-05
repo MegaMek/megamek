@@ -319,8 +319,7 @@ public class AmmoType extends EquipmentType {
           "Multi",
           1,
           Munitions.M_MULTI_PURPOSE,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.F)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
@@ -333,8 +332,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator INFERNO_MUNITION_MUTATOR = new MunitionMutator("Inferno",
           1,
           Munitions.M_INFERNO,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.B)
                 .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2370, 2380, 2400, DATE_NONE, DATE_NONE)
@@ -347,8 +345,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_TORPEDO_MUNITION_MUTATOR = new MunitionMutator("(Clan) Torpedo",
           1,
           Munitions.M_TORPEDO,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 2828, DATE_NONE, DATE_NONE)
@@ -359,8 +356,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator TORPEDO_MUNITION_MUTATOR = new MunitionMutator("Torpedo",
           1,
           Munitions.M_TORPEDO,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3052, DATE_NONE, DATE_NONE)
@@ -371,8 +367,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator ACID_MUNITION_MUTATOR = new MunitionMutator("Acid",
           2,
           Munitions.M_AX_HEAD,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setISAdvancement(3053)
@@ -383,8 +378,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator HEAT_SEEKING_MUNITION_MUTATOR = new MunitionMutator("Heat-Seeking", "HS",
           2,
           Munitions.M_HEAT_SEEKING,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.F)
                 .setISAdvancement(2365, 2370, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -397,8 +391,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator SMOKE_MUNITION_MUTATOR = new MunitionMutator("Smoke",
           1,
           Munitions.M_SMOKE_WARHEAD,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2333, 2370, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -412,8 +405,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator TANDEM_CHARGE_MUNITION_MUTATOR = new MunitionMutator("Tandem-Charge", "Tandem",
           2,
           Munitions.M_TANDEM_CHARGE,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(2757, DATE_NONE, DATE_NONE, 2784, 3062)
@@ -427,8 +419,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator ANTI_TSM_MUNITION_MUTATOR = new MunitionMutator("Anti-TSM",
           1,
           Munitions.M_ANTI_TSM,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setISAdvancement(3026, 3027, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -442,8 +433,7 @@ public class AmmoType extends EquipmentType {
           "Artemis",
           1,
           Munitions.M_ARTEMIS_CAPABLE,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(2592, 2598, 3045, 2855, 3035)
@@ -466,8 +456,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator FRAGMENTATION_MUNITION_MUTATOR = new MunitionMutator("Fragmentation", "Frag",
           1,
           Munitions.M_FRAGMENTATION,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.D)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(2375, 2377, 3058, 2790, 3054)
@@ -480,8 +469,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator LISTEN_KILL_MUNITION_MUTATOR = new MunitionMutator("Listen-Kill",
           1,
           Munitions.M_LISTEN_KILL,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.D)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
                 .setISAdvancement(3037, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
@@ -493,8 +481,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator MINE_CLEARANCE_MUNITION_MUTATOR = new MunitionMutator("Mine Clearance", "MC",
           1,
           Munitions.M_MINE_CLEARANCE,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3065, 3069, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -507,8 +494,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator NARC_CAPABLE_MUNITION_MUTATOR = new MunitionMutator("Narc-capable", "Narc",
           1,
           Munitions.M_NARC_CAPABLE,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setISAdvancement(2520, 2587, 3049, 2795, 3035)
@@ -521,21 +507,19 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_ACID_MUNITION_MUTATOR = new MunitionMutator("(Clan) Acid",
           2,
           Munitions.M_AX_HEAD,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setClanAdvancement(3053)
-                .setPrototypeFactions(Faction.FS, Faction.LC)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
+                .setPrototypeFactions(Faction.FS, Faction.LC),
           rulesRefs(SourceBookCode.TO_AUE, 179));
 
     private static final MunitionMutator CLAN_HEAT_SEEKING_MUNITIONS_MUTATOR = new MunitionMutator("(Clan) "
           + "Heat-Seeking", "HS",
           2,
           Munitions.M_HEAT_SEEKING,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.F)
                 .setClanAdvancement(2365, 2370, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -548,8 +532,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_INFERNO_MUNITION_MUTATOR = new MunitionMutator("(Clan) Inferno",
           1,
           Munitions.M_INFERNO,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.B)
                 .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(2370, 2380, 2400, DATE_NONE, DATE_NONE)
@@ -563,8 +546,7 @@ public class AmmoType extends EquipmentType {
           "(Clan) Smoke",
           1,
           Munitions.M_SMOKE_WARHEAD,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(2333, 2370, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -578,38 +560,35 @@ public class AmmoType extends EquipmentType {
           "(Clan) Tandem-Charge",
           2,
           Munitions.M_TANDEM_CHARGE,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(2757, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.TH)
-                .setProductionFactions(Faction.FS)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
+                .setProductionFactions(Faction.FS),
           rulesRefs(SourceBookCode.TO_AUE, 184));
 
     private static final MunitionMutator CLAN_ANTI_TSM_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
           "(Clan) Anti-TSM",
           1,
           Munitions.M_ANTI_TSM,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setClanAdvancement(3026, 3027, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.FS)
-                .setProductionFactions(Faction.FS)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
+                .setProductionFactions(Faction.FS),
           rulesRefs(SourceBookCode.IO_AE, 98));
 
     private static final MunitionMutator CLAN_ARTEMIS_CAPABLE_MUNITION_MUTATOR_FOR_SRM = new MunitionMutator(
           "(Clan) Artemis-capable", "Artemis",
           1,
           Munitions.M_ARTEMIS_CAPABLE,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 2818, DATE_NONE, DATE_NONE)
@@ -624,8 +603,7 @@ public class AmmoType extends EquipmentType {
           "(Clan) Artemis V-capable", "Artemis V",
           1,
           Munitions.M_ARTEMIS_V_CAPABLE,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.F)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, 3061, 3085, DATE_NONE, DATE_NONE)
@@ -650,8 +628,7 @@ public class AmmoType extends EquipmentType {
           "(Clan) Fragmentation", "Frag",
           1,
           Munitions.M_FRAGMENTATION,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.D)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(2375, 2377, 3058, DATE_NONE, DATE_NONE)
@@ -665,42 +642,39 @@ public class AmmoType extends EquipmentType {
           "(Clan) Listen-Kill", "LK",
           1,
           Munitions.M_LISTEN_KILL,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
                 .setTechRating(TechRating.D)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X)
                 .setClanAdvancement(3037, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(Faction.FS, Faction.LC)
-                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL),
+                .setPrototypeFactions(Faction.FS, Faction.LC),
           rulesRefs(SourceBookCode.TM, 230));
 
     private static final MunitionMutator CLAN_MINE_CLEARANCE_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
           "(Clan) Mine Clearance", "MC",
           1,
           Munitions.M_MINE_CLEARANCE,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(3065, 3069, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.FS)
-                .setProductionFactions(Faction.FS)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+                .setProductionFactions(Faction.FS),
           rulesRefs(SourceBookCode.TO_AUE, 182));
 
-    private static final MunitionMutator CLAN_NARC_CAPABLE_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
+    private static final MunitionMutator CLAN_NARC_CAPABLE_MUNITION_MUTATOR = new MunitionMutator(
           "(Clan) Narc-capable", "Narc",
           1,
           Munitions.M_NARC_CAPABLE,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 2828, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),
+                .setClanApproximate(false, false, false, false, false),
           rulesRefs(SourceBookCode.TW, 142));
 
     private static final MunitionMutator FOLLOW_THE_LEADER_MUNITION_MUTATOR = new MunitionMutator("Follow The Leader"
@@ -745,7 +719,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator INCENDIARY_LRM_MUNITION_MUTATOR = new MunitionMutator("Incendiary", "Inc",
           1,
           Munitions.M_INCENDIARY_LRM,
-          new TechAdvancement(TechBase.ALL).setIntroLevel(false)
+          new TechAdvancement(TechBase.ALL)
                 .setTechRating(TechRating.D)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
                 .setAdvancement(2341, 2342, 2352, DATE_NONE, DATE_NONE)
@@ -757,8 +731,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator SEMI_GUIDED_MUNITION_MUTATOR = new MunitionMutator("Semi-Guided", "SG",
           1,
           Munitions.M_SEMIGUIDED,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(3053, 3057, 3065, DATE_NONE, DATE_NONE)
@@ -774,8 +747,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator SWARM_MUNITION_MUTATOR = new MunitionMutator("Swarm",
           1,
           Munitions.M_SWARM,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2615, 2621, 3058, 2833, 3053)
@@ -788,8 +760,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator SWARM_I_MUNITION_MUTATOR = new MunitionMutator("Swarm-I",
           1,
           Munitions.M_SWARM_I,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(3052, 3057, 3066, DATE_NONE, DATE_NONE)
@@ -802,8 +773,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator THUNDER_MUNITION_MUTATOR = new MunitionMutator("Thunder",
           1,
           Munitions.M_THUNDER,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2618, 2620, 2650, 2840, 3052)
@@ -818,8 +788,7 @@ public class AmmoType extends EquipmentType {
           "T-Act",
           2,
           Munitions.M_THUNDER_ACTIVE,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(3054, 3058, 3064, DATE_NONE, DATE_NONE)
@@ -833,8 +802,7 @@ public class AmmoType extends EquipmentType {
           , "T-Aug",
           2,
           Munitions.M_THUNDER_AUGMENTED,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(3054, 3057, 3064, DATE_NONE, DATE_NONE)
@@ -848,8 +816,7 @@ public class AmmoType extends EquipmentType {
           , "T-Vbb",
           2,
           Munitions.M_THUNDER_VIBRABOMB,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(3054, 3056, 3064, DATE_NONE, DATE_NONE)
@@ -863,8 +830,7 @@ public class AmmoType extends EquipmentType {
           "T-Inf",
           2,
           Munitions.M_THUNDER_INFERNO,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(3054, 3056, 3062, DATE_NONE, DATE_NONE)
@@ -878,8 +844,7 @@ public class AmmoType extends EquipmentType {
           , "Frag",
           1,
           Munitions.M_FRAGMENTATION,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.D)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(2375, 2377, 3058, 2790, 3054)
@@ -894,8 +859,7 @@ public class AmmoType extends EquipmentType {
           "(Clan) Follow The Leader", "FTL",
           2,
           Munitions.M_FOLLOW_THE_LEADER,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.X)
                 .setClanAdvancement(2750, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -909,8 +873,7 @@ public class AmmoType extends EquipmentType {
           "(Clan) Anti-Radiation", "AR",
           1,
           Munitions.M_ARAD,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.F)
                 .setClanAdvancement(3057, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -923,22 +886,20 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_SEMI_GUIDED = new MunitionMutator("(Clan) Semi-Guided", "SG",
           1,
           Munitions.M_SEMIGUIDED,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(3053, 3057, 3065, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.FW)
-                .setProductionFactions(Faction.FW)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),
+                .setProductionFactions(Faction.FW),
           rulesRefs(SourceBookCode.TM, 231));
 
     private static final MunitionMutator CLAN_SMOKE_STANDARD_MUNITION_MUTATOR = new MunitionMutator("(Clan) Smoke",
           1,
           Munitions.M_SMOKE_WARHEAD,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(2333, 2370, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -951,8 +912,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_SWARM_MUNITION_MUTATOR = new MunitionMutator("(Clan) Swarm",
           1,
           Munitions.M_SWARM,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(2615, 2621, 3058, DATE_NONE, DATE_NONE)
@@ -965,22 +925,20 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_SWARM_I_ADV_MUNITION_MUTATOR = new MunitionMutator("(Clan) Swarm-I",
           1,
           Munitions.M_SWARM_I,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(3052, 3057, 3066, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.FW)
-                .setProductionFactions(Faction.FW)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+                .setProductionFactions(Faction.FW),
           rulesRefs(SourceBookCode.TO_AUE, 183));
 
     private static final MunitionMutator CLAN_THUNDER_ADV_MUNITION_MUTATOR = new MunitionMutator("(Clan) Thunder",
           1,
           Munitions.M_THUNDER,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(2618, 2620, 2650, DATE_NONE, DATE_NONE)
@@ -995,68 +953,63 @@ public class AmmoType extends EquipmentType {
           "(Clan) Thunder-Active", "T-Act",
           2,
           Munitions.M_THUNDER_ACTIVE,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3054, 3058, 3064, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CC)
-                .setProductionFactions(Faction.CC)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+                .setProductionFactions(Faction.CC),
           rulesRefs(SourceBookCode.TO_AUE, 185));
 
     private static final MunitionMutator CLAN_THUNDER_AUGMENTED_MUNITION_MUTATOR = new MunitionMutator(
           "(Clan) Thunder-Augmented", "T-Aug",
           2,
           Munitions.M_THUNDER_AUGMENTED,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3054, 3057, 3064, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CC)
-                .setProductionFactions(Faction.CC)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+                .setProductionFactions(Faction.CC),
           rulesRefs(SourceBookCode.TO_AUE, 185));
 
     private static final MunitionMutator CLAN_THUNDER_VIBRABOMB_MUNITION_MUTATOR = new MunitionMutator(
           "(Clan) Thunder-Vibrabomb", "T-Vbb",
           2,
           Munitions.M_THUNDER_VIBRABOMB,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3054, 3056, 3064, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CC)
-                .setProductionFactions(Faction.CC)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+                .setProductionFactions(Faction.CC),
           rulesRefs(SourceBookCode.TO_AUE, 185));
 
     private static final MunitionMutator CLAN_THUNDER_INFORMATION_MUNITION_MUTATOR = new MunitionMutator(
           "(Clan) Thunder-Inferno", "T-Inf",
           2,
           Munitions.M_THUNDER_INFERNO,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3054, 3056, 3062, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CC)
-                .setProductionFactions(Faction.CC)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+                .setProductionFactions(Faction.CC),
           rulesRefs(SourceBookCode.TO_AUE, 185));
 
     private static final MunitionMutator CLAN_ARTEMIS_CAPABLE_MUNITION_MUTATOR_FOR_LRM = new MunitionMutator(
           "(Clan) Artemis-capable", "Artemis",
           1,
           Munitions.M_ARTEMIS_CAPABLE,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(2592, 2598, 3045, DATE_NONE, DATE_NONE)
@@ -1071,8 +1024,7 @@ public class AmmoType extends EquipmentType {
           "(Clan) Artemis V-capable", "Artemis V",
           1,
           Munitions.M_ARTEMIS_V_CAPABLE,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.F)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, 3061, 3085, DATE_NONE, DATE_NONE)
@@ -1086,21 +1038,19 @@ public class AmmoType extends EquipmentType {
           "DF",
           1,
           Munitions.M_DEAD_FIRE,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3052, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(Faction.DC)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
+                .setPrototypeFactions(Faction.DC),
           rulesRefs(SourceBookCode.IO_AE, 125));
 
     private static final MunitionMutator ARMOR_PIERCING_MUNITION_MUTATOR = new MunitionMutator("Armor-Piercing", "AP",
           (5.0 / 4),
           Munitions.M_ARMOR_PIERCING,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(3055, 3059, 3063, DATE_NONE, DATE_NONE)
@@ -1114,8 +1064,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CASELESS_MUNITION_MUTATOR = new MunitionMutator("Caseless",
           1,
           Munitions.M_CASELESS,
-          new TechAdvancement(TechBase.ALL).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.ALL)
                 .setTechRating(TechRating.D)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(DATE_NONE, 3056, 3079, DATE_NONE, DATE_NONE)
@@ -1130,8 +1079,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator FLAK_MUNITION_MUTATOR = new MunitionMutator("Flak",
           1,
           Munitions.M_FLAK,
-          new TechAdvancement(TechBase.ALL).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.ALL)
                 .setTechRating(TechRating.B)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
                 .setAdvancement(DATE_ES, 2310, 3070, DATE_NONE, DATE_NONE)
@@ -1143,8 +1091,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator FLECHETTE_MUNITION_MUTATOR = new MunitionMutator("Flechette",
           1,
           Munitions.M_FLECHETTE,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(3053, 3055, 3058, DATE_NONE, DATE_NONE)
@@ -1157,8 +1104,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator PRECISION_MUNITION_MUTATOR = new MunitionMutator("Precision",
           (5.0 / 3),
           Munitions.M_PRECISION,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(3058, 3062, 3066, DATE_NONE, DATE_NONE)
@@ -1171,8 +1117,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator TRACER_MUNITION_MUTATOR = new MunitionMutator("Tracer",
           1,
           Munitions.M_TRACER,
-          new TechAdvancement(TechBase.ALL).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.ALL)
                 .setTechRating(TechRating.B)
                 .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E)
                 .setAdvancement(DATE_ES, 2300, 3060, DATE_NONE, DATE_NONE)
@@ -1185,8 +1130,7 @@ public class AmmoType extends EquipmentType {
           "Armor-Piercing", "AP",
           (5.0 / 4),
           Munitions.M_ARMOR_PIERCING,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3109, DATE_NONE, DATE_NONE)
@@ -1199,8 +1143,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_IMPROVED_FLECHETTE_MUNITION_MUTATOR = new MunitionMutator("Flechette",
           1,
           Munitions.M_FLECHETTE,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3105, DATE_NONE, DATE_NONE)
@@ -1214,20 +1157,18 @@ public class AmmoType extends EquipmentType {
           "Precision",
           (5.0 / 3),
           Munitions.M_PRECISION,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3053, 3055, 3058, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false)
-                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL),
+                .setClanApproximate(false, false, false, false, false),
           rulesRefs(SourceBookCode.CORE, 190));
 
     private static final MunitionMutator CLAN_IMPROVED_TRACER_MUNITION_MUTATOR = new MunitionMutator("Tracer",
           1,
           Munitions.M_TRACER,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.B)
                 .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, 2815, 2818, 2833, 3080)
@@ -1241,8 +1182,7 @@ public class AmmoType extends EquipmentType {
           "Armor-Piercing",
           (5.0 / 4),
           Munitions.M_ARMOR_PIERCING,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.F)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, 3095, 3105, DATE_NONE, DATE_NONE)
@@ -1254,8 +1194,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CASELESS_MUNITION_MUTATOR_FOR_PROTO = new MunitionMutator("Caseless",
           1,
           Munitions.M_CASELESS,
-          new TechAdvancement(TechBase.ALL).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.ALL)
                 .setTechRating(TechRating.D)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
                 .setClanAdvancement(3070, DATE_NONE, 3109, DATE_NONE, DATE_NONE)
@@ -1266,8 +1205,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator FLAK_MUNITION_MUTATOR_FOR_PROTO = new MunitionMutator("Flak",
           1,
           Munitions.M_FLAK,
-          new TechAdvancement(TechBase.ALL).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.ALL)
                 .setTechRating(TechRating.B)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3070, DATE_NONE, DATE_NONE)
@@ -1279,8 +1217,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_FLECHETTE_MUNITION_MUTATOR_FOR_PROTO = new MunitionMutator("Flechette",
           1,
           Munitions.M_FLECHETTE,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.F)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, 3095, 3105, DATE_NONE, DATE_NONE)
@@ -1292,22 +1229,20 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_PRECISION_MUNITION_MUTATOR_FOR_PROTO = new MunitionMutator("Precision",
           (5.0 / 3),
           Munitions.M_PRECISION,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
                 .setTechRating(TechRating.F)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(3070, 3073, 3145, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(Faction.CBS)
-                .setProductionFactions(Faction.CBS)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),
+                .setProductionFactions(Faction.CBS),
           rulesRefs(SourceBookCode.CORE, 190));
 
     private static final MunitionMutator CLAN_TRACER_MUNITION_MUTATOR_FOR_PROTO = new MunitionMutator("Tracer",
           1,
           Munitions.M_TRACER,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.F)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(3070, 3073, 3145, DATE_NONE, DATE_NONE)
@@ -1321,8 +1256,7 @@ public class AmmoType extends EquipmentType {
           + "Missiles", "ADA",
           1,
           Munitions.M_ADA,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setPrototypeFactions(Faction.CC)
                 .setISAdvancement(3068, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1335,8 +1269,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLUSTER_MUNITION_MUTATOR = new MunitionMutator("Cluster",
           1,
           Munitions.M_CLUSTER,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(2594, 2600, DATE_NONE, 2830, 3047)
@@ -1350,8 +1283,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator HOMING_MUNITION_MUTATOR = new MunitionMutator("Homing",
           1,
           Munitions.M_HOMING,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(2593, 2600, DATE_NONE, 2830, 3045)
@@ -1365,8 +1297,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator ILLUMINATION_MUNITION_MUTATOR = new MunitionMutator("Illumination", "ILL",
           1,
           Munitions.M_FLARE,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2615, 2621, DATE_NONE, 2800, 3047)
@@ -1380,8 +1311,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator INFERNO_IV_MUNITION_MUTATOR = new MunitionMutator("Inferno-IV",
           1,
           Munitions.M_INFERNO_IV,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(3053, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1395,8 +1325,7 @@ public class AmmoType extends EquipmentType {
           "LI",
           1,
           Munitions.M_LASER_INHIB,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setISAdvancement(3053, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1409,8 +1338,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator SMOKE_MUNITION_MUTATOR_FOR_ARROW = new MunitionMutator("Smoke",
           1,
           Munitions.M_SMOKE,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(2595, 2600, DATE_NONE, 2840, 3044)
@@ -1424,8 +1352,7 @@ public class AmmoType extends EquipmentType {
           "T-FASCAM",
           1,
           Munitions.M_FASCAM,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
                 .setISAdvancement(2621, 2844, DATE_NONE, 2770, 3051)
@@ -1440,8 +1367,7 @@ public class AmmoType extends EquipmentType {
           "Thunder Vibrabomb-IV", "T-V",
           1,
           Munitions.M_VIBRABOMB_IV,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.D)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(3056, 3065, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1464,8 +1390,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator FUEL_AIR_MUNITION_MUTATOR = new MunitionMutator("Fuel-Air", "FA",
           1,
           Munitions.M_FAE,
-          new TechAdvancement(TechBase.ALL).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.ALL)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
                 .setAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1477,8 +1402,7 @@ public class AmmoType extends EquipmentType {
           "Air-Defense Arrow (ADA) Missiles", "ADA",
           1,
           Munitions.M_ADA,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setClanAdvancement(3068, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1491,8 +1415,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_CLUSTER_MUNITION_MUTATOR_FOR_ARROW = new MunitionMutator("Cluster",
           1,
           Munitions.M_CLUSTER,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(2594, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1506,8 +1429,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_HOMING_MUNITION_MUTATOR = new MunitionMutator("Homing",
           1,
           Munitions.M_HOMING,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(2593, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1521,8 +1443,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_ILLUMINATION_MUNITION_MUTATOR = new MunitionMutator("Illumination", "ILL",
           1,
           Munitions.M_FLARE,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(2615, 2621, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1536,37 +1457,34 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_INFERNO_IV_MUNITION_MUTATOR = new MunitionMutator("Inferno-IV",
           1,
           Munitions.M_INFERNO_IV,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(3053, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.CC)
-                .setProductionFactions(Faction.CC)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+                .setProductionFactions(Faction.CC),
           rulesRefs(SourceBookCode.TO_AUE, 168));
 
     private static final MunitionMutator CLAN_LASER_INHIBITING_MUNITION_MUTATOR_UNOFFICIAL = new MunitionMutator(
           "Laser Inhibiting", "LI",
           1,
           Munitions.M_LASER_INHIB,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
                 .setClanAdvancement(3053, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.FS, Faction.LC)
-                .setProductionFactions(Faction.FS, Faction.LC)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
+                .setProductionFactions(Faction.FS, Faction.LC),
           rulesRefs(SourceBookCode.TO_AUE, 168));
 
     private static final MunitionMutator CLAN_SMOKE_MUNITION_MUTATOR_FOR_ARROW_IV = new MunitionMutator("Smoke",
           1,
           Munitions.M_SMOKE,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(2595, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1580,8 +1498,7 @@ public class AmmoType extends EquipmentType {
           "T-FASCAM",
           1,
           Munitions.M_FASCAM,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
                 .setClanAdvancement(2621, 2844, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1596,22 +1513,20 @@ public class AmmoType extends EquipmentType {
           "Thunder Vibrabomb-IV", "T-V",
           1,
           Munitions.M_VIBRABOMB_IV,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
                 .setTechRating(TechRating.D)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(3056, 3065, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
                 .setPrototypeFactions(Faction.CC)
-                .setProductionFactions(Faction.CC)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+                .setProductionFactions(Faction.CC),
           rulesRefs(SourceBookCode.TO_AUE, 169));
 
     private static final MunitionMutator CLAN_CHAFF_VEE_MUNITION_MUTATOR = new MunitionMutator("Chaff",
           1,
           Munitions.M_CHAFF,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.B)
                 .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
                 .setClanAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
@@ -1624,8 +1539,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_INDENCIARY_VEE_MUNITION_MUTATOR = new MunitionMutator("Incendiary", "Inc",
           1,
           Munitions.M_INCENDIARY,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.B)
                 .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setClanAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
@@ -1638,8 +1552,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_SMOKE_VEE_MUNITION_MUTATOR = new MunitionMutator("Smoke",
           1,
           Munitions.M_SMOKE,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.B)
                 .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setClanAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
@@ -1652,8 +1565,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CHAFF_VEE_MUNITION_MUTATOR = new MunitionMutator("Chaff",
           1,
           Munitions.M_CHAFF,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.B)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E)
                 .setISAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
@@ -1664,8 +1576,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator INCENDIARY_VEE_MUNITION_MUTATOR = new MunitionMutator("Incendiary", "Inc",
           1,
           Munitions.M_INCENDIARY,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.B)
                 .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setISAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
@@ -1676,8 +1587,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator SMOKE_VEE_MUNITION_MUTATOR = new MunitionMutator("Smoke",
           1,
           Munitions.M_SMOKE,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.B)
                 .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setISAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
@@ -1749,8 +1659,7 @@ public class AmmoType extends EquipmentType {
           "FA",
           1,
           Munitions.M_FAE,
-          new TechAdvancement(TechBase.ALL).setIntroLevel(false)
-                .setUnofficial(false) // Should be marked true here
+          new TechAdvancement(TechBase.ALL)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
                 .setAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1762,8 +1671,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator SMOKE_MUNITION_MUTATOR_FOR_BA_TUBE = new MunitionMutator("Smoke",
           1,
           Munitions.M_SMOKE,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
                 .setISAdvancement(3070, 3075, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1776,8 +1684,7 @@ public class AmmoType extends EquipmentType {
           "Artemis-capable", "Artemis",
           1,
           Munitions.M_ARTEMIS_CAPABLE,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(2592, 2598, 3045, DATE_NONE, DATE_NONE)
@@ -1790,8 +1697,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator COOLANT_MUNITION_MUTATOR = new MunitionMutator("Coolant",
           1,
           Munitions.M_COOLANT,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1803,8 +1709,7 @@ public class AmmoType extends EquipmentType {
           "Coolant",
           1,
           Munitions.M_COOLANT,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setClanAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1815,8 +1720,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator COOLANT_MUNITION_MUTATOR_FOR_HEAVY_FLAMER = new MunitionMutator("Coolant",
           1,
           Munitions.M_COOLANT,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
@@ -1828,8 +1732,7 @@ public class AmmoType extends EquipmentType {
           "(Clan) Coolant", "Coolant",
           1,
           Munitions.M_COOLANT,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
@@ -1837,26 +1740,10 @@ public class AmmoType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           rulesRefs(SourceBookCode.TO_AUE, 173));
 
-    private static final MunitionMutator CLAN_NARC_CAPABLE_MUNITION_MUTATOR_FOR_MISSILE = new MunitionMutator(
-          "(Clan) Narc-capable", "Narc",
-          1,
-          Munitions.M_NARC_CAPABLE,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
-                .setTechRating(TechRating.E)
-                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
-                .setClanAdvancement(2520, 2587, 3049, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(Faction.TH)
-                .setProductionFactions(Faction.TH)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),
-          rulesRefs(SourceBookCode.TW, 142));
-
     private static final MunitionMutator CLAN_SMOKE_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Smoke",
           1,
           Munitions.M_SMOKE_WARHEAD,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.B)
                 .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
                 .setClanAdvancement(2526, 2531, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1869,20 +1756,18 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_SEMI_GUIDED_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Semi-Guided",
           1,
           Munitions.M_SEMIGUIDED,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(true)
+          new TechAdvancement(TechBase.CLAN)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setClanAdvancement(3055, 3064, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED),
+                .setClanApproximate(true, false, false, false, false),
           rulesRefs(SourceBookCode.TO_AUE, 186));
 
     private static final MunitionMutator CLAN_FLARE_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Flare",
           1,
           Munitions.M_FLARE,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.B)
                 .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
                 .setClanAdvancement(2533, 2536, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1896,8 +1781,7 @@ public class AmmoType extends EquipmentType {
           "Anti-personnel", "AP",
           1,
           Munitions.M_ANTI_PERSONNEL,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.B)
                 .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setClanAdvancement(2540, 2544, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1910,8 +1794,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator CLAN_AIRBURST_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Airburst",
           1,
           Munitions.M_AIRBURST,
-          new TechAdvancement(TechBase.CLAN).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.CLAN)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.B, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.D)
                 .setClanAdvancement(2540, 2544, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1924,8 +1807,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator SMOKE_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Smoke",
           1,
           Munitions.M_SMOKE_WARHEAD,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.B)
                 .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
                 .setISAdvancement(2526, 2531, DATE_NONE, 2819, 3043)
@@ -1939,8 +1821,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator SEMI_GUIDED_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Semi-Guided", "SG",
           1,
           Munitions.M_SEMIGUIDED,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
                 .setISAdvancement(3055, 3064, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -1953,8 +1834,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator FLARE_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Flare",
           1,
           Munitions.M_FLARE,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.B)
                 .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
                 .setISAdvancement(2533, 2536, DATE_NONE, 2819, 3043)
@@ -1969,8 +1849,7 @@ public class AmmoType extends EquipmentType {
           "AP",
           1,
           Munitions.M_ANTI_PERSONNEL,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.B)
                 .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
                 .setISAdvancement(2526, 2531, 3052, 2819, 3043)
@@ -1984,8 +1863,7 @@ public class AmmoType extends EquipmentType {
     private static final MunitionMutator AIRBURST_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Airburst",
           1,
           Munitions.M_AIRBURST,
-          new TechAdvancement(TechBase.IS).setIntroLevel(false)
-                .setUnofficial(false)
+          new TechAdvancement(TechBase.IS)
                 .setTechRating(TechRating.C)
                 .setAvailability(AvailabilityValue.B, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.D)
                 .setISAdvancement(2540, 2544, DATE_NONE, 2819, 3043)
@@ -3481,7 +3359,7 @@ public class AmmoType extends EquipmentType {
         munitions.clear();
         /*
          * munitions.add(new MunitionMutator("Harpoon", 2, Munitions.M_HARPOON, new
-         * TechAdvancement(ITechnology.TechBase.ALL).setIntroLevel(false).setUnofficial(false).
+         * TechAdvancement(ITechnology.TechBase.ALL).
          * setTechRating(TechRating.C) .setAvailability(TechRating.C, TechRating.C, TechRating.C,
          * TechRating.C) .setISAdvancement(2395, 2400, 2415, DATE_NONE, DATE_NONE)
          * .setISApproximate(true, false, false, false,
@@ -3511,7 +3389,7 @@ public class AmmoType extends EquipmentType {
 
         /*
          * munitions.add(new MunitionMutator("Harpoon", 2, Munitions.M_HARPOON, new
-         * TechAdvancement(ITechnology.TechBase.ALL).setIntroLevel(false).setUnofficial(false).
+         * TechAdvancement(ITechnology.TechBase.ALL).
          * setTechRating(TechRating.C) .setAvailability(TechRating.C, TechRating.C, TechRating.C,
          * TechRating.C) .setClanAdvancement(2395, 2400, 2415, DATE_NONE, DATE_NONE)
          * .setClanApproximate(true, false, false, false,
@@ -3535,7 +3413,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(CLAN_FRAGMENTATION_MUNITION_MUTATOR);
         munitions.add(CLAN_LISTEN_KILL_MUNITION_MUTATOR_UNOFFICIAL);
         munitions.add(CLAN_MINE_CLEARANCE_MUNITION_MUTATOR_UNOFFICIAL);
-        munitions.add(CLAN_NARC_CAPABLE_MUNITION_MUTATOR_UNOFFICIAL);
+        munitions.add(CLAN_NARC_CAPABLE_MUNITION_MUTATOR);
         AmmoType.createMunitions(clanSrmAmmos, munitions);
         AmmoType.createMunitions(clanImprovedSRMsAmmo, munitions);
 
@@ -3543,7 +3421,7 @@ public class AmmoType extends EquipmentType {
         /*
          * munitions.add(new MunitionMutator("Incendiary", 2,
          * Munitions.M_INCENDIARY_LRM, new
-         * TechAdvancement(ITechnology.TechBase.IS) .setIntroLevel(false) .setUnofficial(false)
+         * TechAdvancement(ITechnology.TechBase.IS)
          * .setTechRating(TechRating.C) .setAvailability(TechRating.E, TechRating.E, TechRating.E,
          * TechRating.E) .setClanAdvancement(2341, 2342, 2352, DATE_NONE, DATE_NONE)
          * .setClanApproximate(false, false, false, false, false)
@@ -3580,8 +3458,8 @@ public class AmmoType extends EquipmentType {
         /*
          * munitions.add(new MunitionMutator("(Clan) Incendiary", 2,
          * Munitions.M_INCENDIARY_LRM,
-         * new TechAdvancement(TechBase.CLAN) .setIntroLevel(false)
-         * .setUnofficial(false) .setTechRating(TechRating.C) .setAvailability(TechRating.E,
+         * new TechAdvancement(TechBase.CLAN)
+         *  .setTechRating(TechRating.C) .setAvailability(TechRating.E,
          * TechRating.E, TechRating.E, TechRating.E) .setClanAdvancement(2341, 2342, 2352,
          * DATE_NONE, DATE_NONE) .setClanApproximate(false, false, false, false, false)
          * .setPrototypeFactions(Faction.TH) .setProductionFactions(Faction.TH),"369, TO"));
@@ -3607,7 +3485,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(CLAN_FRAGMENTATION_MUNITION_MUTATOR);
         munitions.add(CLAN_LISTEN_KILL_MUNITION_MUTATOR_UNOFFICIAL);
         munitions.add(CLAN_MINE_CLEARANCE_MUNITION_MUTATOR_UNOFFICIAL);
-        munitions.add(CLAN_NARC_CAPABLE_MUNITION_MUTATOR_FOR_MISSILE);
+        munitions.add(CLAN_NARC_CAPABLE_MUNITION_MUTATOR);
         AmmoType.createMunitions(clanLrmAmmos, munitions);
         AmmoType.createMunitions(clanImprovedLRMsAmmo, munitions);
 
@@ -4211,8 +4089,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.CORE, 190)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2593, 2600, DATE_NONE, 2830, 3044)
@@ -4242,8 +4118,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.CORE, 190)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(2593, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -4641,8 +4515,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 900;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 96);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3070, 3075, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -4675,7 +4547,7 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2290, 2300, 2305, DATE_NONE, DATE_NONE)
@@ -4708,7 +4580,7 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2240, 2250, 2255, DATE_NONE, DATE_NONE)
@@ -4741,7 +4613,7 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2443, 2460, 2465, DATE_NONE, DATE_NONE)
@@ -4774,7 +4646,7 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2488, 2500, 2502, DATE_NONE, DATE_NONE)
@@ -4808,8 +4680,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(3062, 3068, 3070, DATE_NONE, DATE_NONE)
@@ -4841,8 +4711,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(3062, 3068, 3070, DATE_NONE, DATE_NONE)
@@ -5078,7 +4946,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 141)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(2824, 2826, 2828, DATE_NONE, DATE_NONE)
@@ -5113,7 +4980,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 141)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(2824, 2826, 2828, DATE_NONE, DATE_NONE)
@@ -5149,7 +5015,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 141)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(2824, 2826, 2828, DATE_NONE, DATE_NONE)
@@ -5184,7 +5049,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 141)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(2824, 2826, 2828, DATE_NONE, DATE_NONE)
@@ -5219,8 +5083,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 141)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
@@ -5255,8 +5117,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 141)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
@@ -5291,8 +5151,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 141)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2590, 2595, 3040, 2840, 3035)
@@ -5328,8 +5186,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 141)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
@@ -5362,7 +5218,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(2824, 2826, 2828, DATE_NONE, DATE_NONE)
@@ -5395,7 +5250,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(2824, 2826, 2828, DATE_NONE, DATE_NONE)
@@ -5428,7 +5282,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(2824, 2826, 2828, DATE_NONE, DATE_NONE)
@@ -5460,7 +5313,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(2824, 2826, 2828, DATE_NONE, DATE_NONE)
@@ -5492,8 +5344,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
@@ -5525,8 +5375,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
@@ -5558,8 +5406,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2590, 2595, 3040, 2840, 3035)
@@ -5592,8 +5438,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
@@ -5625,8 +5469,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
               .setClanAdvancement(2825, 2827, 2829, DATE_NONE, DATE_NONE)
@@ -5658,8 +5500,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
               .setClanAdvancement(2825, 2827, 2829, DATE_NONE, DATE_NONE)
@@ -5691,8 +5531,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
               .setClanAdvancement(2825, 2827, 2829, DATE_NONE, DATE_NONE)
@@ -5723,8 +5561,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
               .setClanAdvancement(2825, 2827, 2829, DATE_NONE, DATE_NONE)
@@ -5755,8 +5591,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3057, 3060, DATE_NONE, DATE_NONE)
@@ -5787,8 +5621,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2635, 2640, 3040, 2915, 3035)
@@ -5820,8 +5652,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3057, 3060, DATE_NONE, DATE_NONE)
@@ -5852,8 +5682,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3057, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -5884,8 +5712,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 140)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3060, 3062, 3071, DATE_NONE, DATE_NONE)
@@ -5916,8 +5742,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 140)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3060, 3062, 3071, DATE_NONE, DATE_NONE)
@@ -6189,8 +6013,6 @@ public class AmmoType extends EquipmentType {
         );
 
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3068, 3079, DATE_NONE, DATE_NONE)
@@ -6223,8 +6045,6 @@ public class AmmoType extends EquipmentType {
         );
         ammo.kgPerShot = 10;
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(3065, 3067, 3079, DATE_NONE, DATE_NONE)
@@ -6260,8 +6080,7 @@ public class AmmoType extends EquipmentType {
         );
         ammo.kgPerShot = 50;
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
-              .setUnofficial(false)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -6286,8 +6105,6 @@ public class AmmoType extends EquipmentType {
         ammo.explosive = false;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 125);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -6309,8 +6126,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 500;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 125);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -6349,8 +6164,6 @@ public class AmmoType extends EquipmentType {
          * large round steel balls.
          */
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2587, 2590, 3045, DATE_NONE, 3038)
@@ -6385,8 +6198,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(2822, 2828, 2830, DATE_NONE, DATE_NONE)
@@ -6418,8 +6229,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 136)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3049, 3056, 3065, DATE_NONE, DATE_NONE)
@@ -6450,8 +6259,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 136)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3051, 3061, 3067, DATE_NONE, DATE_NONE)
@@ -6483,8 +6290,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 135)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(3065, 3069, 3072, DATE_NONE, DATE_NONE)
@@ -6518,8 +6323,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 136)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(3062, 3068, 3072, DATE_NONE, DATE_NONE)
@@ -6552,8 +6355,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 136)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(3062, 3068, 3072, DATE_NONE, DATE_NONE)
@@ -6586,8 +6387,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 136)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(3062, 3068, 3072, DATE_NONE, DATE_NONE)
@@ -6642,8 +6441,6 @@ public class AmmoType extends EquipmentType {
         );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(3059, 3072, 3078, DATE_NONE, DATE_NONE)
@@ -6702,8 +6499,6 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 0;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 127);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_PS, DATE_ES, 3080, DATE_NONE, DATE_NONE)
@@ -6730,8 +6525,6 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 0;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 127);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setAdvancement(DATE_PS, DATE_ES, 3070, DATE_NONE, DATE_NONE)
@@ -6765,8 +6558,7 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
-              .setUnofficial(false)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -6800,8 +6592,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.A)
               .setClanAdvancement(2821, 2825, 2830, DATE_NONE, DATE_NONE)
@@ -6838,8 +6628,7 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
-              .setUnofficial(false)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -6874,8 +6663,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.A)
               .setClanAdvancement(2821, 2825, 2830, DATE_NONE, DATE_NONE)
@@ -6910,8 +6697,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(3064, 3068, 3070, DATE_NONE, DATE_NONE)
@@ -6944,8 +6729,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(3055, 3060, 3070, DATE_NONE, DATE_NONE)
@@ -6978,8 +6761,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(3064, 3068, 3070, DATE_NONE, DATE_NONE)
@@ -7013,8 +6794,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(3055, 3060, 3070, DATE_NONE, DATE_NONE)
@@ -7048,8 +6827,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(3063, 3068, 3070, DATE_NONE, DATE_NONE)
@@ -7082,8 +6859,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(3063, 3068, 3070, DATE_NONE, DATE_NONE)
@@ -7116,8 +6891,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(3054, 3059, 3070, DATE_NONE, DATE_NONE)
@@ -7151,8 +6924,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(3054, 3059, 3070, DATE_NONE, DATE_NONE)
@@ -7191,8 +6962,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3052, 3053, 3054, DATE_NONE, DATE_NONE)
@@ -7225,8 +6994,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3052, 3053, 3054, DATE_NONE, DATE_NONE)
@@ -7259,8 +7026,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3052, 3053, 3054, DATE_NONE, DATE_NONE)
@@ -7293,8 +7058,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3052, 3053, 3054, DATE_NONE, DATE_NONE)
@@ -7329,8 +7092,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3052, 3053, 3054, DATE_NONE, DATE_NONE)
@@ -7364,8 +7125,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3052, 3053, 3054, DATE_NONE, DATE_NONE)
@@ -7399,8 +7158,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3052, 3053, 3054, DATE_NONE, DATE_NONE)
@@ -7434,8 +7191,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3052, 3053, 3054, DATE_NONE, DATE_NONE)
@@ -7468,8 +7223,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3052, 3053, 3054, DATE_NONE, DATE_NONE)
@@ -7501,8 +7254,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3052, 3053, 3054, DATE_NONE, DATE_NONE)
@@ -7534,8 +7285,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3052, 3053, 3054, DATE_NONE, DATE_NONE)
@@ -7567,8 +7316,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3052, 3053, 3054, DATE_NONE, DATE_NONE)
@@ -7599,8 +7346,6 @@ public class AmmoType extends EquipmentType {
         ammo.setModes("", "HotLoad");
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 59);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3054, 3070, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -7628,8 +7373,6 @@ public class AmmoType extends EquipmentType {
         ammo.setModes("", "HotLoad");
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 59);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3054, 3070, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -7657,8 +7400,6 @@ public class AmmoType extends EquipmentType {
         ammo.setModes("", "HotLoad");
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 59);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3054, 3070, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -7686,8 +7427,6 @@ public class AmmoType extends EquipmentType {
         ammo.setModes("", "HotLoad");
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 59);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3054, 3070, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -7717,8 +7456,6 @@ public class AmmoType extends EquipmentType {
         ammo.setModes("", "HotLoad");
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 59);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3054, 3070, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -7746,8 +7483,6 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 59);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3054, 3070, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -7776,8 +7511,6 @@ public class AmmoType extends EquipmentType {
         ammo.setModes("", "HotLoad");
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 59);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3054, 3070, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -7806,8 +7539,6 @@ public class AmmoType extends EquipmentType {
         ammo.setModes("", "HotLoad");
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 59);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3054, 3070, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -7837,8 +7568,6 @@ public class AmmoType extends EquipmentType {
         ammo.setModes("", "HotLoad");
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 59);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3054, 3070, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -7867,8 +7596,6 @@ public class AmmoType extends EquipmentType {
         ammo.setModes("", "HotLoad");
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 59);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3054, 3070, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -7897,8 +7624,6 @@ public class AmmoType extends EquipmentType {
         ammo.setModes("", "HotLoad");
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 59);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3054, 3070, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -7927,8 +7652,6 @@ public class AmmoType extends EquipmentType {
         ammo.setModes("", "HotLoad");
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 59);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3054, 3070, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -8210,8 +7933,7 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
-              .setUnofficial(false)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2295, 2300, 2400, DATE_NONE, DATE_NONE)
@@ -8247,8 +7969,7 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
-              .setUnofficial(false)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2295, 2300, 2400, DATE_NONE, DATE_NONE)
@@ -8284,8 +8005,7 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
-              .setUnofficial(false)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2295, 2300, 2400, DATE_NONE, DATE_NONE)
@@ -8321,8 +8041,7 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
-              .setUnofficial(false)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2295, 2300, 2400, DATE_NONE, DATE_NONE)
@@ -8728,8 +8447,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
@@ -8761,8 +8478,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
@@ -8794,8 +8509,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
@@ -8827,8 +8540,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
@@ -9441,8 +9152,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -9474,8 +9183,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -9507,8 +9214,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -9540,8 +9245,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -9573,8 +9276,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -9606,8 +9307,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -9639,8 +9338,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -9672,8 +9369,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -9705,8 +9400,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -9738,8 +9431,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -9771,8 +9462,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -9804,8 +9493,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -9837,8 +9524,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -9870,8 +9555,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -9903,8 +9586,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -9936,8 +9617,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -9968,8 +9647,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3052, 3058, 3063, DATE_NONE, DATE_NONE)
@@ -9999,8 +9676,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3052, 3058, 3063, DATE_NONE, DATE_NONE)
@@ -10030,8 +9705,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3052, 3058, 3063, DATE_NONE, DATE_NONE)
@@ -10061,8 +9734,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 303)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3052, 3058, 3063, DATE_NONE, DATE_NONE)
@@ -10096,8 +9767,7 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
-              .setUnofficial(false)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)
@@ -10132,8 +9802,7 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
-              .setUnofficial(false)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)
@@ -10168,8 +9837,7 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
-              .setUnofficial(false)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)
@@ -10203,8 +9871,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -10236,8 +9902,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
@@ -10267,8 +9931,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -10300,8 +9962,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
@@ -10331,8 +9991,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -10364,8 +10022,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
@@ -10400,8 +10056,6 @@ public class AmmoType extends EquipmentType {
         );
         // March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
@@ -10434,8 +10088,6 @@ public class AmmoType extends EquipmentType {
         );
         // March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
@@ -10469,8 +10121,6 @@ public class AmmoType extends EquipmentType {
         );
         // March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
@@ -10503,8 +10153,6 @@ public class AmmoType extends EquipmentType {
         );
         // March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
@@ -10538,8 +10186,6 @@ public class AmmoType extends EquipmentType {
         );
         // March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
@@ -10572,8 +10218,6 @@ public class AmmoType extends EquipmentType {
         );
         // March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
@@ -10607,8 +10251,6 @@ public class AmmoType extends EquipmentType {
         );
         // March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
@@ -10641,8 +10283,6 @@ public class AmmoType extends EquipmentType {
         );
         // March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
@@ -10666,8 +10306,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 1000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 229);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_ES, 3064, 3067, DATE_NONE, DATE_NONE)
@@ -10692,8 +10330,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 1500;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 229);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_ES, 3064, 3067, DATE_NONE, DATE_NONE)
@@ -10718,8 +10354,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 2000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 229);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_ES, 3064, 3067, DATE_NONE, DATE_NONE)
@@ -10753,8 +10387,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(2819, 2822, 2830, DATE_NONE, DATE_NONE)
@@ -10786,8 +10418,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(2819, 2822, 2830, DATE_NONE, DATE_NONE)
@@ -10819,8 +10449,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(2819, 2822, 2830, DATE_NONE, DATE_NONE)
@@ -10853,8 +10481,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -10886,8 +10512,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -10919,8 +10543,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -10952,8 +10574,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2645, 2647, 2650, 2845, 3035)
@@ -10986,8 +10606,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
@@ -11018,8 +10636,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 138)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
@@ -11055,8 +10671,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.CORE, 193)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2580, 2587, 3049, 2795, 3035)
@@ -11089,8 +10703,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.CORE, 193)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(3054, 3060, 3064, DATE_NONE, DATE_NONE)
@@ -11115,8 +10727,7 @@ public class AmmoType extends EquipmentType {
         ammo.kgPerShot = 150;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TW, 141);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setClanAdvancement(3054, 3060, 3064, DATE_NONE, DATE_NONE)
@@ -11149,8 +10760,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.CORE, 193)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3054, 3062, 3066, DATE_NONE, DATE_NONE)
@@ -11180,8 +10789,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.CORE, 193)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(3054, 3062, 3066, DATE_NONE, DATE_NONE)
@@ -11211,8 +10818,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.CORE, 193)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(3054, 3062, 3066, DATE_NONE, DATE_NONE)
@@ -11242,8 +10847,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.CORE, 193)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(3054, 3062, 3066, DATE_NONE, DATE_NONE)
@@ -11273,8 +10876,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.CORE, 194)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(3054, 3062, 3066, DATE_NONE, DATE_NONE)
@@ -11304,8 +10905,6 @@ public class AmmoType extends EquipmentType {
         ammo.setModes("", "HotLoad");
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 230);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2370, 2380, 2400, DATE_NONE, DATE_NONE)
@@ -11419,8 +11018,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 27000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 230);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2370, 2380, 2400)
@@ -11448,8 +11045,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 27000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 230);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2370, 2380, 2400)
@@ -11477,8 +11072,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 27000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 230);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2370, 2380, 2400)
@@ -11513,8 +11106,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -11546,8 +11137,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -11579,8 +11168,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -11612,8 +11199,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -11641,8 +11226,6 @@ public class AmmoType extends EquipmentType {
         ammo.kgPerShot = 41.65;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 230);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
@@ -11674,8 +11257,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -11707,8 +11288,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -11740,8 +11319,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -11773,8 +11350,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -11802,8 +11377,6 @@ public class AmmoType extends EquipmentType {
         ammo.kgPerShot = 83.3;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 230);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
@@ -11835,8 +11408,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -11868,8 +11439,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -11901,8 +11470,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -11934,8 +11501,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -11963,8 +11528,6 @@ public class AmmoType extends EquipmentType {
         ammo.kgPerShot = 124.95;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 230);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
@@ -11996,8 +11559,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -12029,8 +11590,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -12062,8 +11621,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -12095,8 +11652,6 @@ public class AmmoType extends EquipmentType {
          */
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -12124,8 +11679,6 @@ public class AmmoType extends EquipmentType {
         ammo.kgPerShot = 166.6;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 230);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
@@ -12155,8 +11708,6 @@ public class AmmoType extends EquipmentType {
         // But SRM Tech Base and Avail Ratings.
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -12184,8 +11735,6 @@ public class AmmoType extends EquipmentType {
         ammo.kgPerShot = 20;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 230);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
@@ -12213,8 +11762,6 @@ public class AmmoType extends EquipmentType {
         // But SRM Tech Base and Avail Ratings.
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -12242,8 +11789,6 @@ public class AmmoType extends EquipmentType {
         ammo.kgPerShot = 40;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 230);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
@@ -12271,8 +11816,6 @@ public class AmmoType extends EquipmentType {
         // But SRM Tech Base and Avail Ratings.
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)
@@ -12300,8 +11843,6 @@ public class AmmoType extends EquipmentType {
         ammo.kgPerShot = 60;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 230);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
@@ -12331,8 +11872,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 28000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 136);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(2526, 2531, 3052, 2819, 3043)
@@ -12360,8 +11899,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 28000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 136);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(2526, 2531, 3052, 2819, 3043)
@@ -12389,8 +11926,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 28000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 136);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(2526, 2531, 3052, 2819, 3043)
@@ -12418,8 +11953,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 28000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 136);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(2526, 2531, 3052, 2819, 3043)
@@ -12447,8 +11980,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 28000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 136);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
               .setClanAdvancement(2835, 2840, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -12474,8 +12005,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 28000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 136);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
               .setClanAdvancement(2835, 2840, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -12501,8 +12030,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 28000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 136);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
               .setClanAdvancement(2835, 2840, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -12528,8 +12055,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 28000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 136);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
               .setClanAdvancement(2835, 2840, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -12562,8 +12087,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 140)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3061, 3068, 3072, DATE_NONE, DATE_NONE)
@@ -12589,8 +12112,6 @@ public class AmmoType extends EquipmentType {
         ammo.explosive = false;
         ammo.rulesRefs = rulesRefs(SourceBookCode.CORE, 189, 248);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3061, 3068, 3072, DATE_NONE, DATE_NONE)
@@ -12616,8 +12137,6 @@ public class AmmoType extends EquipmentType {
         ammo.explosive = false;
         ammo.rulesRefs = rulesRefs(SourceBookCode.CORE, 189, 248);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3061, 3068, 3072, DATE_NONE, DATE_NONE)
@@ -12649,8 +12168,6 @@ public class AmmoType extends EquipmentType {
         );
         ammo.kgPerShot = 100;
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(3068, 3069, 3070, DATE_NONE, DATE_NONE)
@@ -12675,8 +12192,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 2000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 85);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
               .setISAdvancement(3134, 3137, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -12703,8 +12218,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 2000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 158);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3065, 3084, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -12740,8 +12253,6 @@ public class AmmoType extends EquipmentType {
         ammo.capital = true;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 135);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(2715, DATE_NONE, DATE_NONE, 2855, 3066)
@@ -12766,8 +12277,6 @@ public class AmmoType extends EquipmentType {
         ammo.capital = true;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 135);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(2715, DATE_NONE, DATE_NONE, 2855, 3066)
@@ -12792,8 +12301,6 @@ public class AmmoType extends EquipmentType {
         ammo.capital = true;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 135);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(2715, DATE_NONE, DATE_NONE, 2855, 3066)
@@ -12818,8 +12325,6 @@ public class AmmoType extends EquipmentType {
         ammo.capital = true;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 145);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(2440, 2448, DATE_NONE, 2950, 3052)
@@ -12848,8 +12353,6 @@ public class AmmoType extends EquipmentType {
         ammo.capital = true;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 145);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(2440, 2448, DATE_NONE, 2950, 3052)
@@ -12878,8 +12381,6 @@ public class AmmoType extends EquipmentType {
         ammo.capital = true;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 145);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(2440, 2448, DATE_NONE, 2950, 3052)
@@ -12909,8 +12410,6 @@ public class AmmoType extends EquipmentType {
         ammo.capital = true;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 143);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2950, 3051)
@@ -12939,8 +12438,6 @@ public class AmmoType extends EquipmentType {
         ammo.capital = true;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 143);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2950, 3051)
@@ -12969,8 +12466,6 @@ public class AmmoType extends EquipmentType {
         ammo.capital = true;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 143);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2950, 3051)
@@ -12999,8 +12494,6 @@ public class AmmoType extends EquipmentType {
         ammo.capital = true;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 143);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2950, 3051)
@@ -13029,8 +12522,6 @@ public class AmmoType extends EquipmentType {
         ammo.capital = true;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 143);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2950, 3051)
@@ -13059,8 +12550,6 @@ public class AmmoType extends EquipmentType {
         ammo.capital = true;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 143);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2950, 3051)
@@ -13094,8 +12583,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2200, 2305, 3055, 2950, 3051)
@@ -13130,8 +12617,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2200, 2305, 3055, 2950, 3051)
@@ -13164,8 +12649,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2200, 2305, 3055, 2950, 3051)
@@ -13202,8 +12685,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 251)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3053, 3056, 3060, DATE_NONE, DATE_NONE)
@@ -13234,8 +12715,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 251)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3053, 3056, 3060, DATE_NONE, DATE_NONE)
@@ -13266,8 +12745,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 251)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3053, 3056, 3060, DATE_NONE, DATE_NONE)
@@ -13298,8 +12775,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 251)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3053, 3057, 3060, DATE_NONE, DATE_NONE)
@@ -13326,8 +12801,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_CAP_MISSILE);
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3053, 3057, 3060, DATE_NONE, DATE_NONE)
@@ -13355,8 +12829,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 251)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3053, 3055, 3057, DATE_NONE, DATE_NONE)
@@ -13386,8 +12858,6 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 155);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3068, 3073, DATE_NONE, DATE_NONE)
@@ -13418,8 +12888,6 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 155);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3068, 3073, DATE_NONE, DATE_NONE)
@@ -13451,8 +12919,6 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 155);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3068, 3073, DATE_NONE, DATE_NONE)
@@ -13486,8 +12952,6 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 156);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3060, 3072, DATE_NONE, DATE_NONE)
@@ -13518,8 +12982,6 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 156);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3060, 3072, DATE_NONE, DATE_NONE)
@@ -13551,8 +13013,6 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 156);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3060, 3072, DATE_NONE, DATE_NONE)
@@ -13584,8 +13044,6 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 156);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3060, 3072, DATE_NONE, DATE_NONE)
@@ -13622,8 +13080,6 @@ public class AmmoType extends EquipmentType {
         // the missiles
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 210);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2540, 2550, 3055, 2950, 3051)
@@ -13655,8 +13111,6 @@ public class AmmoType extends EquipmentType {
         // the missiles
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 210);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2540, 2550, 3055, 2950, 3051)
@@ -13688,8 +13142,6 @@ public class AmmoType extends EquipmentType {
         // the missiles
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 210);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2540, 2550, 3055, 2950, 3051)
@@ -13817,8 +13269,6 @@ public class AmmoType extends EquipmentType {
         );
         ammo.kgPerShot = 3.33;
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2309, 2310, 2312, DATE_NONE, DATE_NONE)
@@ -13851,8 +13301,6 @@ public class AmmoType extends EquipmentType {
         );
         ammo.kgPerShot = 3.33;
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2309, 2310, 2312, DATE_NONE, DATE_NONE)
@@ -13912,8 +13360,6 @@ public class AmmoType extends EquipmentType {
         );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
@@ -13948,8 +13394,6 @@ public class AmmoType extends EquipmentType {
         );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
@@ -13984,8 +13428,6 @@ public class AmmoType extends EquipmentType {
         );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
@@ -14020,8 +13462,6 @@ public class AmmoType extends EquipmentType {
         );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
@@ -14054,8 +13494,6 @@ public class AmmoType extends EquipmentType {
         // in the Periphery.
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 112);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2290, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -14084,8 +13522,6 @@ public class AmmoType extends EquipmentType {
         // in the Periphery.
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 112);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2240, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -14114,8 +13550,6 @@ public class AmmoType extends EquipmentType {
         // in the Periphery.
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 112);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2450, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -14144,8 +13578,6 @@ public class AmmoType extends EquipmentType {
         // in the Periphery.
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 112);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2488, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -14176,8 +13608,6 @@ public class AmmoType extends EquipmentType {
         // in the Periphery.
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 112);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2295, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -14208,8 +13638,6 @@ public class AmmoType extends EquipmentType {
         // in the Periphery.
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 112);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2295, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -14240,8 +13668,6 @@ public class AmmoType extends EquipmentType {
         // in the Periphery.
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 112);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2295, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -14272,8 +13698,6 @@ public class AmmoType extends EquipmentType {
         // in the Periphery.
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 112);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2295, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -14303,8 +13727,6 @@ public class AmmoType extends EquipmentType {
         // in the Periphery.
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 112);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2365, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -14334,8 +13756,6 @@ public class AmmoType extends EquipmentType {
         // in the Periphery.
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 112);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2365, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -14365,8 +13785,6 @@ public class AmmoType extends EquipmentType {
         // in the Periphery.
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 112);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2365, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -14394,8 +13812,6 @@ public class AmmoType extends EquipmentType {
         // in the Periphery.
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 112);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2365, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -14420,8 +13836,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 40000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 64);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2593, 2600, DATE_NONE, 2830, 3044)
@@ -14446,7 +13860,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 1000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 90);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(DATE_NONE, 2815, 2818, 2833, 3080)
@@ -14470,7 +13883,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 4500;
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 90);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(DATE_NONE, 2815, 2818, 2833, 3080)
@@ -14494,7 +13906,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 6000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 90);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(DATE_NONE, 2815, 2818, 2833, 3080)
@@ -14518,7 +13929,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 10000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 90);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(DATE_NONE, 2815, 2818, 2833, 3080)
@@ -14547,8 +13957,6 @@ public class AmmoType extends EquipmentType {
         ammo.kgPerShot = 8.33;
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 90);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(2815, 2818, 2820, 2831, 3080)
@@ -14577,8 +13985,6 @@ public class AmmoType extends EquipmentType {
         ammo.kgPerShot = 8.33;
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 90);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(2815, 2818, 2820, 2831, 3080)
@@ -14607,8 +14013,6 @@ public class AmmoType extends EquipmentType {
         ammo.kgPerShot = 8.33;
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 90);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(2815, 2818, 2820, 2831, 3080)
@@ -14637,8 +14041,6 @@ public class AmmoType extends EquipmentType {
         ammo.kgPerShot = 8.33;
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 90);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(2815, 2818, 2820, 2831, 3080)
@@ -14664,8 +14066,6 @@ public class AmmoType extends EquipmentType {
         ammo.kgPerShot = 125;
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 90);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E)
               .setClanAdvancement(2818, 2821, 2822, 2837, 3080)
@@ -14693,8 +14093,6 @@ public class AmmoType extends EquipmentType {
         ammo.kgPerShot = 10;
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 90);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(2815, 2817, 2819, 2828, 3080)
@@ -14721,8 +14119,6 @@ public class AmmoType extends EquipmentType {
         ammo.kgPerShot = 10;
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 90);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(2815, 2817, 2819, 2828, 3080)
@@ -14749,8 +14145,6 @@ public class AmmoType extends EquipmentType {
         ammo.kgPerShot = 10;
         ammo.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 90);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(2815, 2817, 2819, 2828, 3080)
@@ -14782,8 +14176,6 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 500;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 253);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
@@ -14838,8 +14230,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 229)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, DATE_NONE, 3060, DATE_NONE, DATE_NONE)
@@ -14870,8 +14260,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 229)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.F)
               .setISAdvancement(DATE_NONE, 3050, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -14903,8 +14291,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
               .setClanAdvancement(3055, 3060, 3060, DATE_NONE, DATE_NONE)
@@ -14934,8 +14320,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.A)
               .setClanAdvancement(3055, 3060, 3060, DATE_NONE, DATE_NONE)
@@ -14965,8 +14349,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 304)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(3055, 3060, 3060, DATE_NONE, DATE_NONE)
@@ -14999,8 +14381,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3057, 3060, DATE_NONE, DATE_NONE)
@@ -15032,8 +14412,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3057, 3060, DATE_NONE, DATE_NONE)
@@ -15065,8 +14443,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3057, 3060, DATE_NONE, DATE_NONE)
@@ -15098,8 +14474,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3057, 3060, DATE_NONE, DATE_NONE)
@@ -15130,8 +14504,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3057, 3060, DATE_NONE, DATE_NONE)
@@ -15162,8 +14534,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setClanAdvancement(3058, 3060, 3062, DATE_NONE, DATE_NONE)
@@ -15193,8 +14563,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setClanAdvancement(3058, 3060, 3062, DATE_NONE, DATE_NONE)
@@ -15224,8 +14592,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setClanAdvancement(3058, 3060, 3062, DATE_NONE, DATE_NONE)
@@ -15255,8 +14621,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setClanAdvancement(3058, 3060, 3062, DATE_NONE, DATE_NONE)
@@ -15286,8 +14650,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setClanAdvancement(3058, 3060, 3062, DATE_NONE, DATE_NONE)
@@ -15319,8 +14681,6 @@ public class AmmoType extends EquipmentType {
         );
         // Hackish, blended the Clan and IS versions for Availability.
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(3050, 3050, 3051, DATE_NONE, DATE_NONE)
@@ -15353,8 +14713,6 @@ public class AmmoType extends EquipmentType {
         );
         // Hackish, blended the Clan and IS versions for Availability.
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(3050, 3050, 3051, DATE_NONE, DATE_NONE)
@@ -15387,8 +14745,6 @@ public class AmmoType extends EquipmentType {
         );
         // Hackish, blended the Clan and IS versions for Availability.
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(3050, 3050, 3051, DATE_NONE, DATE_NONE)
@@ -15421,8 +14777,6 @@ public class AmmoType extends EquipmentType {
         );
         // Hackish, blended the Clan and IS versions for Availability.
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(3050, 3050, 3051, DATE_NONE, DATE_NONE)
@@ -15455,8 +14809,6 @@ public class AmmoType extends EquipmentType {
         );
         // Hackish, blended the Clan and IS versions for Availability.
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(3050, 3050, 3051, DATE_NONE, DATE_NONE)
@@ -15489,8 +14841,6 @@ public class AmmoType extends EquipmentType {
         );
         // Hackish, blended the Clan and IS versions for Availability.
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(3050, 3050, 3051, DATE_NONE, DATE_NONE)
@@ -15523,8 +14873,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setClanAdvancement(3052, 3056, 3066, DATE_NONE, DATE_NONE)
@@ -15555,8 +14903,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setClanAdvancement(3052, 3056, 3066, DATE_NONE, DATE_NONE)
@@ -15586,8 +14932,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setClanAdvancement(3052, 3056, 3066, DATE_NONE, DATE_NONE)
@@ -15617,8 +14961,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setClanAdvancement(3052, 3056, 3066, DATE_NONE, DATE_NONE)
@@ -15648,8 +14990,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setClanAdvancement(3052, 3056, 3066, DATE_NONE, DATE_NONE)
@@ -15679,8 +15019,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setClanAdvancement(3052, 3056, 3066, DATE_NONE, DATE_NONE)
@@ -15711,8 +15049,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.B)
               .setISAdvancement(3058, 3060, 3067, DATE_NONE, DATE_NONE)
@@ -15742,8 +15078,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.B)
               .setISAdvancement(3058, 3060, 3067, DATE_NONE, DATE_NONE)
@@ -15773,8 +15107,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.B)
               .setISAdvancement(3058, 3060, 3067, DATE_NONE, DATE_NONE)
@@ -15804,8 +15136,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.B)
               .setISAdvancement(3058, 3060, 3067, DATE_NONE, DATE_NONE)
@@ -15835,8 +15165,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 305)
         );
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.B)
               .setISAdvancement(3058, 3060, 3067, DATE_NONE, DATE_NONE)
@@ -15861,8 +15189,6 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 157);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(3067, 3084, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -15888,8 +15214,6 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 261);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(3050, 3050, 3052, DATE_NONE, DATE_NONE)
@@ -15914,8 +15238,6 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 261);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(3050, 3050, 3052, DATE_NONE, DATE_NONE)
@@ -15940,8 +15262,6 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 261);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(3050, 3050, 3052, DATE_NONE, DATE_NONE)
@@ -15966,8 +15286,6 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 261);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(3050, 3050, 3052, DATE_NONE, DATE_NONE)
@@ -15992,8 +15310,6 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 261);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(3050, 3050, 3052, DATE_NONE, DATE_NONE)
@@ -16059,8 +15375,6 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 0;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 142);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3060, 3064, 3099, DATE_NONE, DATE_NONE)
@@ -16088,8 +15402,7 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 0;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3060, 3064, 3099, DATE_NONE, DATE_NONE)
@@ -16118,8 +15431,6 @@ public class AmmoType extends EquipmentType {
               rulesRef(SourceBookCode.TW, 130)
         );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3068, 3068, 3070, DATE_NONE, DATE_NONE)
@@ -16148,7 +15459,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 8500;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2488, 2500, 2502, DATE_NONE, DATE_NONE)
@@ -16177,8 +15488,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 3000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
@@ -16205,8 +15515,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 15000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
@@ -16233,8 +15542,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 30000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
@@ -16264,8 +15572,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 4950;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
@@ -16295,8 +15602,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 25000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
@@ -16326,8 +15632,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 51000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
@@ -16353,8 +15658,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 2000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
@@ -16380,8 +15684,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 15000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
@@ -16407,8 +15710,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 30000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
@@ -16432,7 +15734,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 37;
         ammo.cost = 30000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
-        ammo.techAdvancement.setTechBase(TechBase.IS).setUnofficial(true);
+        ammo.techAdvancement.setTechBase(TechBase.IS).setStaticTechLevel(SimpleTechLevel.UNOFFICIAL);
         ammo.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3067);
         ammo.techAdvancement.setTechRating(TechRating.E);
         ammo.techAdvancement.setAvailability(AvailabilityValue.E,
@@ -16456,7 +15758,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 59;
         ammo.cost = 80000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
-        ammo.techAdvancement.setTechBase(TechBase.IS).setUnofficial(true);
+        ammo.techAdvancement.setTechBase(TechBase.IS).setStaticTechLevel(SimpleTechLevel.UNOFFICIAL);
         ammo.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3067);
         ammo.techAdvancement.setTechRating(TechRating.E);
         ammo.techAdvancement.setAvailability(AvailabilityValue.E,
@@ -16482,8 +15784,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 16000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3073, 3104, 3145, DATE_NONE, DATE_NONE)
@@ -16509,8 +15810,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 24000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3073, 3104, 3145, DATE_NONE, DATE_NONE)
@@ -16537,8 +15837,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 10000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 207);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.C)
               .setISAdvancement(3062, 3068, 3070, DATE_NONE, DATE_NONE)
@@ -16565,8 +15864,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 20000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 207);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.C)
               .setISAdvancement(3062, 3068, 3070, DATE_NONE, DATE_NONE)
@@ -16591,8 +15889,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 20000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3051, 3061, 3067, DATE_NONE, DATE_NONE)
@@ -16618,7 +15915,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 12000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.ALL)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2443, 2460, 2465, DATE_NONE, DATE_NONE)
@@ -16646,8 +15943,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 1000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3060, 3062, 3071, DATE_NONE, DATE_NONE)
@@ -16673,8 +15969,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 1000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3060, 3062, 3071, DATE_NONE, DATE_NONE)
@@ -16700,8 +15995,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 1000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3060, 3062, 3071, DATE_NONE, DATE_NONE)
@@ -16727,8 +16021,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 1000;
         ammo.rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         ammo.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3060, 3062, 3071, DATE_NONE, DATE_NONE)

@@ -8,6 +8,7 @@ plugins {
     id 'jacoco'
     id 'java'
     id 'checkstyle'
+    id 'com.diffplug.spotless' version '8.10.1'
 }
 
 tasks.withType(AbstractArchiveTask).configureEach {
@@ -146,6 +147,38 @@ checkstyle {
 tasks.withType(Checkstyle).configureEach {
     minHeapSize = "1g"
     maxHeapSize = "4g"
+}
+
+// Source hygiene checks that do not depend on which editor wrote the code: import order, unused imports, trailing
+// whitespace, final newline. `./gradlew spotlessCheck` reports every violation in one run; `./gradlew spotlessApply`
+// fixes them all. The Checkstyle workflow runs the check as its first step on every PR.
+//
+// Deliberately no full formatter engine yet. The Java style in .editorconfig uses a 6-space continuation indent and
+// IntelliJ's wrapping rules, which the Eclipse engine Spotless bundles cannot reproduce; enabling it would reformat
+// most of the tree and then fight IntelliJ on every wrapped line. Choosing an engine is a separate decision.
+spotless {
+    // Checked explicitly by CI rather than as part of `build`, so a plain build stays fast and works in a shallow
+    // checkout that has no origin/main to ratchet against.
+    enforceCheck = false
+
+    // Until the whole tree has been formatted once, only look at files that differ from origin/main. Pass
+    // -PspotlessFullTree to format everything (used for the one-time reformat and to measure it).
+    if (!project.hasProperty('spotlessFullTree')) {
+        ratchetFrom 'origin/main'
+    }
+
+    java {
+        target 'src/**/*.java', 'unittests/**/*.java'
+
+        // Matches ij_java_imports_layout in .editorconfig: static imports, then java/javax, then everything else.
+        importOrder('\\#', 'java|javax', '')
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+
+        // Same fence the code already uses (see MDAugmentationType) and that .editorconfig configures for IntelliJ.
+        toggleOffOn('@formatter:off', '@formatter:on')
+    }
 }
 
 // Data is staged directly out of mm-data/data (no intermediate staging copy) and split

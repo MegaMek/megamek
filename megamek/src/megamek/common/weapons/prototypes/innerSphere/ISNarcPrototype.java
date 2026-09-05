@@ -71,8 +71,6 @@ public class ISNarcPrototype extends NarcWeapon {
         flags = flags.or(F_PROTOTYPE);
         rulesRefs = rulesRefs(SourceBookCode.IO_AE, 66);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2580, DATE_NONE, DATE_NONE, 2587, DATE_NONE)

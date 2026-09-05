@@ -477,7 +477,7 @@ class LobbyMekCellFormatter {
             }
 
             final boolean rpgSkills = options.booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
-            result.append(" (").append(pilot.getSkillsAsString(rpgSkills)).append(")");
+            result.append(" (").append(CrewSkillSummaryUtil.getEffectiveSkillsAsString(entity, rpgSkills)).append(")");
             if (pilot.countOptions() > 0) {
                 result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiQuirksColor()));
                 result.append(Messages.getString("ChatLounge.abilities"));
@@ -940,7 +940,7 @@ class LobbyMekCellFormatter {
             }
 
             final boolean rpgSkills = options.booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
-            result.append(" (").append(pilot.getSkillsAsString(rpgSkills)).append(")");
+            result.append(" (").append(CrewSkillSummaryUtil.getEffectiveSkillsAsString(entity, rpgSkills)).append(")");
             if (pilot.countOptions() > 0) {
                 result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiQuirksColor()));
                 result.append(Messages.getString("ChatLounge.abilities"));
@@ -1274,7 +1274,7 @@ class LobbyMekCellFormatter {
         if (entity instanceof BattlefieldSupportAsset asset) {
             result.append(asset.getCrewSkillLevel());
         } else {
-            result.append(pilot.getSkillsAsString(rpgSkills));
+            result.append(CrewSkillSummaryUtil.getEffectiveSkillsAsString(entity, rpgSkills));
         }
         result.append(")");
         if (pilot.countOptions() > 0) {
@@ -1331,7 +1331,12 @@ class LobbyMekCellFormatter {
                 result.append("<B>").append(asset.getCrewSkillLevel()).append("</B><BR>");
             } else {
                 result.append(CrewSkillSummaryUtil.getSkillNames(entity)).append(": ");
-                result.append("<B>").append(crew.getSkillsAsString(rpgSkills)).append("</B><BR>");
+                result.append("<B>").append(CrewSkillSummaryUtil.getEffectiveSkillsAsString(entity, rpgSkills))
+                      .append("</B><BR>");
+                String implantAdjustments = CrewSkillSummaryUtil.getImplantAdjustmentsDescription(entity);
+                if (!implantAdjustments.isEmpty()) {
+                    result.append(implantAdjustments).append("<BR>");
+                }
             }
 
             // Advantages, MD, Edge

@@ -305,20 +305,6 @@ class VictoryPointVictoryTest {
     }
 
     @Test
-    void testLossThresholdEndsTheGameWhenASideFallsToIt() {
-        enableObjectiveScoring();
-        game.getOptions().getOption(OptionsConstants.VICTORY_VP_LOSS_THRESHOLD).setValue(3);
-        VictoryPointTracker tracker = VictoryPointTracker.getTracker(game);
-        tracker.awardToTeam(1, 2, 4, "holds its objectives");
-        tracker.awardToTeam(2, -3, 4, "lost its objectives");
-
-        VictoryResult result = new VictoryPointVictory().checkVictory(game, game.getVictoryContext());
-
-        assertTrue(result.isVictory());
-        assertEquals(1, result.getWinningTeam());
-    }
-
-    @Test
     void testNoEarlyEndWithoutTheObjectivesOption() {
         // thresholds and sudden death are objective-scoring rules; without the option they never fire
         game.getOptions().getOption(OptionsConstants.VICTORY_VP_SUDDEN_DEATH).setValue(true);
@@ -341,9 +327,6 @@ class VictoryPointVictoryTest {
         game.getOptions().getOption(OptionsConstants.VICTORY_VP_WIN_THRESHOLD).setValue(10);
         assertTrue(VictoryPointVictory.gameHasVictoryPointResolution(game));
         game.getOptions().getOption(OptionsConstants.VICTORY_VP_WIN_THRESHOLD).setValue(0);
-        game.getOptions().getOption(OptionsConstants.VICTORY_VP_LOSS_THRESHOLD).setValue(10);
-        assertTrue(VictoryPointVictory.gameHasVictoryPointResolution(game));
-        game.getOptions().getOption(OptionsConstants.VICTORY_VP_LOSS_THRESHOLD).setValue(0);
         game.getOptions().getOption(OptionsConstants.VICTORY_VP_SUDDEN_DEATH).setValue(true);
         assertTrue(VictoryPointVictory.gameHasVictoryPointResolution(game));
         game.getOptions().getOption(OptionsConstants.VICTORY_VP_SUDDEN_DEATH).setValue(false);

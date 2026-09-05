@@ -75,8 +75,6 @@ public class CLBAMGBearhunterSuperheavy extends Weapon {
               .or(F_BA_WEAPON).or(F_BURST_FIRE);
         rulesRefs = rulesRefs(SourceBookCode.TM, 258);
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setClanAdvancement(3060, 3062, 3065, DATE_NONE, DATE_NONE)

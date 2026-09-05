@@ -226,7 +226,6 @@ final class GameOptionsPresentation {
               OptionsConstants.VICTORY_GAME_KILL_COUNT,
               OptionsConstants.VICTORY_USE_OBJECTIVES,
               OptionsConstants.VICTORY_VP_WIN_THRESHOLD,
-              OptionsConstants.VICTORY_VP_LOSS_THRESHOLD,
               OptionsConstants.VICTORY_VP_SUDDEN_DEATH);
 
         register(ALLOWED_UNITS, GENERAL_UNITS_AND_TECHNOLOGY, "allowedUnits.availability",
@@ -511,8 +510,7 @@ final class GameOptionsPresentation {
 
         register(RPG, INITIATIVE_AND_PILOTS_ABILITIES, "rpg.core",
               OptionsConstants.RPG_PILOT_ADVANTAGES,
-              OptionsConstants.EDGE,
-              OptionsConstants.RPG_MANEI_DOMINI);
+              OptionsConstants.EDGE);
         register(RPG, INITIATIVE_AND_PILOTS_ABILITIES, "rpg.initiative",
               OptionsConstants.RPG_INDIVIDUAL_INITIATIVE,
               OptionsConstants.RPG_COMMAND_INIT);

@@ -670,7 +670,7 @@ public class AmmoType extends EquipmentType {
           1,
           Munitions.M_NARC_CAPABLE,
           new TechAdvancement(TechBase.CLAN)
-                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD)
                 .setTechRating(TechRating.E)
                 .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 2828, DATE_NONE, DATE_NONE)
@@ -1739,20 +1739,6 @@ public class AmmoType extends EquipmentType {
                 .setClanApproximate(false, false, false, false, false)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED),
           rulesRefs(SourceBookCode.TO_AUE, 173));
-
-    private static final MunitionMutator CLAN_NARC_CAPABLE_MUNITION_MUTATOR_FOR_LRM = new MunitionMutator(
-          "(Clan) Narc-capable", "Narc",
-          1,
-          Munitions.M_NARC_CAPABLE,
-          new TechAdvancement(TechBase.CLAN)
-                .setTechRating(TechRating.E)
-                .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
-                .setClanAdvancement(2520, 2587, 3049, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(Faction.TH)
-                .setProductionFactions(Faction.TH)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD),
-          rulesRefs(SourceBookCode.TW, 142));
 
     private static final MunitionMutator CLAN_SMOKE_MORTAR_MUNITION_MUTATOR = new MunitionMutator("Smoke",
           1,
@@ -3499,7 +3485,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(CLAN_FRAGMENTATION_MUNITION_MUTATOR);
         munitions.add(CLAN_LISTEN_KILL_MUNITION_MUTATOR_UNOFFICIAL);
         munitions.add(CLAN_MINE_CLEARANCE_MUNITION_MUTATOR_UNOFFICIAL);
-        munitions.add(CLAN_NARC_CAPABLE_MUNITION_MUTATOR_FOR_LRM);
+        munitions.add(CLAN_NARC_CAPABLE_MUNITION_MUTATOR);
         AmmoType.createMunitions(clanLrmAmmos, munitions);
         AmmoType.createMunitions(clanImprovedLRMsAmmo, munitions);
 

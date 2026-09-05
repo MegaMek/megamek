@@ -55,8 +55,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
 import megamek.client.ui.Messages;
-import megamek.common.Player;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;

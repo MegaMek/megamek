@@ -34,10 +34,10 @@ package megamek.common.equipment;
 
 import java.io.Serial;
 import java.io.Serializable;
-
-import megamek.common.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
+
+import megamek.common.annotations.Nullable;
 
 /**
  * How a control point is fought over and what it is worth: the scoring scheme of an {@link ObjectiveMarker}.

@@ -47,12 +47,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
 import java.util.List;
 
 import megamek.common.Player;
-import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
 import megamek.common.board.Coords;
+import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
 import megamek.common.game.Game;
 import megamek.common.moves.MoveStep;
 import megamek.common.units.Entity;

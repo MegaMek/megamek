@@ -140,11 +140,15 @@ public final class PilotToolTip {
     }
 
     private static StringBuilder crewInfoLine(final Entity entity) {
-        Crew crew = entity.getCrew();
         Game game = entity.getGame();
         // Effective entity skill for the whole crew
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
-        String col = CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills);
+        String col = CrewSkillSummaryUtil.getSkillNames(entity) + ": "
+              + CrewSkillSummaryUtil.getEffectiveSkillsAsString(entity, rpg_skills);
+        String implantAdjustments = CrewSkillSummaryUtil.getImplantAdjustmentsDescription(entity);
+        if (!implantAdjustments.isEmpty()) {
+            col += "<BR>" + implantAdjustments;
+        }
         col = UIUtil.tag("TD", "", col);
         String rows = UIUtil.tag("TR", "", col);
         String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0 BORDER=0", rows);
@@ -189,7 +193,11 @@ public final class PilotToolTip {
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         result.append(CrewSkillSummaryUtil.getSkillNames(entity))
               .append(": ")
-              .append(crew.getSkillsAsString(rpg_skills));
+              .append(CrewSkillSummaryUtil.getEffectiveSkillsAsString(entity, rpg_skills));
+        String implantAdjustments = CrewSkillSummaryUtil.getImplantAdjustmentsDescription(entity);
+        if (!implantAdjustments.isEmpty()) {
+            result.append("<BR>").append(implantAdjustments);
+        }
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         result = new StringBuilder(UIUtil.tag("span", fontSizeAttr, result.toString()));
         String col = UIUtil.tag("TD", "align=\"left\"", result.toString());

@@ -67,6 +67,7 @@ import megamek.common.bays.Bay;
 import megamek.common.board.Board;
 import megamek.common.compute.Compute;
 import megamek.common.enums.Gender;
+import megamek.common.enums.NeuralInterfaceMode;
 import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
@@ -1452,8 +1453,8 @@ public class MULParser {
             }
         }
 
-        if ((options != null) && options.booleanOption(OptionsConstants.RPG_MANEI_DOMINI)
-              && attributes.containsKey(ATTR_IMPLANTS) && !attributes.get(ATTR_IMPLANTS).isBlank()) {
+        boolean implantsAllowed = NeuralInterfaceMode.from(options).allowsImplants();
+        if (implantsAllowed && attributes.containsKey(ATTR_IMPLANTS) && !attributes.get(ATTR_IMPLANTS).isBlank()) {
             StringTokenizer st = new StringTokenizer(attributes.get(ATTR_IMPLANTS), "::");
             while (st.hasMoreTokens()) {
                 String implant = st.nextToken();

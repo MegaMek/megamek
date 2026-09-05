@@ -509,8 +509,7 @@ final class GameOptionsPresentation {
 
         register(RPG, INITIATIVE_AND_PILOTS_ABILITIES, "rpg.core",
               OptionsConstants.RPG_PILOT_ADVANTAGES,
-              OptionsConstants.EDGE,
-              OptionsConstants.RPG_MANEI_DOMINI);
+              OptionsConstants.EDGE);
         register(RPG, INITIATIVE_AND_PILOTS_ABILITIES, "rpg.initiative",
               OptionsConstants.RPG_INDIVIDUAL_INITIATIVE,
               OptionsConstants.RPG_COMMAND_INIT);

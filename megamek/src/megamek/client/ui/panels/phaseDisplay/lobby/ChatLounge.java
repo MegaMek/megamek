@@ -93,10 +93,10 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import megamek.MMConstants;
+import megamek.MegaMek;
 import megamek.SuiteConstants;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
-import megamek.client.bot.AIType;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.BotFactory;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -108,11 +108,10 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.buttons.DialogButton;
 import megamek.client.ui.buttons.MMToggleButton;
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.client.ui.clientGUI.UnitRecipients;
 import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.IMapSettingsObserver;
-import megamek.MegaMek;
+import megamek.client.ui.clientGUI.UnitRecipients;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.RulerDialog;
 import megamek.client.ui.clientGUI.boardview.toolTip.TWBoardViewTooltip;
@@ -133,8 +132,8 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.phaseDisplay.AbstractPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.lobby.PlayerTable.PlayerTableModel;
 import megamek.client.ui.panels.phaseDisplay.lobby.sorters.*;
-import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.preferences.JWindowPreference;
+import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedXPanel;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
@@ -148,6 +147,7 @@ import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.NeuralInterfaceMode;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -1564,8 +1564,9 @@ public class ChatLounge extends AbstractPhaseDisplay
                 entity.getCrew().clearOptions(PilotOptions.EDGE_ADVANTAGES);
             }
 
-            if (!opts.booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) {
+            if (!NeuralInterfaceMode.from(opts).allowsImplants()) {
                 entity.getCrew().clearOptions(PilotOptions.MD_ADVANTAGES);
+                entity.getCrew().clearOptions(PilotOptions.EI_ADVANTAGES);
             }
 
             if (!opts.booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIAL_REPAIRS)) {

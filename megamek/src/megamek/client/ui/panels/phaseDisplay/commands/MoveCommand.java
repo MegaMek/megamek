@@ -52,9 +52,9 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
     MOVE_TURN("moveTurn", MovementDisplay.CMD_GROUND | MovementDisplay.CMD_AERO),
     MOVE_WALK("moveWalk", MovementDisplay.CMD_GROUND),
     MOVE_JUMP("moveJump",
-          MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK | MovementDisplay.CMD_INF | MovementDisplay.CMD_PROTOMEK),
+              MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK | MovementDisplay.CMD_INF | MovementDisplay.CMD_PROTOMEK),
     MOVE_BACK_UP("moveBackUp",
-          MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK | MovementDisplay.CMD_VTOL | MovementDisplay.CMD_PROTOMEK),
+                 MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK | MovementDisplay.CMD_VTOL | MovementDisplay.CMD_PROTOMEK),
     MOVE_GET_UP("moveGetUp", MovementDisplay.CMD_MEK),
     MOVE_FORWARD_INI("moveForwardIni", MovementDisplay.CMD_ALL),
     MOVE_CHARGE("moveCharge", MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK),
@@ -78,15 +78,16 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
     MOVE_ELEVATOR_DOWN("moveElevatorDown", MovementDisplay.CMD_GROUND),
     MOVE_SEARCHLIGHT("moveSearchlight", MovementDisplay.CMD_GROUND),
     MOVE_LAY_MINE("moveLayMine",
-          MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK | MovementDisplay.CMD_INF | MovementDisplay.CMD_PROTOMEK),
+                  MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK | MovementDisplay.CMD_INF | MovementDisplay.CMD_PROTOMEK),
     MOVE_HULL_DOWN("moveHullDown", MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK),
     MOVE_CLIMB_MODE("moveClimbMode",
-          MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK | MovementDisplay.CMD_INF | MovementDisplay.CMD_PROTOMEK),
+                    MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK | MovementDisplay.CMD_INF | MovementDisplay.CMD_PROTOMEK),
     MOVE_DESCEND("moveDescend", MovementDisplay.CMD_MEK),
     MOVE_SWIM("moveSwim", MovementDisplay.CMD_MEK),
     MOVE_SHAKE_OFF("moveShakeOff", MovementDisplay.CMD_TANK | MovementDisplay.CMD_VTOL),
     MOVE_BRACE("moveBrace", MovementDisplay.CMD_MEK),
     MOVE_CHAFF("moveChaff", MovementDisplay.CMD_NON_INF),
+    MOVE_CLEAR_DEPLOY("moveClearDeploy", MovementDisplay.CMD_NONE),
 
     // Convert command to a single button, which can cycle through modes because MovePath state is available
     MOVE_MODE_CONVERT("moveModeConvert", MovementDisplay.CMD_CONVERTER),
@@ -168,7 +169,8 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
      */
     public int priority;
 
-    MoveCommand(String commandString, int commandFlag) {
+    MoveCommand(String commandString,
+                int commandFlag) {
         cmd = commandString;
         flag = commandFlag;
         priority = ordinal();
@@ -211,9 +213,9 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
                 String msgToggleMoveJump = Messages.getString("MovementDisplay.tooltip.ToggleMoveJump");
 
                 result += "&nbsp;&nbsp;" +
-                      msgToggleMoveJump +
-                      ": " +
-                      KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVE_MODE);
+                          msgToggleMoveJump +
+                          ": " +
+                          KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVE_MODE);
                 break;
             case MOVE_BACK_UP:
                 result += KeyCommandBind.getDesc(KeyCommandBind.MOVE_BACKUP);
@@ -238,9 +240,9 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
                 String msgToggleMode = Messages.getString("MovementDisplay.tooltip.ToggleMode");
 
                 result += "&nbsp;&nbsp;" +
-                      msgToggleMode +
-                      ": " +
-                      KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_CONVERSION_MODE);
+                          msgToggleMode +
+                          ": " +
+                          KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_CONVERSION_MODE);
                 break;
             default:
                 break;
@@ -254,10 +256,11 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
      * @param unitFlag   The unit flag to specify what unit type the commands are for.
      * @param opts       A {@link GameOptions} reference for checking game options
      * @param forwardIni A flag to see if we can pass the turn to a teammate
-     *
      * @return An array of valid commands for the given parameters
      */
-    public static MoveCommand[] values(int unitFlag, GameOptions opts, boolean forwardIni) {
+    public static MoveCommand[] values(int unitFlag,
+                                       GameOptions opts,
+                                       boolean forwardIni) {
         boolean selfDestruct = false;
         boolean advVehicle = false;
         boolean vtolStrafe = false;

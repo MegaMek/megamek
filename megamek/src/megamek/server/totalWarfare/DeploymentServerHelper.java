@@ -33,6 +33,9 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.List;
+import java.util.Vector;
+
 import megamek.common.Hex;
 import megamek.common.OffBoardDirection;
 import megamek.common.board.Board;
@@ -43,9 +46,6 @@ import megamek.common.game.Game;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
-
-import java.util.List;
-import java.util.Vector;
 
 /**
  * Helper class for processing deployment whether it is from Deployment Phase or Movement Phase.

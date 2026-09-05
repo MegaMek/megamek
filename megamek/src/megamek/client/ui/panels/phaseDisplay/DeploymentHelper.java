@@ -33,6 +33,10 @@
 
 package megamek.client.ui.panels.phaseDisplay;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
@@ -54,10 +58,6 @@ import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
 import megamek.common.units.TrainLayout;
 import megamek.logging.MMLogger;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class DeploymentHelper {
 

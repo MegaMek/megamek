@@ -33,6 +33,23 @@
  */
 package megamek.client.ui.panels.phaseDisplay;
 
+import static megamek.common.LandingDirection.HORIZONTAL;
+import static megamek.common.LandingDirection.VERTICAL;
+import static megamek.common.bays.Bay.UNSET_BAY;
+import static megamek.common.equipment.MiscType.F_CHAFF_POD;
+import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.io.Serial;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.swing.*;
+
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -118,23 +135,6 @@ import megamek.common.turns.UnloadStrandedTurn;
 import megamek.common.units.*;
 import megamek.common.weapons.TeleMissile;
 import megamek.logging.MMLogger;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.io.Serial;
-import java.util.*;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static megamek.common.LandingDirection.HORIZONTAL;
-import static megamek.common.LandingDirection.VERTICAL;
-import static megamek.common.bays.Bay.UNSET_BAY;
-import static megamek.common.equipment.MiscType.F_CHAFF_POD;
-import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES;
 
 public class MovementDisplay extends ActionPhaseDisplay {
 
@@ -956,6 +956,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         getBtn(MoveCommand.MOVE_DESCEND).setEnabled(canDescend);
         getBtn(MoveCommand.MOVE_DESCEND).setToolTipText(
                 Messages.getString("MovementDisplay.moveDescendTip"));
+        boolean clearDeployEnabled = ((selectedUnit.isDeployed() && (cmd != null) && cmd.contains(MoveStepType.DEPLOY) ||
+                                       !selectedUnit.isDeployed() && Game.rulesManager.getRulesGame()
+                                                                                      .canWalkOnThisRound(selectedUnit)));
+        getBtn(MoveCommand.MOVE_CLEAR_DEPLOY).setEnabled(clearDeployEnabled);
+        getBtn(MoveCommand.MOVE_CLEAR_DEPLOY).setToolTipText("MovementDisplay.moveClearDeployTip");
         updateTurnButton();
 
         updateProneButtons();
@@ -1971,9 +1976,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         if (anchor != null) {
             // Press escape once
+            // entity.isAero will check if a unit is a LAM in Fighter mode
+            if ((currentlySelectedEntity instanceof IAero aero) && (currentlySelectedEntity.isAero())) {
+                currentlySelectedEntity.setAltitude(anchor.elevation());
+                if (anchor.elevation() == 0) {
+                    aero.land();
+                } else {
+                    aero.liftOff(anchor.elevation());
+                }
+            } else {
+                currentlySelectedEntity.setElevation(anchor.elevation());
+            }
             currentlySelectedEntity.setPosition(anchor.coords());
             currentlySelectedEntity.setBoardId(anchor.boardId());
-            currentlySelectedEntity.setElevation(anchor.elevation());
             currentlySelectedEntity.setFacing(anchor.facing());
             currentlySelectedEntity.setDeployed(true);
             addStepToMovePath(MoveStepType.DEPLOY);
@@ -2797,9 +2812,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         coords,
                         boardId,
                         elevation)) {
+                    // entity.isAero will check if a unit is a LAM in Fighter mode
+                    if ((currentlySelectedEntity instanceof IAero aero) && (currentlySelectedEntity.isAero())) {
+                        currentlySelectedEntity.setAltitude(elevation);
+                        if (elevation == 0) {
+                            aero.land();
+                        } else {
+                            aero.liftOff(elevation);
+                        }
+                    } else {
+                        currentlySelectedEntity.setElevation(elevation);
+                    }
                     currentlySelectedEntity.setPosition(coords);
                     currentlySelectedEntity.setBoardId(boardId);
-                    currentlySelectedEntity.setElevation(elevation);
                     currentlySelectedEntity.setFacing(facing);
                     currentlySelectedEntity.setSecondaryFacing(facing);
                     currentlySelectedEntity.setDeployed(true);
@@ -7417,6 +7442,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                         Messages.getString("MovementDisplay.ConfirmChaff.message"))) {
                 isUsingChaff = true;
             }
+        } else if (actionCmd.equals(MoveCommand.MOVE_CLEAR_DEPLOY.getCmd())) {
+            clear(false);
+            Entity currentlySelectedEntity = currentEntity();
+            if (currentlySelectedEntity != null) {
+                lastDeploymentOption = null;
+                lastHexDeploymentOptions.clear();
+            }
+
         }
         updateProneButtons();
         updateRACButton();

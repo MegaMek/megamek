@@ -36,7 +36,9 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.util.Locale;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
@@ -47,6 +49,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 
 import megamek.client.ui.Messages;
 import megamek.common.equipment.ObjectiveMarker;
@@ -131,6 +134,7 @@ public final class VictoryHexPropertiesPane {
         addRow(propertiesPanel, 3, rateLabel, rateSpinner);
         addRow(propertiesPanel, 4, new JLabel(Messages.getString("VictoryHex.radius")), radiusSpinner);
         addRow(propertiesPanel, 5, new JLabel(Messages.getString("VictoryHex.victoryPoints")), victoryPointSpinner);
+        pinRowsToTheTop(propertiesPanel, 6);
 
         JPanel editorPanel = new JPanel();
         editorPanel.setLayout(new BoxLayout(editorPanel, BoxLayout.PAGE_AXIS));
@@ -229,6 +233,39 @@ public final class VictoryHexPropertiesPane {
         controls.rateSpinner().setVisible(usesRate);
         controls.countingLabel().setVisible(usesCounting);
         controls.countingCombo().setVisible(usesCounting);
+        resizeDialogToFit(controls.schemeCombo());
+    }
+
+    /**
+     * Re-packs the dialog around its content after the visible rows changed. The dialog is sized once when it
+     * opens; without this, a scheme with more rows is squeezed into the old height and one with fewer has its
+     * rows re-centred in the leftover space, so the scheme selector jumps up and down as schemes are tried.
+     * Packing keeps the top-left corner where it is, so the selector stays put and the dialog grows or shrinks
+     * beneath it.
+     *
+     * @param anyControl a control inside the dialog; nothing happens while the pane is still being built
+     */
+    private static void resizeDialogToFit(Component anyControl) {
+        Window window = SwingUtilities.getWindowAncestor(anyControl);
+        if (window != null) {
+            window.pack();
+        }
+    }
+
+    /**
+     * Adds an empty, stretchable last row so that any spare height goes below the rows instead of being shared
+     * around them, which would float the rows toward the middle of the panel.
+     *
+     * @param panel the grid panel
+     * @param row   the first unused grid row
+     */
+    private static void pinRowsToTheTop(JPanel panel, int row) {
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridx = 0;
+        constraints.gridy = row;
+        constraints.gridwidth = 2;
+        constraints.weighty = 1;
+        panel.add(Box.createVerticalGlue(), constraints);
     }
 
     /**

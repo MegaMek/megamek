@@ -3421,7 +3421,7 @@ public class AmmoType extends EquipmentType {
         /*
          * munitions.add(new MunitionMutator("Incendiary", 2,
          * Munitions.M_INCENDIARY_LRM, new
-         * TechAdvancement(ITechnology.TechBase.IS)  
+         * TechAdvancement(ITechnology.TechBase.IS)
          * .setTechRating(TechRating.C) .setAvailability(TechRating.E, TechRating.E, TechRating.E,
          * TechRating.E) .setClanAdvancement(2341, 2342, 2352, DATE_NONE, DATE_NONE)
          * .setClanApproximate(false, false, false, false, false)
@@ -3458,7 +3458,7 @@ public class AmmoType extends EquipmentType {
         /*
          * munitions.add(new MunitionMutator("(Clan) Incendiary", 2,
          * Munitions.M_INCENDIARY_LRM,
-         * new TechAdvancement(TechBase.CLAN) 
+         * new TechAdvancement(TechBase.CLAN)
          *  .setTechRating(TechRating.C) .setAvailability(TechRating.E,
          * TechRating.E, TechRating.E, TechRating.E) .setClanAdvancement(2341, 2342, 2352,
          * DATE_NONE, DATE_NONE) .setClanApproximate(false, false, false, false, false)

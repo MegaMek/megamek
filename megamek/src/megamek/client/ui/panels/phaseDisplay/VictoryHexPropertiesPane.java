@@ -33,7 +33,9 @@
 package megamek.client.ui.panels.phaseDisplay;
 
 import java.awt.Component;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.Locale;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
@@ -120,19 +122,15 @@ public final class VictoryHexPropertiesPane {
         // the order a player decides these in: what kind of point is this, how is it won, how big is
         // it, what is it worth. The scheme comes first because it decides which of the rows below even
         // appear - with it third, two values had to be filled in before learning what else would be asked
-        JPanel propertiesPanel = new JPanel(new GridLayout(0, 2));
-        propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.scheme")));
-        propertiesPanel.add(schemeCombo);
-        propertiesPanel.add(thresholdLabel);
-        propertiesPanel.add(thresholdSpinner);
-        propertiesPanel.add(countingLabel);
-        propertiesPanel.add(countingCombo);
-        propertiesPanel.add(rateLabel);
-        propertiesPanel.add(rateSpinner);
-        propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.radius")));
-        propertiesPanel.add(radiusSpinner);
-        propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.victoryPoints")));
-        propertiesPanel.add(victoryPointSpinner);
+        // a grid bag rather than a plain grid: a plain grid keeps a cell for every hidden row, so a scheme with
+        // no rows of its own (Standard) left three empty rows between the scheme and the radius
+        JPanel propertiesPanel = new JPanel(new GridBagLayout());
+        addRow(propertiesPanel, 0, new JLabel(Messages.getString("VictoryHex.scheme")), schemeCombo);
+        addRow(propertiesPanel, 1, thresholdLabel, thresholdSpinner);
+        addRow(propertiesPanel, 2, countingLabel, countingCombo);
+        addRow(propertiesPanel, 3, rateLabel, rateSpinner);
+        addRow(propertiesPanel, 4, new JLabel(Messages.getString("VictoryHex.radius")), radiusSpinner);
+        addRow(propertiesPanel, 5, new JLabel(Messages.getString("VictoryHex.victoryPoints")), victoryPointSpinner);
 
         JPanel editorPanel = new JPanel();
         editorPanel.setLayout(new BoxLayout(editorPanel, BoxLayout.PAGE_AXIS));
@@ -178,6 +176,27 @@ public final class VictoryHexPropertiesPane {
     private record SchemeControls(JComboBox<SchemePreset> schemeCombo, JComboBox<HoldCounting> countingCombo,
           JSpinner thresholdSpinner, JSpinner rateSpinner, JLabel thresholdLabel, JLabel rateLabel,
           JLabel countingLabel, JLabel schemeDescription) {}
+
+    /**
+     * Adds one label-and-control row to the properties grid. Both cells share the row's width equally, so the
+     * labels line up on the left and the controls on the right whichever rows are currently visible.
+     *
+     * @param panel   the grid panel
+     * @param row     the grid row
+     * @param label   the row's label
+     * @param control the row's editing control
+     */
+    private static void addRow(JPanel panel, int row, JLabel label, Component control) {
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridy = row;
+        constraints.weightx = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(2, 2, 2, 2);
+        constraints.gridx = 0;
+        panel.add(label, constraints);
+        constraints.gridx = 1;
+        panel.add(control, constraints);
+    }
 
     /**
      * Rewrites the scheme-dependent rows for the currently selected preset: which rows are visible, what the

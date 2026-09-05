@@ -33,16 +33,6 @@
  */
 package megamek.common.moves;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
-import java.util.Vector;
-
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.IndustrialElevator;
@@ -70,6 +60,17 @@ import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.lang.System;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
+import java.util.Vector;
 
 /**
  * A single step in the entity's movement. Since the path planner uses shallow copies of MovePaths, multiple paths may

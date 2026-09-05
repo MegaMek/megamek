@@ -1,0 +1,461 @@
+/*
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.client.ui.settings;
+
+import static megamek.client.ui.util.UIUtil.scaleForGUI;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ListResourceBundle;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.JViewport;
+import javax.swing.Scrollable;
+import javax.swing.border.TitledBorder;
+
+import org.junit.jupiter.api.Test;
+
+class SettingsContentHostTest {
+    private static final SettingsTextProvider TEXT = SettingsTextProvider.fromResourceBundle(new ListResourceBundle() {
+        @Override
+        protected Object[][] getContents() {
+            return new Object[][] {
+                  { "field.text", "Field" },
+                  { "field.tooltip", "Raw field help" }
+            };
+        }
+    });
+
+    @Test
+    void hostRoutesRawHelpTextAndRestoresTooltipWhenContentChanges() {
+        SettingsLabel label = new SettingsLabel(TEXT, "field");
+        String originalTooltip = label.getToolTipText();
+        SettingsContentHost host = new SettingsContentHost(label, true);
+
+        assertNull(label.getToolTipText());
+        fireMouseEntered(label);
+
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+        assertTrue(helpPane.getText().contains("Raw field help"), helpPane.getText());
+
+        host.setContent(new JLabel("Replacement"), false);
+
+        assertNotNull(label.getToolTipText());
+        assertTrue(label.getToolTipText().equals(originalTooltip));
+    }
+
+    @Test
+    void onlyExplicitHelpProviderButtonsPopulateOptionDetails() {
+        SettingsButton settingsButton = new SettingsButton("settingsButton", TEXT, "field");
+        JButton ordinaryButton = new JButton("Ordinary");
+        ordinaryButton.setToolTipText("Ordinary tooltip");
+        JPanel content = new JPanel();
+        content.add(settingsButton);
+        content.add(ordinaryButton);
+        SettingsContentHost host = new SettingsContentHost(content, true);
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+
+        fireMouseEntered(ordinaryButton);
+        assertFalse(helpPane.getText().contains("Ordinary tooltip"), helpPane.getText());
+        assertEquals("Ordinary tooltip", ordinaryButton.getToolTipText());
+
+        fireMouseEntered(settingsButton);
+        assertTrue(helpPane.getText().contains("Raw field help"), helpPane.getText());
+        assertNull(settingsButton.getToolTipText());
+    }
+
+    @Test
+    void nestedControlUsesItsOwnTooltipInsteadOfAncestorHelp() {
+        JPanel parent = new JPanel();
+        parent.setToolTipText("Parent help");
+        JTextField child = new JTextField();
+        child.setToolTipText("Child-specific help");
+        parent.add(child);
+        SettingsContentHost host = new SettingsContentHost(parent, true);
+
+        fireFocusGained(child);
+
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+        assertTrue(helpPane.getText().contains("Child-specific help"), helpPane.getText());
+        assertFalse(helpPane.getText().contains("Parent help"), helpPane.getText());
+        assertNull(child.getToolTipText());
+    }
+
+    @Test
+    void explicitHelpUpdateTargetsNearestHost() {
+        JLabel source = new JLabel("Source");
+        SettingsContentHost host = new SettingsContentHost(source, true);
+
+        SettingsContentHost nearestHost = SettingsContentHost.findHost(source);
+        assertSame(host, nearestHost);
+        nearestHost.setHelpText("Replacement help");
+
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+        assertTrue(helpPane.getText().contains("Replacement help"), helpPane.getText());
+    }
+
+    @Test
+    void plainHelpTextIsEscapedBeforeRenderingAsHtml() {
+        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), true);
+
+        host.setHelpText("Use A < B & C > D or <value>");
+
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+        assertTrue(helpPane.getText().contains("A &lt; B &amp; C &gt; D or &lt;value&gt;"), helpPane.getText());
+    }
+
+    @Test
+    void plainHelpTextPreservesLineBreaksWithoutFixedWidthMarkup() {
+        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), true);
+
+        host.setHelpText("First line\nSecond line");
+
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+        assertTrue(helpPane.getText().contains("First line<br>"), helpPane.getText());
+        assertTrue(helpPane.getText().contains("Second line"), helpPane.getText());
+        assertFalse(helpPane.getText().contains("width="), helpPane.getText());
+    }
+
+    @Test
+    void htmlFragmentHelpTextIsPreservedAsMarkup() {
+        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), true);
+
+        host.setHelpText("First line.<br><br><b>Warning:</b> Second line.\nThird line.");
+
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+        assertTrue(helpPane.getText().contains("<b>Warning:</b>"), helpPane.getText());
+        assertTrue(helpPane.getText().contains("Second line.<br>"), helpPane.getText());
+        assertTrue(helpPane.getText().contains("Third line."), helpPane.getText());
+        assertFalse(helpPane.getText().contains("&lt;br&gt;"), helpPane.getText());
+    }
+
+    @Test
+    void uppercaseHtmlHelpTextIsPreservedAsMarkup() {
+        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), true);
+
+        host.setHelpText("<HTML><B>Important</B></HTML>");
+
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+        assertTrue(helpPane.getText().contains("<b>Important</b>"), helpPane.getText());
+        assertFalse(helpPane.getText().contains("&lt;HTML&gt;"), helpPane.getText());
+    }
+
+    @Test
+    void widePageKeepsCappedViewportAndScrollableContentWidth() {
+        JLabel wideContent = new JLabel();
+        wideContent.setPreferredSize(new Dimension(2_000, 20));
+        SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "field.text", null)
+              .maximumPageWidth(100)
+              .literalSection("Wide Section", null, wideContent)
+              .build();
+        SettingsContentHost host = new SettingsContentHost(page, false);
+
+        JPanel contentPanel = findComponent(host, "settingsContentPanel", JPanel.class);
+        Scrollable scrollableContent = (Scrollable) contentPanel;
+        // Since this test uses actual GUI config values, local user settings can cause the scale to mismatch.
+        // Use the same scale factor to make sure we expect the correct value.
+        assertEquals(scaleForGUI(100), page.getPreferredSize().width);
+        assertTrue(contentPanel.getPreferredSize().width > page.getPreferredSize().width);
+        assertEquals(page.getPreferredSize().width,
+              scrollableContent.getPreferredScrollableViewportSize().width);
+    }
+
+    @Test
+    void searchFilterHighlightsContentWithoutChangingLabelText() {
+        JLabel label = new JLabel("Search Needle");
+        SettingsContentHost host = new SettingsContentHost(label, false);
+        host.setSize(320, 160);
+        layoutTree(host);
+        String originalText = label.getText();
+
+        host.setSearchFilter(SettingsRoute.normalizeSearchText("needle"));
+
+        assertFalse(host.getSearchHighlightBounds().isEmpty());
+        assertEquals(originalText, label.getText());
+    }
+
+    @Test
+    void searchFilterRevealsTooltipOnlyMatchInOptionDetails() {
+        JPanel row = new JPanel(new GridBagLayout());
+        JLabel label = new JLabel("Get Up");
+        label.setToolTipText("Attempt to stand up from Prone position");
+        JTextField control = new JTextField("U");
+        GridBagConstraints labelLayout = new GridBagConstraints();
+        labelLayout.gridx = 0;
+        labelLayout.gridy = 0;
+        row.add(label, labelLayout);
+        GridBagConstraints controlLayout = new GridBagConstraints();
+        controlLayout.gridx = 1;
+        controlLayout.gridy = 0;
+        row.add(control, controlLayout);
+        JLabel secondLabel = new JLabel("Stand");
+        secondLabel.setToolTipText("Temporarily stand the unit upright");
+        GridBagConstraints secondLabelLayout = new GridBagConstraints();
+        secondLabelLayout.gridx = 0;
+        secondLabelLayout.gridy = 1;
+        row.add(secondLabel, secondLabelLayout);
+        SettingsContentHost host = new SettingsContentHost(row, true);
+        host.setSize(320, 240);
+        layoutTree(host);
+
+        host.setSearchFilter(SettingsRoute.normalizeSearchText("temp"));
+
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+        assertTrue(helpPane.getText().contains("Attempt to stand up from Prone position"), helpPane.getText());
+        SettingsHelpPanel helpPanel = findComponent(host, "settingsHelpPanel", SettingsHelpPanel.class);
+        assertEquals(1, helpPanel.getSearchHighlightCount());
+        assertEquals(2, host.getHelpMatchBounds().size());
+                assertTrue(host.getHelpMatchBounds().stream()
+              .anyMatch(bounds -> bounds.width >= label.getWidth() + control.getWidth()));
+
+        host.setSearchFilter("");
+
+        assertEquals(0, helpPanel.getSearchHighlightCount());
+        assertTrue(host.getHelpMatchBounds().isEmpty());
+    }
+
+    @Test
+    void blankHelpTextClearsSearchHighlights() {
+        SettingsHelpPanel helpPanel = new SettingsHelpPanel();
+        helpPanel.setSearchFilter("stand");
+        helpPanel.setHelpText("Attempt to stand up");
+
+        assertEquals(1, helpPanel.getSearchHighlightCount());
+
+        helpPanel.setHelpText("");
+
+        assertEquals(0, helpPanel.getSearchHighlightCount());
+    }
+
+    @Test
+    void helpMatchMarksOnlyMatchingCheckboxInSharedGridRow() {
+        JPanel row = new JPanel(new GridBagLayout());
+        JCheckBox first = new JCheckBox("First option");
+        first.setToolTipText("Unrelated details");
+        JCheckBox second = new JCheckBox("Second option");
+        second.setToolTipText("Matching needle details");
+        GridBagConstraints firstLayout = new GridBagConstraints();
+        firstLayout.gridx = 0;
+        firstLayout.gridy = 0;
+        row.add(first, firstLayout);
+        GridBagConstraints secondLayout = new GridBagConstraints();
+        secondLayout.gridx = 1;
+        secondLayout.gridy = 0;
+        row.add(second, secondLayout);
+        SettingsContentHost host = new SettingsContentHost(row, true);
+        host.setSize(480, 240);
+        layoutTree(host);
+
+        host.setSearchFilter(SettingsRoute.normalizeSearchText("needle"));
+
+        assertEquals(1, host.getHelpMatchBounds().size());
+        assertEquals(second.getWidth(), host.getHelpMatchBounds().getFirst().width);
+    }
+
+    @Test
+    void contentViewportUsesSimpleScrollModeForOverlayRepainting() {
+        SettingsContentHost host = new SettingsContentHost(new JLabel("Source"), false);
+        JScrollPane scrollPane = findComponent(host, "settingsContentScrollPane", JScrollPane.class);
+
+        assertEquals(JViewport.SIMPLE_SCROLL_MODE, scrollPane.getViewport().getScrollMode());
+    }
+
+    @Test
+    void hostRebindsHelpAfterNotifyLifecycle() {
+        SettingsLabel label = new SettingsLabel(TEXT, "field");
+        SettingsContentHost host = new SettingsContentHost(label, true);
+
+        host.removeNotify();
+        assertNotNull(label.getToolTipText());
+
+        host.addNotify();
+        assertNull(label.getToolTipText());
+    }
+
+    @Test
+    void pageHelpPolicyOverridesHostFallback() {
+        SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "field.text", null)
+              .showDetailsPanel(false)
+              .build();
+        SettingsContentHost host = new SettingsContentHost(page, true);
+
+        SettingsHelpPanel helpPanel = findComponent(host, "settingsHelpPanel", SettingsHelpPanel.class);
+        assertFalse(helpPanel.isVisible());
+    }
+
+    @Test
+    @SuppressWarnings("removal")
+    void helpPanelUsesScaledHeightAndTextPadding() {
+        SettingsHelpPanel helpPanel = new SettingsHelpPanel();
+        JEditorPane helpPane = findComponent(helpPanel, "settingsHelpText", JEditorPane.class);
+
+        assertEquals("Option Details", ((TitledBorder) helpPanel.getBorder()).getTitle());
+        assertEquals("Option Details",
+              ((TitledBorder) new SettingsHelpPanel("Different title").getBorder()).getTitle());
+        assertEquals(scaleForGUI(120), helpPanel.getPreferredSize().height);
+        assertEquals(scaleForGUI(120), helpPanel.getMinimumSize().height);
+        Insets insets = helpPane.getBorder().getBorderInsets(helpPane);
+        assertEquals(scaleForGUI(4), insets.top);
+        assertEquals(scaleForGUI(8), insets.left);
+        assertEquals(scaleForGUI(4), insets.bottom);
+        assertEquals(scaleForGUI(8), insets.right);
+    }
+
+    @Test
+    void compositeEditorFocusUsesParentHelpText() {
+        SettingsSpinner spinner = new SettingsSpinner(TEXT, "field", 1, 0, 10, 1);
+        SettingsContentHost host = new SettingsContentHost(spinner, true);
+        JTextField editor = ((JSpinner.DefaultEditor) spinner.getEditor()).getTextField();
+
+        fireFocusGained(editor);
+
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+        assertTrue(helpPane.getText().contains("Raw field help"), helpPane.getText());
+    }
+
+    @Test
+    void compositeEditorMouseEntryUsesParentHelpText() {
+        SettingsSpinner spinner = new SettingsSpinner(TEXT, "field", 1, 0, 10, 1);
+        SettingsContentHost host = new SettingsContentHost(spinner, true);
+        JTextField editor = ((JSpinner.DefaultEditor) spinner.getEditor()).getTextField();
+
+        fireMouseEntered(editor);
+
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+        assertTrue(helpPane.getText().contains("Raw field help"), helpPane.getText());
+    }
+
+    @Test
+    void descendantTooltipOverridesInheritedRawHelp() {
+        String parentHelp = "Parent help";
+        String childHelp = "Child-specific wrapped help";
+        HelpContainer content = new HelpContainer(parentHelp);
+        JLabel child = new JLabel("Option");
+        child.setToolTipText("<html><div width=500>" + childHelp + "</div></html>");
+        content.add(child);
+
+        SettingsContentHost host = new SettingsContentHost(content, true);
+        fireMouseEntered(child);
+        JEditorPane helpPane = findComponent(host, "settingsHelpText", JEditorPane.class);
+
+        assertTrue(helpPane.getText().contains(childHelp), helpPane.getText());
+        assertFalse(helpPane.getText().contains(parentHelp), helpPane.getText());
+        assertNull(child.getToolTipText());
+    }
+
+    private static void fireMouseEntered(Component component) {
+        MouseEvent event = new MouseEvent(component, MouseEvent.MOUSE_ENTERED, 0, 0, 0, 0, 0, false);
+        for (MouseListener listener : component.getMouseListeners()) {
+            listener.mouseEntered(event);
+        }
+    }
+
+    private static void fireFocusGained(Component component) {
+        FocusEvent event = new FocusEvent(component, FocusEvent.FOCUS_GAINED);
+        for (FocusListener listener : component.getFocusListeners()) {
+            listener.focusGained(event);
+        }
+    }
+
+    private static void layoutTree(Container root) {
+        root.doLayout();
+        for (Component child : root.getComponents()) {
+            if (child instanceof Container container) {
+                layoutTree(container);
+            }
+        }
+    }
+
+    private static <T extends Component> T findComponent(Container root, String name, Class<T> type) {
+        for (Component child : root.getComponents()) {
+            if (type.isInstance(child) && name.equals(child.getName())) {
+                return type.cast(child);
+            }
+            if (child instanceof Container container) {
+                T result = findComponentOrNull(container, name, type);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        throw new AssertionError("No " + type.getSimpleName() + " named " + name);
+    }
+
+    private static <T extends Component> T findComponentOrNull(Container root, String name, Class<T> type) {
+        for (Component child : root.getComponents()) {
+            if (type.isInstance(child) && name.equals(child.getName())) {
+                return type.cast(child);
+            }
+            if (child instanceof Container container) {
+                T result = findComponentOrNull(container, name, type);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static class HelpContainer extends JPanel implements SettingsHelpProvider {
+        private final String helpText;
+
+        private HelpContainer(String helpText) {
+            this.helpText = helpText;
+        }
+
+        @Override
+        public String getSettingsHelpText() {
+            return helpText;
+        }
+    }
+}

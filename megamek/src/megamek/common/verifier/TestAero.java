@@ -56,6 +56,7 @@ import megamek.common.interfaces.ITechManager;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
+import megamek.common.units.FixedWingSupport;
 import megamek.common.units.Jumpship;
 import megamek.common.units.SmallCraft;
 import megamek.common.util.StringUtil;
@@ -841,6 +842,25 @@ public class TestAero extends TestEntity {
     }
 
     /**
+     * Check if the unit has combinations of equipment which are not allowed in the construction rules.
+     *
+     * @param buff diagnostics are appended to this
+     *
+     * @return true if the entity is illegal
+     */
+    @Override
+    public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
+        boolean illegal = super.hasIllegalEquipmentCombinations(buff);
+
+        if (aero.countWorkingMisc(MiscType.F_FLOTATION_HULL) > 1) {
+            illegal = true;
+            buff.append("Max of 1 flotation hull chassis mod\n");
+        }
+
+        return illegal;
+    }
+
+    /**
      * Checks that the weapon loads in the wings match each other.
      *
      * @param buff The buffer that contains the collected error messages.
@@ -919,12 +939,16 @@ public class TestAero extends TestEntity {
      * @return Whether the equipment can be mounted in the location on the aerospace fighter, conventional fighter, or
      *       fixed wing support vehicle
      */
-    public static boolean isValidAeroLocation(EquipmentType eq, int location, @Nullable StringBuffer buffer) {
+    public static boolean isValidAeroLocation(Aero entity, EquipmentType eq, int location,
+          @Nullable StringBuffer buffer) {
         if (buffer == null) {
             buffer = new StringBuffer();
         }
         if (eq instanceof AmmoType && !(eq instanceof BombType)) {
-            if (location != Aero.LOC_FUSELAGE) {
+            if (entity.isFixedWingSupport() && location != FixedWingSupport.LOC_BODY) {
+                buffer.append(eq.getName()).append(" must be mounted in the body.\n");
+                return false;
+            } else if (!entity.isFixedWingSupport() && location != Aero.LOC_FUSELAGE) {
                 buffer.append(eq.getName()).append(" must be mounted in the fuselage.\n");
                 return false;
             }
@@ -935,16 +959,25 @@ public class TestAero extends TestEntity {
                   || eq.hasFlag(MiscType.F_ARTEMIS_PROTO)
                   || eq.hasFlag(MiscType.F_APOLLO)
                   || eq.hasFlag(MiscType.F_PPC_CAPACITOR)
-                  || eq.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) && (location >= Aero.LOC_WINGS)) {
-                if (location != Aero.LOC_FUSELAGE) {
-                    buffer.append(eq.getName()).append(" must be mounted in a location with a firing arc.\n");
+                  || eq.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))
+                  && (location == Aero.LOC_WINGS
+                  || (entity.isFixedWingSupport() && location == FixedWingSupport.LOC_BODY)
+                  || (!entity.isFixedWingSupport() && location == Aero.LOC_FUSELAGE))) {
+                buffer.append(eq.getName()).append(" must be mounted in a location with a firing arc.\n");
+                return false;
+            } else if (eq.hasFlag(MiscType.F_BASIC_FIRE_CONTROL)
+                  || eq.hasFlag(MiscType.F_ADVANCED_FIRE_CONTROL)
+                  || eq.hasFlag(MiscType.F_BLUE_SHIELD)
+                  || eq.hasFlag(MiscType.F_LIFT_HOIST)
+                  || eq.is(EquipmentTypeLookup.IS_CASE)
+                  || eq.is(EquipmentTypeLookup.IS_CASE_P)) {
+                if (entity.isFixedWingSupport() && location != FixedWingSupport.LOC_BODY) {
+                    buffer.append(eq.getName()).append(" must be mounted in the body.\n");
+                    return false;
+                } else if (!entity.isFixedWingSupport() && location != Aero.LOC_FUSELAGE) {
+                    buffer.append(eq.getName()).append(" must be mounted in the fuselage.\n");
                     return false;
                 }
-            } else if ((eq.hasFlag(MiscType.F_BLUE_SHIELD) || eq.hasFlag(MiscType.F_LIFT_HOIST)
-                  || eq.is(EquipmentTypeLookup.IS_CASE) || eq.is(EquipmentTypeLookup.IS_CASE_P))
-                  && (location != Aero.LOC_FUSELAGE)) {
-                buffer.append(eq.getName()).append(" must be mounted in the fuselage.\n");
-                return false;
             }
         } else if (eq instanceof WeaponType) {
             if ((((WeaponType) eq).getAmmoType() == AmmoType.AmmoTypeEnum.GAUSS_HEAVY)
@@ -952,8 +985,12 @@ public class TestAero extends TestEntity {
                 buffer.append(eq.getName()).append(" must be mounted in the nose or aft.\n");
                 return false;
             }
-            if (!eq.hasFlag(WeaponType.F_C3M) && !eq.hasFlag(WeaponType.F_C3MBS)
-                  && !eq.hasFlag(WeaponType.F_TAG) && (location == Aero.LOC_FUSELAGE)) {
+            if (!eq.hasFlag(WeaponType.F_C3M)
+                  && !eq.hasFlag(WeaponType.F_C3MBS)
+                  && !eq.hasFlag(WeaponType.F_TAG)
+                  && (location == Aero.LOC_WINGS
+                  || (entity.isFixedWingSupport() && location == FixedWingSupport.LOC_BODY)
+                  || (!entity.isFixedWingSupport() && location == Aero.LOC_FUSELAGE))) {
                 buffer.append(eq.getName()).append(" must be mounted in a location with a firing arc.\n");
                 return false;
             }
@@ -1314,9 +1351,9 @@ public class TestAero extends TestEntity {
     }
 
     /**
-     * One gunner is required for each capital weapon and each six standard scale weapons, rounding up
-     *
-     * @return The vessel's minimum gunner requirements.
+     * Returns the number of required gunners of the entity.
+     * @param aero The entity
+     * @return The number of required gunners
      */
     public static int requiredGunners(Aero aero) {
         return Compute.getTotalGunnerNeeds(aero);

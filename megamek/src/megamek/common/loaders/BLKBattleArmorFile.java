@@ -41,6 +41,8 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
@@ -66,6 +68,14 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
 
         if (dataFile.exists("exoskeleton") && dataFile.getDataAsString("exoskeleton")[0].equalsIgnoreCase("true")) {
             t.setIsExoskeleton(true);
+        }
+
+        if (dataFile.exists("clan_exo_without_harjel") && dataFile.getDataAsString("clan_exo_without_harjel")[0].equalsIgnoreCase("true")) {
+            if (t.isClan() && t.isExoskeleton()) {
+                t.setClanExoWithoutHarJel(true);
+            } else {
+                throw new EntityLoadingException("Unexpected Clan exo without HarJel found on non-Clan exoskeleton");
+            }
         }
 
         if (!dataFile.exists("trooper count")) {
@@ -132,9 +142,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
             t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
         }
 
-        if (dataFile.exists("armor_tech")) {
-            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
-        }
+        setArmorTechLevelFromDataFile(t);
         if (dataFile.exists("Turret")) {
             String field = dataFile.getDataAsString("Turret")[0];
             int index = field.indexOf(":");
@@ -174,7 +182,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
                   .anyMatch(m -> movementEquipName.equals(m.getType().getInternalName()));
             if (!alreadyPresent) {
                 try {
-                    t.addEquipment(EquipmentType.get(movementEquipName), Entity.LOC_NONE);
+                    t.addEquipment(getEquipmentType(t, movementEquipName), Entity.LOC_NONE);
                 } catch (LocationFullException ignore) {
                     // Adding to LOC_NONE
                 }
@@ -244,7 +252,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
                 }
 
                 String equipName = saEquip[x].trim();
-                EquipmentType etype = EquipmentType.get(equipName);
+                EquipmentType etype = getEquipmentType(t, equipName);
 
                 if (etype == null) {
                     // try w/ prefix
@@ -259,6 +267,13 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
                             m.setShotsLeft(numShots);
                             m.setOriginalShots(numShots);
                             m.setSize(numShots * ((AmmoType) m.getType()).getKgPerShot() / 1000.0);
+                        }
+                        // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing): a one-shot weapon mounted in an
+                        // AP mount/armored glove, used for a single once-per-scenario attack and resolved with the
+                        // disposable damage formula.
+                        if ((m instanceof WeaponMounted weaponMounted)
+                              && etype.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
+                            weaponMounted.setDisposableWeapon(true);
                         }
                         if ((etype instanceof MiscType)
                               && (etype.hasFlag(MiscType.F_AP_MOUNT) || etype.hasFlag(MiscType.F_ARMORED_GLOVE))) {

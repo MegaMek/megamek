@@ -36,6 +36,8 @@ package megamek.common.weapons.capitalWeapons;
 
 import java.io.Serial;
 
+import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -74,10 +76,9 @@ public class CapMissKrakenWeapon extends CapitalMissileWeapon {
         this.extAV = 10;
         this.missileArmor = 100;
         this.maxRange = RANGE_EXT;
-        rulesRefs = "Unofficial";
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3053, 3057, 3060, DATE_NONE, DATE_NONE)

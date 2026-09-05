@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.rifle;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -61,8 +62,9 @@ public class InfantryRifleFederatedBarrettM61ALaserInfernoWeapon extends Infantr
     public InfantryRifleFederatedBarrettM61ALaserInfernoWeapon() {
         super();
 
-        name = "Laser Rifle (Federated-Barrett M61A) (Inferno Grenades)";
+        name = "Laser Rifle (Federated-Barrett M61A) (Incendiary Grenades)";
         setInternalName("InfantryFederatedBarrettM61AInferno");
+        addLookupName("Laser Rifle (Federated-Barrett M61A) (Inferno Grenades)");
         addLookupName(name);
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 2150;
@@ -75,7 +77,7 @@ public class InfantryRifleFederatedBarrettM61ALaserInfernoWeapon extends Infantr
         infantryRange = 2;
         ammoWeight = 0.0003;
         shots = 6;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3058, 3062, 3085, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.FS)

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,6 +46,7 @@ import megamek.client.ui.Messages;
 import megamek.common.ECMInfo;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
+import megamek.common.PartialCover;
 import megamek.common.ToHitData;
 import megamek.common.actions.compute.ComputeAeroAttackerToHitMods;
 import megamek.common.actions.compute.ComputeAttackerToHitMods;
@@ -190,7 +191,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
         bombPayloads.put("internal", new BombLoadout(other.bombPayloads.get("internal")));
         bombPayloads.put("external", new BombLoadout(other.bombPayloads.get("external")));
     }
-
     public int getWeaponId() {
         return weaponId;
     }
@@ -519,7 +519,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 eiStatus = 1;
             }
         }
-
+        
         ToHitData losMods = los.losModifiers(game, eiStatus, attackingEntity.isUnderwater());
         ToHitData toHit = new ToHitData(0, Messages.getString("WeaponAttackAction.BaseToHit"));
 
@@ -773,14 +773,15 @@ public class WeaponAttackAction extends AbstractAttackAction {
             return false;
         }
 
-        // the idea here is that we're in a building that provides partial cover
-        // if the unit involved is tall (at least 2 levels, e.g. mek or superheavy
-        // vehicle)
-        // and its height above the hex ceiling (i.e. building roof) is 1
-        // the height determination takes being prone into account
-        return targetHex.containsTerrain(Terrains.BUILDING) &&
+        // A standing Mek in a Level 1 building, or one level below the roof of a taller one, has its upper half
+        // above the roof and receives partial cover (TW p.171). Its top sits at roof level; a Mek lower in the
+        // building is fully inside and gets none. Only Meks receive partial cover, and prone (height 0) is not standing.
+        // Core p.66 and p.136 ("Level 1 Buildings") grant the same cover, but only for a Level 1 building: the
+        // "one level below the roof" half of the rule is TW p.171 only.
+        return PartialCover.canReceive(targetEntity) &&
+              targetHex.containsTerrain(Terrains.BUILDING) &&
               (targetEntity.getHeight() > 0) &&
-              (targetEntity.relHeight() == 1);
+              (targetEntity.relHeight() == targetHex.terrainLevel(Terrains.BLDG_ELEV));
     }
 
     @Override

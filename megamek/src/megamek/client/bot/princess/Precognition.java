@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,14 +47,7 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.ClubAttackAction;
-import megamek.common.actions.DodgeAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.TorsoTwistAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
@@ -337,6 +330,7 @@ public class Precognition implements Runnable {
                 case ILLEGAL_CLIENT_VERSION:
                 case LOCAL_PN:
                 case PRINCESS_SETTINGS:
+                case PRINCESS_DISHONORED:
                 case FORCE_UPDATE:
                 case FORCE_DELETE:
                 case SENDING_REPORTS_SPECIAL:
@@ -346,6 +340,9 @@ public class Precognition implements Runnable {
                 case LOAD_SAVEGAME:
                 case SENDING_AVAILABLE_MAP_SIZES:
                 case SCRIPTED_MESSAGE:
+                case SEND_TOAST:
+                case UPDATE_CUT_HEXES:
+                case SYNC_TEMPORARY_ECM_FIELDS:
                     LOGGER.debug("Intentionally ignoring PacketCommand: {}", c.command().name());
                     break;
                 default:
@@ -432,9 +429,11 @@ public class Precognition implements Runnable {
                 if (entityId != null) {
                     Entity entity = getGame().getEntity(entityId);
                     if (entity != null) {
-                        LOGGER.debug("ensureToDate = recalculating paths for {}", entity.getDisplayName());
+                        // Pass the entity itself: log4j only calls toString() when DEBUG is enabled, whereas
+                        // getDisplayName() would build the string eagerly on every pass of this hot loop.
+                        LOGGER.debug("ensureToDate = recalculating paths for {}", entity);
                         getPathEnumerator().recalculateMovesFor(entity);
-                        LOGGER.debug("ensureToDate = finished recalculating paths for {}", entity.getDisplayName());
+                        LOGGER.debug("ensureToDate = finished recalculating paths for {}", entity);
                     }
                 }
             }
@@ -459,9 +458,10 @@ public class Precognition implements Runnable {
                         Entity entity = getGame().getEntity(entityId);
                         if ((entity != null) && isEntityOnMap(entity)) {
                             unPause();
-                            LOGGER.debug("run = recalculating paths for {}", entity.getDisplayName());
+                            // Entity toString() is only evaluated when DEBUG is enabled; see ensureUpToDate.
+                            LOGGER.debug("run = recalculating paths for {}", entity);
                             getPathEnumerator().recalculateMovesFor(entity);
-                            LOGGER.debug("run = finished recalculating paths for {}", entity.getDisplayName());
+                            LOGGER.debug("run = finished recalculating paths for {}", entity);
                         }
 
                     }
@@ -550,7 +550,7 @@ public class Precognition implements Runnable {
                         continue; // no sense in updating a unit if it hasn't moved
                     }
                     LOGGER.debug("Received entity change event for {} (ID {})",
-                          changeEvent.getEntity().getDisplayName(),
+                          changeEvent.getEntity(),
                           entity.getId());
                     markUnitAsDirty(changeEvent.getEntity().getId());
                 } else if (event instanceof GamePhaseChangeEvent phaseChange) {
@@ -917,8 +917,23 @@ public class Precognition implements Runnable {
                 if (!isCharge) {
                     game.addAction(ea);
                 } else {
-                    if (ea instanceof AttackAction attackAction) {
-                        game.addCharge(attackAction);
+                    // This should work for Charge, DFA, and RAM attacks.
+                    if (ea instanceof DisplacementAttackAction) {
+                        Entity chargingUnit = game.getEntity(ea.getEntityId());
+                        if (chargingUnit != null) {
+                            chargingUnit.setDisplacementAttack((DisplacementAttackAction) ea);
+                        }
+                        game.addDisplacementAttack((AttackAction) ea);
+                    }
+                    if (ea instanceof RamAttackAction) {
+                        Entity rammingUnit = game.getEntity(ea.getEntityId());
+                        if (rammingUnit != null) {
+                            rammingUnit.setRamming(true);
+                        }
+                        game.addRam((AttackAction) ea);
+                    }
+                    if (ea instanceof TeleMissileAttackAction) {
+                        game.addTeleMissileAttack((AttackAction) ea);
                     }
                 }
             }

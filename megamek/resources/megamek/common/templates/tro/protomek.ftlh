@@ -14,9 +14,9 @@
 	<b>Tonnage:</b> ${tonnage}<br/>
 	<b>Battle Value:</b> ${battleValue}<br/>
 	</p>
-
+	<br/>
 	<table>
-	<tr><th>Equipment</th><th/><th>Mass (kg)</th></tr>
+	<tr><th align="left">Equipment</th><th/><th>Mass (kg)</th></tr>
 	<tr><td>Internal Structure</td><td></td><td align="center">${isMass}</td></tr>
 	<tr><td>Engine</td><td align="center">${engineRating}</td><td align="center">${engineMass}</td></tr>
 	<#if isGlider>
@@ -35,10 +35,10 @@
 	</#if>
 	<tr><td>Heat Sinks:</td><td align="center">${hsCount}</td><td align="center">${hsMass}</td></tr>
 	<tr><td>Cockpit:</td><td></td><td align="center">${cockpitMass}</td></tr>
-	<tr><td>Armor Factor${armorType}:</td><td>${armorFactor}</td><td align="center">${armorMass}</td></tr>
+	<tr><td>Armor Factor${armorType}:</td><td align="center">${armorFactor}</td><td align="center">${armorMass}</td></tr>
 	</table>
 
-	<table width="80%">
+	<table>
 		<tr><th></th><th>Internal<br/>Structure</th><th>Armor<br/>Value</th></tr>
 		<tr>
 			<td>Head</td>
@@ -73,7 +73,7 @@
 			</#if>
 		</tr>
 	</table>
-
+	<br/>
 	<table>
 		<tr><th align="left">Weapons<br/>and Ammo</th><th>Location</th><th>Mass (kg)</th></tr>
 		<#list equipment as eq>

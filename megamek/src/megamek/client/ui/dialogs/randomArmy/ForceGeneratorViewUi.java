@@ -32,8 +32,10 @@
  */
 package megamek.client.ui.dialogs.randomArmy;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -45,13 +47,21 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeModelListener;
@@ -62,25 +72,34 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import megamek.client.Client;
+import megamek.client.ratgenerator.C3NetworkConfigurator;
+import megamek.client.ratgenerator.CarrierLoadingConfigurator;
+import megamek.client.ratgenerator.CrewDescriptor;
+import megamek.client.ratgenerator.ExistingLift;
 import megamek.client.ratgenerator.ForceDescriptor;
+import megamek.client.ratgenerator.FormationType;
+import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
+import megamek.client.ratgenerator.ShipReroller;
+import megamek.client.ratgenerator.TransportBranchMerger;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.options.GameOptions;
-import megamek.common.units.Entity;
-import megamek.common.loaders.MekSummary;
-import megamek.common.loaders.MekSummaryCache;
 import megamek.common.Player;
-import megamek.common.units.UnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.SkillLevel;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
+import megamek.common.options.GameOptions;
+import megamek.common.units.Entity;
+import megamek.common.units.UnitType;
+import megamek.common.universe.Ranks;
 import megamek.logging.MMLogger;
 
 /**
@@ -103,9 +122,60 @@ public class ForceGeneratorViewUi implements ActionListener {
     private JLabel lblRating;
     private JScrollPane paneForceTree;
     private JTree forceTree;
+    private JTextField txtSearch;
+    private JLabel lblSearchStatus;
+    private final List<TreePath> searchMatches = new ArrayList<>();
+    private int searchIndex = -1;
 
     private JTable tblChosen;
     private ChosenEntityModel modelChosen;
+
+    // The chosen-units table below the controls. Standalone Random Army collects units to add to a running game
+    // here; a host that commits the preview tree never reads it, so it is hidden for them.
+    private JScrollPane chosenUnitsPane;
+
+    // When set by a host (e.g. MekHQ) that commits the preview tree into a TOE, the tree's right-click
+    // menu offers Include/Exclude instead of "Add to game", and excluded nodes render struck out.
+    private boolean toeExclusionMode = false;
+
+    // Optional host-supplied display names for formation (non-unit) tree nodes, so the preview can show
+    // the names the committed TOE will actually use. Null (or a null/blank result for a node) falls back
+    // to the descriptor's own parseName().
+    private Function<ForceDescriptor, String> formationNameProvider = null;
+
+    // Notified after anything that changes what a commit would produce: a Generate (including an
+    // accumulated roll) and an Include/Exclude toggle. Hosts use this to invalidate cached previews.
+    private Runnable toeChangeListener = null;
+    /** Told of every roll and every Clear Force, with the rolled force or {@code null} for a clear. */
+    private Consumer<ForceDescriptor> forceGeneratedListener = null;
+
+    // Each Generate appends its rolled force to an accumulating Model root rather than replacing the tree, so
+    // the player builds one command from several rolls - a Mek battalion, then the vehicle company that goes
+    // with it - before adding it to a game or committing it to a campaign. On by default so every host behaves
+    // the same way; Clear Force empties the model. modelRoot holds the accumulated command.
+    private boolean accumulateModel = true;
+    // Thin wrapper root that always holds exactly one child: the current top command (modelTop). The
+    // wrapper exists so the commit walker (which merges the passed root into the campaign's own
+    // formation and flattens its children) preserves modelTop as a distinct formation - so a rolled
+    // regiment keeps its "regiment" tag rather than dissolving into the campaign's top formation.
+    private ForceDescriptor modelRoot;
+    // The current top of the accumulated command; new rolls nest under it, replace it, or get a
+    // synthesized parent, all by echelon (see accumulateIntoModel).
+    private ForceDescriptor modelTop;
+    // Number of generated commands the player has accumulated into the model, regardless of how they
+    // nest. Reported in the status line; a plain counter because the model has no flat command list
+    // once commands nest by echelon.
+    private int modelCommandCount = 0;
+
+    // Design-stage status line under the tree in accumulate mode: reassures the player the model is a
+    // draft ("... - not yet committed.") and reports its running size. Hidden in standalone mode.
+    private JLabel lblModelStatus;
+
+    /**
+     * Where the host says what lift the force owns outside this view - the ships in a running game or a campaign
+     * hangar. Added to whatever the accumulated model already holds, see {@link #existingLift()}.
+     */
+    private Supplier<ExistingLift> hostLiftSupplier = () -> ExistingLift.NONE;
 
     protected TableRowSorter<ChosenEntityModel> sorterChosen;
 
@@ -118,7 +188,35 @@ public class ForceGeneratorViewUi implements ActionListener {
     public ForceGeneratorViewUi(JFrame parentFrame, GameOptions gameOptions) {
         this.parentFrame = parentFrame;
         panControls = new ForceGeneratorOptionsView(this::setGeneratedForce, gameOptions);
+        panControls.setExistingLiftSupplier(this::existingLift);
         initUi();
+    }
+
+    /**
+     * Tells the view what lift the force owns outside it, so a roll generates only the lift it still lacks: the
+     * Random Army dialog reports the ships the player already has in the game, MekHQ's Command Designer the ships in
+     * the hangar. What earlier rolls in an accumulated model brought is counted by the view itself.
+     *
+     * @param supplier the source of the host's lift, asked at every Generate; {@code null} for none
+     */
+    public void setHostLiftSupplier(@Nullable Supplier<ExistingLift> supplier) {
+        this.hostLiftSupplier = (supplier == null) ? () -> ExistingLift.NONE : supplier;
+    }
+
+    /**
+     * @return the lift the next roll starts from: the free bays and collars among the rolls accumulated so far, plus
+     *       whatever the host reports
+     */
+    private ExistingLift existingLift() {
+        ExistingLift inModel = accumulateModel ? ExistingLift.of(modelRoot) : ExistingLift.NONE;
+        ExistingLift lift = inModel.plus(hostLiftSupplier.get());
+        if (!lift.isEmpty()) {
+            // DEBUG: a host reads the panel far more often than it rolls, and the transport stage logs the lift a
+            // roll actually starts from at INFO.
+            logger.debug("[ForceGen][Lift] next roll starts from free bays {} and {} free docking collar(s)",
+                  lift.freeBays(), lift.freeDockingCollars());
+        }
+        return lift;
     }
 
     private void initUi() {
@@ -129,12 +227,12 @@ public class ForceGeneratorViewUi implements ActionListener {
         forceTree.setVisibleRowCount(12);
         forceTree.addTreeExpansionListener(new TreeExpansionListener() {
             @Override
-            public void treeCollapsed(TreeExpansionEvent evt) {
+            public void treeCollapsed(TreeExpansionEvent event) {
 
             }
 
             @Override
-            public void treeExpanded(TreeExpansionEvent evt) {
+            public void treeExpanded(TreeExpansionEvent event) {
                 if (forceTree.getPreferredSize().getWidth() > paneForceTree.getSize().getWidth()) {
                     rightPanel.setMinimumSize(
                           new Dimension(forceTree.getMinimumSize().width, rightPanel.getMinimumSize().height));
@@ -176,8 +274,55 @@ public class ForceGeneratorViewUi implements ActionListener {
         gbc.gridy = 2;
         rightPanel.add(lblRating, gbc);
 
+        // ToE search bar: a live, non-destructive find that highlights and steps through nodes
+        // whose unit name, pilot, ship name, or formation/cluster name matches the query.
         gbc.gridx = 0;
         gbc.gridy = 3;
+        rightPanel.add(new JLabel(Messages.getString("ForceGeneratorDialog.search")), gbc);
+
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        txtSearch = new JTextField(18);
+        txtSearch.setToolTipText(Messages.getString("ForceGeneratorDialog.search.tooltip"));
+        txtSearch.putClientProperty("JTextField.placeholderText",
+              Messages.getString("ForceGeneratorDialog.search.placeholder"));
+        JButton btnSearchPrev = new JButton(Messages.getString("ForceGeneratorDialog.search.prev"));
+        JButton btnSearchNext = new JButton(Messages.getString("ForceGeneratorDialog.search.next"));
+        lblSearchStatus = new JLabel();
+        searchPanel.add(txtSearch);
+        searchPanel.add(btnSearchPrev);
+        searchPanel.add(btnSearchNext);
+        searchPanel.add(lblSearchStatus);
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        rightPanel.add(searchPanel, gbc);
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+
+        txtSearch.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                runToeSearch();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                runToeSearch();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                runToeSearch();
+            }
+        });
+        // Enter in the field, and the buttons, step through matches.
+        txtSearch.addActionListener(e -> gotoToeMatch(1));
+        btnSearchNext.addActionListener(e -> gotoToeMatch(1));
+        btnSearchPrev.addActionListener(e -> gotoToeMatch(-1));
+
+        gbc.gridx = 0;
+        gbc.gridy = 4;
         gbc.gridwidth = 3;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
@@ -186,6 +331,15 @@ public class ForceGeneratorViewUi implements ActionListener {
         paneForceTree.setPreferredSize(new Dimension(600, 800));
         paneForceTree.setMinimumSize(new Dimension(600, 800));
         rightPanel.add(paneForceTree, gbc);
+
+        // Design-stage status line beneath the tree. Present in every host but only made visible in
+        // accumulate mode (see refreshCommandModelChrome); it stays hidden for standalone Random Army.
+        gbc.gridy = 5;
+        gbc.weighty = 0.0;
+        lblModelStatus = new JLabel();
+        lblModelStatus.setBorder(BorderFactory.createEmptyBorder(4, 2, 0, 2));
+        lblModelStatus.setVisible(false);
+        rightPanel.add(lblModelStatus, gbc);
 
         modelChosen = new ChosenEntityModel();
         tblChosen = new JTable(modelChosen);
@@ -201,7 +355,30 @@ public class ForceGeneratorViewUi implements ActionListener {
         leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.add(panControls);
-        leftPanel.add(scroll);
+        // The lower slot holds the chosen-units table for standalone Random Army, and the formation mix editor for a
+        // host that commits the tree instead and so never reads that table. Both live in the panel; one is shown.
+        chosenUnitsPane = scroll;
+        leftPanel.add(chosenUnitsPane);
+        // The model is on by default, so its status line and title have to be right from the first paint.
+        refreshCommandModelChrome();
+    }
+
+    /**
+     * Swaps the lower panel from the chosen-units table to an inline formation mix editor.
+     *
+     * <p>For a host that commits the preview tree rather than collecting units to add to a running game, the
+     * chosen-units table below the controls is inert - nothing reads it - so the space is better spent on the mix,
+     * which that host has room to show inline rather than behind a button.</p>
+     *
+     * @param visible {@code true} to show the mix editor in place of the chosen-units table
+     */
+    public void setFormationMixEditorVisible(boolean visible) {
+        chosenUnitsPane.setVisible(!visible);
+        // The editor lives in the options panel itself, above Transport and the Composition Summary, so it sits with
+        // the settings that shape the force rather than below the ones that describe it.
+        panControls.setFormationMixInline(visible);
+        leftPanel.revalidate();
+        leftPanel.repaint();
     }
 
     public Component getLeftPanel() {
@@ -210,6 +387,207 @@ public class ForceGeneratorViewUi implements ActionListener {
 
     public Component getRightPanel() {
         return rightPanel;
+    }
+
+    /**
+     * The embedded options panel (inputs, transport, composition summary, and the Generate button).
+     * Exposed so hosts (e.g. MekHQ's Force Generator tab) can seed the faction / year and read back
+     * the user's selections without re-implementing the controls.
+     */
+    public ForceGeneratorOptionsView getOptionsView() {
+        return panControls;
+    }
+
+    /**
+     * Points the generator at the options of the game the force is being generated for.
+     *
+     * @param gameOptions the options of the game being generated for
+     */
+    public void setGameOptions(GameOptions gameOptions) {
+        panControls.setGameOptions(gameOptions);
+    }
+
+    /**
+     * Enables TOE exclusion mode for hosts that commit the preview tree into a table of organization.
+     * In this mode the tree's right-click menu offers Include/Exclude (instead of "Add to game") and
+     * excluded nodes are struck out in red. Defaults to {@code false} (the standalone Random Army
+     * behavior).
+     *
+     * @param enabled {@code true} to enable the Include/Exclude menu and struck-out excluded nodes
+     */
+    public void setToeExclusionMode(boolean enabled) {
+        this.toeExclusionMode = enabled;
+    }
+
+    /**
+     * Supplies display names for the formation (non-unit) nodes of the preview tree, overriding each
+     * descriptor's own {@link ForceDescriptor#parseName()}. Hosts that rename formations on commit (for
+     * example MekHQ's Command Designer callsigns) use this so the preview shows the final TOE names. A
+     * {@code null} provider - or a {@code null}/blank result for a node - falls back to
+     * {@code parseName()}.
+     *
+     * @param provider maps a formation descriptor to its display name, or {@code null} to disable
+     */
+    public void setFormationNameProvider(@Nullable Function<ForceDescriptor, String> provider) {
+        this.formationNameProvider = provider;
+        if (forceTree != null) {
+            forceTree.repaint();
+        }
+    }
+
+    /**
+     * Registers a listener notified after anything that changes what a commit would produce: each
+     * Generate (including rolls accumulated into the Model) and each Include/Exclude toggle. Hosts use
+     * this to invalidate caches backing {@link #setFormationNameProvider}.
+     *
+     * @param listener the callback, or {@code null} to clear
+     */
+    public void setToeChangeListener(@Nullable Runnable listener) {
+        this.toeChangeListener = listener;
+    }
+
+    /**
+     * Registers a callback for Generate and Clear Force specifically, as distinct from the TOE-change listener,
+     * which also fires for edits made to an existing tree. A host that needs to know what the settings were
+     * when the force was rolled listens here.
+     *
+     * @param listener the callback, given the rolled force or {@code null} on Clear Force; {@code null} to clear
+     */
+    public void setForceGeneratedListener(@Nullable Consumer<ForceDescriptor> listener) {
+        this.forceGeneratedListener = listener;
+    }
+
+    /**
+     * Repaints the force tree so display-affecting host state (for example a changed
+     * {@link #setFormationNameProvider} backing) is re-rendered without a structural change.
+     */
+    public void repaintForceTree() {
+        if (forceTree != null) {
+            forceTree.repaint();
+        }
+    }
+
+    /**
+     * Opens the root and its immediate children so a freshly generated force shows its shape - the regiment
+     * and its battalions - instead of a single collapsed row the player has to open before seeing anything.
+     */
+    private void expandTopLevels() {
+        if (forceTree == null) {
+            return;
+        }
+        forceTree.expandRow(0);
+        // Rows shift as each child opens, so walk by path from the root rather than by row index.
+        TreePath rootPath = forceTree.getPathForRow(0);
+        if (rootPath == null) {
+            return;
+        }
+        Object root = rootPath.getLastPathComponent();
+        int childCount = forceTree.getModel().getChildCount(root);
+        for (int index = 0; index < childCount; index++) {
+            Object child = forceTree.getModel().getChild(root, index);
+            forceTree.expandPath(rootPath.pathByAddingChild(child));
+        }
+    }
+
+    /** Fires the TOE-change listener, if any. */
+    private void fireToeChanged() {
+        if (toeChangeListener != null) {
+            toeChangeListener.run();
+        }
+    }
+
+    /**
+     * The display name for a formation node: the host-supplied provider's answer when one is set and
+     * returns a usable name, otherwise the descriptor's own {@link ForceDescriptor#parseName()}.
+     */
+    private String resolveFormationName(ForceDescriptor descriptor) {
+        if (formationNameProvider != null) {
+            String provided = formationNameProvider.apply(descriptor);
+            if (provided != null && !provided.isBlank()) {
+                return provided;
+            }
+        }
+        return descriptor.parseName();
+    }
+
+    /**
+     * Enables Model-accumulation mode: each Generate appends its rolled force to an in-dialog Model
+     * root rather than replacing the tree, so the player can build one command from several rolls before
+     * adding or committing it. Defaults to {@code true}; a host that wants each Generate to replace the last
+     * roll turns it off.
+     *
+     * @param enabled {@code true} to accumulate rolls into a Model
+     */
+    public void setAccumulateModel(boolean enabled) {
+        this.accumulateModel = enabled;
+        logger.info("[ForceGen] setAccumulateModel({})", enabled);
+        refreshCommandModelChrome();
+    }
+
+    /**
+     * Applies (or clears) the Command Designer's design-stage chrome around the tree. In accumulate
+     * mode the tree gets a "Command Model (Design)" titled border - so it never reads as the live TOE -
+     * and the status line under it shows either the empty-state hint or the running model size with a
+     * "not yet placed" reminder. With the model off, the border and status line are removed.
+     */
+    private void refreshCommandModelChrome() {
+        if (paneForceTree == null || lblModelStatus == null) {
+            return;
+        }
+        if (!accumulateModel) {
+            paneForceTree.setBorder(null);
+            lblModelStatus.setVisible(false);
+            return;
+        }
+        paneForceTree.setBorder(BorderFactory.createTitledBorder(
+              Messages.getString("ForceGeneratorDialog.commandModel.title")));
+        if (modelRoot == null) {
+            lblModelStatus.setText(Messages.getString("ForceGeneratorDialog.commandModel.empty"));
+        } else {
+            int unitCount = countModelUnits(modelRoot);
+            lblModelStatus.setText(Messages.getString("ForceGeneratorDialog.commandModel.status",
+                  unitCount, modelCommandCount));
+        }
+        lblModelStatus.setVisible(true);
+    }
+
+    /**
+     * Counts the included combat-unit leaves under {@code descriptor} - the units that will actually be
+     * committed. A leaf counts only when it is {@link ForceDescriptor#isIncluded() included} and has an
+     * {@link ForceDescriptor#getEntity() entity}, so struck-out (excluded) units are not tallied.
+     *
+     * @param descriptor the model (or subtree) to count
+     *
+     * @return the number of included combat-unit leaves
+     */
+    private int countModelUnits(ForceDescriptor descriptor) {
+        boolean hasChildren = !descriptor.getSubForces().isEmpty() || !descriptor.getAttached().isEmpty();
+        if (!hasChildren) {
+            return (descriptor.isIncluded() && descriptor.getEntity() != null) ? 1 : 0;
+        }
+        int count = 0;
+        for (ForceDescriptor child : descriptor.getSubForces()) {
+            count += countModelUnits(child);
+        }
+        for (ForceDescriptor child : descriptor.getAttached()) {
+            count += countModelUnits(child);
+        }
+        return count;
+    }
+
+    /** The accumulated Model root in accumulate mode, or {@code null} if nothing has been rolled yet. */
+    public ForceDescriptor getModelRoot() {
+        return modelRoot;
+    }
+
+    /**
+     * The force rolled by the most recent Generate, or {@code null} if nothing has been generated yet.
+     * The tree root holds the rolled {@link ForceDescriptor}; hosts can commit exactly what the player
+     * previewed.
+     */
+    public ForceDescriptor getGeneratedForce() {
+        Object root = (forceTree == null) ? null : forceTree.getModel().getRoot();
+        return (root instanceof ForceDescriptor fd) ? fd : null;
     }
 
     public void setYear(int year) {
@@ -223,95 +601,113 @@ public class ForceGeneratorViewUi implements ActionListener {
     /**
      * Adds the chosen units to the game
      */
-    public void addChosenUnits(String playerName, ClientGUI clientGui) {
-        if ((null != forceTree.getModel().getRoot())
-              && (forceTree.getModel().getRoot() instanceof ForceDescriptor)) {
-            configureNetworks((ForceDescriptor) forceTree.getModel().getRoot());
-        }
+    public void addChosenUnits(Player owner, ClientGUI clientGui) {
+        ForceDescriptor generatedForce = getGeneratedForce();
+        // Only the units the user actually took are wired; the rest of the model is not going
+        // into the game.
+        C3NetworkConfigurator.configure(generatedForce, modelChosen::hasEntity);
 
         List<Entity> entities = new ArrayList<>(modelChosen.allEntities().size());
-        Client c = null;
-        if (null != playerName) {
-            c = (Client) clientGui.getLocalBots().get(playerName);
-        }
-        if (null == c) {
-            c = clientGui.getClient();
-        }
+        // the units belong to the player that was chosen; they are sent over this machine's own connection,
+        // because a remote player has no client here to send through
+        Client localClient = clientGui.getClient();
         for (Entity e : modelChosen.allEntities()) {
-            e.setOwner(c.getLocalPlayer());
-            if (!c.getGame().getPhase().isLounge()) {
-                e.setDeployRound(c.getGame().getRoundCount() + 1);
-                e.setGame(c.getGame());
+            e.setOwner(owner);
+            if (!localClient.getGame().getPhase().isLounge()) {
+                e.setDeployRound(localClient.getGame().getRoundCount() + 1);
+                e.setGame(localClient.getGame());
                 // Set these to true, otherwise units reinforced in
                 // the movement turn are considered selectable
                 e.setDone(true);
                 e.setUnloaded(true);
             }
+            if (e.getForceString().isBlank()) {
+                logger.warn("[ForceGen][ToE] add-to-game '{}' has a BLANK force string; ToE structure will be lost",
+                      e.getShortName());
+            } else {
+                logger.debug("[ForceGen][ToE] add-to-game '{}' forceString='{}'", e.getShortName(),
+                      e.getForceString());
+            }
             entities.add(e);
         }
-        c.sendAddEntity(entities);
+        // Rolls accumulated into one command each numbered their own formations from one; renumber the command
+        // as it stands so the game files every unit into the right formation and sees no wrapper above the top.
+        ForceDescriptor commandTop = (accumulateModel && (modelTop != null)) ? modelTop : generatedForce;
+        if (commandTop != null) {
+            commandTop.refreshForceStrings();
+        }
+        // After the owners are set, because a carrier only takes units on its own side, and before the
+        // batch goes out, because the server translates the ids written here when it adds the units.
+        CarrierLoadingConfigurator.configure(generatedForce, modelChosen::hasEntity);
+        localClient.sendAddEntity(entities);
 
-        String msg = clientGui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: " + playerName
+        String msg = clientGui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: "
+              + owner.getName()
               + " [" + entities.size() + " units]";
         clientGui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
 
         modelChosen.clearData();
     }
 
-    private void configureNetworks(ForceDescriptor fd) {
-        if (fd.getFlags().contains("c3")) {
-            Entity master = fd.getSubForces().stream().map(ForceDescriptor::getEntity)
-                  .filter(en -> modelChosen.hasEntity(en)
-                        && (en.hasC3M() || en.hasC3MM()))
-                  .findFirst().orElse(null);
-            if (null != master) {
-                master.setC3UUID();
-                int c3s = 0;
-                for (ForceDescriptor sf : fd.getSubForces()) {
-                    if (modelChosen.hasEntity(sf.getEntity())
-                          && !sf.getEntity().getExternalIdAsString().equals(master.getExternalIdAsString())
-                          && sf.getEntity().hasC3S()) {
-                        sf.getEntity().setC3UUID();
-                        sf.getEntity().setC3MasterIsUUIDAsString(master.getC3UUIDAsString());
-                        c3s++;
-                        if (c3s == 3) {
-                            break;
-                        }
-                    }
-                }
-            }
-        } else {
-            // Even if we haven't reworked this into a full C3i network, we can still
-            // connect
-            // any C3i units that happen to be present.
-            String netId = null;
-            int nodes = 0;
-            for (ForceDescriptor sf : fd.getSubForces()) {
-                if (modelChosen.hasEntity(sf.getEntity())
-                      && sf.getEntity().hasC3i()) {
-                    sf.getEntity().setC3UUID();
-                    if (null == netId) {
-                        netId = sf.getEntity().getC3UUIDAsString();
-                        nodes++;
-                    } else {
-                        int pos = sf.getEntity().getFreeC3iUUID();
-                        if (pos >= 0) {
-                            sf.getEntity().setC3iNextUUIDAsString(pos, netId);
-                            nodes++;
-                        }
-                    }
-                }
-                if (nodes >= Entity.MAX_C3i_NODES) {
-                    break;
-                }
-            }
+
+    /**
+     * @return what the generated force was rolled for - faction, command, year and rating - or
+     *       {@code null} when nothing has been generated yet
+     */
+    public @Nullable GenerationContext getGenerationContext() {
+        if (!(forceTree.getModel().getRoot() instanceof ForceDescriptor root)) {
+            return null;
         }
-        fd.getSubForces().forEach(this::configureNetworks);
-        fd.getAttached().forEach(this::configureNetworks);
+        return new GenerationContext(root.getFaction(), root.getYear(), root.getRating(),
+              GenerationContext.Source.FORCE_GENERATOR);
     }
 
     private void setGeneratedForce(ForceDescriptor fd) {
-        forceTree.setModel(new ForceTreeModel(fd));
+        // A null descriptor means Clear Force. The accumulated Command Model has to go with the tree:
+        // leaving it behind lets the next Generate fold the new roll into the command the player just
+        // cleared, so the cleared units reappear alongside the newly generated ones.
+        if (fd == null) {
+            clearAccumulatedModel();
+        }
+        // In accumulate mode each roll is appended to the Model root and the tree shows the whole
+        // accumulating command; otherwise the roll replaces the tree (standalone behavior).
+        ForceDescriptor displayRoot = fd;
+        if (accumulateModel && fd != null) {
+            if (modelRoot == null) {
+                modelRoot = new ForceDescriptor();
+                modelRoot.setName("Command Model");
+            }
+            // A rolled command carries no name of its own, so its formation would commit under the bare
+            // echelon name ("Battalion"); stamp the unit type in so it reads "Battle Armor Battalion".
+            ensureDescriptiveName(fd);
+            modelTop = accumulateIntoModel(modelTop, fd);
+            // Every roll brings its own ships; the command lists them in one place, under its top node.
+            TransportBranchMerger.foldInto(modelTop, fd);
+            // Keep the wrapper holding exactly the current top command.
+            modelRoot.getSubForces().clear();
+            modelRoot.addSubForce(modelTop);
+            modelCommandCount++;
+            displayRoot = modelRoot;
+            logger.info("[ForceGen] accumulated roll id={} (echelon={}) into Model; model top='{}' echelon={}, {} command(s) total",
+                  System.identityHashCode(fd), fd.getEchelon(), modelTop.parseName(),
+                  modelTop.getEchelon(), modelCommandCount);
+            logModelTree(modelTop, 0);
+        } else {
+            logger.info("[ForceGen] setGeneratedForce (accumulate={}, fd={}) - replacing tree",
+                  accumulateModel, fd != null);
+        }
+        forceTree.setModel(new ForceTreeModel(displayRoot));
+        if (accumulateModel && (displayRoot != null)) {
+            // The options panel summarised the roll that just landed; the player is building a command, so the
+            // summary should count everything accumulated so far.
+            panControls.updateSummaryTable(displayRoot);
+        }
+        expandTopLevels();
+        // A new force invalidates the previous search; clearing the field re-runs the (now empty)
+        // search via the document listener, resetting the match list and status.
+        if (txtSearch != null) {
+            txtSearch.setText("");
+        }
 
         if (null != fd) {
             lblOrganization.setText(Ruleset.findRuleset(fd).getEschelonNames(fd.getUnitType() == null
@@ -325,22 +721,277 @@ public class ForceGeneratorViewUi implements ActionListener {
             lblFaction.setText("");
             lblRating.setText("");
         }
+
+        // Update the design-stage status line for the model's new size.
+        refreshCommandModelChrome();
+        fireToeChanged();
+        if (forceGeneratedListener != null) {
+            forceGeneratedListener.accept(fd);
+        }
+    }
+
+    /**
+     * Discards the accumulated Command Model so the next Generate starts a fresh command. Called when
+     * the force is cleared; without it the next roll is folded into the model that was just cleared
+     * and the discarded units reappear in the tree beside the newly generated ones.
+     */
+    private void clearAccumulatedModel() {
+        if (modelRoot == null && modelTop == null && modelCommandCount == 0) {
+            return;
+        }
+        logger.debug("[ForceGen] Clear Force: discarding accumulated Command Model ({} command(s))",
+              modelCommandCount);
+        modelRoot = null;
+        modelTop = null;
+        modelCommandCount = 0;
+    }
+
+    /**
+     * Folds a freshly rolled command into the running model by echelon, so the model reads as one
+     * command structure rather than a flat pile of rolls:
+     *
+     * <ul>
+     *   <li><b>Smaller than the current top</b> (lower echelon) - tucked under the current top command
+     *       (for example a Battle Armor company generated after a regiment nests inside that
+     *       regiment).</li>
+     *   <li><b>Larger than the current top</b> (higher echelon) - becomes the new top and the previous
+     *       top nests inside it.</li>
+     *   <li><b>Same echelon</b> - a synthetic parent one echelon up is created and both peers nest
+     *       inside it (for example two regiments end up under a synthesized brigade).</li>
+     * </ul>
+     *
+     * @param currentTop the current model top, or {@code null} if this is the first roll
+     * @param fd         the newly rolled command
+     *
+     * @return the model top after folding {@code fd} in
+     */
+    private ForceDescriptor accumulateIntoModel(ForceDescriptor currentTop, ForceDescriptor fd) {
+        if (currentTop == null) {
+            return fd;
+        }
+        int topEchelon = echelonOf(currentTop);
+        int newEchelon = echelonOf(fd);
+        if (newEchelon < topEchelon) {
+            currentTop.addSubForce(fd);
+            return currentTop;
+        }
+        if (newEchelon > topEchelon) {
+            fd.addSubForce(currentTop);
+            return fd;
+        }
+        ForceDescriptor parent = synthesizeParentCommand(currentTop, topEchelon + 1);
+        parent.addSubForce(currentTop);
+        parent.addSubForce(fd);
+        return parent;
+    }
+
+    /** The descriptor's echelon, treating a {@code null} echelon as 0 (the smallest) for comparison. */
+    private int echelonOf(ForceDescriptor descriptor) {
+        Integer echelon = descriptor.getEchelon();
+        return (echelon == null) ? 0 : echelon;
+    }
+
+    /**
+     * Builds an empty container command one echelon above two same-sized peers (for example a brigade
+     * over two regiments). The container borrows the child's faction, unit type, and year so the
+     * ruleset can resolve the correct echelon name for the campaign's faction; if the ruleset has no
+     * name for that echelon, a generic "Command" label is used.
+     *
+     * @param child   a command being placed under the new container, used for faction/context
+     * @param echelon the echelon for the new container (one above the peers)
+     *
+     * @return the synthesized parent command
+     */
+    private ForceDescriptor synthesizeParentCommand(ForceDescriptor child, int echelon) {
+        ForceDescriptor parent = new ForceDescriptor();
+        parent.setEchelon(echelon);
+        parent.setFaction(child.getFaction());
+        parent.setUnitType(child.getUnitType());
+        parent.setYear(child.getYear());
+        ensureDescriptiveName(parent);
+        if (parent.getName() == null || parent.getName().isBlank()) {
+            // The ruleset has no echelon name at this level; fall back to a generic label.
+            parent.setName("Command");
+        }
+        return parent;
+    }
+
+    /**
+     * Stamps a unit-type-qualified name onto a command whose displayed name is just the bare echelon,
+     * so the model tree and committed TOE read "Battle Armor Battalion" instead of "Battalion". This
+     * looks at the *resolved* display name ({@link ForceDescriptor#parseName()}), not the raw name,
+     * because a rolled command often carries a template like {@code "{ordinal} Battalion"} that resolves
+     * to just "Battalion"; a name that already includes the unit type (or a descriptor with no unit
+     * type / no echelon name) is left untouched.
+     *
+     * @param descriptor the command to name in place
+     */
+    private void ensureDescriptiveName(ForceDescriptor descriptor) {
+        String echelonName = Ruleset.findRuleset(descriptor).getEschelonName(descriptor);
+        if (echelonName == null || echelonName.isBlank()) {
+            logger.info("[ForceGen] ensureDescriptiveName: no echelon name for id={} echelon={}; leaving name='{}'",
+                  System.identityHashCode(descriptor), descriptor.getEchelon(), descriptor.parseName());
+            return;
+        }
+        Integer unitType = descriptor.getUnitType();
+        if (unitType == null) {
+            // No unit type to prepend; the bare echelon name is the best available.
+            return;
+        }
+        String unitTypeName = UnitType.getTypeDisplayableName(unitType);
+        String displayName = descriptor.parseName();
+        if (displayName != null && displayName.contains(unitTypeName)) {
+            // The resolved name already carries the unit type (or a meaningful name), so keep it.
+            return;
+        }
+        String descriptiveName = unitTypeName + " " + echelonName;
+        logger.info("[ForceGen] ensureDescriptiveName: id={} '{}' -> '{}'",
+              System.identityHashCode(descriptor), displayName, descriptiveName);
+        descriptor.setName(descriptiveName);
+    }
+
+    /**
+     * Logs the model's command structure to depth 1 (the top command and its direct children) for
+     * diagnostics. Bounded on purpose so a large model does not flood the log with every leaf unit.
+     *
+     * @param node  the model node to log
+     * @param depth the current depth; recursion stops after depth 1
+     */
+    private void logModelTree(ForceDescriptor node, int depth) {
+        logger.info("[ForceGen]   {}id={} name='{}' echelon={} unitType={} desc='{}'",
+              "  ".repeat(depth), System.identityHashCode(node), node.parseName(),
+              node.getEchelon(), node.getUnitType(), node.getDescription());
+        if (depth >= 1) {
+            return;
+        }
+        for (ForceDescriptor child : node.getSubForces()) {
+            logModelTree(child, depth + 1);
+        }
+    }
+
+    /**
+     * Swaps the ship for another design that does the same job, then shows the tree and the chosen-units table as
+     * they now stand. The old ship and the complement it carried leave the chosen list, since those entities no
+     * longer exist in the tree; the player picks the new ones if they want them.
+     *
+     * @param ship the ship node the player right-clicked
+     */
+    private void rerollShip(ForceDescriptor ship) {
+        List<Entity> before = new ArrayList<>();
+        ship.addAllEntities(before);
+        ShipReroller.Outcome outcome = ShipReroller.reroll(ship);
+        if (outcome == null) {
+            return;
+        }
+        modelChosen.removeEntities(before);
+        Object root = forceTree.getModel().getRoot();
+        if (root instanceof ForceDescriptor rootDescriptor) {
+            forceTree.setModel(new ForceTreeModel(rootDescriptor));
+            expandTopLevels();
+            if (accumulateModel) {
+                panControls.updateSummaryTable(rootDescriptor);
+            }
+        }
+        fireToeChanged();
+        refreshCommandModelChrome();
+    }
+
+    /**
+     * Runs the order-of-battle search against the current field text and jumps to the first match. Matches are
+     * case-insensitive substring hits on each node's unit name/chassis/model, pilot name, ship fluff name, and
+     * formation/cluster name. Non-destructive: the tree is only expanded and selected, never rebuilt or filtered.
+     */
+    private void runToeSearch() {
+        searchMatches.clear();
+        searchIndex = -1;
+        String query = txtSearch.getText().trim().toLowerCase();
+        Object root = forceTree.getModel().getRoot();
+        if (!query.isEmpty() && (root instanceof ForceDescriptor rootForce)) {
+            collectToeMatches(rootForce, new ArrayList<>(), query, searchMatches);
+        }
+        if (searchMatches.isEmpty()) {
+            forceTree.clearSelection();
+            lblSearchStatus.setText(query.isEmpty()
+                  ? ""
+                  : Messages.getString("ForceGeneratorDialog.search.noMatches"));
+        } else {
+            gotoToeMatch(1);
+        }
+    }
+
+    /** Depth-first walk that records the {@link TreePath} of every node matching {@code query}. */
+    private void collectToeMatches(ForceDescriptor node, List<Object> ancestors, String query,
+          List<TreePath> out) {
+        List<Object> path = new ArrayList<>(ancestors);
+        path.add(node);
+        if (matchesToeQuery(node, query)) {
+            out.add(new TreePath(path.toArray()));
+        }
+        for (Object child : node.getAllChildren()) {
+            if (child instanceof ForceDescriptor childForce) {
+                collectToeMatches(childForce, path, query, out);
+            }
+        }
+    }
+
+    /** True when {@code query} (already lower-case) is a substring of any of the node's display text. */
+    private boolean matchesToeQuery(ForceDescriptor fd, String query) {
+        StringBuilder haystack = new StringBuilder();
+        appendSearchable(haystack, fd.parseName());
+        appendSearchable(haystack, fd.getDescription());
+        appendSearchable(haystack, fd.getFluffName());
+        appendSearchable(haystack, fd.getModelName());
+        if (fd.getCo() != null) {
+            appendSearchable(haystack, fd.getCo().getName());
+        }
+        if (fd.getXo() != null) {
+            appendSearchable(haystack, fd.getXo().getName());
+        }
+        Entity en = fd.getEntity();
+        if (en != null) {
+            appendSearchable(haystack, en.getShortName());
+            appendSearchable(haystack, en.getChassis());
+            appendSearchable(haystack, en.getModel());
+        }
+        return haystack.toString().toLowerCase().contains(query);
+    }
+
+    private static void appendSearchable(StringBuilder haystack, String value) {
+        if ((value != null) && !value.isBlank()) {
+            haystack.append(value).append(' ');
+        }
+    }
+
+    /**
+     * Steps the selection to the next ({@code delta > 0}) or previous ({@code delta < 0}) match, wrapping around,
+     * scrolls it into view, and updates the "k / N" status. No-op with no matches.
+     */
+    private void gotoToeMatch(int delta) {
+        if (searchMatches.isEmpty()) {
+            return;
+        }
+        int size = searchMatches.size();
+        searchIndex = (((searchIndex + delta) % size) + size) % size;
+        TreePath path = searchMatches.get(searchIndex);
+        forceTree.setSelectionPath(path);
+        forceTree.scrollPathToVisible(path);
+        lblSearchStatus.setText((searchIndex + 1) + " / " + size);
     }
 
     private final MouseListener treeMouseListener = new MouseAdapter() {
         @Override
-        public void mousePressed(MouseEvent evt) {
-            showPopup(evt);
+        public void mousePressed(MouseEvent event) {
+            showPopup(event);
         }
 
         @Override
-        public void mouseReleased(MouseEvent evt) {
-            showPopup(evt);
+        public void mouseReleased(MouseEvent event) {
+            showPopup(event);
         }
 
-        private void showPopup(MouseEvent evt) {
-            if (evt.isPopupTrigger()) {
-                TreePath path = forceTree.getPathForLocation(evt.getX(), evt.getY());
+        private void showPopup(MouseEvent event) {
+            if (event.isPopupTrigger()) {
+                TreePath path = forceTree.getPathForLocation(event.getX(), event.getY());
                 if (path == null) {
                     return;
                 }
@@ -348,32 +999,364 @@ public class ForceGeneratorViewUi implements ActionListener {
                 if (node instanceof ForceDescriptor fd) {
                     JPopupMenu menu = new JPopupMenu();
 
-                    JMenuItem item = new JMenuItem("Add to game");
-                    item.addActionListener(ev -> modelChosen.addEntities(fd));
-                    menu.add(item);
+                    // Include/exclude is available in both hosts. MekHQ skips excluded nodes when it
+                    // commits the tree into a TOE; standalone Random Army skips them in "Add to game"
+                    // (see ChosenEntityModel.addEntities). The wording follows the host.
+                    String target = toeExclusionMode ? "TOE" : "force";
+                    String toggleText = fd.isIncluded() ? "Exclude from " + target : "Include in " + target;
+                    JMenuItem toggleItem = new JMenuItem(toggleText);
+                    toggleItem.addActionListener(actionEvent -> {
+                        fd.setIncludedRecursively(!fd.isIncluded());
+                        // Exclusions change what a commit produces (dropped formations, shifted
+                        // callsigns), so let the host refresh before the repaint renders names.
+                        fireToeChanged();
+                        forceTree.repaint();
+                        // The status line counts included units, so re-tally after a toggle.
+                        refreshCommandModelChrome();
+                    });
+                    menu.add(toggleItem);
+                    if (ShipReroller.isShip(fd)) {
+                        JMenuItem rerollItem = new JMenuItem(Messages.getString("ForceGeneratorDialog.rerollShip"));
+                        rerollItem.setToolTipText(Messages.getString("ForceGeneratorDialog.rerollShip.tooltip"));
+                        rerollItem.addActionListener(actionEvent -> rerollShip(fd));
+                        menu.add(rerollItem);
+                    }
 
-                    item = new JMenuItem("Export as MUL");
-                    item.addActionListener(ev -> panControls.exportMUL(fd));
-                    menu.add(item);
-                    menu.show(evt.getComponent(), evt.getX(), evt.getY());
+                    menu.add(buildChangeFormationMenu(fd));
+                    menu.add(buildAddSubForceMenu(fd));
+
+                    // A unit in the tree gets the same readouts the lobby offers, so a player can look a Mek over
+                    // where they are rather than adding it to the chosen list first.
+                    if (fd.getEntity() != null) {
+                        menu.addSeparator();
+                        menu.add(unitReadoutItem("RandomArmyDialog.View", fd.getEntity(),
+                              entities -> LobbyUtility.mekReadoutAction(entities, true, true, parentFrame)));
+                        menu.add(unitReadoutItem("RandomArmyDialog.ViewBV", fd.getEntity(),
+                              entities -> LobbyUtility.mekBVAction(entities, true, true, parentFrame)));
+                        menu.add(unitReadoutItem("RandomArmyDialog.ViewCost", fd.getEntity(),
+                              entities -> LobbyUtility.mekCostAction(entities, true, true, parentFrame)));
+                    }
+
+                    if (!toeExclusionMode) {
+                        JMenuItem addItem = new JMenuItem("Add to game");
+                        addItem.addActionListener(actionEvent -> modelChosen.addEntities(fd));
+                        menu.add(addItem);
+                    }
+
+                    JMenuItem exportItem = new JMenuItem("Export as MUL");
+                    exportItem.addActionListener(actionEvent -> panControls.exportMUL(fd));
+                    menu.add(exportItem);
+                    menu.show(event.getComponent(), event.getX(), event.getY());
                 }
             }
         }
     };
 
+    /**
+     * The formations this node could be given instead of the one it has.
+     *
+     * <p>Offered from the node's own rule, so nothing here is a formation the ruleset would have refused it. A node
+     * whose rule allowed only one formation - command lances, mostly - has no choice to offer and gets no menu.</p>
+     *
+     * @param formation the node the player right-clicked
+     *
+     * @return the submenu, or a disabled item explaining why this node has nothing to choose between
+     */
+    private JMenuItem buildChangeFormationMenu(ForceDescriptor formation) {
+        String selected = panControls.getSelectedFormation();
+        Map<String, Integer> offered = formation.getEligibleFormations();
+        String current = (formation.getFormation() == null) ? null : formation.getFormation().getName();
+        logger.debug("[ChangeFormation] '{}' echelon={} formation={} offers {}; palette selection is '{}'",
+              formation.parseName(), formation.getEchelon(), current, offered.keySet(), selected);
+
+        JMenuItem item = new JMenuItem(Messages.getString("ForceGeneratorDialog.changeFormation"));
+        // Shown even when it cannot be used, with the reason, rather than vanishing: a menu item that appears on
+        // some nodes and not others reads as a broken feature, and the player cannot tell which it is.
+        if (selected == null) {
+            item.setEnabled(false);
+            item.setToolTipText(Messages.getString("ForceGeneratorDialog.changeFormation.noSelection"));
+            logger.debug("[ChangeFormation] '{}': disabled - no formation picked in the palette",
+                  formation.parseName());
+            return item;
+        }
+        if (offered.isEmpty()) {
+            item.setEnabled(false);
+            item.setToolTipText(Messages.getString("ForceGeneratorDialog.changeFormation.notAFormation"));
+            logger.debug("[ChangeFormation] '{}': disabled - not a formation node", formation.parseName());
+            return item;
+        }
+        FormationType formationType = FormationType.getFormationType(selected);
+        if (formationType == null) {
+            item.setEnabled(false);
+            logger.warn("[ChangeFormation] palette holds '{}', which is not a registered formation type", selected);
+            return item;
+        }
+
+        item.setText(Messages.getString("ForceGeneratorDialog.changeFormation.to", formationType.getName()));
+        boolean offersIt = offered.containsKey(selected);
+        item.setToolTipText(offersIt
+              ? null
+              : Messages.getString("ForceGeneratorDialog.changeFormation.notOffered", formationType.getName()));
+        item.addActionListener(event -> confirmAndChangeFormation(formation, formationType, offersIt));
+        return item;
+    }
+
+    /**
+     * Offers to add another formation of the picked type under this one.
+     *
+     * <p>The new formation copies the shape of a sibling - its echelon, how many units it holds and the rule it
+     * generates by - so it is legal by construction rather than assembled from guesses about what the ruleset
+     * would have allowed here.</p>
+     *
+     * @param parent the node right-clicked
+     *
+     * @return the menu item, disabled with a reason when nothing can be added
+     */
+    private JMenuItem buildAddSubForceMenu(ForceDescriptor parent) {
+        String selected = panControls.getSelectedFormation();
+        JMenuItem item = new JMenuItem(Messages.getString("ForceGeneratorDialog.addFormation"));
+        ForceDescriptor template = subForceTemplate(parent);
+        logger.debug("[AddFormation] '{}' echelon={} holds {} subforce(s); template={}; palette selection '{}'",
+              parent.parseName(), parent.getEchelon(), parent.getSubForces().size(),
+              (template == null) ? "none" : template.parseName(), selected);
+
+        if (selected == null) {
+            item.setEnabled(false);
+            item.setToolTipText(Messages.getString("ForceGeneratorDialog.changeFormation.noSelection"));
+            return item;
+        }
+        if (template == null) {
+            item.setEnabled(false);
+            item.setToolTipText(Messages.getString("ForceGeneratorDialog.addFormation.noTemplate"));
+            logger.debug("[AddFormation] '{}': disabled - no sibling formation whose shape could be copied",
+                  parent.parseName());
+            return item;
+        }
+        FormationType formationType = FormationType.getFormationType(selected);
+        if (formationType == null) {
+            item.setEnabled(false);
+            return item;
+        }
+        item.setText(Messages.getString("ForceGeneratorDialog.addFormation.of", formationType.getName()));
+        item.addActionListener(event -> confirmAndAddSubForce(parent, template, formationType));
+        return item;
+    }
+
+    /**
+     * A child of this node whose shape a new one can copy.
+     *
+     * <p>Formation-bearing children only: the units inside a lance are children too, and copying one of those
+     * would add a single unit rather than a formation.</p>
+     *
+     * @param parent the node to add under
+     *
+     * @return a child to copy, or {@code null} when this node holds no formations
+     */
+    private static @Nullable ForceDescriptor subForceTemplate(ForceDescriptor parent) {
+        for (ForceDescriptor child : parent.getSubForces()) {
+            if (!child.getEligibleFormations().isEmpty() || (child.getFormation() != null)) {
+                return child;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Asks before adding a formation, then adds and generates it.
+     *
+     * @param parent        the node to add under
+     * @param template      the sibling whose shape the new formation copies
+     * @param formationType the formation to give it
+     */
+    private void confirmAndAddSubForce(ForceDescriptor parent, ForceDescriptor template,
+          FormationType formationType) {
+        int answer = JOptionPane.showConfirmDialog(parentFrame,
+              Messages.getString("ForceGeneratorDialog.addFormation.confirm", formationType.getName(),
+                    parent.parseName()),
+              Messages.getString("ForceGeneratorDialog.addFormation"), JOptionPane.OK_CANCEL_OPTION,
+              JOptionPane.QUESTION_MESSAGE);
+        if (answer != JOptionPane.OK_OPTION) {
+            logger.debug("[AddFormation] '{}': cancelled at the confirmation", parent.parseName());
+            return;
+        }
+
+        ForceDescriptor added = parent.createChild(parent.getSubForces().size());
+        // createChild inherits the parent's weight class, which is the weight of the units the parent already
+        // holds. Keeping it refuses any formation that needs different units - a Heavy Recon lance asked for
+        // inside a medium company came out an ordinary lance. The formation's own requirements decide instead.
+        added.setWeightClass(null);
+        added.setEchelon(template.getEchelon());
+        // The sibling's name pattern, not its parsed name: the pattern is what turns into "C-4 Recon Lance" once
+        // the new formation has a position among its siblings.
+        added.setName(template.getName());
+        added.setEligibleFormations(template.getEligibleFormations());
+        added.setGenerationRule(template.getGenerationRule());
+        added.setFormationType(formationType);
+        // As many unit slots as its sibling holds, so a lance comes out a lance and a Clan star a star.
+        for (int slot = 0; slot < template.getSubForces().size(); slot++) {
+            added.addSubForce(added.createChild(slot));
+        }
+        parent.addSubForce(added);
+        // Renumber the siblings so the new formation is given a position and the others still read correctly.
+        parent.assignPositions();
+        logger.info("[AddFormation] added a {} under '{}' with {} unit slot(s)", formationType.getName(),
+              parent.parseName(), template.getSubForces().size());
+
+        added.generateUnits(null, 0);
+        added.assignCommanders();
+        added.loadEntities(null, 0);
+        warnIfFormationWasDropped(added, formationType);
+        refreshTreeAfterEdit();
+    }
+
+    /**
+     * Asks before re-rolling a formation, because the units it holds are replaced.
+     *
+     * @param formation     the node to change
+     * @param formationType the formation to give it
+     * @param offeredByRules {@code true} when the node's own rule already allowed this formation
+     */
+    private void confirmAndChangeFormation(ForceDescriptor formation, FormationType formationType,
+          boolean offeredByRules) {
+        String question = Messages.getString(offeredByRules
+                    ? "ForceGeneratorDialog.changeFormation.confirm"
+                    : "ForceGeneratorDialog.changeFormation.confirmUnoffered",
+              formation.parseName(), formationType.getName());
+        int answer = JOptionPane.showConfirmDialog(parentFrame, question,
+              Messages.getString("ForceGeneratorDialog.changeFormation"), JOptionPane.OK_CANCEL_OPTION,
+              JOptionPane.QUESTION_MESSAGE);
+        if (answer != JOptionPane.OK_OPTION) {
+            logger.debug("[ChangeFormation] '{}': cancelled at the confirmation", formation.parseName());
+            return;
+        }
+        changeFormation(formation, formationType);
+    }
+
+    /**
+     * Gives one formation a different type and draws it again.
+     *
+     * <p>Only this branch of the tree is redrawn. Regenerating the whole force would replace every other unit the
+     * player has, which is not what changing one lance asks for.</p>
+     *
+     * @param formation     the node to change
+     * @param formationType the formation to give it
+     */
+    private void changeFormation(ForceDescriptor formation, FormationType formationType) {
+        logger.info("[ForceGen][ChangeFormation] '{}' {} -> {}", formation.parseName(),
+              (formation.getFormation() == null) ? "(none)" : formation.getFormation().getName(),
+              formationType.getName());
+        formation.setFormationType(formationType);
+        formation.clearGeneratedUnits();
+        formation.generateUnits(null, 0);
+        formation.assignCommanders();
+        formation.loadEntities(null, 0);
+        warnIfFormationWasDropped(formation, formationType);
+
+        refreshTreeAfterEdit();
+    }
+
+    /**
+     * Says so when a formation could not be built and quietly became an ordinary lance.
+     *
+     * <p>A formation whose requirements cannot be met from the units this faction and year can field is dropped by
+     * the generator and the lance is built normally instead. Nothing announced that: the only outward sign was the
+     * name keeping its plain form, which reads as the request having been ignored rather than as the force being
+     * unable to supply it.</p>
+     *
+     * @param formation the node that was just generated
+     * @param requested the formation that was asked for
+     */
+    private void warnIfFormationWasDropped(ForceDescriptor formation, FormationType requested) {
+        boolean kept = (formation.getFormation() != null)
+              && formation.getFormation().getName().equals(requested.getName());
+        if (kept) {
+            logger.info("[ChangeFormation] '{}' built as {}", formation.parseName(), requested.getName());
+            return;
+        }
+        logger.warn("[ChangeFormation] '{}' could not be built as {} for faction={} year={}; it was generated as"
+                    + " an ordinary formation instead", formation.parseName(), requested.getName(),
+              formation.getFaction(), formation.getYear());
+        JOptionPane.showMessageDialog(parentFrame,
+              Messages.getString("ForceGeneratorDialog.formationDropped", requested.getName(),
+                    formation.getFaction(), formation.getYear()),
+              Messages.getString("ForceGeneratorDialog.formationDropped.title"),
+              JOptionPane.WARNING_MESSAGE);
+    }
+
+    /**
+     * A menu item that opens one of the lobby's readouts for a single unit.
+     *
+     * @param messageKey the resource key for the item's text
+     * @param entity     the unit to show
+     * @param readout    the lobby action to run for it
+     *
+     * @return the menu item
+     */
+    private static JMenuItem unitReadoutItem(String messageKey, Entity entity,
+          Consumer<Collection<Entity>> readout) {
+        JMenuItem item = new JMenuItem(Messages.getString(messageKey));
+        item.addActionListener(event -> readout.accept(Set.of(entity)));
+        return item;
+    }
+
+    /**
+     * Rebuilds the tree after an edit, leaving it looking as it did.
+     *
+     * <p>The model has to be replaced for the tree to see the change, and that alone would collapse everything back
+     * to the root - so an edit three levels down would cost the player the whole view they were working in. The
+     * open branches and the selection are taken before and put back after.</p>
+     *
+     * <p>Branches inside the part that changed cannot come back, because their nodes no longer exist; a re-rolled
+     * lance holds different units than the ones that were on screen. Everything outside it is the same object it
+     * was, so its path still matches.</p>
+     */
+    private void refreshTreeAfterEdit() {
+        List<TreePath> expanded = new ArrayList<>();
+        for (int row = 0; row < forceTree.getRowCount(); row++) {
+            TreePath path = forceTree.getPathForRow(row);
+            if ((path != null) && forceTree.isExpanded(path)) {
+                expanded.add(path);
+            }
+        }
+        TreePath selected = forceTree.getSelectionPath();
+
+        Object root = forceTree.getModel().getRoot();
+        if (root instanceof ForceDescriptor displayRoot) {
+            forceTree.setModel(new ForceTreeModel(displayRoot));
+        }
+
+        // Collected in row order, so a parent is always restored before the children hanging off it.
+        int restored = 0;
+        for (TreePath path : expanded) {
+            forceTree.expandPath(path);
+            if (forceTree.isExpanded(path)) {
+                restored++;
+            }
+        }
+        if (selected != null) {
+            forceTree.setSelectionPath(selected);
+            forceTree.scrollPathToVisible(selected);
+        }
+        logger.debug("[ForceGen][Tree] rebuilt after an edit; reopened {} of {} branch(es)",
+              restored, expanded.size());
+
+        fireToeChanged();
+        refreshCommandModelChrome();
+    }
+
     private final MouseListener tableMouseListener = new MouseAdapter() {
         @Override
-        public void mousePressed(MouseEvent evt) {
-            showPopup(evt);
+        public void mousePressed(MouseEvent event) {
+            showPopup(event);
         }
 
         @Override
-        public void mouseReleased(MouseEvent evt) {
-            showPopup(evt);
+        public void mouseReleased(MouseEvent event) {
+            showPopup(event);
         }
 
-        private void showPopup(MouseEvent evt) {
-            if (evt.isPopupTrigger()) {
+        private void showPopup(MouseEvent event) {
+            if (event.isPopupTrigger()) {
                 if (tblChosen.getSelectedRowCount() > 0) {
                     JPopupMenu menu = new JPopupMenu();
 
@@ -381,7 +1364,7 @@ public class ForceGeneratorViewUi implements ActionListener {
                     int[] entityIDs = entities.stream().mapToInt(Integer::intValue).toArray();
 
                     JMenuItem item = new JMenuItem("Remove");
-                    item.addActionListener(ev -> modelChosen.removeEntities(entityIDs));
+                    item.addActionListener(actionEvent -> modelChosen.removeEntities(entityIDs));
                     menu.add(item);
 
                     // All command strings should follow the layout COMMAND|INFO|ID1,ID2,I3...
@@ -399,15 +1382,15 @@ public class ForceGeneratorViewUi implements ActionListener {
                     menu.add(UIUtil.menuItem(msgViewCost, FGV_COST + eIds, true, ForceGeneratorViewUi.this,
                           Integer.MIN_VALUE));
 
-                    menu.show(evt.getComponent(), evt.getX(), evt.getY());
+                    menu.show(event.getComponent(), event.getX(), event.getY());
                 }
             }
         }
     };
 
     @Override
-    public void actionPerformed(ActionEvent ev) {
-        StringTokenizer st = new StringTokenizer(ev.getActionCommand(), "|");
+    public void actionPerformed(ActionEvent event) {
+        StringTokenizer st = new StringTokenizer(event.getActionCommand(), "|");
         String command = "";
 
         if (st.hasMoreTokens()) {
@@ -435,18 +1418,18 @@ public class ForceGeneratorViewUi implements ActionListener {
 
     private final KeyListener tableKeyListener = new KeyListener() {
         @Override
-        public void keyTyped(KeyEvent evt) {
+        public void keyTyped(KeyEvent event) {
 
         }
 
         @Override
-        public void keyPressed(KeyEvent evt) {
+        public void keyPressed(KeyEvent event) {
 
         }
 
         @Override
-        public void keyReleased(KeyEvent evt) {
-            if ((evt.getKeyCode() == KeyEvent.VK_DELETE) && (tblChosen.getSelectedRowCount() > 0)) {
+        public void keyReleased(KeyEvent event) {
+            if ((event.getKeyCode() == KeyEvent.VK_DELETE) && (tblChosen.getSelectedRowCount() > 0)) {
                 modelChosen.removeEntities(tblChosen.getSelectedRows());
             }
         }
@@ -518,9 +1501,85 @@ public class ForceGeneratorViewUi implements ActionListener {
         }
     }
 
-    private static class UnitRenderer extends DefaultTreeCellRenderer {
+    // Non-static so the formation branch can consult the host-supplied formationNameProvider.
+    private class UnitRenderer extends DefaultTreeCellRenderer {
+        // HTML color for nodes the user has excluded from the TOE (rendered struck out).
+        private static final String EXCLUDED_COLOR_HTML = "#C84B4B";
+
+        // Fallback rank-int -> short title used when the ruleset XML did not set an explicit
+        // title= attribute on the <co>/<xo> element (the typical case — mm-data only sets title
+        // for special honorifics like "Aide" or "ovKhan"). Values match the integer constants in
+        // mm-data/data/forcegenerator/faction_rules/constants.txt. Where IS and Clan share the
+        // same int the IS officer title is preferred since rulesets that need Clan/CS variants
+        // already populate title= explicitly.
+        private static final Map<Integer, String> DEFAULT_RANK_TITLES = Map.ofEntries(
+              Map.entry(12, "Sergeant"),
+              Map.entry(32, "Lieutenant JG"),
+              Map.entry(33, "Lieutenant"),
+              Map.entry(34, "Captain"),
+              Map.entry(35, "Major"),
+              Map.entry(37, "Lt. Colonel"),
+              Map.entry(38, "Colonel"),
+              Map.entry(39, "Lt. General"),
+              Map.entry(42, "Maj. General"),
+              Map.entry(43, "General"),
+              Map.entry(46, "Loremaster"),
+              Map.entry(47, "saKhan"),
+              Map.entry(48, "Khan"));
+
         public UnitRenderer() {
 
+        }
+
+        /**
+         * Builds the "Captain " / "CO: " prefix that precedes a commander's name in the tree. Resolution order:
+         * <ol>
+         *   <li>An explicit {@code title=} attribute from the ruleset XML (honorifics like "Aide", "ovKhan").</li>
+         *   <li>The faction-specific rank from {@code data/universe/ranks.xml} (e.g. "Tai-i" for DCMS, "Star Captain"
+         *       for CLAN) — looked up using the ratgen rank-system integer the ruleset assigned to this force.</li>
+         *   <li>A generic IS-leaning rank-int → title map as a safety net if {@code ranks.xml} is unavailable.</li>
+         *   <li>The {@code "CO: "} / {@code "XO: "} role marker as a last resort.</li>
+         * </ol>
+         */
+        private static String commanderPrefix(CrewDescriptor crew, String roleFallback) {
+            String title = crew.getTitle();
+            if (title != null && !title.isBlank()) {
+                return title.endsWith(" ") ? title : title + " ";
+            }
+            Integer rankSystemIndex = (crew.getAssignment() == null)
+                  ? null : crew.getAssignment().getRankSystem();
+            String factionRankName = Ranks.getInstance()
+                  .resolveRankName(rankSystemIndex, crew.getRank())
+                  .orElse(null);
+            if (factionRankName != null && !factionRankName.isBlank()) {
+                return factionRankName + " ";
+            }
+            String rankName = DEFAULT_RANK_TITLES.get(crew.getRank());
+            if (rankName != null) {
+                return rankName + " ";
+            }
+            return roleFallback + ": ";
+        }
+
+        /**
+         * The unit's Campaign Operations role, for the end of its line in the tree.
+         *
+         * <p>Read from the unit summary rather than the entity, because the role is what the summary carries and
+         * what the formation criteria are tested against.</p>
+         *
+         * @param entity the unit, may be {@code null}
+         *
+         * @return the role suffix, or an empty string when the unit has no role recorded
+         */
+        private static String unitRoleSuffix(@Nullable Entity entity) {
+            if (entity == null) {
+                return "";
+            }
+            MekSummary summary = MekSummaryCache.getInstance().getMek(entity.getShortNameRaw());
+            if ((summary == null) || (summary.getRole() == null)) {
+                return "";
+            }
+            return " - " + summary.getRole();
         }
 
         @Override
@@ -537,22 +1596,35 @@ public class ForceGeneratorViewUi implements ActionListener {
 
             ForceDescriptor fd = (ForceDescriptor) value;
             if (fd.isElement()) {
-                StringBuilder name = new StringBuilder();
-                String uname;
+                String commander;
                 if (fd.getCo() == null) {
-                    name.append("<font color='red'>")
-                          .append(Messages.getString("ForceGeneratorDialog.noCrew"))
-                          .append("</font>");
+                    commander = "<font color='red'>"
+                          + Messages.getString("ForceGeneratorDialog.noCrew") + "</font>";
                 } else {
-                    name.append(fd.getCo().getName());
-                    name.append(" (").append(fd.getCo().getGunnery()).append("/").append(fd.getCo().getPiloting())
-                          .append(")");
+                    commander = fd.getCo().getName()
+                          + " (" + fd.getCo().getGunnery() + "/" + fd.getCo().getPiloting() + ")";
                 }
-                uname = "<i>" + fd.getModelName() + "</i>";
-                if (fd.getFluffName() != null) {
-                    uname += "<br /><i>" + fd.getFluffName() + "</i>";
+                Entity en = fd.getEntity();
+                if ((en != null) && en.isLargeCraft()) {
+                    // Large craft (WarShip, DropShip, JumpShip, Space Station) read better
+                    // ship-first, the way a fleet roster is listed: ship name and class on
+                    // the top line, commander (skill) beneath. Chassis and model, like every other
+                    // node: a Union (2708) carries Meks and a Union (2710) (CV) carries none.
+                    String shipClass = "<i>" + en.getShortName() + "</i>";
+                    String shipName = fd.getFluffName();
+                    String topLine = ((shipName != null) && !shipName.isBlank())
+                          ? "<b>" + shipName + "</b>, " + shipClass
+                          : shipClass;
+                    setText("<html>" + topLine + "<br />" + commander + "</html>");
+                } else {
+                    String uname = "<i>" + fd.getModelName() + "</i>";
+                    if (fd.getFluffName() != null) {
+                        uname += "<br /><i>" + fd.getFluffName() + "</i>";
+                    }
+                    // The unit's own role is what a formation's requirements are written against, so showing it
+                    // here is what lets a glance at the tree say whether a lance really is what it claims to be.
+                    setText("<html>" + commander + ", " + uname + unitRoleSuffix(en) + "</html>");
                 }
-                setText("<html>" + name + ", " + uname + "</html>");
                 if (fd.getEntity() != null) {
                     try {
                         setIcon(new ImageIcon(MMStaticDirectoryManager.getMekTileset().imageFor(fd.getEntity())));
@@ -562,20 +1634,42 @@ public class ForceGeneratorViewUi implements ActionListener {
                 }
             } else {
                 StringBuilder desc = new StringBuilder("<html>");
-                desc.append(fd.parseName());
+                String parsedName = resolveFormationName(fd);
                 String description = fd.getDescription();
-                if (description != null && !description.isBlank()) {
-                    desc.append("<br />").append(description);
+                boolean hasName = parsedName != null && !parsedName.isBlank();
+                boolean hasDescription = description != null && !description.isBlank();
+                // Collapse "A Company" + "Heavy Mek Company" onto one row as
+                // "<b>A Company</b> (Heavy Mek Company)". Formation name is bolded so it pops at
+                // a glance when scrolling a battalion-sized tree; the descriptor (weight + unit
+                // type + role) is italicized to read as a supplementary label. When only one
+                // side is populated, it is rendered bold as the row's primary identifier.
+                if (hasName && hasDescription) {
+                    desc.append("<b>").append(parsedName).append("</b>")
+                          .append(" <i>(").append(description).append(")</i>");
+                } else if (hasName) {
+                    desc.append("<b>").append(parsedName).append("</b>");
+                } else if (hasDescription) {
+                    desc.append("<b>").append(description).append("</b>");
                 }
                 if (fd.getCo() != null) {
-                    desc.append("<br />").append(fd.getCo().getTitle() == null ? "CO: " : fd.getCo().getTitle());
+                    desc.append("<br />").append(commanderPrefix(fd.getCo(), "CO"));
                     desc.append(fd.getCo().getName());
                 }
                 if (fd.getXo() != null) {
-                    desc.append("<br />").append(fd.getXo().getTitle() == null ? "XO: " : fd.getXo().getTitle());
+                    desc.append("<br />").append(commanderPrefix(fd.getXo(), "XO"));
                     desc.append(fd.getXo().getName());
                 }
                 setText(desc.append("</html>").toString());
+            }
+
+            // Excluded nodes: strike out the whole label in red so it's clear it won't be committed.
+            if (!fd.isIncluded()) {
+                String current = getText();
+                if (current != null && current.startsWith("<html>") && current.endsWith("</html>")) {
+                    String inner = current.substring("<html>".length(), current.length() - "</html>".length());
+                    setText("<html><strike><font color='" + EXCLUDED_COLOR_HTML + "'>"
+                          + inner + "</font></strike></html>");
+                }
             }
             return this;
         }
@@ -610,6 +1704,20 @@ public class ForceGeneratorViewUi implements ActionListener {
             fireTableDataChanged();
         }
 
+        /**
+         * Drops the given entities from the chosen list, ignoring any that are not in it.
+         *
+         * @param gone the entities that no longer exist in the tree
+         */
+        public void removeEntities(Collection<Entity> gone) {
+            for (Entity entity : gone) {
+                entityIds.remove(entity.getExternalIdAsString());
+            }
+            entities = entities.stream().filter(entity -> entityIds.contains(entity.getExternalIdAsString()))
+                  .collect(Collectors.toList());
+            fireTableDataChanged();
+        }
+
         public void removeEntities(int... selectedRows) {
             for (int r : selectedRows) {
                 if ((r >= 0) && (r < entities.size())) {
@@ -622,6 +1730,11 @@ public class ForceGeneratorViewUi implements ActionListener {
         }
 
         public void addEntities(ForceDescriptor fd) {
+            // Skip nodes the user excluded in the tree (and their subtree), so "Add to game" adds only
+            // the included units.
+            if (!fd.isIncluded()) {
+                return;
+            }
             if (fd.isElement()) {
                 if (fd.getEntity() != null) {
                     addEntity(fd.getEntity());

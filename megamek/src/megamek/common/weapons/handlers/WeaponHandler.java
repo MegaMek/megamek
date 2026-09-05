@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2004-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -58,6 +58,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.compute.ComputeTerrainMods;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -75,7 +76,9 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryConditions.AtmosphericTaint;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.planetaryConditions.TaintedAtmosphereRules;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
@@ -568,9 +571,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
               && !(attackingEntity.getSwarmTargetId() == target.getId())) {
             bSalvo = true;
             int toReturn = allShotsHit() ? ((BattleArmor) attackingEntity)
-                                           .getShootingStrength()
+                  .getShootingStrength()
                   : Compute
-                    .missilesHit(((BattleArmor) attackingEntity).getShootingStrength());
+                  .missilesHit(((BattleArmor) attackingEntity).getShootingStrength());
             Report r = new Report(3325);
             r.newlines = 0;
             r.subject = subjectId;
@@ -822,7 +825,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     }
                 } else {
                     bSalvo = false;
-                    nDamPerHit = attackValue;
                     nCluster = 1;
                 }
             }
@@ -903,12 +905,20 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
             // Point Defense fire vs Capital Missiles
 
+            // Glancing and direct blows are damage-attack concepts. They don't apply to fire extinguishing,
+            // which is a simple pass/fail roll to put out a fire, so skip (and don't report) them.
+            boolean isFireExtinguishing = weaponType.hasFlag(WeaponType.F_EXTINGUISHER)
+                  || (target.getTargetType() == Targetable.TYPE_HEX_EXTINGUISH);
+
             // are we a glancing hit? Check for this here, report it later
-            setGlancingBlowFlags(entityTarget);
+            if (!isFireExtinguishing) {
+                setGlancingBlowFlags(entityTarget);
+            }
 
             // Set Margin of Success/Failure and check for Direct Blows
             toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
-            bDirect = game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
+            bDirect = !isFireExtinguishing
+                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW)
                   && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
 
             // This has to be up here so that we don't screw up glancing/direct blow reports
@@ -1273,6 +1283,79 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     /**
+     * How many rows this attack is shifted down the Non-Infantry Weapon Damage Against Infantry Table (TW p.217)
+     * before its damage against a conventional infantry platoon is read off it.
+     * <p>
+     * This is the direct blow's shift only, a third of its margin of success. What the atmosphere does to the row is
+     * settled by {@link #resolveInfantryDamageClass(int)} instead, because a flammable atmosphere can push an attack
+     * off the end of the table and that cannot be expressed as a number of rows.
+     *
+     * @return the number of rows to shift, which is zero unless the attack was a direct blow
+     */
+    protected int getInfantryDamageClassShift() {
+        return bDirect ? (toHit.getMoS() / 3) : 0;
+    }
+
+    /**
+     * The row of the Non-Infantry Weapon Damage Against Infantry Table (TW p.217) this attack's damage against a
+     * conventional infantry platoon should be read off.
+     * <p>
+     * Normally that is simply the weapon's own damage class. A flammable atmosphere changes it, and because toxic
+     * air is the same taint at a worse level, both of the following apply there in order (TO:AR p.54).
+     * <p>
+     * First, the attack counts as two types better, to a maximum of the area-effect weapon. So direct fire is read
+     * off the pulse row, cluster ballistic off the cluster missile row, and anything already at or past cluster
+     * missile - the book's own example - lands on area-effect.
+     * <p>
+     * Then, in toxic air only, a non-area-effect attack by a non-infantry unit is resolved as though another infantry
+     * unit had made it, so its damage is applied point for point and the table is skipped altogether. An attack that
+     * the shift has just moved onto area-effect is exempt, which is what stops toxic air resolving a cluster missile
+     * attack more gently than tainted air would.
+     *
+     * @param baseDamageClass the damage class the weapon would use in breathable air
+     *
+     * @return the damage class to use, or one of {@link WeaponType#WEAPON_INFANTRY_ORIGIN} and
+     *       {@link WeaponType#WEAPON_AREA_EFFECT_INFANTRY} for the two rows that are not on the ladder
+     */
+    protected int resolveInfantryDamageClass(int baseDamageClass) {
+        AtmosphericTaint atmosphericTaint = game.getPlanetaryConditions().getAtmosphericTaint();
+        boolean isAreaEffectWeapon = ComputeTerrainMods.isAreaEffectAgainstInfantry(weaponType, ammoType);
+        int shiftedClass = shiftInfantryDamageClass(baseDamageClass, atmosphericTaint, isAreaEffectWeapon);
+
+        if (!TaintedAtmosphereRules.treatsAttacksOnInfantryAsInfantryDamage(atmosphericTaint)) {
+            return shiftedClass;
+        }
+        boolean isInfantryAttacker = (attackingEntity != null) && attackingEntity.isConventionalInfantry();
+        boolean isAreaEffectAttack = isAreaEffectWeapon
+              || (shiftedClass == WeaponType.WEAPON_AREA_EFFECT_INFANTRY);
+        return (isInfantryAttacker || isAreaEffectAttack) ? shiftedClass : WeaponType.WEAPON_INFANTRY_ORIGIN;
+    }
+
+    /**
+     * Moves an attack the two rows down the infantry damage table that a flammable atmosphere calls for, stopping at
+     * area-effect (TO:AR p.54).
+     *
+     * @param baseDamageClass    the damage class the weapon would use in breathable air
+     * @param atmosphericTaint   the air the platoon is standing in
+     * @param isAreaEffectWeapon whether the weapon is area-effect in its own right, which the shift leaves alone
+     *
+     * @return the shifted damage class, or {@code baseDamageClass} when the air shifts nothing
+     */
+    private int shiftInfantryDamageClass(int baseDamageClass, AtmosphericTaint atmosphericTaint,
+          boolean isAreaEffectWeapon) {
+        int rowsBetter = TaintedAtmosphereRules.getInfantryDamageClassShift(atmosphericTaint);
+        boolean isOnTheBookLadder = (baseDamageClass >= WeaponType.WEAPON_DIRECT_FIRE)
+              && (baseDamageClass <= WeaponType.WEAPON_CLUSTER_MISSILE);
+        if ((rowsBetter == 0) || isAreaEffectWeapon || !isOnTheBookLadder) {
+            return baseDamageClass;
+        }
+        int shiftedClass = baseDamageClass + rowsBetter;
+        return (shiftedClass > WeaponType.WEAPON_CLUSTER_MISSILE)
+              ? WeaponType.WEAPON_AREA_EFFECT_INFANTRY
+              : shiftedClass;
+    }
+
+    /**
      * Calculate the damage per hit.
      *
      * @return an <code>int</code> representing the damage dealt per hit.
@@ -1297,8 +1380,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                   && !attackingEntity.isConventionalInfantry()
                   && damageType != DamageType.FLECHETTE;
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                  bDirect ? toHit.getMoS() / 3 : 0,
-                  weaponType.getInfantryDamageClass(),
+                  getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   isNonInfantryVsMechanized,
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
@@ -1316,6 +1399,51 @@ public class WeaponHandler implements AttackHandler, Serializable {
             toReturn = (int) Math.floor(toReturn * .5);
         }
         return (int) toReturn;
+    }
+
+    /**
+     * @return {@code true} when the target is battle armor wearing Fire-Resistant armor, whose suit "ignores
+     *       damage by heat-causing weapons" (TM p. 170). Flamers of every size are heat-causing, so they do
+     *       nothing to it.
+     */
+    protected boolean targetIgnoresHeatWeaponDamage() {
+        return (target instanceof BattleArmor battleArmorTarget) && battleArmorTarget.isFireResistant();
+    }
+
+    /**
+     * Halves the damage of a flame-based attack when the target is a pain-shunted infantry or battle armor unit.
+     *
+     * <p>Conventional infantry and battle armor units made up of warriors with an Artificial Pain Shunt reduce by
+     * half any damage caused by flame-based weapons (IO p. 78). Battle armor is covered by the same sentence as
+     * conventional infantry, so both unit types are handled here.</p>
+     *
+     * <p>IO does not define "flame-based weapon". TO:AR p. 171 does, listing plasma, flamer and Firedrake, which
+     * is the same set {@code InfantryWeapon.isFlameBased()} already recognises. Core Rules does not use the term
+     * at all; it tags both flamers and plasma as Heat-Causing (p. 183), so that tag does not separate them
+     * either.</p>
+     *
+     * <p>Callers must apply this to the value that scales the total damage of the attack. That is the damage per
+     * hit for some handlers and the number of hits for others, so the call site differs per weapon.</p>
+     *
+     * @param damage the flame damage before the reduction
+     *
+     * @return half the damage, rounded down, or the unchanged damage when the target has no pain shunt
+     */
+    protected double applyPainShuntModifier(double damage) {
+        if (!(target instanceof Infantry infantryTarget)
+              || !infantryTarget.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+            return damage;
+        }
+
+        double reducedDamage = floor(damage / 2.0);
+
+        Report report = new Report(9975);
+        report.subject = subjectId;
+        report.indent(2);
+        report.add((int) reducedDamage);
+        calcDmgPerHitReport.addElement(report);
+
+        return reducedDamage;
     }
 
     /**
@@ -1606,11 +1734,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
         nDamage = checkLI(nDamage, entityTarget, vPhaseReport);
 
-        // some buildings scale remaining damage that is not absorbed
-        // TODO: this isn't quite right for castles brian
-        if ((null != bldg) && !targetStickingOutOfBuilding) {
-            nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
-        }
+        nDamage = getBuildingDamageAdjustment(entityTarget, bldg, targetStickingOutOfBuilding, nDamage);
 
         // A building may absorb the entire shot.
         if (nDamage == 0) {
@@ -1945,11 +2069,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 int loc = weapon.getLocation();
                 boolean rearMount = weapon.isRearMounted();
                 if (!attackingEntity.hasArcFired(loc, rearMount)) {
-                    attackingEntity.heatBuildup += attackingEntity.getHeatInArc(loc, rearMount);
+                    attackingEntity.changeHeatBuildup(attackingEntity.getHeatInArc(loc, rearMount),
+                          Messages.getString("HeatBreakdown.weaponsFiredArc", attackingEntity.getLocationName(loc)));
                     attackingEntity.setArcFired(loc, rearMount);
                 }
             } else {
-                weaponEntity.heatBuildup += (weapon.getHeatByBay());
+                weaponEntity.changeHeatBuildup(weapon.getHeatByBay(), weapon.getName());
             }
         }
     }
@@ -2126,13 +2251,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     public void restore() {
         if (typeName == null) {
-            typeName = weaponType.getName();
-        } else {
-            weaponType = (WeaponType) EquipmentType.get(typeName);
+            typeName = weaponType.getInternalName();
         }
+        weaponType = (WeaponType) EquipmentType.get(typeName);
 
         if (weaponType == null) {
             LOGGER.error("Could not restore equipment type \"{}\"", typeName);
+        } else {
+            typeName = weaponType.getInternalName();
         }
     }
 
@@ -2290,25 +2416,26 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     /**
-     * Used by certain artillery handlers to draw drift markers with "hit" graphics if anything is caught in the blast,
-     * or "drift" marker if nothing is damaged. No-op for direct hits.
+     * Used by certain artillery handlers to draw a drift marker at the hex an artillery round actually landed on when
+     * it missed its target. The round is always marked as a drift: a drift that lands on a unit is still a drift, and
+     * the resulting damage is already shown in the combat report. (It must not be marked as a hit -
+     * {@link SpecialHexDisplay#drawNow} deliberately suppresses "hit" markers whose text says they drifted, which would
+     * leave the landing hex with no marker at all.) No-op for direct hits.
+     *
+     * @param targetPos The hex that was targeted
+     * @param finalPos  The hex the round actually drifted to
+     * @param aaa       The artillery attack
+     * @param hitIds    Ids of units caught in the blast; retained because callers produce it as a side effect of
+     *                  resolving the blast damage, but no longer used to choose the marker type
      */
     protected void handleArtilleryDriftMarker(Coords targetPos, Coords finalPos, ArtilleryAttackAction aaa,
           Vector<Integer> hitIds) {
         if (bMissed) {
             String msg = Messages.getString("ArtilleryMessage.drifted") + " " + targetPos.getBoardNum();
-            final SpecialHexDisplay shd;
-            if (hitIds.isEmpty()) {
-                shd = new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_DRIFT,
-                      game.getRoundCount(),
-                      game.getPlayer(aaa.getPlayerId()),
-                      msg);
-            } else {
-                shd = new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
-                      game.getRoundCount(),
-                      game.getPlayer(aaa.getPlayerId()),
-                      msg);
-            }
+            SpecialHexDisplay shd = new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_DRIFT,
+                  game.getRoundCount(),
+                  game.getPlayer(aaa.getPlayerId()),
+                  msg);
             game.getBoard(aaa.getTarget(game)).addSpecialHexDisplay(finalPos, shd);
         }
     }

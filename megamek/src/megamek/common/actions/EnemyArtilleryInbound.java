@@ -1,0 +1,50 @@
+/*
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.common.actions;
+
+import java.io.Serializable;
+
+/**
+ * A redacted, team-safe summary of an enemy artillery round in flight. It is sent to a player who is entitled to know
+ * that enemy artillery is inbound - the firing is announced in the phase report - but NOT where it is aimed or what
+ * munition it carries. It exists so the Rounds-in-Air window can list enemy rounds with their landing time while
+ * showing the target hex and warhead as "Unknown", without ever sending the actual target to the client (which would
+ * re-leak it, e.g. via the board's incoming-artillery sprites).
+ *
+ * @param firingEntityId The id of the firing enemy unit (may be unresolvable on the client under double-blind)
+ * @param playerId       The id of the firing enemy player (resolves the team and player name)
+ * @param turnsTilHit    Turns until the round lands
+ */
+public record EnemyArtilleryInbound(int firingEntityId, int playerId, int turnsTilHit) implements Serializable {
+    private static final long serialVersionUID = 1L;
+}

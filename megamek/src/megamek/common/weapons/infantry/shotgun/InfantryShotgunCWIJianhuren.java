@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.shotgun;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -62,7 +63,7 @@ public class InfantryShotgunCWIJianhuren extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = .054;
         tonnage = 0.0027;
-        infantryDamage = 0.14;
+        infantryDamage = 0.054;
         infantryRange = 1;
         ammoWeight = 0.0027;
         cost = 225;
@@ -70,7 +71,7 @@ public class InfantryShotgunCWIJianhuren extends InfantryWeapon {
         shots = 4;
         bursts = 1;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        rulesRefs = "Shrapnel #7";
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_7);
         techAdvancement
               .setTechBase(TechBase.IS)
               .setTechRating(TechRating.D)

@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -64,8 +65,8 @@ public class CLLightMGA extends AmmoWeapon {
     public CLLightMGA() {
         super();
         name = "Light Machine Gun Array";
-        addLookupName("Clan Light Machine Gun Array");
         setInternalName("CLLMGA");
+        addLookupName("Clan Light Machine Gun Array");
         sortingName = "MGA B";
         heat = 0;
         damage = 1;
@@ -87,10 +88,13 @@ public class CLLightMGA extends AmmoWeapon {
         String[] modeStrings = { "Linked", "Off" };
         setModes(modeStrings);
         instantModeSwitch = false;
-        rulesRefs = "228, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 228),
+              rulesRef(SourceBookCode.TW, 137),
+              rulesRef(SourceBookCode.BMM, 102),
+              rulesRef(SourceBookCode.CORE, 185)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
               .setClanAdvancement(DATE_NONE, DATE_NONE, 3069, DATE_NONE, DATE_NONE)

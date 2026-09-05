@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -70,6 +71,7 @@ public class ISERLaserLargePrototype extends LaserWeapon {
         toHitModifier = 1;
         flags = flags.or(F_PROTOTYPE);
         heat = 12;
+        heatAdjustmentForBvCalculation = 3;
         damage = 8;
         shortRange = 7;
         mediumRange = 14;
@@ -87,11 +89,9 @@ public class ISERLaserLargePrototype extends LaserWeapon {
         criticalSlots = 2;
         bv = 136;
         cost = 600000;
-        rulesRefs = "97, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 97);
         flags = flags.or(F_PROTOTYPE);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(3030, DATE_NONE, DATE_NONE, 3037, DATE_NONE)

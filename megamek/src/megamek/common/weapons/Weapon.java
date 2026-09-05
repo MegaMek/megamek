@@ -75,6 +75,13 @@ public abstract class Weapon extends WeaponType implements Serializable {
     public static final String MODE_FLAMER_DAMAGE = "Damage";
     public static final String MODE_FLAMER_HEAT = "Heat";
 
+    /**
+     * Conventional infantry SRM launchers loaded with true Inferno munitions fire either inferno missiles or
+     * ordinary SRM damage (TW p. 143). Incendiary weapons use {@link #MODE_FLAMER_HEAT} instead, which only
+     * converts damage to heat.
+     */
+    public static final String MODE_INFERNO = "Inferno";
+
     public static final String MODE_AMS_ON = "On";
     public static final String MODE_AMS_OFF = "Off";
     public static final String MODE_AMS_MANUAL = "Use as Weapon";
@@ -107,6 +114,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
     public static final String MODE_RAC_FIVE_SHOT = "5-shot";
     public static final String MODE_RAC_SIX_SHOT = "6-shot";
 
+    public static final String MODE_GAUSS_POWERED_UP = "Powered Up";
     public static final String MODE_GAUSS_POWERED_DOWN = "Powered Down";
 
     public static final String MODE_MISSILE_INDIRECT = "Indirect";
@@ -151,7 +159,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
         // Flamers are spread out over all sorts of weapon types not limited to FlamerWeapon.
         // So modes are handled here.
         if (hasFlag(WeaponType.F_FLAMER)) {
-            if (!gameOptions.booleanOption(OptionsConstants.BASE_FLAMER_HEAT)) {
+            if (!Game.rulesManager.getRulesWeapons().flamerHeatAndDamage(gameOptions.booleanOption(OptionsConstants.BASE_FLAMER_HEAT))) {
                 addMode(MODE_FLAMER_DAMAGE);
                 addMode(MODE_FLAMER_HEAT);
             } else {

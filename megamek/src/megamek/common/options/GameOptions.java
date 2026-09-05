@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -52,6 +52,8 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.common.TechConstants;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.NeuralInterfaceMode;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 import org.w3c.dom.Node;
@@ -78,11 +80,7 @@ public class GameOptions extends BasicGameOptions {
         super.initialize();
 
         IBasicOptionGroup base = addGroup("basic");
-        // Change this to false for normal release
-        addOption(base, OptionsConstants.TWRULES, true);
-        addOption(base, OptionsConstants.PLAYTEST_1, false);
-        addOption(base, OptionsConstants.PLAYTEST_2, false);
-        addOption(base, OptionsConstants.PLAYTEST_3, false);
+
         addOption(base, OptionsConstants.SEARCHLIGHTS_ON, true);
         addOption(base, OptionsConstants.BASE_PUSH_OFF_BOARD, true);
         addOption(base, OptionsConstants.BASE_DUMPING_FROM_ROUND, 1);
@@ -94,6 +92,11 @@ public class GameOptions extends BasicGameOptions {
         addOption(base, OptionsConstants.BASE_AUTO_AMS, true);
         addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true);
         addOption(base, OptionsConstants.BASE_BREEZE, false);
+
+        IBasicOptionGroup gameMaster = addGroup("gameMaster");
+        addOption(gameMaster, OptionsConstants.GAME_MASTER_ALLOW, true);
+        addOption(gameMaster, OptionsConstants.GAME_MASTER_VOTE_THRESHOLD, IOption.CHOICE,
+              OptionsConstants.GAME_MASTER_VOTE_UNANIMOUS);
 
         IBasicOptionGroup victory = addGroup("victory");
         addOption(victory, OptionsConstants.VICTORY_SKIP_FORCED_VICTORY, false);
@@ -107,6 +110,9 @@ public class GameOptions extends BasicGameOptions {
         addOption(victory, OptionsConstants.VICTORY_USE_KILL_COUNT, false);
         addOption(victory, OptionsConstants.VICTORY_GAME_KILL_COUNT, 4);
         addOption(victory, OptionsConstants.VICTORY_COMMANDER_KILLED, false);
+        addOption(victory, OptionsConstants.VICTORY_USE_OBJECTIVES, false);
+        addOption(victory, OptionsConstants.VICTORY_VP_WIN_THRESHOLD, 0);
+        addOption(victory, OptionsConstants.VICTORY_VP_SUDDEN_DEATH, false);
 
         IBasicOptionGroup allowed = addGroup("allowedUnits");
         addOption(allowed, OptionsConstants.ALLOWED_CANON_ONLY, false);
@@ -133,6 +139,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_TEAM_VISION, true);
         addOption(advancedRules, OptionsConstants.ADVANCED_TAC_OPS_BAP, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TAC_OPS_ECCM, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_TAC_OPS_C3_EMERGENCY_MASTER, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_GHOST_TARGET_MODE, IOption.CHOICE,
               OptionsConstants.GHOST_TARGET_MODE_STANDARD);
@@ -153,10 +160,13 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_GROUND_MOVEMENT_EJECTED_PILOTS_FLEE, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_GROUND_MOVEMENT_AUTO_ABANDON_UNIT, false);
         addOption(advancedRules, OptionsConstants.RPG_CONDITIONAL_EJECTION, false);
+        addOption(advancedRules, OptionsConstants.RPG_COMBAT_SUITS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_QUIRKS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_PARTIAL_REPAIRS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_ASSAULT_DROP, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_PARATROOPERS, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_BRIDGE_BUILDING_ENGINEERS, false);
+        addOption(advancedRules, OptionsConstants.UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_SENSORS_DETECT_ALL, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_MAG_SCAN_NO_HILLS, false);
@@ -193,6 +203,8 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CLUSTER_HIT_PEN, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PPC_INHIBITORS, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE, false);
+        addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BULLDOZER, false);
+        addOption(advancedCombat, OptionsConstants.UNOFFICIAL_BACKHOE_CLEARS_RUBBLE, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_GLANCING_BLOWS, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BURST, false);
@@ -237,6 +249,8 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_FOREST_FIRES_NO_SMOKE, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_HOT_LOAD_IN_GAME, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_MULTI_USE_AMS, false);
+        addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS, false);
+        addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_ADVANCED_SCATTER, false);
 
         IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement");
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_SPRINT, false);
@@ -244,6 +258,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_EVADE, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_SKILLED_EVASION, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEAPING, false);
+        addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_CLIMBING, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_PSR, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_PHYSICAL_ATTACK_PSR, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_TAKING_DAMAGE, false);
@@ -328,7 +343,6 @@ public class GameOptions extends BasicGameOptions {
         IBasicOptionGroup rpg = addGroup("rpg");
         addOption(rpg, OptionsConstants.RPG_PILOT_ADVANTAGES, false);
         addOption(rpg, OptionsConstants.EDGE, false);
-        addOption(rpg, OptionsConstants.RPG_MANEI_DOMINI, false);
         addOption(rpg, OptionsConstants.RPG_INDIVIDUAL_INITIATIVE, false);
         addOption(rpg, OptionsConstants.RPG_COMMAND_INIT, false);
         addOption(rpg, OptionsConstants.RPG_RPG_GUNNERY, false);
@@ -358,8 +372,17 @@ public class GameOptions extends BasicGameOptions {
             GameOptionsXML opts = (GameOptionsXML) um.unmarshal(MMXMLUtility.createSafeXmlSource(is));
 
             StringBuilder logMessages = new StringBuilder("\n");
+            boolean legacyImplantsEnabled = false;
             for (IBasicOption bo : opts.getOptions()) {
+                if (isLegacyManeiDominiOption(bo.getName())) {
+                    legacyImplantsEnabled |= Boolean.parseBoolean(String.valueOf(bo.getValue()));
+                    continue;
+                }
                 changedOptions.add(parseOptionNode(bo, print, logMessages));
+            }
+            IOption migratedNeuralInterface = migrateLegacyManeiDominiOption(legacyImplantsEnabled);
+            if (migratedNeuralInterface != null) {
+                changedOptions.add(migratedNeuralInterface);
             }
             logger.info(logMessages.toString());
         } catch (Exception e) {
@@ -422,6 +445,43 @@ public class GameOptions extends BasicGameOptions {
         }
 
         return option;
+    }
+
+    /**
+     * @param optionName the name read from a saved options file, or {@code null}
+     *
+     * @return {@code true} if it is the retired Manei Domini switch, which is no longer registered
+     */
+    @SuppressWarnings("removal")
+    private static boolean isLegacyManeiDominiOption(@Nullable String optionName) {
+        return OptionsConstants.RPG_MANEI_DOMINI.equals(optionName);
+    }
+
+    /**
+     * Folds a saved Manei Domini switch into the neural interface setting it was merged into. A saved
+     * {@code true} meant implants were allowed, which the merged option expresses as any setting other than Off;
+     * so Off is raised to Pilot Abilities Only, and the two settings that already allow implants are left as
+     * they are. A saved {@code false} changes nothing: an old file with implants off but the neural interface
+     * rules on keeps the rules on, because those governed Clan Enhanced Imaging on their own.
+     *
+     * @param legacyImplantsEnabled whether the saved file switched Manei Domini on
+     *
+     * @return the neural interface option if it was raised, or {@code null} if nothing changed
+     */
+    @SuppressWarnings("removal")
+    private @Nullable IOption migrateLegacyManeiDominiOption(boolean legacyImplantsEnabled) {
+        if (!legacyImplantsEnabled) {
+            return null;
+        }
+        IOption neuralInterface = getOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE);
+        if ((neuralInterface == null) || NeuralInterfaceMode.from(this).allowsImplants()) {
+            return null;
+        }
+        neuralInterface.setValue(OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
+        logger.info("[PilotImplants] Migrated the retired '{}' switch: it was on, so '{}' is raised from Off to '{}'",
+              OptionsConstants.RPG_MANEI_DOMINI, OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE,
+              OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
+        return neuralInterface;
     }
 
     public static void saveOptions(Vector<IBasicOption> options) {
@@ -531,6 +591,7 @@ public class GameOptions extends BasicGameOptions {
      * @param nl the node list to parse
      */
     public void fillFromXML(final NodeList nl) {
+        boolean legacyImplantsEnabled = false;
         for (int x = 0; x < nl.getLength(); x++) {
             try {
                 final Node wn = nl.item(x);
@@ -541,6 +602,7 @@ public class GameOptions extends BasicGameOptions {
                 final NodeList nl2 = wn.getChildNodes();
                 IOption option = null;
                 boolean migrateNeuralInterface = false;
+                boolean readingLegacyManeiDomini = false;
                 for (int y = 0; y < nl2.getLength(); y++) {
                     final Node wn2 = nl2.item(y);
                     switch (wn2.getNodeName()) {
@@ -551,10 +613,18 @@ public class GameOptions extends BasicGameOptions {
                                 optionName = OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE;
                                 migrateNeuralInterface = true;
                             }
+                            readingLegacyManeiDomini = isLegacyManeiDominiOption(optionName);
                             option = getOption(optionName);
                             break;
                         case "value":
                             String value = wn2.getTextContent().trim();
+                            if (readingLegacyManeiDomini) {
+                                // The retired switch is folded into the neural interface setting only after every
+                                // node is read, so the two cannot fight over the order they were saved in
+                                legacyImplantsEnabled |= Boolean.parseBoolean(value);
+                                readingLegacyManeiDomini = false;
+                                break;
+                            }
                             // Migrate old boolean value to new CHOICE value
                             // Old false = implant-only benefits = Pilot Only mode (not Off)
                             if (migrateNeuralInterface && (option != null)) {
@@ -592,6 +662,7 @@ public class GameOptions extends BasicGameOptions {
                 logger.error("Failed to parse Game Option Node", e);
             }
         }
+        migrateLegacyManeiDominiOption(legacyImplantsEnabled);
     }
     // endregion MekHQ I/O
 }

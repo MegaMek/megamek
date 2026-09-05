@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2007 - Jay Lawson
- * Copyright (C) 2008-2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -282,10 +282,11 @@ public class FighterSquadron extends AeroSpaceFighter {
     }
 
     @Override
-    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, boolean ignoreTAG,
+          CalculationReport calculationReport) {
         int bv = 0;
         for (Entity fighter : getActiveSubEntities()) {
-            bv += fighter.calculateBattleValue(ignoreC3, ignoreSkill);
+            bv += fighter.calculateBattleValue(ignoreC3, ignoreSkill, ignoreTAG);
         }
         return bv;
     }
@@ -914,4 +915,8 @@ public class FighterSquadron extends AeroSpaceFighter {
         }
     }
 
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return false;
+    }
 }

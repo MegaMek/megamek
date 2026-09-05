@@ -52,6 +52,7 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.*;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
@@ -144,6 +145,14 @@ public class BattleArmor extends Infantry {
      * The number of men alive in this unit at the beginning of the phase, before it begins to take damage.
      */
     private int troopersShooting = 0;
+
+    /**
+     * Number of troopers temporarily knocked out by Improved Magnetic Pulse (iATM IMP) missiles (IO IMP rules), and the
+     * number of rounds the effect lasts. Disabled troopers cannot shoot and each costs the unit 1 Ground/Jump MP, but
+     * are not destroyed; they recover when the effect ends.
+     */
+    private int improvedMagneticPulseDisabledTroopers = 0;
+    private int improvedMagneticPulseDisabledRounds = 0;
 
     /**
      * The cost of this unit. This value should be set when the unit's file is read.
@@ -296,10 +305,10 @@ public class BattleArmor extends Infantry {
     private boolean exoskeleton = false;
 
     /**
-     * Clan industrial exoskeletons can opt to not use Harjel, to allow them to use IS chassis weight; this flag
+     * Clan industrial exoskeletons can opt to not use HarJel, to allow them to use IS chassis weight; this flag
      * indicates whether this is the case.
      */
-    private boolean clanExoWithoutHarjel = false;
+    private boolean clanExoWithoutHarJel = false;
 
     @Override
     public String[] getLocationAbbreviations() {
@@ -480,6 +489,9 @@ public class BattleArmor extends Infantry {
             mp = applyGravityEffectsOnMP(mp);
         }
 
+        // Troopers disabled by Improved Magnetic Pulse missiles each cost 1 Ground MP (IO IMP rules).
+        mp = Math.max(0, mp - improvedMagneticPulseDisabledTroopers);
+
         return mp;
     }
 
@@ -558,6 +570,9 @@ public class BattleArmor extends Infantry {
             mp = applyGravityEffectsOnMP(mp);
         }
 
+        // Troopers disabled by Improved Magnetic Pulse missiles each cost 1 Jump MP (IO IMP rules).
+        mp = Math.max(0, mp - improvedMagneticPulseDisabledTroopers);
+
         return mp;
     }
 
@@ -612,8 +627,7 @@ public class BattleArmor extends Infantry {
         }
 
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-            int roll = Compute.d6(2);
-            if ((5 < roll) && (roll < 9)) {
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation()) {
                 return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
         }
@@ -860,6 +874,14 @@ public class BattleArmor extends Infantry {
         // Perform all base-class behavior.
         super.newRound(roundNumber);
 
+        // Recover troopers knocked out by Improved Magnetic Pulse missiles once the effect expires.
+        if (improvedMagneticPulseDisabledRounds > 0) {
+            improvedMagneticPulseDisabledRounds--;
+            if (improvedMagneticPulseDisabledRounds == 0) {
+                improvedMagneticPulseDisabledTroopers = 0;
+            }
+        }
+
         // If we're equipped with a Magnetic Mine
         // launcher, turn it to single shot mode.
         for (Mounted<?> m : getMisc()) {
@@ -887,7 +909,35 @@ public class BattleArmor extends Infantry {
 
     @Override
     public int getShootingStrength() {
-        return troopersShooting;
+        // Troopers disabled by Improved Magnetic Pulse missiles cannot contribute to weapons fire,
+        // so the cluster-hits column drops to the active trooper count (IO IMP rules).
+        return Math.max(0, troopersShooting - improvedMagneticPulseDisabledTroopers);
+    }
+
+    /**
+     * Records Improved Magnetic Pulse (iATM IMP) missile hits on this battle armor unit (IO IMP rules). Each warhead
+     * that hits disables one trooper through the End Phase of the following turn, capped at the number of troopers
+     * still alive. Additional hits have no effect beyond the missiles' normal damage, so a later hit never lowers the
+     * disabled count (it takes the higher of the existing and new count).
+     *
+     * @param missiles number of IMP warheads that hit this unit
+     *
+     * @return the number of troopers disabled
+     */
+    public int applyImprovedMagneticPulseTrooperDisable(int missiles) {
+        if (missiles <= 0) {
+            return 0;
+        }
+        // Take the higher count so a smaller follow-up salvo cannot let disabled troopers recover early.
+        improvedMagneticPulseDisabledTroopers = Math.max(improvedMagneticPulseDisabledTroopers,
+              Math.min(missiles, troopersShooting));
+        // 2 rounds so the effect lasts through the End Phase of the turn after the attack.
+        improvedMagneticPulseDisabledRounds = 2;
+        return improvedMagneticPulseDisabledTroopers;
+    }
+
+    public int getImprovedMagneticPulseDisabledTroopers() {
+        return improvedMagneticPulseDisabledTroopers;
     }
 
     public void setCost(int inC) {
@@ -1276,12 +1326,16 @@ public class BattleArmor extends Infantry {
      *
      */
     public boolean hasActiveProbe() {
-        for (Mounted<?> equip : getMisc()) {
-            if (equip.getType().hasFlag(MiscType.F_BAP)
-                  && !(equip.getType().getInternalName()
-                  .equals(Sensor.IS_IMPROVED)
-                  || equip.getType()
-                  .getInternalName().equals(Sensor.CL_IMPROVED))) {
+        for (MiscMounted equip : getMisc()) {
+            MiscType miscType = equip.getType();
+            if ((miscType == null) || !miscType.hasFlag(MiscType.F_BAP)) {
+                continue;
+            }
+            String internalName = miscType.getInternalName();
+            boolean isImprovedSensors = internalName.equals(Sensor.IS_IMPROVED)
+                  || internalName.equals(Sensor.CL_IMPROVED);
+            // A probe switched to "Off" is not an active probe (activation/deactivation rules)
+            if (!isImprovedSensors && !equip.isModeTurnedOff()) {
                 return true;
             }
         }
@@ -1705,6 +1759,22 @@ public class BattleArmor extends Infantry {
     }
 
     /**
+     * Determines whether this Battle Armor squad is permitted to carry Disposable Weapons (TO:AuE p.116, Corrected
+     * Sixth Printing). A suit may only carry Disposable Weapons if it is also equipped with an anti-personnel weapon
+     * mount or two armored gloves. Note that armored gloves themselves carry the {@link MiscType#F_AP_MOUNT} flag, so
+     * a dedicated AP mount is identified as an {@code F_AP_MOUNT} item that is not an armored glove.
+     *
+     * @return {@code true} if this squad may carry Disposable Weapons
+     */
+    public boolean canCarryDisposableWeapons() {
+        boolean hasAntiPersonnelMount = getMisc().stream()
+              .map(Mounted::getType)
+              .anyMatch(type -> type.hasFlag(MiscType.F_AP_MOUNT) && !type.hasFlag(MiscType.F_ARMORED_GLOVE));
+        boolean hasTwoArmoredGloves = countWorkingMisc(MiscType.F_ARMORED_GLOVE) >= 2;
+        return hasAntiPersonnelMount || hasTwoArmoredGloves;
+    }
+
+    /**
      * Convenience method for determining if the BA has magnetic clamps.
      *
      * @return true if the unit has at least one magnetic clamp, else false
@@ -1773,12 +1843,43 @@ public class BattleArmor extends Infantry {
         return getManipulator(MOUNT_LOC_RIGHT_ARM);
     }
 
-    public boolean isClanExoWithoutHarjel() {
-        return clanExoWithoutHarjel;
+    public boolean isClanExoWithoutHarJel() {
+        return clanExoWithoutHarJel;
     }
 
-    public void setClanExoWithoutHarjel(boolean clanExoWithoutHarjel) {
-        this.clanExoWithoutHarjel = clanExoWithoutHarjel;
+    public void setClanExoWithoutHarJel(boolean clanExoWithoutHarJel) {
+        this.clanExoWithoutHarJel = clanExoWithoutHarJel;
+    }
+
+    /**
+     * Whether this squad's suits seal themselves with HarJel because of how they were built, rather than because a
+     * HarJel system was mounted in a location.
+     * <p>
+     * Clan power armor and battle armor of 401 kilograms or more incorporate HarJel automatically, as do Clan
+     * exoskeletons built on a Clan chassis (TechManual 8th printing, p.256). Only an exoskeleton may decline it, and
+     * it does so to buy the lighter Inner Sphere chassis instead, which is what {@link #isClanExoWithoutHarJel()}
+     * records.
+     *
+     * @return {@code true} if every suit in this squad is HarJel-sealed by construction
+     */
+    public boolean hasHarJelByConstruction() {
+        if (!isClan()) {
+            return false;
+        }
+        boolean isExoskeletonOnInnerSphereChassis = isExoskeleton() && isClanExoWithoutHarJel();
+        return !isExoskeletonOnInnerSphereChassis;
+    }
+
+    /**
+     * Whether the suit in the given location is sealed by HarJel, whether it mounts a HarJel system or is one of the
+     * Clan designs that incorporate HarJel by construction.
+     *
+     * @param location the trooper location to check
+     *
+     * @return {@code true} if that suit reseals itself
+     */
+    public boolean hasHarJelProtection(int location) {
+        return hasHarJelIn(location) || hasHarJelByConstruction();
     }
 
     @Override

@@ -36,11 +36,13 @@ package megamek.common.weapons.c3;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
+import megamek.common.equipment.Mounted;
 import megamek.common.weapons.tag.TAGWeapon;
 
 /**
@@ -68,16 +70,21 @@ public class ISC3M extends TAGWeapon {
         cost = 1500000;
         bv = 0;
         flags = flags.or(F_C3M).or(F_MEK_WEAPON).or(F_TANK_WEAPON).andNot(F_AERO_WEAPON);
+        setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
+        setInstantModeSwitch(false);
         heat = 0;
         damage = 0;
         shortRange = 5;
         mediumRange = 9;
         longRange = 15;
         extremeRange = 18;
-        rulesRefs = "209, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 209),
+              rulesRef(SourceBookCode.BMM, 110),
+              rulesRef(SourceBookCode.CORE, 198),
+              rulesRef(SourceBookCode.TW, 131)
+        );
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3039, 3050, 3065, DATE_NONE, DATE_NONE)

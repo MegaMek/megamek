@@ -39,6 +39,7 @@ import static megamek.common.game.IGame.LOGGER;
 import java.io.Serial;
 
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -66,7 +67,6 @@ public class BombISRLP10 extends MissileWeapon {
 
         this.name = "Rocket Launcher (Prototype) Pod";
         this.setInternalName(BombTypeEnum.RLP.getWeaponName());
-        addLookupName("RL-P 10 (Bomb)");
         this.heat = 0;
         this.rackSize = 10;
         this.shortRange = 5;
@@ -84,16 +84,12 @@ public class BombISRLP10 extends MissileWeapon {
         this.maxRange = RANGE_MED;
         this.toHitModifier = 1;
         this.ammoType = AmmoType.AmmoTypeEnum.RL_BOMB;
-        rulesRefs = "67, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 67);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
-              .setISAdvancement(DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
-              .setISApproximate(true, false, false, false, false)
-              .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
-              .setClanApproximate(true, false, false, true, false)
+              .setAdvancement(2320, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setApproximate(true, false, false, false, false)
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

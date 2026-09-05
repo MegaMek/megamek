@@ -36,6 +36,7 @@ package megamek.common.weapons.srms.innerSphere.torpedo;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -66,10 +67,13 @@ public class ISSRT4 extends SRTWeapon {
         this.criticalSlots = 1;
         this.bv = 39;
         this.cost = 60000;
-        rulesRefs = "230, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 230),
+              rulesRef(SourceBookCode.BMM, 104),
+              rulesRef(SourceBookCode.CORE, 187),
+              rulesRef(SourceBookCode.TW, 138)
+        );
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2665, 2676, 3045, DATE_NONE, DATE_NONE)

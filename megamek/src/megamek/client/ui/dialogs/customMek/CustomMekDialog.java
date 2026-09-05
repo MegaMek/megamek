@@ -34,16 +34,19 @@
 package megamek.client.ui.dialogs.customMek;
 
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.LayoutManager;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -71,6 +74,7 @@ import megamek.common.Player;
 import megamek.common.TechConstants;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
+import megamek.common.compute.ArtilleryRange;
 import megamek.common.enums.Gender;
 import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.equipment.EquipmentMode;
@@ -116,8 +120,7 @@ public class CustomMekDialog extends AbstractButtonDialog
     private QuirksPanel panQuirks;
     private JPanel panPartReps;
 
-    private JPanel panOptions;
-    // private JScrollPane scrOptions;
+    private PilotOptionsPanel panOptions;
 
     private final FlatTabbedPane tabAll = new FlatTabbedPane();
 
@@ -158,6 +161,9 @@ public class CustomMekDialog extends AbstractButtonDialog
     private final JLabel labDeployHullDown = new JLabel(Messages.getString("CustomMekDialog.labDeployHullDown"),
           SwingConstants.RIGHT);
     private final JCheckBox chDeployHullDown = new JCheckBox();
+    private final JLabel labDeployDugIn = new JLabel(Messages.getString("CustomMekDialog.labDeployDugIn"),
+          SwingConstants.RIGHT);
+    private final JCheckBox chDeployDugIn = new JCheckBox();
     private final JLabel labHidden = new JLabel(Messages.getString("CustomMekDialog.labHidden"), SwingConstants.RIGHT);
     private final JCheckBox chHidden = new JCheckBox();
 
@@ -208,7 +214,6 @@ public class CustomMekDialog extends AbstractButtonDialog
     private PilotOptions options;
     private PartialRepairs partReps;
     private final HashMap<Integer, WeaponQuirks> h_wpnQuirks = new HashMap<>();
-    private ArrayList<DialogOptionComponentYPanel> optionComps = new ArrayList<>();
     private ArrayList<DialogOptionComponentYPanel> partRepsComps = new ArrayList<>();
 
     private final boolean editable;
@@ -341,7 +346,7 @@ public class CustomMekDialog extends AbstractButtonDialog
     private void setOptions() {
         Entity entity = entities.getFirst();
         IOption option;
-        for (final DialogOptionComponentYPanel newVar : optionComps) {
+        for (final DialogOptionComponentYPanel newVar : panOptions.getOptionComponents()) {
             option = newVar.getOption();
             if ((newVar.getValue() == Messages.getString("CustomMekDialog.None"))) {
                 entity.getCrew().getOptions().getOption(option.getName()).setValue("None");
@@ -352,88 +357,7 @@ public class CustomMekDialog extends AbstractButtonDialog
     }
 
     public void refreshOptions() {
-        panOptions.removeAll();
-        optionComps = new ArrayList<>();
-
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panOptions.setLayout(gridBagLayout);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(0, 0, 0, 0);
-        c.ipadx = 0;
-        c.ipady = 0;
-
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements(); ) {
-            IOptionGroup group = i.nextElement();
-
-            if (group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) &&
-                  !gameOptions().booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES)) {
-                continue;
-            }
-
-            if (group.getKey().equalsIgnoreCase(PilotOptions.EDGE_ADVANTAGES) &&
-                  !gameOptions().booleanOption(OptionsConstants.EDGE)) {
-                continue;
-            }
-
-            if (group.getKey().equalsIgnoreCase(PilotOptions.MD_ADVANTAGES) &&
-                  !gameOptions().booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) {
-                continue;
-            }
-
-            // Hide EI Implant group when neural interface rules are Off
-            if (group.getKey().equalsIgnoreCase(PilotOptions.EI_ADVANTAGES)) {
-                IOption aniOption = gameOptions().getOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE);
-                String aniMode = (aniOption == null) ? OptionsConstants.NEURAL_INTERFACE_MODE_OFF : aniOption.stringValue();
-                if (OptionsConstants.NEURAL_INTERFACE_MODE_OFF.equals(aniMode)) {
-                    continue;
-                }
-            }
-
-            addGroup(group, gridBagLayout, c);
-
-            Entity entity = entities.getFirst();
-            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
-                IOption option = j.nextElement();
-
-                if (entity.isBuildingEntityOrGunEmplacement()) {
-                    continue;
-                }
-
-                // a bunch of stuff should get disabled for conv infantry
-                if (entity.isConventionalInfantry() &&
-                      (option.getName().equals(OptionsConstants.MD_VDNI) ||
-                            option.getName().equals(OptionsConstants.MD_BVDNI))) {
-                    continue;
-                }
-
-                // a bunch of stuff should get disabled for all but conventional infantry
-                // Prosthetic enhancements (Enhanced/Improved Enhanced) are infantry-only (IO p.84)
-                // Sensory implants (audio, visual, laser, tele) are infantry-only
-                // Gas Effuser (Pheromone/Toxin) is infantry-only (IO pg 79)
-                String optionName = option.getName();
-                boolean isInfantryOnlyOption = switch (optionName) {
-                    case OptionsConstants.MD_PL_ENHANCED,
-                         OptionsConstants.MD_PL_I_ENHANCED,
-                         OptionsConstants.MD_PL_MASC,
-                         OptionsConstants.MD_CYBER_IMP_AUDIO,
-                         OptionsConstants.MD_CYBER_IMP_VISUAL,
-                         OptionsConstants.MD_CYBER_IMP_LASER,
-                         OptionsConstants.MD_CYBER_IMP_TELE,
-                         OptionsConstants.MD_GAS_EFFUSER_PHEROMONE,
-                         OptionsConstants.MD_GAS_EFFUSER_TOXIN -> true;
-                    default -> false;
-                };
-                if (!entity.isConventionalInfantry() && isInfantryOnlyOption) {
-                    continue;
-                }
-
-                addOption(option, gridBagLayout, c, editable);
-            }
-        }
-
+        panOptions.refreshOptions(options);
         validate();
     }
 
@@ -479,16 +403,12 @@ public class CustomMekDialog extends AbstractButtonDialog
         panQuirks.refreshQuirks();
     }
 
-    private void addGroup(IOptionGroup group, GridBagLayout gridBagLayout, GridBagConstraints gridBagConstraints) {
-        JLabel groupLabel = new JLabel(group.getDisplayableName());
-        gridBagLayout.setConstraints(groupLabel, gridBagConstraints);
-        panOptions.add(groupLabel);
-    }
-
-    private void addOption(IOption option, GridBagLayout gridBagLayout, GridBagConstraints gridBagConstraints,
-          boolean editable) {
+    /**
+     * Finishes one pilot option row built by {@link PilotOptionsPanel}: populates choice values and attaches the inline
+     * prosthetic controls. Passed to the panel as its {@link PilotOptionsPanel.OptionRowConfigurator}.
+     */
+    private void configureOptionRow(IOption option, DialogOptionComponentYPanel optionComp) {
         Entity entity = entities.getFirst();
-        DialogOptionComponentYPanel optionComp = new DialogOptionComponentYPanel(this, option, editable);
 
         if ((OptionsConstants.GUNNERY_WEAPON_SPECIALIST).equals(option.getName())) {
             optionComp.addValue(Messages.getString("CustomMekDialog.None"));
@@ -550,10 +470,6 @@ public class CustomMekDialog extends AbstractButtonDialog
         if (OptionsConstants.MD_PL_EXTRA_LIMBS.equals(option.getName()) && entity.isConventionalInfantry()) {
             addInlineExtraneousControls(optionComp, entity);
         }
-
-        gridBagLayout.setConstraints(optionComp, gridBagConstraints);
-        panOptions.add(optionComp);
-        optionComps.add(optionComp);
     }
 
     private void addPartRep(IOption option, boolean editable) {
@@ -1146,7 +1062,7 @@ public class CustomMekDialog extends AbstractButtonDialog
      */
     private int countSelectedSensoryImplants(DialogOptionComponentYPanel excludeComp) {
         int count = 0;
-        for (DialogOptionComponentYPanel optComp : optionComps) {
+        for (DialogOptionComponentYPanel optComp : panOptions.getOptionComponents()) {
             if (optComp == excludeComp) {
                 continue;
             }
@@ -1162,7 +1078,7 @@ public class CustomMekDialog extends AbstractButtonDialog
      * Checks if another gas effuser of the specified type is already selected.
      */
     private boolean hasOtherGasEffuserSelected(DialogOptionComponentYPanel excludeComp, String otherEffuserName) {
-        for (DialogOptionComponentYPanel optComp : optionComps) {
+        for (DialogOptionComponentYPanel optComp : panOptions.getOptionComponents()) {
             if (optComp == excludeComp) {
                 continue;
             }
@@ -1178,7 +1094,7 @@ public class CustomMekDialog extends AbstractButtonDialog
      * Deselects the option with the given name.
      */
     private void deselectOption(String optionName) {
-        for (DialogOptionComponentYPanel optComp : optionComps) {
+        for (DialogOptionComponentYPanel optComp : panOptions.getOptionComponents()) {
             if (optComp.getOption().getName().equals(optionName)) {
                 optComp.setSelected(false);
                 break;
@@ -1190,7 +1106,7 @@ public class CustomMekDialog extends AbstractButtonDialog
      * Checks if a boolean option is currently selected.
      */
     private boolean isOptionSelected(String optionName) {
-        for (DialogOptionComponentYPanel optComp : optionComps) {
+        for (DialogOptionComponentYPanel optComp : panOptions.getOptionComponents()) {
             if (optComp.getOption().getName().equals(optionName)) {
                 Object value = optComp.getValue();
                 return (value instanceof Boolean) && (Boolean) value;
@@ -1246,7 +1162,7 @@ public class CustomMekDialog extends AbstractButtonDialog
      * Deselects other DNI options when one is selected (they are mutually exclusive).
      */
     private void deselectOtherDniOptions(DialogOptionComponentYPanel selectedComp) {
-        for (DialogOptionComponentYPanel optComp : optionComps) {
+        for (DialogOptionComponentYPanel optComp : panOptions.getOptionComponents()) {
             if (optComp == selectedComp) {
                 continue;
             }
@@ -1255,6 +1171,43 @@ public class CustomMekDialog extends AbstractButtonDialog
                 optComp.setSelected(false);
             }
         }
+    }
+
+    /**
+     * Returns true when this unit, or anything it tows, carries a weapon that can be fired from off board.
+     * <p>
+     * A train acts as one unit for firing (TM, Trailers), so a tractor with no artillery of its own still belongs off
+     * board when it is pulling a gun trailer. Without this a Prime Mover towing a Gun Trailer could never put that gun
+     * off board, because the tractor alone would not qualify.
+     * </p>
+     */
+    private boolean trainCarriesArtillery(Entity entity) {
+        if (carriesOffBoardWeapon(entity)) {
+            return true;
+        }
+
+        for (int towedId : entity.getAllTowedUnits()) {
+            Entity trailer = (entity.getGame() == null) ? null : entity.getGame().getEntity(towedId);
+
+            if ((trailer != null) && carriesOffBoardWeapon(trailer)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** Returns true when the unit mounts artillery or a capital missile bay, the weapons that can fire off board. */
+    private boolean carriesOffBoardWeapon(Entity entity) {
+        for (WeaponMounted weapon : entity.getWeaponList()) {
+            WeaponType weaponType = weapon.getType();
+
+            if (weaponType.hasFlag(WeaponType.F_ARTILLERY) || (weaponType instanceof CapitalMissileBayWeapon)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -1443,38 +1396,32 @@ public class CustomMekDialog extends AbstractButtonDialog
             // effective range, even if many of the unit's weapons would be out of range
             int maxDistance = 0;
             for (Entity entity : entities) {
-                for (WeaponMounted wep : entity.getWeaponList()) {
-                    WeaponType w = wep.getType();
-                    int nDistance = 0;
-                    if (w.hasFlag(WeaponType.F_ARTILLERY)) {
-                        if (w instanceof ArtilleryBayWeapon) {
-                            // Artillery bays can mix and match, so limit the bay
-                            // to the shortest range of the weapons in it
-                            nDistance = getBayShortestRange(wep);
-                        } else {
-                            // Max TO range in map sheets - 1 for the actual play area
-                            nDistance = (w.getLongRange() - 1);
-                        }
-                    } else if (w.isCapital() || w.isSubCapital()) {
-                        // Capital weapons use their maximum space hex range as the map sheet range
-                        if (w.getMaxRange(wep) == WeaponType.RANGE_EXT) {
-                            nDistance = 50;
-                        }
-                        if (w.getMaxRange(wep) == WeaponType.RANGE_LONG) {
-                            nDistance = 40;
-                        }
-                        if (w.getMaxRange(wep) == WeaponType.RANGE_MED) {
-                            nDistance = 24;
-                        }
-                        if (w.getMaxRange(wep) == WeaponType.RANGE_SHORT) {
-                            nDistance = 12;
-                        }
+                for (WeaponMounted weaponMount : entity.getWeaponList()) {
+                    WeaponType weaponType = weaponMount.getType();
+                    int distanceInHexes = 0;
+                    if (weaponType.hasFlag(WeaponType.F_ARTILLERY)) {
+                        // Artillery bays can mix and match, so limit the bay
+                        // to the shortest range of the weapons in it
+                        int ratedRangeInMapSheets = (weaponType instanceof ArtilleryBayWeapon)
+                              ? getBayShortestRange(weaponMount)
+                              : weaponType.getLongRange();
+                        distanceInHexes = offBoardArtilleryDistance(entity, weaponType, ratedRangeInMapSheets);
+                    } else if (weaponType.isCapital() || weaponType.isSubCapital()) {
+                        // Capital weapons use their maximum space hex range as the map sheet range. The range
+                        // bracket is read once: working it out walks the mount's linked ammo.
+                        int rangeInMapSheets = switch (weaponType.getMaxRange(weaponMount)) {
+                            case WeaponType.RANGE_EXT -> 50;
+                            case WeaponType.RANGE_LONG -> 40;
+                            case WeaponType.RANGE_MED -> 24;
+                            case WeaponType.RANGE_SHORT -> 12;
+                            default -> 0;
+                        };
+                        // Now, convert to hexes
+                        distanceInHexes = rangeInMapSheets * Board.DEFAULT_BOARD_HEIGHT;
                     }
-                    // Now, convert to map sheets
-                    nDistance = nDistance * Board.DEFAULT_BOARD_HEIGHT;
                     // And set our maximum slider hex distance based on the calculations
-                    if (nDistance > maxDistance) {
-                        maxDistance = nDistance;
+                    if (distanceInHexes > maxDistance) {
+                        maxDistance = distanceInHexes;
                     }
                 }
 
@@ -1514,16 +1461,37 @@ public class CustomMekDialog extends AbstractButtonDialog
         }
     }
 
-    private static int getBayShortestRange(WeaponMounted wep) {
+    /**
+     * @param weaponMount the artillery bay to measure
+     *
+     * @return the rated range in map sheets of the shortest-ranged weapon in the bay, since that is as far as the whole
+     *       bay can reach
+     */
+    private static int getBayShortestRange(WeaponMounted weaponMount) {
         int bayShortestRange = 150; // Cruise missile/120
-        for (WeaponMounted bayWeapons : wep.getBayWeapons()) {
-            // Max TO range in map sheets - 1 for the actual play area
-            int currentDistance = (bayWeapons.getType().getLongRange() - 1);
-            if (currentDistance < bayShortestRange) {
-                bayShortestRange = currentDistance;
-            }
+        for (WeaponMounted bayWeapon : weaponMount.getBayWeapons()) {
+            bayShortestRange = Math.min(bayShortestRange, bayWeapon.getType().getLongRange());
         }
         return bayShortestRange;
+    }
+
+    /**
+     * Calculates how far off board a unit may deploy and still reach the play area with an artillery weapon. One map
+     * sheet of the weapon's range is reserved for the play area itself. A crew with the Oblique Artilleryman ability
+     * reaches ten percent farther (CamOps p.78, 5th printing), and ten percent of a map sheet is a fraction of one, so
+     * the calculation is made in hexes.
+     *
+     * @param entity                the unit being deployed off board
+     * @param weaponType            the type of the artillery weapon being measured
+     * @param ratedRangeInMapSheets the artillery weapon's rated range, in map sheets
+     *
+     * @return the greatest distance off board the unit may deploy, in hexes
+     */
+    private static int offBoardArtilleryDistance(Entity entity, WeaponType weaponType, int ratedRangeInMapSheets) {
+        int rangeInHexes = ArtilleryRange.extendedRangeInHexes(ratedRangeInMapSheets,
+              ArtilleryRange.isExtendedByObliqueArtilleryman(entity, weaponType));
+        // The play area itself takes up one map sheet of the weapon's reach
+        return Math.max(rangeInHexes - Board.DEFAULT_BOARD_HEIGHT, 0);
     }
 
     @Override
@@ -1621,7 +1589,6 @@ public class CustomMekDialog extends AbstractButtonDialog
             for (int i = 0; i < entities.getFirst().getCrew().getSlotCount(); i++) {
                 String name = panCrewMember[i].getPilotName();
                 String nick = panCrewMember[i].getNickname();
-                String hits = panCrewMember[i].getHits();
                 Gender gender = panCrewMember[i].getGender();
                 if (gender == Gender.RANDOMIZE) {
                     gender = entities.getFirst().getCrew().getGender(i);
@@ -1735,9 +1702,10 @@ public class CustomMekDialog extends AbstractButtonDialog
                 entity.getCrew().setCrewFatigue(fatigue, i);
                 entity.getCrew().setName(name, i);
                 entity.getCrew().setNickname(nick, i);
-                entity.getCrew().setHits(MathUtility.parseInt(hits, 0), i);
+                // crew hits are damage, so they are edited in the damage editor rather than here
                 entity.getCrew().setGender(gender, i);
                 entity.getCrew().setClanPilot(panCrewMember[i].isClanPilot(), i);
+                entity.getCrew().setArmorKitName(panCrewMember[i].getArmorKitName(), i);
                 if (clientGUI != null) {
                     entity.getCrew().setPortrait(panCrewMember[i].getPortrait().clone(), i);
                 }
@@ -1894,8 +1862,16 @@ public class CustomMekDialog extends AbstractButtonDialog
                 // Should the entity begin the game prone?
                 entity.setProne(chDeployProne.isSelected());
 
-                // Should the entity begin the game prone?
+                // Should the entity begin the game hull down?
                 entity.setHullDown(chDeployHullDown.isSelected());
+            }
+
+            // Should the infantry begin the game dug in? (TO:AR p.106; mechanized infantry cannot dig in.)
+            if ((entity instanceof Infantry deployingInfantry) && !deployingInfantry.isMechanized()
+                  && gameOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_DIG_IN)) {
+                deployingInfantry.setDugIn(chDeployDugIn.isSelected()
+                      ? Infantry.DUG_IN_COMPLETE
+                      : Infantry.DUG_IN_NONE);
             }
         }
 
@@ -2054,9 +2030,9 @@ public class CustomMekDialog extends AbstractButtonDialog
                 EquipmentType eiType = EquipmentType.get("EIInterface");
                 if (eiType != null) {
                     Mounted<?> eiMounted = entity.addEquipment(eiType, Entity.LOC_NONE);
-                    // Set EI to "On" mode by default - pilot got the implant to use it
-                    // Mode 1 is "Initiate enhanced imaging" (On)
-                    eiMounted.setMode(1);
+                    // Set EI to running mode - the pilot got the implant in order to use it. This matches the
+                    // equipment's own default and is stated explicitly so the intent survives future mode changes.
+                    eiMounted.setMode(MiscType.MODE_EI_ON);
                 }
             } catch (LocationFullException e) {
                 // Should not happen for 0-slot equipment
@@ -2128,14 +2104,15 @@ public class CustomMekDialog extends AbstractButtonDialog
             //  lob offboard missiles and we could use it in space for extreme range bearings-only fights, plus
             //  Ortillery. Further, this should be revisited with a rules query when it comes to handling offboard
             //  gun emplacements, especially if they are allowed
+            // A hitched train deploys wherever its tractor does, so the setting belongs to the tractor and a trailer
+            // must not offer one of its own. Unhitched, a trailer is free to deploy off board on its own terms.
+            final boolean deploysWithItsTractor = e.getTractor() != Entity.NONE;
+
             final boolean entityEligibleForOffBoard = !space &&
                   (e.getAltitude() == 0) &&
                   !(e.isBuildingEntityOrGunEmplacement()) &&
-                  e.getWeaponList()
-                        .stream()
-                        .map(Mounted::getType)
-                        .anyMatch(weaponType -> weaponType.hasFlag(WeaponType.F_ARTILLERY) ||
-                              (weaponType instanceof CapitalMissileBayWeapon));
+                  !deploysWithItsTractor &&
+                  trainCarriesArtillery(e);
             eligibleForOffBoard &= entityEligibleForOffBoard;
         }
         // set up the panels
@@ -2146,7 +2123,7 @@ public class CustomMekDialog extends AbstractButtonDialog
         tabAll.setTabAlignment(FlatTabbedPane.TabAlignment.leading);
         tabAll.setMinimumTabWidth(new JLabel("X".repeat(15)).getPreferredSize().width);
 
-        JPanel panCrew = new JPanel(new GridBagLayout());
+        JPanel panCrew = new WidthTrackingPanel(new GridBagLayout());
         panCrewMember = new CustomPilotViewPanel[entity.getCrew().getSlotCount()];
         for (int i = 0; i < panCrewMember.length; i++) {
             panCrewMember[i] = new CustomPilotViewPanel(this, entity, i, editable);
@@ -2179,7 +2156,7 @@ public class CustomMekDialog extends AbstractButtonDialog
                 crewScrollPane.getVerticalScrollBar().setUnitIncrement(16);
                 tabAll.addTab(Messages.getString("CustomMekDialog.tabCrew"), crewScrollPane);
             } else {
-                panCrew.add(panCrewMember[0], GBC.eop());
+                panCrew.add(panCrewMember[0], GBC.eop().anchor(GridBagConstraints.NORTHWEST));
                 JScrollPane memberScrollPane = new JScrollPane(panCrew);
                 memberScrollPane.getVerticalScrollBar().setUnitIncrement(16);
                 tabAll.addTab(Messages.getString("CustomMekDialog.tabPilot"), memberScrollPane);
@@ -2216,31 +2193,54 @@ public class CustomMekDialog extends AbstractButtonDialog
         }
         // Also need to consider melee weapons
         for (Mounted<?> m : entity.getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_CLUB)) {
+            if (m.getType().hasFlag(MiscType.F_CLUB) || m.getType().hasFlag(MiscType.F_SHIELD)) {
                 h_wpnQuirks.put(entity.getEquipmentNum(m), m.getQuirks());
             }
         }
 
         // **CREW TAB**//
-        if (gameOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
-            panCrew.add(new JLabel(Messages.getString("CustomMekDialog.labInit"), SwingConstants.RIGHT), GBC.std());
-            panCrew.add(fldInit, GBC.eop());
-        }
         fldInit.setText(Integer.toString(entity.getCrew().getInitBonus()));
-
-        if (gameOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
-            panCrew.add(new JLabel(Messages.getString("CustomMekDialog.labCommandInit"), SwingConstants.RIGHT),
-                  GBC.std());
-            panCrew.add(fldCommandInit, GBC.eop());
-        }
         fldCommandInit.setText(Integer.toString(entity.getCrew().getCommandBonus()));
-
         // Set up commanders for commander killed victory condition & SPA
-        panCrew.add(new JLabel(Messages.getString("CustomMekDialog.labCommander"), SwingConstants.RIGHT), GBC.std());
-        panCrew.add(chCommander, GBC.eol());
         chCommander.setSelected(entity.isCommander());
-        panOptions = new JPanel(new GridBagLayout());
-        panCrew.add(panOptions, GBC.eop());
+
+        boolean individualInitiative = gameOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE);
+        boolean commandInitiative = gameOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT);
+        if (!multipleEntities && (panCrewMember.length == 1)) {
+            // Single pilot: fold the crew-level controls into the pilot's Advanced section. Clan Pilot goes
+            // after Commander Initiative (the two swapped places by request).
+            if (individualInitiative) {
+                panCrewMember[0].addAdvancedRow(Messages.getString("CustomMekDialog.labInit"), fldInit);
+            }
+            if (commandInitiative) {
+                panCrewMember[0].addAdvancedRow(Messages.getString("CustomMekDialog.labCommandInit"),
+                      fldCommandInit);
+            }
+            panCrewMember[0].addClanPilotAdvancedRow();
+            panCrewMember[0].addAdvancedRow(Messages.getString("CustomMekDialog.labCommander"), chCommander);
+        } else {
+            // Multi-crew: the shared Crew tab gets its own Command section
+            JPanel commandSection = new JPanel(new GridBagLayout());
+            commandSection.setBorder(CustomPilotViewPanel.sectionBorder("CustomMekDialog.sectionCommand"));
+            if (individualInitiative) {
+                commandSection.add(new JLabel(Messages.getString("CustomMekDialog.labInit"),
+                      SwingConstants.RIGHT), GBC.std());
+                commandSection.add(fldInit, GBC.eop());
+            }
+            if (commandInitiative) {
+                commandSection.add(new JLabel(Messages.getString("CustomMekDialog.labCommandInit"),
+                      SwingConstants.RIGHT), GBC.std());
+                commandSection.add(fldCommandInit, GBC.eop());
+            }
+            commandSection.add(new JLabel(Messages.getString("CustomMekDialog.labCommander"),
+                  SwingConstants.RIGHT), GBC.std());
+            commandSection.add(chCommander, GBC.eol());
+            panCrew.add(commandSection, GBC.eop().anchor(GridBagConstraints.NORTHWEST).insets(0, 0, 0, 10));
+        }
+
+        panOptions = new PilotOptionsPanel(entities.getFirst(), editable, gameOptions(), this,
+              this::configureOptionRow);
+        panCrew.add(panOptions, GBC.eop().fill(GridBagConstraints.HORIZONTAL).weightX(1.0));
 
         // **DEPLOYMENT TAB**//
 
@@ -2321,6 +2321,28 @@ public class CustomMekDialog extends AbstractButtonDialog
             panDeploy.add(chDeployProne, GBC.eol());
             chDeployProne.setSelected(entity.isProne() && !entity.isHullDown());
             chDeployProne.addItemListener(this);
+        }
+
+        // Vehicles may deploy already hull-down (TO:AR p.19) when the hull-down option is enabled. The option is
+        // offered only to hull-down-capable vehicles (not Large Vehicles, and not naval/hydrofoil/submarine units);
+        // the deploy hex must still be fortified, which is validated at deployment time.
+        boolean isHullDownCapableVehicle = (entity instanceof Tank deployingVehicle)
+              && deployingVehicle.isHullDownCapable()
+              && gameOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);
+        if (isHullDownCapableVehicle) {
+            panDeploy.add(labDeployHullDown, GBC.std());
+            panDeploy.add(chDeployHullDown, GBC.eol());
+            chDeployHullDown.setSelected(entity.isHullDown());
+            chDeployHullDown.addItemListener(this);
+        }
+
+        // Infantry may deploy already dug in (TO:AR p.106). Mechanized infantry cannot dig in, so this is
+        // offered only to non-mechanized infantry and only when the dig-in option is enabled.
+        if ((entity instanceof Infantry deployingInfantry) && !deployingInfantry.isMechanized()
+              && gameOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_DIG_IN)) {
+            panDeploy.add(labDeployDugIn, GBC.std());
+            panDeploy.add(chDeployDugIn, GBC.eol());
+            chDeployDugIn.setSelected(deployingInfantry.getDugIn() == Infantry.DUG_IN_COMPLETE);
         }
 
         refreshDeployment();
@@ -2433,5 +2455,46 @@ public class CustomMekDialog extends AbstractButtonDialog
             return client.getGame().getOptions();
         }
         return clientGUI.getClient().getGame().getOptions();
+    }
+
+    /**
+     * A scroll pane view that reflows to the viewport width instead of forcing horizontal scrolling - the wide option
+     * groups then squeeze their columns rather than pushing the whole tab sideways. Height stays free so vertical
+     * scrolling works as usual.
+     */
+    private static class WidthTrackingPanel extends JPanel implements Scrollable {
+        @Serial
+        private static final long serialVersionUID = 3364552402022733440L;
+
+        private static final int SCROLL_UNIT_INCREMENT = 16;
+
+        WidthTrackingPanel(LayoutManager layoutManager) {
+            super(layoutManager);
+        }
+
+        @Override
+        public Dimension getPreferredScrollableViewportSize() {
+            return getPreferredSize();
+        }
+
+        @Override
+        public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return SCROLL_UNIT_INCREMENT;
+        }
+
+        @Override
+        public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return (orientation == SwingConstants.VERTICAL) ? visibleRect.height : visibleRect.width;
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportWidth() {
+            return true;
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportHeight() {
+            return false;
+        }
     }
 }

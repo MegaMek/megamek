@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,9 @@
 
 package megamek.common.loaders;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.enums.ProstheticEnhancementType;
+import megamek.common.enums.TechBase;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.InfantryWeaponMounted;
@@ -112,7 +114,8 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             throw new EntityLoadingException("Could not find primary weapon.");
         }
         String primaryName = dataFile.getDataAsString("Primary")[0];
-        EquipmentType primaryWeaponType = EquipmentType.get(primaryName);
+          EquipmentType primaryWeaponType = EquipmentType.get(primaryName,
+              infantry.isClan() ? TechBase.CLAN : TechBase.IS);
         if (!(primaryWeaponType instanceof InfantryWeapon)) {
             throw new EntityLoadingException("primary weapon is not an infantry weapon");
         }
@@ -121,7 +124,8 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         EquipmentType secondaryWeaponType = null;
         if (dataFile.exists("Secondary")) {
             String secondName = dataFile.getDataAsString("Secondary")[0];
-            secondaryWeaponType = EquipmentType.get(secondName);
+            secondaryWeaponType = EquipmentType.get(secondName,
+                infantry.isClan() ? TechBase.CLAN : TechBase.IS);
             if (!(secondaryWeaponType instanceof InfantryWeapon)) {
                 throw new EntityLoadingException("secondary weapon " + secondName + " is not an infantry weapon");
             }
@@ -153,6 +157,8 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             throw new EntityLoadingException(ex.getMessage());
         }
 
+        loadDisposableWeapon(infantry);
+
         // TAG infantry have separate attacks for primary and secondary weapons.
         if (null != secondaryWeaponType && secondaryWeaponType.hasFlag(WeaponType.F_TAG)) {
             infantry.setSpecializations(infantry.getSpecializations() | ConvInfantry.TAG_TROOPS);
@@ -167,15 +173,24 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         // LOC_INFANTRY equipment
         if (dataFile.exists("armorKit")) {
             String kitName = dataFile.getDataAsString("armorKit")[0];
-            EquipmentType kit = EquipmentType.get(kitName);
+            EquipmentType kit = EquipmentType.get(kitName,
+                infantry.isClan() ? TechBase.CLAN : TechBase.IS);
             if ((null == kit) || !(kit.hasFlag(MiscType.F_ARMOR_KIT))) {
                 throw new EntityLoadingException(kitName + " is not an infantry armor kit");
             }
             infantry.setArmorKit(kit);
         }
 
-        if (dataFile.exists("dest")) {
-            infantry.setDEST(true);
+        if (dataFile.exists("armor_name")) {
+            infantry.setCustomArmorName(dataFile.getDataAsString("armor_name")[0]);
+        }
+
+        if (dataFile.exists("armordivisor")) {
+            try {
+                infantry.setCustomArmorDamageDivisor(Double.parseDouble(dataFile.getDataAsString("armordivisor")[0]));
+            } catch (NumberFormatException ex) {
+                throw new EntityLoadingException("Could not read armor divisor");
+            }
         }
 
         if (dataFile.exists("encumberingarmor")) {
@@ -184,6 +199,10 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
 
         if (dataFile.exists("spacesuit")) {
             infantry.setSpaceSuit(true);
+        }
+
+        if (dataFile.exists("dest")) {
+            infantry.setDEST(true);
         }
 
         if (dataFile.exists("sneakcamo")) {
@@ -196,14 +215,6 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
 
         if (dataFile.exists("sneakecm")) {
             infantry.setSneakECM(true);
-        }
-
-        if (dataFile.exists("armordivisor")) {
-            try {
-                infantry.setCustomArmorDamageDivisor(Double.parseDouble(dataFile.getDataAsString("armordivisor")[0]));
-            } catch (NumberFormatException ex) {
-                throw new EntityLoadingException("Could not read armor divisor");
-            }
         }
 
         loadEquipment(infantry, "Field Guns", ConvInfantry.LOC_FIELD_GUNS);
@@ -231,7 +242,8 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             int[] amSkill = dataFile.getDataAsInt("antimek");
             if (amSkill[0] != 8) {
                 try {
-                    infantry.addEquipment(EquipmentType.get(EquipmentTypeLookup.ANTI_MEK_GEAR), ConvInfantry.LOC_INFANTRY);
+                      infantry.addEquipment(EquipmentType.get(EquipmentTypeLookup.ANTI_MEK_GEAR,
+                          infantry.isClan() ? TechBase.CLAN : TechBase.IS), ConvInfantry.LOC_INFANTRY);
                 } catch (LocationFullException ex) {
                     throw new EntityLoadingException(ex.getMessage());
                 }
@@ -320,5 +332,36 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         infantry.recalculateTechAdvancement();
         loadQuirks(infantry);
         return infantry;
+    }
+
+    /**
+     * Loads the platoon's Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing), if present. A Disposable Weapon
+     * is a one-shot weapon carried by every trooper; it is added to {@code LOC_INFANTRY} as a separate fireable mount
+     * marked disposable so it resolves with the disposable damage formula instead of the standard infantry weapon
+     * attack.
+     *
+     * @param infantry the platoon being loaded
+     *
+     * @throws EntityLoadingException if the tech level is not Advanced or greater, the named weapon is missing, not an
+     * infantry weapon, or not a Disposable Weapon
+     */
+    private void loadDisposableWeapon(ConvInfantry infantry) throws EntityLoadingException {
+        if (dataFile.exists("disposableWeapon")) {
+            SimpleTechLevel techLevel = SimpleTechLevel.convertCompoundToSimple(infantry.getTechLevel());
+            if (techLevel.ordinal() < SimpleTechLevel.ADVANCED.ordinal()) {
+                throw new EntityLoadingException("Disposable Weapon requires Advanced or greater Tech Level (found: "
+                      + techLevel + ")");
+            }
+            String disposableWeaponName = dataFile.getDataAsString("disposableWeapon")[0];
+            EquipmentType disposableWeaponType = EquipmentType.get(disposableWeaponName,
+              infantry.isClan() ? TechBase.CLAN : TechBase.IS);
+            if (!(disposableWeaponType instanceof InfantryWeapon disposableWeapon)) {
+                throw new EntityLoadingException(disposableWeaponName + " is not an infantry weapon");
+            }
+            if (!disposableWeapon.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
+                throw new EntityLoadingException(disposableWeaponName + " is not a Disposable Weapon");
+            }
+            infantry.equipDisposableWeapon(disposableWeapon);
+        }
     }
 }

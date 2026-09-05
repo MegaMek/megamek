@@ -36,6 +36,7 @@ package megamek.common.weapons.missiles.innerSphere.mml;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
@@ -74,11 +75,14 @@ public class ISMML3 extends MMLWeapon {
         medAV = 2;
         longAV = 2;
         maxRange = RANGE_LONG;
-        rulesRefs = "229, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 229),
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 186),
+              rulesRef(SourceBookCode.TW, 138)
+        );
         // March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)

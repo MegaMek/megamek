@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -54,6 +54,7 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.game.Game;
 import megamek.common.game.InGameObject;
 import megamek.common.options.OptionsConstants;
+import megamek.common.options.PilotOptions;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.MekWarrior;
@@ -139,11 +140,15 @@ public final class PilotToolTip {
     }
 
     private static StringBuilder crewInfoLine(final Entity entity) {
-        Crew crew = entity.getCrew();
         Game game = entity.getGame();
         // Effective entity skill for the whole crew
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
-        String col = CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills);
+        String col = CrewSkillSummaryUtil.getSkillNames(entity) + ": "
+              + CrewSkillSummaryUtil.getEffectiveSkillsAsString(entity, rpg_skills);
+        String implantAdjustments = CrewSkillSummaryUtil.getImplantAdjustmentsDescription(entity);
+        if (!implantAdjustments.isEmpty()) {
+            col += "<BR>" + implantAdjustments;
+        }
         col = UIUtil.tag("TD", "", col);
         String rows = UIUtil.tag("TR", "", col);
         String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0 BORDER=0", rows);
@@ -188,7 +193,11 @@ public final class PilotToolTip {
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         result.append(CrewSkillSummaryUtil.getSkillNames(entity))
               .append(": ")
-              .append(crew.getSkillsAsString(rpg_skills));
+              .append(CrewSkillSummaryUtil.getEffectiveSkillsAsString(entity, rpg_skills));
+        String implantAdjustments = CrewSkillSummaryUtil.getImplantAdjustmentsDescription(entity);
+        if (!implantAdjustments.isEmpty()) {
+            result.append("<BR>").append(implantAdjustments);
+        }
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         result = new StringBuilder(UIUtil.tag("span", fontSizeAttr, result.toString()));
         String col = UIUtil.tag("TD", "align=\"left\"", result.toString());
@@ -280,8 +289,15 @@ public final class PilotToolTip {
         String result;
         String sOptionList;
         Crew crew = entity.getCrew();
+        // The Edge group (Edge points and their triggers) is only meaningful when the Edge game option is enabled.
+        // When it is disabled, hide the whole group so it doesn't clutter the unit card (issue #7142).
+        Game game = entity.getGame();
+        boolean edgeEnabled = (game == null) || game.getOptions().booleanOption(OptionsConstants.EDGE);
         // Pass entity to getOptionList so it can add prosthetic enhancement details during generation
-        sOptionList = getOptionList(crew.getOptions().getGroups(), crew::countOptions, detailed, entity);
+        sOptionList = getOptionList(crew.getOptions().getGroups(),
+              groupKey -> (!edgeEnabled && PilotOptions.EDGE_ADVANTAGES.equals(groupKey)) ? 0
+                    : crew.countOptions(groupKey),
+              detailed, entity);
 
         String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipQuirkColor()));
         sOptionList = UIUtil.tag("FONT", attr, sOptionList);

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2006 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.ToolTipManager;
 
@@ -57,7 +58,7 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.CollapseWarning;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
-import megamek.client.ui.dialogs.ConfirmDialog;
+import megamek.client.ui.dialogs.phaseDisplay.AutomaticEjectionDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DeployElevationChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DeployFacingChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.EntityChoiceDialog;
@@ -67,6 +68,7 @@ import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.MekPanelTabStrip;
+import megamek.common.Hex;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.ProtoMekClampMount;
 import megamek.common.bays.Bay;
@@ -80,13 +82,18 @@ import megamek.common.board.FacingOption;
 import megamek.common.equipment.Transporter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Dropship;
+import megamek.common.units.AutomaticEjectionRules;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.Infantry;
+import megamek.common.units.Tank;
+import megamek.common.units.Terrains;
+import megamek.common.units.TrainLayout;
 import megamek.logging.MMLogger;
 
 public class DeploymentDisplay extends StatusBarPhaseDisplay {
@@ -105,6 +112,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         DEPLOY_UNLOAD("deployUnload"),
         DEPLOY_REMOVE("deployRemove"),
         DEPLOY_ASSAULT_DROP("assaultDrop"),
+        DEPLOY_HULL_DOWN("deployHullDown"),
         DEPLOY_DOCK("deployDock");
 
         public final String cmd;
@@ -163,6 +171,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     // is the shift key held?
     private boolean turnMode = false;
     private boolean assaultDropPreference = false;
+    /** Whether the crews-will-die-if-they-eject warning has already been given this deployment phase. */
+    private boolean hasWarnedAboutAutoEjection = false;
     private final Set<ElevationOption> lastHexDeploymentOptions = new HashSet<>();
     private ElevationOption lastDeploymentOption = null;
 
@@ -185,7 +195,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         /** Entity cannot deploy on this board type (e.g., space unit on ground board) */
         WRONG_BOARD_TYPE,
         /** Coordinates are outside the allowed deployment area */
-        OUTSIDE_DEPLOYMENT_AREA
+        OUTSIDE_DEPLOYMENT_AREA,
+        /** A hidden unit cannot deploy onto a fortified hex (the fortification would reveal the position) */
+        HIDDEN_IN_FORTIFIED,
+        /** A vehicle set to deploy hull-down must start in a fortified hex and must not be a Large Vehicle */
+        HULL_DOWN_NEEDS_FORTIFIED,
+        /** A tractor's trailers would land outside the deployment area; the whole train has to fit */
+        TRAIN_DOES_NOT_FIT
     }
 
     /**
@@ -326,6 +342,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             assaultDropPreference = false;
         }
 
+        // Vehicles may deploy hull down (TO:AR p.19) onto a fortified hex. Offer a toggle so a player who set a
+        // vehicle to deploy hull-down can turn it off when there is no fortified hex to deploy into.
+        boolean hullDownOption = game.getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);
+        boolean canToggleHullDown = (entity instanceof Tank deployingVehicle)
+              && deployingVehicle.isHullDownCapable() && hullDownOption;
+        setHullDownEnabled(canToggleHullDown);
+        updateHullDownButtonText(entity);
+
         setLoadEnabled(!getLoadableEntities().isEmpty());
         setUnloadEnabled(!entity.getLoadedUnits().isEmpty());
 
@@ -337,6 +362,21 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.updateFiringArc(entity);
         clientgui.showSensorRanges(entity);
         computeWarningHexes(entity);
+    }
+
+    /**
+     * Recomputes the collapse warnings when the board changes under the unit being deployed, so a marker does not
+     * outlive the building it was warning about.
+     */
+    @Override
+    public void gameBoardChanged(GameBoardChangeEvent event) {
+        if (isIgnoringEvents()) {
+            return;
+        }
+        Entity deployingEntity = currentEntity();
+        if (deployingEntity != null) {
+            computeWarningHexes(deployingEntity);
+        }
     }
 
     private void computeWarningHexes(Entity ce) {
@@ -379,6 +419,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         setLoadEnabled(false);
         setUnloadEnabled(false);
         setAssaultDropEnabled(false);
+        setHullDownEnabled(false);
     }
 
     private void setButtonEnabled(DeployCommand cmd, boolean enabled) {
@@ -416,17 +457,35 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (GUIP.getNagForDoomed()) {
             String reason = game.getPlanetaryConditions().whyDoomed(entity, game);
             if (reason != null) {
-                String title = Messages.getString("DeploymentDisplay.ConfirmDoomed.title");
-                String body = Messages.getString("DeploymentDisplay.ConfirmDoomed.message", reason);
-                ConfirmDialog nag = clientgui.doYesNoBotherDialog(title, body);
-                if (nag.getAnswer()) {
-                    // do they want to be bothered again?
-                    if (!nag.getShowAgain()) {
-                        GUIP.setNagForDoomed(false);
+                switch (askAboutDoomedDeployment(entity, reason)) {
+                    case DEPLOY_ANYWAY -> {
+                        // Fall through to the rest of the checks and deploy it.
                     }
-                } else {
-                    return true;
+                    case REMOVE_FROM_GAME -> {
+                        remove();
+                        return true;
+                    }
+                    case CANCEL -> {
+                        takeBackDeployment(entity, reason);
+                        return true;
+                    }
                 }
+            }
+        }
+
+        if (shouldWarnAboutAutoEjection()) {
+            List<Entity> unitsWithEjectionSystems = unitsWithAnEjectionSystem();
+            hasWarnedAboutAutoEjection = true;
+            logger.debug("[EnvironmentalSealing] warning about auto-ejection - listing {} unit(s) with an ejection "
+                  + "system in conditions that would kill an ejected crew", unitsWithEjectionSystems.size());
+            AutomaticEjectionDialog ejectionDialog = new AutomaticEjectionDialog(clientgui.getFrame(),
+                  clientgui, unitsWithEjectionSystems,
+                  game.getPlanetaryConditions().whyLethalToEjectedCrew());
+            ejectionDialog.setVisible(true);
+            if (ejectionDialog.isDeploymentCancelled()) {
+                takeBackDeployment(entity,
+                      Messages.getString("DeploymentDisplay.ConfirmAutoEject.cancelReason"));
+                return true;
             }
         }
 
@@ -450,6 +509,134 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             clientgui.getClient().sendEntityWeaponOrderUpdate(entity);
         }
         endMyTurn();
+    }
+
+    /** What the player chose to do about a unit the planetary conditions would destroy. */
+    private enum DoomedDeploymentChoice {
+        /** Put it on the board anyway and accept the consequences. */
+        DEPLOY_ANYWAY,
+        /** Take it out of the game, so it stops being offered for deployment. */
+        REMOVE_FROM_GAME,
+        /** Neither - lift it back off the board and let the player think again. */
+        CANCEL
+    }
+
+    /**
+     * Asks what to do about a unit the planetary conditions would destroy.
+     * <p>
+     * There are genuinely three answers here, not two. The conditions that raise this question - vacuum, a tainted
+     * atmosphere, a tornado - apply to the whole map, so a unit that cannot survive them cannot survive anywhere on
+     * this board, and the deployment phase keeps offering it until it is either deployed or taken out of the game.
+     * Removing it is therefore a real answer and needs its own button rather than being buried on the Remove button
+     * once the player works out that is what they need.
+     *
+     * @param entity the unit being deployed
+     * @param reason the reason the conditions would destroy it, as {@code whyDoomed} gave it
+     *
+     * @return what the player chose
+     */
+    private DoomedDeploymentChoice askAboutDoomedDeployment(Entity entity, String reason) {
+        JCheckBox dontAskAgain = new JCheckBox(
+              Messages.getString("DeploymentDisplay.ConfirmDoomed.dontAskAgain"));
+        Object[] message = { Messages.getString("DeploymentDisplay.ConfirmDoomed.message",
+              entity.getShortName(), reason), dontAskAgain };
+        Object[] choices = { Messages.getString("DeploymentDisplay.ConfirmDoomed.deployAnyway"),
+              Messages.getString("DeploymentDisplay.ConfirmDoomed.removeFromGame"),
+              Messages.getString("DeploymentDisplay.ConfirmDoomed.cancel") };
+
+        int chosenIndex = JOptionPane.showOptionDialog(clientgui.getFrame(),
+              message,
+              Messages.getString("DeploymentDisplay.ConfirmDoomed.title"),
+              JOptionPane.DEFAULT_OPTION,
+              JOptionPane.WARNING_MESSAGE,
+              null,
+              choices,
+              choices[2]);
+
+        if (dontAskAgain.isSelected()) {
+            GUIP.setNagForDoomed(false);
+        }
+        return switch (chosenIndex) {
+            case 0 -> DoomedDeploymentChoice.DEPLOY_ANYWAY;
+            case 1 -> DoomedDeploymentChoice.REMOVE_FROM_GAME;
+            // Closing the dialog with the window button lands here too, and means the same as Cancel.
+            default -> DoomedDeploymentChoice.CANCEL;
+        };
+    }
+
+    /**
+     * Whether the player still needs telling that their crews will die if they eject here.
+     * <p>
+     * Asked once for the whole force rather than once per unit, because automatic ejection is switched on by default
+     * and the answer is the same for every unit on the board: the conditions cover the whole map.
+     *
+     * @return {@code true} if the warning is due
+     */
+    private boolean shouldWarnAboutAutoEjection() {
+        if (hasWarnedAboutAutoEjection || !GUIP.getNagForAutoEject()) {
+            return false;
+        }
+        if (!game.getPlanetaryConditions().isLethalToEjectedCrew()) {
+            return false;
+        }
+        return unitsWithAnEjectionSystem().stream()
+              .anyMatch(entity -> AutomaticEjectionRules.willEjectAutomatically(entity, game));
+    }
+
+    /**
+     * Every unit of this player's that has an ejection system, whether or not it is currently switched on.
+     * <p>
+     * The dialog lists all of them rather than only the ones at risk, so the player can see the state of the whole
+     * force and change any of it. Hiding the units that are already safe would leave them wondering why a Mek they
+     * own is missing from the list.
+     *
+     * @return every unit with an ejection system, in the order the game holds them
+     */
+    private List<Entity> unitsWithAnEjectionSystem() {
+        return game.getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
+              .stream()
+              .filter(AutomaticEjectionRules::hasEjectionSystem)
+              .toList();
+    }
+
+    /**
+     * Lifts a unit back off the board after the player cancels out of deploying it into conditions that would kill
+     * it, leaving it selected so they can place it somewhere else or move on with the Next button.
+     *
+     * @param entity the unit being taken back off the board
+     * @param reason the reason the conditions would destroy it, as {@code whyDoomed} gave it
+     */
+    private void takeBackDeployment(Entity entity, String reason) {
+        entity.setPosition(null);
+        clientgui.boardViews().forEach(boardView -> ((BoardView) boardView).redrawEntity(entity));
+        clientgui.boardViews().forEach(IBoardView::repaint);
+        butDone.setEnabled(false);
+        clientgui.addToast(ToastLevel.INFO,
+              Messages.getString("DeploymentDisplay.doomedDeploymentCancelled", reason),
+              entity);
+    }
+
+    /**
+     * Lifts the current unit back off the board, releases anything it picked up this turn, and selects the next unit
+     * waiting to deploy. This is what the Next button does.
+     */
+    private void moveOnToNextDeployableUnit() {
+        final Client client = clientgui.getClient();
+        if (currentEntity() != null) {
+            currentEntity().setPosition(null);
+            clientgui.boardViews().forEach(boardView -> ((BoardView) boardView).redrawEntity(currentEntity()));
+            // Unload any units loaded during this turn, but leave the ones loaded back in the lobby alone.
+            List<Integer> lobbyLoadedUnits = currentEntity().getLoadedKeepers();
+            for (Entity other : currentEntity().getLoadedUnits()) {
+                if (!lobbyLoadedUnits.contains(other.getId())) {
+                    currentEntity().unload(other);
+                    other.setTransportId(Entity.NONE);
+                    other.newRound(client.getGame().getRoundCount());
+                }
+            }
+        }
+        clientgui.boardViews().forEach(IBoardView::repaint);
+        selectEntity(client.getNextDeployableEntityNum(cen));
     }
 
     /** Sends an entity removal to the server. */
@@ -537,6 +724,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
 
         if (game.getPhase().isDeployment()) {
+            hasWarnedAboutAutoEjection = false;
             setStatusBarText(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase"));
         }
     }
@@ -585,6 +773,30 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
         if (!(board.isLegalDeployment(coords, entity) || assaultDropPreference)) {
             return BoardValidationResult.OUTSIDE_DEPLOYMENT_AREA;
+        }
+        // A train deploys as one piece, so every hex it would occupy has to be legal, not just the tractor's.
+        if (!entity.getAllTowedUnits().isEmpty() && !assaultDropPreference) {
+            for (Coords trainHex : TrainLayout.deploymentFootprint(game, entity, coords, entity.getFacing())) {
+                if (!board.isLegalDeployment(trainHex, entity)) {
+                    logger.info("[Train] {} cannot deploy at {} facing {}: trailer hex {} is outside the "
+                          + "deployment area", entity.getShortName(), coords, entity.getFacing(), trainHex);
+                    return BoardValidationResult.TRAIN_DOES_NOT_FIT;
+                }
+            }
+        }
+        // A hidden unit cannot start in a fortified hex - the fortification is visible terrain that would give
+        // the position away. (A unit may, however, deploy both dug in and hidden in concealing terrain.)
+        Hex deployHex = board.getHex(coords);
+        if (entity.isHidden() && (deployHex != null) && deployHex.containsTerrain(Terrains.FORTIFIED)) {
+            return BoardValidationResult.HIDDEN_IN_FORTIFIED;
+        }
+        // A vehicle set to deploy hull-down must start in a fortified ("infantry-built") hex; only that terrain lets
+        // a vehicle take cover, and Large Vehicles cannot use it at all (TO:AR p.19).
+        if ((entity instanceof Tank deployingVehicle) && entity.isHullDown()) {
+            boolean fortifiedHex = (deployHex != null) && deployHex.containsTerrain(Terrains.FORTIFIED);
+            if (deployingVehicle.isLargeVehicleForHullDown() || !fortifiedHex) {
+                return BoardValidationResult.HULL_DOWN_NEEDS_FORTIFIED;
+            }
         }
         return BoardValidationResult.VALID;
     }
@@ -714,6 +926,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             } else if (validationResult == BoardValidationResult.OUTSIDE_DEPLOYMENT_AREA) {
                 showOutsideDeployAreaMessage();
                 return;
+            } else if (validationResult == BoardValidationResult.HIDDEN_IN_FORTIFIED) {
+                showHiddenInFortifiedMessage();
+                return;
+            } else if (validationResult == BoardValidationResult.HULL_DOWN_NEEDS_FORTIFIED) {
+                showHullDownNeedsFortifiedMessage();
+                return;
+            } else if (validationResult == BoardValidationResult.TRAIN_DOES_NOT_FIT) {
+                showTrainDoesNotFitMessage();
+                return;
             }
 
             if (!board.isSpace()) {
@@ -816,6 +1037,21 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.addToast(ToastLevel.ERROR, msg);
     }
 
+    private void showHiddenInFortifiedMessage() {
+        String msg = Messages.getString("DeploymentDisplay.hiddenInFortified");
+        clientgui.addToast(ToastLevel.WARNING, msg);
+    }
+
+    private void showTrainDoesNotFitMessage() {
+        String msg = Messages.getString("DeploymentDisplay.trainDoesNotFit");
+        clientgui.addToast(ToastLevel.WARNING, msg);
+    }
+
+    private void showHullDownNeedsFortifiedMessage() {
+        String msg = Messages.getString("DeploymentDisplay.hullDownNeedsFortified");
+        clientgui.addToast(ToastLevel.WARNING, msg);
+    }
+
     private void showCannotDeployHereMessage(Coords coords) {
         String msg = Messages.getString("DeploymentDisplay.cantDeployInto",
               currentEntity().getShortName(),
@@ -844,21 +1080,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
 
         if (actionCmd.equals(DeployCommand.DEPLOY_NEXT.getCmd())) {
-            if (currentEntity() != null) {
-                currentEntity().setPosition(null);
-                clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentEntity()));
-                // Unload any loaded units during this turn
-                List<Integer> lobbyLoadedUnits = currentEntity().getLoadedKeepers();
-                for (Entity other : currentEntity().getLoadedUnits()) {
-                    // Ignore units loaded before this turn
-                    if (!lobbyLoadedUnits.contains(other.getId())) {
-                        currentEntity().unload(other);
-                        other.setTransportId(Entity.NONE);
-                        other.newRound(client.getGame().getRoundCount());
-                    }
-                }
-            }
-            selectEntity(client.getNextDeployableEntityNum(cen));
+            moveOnToNextDeployableUnit();
         } else if (actionCmd.equals(DeployCommand.DEPLOY_TURN.getCmd())) {
             turnMode = true;
         } else if (actionCmd.equals(DeployCommand.DEPLOY_LOAD.getCmd())) {
@@ -1028,7 +1250,23 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 buttons.get(DeployCommand.DEPLOY_ASSAULT_DROP)
                       .setText(Messages.getString("DeploymentDisplay.assaultDrop"));
             }
+        } else if (actionCmd.equals(DeployCommand.DEPLOY_HULL_DOWN.getCmd())) {
+            Entity entity = currentEntity();
+            if (entity != null) {
+                entity.setHullDown(!entity.isHullDown());
+                updateHullDownButtonText(entity);
+                // Sync the toggle so the server applies the chosen state when the unit deploys.
+                clientgui.getClient().sendUpdateEntity(entity);
+                clientgui.getUnitDisplay().displayEntity(entity);
+            }
         }
+    }
+
+    /** Sets the Hull Down deploy button label to reflect the entity's current hull-down state. */
+    private void updateHullDownButtonText(Entity entity) {
+        buttons.get(DeployCommand.DEPLOY_HULL_DOWN).setText(Messages.getString(entity.isHullDown()
+              ? "DeploymentDisplay.deployHullDownOff"
+              : "DeploymentDisplay.deployHullDown"));
     }
 
     @Override
@@ -1126,6 +1364,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void setAssaultDropEnabled(boolean enabled) {
         buttons.get(DeployCommand.DEPLOY_ASSAULT_DROP).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_ASSAULT_DROP.getCmd(), enabled);
+    }
+
+    private void setHullDownEnabled(boolean enabled) {
+        buttons.get(DeployCommand.DEPLOY_HULL_DOWN).setEnabled(enabled);
     }
 
     /**

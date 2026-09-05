@@ -39,6 +39,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.*;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -47,7 +48,9 @@ import javax.swing.ScrollPaneConstants;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.CardinalEdge;
+import megamek.client.bot.princess.MinefieldDeploymentPlanner;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.common.ECMInfo;
 import megamek.common.Hex;
@@ -75,6 +78,8 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -82,6 +87,7 @@ import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.game.Game;
 import megamek.common.game.InitiativeRoll;
 import megamek.common.moves.MovePath;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
@@ -106,6 +112,17 @@ public abstract class BotClient extends Client {
 
     public static final int BOT_TURN_RETRY_COUNT = 3;
 
+    /**
+     * Which AI implementation this bot is. Reported to the server alongside the bot's settings so a savegame
+     * remembers what kind of bot held each seat, and shown by the bot config dialog so it tells the truth
+     * about a running bot instead of assuming Princess. Subclasses that are their own AI type override this.
+     *
+     * @return this bot's {@link AIType}
+     */
+    public AIType getAIType() {
+        return AIType.PRINCESS;
+    }
+
     private List<Entity> currentTurnEnemyEntities;
     private List<Entity> currentTurnFriendlyEntities;
 
@@ -115,11 +132,45 @@ public abstract class BotClient extends Client {
     /**
      * Keeps track of whether this client has started to calculate a turn this phase.
      */
-    boolean calculatedTurnThisPhase = false;
+    /**
+     * The turn index this bot last spawned a calculation for in the current phase, or -1. Replaces
+     * the old once-per-phase flag: the point is to suppress duplicate spawns for the SAME pending
+     * turn (in simultaneous phases every player's turn-end fires a turn-change event at everyone),
+     * never to suppress a genuinely new turn of ours.
+     */
+    int lastCalculatedTurnIndex = -1;
     int calculatedTurnsThisPhase = 0;
+
+    /** Test seam for the spawn decision: would a turn-change event at this turn index spawn a calc? */
+    boolean shouldSpawnForTest(int turnIndex) {
+        return turnIndex != lastCalculatedTurnIndex;
+    }
 
     // Let bots remember whether they've rerolled an initiative roll this round
     protected boolean rerolledInitiative = false;
+
+    /**
+     * Tractors this bot has already asked the server to build a train for. Lobby updates arrive one unit at a time,
+     * so without this a batch of units would send the same build request several times over before the first reply
+     * came back. Cleared when the lobby is left.
+     */
+    /** The trailer list last requested for each tractor, so an unchanged plan is not asked for twice. */
+    private final Map<Integer, List<Integer>> requestedTrains = new HashMap<>();
+
+    /**
+     * Switches this bot's heat-generating equipment on and off to suit each unit's heat. Held on
+     * {@link BotClient} so every bot implementation gets it, Princess and CASPAR alike.
+     */
+    private final BotHeatEquipmentManager heatEquipmentManager = new BotHeatEquipmentManager(this);
+
+    /**
+     * The bot's personality/configuration state. Held on {@link BotClient} because it is generic bot-personality state
+     * (sliders, targeting, retreat edges) shared by every bot implementation, not specific to any one AI. Initialized
+     * to a default so it is never {@code null}: subclasses normally replace it via
+     * {@link #setBehaviorSettings(BehaviorSettings)} during construction, but the default preserves the non-null
+     * contract that {@link #getBehaviorSettings()} callers rely on even if a subclass does not.
+     */
+    protected BehaviorSettings behaviorSettings = new BehaviorSettings();
 
     /**
      * Store a reference to the ClientGUI for the client who created this bot. This is used to ensure keep the ClientGUI
@@ -130,8 +181,21 @@ public abstract class BotClient extends Client {
     public class CalculateBotTurn implements Runnable {
         @Override
         public void run() {
-            calculateMyTurn();
-            flushConn();
+            // Lifecycle bracket plus a Throwable net: a calc thread that dies uncaught leaves the
+            // server waiting on a move forever, with nothing in any log. Both freeze investigations
+            // needed exactly these lines.
+            LOGGER.info("{}: calc thread started for phase {}, turnIndex {}",
+                  getName(), getGame().getPhase(), game.getTurnIndex());
+            try {
+                calculateMyTurn();
+                flushConn();
+                LOGGER.info("{}: calc thread finished for phase {}, turnIndex {}",
+                      getName(), getGame().getPhase(), game.getTurnIndex());
+            } catch (Throwable t) {
+                LOGGER.error(t, getName() + ": calc thread DIED for phase " + getGame().getPhase()
+                      + ", turnIndex " + game.getTurnIndex()
+                      + " - the server is now waiting on a move this bot will never send");
+            }
         }
     }
 
@@ -150,16 +214,23 @@ public abstract class BotClient extends Client {
 
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
-                // On simultaneous phases, each player ending their turn will generate a turn
-                // change
-                // We want to ignore turns from other players and only listen to events we
-                // generated
-                boolean ignoreSimTurn = getGame().getPhase().isSimultaneous(getGame()) &&
-                      (e.getPreviousPlayerId() != localPlayerNumber) &&
-                      calculatedTurnThisPhase;
+                // In simultaneous phases every player's turn-end fires a turn-change event at every
+                // client, so the same pending turn can arrive several times. Suppress duplicates by
+                // turn INDEX, never by a once-per-phase flag: the old ignoreSimTurn guard skipped any
+                // turn that arrived after another player's event once this bot had calculated once,
+                // which silently dropped every second-and-later turn of a multi-unit bot - caught
+                // verbatim by this very log line ("myTurn true ... -> skipping") after ~50 corrupted
+                // benchmark games. A turn the server says is ours is ours.
+                boolean myTurn = isMyTurn();
+                boolean alreadySpawnedForThisTurn = (game.getTurnIndex() == lastCalculatedTurnIndex);
+                LOGGER.info("{}: turn change - phase {}, turnIndex {}, prevPlayer {}, me {}, "
+                            + "myTurn {}, alreadySpawnedForThisTurn {} -> {}",
+                      getName(), getGame().getPhase(), game.getTurnIndex(), e.getPreviousPlayerId(),
+                      localPlayerNumber, myTurn, alreadySpawnedForThisTurn,
+                      myTurn && !alreadySpawnedForThisTurn ? "SPAWNING calc thread" : "skipping");
 
-                if (isMyTurn() && !ignoreSimTurn) {
-                    calculatedTurnThisPhase = true;
+                if (myTurn && !alreadySpawnedForThisTurn) {
+                    lastCalculatedTurnIndex = game.getTurnIndex();
                     // Run bot's turn processing in a separate thread.
                     // So calling thread is free to process the other actions.
                     Thread worker = new Thread(new CalculateBotTurn(),
@@ -176,9 +247,24 @@ public abstract class BotClient extends Client {
             }
 
             @Override
+            public void gameEntityNew(GameEntityNewEvent e) {
+                connectOwnTrains();
+            }
+
+            @Override
+            public void gameEntityChange(GameEntityChangeEvent e) {
+                connectOwnTrains();
+            }
+
+            @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
-                calculatedTurnThisPhase = false;
+                LOGGER.info("{}: phase change {} -> {}, resetting lastCalculatedTurnIndex (was {})",
+                      getName(), e.getOldPhase(), e.getNewPhase(), lastCalculatedTurnIndex);
+                lastCalculatedTurnIndex = -1;
                 rerolledInitiative = false;
+                if (!getGame().getPhase().isLounge()) {
+                    requestedTrains.clear();
+                }
                 if (e.getOldPhase().isSimultaneous(getGame())) {
                     LOGGER.info("{}: Calculated {} / {} turns for phase {}",
                           getName(),
@@ -215,9 +301,9 @@ public abstract class BotClient extends Client {
                         // essentially same as if the auto_ams option was on
                         waa = Compute.getHighestExpectedDamage(game, evt.getWAAs(), true);
 
-                        // Add second weapon attack counter for the bot when playtest 3 is active
+                        // If AMS can make multiple attacks
                         WeaponAttackAction secondWaa = null;
-                        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
+                        if (Game.rulesManager.getRulesEquipment().getAMSMultiShot()) {
                             secondWaa = Compute.getSecondHighestExpectedDamage(game, evt.getWAAs(), true);
                         }
 
@@ -298,6 +384,22 @@ public abstract class BotClient extends Client {
     protected abstract void calculateFiringTurn();
 
     protected abstract void calculateDeployment() throws Exception;
+
+    /**
+     * @return this bot's current behavior settings (personality/configuration state)
+     */
+    public BehaviorSettings getBehaviorSettings() {
+        return behaviorSettings;
+    }
+
+    /**
+     * Applies the given behavior settings to this bot. Implementations decide how the settings take effect (for
+     * example, re-initializing scorers or notifying the server) and are responsible for storing them in
+     * {@link #behaviorSettings}.
+     *
+     * @param behaviorSettings the new behavior settings to apply
+     */
+    public abstract void setBehaviorSettings(BehaviorSettings behaviorSettings);
 
     protected void initTargeting() {
     }
@@ -495,6 +597,7 @@ public abstract class BotClient extends Client {
                       !entity.isOffBoard() &&
                       (entity.getCrew() != null) &&
                       !entity.getCrew().isDead() &&
+                      !entity.isAbandoned() &&
                       !entity.isHidden()) {
                     currentTurnEnemyEntities.add(entity);
                 }
@@ -523,6 +626,64 @@ public abstract class BotClient extends Client {
         return currentTurnFriendlyEntities;
     }
 
+    /**
+     * Hitches up any trailers this bot owns that are not part of a train yet.
+     * <p>
+     * A bot cannot use the lobby's "Connect as Train" action, so a trailer handed to one would otherwise sit there
+     * with no engine and no tractor, unable to move for the whole game. Runs whenever the lobby tells us a unit was
+     * added or changed, so it does not matter how the units arrived: assigned one at a time, assigned as a force, or
+     * loaded from a file straight onto this bot.
+     * </p>
+     * <p>
+     * The request sent is the same one a human client sends, so the server validates it exactly as it would a
+     * player's, and a train that cannot legally be built is refused rather than half-applied.
+     * </p>
+     */
+    /**
+     * Decides whether a planned train still needs to be requested, and records it when it does.
+     * <p>
+     * The server's reply to a build request arrives as another lobby update, which asks for the plans again, so
+     * repeating an identical request would loop. The guard is the trailer list rather than the tractor id: a tractor
+     * handed more trailers after its first request produces a different list, so it is asked again with the longer
+     * plan instead of being suppressed for the rest of the lobby.
+     * </p>
+     *
+     * @param requestedTrains  the trailer list last requested for each tractor, updated in place
+     * @param tractorId        the tractor heading the planned train
+     * @param plannedTrailers  the trailers to hitch behind it, in order
+     *
+     * @return {@code true} when this plan has not been requested yet and the caller should send it
+     */
+    static boolean recordTrainRequest(Map<Integer, List<Integer>> requestedTrains, int tractorId,
+          List<Integer> plannedTrailers) {
+        if (plannedTrailers.equals(requestedTrains.get(tractorId))) {
+            return false;
+        }
+        requestedTrains.put(tractorId, List.copyOf(plannedTrailers));
+        return true;
+    }
+
+    protected void connectOwnTrains() {
+        if (!getGame().getPhase().isLounge()) {
+            return;
+        }
+
+        Map<Integer, List<Integer>> plannedTrains = BotTrainPlanner.planTrains(getGame(), localPlayerNumber);
+
+        for (Map.Entry<Integer, List<Integer>> plannedTrain : plannedTrains.entrySet()) {
+            if (!recordTrainRequest(requestedTrains, plannedTrain.getKey(), plannedTrain.getValue())) {
+                continue;
+            }
+
+            Entity tractor = getGame().getEntity(plannedTrain.getKey());
+            LOGGER.info("[Train] {} connecting {} + {} trailer(s)",
+                  getName(),
+                  (tractor == null) ? plannedTrain.getKey() : tractor.getDisplayName(),
+                  plannedTrain.getValue().size());
+            sendBuildTrain(plannedTrain.getKey(), plannedTrain.getValue());
+        }
+    }
+
     // TODO: move initMovement to be called on phase end
     @Override
     public void changePhase(GamePhase phase) {
@@ -537,22 +698,14 @@ public abstract class BotClient extends Client {
                     initialize();
                     break;
                 case MOVEMENT:
-                    /*
-                     * Do not uncomment this. It is so that bots stick around till end of game
-                     * for proper salvage. If the bot dies out here, the salvage for all but the
-                     * last bot disappears for some reason
-                     * if (game.getEntitiesOwnedBy(getLocalPlayer()) == 0) {
-                     * sendChat(Messages.getString("BotClient.HowAbout"));
-                     * die();
-                     * }
-                     */
-                    // if the game is not double blind and I can't see anyone
-                    // else on the board I should kill myself.
-                    if (!(game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) &&
-                          ((game.getEntitiesOwnedBy(getLocalPlayer()) - game.getNoOfEntities()) == 0)) {
-                        die();
-                    }
-
+                    // A bot never dismisses itself from a running game. There used to be two exit
+                    // rules here and both caused real harm: leaving when the bot had no units broke
+                    // salvage for every bot but the last, and leaving when the bot owned everything
+                    // visible ("no enemies left") hung the game whenever the last enemy was merely
+                    // off the board - an aerospace fighter that flies off returns some rounds later,
+                    // but the count could not see it, so the bot quit mid-game and the server waited
+                    // forever on its units. The victory check ends finished games; the VICTORY phase
+                    // below is where a bot says goodbye.
                     if (Compute.randomInt(4) == 1) {
                         String message = getRandomBotMessage();
                         if (message != null) {
@@ -569,10 +722,11 @@ public abstract class BotClient extends Client {
                     initTargeting();
                     break;
                 case END_REPORT:
-                    // Check if stealth armor should be switched on/off
-                    // Kinda cheap leaving this until the end phase, players
-                    // can't do this
-                    toggleStealth();
+                    // Switch heat-generating equipment on or off to suit each unit's heat: stealth armor,
+                    // the other three concealment systems, Nova CEWS and the radical heat sink. The end
+                    // phase is the right moment because the turn's heat has been resolved by then, so
+                    // each unit is being judged on the heat it actually finished the turn carrying.
+                    heatEquipmentManager.manageOwnedUnits();
                     endOfTurnProcessing();
                     // intentional fallthrough: all reports must click "done", otherwise the game
                     // never moves on.
@@ -589,6 +743,10 @@ public abstract class BotClient extends Client {
                 case OFFBOARD_REPORT:
                 case FIRING_REPORT:
                 case PHYSICAL_REPORT:
+                    // Sender half of the done ledger (server logs the receive): if a hang shows the
+                    // server waiting on this bot and this line IS present, the ack was lost in
+                    // flight; if the line is absent, changePhase never ran for the phase.
+                    LOGGER.info("[DoneLedger] {}: sending done for {}", getName(), phase);
                     sendDone(true);
                     break;
                 case VICTORY:
@@ -662,7 +820,7 @@ public abstract class BotClient extends Client {
         boolean success = false;
 
         while ((retryCount < BOT_TURN_RETRY_COUNT) && !success) {
-            success = calculateMyTurnWorker();
+            success = calculateMyTurnWorker(retryCount == (BOT_TURN_RETRY_COUNT - 1));
 
             if (!success) {
                 // if we fail, take a nap for 500-1500 milliseconds, then try again
@@ -683,6 +841,13 @@ public abstract class BotClient extends Client {
      * Worker function for a single attempt to calculate the bot's turn.
      */
     private synchronized boolean calculateMyTurnWorker() {
+        return calculateMyTurnWorker(false);
+    }
+
+    /**
+     * @param lastAttempt whether this is the final retry, after which the bot would otherwise fall silent
+     */
+    private synchronized boolean calculateMyTurnWorker(boolean lastAttempt) {
         // clear out transient data
         currentTurnEnemyEntities = null;
         currentTurnFriendlyEntities = null;
@@ -707,6 +872,18 @@ public abstract class BotClient extends Client {
                 // MP can be null due to various factors in pathing.  Avoid derailing the bot if so.
                 if (mp != null) {
                     moveEntity(mp.getEntity().getId(), mp);
+                } else if (lastAttempt && (moverId != -1) && (game.getEntity(moverId) != null)) {
+                    // Out of retries with a specific unit to move and still no path. The retries recompute
+                    // deterministically, so a unit whose candidate set is empty - a cornered fighter whose
+                    // every path leaves the board is the observed live case - returns null every time, and
+                    // a bot that then submits nothing hangs the game: the server waits forever on a turn
+                    // that is never answered. Submit an empty move instead. The server applies the mandatory
+                    // movement rules itself (an aero flies its committed velocity straight ahead, off the
+                    // edge under return flyovers if it must), which is the least-bad honest outcome and,
+                    // unlike silence, always ends the turn.
+                    LOGGER.warn("No path found for entity ID {} after {} attempts; submitting an empty move "
+                          + "so the turn is not lost", moverId, BOT_TURN_RETRY_COUNT);
+                    moveEntity(moverId, new MovePath(game, game.getEntity(moverId)));
                 } else {
                     // This attempt to calculate the turn failed, but we don't want to log
                     // an exception here.
@@ -726,6 +903,8 @@ public abstract class BotClient extends Client {
                 }
             } else if (game.getPhase().isDeployment()) {
                 calculateDeployment();
+            } else if (game.getPhase().isVictorySetup()) {
+                performVictorySetupTurn();
             } else if (game.getPhase().isDeployMinefields()) {
                 deployMinefields();
             } else if (game.getPhase().isSetArtilleryAutoHitHexes()) {
@@ -1220,94 +1399,6 @@ public abstract class BotClient extends Client {
         return fDamage;
     }
 
-    /**
-     * If the unit has stealth armor, turning it off is probably a good idea if most of the enemy force is at 'short'
-     * range or if in danger of overheating
-     */
-
-    private void toggleStealth() {
-
-        initialize();
-
-        int total_bv, known_bv, known_range, known_count, trigger_range;
-        int new_stealth;
-
-        for (Entity check_ent : game.getEntitiesVector()) {
-            if ((check_ent.getOwnerId() == localPlayerNumber)) {
-                if (check_ent.hasStealth()) {
-                    for (Mounted<?> mEquip : check_ent.getMisc()) {
-                        MiscType mtype = (MiscType) mEquip.getType();
-                        if (mtype.hasFlag(MiscType.F_STEALTH)) {
-
-                            if (!check_ent.tracksHeat()) {
-                                // Always activate Stealth if the heat doesn't matter!
-                                new_stealth = 1;
-                            } else {
-                                // If the Mek is in danger of shutting down (14+
-                                // heat), consider shutting
-                                // off the armor
-                                trigger_range = 13 + Compute.randomInt(7);
-
-                                if (check_ent.heat > trigger_range) {
-                                    new_stealth = 0;
-                                } else if ((check_ent.getPosition() == null)) {
-                                    // Off-board entities that _do_ track heat should be Stealth-ing up
-                                    // before they come back on-board.
-                                    new_stealth = 1;
-
-                                } else {
-
-                                    // Mek is not in danger of shutting down soon;
-                                    // if most of the
-                                    // enemy is right next to the Mek deactivate
-                                    // armor to free up
-                                    // heat sinks for weapons fire
-
-                                    total_bv = 0;
-                                    known_bv = 0;
-                                    known_range = 0;
-                                    known_count = 0;
-
-                                    for (Entity test_ent : game.getEntitiesVector()) {
-                                        if (check_ent.isEnemyOf(test_ent)) {
-                                            total_bv += test_ent.calculateBattleValue();
-                                            // Skip enemies without a position (off-board, not yet deployed, in
-                                            // transport, etc.) - we can't measure distance to them, and including
-                                            // them in the count/BV would skew the (known_range / known_count)
-                                            // average. Mirrors the check_ent null-position guard above.
-                                            if ((test_ent.getPosition() != null) && test_ent.isVisibleToEnemy()) {
-                                                known_count++;
-                                                known_bv += test_ent.calculateBattleValue();
-                                                known_range += Compute.effectiveDistance(game, check_ent, test_ent);
-                                            }
-                                        }
-                                    }
-
-                                    // If no or few enemy units are visible, they're
-                                    // hiding;
-                                    // Default to stealth armor on in this case
-
-                                    if ((known_count == 0) || (known_bv < (total_bv / 2))) {
-                                        new_stealth = 1;
-                                    } else {
-                                        if ((known_range / known_count) <= (5 + Compute.randomInt(5))) {
-                                            new_stealth = 0;
-                                        } else {
-                                            new_stealth = 1;
-                                        }
-                                    }
-                                }
-                            }
-                            mEquip.setMode(new_stealth);
-                            sendModeChange(check_ent.getId(), check_ent.getEquipmentNum(mEquip), new_stealth);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private @Nullable String getRandomBotMessage() {
         String message = null;
 
@@ -1375,20 +1466,80 @@ public abstract class BotClient extends Client {
         // Do nothing;
     }
 
-    private record MinefieldNumbers(int number, int type) {
-    }
-
     /**
      * Deploy minefields for the bot
      */
+    /**
+     * Takes this bot's turn in the Victory Setup phase. The default sends the game's ground objects back
+     * unchanged, which ends the turn without placing anything: control points assigned to this bot before
+     * the game began (by MekHQ, a scenario file, or in the lobby) are already on the board when this phase
+     * runs, so a bot has nothing it must do here. Bot implementations that want to choose or adjust their
+     * own control points (Princess, CASPAR) override this, edit the ground objects, and send the result -
+     * the send is the turn action that ends the bot's turn, so every override MUST end with
+     * {@link #sendDeployGroundObjects}.
+     */
+    protected void performVictorySetupTurn() {
+        sendDeployGroundObjects(game.getGroundObjects());
+    }
+
     protected void deployMinefields() {
-        MinefieldNumbers[] minefieldNumbers = getMinefieldNumbers();
-        int totalMines = Arrays.stream(minefieldNumbers).mapToInt(MinefieldNumbers::number).sum();
-        Deque<Coords> coordsSet = getMinefieldDeploymentPlanner().getRandomMinefieldPositions(totalMines);
-        Vector<Minefield> deployedMinefields = new Vector<>();
-        for (MinefieldNumbers minefieldNumber : minefieldNumbers) {
-            deployMinefields(minefieldNumber, coordsSet, deployedMinefields);
-        }
+    	MinefieldDeploymentPlanner mdp = new MinefieldDeploymentPlanner(getLocalPlayer(), getGame());
+    	Vector<Minefield> deployedMinefields = new Vector<>();
+    	
+    	// cycle through all possible mine field types
+    	for (int minefieldType = 0; minefieldType < Minefield.TYPE_SIZE; minefieldType++) {
+    		int minesToPlace = getLocalPlayer().getMinefieldCount(minefieldType);
+    		
+    		// avoid unnecessary loops and evaluations
+    		if (minesToPlace <= 0) {
+    			continue;
+    		}
+    		
+    		Map<Double, List<Coords>> potentialCoords = 
+    				mdp.getBucketedCandidateCoords(minefieldType, getBoard());    		    		
+    		
+    		// complicated loop:
+    		// while we have mines to place (minesToPlace > 0)
+    		// AND we have buckets left with coordinates in them, place mines.    		
+    		bucketloop:
+    		for (double bucket : potentialCoords.keySet()) {
+    			for (Coords coords : potentialCoords.get(bucket)) {
+    				// it's always more advantageous to put in higher density minefields
+	    			// but hardly fair when players may be bound by scenario restrictions
+	    			// while the bot is not
+	    			int density = Compute.randomIntInclusive(30) + 5;
+	    			
+	    			Minefield minefield;
+	    			
+	    			// vibrabombs require a "setting"
+	    			if (minefieldType != Minefield.TYPE_VIBRABOMB) {
+	    				minefield = Minefield.createMinefield(coords,
+	    					getLocalPlayer().getId(),
+	    					minefieldType,
+	    					density);
+	    			} else {
+	    				minefield = Minefield.createMinefield(coords,
+	    						getLocalPlayer().getId(),
+	    						minefieldType,
+	    						density,
+	    						mdp.getVibrabombSetting(),
+	    						false,
+	    						0);	    						
+	    			}
+	    			
+	    			deployedMinefields.add(minefield);
+	    			mdp.markMinePlacement(coords);
+	    			
+	    			minesToPlace--;
+	    			
+	    			// if we run out of mines to place, break out of both loops
+	    			if (minesToPlace == 0) {
+	    				break bucketloop;
+	    			}
+    			}
+    		}
+    	}
+    	
         performMinefieldDeployment(deployedMinefields);
     }
 
@@ -1406,65 +1557,10 @@ public abstract class BotClient extends Client {
      * Reset the minefield counters for the bot and push the updated player info to the server
      */
     private void resetMinefieldCounters() {
-        getLocalPlayer().setNbrMFActive(0);
-        getLocalPlayer().setNbrMFCommand(0);
-        getLocalPlayer().setNbrMFConventional(0);
-        getLocalPlayer().setNbrMFInferno(0);
-        getLocalPlayer().setNbrMFVibra(0);
-        getLocalPlayer().setNbrMFEMP(0);
+    	for (int minefieldIndex = 0; minefieldIndex < Minefield.TYPE_SIZE; minefieldIndex++) {
+    		getLocalPlayer().setMinefieldCount(minefieldIndex, 0);
+    	}
         sendPlayerInfo();
-    }
-
-    /**
-     * Deploy the specified number of minefields of the specified type
-     *
-     * @param minefieldNumber    the number of minefields to deploy and the type of minefield to deploy
-     * @param coordsSet          the set of coordinates to deploy the minefields to
-     * @param deployedMinefields the vector to add the deployed minefields to
-     */
-    private void deployMinefields(MinefieldNumbers minefieldNumber, Deque<Coords> coordsSet,
-          Vector<Minefield> deployedMinefields) {
-        int minesToDeploy = minefieldNumber.number();
-        while (!coordsSet.isEmpty() && minesToDeploy > 0) {
-            Coords coords = coordsSet.poll();
-            int density = Compute.randomIntInclusive(30) + 5;
-            Minefield minefield = Minefield.createMinefield(coords,
-                  getLocalPlayer().getId(),
-                  minefieldNumber.type(),
-                  density);
-            deployedMinefields.add(minefield);
-            minesToDeploy--;
-        }
-    }
-
-    /**
-     * Get the number of minefields of each type that the bot should deploy
-     *
-     * @return an array of MinefieldNumbers, each representing the number of a specific type of minefield to deploy
-     */
-    private MinefieldNumbers[] getMinefieldNumbers() {
-        return new MinefieldNumbers[] { new MinefieldNumbers(getLocalPlayer().getNbrMFActive(), Minefield.TYPE_ACTIVE),
-                                        new MinefieldNumbers(getLocalPlayer().getNbrMFInferno(),
-                                              Minefield.TYPE_INFERNO),
-                                        new MinefieldNumbers(getLocalPlayer().getNbrMFConventional(),
-                                              Minefield.TYPE_CONVENTIONAL),
-                                        new MinefieldNumbers(getLocalPlayer().getNbrMFVibra(),
-                                              Minefield.TYPE_VIBRABOMB),
-                                        new MinefieldNumbers(getLocalPlayer().getNbrMFEMP(),
-                                              Minefield.TYPE_EMP),
-                                        // the following are added for completeness, but are not used by the bot
-                                        new MinefieldNumbers(0, Minefield.TYPE_COMMAND_DETONATED),
-                                        // no command detonated mines
-        };
-    }
-
-    /**
-     * Get the minefield deployment planner to use for this bot
-     *
-     * @return the minefield deployment planner
-     */
-    protected MinefieldDeploymentPlanner getMinefieldDeploymentPlanner() {
-        return new RandomMinefieldDeploymentPlanner(getBoard());
     }
 
     /**
@@ -1475,7 +1571,28 @@ public abstract class BotClient extends Client {
     public String receiveReport(List<Report> reports) {
         return "";
     }
-
+    
+    /**
+     * In addition to handling the entity update normally, the bot needs to decide
+     * if it should activate its hidden units
+     */
+    @Override
+    protected void receiveEntityUpdate(Packet packet) throws InvalidPacketDataException {
+    	super.receiveEntityUpdate(packet);
+    	
+    	if (this.getGame().getPhase() == GamePhase.MOVEMENT) {
+    		int entityIndex = packet.getIntValue(0);
+    		revealEntities(entityIndex);
+    	}
+    }
+    
+    /**
+     * Given an entity that just moved, decide if I should reveal any entities in response
+     */
+    protected void revealEntities(int movedEntityID) {
+    	// default does nothing
+    }
+    
     /**
      * Let the bot decide whether to reroll initiative based on report info
      *

@@ -54,6 +54,12 @@ public enum MissionRole {
     FIRE_SUPPORT, SR_FIRE_SUPPORT, URBAN, SPOTTER, ANTI_AIRCRAFT, ANTI_INFANTRY, INF_SUPPORT, CAVALRY,
     /* Specialized ground support roles */
     SPECOPS, ENGINEER, MINESWEEPER, MINELAYER,
+    /*
+     * Combat engineer specializations. These are additive facets layered on top of ENGINEER: a unit that carries the
+     * capability keeps the umbrella ENGINEER role and gains the matching facet, in the same way MINESWEEPER/MINELAYER
+     * already coexist with ENGINEER.
+     */
+    BRIDGE_LAYER, DEMOLITION, FIREFIGHTER, FIELDWORKS,
     /* ASF roles */
     BOMBER, ESCORT, INTERCEPTOR, GROUND_SUPPORT,
     /* DropShip roles */
@@ -239,8 +245,9 @@ public enum MissionRole {
                   unitType == UnitType.NAVAL ||
                   unitType == UnitType.CONV_FIGHTER;
 
-            // ENGINEER applies to Meks, ground vehicles, and conventional infantry
-            case ENGINEER -> unitType == UnitType.MEK ||
+            // ENGINEER and its specializations (bridging, demolition, firefighting, fieldworks)
+            // apply to Meks, ground vehicles, and conventional infantry
+            case ENGINEER, BRIDGE_LAYER, DEMOLITION, FIREFIGHTER, FIELDWORKS -> unitType == UnitType.MEK ||
                   unitType == UnitType.TANK ||
                   unitType == UnitType.INFANTRY;
 
@@ -391,21 +398,31 @@ public enum MissionRole {
                     // COMMAND units may be specialized in other roles. Units with C3 master
                     // equipment take priority, while others without the role or equipment are
                     // reduced in priority.
+                    // Command Meks will always be combat units unless specifically called
+                    // for with the SUPPORT role. Other unit types may mix SUPPORT and combat
+                    // roles due to construction under both combat and support vehicle rules.
                     case COMMAND:
                         if (mRec.getRoles().contains(CIVILIAN) &&
                               !desiredRoles.contains(CIVILIAN)) {
                             return null;
                         }
                         if (mRec.getRoles().contains(COMMAND)) {
-                            avRating += medium_adjust;
+                            avRating += max_adjust;
+                        } else {
+                            avRating -= strong_adjust;
+                        }
+                        if (mRec.unitType == UnitType.MEK) {
+                            if (mRec.getRoles().contains(SUPPORT) &&
+                                  !desiredRoles.contains(SUPPORT)) {
+                                return null;
+                            }
                         }
                         if ((ModelRecord.NETWORK_COMPANY_COMMAND & mRec.getNetworkMask()) != 0) {
                             avRating += light_adjust;
                         } else if ((ModelRecord.NETWORK_C3_MASTER & mRec.getNetworkMask()) != 0) {
                             avRating += min_adjust;
-                        } else {
-                            avRating -= strong_adjust;
                         }
+
                         break;
 
                     // Calling for FIRE_SUPPORT prioritizes units with a significant percentage of
@@ -1120,6 +1137,23 @@ public enum MissionRole {
                         }
                         break;
 
+                    // Calling for a combat engineer specialization (bridging, demolition,
+                    // firefighting, or fieldworks) only returns units that carry the specific
+                    // capability, in the same manner as MINESWEEPER/MINELAYER. Non-combat
+                    // civilian units are excluded unless specifically requested.
+                    case BRIDGE_LAYER:
+                    case DEMOLITION:
+                    case FIREFIGHTER:
+                    case FIELDWORKS:
+                        if (mRec.getRoles().contains(CIVILIAN) &&
+                              !desiredRoles.contains(CIVILIAN)) {
+                            return null;
+                        }
+                        if (!mRec.getRoles().contains(role)) {
+                            return null;
+                        }
+                        break;
+
                     // Calling for SUPPORT non-combat units may include units with the APC,
                     // CIVILIAN, CARGO, or ENGINEER roles at a lower priority. This should filter
                     // out all combat units, although some of the selected units may have weapons.
@@ -1315,6 +1349,10 @@ public enum MissionRole {
             case "cruiser" -> CRUISER;
             case "battleship" -> BATTLESHIP;
             case "engineer" -> ENGINEER;
+            case "bridge layer", "bridge" -> BRIDGE_LAYER;
+            case "demolition" -> DEMOLITION;
+            case "firefighter", "firefighting" -> FIREFIGHTER;
+            case "fieldworks", "trench" -> FIELDWORKS;
             case "marine" -> MARINE;
             case "mountaineer" -> MOUNTAINEER;
             case "xct" -> XCT;

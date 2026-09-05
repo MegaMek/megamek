@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,10 +40,12 @@ package megamek.common.weapons.infantry.support.mortar;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -63,21 +65,21 @@ public class InfantrySupportMortarLightWeapon extends InfantryWeapon {
         super();
 
         name = "Mortar (Light)";
-        setInternalName("InfantryLightMortar");
+        setInternalName(EquipmentTypeLookup.INFANTRY_MORTAR_LIGHT);
         addLookupName(name);
         addLookupName("Infantry Light Mortar");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1400;
         bv = 1.62;
         tonnage = .050;
-        flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
+        flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT).or(F_MORTAR_TYPE_INDIRECT).or(F_INDIRECT_FIRE);
         infantryDamage = 0.53;
         infantryRange = 1;
         crew = 2;
         ammoWeight = 0.002;
         ammoCost = 24;
         shots = 1;
-        rulesRefs = " 273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
@@ -98,5 +100,11 @@ public class InfantrySupportMortarLightWeapon extends InfantryWeapon {
             removeMode("");
             removeMode("Indirect");
         }
+    }
+
+    @Override
+    public boolean isAlphaStrikeIndirectFire() {
+        // Conventional infantry do not gain the AlphaStrike IF ability from a carried mortar.
+        return false;
     }
 }

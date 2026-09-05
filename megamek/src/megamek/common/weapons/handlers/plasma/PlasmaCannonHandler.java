@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,7 +51,6 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.BuildingTarget;
 import megamek.common.units.Entity;
@@ -238,25 +237,12 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             r.indent(2);
             int extraHeat = Compute.d6(2);
+            int reducedHeat =
+                  Game.rulesManager.getRulesArmor().reduceHeatDamageByArmor(entityTarget.getArmorType(hit.getLocation()), extraHeat);
             if (entityTarget.getArmor(hit) > 0
-                  &&
-                  (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)
-                  && !game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                // PLAYTEST3 do not halve for reflective
-                entityTarget.heatFromExternal += Math.max(1, extraHeat / 2);
-                r.add(Math.max(1, extraHeat / 2));
-                r.choose(true);
-                r.messageId = 3406;
-                r.add(extraHeat);
-                r.add(ArmorType.forEntity(entityTarget, hit.getLocation()).getName());
-            } else if (entityTarget.getArmor(hit) > 0 &&
-                  (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
-                if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                    // PLAYTEST3 no heat from plasma
-                    extraHeat = 0;
-                }
-                entityTarget.heatFromExternal += extraHeat / 2;
-                r.add(extraHeat / 2);
+                  && reducedHeat != extraHeat) {
+                entityTarget.heatFromExternal += reducedHeat;
+                r.add(reducedHeat);
                 r.choose(true);
                 r.messageId = 3406;
                 r.add(extraHeat);
@@ -277,20 +263,23 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         if (target.tracksHeat()) {
             return 0;
         }
+        boolean targetIsConventionalInfantry = target.isConventionalInfantry();
         int toReturn = 1;
-        if (target.isConventionalInfantry()) {
+        if (targetIsConventionalInfantry) {
             toReturn = Compute.d6(3);
-            // pain shunted infantry get half damage
             if (bDirect) {
                 toReturn += toHit.getMoS() / 3;
-            }
-            if (((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
-                toReturn = Math.max(toReturn / 2, 1);
             }
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
-        toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
+        toReturn = applyGlancingBlowModifier(toReturn, targetIsConventionalInfantry);
+
+        if (targetIsConventionalInfantry) {
+            // Pain-shunted conventional infantry halve flame damage (IO p. 78). Battle armor gets the same
+            // reduction in calcHits(), where its damage total lives.
+            toReturn = (int) applyPainShuntModifier(toReturn);
+        }
         return toReturn;
     }
 
@@ -310,10 +299,12 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         // BAs can't mount Plasma Cannons
         if (target.isConventionalInfantry() || target.tracksHeat()) {
             return 1;
-        } else if ((target instanceof BattleArmor) && ((BattleArmor) target).isFireResistant()) {
+        } else if ((target instanceof BattleArmor battleArmorTarget) && battleArmorTarget.isFireResistant()) {
             return 0;
         } else {
-            return Compute.d6(3);
+            // Pain-shunted battle armor halves flame damage (IO p. 78). Plasma damage against battle armor
+            // arrives as 1-point hits, so the hit count is what carries the damage total.
+            return (int) applyPainShuntModifier(Compute.d6(3));
         }
     }
 

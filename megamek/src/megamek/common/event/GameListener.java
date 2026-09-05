@@ -81,6 +81,10 @@ public interface GameListener extends java.util.EventListener {
 
     void gameSettingsChange(GameSettingsChangeEvent e);
 
+    /** A vote among the players - a gamemaster request - was called, received a ballot, or resolved. */
+    default void gamePollChange(GamePollEvent e) {
+    }
+
     void gameMapQuery(GameMapQueryEvent e);
 
     void gameEntityNew(GameEntityNewEvent e);
@@ -98,6 +102,9 @@ public interface GameListener extends java.util.EventListener {
     void gameVictory(PostGameResolution e);
 
     default void gameScriptedEvent(GameScriptedEvent event) {}
+
+    /** Raised when the server asks the client to show a transient toast notification on the board view. */
+    default void gameToast(GameToastEvent event) {}
 
     /**
      * This event is used in SBF games when a unit (formation) changes.

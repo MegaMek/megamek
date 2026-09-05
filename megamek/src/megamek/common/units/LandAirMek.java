@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2012-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -835,8 +835,18 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      * @return The control roll that must be passed to land safely.
      */
     public PilotingRollData checkAirMekLanding() {
-        // Base piloting skill
-        PilotingRollData roll = new PilotingRollData(getId(), getCrew().getPiloting(), "Base piloting skill");
+        // Base piloting skill, with any gamemaster modifier shown as a line of its own
+        int gamemasterModifier = getCrew().appliedPilotingModifier();
+        PilotingRollData roll = new PilotingRollData(getId(),
+              getCrew().getPiloting() - gamemasterModifier,
+              "Base piloting skill");
+        if (gamemasterModifier != 0) {
+            roll.addModifier(gamemasterModifier, "GM Modifier");
+        }
+
+        if ((hasAbility(OptionsConstants.PILOT_WIND_WALKER)) && PilotSPAHelper.isWindWalkerValid(this)) {
+            roll.addModifier(-1, "Wind Walker SPA");
+        }
 
         addEntityBonuses(roll);
 
@@ -1594,12 +1604,6 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                 case 12:
                     return new HitData(LOC_LEFT_TORSO, false, HitData.EFFECT_NONE);
             }
-        }
-
-        boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
-
-        if (playtestLocations && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)) {
-            return getPlaytestSideLocation(table, side, LosEffects.COVER_NONE);
         }
 
         if (side == ToHitData.SIDE_FRONT) {

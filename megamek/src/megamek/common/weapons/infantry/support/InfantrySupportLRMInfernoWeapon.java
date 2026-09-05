@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -63,8 +64,9 @@ public class InfantrySupportLRMInfernoWeapon extends InfantryWeapon {
     public InfantrySupportLRMInfernoWeapon() {
         super();
 
-        name = "LRM Launcher (Corean Farshot) w/Inferno";
+        name = "LRM Launcher (Corean Farshot) w/Incendiary";
         setInternalName("InfantryLRMInferno");
+        addLookupName("LRM Launcher (Corean Farshot) w/Inferno");
         addLookupName(name);
         addLookupName("InfantryInfernoLRM");
         addLookupName("LRM Inferno Launcher");
@@ -76,10 +78,10 @@ public class InfantrySupportLRMInfernoWeapon extends InfantryWeapon {
         ammoWeight = 0.0083;
         ammoCost = 1500;
         shots = 1;
-        flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
+        flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT).or(F_LRM);
         infantryDamage = 0.19;
         infantryRange = 3;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3055, 3057, 3065, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.FW, Faction.CC)

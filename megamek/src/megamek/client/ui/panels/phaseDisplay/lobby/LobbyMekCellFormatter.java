@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,6 +40,8 @@ import static megamek.common.options.PilotOptions.MD_ADVANTAGES;
 import java.awt.Color;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import megamek.MegaMek;
@@ -50,6 +52,7 @@ import megamek.client.ui.util.PlayerColour;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.board.Board;
 import megamek.common.force.Force;
 import megamek.common.game.Game;
@@ -67,6 +70,24 @@ import megamek.common.util.CrewSkillSummaryUtil;
 class LobbyMekCellFormatter {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
+    /** Corner of the branch drawn before a carried or towed unit. Escaped to keep the source plain ASCII. */
+    private static final String BRANCH_CORNER = "\u2514";
+
+    /** One length of branch. Repeated once per level, so a deeper load reads as a longer arm. */
+    private static final String BRANCH_ARM = "\u2500";
+
+    /** Top of the bracket drawn on the first member of a masterless C3 network (C3i, NC3, Nova CEWS). */
+    private static final String BRANCH_TOP = "\u250c";
+
+    /** Middle rung of the bracket drawn on inner members of a masterless C3 network. */
+    private static final String BRANCH_TEE = "\u251c";
+
+    /** Stops a malformed C3 master chain from spinning while counting how deep a unit sits. */
+    private static final int MAX_C3_DEPTH = 3;
+
+    /** Stops a malformed load loop from spinning while counting how deep a unit sits. */
+    private static final int MAX_CARRIER_DEPTH = 16;
 
     private LobbyMekCellFormatter() {
     }
@@ -93,6 +114,166 @@ class LobbyMekCellFormatter {
         } else {
             return "This type of object has currently no table entry.";
         }
+    }
+
+    /**
+     * Returns the branch drawn in front of a unit that rides on another, indented and lengthened by how deeply it
+     * sits. A Mek inside a DropShip inside a JumpShip is drawn further in than the DropShip carrying it, so a stack
+     * reads as a tree rather than a flat run of identical marks.
+     */
+    static String carriedBranch(Entity entity) {
+        int depth = carriedDepth(entity);
+
+        if (depth <= 0) {
+            return "";
+        }
+
+        return "&nbsp;".repeat(depth) + BRANCH_CORNER + BRANCH_ARM.repeat(depth) + "&nbsp;";
+    }
+
+    /** How many carriers sit above this unit: 1 for a DropShip in a JumpShip, 2 for a Mek inside that DropShip. */
+    private static int carriedDepth(Entity entity) {
+        int depth = 0;
+        Entity current = entity;
+
+        while ((current != null) && (depth < MAX_CARRIER_DEPTH)) {
+            Entity carrier = carrierOf(current);
+
+            if ((carrier == null) || (carrier.getId() == current.getId())) {
+                break;
+            }
+            depth++;
+            current = carrier;
+        }
+
+        return depth;
+    }
+
+    /** The unit this one rides on, carried in a bay or towed behind, or {@code null} when neither. */
+    private static Entity carrierOf(Entity entity) {
+        if (entity.getGame() == null) {
+            return null;
+        }
+
+        if (entity.getTransportId() != Entity.NONE) {
+            return entity.getGame().getEntity(entity.getTransportId());
+        }
+        if (entity.getTractor() != Entity.NONE) {
+            return entity.getGame().getEntity(entity.getTractor());
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the tractor heading the train this unit is towed by, or {@code null} when it is not towed.
+     * <p>
+     * Deployment belongs to that tractor: a train goes where it goes. A trailer only gets a setting of its own once
+     * the game starts and the tractor's is copied onto it, so the lobby has to read it from the head of the train.
+     * </p>
+     */
+    private static Entity trainHeadOf(Entity entity) {
+        if ((entity == null) || (entity.getGame() == null) || (entity.getTractor() == Entity.NONE)) {
+            return null;
+        }
+
+        return entity.getGame().getEntity(entity.getTractor());
+    }
+
+    /**
+     * Returns the branch drawn in front of a C3 network member, so a network reads as the tree from the rulebook's
+     * configuration diagram. The C3 sorter wrapper keeps members adjacent in hierarchy order under every sorter, so
+     * the branch always points at the row above it. Hierarchical C3 draws a corner per level below the network's
+     * top unit (lance masters one level in, their slaves two). C3i, NC3 and Nova CEWS networks have no master, so
+     * their members are drawn as a flat bracket instead: a top corner on the first member, rungs on inner members
+     * and a bottom corner on the last, showing they belong together without inventing a hierarchy.
+     */
+    static String c3Branch(Entity entity) {
+        if (!entity.hasAnyC3System()) {
+            return "";
+        }
+
+        if (entity.hasNhC3()) {
+            return peerNetworkBracket(entity);
+        }
+
+        int depth = c3Depth(entity);
+
+        if (depth <= 0) {
+            // The network's top unit opens the block with a top corner, the way a peer bracket opens - it heads
+            // the tree rather than hanging from anything, but it should not look like an ordinary lone unit
+            return hierarchicalNetworkTopBranch(entity);
+        }
+
+        return "&nbsp;".repeat(depth) + BRANCH_CORNER + BRANCH_ARM.repeat(depth) + "&nbsp;";
+    }
+
+    /** The opening corner for a unit heading a hierarchical C3 network; empty for units networked with no one. */
+    private static String hierarchicalNetworkTopBranch(Entity entity) {
+        Game game = entity.getGame();
+        if ((game == null) || !entity.hasC3()) {
+            return "";
+        }
+        for (Entity other : game.inGameTWEntities()) {
+            if (!other.equals(entity) && entity.onSameC3NetworkAs(other)) {
+                return BRANCH_TOP + BRANCH_ARM + "&nbsp;";
+            }
+        }
+        return "";
+    }
+
+    /** How many masters sit above this unit: 1 for a lance master under a company commander, 2 for its slaves. */
+    private static int c3Depth(Entity entity) {
+        int depth = 0;
+        Entity current = entity;
+
+        while (depth < MAX_C3_DEPTH) {
+            Entity master = current.getC3Master();
+
+            if ((master == null) || (master.getId() == current.getId())) {
+                break;
+            }
+            depth++;
+            current = master;
+        }
+
+        return depth;
+    }
+
+    /** The flat bracket for masterless networks; empty when the unit is not networked with anyone. */
+    private static String peerNetworkBracket(Entity entity) {
+        Game game = entity.getGame();
+        String netId = entity.getC3NetId();
+
+        if ((game == null) || (netId == null)) {
+            return "";
+        }
+
+        // Only peers shown in the same table block bracket together: the table groups rows by player first, so a
+        // network spanning allied players draws one bracket per player rather than one pointing across the table.
+        List<Integer> peerIds = new ArrayList<>();
+        for (Entity other : game.inGameTWEntities()) {
+            if (other.hasNhC3() && (other.getOwnerId() == entity.getOwnerId())
+                  && netId.equals(other.getC3NetId())) {
+                peerIds.add(other.getId());
+            }
+        }
+
+        if (peerIds.size() < 2) {
+            return "";
+        }
+
+        Collections.sort(peerIds);
+        String corner;
+        if (entity.getId() == peerIds.get(0)) {
+            corner = BRANCH_TOP;
+        } else if (entity.getId() == peerIds.get(peerIds.size() - 1)) {
+            corner = BRANCH_CORNER;
+        } else {
+            corner = BRANCH_TEE;
+        }
+
+        return corner + BRANCH_ARM + "&nbsp;";
     }
 
     /**
@@ -141,6 +322,16 @@ class LobbyMekCellFormatter {
         int mapType = lobby.mapSettings.getMedium();
 
         // First line
+        // Draw a branch on anything riding on another unit, carried or towed, so a carrier and its load read as one
+        // block in the list rather than as unrelated rows that happen to sit next to each other.
+        if (isCarried || isTowed) {
+            result.append(UIUtil.fontHTML(uiGray())).append(carriedBranch(entity)).append("</FONT>");
+        }
+
+        // Networked C3 units draw the network as a tree the same way - the C3 sorter wrapper keeps a network's
+        // members adjacent in hierarchy order under every sorter, so the branch always points at the master above
+        result.append(UIUtil.fontHTML(uiC3Color())).append(c3Branch(entity)).append("</FONT>");
+
         if (LobbyUtility.hasYellowWarning(entity)) {
             result.append(UIUtil.fontHTML(uiYellow()));
             result.append(WARNING_SIGN + "</FONT>");
@@ -161,7 +352,8 @@ class LobbyMekCellFormatter {
         // Unit Name
         if (hasCritical) {
             result.append(UIUtil.fontHTML(GUIP.getWarningColor()));
-        } else if (hasWarning) {
+        } else if (hasWarning || (entity instanceof BattlefieldSupportAsset)) {
+            // Battlefield Support Assets always show their name in yellow to stand out from ordinary units.
             result.append(UIUtil.fontHTML(uiYellow()));
         } else {
             result.append(fontHTML());
@@ -182,9 +374,14 @@ class LobbyMekCellFormatter {
         if (forceView) {
             result.append(MekTableModel.DOT_SPACER);
         }
-        NumberFormat formatter = NumberFormat.getNumberInstance(MegaMek.getMMOptions().getLocale());
-        result.append(formatter.format(entity.getWeight()));
-        result.append(Messages.getString("ChatLounge.Tons"));
+        if (entity instanceof BattlefieldSupportAsset) {
+            // Assets have no weight; show what they are instead of a "0 Tons" reading.
+            result.append(Messages.getString("ChatLounge.BFSAsset"));
+        } else {
+            NumberFormat formatter = NumberFormat.getNumberInstance(MegaMek.getMMOptions().getLocale());
+            result.append(formatter.format(entity.getWeight()));
+            result.append(Messages.getString("ChatLounge.Tons"));
+        }
         result.append("</FONT>");
 
         // Alpha Strike Unit Role
@@ -250,7 +447,7 @@ class LobbyMekCellFormatter {
             }
 
             final boolean rpgSkills = options.booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
-            result.append(" (").append(pilot.getSkillsAsString(rpgSkills)).append(")");
+            result.append(" (").append(CrewSkillSummaryUtil.getEffectiveSkillsAsString(entity, rpgSkills)).append(")");
             if (pilot.countOptions() > 0) {
                 result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiQuirksColor()));
                 result.append(Messages.getString("ChatLounge.abilities"));
@@ -455,6 +652,22 @@ class LobbyMekCellFormatter {
                       .append(Messages.getString("ChatLounge.towedBy"))
                       .append(" ")
                       .append(tractor.getChassis());
+
+                // Say where in the train it sits. A convoy can carry several identical carriages, so the name alone
+                // does not say which is which, and the order decides which hex each one ends up in.
+                String trainPosition = UIUtil.trainPositionLabel(entity);
+                if (!trainPosition.isEmpty()) {
+                    result.append(" (").append(trainPosition).append(')');
+                }
+
+                // A train deploys wherever its tractor does, so show the tractor's off board setting here too. The
+                // trailer does not carry one of its own until the game starts and the tractor's is copied onto it.
+                Entity trainHead = trainHeadOf(entity);
+                if ((trainHead != null) && trainHead.isOffBoard()) {
+                    result.append(", ").append(getString("ChatLounge.deploysOffBoard"));
+                    result.append(",  ").append(trainHead.getOffBoardDirection());
+                    result.append(", ").append(trainHead.getOffBoardDistance());
+                }
             }
 
             if (PreferenceManager.getClientPreferences().getShowUnitId()) {
@@ -476,6 +689,12 @@ class LobbyMekCellFormatter {
             if (entity.isProne()) {
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(getString("ChatLounge.prone"));
+            }
+
+            if ((entity instanceof Infantry dugInInfantry)
+                  && (dugInInfantry.getDugIn() == Infantry.DUG_IN_COMPLETE)) {
+                firstEntry = dotSpacer(result, firstEntry);
+                result.append(getString("ChatLounge.dugIn"));
             }
         }
 
@@ -640,7 +859,15 @@ class LobbyMekCellFormatter {
             result.append(WARNING_SIGN + "</FONT>");
         }
 
-        // Loaded unit
+        // Loaded unit. Towed units get the same treatment: both are riding on another unit in the list.
+        boolean isTowed = entity.getTowedBy() != Entity.NONE;
+        if (isCarried || isTowed) {
+            result.append(UIUtil.fontHTML(uiGray())).append(carriedBranch(entity)).append("</FONT>");
+        }
+
+        // Networked C3 units draw the network as a tree the same way (see formatUnitFull)
+        result.append(UIUtil.fontHTML(uiC3Color())).append(c3Branch(entity)).append("</FONT>");
+
         if (isCarried) {
             result.append(UIUtil.fontHTML(uiGreen())).append(LOADED_SIGN).append("</FONT>");
         }
@@ -649,6 +876,10 @@ class LobbyMekCellFormatter {
         // Gray out if the unit is a fighter in a squadron
         if (entity.isPartOfFighterSquadron()) {
             result.append(UIUtil.fontHTML(uiGray()));
+            result.append(entity.getShortNameRaw()).append("</FONT>");
+        } else if (entity instanceof BattlefieldSupportAsset) {
+            // Battlefield Support Assets show their name in yellow to stand out from ordinary units.
+            result.append(UIUtil.fontHTML(uiYellow()));
             result.append(entity.getShortNameRaw()).append("</FONT>");
         } else {
             result.append(entity.getShortNameRaw());
@@ -673,7 +904,7 @@ class LobbyMekCellFormatter {
             }
 
             final boolean rpgSkills = options.booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
-            result.append(" (").append(pilot.getSkillsAsString(rpgSkills)).append(")");
+            result.append(" (").append(CrewSkillSummaryUtil.getEffectiveSkillsAsString(entity, rpgSkills)).append(")");
             if (pilot.countOptions() > 0) {
                 result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiQuirksColor()));
                 result.append(Messages.getString("ChatLounge.abilities"));
@@ -793,6 +1024,12 @@ class LobbyMekCellFormatter {
                 result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
                 result.append(Messages.getString("ChatLounge.compact.prone")).append("</I></FONT>");
             }
+
+            if ((entity instanceof Infantry dugInInfantry)
+                  && (dugInInfantry.getDugIn() == Infantry.DUG_IN_COMPLETE)) {
+                result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
+                result.append(Messages.getString("ChatLounge.compact.dugIn")).append("</I></FONT>");
+            }
         }
 
         if (entity.countPartialRepairs() > 0) {
@@ -800,8 +1037,10 @@ class LobbyMekCellFormatter {
             result.append("Partial Repairs</FONT>");
         }
 
-        // Offboard deployment
-        if (entity.isOffBoard()) {
+        // Offboard deployment. A towed unit shows its tractor's setting, since the train deploys as one and the
+        // trailer does not carry a setting of its own until the game starts.
+        Entity offBoardSource = entity.isOffBoard() ? entity : trainHeadOf(entity);
+        if ((offBoardSource != null) && offBoardSource.isOffBoard()) {
             result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiGreen())).append("<I>");
             result.append(Messages.getString("ChatLounge.compact.deploysOffBoard")).append("</I></FONT>");
         } else if (entity.getDeployRound() > 0) {
@@ -990,7 +1229,13 @@ class LobbyMekCellFormatter {
             result.append(pilot.getDesc(0));
         }
 
-        result.append(" (").append(pilot.getSkillsAsString(rpgSkills)).append(")");
+        result.append(" (");
+        if (entity instanceof BattlefieldSupportAsset asset) {
+            result.append(asset.getCrewSkillLevel());
+        } else {
+            result.append(CrewSkillSummaryUtil.getEffectiveSkillsAsString(entity, rpgSkills));
+        }
+        result.append(")");
         if (pilot.countOptions() > 0) {
             result.append(MekTableModel.DOT_SPACER).append(UIUtil.fontHTML(uiQuirksColor()));
             result.append(Messages.getString("ChatLounge.abilities"));
@@ -1039,8 +1284,18 @@ class LobbyMekCellFormatter {
                 result.append("<I>").append(Messages.getString("ChatLounge.multipleCrew")).append("</I>");
                 result.append("<BR>");
             }
-            result.append(CrewSkillSummaryUtil.getSkillNames(entity)).append(": ");
-            result.append("<B>").append(crew.getSkillsAsString(rpgSkills)).append("</B><BR>");
+            if (entity instanceof BattlefieldSupportAsset asset) {
+                // Assets have only a Regular/Veteran grade, not gunnery/piloting numbers.
+                result.append("<B>").append(asset.getCrewSkillLevel()).append("</B><BR>");
+            } else {
+                result.append(CrewSkillSummaryUtil.getSkillNames(entity)).append(": ");
+                result.append("<B>").append(CrewSkillSummaryUtil.getEffectiveSkillsAsString(entity, rpgSkills))
+                      .append("</B><BR>");
+                String implantAdjustments = CrewSkillSummaryUtil.getImplantAdjustmentsDescription(entity);
+                if (!implantAdjustments.isEmpty()) {
+                    result.append(implantAdjustments).append("<BR>");
+                }
+            }
 
             // Advantages, MD, Edge
             if ((crew.countOptions(LVL3_ADVANTAGES) > 0) || (crew.countOptions(MD_ADVANTAGES) > 0)) {

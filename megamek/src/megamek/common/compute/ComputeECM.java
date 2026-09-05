@@ -1,7 +1,7 @@
 /*
 
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -413,6 +413,16 @@ public class ComputeECM {
             }
         }
 
+        // Add a hostile, single-hex ECM field over any unit currently suffering Improved Magnetic
+        // Pulse (iATM IMP) missile interference (IO IMP rules). A null owner is hostile to everyone
+        // and range 0 affects only the stricken unit's own hex, not a surrounding bubble. eccmStrength
+        // 0 keeps it pure ECM, so it can never act as ECCM as the rules require.
+        for (Entity entity : entities) {
+            if (entity.isImpEcmAffected() && (entity.getPosition() != null)) {
+                allEcmInfo.add(new ECMInfo(0, entity.getPosition(), null, 1, 0));
+            }
+        }
+
         // Sort the ECM, as we need to take care of the stronger ECM/ECCM first
         // ie; Angel ECCM can counter any number of ECM, however if an angel
         //  ECM counters it first...
@@ -500,14 +510,7 @@ public class ComputeECM {
         }
 
         // Get intervening Coords
-        ArrayList<Coords> coords = Coords.intervening(a, b);
-
-        // PLAYTEST3 only if the two coordinates are affected by ECM, not intervening
-        if (ae.getGame().getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            coords.clear();
-            coords.add(a);
-            coords.add(b);
-        }
+        ArrayList<Coords> coords = Game.rulesManager.getRulesEquipment().getECMCoordsAffected(a, b);
         
         ECMInfo worstECMEffects = null;
         // Loop through intervening coords, and find the worst effects
@@ -618,14 +621,7 @@ public class ComputeECM {
                 }
                 // Anything that's not Angel ECM
             } else if (m.getType().hasFlag(MiscType.F_ECM) && m.curMode().equals("ECM")) {
-                int range = 6;
-                if (m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
-                    range = 0;
-                } else if (m.getType().hasFlag(MiscType.F_EW_EQUIPMENT) ||
-                      m.getType().hasFlag(MiscType.F_NOVA) ||
-                      m.getType().hasFlag(MiscType.F_WATCHDOG)) {
-                    range = 3;
-                }
+                int range = Game.rulesManager.getRulesEquipment().getECMRanges(m.getType());
                 newInfo = new ECMInfo(range, 1, entity);
                 newInfo.setECMNova(m.getType().hasFlag(MiscType.F_NOVA));
             }
@@ -636,7 +632,7 @@ public class ComputeECM {
                 }
             }
         }
-        return bestInfo;
+        return applyEmiRangeBonus(bestInfo, game);
     }
 
     /**
@@ -707,14 +703,8 @@ public class ComputeECM {
                 }
                 // Anything that's not Angel ECM
             } else if (m.getType().hasFlag(MiscType.F_ECM) && m.curMode().equals("ECCM")) {
-                int range = 6;
-                if (m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
-                    range = 0;
-                } else if (m.getType().hasFlag(MiscType.F_EW_EQUIPMENT) ||
-                      m.getType().hasFlag(MiscType.F_NOVA) ||
-                      m.getType().hasFlag(MiscType.F_WATCHDOG)) {
-                    range = 3;
-                }
+                int range = Game.rulesManager.getRulesEquipment().getECMRanges(m.getType());
+                
                 newInfo = new ECMInfo(range, 0, entity);
                 newInfo.setECCMStrength(1);
             }
@@ -725,7 +715,26 @@ public class ComputeECM {
                 }
             }
         }
-        return bestInfo;
+        return applyEmiRangeBonus(bestInfo, game);
+    }
+
+    /**
+     * Under EMI planetary conditions, ECM and ECCM systems double their effective range (TO:AR p.59). Single-hex
+     * systems (range 0) are unaffected, since 0 doubled is still 0. This is applied to the range used both for the
+     * board view's ECM shading and for the actual ECM/ECCM effect resolution, keeping the two consistent. The
+     * spaceborne E(C)CM branches already derive their range from {@link Entity#getECMRange()}, which applies this
+     * doubling on its own, so they must not be routed through this method.
+     *
+     * @param ecmInfo the computed E(C)CM info for a ground unit, or null if the unit emits none
+     * @param game    the current game, used to read the active planetary conditions
+     *
+     * @return the same ecmInfo with its range doubled when EMI is active; otherwise the unchanged ecmInfo (or null)
+     */
+    private static @Nullable ECMInfo applyEmiRangeBonus(@Nullable ECMInfo ecmInfo, Game game) {
+        if ((ecmInfo != null) && game.getPlanetaryConditions().getEMI().isEMI()) {
+            ecmInfo.setRange(ecmInfo.getRange() * 2);
+        }
+        return ecmInfo;
     }
 
     private ComputeECM() {}

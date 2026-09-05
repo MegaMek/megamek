@@ -91,6 +91,7 @@ public class MinefieldUtil {
             switch (minefield.getType()) {
                 case Minefield.TYPE_CONVENTIONAL:
                 case Minefield.TYPE_INFERNO:
+                case Minefield.TYPE_EMP:
                     // if we're either not jumping or it's the last step
                     if (!isJumping || lastStep) {
                         hazardAccumulator += minefield.getDensity() * hoverMovementMultiplier;
@@ -109,6 +110,12 @@ public class MinefieldUtil {
                         hazardAccumulator += minefield.getDensity();
                     }
                     break;
+                case Minefield.TYPE_TRIPWIRE:
+                case Minefield.TYPE_PITFALL:
+                	// tripwires and pitfalls cause mechs to fall
+                	if (movingUnit instanceof Mek && (!isJumping || lastStep)) {
+                		hazardAccumulator += movingUnit.getWeight() / 10;
+                	}
             }
         }
 

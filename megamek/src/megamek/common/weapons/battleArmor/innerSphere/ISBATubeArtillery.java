@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -68,14 +69,16 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
         criticalSlots = 4;
         bv = 27;
         cost = 200000;
-        rulesRefs = "96, TO:AUE";
-        flags = flags.or(F_BA_WEAPON, F_MEK_MORTAR, F_MISSILE).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 96);
+        flags = flags.or(F_BA_WEAPON, F_MEK_MORTAR, F_MISSILE)
+              .andNot(F_MEK_WEAPON)
+              .andNot(F_TANK_WEAPON)
+              .andNot(F_AERO_WEAPON)
+              .andNot(F_PROTO_WEAPON);
         damage = DAMAGE_BY_CLUSTER_TABLE;
         atClass = CLASS_ARTILLERY;
         infDamageClass = WEAPON_CLUSTER_MISSILE;
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3070, 3075, DATE_NONE, DATE_NONE, DATE_NONE)

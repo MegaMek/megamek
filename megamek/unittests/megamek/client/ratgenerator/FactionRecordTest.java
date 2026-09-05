@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,12 +33,14 @@
 package megamek.client.ratgenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 
 import megamek.utilities.xml.MMXMLUtility;
@@ -51,6 +53,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 class FactionRecordTest {
+
+    private static final int TEST_ERA = 3075;
+    private static final String FIVE_RATINGS = "F,D,C,B,A";
+    private static final int RATING_F = 0;
+    private static final int RATING_A = 4;
 
     private static DocumentBuilder db;
     private final HashMap<String, FactionRecord> factions = new HashMap<>();
@@ -136,5 +143,118 @@ class FactionRecordTest {
         // Assert SL/IS ASF value
         pct = fr.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_AERO, 3151, 0);
         assertEquals(20, pct);
+    }
+
+    @Test
+    void lineageCodesWithoutAliasesReturnsOnlyKey() {
+        FactionRecord factionRecord = new FactionRecord("CGS");
+        assertEquals(List.of("CGS"), factionRecord.getLineageCodesForYear(3100));
+    }
+
+    @Test
+    void lineageCodesPreferEraActiveAliasFirst() {
+        FactionRecord factionRecord = new FactionRecord("CGS");
+        factionRecord.addAlias(3080, "CEI");
+        factionRecord.addAlias(3141, "SE");
+
+        // Before the first alias year, the faction's own key is era-active.
+        assertEquals(List.of("CGS", "CEI", "SE"), factionRecord.getLineageCodesForYear(3050));
+        // In the Escorpion Imperio era, CEI is preferred, then the key, then the remaining alias.
+        assertEquals(List.of("CEI", "CGS", "SE"), factionRecord.getLineageCodesForYear(3100));
+        // Exactly on a boundary year, the alias that begins that year is era-active.
+        assertEquals(List.of("CEI", "CGS", "SE"), factionRecord.getLineageCodesForYear(3080));
+        // In the Scorpion Empire era, SE is preferred.
+        assertEquals(List.of("SE", "CGS", "CEI"), factionRecord.getLineageCodesForYear(3200));
+    }
+
+    /** A faction with the standard five equipment ratings and no parents. */
+    private static FactionRecord factionWithFiveRatings(String key) {
+        FactionRecord factionRecord = new FactionRecord(key);
+        factionRecord.setRatings(FIVE_RATINGS);
+        return factionRecord;
+    }
+
+    @Test
+    void singleDeclaredPercentageAppliesToEveryRating() {
+        // The Word of Blake Shadow Divisions shape: one value, meaning "this is our profile".
+        FactionRecord shadowDivisions = factionWithFiveRatings("WOBTEST.SD");
+        shadowDivisions.setPctTech(FactionRecord.TechCategory.OMNI, TEST_ERA, "50");
+
+        for (int rating = RATING_F; rating <= RATING_A; rating++) {
+            assertEquals(50, shadowDivisions.getPctTech(FactionRecord.TechCategory.OMNI, TEST_ERA, rating),
+                  "a lone declared percentage describes the faction, so it answers for rating " + rating);
+        }
+        // With nothing declared beyond it there is no parent to defer to either.
+        assertEquals(50, shadowDivisions.findPctTech(FactionRecord.TechCategory.OMNI, TEST_ERA, RATING_A));
+    }
+
+    @Test
+    void fiveDeclaredPercentagesAreStillReadPositionally() {
+        // Regression guard: the common case must keep differentiating by rating, worst first.
+        FactionRecord wordOfBlake = factionWithFiveRatings("WOBTEST");
+        wordOfBlake.setPctTech(FactionRecord.TechCategory.IS_ADVANCED, TEST_ERA, "5,25,45,80,92");
+
+        int[] expectedByRating = { 5, 25, 45, 80, 92 };
+        for (int rating = RATING_F; rating <= RATING_A; rating++) {
+            assertEquals(expectedByRating[rating],
+                  wordOfBlake.getPctTech(FactionRecord.TechCategory.IS_ADVANCED, TEST_ERA, rating),
+                  "index 0 is the worst rating, so rating " + rating + " must read positionally");
+        }
+    }
+
+    @Test
+    void partlyDeclaredPercentagesAnswerOnlyWhatTheyDeclare() {
+        // Ambiguous rather than shorthand: there is no way to tell which ratings were meant to be
+        // left to the parent, so the declared ones answer and the rest defer.
+        FactionRecord partiallyRated = factionWithFiveRatings("WOBTEST.PM");
+        partiallyRated.setPctTech(FactionRecord.TechCategory.OMNI, TEST_ERA, "10,20,30,40");
+
+        assertEquals(10, partiallyRated.getPctTech(FactionRecord.TechCategory.OMNI, TEST_ERA, RATING_F));
+        assertEquals(40, partiallyRated.getPctTech(FactionRecord.TechCategory.OMNI, TEST_ERA, 3));
+        assertNull(partiallyRated.getPctTech(FactionRecord.TechCategory.OMNI, TEST_ERA, RATING_A),
+              "rating A is undeclared, so it must defer rather than repeat rating B");
+    }
+
+    @Test
+    void nothingDeclaredReturnsNull() {
+        FactionRecord factionRecord = factionWithFiveRatings("WOBTEST.NONE");
+        assertNull(factionRecord.getPctTech(FactionRecord.TechCategory.OMNI, TEST_ERA, RATING_F),
+              "a category the era file never mentions declares nothing");
+
+        factionRecord.setPctTech(FactionRecord.TechCategory.OMNI, TEST_ERA, "");
+        assertNull(factionRecord.getPctTech(FactionRecord.TechCategory.OMNI, TEST_ERA, RATING_F),
+              "an empty list declares nothing");
+    }
+
+    @Test
+    void declaredAccessorReportsOnlyWhatTheFileHolds() {
+        // What an editor must show: a one-value entry stays a one-value entry, so editing it cannot
+        // silently write back five.
+        FactionRecord shadowDivisions = factionWithFiveRatings("WOBTEST.SD2");
+        shadowDivisions.setPctTech(FactionRecord.TechCategory.OMNI, TEST_ERA, "50");
+
+        assertEquals(50, shadowDivisions.getDeclaredPctTech(FactionRecord.TechCategory.OMNI, TEST_ERA, RATING_F));
+        assertNull(shadowDivisions.getDeclaredPctTech(FactionRecord.TechCategory.OMNI, TEST_ERA, RATING_A),
+              "the file declares nothing for rating A, whatever generation resolves it to");
+    }
+
+    @Test
+    void childSinglePercentageOutranksParentFullList() {
+        // The reported bug: the rulesets default these commands to rating A, so a child profile that
+        // only answered at rating F was never the one that applied.
+        FactionRecord parent = factionWithFiveRatings("WOBTEST.PARENT");
+        parent.setPctTech(FactionRecord.TechCategory.OMNI, TEST_ERA, "0,0,0,0,30");
+
+        FactionRecord child = factionWithFiveRatings("WOBTEST.CHILD");
+        child.setPctTech(FactionRecord.TechCategory.OMNI, TEST_ERA, "50");
+        child.setParentFactions("WOBTEST.PARENT");
+
+        RATGenerator.getInstance().addFaction(parent);
+        RATGenerator.getInstance().addFaction(child);
+
+        assertEquals(50, child.findPctTech(FactionRecord.TechCategory.OMNI, TEST_ERA, RATING_A),
+              "the child declares its own profile, so it must not inherit the parent's rating A");
+        assertEquals(30, parent.findPctTech(FactionRecord.TechCategory.OMNI, TEST_ERA, RATING_A),
+              "the parent's own full list is unaffected");
     }
 }

@@ -41,6 +41,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import javax.swing.*;
@@ -60,6 +61,9 @@ import megamek.client.ui.buttons.ButtonEsc;
 import megamek.client.ui.buttons.DialogButton;
 import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
+import megamek.common.SourceBookCode;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
 
 /**
  * This is the dialog for advanced unit filtering, mostly for the unit selector. It contains the TW advanced search in
@@ -78,6 +82,7 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
 
     private final TWAdvancedSearchPanel totalWarTab;
     private final ASAdvancedSearchPanel alphaStrikeTab = new ASAdvancedSearchPanel();
+    private final BFSAdvancedSearchPanel battlefieldSupportTab = new BFSAdvancedSearchPanel();
     private final JTabbedPane advancedSearchPane = new JTabbedPane();
 
     public AdvancedSearchDialog(JFrame parent, int allowedYear) {
@@ -85,16 +90,31 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
         totalWarTab = new TWAdvancedSearchPanel(allowedYear);
         advancedSearchPane.addTab("Total Warfare", totalWarTab);
         advancedSearchPane.addTab("Alpha Strike", new TWAdvancedSearchPanel.StandardScrollPane(alphaStrikeTab));
+        advancedSearchPane.addTab("Battlefield Support",
+              new TWAdvancedSearchPanel.StandardScrollPane(battlefieldSupportTab));
         initialize();
     }
 
     @Override
     public void setVisible(boolean b) {
         alphaStrikeTab.saveValues();
+        battlefieldSupportTab.saveValues();
         if (b) {
+            totalWarTab.setRulesRefChoices(collectRulesRefChoices(MekSummaryCache.getInstance().getAllMeks()));
             setLocationRelativeTo(getOwner());
         }
         super.setVisible(b);
+    }
+
+    static List<SourceBookCode> collectRulesRefChoices(MekSummary[] summaries) {
+        if (summaries == null) {
+            return List.of();
+        }
+        return Arrays.stream(summaries)
+              .flatMap(summary -> summary.getRulesRefs().stream())
+              .flatMap(List::stream)
+              .distinct()
+              .toList();
     }
 
     @Override
@@ -106,6 +126,7 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
     @Override
     protected void cancelAction() {
         alphaStrikeTab.resetValues();
+        battlefieldSupportTab.resetValues();
         super.cancelAction();
     }
 
@@ -188,6 +209,7 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
         state.name = name;
         state.twState = totalWarTab.getState();
         state.asState = alphaStrikeTab.getState();
+        state.bfsState = battlefieldSupportTab.getState();
         try {
             save(file, state);
         } catch (IOException e) {
@@ -227,6 +249,7 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
             clearSearches();
             totalWarTab.applyState(state.twState);
             alphaStrikeTab.applyState(state.asState);
+            battlefieldSupportTab.applyState(state.bfsState);
         } catch (IOException | IllegalArgumentException e) {
             JOptionPane.showMessageDialog(this, "Error loading search state: " + e.getMessage(),
                   "Error", JOptionPane.ERROR_MESSAGE);
@@ -253,14 +276,19 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
         return advancedSearchPane;
     }
 
-    /** Deactivates the search fields in both search tabs so that no units are filtered out. */
+    /** Deactivates the search fields in all search tabs so that no units are filtered out. */
     public void clearSearches() {
         totalWarTab.clearValues();
         alphaStrikeTab.clearValues();
+        battlefieldSupportTab.clearValues();
     }
 
     public ASAdvancedSearchPanel getASAdvancedSearch() {
         return alphaStrikeTab;
+    }
+
+    public BFSAdvancedSearchPanel getBFSAdvancedSearch() {
+        return battlefieldSupportTab;
     }
 
     public TWAdvancedSearchPanel getTWAdvancedSearch() {

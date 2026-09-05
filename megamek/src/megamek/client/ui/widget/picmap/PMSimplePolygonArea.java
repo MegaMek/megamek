@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,16 +36,20 @@
 package megamek.client.ui.widget.picmap;
 
 import java.awt.AWTEventMulticaster;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
+import megamek.common.annotations.Nullable;
 
 /**
  * Class for drawing a simple polygon, used to display the polygon areas for different locations on an Entity.
@@ -53,9 +57,10 @@ import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 public class PMSimplePolygonArea implements PMHotArea {
 
     /**
-     * References to the UnitDisplay for call-back purposes
+     * Told which location the user picked when this area is double-clicked; {@code null} when the diagram is
+     * display-only.
      */
-    private final UnitDisplayPanel unitDisplayPanel;
+    private final LocationSelectListener locationSelectListener;
 
     /**
      * The location of systems corresponding to this polygon area
@@ -64,9 +69,17 @@ public class PMSimplePolygonArea implements PMHotArea {
 
     private ActionListener actionListener = null;
 
+    /** The stripes drawn over a location that has taken a critical hit: color, gap, width and how solid they are. */
+    private static final Color HATCH_COLOR = Color.black;
+    private static final int HATCH_SPACING = 8;
+    private static final float HATCH_WIDTH = 2.0f;
+    private static final float HATCH_OPACITY = 0.45f;
+
     public Color backColor = Color.lightGray;
     public Color normalBorderColor = Color.black;
     public Color highlightBorderColor = Color.red;
+    /** Whether this area is striped to show that it has taken a critical hit. */
+    private boolean criticalHatch = false;
     private final boolean highlight;
     private final Polygon areaShape;
     private boolean selected = false;
@@ -75,7 +88,7 @@ public class PMSimplePolygonArea implements PMHotArea {
     private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
 
     public PMSimplePolygonArea(Polygon p, Color backColor, Color brdColor,
-          Color hiBrdColor, boolean highlight, UnitDisplayPanel unitDisplayPanel,
+          Color hiBrdColor, boolean highlight, @Nullable LocationSelectListener locationSelectListener,
           int loc) {
         this.areaShape = p;
         if (backColor != null) {
@@ -90,17 +103,17 @@ public class PMSimplePolygonArea implements PMHotArea {
             this.highlightBorderColor = hiBrdColor;
         }
         this.highlight = highlight;
-        this.unitDisplayPanel = unitDisplayPanel;
+        this.locationSelectListener = locationSelectListener;
         this.loc = loc;
     }
 
     public PMSimplePolygonArea(Polygon p, Color backColor, Color brdColor,
-          UnitDisplayPanel unitDisplayPanel, int loc) {
-        this(p, backColor, brdColor, null, false, unitDisplayPanel, loc);
+          @Nullable LocationSelectListener locationSelectListener, int loc) {
+        this(p, backColor, brdColor, null, false, locationSelectListener, loc);
     }
 
-    public PMSimplePolygonArea(Polygon p, UnitDisplayPanel unitDisplayPanel, int loc) {
-        this(p, null, null, null, true, unitDisplayPanel, loc);
+    public PMSimplePolygonArea(Polygon p, @Nullable LocationSelectListener locationSelectListener, int loc) {
+        this(p, null, null, null, true, locationSelectListener, loc);
 
     }
 
@@ -123,6 +136,9 @@ public class PMSimplePolygonArea implements PMHotArea {
         Color oldColor = g.getColor();
         g.setColor(this.backColor);
         g.fillPolygon(areaShape);
+        if (criticalHatch) {
+            drawCriticalHatch(g);
+        }
         if (selected && highlight) {
             g.setColor(highlightBorderColor);
         } else {
@@ -130,6 +146,39 @@ public class PMSimplePolygonArea implements PMHotArea {
         }
         g.drawPolygon(this.areaShape);
         g.setColor(oldColor);
+    }
+
+    /**
+     * Draws diagonal stripes across the area, over its fill. The fill already carries the location's damage as its
+     * color, so a critical hit is shown by striping the location rather than recoloring it, and both can be read at
+     * once.
+     * <p>
+     * The stripes are translucent, and the location's name and value are drawn over them afterwards. Solid stripes
+     * would win against that text, which is the thing a player actually reads.
+     * </p>
+     */
+    private void drawCriticalHatch(Graphics g) {
+        if (!(g instanceof Graphics2D)) {
+            return;
+        }
+        Graphics2D hatchGraphics = (Graphics2D) g.create();
+        hatchGraphics.clip(areaShape);
+        hatchGraphics.setColor(HATCH_COLOR);
+        hatchGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, HATCH_OPACITY));
+        hatchGraphics.setStroke(new BasicStroke(HATCH_WIDTH));
+        hatchGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        Rectangle bounds = areaShape.getBounds();
+        int end = bounds.x + bounds.width + bounds.height;
+        for (int x = bounds.x - bounds.height; x < end; x += HATCH_SPACING) {
+            hatchGraphics.drawLine(x, bounds.y, x + bounds.height, bounds.y + bounds.height);
+        }
+        hatchGraphics.dispose();
+    }
+
+    /** Marks the area as having taken a critical hit, drawn as stripes over its fill. */
+    public void setCriticalHatch(boolean criticalHatch) {
+        this.criticalHatch = criticalHatch;
     }
 
     @Override
@@ -163,8 +212,11 @@ public class PMSimplePolygonArea implements PMHotArea {
 
     @Override
     public void onMouseClick(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-            unitDisplayPanel.showSpecificSystem(loc);
+        if (locationSelectListener == null) {
+            return;
+        }
+        if ((e.getClickCount() >= 2) || locationSelectListener.selectsOnSingleClick()) {
+            locationSelectListener.locationSelected(loc);
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import megamek.common.board.Coords;
+import megamek.common.annotations.Nullable;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.logging.MMLogger;
@@ -74,7 +75,9 @@ public class UnitBehavior {
     private BehaviorType calculateUnitBehavior(Entity entity, Princess owner) {
         BehaviorSettings botSettings = owner.getBehaviorSettings();
 
-        if (botSettings.isForcedWithdrawal() && entity.isCrippled()) {
+        // isCrippled(true) so crew-crippled Meks withdraw too, matching Princess.refreshCrippledUnits and the
+        // firing-suppression checks (isCrippled() skips crew damage for Meks)
+        if (botSettings.isForcedWithdrawal() && entity.isCrippled(true)) {
             if (owner.getClusterTracker().getDestinationCoords(entity, owner.getHomeEdge(entity), true).isEmpty()) {
                 return BehaviorType.NoPathToDestination;
             }
@@ -122,6 +125,21 @@ public class UnitBehavior {
             entityBehaviors.put(entity.getId(), calculateUnitBehavior(entity, owner));
         }
 
+        return entityBehaviors.get(entity.getId());
+    }
+
+    /**
+     * The behavior already worked out for this unit, without working one out if none has been.
+     *
+     * <p>For logging and analysis only. {@link #getBehaviorType} computes and caches on a miss, and what it
+     * computes depends on where everything is standing at the time - so asking early, for a unit that has not
+     * moved yet, would pin an answer the bot would otherwise have reached later with better information.</p>
+     *
+     * @param entity the unit to look up
+     *
+     * @return the cached behavior, or {@code null} if this unit has not been evaluated this turn
+     */
+    public @Nullable BehaviorType getCachedBehaviorType(Entity entity) {
         return entityBehaviors.get(entity.getId());
     }
 

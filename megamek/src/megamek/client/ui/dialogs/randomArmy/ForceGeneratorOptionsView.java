@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,11 +32,14 @@
  */
 package megamek.client.ui.dialogs.randomArmy;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -48,21 +51,35 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
 
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.Ruleset.ProgressListener;
 import megamek.client.ui.Messages;
+import megamek.client.ui.util.UIUtil;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Player;
+import megamek.common.annotations.Nullable;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityListFile;
 import megamek.common.units.EntityWeightClass;
@@ -79,10 +96,26 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     private int currentYear;
     private final Consumer<ForceDescriptor> onGenerate;
+    /**
+     * Optional override for the Export-MUL button action. When set, replaces the built-in {@link #exportMUL}
+     * call so embedders can route the descriptor through their own export path. Null means use the default.
+     */
+    private Consumer<ForceDescriptor> onExportMUL;
+    private Consumer<FactionRecord> onFactionChanged;
+    /**
+     * Where a roll learns what lift the force already owns, asked at the moment of each Generate so it reflects the
+     * ships brought by earlier rolls. Defaults to none.
+     */
+    private Supplier<ExistingLift> existingLiftSupplier = () -> ExistingLift.NONE;
 
     private ForceDescriptor forceDesc = new ForceDescriptor();
 
+    /** Width of the transport percentage fields; three digits and a decimal is all they ever hold. */
+    private static final int TRANSPORT_FIELD_COLUMNS = 5;
+
     private JTextField txtYear;
+    /** The year field's own border, kept so an editable year can get it back. */
+    private Border yearFieldBorder;
     private JComboBox<FactionRecord> cbFaction;
     private JComboBox<FactionRecord> cbSubFaction;
     private JComboBox<Integer> cbUnitType;
@@ -92,7 +125,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     private JComboBox<String> cbExperience;
     private JComboBox<Integer> cbWeightClass;
-    private JCheckBox chkAttachments;
+    private JCheckBox chkDetachments;
+    private JPanel panGenerateOptions;
 
     private final DefaultListCellRenderer factionRenderer = new CBRenderer<FactionRecord>(Messages.getString(
           "ForceGeneratorDialog.general"), fRec -> fRec.getName(currentYear));
@@ -101,44 +135,42 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private final HashMap<String, String> formationDisplayNames = new HashMap<>();
     private final HashMap<String, String> flagDisplayNames = new HashMap<>();
 
-    private JPanel panGroundRole;
-    private JPanel panInfRole;
-    private JPanel panAirRole;
-
-    private JCheckBox chkRoleRecon;
-    private JCheckBox chkRoleFireSupport;
-    private JCheckBox chkRoleUrban;
-    private JCheckBox chkRoleInfantrySupport;
-    private JCheckBox chkRoleCavalry;
-    private JCheckBox chkRoleRaider;
-    private JCheckBox chkRoleIncendiary;
-    private JCheckBox chkRoleAntiAircraft;
-    private JCheckBox chkRoleAntiInfantry;
-    private JCheckBox chkRoleArtillery;
-    private JCheckBox chkRoleMissileArtillery;
-    private JCheckBox chkRoleTransport;
-    private JCheckBox chkRoleEngineer;
-
-    private JCheckBox chkRoleFieldGun;
-    private JCheckBox chkRoleFieldArtillery;
-    private JCheckBox chkRoleFieldMissileArtillery;
-
-    private JCheckBox chkRoleAirRecon;
-    private JCheckBox chkRoleGroundSupport;
-    private JCheckBox chkRoleInterceptor;
-    private JCheckBox chkRoleAssault;
-    private JCheckBox chkRoleAirTransport;
+    private MissionRoleFilterPanel panMissionRoleFilters;
+    /** The label on the role filters row, hidden with the panel when a host does not offer the filters. */
+    private JLabel lblMissionRoles;
 
     private JTextField txtDropshipPct;
     private JTextField txtJumpshipPct;
     private JTextField txtWarshipPct;
-    private JTextField txtCargo;
+    private JTextField txtCargoPct;
+    private JCheckBox chkFighterComplement;
+
+    /** Post-generation summary: unit type rows, Light/Medium/Heavy/Assault columns. */
+    private JTable tblSummary;
+    private DefaultTableModel summaryModel;
+    /** Opens the formation mix editor; the label beside it shows any request in force. */
+    private JButton btnFormationMix;
+    private JLabel lblFormationMixSummary;
+
+    /** The formation the player has picked in the palette, applied to a node from the tree's right-click menu. */
+    private String selectedFormation;
+    /** Holds the mix editor when a host shows it inline rather than opening it from the button. */
+    private JPanel panFormationMixInline;
+    /** The inline panel's title, which names the selected formation so the pick is visible without scrolling. */
+    private TitledBorder formationMixInlineTitle;
+    private boolean formationMixInline = false;
+    /** Whether a force has been generated and not since cleared; the inline mix editor only shows while one exists. */
+    private boolean forceGenerated;
 
     private JButton btnGenerate;
     private JButton btnExportMUL;
     private JButton btnClear;
 
-    private final GameOptions gameOptions;
+    /**
+     * The options the generated force is built for. Not final: the hosting dialog is created before the
+     * game it belongs to is known, so it starts on defaults and is handed the real options later.
+     */
+    private GameOptions gameOptions;
 
     public ForceGeneratorOptionsView(Consumer<ForceDescriptor> onGenerate, GameOptions gameOptions) {
         this.onGenerate = onGenerate;
@@ -149,92 +181,162 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         initUi();
     }
 
+    /**
+     * Points this panel at the options of the game the force is actually being generated for.
+     *
+     * <p>The dialog is built before the game is known, so it starts on a default set. Until this was
+     * propagated the generator kept reading those defaults, and a rule the player had switched on -
+     * Manei Domini, say - was invisible to generation while being plainly on in the lobby.</p>
+     *
+     * @param gameOptions the options of the game being generated for
+     */
+    public void setGameOptions(GameOptions gameOptions) {
+        this.gameOptions = gameOptions;
+    }
+
+    /**
+     * Caps this panel's height at what it actually needs.
+     *
+     * <p>Hosts stack this panel in a {@link BoxLayout}, which stretches a component up to its maximum size, and a
+     * plain panel reports no maximum at all. In a tall window that handed the panel far more height than its
+     * contents use, and the formation list - the only row with any vertical weight - swallowed the difference as
+     * grey inside its own border. Reporting the preferred height as the maximum leaves the spare space below the
+     * panel, where it belongs.</p>
+     *
+     * @return the preferred size, with width left free to stretch
+     */
+    @Override
+    public Dimension getMaximumSize() {
+        return new Dimension(super.getMaximumSize().width, getPreferredSize().height);
+    }
+
+    /**
+     * Assembles the panel from its sections, in the order they appear on screen.
+     *
+     * <p>Each section adds its own rows and hands back the next free one, so the running row index stays the single
+     * thing they share.</p>
+     */
     private void initUi() {
         currentYear = gameOptions.intOption(OptionsConstants.ALLOWED_YEAR);
         forceDesc.setYear(currentYear);
-        RATGenerator rg = RATGenerator.getInstance();
-        rg.loadYear(currentYear);
+        RATGenerator.getInstance().loadYear(currentYear);
 
         setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(5, 5, 5, 5);
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.NORTHWEST;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        int inset = UIUtil.scaleForGUI(5);
+        constraints.insets = new Insets(inset, inset, inset, inset);
 
-        int y = 0;
+        int row = 0;
+        // Top to bottom the tab follows the way the force is made: everything that describes it first (the
+        // form, the role filters and the transport to generate for it), then what came out, then the tools
+        // for changing it.
+        row = addForceDescriptionFields(constraints, row);
+        row = addMissionRoleFilters(constraints, row);
+        row = addTransportRow(constraints, row);
+        row = addCompositionSummary(constraints, row);
+        // Last, below everything that shapes the force: the mix edits a generated tree, so it belongs with the
+        // result rather than among the settings, and it stays hidden until there is a tree to edit.
+        row = addFormationMixPanel(constraints, row);
+        addGenerateControls(constraints, row);
 
-        gbc.gridx = 0;
-        gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.year")), gbc);
+        refreshFactions();
+    }
+
+    /**
+     * Adds the fields that describe the force: year, faction, unit type, formation, rating, weight and experience.
+     *
+     * @param constraints the shared constraints
+     * @param startRow the first free grid row
+     *
+     * @return the next free grid row
+     */
+    private int addForceDescriptionFields(GridBagConstraints constraints, int startRow) {
+        int row = startRow;
+
+        constraints.gridx = 0;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.year"), constraints);
         txtYear = new JTextField();
         txtYear.setEditable(true);
         txtYear.setText(Integer.toString(currentYear));
         txtYear.setToolTipText(Messages.getString("ForceGeneratorDialog.year.tooltip"));
-        gbc.gridx = 1;
-        gbc.gridy = y++;
-        add(txtYear, gbc);
+        constraints.gridx = 1;
+        constraints.gridy = row++;
+        add(txtYear, constraints);
         txtYear.addFocusListener(this);
-        gbc.gridx = 0;
-        gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.faction")), gbc);
+        constraints.gridx = 0;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.faction"), constraints);
         cbFaction = new JComboBox<>();
         cbFaction.setRenderer(factionRenderer);
-        gbc.gridx = 1;
-        gbc.gridy = y;
-        add(cbFaction, gbc);
+        constraints.gridx = 1;
+        constraints.gridy = row;
+        add(cbFaction, constraints);
         cbFaction.setToolTipText(Messages.getString("ForceGeneratorDialog.faction.tooltip"));
         cbFaction.addActionListener(this);
 
-        gbc.gridx = 2;
-        gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.subfaction")), gbc);
+        constraints.gridx = 2;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.subfaction"), constraints);
         cbSubFaction = new JComboBox<>();
         cbSubFaction.setRenderer(factionRenderer);
-        gbc.gridx = 3;
-        gbc.gridy = y++;
-        add(cbSubFaction, gbc);
+        constraints.gridx = 3;
+        constraints.gridy = row++;
+        add(cbSubFaction, constraints);
         cbSubFaction.setToolTipText(Messages.getString("ForceGeneratorDialog.subfaction.tooltip"));
         cbSubFaction.addActionListener(this);
 
-        gbc.gridx = 0;
-        gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.unitType")), gbc);
+        // TODO (future state) - Specific Unit picker (Option B). Add a combo here, after the
+        // subfaction, populated from the `units:` block of the selected command's universe data file
+        // (data/universe/commands/<KEY>.yml). Selecting a named regiment (e.g. "1st Sword of Light")
+        // would pin its era-appropriate composition - battalionWeights become a fixed
+        // <subforce weightClass="..."> distribution instead of the random <subforceOption> roll - plus
+        // skill and commander, with any unspecified field falling back to normal generic generation.
+        // The list should be year-filtered using each unit's yearsActive / history span (the Year
+        // field already set drives this; no era picker is needed). Only `name` is mandatory in the
+        // per-unit schema. See data/universe/commands/DC.SL.yml for the pilot data and schema notes.
+
+        constraints.gridx = 0;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.unitType"), constraints);
         cbUnitType = new JComboBox<>();
         cbUnitType.setRenderer(new CBRenderer<>(Messages.getString("ForceGeneratorDialog.combined"),
-              UnitType::getTypeName));
-        gbc.gridx = 1;
-        gbc.gridy = y;
-        add(cbUnitType, gbc);
+              UnitType::getTypeDisplayableName));
+        constraints.gridx = 1;
+        constraints.gridy = row;
+        add(cbUnitType, constraints);
         cbUnitType.setToolTipText(Messages.getString("ForceGeneratorDialog.unitType.tooltip"));
         cbUnitType.addActionListener(this);
 
-        gbc.gridx = 2;
-        gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.formation")), gbc);
+        constraints.gridx = 2;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.formation"), constraints);
         cbFormation = new JComboBox<>();
         cbFormation.setRenderer(new CBRenderer<String>(Messages.getString("ForceGeneratorDialog.random"),
               formationDisplayNames::get));
-        gbc.gridx = 3;
-        gbc.gridy = y++;
-        add(cbFormation, gbc);
+        constraints.gridx = 3;
+        constraints.gridy = row++;
+        add(cbFormation, constraints);
         cbFormation.setToolTipText(Messages.getString("ForceGeneratorDialog.formation.tooltip"));
         cbFormation.addActionListener(this);
 
-        gbc.gridx = 0;
-        gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.rating")), gbc);
+        constraints.gridx = 0;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.rating"), constraints);
         cbRating = new JComboBox<>();
         cbRating.setRenderer(new CBRenderer<String>(Messages.getString("ForceGeneratorDialog.random"),
               ratingDisplayNames::get));
-        gbc.gridx = 1;
-        gbc.gridy = y;
-        add(cbRating, gbc);
+        constraints.gridx = 1;
+        constraints.gridy = row;
+        add(cbRating, constraints);
         cbRating.setToolTipText(Messages.getString("ForceGeneratorDialog.rating.tooltip"));
         cbRating.addActionListener(this);
 
-        gbc.gridx = 2;
-        gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.weight")), gbc);
+        constraints.gridx = 2;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.weight"), constraints);
         cbWeightClass = new JComboBox<>();
         cbWeightClass.setRenderer(new CBRenderer<Integer>(Messages.getString("ForceGeneratorDialog.random"),
               EntityWeightClass::getClassName));
@@ -243,251 +345,485 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         cbWeightClass.addItem(EntityWeightClass.WEIGHT_MEDIUM);
         cbWeightClass.addItem(EntityWeightClass.WEIGHT_HEAVY);
         cbWeightClass.addItem(EntityWeightClass.WEIGHT_ASSAULT);
-        gbc.gridx = 3;
-        gbc.gridy = y++;
-        add(cbWeightClass, gbc);
+        constraints.gridx = 3;
+        constraints.gridy = row++;
+        add(cbWeightClass, constraints);
         cbWeightClass.setToolTipText(Messages.getString("ForceGeneratorDialog.weight.tooltip"));
         cbWeightClass.addActionListener(this);
 
-        gbc.gridx = 0;
-        gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.other")), gbc);
+        constraints.gridx = 0;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.other"), constraints);
         cbFlags = new JComboBox<>();
         cbFlags.setRenderer(new CBRenderer<String>("---", flagDisplayNames::get));
-        gbc.gridx = 1;
-        gbc.gridy = y;
-        add(cbFlags, gbc);
+        constraints.gridx = 1;
+        constraints.gridy = row;
+        add(cbFlags, constraints);
         cbFlags.setToolTipText(Messages.getString("ForceGeneratorDialog.other.tooltip"));
         cbFlags.addActionListener(this);
 
-        gbc.gridx = 2;
-        gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.experience")), gbc);
+        constraints.gridx = 2;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.experience"), constraints);
         cbExperience = new JComboBox<>();
         cbExperience.addItem(Messages.getString("ForceGeneratorDialog.random"));
         cbExperience.addItem(Messages.getString("ForceGeneratorDialog.green"));
         cbExperience.addItem(Messages.getString("ForceGeneratorDialog.regular"));
         cbExperience.addItem(Messages.getString("ForceGeneratorDialog.veteran"));
         cbExperience.addItem(Messages.getString("ForceGeneratorDialog.elite"));
-        gbc.gridx = 3;
-        gbc.gridy = y++;
-        add(cbExperience, gbc);
+        constraints.gridx = 3;
+        constraints.gridy = row++;
+        add(cbExperience, constraints);
         cbExperience.setToolTipText(Messages.getString("ForceGeneratorDialog.experience.tooltip"));
         cbExperience.addActionListener(this);
 
-        gbc.gridx = 0;
-        gbc.gridy = y++;
-        gbc.gridwidth = 2;
-        chkAttachments = new JCheckBox(Messages.getString("ForceGeneratorDialog.includeSupportForces"));
-        chkAttachments.setToolTipText(Messages.getString("ForceGeneratorDialog.includeSupportForces.tooltip"));
-        chkAttachments.setSelected(true);
-        add(chkAttachments, gbc);
+        // The sections below span the full dialog width rather than sitting in the four field columns.
+        constraints.gridwidth = 4;
+        constraints.gridx = 0;
+        constraints.gridy = row++;
+        return row;
+    }
 
-        gbc.gridwidth = 4;
-        panGroundRole = new JPanel(new GridBagLayout());
-        gbc.gridx = 0;
-        gbc.gridy = y++;
-        add(panGroundRole, gbc);
+    /**
+     * The transport settings as one row of the description form. They decide what gets generated - how much of
+     * the force gets a DropShip berth, whether those ships get JumpShip collars - so they belong with the other
+     * inputs rather than beside the summary of the result, and four short fields fit on a line.
+     */
+    private int addTransportRow(GridBagConstraints constraints, int startRow) {
+        int row = startRow;
+        constraints.gridx = 0;
+        constraints.gridy = row;
+        add(describedLabel("ForceGeneratorDialog.transport"), constraints);
 
-        panInfRole = new JPanel(new GridBagLayout());
-        gbc.gridx = 0;
-        gbc.gridy = y++;
-        add(panInfRole, gbc);
-        panInfRole.setVisible(false);
+        JPanel panTransport = new JPanel(new GridBagLayout());
+        panTransport.setOpaque(false);
+        GridBagConstraints cell = new GridBagConstraints();
+        cell.anchor = GridBagConstraints.WEST;
+        cell.gridy = 0;
+        int gap = UIUtil.scaleForGUI(4);
+        int groupGap = UIUtil.scaleForGUI(14);
 
-        panAirRole = new JPanel(new GridBagLayout());
-        gbc.gridx = 0;
-        gbc.gridy = y++;
-        add(panAirRole, gbc);
-        panAirRole.setVisible(false);
-
-        gbc.gridx = 0;
-        gbc.gridy = y++;
-
-        JPanel panTransport = new JPanel(new GridLayout(4, 2));
-        txtDropshipPct = new JTextField("0");
+        txtDropshipPct = new JTextField("0", TRANSPORT_FIELD_COLUMNS);
         txtDropshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.dropshipPercentage.tooltip"));
-        txtJumpshipPct = new JTextField("0");
+        txtJumpshipPct = new JTextField("0", TRANSPORT_FIELD_COLUMNS);
         txtJumpshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.jumpshipPercentage.tooltip"));
-        txtWarshipPct = new JTextField("0");
+        txtWarshipPct = new JTextField("0", TRANSPORT_FIELD_COLUMNS);
         txtWarshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.warshipPercentage.tooltip"));
-        txtCargo = new JTextField("0");
-        txtCargo.setToolTipText(Messages.getString("ForceGeneratorDialog.cargo.tooltip"));
-        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.dropshipPercentage")));
-        panTransport.add(txtDropshipPct, gbc);
-        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.jumpshipPercentage")));
-        panTransport.add(txtJumpshipPct, gbc);
-        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.warshipPercentage")));
-        panTransport.add(txtWarshipPct, gbc);
-        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.cargo")));
-        panTransport.add(txtCargo, gbc);
-        gbc.gridx = 0;
-        gbc.gridy = y++;
-        gbc.fill = GridBagConstraints.NONE;
-        panTransport.setBorder(BorderFactory.createTitledBorder(Messages.getString("ForceGeneratorDialog.transport")));
-        add(panTransport, gbc);
+        // Default 100: provision cargo holds for everything the command has to haul. Above 100
+        // buys headroom for cargo it picks up later.
+        txtCargoPct = new JTextField("100", TRANSPORT_FIELD_COLUMNS);
+        txtCargoPct.setToolTipText(Messages.getString("ForceGeneratorDialog.cargoPct.tooltip"));
 
+        // The label is what a player reads and points at, so it carries the same explanation as the
+        // field. With the tooltip on the input box alone, hovering the thing that names the setting
+        // explained nothing.
+        int column = 0;
+        column = addTransportField(panTransport, cell, column, "ForceGeneratorDialog.dropshipPercentage",
+              txtDropshipPct, gap, groupGap);
+        column = addTransportField(panTransport, cell, column, "ForceGeneratorDialog.jumpshipPercentage",
+              txtJumpshipPct, gap, groupGap);
+        column = addTransportField(panTransport, cell, column, "ForceGeneratorDialog.warshipPercentage",
+              txtWarshipPct, gap, groupGap);
+        column = addTransportField(panTransport, cell, column, "ForceGeneratorDialog.cargoPct",
+              txtCargoPct, gap, groupGap);
+
+        chkFighterComplement = new JCheckBox(Messages.getString("ForceGeneratorDialog.fighterComplement"));
+        chkFighterComplement.setToolTipText(Messages.getString("ForceGeneratorDialog.fighterComplement.tooltip"));
+        // The complement fills bays on ships the roll brings, so the option follows the fields that bring them.
+        DocumentListener shipsMayChange = onTextChange(this::refreshFighterComplementEnabled);
+        txtDropshipPct.getDocument().addDocumentListener(shipsMayChange);
+        txtJumpshipPct.getDocument().addDocumentListener(shipsMayChange);
+        txtWarshipPct.getDocument().addDocumentListener(shipsMayChange);
+        refreshFighterComplementEnabled();
+        cell.gridx = column;
+        cell.insets = new Insets(0, 0, 0, 0);
+        cell.weightx = 1.0;
+        panTransport.add(chkFighterComplement, cell);
+
+        constraints.gridx = 1;
+        constraints.gridy = row++;
+        constraints.gridwidth = 3;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1.0;
+        add(panTransport, constraints);
+        constraints.gridwidth = 1;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.weightx = 0.0;
+        return row;
+    }
+
+    /**
+     * Places one label-and-field pair on the transport row.
+     *
+     * @return the next free column
+     */
+    private int addTransportField(JPanel panTransport, GridBagConstraints cell, int column, String messageKey,
+          JTextField field, int gap, int groupGap) {
+        cell.gridx = column;
+        cell.insets = new Insets(0, 0, 0, gap);
+        panTransport.add(describedLabel(messageKey), cell);
+        cell.gridx = column + 1;
+        cell.insets = new Insets(0, 0, 0, groupGap);
+        panTransport.add(field, cell);
+        return column + 2;
+    }
+
+    /**
+     * Adds the inline formation mix panel, which shapes the force and so leads the sections that describe it.
+     *
+     * <p>Hidden unless a host asks for it inline; MegaMek opens the same editor from a button instead.</p>
+     *
+     * @param constraints the shared constraints
+     * @param startRow the first free grid row
+     *
+     * @return the next free grid row
+     */
+    private int addFormationMixPanel(GridBagConstraints constraints, int startRow) {
+        int row = startRow;
+        panFormationMixInline = new JPanel(new BorderLayout());
+        formationMixInlineTitle = BorderFactory.createTitledBorder(
+              Messages.getString("ForceGeneratorDialog.formationMix.title"));
+        panFormationMixInline.setBorder(formationMixInlineTitle);
+        panFormationMixInline.setVisible(false);
+        constraints.gridx = 0;
+        constraints.gridy = row++;
+        constraints.gridwidth = 4;
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.weightx = 1.0;
+        constraints.weighty = 1.0;
+        add(panFormationMixInline, constraints);
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.weightx = 0.0;
+        constraints.weighty = 0.0;
+
+        return row;
+    }
+
+    /** The role filters as one row of the description form: a label, then the boxes for the unit type shown. */
+    private int addMissionRoleFilters(GridBagConstraints constraints, int startRow) {
+        int row = startRow;
+        constraints.gridx = 0;
+        constraints.gridy = row;
+        lblMissionRoles = describedLabel("ForceGeneratorDialog.missionRoles");
+        add(lblMissionRoles, constraints);
+        panMissionRoleFilters = new MissionRoleFilterPanel();
+        constraints.gridx = 1;
+        constraints.gridy = row++;
+        constraints.gridwidth = 3;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1.0;
+        add(panMissionRoleFilters, constraints);
+        constraints.gridwidth = 1;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.weightx = 0.0;
+        return row;
+    }
+
+    /** The Composition Summary across the full width, now that the transport settings sit in the form above. */
+    private int addCompositionSummary(GridBagConstraints constraints, int startRow) {
+        int row = startRow;
+        constraints.gridx = 0;
+        constraints.gridy = row++;
+        constraints.gridwidth = 4;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        // No vertical weight: this panel wants its natural height and nothing more. Sharing the slack with the
+        // formation list left the list a third of the height it needed while this row kept grey it had no use for.
+        constraints.weighty = 0.0;
+        add(createSummaryTable(), constraints);
+        constraints.gridwidth = 1;
+        constraints.fill = GridBagConstraints.NONE;
+        return row;
+    }
+
+    /**
+     * Adds the button strip that drives generation: Generate and its options, Export MUL and Clear Force.
+     *
+     * @param constraints the shared constraints
+     * @param startRow the first free grid row
+     */
+    private void addGenerateControls(GridBagConstraints constraints, int startRow) {
+        int row = startRow;
         btnGenerate = new JButton(Messages.getString("ForceGeneratorDialog.generate"));
         btnGenerate.setToolTipText(Messages.getString("ForceGeneratorDialog.generate.tooltip"));
-        gbc.gridx = 0;
-        gbc.gridy = y;
-        gbc.gridwidth = 1;
-        gbc.weighty = 1.0;
-        add(btnGenerate, gbc);
+        constraints.gridx = 0;
+        constraints.gridy = row;
+        constraints.gridwidth = 1;
+        constraints.weighty = 0.0;
+        add(btnGenerate, constraints);
         btnGenerate.addActionListener(this);
+
+        // Options that modify the Generate action sit directly beside it rather than among the
+        // standalone settings above. They live in their own panel so a host (MekHQ's Command Designer)
+        // can append its own toggles via addGenerateOption without disturbing the button columns.
+        panGenerateOptions = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        // Transparent so the row reads as part of the button strip; an opaque nested panel paints its
+        // own theme background and shows up as a coloured box against the surrounding container.
+        panGenerateOptions.setOpaque(false);
+        chkDetachments = new JCheckBox(Messages.getString("ForceGeneratorDialog.generateDetachments"));
+        chkDetachments.setToolTipText(Messages.getString("ForceGeneratorDialog.generateDetachments.tooltip"));
+        chkDetachments.setSelected(true);
+        // Turning detachments off withdraws the aerospace and infantry formations, so the editor has to be rebuilt.
+        chkDetachments.addActionListener(this);
+        panGenerateOptions.add(chkDetachments);
+        // Behind a button rather than inline: which formations a force offers depends on the selections above, so
+        // the list is a couple of dozen rows that would crowd out everything else on an already dense panel.
+        btnFormationMix = new JButton(Messages.getString("ForceGeneratorDialog.formationMix.button"));
+        btnFormationMix.setToolTipText(Messages.getString("ForceGeneratorDialog.formationMix.button.tooltip"));
+        btnFormationMix.addActionListener(event -> showFormationMixDialog());
+        panGenerateOptions.add(btnFormationMix);
+        lblFormationMixSummary = new JLabel(" ");
+        panGenerateOptions.add(lblFormationMixSummary);
+        constraints.gridx = 1;
+        constraints.gridy = row;
+        add(panGenerateOptions, constraints);
 
         btnExportMUL = new JButton(Messages.getString("ForceGeneratorDialog.exportMUL"));
         btnExportMUL.setToolTipText(Messages.getString("ForceGeneratorDialog.exportMUL.tooltip"));
-        gbc.gridx = 1;
-        gbc.gridy = y;
-        add(btnExportMUL, gbc);
+        constraints.gridx = 2;
+        constraints.gridy = row;
+        add(btnExportMUL, constraints);
         btnExportMUL.addActionListener(this);
         btnExportMUL.setEnabled(false);
 
         btnClear = new JButton(Messages.getString("ForceGeneratorDialog.clear"));
         btnClear.setToolTipText(Messages.getString("ForceGeneratorDialog.clear.tooltip"));
-        gbc.gridx = 2;
-        gbc.gridy = y;
-        gbc.weighty = 1.0;
-        add(btnClear, gbc);
+        constraints.gridx = 3;
+        constraints.gridy = row;
+        constraints.weighty = 0.0;
+        add(btnClear, constraints);
         btnClear.addActionListener(this);
         btnClear.setEnabled(false);
 
-        gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-
-        chkRoleRecon = createMissionRoleCheck(MissionRole.RECON);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panGroundRole.add(chkRoleRecon, gbc);
-
-        chkRoleFireSupport = createMissionRoleCheck(MissionRole.FIRE_SUPPORT);
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        panGroundRole.add(chkRoleFireSupport, gbc);
-
-        chkRoleUrban = createMissionRoleCheck(MissionRole.URBAN);
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        panGroundRole.add(chkRoleUrban, gbc);
-
-        chkRoleCavalry = createMissionRoleCheck(MissionRole.CAVALRY);
-        gbc.gridx = 3;
-        gbc.gridy = 0;
-        panGroundRole.add(chkRoleCavalry, gbc);
-
-        chkRoleRaider = createMissionRoleCheck(MissionRole.RAIDER);
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        panGroundRole.add(chkRoleRaider, gbc);
-
-        chkRoleIncendiary = createMissionRoleCheck(MissionRole.INCENDIARY);
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        panGroundRole.add(chkRoleIncendiary, gbc);
-
-        chkRoleAntiAircraft = createMissionRoleCheck(MissionRole.ANTI_AIRCRAFT);
-        gbc.gridx = 2;
-        gbc.gridy = 1;
-        panGroundRole.add(chkRoleAntiAircraft, gbc);
-
-        chkRoleAntiInfantry = createMissionRoleCheck(MissionRole.ANTI_INFANTRY);
-        gbc.gridx = 3;
-        gbc.gridy = 1;
-        panGroundRole.add(chkRoleAntiInfantry, gbc);
-
-        chkRoleArtillery = createMissionRoleCheck(MissionRole.ARTILLERY);
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        panGroundRole.add(chkRoleArtillery, gbc);
-
-        chkRoleMissileArtillery = createMissionRoleCheck(MissionRole.MISSILE_ARTILLERY);
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        panGroundRole.add(chkRoleMissileArtillery, gbc);
-
-        chkRoleInfantrySupport = createMissionRoleCheck(MissionRole.INF_SUPPORT);
-        gbc.gridx = 2;
-        gbc.gridy = 2;
-        panGroundRole.add(chkRoleInfantrySupport, gbc);
-
-        chkRoleTransport = createMissionRoleCheck(MissionRole.CARGO);
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        panGroundRole.add(chkRoleTransport, gbc);
-
-        chkRoleEngineer = createMissionRoleCheck(MissionRole.ENGINEER);
-        gbc.gridx = 1;
-        gbc.gridy = 3;
-        panGroundRole.add(chkRoleEngineer, gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-
-        chkRoleFieldGun = createMissionRoleCheck(MissionRole.FIELD_GUN);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panInfRole.add(chkRoleFieldGun, gbc);
-
-        chkRoleFieldArtillery = createMissionRoleCheck(MissionRole.ARTILLERY);
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        panInfRole.add(chkRoleFieldArtillery, gbc);
-
-        chkRoleFieldMissileArtillery = createMissionRoleCheck(MissionRole.MISSILE_ARTILLERY);
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        panInfRole.add(chkRoleFieldMissileArtillery, gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-
-        chkRoleAirRecon = createMissionRoleCheck(MissionRole.RECON);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panAirRole.add(chkRoleAirRecon, gbc);
-
-        chkRoleGroundSupport = createMissionRoleCheck(MissionRole.GROUND_SUPPORT);
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        panAirRole.add(chkRoleGroundSupport, gbc);
-
-        chkRoleInterceptor = createMissionRoleCheck(MissionRole.INTERCEPTOR);
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        panAirRole.add(chkRoleInterceptor, gbc);
-
-        JCheckBox chkRoleEscort = createMissionRoleCheck(MissionRole.ESCORT);
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        panAirRole.add(chkRoleEscort, gbc);
-
-        JCheckBox chkRoleBomber = createMissionRoleCheck(MissionRole.BOMBER);
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        panAirRole.add(chkRoleBomber, gbc);
-
-        chkRoleAssault = createMissionRoleCheck(MissionRole.ASSAULT);
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        panAirRole.add(chkRoleAssault, gbc);
-
-        chkRoleAirTransport = createMissionRoleCheck(MissionRole.CARGO);
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        panAirRole.add(chkRoleAirTransport, gbc);
-
-        refreshFactions();
     }
 
-    private JCheckBox createMissionRoleCheck(MissionRole role) {
-        String key = "MissionRole." + role.toString().toLowerCase();
-        JCheckBox chk = new JCheckBox(Messages.getString(key));
-        chk.setToolTipText(Messages.getString(key + ".tooltip"));
-        return chk;
+    /**
+     * Opens the formation mix editor for the force the current selections describe.
+     *
+     * <p>The offered formations are discovered by building that force's structure and stopping before any unit is
+     * drawn - a twentieth of the cost of generating it - because which formations a lance is offered depends on
+     * state that only exists once the tree is being built.</p>
+     */
+    private void showFormationMixDialog() {
+        Ruleset ruleset = Ruleset.findRuleset(buildForceDescriptor());
+        if (ruleset == null) {
+            JOptionPane.showMessageDialog(this,
+                  Messages.getString("ForceGeneratorDialog.formationMix.noRuleset"),
+                  Messages.getString("ForceGeneratorDialog.formationMix.title"), JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        FormationMixEditorPanel palette = new FormationMixEditorPanel(sampleFormationOffer(ruleset));
+        palette.selectFormation(selectedFormation);
+
+        JScrollPane scroll = new JScrollPane(palette);
+        scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scroll.setPreferredSize(UIUtil.scaleForGUI(760, 420));
+        JPanel content = new JPanel(new BorderLayout(0, 4));
+        content.add(wrappedExplanation(), BorderLayout.NORTH);
+        content.add(scroll, BorderLayout.CENTER);
+
+        int choice = JOptionPane.showConfirmDialog(this, content,
+              Messages.getString("ForceGeneratorDialog.formationMix.title"),
+              JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (choice == JOptionPane.OK_OPTION) {
+            setSelectedFormation(palette.getSelectedFormation());
+        }
     }
 
-    private void generateForce() {
+    /**
+     * Samples what the currently described force offers, over several structure-only builds.
+     *
+     * <p>One build is not representative: weight class is rolled per node and most formation options are gated on
+     * it, so consecutive builds of the same regiment offer noticeably different formations. Sampling gives the
+     * player a list that does not change under them every time they open the editor.</p>
+     *
+     * @param ruleset the ruleset for the described force
+     *
+     * @return the combined picture of what the force offers
+     */
+    public FormationMixPreview sampleFormationOffer(Ruleset ruleset) {
+        List<FormationMixPreview> samples = new ArrayList<>();
+        for (int sample = 0; sample < FORMATION_OFFER_SAMPLES; sample++) {
+            ForceDescriptor probe = buildForceDescriptor();
+            ruleset.buildStructureOnly(probe);
+            samples.add(FormationMixPreview.of(probe));
+        }
+        return FormationMixPreview.merged(samples);
+    }
+
+    /**
+     * How many structure-only builds to average when working out what a force offers. A build costs about a
+     * twentieth of a generation, so this is still a fraction of one roll.
+     */
+    private static final int FORMATION_OFFER_SAMPLES = 15;
+
+    /** Shows on the main panel which formations the mix is asking for, or nothing at all when it asks for none. */
+    private void refreshFormationMixSummary() {
+        refreshInlineFormationMixTitle();
+        if (lblFormationMixSummary == null) {
+            return;
+        }
+        if (selectedFormation == null) {
+            lblFormationMixSummary.setText(" ");
+            lblFormationMixSummary.setToolTipText(null);
+            return;
+        }
+        lblFormationMixSummary.setText(
+              Messages.getString("ForceGeneratorDialog.formationMix.summary", selectedFormation));
+        lblFormationMixSummary.setToolTipText(
+              Messages.getString("ForceGeneratorDialog.formationMix.summary.tooltip", selectedFormation));
+    }
+
+    /**
+     * Hides the button that opens the mix in a dialog, for a host showing the editor inline instead.
+     *
+     * @param visible {@code false} to hide the button and its summary
+     */
+    public void setFormationMixButtonVisible(boolean visible) {
+        if (btnFormationMix != null) {
+            btnFormationMix.setVisible(visible);
+        }
+        if (lblFormationMixSummary != null) {
+            lblFormationMixSummary.setVisible(visible);
+        }
+    }
+
+    /**
+     * Shows the mix editor inline, above Transport and the Composition Summary, in place of the dialog button.
+     *
+     * <p>For a host with the room to keep it on screen. The editor is rebuilt from the current selections, so call
+     * this again whenever those change.</p>
+     *
+     * @param visible {@code true} to show the editor inline
+     */
+    public void setFormationMixInline(boolean visible) {
+        formationMixInline = visible;
+        setFormationMixButtonVisible(!visible);
+        if (!visible) {
+            panFormationMixInline.setVisible(false);
+        }
+        refreshInlineFormationMixEditor();
+        revalidate();
+        repaint();
+    }
+
+    /** Rebuilds the inline editor for the force the current selections describe, keeping any request already made. */
+    public void refreshInlineFormationMixEditor() {
+        if (!formationMixInline) {
+            return;
+        }
+        // The palette is a tool for editing a generated tree - re-rolling a node, adding a lance under a company -
+        // so until there is a tree it has nothing to act on, and showing it early only crowded out the settings
+        // that shape the force. It appears with the first generated force and goes when the force is cleared.
+        if (!forceGenerated) {
+            logger.debug("[FormationMix] inline editor hidden - no force generated yet");
+            panFormationMixInline.setVisible(false);
+            revalidate();
+            repaint();
+            return;
+        }
+        Ruleset ruleset = Ruleset.findRuleset(buildForceDescriptor());
+        FormationMixEditorPanel palette = new FormationMixEditorPanel(
+              (ruleset == null) ? FormationMixPreview.EMPTY : sampleFormationOffer(ruleset));
+        palette.selectFormation(selectedFormation);
+        palette.addSelectionListener(() -> setSelectedFormation(palette.getSelectedFormation()));
+
+        JScrollPane scroll = new JScrollPane(palette);
+        scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scroll.setPreferredSize(UIUtil.scaleForGUI(720, INLINE_MIX_HEIGHT));
+
+        panFormationMixInline.removeAll();
+        panFormationMixInline.add(wrappedExplanation(), BorderLayout.NORTH);
+        panFormationMixInline.add(scroll, BorderLayout.CENTER);
+        panFormationMixInline.setVisible(true);
+        panFormationMixInline.revalidate();
+        panFormationMixInline.repaint();
+        // Swing scrolls the new viewport to whatever takes focus inside it, which left the first family
+        // heading above the top edge. Reset once layout has settled so the list opens at its own top.
+        SwingUtilities.invokeLater(() -> scroll.getViewport().setViewPosition(new Point(0, 0)));
+    }
+
+    /**
+     * Clears the picked formation, so nothing is selected and the tree offers nothing to apply.
+     *
+     * <p>Called when a host resets its options: the selection lives here rather than in the host's own options, so
+     * it is not covered by reloading those.</p>
+     */
+    public void clearFormationSelection() {
+        setSelectedFormation(null);
+        refreshInlineFormationMixEditor();
+    }
+
+    /**
+     * The formation the player has picked to apply to nodes in the organisation tree.
+     *
+     * @return the selected formation's name, or {@code null} when none is picked
+     */
+    public @Nullable String getSelectedFormation() {
+        return selectedFormation;
+    }
+
+    /**
+     * Records the picked formation and tells anyone listening, so the tree can offer it.
+     *
+     * @param formationName the formation picked, or {@code null} for none
+     */
+    private void setSelectedFormation(@Nullable String formationName) {
+        selectedFormation = formationName;
+        logger.debug("[ChangeFormation] palette selection is now '{}'", formationName);
+        refreshFormationMixSummary();
+    }
+
+    /**
+     * The paragraph explaining what the spinners mean, wrapped so it does not stretch the dialog.
+     *
+     * <p>The width lives here rather than in the resource so a translator writes plain prose rather than markup.</p>
+     *
+     * @return the explanation label
+     */
+    private static JLabel wrappedExplanation() {
+        String text = Messages.getString("ForceGeneratorDialog.formationMix.explain");
+        return new JLabel("<html><body style='width:" + UIUtil.scaleForGUI(EXPLANATION_WIDTH_PIXELS) + "px'>"
+              + text + "</body></html>");
+    }
+
+    /** Width the mix explanation wraps at, so a long paragraph cannot stretch the dialog. */
+    private static final int EXPLANATION_WIDTH_PIXELS = 700;
+
+    /** Unscaled height of the inline mix editor, past which it scrolls rather than growing. */
+    private static final int INLINE_MIX_HEIGHT = 260;
+
+    /**
+     * The controls that drive Generate, so a host can move them into its own button bar.
+     *
+     * <p>Re-parenting them removes them from this panel, which is the intent: a host with a toolbar of its own
+     * should not also show a second set of buttons mid-panel.</p>
+     *
+     * @return the Generate button, its options panel and the Clear Force button, in that order
+     */
+    public List<JComponent> getGenerateControls() {
+        return List.of(btnGenerate, panGenerateOptions, btnClear);
+    }
+
+    /**
+     * Rolls a force exactly as pressing Generate does, for a host that wants to regenerate on the player's behalf
+     * (for example after the player agrees that changed settings call for a fresh roll).
+     */
+    public void requestGenerate() {
+        btnGenerate.doClick();
+    }
+
+    /** Names the selected formation in the inline panel's title, so the pick is readable without scrolling. */
+    private void refreshInlineFormationMixTitle() {
+        if ((formationMixInlineTitle == null) || (panFormationMixInline == null)) {
+            return;
+        }
+        formationMixInlineTitle.setTitle((selectedFormation == null)
+              ? Messages.getString("ForceGeneratorDialog.formationMix.title")
+              : Messages.getString("ForceGeneratorDialog.formationMix.title.selected", selectedFormation));
+        panFormationMixInline.repaint();
+    }
+
+    public ForceDescriptor buildForceDescriptor() {
         ForceDescriptor fd = new ForceDescriptor();
         fd.setTopLevel(true);
         fd.setYear(forceDesc.getYear());
@@ -503,84 +839,14 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         } else {
             fd.setExperience(CrewDescriptor.randomExperienceLevel());
         }
-        fd.setWeightClass(forceDesc.getWeightClass());
-        fd.setAttachments(chkAttachments.isSelected());
-        if (forceDesc.getUnitType() != null) {
-            switch (forceDesc.getUnitType()) {
-                case UnitType.MEK:
-                case UnitType.TANK:
-                    if (chkRoleRecon.isSelected()) {
-                        fd.getRoles().add(MissionRole.RECON);
-                    }
-                    if (chkRoleFireSupport.isSelected()) {
-                        fd.getRoles().add(MissionRole.FIRE_SUPPORT);
-                    }
-                    if (chkRoleUrban.isSelected()) {
-                        fd.getRoles().add(MissionRole.URBAN);
-                    }
-                    if (chkRoleInfantrySupport.isSelected()) {
-                        fd.getRoles().add(MissionRole.INF_SUPPORT);
-                    }
-                    if (chkRoleCavalry.isSelected()) {
-                        fd.getRoles().add(MissionRole.CAVALRY);
-                    }
-                    if (chkRoleRaider.isSelected()) {
-                        fd.getRoles().add(MissionRole.RAIDER);
-                    }
-                    if (chkRoleIncendiary.isSelected()) {
-                        fd.getRoles().add(MissionRole.INCENDIARY);
-                    }
-                    if (chkRoleAntiAircraft.isSelected()) {
-                        fd.getRoles().add(MissionRole.ANTI_AIRCRAFT);
-                    }
-                    if (chkRoleAntiInfantry.isSelected()) {
-                        fd.getRoles().add(MissionRole.ANTI_INFANTRY);
-                    }
-                    if (chkRoleArtillery.isSelected()) {
-                        fd.getRoles().add(MissionRole.ARTILLERY);
-                    }
-                    if (chkRoleMissileArtillery.isSelected()) {
-                        fd.getRoles().add(MissionRole.MISSILE_ARTILLERY);
-                    }
-                    if (chkRoleTransport.isSelected()) {
-                        fd.getRoles().add(MissionRole.CARGO);
-                    }
-                    if (chkRoleEngineer.isSelected()) {
-                        fd.getRoles().add(MissionRole.ENGINEER);
-                    }
-                    break;
-                case UnitType.INFANTRY:
-                case UnitType.BATTLE_ARMOR:
-                    if (chkRoleFieldGun.isSelected()) {
-                        fd.getRoles().add(MissionRole.FIELD_GUN);
-                    }
-                    if (chkRoleFieldArtillery.isSelected()) {
-                        fd.getRoles().add(MissionRole.ARTILLERY);
-                    }
-                    if (chkRoleFieldMissileArtillery.isSelected()) {
-                        fd.getRoles().add(MissionRole.MISSILE_ARTILLERY);
-                    }
-                    break;
-                case UnitType.AERO:
-                case UnitType.AEROSPACE_FIGHTER:
-                    if (chkRoleAirRecon.isSelected()) {
-                        fd.getRoles().add(MissionRole.RECON);
-                    }
-                    if (chkRoleGroundSupport.isSelected()) {
-                        fd.getRoles().add(MissionRole.GROUND_SUPPORT);
-                    }
-                    if (chkRoleInterceptor.isSelected()) {
-                        fd.getRoles().add(MissionRole.INTERCEPTOR);
-                    }
-                    if (chkRoleAssault.isSelected()) {
-                        fd.getRoles().add(MissionRole.ASSAULT);
-                    }
-                    if (chkRoleAirTransport.isSelected()) {
-                        fd.getRoles().add(MissionRole.CARGO);
-                    }
-                    break;
-            }
-        }
+        // Read directly from the dropdown rather than the cached forceDesc field.
+        // The SwingWorker's done() callback overwrites forceDesc with the engine-mutated
+        // tree-root descriptor after each Generate, so the cached weightClass can drift
+        // away from the user's UI selection across consecutive runs.
+        Object selectedWeight = cbWeightClass.getSelectedItem();
+        fd.setWeightClass(selectedWeight instanceof Integer ? (Integer) selectedWeight : null);
+        fd.setAttachments(chkDetachments.isSelected());
+        panMissionRoleFilters.applyTo(fd, forceDesc.getUnitType());
 
         // Internal storage uses fraction (0.0–N.0+); the textbox shows percentage (0–N00).
         // Preserve the user's input form in the textbox so it doesn't reset to "1.0" after Generate.
@@ -596,9 +862,32 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         fd.setWarshipPct(warShipPct * 0.01);
         txtWarshipPct.setText(String.valueOf(warShipPct));
 
-        double cargo = MathUtility.parseDouble(txtCargo.getText(), 0.0);
-        fd.setCargo(cargo);
-        txtCargo.setText(String.valueOf(cargo));
+        double cargoPct = Math.max(0.0, MathUtility.parseDouble(txtCargoPct.getText(), 100.0));
+        fd.setCargoPct(cargoPct);
+        txtCargoPct.setText(String.valueOf(cargoPct));
+
+        // A tick left behind from before the ships were removed must not count.
+        fd.setFighterComplement(chkFighterComplement.isSelected() && chkFighterComplement.isEnabled());
+        // Asked now rather than cached: the ships an earlier roll brought are what this roll starts from.
+        fd.setExistingLift(existingLiftSupplier.get());
+
+        return fd;
+    }
+
+    /** The name the unit type combo shows for a code, for the log; "Combined" for {@code null}. */
+    private static String unitTypeLabel(@Nullable Integer unitType) {
+        return (unitType == null) ? Messages.getString("ForceGeneratorDialog.combined")
+              : UnitType.getTypeDisplayableName(unitType);
+    }
+
+    private void generateForce() {
+        // Logged here rather than in buildForceDescriptor, which a host also calls to read the panel without
+        // rolling; this line means a roll is actually starting.
+        logger.info("[ForceGen] roll requested: unitType={} ({}), combo shows {} ({}), echelon={} faction={} rating={}",
+              forceDesc.getUnitType(), unitTypeLabel(forceDesc.getUnitType()),
+              cbUnitType.getSelectedItem(), unitTypeLabel((Integer) cbUnitType.getSelectedItem()),
+              forceDesc.getEchelon(), forceDesc.getFaction(), forceDesc.getRating());
+        ForceDescriptor fd = buildForceDescriptor();
 
         ProgressMonitor monitor = new ProgressMonitor(this,
               Messages.getString("ForceGeneratorDialog.generateFormation"),
@@ -620,6 +909,185 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private void clearForce() {
         if (null != onGenerate) {
             onGenerate.accept(null);
+        }
+        clearSummaryTable();
+        forceGenerated = false;
+        logger.debug("[FormationMix] force cleared - inline editor withdrawn");
+        refreshInlineFormationMixEditor();
+    }
+
+    /**
+     * Builds the post-generation composition summary table (rows: unit types present in the force; columns: Light /
+     * Medium / Heavy / Assault counts). Empty until the first Generate.
+     */
+    private JScrollPane createSummaryTable() {
+        String[] columns = {
+              Messages.getString("ForceGeneratorDialog.summary.unitType"),
+              Messages.getString("ForceGeneratorDialog.summary.light"),
+              Messages.getString("ForceGeneratorDialog.summary.medium"),
+              Messages.getString("ForceGeneratorDialog.summary.heavy"),
+              Messages.getString("ForceGeneratorDialog.summary.assault"),
+              Messages.getString("ForceGeneratorDialog.summary.total")
+        };
+        summaryModel = new DefaultTableModel(columns, 0) {
+            @Serial
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        tblSummary = new JTable(summaryModel);
+        tblSummary.setAutoCreateRowSorter(false);
+        // Battle Armor cells read "4 (16)": squads, with troopers in brackets. Nothing on the table said so.
+        tblSummary.setToolTipText(Messages.getString("ForceGeneratorDialog.summary.tooltip"));
+        tblSummary.getTableHeader().setReorderingAllowed(false);
+        // Unit Type column is wider to fit the longest name (AeroSpaceFighter); numeric columns
+        // are narrower since they only hold 1-3 digit counts. Total ~380px fits comfortably in
+        // the 480px scroll-pane viewport with the default AUTO_RESIZE_SUBSEQUENT_COLUMNS.
+        tblSummary.getColumnModel().getColumn(0).setPreferredWidth(140);
+        for (int col = 1; col <= 5; col++) {
+            tblSummary.getColumnModel().getColumn(col).setPreferredWidth(60);
+        }
+        JScrollPane scrollPane = new JScrollPane(tblSummary);
+        scrollPane.setBorder(BorderFactory.createTitledBorder(
+              Messages.getString("ForceGeneratorDialog.summary.title")));
+        // Tall enough for the header, the six unit types a combined-arms force can hold, and the total row.
+        scrollPane.setPreferredSize(UIUtil.scaleForGUI(480, 170));
+        return scrollPane;
+    }
+
+    /**
+     * Walks the generated force tree, buckets each entity into (unit type, weight class), and rebuilds the summary
+     * table. Weight-class codes 0-1 collapse into Light and 4-5 into Assault to keep the table to a clean four
+     * columns.
+     * <p>For Battle Armor each entity represents one Squad/Point (5 Clan Elementals, 4-5 IS), so cells show
+     * "N (M)" where N is the squad count and M is the total trooper count. Other unit types show plain N.</p>
+     *
+     * <p>Public so a host that accumulates rolls into one command can show the whole command here rather than
+     * the roll that just landed.</p>
+     *
+     * @param force the force to summarise
+     */
+    public void updateSummaryTable(ForceDescriptor force) {
+        summaryModel.setRowCount(0);
+        if (force == null) {
+            return;
+        }
+        ArrayList<Entity> entities = new ArrayList<>();
+        force.addAllEntities(entities);
+        // Per (unitType, weightClassColumn): [0]=squad/entity count, [1]=trooper count (BA only).
+        Map<Integer, int[][]> counts = new TreeMap<>();
+        for (Entity entity : entities) {
+            int unitType = entity.getUnitType();
+            int weightClass = entity.getWeightClass();
+            int column;
+            if (weightClass <= EntityWeightClass.WEIGHT_LIGHT) {
+                column = 0;
+            } else if (weightClass == EntityWeightClass.WEIGHT_MEDIUM) {
+                column = 1;
+            } else if (weightClass == EntityWeightClass.WEIGHT_HEAVY) {
+                column = 2;
+            } else {
+                column = 3;
+            }
+            int[][] row = counts.computeIfAbsent(unitType, k -> new int[4][2]);
+            row[column][0]++;
+            if (entity instanceof BattleArmor ba) {
+                row[column][1] += ba.getShootingStrength();
+            }
+        }
+        // At Galaxy echelon and above (constants.txt: GALAXY/BRIGADE=7, TOUMAN/DIVISION=8, ...) a force
+        // holds hundreds of units, so raw per-cell counts are unreadable. Show each weight class as a
+        // percentage of that unit type's total instead. Smaller forces keep the exact counts.
+        Integer echelon = force.getEchelon();
+        boolean asPercent = (echelon != null) && (echelon >= LARGE_ECHELON_PERCENT_THRESHOLD);
+        // Column totals count units (squads for Battle Armor) so the bottom row adds up across types.
+        int[] columnTotals = new int[4];
+        for (Map.Entry<Integer, int[][]> entry : counts.entrySet()) {
+            int[][] row = entry.getValue();
+            boolean isBA = (entry.getKey() == UnitType.BATTLE_ARMOR);
+            int typeTotal = row[0][0] + row[1][0] + row[2][0] + row[3][0];
+            int typeTroopers = row[0][1] + row[1][1] + row[2][1] + row[3][1];
+            for (int column = 0; column < 4; column++) {
+                columnTotals[column] += row[column][0];
+            }
+            // The Total column is always the plain count, even when the weight cells show percentages: the
+            // percentages say how the type is spread, the total says how many there are.
+            String rowTotal = formatSummaryCell(new int[] { typeTotal, typeTroopers }, isBA);
+            if (asPercent) {
+                summaryModel.addRow(new Object[] {
+                      UnitType.getTypeDisplayableName(entry.getKey()),
+                      formatSummaryPercent(row[0][0], typeTotal),
+                      formatSummaryPercent(row[1][0], typeTotal),
+                      formatSummaryPercent(row[2][0], typeTotal),
+                      formatSummaryPercent(row[3][0], typeTotal),
+                      rowTotal
+                });
+            } else {
+                summaryModel.addRow(new Object[] {
+                      UnitType.getTypeDisplayableName(entry.getKey()),
+                      formatSummaryCell(row[0], isBA),
+                      formatSummaryCell(row[1], isBA),
+                      formatSummaryCell(row[2], isBA),
+                      formatSummaryCell(row[3], isBA),
+                      rowTotal
+                });
+            }
+        }
+        if (!counts.isEmpty()) {
+            summaryModel.addRow(new Object[] {
+                  Messages.getString("ForceGeneratorDialog.summary.total"),
+                  String.valueOf(columnTotals[0]),
+                  String.valueOf(columnTotals[1]),
+                  String.valueOf(columnTotals[2]),
+                  String.valueOf(columnTotals[3]),
+                  String.valueOf(columnTotals[0] + columnTotals[1] + columnTotals[2] + columnTotals[3])
+            });
+        }
+    }
+
+    /** Echelon level at or above which the composition summary switches from counts to percentages. */
+    private static final int LARGE_ECHELON_PERCENT_THRESHOLD = 7;
+
+    /**
+     * Formats a summary-table cell as a whole-number percentage of the unit type's total, e.g. "43%". An empty bucket
+     * renders as "0%"; a type with no units renders blank.
+     */
+    private static String formatSummaryPercent(int count, int total) {
+        if (total <= 0) {
+            return "";
+        }
+        return Math.round(100.0 * count / total) + "%";
+    }
+
+    /**
+     * Formats a summary-table cell. For Battle Armor with at least one squad, shows "N (M)" — squad count and total
+     * trooper count in parentheses. Other unit types and empty cells render as the plain integer.
+     */
+    private static String formatSummaryCell(int[] squadsAndTroopers, boolean isBattleArmor) {
+        int squads = squadsAndTroopers[0];
+        int troopers = squadsAndTroopers[1];
+        if (isBattleArmor && squads > 0) {
+            return squads + " (" + troopers + ")";
+        }
+        return String.valueOf(squads);
+    }
+
+    /**
+     * Reports what the formation mix delivered against what it asked for, and names anything it could not place.
+     *
+     * <p>Shown because the two often differ for reasons the player cannot see: a formation only a few of the force's
+     * lances are ever offered cannot take a large share however much is requested, and one that is assigned can
+     * still fail its own requirements when its units are drawn. A mix that silently delivers less than it was asked
+     * for reads as a mix that did nothing.</p>
+     *
+     * @param forceDescriptor the generated force, or {@code null} to blank the line
+     */
+    private void clearSummaryTable() {
+        if (summaryModel != null) {
+            summaryModel.setRowCount(0);
         }
     }
 
@@ -651,15 +1119,18 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         cbSubFaction.removeAllItems();
         String currentFaction = ((FactionRecord) Objects.requireNonNull(cbFaction.getSelectedItem())).getKey();
         if (currentFaction != null) {
+            // Subunits are deliberately left out: this list offers whole commands, so including every regiment of
+            // every command would swell one faction's list by hundreds of entries.
             List<FactionRecord> sorted = RATGenerator.getInstance()
                   .getFactionList()
                   .stream()
-                  .filter(fr -> fr.getKey().startsWith(currentFaction + ".") &&
-                        fr.isActiveInYear(currentYear))
-                  .sorted(Comparator.comparing(fr -> fr.getName(currentYear)))
+                  .filter(factionRecord -> factionRecord.getKey().startsWith(currentFaction + ".") &&
+                        !factionRecord.isSubunit() &&
+                        factionRecord.isActiveInYear(currentYear))
+                  .sorted(Comparator.comparing(factionRecord -> factionRecord.getName(currentYear)))
                   .toList();
             cbSubFaction.addItem(null);
-            sorted.forEach(fr -> cbSubFaction.addItem(fr));
+            sorted.forEach(factionRecord -> cbSubFaction.addItem(factionRecord));
         }
         cbSubFaction.setSelectedItem(oldFaction);
         if (cbSubFaction.getSelectedItem() == null) {
@@ -691,8 +1162,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                             hasCurrent = true;
                         }
                     } else {
-                        cbUnitType.addItem(AbstractUnitRecord.parseUnitType(unitType));
-                        if (currentType != null && UnitType.getTypeDisplayableName(currentType).equals(unitType)) {
+                        int unitTypeCode = AbstractUnitRecord.parseUnitType(unitType);
+                        cbUnitType.addItem(unitTypeCode);
+                        if ((currentType != null) && (currentType == unitTypeCode)) {
                             hasCurrent = true;
                         }
                     }
@@ -717,7 +1189,66 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             forceDesc.setUnitType(unitType);
         }
         refreshFormations();
+        refreshFighterComplementEnabled();
         cbUnitType.addActionListener(this);
+    }
+
+    /**
+     * Offers the Carried Fighter Complement only when the roll will have ships whose fighter bays it could fill: a
+     * DropShip, JumpShip or WarShip percentage above zero, or a force that is itself ships. With neither, the
+     * option would do nothing, so it is greyed out and the tooltip says what would enable it.
+     */
+    private void refreshFighterComplementEnabled() {
+        if (chkFighterComplement == null) {
+            return;
+        }
+        boolean wantsTransports = (percentageIn(txtDropshipPct) > 0) || (percentageIn(txtJumpshipPct) > 0)
+              || (percentageIn(txtWarshipPct) > 0);
+        boolean isShipForce = isShipType(forceDesc.getUnitType());
+        boolean canHaveShips = wantsTransports || isShipForce;
+        chkFighterComplement.setEnabled(canHaveShips);
+        chkFighterComplement.setToolTipText(Messages.getString(canHaveShips
+              ? "ForceGeneratorDialog.fighterComplement.tooltip"
+              : "ForceGeneratorDialog.fighterComplement.noShips.tooltip"));
+        if (!canHaveShips) {
+            logger.debug("[ForceGen][Fighters] Carried Fighter Complement greyed out: every transport percentage is"
+                  + " 0 and unit type {} is not ships", unitTypeLabel(forceDesc.getUnitType()));
+        }
+    }
+
+    private static double percentageIn(@Nullable JTextField field) {
+        return (field == null) ? 0 : MathUtility.parseDouble(field.getText(), 0.0);
+    }
+
+    /**
+     * @return {@code true} for the unit types that are ships with bays of their own
+     */
+    private static boolean isShipType(@Nullable Integer unitType) {
+        if (unitType == null) {
+            return false;
+        }
+        return (unitType == UnitType.DROPSHIP) || (unitType == UnitType.JUMPSHIP) || (unitType == UnitType.WARSHIP)
+              || (unitType == UnitType.SPACE_STATION);
+    }
+
+    /** A document listener that runs the same action on every kind of change. */
+    private static DocumentListener onTextChange(Runnable action) {
+        return new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent event) {
+                action.run();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent event) {
+                action.run();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent event) {
+                action.run();
+            }
+        };
     }
 
     private void refreshFormations() {
@@ -727,9 +1258,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         if (cbUnitType.getSelectedItem() != null) {
             Integer unitType = (Integer) cbUnitType.getSelectedItem();
             if (unitType != null) {
-                panGroundRole.setVisible(unitType == UnitType.MEK || unitType == UnitType.TANK);
-                panInfRole.setVisible(unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR);
-                panAirRole.setVisible(unitType == UnitType.AEROSPACE_FIGHTER || unitType == UnitType.CONV_FIGHTER);
+                panMissionRoleFilters.showFor(unitType);
             }
         }
 
@@ -804,16 +1333,24 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         if (tocNode != null) {
             ValueNode n = tocNode.findRatings(forceDesc);
             if (n != null && n.getContent() != null) {
-                cbRating.addItem(null);
                 for (String rating : n.getContent().split(",")) {
+                    // Display every entry as "<Brief Description> (CODE)". Clan/RotS entries carry
+                    // their display name in the data ("FL:Front Line"); bare letter codes (A-F,
+                    // Keshik) get theirs from the ForceGeneratorDialog.rating.* message keys. A code
+                    // with no description anywhere falls back to the raw code.
+                    final String code;
+                    String description;
                     if (rating.contains(":")) {
                         String[] fields = rating.split(":");
-                        cbRating.addItem(fields[0]);
-                        ratingDisplayNames.put(fields[0], fields[1]);
+                        code = fields[0];
+                        description = fields[1];
                     } else {
-                        cbRating.addItem(rating);
-                        ratingDisplayNames.put(rating, rating);
+                        code = rating;
+                        description = ratingDescription(code);
                     }
+                    cbRating.addItem(code);
+                    ratingDisplayNames.put(code,
+                          (description == null) ? code : description + " (" + code + ")");
                 }
             } else {
                 logger.warn("No rating found.");
@@ -823,7 +1360,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         Ruleset rs = Ruleset.findRuleset(forceDesc.getFaction());
         String rating = rs.getDefaultRating(forceDesc);
         if (rating == null && cbRating.getItemCount() > 0) {
+            // Every shipped ruleset with TOC ratings declares a default; falling back to the first
+            // entry keeps a data gap visible instead of leaving the picker and descriptor split.
             rating = cbRating.getItemAt(0);
+            logger.warn("Ruleset for {} offers ratings but declares no default; selecting {}",
+                  forceDesc.getFaction(), rating);
         }
         if (rating != null) {
             cbRating.setSelectedItem(rating);
@@ -831,6 +1372,21 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
         refreshFlags();
         cbRating.addActionListener(this);
+    }
+
+    /**
+     * The brief description for a bare rating code (for example {@code C} - "Standard"), read from
+     * the {@code ForceGeneratorDialog.rating.<code>} message keys so it localizes with the rest of
+     * the dialog.
+     *
+     * @param code the rating code as it appears in the ruleset TOC
+     *
+     * @return the description, or {@code null} when no key is defined for the code
+     */
+    private static @Nullable String ratingDescription(String code) {
+        String text = Messages.getString("ForceGeneratorDialog.rating." + code);
+        // Messages.getString returns !key! when the key is missing.
+        return text.startsWith("!") ? null : text;
     }
 
     private void refreshFlags() {
@@ -889,18 +1445,24 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 forceDesc.setFaction(((FactionRecord) cbFaction.getSelectedItem()).getKey());
             }
             refreshSubFactions();
+            notifyFactionChanged();
         } else if (ev.getSource() == cbSubFaction) {
             logger.debug("cbSubFaction action: selected={}", cbSubFaction.getSelectedItem());
             if (cbSubFaction.getSelectedItem() != null) {
                 forceDesc.setFaction(((FactionRecord) cbSubFaction.getSelectedItem()).getKey());
+                notifyFactionChanged();
             } else {
                 forceDesc.setFaction(((FactionRecord) Objects.requireNonNull(cbFaction.getSelectedItem())).getKey());
             }
             refreshUnitTypes();
         } else if (ev.getSource() == cbUnitType) {
-            logger.debug("cbUnitType action: selected={}", cbUnitType.getSelectedItem());
+            // INFO on purpose: a roll that comes back as the wrong kind of unit is only diagnosable from the log if
+            // it says what was picked, and a pick is a one-off event.
+            logger.info("[ForceGen] unit type picked: {} ({})", cbUnitType.getSelectedItem(),
+                  unitTypeLabel((Integer) cbUnitType.getSelectedItem()));
             forceDesc.setUnitType((Integer) cbUnitType.getSelectedItem());
             refreshFormations();
+            refreshFighterComplementEnabled();
         } else if (ev.getSource() == cbFormation) {
             String echelon = (String) cbFormation.getSelectedItem();
             if (echelon != null) {
@@ -923,22 +1485,260 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 forceDesc.getFlags().add((String) cbFlags.getSelectedItem());
             }
         } else if (ev.getSource() == cbWeightClass) {
-            if (cbWeightClass.getSelectedIndex() < 1) {
-                forceDesc.setWeightClass(null);
-            } else {
-                forceDesc.setWeightClass(cbWeightClass.getSelectedIndex());
-            }
+            // Use getSelectedItem() so the stored value is the actual EntityWeightClass
+            // constant rather than the dropdown index. Index-and-value match today (1..4)
+            // but only by coincidence — defensive against future re-ordering or insertion
+            // of new entries like Ultra Light.
+            Object item = cbWeightClass.getSelectedItem();
+            forceDesc.setWeightClass(item instanceof Integer ? (Integer) item : null);
         } else if (ev.getSource() == btnGenerate) {
             generateForce();
             btnExportMUL.setEnabled(true);
             btnClear.setEnabled(true);
         } else if (ev.getSource() == btnExportMUL) {
-            exportMUL(forceDesc);
+            if (onExportMUL != null) {
+                onExportMUL.accept(forceDesc);
+            } else {
+                exportMUL(forceDesc);
+            }
         } else if (ev.getSource() == btnClear) {
             clearForce();
             btnExportMUL.setEnabled(false);
             btnClear.setEnabled(false);
         }
+
+        if (changesFormationOffer(ev.getSource())) {
+            refreshInlineFormationMixEditor();
+        }
+    }
+
+    /**
+     * Whether changing this control changes the formations the force offers.
+     *
+     * <p>The offer is read out of the ruleset for the force the selections describe, so every selection that feeds
+     * that description invalidates it. Detachments are in the list because the aerospace and infantry formations are
+     * only offered when the force generates detachments to put them in.</p>
+     *
+     * @param source the control that fired
+     *
+     * @return {@code true} when the inline editor needs rebuilding
+     */
+    private boolean changesFormationOffer(Object source) {
+        return (source == cbFaction)
+              || (source == cbSubFaction)
+              || (source == cbUnitType)
+              || (source == cbFormation)
+              || (source == cbRating)
+              || (source == cbFlags)
+              || (source == cbExperience)
+              || (source == cbWeightClass)
+              || (source == chkDetachments);
+    }
+
+    /**
+     * Shows or hides the Generate button. Embedders that drive generation through their own controls
+     * (e.g. an OK button on a parent dialog) hide the built-in button.
+     */
+    public void setGenerateButtonVisible(boolean visible) {
+        btnGenerate.setVisible(visible);
+    }
+
+    /**
+     * Shows or hides the Export MUL button. Embedders that route the export through their own UI hide it.
+     */
+    public void setExportMULButtonVisible(boolean visible) {
+        btnExportMUL.setVisible(visible);
+    }
+
+    /**
+     * Shows or hides the Clear button.
+     */
+    public void setClearButtonVisible(boolean visible) {
+        btnClear.setVisible(visible);
+    }
+
+    /**
+     * Sets a custom handler for the Export-MUL button. When non-null, the built-in {@link #exportMUL} call is
+     * replaced by this consumer; the panel passes the live {@link ForceDescriptor} for the embedder to handle.
+     * Pass {@code null} to restore default behavior.
+     */
+    public void setOnExportMUL(Consumer<ForceDescriptor> handler) {
+        this.onExportMUL = handler;
+    }
+
+    /**
+     * Tells the panel where to learn what lift the force already owns - the free bays and docking collars on ships
+     * from earlier rolls, a running game or a campaign hangar - so each roll generates only the lift it still lacks.
+     * The supplier is asked at every Generate.
+     *
+     * @param supplier the source of existing lift, or {@code null} to start every roll from nothing
+     */
+    public void setExistingLiftSupplier(@Nullable Supplier<ExistingLift> supplier) {
+        this.existingLiftSupplier = (supplier == null) ? () -> ExistingLift.NONE : supplier;
+    }
+
+    /**
+     * Sets a handler notified whenever the selected faction changes, so an embedder can adjust its own
+     * settings to suit - MekHQ's Command Designer uses it to switch formation naming to the Greek
+     * alphabet when a Clan is picked.
+     *
+     * <p>Fires for both the faction and sub-faction selectors, since either can change which faction a
+     * force is generated for.</p>
+     *
+     * @param handler the handler to notify, or {@code null} to stop notifying
+     */
+    public void setOnFactionChanged(@Nullable Consumer<FactionRecord> handler) {
+        this.onFactionChanged = handler;
+        // Report the current selection straight away. The faction is seeded before an embedder gets
+        // the chance to register, so a handler that only ever heard about changes would never learn
+        // the faction the panel opened on - which is the usual case, since most users generate for
+        // the faction it starts on without touching the selector.
+        notifyFactionChanged();
+    }
+
+    /**
+     * Tells the embedder which faction is now selected, preferring the sub-faction where one is chosen
+     * because that is the faction the force is actually generated for.
+     */
+    private void notifyFactionChanged() {
+        if (onFactionChanged == null) {
+            logger.debug("[FactionChanged] faction changed but no host handler is registered");
+            return;
+        }
+        // The sub-faction is the more specific choice, but Clan-ness belongs to the parent - a sub
+        // faction of a Clan is still a Clan, and its own record does not always say so. Report
+        // whichever of the two actually identifies as a Clan so an embedder keying off that is not
+        // misled by the refinement.
+        Object subFaction = cbSubFaction.getSelectedItem();
+        Object parentFaction = cbFaction.getSelectedItem();
+        Object selected = (subFaction != null) ? subFaction : parentFaction;
+        if ((parentFaction instanceof FactionRecord parentRecord) && parentRecord.isClan()
+                  && !(selected instanceof FactionRecord chosen && chosen.isClan())) {
+            selected = parentFaction;
+        }
+        if (selected instanceof FactionRecord factionRecord) {
+            logger.debug("[FactionChanged] notifying host: faction={} isClan={}",
+                  factionRecord.getKey(), factionRecord.isClan());
+            onFactionChanged.accept(factionRecord);
+        } else {
+            logger.debug("[FactionChanged] no FactionRecord selected; nothing to notify");
+        }
+    }
+
+    /**
+     * Appends a host-supplied toggle to the row of options beside the Generate button, so a host's own
+     * generation options read as part of that action rather than as a separate setting elsewhere.
+     *
+     * <p>Used by MekHQ's Command Designer for options that belong to the campaign layer (for example
+     * "Generate Company Command Lance") and therefore cannot live in this view.</p>
+     *
+     * @param option the control to append; ignored when {@code null}
+     */
+    public void addGenerateOption(@Nullable JComponent option) {
+        if ((option == null) || (panGenerateOptions == null)) {
+            return;
+        }
+        panGenerateOptions.add(option);
+        panGenerateOptions.revalidate();
+        panGenerateOptions.repaint();
+    }
+
+    /**
+     * A label that carries its setting's explanation, so hovering the name of a control describes it
+     * rather than only hovering the input box beside it.
+     *
+     * @param messageKey the label's message key; its tooltip is the same key suffixed {@code .tooltip}
+     *
+     * @return the label, with tooltip attached when one is defined
+     */
+    private static JLabel describedLabel(String messageKey) {
+        JLabel label = new JLabel(Messages.getString(messageKey));
+        label.setToolTipText(Messages.getString(messageKey + ".tooltip"));
+        return label;
+    }
+
+    /**
+     * Shows or hides the role filters row. A host that builds a whole command rather than a unit list may not want
+     * them: they restrict every draw in the tree to units that can fill the ticked role, which suits picking a
+     * lance of artillery carriers and not designing a regiment. Hiding them also clears them, so nothing ticked
+     * behind a hidden row can filter a force.
+     *
+     * @param visible {@code false} to hide the row
+     */
+    public void setMissionRoleFiltersVisible(boolean visible) {
+        if (!visible && (panMissionRoleFilters != null)) {
+            panMissionRoleFilters.clearSelections();
+        }
+        if (lblMissionRoles != null) {
+            lblMissionRoles.setVisible(visible);
+        }
+        if (panMissionRoleFilters != null) {
+            panMissionRoleFilters.setVisible(visible);
+        }
+        revalidate();
+        repaint();
+    }
+
+    /**
+     * Relabels the Clear button for a host whose model is a set of accumulated rolls rather than one force.
+     *
+     * @param text    the button text
+     * @param tooltip the tooltip, or {@code null} to keep the current one
+     */
+    public void setClearButtonLabel(String text, @Nullable String tooltip) {
+        btnClear.setText(text);
+        if (tooltip != null) {
+            btnClear.setToolTipText(tooltip);
+        }
+    }
+
+    /**
+     * Makes the year text field read-only. Use this when an embedder anchors the year to an external value
+     * (e.g. MekHQ's campaign year) and doesn't want the user editing it on this panel.
+     */
+    public void setYearFieldEditable(boolean editable) {
+        txtYear.setEditable(editable);
+        // A locked year is shown as plain text. Drawn as a box it invites typing that does nothing, and
+        // leaves the rest of the row looking as though something failed to appear beside it.
+        if (editable) {
+            if (yearFieldBorder != null) {
+                txtYear.setBorder(yearFieldBorder);
+            }
+            txtYear.setOpaque(true);
+        } else {
+            if (yearFieldBorder == null) {
+                yearFieldBorder = txtYear.getBorder();
+            }
+            txtYear.setBorder(BorderFactory.createEmptyBorder());
+            txtYear.setOpaque(false);
+        }
+    }
+
+    /**
+     * Programmatically picks a faction in the embedded picker. Embedders (e.g. MekHQ) call this to
+     * seed the picker with their campaign's faction so the dialog opens pre-aligned instead of
+     * defaulting to "IS". Looks up the FactionRecord from the loaded RATGenerator data; if the
+     * code doesn't match a known faction, the picker is left unchanged and {@code false} is
+     * returned.
+     *
+     * <p>The picker's existing {@link ActionListener} fires as a result of the
+     * {@code setSelectedItem} call, so the descriptor is updated as if the user had picked the
+     * faction by hand.</p>
+     *
+     * @param factionCode the short-name faction code (e.g. {@code "CHH"}, {@code "LC"},
+     *                    {@code "FS"})
+     * @return {@code true} if a matching faction was found and selected; {@code false} otherwise
+     */
+    public boolean setSelectedFaction(String factionCode) {
+        if (factionCode == null || factionCode.isBlank()) {
+            return false;
+        }
+        FactionRecord faction = RATGenerator.getInstance().getFaction(factionCode);
+        if (faction == null) {
+            return false;
+        }
+        cbFaction.setSelectedItem(faction);
+        return true;
     }
 
     public void exportMUL(ForceDescriptor fd) {
@@ -953,6 +1753,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
         // Create a fake game so we can write the entities to a file without adding them
         // to the real game.
+        // Make sure we set the right rules manager here.
+        if (Game.rulesManager instanceof TWRulesManager) {
+            gameOptions.getOption(OptionsConstants.RULES_SYSTEM).setValue(OptionsConstants.RULES_TW);
+        }
         Game game = new Game();
         // Add a player to prevent complaining in the log file
         Player p = new Player(1, "Observer");
@@ -966,7 +1770,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             en.setId(game.getNextEntityId());
             game.addEntity(en);
         });
-        configureNetworks(fd);
+        C3NetworkConfigurator.configure(fd);
 
         JFileChooser chooser = new JFileChooser(".");
         chooser.setDialogTitle(Messages.getString("ForceGeneratorDialog.exportMUL.title"));
@@ -1010,58 +1814,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
     }
 
-    /**
-     * Searches recursively for nodes that are flagged with C3 networks and configures them.
-     *
-     * @param fd {@link ForceDescriptor} Object
-     */
-    private void configureNetworks(ForceDescriptor fd) {
-        if (fd.getFlags().contains("c3")) {
-            Entity master = fd.getSubForces()
-                  .stream()
-                  .map(ForceDescriptor::getEntity)
-                  .filter(en -> (null != en) && (en.hasC3M() || en.hasC3MM()))
-                  .findFirst()
-                  .orElse(null);
-            if (null != master) {
-                int c3s = 0;
-                for (ForceDescriptor sf : fd.getSubForces()) {
-                    if ((null != sf.getEntity()) &&
-                          (sf.getEntity().getId() != master.getId()) &&
-                          sf.getEntity().hasC3S()) {
-                        sf.getEntity().setC3Master(master, false);
-                        c3s++;
-                        if (c3s == 3) {
-                            break;
-                        }
-                    }
-                }
-            }
-        } else {
-            // Even if we haven't reworked this into a full C3i network, we can still
-            // connect
-            // any C3i units that happen to be present.
-            Entity first = null;
-            int nodes = 0;
-            for (ForceDescriptor sf : fd.getSubForces()) {
-                if ((null != sf.getEntity()) && sf.getEntity().hasC3i()) {
-                    sf.getEntity().setC3UUID();
-                    if (null == first) {
-                        sf.getEntity().setC3NetIdSelf();
-                        first = sf.getEntity();
-                    } else {
-                        sf.getEntity().setC3NetId(first);
-                    }
-                    nodes++;
-                }
-                if (nodes >= Entity.MAX_C3i_NODES) {
-                    break;
-                }
-            }
-        }
-        fd.getSubForces().forEach(this::configureNetworks);
-        fd.getAttached().forEach(this::configureNetworks);
-    }
 
     private void setFormation(String echelon) {
         forceDesc.setEchelon(MathUtility.parseInt(echelon.replaceAll("[^0-9]", ""), 0));
@@ -1088,6 +1840,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         RATGenerator.getInstance().loadYear(currentYear);
         forceDesc.setYear(currentYear);
         refreshFactions();
+        refreshInlineFormationMixEditor();
     }
 
     @Override
@@ -1146,20 +1899,47 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         protected ForceDescriptor doInBackground() {
             btnGenerate.setEnabled(false);
             Ruleset.findRuleset(fd).processRoot(fd, this);
+            // Fitted as the force is generated rather than when it is added to a game, so the crews
+            // carry their implants everywhere the generated force goes - the preview, an exported MUL
+            // and the lobby alike.
+            ManeiDominiCrewAugmentor.augment(fd, gameOptions);
+            // The Clans' own augmentation, unrelated to the Manei Domini and gated on its own
+            // rule. Clan-ness comes from the faction record rather than the key, sub-factions
+            // of a Clan being Clans.
+            FactionRecord factionRecord = RATGenerator.getInstance().getFaction(fd.getFaction());
+            ClanEnhancedImagingAugmentor.augment(fd,
+                  (factionRecord != null) && factionRecord.isClan(), gameOptions);
             return fd;
         }
 
         @Override
         protected void done() {
             try {
-                forceDesc = get();
+                // Do NOT alias the input descriptor (forceDesc) to the generated root: forceDesc is
+                // mutated by the Unit Type / Formation dropdowns, so aliasing it would let a later
+                // roll's dropdown changes rewrite an already-generated (and possibly accumulated) root.
+                // Keep the generated force independent.
+                ForceDescriptor generated = get();
+                logger.info("[ForceGen] generated root id={} name='{}' unitType={} echelon={} weight={} subForces={}",
+                      System.identityHashCode(generated), generated.getName(), generated.getUnitType(),
+                      generated.getEchelon(), generated.getWeightClass(),
+                      generated.getSubForces() == null ? 0 : generated.getSubForces().size());
+                updateSummaryTable(generated);
+                forceGenerated = true;
+                refreshInlineFormationMixEditor();
                 if (onGenerate != null) {
-                    onGenerate.accept(forceDesc);
+                    onGenerate.accept(generated);
                 }
-            } catch (InterruptedException ignored) {
-
-            } catch (ExecutionException ex) {
-                logger.error(ex, "");
+            } catch (InterruptedException interrupted) {
+                Thread.currentThread().interrupt();
+                logger.warn("[ForceGen] generation was interrupted; no force was produced");
+            } catch (ExecutionException executionFailure) {
+                // Generation runs on a worker, so a failure here is invisible to the player - the
+                // button simply appears to do nothing. Log the cause with enough context to identify
+                // it, and say plainly that no force was produced.
+                logger.error(executionFailure, "[ForceGen] generation FAILED for faction={} year={} unitType={}"
+                            + " echelon={}; no force was produced",
+                      fd.getFaction(), fd.getYear(), fd.getUnitType(), fd.getEchelon());
             } finally {
                 btnGenerate.setEnabled(true);
             }

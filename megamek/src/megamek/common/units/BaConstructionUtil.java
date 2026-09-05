@@ -37,6 +37,7 @@ import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.logging.MMLogger;
@@ -110,7 +111,6 @@ public class BaConstructionUtil {
         }
         if (mount.getLinked() != null) {
             Mounted<?> attachedEquipment = mount.getLinked();
-            attachedEquipment.setLinkedBy(null);
             attachedEquipment.setDWPMounted(false);
             attachedEquipment.setAPMMounted(false);
             mount.setLinked(null);
@@ -136,8 +136,13 @@ public class BaConstructionUtil {
         }
         emptyDwpApm(apm);
         apm.setLinked(weapon);
-        weapon.setLinkedBy(apm);
         weapon.setAPMMounted(true);
+        // A Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing) mounted in an AP mount / armored glove is
+        // marked so it resolves with the disposable rules. Marking is a construction property; in-game behavior is
+        // gated on the rule option.
+        if ((weapon instanceof WeaponMounted weaponMounted) && weapon.getType().hasFlag(WeaponType.F_INF_DISPOSABLE)) {
+            weaponMounted.setDisposableWeapon(true);
+        }
 //        weapon.setBaMountLoc(BattleArmor.MOUNT_LOC_NONE); // only necessary for DWP
     }
 }

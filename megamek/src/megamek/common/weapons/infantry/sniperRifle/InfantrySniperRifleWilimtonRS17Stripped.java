@@ -35,6 +35,7 @@ package megamek.common.weapons.infantry.sniperRifle;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -59,7 +60,7 @@ public class InfantrySniperRifleWilimtonRS17Stripped extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = 1.05;
         tonnage = 0.009;
-        infantryDamage = 0.53;
+        infantryDamage = 0.525;
         infantryRange = 6;
         ammoWeight = 0.009;
         cost = 2000;
@@ -67,7 +68,7 @@ public class InfantrySniperRifleWilimtonRS17Stripped extends InfantryWeapon {
         shots = 10;
         bursts = 1;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        rulesRefs = "Shrapnel #1";
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_1);
         techAdvancement
               .setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)

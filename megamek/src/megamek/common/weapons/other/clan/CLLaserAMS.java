@@ -36,6 +36,7 @@ package megamek.common.weapons.other.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -82,7 +83,11 @@ public class CLLaserAMS extends LaserWeapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 225000;
-        rulesRefs = "134, TO:AUE";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 134),
+              rulesRef(SourceBookCode.BMM, 118),
+              rulesRef(SourceBookCode.CORE, 206)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)

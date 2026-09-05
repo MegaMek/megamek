@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -87,10 +88,8 @@ public class ISSRM6Primitive extends SRMWeapon {
         ammoType = AmmoType.AmmoTypeEnum.SRM_PRIMITIVE;
         // IO Doesn't strictly define when these weapons stop production. Checked with Herb, and
         // they would always be around. This to cover some of the back worlds in the Periphery.
-        rulesRefs = "112, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 112);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2365, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)

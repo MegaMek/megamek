@@ -24,13 +24,13 @@ jobs:
 
     steps:
       - name: Checkout Data Repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: megamek/mm-data
           path: mm-data
 
       - name: "Check out MegaMek"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           path: megamek
 
@@ -46,13 +46,13 @@ jobs:
           echo "Event Pull Request Head Ref: ${{ github.event.pull_request.head.ref }}"
 
       - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           distribution: ${{ matrix.java-distribution }}
           java-version: ${{ matrix.java-version }}
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v4
+        uses: github/codeql-action/init@v4.37.9
         with:
           languages: java-kotlin
           build-mode: none
@@ -61,7 +61,7 @@ jobs:
           dependency-caching: true
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v4
+        uses: github/codeql-action/analyze@v4.37.9
         with:
           checkout_path: megamek
           sha: ${{ github.event.pull_request.head.sha || github.sha}}

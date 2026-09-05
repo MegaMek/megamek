@@ -90,8 +90,8 @@ public class MGHandler extends AmmoWeaponHandler {
         } else {
             if (target.isConventionalInfantry()) {
                 toReturn = Compute.directBlowInfantryDamage(
-                      weaponType.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
-                      weaponType.getInfantryDamageClass(),
+                      weaponType.getDamage(), getInfantryDamageClassShift(),
+                      resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                       ((Infantry) target).isMechanized(),
                       toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport);
 
@@ -129,7 +129,7 @@ public class MGHandler extends AmmoWeaponHandler {
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             if (weapon.isRapidFire()) {
-                weaponEntity.heatBuildup += nRapidDamHeatPerHit;
+                weaponEntity.changeHeatBuildup(nRapidDamHeatPerHit, weapon.getName());
             } else {
                 super.addHeat();
             }

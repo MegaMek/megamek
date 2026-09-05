@@ -35,6 +35,7 @@ package megamek.client.ui.dialogs.customMek;
 import static megamek.common.battleArmor.BattleArmor.MOUNT_LOC_LEFT_ARM;
 import static megamek.common.battleArmor.BattleArmor.MOUNT_LOC_RIGHT_ARM;
 import static megamek.common.equipment.EquipmentTypeLookup.BA_MODULAR_EQUIPMENT_ADAPTOR;
+import static megamek.common.verifier.TestBattleArmor.BAManipulator;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -64,8 +65,6 @@ import megamek.common.units.ConstructionUtil;
 import megamek.common.util.RoundWeight;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.verifier.TestEntity;
-
-import static megamek.common.verifier.TestBattleArmor.BAManipulator;
 
 /**
  * This class shows selectors for a BA's Manipulators; these are enabled only when there are respective Modular
@@ -113,7 +112,7 @@ class BaManipulatorChoice {
 
         Vector<String> agWeaponNames = new Vector<>();
         agWeaponNames.add("None");
-        agWeaponNames.addAll(agWeaponTypes.stream().map(EquipmentType::getName).toList());
+        agWeaponNames.addAll(agWeaponTypes.stream().map(EquipChoicePanel::weaponChoiceLabel).toList());
         armoredGloveWeaponSelect.setModel(new DefaultComboBoxModel<>(agWeaponNames));
 
         leftManipulatorSelect.setRenderer(new ManipulatorRenderer(leftManipulatorSelect));
@@ -205,7 +204,8 @@ class BaManipulatorChoice {
             rightMeaInfo.setVisible(hasRightModularEquipmentAdaptor);
 
             findArmoredGloveWithWeapon()
-                  .ifPresent(glove -> armoredGloveWeaponSelect.setSelectedItem(glove.getLinked().getName()));
+                  .ifPresent(glove -> armoredGloveWeaponSelect.setSelectedItem(
+                        EquipChoicePanel.weaponChoiceLabel(glove.getLinked().getType())));
 
             MiscMounted manipulator = battleArmor.getManipulator(BattleArmor.MOUNT_LOC_LEFT_ARM);
             if (manipulator != null && manipulator.is(EquipmentTypeLookup.BA_MANIPULATOR_CARGO_LIFTER)) {
@@ -384,6 +384,8 @@ class BaManipulatorChoice {
                       .findFirst();
                 if (glove.isPresent()) {
                     Mounted<?> newWeapon = battleArmor.addEquipment(selectedWeaponType, glove.get().getLocation());
+                    // mountOnApm marks Disposable Weapons (TO:AuE p.116, Corrected Sixth Printing) so they resolve
+                    // with the disposable rules.
                     BaConstructionUtil.mountOnApm(newWeapon, glove.get());
                 }
             } catch (LocationFullException ex) {

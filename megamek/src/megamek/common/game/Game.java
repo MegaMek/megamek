@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,13 +41,16 @@ import static megamek.common.options.OptionsConstants.ATOW_COMBAT_SENSE;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import megamek.MMConstants;
 import megamek.Version;
+import megamek.client.bot.AIType;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
+import megamek.common.IndustrialElevator;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.TagInfo;
@@ -56,7 +59,10 @@ import megamek.common.TemporaryECMField;
 import megamek.common.WoodsClearingTracker;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
+import megamek.common.actions.EnemyArtilleryInbound;
 import megamek.common.actions.EntityAction;
+import megamek.common.actions.RamAttackAction;
+import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
@@ -90,11 +96,15 @@ import megamek.common.interfaces.ReportEntry;
 import megamek.common.loaders.MapSettings;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IGameOptions;
+import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Wind;
 import megamek.common.planetaryConditions.WindDirection;
 import megamek.common.rolls.PilotingRollData;
+import megamek.common.rules.RulesManager;
+import megamek.common.rules.core.CoreRulesManager;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.turns.SpecificEntityTurn;
 import megamek.common.turns.TurnOrdered;
 import megamek.common.units.*;
@@ -103,6 +113,7 @@ import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
 import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryHelper;
+import megamek.server.victory.VictoryPointLevel;
 import megamek.server.victory.VictoryResult;
 
 /**
@@ -118,7 +129,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public static final int TEAM_HAS_COMBAT_SENSE = 1;
     public static final int TEAM_HAS_NO_INITIATIVE_APTITUDE = 0;
     public static final int TEAM_HAS_COMBAT_PARALYSIS = -1;
-
+    public static RulesManager rulesManager = new CoreRulesManager();
     /**
      * A UUID to identify this game instance.
      */
@@ -156,15 +167,22 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private GamePhase phase = GamePhase.UNKNOWN;
 
     /**
+     * Lazily-computed set of player ids that own at least one demolition charge. Computed on demand and cleared on
+     * phase change, so the per-entity pre-end eligibility check is a constant-time lookup rather than a board scan per
+     * unit. {@code null} means not yet computed.
+     */
+    private transient Set<Integer> playerIdsWithDemolitionCharges = null;
+
+    /**
      * The past phase
      */
     private GamePhase lastPhase = GamePhase.UNKNOWN;
 
     // phase state
-    private final Vector<AttackAction> pendingCharges = new Vector<>();
-    private final Vector<AttackAction> pendingRams = new Vector<>();
-    private final Vector<AttackAction> pendingTeleMissileAttacks = new Vector<>();
-    private final Vector<PilotingRollData> pilotRolls = new Vector<>();
+    private Vector<AttackAction> pendingDisplacementAttacks = new Vector<>();
+    private Vector<AttackAction> pendingRams = new Vector<>();
+    private Vector<AttackAction> pendingTeleMissileAttacks = new Vector<>();
+    private final ArrayList<PilotingRollData> pilotingRolls = new ArrayList<>();
     private final Vector<PilotingRollData> extremeGravityRolls = new Vector<>();
     private final Vector<PilotingRollData> controlRolls = new Vector<>();
     private final Vector<Team> initiativeRerollRequests = new Vector<>();
@@ -188,6 +206,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private Map<BoardLocation, Integer> hexesBeingCut = new HashMap<>();
     private Vector<AttackHandler> attacks = new Vector<>();
     private Vector<ArtilleryAttackAction> offboardArtilleryAttacks = new Vector<>();
+    // Client-display only: redacted summaries of enemy artillery rounds in flight (landing time only; target and
+    // munition withheld), used by the Rounds-in-Air window. Transient - it is pushed fresh from the server each update
+    // and never persisted with a saved game.
+    private transient List<EnemyArtilleryInbound> enemyArtilleryInbound = new ArrayList<>();
     private Vector<OrbitalBombardment> orbitalBombardmentAttacks = new Vector<>();
     private int lastEntityId;
 
@@ -196,6 +218,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private HashSet<Coords> illuminatedPositions = new HashSet<>();
 
     private HashMap<String, Object> victoryContext = null;
+
+    // the scenario's graded victory scale (e.g. Pyrrhic / minor / major); empty when the scenario defines none
+    private List<VictoryPointLevel> victoryPointLevels = new ArrayList<>();
 
     // internal integer value for an external game id link
     private int externalGameId = 0;
@@ -206,6 +231,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     // smoke clouds
     private final List<SmokeCloud> smokeCloudList = new CopyOnWriteArrayList<>();
 
+    // industrial elevators (player-controlled)
+    private final Map<BoardLocation, IndustrialElevator> industrialElevators = new ConcurrentHashMap<>();
+
     // temporary ECM fields (from EMP mines, etc.)
     private final List<TemporaryECMField> temporaryECMFields = new CopyOnWriteArrayList<>();
 
@@ -215,6 +243,25 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * savegames and allow restoring bots to their previous settings.
      */
     private Map<String, BehaviorSettings> botSettings = new HashMap<>();
+
+    /**
+     * Which AI implementation the most recent bot connected under each name was, alongside {@link #botSettings}. Rides
+     * the savegame so a loaded game can restore each seat with the same kind of bot it held, rather than guessing.
+     * Absent ({@code null}) in games saved before this was recorded - read it through {@link #getBotTypes()}, which
+     * heals that.
+     */
+    private Map<String, AIType> botTypes = new HashMap<>();
+
+    /**
+     * For each bot player (keyed by player ID), the set of player IDs that bot currently considers dishonored. Reported
+     * by Princess bots through {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED} and relayed to all
+     * clients, so a human client can warn before an action that would newly dishonor them without guessing at a remote
+     * bot's honor state. Transient, ephemeral battle state; not part of savegames.
+     *
+     * <p>Concurrent because it is written on the packet-handling thread and read on the EDT during turn commit. The
+     * inner sets are always replaced wholesale (never mutated in place), so a reader safely sees a consistent set.</p>
+     */
+    private transient Map<Integer, Set<Integer>> dishonoredPlayersByBot = new ConcurrentHashMap<>();
 
     /**
      * Constructor
@@ -286,6 +333,14 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             woodsClearingTracker = new WoodsClearingTracker();
         }
         return woodsClearingTracker;
+    }
+
+    public void initializeRulesManager(String system) {
+        if (system.equals(OptionsConstants.RULES_TW)) {
+            rulesManager = new TWRulesManager();
+        } else if (system.equals(OptionsConstants.RULES_CORE)) {
+            rulesManager = new CoreRulesManager();
+        }
     }
 
     /**
@@ -457,6 +512,15 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                     entity.setGameOptions();
                 }
             }
+            // Check Rules system and reapply as needed.
+            IOption rules_system = this.options.getOption(OptionsConstants.RULES_SYSTEM);
+            String loadedOption = (rulesManager instanceof CoreRulesManager) ?
+                  OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW;
+            if (rules_system == null) {
+                initializeRulesManager(OptionsConstants.RULES_CORE);
+            } else if (!rules_system.stringValue().equals(loadedOption)) {
+                initializeRulesManager(rules_system.stringValue());
+            }
             processGameEvent(new GameSettingsChangeEvent(this));
         }
     }
@@ -520,7 +584,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             for (Team newTeam : initTeams) {
                 for (Team oldTeam : teams) {
                     if (newTeam.equals(oldTeam)) {
-                        newTeam.setInitiative(oldTeam.getInitiative());
+                        newTeam.setInitiative(new InitiativeRoll(oldTeam.getInitiative()));
                     }
                 }
             }
@@ -565,6 +629,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                  FIRING,
                  PHYSICAL,
                  DEPLOY_MINEFIELDS,
+                 VICTORY_SETUP,
                  SET_ARTILLERY_AUTO_HIT_HEXES -> hasMoreTurns();
             case OFFBOARD -> hasMoreTurns() && isOffboardPlayable();
             default -> true;
@@ -584,7 +649,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                       (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
                       (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
                       (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
-                      (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) {
+                      (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR) ||
+                      (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_5) ||
+                      (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_10) ||
+                      (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_15) ||
+                      (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_20)) {
                     return true;
                 }
 
@@ -945,6 +1014,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public void setPhase(GamePhase phase) {
         final GamePhase oldPhase = this.phase;
         this.phase = phase;
+        // Demolition charges only change during the End Phase; clearing the cache on every phase change keeps the
+        // pre-end eligibility lookup correct and recomputes it at most once per phase.
+        playerIdsWithDemolitionCharges = null;
         // Handle phase-specific items.
         switch (phase) {
             case LOUNGE:
@@ -974,6 +1046,28 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
 
         processGameEvent(new GamePhaseChangeEvent(this, oldPhase, phase));
+    }
+
+    /**
+     * Returns the ids of players that own at least one demolition charge set on a building. The result is computed once
+     * per phase and cached (see {@link #setPhase}), so callers such as the per-entity pre-end declarations eligibility
+     * check do a constant-time lookup instead of scanning every board and building per unit.
+     *
+     * @return the set of owning player ids (empty if no charges are set)
+     */
+    public Set<Integer> getPlayerIdsWithDemolitionCharges() {
+        if (playerIdsWithDemolitionCharges == null) {
+            Set<Integer> ownerIds = new HashSet<>();
+            for (Board board : getBoards().values()) {
+                for (IBuilding building : board.getBuildingsVector()) {
+                    for (DemolitionCharge charge : building.getDemolitionCharges()) {
+                        ownerIds.add(charge.playerId);
+                    }
+                }
+            }
+            playerIdsWithDemolitionCharges = ownerIds;
+        }
+        return playerIdsWithDemolitionCharges;
     }
 
     public void processGameEvent(GameEvent event) {
@@ -1306,7 +1400,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 case Targetable.TYPE_HEX_CLEAR, Targetable.TYPE_HEX_IGNITE, Targetable.TYPE_HEX_BOMB,
                      Targetable.TYPE_MINEFIELD_DELIVER, Targetable.TYPE_FLARE_DELIVER, Targetable.TYPE_HEX_EXTINGUISH,
                      Targetable.TYPE_HEX_ARTILLERY, Targetable.TYPE_HEX_SCREEN, Targetable.TYPE_HEX_AERO_BOMB,
-                     Targetable.TYPE_HEX_TAG -> new HexTarget(HexTarget.idToLocation(targetId), targetType);
+                     Targetable.TYPE_SATURATION, Targetable.TYPE_HEX_TAG ->
+                      new HexTarget(HexTarget.idToLocation(targetId), targetType);
 
                 case Targetable.TYPE_FUEL_TANK, Targetable.TYPE_FUEL_TANK_IGNITE, Targetable.TYPE_BUILDING,
                      Targetable.TYPE_BLDG_IGNITE, Targetable.TYPE_BLDG_TAG -> {
@@ -1540,6 +1635,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         clearAllReports();
         smokeCloudList.clear();
         temporaryECMFields.clear();
+        // Without this, a reset game re-uses the previous game's elevators: initialization deliberately
+        // skips boards whose elevators already exist, so stale platform positions would carry over.
+        clearIndustrialElevators();
 
         forceVictory = false;
         victoryPlayerId = Player.PLAYER_NONE;
@@ -2470,6 +2568,22 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return offboardArtilleryAttacks.elements();
     }
 
+    /**
+     * @param inbound Redacted enemy artillery-in-flight summaries for the Rounds-in-Air window (target/munition already
+     *                withheld by the server), or {@code null} to clear
+     */
+    public void setEnemyArtilleryInbound(List<EnemyArtilleryInbound> inbound) {
+        enemyArtilleryInbound = (inbound != null) ? inbound : new ArrayList<>();
+    }
+
+    /**
+     * @return The redacted enemy artillery-in-flight summaries (landing time only; target and munition withheld); never
+     *       {@code null} (empty when none, or after deserializing a saved game where this transient field is unset)
+     */
+    public List<EnemyArtilleryInbound> getEnemyArtilleryInbound() {
+        return (enemyArtilleryInbound != null) ? enemyArtilleryInbound : new ArrayList<>();
+    }
+
     @Deprecated(since = "0.51.0", forRemoval = true)
     public int getArtillerySize() {
         return offboardArtilleryAttacks.size();
@@ -2548,30 +2662,39 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * Adds a pending displacement attack to the list for this phase.
      */
-    public void addCharge(AttackAction ea) {
-        pendingCharges.addElement(ea);
+    public void addDisplacementAttack(AttackAction ea) {
+        pendingDisplacementAttacks.addElement(ea);
         processGameEvent(new GameNewActionEvent(this, ea));
+    }
+
+    /**
+     * Remove displacement attacks that were added previously
+     *
+     * @param ea
+     */
+    public void removeDisplacementAttack(AttackAction ea) {
+        pendingDisplacementAttacks.removeElement(ea);
     }
 
     /**
      * @return Enumeration of displacement attacks scheduled for the end of the physical phase.
      */
-    public Enumeration<AttackAction> getCharges() {
-        return pendingCharges.elements();
+    public Enumeration<AttackAction> getDisplacementAttacks() {
+        return pendingDisplacementAttacks.elements();
     }
 
     /**
      * Resets the pending charges list.
      */
     public void resetCharges() {
-        pendingCharges.removeAllElements();
+        pendingDisplacementAttacks.removeAllElements();
     }
 
     /**
      * @return the charges vector. Do not modify. Used for sending all charges to the client.
      */
     public List<AttackAction> getChargesVector() {
-        return Collections.unmodifiableList(pendingCharges);
+        return Collections.unmodifiableList(pendingDisplacementAttacks);
     }
 
     /**
@@ -2603,6 +2726,32 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public List<AttackAction> getRamsVector() {
         return Collections.unmodifiableList(pendingRams);
+    }
+
+    public void initializeAfterLoad() {
+        if (pendingRams == null) {
+            pendingRams = new Vector<>();
+        }
+        if (pendingTeleMissileAttacks == null) {
+            pendingTeleMissileAttacks = new Vector<>();
+        }
+        if (pendingDisplacementAttacks == null) {
+            pendingDisplacementAttacks = new Vector<>();
+        }
+        if (!pendingDisplacementAttacks.isEmpty()) {
+            // Reverse traverse the pendingDisplacementAttacks, otherwise when we remove things, it causes problems
+            for (int attack = (pendingDisplacementAttacks.size() - 1); attack >= 0; attack--) {
+                AttackAction pendingAttack = pendingDisplacementAttacks.get(attack);
+                if (pendingAttack == null) {continue;}
+                if (pendingAttack instanceof RamAttackAction) {
+                    addRam(pendingAttack);
+                    pendingDisplacementAttacks.remove(attack);
+                } else if (pendingAttack instanceof TeleMissileAttackAction) {
+                    addTeleMissileAttack(pendingAttack);
+                    pendingDisplacementAttacks.remove(attack);
+                }
+            }
+        }
     }
 
     /**
@@ -2646,14 +2795,14 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @see PilotingRollData
      */
     public void addPSR(PilotingRollData psr) {
-        pilotRolls.addElement(psr);
+        pilotingRolls.add(psr);
     }
 
     /**
      * Returns an Enumeration of pending PSRs.
      */
     public Enumeration<PilotingRollData> getPSRs() {
-        return pilotRolls.elements();
+        return Collections.enumeration(pilotingRolls);
     }
 
     /**
@@ -2671,105 +2820,28 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
+     * Get PSR rolls for a given entity. These are references to the pilotingRolls ArrayList
+     */
+    public ArrayList<PilotingRollData> getPSRsForEntity(Entity entity) {
+        ArrayList<PilotingRollData> rollsForEntity = new ArrayList<>();
+
+        for (PilotingRollData psr : pilotingRolls) {
+            if (psr.getEntityId() == entity.getId()) {
+                rollsForEntity.add(psr);
+            }
+        }
+        return rollsForEntity;
+    }
+
+    public void removePSRsByArray(ArrayList<PilotingRollData> psrList) {
+        pilotingRolls.removeAll(psrList);
+    }
+
+    /**
      * Resets the PSR list for a given entity.
      */
     public void resetPSRs(Entity entity) {
-        PilotingRollData roll;
-        Vector<Integer> rollsToRemove = new Vector<>();
-        int i;
-
-        // first, find all the rolls belonging to the target entity
-        for (i = 0; i < pilotRolls.size(); i++) {
-            roll = pilotRolls.elementAt(i);
-            if (roll.getEntityId() == entity.getId()) {
-                rollsToRemove.addElement(i);
-            }
-        }
-
-        // now, clear them out
-        for (i = rollsToRemove.size() - 1; i > -1; i--) {
-            pilotRolls.removeElementAt(rollsToRemove.elementAt(i));
-        }
-    }
-
-    // PLAYTEST2 single PSR roll for actuators/hips
-    public void reducePSRforActuatorCrits(Entity entity) {
-        PilotingRollData roll;
-        Vector<Integer> rollsToRemove = new Vector<>();
-        Vector<Integer> rollTarget = new Vector<>();
-        Vector<Integer> rollLocation = new Vector<>();
-        Vector<Integer> saveRolls = new Vector<>();
-
-        // first, find all the rolls belonging to the target entity
-        // Locations are: 1 = left leg, 2 = right leg, 3 = front left leg, 4 = front right leg, 5 = center leg
-        for (int i = 0; i < pilotRolls.size(); i++) {
-            roll = pilotRolls.elementAt(i);
-            if (roll.getEntityId() == entity.getId()) {
-                // This is the critical part.
-                if (roll.getDesc().equals("left leg actuator hit") || roll.getDesc().equals("left hip actuator hit")) {
-                    rollTarget.addElement(roll.getValue());
-                    rollLocation.addElement(1);
-                    rollsToRemove.addElement(i);
-                } else if (roll.getDesc().equals("right leg actuator hit") || roll.getDesc()
-                      .equals("right hip actuator hit")) {
-                    rollTarget.addElement(roll.getValue());
-                    rollLocation.addElement(2);
-                    rollsToRemove.addElement(i);
-                } else if (roll.getDesc().equals("front left leg actuator hit") || roll.getDesc().equals("front left "
-                      + "hip actuator hit")) {
-                    rollTarget.addElement(roll.getValue());
-                    rollLocation.addElement(3);
-                    rollsToRemove.addElement(i);
-                } else if (roll.getDesc().equals("front right leg actuator hit") || roll.getDesc().equals("front "
-                      + "right hip actuator hit")) {
-                    rollTarget.addElement(roll.getValue());
-                    rollLocation.addElement(4);
-                    rollsToRemove.addElement(i);
-                } else if (roll.getDesc().equals("center leg actuator hit") || roll.getDesc().equals("center hip "
-                      + "actuator hit")) {
-                    rollTarget.addElement(roll.getValue());
-                    rollLocation.addElement(5);
-                    rollsToRemove.addElement(i);
-                }
-            }
-        }
-
-        if (rollsToRemove.size() > 1) {
-            int saveEntry = 0;
-            int highTarget = 0;
-            boolean entrySaved = false;
-            // check which roll target is highest
-            for (int location = 1; location < 6; location++) {
-                highTarget = 0;
-                saveEntry = 0;
-                entrySaved = false;
-                for (int i = 0; i < rollTarget.size(); i++) {
-                    if ((rollTarget.elementAt(i) > highTarget) && (rollLocation.elementAt(i) == location)) {
-                        saveEntry = i;
-                        entrySaved = true;
-                        highTarget = rollTarget.elementAt(i);
-                    }
-                }
-                if (entrySaved) {
-                    saveRolls.addElement(rollsToRemove.elementAt(saveEntry));
-                }
-            }
-            logger.debug("Playtest: Removing PSR rolls for {}", entity.getDisplayName());
-            // Remove the saved element from our removal list
-            for (int i = saveRolls.size() - 1; i > -1; i--) {
-                roll = pilotRolls.elementAt(saveRolls.elementAt(i));
-                logger.debug("Saving PSR roll: {}", roll.getDesc());
-                rollsToRemove.removeElementAt(saveRolls.elementAt(i));
-            }
-
-            // now, clear out remaining rolls from the PSRs
-            for (int i = rollsToRemove.size() - 1; i > -1; i--) {
-                roll = pilotRolls.elementAt(rollsToRemove.elementAt(i));
-                logger.debug("Removing PSR roll: {}", roll.getDesc());
-                pilotRolls.removeElementAt(rollsToRemove.elementAt(i));
-            }
-            logger.debug("Done removing PSR rolls");
-        }
+        pilotingRolls.removeAll(getPSRsForEntity(entity));
     }
 
     /**
@@ -2805,7 +2877,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * Resets the PSR list.
      */
     public void resetPSRs() {
-        pilotRolls.removeAllElements();
+        pilotingRolls.clear();
     }
 
     /**
@@ -3033,6 +3105,23 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     public void setVictoryContext(HashMap<String, Object> ctx) {
         victoryContext = ctx;
+    }
+
+    /**
+     * @return The scenario's graded victory scale - ordered bands mapping the winner's final victory point
+     *       total to a victory name (e.g. "Pyrrhic victory" up to 10, "Major victory" above) - or an empty
+     *       list when the scenario defines none. Never {@code null}: saves from before this field existed
+     *       restore it lazily.
+     */
+    public List<VictoryPointLevel> getVictoryPointLevels() {
+        if (victoryPointLevels == null) {
+            victoryPointLevels = new ArrayList<>();
+        }
+        return victoryPointLevels;
+    }
+
+    public void setVictoryPointLevels(List<VictoryPointLevel> victoryPointLevels) {
+        this.victoryPointLevels = new ArrayList<>(victoryPointLevels);
     }
 
     /**
@@ -3564,6 +3653,90 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         smokeCloudList.removeIf(SmokeCloud::isCompletelyDissipated);
     }
 
+    // --- Industrial Elevator Methods ---
+
+    /**
+     * Adds an industrial elevator to the game.
+     *
+     * @param elevator The industrial elevator to add
+     */
+    public void addIndustrialElevator(IndustrialElevator elevator) {
+        industrialElevators.put(elevator.getLocation(), elevator);
+    }
+
+    /**
+     * Gets an industrial elevator at the specified location.
+     *
+     * @param location The board location to check
+     *
+     * @return The elevator at this location, or {@code null} if none exists
+     */
+    public @Nullable IndustrialElevator getIndustrialElevator(BoardLocation location) {
+        return industrialElevators.get(location);
+    }
+
+    /**
+     * Gets an industrial elevator at the specified coordinates and board.
+     *
+     * @param coords  The coordinates to check
+     * @param boardId The board ID
+     *
+     * @return The elevator at this location, or {@code null} if none exists
+     */
+    public @Nullable IndustrialElevator getIndustrialElevator(Coords coords, int boardId) {
+        return getIndustrialElevator(BoardLocation.of(coords, boardId));
+    }
+
+    /**
+     * Returns all industrial elevators in the game.
+     *
+     * @return An unmodifiable collection of all industrial elevators
+     */
+    public Collection<IndustrialElevator> getIndustrialElevators() {
+        return Collections.unmodifiableCollection(industrialElevators.values());
+    }
+
+    /**
+     * Checks if there is an industrial elevator at the specified location.
+     *
+     * @param location The board location to check
+     *
+     * @return {@code true} if an elevator exists at this location
+     */
+    public boolean hasIndustrialElevator(BoardLocation location) {
+        return industrialElevators.containsKey(location);
+    }
+
+    /**
+     * Removes an industrial elevator from the game.
+     *
+     * @param location The location of the elevator to remove
+     *
+     * @return The removed elevator, or {@code null} if none was found
+     */
+    public @Nullable IndustrialElevator removeIndustrialElevator(BoardLocation location) {
+        return industrialElevators.remove(location);
+    }
+
+    /**
+     * Clears all industrial elevators from the game.
+     */
+    public void clearIndustrialElevators() {
+        industrialElevators.clear();
+    }
+
+    /**
+     * Sets the industrial elevators from the provided collection, replacing any existing ones.
+     *
+     * @param elevators Collection of industrial elevators to set
+     */
+    public void setIndustrialElevators(Collection<IndustrialElevator> elevators) {
+        industrialElevators.clear();
+        for (IndustrialElevator elevator : elevators) {
+            industrialElevators.put(elevator.getLocation(), elevator);
+        }
+    }
+
     /**
      * Adds a temporary ECM field to the game (e.g., from EMP mine detonation).
      *
@@ -3768,6 +3941,87 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     public void setBotSettings(Map<String, BehaviorSettings> botSettings) {
         this.botSettings = botSettings;
+    }
+
+    /**
+     * Records the set of players the given bot player currently considers dishonored, as reported through
+     * {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED}.
+     *
+     * @param botPlayerId         the reporting bot's player ID
+     * @param dishonoredPlayerIds the player IDs that bot considers dishonored
+     */
+    public void setDishonoredPlayers(int botPlayerId, Collection<Integer> dishonoredPlayerIds) {
+        ensureDishonoredPlayers().put(botPlayerId, new HashSet<>(dishonoredPlayerIds));
+    }
+
+    /**
+     * Adds a single player to the set the given bot player considers dishonored. Used to optimistically record a
+     * dishonoring action the moment the local player commits it, so the same turn's later actions are not re-warned
+     * before the bot's authoritative {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED} report arrives
+     * (that report then replaces this set wholesale). Replaces the inner set rather than mutating it in place, keeping
+     * the wholesale-replacement invariant that lets {@link #isPlayerDishonoredBy} read without locking.
+     *
+     * @param botPlayerId the bot player that now holds a grudge
+     * @param playerId    the player it now considers dishonored
+     */
+    public void addDishonoredPlayer(int botPlayerId, int playerId) {
+        Map<Integer, Set<Integer>> byBot = ensureDishonoredPlayers();
+        Set<Integer> current = byBot.get(botPlayerId);
+        Set<Integer> updated = (current == null) ? new HashSet<>() : new HashSet<>(current);
+        updated.add(playerId);
+        byBot.put(botPlayerId, updated);
+    }
+
+    /**
+     * @param botPlayerId the bot player whose honor opinion is being queried
+     * @param playerId    the player who may be dishonored
+     *
+     * @return true if the bot with player ID {@code botPlayerId} currently considers {@code playerId} dishonored, as
+     *       last reported via {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED}. False if that bot has
+     *       not reported (e.g. it is not a Princess bot, or the report has not arrived yet).
+     */
+    public boolean isPlayerDishonoredBy(int botPlayerId, int playerId) {
+        Set<Integer> dishonored = ensureDishonoredPlayers().get(botPlayerId);
+        return (dishonored != null) && dishonored.contains(playerId);
+    }
+
+    private Map<Integer, Set<Integer>> ensureDishonoredPlayers() {
+        if (dishonoredPlayersByBot == null) {
+            // Transient field is null after deserialization of a savegame.
+            dishonoredPlayersByBot = new ConcurrentHashMap<>();
+        }
+        return dishonoredPlayersByBot;
+    }
+
+    /**
+     * @return which AI implementation the most recent bot connected under each player name was, as an unmodifiable
+     *       view; never {@code null} - games saved before the types were recorded read as an empty map. Record entries
+     *       through {@link #recordBotType(String, AIType)}.
+     */
+    public Map<String, AIType> getBotTypes() {
+        return Collections.unmodifiableMap(ensureBotTypes());
+    }
+
+    /**
+     * Records which AI implementation the bot connected under the given player name is.
+     *
+     * @param playerName the bot player's name
+     * @param aiType     the AI implementation it reported
+     */
+    public void recordBotType(String playerName, AIType aiType) {
+        ensureBotTypes().put(playerName, aiType);
+    }
+
+    public void setBotTypes(Map<String, AIType> botTypes) {
+        this.botTypes = new HashMap<>(botTypes);
+    }
+
+    private Map<String, AIType> ensureBotTypes() {
+        if (null == botTypes) {
+            // Deserialization of a save from before this field existed leaves it null.
+            botTypes = new HashMap<>();
+        }
+        return botTypes;
     }
 
     /**

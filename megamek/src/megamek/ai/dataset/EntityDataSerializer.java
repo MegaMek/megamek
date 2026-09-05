@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
+import megamek.common.units.EntityMovementType;
 import megamek.common.units.UnitRole;
 
 /**
@@ -82,6 +83,7 @@ public abstract class EntityDataSerializer<F extends Enum<F>, T extends EntityDa
         DEFAULT_FORMAT_HANDLERS.put(UnitRole.class, value -> ((UnitRole) value).name());
         DEFAULT_FORMAT_HANDLERS.put(GamePhase.class, value -> ((GamePhase) value).name());
         DEFAULT_FORMAT_HANDLERS.put(AimingMode.class, value -> ((AimingMode) value).name());
+        DEFAULT_FORMAT_HANDLERS.put(EntityMovementType.class, value -> ((EntityMovementType) value).name());
 
         // Lists with space-separated values
         DEFAULT_FORMAT_HANDLERS.put(List.class, value -> {

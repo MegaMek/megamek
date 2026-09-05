@@ -60,15 +60,20 @@ public class UnitType {
     public static final int HANDHELD_WEAPON = 15;
     public static final int MOBILE_STRUCTURE = 16;
     public static final int ADVANCED_BUILDING = 17;
-    // IMPORTANT: AERO must be the last unit type for advanced search to work,
-    // unless you are adding a new unit type which like Aero should be excluded from search.
-    // In that case add an exception for it in the definition of unitTypeModel in AbstractUnitSelectorDialog.java
+    // AERO does not match any real units (there are no preconstructed lifeboats or escape pods), so it is omitted
+    // from the unit-type search combo; unit-type filters map combo entries to UnitType codes explicitly (see
+    // AbstractUnitSelectorDialog#unitTypeCodeForComboIndex)
     public static final int AERO = 18; // Non-differentiated Aerospace, like Escape Pods / Lifeboats
+
+    // Battlefield Support Asset. This is a selectable unit-type search filter; a linked base unit and Asset are shown
+    // as a single condensed row in the selector.
+    public static final int BATTLEFIELD_SUPPORT_ASSET = 19;
 
     private static final String[] names = { "Mek", "Tank", "BattleArmor", "Infantry", "ProtoMek", "VTOL", "Naval",
                                             "Gun Emplacement", "Conventional Fighter", "AeroSpaceFighter",
                                             "Small Craft", "Dropship", "Jumpship", "Warship", "Space Station",
-                                            "Handheld Weapon", "Mobile Structure", "Advanced Building", "Aero" };
+                                            "Handheld Weapon", "Mobile Structure", "Advanced Building", "Aero",
+                                            "Battlefield Support Asset" };
 
     public static final int SIZE = names.length;
 

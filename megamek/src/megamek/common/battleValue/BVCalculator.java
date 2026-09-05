@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,7 +35,6 @@ package megamek.common.battleValue;
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,11 +46,13 @@ import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.common.MPCalculationSetting;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.*;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.*;
 import megamek.common.weapons.bayWeapons.BayWeapon;
@@ -73,6 +74,7 @@ public abstract class BVCalculator {
     protected CalculationReport bvReport;
     protected boolean ignoreC3;
     protected boolean ignoreSkill;
+    protected boolean ignoreTAG;
 
     protected int runMP;
     protected int jumpMP;
@@ -111,6 +113,7 @@ public abstract class BVCalculator {
             case GunEmplacement ignored -> new GunEmplacementBVCalculator(entity);
             case HandheldWeapon ignored -> new HandheldWeaponBVCalculator(entity);
             case AbstractBuildingEntity ignored -> new AbstractBuildingEntityBVCalculator(entity);
+            case BattlefieldSupportAsset ignored -> new BattlefieldSupportAssetBVCalculator(entity);
             case null, default ->  // Tank
                   new CombatVehicleBVCalculator(entity);
         };
@@ -126,7 +129,7 @@ public abstract class BVCalculator {
      * @return The newly calculated battle value.
      */
     public int calculateBV(boolean ignoreC3, boolean ignoreSkill) {
-        return calculateBV(ignoreC3, ignoreSkill, new DummyCalculationReport());
+        return calculateBV(ignoreC3, ignoreSkill, false, new DummyCalculationReport());
     }
 
     /**
@@ -140,8 +143,25 @@ public abstract class BVCalculator {
      * @return The newly calculated battle value.
      */
     public int calculateBV(boolean ignoreC3, boolean ignoreSkill, CalculationReport bvReport) {
+        return calculateBV(ignoreC3, ignoreSkill, false, bvReport);
+    }
+
+    /**
+     * Calculate and return the current battle value of the entity of this calculator. Depending on the parameters C3
+     * bonuses, pilot skill and/or the TAG force bonus may be removed from the calculation. The given report is filled
+     * in.
+     *
+     * @param ignoreC3    When true, the force bonus for C3 connections is not added.
+     * @param ignoreSkill When true, the pilot skill (including MD) is not factored in.
+     * @param ignoreTAG   When true, the force bonus for friendly guided munitions (TAG/homing) is not added.
+     * @param bvReport    The report to fill in with the calculation.
+     *
+     * @return The newly calculated battle value.
+     */
+    public int calculateBV(boolean ignoreC3, boolean ignoreSkill, boolean ignoreTAG, CalculationReport bvReport) {
         this.ignoreC3 = ignoreC3;
         this.ignoreSkill = ignoreSkill;
+        this.ignoreTAG = ignoreTAG;
         calculateBaseBV(bvReport);
         adjustBV();
         return (int) Math.round(adjustedBV);
@@ -520,7 +540,7 @@ public abstract class BVCalculator {
                   eType.hasFlag(MiscType.F_HARJEL_III) ||
                   eType.hasFlag(MiscType.F_SPIKES) ||
                   eType.hasFlag(MiscType.F_MINESWEEPER) ||
-                  ((MiscType) eType).isShield();
+                  eType.hasFlag(MiscType.F_SHIELD);
         } else {
             return false;
         }
@@ -994,13 +1014,14 @@ public abstract class BVCalculator {
                   miscType.hasFlag(MiscType.F_HARJEL_III) ||
                   miscType.hasFlag(MiscType.F_MASS) ||
                   miscType.hasFlag(MiscType.F_MINE) ||
-                  miscType.isShield() ||
+                  miscType.hasFlag(MiscType.F_SHIELD) ||
                   offensiveEquipmentBV(miscType, misc.getLocation()) == 0) {
                 continue;
             }
 
             double bv = offensiveEquipmentBV(miscType, misc.getLocation());
-            if ((miscType.hasFlag(MiscType.F_CLUB) || miscType.hasFlag(MiscType.F_HAND_WEAPON)) &&
+            if ((miscType.hasFlag(MiscType.F_CLUB) || miscType.hasFlag(MiscType.F_HAND_WEAPON) || miscType.hasFlag(
+                  MiscType.F_SHIELD)) &&
                   entity.hasFunctionalArmAES(misc.getLocation())) {
                 bv *= 1.25;
             } else if (miscType.hasFlag(MiscType.F_WATCHDOG)) {
@@ -1234,7 +1255,9 @@ public abstract class BVCalculator {
         List<String> pilotModifiers = new ArrayList<>();
         double pilotFactor = ignoreSkill ? 1 : BVCalculator.bvMultiplier(entity, pilotModifiers);
 
-        processTagBonus();
+        if (!ignoreTAG) {
+            processTagBonus();
+        }
 
         if (c3Bonus > 0) {
             adjustedBV += c3Bonus;
@@ -1393,8 +1416,13 @@ public abstract class BVCalculator {
      * <a href="https://bg.battletech.com/forums/tactical-operations/tagguided-munitions-and-bv/">BT Forum</a>)
      */
     public void processTagBonus() {
+        if (entity.getGame() == null) {
+            return;
+        }
         long tagCount = workingTAGCount(entity);
-        if ((tagCount == 0) || (entity.getGame() == null)) {
+        // CORE if we need to adapt this for only SG, replace (munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED))
+        // (munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED) && Game.rulesManager.getRulesGame().tagBVBump())
+        if ((tagCount == 0)) {
             return;
         }
 
@@ -1403,50 +1431,13 @@ public abstract class BVCalculator {
         // In the lobby, bombs are represented as a bombChoices array, only later is it
         // real Mounted.
         boolean hasGuided = false;
-
-        for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
-            if ((otherEntity.getOwner() == null) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
-                continue;
-            }
-            for (Mounted<?> mounted : otherEntity.getAmmo()) {
-                AmmoType ammoType = (AmmoType) mounted.getType();
-                EnumSet<AmmoType.Munitions> munitionType = ammoType.getMunitionType();
-                if ((mounted.getUsableShotsLeft() > 0) &&
-                      ((munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED)) ||
-                            (munitionType.contains(AmmoType.Munitions.M_HOMING)))) {
-                    adjustedBV += mounted.getType().getBV(entity) * tagCount;
-                    bvReport.addLine("- " + equipmentDescriptor(mounted),
-                          "+ " +
-                                tagCount +
-                                " x " +
-                                formatForReport(mounted.getType().getBV(entity)) +
-                                " (" +
-                                otherEntity.getShortName() +
-                                ")",
-                          "= " + formatForReport(adjustedBV));
-                    hasGuided = true;
-                }
-            }
-            if (otherEntity instanceof IBomber asBomber) {
-                BombType bomb = BombType.createBombByType(BombTypeEnum.HOMING);
-                if (bomb != null) {
-                    int homingCount = asBomber.getBombChoices().getCount(BombTypeEnum.HOMING);
-                    if (homingCount > 0) {
-                        adjustedBV += bomb.getBV(otherEntity) * homingCount * tagCount;
-                        bvReport.addLine("- " + bomb.getName(),
-                              "+ " +
-                                    tagCount +
-                                    " x " +
-                                    formatForReport(bomb.getBV(otherEntity)) +
-                                    " (" +
-                                    otherEntity.getShortName() +
-                                    ")",
-                              "= " + formatForReport(adjustedBV));
-                        hasGuided = true;
-                    }
-                }
-            }
+        double modifiedBV = Game.rulesManager.getRulesGame().tagBVBump(entity, bvReport, adjustedBV, tagCount,
+              hasGuided);
+        if (modifiedBV != adjustedBV) {
+            hasGuided = true;
+            adjustedBV = modifiedBV;
         }
+
         bvReport.finalizeTentativeSection(hasGuided);
     }
 

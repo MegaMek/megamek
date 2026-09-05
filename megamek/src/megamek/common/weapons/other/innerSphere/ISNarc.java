@@ -36,6 +36,7 @@ package megamek.common.weapons.other.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -66,10 +67,14 @@ public class ISNarc extends NarcWeapon {
         this.criticalSlots = 2;
         this.bv = 30;
         this.cost = 100000;
-        rulesRefs = "232, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 232),
+              rulesRef(SourceBookCode.BMM, 104),
+              rulesRef(SourceBookCode.BMM, 108),
+              rulesRef(SourceBookCode.CORE, 188),
+              rulesRef(SourceBookCode.TW, 138)
+        );
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(2580, 2587, 3049, 2795, 3035)

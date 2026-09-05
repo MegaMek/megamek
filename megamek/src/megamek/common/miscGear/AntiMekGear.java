@@ -33,6 +33,7 @@
 
 package megamek.common.miscGear;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -47,9 +48,9 @@ public class AntiMekGear extends MiscType {
         name = "Anti-Mek Gear";
         setInternalName(EquipmentTypeLookup.ANTI_MEK_GEAR);
         tonnage = 0.015;
-        flags = flags.or(F_INF_EQUIPMENT);
+        flags = flags.or(F_INF_EQUIPMENT).or(F_ANTI_MEK_GEAR);
         cost = COST_VARIABLE;
-        rulesRefs = "155, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 155);
         techAdvancement.setTechBase(TechBase.ALL).setAdvancement(2456, 2460, 2500)
               .setStaticTechLevel(SimpleTechLevel.STANDARD)
               .setApproximate(true, false, false)

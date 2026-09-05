@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -56,6 +57,7 @@ public class ISBAMGHeavy extends BAMGWeapon {
         name = "Machine Gun (Heavy)";
         setInternalName("ISBAHeavyMachineGun");
         addLookupName("IS BA Heavy Machine Gun");
+        addLookupName("ISBAHeavyMachineGun");
         addLookupName("ISBAHeavyMG");
         sortingName = "MG D";
         heat = 0;
@@ -70,7 +72,7 @@ public class ISBAMGHeavy extends BAMGWeapon {
         criticalSlots = 1;
         bv = 6;
         cost = 7500;
-        rulesRefs = "258, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 258);
         techAdvancement.setTechBase(TechBase.IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3068);
         techAdvancement.setTechRating(TechRating.C);

@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -84,11 +85,9 @@ public class ISGaussRiflePrototype extends GaussWeapon {
         tankSlots = 1;
         flags = flags.or(F_PROTOTYPE);
         explosionDamage = 20;
-        rulesRefs = "66, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 66);
         techAdvancement
               .setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2587, DATE_NONE, DATE_NONE, 2590, 3038)

@@ -55,6 +55,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -123,6 +124,9 @@ class RandomArmyRatTab extends JPanel implements RandomArmyTab, TreeSelectionLis
         if (node != null && node.isLeaf()) {
             String ratName = (String) node.getUserObject();
             rug.setChosenRAT(ratName);
+            // updateRATs() has always restored this selection on reopening, but nothing ever saved
+            // it, so the table reset to none every time.
+            GUIP.setRATSelectedRAT(Arrays.toString(ratTree.getSelectionPath().getPath()));
         }
     }
 

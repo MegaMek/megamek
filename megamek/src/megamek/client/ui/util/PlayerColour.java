@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -77,7 +77,7 @@ public enum PlayerColour {
     public static final String PLAYER_COLOUR_PINK = "PlayerColour.PINK.text";
     public static final String PLAYER_COLOUR_ORANGE = "PlayerColour.ORANGE.text";
     public static final String PLAYER_COLOUR_GRAY = "PlayerColour.GRAY.text";
-    public static final String PLAYER_COLOUR_BROWN = "layerColour.BROWN.text";
+    public static final String PLAYER_COLOUR_BROWN = "PlayerColour.BROWN.text";
     public static final String PLAYER_COLOUR_PURPLE = "PlayerColour.PURPLE.text";
     public static final String PLAYER_COLOUR_TURQUOISE = "PlayerColour.TURQUOISE.text";
     public static final String PLAYER_COLOUR_MAROON = "PlayerColour.MAROON.text";

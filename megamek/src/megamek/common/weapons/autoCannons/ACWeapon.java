@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -77,7 +77,7 @@ public abstract class ACWeapon extends AmmoWeapon {
 
     public ACWeapon() {
         super();
-        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MEK_WEAPON).or(F_AERO_WEAPON).or(F_TANK_WEAPON);
+        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MEK_WEAPON).or(F_AERO_WEAPON).or(F_TANK_WEAPON).or(F_AC);
         ammoType = AmmoType.AmmoTypeEnum.AC;
         explosive = true; // when firing incendiary ammo
         atClass = CLASS_AC;
@@ -104,8 +104,7 @@ public abstract class ACWeapon extends AmmoWeapon {
                         return new RapidFireACWeaponHandler(toHit, waa, game, gameManager);
                     }
 
-                    // PLAYTEST3 AP Ammo
-                    if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING) || ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST)) {
+                    if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING)) {
                         return new ACAPHandler(toHit, waa, game, gameManager);
                     }
 

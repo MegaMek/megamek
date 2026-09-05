@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,7 +44,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.client.Client;
@@ -62,6 +64,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IOption;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -112,6 +115,9 @@ class ComputeTest {
         when(mockTrueBoolOpt.booleanValue()).thenReturn(true);
         when(mockFalseBoolOpt.booleanValue()).thenReturn(false);
         when(mockGameOptions.getOption(anyString())).thenReturn(mockTrueBoolOpt);
+        IOption mockRulesSystemOption = mock (IOption.class);
+        when(mockRulesSystemOption.stringValue()).thenReturn(OptionsConstants.RULES_CORE);
+        when(mockGameOptions.getOption(OptionsConstants.RULES_SYSTEM)).thenReturn(mockRulesSystemOption);
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3151);
 
         team1.addPlayer(player1);
@@ -711,6 +717,37 @@ class ComputeTest {
               "Right leg-mounted weapon should be impossible to fire when prone");
     }
 
+    @Test
+    @DisplayName("scatter stays on the straight-line path for a negative margin")
+    void scatterStaysOnStraightLineForNegativeMargin() {
+        // Regression for issues 7695 and 8227. On a miss, toHit.getMoS() is negative, and the old
+        // code passed it straight into Coords.translated(). That truncates toward zero on the four
+        // diagonal directions (e.g. -5 / 2 == -2 instead of the floored -3), so the shot landed one
+        // hex off the straight-line scatter path. scatter() now uses the magnitude, so every result
+        // must sit exactly |margin| hexes away on one of the six straight-line directions.
+        for (int startX : new int[] { 6, 7 }) { // even and odd column parity behave differently
+            Coords target = new Coords(startX, 9);
+            for (int distance : new int[] { 1, 3, 5, 6 }) {
+                Set<Coords> straightLineHexes = new HashSet<>();
+                for (int direction = 0; direction < 6; direction++) {
+                    Coords landing = target.translated(direction, distance);
+                    assertEquals(distance, target.distance(landing),
+                          "a straight-line hex must be exactly " + distance + " hexes from the target");
+                    straightLineHexes.add(landing);
+                }
+
+                for (int trial = 0; trial < 300; trial++) {
+                    Coords scattered = Compute.scatter(target, -distance);
+                    assertTrue(straightLineHexes.contains(scattered),
+                          "scatter(-" + distance + ") from " + target.getBoardNum()
+                                + " drifted off the straight line to " + scattered.getBoardNum());
+                    assertEquals(distance, target.distance(scattered),
+                          "a scattered hex must be exactly " + distance + " hexes from the target");
+                }
+            }
+        }
+    }
+
     /**
      * Tests for
      * {@link Compute#getRangeMods(Game, megamek.common.units.Entity, WeaponMounted, AmmoMounted,
@@ -938,6 +975,30 @@ class ComputeTest {
     }
 
     @Test
+    void testDirectBlowInfantryMOSCannotShiftPastEndOfTable() {
+        // A heavy flamer is already 6D6, the second-to-last row of the Non-Conventional Damage against Infantry
+        // table. A direct blow that shifts it two rows would run off the end of the table; the shift must stop at
+        // 7D6 rather than falling through to the weapon's base damage.
+        double originalDamage = 4.0;
+        int weaponType = WeaponType.WEAPON_BURST_6D6;
+        Vector<Report> reports = new Vector<>();
+        int newDamage = directBlowInfantryDamage(
+              originalDamage,
+              3,
+              weaponType,
+              false,
+              false,
+              1,
+              reports,
+              1
+        );
+        assertTrue((newDamage >= 7) && (newDamage <= 42),
+              "A 6D6 burst shifted past the end of the table must roll 7D6 (7-42), not fall back to the weapon's "
+                    + "base damage of 4; got " + newDamage);
+        assertEquals(1, reports.size(), "Report size");
+    }
+
+    @Test
     void testDirectBlowInfantryMOS3BurstInBuilding() {
         // Burst Weapon in the building attacking infantry also in the building.
         // 1D6 -> 4D6 -> 4D6 / 2
@@ -957,5 +1018,77 @@ class ComputeTest {
         assertTrue(newDamage >= 2.0 && newDamage <= 12.0, "10 -> 4D6 / 2.0, rounded up: " + newDamage);
         assertEquals(1, reports.size(), "Report size");
         assertTrue(reports.getFirst().text().contains("in building"));
+    }
+
+    /**
+     * Tests for {@link Compute#isInBuilding(Game, Entity)}
+     */
+    @Nested
+    @DisplayName("isInBuilding Tests")
+    class ComputeTestIsInBuilding extends GameBoardTestCase {
+
+        static {
+            initializeBoard("01_BY_02_WITH_BUILDING", """
+                  size 1 2
+                  hex 0101 0 "" ""
+                  hex 0102 0 "bldg_elev:2;building:2:8;bldg_cf:100" ""
+                  end""");
+        }
+
+        @BeforeEach
+        void beforeEach() {
+            setBoard("01_BY_02_WITH_BUILDING");
+        }
+
+        @Test
+        @DisplayName("Mek at ground floor of a building is inside the building")
+        void mekAtGroundFloorIsInBuilding() {
+            Mek mek = createMek("Atlas", "AS7-D", "Alice");
+            mek.setPosition(new Coords(0, 1));
+            mek.setElevation(0);
+
+            assertTrue(Compute.isInBuilding(getGame(), mek));
+        }
+
+        @Test
+        @DisplayName("Mek at upper floor of a building is inside the building")
+        void mekAtUpperFloorIsInBuilding() {
+            Mek mek = createMek("Atlas", "AS7-D", "Alice");
+            mek.setPosition(new Coords(0, 1));
+            mek.setElevation(1);
+
+            assertTrue(Compute.isInBuilding(getGame(), mek));
+        }
+
+        @Test
+        @DisplayName("Mek standing on building roof is not inside the building")
+        void mekOnBuildingRoofIsNotInBuilding() {
+            Mek mek = createMek("Atlas", "AS7-D", "Alice");
+            mek.setPosition(new Coords(0, 1));
+            mek.setElevation(2);
+
+            assertFalse(Compute.isInBuilding(getGame(), mek));
+        }
+
+        @Test
+        @DisplayName("Prone Mek on building roof is not inside the building")
+        void proneMekOnBuildingRoofIsNotInBuilding() {
+            Mek mek = createMek("Atlas", "AS7-D", "Alice");
+            mek.setPosition(new Coords(0, 1));
+            mek.setElevation(2);
+            mek.setProne(true);
+
+            assertFalse(Compute.isInBuilding(getGame(), mek));
+        }
+
+        @Test
+        @DisplayName("Mek in a hex with no building is not inside a building")
+        void mekInNonBuildingHexIsNotInBuilding() {
+            Mek mek = createMek("Atlas", "AS7-D", "Alice");
+            mek.setPosition(new Coords(0, 0));
+            mek.setElevation(0);
+
+            assertFalse(Compute.isInBuilding(getGame(), mek));
+        }
     }
 }

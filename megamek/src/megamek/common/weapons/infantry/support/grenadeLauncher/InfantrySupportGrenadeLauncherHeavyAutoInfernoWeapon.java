@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support.grenadeLauncher;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -61,8 +62,9 @@ public class InfantrySupportGrenadeLauncherHeavyAutoInfernoWeapon extends Infant
     public InfantrySupportGrenadeLauncherHeavyAutoInfernoWeapon() {
         super();
 
-        name = "Grenade Launcher (Heavy Auto) w/Inferno";
+        name = "Grenade Launcher (Heavy Auto) w/Incendiary";
         setInternalName("InfantryHeavyAutoGrenadeLauncherInferno");
+        addLookupName("Grenade Launcher (Heavy Auto) w/Inferno");
         addLookupName(name);
         addLookupName("Infantry Inferno Heavy Auto Grenade Launcher");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
@@ -78,7 +80,7 @@ public class InfantrySupportGrenadeLauncherHeavyAutoInfernoWeapon extends Infant
         shots = 20;
         bursts = 3;
         tonnage = .020;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(2896, 2900, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CSF, Faction.CHH)
               .setProductionFactions(Faction.CSF).setTechRating(TechRating.D)

@@ -46,11 +46,10 @@ public class ShowBugReportDialogAction extends AbstractAction {
 
     private final Container container;
     private final Action copySystemDataAction;
+    private final Action packageBugReportAction;
 
     /**
-     * Creates an action that shows the Bug Report helper dialog. The parent frame for the dialog is the given parent if
-     * it's a window or the window the parent is in. The given Action is used for a "Copy System Data" button. This
-     * action needs to know the current project (MM/MML/MHQ) which is why it isn't created internally.
+     * Creates an action that shows the Bug Report helper dialog, without a bug report packaging button.
      *
      * @param parent               The parent component
      * @param copySystemDataAction An Action shown as a button in the dialog
@@ -58,9 +57,28 @@ public class ShowBugReportDialogAction extends AbstractAction {
      * @see BugReportDialog
      */
     public ShowBugReportDialogAction(@Nullable Container parent, @Nullable CopySystemDataAction copySystemDataAction) {
+        this(parent, copySystemDataAction, null);
+    }
+
+    /**
+     * Creates an action that shows the Bug Report helper dialog. The parent frame for the dialog is the given parent if
+     * it's a window or the window the parent is in. The given Action is used for a "Copy System Data" button. This
+     * action needs to know the current project (MM/MML/MHQ) which is why it isn't created internally.
+     *
+     * @param parent                 The parent component
+     * @param copySystemDataAction   An Action shown as a button in the dialog
+     * @param packageBugReportAction An Action shown as a button in the dialog, which collects the current game and
+     *                               logs into a single archive. May be {@code null}, in which case no such button is
+     *                               shown.
+     *
+     * @see BugReportDialog
+     */
+    public ShowBugReportDialogAction(@Nullable Container parent, @Nullable CopySystemDataAction copySystemDataAction,
+          @Nullable Action packageBugReportAction) {
         super(getString("CommonMenuBar.helpReportBug"));
         this.container = parent;
         this.copySystemDataAction = copySystemDataAction;
+        this.packageBugReportAction = packageBugReportAction;
     }
 
     @Override
@@ -71,6 +89,6 @@ public class ShowBugReportDialogAction extends AbstractAction {
         } else if (container != null) {
             parentWindow = SwingUtilities.getWindowAncestor(container);
         }
-        new BugReportDialog(parentWindow, copySystemDataAction).show();
+        new BugReportDialog(parentWindow, copySystemDataAction, packageBugReportAction).show();
     }
 }

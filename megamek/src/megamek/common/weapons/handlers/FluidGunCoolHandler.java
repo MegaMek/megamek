@@ -76,8 +76,8 @@ public class FluidGunCoolHandler extends AmmoWeaponHandler {
         if (entityTarget.isConventionalInfantry()) {
             // 1 point direct-fire ballistic
             nDamPerHit = Compute.directBlowInfantryDamage(1,
-                  bDirect ? toHit.getMoS() / 3 : 0,
-                  WeaponType.WEAPON_DIRECT_FIRE,
+                  getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(WeaponType.WEAPON_DIRECT_FIRE),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null);
             super.handleEntityDamage(entityTarget, vPhaseReport, building, hits, nCluster, bldgAbsorbs);

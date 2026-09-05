@@ -15,9 +15,9 @@
 	<b>Tonnage:</b> ${tonnage}<br/>
 	<b>Battle Value:</b> ${battleValue}<br/>
 	</p>
-
+	<br/>
 	<table>
-	<tr><th>Equipment</th><th/><th>Mass</th></tr>
+	<tr><th align="left">Equipment</th><th/><th>Mass</th></tr>
 	<tr><td>Heat Sinks:</td><td align="center">${hsCount}</td><td align="center">${hsMass}</td></tr>
 	<tr><td>Control Equipment:</td><td></td><td align="center">${controlMass}</td</tr>
 <#if liftMass gt 0>
@@ -31,23 +31,18 @@
 	<tr><td>Turret:</td><td></td><td align="center">${turretMass}</td</tr>
 </#if>
 	</table>
-
-	<#if isOmni>
-	<b>Fixed Equipment</b><br/>
-		<#if fixedTonnage gt 0>
-			<table>
-			<tr><td><i>Location</i></td><td align="center"><i>Fixed</i></td><td align="center"><i>Tonnage</i></td></tr>
-			<#list fixedEquipment as row>
-				<#if row.equipment != "None">
-			<tr><td>${row.location}</td><td align="center">${row.equipment}</td><td align="center">${row.tonnage}</td></tr>
-				</#if>
-			</#list>
-			</table>
-		<#else>
-			None
-		</#if>
-	</#if>
-
+<#if isOmni && fixedTonnage gt 0>
+    <br/>
+    <table>
+        <tr><th align="left">Fixed Equipment</th><th>Location</th><th>Tonnage</th></tr>
+        <#list fixedEquipment as row>
+            <#if row.equipment != "None">
+        <tr><td>${row.equipment}</td><td align="center">${row.location}</td><td align="center">${row.tonnage}</td></tr>
+            </#if>
+        </#list>
+    </table>
+</#if>
+	<br/>
 	<table>
 		<tr><th align="left">Weapons<br/>and Ammo</th><th>Location</th><th>Critical</th><th>Tonnage</th></tr>
 		<#list equipment as eq>

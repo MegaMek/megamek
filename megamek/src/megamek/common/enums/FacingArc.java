@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -166,6 +166,13 @@ public enum FacingArc {
     }
 
     /**
+     * Cached copy of {@link #values()}. {@code values()} clones its backing array on every call, which showed up
+     * as a heavy allocation source in hot arc lookups (JFR profiling, 2026-06-21). Iterating this shared,
+     * never-modified array avoids that per-call clone. Treat as read-only.
+     */
+    private static final FacingArc[] VALUES = values();
+
+    /**
      * Returns the enum constant of this type with the legacy specified arcCode. The arcCode must match exactly an
      * arcCode used to declare an enum constant in this type.
      *
@@ -174,7 +181,7 @@ public enum FacingArc {
      * @throws IllegalArgumentException – if this enum type has no constant with the specified arcCode
      */
     public static FacingArc valueOf(int arcCode) {
-        for (FacingArc facingArc : FacingArc.values()) {
+        for (FacingArc facingArc : VALUES) {
             if (facingArc.arcCode == arcCode) {
                 return facingArc;
             }

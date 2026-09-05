@@ -37,19 +37,54 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameVictoryEvent;
+import megamek.common.options.IOption;
+import megamek.common.options.OptionsConstants;
+import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.Entity;
+import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
 
 record TWPhaseEndManager(TWGameManager gameManager) {
+
+    /** Feature logger for the objectives diagnostics; enabled via the log4j2.xml VictoryHex block. */
+    private static final MMLogger VICTORY_HEX_LOGGER = MMLogger.create("megamek.feature.VictoryHex");
 
     void managePhase() {
         switch (gameManager.getGame().getPhase()) {
             case LOUNGE:
                 gameManager.getGame().addReports(gameManager.getMainPhaseReport());
+                // Case for if the options didn't set the rules properly 
+                IOption rules_system = gameManager.getGame().getOptions().getOption(OptionsConstants.RULES_SYSTEM);
+                String loadedOption = (gameManager.getGame().rulesManager instanceof CoreRulesManager) ?
+                      OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW;
+                if (rules_system == null) {
+                    gameManager.getGame().initializeRulesManager(OptionsConstants.RULES_CORE);
+                } else if (!rules_system.stringValue().equals(loadedOption)) {
+                    gameManager.getGame().initializeRulesManager(rules_system.stringValue());
+                }
                 gameManager.changePhase(GamePhase.EXCHANGE);
                 break;
             case EXCHANGE:
+                // a lobby game has already run the objectives pass in executeCurrentPhase; running it
+                // again here would place a player's markers and award their starting points twice
+                gameManager.getGame().addReports(gameManager.getMainPhaseReport());
+                leaveTheStartingPhase();
+                break;
             case STARTING_SCENARIO:
+                // A scenario sets this phase with the plain setter rather than changePhase, and only
+                // changePhase runs executeCurrentPhase - so the objectives pass placed there is dead
+                // code for the one path that needs it. The phase END does run; it is what moves the
+                // game on. Markers themselves arrive with the scenario file; what this pass adds is the
+                // scenario's starting victory points and the warning that nothing can end the game.
+                gameManager.placeLobbyObjectives();
+                // deliberately not cleared afterwards: nothing reports again until the first initiative
+                // report, so these lines have to survive in the phase report until then. Clearing here
+                // removed them from the round report entirely. The cost is that intermediate phase ends
+                // copy them into the stored round report more than once
+                gameManager.getGame().addReports(gameManager.getMainPhaseReport());
+                leaveTheStartingPhase();
+                break;
+            case VICTORY_SETUP:
                 gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                 gameManager.changePhase(GamePhase.SET_ARTILLERY_AUTO_HIT_HEXES);
                 break;
@@ -88,6 +123,9 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 // NOTE: now that aerospace can come and go from the battlefield, I need to update the
                 // deployment table every round. I think this it is OK to go here. (Taharqa)
                 gameManager.getGame().setupDeployment();
+                // whether there is a deployment phase at all is decided here, and when the answer is no nothing is
+                // said - so a unit that quietly missed its arrival round looks the same as one that never existed
+                DeploymentDiagnostics.logDeploymentDecision(gameManager.getGame());
                 if (gameManager.getGame().shouldDeployThisRound()) {
                     gameManager.changePhase(GamePhase.DEPLOYMENT);
                 } else {
@@ -141,7 +179,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.changePhase(GamePhase.FIRING);
                 break;
             case FIRING:
-                // write Weapon Attack Phase header
+                // write Ranged Attack Phase header
                 gameManager.addReport(new Report(3000, Report.PUBLIC));
                 // Add ghost target reports (resolved during PRE_FIRING, displayed here)
                 gameManager.addGhostTargetReports();
@@ -162,6 +200,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.checkForPSRFromDamage();
                 gameManager.cleanupDestroyedNarcPods();
                 gameManager.addReport(gameManager.resolvePilotingRolls());
+                gameManager.addReport(gameManager.resolveCrewConsciousness());
                 gameManager.checkForFlawedCooling();
                 // check phase report
                 if (gameManager.getMainPhaseReport().size() > 1) {
@@ -191,6 +230,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.applyBuildingDamage();
                 gameManager.checkForPSRFromDamage();
                 gameManager.addReport(gameManager.resolvePilotingRolls());
+                gameManager.addReport(gameManager.resolveCrewConsciousness());
                 gameManager.resolveSinkVees();
                 gameManager.cleanupDestroyedNarcPods();
                 gameManager.checkForFlawedCooling();
@@ -254,6 +294,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.applyBuildingDamage();
                 gameManager.checkForPSRFromDamage();
                 gameManager.addReport(gameManager.resolvePilotingRolls());
+                gameManager.addReport(gameManager.resolveCrewConsciousness());
 
                 gameManager.cleanupDestroyedNarcPods();
                 gameManager.checkForFlawedCooling();
@@ -281,6 +322,8 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.changePhase(GamePhase.PREMOVEMENT);
                 break;
             case END:
+                gameManager.addReport(gameManager.resolveCrewConsciousness());
+                gameManager.addReport(C3EmergencyMasterProcessor.processEndPhase(gameManager.getGame()));
                 // remove any entities that died in the heat/end phase before
                 // checking for victory
                 gameManager.resetEntityPhase(GamePhase.END);
@@ -292,6 +335,14 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 );
                 // Sync remaining ECM fields to clients
                 gameManager.sendSyncTemporaryECMFields();
+
+                // Resolve objective control and score victory points before the victory check so the
+                // check sees this round's tally
+                gameManager.resolveObjectives();
+                // resolution writes this round's controller and counters onto the markers; without this
+                // the clients keep the copy they were sent at the end of the physical phase, so anything
+                // drawn from that state - the flag counter, the zone colour - would be a round behind
+                gameManager.sendGroundObjectUpdate();
 
                 boolean victory = gameManager.victory(); // note this may add reports
                 // check phase report
@@ -349,5 +400,29 @@ record TWPhaseEndManager(TWGameManager gameManager) {
 
     private boolean isStandardGhostTargetMode() {
         return gameManager.getGame().usesStandardGhostTargetMode();
+    }
+
+    /**
+     * Moves a game out of its starting phase, whether it began in the lobby or from a scenario file.
+     * Objectives are set up before artillery is pre-sighted and mines are laid, because both of those
+     * decisions depend on knowing where the objectives are.
+     */
+    private void leaveTheStartingPhase() {
+        // which starting phase a game leaves from decides whether the objectives pass ran: a lobby game
+        // goes through EXCHANGE, a scenario through STARTING_SCENARIO. Without this the log cannot say
+        // which route was taken, and the two failures look identical
+        VICTORY_HEX_LOGGER.debug("[Objective] leaving the starting phase {}",
+              gameManager.getGame().getPhase());
+        boolean usesObjectives = gameManager.getGame().getOptions()
+              .booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES);
+        // the ground-object map is keyed by hex alone, with no board id, so objectives can only address
+        // a single-board ground game; multi-board games skip the phase
+        boolean isSingleGroundBoardGame = (gameManager.getGame().getBoards().size() == 1)
+              && gameManager.getGame().getBoard().isGround();
+        if (usesObjectives && isSingleGroundBoardGame) {
+            gameManager.changePhase(GamePhase.VICTORY_SETUP);
+        } else {
+            gameManager.changePhase(GamePhase.SET_ARTILLERY_AUTO_HIT_HEXES);
+        }
     }
 }

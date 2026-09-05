@@ -36,6 +36,7 @@ package megamek.common.weapons.c3;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -83,7 +84,7 @@ public class ISC3RemoteSensorLauncher extends MissileWeapon {
         extremeRange = 12;
         flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON);
         // suppveeslots = 3;
-        rulesRefs = "110, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 110);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3072, 3093).setPrototypeFactions(Faction.DC)
               .setProductionFactions(Faction.DC).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)

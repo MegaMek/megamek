@@ -1,0 +1,350 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+#Saved from version 0.50.12 on 2026-02-26
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Aegis Heavy Cruiser
+</Name>
+
+<Model>
+(2843)
+</Model>
+
+<mul id:>
+3672
+</mul id:>
+
+<year>
+2843
+</year>
+
+<originalBuildYear>
+2843
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:10.0:2:1::-1:0
+asfbay:20.0:4:2::-1:0
+cargobay:85509.0:1:3::-1:0
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+1stclassquarters:490.0:0:-1::-1:0
+crewquarters:1582.0:0:-1::-1:0
+2ndclassquarters:70.0:0:-1::-1:0
+cargobay:50.0:0:11::-1:0
+</transporters>
+
+<SafeThrust>
+2
+</SafeThrust>
+
+<heatsinks>
+2046
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+2500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<armor_type>
+11
+</armor_type>
+
+<armor_tech_rating>
+0
+</armor_tech_rating>
+
+<armor_tech_level>
+6
+</armor_tech_level>
+
+<armor>
+91
+101
+101
+91
+101
+101
+</armor>
+
+<Nose Equipment>
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:20
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:30
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:20
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:30
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:20
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:20
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:20
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:30
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:30
+(B) Capital Missile Launcher (Barracuda)
+Ammo Barracuda:10
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:30
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:30
+(B) Capital Missile Launcher (Barracuda)
+Ammo Barracuda:10
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:20
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:20
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:30
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:30
+(B) Capital Missile Launcher (Barracuda)
+Ammo Barracuda:10
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:20
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:20
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:30
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:30
+(B) Capital Missile Launcher (Barracuda)
+Ammo Barracuda:10
+</Right Broadsides Equipment>
+
+<structural_integrity>
+75
+</structural_integrity>
+
+
+
+
+
+
+
+
+
+<source>
+TR:3057r
+</source>
+
+<tonnage>
+750000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<lithium-fusion>
+1
+</lithium-fusion>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+90
+90
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+365
+</crew>
+
+<officers>
+49
+</officers>
+
+<gunners>
+80
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+20
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+
+# Fluff Date: 2026-02-26 19:50:04
+<overview>
+<p>The Aegis-class heavy cruiser is among the longest-serving and most prolific WarShip designs in human history, with variants spanning from the original 2372 production through Star League-era refits and Clan modernizations that kept the class in active service for nearly eight centuries. Built by Di Tron Heavy Industries at their Terra orbital shipyards, the Aegis was designed as a purpose-built heavy cruiser, incorporating lessons learned from decades of capital ship operations into a hull optimized for the role. The class earned a reputation for rugged dependability and formidable firepower that few contemporaries could match, qualities that ensured its continued relevance long after the shipyards that built it fell silent. Few heavy cruiser designs have served under as many flags or participated in as many decisive fleet actions across such a broad span of interstellar history.</p>
+</overview>
+
+<capabilities>
+<p>At 750,000 tons and 725 meters in length, the Aegis heavy cruiser packs extraordinary firepower into a hull capable of two-gravity sustained acceleration with a three-gravity burst. The Star League refit variant's primary armament consists of eighteen Armstrong II 35-Series NAC/35 naval autocannons and twenty-four Imperator-20 NAC/20s distributed across all firing arcs, delivering crushing kinetic damage at any engagement range. Twelve Randall-55 NL55 and four Magna-45 NL45 naval lasers provide sustained energy firepower, while eight White Shark and four Barracuda capital missile launchers deliver long-range ordnance. The Templar Steel Plus hull is protected by 627 tons of Grumman K5 ferro-carbide armor, with twin Century 5000 engines driving the vessel through a KF Mark XIX jump drive. OMP Stratacaster communications and KTI 389 targeting systems coordinate the massive weapons suite across all arcs. The 2582 refit replaced the original 2,046 single heat sinks with double heat sink technology generating 4,092 points of effective dissipation, and added a lithium-fusion battery for rapid successive jumps. Four docking collars, eighteen fighter bays, and ten small craft bays support extensive force projection. The Clan refit expanded fighter capacity to twenty while reducing armor to 597.5 tons of ferro-carbide.</p>
+</capabilities>
+
+<deployment>
+<p>The Clan Aegis refit produced a modernized heavy cruiser that served across multiple Clan navies. The CJF Red Talon traced one of the most dramatic service histories of any WarShip. Scuttled at Coventry, rebuilt, deployed to destroy the Kell Hounds at Timkovichi, and ultimately fought at the Battle for Terra during the ilClan Trial before being renamed Mariposa under Clan Snow Raven. The CSR Lord Death earned the distinction of being the last Raven vessel to depart the Clan Homeworlds during the Wars of Reaving, carrying irreplaceable personnel and materiel to the Inner Sphere. The NCS Promise was sacrificed at New Home to save Devlin Stone, a critical moment in the Republic's formation. The Republic of the Sphere operated the RSS Auspicium, formerly the Nova Cat vessel NCS Blade, which survived through the ilClan era as one of the longest-serving Aegis-class vessels. The sheer number of Aegis heavy cruisers that remained operational through the thirty-second century, spread across Clan Wolf, Clan Snow Raven, Clan Jade Falcon, and the Republic, speaks to the fundamental soundness of the design.</p>
+</deployment>
+
+<history>
+<p>The Aegis-class heavy cruiser entered service in 2372 from Di Tron Heavy Industries' Terra orbital shipyards as a purpose-built replacement for the aging Black Lion I-class battlecruiser. The design incorporated lessons from decades of Black Lion I operations into a 750,000-ton hull optimized for the heavy cruiser role, with four docking collars, extensive fighter capacity, and a weapons suite built around the largest naval autocannons available. The hull's protective systems and advanced armor provided excellent protection for the era, while powerful engines and a capable jump drive gave the vessel strategic and tactical mobility befitting its cruiser classification.</p><p>The Aegis served through the Age of War, establishing its reputation in engagements like the Battle of Kentares in 2431 where the THS Spark originated the Crazy Jane maneuver. By 2531, a series of refits had failed to keep pace with newer designs, and Director-General Deborah Cameron ordered the class retired in favor of the Avatar. Rather than scrapping the fleet, Cameron sent one hundred and six surviving vessels to mothball orbits between Terra and Mars. When the Reunification War created an urgent need for hulls, First Lord Ian Cameron ordered the Aegis cruisers returned to active duty. One-third were distributed to the Council Lords for their private fleets, while the remainder entered Di Tron shipyards for a decade-long refit that produced the 2582 variant, one of the most capable heavy cruisers in the Star League Navy.</p><p>The class saw extensive service through the Periphery Uprising and the Liberation of Terra. As late as 2765, the Great Houses collectively operated more than twenty-five Aegis cruisers across their national fleets. After the fall of the Star League, vessels served with ComStar, the Word of Blake, Wolf's Dragoons, and eventually the Republic of the Sphere.</p><p>One vessel from the Exodus fleet would produce the most extraordinary incident in the class's long history. The SLS Manassas, fitted prior to departure with a prototype booster system extending her KF jump range to forty light years, was assigned rear-guard duty under Captain James Cromwell to scout for pursuers. After confirming no pursuit was forthcoming, the Manassas jumped for her rendezvous at Schwartz. The jump failed. The vessel misjumped thirty-five light years off target, stranding her crew in an uncharted system for six months while they jury-rigged repairs from their four Confederate-class DropShips. When the Manassas attempted a second jump, a flaw in the drive controller failed to detect the pending misjump in time to abort. The vessel entered hyperspace and did not rematerialize for two hundred and seventy-four years.</p><p>In 3058, the Manassas emerged at Schwartz. Her crew did not know that centuries had passed. They hailed the first vessel they encountered, the Lioness, a York-class destroyer of the Clan Smoke Jaguar Naval Reserve. The Jaguars ordered the Manassas to stand by and prepared to board. A ComStar Explorer Corps team operating in the system monitored the exchange and warned the Manassas, directing her to a rendezvous at Roxborough. Cromwell, upon learning the truth of his situation, chose to return and fight for Schwartz rather than flee. He underestimated the Lioness. The Manassas was seized with no operational weapons remaining. Her crew was consigned to forced labor. Cromwell was detained for trial under Clan law. ComStar, aware of the prototype drive, attempted to sabotage the vessel rather than allow the technology to fall into Clan hands. Nothing was heard from the crew again. The affair was buried.</p><p>Clan technicians modernized their inherited Aegis vessels, expanding fighter capacity from eighteen to twenty and integrating Clan-grade technology while maintaining the fundamental hull design. The Clan Aegis served across virtually every Clan navy. With sixty-five named vessels documented across all factions and eras, the Aegis holds one of the richest service histories of any WarShip class, a reflection of the enduring soundness of the heavy cruiser concept that kept the class operational for nearly eight centuries.</p><p><i>Interstellar Expeditions, Deep Periphery Studies Division. Case File AG-2582-M. Classification: RESTRICTED.</i></p><p><i>The following irregularities are noted for the record. The SLS Manassas was fitted prior to the Exodus with a booster system extending KF jump range to forty light years. No technical documentation for this system exists in any surviving Star League archive. The development records were reportedly erased under the assumption the vessel was lost in a misjump, marking the technology unsafe. This explanation is accepted by most authorities. We do not accept it. Programs of that magnitude leave traces. Requisition chains, personnel transfers, facility allocations. None have been found. The records were not lost. They were removed.</i></p><p><i>The Schwartz system carries restricted-access designations from both ComStar and Clan Smoke Jaguar, two organizations that agree on almost nothing. During the Jihad, a publishing house on Terra reportedly received a manuscript proposal from an individual claiming to have served aboard an SLDF WarShip that "arrived late." The proposal was withdrawn within seventy-two hours. The author's name does not appear in any database we can access. A vessel does not remain in jump stasis for 274 years. That is not consistent with any accepted model of KF field behavior. Either the accepted models are incomplete, or something else happened aboard the Manassas. We have been unable to determine which. The investigation remains open.</i></p>
+</history>
+
+<manufacturer>
+Field Refit
+</manufacturer>
+
+<primaryFactory>
+Various
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Century
+ARMOR:Grumman
+JUMP_JET:Unknown
+COMMUNICATIONS:OMP
+TARGETING:KTI
+</systemManufacturers>
+
+<systemModels>
+CHASSIS:Templar Steel Plus
+ENGINE:5000
+ARMOR:K5 Ferro-Carbide
+JUMP_JET:KF Mark XIX
+COMMUNICATIONS:Stratacaster
+TARGETING:389
+</systemModels>
+

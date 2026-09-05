@@ -54,12 +54,14 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.LiftHoist;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.StructureType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.BipedMek;
@@ -70,6 +72,7 @@ import megamek.common.units.QuadMek;
 import megamek.common.units.QuadVee;
 import megamek.common.units.System;
 import megamek.common.units.TripodMek;
+import megamek.common.units.ForceGeneratorAvailability;
 import megamek.common.units.UnitRole;
 import megamek.logging.MMLogger;
 
@@ -115,7 +118,7 @@ public class MtfFile implements IMekLoader {
     private final String[] armorValues = new String[12];
     private final Map<Integer, String> frankenMekStructureValues = new HashMap<>();
     private final Map<Integer, String> frankenMekLocationSources = new HashMap<>();
-    private boolean mismatchedFrankenMekLegs = false;
+    private final Map<Integer, String> frankenMekLocationSourceTypes = new HashMap<>();
 
     private final String[][] critData;
     private final List<String> noCritEquipment = new ArrayList<>();
@@ -136,7 +139,11 @@ public class MtfFile implements IMekLoader {
 
     private int bv = 0;
     private String role;
+    private String missionRoles;
     private String faction;
+    private String unitFileUUID;
+
+    private final List<String> availabilityLines = new ArrayList<>();
 
     private final Map<EquipmentType, Mounted<?>> hSharedEquip = new HashMap<>();
     private final List<Mounted<?>> vSplitWeapons = new ArrayList<>();
@@ -162,7 +169,6 @@ public class MtfFile implements IMekLoader {
     public static final String MASS = "mass:";
     public static final String ENGINE = "engine:";
     public static final String STRUCTURE = "structure:";
-    public static final String MISMATCHED_LEGS = "mismatched legs:";
     public static final String MYOMER = "myomer:";
     public static final String LAM = "lam:";
     public static final String CONFIG = "config:";
@@ -200,11 +206,15 @@ public class MtfFile implements IMekLoader {
     public static final String OMNI_POD = "(OMNIPOD)";
     public static final String NO_CRIT = "nocrit:";
     public static final String LOCATION_DONOR = "donor:";
+    public static final String LOCATION_DONOR_TYPE = "donor type:";
     public static final String SIZE = ":SIZE:";
+    public static final String UUID = "uuid:";
     public static final String MUL_ID = "mul id:";
     public static final String QUIRK = "quirk:";
     public static final String WEAPON_QUIRK = "weaponquirk:";
     public static final String ROLE = "role:";
+    public static final String AVAILABILITY = "availability:";
+    public static final String MISSION_ROLES = "missionroles:";
     public static final String FACTION = "faction:";
     public static final String CLAN_CASE_OPT_OUT = "clancaseoptedoutlocs:";
     public static final String FLUFF_IMAGE = "fluffimage:";
@@ -330,6 +340,10 @@ public class MtfFile implements IMekLoader {
             mek.setChassis(chassis.trim());
             mek.setClanChassisName(clanChassisName);
             mek.setModel(model.trim());
+            if (!StringUtility.isNullOrBlank(unitFileUUID)) {
+                mek.setUnitFileUUID(unitFileUUID);
+            }
+            mek.storeOriginalUnitData();
             mek.setMulId(mulId);
             mek.setYear(Integer.parseInt(techYear.substring(ERA.length()).trim()));
             String originalYearStr = originalTechYear.substring(ORIGINAL_ERA.length()).trim();
@@ -345,6 +359,11 @@ public class MtfFile implements IMekLoader {
                 mek.setUnitRole(UnitRole.UNDETERMINED);
             } else {
                 mek.setUnitRole(UnitRole.parseRole(role));
+            }
+            mek.setForceGeneratorAvailability(
+                  ForceGeneratorAvailability.parseAll(availabilityLines, mek.getShortNameRaw()));
+            if (!StringUtility.isNullOrBlank(missionRoles)) {
+                mek.setMissionRoles(missionRoles);
             }
             if (!StringUtility.isNullOrBlank(faction)) {
                 mek.setTechFaction(Faction.fromAbbr(faction));
@@ -382,7 +401,13 @@ public class MtfFile implements IMekLoader {
             String thisStructureType = internalType.substring(internalType.indexOf(':') + 1).trim();
             if (!thisStructureType.isBlank()
                   && !thisStructureType.equalsIgnoreCase(Mek.FRANKEN_MEK_STRUCTURE_HYBRID)) {
-                mek.setStructureType(thisStructureType);
+                StructureType structure = EquipmentType.getStructureFromName(thisStructureType);
+                if (!mek.isMixedTech() && (structure != null)
+                      && (structure.getTechAdvancement().getTechBase() == TechBase.ALL)) {
+                    mek.setStructureType(EquipmentType.getStructureType(structure));
+                } else {
+                    mek.setStructureType(thisStructureType);
+                }
             } else {
                 mek.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
             }
@@ -397,7 +422,12 @@ public class MtfFile implements IMekLoader {
 
             String thisArmorType = armorType.substring(armorType.indexOf(':') + 1);
             if (thisArmorType.indexOf('(') != -1) {
-                boolean clan = thisArmorType.toLowerCase().contains("clan");
+                String armorName = thisArmorType.substring(0, thisArmorType.indexOf('(')).trim();
+                ArmorType armor = EquipmentType.getArmorFromName(armorName);
+                boolean clan = (!mek.isMixedTech() && (armor != null)
+                      && (armor.getTechAdvancement().getTechBase() == TechBase.ALL))
+                      ? mek.isClan()
+                      : thisArmorType.toLowerCase().contains("clan");
                 if (clan) {
                     switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                         case 2:
@@ -438,7 +468,7 @@ public class MtfFile implements IMekLoader {
                                   "Unsupported tech level: " + rulesLevel.substring(12).trim());
                     }
                 }
-                thisArmorType = thisArmorType.substring(0, thisArmorType.indexOf('(')).trim();
+                thisArmorType = armorName;
                 mek.setArmorType(thisArmorType);
             } else if (!thisArmorType.equals(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK))) {
                 mek.setArmorTechLevel(mek.getTechLevel());
@@ -458,7 +488,8 @@ public class MtfFile implements IMekLoader {
                       locationOrder[x]);
                 if (thisArmorType.equals(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK))) {
                     String armorName = isClan(x);
-                    mek.setArmorType(EquipmentType.getArmorType(EquipmentType.get(armorName)), locationOrder[x]);
+                    ArmorType armor = EquipmentType.getArmorFromName(armorName);
+                    mek.setArmorType(armor == null ? EquipmentType.T_ARMOR_UNKNOWN : armor.getArmorType(), locationOrder[x]);
 
                     String armorValue = armorValues[x].toLowerCase();
                     if (armorValue.contains("clan")) {
@@ -531,7 +562,8 @@ public class MtfFile implements IMekLoader {
 
             if (mek.isFrankenMek()) {
                 for (Map.Entry<Integer, String> entry : frankenMekLocationSources.entrySet()) {
-                    mek.linkFrankenMekLocationToSource(entry.getKey(), entry.getValue());
+                    mek.linkFrankenMekLocationToSource(entry.getKey(), entry.getValue(),
+                          frankenMekLocationSourceTypes.get(entry.getKey()));
                 }
             }
 
@@ -539,8 +571,9 @@ public class MtfFile implements IMekLoader {
                 // Set capital fighter stats for LAMs
                 ((LandAirMek) mek).autoSetCapArmor();
                 ((LandAirMek) mek).autoSetFatalThresh();
-                int fuelTankCount = (int) mek.getEquipment().stream()
-                      .filter(e -> e.is(EquipmentTypeLookup.LAM_FUEL_TANK)).count();
+                    int fuelTankCount = (int) mek.getMisc().stream()
+                        .filter(e -> e.getType().hasFlag(MiscType.F_LAM_FUEL_TANK))
+                        .count();
                 ((LandAirMek) mek).setFuel(80 * (1 + fuelTankCount));
             }
 
@@ -664,7 +697,6 @@ public class MtfFile implements IMekLoader {
                       parseFrankenMekStructureTonnage(mek, entry.getKey(), structureValue));
             }
         }
-        mek.setMismatchedFrankenMekLegs(mismatchedFrankenMekLegs);
     }
 
     private int parseFrankenMekStructureTonnage(Mek mek, int location, String tonnageValue)
@@ -687,7 +719,7 @@ public class MtfFile implements IMekLoader {
         if (!lookupName.endsWith("Structure")) {
             lookupName += " Structure";
         }
-        EquipmentType structure = EquipmentType.get(lookupName);
+        EquipmentType structure = EquipmentType.getStructureFromName(lookupName);
         if (structure == null) {
             throw new EntityLoadingException("Unknown structure type: " + structureName);
         }
@@ -757,6 +789,13 @@ public class MtfFile implements IMekLoader {
 
             if ((loc >= 0) && (loc < critData.length) && line.toLowerCase().startsWith(LOCATION_DONOR)) {
                 frankenMekLocationSources.put(loc, line.substring(LOCATION_DONOR.length()).trim());
+                continue;
+            }
+
+            if ((loc >= 0) && (loc < critData.length)
+                  && line.toLowerCase().startsWith(LOCATION_DONOR_TYPE)) {
+                frankenMekLocationSourceTypes.put(loc,
+                      line.substring(LOCATION_DONOR_TYPE.length()).trim());
                 continue;
             }
 
@@ -1014,18 +1053,12 @@ public class MtfFile implements IMekLoader {
             EquipmentType etype2 = null;
             if (critName.contains("|")) {
                 String critName2 = critName.substring(critName.indexOf("|") + 1);
-                etype2 = EquipmentType.get(critName2);
-                if (etype2 == null) {
-                    etype2 = EquipmentType.get(mek.isClan() ? "Clan " + critName2 : "IS " + critName2);
-                }
+                etype2 = getEquipmentType(mek, critName2);
                 critName = critName.substring(0, critName.indexOf("|"));
             }
 
             try {
-                EquipmentType etype = EquipmentType.get(critName);
-                if (etype == null) {
-                    etype = EquipmentType.get(mek.isClan() ? "Clan " + critName : "IS " + critName);
-                }
+                EquipmentType etype = getEquipmentType(mek, critName);
                 if (etype != null) {
                     if (etype.isSpreadable()) {
                         // do we already have one of these? Key on Type
@@ -1181,6 +1214,10 @@ public class MtfFile implements IMekLoader {
                 throw new EntityLoadingException(ex.getMessage());
             }
         }
+    }
+
+    private EquipmentType getEquipmentType(Mek mek, String equipmentName) {
+        return EquipmentType.get(equipmentName, mek.isMixedTech() ? null : mek.getTechBase());
     }
 
     private void clearSystemCriticalIfAbsent(Mek mek, int loc, int slot, String expectedCritical) {
@@ -1634,11 +1671,6 @@ public class MtfFile implements IMekLoader {
             return true;
         }
 
-        if (lineLower.startsWith(MISMATCHED_LEGS)) {
-            String value = line.substring(line.indexOf(':') + 1).trim();
-            mismatchedFrankenMekLegs = value.isBlank() || Boolean.parseBoolean(value);
-            return true;
-        }
 
         if (lineLower.startsWith(MYOMER)) {
             return true;
@@ -1786,6 +1818,11 @@ public class MtfFile implements IMekLoader {
             return true;
         }
 
+        if (lineLower.startsWith(UUID)) {
+            unitFileUUID = line.substring(UUID.length()).trim();
+            return true;
+        }
+
         if (lineLower.startsWith(MUL_ID)) {
             mulId = Integer.parseInt(line.substring(MUL_ID.length()));
             return true;
@@ -1808,6 +1845,16 @@ public class MtfFile implements IMekLoader {
 
         if (lineLower.startsWith(ROLE)) {
             role = line.substring(ROLE.length());
+            return true;
+        }
+
+        if (lineLower.startsWith(AVAILABILITY)) {
+            availabilityLines.add(line.substring(AVAILABILITY.length()).trim());
+            return true;
+        }
+
+        if (lineLower.startsWith(MISSION_ROLES)) {
+            missionRoles = line.substring(MISSION_ROLES.length()).trim();
             return true;
         }
 

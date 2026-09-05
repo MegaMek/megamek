@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,6 +35,7 @@ package megamek.common.loaders;
 
 import static megamek.common.bays.Bay.UNSET_BAY;
 
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,6 +51,8 @@ import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import javax.xml.parsers.DocumentBuilder;
 
+import megamek.SuiteConstants;
+import megamek.Version;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
@@ -57,10 +60,14 @@ import megamek.common.CriticalSlot;
 import megamek.common.OffBoardDirection;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
+import megamek.common.battlefieldSupport.OverlayStyle;
+import megamek.common.battlefieldSupport.StripeDirection;
 import megamek.common.bays.Bay;
 import megamek.common.board.Board;
 import megamek.common.compute.Compute;
 import megamek.common.enums.Gender;
+import megamek.common.enums.NeuralInterfaceMode;
 import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
@@ -130,6 +137,8 @@ public class MULParser {
     public static final String ELE_ORIG_PODS = "ONumberOfPods";
     public static final String ELE_ORIG_MEN = "ONumberOfMen";
     public static final String ELE_CONVEYANCE = "Conveyance";
+    public static final String ELE_TOWED_UNITS = "TowedUnits";
+    public static final String ELE_TOWED_UNIT = "TowedUnit";
     public static final String ELE_GAME = "Game";
     public static final String ELE_FORCE = "Force";
     public static final String ELE_BAY = "transportBay";
@@ -152,6 +161,9 @@ public class MULParser {
     public static final String ATTR_CAMO_FILENAME = "camoFileName";
     public static final String ATTR_CAMO_ROTATION = "camoRotation";
     public static final String ATTR_CAMO_SCALE = "camoScale";
+    public static final String ATTR_CAMO_OVERLAY_STYLE = "camoOverlayStyle";
+    public static final String ATTR_CAMO_OVERLAY_DIRECTION = "camoOverlayDirection";
+    public static final String ATTR_CAMO_OVERLAY_COLOR = "camoOverlayColor";
 
     /**
      * The names of the attributes recognized by this parser. Not every attribute is valid for every element.
@@ -163,6 +175,7 @@ public class MULParser {
     public static final String ATTR_EXT_ID = "externalId";
     public static final String ATTR_PICKUP_ID = "pickUpId";
     public static final String ATTR_CLAN_PILOT = "clanperson";
+    public static final String ATTR_ARMOR_KIT = "armorkit";
     public static final String ATTR_NICK = "nick";
     public static final String ATTR_GENDER = "gender";
     public static final String ATTR_CAT_PORTRAIT = "portraitCat";
@@ -204,6 +217,16 @@ public class MULParser {
     public static final String ATTR_DEPLOYMENT_ZONE_ANY_SEX = "deploymentZoneAnySEx";
     public static final String ATTR_DEPLOYMENT_ZONE_ANY_SEY = "deploymentZoneAnySEy";
     public static final String ATTR_NEVER_DEPLOYED = "neverDeployed";
+    /**
+     * The unit-file UUID. Written for every unit that has one and used as the primary lookup on load (the chassis and
+     * model remain for backwards-compatibility and readability). It is essential for Battlefield Support Assets, which
+     * share a name with their base unit.
+     */
+    public static final String ATTR_UNIT_FILE_UUID = "unitFileUUID";
+    /** Distinguishes alternate entity forms that can share the same chassis/model name. */
+    public static final String ATTR_ENTITY_FORM = "entityForm";
+    /** The current (damage-lowered) Destroy Check of a Battlefield Support Asset. */
+    public static final String ATTR_DESTROY_CHECK = "destroyCheck";
     public static final String ATTR_VELOCITY = "velocity";
     public static final String ATTR_ALTITUDE = "altitude";
     public static final String ATTR_ELEVATION = "elevation";
@@ -217,6 +240,7 @@ public class MULParser {
     public static final String ATTR_INDEX = "index";
     public static final String ATTR_IS_DESTROYED = "isDestroyed";
     public static final String ATTR_IS_REPAIRABLE = "isRepairable";
+    public static final String ATTR_ARMOR_HIT = "armorHit";
     public static final String ATTR_POINTS = "points";
     public static final String ATTR_TYPE = "type";
     public static final String ATTR_SHOTS = "shots";
@@ -245,6 +269,8 @@ public class MULParser {
     public static final String ATTR_PENALTY = "penalty";
     public static final String ATTR_C3_MASTER_IS = "c3MasterIs";
     public static final String ATTR_C3UUID = "c3UUID";
+    public static final String ATTR_C3EM_ACTIVE = "c3emActive";
+    public static final String ATTR_C3EM_TURNS = "c3emTurns";
     public static final String ATTR_LOAD = "load";
     public static final String ATTR_INTERNAL = "Internal";
     public static final String ATTR_BA_APM_MOUNT_NUM = "baAPMMountNum";
@@ -253,7 +279,9 @@ public class MULParser {
     public static final String ATTR_BA_MEA_TYPE_NAME = "baMEATypeName";
     public static final String ATTR_KILLED = "killed";
     public static final String ATTR_KILLER = "killer";
+    public static final String ATTR_DAMAGE_TAKEN = "damageTaken";
     private static final String EXTRA_DATA = "extraData";
+    public static final String ATTR_ARMOR_NAME = "armorName";
     public static final String ATTR_ARMOR_DIVISOR = "armorDivisor";
     public static final String ATTR_ARMOR_ENC = "armorEncumbering";
     public static final String ATTR_DEST_ARMOR = "destArmor";
@@ -262,8 +290,12 @@ public class MULParser {
     public static final String ATTR_SNEAK_IR = "sneakIR";
     public static final String ATTR_SNEAK_ECM = "sneakECM";
     public static final String ATTR_INF_SPEC = "infantrySpecializations";
+    public static final String ATTR_DISPOSABLE_WEAPON = "disposableWeapon";
+    public static final String ATTR_DISPOSABLE_WEAPON_FIRED = "disposableWeaponFired";
     public static final String ATTR_INF_SQUAD_NUM = "squadNum";
     public static final String ATTR_RFMG = "rfmg";
+    public static final String ATTR_AUTOCANNON_HIT = "autocannonHit";
+    public static final String ATTR_DIRECTIONAL_MOUNT_LOCKED = "directionalMountLocked";
     public static final String ATTR_LINK = "link";
     public static final String ATTR_ID = "id";
     public static final String ATTR_NUMBER = "number";
@@ -295,6 +327,7 @@ public class MULParser {
     public static final String VALUE_HIT = "hit";
     public static final String VALUE_CONSOLE = "console";
     public static final String VALUE_SQUADRON = "Squadron";
+    public static final String VALUE_BATTLEFIELD_SUPPORT_ASSET = "BattlefieldSupportAsset";
 
     /**
      * Stores all the Entity's read in. This is for general use saving and loading to the chat lounge
@@ -337,6 +370,24 @@ public class MULParser {
     private final Hashtable<String, String> kills;
 
     StringBuffer warning;
+
+    /**
+     * The MegaMek version this MUL was saved in, as read from the root element's {@link #VERSION} attribute. This is
+     * {@code null} when the file did not specify a (parseable) version.
+     */
+    private Version fileVersion;
+
+    /**
+     * True when the MUL was saved in a MegaMek version newer (by major.minor.patch) than the one currently running. A
+     * newer MUL can never be loaded in an older version, so no entities are parsed in this case.
+     */
+    private boolean newerVersion;
+
+    /**
+     * True when the MUL was saved in an older MegaMek version than the one currently running, or when it does not carry
+     * a parseable version at all. Loading is still possible, but correct behavior is not guaranteed.
+     */
+    private boolean olderVersion;
 
     // region Constructors
 
@@ -420,11 +471,78 @@ public class MULParser {
         element.normalize();
 
         final String version = element.getAttribute(VERSION);
+        determineVersionCompatibility(version);
+
+        if (newerVersion) {
+            // A MUL saved in a newer version can never be loaded in an older one. Refuse to parse any entities.
+            warning.append("This MUL was created in a newer version of MegaMek (")
+                  .append(version)
+                  .append(") than the one currently running (")
+                  .append(SuiteConstants.VERSION)
+                  .append("). It cannot be loaded.\n");
+            if (hasWarningMessage()) {
+                LOGGER.warn(getWarningMessage());
+            }
+            return;
+        }
+
         if (version.isBlank()) {
             warning.append("Warning: No version specified, correct parsing ")
                   .append("not guaranteed!\n");
         }
         parse(element, options);
+    }
+
+    /**
+     * Reads the MUL's saved version (as taken from the root element's {@link #VERSION} attribute) and records how it
+     * relates to the currently running version. A missing or unparseable version is treated as older, since it cannot
+     * be confirmed to match the current format. Only the major.minor.patch components are compared; the
+     * snapshot/nightly suffix is ignored.
+     *
+     * @param versionText the raw version attribute value, which may be blank
+     */
+    private void determineVersionCompatibility(final String versionText) {
+        fileVersion = parseVersionSafely(versionText);
+
+        if (fileVersion == null) {
+            // Missing or unparseable version: assume it predates the current format.
+            olderVersion = true;
+            return;
+        }
+
+        final Version runningVersion = SuiteConstants.VERSION;
+        if (fileVersion.isHigherThan(runningVersion)) {
+            newerVersion = true;
+        } else if (fileVersion.isLowerThan(runningVersion)) {
+            olderVersion = true;
+        }
+        // Equal major.minor.patch: load silently.
+    }
+
+    /**
+     * Parses a version string into a {@link Version} without triggering the fatal error dialog that
+     * {@link Version#Version(String)} raises on malformed input. Returns {@code null} for blank or malformed values.
+     *
+     * @param versionText the raw version attribute value
+     *
+     * @return the parsed {@link Version}, or {@code null} if it is blank or cannot be parsed
+     */
+    private static @Nullable Version parseVersionSafely(final @Nullable String versionText) {
+        if ((versionText == null) || versionText.isBlank()) {
+            return null;
+        }
+
+        final String[] extraSplit = versionText.split("-", 2);
+        final String[] versionSplit = extraSplit[0].split("\\.");
+        if ((extraSplit.length > 2) || (versionSplit.length < 3)) {
+            return null;
+        }
+        for (int i = 0; i < 3; i++) {
+            if (!versionSplit[i].matches("\\d+")) {
+                return null;
+            }
+        }
+        return new Version(versionText);
     }
 
     private void parse(final Element element, final @Nullable GameOptions options) {
@@ -561,6 +679,8 @@ public class MULParser {
         // We need to get a new Entity, use the chassis and model to create one
         String chassis = entityNode.getAttribute(ATTR_CHASSIS);
         String model = entityNode.getAttribute(ATTR_MODEL);
+        String unitFileUUID = entityNode.getAttribute(ATTR_UNIT_FILE_UUID);
+        boolean assetForm = VALUE_BATTLEFIELD_SUPPORT_ASSET.equals(entityNode.getAttribute(ATTR_ENTITY_FORM));
 
         Entity entity = null;
 
@@ -590,8 +710,13 @@ public class MULParser {
         }
 
         // Look for the entity in the unit cache if it couldn't be loaded.
+        if (assetForm && (entity != null) && !(entity instanceof BattlefieldSupportAsset)) {
+            warning.append("Embedded unit is not the saved Battlefield Support Asset form.\n");
+            entity = null;
+        }
+
         if (entity == null) {
-            entity = getEntity(chassis, model);
+            entity = getEntity(chassis, model, unitFileUUID, assetForm);
         }
 
         // Make sure we've got an Entity
@@ -666,6 +791,8 @@ public class MULParser {
                     parseOMen(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(ELE_CONVEYANCE)) {
                     parseConveyance(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(ELE_TOWED_UNITS)) {
+                    parseTowedUnits(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(ELE_GAME)) {
                     parseId(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(ELE_FORCE)) {
@@ -679,10 +806,44 @@ public class MULParser {
     }
 
     /**
-     * Create a new <code>Entity</code> instance given a mode and chassis name.
+     * Loads a unit from the cache. When a unit-file UUID is given it is the primary lookup - it pins the exact saved
+     * unit file - and the chassis/model name is the fallback. A MUL entity-form discriminator makes that fallback use
+     * the separate Battlefield Support Asset name index, preventing a same-name base unit from being substituted.
      *
+     * @param chassis      the unit chassis
+     * @param model        the unit model, or {@code null}
+     * @param unitFileUUID the unit-file UUID to resolve first, or {@code null}/blank to look up by name only
+     * @param assetForm    whether the MUL explicitly identifies the entity as its Battlefield Support Asset form
+     *
+     * @return the loaded entity, or {@code null} if it could not be found or loaded
      */
-    private Entity getEntity(String chassis, @Nullable String model) {
+    private Entity getEntity(String chassis, @Nullable String model, @Nullable String unitFileUUID,
+          boolean assetForm) {
+        // The unit-file UUID is the primary lookup: it pins the exact saved unit file (and is the only way to resolve a
+        // Battlefield Support Asset, which shares its name with its base unit). Old UUID-less MULs, and any UUID not in
+        // this cache, fall through to the chassis/model name lookup below.
+        if (!StringUtility.isNullOrBlank(unitFileUUID)) {
+            MekSummary ms = MekSummaryCache.getInstance().getByUnitFileUUID(unitFileUUID);
+            if (ms != null) {
+                if (!summaryMatchesEntityForm(ms, assetForm)) {
+                    warning.append("Unit UUID ").append(unitFileUUID)
+                          .append(" does not identify a Battlefield Support Asset.\n");
+                } else {
+                    try {
+                        return new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+                    } catch (Exception ex) {
+                        LOGGER.error("", ex);
+                        warning.append("Unable to load unit by UUID ").append(unitFileUUID).append(": ")
+                              .append(ex.getMessage()).append("\n");
+                    }
+                }
+            } else {
+                // Not in this cache (for example a different data version); the name lookup below usually still finds
+                // the right unit, so this is diagnostic rather than user-facing information.
+                LOGGER.debug("No unit with UUID {} in the cache; falling back to chassis/model lookup.", unitFileUUID);
+            }
+        }
+
         Entity newEntity = null;
 
         // First check for ejected MekWarriors, vee crews, escape pods and spacecraft
@@ -705,15 +866,18 @@ public class MULParser {
         } else {
             // Try to find the entity.
             StringBuilder key = new StringBuilder(chassis);
-            MekSummary ms = MekSummaryCache.getInstance().getMek(key.toString());
+            MekSummary ms = assetForm ? MekSummaryCache.getInstance().getAsset(key.toString())
+                  : MekSummaryCache.getInstance().getMek(key.toString());
             if (!StringUtility.isNullOrBlank(model)) {
                 key.append(" ").append(model);
-                ms = MekSummaryCache.getInstance().getMek(key.toString());
+                ms = assetForm ? MekSummaryCache.getInstance().getAsset(key.toString())
+                      : MekSummaryCache.getInstance().getMek(key.toString());
                 // That didn't work. Try swapping model and chassis.
                 if (ms == null) {
                     key = new StringBuilder(model);
                     key.append(" ").append(chassis);
-                    ms = MekSummaryCache.getInstance().getMek(key.toString());
+                    ms = assetForm ? MekSummaryCache.getInstance().getAsset(key.toString())
+                          : MekSummaryCache.getInstance().getMek(key.toString());
                 }
             }
             // We should have found the mek.
@@ -739,6 +903,10 @@ public class MULParser {
         return newEntity;
     }
 
+    static boolean summaryMatchesEntityForm(MekSummary summary, boolean assetForm) {
+        return !assetForm || summary.isBattlefieldSupportAsset();
+    }
+
     /**
      * An Entity tag can define numerous attributes for the <code>Entity</code>, check and set all the relevant
      * attributes.
@@ -750,6 +918,25 @@ public class MULParser {
         // commander
         boolean commander = Boolean.parseBoolean(entityTag.getAttribute(ATTR_COMMANDER));
         entity.setCommander(commander);
+
+        // Battlefield Support Asset persistent damage: restore the current (damage-lowered) Destroy Check. Absence of
+        // the attribute means undamaged (current stays equal to the as-constructed value from the .bfs).
+        if (entity instanceof BattlefieldSupportAsset asset) {
+            String destroyCheck = entityTag.getAttribute(ATTR_DESTROY_CHECK);
+            if (!StringUtility.isNullOrBlank(destroyCheck)) {
+                try {
+                    int parsedDestroyCheck = Integer.parseInt(destroyCheck);
+                    if ((parsedDestroyCheck < 0) || (parsedDestroyCheck > asset.getODestroyCheck())) {
+                        warning.append("Invalid destroyCheck value: ").append(destroyCheck)
+                              .append(" (expected 0..").append(asset.getODestroyCheck()).append(")\n");
+                    } else {
+                        asset.setDestroyCheck(parsedDestroyCheck);
+                    }
+                } catch (NumberFormatException e) {
+                    warning.append("Invalid destroyCheck value: ").append(destroyCheck).append("\n");
+                }
+            }
+        }
 
         // hidden
         try {
@@ -891,6 +1078,32 @@ public class MULParser {
             entity.getCamouflage().resetScale();
         }
 
+        // Battlefield Support Asset marker overlay (only written when non-default)
+        String overlayStyleString = entityTag.getAttribute(ATTR_CAMO_OVERLAY_STYLE);
+        if (!overlayStyleString.isBlank()) {
+            try {
+                entity.getCamouflage().setOverlayStyle(OverlayStyle.valueOf(overlayStyleString));
+            } catch (IllegalArgumentException ignored) {
+                // keep default
+            }
+        }
+        String overlayDirectionString = entityTag.getAttribute(ATTR_CAMO_OVERLAY_DIRECTION);
+        if (!overlayDirectionString.isBlank()) {
+            try {
+                entity.getCamouflage().setOverlayDirection(StripeDirection.valueOf(overlayDirectionString));
+            } catch (IllegalArgumentException ignored) {
+                // keep default
+            }
+        }
+        String overlayColorString = entityTag.getAttribute(ATTR_CAMO_OVERLAY_COLOR);
+        if (!overlayColorString.isBlank()) {
+            try {
+                entity.getCamouflage().setOverlayColor(new Color(Integer.parseInt(overlayColorString, 16)));
+            } catch (NumberFormatException ignored) {
+                // keep default
+            }
+        }
+
         // external id
         String extId = entityTag.getAttribute(ATTR_EXT_ID);
         if (extId.isBlank()) {
@@ -933,9 +1146,18 @@ public class MULParser {
         if (!c3uuid.isBlank()) {
             entity.setC3UUIDAsString(c3uuid);
         }
+        // C3 Emergency Master state (TO:AUE p.110) survives mid-scenario saves
+        entity.setC3EmergencyMasterActive(Boolean.parseBoolean(entityTag.getAttribute(ATTR_C3EM_ACTIVE)));
+        String c3emTurns = entityTag.getAttribute(ATTR_C3EM_TURNS);
+        if (!c3emTurns.isBlank()) {
+            entity.setC3EmergencyMasterOperatingTurns(MathUtility.parseInt(c3emTurns, 0));
+        }
 
         // Load some values for conventional infantry
         if (entity instanceof ConvInfantry inf) {
+            String armorName = entityTag.getAttribute(ATTR_ARMOR_NAME);
+            inf.setCustomArmorName(armorName);
+
             String armorDiv = entityTag.getAttribute(ATTR_ARMOR_DIVISOR);
             if (!armorDiv.isBlank()) {
                 inf.setCustomArmorDamageDivisor(Double.parseDouble(armorDiv));
@@ -968,6 +1190,22 @@ public class MULParser {
             String infSpec = entityTag.getAttribute(ATTR_INF_SPEC);
             if (!infSpec.isBlank()) {
                 inf.setSpecializations(Integer.parseInt(infSpec));
+            }
+
+            // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing): the design's weapons are re-derived from the
+            // cache, but the disposable is not part of that, so restore it (and whether it was already fired) from the
+            // saved attributes. A platoon carries at most one Disposable Weapon - equipDisposableWeapon() replaces any
+            // existing disposable mount - so the single mount found below is the one just equipped.
+            String disposableName = entityTag.getAttribute(ATTR_DISPOSABLE_WEAPON);
+            if (!disposableName.isBlank() && (EquipmentType.get(disposableName) instanceof InfantryWeapon disposable)) {
+                inf.equipDisposableWeapon(disposable);
+                if (!entityTag.getAttribute(ATTR_DISPOSABLE_WEAPON_FIRED).isBlank()) {
+                    inf.getWeaponList()
+                          .stream()
+                          .filter(WeaponMounted::isDisposableWeapon)
+                          .findFirst()
+                          .ifPresent(weaponMounted -> weaponMounted.setFired(true));
+                }
             }
 
             String infSquadNum = entityTag.getAttribute(ATTR_INF_SQUAD_NUM);
@@ -1215,8 +1453,8 @@ public class MULParser {
             }
         }
 
-        if ((options != null) && options.booleanOption(OptionsConstants.RPG_MANEI_DOMINI)
-              && attributes.containsKey(ATTR_IMPLANTS) && !attributes.get(ATTR_IMPLANTS).isBlank()) {
+        boolean implantsAllowed = NeuralInterfaceMode.from(options).allowsImplants();
+        if (implantsAllowed && attributes.containsKey(ATTR_IMPLANTS) && !attributes.get(ATTR_IMPLANTS).isBlank()) {
             StringTokenizer st = new StringTokenizer(attributes.get(ATTR_IMPLANTS), "::");
             while (st.hasMoreTokens()) {
                 String implant = st.nextToken();
@@ -1524,6 +1762,13 @@ public class MULParser {
                 crew.setClanPilot(Boolean.parseBoolean(attributes.get(ATTR_CLAN_PILOT)), slot);
             }
 
+            // This is the seam MekHQ hands personal equipment across on: a campaign issues a kit to a person,
+            // writes its name here, and MegaMek reads it back when the battle starts. An older file simply has no
+            // attribute and the crew member goes without.
+            if ((attributes.containsKey(ATTR_ARMOR_KIT)) && !attributes.get(ATTR_ARMOR_KIT).isBlank()) {
+                crew.setArmorKitName(attributes.get(ATTR_ARMOR_KIT), slot);
+            }
+
             if ((attributes.containsKey(ATTR_CAT_PORTRAIT)) && !attributes.get(ATTR_CAT_PORTRAIT).isBlank()) {
                 crew.getPortrait(slot).setCategory(attributes.get(ATTR_CAT_PORTRAIT));
             }
@@ -1727,6 +1972,13 @@ public class MULParser {
         }
     }
 
+    private void parseArmoredSlotState(CriticalSlot slot, String armorHit) {
+        if (Boolean.parseBoolean(armorHit) && (slot.isOriginalArmored() || slot.isArmorable())) {
+            slot.setArmored(true);
+            slot.hitArmored();
+        }
+    }
+
     /**
      * Parse a slot tag for the given Entity and location.
      *
@@ -1740,6 +1992,8 @@ public class MULParser {
         String capacity = slotTag.getAttribute(ATTR_CAPACITY);
         String hit = slotTag.getAttribute(ATTR_IS_HIT);
         String destroyed = slotTag.getAttribute(ATTR_IS_DESTROYED);
+        String armorHit = slotTag.getAttribute(ATTR_ARMOR_HIT);
+        String damageTaken = slotTag.getAttribute(ATTR_DAMAGE_TAKEN);
         String repairable = (slotTag.getAttribute(ATTR_IS_REPAIRABLE).isBlank() ? "true"
               : slotTag.getAttribute(ATTR_IS_REPAIRABLE));
         String munition = slotTag.getAttribute(ATTR_MUNITION);
@@ -1748,6 +2002,8 @@ public class MULParser {
         String quirks = slotTag.getAttribute(ATTR_QUIRKS);
         String trooperMiss = slotTag.getAttribute(ATTR_TROOPER_MISS);
         String rfmg = slotTag.getAttribute(ATTR_RFMG);
+        String autocannonHit = slotTag.getAttribute(ATTR_AUTOCANNON_HIT);
+        String directionalMountLocked = slotTag.getAttribute(ATTR_DIRECTIONAL_MOUNT_LOCKED);
         String bayIndex = slotTag.getAttribute(ATTR_WEAPONS_BAY_INDEX);
 
         // Did we find required attributes?
@@ -1885,6 +2141,7 @@ public class MULParser {
                 }
                 return locAmmoCount;
             }
+            parseArmoredSlotState(slot, armorHit);
 
             // Is the slot for a critical system?
             if (slot.getType() == CriticalSlot.TYPE_SYSTEM) {
@@ -1935,9 +2192,33 @@ public class MULParser {
                 // Hit and destroy the mounted, according to the flags.
                 mounted.setDestroyed(hitFlag || destFlag);
 
+                if ((mounted instanceof MiscMounted miscMounted) &&
+                      mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR) &&
+                      !damageTaken.isBlank()) {
+                    int damageTakenVal = MathUtility.parseInt(damageTaken, -1);
+                    if ((damageTakenVal < 0) || (damageTakenVal > miscMounted.getBaseDamageCapacity())) {
+                        warning.append("Found invalid modular armor damageTaken value for slot: ")
+                              .append(damageTaken)
+                              .append(".\n");
+                    } else {
+                        miscMounted.setDamageTaken(damageTakenVal);
+                        miscMounted.setHit(damageTakenVal >= miscMounted.getBaseDamageCapacity());
+                    }
+                }
+
                 mounted.setRepairable(repairFlag);
 
                 mounted.setRapidFire(Boolean.parseBoolean(rfmg));
+
+                // Non-crit-slot combat damage flags (CORE first autocannon crit, locked Directional Torso Mount) that
+                // the writer stored on the slot; blank when the attribute was absent, leaving the default false.
+                if (!autocannonHit.isBlank()) {
+                    mounted.setAutocannonHit(Boolean.parseBoolean(autocannonHit));
+                }
+
+                if (!directionalMountLocked.isBlank()) {
+                    mounted.setDirectionalMountLocked(Boolean.parseBoolean(directionalMountLocked));
+                }
 
                 // Is the mounted a type of ammo?
                 if (mounted instanceof AmmoMounted) {
@@ -2579,6 +2860,37 @@ public class MULParser {
     }
 
     /**
+     * Parses the trailers a tractor tows, in order from front to back.
+     * <p>
+     * The ids read here are the ones the saving game used. They are stored as-is, exactly like the conveyance id above,
+     * and translated to real ids once the units have been added to a game and their server-side ids are known. Only the
+     * tractor records the train; each trailer's own tractor and hitch are rebuilt from this list.
+     * </p>
+     */
+    private void parseTowedUnits(Element towedUnitsTag, Entity entity) {
+        NodeList towedNodes = towedUnitsTag.getChildNodes();
+
+        for (int nodeIndex = 0; nodeIndex < towedNodes.getLength(); nodeIndex++) {
+            Node currNode = towedNodes.item(nodeIndex);
+
+            if (currNode.getParentNode() != towedUnitsTag || (currNode.getNodeType() != Node.ELEMENT_NODE)) {
+                continue;
+            }
+
+            Element currEle = (Element) currNode;
+            if (!currEle.getNodeName().equalsIgnoreCase(ELE_TOWED_UNIT)) {
+                continue;
+            }
+
+            try {
+                entity.addTowedUnit(Integer.parseInt(currEle.getAttribute(ATTR_ID)));
+            } catch (Exception ignored) {
+                warning.append("Invalid id in TowedUnit tag.\n");
+            }
+        }
+    }
+
+    /**
      * Parse an id tag for the given <code>Entity</code>. Used to resolve crew damage to transported entities
      *
      */
@@ -2789,6 +3101,29 @@ public class MULParser {
             return warning.toString();
         }
         return null;
+    }
+
+    /**
+     * @return the MegaMek version this MUL was saved in, or {@code null} if the file did not carry a parseable version
+     */
+    public @Nullable Version getFileVersion() {
+        return fileVersion;
+    }
+
+    /**
+     * @return true if the MUL was saved in a MegaMek version newer than the one currently running. Such a file is never
+     *       loaded, so {@link #getEntities()} and the other result accessors will be empty.
+     */
+    public boolean isNewerVersion() {
+        return newerVersion;
+    }
+
+    /**
+     * @return true if the MUL was saved in an older MegaMek version than the one currently running, or does not carry a
+     *       parseable version. The file is still parsed, but correct behavior is not guaranteed.
+     */
+    public boolean isOlderVersion() {
+        return olderVersion;
     }
 
     /**

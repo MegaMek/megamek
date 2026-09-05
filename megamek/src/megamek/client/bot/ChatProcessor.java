@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,7 +46,6 @@ import megamek.common.game.Game;
 import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.commands.DefeatCommand;
-import megamek.server.commands.GameMasterCommand;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.ArgumentsParser;
 
@@ -132,16 +131,16 @@ public class ChatProcessor {
         }
 
         if (name.equals(Server.ORIGIN)) {
-            String msg = st.nextToken();
-            if (msg.contains(GameMasterCommand.SERVER_VOTE_PROMPT_MSG)) {
-                bot.sendChat("/allowGM");
-            }
+            // Server announcements need no reply. Bots are not voters in a gamemaster vote, so the old habit of
+            // answering the vote prompt with /allowGM is gone with it.
             return;
         } else if (player == null) {
             return;
         }
 
-        additionalPrincessCommands(ge, (Princess) bot);
+        if (bot instanceof Princess princess) {
+            additionalPrincessCommands(ge, princess);
+        }
     }
 
     private Player getPlayer(Game game, String playerName) {
@@ -185,6 +184,7 @@ public class ChatProcessor {
         String command = tokenizer.nextToken().trim();
         if (command.length() < 2) {
             princess.sendChat("I do not recognize that command.");
+            return;
         }
 
         // Any remaining tokens should be the command arguments.
@@ -221,18 +221,24 @@ public class ChatProcessor {
 
     private static void processChatCommand(Princess princess, String command, String[] arguments) {
         for (ChatCommands cmd : ChatCommands.values()) {
-            if (command.toLowerCase().equalsIgnoreCase(cmd.getAbbreviation()) ||
-                  command.toLowerCase().equalsIgnoreCase(cmd.getCommand())) {
+            if (command.equalsIgnoreCase(cmd.getAbbreviation()) ||
+                  command.equalsIgnoreCase(cmd.getCommand())) {
                 try {
                     Arguments args = ArgumentsParser.parse(arguments, cmd.getChatCommand().defineArguments());
+                    LOGGER.info("{}: executing chat command {} with arguments {}",
+                          princess.getLocalPlayer().getName(), cmd.getCommand(), Arrays.toString(arguments));
                     cmd.getChatCommand().execute(princess, args);
-                } catch (IllegalArgumentException e) {
+                } catch (IllegalArgumentException exception) {
+                    LOGGER.warn("{}: invalid arguments for chat command {}: {} ({})",
+                          princess.getLocalPlayer().getName(), cmd.getCommand(), Arrays.toString(arguments),
+                          exception.getMessage());
                     princess.sendChat("Invalid arguments for command: " + command);
                     return;
                 }
                 return;
             }
         }
+        LOGGER.warn("Unrecognized chat command: {} with arguments {}", command, Arrays.toString(arguments));
         princess.sendChat("I do not recognize that command.");
     }
 }

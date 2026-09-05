@@ -486,8 +486,12 @@ public class AvailabilityPanel {
                               || (factionRecord != null && !factionRecord.isActiveInYear(year))) {
                             continue;
                         }
+                        // Gate on the year as well as the era. An availability code can name the year a faction
+                        // starts getting the unit, and a Force Generator era can straddle two of the eras shown
+                        // here: the 3060 era runs to 3066, so a unit the Periphery only gets from 3063 was being
+                        // listed under the Clan Invasion, which ends in 3061.
                         AvailabilityRating modelAvailRecord = RAT_GENERATOR.findModelAvailabilityRecord(
-                              year, record.getKey(), factionName);
+                              year, record.getKey(), factionName, year);
                         if (modelAvailRecord != null) {
                             ratingsForEra.add(modelAvailRecord);
                         }

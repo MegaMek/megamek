@@ -36,6 +36,7 @@ package megamek.common.weapons.lasers.innerSphere.medium;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
@@ -62,7 +63,6 @@ public class ISVariableSpeedPulseLaserMedium extends VariableSpeedPulseLaserWeap
         sortingName = "Laser VSP C";
         heat = 7;
         damage = DAMAGE_VARIABLE;
-        toHitModifier = -4;
         shortRange = 2;
         mediumRange = 5;
         longRange = 9;
@@ -80,7 +80,11 @@ public class ISVariableSpeedPulseLaserMedium extends VariableSpeedPulseLaserWeap
         cost = 200000;
         shortAV = 7;
         maxRange = RANGE_SHORT;
-        rulesRefs = "133, TO:AUE";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 133),
+              rulesRef(SourceBookCode.BMM, 101),
+              rulesRef(SourceBookCode.CORE, 185)
+        );
         //Nov 22 - CGL requested we move to Standard for Simple Tech Level
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)

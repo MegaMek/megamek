@@ -52,6 +52,7 @@ import megamek.client.ui.Messages;
  * @param constant     Player's constant init bonus
  * @param compensation Initiative compensation bonus
  * @param crew         Individual crew init bonus (for individual initiative mode)
+ * @param gamemaster   Temporary gamemaster initiative modifier (for individual initiative mode)
  *
  * @since 2025-12-15
  */
@@ -64,10 +65,19 @@ public record InitiativeBonusBreakdown(
       int tcp,
       int constant,
       int compensation,
-      int crew
+      int crew,
+      int gamemaster
 ) implements Serializable {
     @Serial
     private static final long serialVersionUID = 3L;
+
+    /**
+     * Creates a breakdown with no gamemaster modifier, for the many sources that cannot carry one.
+     */
+    public InitiativeBonusBreakdown(int hq, int quirk, String quirkName, int console, int crewCommand, int tcp,
+          int constant, int compensation, int crew) {
+        this(hq, quirk, quirkName, console, crewCommand, tcp, constant, compensation, crew, 0);
+    }
 
     /**
      * Creates a breakdown with all zeros.
@@ -96,7 +106,7 @@ public record InitiativeBonusBreakdown(
      * @return The total initiative bonus with stacking rules applied
      */
     public int total() {
-        int[] components = { hq, quirk, console, crewCommand, tcp, constant, compensation, crew };
+        int[] components = { hq, quirk, console, crewCommand, tcp, constant, compensation, crew, gamemaster };
 
         int negativeSum = 0;
         int highestPositive = 0;
@@ -119,7 +129,7 @@ public record InitiativeBonusBreakdown(
      * @return The raw sum of all bonus components
      */
     public int rawTotal() {
-        return hq + quirk + console + crewCommand + tcp + constant + compensation + crew;
+        return hq + quirk + console + crewCommand + tcp + constant + compensation + crew + gamemaster;
     }
 
     /**
@@ -169,6 +179,10 @@ public record InitiativeBonusBreakdown(
         if (crew != 0) {
             components.add(new int[] { crew, components.size() });
             labels.add(Messages.getString("InitiativeBonusBreakdown.Crew"));
+        }
+        if (gamemaster != 0) {
+            components.add(new int[] { gamemaster, components.size() });
+            labels.add(Messages.getString("InitiativeBonusBreakdown.GM"));
         }
 
         if (components.isEmpty()) {
@@ -249,7 +263,8 @@ public record InitiativeBonusBreakdown(
               this.tcp + other.tcp,
               this.constant + other.constant,
               this.compensation + other.compensation,
-              this.crew + other.crew
+              this.crew + other.crew,
+              this.gamemaster + other.gamemaster
         );
     }
 }

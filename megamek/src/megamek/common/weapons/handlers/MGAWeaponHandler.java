@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -77,8 +77,8 @@ public class MGAWeaponHandler extends MGHandler {
         if (target.isConventionalInfantry()) {
             calcDmgPerHitReport.add(new Report(950));
             int damage = Compute.directBlowInfantryDamage(
-                  weaponType.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
-                  weaponType.getInfantryDamageClass(),
+                  weaponType.getDamage(), getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport, howManyShots);
             damage = applyGlancingBlowModifier(damage, true);
@@ -135,7 +135,8 @@ public class MGAWeaponHandler extends MGHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         int shotsHit;
         int nMod = getClusterModifiers(true);
-
+        nMod += Game.rulesManager.getRulesWeapons().getMGABonus();
+        
         if ((howManyShots == 1) || target.isConventionalInfantry()) {
             shotsHit = 1;
         } else {
@@ -231,11 +232,7 @@ public class MGAWeaponHandler extends MGHandler {
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
 
-        // some buildings scale remaining damage that is not absorbed
-        // TODO: this isn't quite right for castles brian
-        if ((null != bldg) && !targetStickingOutOfBuilding) {
-            nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
-        }
+        nDamage = getBuildingDamageAdjustment(entityTarget, bldg, targetStickingOutOfBuilding, nDamage);
 
         // A building may absorb the entire shot.
         if (nDamage == 0) {

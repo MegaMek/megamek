@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -67,6 +67,12 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll.getIntValue() <= 3) {
+            // The RISC Hyper Laser explodes on a 3 or less. Edge may reroll the malfunction check.
+            int edgeReroll = rerollRiscMalfunctionWithEdge(attackingEntity, subjectId, vPhaseReport);
+            if (!riscStillMalfunctions(edgeReroll, 3)) {
+                // Edge cleared the malfunction; the weapon fires normally.
+                return false;
+            }
             Report r = new Report(3162);
 
             r.subject = subjectId;
@@ -119,8 +125,8 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
 
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                  bDirect ? toHit.getMoS() / 3 : 0,
-                  weaponType.getInfantryDamageClass(),
+                  getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport);
             if (nRange <= nRanges[RangeType.RANGE_SHORT]) {

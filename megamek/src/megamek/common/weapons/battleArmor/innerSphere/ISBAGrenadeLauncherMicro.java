@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -77,10 +78,11 @@ public class ISBAGrenadeLauncherMicro extends Weapon {
               .andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON)
               .andNot(F_PROTO_WEAPON);
-        rulesRefs = "256, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 256),
+              rulesRef(SourceBookCode.TW, 305)
+        );
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_ES, DATE_ES, 3050, DATE_NONE, DATE_NONE)

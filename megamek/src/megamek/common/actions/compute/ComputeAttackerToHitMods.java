@@ -253,6 +253,17 @@ public class ComputeAttackerToHitMods {
             toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeEMPInterference"));
         }
 
+        // Attacker hit by Magnetic Pulse (MP) missiles (IO p.62) - flat +1, does not stack
+        if (attacker.getMagneticPulseRounds() > 0) {
+            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeMagneticPulse"));
+        }
+
+        // Attacker hit by Improved Magnetic Pulse (iATM IMP) missiles - +1 per 3 hits, capped
+        int impToHitModifier = attacker.getImpToHitModifier();
+        if (impToHitModifier > 0) {
+            toHit.addModifier(impToHitModifier, Messages.getString("WeaponAttackAction.AeImprovedMagneticPulse"));
+        }
+
         // Special Equipment that that attacker possesses
 
         // Attacker has an AES system
@@ -291,18 +302,8 @@ public class ComputeAttackerToHitMods {
         // Is the attacker hindered by a shield?
         if (attacker.hasShield() && (weapon != null)) {
             // active shield has already been checked as it makes shots impossible
-            // time to check passive defense and no defense
-            if (attacker.hasPassiveShield(weapon.getLocation(), weapon.isRearMounted())) {
-                // PLAYTEST3 shield modifiers no longer apply.
-                if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                    toHit.addModifier(+2, Messages.getString("WeaponAttackAction.PassiveShield"));
-                }
-            } else if (attacker.hasNoDefenseShield(weapon.getLocation())) {
-                // PLAYTEST3 shield modifiers no longer apply
-                if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Shield"));
-                }
-            }
+            // Check if shields cause any other issues
+            Game.rulesManager.getRulesPhysical().getShieldToHitModifier(toHit, attacker, weapon);
         }
 
         // add targeting computer aimed shot modifiers (except with LBX cluster ammo)

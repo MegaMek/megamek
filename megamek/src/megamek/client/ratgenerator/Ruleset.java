@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,12 +40,15 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 
 import megamek.client.generator.RandomNameGenerator;
+import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
+import megamek.common.units.EntityWeightClass;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 import org.w3c.dom.Document;
@@ -84,8 +87,25 @@ public class Ruleset {
         }
     }
 
-    private static final String directory = "data/forcegenerator/faction_rules";
+    // Subdirectory of Configuration.forceGeneratorDir() holding the faction ruleset files. Resolved
+    // through the configured data directory (not a hardcoded relative path) so -data_dir and the RAT
+    // editor's alternate-directory option relocate the rulesets together with the era files.
+    private static final String FACTION_RULES_SUBDIR = "faction_rules";
     private static final String CONSTANTS_FILE = "constants.txt";
+
+    // Progress-bar weights for the phases of processRoot(), as fractions of the force-generation
+    // pass. They are display hints for the ProgressListener only and do not affect generation.
+    private static final double PROGRESS_BUILD_TREE = 0.05;
+    private static final double PROGRESS_GENERATE_UNITS = 0.5;
+    private static final double PROGRESS_LOAD_ENTITIES = 0.4;
+    private static final double PROGRESS_FINALIZE = 0.05;
+
+    /**
+     * Upper bound on ruleset parent links followed when resolving an inherited value. The shipped data
+     * is at most three deep (for example {@code CFM.MiKrKl -> CFM -> CLAN}); this only exists to stop
+     * a mis-authored cycle from hanging generation.
+     */
+    private static final int MAX_PARENT_CHAIN_DEPTH = 16;
 
     private static HashMap<String, String> constants;
     private static final Pattern constantPattern = Pattern.compile("%(.*?)%");
@@ -101,6 +121,7 @@ public class Ruleset {
     private final HashMap<Integer, String> customRanks;
     private final ArrayList<ForceNode> forceNodes;
     private String parent;
+    private FormationNamingConvention formationNaming;
 
     private Ruleset() {
         faction = FactionRecord.IS_GENERAL_KEY;
@@ -110,6 +131,7 @@ public class Ruleset {
         customRanks = new HashMap<>();
         forceNodes = new ArrayList<>();
         parent = null;
+        formationNaming = new FormationNamingConvention();
     }
 
     public static String substituteConstants(String str) {
@@ -159,7 +181,7 @@ public class Ruleset {
         }
         // This shouldn't happen unless the data is missing. Throw out a default ruleset
         // to prevent barfing.
-        logger.warn("findRuleset({}): no match in any parent — returning empty default ruleset", faction);
+        logger.warn("findRuleset({}): no match in any parent - returning empty default ruleset", faction);
         return new Ruleset();
     }
 
@@ -184,37 +206,188 @@ public class Ruleset {
         void updateProgress(double progress, String message);
     }
 
+    /**
+     * Builds the force's structure without generating any units.
+     *
+     * <p>Produces the same tree {@link #processRoot} would - the same echelons, weight classes and formation
+     * assignments, and so the same {@link ForceDescriptor#getEligibleFormations() eligible formation sets} - but stops
+     * before a single unit is drawn. It exists so a caller can ask what a force <em>would</em> look like without
+     * paying for it: the progress weights in this class put building the tree at a twentieth of a full generation,
+     * against half for picking units and most of the rest for loading entities.</p>
+     *
+     * <p>Asking the generator rather than re-deriving rule matching by hand is the point. Which formations a node is
+     * offered depends on properties that only exist once the tree is being built - the weight class it rolled, its
+     * index among its siblings, the flags it inherited - so any prediction made from the ruleset XML alone would be
+     * an approximation that drifts from what generation actually does.</p>
+     *
+     * <p>The descriptor is modified in place, exactly as {@code processRoot} modifies it. Callers previewing a force
+     * they intend to generate later should pass a throwaway copy.</p>
+     *
+     * @param fd the force to build the structure of, modified in place
+     */
+    public void buildStructureOnly(ForceDescriptor fd) {
+        defaults.apply(fd);
+        // Bracket the shared name-generator faction the same way processRoot does, so a preview run cannot leave
+        // global state changed behind it. A preview may run on every change to the options panel.
+        String rngFaction = RandomNameGenerator.getInstance().getChosenFaction();
+        try {
+            buildForceTree(fd, null, 0);
+        } finally {
+            RandomNameGenerator.getInstance().setChosenFaction(rngFaction);
+        }
+    }
+
     public void processRoot(ForceDescriptor fd, ProgressListener l) {
+        logger.debug("[ForceGen][Weight] processRoot ENTER: faction={} echelon={} unitType={} rating={} " +
+                    "weightClass={} ({})",
+              fd.getFaction(), fd.getEchelon(), fd.getUnitType(), fd.getRating(),
+              fd.getWeightClass(),
+              fd.getWeightClassCode().isEmpty() ? "RANDOM - ruleset will roll one" : fd.getWeightClassCode());
         defaults.apply(fd);
         // save the setting so it can be restored after assigning names
         String rngFaction = RandomNameGenerator.getInstance().getChosenFaction();
 
-        buildForceTree(fd, l, 0.05);
-        fd.generateUnits(l, 0.5);
+        buildForceTree(fd, l, PROGRESS_BUILD_TREE);
+        // Capture the weight class the ruleset ROLLED for this force (the value that drove the
+        // <weightTarget> selection) before recalcWeightClass() below overwrites it with the
+        // weight implied by the units actually generated. This is the right label for tuning.
+        String rolledWeight = fd.getWeightClassCode().isEmpty() ? "RANDOM" : fd.getWeightClassCode();
+        // Cluster identity flags (e.g. CCC's battle/coil/fang named types). These let the CSV tune
+        // per named cluster type, since all of them roll the same H/M/L weight picker.
+        String clusterFlags = String.join(";", fd.getFlags());
+        // Per-cluster-type weight budget: reshape element weights to the faction's <weightTarget>
+        // blocks before units are picked. Data-gated -- a no-op for any cluster that declares no
+        // targets, so factions without <weightTarget> generate exactly as before.
+        WeightBudgetAllocator.allocate(fd);
+        // Reshape which formation each node gets to match the requested mix, before those formations pick their
+        // units. Only formations the node's own rule offered are ever assigned, and a node the mix does not claim
+        // keeps what the ruleset rolled for it. A no-op for an empty mix.
+        FormationMixReport formationAssignment = FormationBudgetAllocator.allocate(fd);
+        fd.generateUnits(l, PROGRESS_GENERATE_UNITS);
+        // Count what survived rather than what was asked for: a formation can be assigned legally and still fail its
+        // own requirements once units are drawn, at which point it reverts to an ordinary lance.
+        fd.setFormationMixReport(FormationBudgetAllocator.tallyAchieved(fd, formationAssignment));
         if (null != l) {
             l.updateProgress(0, "Finalizing formation");
         }
         fd.recalcWeightClass();
+        // Optional: fill each large craft's ASF bays with its carried fighter complement and nest the
+        // fighters under the ship. Run before commander/id/entity assignment so the normal passes handle
+        // the new fighters. Off unless the user ticks the option.
+        //
+        // This pass only sees large craft that are part of the force itself (a DropShip or WarShip
+        // force generated directly). Carriers produced by the transport stage do not exist yet; they
+        // get their complement further down, right after assignTransport attaches them.
+        if (fd.isFighterComplement()) {
+            fd.addFighterComplement();
+        }
         fd.assignCommanders();
         fd.assignPositions();
 
         if (null != l) {
-            l.updateProgress(0.05, "Finalizing formation");
+            l.updateProgress(PROGRESS_FINALIZE, "Finalizing formation");
         }
-        fd.loadEntities(l, 0.4);
+        // Stamp every node with a unique force id before loading entities, so the force strings
+        // written onto the entities are collision-free and the server reconstructs the exact tree.
+        int nextForceId = fd.assignForceIds(1);
+        fd.loadEntities(l, PROGRESS_LOAD_ENTITIES);
         // fd.assignBloodnames();
 
         ForceDescriptor transports = fd.assignTransport();
         if (null != transports) {
-            transports.loadEntities(l, 0);
+            // Attach first so the transports' parent is set, then number and load them; their force
+            // strings then correctly nest the transport force under the force it carries.
             fd.addAttached(transports);
+            // The transport DropShips are created here, long after the fighter-complement pass above
+            // ran, so they must be filled now or the option silently does nothing for any carrier the
+            // player got from the Dropship Percentage setting - which is where nearly all of them come
+            // from. This has to happen before assignForceIds/loadEntities below so the new fighters
+            // still receive ids and entities from those passes.
+            if (fd.isFighterComplement()) {
+                transports.addFighterComplement();
+            }
+            transports.assignForceIds(nextForceId);
+            transports.loadEntities(l, 0);
         }
 
         if (null != l) {
             l.updateProgress(0, "Complete");
         }
 
+        // Diagnostic: tally the weight class of every generated BattleMek so a caller can verify
+        // that a requested force weight (e.g. an Assault regiment) produced the expected mix.
+        // Compare against the per-faction subforce tables in the ruleset XML.
+        int[] mekWeights = fd.tallyMekWeightClasses();
+        int totalMeks = 0;
+        for (int count : mekWeights) {
+            totalMeks += count;
+        }
+        if (totalMeks > 0) {
+            logger.debug("[ForceGen][Weight] generated BattleMek weight distribution ({} total): " +
+                        "UltraLight={} Light={} Medium={} Heavy={} Assault={} SuperHeavy={}",
+                  totalMeks,
+                  mekWeights[EntityWeightClass.WEIGHT_ULTRA_LIGHT],
+                  mekWeights[EntityWeightClass.WEIGHT_LIGHT],
+                  mekWeights[EntityWeightClass.WEIGHT_MEDIUM],
+                  mekWeights[EntityWeightClass.WEIGHT_HEAVY],
+                  mekWeights[EntityWeightClass.WEIGHT_ASSAULT],
+                  mekWeights[EntityWeightClass.WEIGHT_SUPER_HEAVY]);
+        }
+        // Append machine-readable rows for weight-mix tuning (logs/forcegen_weights.csv): one row per
+        // weight-classed unit type (Mek/Aero/Vehicle/BA). Logged independently of the Mek-only summary
+        // above so Mek-less forces (solahma/infantry, pure-aero) still record. Per CLUSTER so factions
+        // whose identity lives on the cluster (e.g. CCC's flag-named types) are tagged individually; if
+        // the generated force is a single cluster or smaller, log it directly with its own flags.
+        List<ForceDescriptor> clusters = new ArrayList<>();
+        collectClusters(fd, clusters);
+        int year = (fd.getYear() != null) ? fd.getYear() : -1;
+        if (clusters.isEmpty()) {
+            ForceGenWeightCsv.append(fd.getFaction(), year, fd.getRating(), rolledWeight, clusterFlags,
+                  fd.tallyWeightClassesByType());
+        } else {
+            for (ForceDescriptor cluster : clusters) {
+                String cwc = cluster.getWeightClassCode().isEmpty() ? "RANDOM" : cluster.getWeightClassCode();
+                int cyear = (cluster.getYear() != null) ? cluster.getYear() : year;
+                ForceGenWeightCsv.append(cluster.getFaction(), cyear, cluster.getRating(), cwc,
+                      String.join(";", cluster.getFlags()), cluster.tallyWeightClassesByType());
+            }
+        }
+
+        // Large craft (WarShips/DropShips/JumpShips/Space Stations) are absent from the weight CSV
+        // (no L/M/H/A class), so record them separately with their structural path for naval
+        // verification (logs/forcegen_warships.csv): correct galaxy/reserve nesting, no duplicates,
+        // and EMPTY-point detection.
+        ForceGenWarshipCsv.append(fd);
+
         RandomNameGenerator.getInstance().setChosenFaction(rngFaction);
+    }
+
+    /** CLUSTER echelon level (see forcegenerator/faction_rules/constants.txt). */
+    private static final int CLUSTER_ECHELON = 6;
+
+    /**
+     * Collects every CLUSTER-echelon descriptor in the tree (not descending into a cluster's own subforces), so
+     * weight-mix logging can record one row-set per cluster tagged with that cluster's flags. Used for factions whose
+     * identity lives on the cluster, e.g. Cloud Cobra's named types.
+     *
+     * @param fd  the node to search from
+     * @param out accumulator for cluster nodes found
+     */
+    private static void collectClusters(ForceDescriptor fd, List<ForceDescriptor> out) {
+        Integer echelon = fd.getEchelon();
+        if ((echelon != null) && (echelon == CLUSTER_ECHELON)) {
+            out.add(fd);
+            return;
+        }
+        for (ForceDescriptor sub : fd.getSubForces()) {
+            collectClusters(sub, out);
+        }
+        // Also walk attached forces: a faction's aerospace and naval clusters are often attached to
+        // a galaxy/touman (e.g. Clan Blood Spirit puts all its ASF clusters on the Blood Galaxy),
+        // so without this they never reach the weight log.
+        for (ForceDescriptor att : fd.getAttached()) {
+            collectClusters(att, out);
+        }
     }
 
     /**
@@ -277,7 +450,19 @@ public class Ruleset {
 
         // Any attached support units are then built.
         for (ForceDescriptor sub : fd.getAttached()) {
+            logger.debug("[ForceGen][Attached] buildForceTree ENTER: parent='{}' (esch={} ut={}) " +
+                        "attached='{}' (esch={} ut={} wc={} faction={})",
+                  fd.getName(), fd.getEchelon(), fd.getUnitType(),
+                  sub.getName(), sub.getEchelon(), sub.getUnitType(),
+                  sub.getWeightClass(), sub.getFaction());
+            int subCountBefore = sub.getSubForces().size();
+            int attCountBefore = sub.getAttached().size();
             buildForceTree(sub, l, progress / count);
+            logger.debug("[ForceGen][Attached] buildForceTree DONE:  attached='{}' (esch={}) " +
+                        "produced subForces={} (was {}) attached={} (was {})",
+                  sub.getName(), sub.getEchelon(),
+                  sub.getSubForces().size(), subCountBefore,
+                  sub.getAttached().size(), attCountBefore);
         }
         /*
          * // Each attached formation is essentially a new top-level node
@@ -296,6 +481,32 @@ public class Ruleset {
 
     public int getRatingIndex(String key) {
         return ratingSystem.indexOf(key);
+    }
+
+    /**
+     * Returns the given equipment rating followed by every worse rating in this ruleset's rating system, ordered from
+     * the given rating down to the worst. Used as an equipment-rating fallback ladder during unit generation: a force
+     * tries its own rating first and only steps down to worse-equipped ratings when nothing can be generated, never to
+     * a better rating. If the rating is not part of this system, the list contains only the rating itself.
+     *
+     * @param rating the force's own equipment rating
+     *
+     * @return the rating and all worse ratings, closest first
+     */
+    public List<String> getRatingsAtOrWorseThan(String rating) {
+        List<String> result = new ArrayList<>();
+        int idx = ratingSystem.indexOf(rating);
+        if (idx < 0) {
+            if (rating != null) {
+                result.add(rating);
+            }
+            return result;
+        }
+        // RatingSystem values are ordered worst-to-best, so worse ratings are lower indices.
+        for (int i = idx; i >= 0; i--) {
+            result.add(ratingSystem.vals[i]);
+        }
+        return result;
     }
 
     public Integer getDefaultUnitType(ForceDescriptor fd) {
@@ -385,6 +596,48 @@ public class Ruleset {
         return parent;
     }
 
+    /**
+     * The naming convention declared directly by this ruleset, without consulting its parents. Use
+     * {@link #findNamingTier(int)} for the inherited view that consumers want.
+     *
+     * @return this file's own {@code <formationNaming>} content, empty when it declares none
+     */
+    public FormationNamingConvention getFormationNaming() {
+        return formationNaming;
+    }
+
+    /**
+     * Resolves the naming rule for one echelon, walking the parent chain the same way force-node
+     * lookup does. Resolution is per echelon rather than per file, so a faction that declares a rule
+     * for a single echelon still inherits its parent's rules for all the others.
+     *
+     * @param echelon the echelon to resolve, as stored on the force node (constants already
+     *                substituted)
+     *
+     * @return the nearest declared rule for {@code echelon}, or {@code null} when neither this
+     *       ruleset nor any of its ancestors declares one - in which case the consumer should keep
+     *       whatever name the ruleset's {@code <name>} elements produced
+     */
+    public @Nullable FormationNamingConvention.Tier findNamingTier(int echelon) {
+        Ruleset current = this;
+        // Parent links come from data and are not validated for cycles at load time; cap the walk so a
+        // mis-authored parent="..." pair cannot hang force generation.
+        for (int depth = 0; (current != null) && (depth <= MAX_PARENT_CHAIN_DEPTH); depth++) {
+            FormationNamingConvention.Tier tier = current.formationNaming.getTier(echelon);
+            if (tier != null) {
+                return tier;
+            }
+            String parentFaction = current.getParent();
+            current = (parentFaction == null) ? null : rulesets.get(parentFaction);
+        }
+        if (current != null) {
+            logger.error("[ForceGen][Naming] parent chain for faction {} exceeded {} links while resolving"
+                        + " echelon {}; check the ruleset files for a parent cycle",
+                  faction, MAX_PARENT_CHAIN_DEPTH, echelon);
+        }
+        return null;
+    }
+
     public static void loadConstants(File f) {
         constants = new HashMap<>();
         InputStream is;
@@ -413,9 +666,9 @@ public class Ruleset {
         initializing = true;
         rulesets = new HashMap<>();
 
-        File dir = new File(directory);
+        File dir = new File(Configuration.forceGeneratorDir(), FACTION_RULES_SUBDIR);
         if (!dir.exists()) {
-            logger.error("Could not locate force generator faction rules.");
+            logger.error("Could not locate force generator faction rules at {}.", dir.getPath());
             initializing = false;
             return;
         }
@@ -501,8 +754,9 @@ public class Ruleset {
                 }
             }
         }
-        // Rating system defaults to IS if not present. If present but cannot be parsed,
-        // is set to NONE.
+        // Rating system defaults to IS if not present. An unrecognized value (for example a typo'd
+        // case like "Clan") also falls back to IS - matching the missing-attribute default - and is
+        // logged, rather than silently setting NONE and stripping rating handling from the file.
         if (!elem.getAttribute("ratingSystem").isBlank()) {
             switch (elem.getAttribute("ratingSystem")) {
                 case "IS":
@@ -518,7 +772,10 @@ public class Ruleset {
                     retVal.ratingSystem = RatingSystem.ROS;
                     break;
                 default:
-                    retVal.ratingSystem = RatingSystem.NONE;
+                    logger.warn("Ruleset for faction {} has unrecognized ratingSystem \"{}\"; expected "
+                                + "IS, SL, CLAN, or ROS. Falling back to IS.",
+                          retVal.faction, elem.getAttribute("ratingSystem"));
+                    retVal.ratingSystem = RatingSystem.IS;
                     break;
             }
         } else {
@@ -535,6 +792,9 @@ public class Ruleset {
                     break;
                 case "toc":
                     retVal.toc = TOCNode.createFromXml(wn);
+                    break;
+                case "formationNaming":
+                    retVal.formationNaming = FormationNamingConvention.createFromXml(wn, retVal.faction);
                     break;
                 case "customRanks":
                     for (int y = 0; y < wn.getChildNodes().getLength(); y++) {

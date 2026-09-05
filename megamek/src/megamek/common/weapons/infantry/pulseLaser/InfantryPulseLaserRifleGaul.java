@@ -37,6 +37,7 @@ package megamek.common.weapons.infantry.pulseLaser;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -53,19 +54,20 @@ public class InfantryPulseLaserRifleGaul extends InfantryWeapon {
     public InfantryPulseLaserRifleGaul() {
         super();
 
-        name = "Pulse Laser Rifle (Gaul)";
-        setInternalName(name);
+        name = "Pulse Laser Rifle (GAUL)";
+        setInternalName("Pulse Laser Rifle (Gaul)");
+        addLookupName(name);
         addLookupName("GAUL");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 2200;
         bv = 0.252;
         tonnage = 0.0075;
-        infantryDamage = 0.36;
+        infantryDamage = 0.252;
         infantryRange = 4;
         shots = 7;
         bursts = 6;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        rulesRefs = "Shrapnel #9";
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_9);
 
         techAdvancement
               .setTechBase(TechBase.IS)

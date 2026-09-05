@@ -41,10 +41,12 @@ import megamek.common.TechAdvancement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
+import megamek.common.units.EntityWeightClass;
 import megamek.common.units.Entity;
 import megamek.common.units.LandAirMek;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadVee;
+
 
 /**
  * Represents a Transport Bay (TM p.239) for carrying Meks or LAMs aboard large spacecraft other units.
@@ -72,9 +74,9 @@ public final class MekBay extends UnitBay {
     public boolean canLoad(Entity unit) {
         boolean loadableQuadVee = (unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_MEK);
         boolean loadableLAM = (unit instanceof LandAirMek) && (unit.getConversionMode()
-              != LandAirMek.CONV_MODE_FIGHTER);
+              == LandAirMek.CONV_MODE_MEK);
         boolean loadableOtherMek = (unit instanceof Mek) && !(unit instanceof QuadVee) && !(unit instanceof LandAirMek);
-        return (getUnused() >= 1) && (doors > loadedThisTurn) && (loadableLAM || loadableQuadVee || loadableOtherMek);
+        return (getUnused() >= 1) && (doors > loadedThisTurn) && !unit.isSuperHeavy() && (loadableLAM || loadableQuadVee || loadableOtherMek);
     }
 
     @Override

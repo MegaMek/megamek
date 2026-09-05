@@ -67,11 +67,6 @@ public class BulkUnitFileTest {
     public static void initializeStuff() {
         MekFileParser.initCanonUnitNames();
         EquipmentType.initializeTypes();
-        AmmoType.initializeTypes();
-        ArmorType.initializeTypes();
-        WeaponType.initializeTypes();
-        MiscType.initializeTypes();
-        BombType.initializeTypes();
     }
 
     @ParameterizedTest(name = "{0}")

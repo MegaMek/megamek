@@ -62,7 +62,6 @@ import megamek.common.units.Warship;
 import megamek.common.util.RoundWeight;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayWeapons.BayWeapon;
-import megamek.common.weapons.capitalWeapons.ScreenLauncherWeapon;
 
 /**
  * Validation and construction data for advanced aerospace units (jump ships, warships, space stations)
@@ -101,7 +100,7 @@ public class TestAdvancedAerospace extends TestAero {
      * @return The total number of armor points allowed to the vessel
      */
     public static int maxArmorPoints(Jumpship vessel) {
-        double pointsPerTon = ArmorType.forEntity(vessel).getPointsPerTon();
+        double pointsPerTon = ArmorType.forEntity(vessel).getPointsPerTon(vessel);
         int baseArmor = (int) (pointsPerTon * maxArmorWeight(vessel) + getSIBonusArmorPoints(vessel));
         if (vessel.isPrimitive()) {
             return (int) (baseArmor * 0.66);
@@ -331,29 +330,6 @@ public class TestAdvancedAerospace extends TestAero {
             crew += equipmentCrewRequirements(m);
         }
         return crew;
-    }
-
-    /**
-     * One gunner is required for each capital weapon and each six standard scale weapons, rounding up
-     *
-     * @return The vessel's minimum gunner requirements.
-     */
-    public static int requiredGunners(Jumpship vessel) {
-        int capitalWeapons = 0;
-        int stdWeapons = 0;
-        for (Mounted<?> m : vessel.getTotalWeaponList()) {
-            if ((m.getType() instanceof BayWeapon) || (((WeaponType) m.getType()).getLongRange() <= 1)) {
-                continue;
-            }
-            if (m.getType().hasFlag(WeaponType.F_MASS_DRIVER)) {
-                capitalWeapons += 10;
-            } else if (((WeaponType) m.getType()).isCapital() || (m.getType() instanceof ScreenLauncherWeapon)) {
-                capitalWeapons++;
-            } else {
-                stdWeapons++;
-            }
-        }
-        return capitalWeapons + (int) Math.ceil(stdWeapons / 6.0);
     }
 
     public TestAdvancedAerospace(Jumpship vessel, TestEntityOption option, String fs) {

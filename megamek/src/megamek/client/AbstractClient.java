@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,13 +33,16 @@
 
 package megamek.client;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
+import java.util.function.Consumer;
 import javax.swing.SwingUtilities;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.SuiteConstants;
 import megamek.Version;
@@ -49,6 +52,7 @@ import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameScriptedMessageEvent;
+import megamek.common.event.GameToastEvent;
 import megamek.common.event.player.GamePlayerChangeEvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.event.player.GamePlayerDisconnectedEvent;
@@ -84,6 +88,8 @@ public abstract class AbstractClient implements IClient {
     protected boolean connected = false;
     protected boolean disconnectFlag = false;
     protected boolean awaitingSave = false;
+    /** One-shot listener for the asynchronous local save; see {@link #setSaveCompletionCallback(Consumer)}. */
+    private Consumer<File> saveCompletionCallback;
     protected final String host;
     protected final int port;
     private ConnectionHandler packetUpdate;
@@ -270,6 +276,18 @@ public abstract class AbstractClient implements IClient {
 
     public void sendUnpause() {
         send(new Packet(PacketCommand.UNPAUSE));
+        flushConn();
+    }
+
+    /**
+     * Sends this player's "reveal all artillery rounds" testing preference to the server. When {@code true}, the server
+     * includes enemy artillery attacks in this player's artillery packet so the Rounds in the Air view can show both
+     * sides; when {@code false}, only this player's team's rounds are sent (normal double-blind behavior).
+     *
+     * @param revealAll Whether to reveal all in-flight artillery to this player
+     */
+    public void sendArtilleryRevealPreference(boolean revealAll) {
+        send(new Packet(PacketCommand.CLIENT_ARTILLERY_REVEAL, revealAll));
         flushConn();
     }
 
@@ -521,6 +539,12 @@ public abstract class AbstractClient implements IClient {
                           (String) packet.getObject(1),
                           (Base64Image) packet.getObject(2)));
                     break;
+                case SEND_TOAST:
+                    getGame().fireGameEvent(new GameToastEvent(this,
+                          (GameToastEvent.Level) packet.getObject(0),
+                          (String) packet.getObject(1),
+                          packet.getIntValue(2)));
+                    break;
                 default:
                     return false;
             }
@@ -588,6 +612,39 @@ public abstract class AbstractClient implements IClient {
     public boolean isAwaitingSave() {
         return awaitingSave;
     }
+
+    /**
+     * Registers a one-shot callback to be run once a requested local save has actually landed on disk.
+     *
+     * <p>Saving is asynchronous in MegaMek: the request goes to the server as a chat command, the server serializes
+     * the game, and the resulting file is streamed back to this client, which then writes it out. A caller that needs
+     * the finished file - the bug report packager, for instance - therefore cannot simply read it after asking for
+     * the save, because at that moment it does not yet exist.</p>
+     *
+     * <p>The callback is cleared as it fires, so it runs at most once per registration. Registering a new callback
+     * replaces any previous one.</p>
+     *
+     * @param saveCompletionCallback invoked with the saved file, or with {@code null} if the save could not be
+     *                               written; pass {@code null} to cancel a pending registration
+     */
+    public void setSaveCompletionCallback(@Nullable Consumer<File> saveCompletionCallback) {
+        this.saveCompletionCallback = saveCompletionCallback;
+    }
+
+    /**
+     * Runs and clears any registered save-completion callback. Safe to call when none is registered, and safe to call
+     * more than once for a single save.
+     *
+     * @param savedFile the file that was written, or {@code null} if the save failed
+     */
+    protected void fireSaveCompleted(@Nullable File savedFile) {
+        Consumer<File> callback = saveCompletionCallback;
+        saveCompletionCallback = null;
+        if (callback != null) {
+            callback.accept(savedFile);
+        }
+    }
+
     /**
      * Custom connection Listener for AbstractClient
      *

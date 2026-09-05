@@ -291,6 +291,19 @@ public class AbandonUnitDialog extends JDialog implements ActionListener {
         boardView.repaint();
     }
 
+    /**
+     * {@code true} once Confirm announced at least one abandonment, so the caller can confirm a declaration was
+     * made.
+     */
+    private boolean applied;
+
+    /**
+     * @return {@code true} if Confirm announced at least one unit abandonment this time the dialog was shown
+     */
+    public boolean wasApplied() {
+        return applied;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnConfirm) {
@@ -299,6 +312,7 @@ public class AbandonUnitDialog extends JDialog implements ActionListener {
                 if (entry.getValue().isSelected()) {
                     clientGUI.getClient().sendUnitAbandonmentAnnouncement(entry.getKey());
                     logger.debug("Sent abandonment announcement for unit ID: {}", entry.getKey());
+                    applied = true;
                 }
             }
             clearHighlighting();

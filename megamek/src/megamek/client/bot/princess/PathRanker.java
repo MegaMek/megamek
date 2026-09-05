@@ -42,16 +42,20 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import megamek.client.bot.BotLogger;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.common.MPCalculationSetting;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -71,6 +75,23 @@ import org.apache.logging.log4j.Level;
 public abstract class PathRanker implements IPathRanker {
     private final static MMLogger logger = MMLogger.create(PathRanker.class);
     private static final BotLogger botLogger = new BotLogger();
+
+    // Fraction of a failed water-entry piloting roll treated as an acceptable (non-damaging) outcome: falling
+    // when wading only drops the unit prone in the water (minor damage, stand next turn) rather than a real
+    // fall. The forgiveness is scaled by water depth - a fall in a shallow ford is nearly harmless, but is
+    // progressively worse in deeper water (where the separately-scored submerged-location breach hazard also
+    // applies). This keeps Princess willing to wade a shallow river to engage instead of pacing at the bank
+    // (issue #7627) without making her reckless in deep water.
+    private static final double WATER_FALL_FORGIVENESS_DEPTH_1 = 0.95;
+    private static final double WATER_FALL_FORGIVENESS_PER_DEPTH = 0.20;
+    private static final double WATER_FALL_FORGIVENESS_FLOOR = 0.30;
+    // Matches the "entering Depth N Water" piloting-roll description built in Entity.checkWaterMove.
+    private static final Pattern WATER_ENTRY_DEPTH_PATTERN = Pattern.compile("entering depth (\\d+)");
+    // Piloting-roll descriptions emitted for gravity overspeed (see Entity.checkMovedTooFast and
+    // SharedUtility.getPSRList). Matched lower-cased to add the self-inflicted leg damage into a path's
+    // expected damage taken. Kept as literals because the engine emits them as raw strings, not i18n keys.
+    private static final String PSR_DESC_GRAVITY_TOO_FAST = "used more mps than at 1g possible";
+    private static final String PSR_DESC_GRAVITY_HIGH_JUMP = "jumped in high gravity";
     // TODO: Introduce PathRankerCacheHelper class that contains "global" path
     // ranker state
     // TODO: Introduce FireControlCacheHelper class that contains "global" Fire
@@ -86,7 +107,53 @@ public abstract class PathRanker implements IPathRanker {
         Basic,
         Infantry,
         NewtonianAerospace,
-        Utility
+        Utility,
+        /**
+         * Airborne aerospace units flying in an atmosphere, on either a ground mapsheet or a low-altitude
+         * map. Distinct from {@link #NewtonianAerospace}, which covers vector movement instead.
+         *
+         * <p>Princess registers its ordinary {@link BasicPathRanker} here, so this slot changes nothing for
+         * it; the slot exists so that CASPAR can replace atmospheric aerospace movement on its own.</p>
+         */
+        Aerospace
+    }
+
+    /**
+     * The posture already resolved for this board this round, or {@code null} when none has been.
+     *
+     * <p>Read-only by contract: implementations must not resolve a posture that has not been asked for, since
+     * resolving announces it. Overridden by {@link BasicPathRanker}; there is nothing to report here.</p>
+     *
+     * @param game    the current game
+     * @param boardId the board to report on
+     *
+     * @return the resolved posture, or {@code null}
+     */
+    protected @Nullable CombatPosture resolvedPostureFor(Game game, int boardId) {
+        return null;
+    }
+
+    /**
+     * Whether each of this bot's units is fighting offensively or defensively, for the log.
+     *
+     * <p>Both values are read as already decided, never computed here. A unit that has not been evaluated yet
+     * this turn reports nothing rather than an answer invented for the logger's benefit.</p>
+     *
+     * @param game the current game
+     *
+     * @return entity id to its logged context, for this bot's units only
+     */
+    private Map<Integer, BotLogger.UnitContext> ownUnitContexts(Game game) {
+        Map<Integer, BotLogger.UnitContext> contexts = new HashMap<>();
+        UnitBehavior behaviorTracker = getOwner().getUnitBehaviorTracker();
+        for (Entity ownedUnit : getOwner().getEntitiesOwned()) {
+            UnitBehavior.BehaviorType behavior = behaviorTracker.getCachedBehaviorType(ownedUnit);
+            CombatPosture posture = resolvedPostureFor(game, ownedUnit.getBoardId());
+            contexts.put(ownedUnit.getId(),
+                  new BotLogger.UnitContext(behavior == null ? "" : behavior.name(),
+                        posture == null ? "" : posture.name()));
+        }
+        return contexts;
     }
 
     private final Princess owner;
@@ -173,7 +240,7 @@ public abstract class PathRanker implements IPathRanker {
             logger.error(exception, exception.getMessage());
             return returnPaths;
         }
-        botLogger.append(game, true);
+        botLogger.append(game, true, ownUnitContexts(game));
         // log at most 500 paths
         int i = 0;
         int maxRankedPaths = Math.max(500, returnPaths.size());
@@ -185,7 +252,62 @@ public abstract class PathRanker implements IPathRanker {
             i++;
         }
 
+        logSprintDecisionSummary(returnPaths);
+
         return returnPaths;
+    }
+
+    /**
+     * Logs a one-line, debug-level summary of the sprint decision for a unit's move: whether the best-ranked path
+     * sprints, how many candidate paths end in a sprint, how many of those were penalized for ending inside enemy
+     * weapon range, and the best sprint vs. non-sprint ranks. This makes the bot's sprint reasoning visible without
+     * wading through per-path trace output; the full per-path detail is in the BotLogger TSV columns
+     * ({@code isSprinting}, {@code sprintExposurePenalty}, {@code sprintThreatEnemyId}, {@code sprintThreatDistance},
+     * {@code sprintThreatRange}) and each ranked path's reason string.
+     *
+     * @param rankedPaths the ranked paths for this unit's move, best first
+     */
+    private void logSprintDecisionSummary(TreeSet<RankedPath> rankedPaths) {
+        if (rankedPaths.isEmpty() || !logger.isLevelLessSpecificThan(Level.INFO)) {
+            return;
+        }
+
+        int sprintPathCount = 0;
+        int penalizedPathCount = 0;
+        RankedPath bestSprintPath = null;
+        RankedPath bestNonSprintPath = null;
+
+        for (RankedPath rankedPath : rankedPaths) {
+            if (BasicPathRanker.isSprintingPath(rankedPath.getPath())) {
+                sprintPathCount++;
+                Double sprintExposurePenalty = rankedPath.getScores().get("sprintExposurePenalty");
+                if ((sprintExposurePenalty != null) && (sprintExposurePenalty > 0)) {
+                    penalizedPathCount++;
+                }
+                if (bestSprintPath == null) {
+                    bestSprintPath = rankedPath;
+                }
+            } else if (bestNonSprintPath == null) {
+                bestNonSprintPath = rankedPath;
+            }
+        }
+
+        RankedPath bestPath = rankedPaths.first();
+        // The score breakdown (getReason) answers "why did this unit move here?" - include it at debug so a playtest
+        // can see the winning path's factors without enabling the per-path trace flood.
+        logger.debug("[Move] {}: best path ends {} ({}, rank {}); {} of {} candidate paths sprint, "
+                    + "{} sprint paths penalized for ending in enemy weapon range; "
+                    + "best sprint rank {}, best non-sprint rank {}. Breakdown: {}",
+              bestPath.getPath().getEntity().getDisplayName(),
+              bestPath.getPath().getFinalCoords(),
+              BasicPathRanker.isSprintingPath(bestPath.getPath()) ? "SPRINTS" : "does not sprint",
+              bestPath.getRank(),
+              sprintPathCount,
+              rankedPaths.size(),
+              penalizedPathCount,
+              (bestSprintPath == null) ? "n/a" : bestSprintPath.getRank(),
+              (bestNonSprintPath == null) ? "n/a" : bestNonSprintPath.getRank(),
+              bestPath.getReason());
     }
 
     private List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange,
@@ -336,10 +458,15 @@ public abstract class PathRanker implements IPathRanker {
                 unmovedDistanceModifier = enemy.getWalkMP();
             }
 
+            // "Closest" is measured by the adjusted distance (an unmoved enemy is treated as farther, since it can
+            // still move away), so store the same adjusted value we compare against - not the raw distance. The
+            // minDistance filter is a "not within N raw hexes" gate (e.g. the not-zero-distance facing target), so
+            // it is tested against the raw hex distance, otherwise a same-hex enemy could pass it via its movement
+            // allowance.
             int distance = position.distance(enemy.getPosition());
-            if (((distance + unmovedDistanceModifier) < range) && ((distance + unmovedDistanceModifier)
-                  >= minDistance)) {
-                range = distance;
+            int adjustedDistance = distance + unmovedDistanceModifier;
+            if ((adjustedDistance < range) && (distance >= minDistance)) {
+                range = adjustedDistance;
                 closest = enemy;
             }
         }
@@ -393,10 +520,11 @@ public abstract class PathRanker implements IPathRanker {
         logger.trace("Calculating Move Path Success for {}", pathCopy);
 
         for (TargetRoll roll : pilotingRolls) {
+            String rollDescription = roll.getDesc().toLowerCase();
             // Skip the getting up check. That's handled when checking for being immobile.
-            if (roll.getDesc().toLowerCase().contains("getting up")) {
+            if (rollDescription.contains("getting up")) {
                 continue;
-            } else if (roll.getDesc().toLowerCase().contains("careful stand")) {
+            } else if (rollDescription.contains("careful stand")) {
                 continue;
             }
             boolean naturalAptPilot = movePath.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
@@ -405,6 +533,14 @@ public abstract class PathRanker implements IPathRanker {
             }
 
             double odds = Compute.oddsAbove(roll.getValue(), naturalAptPilot) / 100d;
+            // A failed water-entry roll only drops the unit prone in the water rather than causing a damaging
+            // fall, so treat most of that chance as an acceptable outcome - more so the shallower the water.
+            // Otherwise an 8% wet-fall reads as a catastrophe (fall chance x fallShame) and Princess refuses to
+            // wade even a shallow river (issue #7627).
+            if (rollDescription.contains("entering depth")) {
+                double forgiveness = waterFallForgiveness(waterEntryDepth(rollDescription));
+                odds += (1.0 - odds) * forgiveness;
+            }
             logger.trace("Odds above {} = {}", roll.getValue(), odds);
             successProbability *= odds;
         }
@@ -432,10 +568,50 @@ public abstract class PathRanker implements IPathRanker {
     }
 
     /**
+     * The fraction of a failed water-entry piloting roll treated as an acceptable (non-damaging) outcome,
+     * scaled by water depth. A fall while wading only drops the unit prone in the water, which is nearly
+     * harmless in a shallow ford but progressively worse in deeper water; the forgiveness therefore shrinks
+     * as depth grows and never drops below {@link #WATER_FALL_FORGIVENESS_FLOOR}.
+     *
+     * @param waterDepth the depth (in levels) of the water being entered
+     *
+     * @return the forgiveness fraction, between {@link #WATER_FALL_FORGIVENESS_FLOOR} and
+     *       {@link #WATER_FALL_FORGIVENESS_DEPTH_1}
+     */
+    private static double waterFallForgiveness(int waterDepth) {
+        int depthBeyondFirst = Math.max(0, waterDepth - 1);
+        double forgiveness = WATER_FALL_FORGIVENESS_DEPTH_1 - (depthBeyondFirst * WATER_FALL_FORGIVENESS_PER_DEPTH);
+        return Math.max(WATER_FALL_FORGIVENESS_FLOOR, forgiveness);
+    }
+
+    /**
+     * Extracts the water depth from a water-entry piloting-roll description of the form
+     * {@code "entering Depth N Water"} (see {@code Entity.checkWaterMove}).
+     *
+     * @param rollDescription the lower-cased roll description
+     *
+     * @return the parsed depth, or {@code 1} (shallowest) if the description cannot be parsed
+     */
+    private static int waterEntryDepth(String rollDescription) {
+        Matcher matcher = WATER_ENTRY_DEPTH_PATTERN.matcher(rollDescription);
+        if (matcher.find()) {
+            try {
+                return Integer.parseInt(matcher.group(1));
+            } catch (NumberFormatException numberFormatException) {
+                // The capture is all digits, so this only happens on an implausibly large value that overflows
+                // an int; treat it as the shallowest depth rather than failing.
+                return 1;
+            }
+        }
+        return 1;
+    }
+
+    /**
      * Estimates the most expected damage that a path could cause, given the pilot skill of the path ranker and various
      * conditions.
      * <p>
-     * XXX Sleet01: add fall pilot damage, skid damage, and low-gravity overspeed damage calcs
+     * XXX Sleet01: add fall pilot damage and skid damage calcs (low-/high-gravity overspeed leg damage is
+     * handled below via {@link #predictGravityOverspeedDamage}).
      */
     protected double calculateMovePathPSRDamage(Entity movingEntity, MovePath path) {
         double damage = 0.0;
@@ -452,10 +628,65 @@ public abstract class PathRanker implements IPathRanker {
                   description.contains(Messages.getString("TacOps.leaping.fall_damage"))
             ) {
                 damage += predictLeapFallDamage(movingEntity, roll);
+            } else if (
+                  description.contains(PSR_DESC_GRAVITY_TOO_FAST)
+                        || description.contains(PSR_DESC_GRAVITY_HIGH_JUMP)
+            ) {
+                damage += predictGravityOverspeedDamage(movingEntity, path, roll);
             }
         }
 
         return damage;
+    }
+
+    /**
+     * Predicts the self-inflicted leg internal-structure damage Princess would take if she failed the gravity
+     * "overspeed" piloting roll on this path. On low-gravity worlds a unit can run or jump farther than its 1G
+     * rating allows, and on high-gravity worlds a jump that costs it walk MP triggers a roll; failing either
+     * deals extreme-gravity damage to the legs (1 point per MP over the 1G limit for ground or low-gravity
+     * jumps, or {@code (1G walk MP - gravity walk MP) / 2} for a high-gravity jump).
+     *
+     * <p>Unlike the leaping rolls, the gravity roll does not encode the damage magnitude in its value (see
+     * {@link Entity#checkMovedTooFast}), so it is recomputed from the path's final step. The result is
+     * weighted by the chance of failing the roll, matching {@code predictLeapDamage}.</p>
+     *
+     * @param movingEntity the unit whose path is being ranked
+     * @param path         the candidate path
+     * @param roll         the gravity overspeed piloting roll from {@link #getPSRList(MovePath)}
+     *
+     * @return the odds-weighted expected leg damage, or {@code 0} if the path does not actually overspeed
+     */
+    private double predictGravityOverspeedDamage(Entity movingEntity, MovePath path, TargetRoll roll) {
+        MoveStep lastStep = path.getLastStep();
+        if (lastStep == null) {
+            return 0.0;
+        }
+
+        String description = roll.getLastPlainDesc().toLowerCase();
+        int overspeedMP;
+        if (description.contains(PSR_DESC_GRAVITY_HIGH_JUMP)) {
+            // High-gravity jump: half the walk MP lost to gravity (TO:AR gravity rules).
+            overspeedMP = (movingEntity.getWalkMP(MPCalculationSetting.NO_GRAVITY) - movingEntity.getWalkMP()) / 2;
+        } else if (path.isJumping()) {
+            // Low-gravity jump overspeed: MP used beyond the 1G jump rating. A mechanical jump booster uses
+            // its own no-gravity rating, matching the server extreme-gravity damage calculation.
+            int noGravityJumpMP = lastStep.isUsingMekJumpBooster()
+                  ? movingEntity.getMechanicalJumpBoosterMP(MPCalculationSetting.NO_GRAVITY)
+                  : movingEntity.getJumpMP(MPCalculationSetting.NO_GRAVITY);
+            overspeedMP = lastStep.getMpUsed() - noGravityJumpMP;
+        } else {
+            // Low-gravity ground overspeed: MP used beyond the 1G running limit. The server's extreme-gravity
+            // damage uses getRunningGravityLimit() directly (no pavement/road adjustment), so mirror it.
+            overspeedMP = lastStep.getMpUsed() - movingEntity.getRunningGravityLimit();
+        }
+
+        if (overspeedMP <= 0) {
+            return 0.0;
+        }
+
+        // Each excess MP costs 1 point of leg internal structure on a failed roll; weight by failure chance.
+        double failureProbability = 1.0 - (Compute.oddsAbove(roll.getValue(), false) / 100.0);
+        return overspeedMP * failureProbability;
     }
 
     protected List<TargetRoll> getPSRList(MovePath path) {

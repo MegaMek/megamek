@@ -64,6 +64,8 @@ class UnitTypeSearchTab extends JPanel {
           "MekSelectorDialog.Search.Quad"));
     final FlatTriStateCheckBox btnFilterQuadVee = new SearchTriStateCheckBox(Messages.getString(
           "MekSelectorDialog.Search.QuadVee"));
+    final FlatTriStateCheckBox btnFilterFrankenMek = new SearchTriStateCheckBox(Messages.getString(
+          "MekSelectorDialog.Search.FrankenMek"));
     final FlatTriStateCheckBox btnFilterAero = new SearchTriStateCheckBox(Messages.getString(
           "MekSelectorDialog.Search.Aero"));
     final FlatTriStateCheckBox btnFilterAerospaceFighter = new SearchTriStateCheckBox(Messages.getString(
@@ -151,8 +153,11 @@ class UnitTypeSearchTab extends JPanel {
         gbc.gridy++;
         gbc.gridx = 1;
         add(btnFilterTripod, gbc);
+        gbc.gridx = 2;
+        add(btnFilterFrankenMek, gbc);
 
         gbc.gridy++;
+        gbc.gridx = 1;
         add(btnFilterQuad, gbc);
         gbc.gridx = 2;
         add(btnFilterQuadVee, gbc);
@@ -273,6 +278,7 @@ class UnitTypeSearchTab extends JPanel {
         btnFilterTripod.setState(state.tripod);
         btnFilterQuad.setState(state.quad);
         btnFilterQuadVee.setState(state.quadVee);
+        btnFilterFrankenMek.setState(state.frankenMek);
         btnFilterAero.setState(state.aero);
         btnFilterFixedWingSupport.setState(state.fixedWingSupport);
         btnFilterConvFighter.setState(state.convFighter);
@@ -313,6 +319,7 @@ class UnitTypeSearchTab extends JPanel {
         state.tripod = btnFilterTripod.getState();
         state.quad = btnFilterQuad.getState();
         state.quadVee = btnFilterQuadVee.getState();
+        state.frankenMek = btnFilterFrankenMek.getState();
         state.aero = btnFilterAero.getState();
         state.fixedWingSupport = btnFilterFixedWingSupport.getState();
         state.convFighter = btnFilterConvFighter.getState();

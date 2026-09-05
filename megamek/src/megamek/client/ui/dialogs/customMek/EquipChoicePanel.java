@@ -63,10 +63,12 @@ import megamek.client.ui.GBC2;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.phaseDisplay.EcmSuiteChoiceDialog;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.AmmoTypeFlag;
@@ -129,8 +131,14 @@ public class EquipChoicePanel extends JPanel {
     private final JCheckBox chEICockpit = new JCheckBox(Messages.getString("CustomMekDialog.labEICockpit"));
     private final JCheckBox chDamageInterruptCircuit
           = new JCheckBox(Messages.getString("CustomMekDialog.labDamageInterruptCircuit"));
-    /** Ghost target equipment mode selectors, keyed by equipment number on the entity. */
+    /**
+     * Mode selectors for the equipment shown in the ECM section - ECM suites, active probes, C3 gear, comms gear and
+     * the command console - keyed by equipment number on the entity. The ECM suites among them also drive the
+     * single-suite conflict check.
+     */
     private final Map<Integer, JComboBox<String>> ecmModeSelectors = new LinkedHashMap<>();
+    /** Set while the ECM dropdowns are being changed in code, so those changes do not re-trigger the conflict check. */
+    private boolean adjustingEcmModes;
     private final JComboBox<String> choC3 = new JComboBox<>();
     ClientGUI clientgui;
     Client client;
@@ -169,6 +177,10 @@ public class EquipChoicePanel extends JPanel {
         if ((entity instanceof BattleArmor battleArmor)) {
             List<WeaponType> apmWeaponTypes = new Vector<>(100);
             List<WeaponType> agloveWeaponTypes = new Vector<>(100);
+            // Disposable Weapons (TO:AuE p.116, Corrected Sixth Printing) - support-class disposables may be
+            // AP-mounted only with the rule on
+            boolean disposableRuleEnabled = entity.getGame().getOptions()
+                  .booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS);
             int gameYear;
             SimpleTechLevel legalLevel;
             if (clientgui == null) {
@@ -196,11 +208,31 @@ public class EquipChoicePanel extends JPanel {
                     continue;
                 }
 
-                if (!infantryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)) {
-                    apmWeaponTypes.add(infantryWeapon);
+                boolean isDisposable = infantryWeapon.hasFlag(WeaponType.F_INF_DISPOSABLE);
+                // Disposable Weapons (TO:AuE p.116, Corrected Sixth Printing) are only offered while the rule is on;
+                // normal AP weapons are unaffected. AP mounts take non-support weapons (or any disposable); gloves
+                // take crew < 2 weapons.
+                if (!isDisposable || disposableRuleEnabled) {
+                    if (!infantryWeapon.hasFlag(WeaponType.F_INF_SUPPORT) || isDisposable) {
+                        apmWeaponTypes.add(infantryWeapon);
+                    }
+                    if (infantryWeapon.getCrew() < 2) {
+                        agloveWeaponTypes.add(infantryWeapon);
+                    }
                 }
-                if (infantryWeapon.getCrew() < 2) {
-                    agloveWeaponTypes.add(infantryWeapon);
+            }
+            // Preserve any currently-mounted AP/glove weapon the rule gating would otherwise hide, so opening
+            // Configure with the rule off never silently drops an existing weapon.
+            for (Mounted<?> misc : entity.getMisc()) {
+                if ((misc.getLinked() == null)
+                      || !(misc.getLinked().getType() instanceof WeaponType linkedWeaponType)) {
+                    continue;
+                }
+                if (misc.is(EquipmentTypeLookup.BA_APM) && !apmWeaponTypes.contains(linkedWeaponType)) {
+                    apmWeaponTypes.add(linkedWeaponType);
+                }
+                if (misc.getType().hasFlag(MiscType.F_ARMORED_GLOVE) && !agloveWeaponTypes.contains(linkedWeaponType)) {
+                    agloveWeaponTypes.add(linkedWeaponType);
                 }
             }
             apmWeaponTypes.sort(Comparator.comparing(EquipmentType::getName));
@@ -482,7 +514,9 @@ public class EquipChoicePanel extends JPanel {
                 continue;
             }
             int nodes = e.calculateFreeC3Nodes();
-            if (e.hasC3MM() && entity.hasC3M() && e.C3MasterIs(e)) {
+            if (entity.hasC3M() && e.C3MasterIs(e)) {
+                // A master joining a company commander occupies a company-level master link - also for
+                // single-computer company masters (CR p.198, Configuration 1)
                 nodes = e.calculateFreeC3MNodes();
             }
             if (entity.C3MasterIs(e) && !entity.equals(e)) {
@@ -629,8 +663,41 @@ public class EquipChoicePanel extends JPanel {
                     bTechMatch = atCheck.getStaticTechLevel().ordinal() <= legalLevel.ordinal() && canUseThisAmmo;
                 }
 
-                // If clan_ignore_eq_limits is unchecked, do NOT allow Clans to use IS-only ammo.
                 EnumSet<AmmoType.Munitions> munitionsTypes = atCheck.getMunitionType();
+
+                boolean bTWRules = false;
+                IOption rules_system = gameOpts.getOption(OptionsConstants.RULES_SYSTEM);
+                String rules_selected = (rules_system == null) ? OptionsConstants.RULES_CORE :
+                      rules_system.stringValue();
+                if (OptionsConstants.RULES_TW.equals(rules_selected)) {
+                    bTWRules = true;
+                }
+                if (bTWRules) {
+                    // Check if the ammo type is caseless, and do not include it if it is.
+                    if (atCheck.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY
+                          && munitionsTypes.contains(AmmoType.Munitions.M_CASELESS)) {
+                        continue;
+                    }
+
+                    // Check for advanced Thunderbolt ammos and skip them if Core is not enabled
+                    switch (atCheck.getAmmoType()) {
+                        case AmmoType.AmmoTypeEnum.TBOLT_5:
+                        case AmmoType.AmmoTypeEnum.TBOLT_10:
+                        case AmmoType.AmmoTypeEnum.TBOLT_15:
+                        case AmmoType.AmmoTypeEnum.TBOLT_20:
+                            if (munitionsTypes.contains(AmmoType.Munitions.M_SEMIGUIDED)) {
+                                continue;
+                            }
+                            if (munitionsTypes.contains(AmmoType.Munitions.M_NARC_CAPABLE)) {
+                                continue;
+                            }
+                            if (munitionsTypes.contains(AmmoType.Munitions.M_THUNDER)) {
+                                continue;
+                            }
+                    }
+                }
+
+                // If clan_ignore_eq_limits is unchecked, do NOT allow Clans to use IS-only ammo.
                 if (!gameOpts.booleanOption(OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH) &&
                       entity.isClan() &&
                       atCheck.notAllowedByClanRules()) {
@@ -648,7 +715,8 @@ public class EquipChoicePanel extends JPanel {
                     continue;
                 }
 
-                if (!gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS) &&
+                if (!Game.rulesManager.getRulesGame()
+                      .allowMinefields(gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) &&
                       AmmoType.canDeliverMinefield(atCheck)) {
                     continue;
                 }
@@ -1024,6 +1092,10 @@ public class EquipChoicePanel extends JPanel {
             }
         }
 
+        // Both ECM dropdowns can still be showing a suite in use at this point, because every suite starts in its
+        // ECM mode and the player never had to touch either one. Ask before the modes are applied.
+        askWhichEcmSuiteToKeep(null);
+
         // Apply ghost target equipment mode selections
         applyEcmModes();
 
@@ -1111,9 +1183,10 @@ public class EquipChoicePanel extends JPanel {
     }
 
     /**
-     * Sets up mode dropdowns for ECM equipment. Covers plain ECM/ECCM mode selection as well as Ghost Targets modes
-     * (TO:AR p.100) when that game option is enabled. Also includes Communications Equipment (7+ tons) and Cockpit
-     * Command Console when they can be set to Ghost Targets mode.
+     * Sets up mode dropdowns for electronic warfare equipment. Covers plain ECM/ECCM mode selection as well as Ghost
+     * Targets modes (TO:AR p.100) when that game option is enabled, active probes and Nova CEWS with their
+     * activation/deactivation ("Off") modes, Communications Equipment (7+ tons) and Cockpit Command Console when they
+     * can be set to Ghost Targets mode.
      */
     private void setupEcmModes(Game game, GBC2 gbc) {
         boolean hasEccmOption = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_ECCM);
@@ -1128,11 +1201,14 @@ public class EquipChoicePanel extends JPanel {
                 continue;
             }
             MiscType type = equipment.getType();
+            if (type == null) {
+                continue;
+            }
             List<String> modes = new ArrayList<>();
 
             if (type.hasFlag(MiscType.F_ECM) && !type.hasFlag(MiscType.F_NOVA)) {
                 // ECM / Angel ECM
-                modes.add("ECM");
+                modes.add(MiscType.MODE_ECM);
                 if (hasEccmOption) {
                     modes.add("ECCM");
                     if (type.hasFlag(MiscType.F_ANGEL_ECM)) {
@@ -1149,6 +1225,10 @@ public class EquipChoicePanel extends JPanel {
                         modes.add("Ghost Targets");
                     }
                 }
+                // An ECM suite cannot start deactivated while the stealth armor system is engaged or engaging
+                if (!EquipmentActivation.isStealthOnOrActivating(entity)) {
+                    modes.add(Mounted.MODE_OFF);
+                }
             } else if (hasGhostTargetOption
                   && type.hasFlag(MiscType.F_COMMUNICATIONS)
                   && (entity.getTotalCommGearTons() >= 7)) {
@@ -1160,12 +1240,23 @@ public class EquipChoicePanel extends JPanel {
             } else if (hasGhostTargetOption && type.hasFlag(MiscType.F_COMMAND_CONSOLE)) {
                 modes.add("Default");
                 modes.add("Ghost Targets");
+            } else if ((type.hasFlag(MiscType.F_BAP) || type.hasFlag(MiscTypeFlag.ANY_C3))
+                  && (type.getModesCount() > 1)) {
+                // Active probes, Nova CEWS (which carries F_BAP but is excluded from the ECM branch above) and C3
+                // computers can be activated/deactivated at game start; offer the modes defined on the equipment
+                // type itself
+                for (int modeIndex = 0; modeIndex < type.getModesCount(); modeIndex++) {
+                    modes.add(type.getMode(modeIndex).getName());
+                }
             }
 
             if (modes.size() > 1) {
                 int equipmentNumber = entity.getEquipmentNum(equipment);
                 JComboBox<String> combo = new JComboBox<>(modes.toArray(new String[0]));
                 combo.setSelectedItem(equipment.curMode().getName());
+                if (type.hasFlag(MiscType.F_ECM)) {
+                    combo.addActionListener(event -> resolveEcmSuiteConflict(equipmentNumber));
+                }
 
                 JLabel label = new JLabel(equipment.getName() + ":", SwingConstants.RIGHT);
                 add(label, gbc.forLabel());
@@ -1176,7 +1267,112 @@ public class EquipChoicePanel extends JPanel {
 
         if (ecmModeSelectors.isEmpty()) {
             remove(title);
+        } else if (selectedEcmSuitesInUse().size() > 1) {
+            // The panel can open with two suites already in use, since every ECM suite starts in its ECM mode.
+            // Say so here rather than leaving the player to find out when the game starts.
+            add(new JLabel(Messages.getString("CustomMekDialog.ecmOneAtATime")), gbc.fullLine());
         }
+    }
+
+    /**
+     * Asks the player which ECM suite to leave on when the dropdown they just changed would put a second one into
+     * use, and sets every other ECM dropdown to {@code "Off"}. A unit may use only one ECM suite at a time, of any
+     * type (TM p.213, CO p.200), and every mode other than {@code "Off"} counts as using the suite.
+     *
+     * <p>Cancelling sets the dropdown the player just changed to {@code "Off"}, which is the one choice that is
+     * always legal. While the stealth armor system is engaged no ECM suite may be switched off at all, so the
+     * dropdowns offer no {@code "Off"} entry and there is nothing to resolve here; the server sorts that unit out
+     * when the game starts.</p>
+     *
+     * @param changedEquipmentNumber the equipment number of the ECM suite whose dropdown the player just changed
+     */
+    private void resolveEcmSuiteConflict(int changedEquipmentNumber) {
+        if (adjustingEcmModes) {
+            return;
+        }
+        JComboBox<String> changedCombo = ecmModeSelectors.get(changedEquipmentNumber);
+        if ((changedCombo != null) && !Mounted.MODE_OFF.equals(changedCombo.getSelectedItem())) {
+            askWhichEcmSuiteToKeep(changedCombo);
+        }
+    }
+
+    /**
+     * Opens the choice dialog when the ECM dropdowns have more than one suite in use, and sets every dropdown but the
+     * one the player keeps to {@code "Off"}.
+     *
+     * <p>This runs both when the player changes a dropdown and when they confirm the customization. The second case
+     * is needed because every ECM suite starts in its {@code "ECM"} mode, so a unit carrying two of them opens this
+     * panel already showing both in use - the player can confirm without touching either dropdown, and nothing would
+     * have fired the change check.</p>
+     *
+     * <p>While the stealth armor system is engaged no ECM suite may be switched off at all, so the dropdowns offer no
+     * {@code "Off"} entry and there is nothing to resolve here; the server sorts that unit out when the game
+     * starts.</p>
+     *
+     * @param changedCombo the dropdown the player just changed, or {@code null} when the check runs because the
+     *                     customization is being confirmed. Cancelling switches off the changed dropdown, or, with
+     *                     nothing to revert, keeps the suite the game itself would have kept
+     */
+    private void askWhichEcmSuiteToKeep(@Nullable JComboBox<String> changedCombo) {
+        if (EquipmentActivation.isStealthOnOrActivating(entity)) {
+            return;
+        }
+        Map<MiscMounted, String> suitesInUse = selectedEcmSuitesInUse();
+        if (suitesInUse.size() < 2) {
+            return;
+        }
+
+        MiscMounted keptSuite = EcmSuiteChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(), entity,
+              suitesInUse);
+        adjustingEcmModes = true;
+        try {
+            if (keptSuite == null) {
+                if (changedCombo != null) {
+                    changedCombo.setSelectedItem(Mounted.MODE_OFF);
+                    return;
+                }
+                keptSuite = EquipmentActivation.preferredEcmSuite(new ArrayList<>(suitesInUse.keySet()));
+                if (keptSuite == null) {
+                    return;
+                }
+            }
+            for (MiscMounted suite : suitesInUse.keySet()) {
+                if (suite.equals(keptSuite)) {
+                    continue;
+                }
+                JComboBox<String> combo = ecmModeSelectors.get(entity.getEquipmentNum(suite));
+                if (combo != null) {
+                    combo.setSelectedItem(Mounted.MODE_OFF);
+                }
+            }
+        } finally {
+            adjustingEcmModes = false;
+        }
+    }
+
+    /**
+     * Returns the ECM suites the dropdowns currently have in use, each mapped to the mode selected for it. The modes
+     * are read from the dropdowns rather than the equipment because the customization has not been applied yet.
+     *
+     * @return the suites in use, in mount order
+     */
+    private Map<MiscMounted, String> selectedEcmSuitesInUse() {
+        Map<MiscMounted, String> suitesInUse = new LinkedHashMap<>();
+        for (MiscMounted suite : entity.getMisc()) {
+            MiscType suiteType = suite.getType();
+            if ((suiteType == null) || !suiteType.hasFlag(MiscType.F_ECM)) {
+                continue;
+            }
+            JComboBox<String> combo = ecmModeSelectors.get(entity.getEquipmentNum(suite));
+            if (combo == null) {
+                continue;
+            }
+            String selectedMode = (String) combo.getSelectedItem();
+            if ((selectedMode != null) && !Mounted.MODE_OFF.equals(selectedMode)) {
+                suitesInUse.put(suite, selectedMode);
+            }
+        }
+        return suitesInUse;
     }
 
     /**
@@ -1211,6 +1407,22 @@ public class EquipChoicePanel extends JPanel {
             UIUtil.setHighQualityRendering(g);
             nothingToConfigureText.at(getWidth() / 2, getHeight() / 2).draw(g);
         }
+    }
+
+    /**
+     * Returns the dropdown label for a Battle Armor AP/glove weapon choice, tagging Disposable Weapons (TO:AuE p.116,
+     * Corrected Sixth Printing) so they are distinguishable from ordinary AP weapons in the list.
+     *
+     * @param equipmentType the weapon type being listed
+     *
+     * @return the display label, with a "(Disposable)" suffix for disposable weapons
+     */
+    static String weaponChoiceLabel(EquipmentType equipmentType) {
+        String name = equipmentType.getName();
+        if ((equipmentType instanceof WeaponType weaponType) && weaponType.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
+            return Messages.getString("CustomMekDialog.disposableWeaponLabel", name);
+        }
+        return name;
     }
 
     static class SectionTitleLabel extends JPanel {

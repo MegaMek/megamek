@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -70,6 +71,7 @@ public class ISPulseLaserSmallPrototype extends PulseLaserWeapon {
         this.addLookupName("ISSmall Pulse Laser Prototype");
         shortName = "Small Pulse Laser (P)";
         this.heat = 2;
+        this.heatAdjustmentForBvCalculation = 2;
         this.damage = 3;
         this.infDamageClass = WeaponType.WEAPON_BURST_2D6;
         this.toHitModifier = -1;
@@ -89,10 +91,8 @@ public class ISPulseLaserSmallPrototype extends PulseLaserWeapon {
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_POINT_DEFENSE;
         this.flags = flags.or(F_BURST_FIRE).or(F_PROTOTYPE);
-        rulesRefs = "67, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 67);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2595, DATE_NONE, DATE_NONE, 2609, DATE_NONE)

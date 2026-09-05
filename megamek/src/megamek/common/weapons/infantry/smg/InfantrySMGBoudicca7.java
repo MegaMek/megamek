@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.smg;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -64,15 +65,15 @@ public class InfantrySMGBoudicca7 extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = 1.375;
         tonnage = 0.0021;
-        infantryDamage = 0.69;
+        infantryDamage = 0.6875;
         infantryRange = 1;
         ammoWeight = 0.0021;
         cost = 700;
         ammoCost = 20;
         shots = 40;
         bursts = 8;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        rulesRefs = "Shrapnel #5";
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST);
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_5);
         techAdvancement
               .setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)

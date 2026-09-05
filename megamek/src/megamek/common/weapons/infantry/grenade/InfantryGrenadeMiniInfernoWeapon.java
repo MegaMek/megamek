@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.grenade;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -60,8 +61,9 @@ public class InfantryGrenadeMiniInfernoWeapon extends InfantryWeapon {
     public InfantryGrenadeMiniInfernoWeapon() {
         super();
 
-        name = "Grenade (Mini) (Inferno)";
+        name = "Grenade (Mini) (Incendiary)";
         setInternalName("InfantryMiniGrenadeInferno");
+        addLookupName("Grenade (Mini) (Inferno)");
         addLookupName(name);
         addLookupName("InfantryMiniInfernoGrenade");
         addLookupName("Mini Inferno Grenades");
@@ -69,13 +71,13 @@ public class InfantryGrenadeMiniInfernoWeapon extends InfantryWeapon {
         cost = 8;
         bv = 0.10;
         tonnage = .00045;
-        flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT);
+        flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT).or(F_INF_DISPOSABLE);
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
         infantryDamage = 0.11;
         infantryRange = 0;
         // very hackish - using some data from Inferno Fuel.
-        rulesRefs = "272, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 272);
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

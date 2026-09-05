@@ -69,7 +69,7 @@ public abstract class LRMWeapon extends MissileWeapon {
         longRange = 21;
         extremeRange = 28;
         atClass = CLASS_LRM;
-        flags = flags.or(F_PROTO_WEAPON).or(F_ARTEMIS_COMPATIBLE);
+        flags = flags.or(F_PROTO_WEAPON).or(F_ARTEMIS_COMPATIBLE).or(F_LRM).or(F_INDIRECT_FIRE);
     }
 
 
@@ -91,11 +91,6 @@ public abstract class LRMWeapon extends MissileWeapon {
     @Override
     public int getBattleForceClass() {
         return BF_CLASS_LRM;
-    }
-
-    @Override
-    public boolean hasIndirectFire() {
-        return true;
     }
 
     @Override
@@ -166,6 +161,9 @@ public abstract class LRMWeapon extends MissileWeapon {
             }
             if (atype.getMunitionType().contains(AmmoType.Munitions.M_ARAD)) {
                 return new LRMARADHandler(toHit, waa, game, manager);
+            }
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_MAGNETIC_PULSE)) {
+                return new LRMMagneticPulseHandler(toHit, waa, game, manager);
             }
             // Note: Incendiary mixed is handled via LRMHandler.isIncendiaryMixed()
             return new LRMHandler(toHit, waa, game, manager);

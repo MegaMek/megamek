@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,6 +42,7 @@ import java.util.Vector;
 
 import megamek.common.Hex;
 import megamek.common.HitData;
+import megamek.common.IndustrialElevator;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.battleArmor.BattleArmor;
@@ -96,8 +97,9 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
     boolean checkForCollapse(IBuilding bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
           boolean checkBecauseOfDamage, Vector<Report> vPhaseReport) {
 
-        // If the input is meaningless, do nothing and throw no exception.
-        if ((bldg == null) || (positionMap == null) || positionMap.isEmpty() || (coords == null)
+        // If the input is meaningless, do nothing and throw no exception. An empty position map is legal: nothing
+        // is standing on the board, but the building can still come down (a building burning down on an empty map).
+        if ((bldg == null) || (positionMap == null) || (coords == null)
               || !bldg.isIn(coords) || !bldg.hasCFIn(coords)) {
             LOGGER.error("Illegal/null arguments");
             return false;
@@ -420,6 +422,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                 bldg.setPhaseCF(0, coords);
                 gameManager.send(createCollapseBuildingPacket(coords, bldg.getBoardId()));
                 getGame().getBoard(bldg.getBoardId()).collapseBuilding(coords);
+                disableIndustrialElevatorAt(coords, bldg.getBoardId());
             }
 
             // Sort in elevation order
@@ -509,7 +512,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                         table = ToHitData.HIT_PUNCH;
                     }
                     HitData hit = entity.rollHitLocation(table, ToHitData.SIDE_FRONT);
-                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
                     vPhaseReport.addAll(gameManager.damageEntity(entity, hit, next));
                     remaining -= next;
                 }
@@ -538,6 +541,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
             bldg.setPhaseCF(0, coords);
             gameManager.send(createCollapseBuildingPacket(coords, bldg.getBoardId()));
             getGame().getBoard(bldg.getBoardId()).collapseBuilding(coords);
+            disableIndustrialElevatorAt(coords, bldg.getBoardId());
         }
         // if more than half of the hexes are gone, collapse all
         if (bldg.getCollapsedHexCount() > ((double) bldg.getOriginalHexCount() / 2.0)) {
@@ -548,6 +552,27 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
             if (bldg instanceof BuildingEntity buildingEntity) {
                 vPhaseReport.addAll(gameManager.destroyEntity(buildingEntity, "building collapse"));
             }
+        }
+    }
+
+    /**
+     * Disables any industrial elevator in a collapsed hex. A collapsed shaft level stops the elevator from functioning
+     * (TO:AR), so its platform can no longer be ridden or called. Broadcasts the change so clients update their
+     * elevator controls.
+     * <p>
+     * TODO: An elevator should also cease to function when any level of its hex is breached or flooded (TO:AR). Neither
+     * mechanic is modeled yet - MegaMek has no sealed-building breach roll and no dynamic hex flooding - so only the
+     * collapse case is handled here. Wire those in once the engine tracks them.
+     *
+     * @param coords  the hex that collapsed
+     * @param boardId the board the hex is on
+     */
+    private void disableIndustrialElevatorAt(Coords coords, int boardId) {
+        IndustrialElevator elevator = getGame().getIndustrialElevator(BoardLocation.of(coords, boardId));
+        if ((elevator != null) && elevator.isFunctional()) {
+            LOGGER.info("[IndustrialElevator] Elevator at {} disabled by building collapse", coords);
+            elevator.setFunctional(false);
+            gameManager.sendIndustrialElevatorUpdate();
         }
     }
 

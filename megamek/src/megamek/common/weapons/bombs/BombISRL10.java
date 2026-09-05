@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -66,7 +67,6 @@ public class BombISRL10 extends MissileWeapon {
 
         this.name = "Rocket Launcher Pod";
         this.setInternalName(BombTypeEnum.RL.getWeaponName());
-        addLookupName("RL 10 (Bomb)");
         this.heat = 0;
         this.rackSize = 10;
         this.shortRange = 5;
@@ -84,14 +84,12 @@ public class BombISRL10 extends MissileWeapon {
         this.maxRange = RANGE_MED;
         this.toHitModifier = 1;
         this.ammoType = AmmoType.AmmoTypeEnum.RL_BOMB;
-        rulesRefs = "229, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 229);
         this.techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
-              .setISAdvancement(3060, 3064, 3067, DATE_NONE, DATE_NONE)
-              .setISApproximate(true, false, false, false, false)
+              .setISAdvancement(DATE_ES, 3064, 3067, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, false, false, false, false)
               .setPrototypeFactions(Faction.MH)
               .setProductionFactions(Faction.MH);
     }

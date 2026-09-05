@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -62,6 +62,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.ChargeLevel;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
@@ -164,6 +165,9 @@ public class PointblankShotDisplay extends FiringDisplay {
                     result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_MODE);
                     result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_MODE);
                     break;
+                case FIRE_CALLED:
+                    result = FiringDisplay.calledShotHotKeyDesc();
+                    break;
                 case FIRE_CANCEL:
                     result = "<BR>";
                     result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.CANCEL);
@@ -249,6 +253,17 @@ public class PointblankShotDisplay extends FiringDisplay {
     }
 
     /**
+     * The pointblank display is only active while a hidden unit is taking its pointblank shot, so the called shot binds
+     * are gated on that rather than on the normal firing turn check.
+     *
+     * @return {@code true} when a pointblank shot is being processed and the Called button is enabled
+     */
+    @Override
+    protected boolean shouldPerformCalledShotKeyCommand() {
+        return shouldPerformPointBlankKeyCommands() && buttons.get(FiringCommand.FIRE_CALLED).isEnabled();
+    }
+
+    /**
      * Register all of the <code>CommandAction</code>s for this panel display.
      */
     @Override
@@ -269,6 +284,8 @@ public class PointblankShotDisplay extends FiringDisplay {
 
         controller.registerCommandAction(KeyCommandBind.NEXT_MODE, this, () -> changeMode(true));
         controller.registerCommandAction(KeyCommandBind.PREV_MODE, this, () -> changeMode(false));
+
+        registerCalledShotKeyCommands(controller, this::shouldPerformCalledShotKeyCommand);
 
         controller.registerCommandAction(KeyCommandBind.FIRE, this::shouldPerformFireKeyCommand, this::fire);
         controller.registerCommandAction(KeyCommandBind.CANCEL, this::shouldPerformClearKeyCommand, this::clear);
@@ -403,6 +420,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         setFlipArmsEnabled(false);
         setFireModeEnabled(false);
         setFireCalledEnabled(false);
+        setFireChargeLevelEnabled(false);
     }
 
     private boolean checkNags() {
@@ -753,7 +771,6 @@ public class PointblankShotDisplay extends FiringDisplay {
             Mounted<?> m = currentEntity().getEquipment(weaponId);
             setFireModeEnabled(m.isModeSwitchable());
         }
-
         updateSearchlight();
     }
 
@@ -761,7 +778,7 @@ public class PointblankShotDisplay extends FiringDisplay {
     // BoardListener
     //
     @Override
-    public void hexMoused(BoardViewEvent b) {
+    public void hexMoused(BoardViewEvent event) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -769,28 +786,25 @@ public class PointblankShotDisplay extends FiringDisplay {
 
         // ignore buttons other than 1
         if (!clientgui.isProcessingPointblankShot()
-              || ((b.getButton() != MouseEvent.BUTTON1))) {
+              || ((event.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
-        if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
-              || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
+        if (((event.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
+              || ((event.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
 
-        if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-            if (b.isShiftHeld() || twisting) {
+        if (event.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
+            if (event.isShiftHeld() || twisting) {
                 updateFlipArms(false);
-                torsoTwist(b.getCoords());
+                torsoTwist(event.getCoords());
             }
-            b.getBoardView().cursor(b.getCoords());
-        } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
+        } else if (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             twisting = false;
-            if (!b.isShiftHeld()) {
-                b.getBoardView().select(b.getCoords());
-            }
         }
+        applyHexMouseAction(event, event.isShiftHeld());
     }
 
     @Override

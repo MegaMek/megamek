@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -161,6 +161,41 @@ public class LRMHandler extends MissileWeaponHandler {
         return false;
     }
 
+    /**
+     * Returns {@code true} if the given ammunition is a Semi-Guided load for one of the long range missile launchers
+     * that can carry it, otherwise {@code false}.
+     *
+     * @param ammoType the ammunition loaded in the firing weapon
+     *
+     * @return {@code true} if this is a Semi-Guided load for a launcher that can carry it
+     */
+    private boolean isSemiGuidedMissileAmmo(AmmoType ammoType) {
+        boolean isSemiGuidedCapableLauncher = ammoType.getAmmoType()
+              .isAnyOf(AmmoType.AmmoTypeEnum.LRM,
+                    AmmoType.AmmoTypeEnum.LRM_IMP,
+                    AmmoType.AmmoTypeEnum.MML,
+                    AmmoType.AmmoTypeEnum.NLRM);
+        boolean isSemiGuidedMunition = ammoType.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED);
+        return isSemiGuidedCapableLauncher && isSemiGuidedMunition;
+    }
+
+    /**
+     * Returns the cluster roll modifier that Semi-Guided ammunition contributes to this attack, which depends on
+     * whether the target is currently designated by TAG. The modifier is zero under Total Warfare rules, where
+     * Semi-Guided ammunition improves the to-hit roll instead of the number of missiles that hit.
+     * <p>
+     * Buildings and hexes can be designated by TAG just like units can, so the designation is looked up through the
+     * game rather than on the target unit, which does not exist for those targets.
+     * </p>
+     *
+     * @return the number of missiles to add to or subtract from the cluster roll
+     */
+    protected int getSemiGuidedClusterModifier() {
+        boolean isTargetTagged = Compute.isTargetTagged(target, game);
+        boolean isIndirectFire = weapon.curMode().equals("Indirect");
+        return Game.rulesManager.getRulesAmmo().getSemiGuidedNMissiles(isTargetTagged, isIndirectFire);
+    }
+
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // Use effective rack size (reduced by 20% when incendiary mixed)
@@ -318,6 +353,10 @@ public class LRMHandler extends MissileWeaponHandler {
             }
         }
 
+        if (isSemiGuidedMissileAmmo(ammoType)) {
+            nMissilesModifier += getSemiGuidedClusterModifier();
+        }
+
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
 
@@ -330,15 +369,14 @@ public class LRMHandler extends MissileWeaponHandler {
         int rackSize = effectiveRackSize;
         boolean minRangeELRMAttack = false;
 
-        // ELRMs only hit with half their rack size rounded up at minimum range.
+        // ELRMs may be reduced under minimum range.
         // Ignore this for space combat. 1 hex is 18km across.
-        // PLAYTEST3 this is now ignored completely
-        if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            if (weaponType instanceof ExtendedLRMWeapon
-                  && !game.getBoard().isSpace()
-                  && (nRange <= weaponType.getMinimumRange())) {
-                rackSize = rackSize / 2 + rackSize % 2;
+        if (weaponType instanceof ExtendedLRMWeapon && !game.getBoard().isSpace()
+              && (nRange <= weaponType.getMinimumRange())) {
+            int reducedRackSize = Game.rulesManager.getRulesWeapons().getELRMMinimumRackSize(rackSize);
+            if (reducedRackSize < rackSize) {
                 minRangeELRMAttack = true;
+                rackSize = reducedRackSize;
             }
         }
 
@@ -424,8 +462,8 @@ public class LRMHandler extends MissileWeaponHandler {
 
             // Get base infantry damage
             double toReturn = Compute.directBlowInfantryDamage(
-                  effectiveRack, bDirect ? toHit.getMoS() / 3 : 0,
-                  weaponType.getInfantryDamageClass(),
+                  effectiveRack, getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
 

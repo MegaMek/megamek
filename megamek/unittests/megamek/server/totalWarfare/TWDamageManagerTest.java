@@ -44,10 +44,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import megamek.common.DamageInfo;
 import megamek.common.HitData;
 import megamek.common.Player;
+import megamek.common.Report;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.battleArmor.BattleArmor;
@@ -59,6 +61,7 @@ import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.LiftHoist;
 import megamek.common.equipment.MekArms;
 import megamek.common.equipment.Transporter;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.loaders.MekFileParser;
@@ -432,6 +435,77 @@ class TWDamageManagerTest {
         assertTrue(mek.hasCompositeStructure(Mek.LOC_LEFT_ARM));
         assertTrue(mek.hasReinforcedStructure(Mek.LOC_LEFT_TORSO));
         assertEquals(7, mek.getInternal(Mek.LOC_LEFT_TORSO));
+    }
+
+    /**
+     * Report id of the Enhanced Imaging feedback roll, and of the superseded duplicate that used to roll a second time
+     * for the same hit (issue #8718).
+     */
+    private static final int REPORT_EI_FEEDBACK = 3593;
+    private static final int REPORT_LEGACY_EI_FEEDBACK = 5075;
+
+    /**
+     * Installs a running EI Interface and gives the pilot the EI implant, then enables the Pilot Abilities Only neural
+     * interface mode - the mode the issue was reported under.
+     */
+    private void equipWithRunningEnhancedImaging(Entity entity) {
+        game.getOptions()
+              .getOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE)
+              .setValue(OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
+        entity.getCrew().getOptions().getOption(OptionsConstants.MD_EI_IMPLANT).setValue(true);
+        try {
+            entity.addEquipment(EquipmentType.get("EIInterface"), Entity.LOC_NONE);
+        } catch (LocationFullException exception) {
+            throw new IllegalStateException("EI Interface takes no slots and must always mount", exception);
+        }
+    }
+
+    private long countReports(List<Report> reports, int messageId) {
+        return reports.stream().filter(report -> report.messageId == messageId).count();
+    }
+
+    @Test
+    void testEnhancedImagingRollsOnceForOneInternalHit() {
+        BipedMek mek = createFrankenMekForInternalDamage();
+        equipWithRunningEnhancedImaging(mek);
+        HitData hit = new HitData(Mek.LOC_LEFT_ARM, false, HitData.EFFECT_NO_CRITICAL_SLOTS);
+
+        Vector<Report> reports = manager.damageEntity(new DamageInfo(mek, hit, 3, false, DamageType.NONE, true));
+
+        assertEquals(1, countReports(reports, REPORT_EI_FEEDBACK),
+              "One hit that reaches internal structure must produce exactly one EI feedback roll");
+        assertEquals(0, countReports(reports, REPORT_LEGACY_EI_FEEDBACK),
+              "The superseded duplicate EI feedback roll must no longer fire");
+    }
+
+    @Test
+    void testEnhancedImagingDoesNotRollWhenShutDown() {
+        BipedMek mek = createFrankenMekForInternalDamage();
+        equipWithRunningEnhancedImaging(mek);
+        mek.setEiShutdown(true);
+        mek.newRound(1);
+        HitData hit = new HitData(Mek.LOC_LEFT_ARM, false, HitData.EFFECT_NO_CRITICAL_SLOTS);
+
+        Vector<Report> reports = manager.damageEntity(new DamageInfo(mek, hit, 3, false, DamageType.NONE, true));
+
+        assertEquals(0, countReports(reports, REPORT_EI_FEEDBACK),
+              "A pilot who shut EI down must take no feedback roll (IO p.69)");
+    }
+
+    @Test
+    void testEnhancedImagingDoesNotApplyToBattleArmor() throws EntityLoadingException {
+        BattleArmor battleArmor = loadBA("Elemental BA [Laser] (Sqd5).blk");
+        equipWithRunningEnhancedImaging(battleArmor);
+        assertTrue(battleArmor.hasActiveEiCockpit(), "Test setup: the squad must have EI running");
+        HitData hit = new HitData(BattleArmor.LOC_TROOPER_1);
+
+        // damageIS drives the internal-damage flag the feedback roll keys off, so this is the battle armor case
+        // that would have rolled before the Mek restriction was restored
+        Vector<Report> reports = manager.damageEntity(
+              new DamageInfo(battleArmor, hit, 5, false, DamageType.NONE, true));
+
+        assertEquals(0, countReports(reports, REPORT_EI_FEEDBACK),
+              "EI feedback damage is limited to Mek units, so battle armor must not roll for it");
     }
 
     @Test

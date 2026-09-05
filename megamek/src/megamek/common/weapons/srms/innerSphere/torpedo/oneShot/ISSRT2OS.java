@@ -36,6 +36,7 @@ package megamek.common.weapons.srms.innerSphere.torpedo.oneShot;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -67,10 +68,13 @@ public class ISSRT2OS extends SRTWeapon {
         bv = 4;
         flags = flags.or(F_NO_FIRES).or(F_ONE_SHOT).andNot(F_PROTO_WEAPON);
         cost = 5000;
-        rulesRefs = "230, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 230),
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 182),
+              rulesRef(SourceBookCode.TW, 113)
+        );
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.C)
               //From TM pg 230 - "curious concept that did not so much go extinct in the

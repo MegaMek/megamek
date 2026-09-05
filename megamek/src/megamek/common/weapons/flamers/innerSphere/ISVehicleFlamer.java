@@ -36,6 +36,8 @@ package megamek.common.weapons.flamers.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
@@ -76,10 +78,15 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
         this.cost = 7500;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
-        rulesRefs = "218, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 218),
+              rulesRef(SourceBookCode.BMM, 99),
+              rulesRef(SourceBookCode.CORE, 184),
+              rulesRef(SourceBookCode.TW, 303),
+              rulesRef(SourceBookCode.TW, 304)
+        );
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(true)
-              .setUnofficial(false)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)

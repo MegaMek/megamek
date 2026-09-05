@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,11 +37,13 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import megamek.common.TargetRollModifier;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
+import megamek.server.victory.VictoryPointTracker;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.equipment.INarcPod;
@@ -49,6 +51,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.NarcPod;
 import megamek.common.equipment.Sensor;
 import megamek.common.equipment.Transporter;
+import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.game.InitiativeBonusBreakdown;
 import megamek.common.interfaces.ITechnology;
@@ -58,10 +61,14 @@ import megamek.common.rolls.Roll;
 import megamek.common.units.BTObject;
 import megamek.common.units.Crew;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.HeatBreakdown;
 import megamek.common.units.IBuilding;
 import megamek.common.units.InfantryMount;
+import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.victory.VictoryCondition;
+
+import java.util.ArrayList;
 
 /**
  * Class that off-loads serialization related code from Server.java
@@ -108,6 +115,18 @@ public class SerializationHelper {
      */
     public static XStream getLoadSaveGameXStream() {
         XStream xStream = getSaveGameXStream();
+
+        // Mek heat sink activation used to be a pair of counter fields; it is now tracked per mount via
+        // equipment modes (activation/deactivation rules), and the fields no longer exist. Save games written
+        // before that change still contain the elements, and this XStream setup rejects unknown elements, so
+        // they are explicitly omitted to keep those saves loading.
+        xStream.omitField(Mek.class, "sinksOn");
+        xStream.omitField(Mek.class, "sinksOnNextRound");
+        xStream.aliasField("pendingCharges", Game.class, "pendingDisplacementAttacks");
+        xStream.aliasField("pilotRolls", Game.class, "pilotingRolls");
+        
+        xStream.registerLocalConverter(Game.class, "pilotingRolls", new CollectionConverter(xStream.getMapper(),
+              ArrayList.class));
 
         xStream.registerConverter(new Converter() {
             @Override
@@ -370,6 +389,7 @@ public class SerializationHelper {
                 int constant = 0;
                 int compensation = 0;
                 int crew = 0;
+                int gamemaster = 0;
 
                 while (reader.hasMoreChildren()) {
                     reader.moveDown();
@@ -384,6 +404,7 @@ public class SerializationHelper {
                             case "constant" -> constant = Integer.parseInt(reader.getValue());
                             case "compensation" -> compensation = Integer.parseInt(reader.getValue());
                             case "crew" -> crew = Integer.parseInt(reader.getValue());
+                            case "gamemaster" -> gamemaster = Integer.parseInt(reader.getValue());
                         }
                         reader.moveUp();
                     } catch (NumberFormatException e) {
@@ -392,7 +413,7 @@ public class SerializationHelper {
                     }
                 }
                 return new InitiativeBonusBreakdown(hq, quirk, quirkName, console, crewCommand,
-                      tcp, constant, compensation, crew);
+                      tcp, constant, compensation, crew, gamemaster);
             }
 
             @Override
@@ -439,6 +460,99 @@ public class SerializationHelper {
                 } else {
                     return null;
                 }
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        // Necessary because XStream 1.4.x cannot deserialize records natively. VictoryPointAward is the
+        // award log entry of the VictoryPointTracker stored in the game's victory context, so without this
+        // converter a save made after any victory points were scored fails to load.
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == VictoryPointTracker.VictoryPointAward.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                int gameRound = 0;
+                VictoryPointTracker.Recipient recipient = null;
+                int recipientId = -1;
+                int points = 0;
+                String reason = "";
+                try {
+                    while (reader.hasMoreChildren()) {
+                        reader.moveDown();
+                        switch (reader.getNodeName()) {
+                            case "gameRound":
+                                gameRound = Integer.parseInt(reader.getValue());
+                                break;
+                            case "recipient":
+                                recipient = VictoryPointTracker.Recipient.valueOf(reader.getValue());
+                                break;
+                            case "recipientId":
+                                recipientId = Integer.parseInt(reader.getValue());
+                                break;
+                            case "points":
+                                points = Integer.parseInt(reader.getValue());
+                                break;
+                            case "reason":
+                                reason = reader.getValue();
+                                break;
+                            default:
+                                // Unknown node, or <hash>
+                                break;
+                        }
+                        reader.moveUp();
+                    }
+                } catch (IllegalArgumentException exception) {
+                    return null;
+                }
+                if (recipient != null) {
+                    return new VictoryPointTracker.VictoryPointAward(gameRound, recipient, recipientId, points,
+                          reason);
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        // Necessary because XStream 1.4.x cannot deserialize records natively. HeatContribution is stored in
+        // Entity.heatBreakdown, so without this converter any save game containing heat-breakdown data fails to
+        // load.
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == HeatBreakdown.HeatContribution.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                int count = 0;
+                int totalHeat = 0;
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    try {
+                        switch (reader.getNodeName()) {
+                            case "count" -> count = Integer.parseInt(reader.getValue());
+                            case "totalHeat" -> totalHeat = Integer.parseInt(reader.getValue());
+                        }
+                    } catch (NumberFormatException e) {
+                        // Keep the default for this field on a malformed value; never return null, because a
+                        // null contribution stored in HeatBreakdown.buildup would NPE in buildupTooltip().
+                    }
+                    reader.moveUp();
+                }
+                return new HeatBreakdown.HeatContribution(count, totalHeat);
             }
 
             @Override

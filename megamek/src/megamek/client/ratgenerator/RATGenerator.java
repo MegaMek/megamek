@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -81,10 +81,15 @@ public class RATGenerator {
     private final HashMap<String, ModelRecord> models;
     private final HashMap<String, ChassisRecord> chassis;
     private final HashMap<String, FactionRecord> factions;
+    /** Maps a retired/aliased faction code to the surviving canonical faction key; see {@link FactionRecord#getAliases()}. */
+    private final HashMap<String, String> factionAliases;
     private final HashMap<Integer, HashMap<String, HashMap<String, AvailabilityRating>>> modelIndex;
     private final HashMap<Integer, HashMap<String, HashMap<String, AvailabilityRating>>> chassisIndex;
 
     private final TreeSet<Integer> eraSet;
+
+    /** Feeds in units that declare their own availability in their unit file, rather than in the era files. */
+    private final UnitFileAvailabilityLoader unitFileAvailabilityLoader;
 
     private static RATGenerator ratGenerator = null;
     private static boolean interrupted = false;
@@ -115,11 +120,20 @@ public class RATGenerator {
         models = new HashMap<>();
         chassis = new HashMap<>();
         factions = new HashMap<>();
+        factionAliases = new HashMap<>();
         modelIndex = new HashMap<>();
         chassisIndex = new HashMap<>();
         eraSet = new TreeSet<>();
 
         listeners = new ArrayList<>();
+
+        // Shares the record store above rather than copying it, so reloadFromDir() stays valid
+        unitFileAvailabilityLoader = new UnitFileAvailabilityLoader(models,
+              chassis,
+              factions,
+              chassisIndex,
+              modelIndex,
+              eraSet);
     }
 
     public static RATGenerator getInstance() {
@@ -155,14 +169,20 @@ public class RATGenerator {
         chassisIndex.clear();
         modelIndex.clear();
         eraSet.clear();
+        // Stay marked as initializing for the duration of the reload, and set that before clearing initialized so the
+        // two flags are never both clear. getInstance() starts a loader thread whenever it finds them both clear, and
+        // one started partway through a reload runs its own initialize() as soon as this one releases the lock. That
+        // second pass rebuilds every faction record but skips the era files, which are marked loaded by then, so the
+        // reloaded era parameters are replaced by empty ones.
+        initializing = true;
         initialized = false;
-        initializing = false;
         initialize(dir);
     }
 
     public AvailabilityRating findChassisAvailabilityRecord(int era, String unit, String faction, int year) {
-        if (factions.containsKey(faction)) {
-            return findChassisAvailabilityRecord(era, unit, factions.get(faction), year);
+        FactionRecord factionRecord = getFaction(faction);
+        if (factionRecord != null) {
+            return findChassisAvailabilityRecord(era, unit, factionRecord, year);
         }
 
         if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(unit)) {
@@ -196,9 +216,11 @@ public class RATGenerator {
 
         AvailabilityRating retVal = null;
         if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(unit)) {
+            Map<String, AvailabilityRating> unitAvailability = chassisIndex.get(era).get(unit);
+            AvailabilityRating lineageAvailability = findLineageAvailability(unitAvailability, factionRecord, year);
 
-            if (chassisIndex.get(era).get(unit).containsKey(factionRecord.getKey())) {
-                retVal = chassisIndex.get(era).get(unit).get(factionRecord.getKey());
+            if (lineageAvailability != null) {
+                retVal = lineageAvailability;
             } else if (factionRecord.getParentFactions().size() == 1) {
                 retVal = findChassisAvailabilityRecord(era, unit, factionRecord.getParentFactions().getFirst(), year);
             } else if (!factionRecord.getParentFactions().isEmpty()) {
@@ -212,7 +234,7 @@ public class RATGenerator {
                 retVal = mergeFactionAvailability(factionRecord.getKey(), list);
 
             } else {
-                retVal = chassisIndex.get(era).get(unit).get("General");
+                retVal = unitAvailability.get("General");
             }
         }
 
@@ -223,9 +245,32 @@ public class RATGenerator {
         return null;
     }
 
+    /**
+     * Looks up the availability rating for a faction within a single unit's per-code availability map, trying the
+     * faction's lineage codes - its own key plus any historical rename {@link FactionRecord#getAliases() aliases} - in
+     * era-active-first order. For a faction without aliases this checks only its own key, so behavior is unchanged.
+     *
+     * @param unitAvailability the availability ratings for a single unit in a single era, keyed by faction code
+     * @param factionRecord    the faction whose availability is sought
+     * @param year             the game year, used to pick the era-active alias first
+     *
+     * @return the first matching {@link AvailabilityRating}, or {@code null} if no lineage code is listed
+     */
+    private @Nullable AvailabilityRating findLineageAvailability(Map<String, AvailabilityRating> unitAvailability,
+          FactionRecord factionRecord, int year) {
+        for (String lineageCode : factionRecord.getLineageCodesForYear(year)) {
+            AvailabilityRating availabilityRating = unitAvailability.get(lineageCode);
+            if (availabilityRating != null) {
+                return availabilityRating;
+            }
+        }
+        return null;
+    }
+
     public @Nullable AvailabilityRating findModelAvailabilityRecord(int era, String unit, String faction) {
-        if (factions.containsKey(faction)) {
-            return findModelAvailabilityRecord(era, unit, factions.get(faction));
+        FactionRecord factionRecord = getFaction(faction);
+        if (factionRecord != null) {
+            return findModelAvailabilityRecord(era, unit, factionRecord);
         }
         // Normalize the unit key to the canonical MekSummary name so name_changes aliases work.
         ModelRecord modelRecord = models.get(unit);
@@ -267,9 +312,12 @@ public class RATGenerator {
         }
 
         if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
-            // If the provided faction is directly specified, return its availability
-            if (modelIndex.get(era).get(unit).containsKey(factionRecord.getKey())) {
-                return modelIndex.get(era).get(unit).get(factionRecord.getKey());
+            // If the provided faction (or one of its lineage aliases) is directly specified, return its availability.
+            // The era stands in for the year when resolving the era-active alias, since no specific year is supplied.
+            AvailabilityRating lineageAvailability =
+                  findLineageAvailability(modelIndex.get(era).get(unit), factionRecord, era);
+            if (lineageAvailability != null) {
+                return lineageAvailability;
             }
 
             // If the provided faction has a single parent, return its availability
@@ -294,6 +342,56 @@ public class RATGenerator {
         }
 
         return null;
+    }
+
+    /**
+     * Generate the availability rating for a specific model, honouring the year the model becomes available.
+     * <p>
+     * An availability code can name a year, as in {@code FS:5:3055}: the unit exists in the era but the faction does
+     * not get it until that year. {@link #findChassisAvailabilityRecord(int, String, FactionRecord, int)} has always
+     * applied that. The model lookup could not, because it had no year to apply, so a model's year was ignored and the
+     * unit turned up from the start of the era instead. Use this overload anywhere a table is being generated.
+     * </p>
+     *
+     * @param era           era designation
+     * @param unit          string full chassis-model name
+     * @param factionRecord faction data
+     * @param year          the game year
+     *
+     * @return the availability rating, or {@code null} if the faction does not have this model yet in this year
+     */
+    public @Nullable AvailabilityRating findModelAvailabilityRecord(int era, String unit,
+          @Nullable FactionRecord factionRecord, int year) {
+
+        AvailabilityRating availabilityRating = findModelAvailabilityRecord(era, unit, factionRecord);
+
+        return isAvailableYet(availabilityRating, year) ? availabilityRating : null;
+    }
+
+    /**
+     * Generate the availability rating for a specific model, honouring the year the model becomes available.
+     *
+     * @param era     era designation
+     * @param unit    string full chassis-model name
+     * @param faction faction code
+     * @param year    the game year
+     *
+     * @return the availability rating, or {@code null} if the faction does not have this model yet in this year
+     */
+    public @Nullable AvailabilityRating findModelAvailabilityRecord(int era, String unit, String faction, int year) {
+        AvailabilityRating availabilityRating = findModelAvailabilityRecord(era, unit, faction);
+
+        return isAvailableYet(availabilityRating, year) ? availabilityRating : null;
+    }
+
+    /**
+     * @param availabilityRating the rating to test, which may be null
+     * @param year               the game year
+     *
+     * @return {@code true} if the rating exists and its start year has arrived
+     */
+    private static boolean isAvailableYet(@Nullable AvailabilityRating availabilityRating, int year) {
+        return (availabilityRating != null) && (year >= availabilityRating.getStartYear());
     }
 
     /**
@@ -426,7 +524,14 @@ public class RATGenerator {
     }
 
     public FactionRecord getFaction(String key) {
-        return factions.get(key);
+        FactionRecord factionRecord = factions.get(key);
+        if (factionRecord == null) {
+            String canonicalKey = factionAliases.get(key);
+            if (canonicalKey != null) {
+                factionRecord = factions.get(canonicalKey);
+            }
+        }
+        return factionRecord;
     }
 
     public void addFaction(FactionRecord rec) {
@@ -475,22 +580,28 @@ public class RATGenerator {
             return null;
         }
 
-        double totalWt = 0;
-        int totalAdj = 0;
+        double totalWeight = 0;
+        int totalAdjustment = 0;
 
-        for (AvailabilityRating ar : avList) {
-            totalWt += AvailabilityRating.calcWeight(ar.availability);
-            totalAdj += ar.ratingAdjustment;
+        for (AvailabilityRating availabilityRating : avList) {
+            totalWeight += AvailabilityRating.calcWeight(availabilityRating.availability);
+            totalAdjustment += availabilityRating.ratingAdjustment;
         }
 
-        AvailabilityRating retVal = avList.getFirst().makeCopy(faction);
+        AvailabilityRating mergedRating = avList.getFirst().makeCopy(faction);
 
-        retVal.availability = (int) (AvailabilityRating.calcAvRating(totalWt / avList.size()));
-        if (totalAdj != 0) {
-            retVal.ratingAdjustment = totalAdj > 0 ? 1 : -1;
+        mergedRating.availability = (int) (AvailabilityRating.calcAvRating(totalWeight / avList.size()));
+        if (totalAdjustment != 0) {
+            mergedRating.ratingAdjustment = totalAdjustment > 0 ? 1 : -1;
         }
 
-        return retVal;
+        // Per-rating values are indexed against a faction's own equipment rating system, so they have to be resolved
+        // again for the faction being merged for. Without this every lookup reads back 0 and the unit drops out.
+        if (mergedRating.hasMultipleRatings()) {
+            mergedRating.setRatingByNumericLevel(factions.get(faction));
+        }
+
+        return mergedRating;
     }
 
     /**
@@ -592,6 +703,7 @@ public class RATGenerator {
 
         // Iterate through all available chassis
         double chassisWeightTotal = 0.0;
+        int chassisExcludedByZeroAvailability = 0;
         for (String chassisKey : chassisIndex.get(currentEra).keySet()) {
             ChassisRecord curChassis = chassis.get(chassisKey);
             if (curChassis == null) {
@@ -634,6 +746,16 @@ public class RATGenerator {
             AvailabilityRating chassisAvRating = findChassisAvailabilityRecord(currentEra,
                   chassisKey, fRec, year);
             if (chassisAvRating == null) {
+                continue;
+            }
+
+            // An availability of zero means the faction does not field this chassis, even when a parent faction
+            // does (see docs/Customization/RAT and Force Generator Stuff/rat-generator.txt). It has to be honoured
+            // before the interpolation below, which would otherwise pull the zero up towards a non-zero value in
+            // the next era and put the chassis back in the table. The model loop applies the same rule in
+            // ChassisRecord.totalModelWeight.
+            if (chassisAvRating.getAvailability() <= 0) {
+                chassisExcludedByZeroAvailability++;
                 continue;
             }
 
@@ -724,6 +846,11 @@ public class RATGenerator {
                 }
 
             }
+        }
+
+        if (chassisExcludedByZeroAvailability > 0) {
+            LOGGER.debug("[ForceGen][Availability] {} chassis excluded for {} in era {}: availability of zero",
+                  chassisExcludedByZeroAvailability, fRec.getKey(), currentEra);
         }
 
         if (unitWeights.isEmpty() || chassisWeightTotal == 0.0) {
@@ -1406,8 +1533,11 @@ public class RATGenerator {
         }
 
         if (!interrupted) {
-            ratGenerator.initialized = true;
+            // Load every era first, THEN mark initialized. Setting the flag before the loop let callers that poll
+            // isInitialized() start iterating chassis/model/faction collections on another thread while this loop was
+            // still adding to them, which threw ConcurrentModificationException.
             ratGenerator.getEraSet().forEach(e -> ratGenerator.loadEra(e, dir));
+            ratGenerator.initialized = true;
             ratGenerator.notifyListenersOfInitialization();
         }
 
@@ -1448,6 +1578,37 @@ public class RATGenerator {
         // Since the unification of MHQ and RatGen factions, every faction can create a FactionRecord but not every
         // FactionRecord has enough data to produce units, so remove those
         factions.values().removeIf(fr -> fr.getRatingLevelSystem().isEmpty());
+        registerFactionAliases();
+    }
+
+    /**
+     * Registers each faction's historical code aliases (see {@link FactionRecord#getAliases()}) in a separate
+     * alias-to-canonical map, so that availability tokens still written under a retired code (for example
+     * {@code CEI:5} after Clan Goliath Scorpion absorbed the Escorpion Imperio into its {@code CGS} key) are recognized
+     * at load and resolve to the surviving faction via {@link #getFaction(String)}. The aliases are kept out of the
+     * {@code factions} map itself so that iterations over {@link #getFactionList()} and RAT export do not see the same
+     * record under multiple keys. Runs after the real factions are indexed, so a real faction always wins over an alias
+     * claiming the same code.
+     */
+    private void registerFactionAliases() {
+        for (FactionRecord factionRecord : factions.values()) {
+            for (String aliasCode : factionRecord.getAliases().values()) {
+                if (factions.containsKey(aliasCode)) {
+                    if (factions.get(aliasCode) != factionRecord) {
+                        LOGGER.warn("[FactionAlias] Alias {} for faction {} collides with an existing faction; " +
+                                    "keeping the existing faction.", aliasCode, factionRecord.getKey());
+                    }
+                    continue;
+                }
+                String previousKey = factionAliases.putIfAbsent(aliasCode, factionRecord.getKey());
+                if (previousKey != null && !previousKey.equals(factionRecord.getKey())) {
+                    LOGGER.warn("[FactionAlias] Alias {} is claimed by both {} and {}; keeping {}.",
+                          aliasCode, previousKey, factionRecord.getKey(), previousKey);
+                } else if (previousKey == null) {
+                    LOGGER.debug("[FactionAlias] {} registered as an alias of {}", aliasCode, factionRecord.getKey());
+                }
+            }
+        }
     }
 
     /**
@@ -1499,22 +1660,7 @@ public class RATGenerator {
         for (int x = 0; x < nl.getLength(); x++) {
             Node mainNode = nl.item(x);
             if (mainNode.getNodeName().equalsIgnoreCase("factions")) {
-                for (int i = 0; i < mainNode.getChildNodes().getLength(); i++) {
-                    Node wn = mainNode.getChildNodes().item(i);
-                    if (wn.getNodeName().equalsIgnoreCase("faction")) {
-                        String fKey = wn.getAttributes().getNamedItem("key").getTextContent();
-                        if (fKey != null) {
-                            FactionRecord rec = factions.get(fKey);
-                            if (rec != null) {
-                                rec.loadEra(wn, era);
-                            } else {
-                                LOGGER.error("Faction {} not found in {}", fKey, file.getPath());
-                            }
-                        } else {
-                            LOGGER.error("Faction key not found in {}", file.getPath());
-                        }
-                    }
-                }
+                loadEraFactionParameters(mainNode, era, file);
             } else if (mainNode.getNodeName().equalsIgnoreCase("units")) {
                 for (int i = 0; i < mainNode.getChildNodes().getLength(); i++) {
                     Node wn = mainNode.getChildNodes().item(i);
@@ -1524,7 +1670,69 @@ public class RATGenerator {
                 }
             }
         }
+
+        unitFileAvailabilityLoader.loadEra(era);
+
         notifyListenersEraLoaded();
+    }
+
+    /**
+     * Loads the per-era faction parameters - the Clan, Star League and Omni percentages, the tech margins, the salvage
+     * table and the weight distributions - from the {@code <factions>} section of an era file.
+     *
+     * <p>Faction codes are resolved through {@link #getFaction(String)} rather than by a direct lookup, so a block
+     * still written under a retired code loads into the faction that absorbed it. The availability tokens in the
+     * {@code <units>} section have always resolved that way, but this section did not, so a faction whose code was
+     * retired silently lost every parameter for the eras written under the old code and fell back on its parent
+     * faction's tech mix. Clan Goliath Scorpion is the live case: its blocks from 3082 on are written as {@code CEI}
+     * and then {@code SE}, both aliases of {@code CGS}.</p>
+     *
+     * <p>Two shipped era files name both the retired and the surviving code, so two blocks can resolve to the same
+     * faction. They are merged in document order and the later block wins for each field it sets, which is harmless
+     * while the overlapping values agree but would quietly discard data if they diverged. That case is logged rather
+     * than resolved here, because the fix belongs in the data.</p>
+     *
+     * @param factionsNode the {@code <factions>} element of an era file
+     * @param era          the era bucket being loaded
+     * @param file         the era file being read, named in the log messages so a bad block can be found
+     */
+    private void loadEraFactionParameters(Node factionsNode, int era, File file) {
+        Set<String> factionsAlreadyLoadedFromThisFile = new HashSet<>();
+        NodeList factionNodes = factionsNode.getChildNodes();
+
+        for (int index = 0; index < factionNodes.getLength(); index++) {
+            Node factionNode = factionNodes.item(index);
+            if (!factionNode.getNodeName().equalsIgnoreCase("faction")) {
+                continue;
+            }
+
+            Node keyAttribute = factionNode.getAttributes().getNamedItem("key");
+            if (keyAttribute == null) {
+                LOGGER.error("Faction key not found in {}", file.getPath());
+                continue;
+            }
+
+            String factionKey = keyAttribute.getTextContent();
+            FactionRecord factionRecord = getFaction(factionKey);
+            if (factionRecord == null) {
+                LOGGER.error("Faction {} not found in {}", factionKey, file.getPath());
+                continue;
+            }
+
+            String canonicalKey = factionRecord.getKey();
+            if (!canonicalKey.equals(factionKey)) {
+                LOGGER.debug("[FactionAlias] era {} parameters written as {} loaded into {}",
+                      era, factionKey, canonicalKey);
+            }
+
+            if (!factionsAlreadyLoadedFromThisFile.add(canonicalKey)) {
+                LOGGER.warn("[FactionAlias] {} in {} loads era {} parameters into {}, which an earlier block in the" +
+                            " same file already filled; the values set here replace it. Merge the two blocks in the" +
+                            " data to resolve this.", factionKey, file.getName(), era, canonicalKey);
+            }
+
+            factionRecord.loadEra(factionNode, era);
+        }
     }
 
     /**
@@ -1591,13 +1799,13 @@ public class RATGenerator {
                 for (String code : codes) {
 
                     AvailabilityRating ar = new AvailabilityRating(chassisKey, era, code);
-                    FactionRecord chassisFaction = factions.get(ar.getFaction());
+                    FactionRecord chassisFaction = getFaction(ar.getFaction());
                     if (null != chassisFaction || code.startsWith("General")) {
 
                         // If it provides availability values based on equipment ratings,
                         // generate index values in addition to letter values
                         if (ar.hasMultipleRatings()) {
-                            ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
+                            ar.setRatingByNumericLevel(chassisFaction);
                         }
 
                         cr.getIncludedFactions().add(ar.getFaction());
@@ -1667,12 +1875,12 @@ public class RATGenerator {
                 for (String code : codes) {
 
                     AvailabilityRating ar = new AvailabilityRating(modelRecord.getKey(), era, code);
-                    FactionRecord modelFaction = factions.get(ar.getFaction());
+                    FactionRecord modelFaction = getFaction(ar.getFaction());
                     if (null != modelFaction || code.startsWith("General")) {
                         // If it provides availability values based on equipment ratings,
                         // generate index values in addition to letter values
                         if (ar.hasMultipleRatings()) {
-                            ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
+                            ar.setRatingByNumericLevel(modelFaction);
                         }
 
                         modelRecord.getIncludedFactions().add(ar.getFaction());

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2008 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -60,9 +60,7 @@ import javax.swing.plaf.metal.MetalTheme;
 
 import megamek.MMConstants;
 import megamek.client.TimerSingleton;
-import megamek.client.bot.princess.PathEnumerator;
-import megamek.client.bot.princess.Princess;
-import megamek.client.bot.princess.geometry.ConvexBoardArea;
+import megamek.client.bot.princess.MinefieldDeploymentPlanner;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
@@ -112,6 +110,7 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeECM;
 import megamek.common.enums.MoveStepType;
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
@@ -345,6 +344,10 @@ public final class BoardView extends AbstractBoardView
     // highlighted entity hexes (for Nova CEWS network dialog)
     private List<Coords> highlightedEntityHexes = new ArrayList<>();
 
+    // highlighted demolition charge hexes (selected in the Detonate Charges dialog) - drawn with a bold yellow/black
+    // hazard outline, separate from the plain entity highlight above
+    private List<Coords> demolitionChargeHighlightHexes = new ArrayList<>();
+
     private Coords rulerStart;
     private Coords rulerEnd;
     private Color rulerStartColor;
@@ -514,13 +517,20 @@ public final class BoardView extends AbstractBoardView
                     tileManager.reloadImage(entity);
                 }
 
-                // for units that have been blown up, damaged or ejected, force a reload
-                if ((gameEntityChangeEvent.getOldEntity() != null) && ((entity.getDamageLevel()
-                      != gameEntityChangeEvent.getOldEntity()
-                      .getDamageLevel()) || (entity.isDestroyed()
-                      != gameEntityChangeEvent.getOldEntity().isDestroyed()) || (
-                      entity.getCrew().isEjected()
-                            != gameEntityChangeEvent.getOldEntity().getCrew().isEjected()))) {
+                // For units that have been blown up, damaged, ejected or handed to another player (a traitor
+                // switch means the new owner's camouflage), force a reload. Without the old state we cannot tell
+                // whether the damage changed, so reload to be safe; the reload reuses the cached image when
+                // nothing shown in fact changed, so it costs nothing in the common case.
+                final Entity oldEntity = gameEntityChangeEvent.getOldEntity();
+                boolean shownStateChanged = true;
+                if (oldEntity != null) {
+                    boolean damageChanged = entity.getDamageLevel() != oldEntity.getDamageLevel();
+                    boolean destructionChanged = entity.isDestroyed() != oldEntity.isDestroyed();
+                    boolean ownerChanged = entity.getOwnerId() != oldEntity.getOwnerId();
+                    boolean ejectionChanged = entity.getCrew().isEjected() != oldEntity.getCrew().isEjected();
+                    shownStateChanged = damageChanged || destructionChanged || ownerChanged || ejectionChanged;
+                }
+                if (shownStateChanged) {
                     tileManager.reloadImage(entity);
                 }
 
@@ -1178,6 +1188,9 @@ public final class BoardView extends AbstractBoardView
         // Minefield signs all over the place!
         drawMinefields(graphics2D);
 
+        // Demolition charges set by the local player
+        drawDemolitionCharges(graphics2D);
+
         // Artillery targets
         drawArtilleryHexes(graphics2D);
 
@@ -1186,6 +1199,9 @@ public final class BoardView extends AbstractBoardView
 
         // draw entity hex highlights (Nova CEWS network dialog)
         drawEntityHexHighlights(graphics2D);
+
+        // draw demolition charge selection highlights (Detonate Charges dialog)
+        drawDemolitionChargeHighlights(graphics2D);
 
         // draw cursors
         drawSprite(graphics2D, cursorSprite);
@@ -1216,6 +1232,9 @@ public final class BoardView extends AbstractBoardView
 
         // draw onscreen attacks
         drawSprites(graphics2D, attackSprites);
+
+        // draw artillery drift lines (from the targeted hex to where the round actually landed)
+        drawArtilleryDriftLines(graphics2D);
 
         // draw movement vectors.
         if (game.useVectorMove() && game.getPhase().isMovement()) {
@@ -1286,9 +1305,9 @@ public final class BoardView extends AbstractBoardView
 
         // debugging method that renders the bounding box of a unit's movement envelope.
         // renderClusters((Graphics2D) graphics2D);
-        // renderMovementBoundingBox((Graphics2D) graphics2D);
         // renderDonut(graphics2D, new Coords(10, 10), 2);
         // renderApproxHexDirection((Graphics2D) graphics2D);
+        // renderMinefieldScores((Graphics2D) graphics2D);
     }
 
     /**
@@ -1310,58 +1329,6 @@ public final class BoardView extends AbstractBoardView
         Point p = getCentreHexLocation(donutCoords.getX(), donutCoords.getY(), true);
         p.translate(HEX_W / 2, HEX_H / 2);
         drawHexBorder(g, p, Color.BLUE, 0, 6);
-    }
-
-    /**
-     * Debugging method that renders the bounding hex of a unit's movement envelope. Warning: very slow when rendering
-     * the bounding hex for really fast units.
-     *
-     * @param graphics2D Graphics object on which to draw.
-     */
-    @SuppressWarnings("unused")
-    private void renderMovementBoundingBox(Graphics2D graphics2D) {
-        if (getSelectedEntity() != null) {
-            Princess princess = new Princess("test", MMConstants.LOCALHOST, 2020);
-            princess.startPrecognition();
-            princess.getGame().setBoard(game.getBoard(boardId));
-            PathEnumerator pathEnum = new PathEnumerator(princess, game);
-            pathEnum.recalculateMovesFor(getSelectedEntity());
-
-            ConvexBoardArea cba = pathEnum.getUnitMovableAreas().get(getSelectedEntity().getId());
-            for (int x = 0;
-                  x < game.getBoard(boardId).getWidth();
-                  x++) {
-                for (int y = 0;
-                      y < game.getBoard(boardId).getHeight();
-                      y++) {
-                    Point centreHexLocation = getCentreHexLocation(x, y, true);
-                    centreHexLocation.translate(HEX_W / 2, HEX_H / 2);
-                    Coords coords = new Coords(x, y);
-
-                    if (cba.contains(coords)) {
-                        drawHexBorder(graphics2D, centreHexLocation, Color.PINK, 0, 6);
-                    }
-                }
-            }
-
-            for (int x = 0;
-                  x < 6;
-                  x++) {
-                Coords coords = cba.getVertexNum(x);
-                if (coords == null) {
-                    continue;
-                }
-
-                Point centreHexLocation = getCentreHexLocation(coords.getX(), coords.getY(), true);
-                centreHexLocation.translate(HEX_W / 2, HEX_H / 2);
-
-                drawHexBorder(graphics2D, centreHexLocation, Color.yellow, 0, 3);
-                new StringDrawer(Integer.toString(x)).at(centreHexLocation)
-                      .center()
-                      .color(Color.YELLOW)
-                      .draw(graphics2D);
-            }
-        }
     }
 
     /**
@@ -1397,6 +1364,26 @@ public final class BoardView extends AbstractBoardView
                 drawHexBorder(graphics2D, centreHexLocation, new Color(0, 0, (20 * cluster.id) % 255), 0, 6);
             }
         }
+    }
+    
+    /** 
+     * Debugging method used to render minefield effectiveness ratings
+     */
+    @SuppressWarnings("unused")
+    private void renderMinefieldScores(Graphics2D graphics2D) {
+    	/*Map<Coords, Integer> minefieldScores = mdp.getMinefieldScores(Minefield.TYPE_CONVENTIONAL, UnitType.TANK,
+    			EntityMovementMode.WHEELED, getBoard());*/
+    	
+    	MinefieldDeploymentPlanner mdp = new MinefieldDeploymentPlanner(getLocalPlayer(), game);
+    	Map<Coords, Double> minefieldScores = mdp.buildCoalescedMinefieldScores(Minefield.TYPE_CONVENTIONAL, getBoard());
+    	
+    	for (Coords coords : minefieldScores.keySet()) {
+    		Point centreHexLocation = getCentreHexLocation(coords.getX(), coords.getY(), true);
+            centreHexLocation.translate(HEX_W / 2, HEX_H);
+            graphics2D.setColor(Color.pink);
+            drawCenteredString(String.format("%3.1f", minefieldScores.get(coords)), 
+            		centreHexLocation.x, centreHexLocation.y, FONT_14, graphics2D);
+    	}
     }
 
     public void clearShadowMap() {
@@ -1751,6 +1738,52 @@ public final class BoardView extends AbstractBoardView
         }
     }
 
+    /** Hazard-stripe yellow for the bold demolition charge selection outline. */
+    private static final Color DEMO_CHARGE_HAZARD_COLOR = new Color(255, 213, 0);
+
+    /**
+     * Draws the outline around demolition charge hexes selected in the Detonate Charges dialog. With the hazard-outline
+     * client setting on (default), each hex gets a bold yellow/black hazard-stripe border (a thick black base with a
+     * yellow dashed line over it). With the setting off, it falls back to the same plain border the generic entity
+     * highlight uses.
+     *
+     * @param graphics The graphics object to draw on
+     */
+    private void drawDemolitionChargeHighlights(Graphics2D graphics) {
+        if (demolitionChargeHighlightHexes.isEmpty()) {
+            return;
+        }
+        boolean hazard = GUIP.getDemolitionChargeHazardOutline();
+        Stroke oldStroke = graphics.getStroke();
+        for (Coords hex : demolitionChargeHighlightHexes) {
+            Point hexPos = getHexLocation(hex);
+            Shape hexBorder = HexDrawUtilities.getHexFullBorderLine(0);
+            Shape scaled = AffineTransform
+                  .getScaleInstance(scale, scale)
+                  .createTransformedShape(hexBorder);
+            Shape border = AffineTransform
+                  .getTranslateInstance(hexPos.x, hexPos.y)
+                  .createTransformedShape(scaled);
+            if (hazard) {
+                float boldWidth = (float) Math.max(3.0, 4.0 * scale);
+                // Black base pass, then a yellow dashed pass on top so the gaps show black underneath - a hazard stripe.
+                graphics.setColor(Color.BLACK);
+                graphics.setStroke(new BasicStroke(boldWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                graphics.draw(border);
+                float dash = (float) Math.max(6.0, 10.0 * scale);
+                graphics.setColor(DEMO_CHARGE_HAZARD_COLOR);
+                graphics.setStroke(new BasicStroke(boldWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+                      10.0f, new float[] { dash, dash }, 0.0f));
+                graphics.draw(border);
+            } else {
+                graphics.setColor(UIUtil.uiGreen());
+                graphics.setStroke(new BasicStroke((float) (2.0 * scale)));
+                graphics.draw(border);
+            }
+        }
+        graphics.setStroke(oldStroke);
+    }
+
     /**
      * Draw the orbital bombardment attacks on the board view
      *
@@ -1949,9 +1982,130 @@ public final class BoardView extends AbstractBoardView
                                   graphics2D);
                         }
                         break;
+                    case Minefield.TYPE_TRIPWIRE:
+                    	drawCenteredString(Messages.getString("BoardView1.Tripwire"),
+                                hexLocation.x,
+                                hexLocation.y + (int) (31 * scale),
+                                font_minefield,
+                                graphics2D);
+                    	break;
+                    case Minefield.TYPE_PITFALL:
+                    	drawCenteredString(Messages.getString("BoardView1.Pitfall"),
+                                hexLocation.x,
+                                hexLocation.y + (int) (31 * scale),
+                                font_minefield,
+                                graphics2D);
+                    	break;
                 }
             }
         }
+    }
+
+    /**
+     * Draws an indicator on every hex holding a demolition charge set by the local player, so the player can keep track
+     * of armed charges until they are touched off (TO:AUE p.152). Charges are only visible to their owner.
+     *
+     * @param graphics2D the graphics context to draw on
+     */
+    private void drawDemolitionCharges(Graphics2D graphics2D) {
+        if (localPlayer == null) {
+            return;
+        }
+        Rectangle view = graphics2D.getClipBounds();
+        // only update visible hexes
+        int drawX = (view.x / (int) (HEX_WC * scale)) - 1;
+        int drawY = (view.y / (int) (HEX_H * scale)) - 1;
+
+        int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
+        int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
+
+        int maxX = drawX + drawWidth;
+        int maxY = drawY + drawHeight;
+
+        Board board = game.getBoard(boardId);
+        for (IBuilding building : board.getBuildingsVector()) {
+            for (DemolitionCharge charge : building.getDemolitionCharges()) {
+                if (charge.playerId != localPlayer.getId()) {
+                    continue;
+                }
+                Coords coords = charge.pos;
+                // If the coords aren't visible, skip
+                if ((coords.getX() < drawX)
+                      || (coords.getX() > maxX)
+                      || (coords.getY() < drawY)
+                      || (coords.getY() > maxY)
+                      || !board.contains(coords)) {
+                    continue;
+                }
+
+                Point hexLocation = getHexLocation(coords);
+                drawDemolitionChargeLabel(graphics2D, hexLocation,
+                      Messages.getString("BoardView1.demoChargeSet", charge.damage));
+            }
+        }
+    }
+
+    private static final Color DEMO_CHARGE_OUTLINE_COLOR = new Color(0, 0, 0, 200);
+
+    /**
+     * Draws the armed-charge marker: a crosshair centered in the hex to clearly mark the rigged hex, with the damage
+     * label on a dark backing pill below it so it stays readable over any terrain and is clearly distinct from unit
+     * status tags.
+     *
+     * @param graphics2D  the graphics context to draw on
+     * @param hexLocation the pixel location of the hex
+     * @param label       the label text
+     */
+    private void drawDemolitionChargeLabel(Graphics2D graphics2D, Point hexLocation, String label) {
+        // The marker color is a client setting so players can adjust it for color vision deficiencies
+        // and for visibility against the terrain colors of the current map
+        Color demolitionChargeColor = GUIP.getDemolitionChargeColor();
+        int centerX = hexLocation.x + (hex_size.width / 2);
+        int centerY = hexLocation.y + (hex_size.height / 2);
+        int radius = Math.max(3, (int) (7 * scale));
+        int tickLength = Math.max(2, (int) (4 * scale));
+
+        Stroke oldStroke = graphics2D.getStroke();
+        // Outline pass (thicker, dark) below the colored pass keeps the crosshair visible on any terrain
+        graphics2D.setStroke(new BasicStroke(Math.max(2.5f, 3f * scale)));
+        graphics2D.setColor(DEMO_CHARGE_OUTLINE_COLOR);
+        drawCrosshair(graphics2D, centerX, centerY, radius, tickLength);
+        graphics2D.setStroke(new BasicStroke(Math.max(1f, 1.5f * scale)));
+        graphics2D.setColor(demolitionChargeColor);
+        drawCrosshair(graphics2D, centerX, centerY, radius, tickLength);
+        graphics2D.setStroke(oldStroke);
+
+        // Damage label on a dark backing pill below the crosshair
+        FontMetrics metrics = boardPanel.getFontMetrics(font_minefield);
+        int stringWidth = metrics.stringWidth(label);
+        int labelX = centerX - (stringWidth / 2);
+        int labelY = centerY + radius + tickLength + metrics.getAscent() + 2;
+
+        graphics2D.setColor(new Color(0, 0, 0, 160));
+        graphics2D.fillRoundRect(labelX - 4, labelY - metrics.getAscent() - 1,
+              stringWidth + 8, metrics.getAscent() + metrics.getDescent() + 2, 8, 8);
+
+        graphics2D.setFont(font_minefield);
+        graphics2D.setColor(demolitionChargeColor);
+        graphics2D.drawString(label, labelX, labelY);
+    }
+
+    /**
+     * Draws a crosshair: a circle with four tick lines extending outward at the cardinal points and a center dot.
+     *
+     * @param graphics2D the graphics context to draw on
+     * @param centerX    the x pixel coordinate of the crosshair center
+     * @param centerY    the y pixel coordinate of the crosshair center
+     * @param radius     the circle radius in pixels
+     * @param tickLength the length of the tick lines in pixels
+     */
+    private void drawCrosshair(Graphics2D graphics2D, int centerX, int centerY, int radius, int tickLength) {
+        graphics2D.drawOval(centerX - radius, centerY - radius, radius * 2, radius * 2);
+        graphics2D.drawLine(centerX, centerY - radius - tickLength, centerX, centerY - radius + tickLength);
+        graphics2D.drawLine(centerX, centerY + radius - tickLength, centerX, centerY + radius + tickLength);
+        graphics2D.drawLine(centerX - radius - tickLength, centerY, centerX - radius + tickLength, centerY);
+        graphics2D.drawLine(centerX + radius - tickLength, centerY, centerX + radius + tickLength, centerY);
+        graphics2D.fillOval(centerX - 1, centerY - 1, 3, 3);
     }
 
     private void drawCenteredString(String string, int x, int y, Font font, Graphics2D graphics2D) {
@@ -1960,6 +2114,273 @@ public final class BoardView extends AbstractBoardView
         x += ((hex_size.width - stringWidth) / 2);
         graphics2D.setFont(font);
         graphics2D.drawString(string, x, y);
+    }
+
+    /**
+     * Draws a single combined turn label for all the bot artillery heat-map markers stacked on one hex, so the text is
+     * visible in screenshots and not just in the hover text. Several tubes can target the same hex with different flight
+     * times, so the distinct values are merged into one label rather than drawn over each other: firing markers count
+     * down the turns until impact ({@code T-2}, joined as {@code T-1/2} when they differ, {@code SPLASH} when the only
+     * one is this turn), and otherwise a predicted-position hex shows the prediction's turn ({@code T<turn>}). No-op when
+     * no
+     * heat-map markers are given.
+     *
+     * @param heatMapMarkers The heat-map markers drawn on this hex
+     * @param graphics2D     The hex graphics context
+     * @param scale          The current board scale
+     */
+    private void drawHeatMapTurnLabel(Collection<SpecialHexDisplay> heatMapMarkers, Graphics2D graphics2D,
+          float scale) {
+        SortedSet<Integer> firingCountdowns = new TreeSet<>();
+        SortedSet<Integer> predictedTurns = new TreeSet<>();
+        for (SpecialHexDisplay marker : heatMapMarkers) {
+            String info = marker.getInfo();
+            if ((info == null) || !info.startsWith(SpecialHexDisplay.HEAT_MAP_PREFIX)) {
+                continue;
+            }
+            // Control token is "<turn-or-countdown>:<heat>:<kind>".
+            String[] fields = heatMapToken(info).split(":");
+            if (fields.length == 0) {
+                continue;
+            }
+            try {
+                int value = Integer.parseInt(fields[0]);
+                if ((fields.length >= 3) && SpecialHexDisplay.HEAT_MAP_KIND_FIRING.equals(fields[2])) {
+                    firingCountdowns.add(value);
+                } else {
+                    predictedTurns.add(value);
+                }
+            } catch (NumberFormatException ignored) {
+                // skip a marker whose turn value is not numeric
+            }
+        }
+
+        String label;
+        if (!firingCountdowns.isEmpty()) {
+            // A firing marker's countdown wins over a predicted label; merge distinct countdowns with '/'.
+            if ((firingCountdowns.size() == 1) && (firingCountdowns.first() == 0)) {
+                label = Messages.getString("BoardView.artillery.splash");
+            } else {
+                label = Messages.getString("BoardView.artillery.firingCountdown", joinValues(firingCountdowns));
+            }
+        } else if (!predictedTurns.isEmpty()) {
+            label = Messages.getString("BoardView.artillery.predictedTurns", joinValues(predictedTurns));
+        } else {
+            return;
+        }
+
+        Color previousColor = graphics2D.getColor();
+        graphics2D.setColor(Color.WHITE);
+        drawCenteredString(label, 0, (int) (45 * scale), font_note, graphics2D);
+        graphics2D.setColor(previousColor);
+    }
+
+    /**
+     * @param values The values to render
+     *
+     * @return The values joined with a slash, e.g. {@code 1/2}
+     */
+    private String joinValues(Collection<Integer> values) {
+        StringBuilder joined = new StringBuilder();
+        for (Integer value : values) {
+            if (joined.length() > 0) {
+                joined.append('/');
+            }
+            joined.append(value);
+        }
+        return joined.toString();
+    }
+
+    /**
+     * The cold-to-hot diverging color ramp for predicted-position heat-map markers: navy blue (coldest, a single
+     * enemy converging on the hex) through light blue, light gray, and light orange to crimson red (hottest, many
+     * enemies converging).
+     */
+    private static final Color[] HEAT_MAP_COLOR_RAMP = {
+          new Color(0, 0, 128),      // navy blue - coldest
+          new Color(102, 178, 255),  // light blue
+          new Color(220, 220, 220),  // light gray (neutral middle)
+          new Color(255, 178, 102),  // light orange
+          new Color(220, 20, 60)     // crimson red - hottest
+    };
+
+    /** The enemy count at which a predicted-position heat-map hex is drawn fully hot (crimson). */
+    private static final int HEAT_MAP_MAX_HEAT_UNITS = 5;
+
+    /** Opacity of the predicted-position heat-map color fill, so the underlying terrain still shows through. */
+    private static final float HEAT_MAP_FILL_ALPHA = 0.55f;
+
+    /**
+     * Extracts the colon-separated heat-map control token (the {@code <turn>:<heat>:<kind>} part up to the first
+     * space) from a heat-map marker's info text. See {@link SpecialHexDisplay#HEAT_MAP_PREFIX}.
+     *
+     * @param info The marker's info text
+     *
+     * @return The control token (without the prefix), or an empty string if there is none
+     */
+    private String heatMapToken(String info) {
+        int prefixLength = SpecialHexDisplay.HEAT_MAP_PREFIX.length();
+        int space = info.indexOf(' ', prefixLength);
+        return (space > prefixLength) ? info.substring(prefixLength, space) : info.substring(prefixLength);
+    }
+
+    /**
+     * @param specialHexDisplay A special hex display being drawn
+     *
+     * @return {@code true} if this is any bot artillery heat-map marker (predicted-position or firing)
+     */
+    private boolean isHeatMapMarker(SpecialHexDisplay specialHexDisplay) {
+        String info = specialHexDisplay.getInfo();
+        return (info != null) && info.startsWith(SpecialHexDisplay.HEAT_MAP_PREFIX);
+    }
+
+    /**
+     * @param specialHexDisplay A special hex display being drawn
+     *
+     * @return {@code true} if this is a predicted-position heat-map marker (painted as a cold-to-hot color fill),
+     *       {@code false} for a firing marker or any non-heat-map display
+     */
+    private boolean isPredictedHeatMapMarker(SpecialHexDisplay specialHexDisplay) {
+        String info = specialHexDisplay.getInfo();
+        if ((info == null) || !info.startsWith(SpecialHexDisplay.HEAT_MAP_PREFIX)) {
+            return false;
+        }
+        String[] fields = heatMapToken(info).split(":");
+        return (fields.length >= 3) && SpecialHexDisplay.HEAT_MAP_KIND_PREDICTED.equals(fields[2]);
+    }
+
+    /**
+     * @param info A heat-map marker's info text
+     *
+     * @return The number of enemies predicted to converge on the hex (the marker's heat), or 1 if it cannot be parsed
+     */
+    private int heatMapHeatUnits(String info) {
+        String[] fields = heatMapToken(info).split(":");
+        if (fields.length >= 2) {
+            try {
+                return Integer.parseInt(fields[1]);
+            } catch (NumberFormatException ignored) {
+                return 1;
+            }
+        }
+        return 1;
+    }
+
+    /**
+     * Maps a predicted hex's heat (number of enemies converging on it) to a color on the cold-to-hot diverging ramp:
+     * one enemy is navy blue (coldest) and {@link #HEAT_MAP_MAX_HEAT_UNITS} or more is crimson red (hottest), with the
+     * intermediate counts interpolated through the ramp.
+     *
+     * @param heatUnits The number of enemies converging on the hex
+     *
+     * @return The color to paint the hex
+     */
+    private Color heatMapDivergingColor(int heatUnits) {
+        float normalized = (float) (heatUnits - 1) / (HEAT_MAP_MAX_HEAT_UNITS - 1);
+        normalized = Math.max(0.0f, Math.min(1.0f, normalized));
+        float scaledPosition = normalized * (HEAT_MAP_COLOR_RAMP.length - 1);
+        int lowerStop = (int) Math.floor(scaledPosition);
+        int upperStop = Math.min(lowerStop + 1, HEAT_MAP_COLOR_RAMP.length - 1);
+        float fraction = scaledPosition - lowerStop;
+        Color from = HEAT_MAP_COLOR_RAMP[lowerStop];
+        Color to = HEAT_MAP_COLOR_RAMP[upperStop];
+        int red = Math.round(from.getRed() + (fraction * (to.getRed() - from.getRed())));
+        int green = Math.round(from.getGreen() + (fraction * (to.getGreen() - from.getGreen())));
+        int blue = Math.round(from.getBlue() + (fraction * (to.getBlue() - from.getBlue())));
+        return new Color(red, green, blue);
+    }
+
+    /**
+     * Paints a predicted-position heat-map marker as a cold-to-hot translucent fill over the whole hex (navy = one
+     * enemy converging, crimson = many), so the predicted enemy concentration reads at a glance and cools as units
+     * are destroyed. No-op for any other special hex display.
+     *
+     * @param specialHexDisplay The special hex display being drawn
+     * @param graphics2D        The hex graphics context
+     * @param scale             The current board scale
+     */
+    private void drawHeatMapPredictedHex(SpecialHexDisplay specialHexDisplay, Graphics2D graphics2D, float scale) {
+        Color heatColor = heatMapDivergingColor(heatMapHeatUnits(specialHexDisplay.getInfo()));
+        Color previousColor = graphics2D.getColor();
+        Composite previousComposite = graphics2D.getComposite();
+        graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, HEAT_MAP_FILL_ALPHA));
+        graphics2D.setColor(heatColor);
+        AffineTransform hexScale = new AffineTransform();
+        hexScale.scale(scale, scale);
+        graphics2D.fill(hexScale.createTransformedShape(HEX_POLY));
+        graphics2D.setComposite(previousComposite);
+        graphics2D.setColor(previousColor);
+    }
+
+    /** Color of the artillery drift line drawn from a targeted hex to where the round actually landed. */
+    private static final Color ARTILLERY_DRIFT_LINE_COLOR = new Color(255, 191, 0);
+
+    /**
+     * Draws a thin dashed line from each visible artillery miss marker's targeted hex to the hex the round actually
+     * drifted to, with an arrowhead at the landing hex, so the drift reads at a glance (in addition to the combat
+     * report). Only drawn for drift markers currently shown to the local player.
+     *
+     * @param graphics2D The board graphics context, in board pixel space at the current scale
+     */
+    private void drawArtilleryDriftLines(Graphics2D graphics2D) {
+        if (!GUIP.getShowArtilleryDriftArrows()) {
+            return;
+        }
+        Board board = game.getBoard(boardId);
+        if (board == null) {
+            return;
+        }
+        Map<Coords, Collection<SpecialHexDisplay>> specialHexDisplays = board.getSpecialHexDisplayTable();
+        if ((specialHexDisplays == null) || specialHexDisplays.isEmpty()) {
+            return;
+        }
+        Stroke previousStroke = graphics2D.getStroke();
+        Color previousColor = graphics2D.getColor();
+        float dashLength = Math.max(4.0f, hex_size.width / 14.0f);
+        graphics2D.setColor(ARTILLERY_DRIFT_LINE_COLOR);
+        graphics2D.setStroke(new BasicStroke(Math.max(1.0f, hex_size.width / 60.0f), BasicStroke.CAP_ROUND,
+              BasicStroke.JOIN_ROUND, 1.0f, new float[] { dashLength, dashLength }, 0.0f));
+        for (Map.Entry<Coords, Collection<SpecialHexDisplay>> entry : specialHexDisplays.entrySet()) {
+            for (SpecialHexDisplay specialHexDisplay : entry.getValue()) {
+                Coords landingHex = specialHexDisplay.getDriftHex();
+                if ((landingHex == null)
+                      || !specialHexDisplay.drawNow(game.getPhase(), game.getRoundCount(), getLocalPlayer(), GUIP)) {
+                    continue;
+                }
+                drawDriftLine(graphics2D, entry.getKey(), landingHex);
+            }
+        }
+        graphics2D.setStroke(previousStroke);
+        graphics2D.setColor(previousColor);
+    }
+
+    /**
+     * Draws a single drift line, with an arrowhead at the landing hex, between the centers of two hexes.
+     *
+     * @param graphics2D  The board graphics context
+     * @param targetedHex The hex that was targeted (line origin)
+     * @param landingHex  The hex the round drifted to (arrowhead end)
+     */
+    private void drawDriftLine(Graphics2D graphics2D, Coords targetedHex, Coords landingHex) {
+        Point targetedPoint = getHexLocation(targetedHex);
+        Point landingPoint = getHexLocation(landingHex);
+        if ((targetedPoint == null) || (landingPoint == null)) {
+            return;
+        }
+        int fromX = targetedPoint.x + (hex_size.width / 2);
+        int fromY = targetedPoint.y + (hex_size.height / 2);
+        int toX = landingPoint.x + (hex_size.width / 2);
+        int toY = landingPoint.y + (hex_size.height / 2);
+        graphics2D.drawLine(fromX, fromY, toX, toY);
+        double angle = Math.atan2((double) toY - fromY, (double) toX - fromX);
+        int headLength = Math.max(6, hex_size.width / 6);
+        double spread = Math.toRadians(28);
+        int leftX = (int) Math.round(toX - (headLength * Math.cos(angle - spread)));
+        int leftY = (int) Math.round(toY - (headLength * Math.sin(angle - spread)));
+        int rightX = (int) Math.round(toX - (headLength * Math.cos(angle + spread)));
+        int rightY = (int) Math.round(toY - (headLength * Math.sin(angle + spread)));
+        graphics2D.drawLine(toX, toY, leftX, leftY);
+        graphics2D.drawLine(toX, toY, rightX, rightY);
     }
 
     @Override
@@ -1987,6 +2408,9 @@ public final class BoardView extends AbstractBoardView
         if (!ignoreUnits) {
             // Minefield signs all over the place!
             drawMinefields(boardGraph);
+
+            // Demolition charges set by the local player
+            drawDemolitionCharges(boardGraph);
 
             // Artillery targets
             drawArtilleryHexes(boardGraph);
@@ -2490,11 +2914,28 @@ public final class BoardView extends AbstractBoardView
         final Collection<SpecialHexDisplay> shdList = game.getBoard(boardId).getSpecialHexDisplay(coords);
         try {
             if (shdList != null) {
+                // Several heat-map markers can stack on one hex (multiple tubes firing it, or a prediction plus a
+                // shot). Draw each marker's icon/fill, but collect them so a single combined turn label is drawn (their
+                // distinct values merged), rather than each marker drawing its label over the others.
+                List<SpecialHexDisplay> heatMapMarkers = new ArrayList<>();
                 for (SpecialHexDisplay shd : shdList) {
                     if (shd.drawNow(game.getPhase(), game.getRoundCount(), getLocalPlayer(), GUIP)) {
-                        scaledImage = getScaledImage(shd.getDefaultImage(), true);
-                        graphics2D.drawImage(scaledImage, 0, 0, boardPanel);
+                        // A predicted-position heat-map marker paints the hex with a cold-to-hot color (navy = one
+                        // enemy converging, crimson = many) instead of an icon; the firing marker and every other
+                        // display draw their icon.
+                        if (isPredictedHeatMapMarker(shd)) {
+                            drawHeatMapPredictedHex(shd, graphics2D, scale);
+                        } else {
+                            scaledImage = getScaledImage(shd.getDefaultImage(), true);
+                            graphics2D.drawImage(scaledImage, 0, 0, boardPanel);
+                        }
+                        if (isHeatMapMarker(shd)) {
+                            heatMapMarkers.add(shd);
+                        }
                     }
+                }
+                if (!heatMapMarkers.isEmpty()) {
+                    drawHeatMapTurnLabel(heatMapMarkers, graphics2D, scale);
                 }
             }
         } catch (Exception e) {
@@ -3356,6 +3797,19 @@ public final class BoardView extends AbstractBoardView
             addC3Link(entity);
         }
 
+        // The removal above also dropped the lines that this entity's hierarchic subordinates draw TO it (each
+        // slave owns its own line to its master), and addC3Link(entity) only redraws the entity's own line to its
+        // master. Re-add the subordinates' lines, otherwise selecting a master in the firing phase erases its
+        // network on the board until the next full redraw.
+        for (Entity subordinate : game.getEntitiesVector()) {
+            if ((subordinate.getC3MasterId() == entity.getId())
+                  && !subordinate.equals(entity)
+                  && subordinate.hasC3()
+                  && isOnThisBord(subordinate)) {
+                addC3Link(subordinate);
+            }
+        }
+
         vtolAttackSprites.removeIf(s -> s.getEntity().getId() == entity.getId());
 
         // Remove Flyover Sprites
@@ -3947,6 +4401,14 @@ public final class BoardView extends AbstractBoardView
                 return;
             }
 
+            // A unit whose C3 gear is switched off is not on the network, so neither end draws a link. The
+            // non-hierarchic branches above get this from onSameC3NetworkAs(); the hierarchic branch does not
+            // consult it, so the same check is applied here. Network wiring is left intact, so the links come
+            // back when the gear is switched on again.
+            if (EquipmentActivation.isC3SwitchedOff(entity) || EquipmentActivation.isC3SwitchedOff(eMaster)) {
+                return;
+            }
+
             // ECM cuts off the network
             boolean blocked;
 
@@ -4058,8 +4520,8 @@ public final class BoardView extends AbstractBoardView
             }
         }
 
-        for (Enumeration<AttackAction> i = game.getCharges();
-              i.hasMoreElements(); ) {
+        for (Enumeration<AttackAction> i = game.getDisplacementAttacks();
+             i.hasMoreElements(); ) {
             AttackAction attackAction = i.nextElement();
             if (attackAction instanceof PhysicalAttackAction physicalAttackAction) {
                 addAttack(physicalAttackAction);
@@ -4521,6 +4983,17 @@ public final class BoardView extends AbstractBoardView
     }
 
     /**
+     * Sets the demolition charge hexes to highlight (selected in the Detonate Charges dialog). These are drawn with a
+     * bold yellow/black hazard outline when the matching client setting is on, otherwise with the plain highlight.
+     *
+     * @param hexes List of hex coordinates to highlight (can be empty to clear all highlights)
+     */
+    public void setDemolitionChargeHighlightHexes(List<Coords> hexes) {
+        demolitionChargeHighlightHexes = new ArrayList<>(hexes);
+        repaint();
+    }
+
+    /**
      * Determines if this Board contains the Coords, and if so, "cursors" that Coords.
      *
      * @param coords the Coords.
@@ -4631,10 +5104,21 @@ public final class BoardView extends AbstractBoardView
 
     @Override
     public void boardChangedHex(BoardEvent boardEvent) {
-        hexImageCache.remove(boardEvent.getCoords());
-        // Also repaint the surrounding hexes because of shadows, border etc.
-        for (int direction : allDirections) {
-            hexImageCache.remove(boardEvent.getCoords().translated(direction));
+        Coords coords = boardEvent.getCoords();
+        Hex hex = game.getBoard(boardId).getHex(coords);
+        // An elevator changes its terrain overlay level, which the isometric view can draw beyond the immediate
+        // neighbors. A per-hex cache clear leaves the isometric view stale (it only recovers on a full reload), so
+        // for elevator hexes clear the whole hex image cache - the same thing a board reload does.
+        boolean hasIndustrialElevator = (hex != null) && hex.containsTerrain(Terrains.INDUSTRIAL_ELEVATOR);
+        boolean hasSolarisElevator = (hex != null) && hex.containsTerrain(Terrains.SOLARIS_ELEVATOR);
+        if (hasIndustrialElevator || hasSolarisElevator) {
+            clearHexImageCache();
+        } else {
+            hexImageCache.remove(coords);
+            // Also repaint the surrounding hexes because of shadows, border etc.
+            for (int direction : allDirections) {
+                hexImageCache.remove(coords.translated(direction));
+            }
         }
         clearShadowMap();
         boardPanel.repaint();

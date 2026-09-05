@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,10 +40,12 @@ package megamek.common.weapons.infantry.support.mortar;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -62,15 +64,16 @@ public class InfantrySupportMortarLightInfernoWeapon extends InfantryWeapon {
     public InfantrySupportMortarLightInfernoWeapon() {
         super();
 
-        name = "Mortar (Light) - Inferno";
-        setInternalName("InfantryLightMortarInferno");
+        name = "Mortar (Light) - Incendiary";
+        setInternalName(EquipmentTypeLookup.INFANTRY_MORTAR_LIGHT_INFERNO);
+        addLookupName("Mortar (Light) - Inferno");
         addLookupName(name);
         addLookupName("Infantry Light Mortar Inferno");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1400;
         bv = 0.79;
         tonnage = .050;
-        flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT);
+        flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT).or(F_MORTAR_TYPE_INDIRECT).or(F_INDIRECT_FIRE);
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
         infantryDamage = 0.26;
@@ -79,7 +82,7 @@ public class InfantrySupportMortarLightInfernoWeapon extends InfantryWeapon {
         ammoWeight = 0.002;
         ammoCost = 24;
         shots = 1;
-        rulesRefs = " 273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
@@ -100,5 +103,11 @@ public class InfantrySupportMortarLightInfernoWeapon extends InfantryWeapon {
             removeMode(MODE_MISSILE_INDIRECT);
             removeMode(MODE_INDIRECT_HEAT);
         }
+    }
+
+    @Override
+    public boolean isAlphaStrikeIndirectFire() {
+        // Conventional infantry do not gain the AlphaStrike IF ability from a carried mortar.
+        return false;
     }
 }

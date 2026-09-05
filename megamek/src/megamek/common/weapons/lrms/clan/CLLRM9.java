@@ -36,6 +36,7 @@ package megamek.common.weapons.lrms.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -64,12 +65,9 @@ public class CLLRM9 extends LRMWeapon {
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
         // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         // But LRM Tech Base and Avail Ratings.
-        rulesRefs = "231, TM";
-        flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
-              .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
+        cost = 90000;
+        rulesRefs = rulesRefs(SourceBookCode.TM, 231);
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)

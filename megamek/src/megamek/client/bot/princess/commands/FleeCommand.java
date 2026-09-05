@@ -42,7 +42,8 @@ import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.EnumArgument;
 
 /**
- * Command to set the bot to flee to a specific edge of the map.
+ * Command to set the bot to flee to a specific edge of the map. Ordering a flee to {@link CardinalEdge#NONE} cancels
+ * a previous flee order.
  *
  * @author Luana Coppio
  */
@@ -59,8 +60,30 @@ public class FleeCommand implements ChatCommand {
     @Override
     public void execute(Princess princess, Arguments arguments) {
         CardinalEdge edge = arguments.getEnum(EDGE, CardinalEdge.class);
-        princess.sendChat("Received flee order - " + edge.name());
+        if (edge == CardinalEdge.NONE) {
+            cancelFleeOrder(princess);
+        } else {
+            issueFleeOrder(princess, edge);
+        }
+    }
+
+    private void issueFleeOrder(Princess princess, CardinalEdge edge) {
+        String reason = "Received flee order - " + edge.name();
+        princess.sendChat(Messages.getString("Princess.command.flee.fleeing", edge.name()));
         princess.getBehaviorSettings().setDestinationEdge(edge);
-        princess.setFallBack(true, "Received flee order - " + edge.name());
+        // Auto-flee plus a destination edge is what actually makes healthy units move toward the edge
+        // (see UnitBehavior#calculateUnitBehavior), and the flee-board flag allows them to leave the map.
+        princess.getBehaviorSettings().setAutoFlee(true);
+        princess.setFallBack(true, reason);
+        princess.setFleeBoard(true, reason);
+    }
+
+    private void cancelFleeOrder(Princess princess) {
+        String reason = "Received cancel flee order";
+        princess.sendChat(Messages.getString("Princess.command.flee.canceled"));
+        princess.getBehaviorSettings().setDestinationEdge(CardinalEdge.NONE);
+        princess.getBehaviorSettings().setAutoFlee(false);
+        princess.setFallBack(false, reason);
+        princess.setFleeBoard(false, reason);
     }
 }

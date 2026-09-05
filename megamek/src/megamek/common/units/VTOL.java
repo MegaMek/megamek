@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,6 +45,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.MPCalculationSetting;
+import megamek.common.Messages;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
@@ -59,6 +60,7 @@ import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
@@ -219,8 +221,7 @@ public class VTOL extends Tank implements IBomber {
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-            int roll = Compute.d6(2);
-            if ((5 < roll) && (roll < 9)) {
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation()) {
                 rv = new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
                 bHitAimed = true;
             }
@@ -689,6 +690,9 @@ public class VTOL extends Tank implements IBomber {
             mp = applyGravityEffectsOnMP(mp);
         }
 
+        // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules)
+        mp = Math.max(0, mp - getImpMpReduction());
+
         return mp;
     }
 
@@ -746,10 +750,10 @@ public class VTOL extends Tank implements IBomber {
     }
 
     @Override
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
-        super.addSystemTechAdvancement(ctl);
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
+        super.addSystemTechAdvancement(techLevel);
         if (!hasNoTurret()) {
-            ctl.addComponent(getChinTurretTA());
+            techLevel.addComponent(getChinTurretTA(), Messages.getString("CompositeTechLevel.component.chinTurret"));
         }
     }
 

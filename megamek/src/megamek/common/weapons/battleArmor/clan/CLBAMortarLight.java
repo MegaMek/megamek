@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -80,12 +81,13 @@ public class CLBAMortarLight extends Weapon {
         tonnage = 0.3;
         cost = 2100;
         criticalSlots = 2;
-        flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON).or(F_MORTAR_TYPE_INDIRECT)
+        flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON).or(F_MORTAR_TYPE_INDIRECT).or(F_INDIRECT_FIRE)
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        rulesRefs = "263, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 263),
+              rulesRef(SourceBookCode.TW, 305)
+        );
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(3054, 3057, 3063, DATE_NONE, DATE_NONE)
@@ -94,11 +96,6 @@ public class CLBAMortarLight extends Weapon {
               .setClanApproximate(false, false, true, false, false)
               .setPrototypeFactions(Faction.FS, Faction.LC)
               .setProductionFactions(Faction.LC);
-    }
-
-    @Override
-    public boolean hasIndirectFire() {
-        return true;
     }
 
     @Override

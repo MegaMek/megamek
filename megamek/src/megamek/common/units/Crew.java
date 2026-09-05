@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,7 +44,6 @@ import java.util.UUID;
 import java.util.Vector;
 
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
-import megamek.codeUtilities.MathUtility;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
@@ -79,6 +78,10 @@ public class Crew implements Serializable {
     private final String[] nicknames;
     private final Gender[] genders;
     private final boolean[] clanPilots;
+    /** Whether each crew member is wearing a MekWarrior Combat Suit, TO:AUE p.129. */
+    // Deliberately not final: a Crew deserialized from a stream written before this field existed restores as
+    // null, because Java deserialization skips field initializers. getArmorKitNames() fills it in on first use.
+    private String[] armorKitNames;
     private final Portrait[] portraits;
 
     private final int[] gunnery;
@@ -102,15 +105,20 @@ public class Crew implements Serializable {
     // deployment
     private int fatigueTurnCount;
 
+    // A gamemaster-set temporary change to the crew's effective skills; applied in the effective-skill
+    // getters and never written into the skill arrays, so it reverses itself completely when it expires.
+    private TemporarySkillModifiers skillModifiers = new TemporarySkillModifiers();
+
     // region RPG Skills
     // MW3e uses 3 different gunnery skills
     private final int[] gunneryL;
     private final int[] gunneryM;
     private final int[] gunneryB;
-
+    private boolean[] pendingConRolls;
+    
     // Separate artillery skill
     private final int[] artillery;
-
+    
     // init bonuses
     // bonus for individual initiative
     private int initBonus;
@@ -191,7 +199,7 @@ public class Crew implements Serializable {
     // endregion Variable Declarations
 
     // region Constructors
-
+    
     /**
      * Creates a nameless P5/G4 crew of the given size.
      *
@@ -245,6 +253,7 @@ public class Crew implements Serializable {
         Arrays.fill(getGenders(), Gender.RANDOMIZE);
         setGender(gender, 0);
         clanPilots = new boolean[slots];
+        armorKitNames = new String[slots];
         Arrays.fill(getClanPilots(), clanPilot);
         portraits = new Portrait[slots];
         for (int i = 0; i < slots; i++) {
@@ -274,6 +283,9 @@ public class Crew implements Serializable {
         koThisRound = new boolean[slots];
         toughness = new int[slots];
         fatigue = new int[slots];
+        
+        this.pendingConRolls = new boolean[slots];
+        Arrays.fill(this.pendingConRolls, false);
 
         options.initialize();
 
@@ -347,6 +359,32 @@ public class Crew implements Serializable {
         return (pos < getGenders().length) ? getGenders()[pos] : Gender.RANDOMIZE;
     }
 
+    public boolean hasPendingConRolls() { 
+        for (int i = 0; i < pendingConRolls.length; i++) {
+            if (pendingConRolls[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean hasPendingConRoll(final int pos) {
+        return pendingConRolls[pos];
+    }
+    
+    public void setPendingConRolls(final boolean pendingConRolls, int crewPos) {
+        this.pendingConRolls[crewPos] = pendingConRolls;
+    }
+
+    /**
+     * Not used yet, but if we need to clear pending con rolls.
+     */
+    public void resetPendingConRolls() {
+        for (int i = 0; i < pendingConRolls.length; i++) {
+            pendingConRolls[i] = false;
+        }
+    }
+    
     public void setGender(final Gender gender, final int pos) {
         getGenders()[pos] = gender;
     }
@@ -365,6 +403,53 @@ public class Crew implements Serializable {
 
     public void setClanPilot(final boolean clanPilot, final int position) {
         getClanPilots()[position] = clanPilot;
+    }
+
+    /**
+     * @return one entry per crew slot, holding the internal name of the armor kit that crew member wears, or
+     *       {@code null} where they wear none
+     */
+    public String[] getArmorKitNames() {
+        if (armorKitNames == null) {
+            // An older save game or a unit cached before this field existed. Nobody was wearing anything then.
+            armorKitNames = new String[getSlotCount()];
+        }
+        return armorKitNames;
+    }
+
+    /**
+     * The armor kit this crew member wears, by internal name.
+     * <p>
+     * The name rather than the equipment itself, because a {@code Crew} travels to the server and into save games,
+     * and a name survives that trip where an {@code EquipmentType} reference does not. Whoever needs the kit's
+     * damage divisor or its flags looks it up.
+     *
+     * @param position the crew slot to ask about
+     *
+     * @return the kit's internal name, or {@code null} if that crew member wears none
+     */
+    public @Nullable String getArmorKitName(final int position) {
+        String[] kits = getArmorKitNames();
+        return (position < kits.length) ? kits[position] : kits[0];
+    }
+
+    /**
+     * The armor kit worn by anyone aboard. A vehicle or vessel crew is a single collective in MegaMek however many
+     * people MekHQ assigned to it, so one slot answers for all of them.
+     *
+     * @return the first kit found, or {@code null} if nobody wears one
+     */
+    public @Nullable String getAnyArmorKitName() {
+        for (String kitName : getArmorKitNames()) {
+            if ((kitName != null) && !kitName.isBlank()) {
+                return kitName;
+            }
+        }
+        return null;
+    }
+
+    public void setArmorKitName(final @Nullable String armorKitName, final int position) {
+        getArmorKitNames()[position] = armorKitName;
     }
 
     public Portrait[] getPortraits() {
@@ -423,8 +508,100 @@ public class Crew implements Serializable {
         return crewType.getCrewSlots();
     }
 
+    /**
+     * The gamemaster-set temporary change to this crew's effective skills. Always present; when no change is
+     * active it leaves every skill untouched.
+     *
+     * @return the crew's temporary skill modifiers, never {@code null}
+     */
+    public TemporarySkillModifiers getSkillModifiers() {
+        // Saves from before the modifiers existed load with the field null, so it is filled in lazily.
+        if (skillModifiers == null) {
+            skillModifiers = new TemporarySkillModifiers();
+        }
+        return skillModifiers;
+    }
+
+    // The positionless skill getters below return the EFFECTIVE skill - the stored skill with any temporary
+    // gamemaster modifier applied - and are what combat, PSRs and the bot read. The per-slot (pos) getters
+    // return the raw stored skill and are what unit-list export and lobby customization read.
+
     public int getGunnery() {
+        return getSkillModifiers().adjustGunnery(gunnery[gunnerPos]);
+    }
+
+    /**
+     * The part of the effective gunnery that comes from the gamemaster's temporary modifier: effective minus
+     * stored, zero while no modifier is active. Lets a to-hit breakdown show the gamemaster's intervention as a
+     * line of its own instead of silently folding it into the skill number. Each gunnery variant has an applied
+     * modifier of its own, because the clamp to the skill range can eat a different part of the delta for each.
+     */
+    public int appliedGunneryModifier() {
+        return getGunnery() - rawGunnery();
+    }
+
+    /** @see #appliedGunneryModifier() */
+    public int appliedGunneryLModifier() {
+        return getGunneryL() - rawGunneryL();
+    }
+
+    /** @see #appliedGunneryModifier() */
+    public int appliedGunneryMModifier() {
+        return getGunneryM() - rawGunneryM();
+    }
+
+    /** @see #appliedGunneryModifier() */
+    public int appliedGunneryBModifier() {
+        return getGunneryB() - rawGunneryB();
+    }
+
+    /** @see #appliedGunneryModifier() */
+    public int appliedArtilleryModifier() {
+        return getArtillery() - rawArtillery();
+    }
+
+    /** @see #appliedGunneryModifier() */
+    public int appliedPilotingModifier() {
+        return getPiloting() - rawPiloting();
+    }
+
+    /** @see #appliedGunneryModifier() */
+    public int appliedPilotingModifier(EntityMovementType moveType) {
+        return getPiloting(moveType) - rawPiloting(moveType);
+    }
+
+    /*
+     * The stored skill each effective getter adjusts. LAMPilot overrides the effective getters with its own
+     * mode-dependent skills, so it overrides these to match; without that, the applied-modifier math above would
+     * subtract the wrong base.
+     */
+
+    protected int rawGunnery() {
         return gunnery[gunnerPos];
+    }
+
+    protected int rawGunneryL() {
+        return gunneryL[gunnerPos];
+    }
+
+    protected int rawGunneryM() {
+        return gunneryM[gunnerPos];
+    }
+
+    protected int rawGunneryB() {
+        return gunneryB[gunnerPos];
+    }
+
+    protected int rawArtillery() {
+        return artillery[gunnerPos];
+    }
+
+    protected int rawPiloting() {
+        return piloting[pilotPos];
+    }
+
+    protected int rawPiloting(EntityMovementType moveType) {
+        return piloting[pilotPos];
     }
 
     public int getGunnery(int pos) {
@@ -432,7 +609,7 @@ public class Crew implements Serializable {
     }
 
     public int getGunneryL() {
-        return gunneryL[gunnerPos];
+        return getSkillModifiers().adjustGunnery(gunneryL[gunnerPos]);
     }
 
     public int getGunneryL(int pos) {
@@ -440,7 +617,7 @@ public class Crew implements Serializable {
     }
 
     public int getGunneryM() {
-        return gunneryM[gunnerPos];
+        return getSkillModifiers().adjustGunnery(gunneryM[gunnerPos]);
     }
 
     public int getGunneryM(int pos) {
@@ -448,7 +625,7 @@ public class Crew implements Serializable {
     }
 
     public int getGunneryB() {
-        return gunneryB[gunnerPos];
+        return getSkillModifiers().adjustGunnery(gunneryB[gunnerPos]);
     }
 
     public int getGunneryB(int pos) {
@@ -456,7 +633,7 @@ public class Crew implements Serializable {
     }
 
     public int getArtillery() {
-        return artillery[gunnerPos];
+        return getSkillModifiers().adjustGunnery(artillery[gunnerPos]);
     }
 
     public int getArtillery(int pos) {
@@ -464,7 +641,7 @@ public class Crew implements Serializable {
     }
 
     public int getPiloting() {
-        return piloting[pilotPos];
+        return getSkillModifiers().adjustPiloting(piloting[pilotPos]);
     }
 
     public int getPiloting(int pos) {
@@ -475,7 +652,7 @@ public class Crew implements Serializable {
      * LAMs use a different skill in AirMEK mode depending on whether they are grounded or airborne.
      */
     public int getPiloting(EntityMovementType moveType) {
-        return piloting[pilotPos];
+        return getSkillModifiers().adjustPiloting(piloting[pilotPos]);
     }
 
     /**
@@ -1070,7 +1247,7 @@ public class Crew implements Serializable {
         int fatigueModifier = 0;
 
         for (int i = 0; i < getSlotCount(); i++) {
-            fatigueModifier = MathUtility.clamp((fatigue[i] - 1) / 4, 0, 4);
+            fatigueModifier = Math.clamp((fatigue[i] - 1) / 4, 0, 4);
         }
 
         return -(fatigueModifier / getSlotCount());
@@ -1165,6 +1342,7 @@ public class Crew implements Serializable {
             unconscious[i] = false;
             dead[i] = false;
             missing[i] = false;
+            pendingConRolls[i] = false;
         }
     }
 

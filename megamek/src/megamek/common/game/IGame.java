@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -385,7 +385,7 @@ public interface IGame {
      */
     @Nullable
     default Board getBoard(BoardLocation boardLocation) {
-        return getBoards().get(boardLocation.boardId());
+        return getBoard(boardLocation.boardId());
     }
 
     /**

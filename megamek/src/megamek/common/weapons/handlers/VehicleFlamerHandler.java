@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,8 +34,6 @@
 
 package megamek.common.weapons.handlers;
 
-import static java.lang.Math.floor;
-
 import java.io.Serial;
 import java.util.Vector;
 
@@ -43,8 +41,6 @@ import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.battleArmor.BattleArmor;
-import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.game.Game;
@@ -55,8 +51,6 @@ import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.weapons.FlamerHandlerHelper;
 import megamek.common.weapons.Weapon;
-import megamek.common.weapons.flamers.clan.CLHeavyFlamer;
-import megamek.common.weapons.flamers.innerSphere.ISHeavyFlamer;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -100,16 +94,13 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
               && currentWeaponMode.equals(Weapon.MODE_FLAMER_HEAT);
         boolean flamerDoesOnlyDamage = currentWeaponMode != null && currentWeaponMode.equals(Weapon.MODE_FLAMER_DAMAGE);
 
-        if (bmmFlamerDamage || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
-            // PLAYTEST3 Heat-dissipating armor reduces damage
-            if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                if (hit != null) {
-                    hit.setHeatWeapon(true);
-                }
+        if (Game.rulesManager.getRulesWeapons().flamerHeatAndDamage(bmmFlamerDamage) || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
+            if (hit != null) {
+                hit.setHeatWeapon(true);
             }
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
 
-            if (bmmFlamerDamage && entityTarget.tracksHeat()) {
+            if (Game.rulesManager.getRulesWeapons().flamerHeatAndDamage(bmmFlamerDamage) && entityTarget.tracksHeat()) {
                 FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit);
             }
         } else if (flamerDoesHeatOnlyDamage) {
@@ -144,29 +135,14 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        double toReturn;
-        if (target.isConventionalInfantry()) {
-            if (attackingEntity instanceof BattleArmor) {
-                toReturn = Compute.d6(3);
-            } else if ((weaponType instanceof ISHeavyFlamer)
-                  || (weaponType instanceof CLHeavyFlamer)) {
-                toReturn = Compute.d6(6);
-            } else {
-                toReturn = Compute.d6(4);
-            }
-            if (bDirect) {
-                toReturn += (int) floor(toHit.getMoS() / 3.0);
-            }
-            // pain shunted infantry get half damage
-            if (((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
-                toReturn /= 2;
-            }
-
-            toReturn = applyGlancingBlowModifier(toReturn, true);
-        } else {
-            toReturn = super.calcDamagePerHit();
+        if (targetIgnoresHeatWeaponDamage()) {
+            return 0;
         }
-        return (int) toReturn;
+        // Anti-infantry damage is rolled by the shared handler from the weapon's infantry damage class, which is
+        // 6D6 for the heavy flamers and 4D6 for the vehicle flamer. Rolling it here instead skipped the burst
+        // halving against mechanized infantry and through buildings, and skipped the damage breakdown report.
+        // Conventional infantry and battle armor with an Artificial Pain Shunt halve flame damage (IO p. 78).
+        return (int) applyPainShuntModifier(super.calcDamagePerHit());
     }
 
     @Override
@@ -181,8 +157,11 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
         TargetRoll tn = new TargetRoll(weaponType.getFireTN(), weaponType.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
-            gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true, false,
-                  tn, true, -1, vPhaseReport);
+            if (gameManager.tryIgniteHex(target.getPosition(), target.getBoardId(), subjectId, true, false,
+                  tn, true, -1, vPhaseReport)) {
+                // Fuel-fed flamer fires are harder for firefighting engineers to put out (TO:AuE p.153).
+                game.getBoard(target.getBoardId()).markFlamerStartedFire(target.getPosition());
+            }
         }
     }
 
@@ -212,6 +191,8 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
               false,
               new TargetRoll(weaponType.getFireTN(), weaponType.getName()), 5,
               vPhaseReport)) {
+            // Fuel-fed flamer fires are harder for firefighting engineers to put out (TO:AuE p.153).
+            game.getBoard(target.getBoardId()).markFlamerStartedFire(target.getPosition());
             return;
         }
         Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(),

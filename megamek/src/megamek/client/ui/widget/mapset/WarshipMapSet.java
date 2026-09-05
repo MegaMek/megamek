@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,7 +45,7 @@ import javax.swing.JComponent;
 
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
+import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
@@ -66,7 +66,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
  */
 public class WarshipMapSet implements DisplayMapSet {
 
-    private final UnitDisplayPanel unitDisplayPanel;
+    private final LocationSelectListener locationSelectListener;
 
     private final JComponent jComponent;
     private final PMSimplePolygonArea[] areas = new PMSimplePolygonArea[7];
@@ -113,8 +113,8 @@ public class WarshipMapSet implements DisplayMapSet {
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
           GUIP.getUnitDisplayMekArmorLargeFontSize());
 
-    public WarshipMapSet(JComponent c, UnitDisplayPanel unitDisplayPanel) {
-        this.unitDisplayPanel = unitDisplayPanel;
+    public WarshipMapSet(JComponent c, LocationSelectListener locationSelectListener) {
+        this.locationSelectListener = locationSelectListener;
         jComponent = c;
         setAreas();
         setLabels();
@@ -223,13 +223,14 @@ public class WarshipMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[Jumpship.LOC_NOSE] = new PMSimplePolygonArea(noseArmor, unitDisplayPanel, Jumpship.LOC_NOSE);
-        areas[Jumpship.LOC_FLS] = new PMSimplePolygonArea(leftFSArmor, unitDisplayPanel, Jumpship.LOC_FLS);
-        areas[Jumpship.LOC_FRS] = new PMSimplePolygonArea(rightFSArmor, unitDisplayPanel, Jumpship.LOC_FRS);
-        areas[Jumpship.LOC_ALS] = new PMSimplePolygonArea(leftASArmor, unitDisplayPanel, Jumpship.LOC_ALS);
-        areas[Jumpship.LOC_ARS] = new PMSimplePolygonArea(rightASArmor, unitDisplayPanel, Jumpship.LOC_ARS);
-        areas[Jumpship.LOC_AFT] = new PMSimplePolygonArea(aftArmor, unitDisplayPanel, Jumpship.LOC_AFT);
-        areas[6] = new PMSimplePolygonArea(structure, unitDisplayPanel, Jumpship.LOC_NOSE);
+        areas[Jumpship.LOC_NOSE] = new PMSimplePolygonArea(noseArmor, locationSelectListener, Jumpship.LOC_NOSE);
+        areas[Jumpship.LOC_FLS] = new PMSimplePolygonArea(leftFSArmor, locationSelectListener, Jumpship.LOC_FLS);
+        areas[Jumpship.LOC_FRS] = new PMSimplePolygonArea(rightFSArmor, locationSelectListener, Jumpship.LOC_FRS);
+        areas[Jumpship.LOC_ALS] = new PMSimplePolygonArea(leftASArmor, locationSelectListener, Jumpship.LOC_ALS);
+        areas[Jumpship.LOC_ARS] = new PMSimplePolygonArea(rightASArmor, locationSelectListener, Jumpship.LOC_ARS);
+        areas[Jumpship.LOC_AFT] = new PMSimplePolygonArea(aftArmor, locationSelectListener, Jumpship.LOC_AFT);
+        // the central structural-integrity area stands in for the hull, so clicking it selects the hull's panel
+        areas[6] = new PMSimplePolygonArea(structure, locationSelectListener, Jumpship.LOC_HULL);
     }
 
     private void setLabels() {

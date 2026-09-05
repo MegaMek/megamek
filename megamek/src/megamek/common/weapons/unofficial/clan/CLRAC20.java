@@ -36,6 +36,8 @@ package megamek.common.weapons.unofficial.clan;
 
 import java.io.Serial;
 
+import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -68,11 +70,10 @@ public class CLRAC20 extends RACWeapon {
         criticalSlots = 10;
         bv = 823;
         cost = 960000;
-        rulesRefs = "Unofficial";
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3073, 3104, 3145, DATE_NONE, DATE_NONE)

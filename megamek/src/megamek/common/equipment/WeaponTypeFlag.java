@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -56,6 +56,7 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_DOUBLE_ONE_SHOT, // Fusillade works like a one-shot weapon but has a second round.
     F_EXTINGUISHER, // fire Extinguisher
     F_HEAT_AS_DICE, // Variable heat, heat is listed in dice, not points
+    F_HEAT_VARIABLE, // Variable heat, heat depends on the weapon mode
     F_INFANTRY_ONLY, // may only target Infantry
     F_MISSILE_HITS, // use missile rules for # of hits
     F_MORTAR_TYPE_INDIRECT,  // This flag is used by mortar-type weapons that allow indirect fire without a spotter and/or with LOS.
@@ -93,9 +94,11 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_PLASMA_MFUK, // Plasma Rifle
     F_PPC,
     F_PULSE,
+    F_VSP, // Variable Speed Pulse
     F_TASER,
     F_TSEMP, // Used for TSEMP Weapons.
     F_VGL,
+    F_ARROW_IV,
 
     // Bomb types
     F_ALT_BOMB,
@@ -129,6 +132,7 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_INF_ARCHAIC,
     F_INF_BURST,
     F_INF_CLIMBING_CLAWS, // TODO Add game rules IO pg 84
+    F_INF_DISPOSABLE, // One-shot Disposable Weapon ("(1-D)" ammo listing), TO:AuE p.116, Corrected Sixth Printing
     F_INF_ENCUMBER,
     F_INF_NONPENETRATING,
     F_INF_POINT_BLANK,
@@ -143,5 +147,22 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     /**
      * Denotes Clan Heavy Lasers (S, M, L)
      */
-    HEAVY_LASER
+    HEAVY_LASER,
+
+    // families
+    F_AC,
+    F_LRM,
+    F_SRM,
+    F_HAG,
+    F_MML,
+    F_MRM,
+    F_ATM,
+    F_NARC,
+    F_GAUSS,
+    F_HVAC,
+
+    F_INDIRECT_FIRE,
+
+    F_PPC_CAPACITOR_COMPATIBLE,
+    S_IMPROVED,
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Jay Lawson
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -73,6 +73,12 @@ public class Dropship extends SmallCraft {
 
     @Serial
     private static final long serialVersionUID = 1528728632696989565L;
+
+    /** A DropShip is far too large to be hidden (hidden units, TW pg 259). */
+    @Override
+    public boolean canHide() {
+        return false;
+    }
 
     // ASEW Missile Effects, per location
     // Values correspond to Locations: NOS, Left, Right, AFT
@@ -426,10 +432,10 @@ public class Dropship extends SmallCraft {
     }
 
     @Override
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
-        super.addSystemTechAdvancement(ctl);
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
+        super.addSystemTechAdvancement(techLevel);
         if (collarType != COLLAR_NO_BOOM) {
-            ctl.addComponent(getCollarTA());
+            techLevel.addComponent(getCollarTA(), Messages.getString("CompositeTechLevel.component.dockingCollar"));
         }
     }
 
@@ -807,6 +813,9 @@ public class Dropship extends SmallCraft {
      */
     @Override
     public boolean canTakeOffVertically() {
+        if (isLaunchProhibitedByAtmosphere()) {
+            return false;
+        }
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         boolean spheroidOrLessThanThin = isSpheroid()
               || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);

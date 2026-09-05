@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,7 +45,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.Serial;
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -56,6 +59,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.ChoiceDialog;
+import megamek.client.ui.dialogs.phaseDisplay.EcmSuiteChoiceDialog;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
@@ -64,16 +68,12 @@ import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.Configuration;
 import megamek.common.CriticalSlot;
 import megamek.common.battleArmor.BattleArmor;
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.EquipmentMode;
-import megamek.common.equipment.GunEmplacement;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.*;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
@@ -448,11 +448,68 @@ class SystemPanel extends PicMap
         return getMountedDisplay(m, loc, null);
     }
 
+    /**
+     * Appends the remaining bridge building budget to the Infantry Bridge Kit line so a Bridge-Building Engineer
+     * platoon can see, in the systems tab, how many bridges it can still raise this scenario (TO:AUE p.152). The budget
+     * of 2 points covers either 2 Light Bridges (1 point each) or 1 Medium Bridge (2 points); the counts drop as
+     * bridges are built.
+     *
+     * @param displayText the systems-tab display text being built
+     * @param mounted     the mounted equipment for this row
+     */
+    private void appendBridgeKitBudget(StringBuilder displayText, Mounted<?> mounted) {
+        if (!(en instanceof ConvInfantry convInfantry)) {
+            return;
+        }
+        boolean isBridgeKit = (mounted.getType() instanceof MiscType miscType)
+              && miscType.hasFlag(MiscType.F_TOOLS)
+              && miscType.hasFlag(MiscTypeFlag.S_BRIDGE_KIT);
+        if (!isBridgeKit) {
+            return;
+        }
+        int pointsLeft = convInfantry.getBridgeBuildPoints();
+        int lightLeft = pointsLeft / ConvInfantry.BRIDGE_TYPE_LIGHT;
+        int mediumLeft = pointsLeft / ConvInfantry.BRIDGE_TYPE_MEDIUM;
+        displayText.append(' ').append(Messages.getString("MekDisplay.bridgeKitBudget", lightLeft, mediumLeft));
+    }
+
+    /**
+     * Appends the Bridge-Layer (AVLB) state to a systems-tab row: the carried bridge's remaining Construction Factor,
+     * "deploying" once a deployment has been declared but the bridge has not yet been laid (the stationary turn between
+     * the pre-end declaration and placement), "deployed" once the folding bridge has been laid, or "mechanism disabled"
+     * if a critical hit has knocked out the deploy mechanism (TM p.242 / TW). Does nothing for non-bridgelayer
+     * equipment.
+     *
+     * @param displayText the systems-tab display text being built
+     * @param mounted     the mounted equipment for this row
+     */
+    private void appendBridgeLayerState(StringBuilder displayText, Mounted<?> mounted) {
+        if (!(mounted instanceof MiscMounted miscMounted)) {
+            return;
+        }
+        BridgeLayerState bridgeState = miscMounted.getBridgeLayerState();
+        if (bridgeState == null) {
+            return;
+        }
+        if (bridgeState.isDeployed()) {
+            displayText.append(' ').append(Messages.getString("MekDisplay.bridgeLayerDeployed"));
+        } else if (bridgeState.isDeployPending()) {
+            displayText.append(' ').append(Messages.getString("MekDisplay.bridgeLayerDeploying",
+                  bridgeState.getCurrentCF()));
+        } else if (bridgeState.isDeployMechanismDisabled()) {
+            displayText.append(' ').append(Messages.getString("MekDisplay.bridgeLayerMechanismDisabled"));
+        } else {
+            displayText.append(' ').append(Messages.getString("MekDisplay.bridgeLayerCF", bridgeState.getCurrentCF()));
+        }
+    }
+
     private String getMountedDisplay(Mounted<?> m, int loc, CriticalSlot cs) {
         String hotLoaded = Messages.getString("MekDisplay.isHotLoaded");
         StringBuilder sb = new StringBuilder();
 
         sb.append(m.getDesc());
+        appendBridgeKitBudget(sb, m);
+        appendBridgeLayerState(sb, m);
 
         if ((cs != null) && cs.getMount2() != null) {
             sb.append(" ");
@@ -464,19 +521,20 @@ class SystemPanel extends PicMap
         }
 
         if (m.hasModes()) {
-            if (!m.curMode().getDisplayableName().isEmpty()) {
+            // Both of these describe what the equipment is or is about to be, so they take the state label
+            if (!m.curMode().getStateName(m.getType()).isEmpty()) {
                 sb.append(" (");
-                sb.append(m.curMode().getDisplayableName());
+                sb.append(m.curMode().getStateName(m.getType()));
                 sb.append(')');
             }
 
-            if (!m.pendingMode().equals("None")) {
+            if (!m.pendingMode().equals(Mounted.MODE_NONE)) {
                 sb.append(" (next turn, ");
-                sb.append(m.pendingMode().getDisplayableName());
+                sb.append(m.pendingMode().getStateName(m.getType()));
                 sb.append(')');
             }
 
-            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().isShield()) {
+            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().hasFlag(MiscType.F_SHIELD)) {
                 sb.append(" ").append(((MiscMounted) m).getDamageAbsorption(en, m.getLocation())).append('/')
                       .append(((MiscMounted) m).getCurrentDamageCapacity(en, m.getLocation())).append(')');
             }
@@ -523,7 +581,8 @@ class SystemPanel extends PicMap
                         }
 
                         if ((m.getType() instanceof MiscType)
-                              && ((MiscType) m.getType()).isShield()
+                              && ((MiscType) m.getType()).hasFlag(MiscType.F_SHIELD)
+                              && !Game.rulesManager.getRulesPhysical().phaseChangeShield()
                               && !clientgui.getClient().getGame().getPhase().isFiring()) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.ShieldModePhase"));
                             return;
@@ -553,21 +612,27 @@ class SystemPanel extends PicMap
                             return;
                         }
 
+                        if (!resolveEcmSuiteConflict(clientgui, m, nMode)) {
+                            return;
+                        }
+
                         m.setMode(nMode);
                         // send the event to the server
                         clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);
 
                         // notify the player
+                        // These report the state the equipment has reached, or will reach, so they take the
+                        // state label rather than the label the player picked from the dropdown
                         if (m.canInstantSwitch(nMode)) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.switched",
-                                  m.getName(), m.curMode().getDisplayableName()));
+                                  m.getName(), m.curMode().getStateName(m.getType())));
                             clientgui.addToast(ToastLevel.INFO,
-                                  m.getName() + ": " + m.curMode().getDisplayableName(), en);
+                                  m.getName() + ": " + m.curMode().getStateName(m.getType()), en);
                             int weapon = this.unitDisplayPanel.wPan.getSelectedWeaponNum();
                             this.unitDisplayPanel.wPan.displayMek(en);
                             this.unitDisplayPanel.wPan.selectWeapon(weapon);
                         } else {
-                            String pendingModeName = m.pendingMode().getDisplayableName();
+                            String pendingModeName = m.pendingMode().getStateName(m.getType());
                             if (clientgui.getClient().getGame().getPhase().isDeployment()) {
                                 clientgui.systemMessage(Messages.getString("MekDisplay.willSwitchAtStart",
                                       m.getName(), pendingModeName));
@@ -589,6 +654,85 @@ class SystemPanel extends PicMap
         } finally {
             addListeners();
         }
+    }
+
+    /**
+     * Asks the player which ECM suite to leave on when the mode they just picked would put a second one into use, and
+     * switches off the suites they did not keep. A unit may use only one ECM suite at a time, of any type (TM p.213,
+     * CO p.200), and every mode other than {@code "Off"} counts as using the suite - ECCM and Ghost Targets included.
+     *
+     * <p>The choice is always between the suite already in use and the one the player just switched, so keeping the
+     * suite that was already on means abandoning the requested switch. Cancelling does the same.</p>
+     *
+     * @param clientgui        the client GUI, used for the parent frame and to send the switches that are applied
+     * @param changedEquipment the equipment whose mode the player just picked
+     * @param newMode          the requested mode index
+     *
+     * @return {@code true} if the requested mode change should go ahead, {@code false} if it should be abandoned
+     */
+    private boolean resolveEcmSuiteConflict(ClientGUI clientgui, Mounted<?> changedEquipment, int newMode) {
+        if (!(changedEquipment instanceof MiscMounted changedSuite)
+              || !changedSuite.getType().hasFlag(MiscType.F_ECM)) {
+            return true;
+        }
+        if ((newMode < 0) || (newMode >= changedSuite.getType().getModesCount())) {
+            return true;
+        }
+        EquipmentMode requestedMode = changedSuite.getType().getMode(newMode);
+        if (requestedMode.equals(Mounted.MODE_OFF)) {
+            return true;
+        }
+
+        // Walk the mounts rather than appending the changed suite to the list of those already in use, so the
+        // dialog offers the suites in mount order and its numbering runs 1, 2, 3 down the list
+        List<MiscMounted> alreadyInUse = EquipmentActivation.ecmSuitesInUseNextRound(en);
+        List<MiscMounted> suitesInUse = new ArrayList<>();
+        for (MiscMounted suite : en.getMisc()) {
+            if (suite.equals(changedSuite) || alreadyInUse.contains(suite)) {
+                suitesInUse.add(suite);
+            }
+        }
+        if (suitesInUse.size() < 2) {
+            return true;
+        }
+
+        // Making room for this suite means switching another one off, which the server refuses for any ECM suite
+        // while stealth armor is engaged or engaging - so there is no choice to offer here
+        if (EquipmentActivation.isStealthOnOrActivating(en)) {
+            clientgui.systemMessage(Messages.getString("MekDisplay.EcmSuiteStealthEngaged",
+                  EquipmentActivation.ecmSuiteLabel(en, changedSuite)));
+            return false;
+        }
+
+        // The mode the player just picked has not been applied yet, so it has to be named for the dialog rather
+        // than read back off the equipment
+        Map<MiscMounted, String> suiteModeNames = new LinkedHashMap<>();
+        for (MiscMounted suite : suitesInUse) {
+            suiteModeNames.put(suite, suite.equals(changedSuite)
+                  ? requestedMode.getStateName(changedSuite.getType())
+                  : suite.modeNextRound().getStateName(suite.getType()));
+        }
+        MiscMounted keptSuite = EcmSuiteChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(), en,
+              suiteModeNames);
+        if (!changedSuite.equals(keptSuite)) {
+            clientgui.systemMessage(Messages.getString("MekDisplay.EcmSuiteNotSwitched",
+                  EquipmentActivation.ecmSuiteLabel(en, changedSuite)));
+            return false;
+        }
+
+        for (MiscMounted suite : suitesInUse) {
+            if (suite.equals(keptSuite)) {
+                continue;
+            }
+            int offModeIndex = suite.setMode(Mounted.MODE_OFF);
+            if (offModeIndex >= 0) {
+                clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(suite), offModeIndex);
+                clientgui.systemMessage(Messages.getString("MekDisplay.willSwitchAtEnd",
+                      EquipmentActivation.ecmSuiteLabel(en, suite),
+                      suite.pendingMode().getStateName(suite.getType())));
+            }
+        }
+        return true;
     }
 
     @Override
@@ -791,11 +935,11 @@ class SystemPanel extends PicMap
                       && (client.getGame().getOptions().intOption(OptionsConstants.BASE_DUMPING_FROM_ROUND) <= client
                       .getGame().getRoundCount())
                       && !carryingBAsOnBack && !invalidEnvironment) {
-                    m_bDumpAmmo.setEnabled(true);
+                    m_bDumpAmmo.setEnabled(Game.rulesManager.getRulesGame().ammoDumping());
                 } else if ((mounted != null) && bOwner
                       && (mounted.getType() instanceof WeaponType)
                       && !mounted.isMissing() && mounted.isDWPMounted()) {
-                    m_bDumpAmmo.setEnabled(true);
+                    m_bDumpAmmo.setEnabled(Game.rulesManager.getRulesGame().ammoDumping());
                     // Allow dumping of body-mounted missile launchers on BA
                 } else if ((mounted != null) && bOwner
                       && (en instanceof BattleArmor)
@@ -804,49 +948,67 @@ class SystemPanel extends PicMap
                       && mounted.getType().hasFlag(WeaponType.F_MISSILE)
                       && (mounted.getLinked() != null)
                       && (mounted.getLinked().getUsableShotsLeft() > 0)) {
-                    m_bDumpAmmo.setEnabled(true);
+                    m_bDumpAmmo.setEnabled(Game.rulesManager.getRulesGame().ammoDumping());
                 }
                 int round = client.getGame().getRoundCount();
                 boolean inSquadron = en.isPartOfFighterSquadron();
-                if ((mounted != null) && bOwner && mounted.hasModes()) {
+                EquipmentType mountedType = (mounted != null) ? mounted.getType() : null;
+                if ((mountedType != null) && bOwner && mounted.hasModes()) {
+                    boolean isMiscEquipment = mountedType instanceof MiscType;
                     if (!mounted.isInoperable() && !mounted.isDumping()
                           && (en.isActive() || en.isActive(round) || inSquadron)
                           && mounted.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     }
                     if (!mounted.isInoperable()
-                          && (mounted.getType() instanceof MiscType)
-                          && mounted.getType().hasFlag(MiscType.F_STEALTH)
+                          && isMiscEquipment
+                          && mountedType.hasFlag(MiscType.F_STEALTH)
                           && mounted.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     }
                     // Nova CEWS has built-in "ECM"/"Off" modes and should always be switchable
                     if (!mounted.isInoperable()
-                          && (mounted.getType() instanceof MiscType)
-                          && mounted.getType().hasFlag(MiscType.F_NOVA)
+                          && isMiscEquipment
+                          && mountedType.hasFlag(MiscType.F_NOVA)
                           && mounted.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     }
                     // EI Interface modes should be switchable even when not deployed (IO p.69)
                     if (!mounted.isInoperable()
-                          && (mounted.getType() instanceof MiscType)
-                          && mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)
+                          && isMiscEquipment
+                          && mountedType.hasFlag(MiscType.F_EI_INTERFACE)
                           && mounted.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     }
-                    // if the max tech eccm option is not set then the ECM
-                    // should not show anything.
-                    // Exception: Nova CEWS has built-in "ECM"/"Off" modes and should always be switchable
-                    if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_ECM)
-                          && !mounted.getType().hasFlag(MiscType.F_NOVA)
-                          && !(client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_ECCM)
-                          || client.getGame().getOptions()
-                          .booleanOption(OptionsConstants.ADVANCED_TAC_OPS_GHOST_TARGET))) {
-                        return;
+                    // Heat sinks can be activated or deactivated even while the unit is shut down (TW,
+                    // Deactivating Heat Sinks)
+                    boolean isSingleHeatSink = isMiscEquipment && mountedType.hasFlag(MiscType.F_HEAT_SINK);
+                    boolean isDoubleHeatSink = isMiscEquipment && mountedType.hasFlag(MiscType.F_DOUBLE_HEAT_SINK);
+                    boolean isPrototypeDoubleHeatSink = isMiscEquipment
+                          && mountedType.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE);
+                    boolean isHeatSinkMount = isSingleHeatSink || isDoubleHeatSink || isPrototypeDoubleHeatSink;
+                    if (!mounted.isInoperable() && isHeatSinkMount && mounted.isModeSwitchable()) {
+                        m_chMode.setEnabled(true);
                     }
-                    for (Enumeration<EquipmentMode> modeEnumeration = mounted.getType()
-                          .getModes(); modeEnumeration.hasMoreElements(); ) {
-                        EquipmentMode equipmentMode = modeEnumeration.nextElement();
+                    // Every ECM suite now carries at least the "ECM"/"Off" pair (activation/deactivation
+                    // rules), so the mode switcher is always offered - the ECCM and Ghost Target game
+                    // options merely add further modes.
+                    // Iterate the type's per-mount mode count rather than its raw mode count: it filters
+                    // modes that need linked equipment to be available, such as the "Pulse ..." laser
+                    // modes that require a RISC Laser Pulse Module (LaserWeapon keeps them last and
+                    // reduces the count when no module is linked).
+                    // This must come from the TYPE, not from Mounted#getModesCount(), because the loop
+                    // below indexes into the type's mode list. InfantryWeaponMounted overrides
+                    // getModesCount() to report a merged primary+secondary list that can be longer than
+                    // the type's, which would index past the end.
+                    int visibleModeCount = mountedType.getModesCount(mounted);
+                    // A queued switch is what the combo shows as selected, so that is the mode described as
+                    // the equipment's state; without one it is simply the current mode.
+                    EquipmentMode selectedMode = mounted.pendingMode().equals(Mounted.MODE_NONE)
+                          ? mounted.curMode()
+                          : mounted.pendingMode();
+                    for (int modeIndex = 0; modeIndex < visibleModeCount; modeIndex++) {
+                        EquipmentMode equipmentMode = mountedType.getMode(modeIndex);
                         // Hack to prevent showing an option that is disabled by the server, but would
                         // be overwritten by every entity update if made also in the client
                         if (equipmentMode.equals("HotLoad") && en instanceof Mek
@@ -854,19 +1016,61 @@ class SystemPanel extends PicMap
                               .booleanOption(OptionsConstants.ADVANCED_COMBAT_HOT_LOAD_IN_GAME)) {
                             continue;
                         }
-                        m_chMode.addItem(equipmentMode.getDisplayableName());
+                        // Hide the Off mode for ECM suites while the stealth armor system is engaged or
+                        // queued to engage this round - the server rejects that switch (stealth armor
+                        // requires an operating ECM). Off is always the LAST mode in every ECM mode list, so
+                        // skipping it keeps the combo indices aligned with the equipment type's mode indices
+                        // (the selection is applied by index).
+                        if (equipmentMode.equals(Mounted.MODE_OFF)
+                              && isMiscEquipment
+                              && mountedType.hasFlag(MiscType.F_ECM)
+                              && EquipmentActivation.isStealthOnOrActivating(en)) {
+                            continue;
+                        }
+                        // Mirror case: hide the On mode for stealth armor while no ECM suite will be
+                        // operating next round (deactivated or deactivating). On is the LAST stealth mode,
+                        // so the combo indices stay aligned.
+                        if (equipmentMode.equals(Mounted.MODE_ON)
+                              && isMiscEquipment
+                              && mountedType.hasFlag(MiscType.F_STEALTH)
+                              && !EquipmentActivation.hasEcmAvailableForStealth(en)) {
+                            continue;
+                        }
+                        // Blue shield prevents stealth systems from being activated.
+                        if (equipmentMode.equals(Mounted.MODE_ON)
+                              && isMiscEquipment
+                              && (mountedType.hasFlag(MiscType.F_STEALTH)
+                              || mountedType.hasFlag(MiscType.F_CHAMELEON_SHIELD)
+                              || mountedType.hasFlag(MiscType.F_VOID_SIG)
+                              || mountedType.hasFlag(MiscType.F_NULL_SIG))
+                              && Game.rulesManager.getRulesEquipment()
+                              .blueShieldStealth(mounted.getEntity().hasActiveBlueShield())) {
+                            continue;
+                        }
+                        // Mirror case. If Stealth is active, Blue Shield can't be turned on.
+                        if (equipmentMode.equals(Mounted.MODE_ON)
+                              && isMiscEquipment
+                              && mountedType.hasFlag(MiscType.F_BLUE_SHIELD)
+                              && (EquipmentActivation.isStealthOnOrActivating(en)
+                              || en.isNullSigOn()
+                              || en.isVoidSigOn()
+                              || en.isChameleonShieldOn())
+                              && Game.rulesManager.getRulesEquipment().blueShieldStealth()) {
+                            continue;
+                        }
+                        // The mode the combo will end up selected on describes the equipment's state; every
+                        // other entry is a change the player can make, and reads as an instruction.
+                        if (equipmentMode.equals(selectedMode)) {
+                            m_chMode.addItem(equipmentMode.getStateName(mountedType));
+                        } else {
+                            m_chMode.addItem(equipmentMode.getActionName(mountedType));
+                        }
                     }
                     if (m_chMode.getModel().getSize() <= 1) {
                         m_chMode.removeAllItems();
                         m_chMode.setEnabled(false);
                     } else {
-                        if (mounted.pendingMode().equals("None")) {
-                            m_chMode.setSelectedItem(mounted.curMode()
-                                  .getDisplayableName());
-                        } else {
-                            m_chMode.setSelectedItem(mounted.pendingMode()
-                                  .getDisplayableName());
-                        }
+                        m_chMode.setSelectedItem(selectedMode.getStateName(mountedType));
                     }
                 }
                 // Note: EI Interface modes are now controlled via the EI Interface equipment, not cockpit

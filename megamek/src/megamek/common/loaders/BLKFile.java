@@ -48,6 +48,7 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+import megamek.codeUtilities.StringUtility;
 import megamek.common.QuirkEntry;
 import megamek.common.SourceBooks;
 import megamek.common.TechConstants;
@@ -55,6 +56,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.*;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
 import megamek.common.equipment.*;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.options.IOption;
@@ -69,6 +71,8 @@ import megamek.logging.MMLogger;
 
 public class BLKFile {
     private static final MMLogger logger = MMLogger.create(BLKFile.class);
+
+    public static final String UNIT_FILE_UUID = "UUID";
 
     BuildingBlock dataFile;
 
@@ -88,6 +92,12 @@ public class BLKFile {
     public static final int EXTERNAL = 13;
 
     private static final String COMSTAR_BAY = "c*";
+
+    /** Force Generator availability block, e.g. a line of "FS:5,LA:3". One entry per line. */
+    private static final String BLOCK_AVAILABILITY = "availability";
+    /** Force Generator mission roles block, e.g. "fire_support,urban". */
+    private static final String BLOCK_MISSION_ROLES = "missionroles";
+
     private static final int TRANSPORTER_FIELDS = 6;
 
     /**
@@ -117,6 +127,13 @@ public class BLKFile {
     }
 
     protected void setBasicEntityData(Entity entity) throws EntityLoadingException {
+        if (dataFile.exists(UNIT_FILE_UUID)) {
+            String unitFileUUID = dataFile.getDataAsString(UNIT_FILE_UUID)[0];
+            if (!StringUtility.isNullOrBlank(unitFileUUID)) {
+                entity.setUnitFileUUID(unitFileUUID.trim());
+            }
+        }
+
         if (!dataFile.exists("Name")) {
             throw new EntityLoadingException("Could not find name block.");
         }
@@ -129,6 +146,7 @@ public class BLKFile {
         } else {
             entity.setModel("");
         }
+        entity.storeOriginalUnitData();
 
         if (dataFile.exists(MtfFile.MUL_ID)) {
             entity.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
@@ -136,6 +154,15 @@ public class BLKFile {
 
         if (dataFile.exists("role")) {
             entity.setUnitRole(UnitRole.parseRole(dataFile.getDataAsString("role")[0]));
+        }
+
+        if (dataFile.exists(BLOCK_AVAILABILITY)) {
+            entity.setForceGeneratorAvailability(ForceGeneratorAvailability.parseAll(
+                  List.of(dataFile.getDataAsString(BLOCK_AVAILABILITY)), entity.getShortNameRaw()));
+        }
+
+        if (dataFile.exists(BLOCK_MISSION_ROLES)) {
+            entity.setMissionRoles(dataFile.getDataAsString(BLOCK_MISSION_ROLES)[0]);
         }
 
         if (dataFile.exists("source")) {
@@ -214,6 +241,10 @@ public class BLKFile {
         };
     }
 
+    protected EquipmentType getEquipmentType(Entity entity, String equipmentName) {
+        return EquipmentType.get(equipmentName, entity.isMixedTech() ? null : entity.getTechBase());
+    }
+
     protected void loadEquipment(Entity t, String sName, int nLoc) throws EntityLoadingException {
         String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
         if (saEquip == null || saEquip.length == 0 || saEquip[0].isEmpty()) {
@@ -290,7 +321,7 @@ public class BLKFile {
                     equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
 
-                EquipmentType etype = EquipmentType.get(equipName);
+                EquipmentType etype = getEquipmentType(t, equipName);
 
                 if (etype == null) {
                     // try w/ prefix
@@ -415,7 +446,7 @@ public class BLKFile {
             equipName = equipName.replace(":Body", "").replace(":LA", "")
                   .replace(":RA", "").replace(":TU", "").replace(":OMNI", "");
 
-            EquipmentType etype = EquipmentType.get(equipName);
+            EquipmentType etype = getEquipmentType(t, equipName);
             if (etype == null) {
                 etype = EquipmentType.get(prefix + equipName);
             }
@@ -492,6 +523,7 @@ public class BLKFile {
             if (dataFile.exists("armor_tech_rating")) {
                 sv.setArmorTechRating(dataFile.getDataAsInt("armor_tech_rating")[0]);
             }
+            normalizeAllTechBaseArmor(sv);
         }
     }
 
@@ -708,6 +740,7 @@ public class BLKFile {
     public static BuildingBlock getBlock(Entity t) throws EntitySavingException {
         BuildingBlock blk = new BuildingBlock();
         blk.createNewBlock();
+        blk.writeBlockData(UNIT_FILE_UUID, t.getUnitFileUUID());
 
         if (t instanceof BattleArmor) {
             blk.writeBlockData("UnitType", "BattleArmor");
@@ -767,6 +800,19 @@ public class BLKFile {
 
         if (t.hasRole()) {
             blk.writeBlockData("role", t.getRole().toString());
+        }
+
+        List<ForceGeneratorAvailability> availabilityList = t.getForceGeneratorAvailability();
+        if (!availabilityList.isEmpty()) {
+            List<String> availabilityLines = new ArrayList<>();
+            for (ForceGeneratorAvailability availability : availabilityList) {
+                availabilityLines.add(availability.toFileFormat());
+            }
+            blk.writeBlockData(BLOCK_AVAILABILITY, availabilityLines);
+        }
+
+        if (!t.getMissionRoles().isBlank()) {
+            blk.writeBlockData(BLOCK_MISSION_ROLES, t.getMissionRoles());
         }
 
         List<String> quirkList = t.getQuirks()
@@ -1088,109 +1134,121 @@ public class BLKFile {
             blk.writeBlockData("faction", t.getTechFaction().getCode());
         }
 
-        if (t instanceof BattleArmor ba) {
-            if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_BIPED) {
-                blk.writeBlockData("chassis", "biped");
+        switch (t) {
+            case BattleArmor ba -> {
+                if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_BIPED) {
+                    blk.writeBlockData("chassis", "biped");
 
-            } else if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
-                blk.writeBlockData("chassis", "quad");
-                if (ba.getTurretCapacity() > 0) {
-                    blk.writeBlockData("turret",
-                          (ba.hasModularTurretMount() ? "Modular:" : "Standard:") + ba.getTurretCapacity());
+                } else if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
+                    blk.writeBlockData("chassis", "quad");
+                    if (ba.getTurretCapacity() > 0) {
+                        blk.writeBlockData("turret",
+                              (ba.hasModularTurretMount() ? "Modular:" : "Standard:") + ba.getTurretCapacity());
+                    }
+                }
+                if (ba.isExoskeleton()) {
+                    blk.writeBlockData("exoskeleton", "true");
+                }
+                if (ba.isClan() && ba.isExoskeleton() && ba.isClanExoWithoutHarJel()) {
+                    blk.writeBlockData("clan_exo_without_harjel", "true");
+                }
+                blk.writeBlockData("jumpingMP", ba.getOriginalJumpMP());
+                blk.writeBlockData("armor", new int[] { ba.getArmor(1) });
+                blk.writeBlockData("Trooper Count", (int) t.getWeight());
+                blk.writeBlockData("weightclass", ba.getWeightClass());
+            }
+            case ConvInfantry infantry -> {
+                blk.writeBlockData("squad_size", infantry.getSquadSize());
+                blk.writeBlockData("squadn", infantry.getSquadCount());
+                if (infantry.getSecondaryWeaponsPerSquad() > 0) {
+                    blk.writeBlockData("secondn", infantry.getSecondaryWeaponsPerSquad());
+                }
+                if (null != infantry.getPrimaryWeapon()) {
+                    blk.writeBlockData("Primary", infantry.getPrimaryWeapon().getInternalName());
+                }
+                if (null != infantry.getSecondaryWeapon()) {
+                    blk.writeBlockData("Secondary", infantry.getSecondaryWeapon().getInternalName());
+                }
+                if (null != infantry.getDisposableWeapon()) {
+                    blk.writeBlockData("disposableWeapon", infantry.getDisposableWeapon().getInternalName());
+                }
+                if (infantry.getCustomArmorName() != null) {
+                    blk.writeBlockData("armor_name", infantry.getCustomArmorName());
+                }
+                if (infantry.getCustomArmorDamageDivisor() != 1) {
+                    blk.writeBlockData("armordivisor", Double.toString(infantry.getCustomArmorDamageDivisor()));
+                }
+                if (infantry.isArmorEncumbering()) {
+                    blk.writeBlockData("encumberingarmor", "true");
+                }
+                if (infantry.hasSpaceSuit()) {
+                    blk.writeBlockData("spacesuit", "true");
+                }
+                if (infantry.hasDEST()) {
+                    blk.writeBlockData("dest", "true");
+                }
+                if (infantry.hasSneakCamo()) {
+                    blk.writeBlockData("sneakcamo", "true");
+                }
+                if (infantry.hasSneakIR()) {
+                    blk.writeBlockData("sneakir", "true");
+                }
+                if (infantry.hasSneakECM()) {
+                    blk.writeBlockData("sneakecm", "true");
+                }
+                if (infantry.hasSpecialization()) {
+                    blk.writeBlockData("specialization", infantry.getSpecializations());
+                }
+                ArrayList<String> augmentations = new ArrayList<>();
+                for (Enumeration<IOption> e = infantry.getCrew().getOptions(PilotOptions.MD_ADVANTAGES);
+                      e.hasMoreElements(); ) {
+                    final IOption o = e.nextElement();
+                    if (o.booleanValue()) {
+                        augmentations.add(o.getName());
+                    }
+                }
+                if (!augmentations.isEmpty()) {
+                    blk.writeBlockData("augmentation", augmentations.toArray(new String[0]));
+                }
+
+                // Prosthetic Enhancement (Enhanced Limbs) - IO p.84
+                if (infantry.hasProstheticEnhancement1()) {
+                    blk.writeBlockData("prostheticEnhancement1", infantry.getProstheticEnhancement1().toString());
+                    if (infantry.getProstheticEnhancement1Count() > 0) {
+                        blk.writeBlockData("prostheticEnhancement1Count", infantry.getProstheticEnhancement1Count());
+                    }
+                }
+                if (infantry.hasProstheticEnhancement2()) {
+                    blk.writeBlockData("prostheticEnhancement2", infantry.getProstheticEnhancement2().toString());
+                    if (infantry.getProstheticEnhancement2Count() > 0) {
+                        blk.writeBlockData("prostheticEnhancement2Count", infantry.getProstheticEnhancement2Count());
+                    }
+                }
+
+                // Extraneous (Enhanced) Limbs - IO p.84
+                // Each pair always provides 2 items, so no count needed
+                if (infantry.hasExtraneousPair1()) {
+                    blk.writeBlockData("extraneousPair1", infantry.getExtraneousPair1().toString());
+                }
+                if (infantry.hasExtraneousPair2()) {
+                    blk.writeBlockData("extraneousPair2", infantry.getExtraneousPair2().toString());
                 }
             }
-            if (ba.isExoskeleton()) {
-                blk.writeBlockData("exoskeleton", "true");
-            }
-            blk.writeBlockData("jumpingMP", ba.getOriginalJumpMP());
-            blk.writeBlockData("armor", new int[] { ba.getArmor(1) });
-            blk.writeBlockData("Trooper Count", (int) t.getWeight());
-            blk.writeBlockData("weightclass", ba.getWeightClass());
-        } else if (t instanceof ConvInfantry infantry) {
-            blk.writeBlockData("squad_size", infantry.getSquadSize());
-            blk.writeBlockData("squadn", infantry.getSquadCount());
-            if (infantry.getSecondaryWeaponsPerSquad() > 0) {
-                blk.writeBlockData("secondn", infantry.getSecondaryWeaponsPerSquad());
-            }
-            if (null != infantry.getPrimaryWeapon()) {
-                blk.writeBlockData("Primary", infantry.getPrimaryWeapon().getInternalName());
-            }
-            if (null != infantry.getSecondaryWeapon()) {
-                blk.writeBlockData("Secondary", infantry.getSecondaryWeapon().getInternalName());
-            }
-
-            if (infantry.getCustomArmorDamageDivisor() != 1) {
-                blk.writeBlockData("armordivisor", Double.toString(infantry.getCustomArmorDamageDivisor()));
-            }
-            if (infantry.isArmorEncumbering()) {
-                blk.writeBlockData("encumberingarmor", "true");
-            }
-            if (infantry.hasSpaceSuit()) {
-                blk.writeBlockData("spacesuit", "true");
-            }
-            if (infantry.hasDEST()) {
-                blk.writeBlockData("dest", "true");
-            }
-            if (infantry.hasSneakCamo()) {
-                blk.writeBlockData("sneakcamo", "true");
-            }
-            if (infantry.hasSneakIR()) {
-                blk.writeBlockData("sneakir", "true");
-            }
-            if (infantry.hasSneakECM()) {
-                blk.writeBlockData("sneakecm", "true");
-            }
-            if (infantry.hasSpecialization()) {
-                blk.writeBlockData("specialization", infantry.getSpecializations());
-            }
-            ArrayList<String> augmentations = new ArrayList<>();
-            for (Enumeration<IOption> e = infantry.getCrew().getOptions(PilotOptions.MD_ADVANTAGES);
-                  e.hasMoreElements(); ) {
-                final IOption o = e.nextElement();
-                if (o.booleanValue()) {
-                    augmentations.add(o.getName());
+            case GunEmplacement gunEmplacement -> {
+                if (!gunEmplacement.hasNoTurret()) {
+                    blk.writeBlockData("turret", 1);
                 }
             }
-            if (!augmentations.isEmpty()) {
-                blk.writeBlockData("augmentation", augmentations.toArray(new String[0]));
-            }
+            case AbstractBuildingEntity abstractBuildingEntity -> {
+                blk.writeBlockData("building_class", abstractBuildingEntity.getBldgClass());
+                blk.writeBlockData("building_type", abstractBuildingEntity.getBuildingType().getTypeValue());
+                blk.writeBlockData("height", abstractBuildingEntity.getInternalBuilding().getBuildingHeight());
+                blk.writeBlockData("cf", abstractBuildingEntity.getInternalBuilding().getCurrentCF(CubeCoords.ZERO));
 
-            // Prosthetic Enhancement (Enhanced Limbs) - IO p.84
-            if (infantry.hasProstheticEnhancement1()) {
-                blk.writeBlockData("prostheticEnhancement1", infantry.getProstheticEnhancement1().toString());
-                if (infantry.getProstheticEnhancement1Count() > 0) {
-                    blk.writeBlockData("prostheticEnhancement1Count", infantry.getProstheticEnhancement1Count());
-                }
+                blk.writeBlockData("coords",
+                      abstractBuildingEntity.getInternalBuilding().getCoordsList().toArray(new CubeCoords[0]));
             }
-            if (infantry.hasProstheticEnhancement2()) {
-                blk.writeBlockData("prostheticEnhancement2", infantry.getProstheticEnhancement2().toString());
-                if (infantry.getProstheticEnhancement2Count() > 0) {
-                    blk.writeBlockData("prostheticEnhancement2Count", infantry.getProstheticEnhancement2Count());
-                }
-            }
-
-            // Extraneous (Enhanced) Limbs - IO p.84
-            // Each pair always provides 2 items, so no count needed
-            if (infantry.hasExtraneousPair1()) {
-                blk.writeBlockData("extraneousPair1", infantry.getExtraneousPair1().toString());
-            }
-            if (infantry.hasExtraneousPair2()) {
-                blk.writeBlockData("extraneousPair2", infantry.getExtraneousPair2().toString());
-            }
-        } else if (t instanceof GunEmplacement gunEmplacement) {
-            if (!gunEmplacement.hasNoTurret()) {
-                blk.writeBlockData("turret", 1);
-            }
-        } else if (t instanceof AbstractBuildingEntity abstractBuildingEntity) {
-            blk.writeBlockData("building_class", abstractBuildingEntity.getBldgClass());
-            blk.writeBlockData("building_type", abstractBuildingEntity.getBuildingType().getTypeValue());
-            blk.writeBlockData("height", abstractBuildingEntity.getInternalBuilding().getBuildingHeight());
-            blk.writeBlockData("cf", abstractBuildingEntity.getInternalBuilding().getCurrentCF(CubeCoords.ZERO));
-
-            blk.writeBlockData("coords",
-                  abstractBuildingEntity.getInternalBuilding().getCoordsList().toArray(new CubeCoords[0]));
-        } else {
-            blk.writeBlockData("tonnage", t.getWeight());
+            default -> blk.writeBlockData("tonnage", t.getWeight());
         }
 
         if (t.getUseManualBV()) {
@@ -1874,6 +1932,43 @@ public class BLKFile {
             entity.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
         } else {
             entity.setArmorTechLevel(entity.getStaticTechLevel().getCompoundTechLevel(entity.isClan()));
+        }
+        normalizeAllTechBaseArmor(entity);
+    }
+
+    /**
+     * Normalizes ALL-tech-base armor tech levels when the file specifies an IS/Clan tech base that
+     * doesn't match the unit, while preserving the underlying rules level (e.g., IS Advanced -> Clan Advanced).
+     */
+    private void normalizeAllTechBaseArmor(Entity entity) {
+        ArmorType armor = ArmorType.forEntity(entity);
+        if (!entity.isMixedTech() && !entity.hasPatchworkArmor() && (armor != null)
+              && (armor.getTechAdvancement().getTechBase() == TechBase.ALL)) {
+            int armorTechLevel = entity.getArmorTechLevel(entity.firstArmorIndex());
+            int normalizedTechLevel = switch (armorTechLevel) {
+                case TechConstants.T_INTRO_BOX_SET, TechConstants.T_IS_TW_NON_BOX, TechConstants.T_IS_TW_ALL ->
+                    entity.isClan() ? TechConstants.T_CLAN_TW : armorTechLevel;
+                case TechConstants.T_IS_ADVANCED ->
+                    entity.isClan() ? TechConstants.T_CLAN_ADVANCED : armorTechLevel;
+                case TechConstants.T_IS_EXPERIMENTAL ->
+                    entity.isClan() ? TechConstants.T_CLAN_EXPERIMENTAL : armorTechLevel;
+                case TechConstants.T_IS_UNOFFICIAL ->
+                    entity.isClan() ? TechConstants.T_CLAN_UNOFFICIAL : armorTechLevel;
+                case TechConstants.T_ALL_IS -> entity.isClan() ? TechConstants.T_ALL_CLAN : armorTechLevel;
+                case TechConstants.T_CLAN_TW ->
+                    entity.isClan() ? armorTechLevel : TechConstants.T_IS_TW_NON_BOX;
+                case TechConstants.T_CLAN_ADVANCED ->
+                    entity.isClan() ? armorTechLevel : TechConstants.T_IS_ADVANCED;
+                case TechConstants.T_CLAN_EXPERIMENTAL ->
+                    entity.isClan() ? armorTechLevel : TechConstants.T_IS_EXPERIMENTAL;
+                case TechConstants.T_CLAN_UNOFFICIAL ->
+                    entity.isClan() ? armorTechLevel : TechConstants.T_IS_UNOFFICIAL;
+                case TechConstants.T_ALL_CLAN -> entity.isClan() ? armorTechLevel : TechConstants.T_ALL_IS;
+                default -> armorTechLevel;
+            };
+            if (normalizedTechLevel != armorTechLevel) {
+                entity.setArmorTechLevel(normalizedTechLevel);
+            }
         }
     }
 

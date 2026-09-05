@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -48,8 +48,8 @@ import javax.swing.JOptionPane;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
+import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.bot.princess.Princess;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
@@ -59,7 +59,10 @@ import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
 import megamek.client.ui.dialogs.SBFStats.SBFStatsDialog;
 import megamek.client.ui.dialogs.UnitEditorDialog;
 import megamek.client.ui.dialogs.abstractDialogs.ASStatsDialog;
+import megamek.client.ui.dialogs.customMek.BattlefieldSupportAssetConfigDialog;
+import megamek.client.ui.dialogs.customMek.BattlefieldSupportAssetDamageDialog;
 import megamek.client.ui.dialogs.customMek.CustomMekDialog;
+import megamek.client.ui.dialogs.lobby.TrainOrderDialog;
 import megamek.client.ui.dialogs.iconChooser.CamoChooserDialog;
 import megamek.common.Player;
 import megamek.common.bays.Bay;
@@ -77,6 +80,7 @@ import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import megamek.common.units.Crew;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
 import megamek.common.units.LandAirMek;
@@ -241,10 +245,49 @@ public class LobbyActions {
             return;
         }
         Entity entity = CollectionUtil.anyOneElement(entities);
-        UnitEditorDialog med = new UnitEditorDialog(frame(), entity);
+        if (!canEditDamage(client(), entity)) {
+            LobbyErrors.showCannotEditDamage(frame());
+            return;
+        }
+        // An asset has no armor/structure/criticals; its only persistent damage is a lowered Destroy Check.
+        if (entity instanceof BattlefieldSupportAsset asset) {
+            BattlefieldSupportAssetDamageDialog dialog = new BattlefieldSupportAssetDamageDialog(frame(), asset);
+            if (dialog.showDialog().isConfirmed()) {
+                dialog.applyChoices();
+                sendUpdates(entities);
+            }
+            return;
+        }
+
+        // Reaching here means the local player may edit this unit: the gamemaster, or the owner when no gamemaster
+        // is present. Either way the dialog offers the full editing tools without re-checking the gamemaster role.
+        UnitEditorDialog med = new UnitEditorDialog(frame(), entity, true);
         med.setVisible(true);
         med.dispose();
         sendUpdates(entities);
+    }
+
+    /**
+     * Returns true when the local player of the given client may edit damage on the given unit. When any player
+     * holds the Game Master role, only the Game Master may edit damage. Without a Game Master, players may edit
+     * damage only on their own units and the units of their local bots.
+     *
+     * @param client the client asking to edit damage
+     * @param entity the unit to edit damage on
+     *
+     * @return true when the client's local player may edit damage on the unit
+     */
+    static boolean canEditDamage(Client client, Entity entity) {
+        Player localPlayer = client.getLocalPlayer();
+        boolean ownUnit = (entity.getOwnerId() == localPlayer.getId())
+              || client.getBots().containsKey(entity.getOwner().getName());
+        for (Player player : client.getGame().getPlayersList()) {
+            if (player.isGameMaster()) {
+                // when a gamemaster is present, only the gamemaster may edit damage; everyone else loses access
+                return localPlayer.isGameMaster();
+            }
+        }
+        return ownUnit;
     }
 
     /**
@@ -299,11 +342,12 @@ public class LobbyActions {
         boolean hasIndividualCamo = entities.stream().anyMatch(e -> !e.getCamouflage().hasDefaultCategory());
         CamoChooserDialog ccd = new CamoChooserDialog(frame(), entity.getCamouflageOrElseOwners(), hasIndividualCamo);
         try {
-            ccd.setDisplayedEntity(entity);
+            ccd.setDisplayedEntities(new ArrayList<>(entities));
             if (ccd.showDialog().isCancelled()) {
                 return;
             }
-            // Choosing the player camo resets the units to have no individual camo.
+            // Choosing the player camo resets the units to have no individual camo. The asset marker overlay rides on
+            // the camo, so it is carried automatically (including on a reset back to the player camo).
             Camouflage selectedItem = ccd.getSelectedItem();
             Camouflage ownerCamo = entity.getOwner().getCamouflage();
             boolean noIndividualCamo = selectedItem.equals(ownerCamo);
@@ -331,11 +375,23 @@ public class LobbyActions {
             LobbyErrors.showSingleOwnerRequired(frame());
             return;
         }
-        Entity oneSelected = CollectionUtil.anyOneElement(entities);
+        // Assets use their own minimal crew dialog. A mixed selection must run both configuration flows rather than
+        // choosing one based on an arbitrary element from the collection.
+        List<Entity> assets = entities.stream().filter(BattlefieldSupportAsset.class::isInstance).toList();
+        assets.forEach(this::customizeBattlefieldSupportAsset);
+
+        List<Entity> standardUnits = entities.stream()
+              .filter(entity -> !(entity instanceof BattlefieldSupportAsset))
+              .toList();
+        if (standardUnits.isEmpty()) {
+            return;
+        }
+
+        Entity oneSelected = CollectionUtil.anyOneElement(standardUnits);
         Client client = clientForCustomization(oneSelected);
         boolean editable = allowCustomization(oneSelected);
 
-        CustomMekDialog cmd = new CustomMekDialog(lobby.getClientGUI(), client, new ArrayList<>(entities), editable);
+        CustomMekDialog cmd = new CustomMekDialog(lobby.getClientGUI(), client, new ArrayList<>(standardUnits), editable);
         cmd.setSize(new Dimension(GUIPreferences.getInstance().getCustomUnitWidth(),
               GUIPreferences.getInstance().getCustomUnitHeight()));
         cmd.setTitle(Messages.getString("ChatLounge.CustomizeUnits"));
@@ -344,7 +400,7 @@ public class LobbyActions {
         GUIPreferences.getInstance().setCustomUnitWidth(cmd.getSize().width);
 
         if (editable && cmd.isOkay()) {
-            sendCustomizationUpdate(entities);
+            sendCustomizationUpdate(standardUnits);
         }
 
         if (cmd.isOkay() && (cmd.getStatus() != CustomMekDialog.DONE)) {
@@ -357,12 +413,34 @@ public class LobbyActions {
     }
 
     /**
+     * Shows the minimal crew configuration dialog for a Battlefield Support Asset (name and Regular/Veteran grade) and,
+     * if confirmed and editable, applies the choices and sends the update to the server.
+     *
+     * @param entity the asset to configure
+     */
+    private void customizeBattlefieldSupportAsset(Entity entity) {
+        boolean editable = allowCustomization(entity);
+        BattlefieldSupportAssetConfigDialog dialog =
+              new BattlefieldSupportAssetConfigDialog(frame(), (BattlefieldSupportAsset) entity, editable);
+        if (dialog.showDialog().isConfirmed() && editable) {
+            dialog.applyChoices();
+            sendCustomizationUpdate(List.of(entity));
+        }
+    }
+
+    /**
      * Shows the unit configuration dialog for the given unit.
      *
      * @param entity the unit to configure
      */
     public void customizeMek(Entity entity) {
         if (!validateUpdate(List.of(entity))) {
+            return;
+        }
+
+        // Assets have no equipment/quirks/weapon tabs; only a crew name and Regular/Veteran grade to configure.
+        if (entity instanceof BattlefieldSupportAsset) {
+            customizeBattlefieldSupportAsset(entity);
             return;
         }
 
@@ -585,10 +663,10 @@ public class LobbyActions {
     /** Adds the given entities as strategic targets for the given local bot. */
     void setPriorityTarget(String botName, Collection<Entity> entities) {
         Map<String, AbstractClient> bots = lobby.getClientGUI().getLocalBots();
-        if (!bots.containsKey(botName) || !(bots.get(botName) instanceof Princess)) {
+        if (!bots.containsKey(botName) || !(bots.get(botName) instanceof BotClient botClient)) {
             return;
         }
-        BehaviorSettings behavior = ((Princess) bots.get(botName)).getBehaviorSettings();
+        BehaviorSettings behavior = botClient.getBehaviorSettings();
         entities.forEach(e -> behavior.addPriorityUnit(e.getId()));
     }
 
@@ -742,6 +820,77 @@ public class LobbyActions {
         }
 
         lobby.towBy(trailer, tractorId);
+    }
+
+    /**
+     * Connects a multi-unit selection into a tractor-and-trailer train in one operation, after asking the player what
+     * order the trailers should sit in.
+     * <p>
+     * Order is load-bearing rather than cosmetic: a unit draws ammunition only from its immediate neighbours, so the
+     * carriage placed directly behind the gun is the only one that can feed it. The server validates and applies the
+     * whole chain, so a rejected request leaves every unit unattached.
+     * </p>
+     */
+    public void connectTrain(Collection<Entity> entities) {
+        List<Entity> editable = new ArrayList<>(entities);
+        editable.removeIf(this::isNotEditable);
+        if (editable.size() != entities.size()) {
+            logger.info("[Train] ignoring {} unit(s) in the selection that this player cannot edit",
+                  entities.size() - editable.size());
+        }
+
+        List<Entity> candidateHeads = new ArrayList<>();
+        List<Entity> trailers = new ArrayList<>();
+        for (Entity entity : editable) {
+            if (entity.getTractor() != Entity.NONE) {
+                logger.info("[Train] cannot connect: {} is already part of a train", entity.getShortName());
+                LobbyErrors.showOnlyTrainMembers(frame());
+                return;
+            }
+            if (entity.isTrailer()) {
+                trailers.add(entity);
+            } else if (entity.isTractor()) {
+                if (entity.getTowing() != Entity.NONE) {
+                    // The server builds a train from an unattached tractor. Catch it here so the player gets a
+                    // message instead of a dialog that quietly does nothing.
+                    logger.info("[Train] cannot connect: {} already tows a trailer", entity.getShortName());
+                    LobbyErrors.showSingleTractorRequired(frame());
+                    return;
+                }
+                candidateHeads.add(entity);
+            } else {
+                logger.info("[Train] cannot connect: {} is neither a tractor nor a trailer", entity.getShortName());
+                LobbyErrors.showOnlyTrainMembers(frame());
+                return;
+            }
+        }
+
+        if (candidateHeads.size() != 1) {
+            logger.info("[Train] cannot connect: found {} possible tractors, need exactly one",
+                  candidateHeads.size());
+            LobbyErrors.showSingleTractorRequired(frame());
+            return;
+        }
+        if (trailers.isEmpty()) {
+            logger.info("[Train] cannot connect: no trailers in the selection");
+            LobbyErrors.showOnlyTrainMembers(frame());
+            return;
+        }
+
+        Entity head = candidateHeads.get(0);
+        TrainOrderDialog dialog = new TrainOrderDialog(frame(), head, trailers);
+        dialog.setVisible(true);
+        if (!dialog.wasConfirmed()) {
+            logger.info("[Train] connect cancelled by the player");
+            return;
+        }
+
+        List<Integer> orderedTrailerIds = new ArrayList<>();
+        for (Entity trailer : dialog.getOrderedTrailers()) {
+            orderedTrailerIds.add(trailer.getId());
+        }
+        logger.info("[Train] requesting train: {} + {} trailer(s)", head.getShortName(), orderedTrailerIds.size());
+        lobby.getLocalClient(head).sendBuildTrain(head.getId(), orderedTrailerIds);
     }
 
     /** Asks for a new name for the provided forceId and applies it. */
@@ -1246,8 +1395,8 @@ public class LobbyActions {
     }
 
     /**
-     * Returns the best sending client for an update of the given entity or null if none can be found (entity is an
-     * enemy to the local player and all his bots)
+     * Returns the best sending client for an update of the given entity or {@code null} if none can be found (entity
+     * is an enemy to the local player and all his bots, and the local player is not a gamemaster)
      */
     private Client correctSender(Entity entity) {
         Player owner = entity.getOwner();
@@ -1265,6 +1414,10 @@ public class LobbyActions {
             }
         }
 
+        // A gamemaster may update any unit; the server accepts GM updates sent from the local client
+        if (localPlayer().isGameMaster()) {
+            return client();
+        }
         return null;
     }
 

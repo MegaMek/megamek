@@ -173,7 +173,7 @@ public class ChassisRecord extends AbstractUnitRecord {
 
             // Get the availability rating for the provided faction and year,
             // skip processing if not available
-            avRating = ratGen.findModelAvailabilityRecord(currentEra, curModel.getKey(), fRec);
+            avRating = ratGen.findModelAvailabilityRecord(currentEra, curModel.getKey(), fRec, exactYear);
             if (avRating == null || avRating.getAvailability() <= 0) {
                 continue;
             }
@@ -182,7 +182,7 @@ public class ChassisRecord extends AbstractUnitRecord {
             // (whichever is later), and start of next era
             if (exactYear > currentEra && currentEra != nextEra) {
                 nextAvRating = ratGen.findModelAvailabilityRecord(nextEra,
-                      curModel.getKey(), fRec);
+                      curModel.getKey(), fRec, nextEra);
 
                 int interpolationStart = Math.clamp(curModel.introYear, currentEra, exactYear);
 

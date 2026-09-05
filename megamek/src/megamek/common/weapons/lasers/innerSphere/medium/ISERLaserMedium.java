@@ -36,6 +36,7 @@ package megamek.common.weapons.lasers.innerSphere.medium;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -73,12 +74,15 @@ public class ISERLaserMedium extends LaserWeapon {
         shortAV = 5;
         medAV = 5;
         maxRange = RANGE_MED;
-        rulesRefs = "226, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 226),
+              rulesRef(SourceBookCode.BMM, 101),
+              rulesRef(SourceBookCode.CORE, 185),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         // December 2021 - Errata request to change common date
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(3052, 3058, 3062, DATE_NONE, DATE_NONE)

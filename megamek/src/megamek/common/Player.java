@@ -36,6 +36,7 @@ package megamek.common;
 
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
@@ -51,6 +52,7 @@ import megamek.common.equipment.MiscType;
 import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
+import megamek.common.game.InitiativeRoll;
 import megamek.common.hexArea.BorderHexArea;
 import megamek.common.hexArea.HexArea;
 import megamek.common.icons.Camouflage;
@@ -106,12 +108,10 @@ public final class Player extends TurnOrdered {
     private int startingAnySEy = Entity.STARTING_ANY_NONE;
 
     // number of minefields
-    private int numMfConv = 0;
-    private int numMfCmd = 0;
-    private int numMfVibra = 0;
-    private int numMfActive = 0;
-    private int numMfInferno = 0;
-    private int numMfEMP = 0;
+    private int[] minefieldCounts = new int[Minefield.TYPE_SIZE];
+
+    // number of fortified hexes the player may place during the minefield deployment phase (TO:AUE p.153)
+    private int numFortifiedHexes = 0;
 
     // hexes that are automatically hit by artillery
     private List<BoardLocation> artyAutoHitHexes = new ArrayList<>();
@@ -123,6 +123,9 @@ public final class Player extends TurnOrdered {
     // initiative collectively
     // if they are then we pick the best non-zero bonuses
     private int constantInitBonus = 0;
+
+    // victory points this player's side starts the game with, from a scenario's faction definition
+    private int startingVictoryPoints = 0;
     private int streakCompensationBonus = 0;
 
     private Camouflage camouflage = new Camouflage(Camouflage.COLOUR_CAMOUFLAGE, PlayerColour.BLUE.name());
@@ -136,7 +139,9 @@ public final class Player extends TurnOrdered {
 
     //Voting should not be stored in save game so marked transient
     private transient boolean votedToAllowTeamChange = false;
-    private transient boolean votedToAllowGameMaster = false;
+    // Testing aid (client-set, server-only): when true the server includes enemy artillery attacks in this player's
+    // artillery packet so the Rounds in the Air view can show both sides. Transient - never serialized or saved.
+    private transient boolean artilleryRevealAll = false;
 
     private HexArea fleeArea = new BorderHexArea(true, true, true, true);
     //endregion Variable Declarations
@@ -179,61 +184,94 @@ public final class Player extends TurnOrdered {
     }
 
     public boolean hasMinefields() {
-        return (numMfCmd > 0) ||
-              (numMfConv > 0) ||
-              (numMfVibra > 0) ||
-              (numMfActive > 0) ||
-              (numMfInferno > 0) ||
-              (numMfEMP > 0) ||
+        boolean hasMinefields = false;
+
+        for (int minefieldIndex = 0; minefieldIndex < Minefield.TYPE_SIZE; minefieldIndex++) {
+            if (minefieldCounts[minefieldIndex] > 0) {
+                hasMinefields = true;
+                break;
+            }
+        }
+
+        return hasMinefields ||
+              (numFortifiedHexes > 0) ||
               !getGroundObjectsToPlace().isEmpty();
     }
 
+    /**
+     * Given a minefield type from one of the TYPE_[MINEFIELDTYPE] constants in Minefield.java
+     * and a count (preferably more than 0), set the count of that type of mine for this player.
+     */
+    public void setMinefieldCount(int minefieldType, int count) {
+        minefieldCounts[minefieldType] = count;
+    }
+
     public void setNbrMFConventional(int nbrMF) {
-        numMfConv = nbrMF;
+        minefieldCounts[Minefield.TYPE_CONVENTIONAL] = nbrMF;
     }
 
     public void setNbrMFCommand(int nbrMF) {
-        numMfCmd = nbrMF;
+        minefieldCounts[Minefield.TYPE_COMMAND_DETONATED] = nbrMF;
     }
 
     public void setNbrMFVibra(int nbrMF) {
-        numMfVibra = nbrMF;
+        minefieldCounts[Minefield.TYPE_VIBRABOMB] = nbrMF;
     }
 
     public void setNbrMFActive(int nbrMF) {
-        numMfActive = nbrMF;
+        minefieldCounts[Minefield.TYPE_ACTIVE] = nbrMF;
     }
 
     public void setNbrMFInferno(int nbrMF) {
-        numMfInferno = nbrMF;
-    }
-
-    public int getNbrMFConventional() {
-        return numMfConv;
-    }
-
-    public int getNbrMFCommand() {
-        return numMfCmd;
-    }
-
-    public int getNbrMFVibra() {
-        return numMfVibra;
-    }
-
-    public int getNbrMFActive() {
-        return numMfActive;
-    }
-
-    public int getNbrMFInferno() {
-        return numMfInferno;
+        minefieldCounts[Minefield.TYPE_INFERNO] = nbrMF;
     }
 
     public void setNbrMFEMP(int nbrMF) {
-        numMfEMP = nbrMF;
+        minefieldCounts[Minefield.TYPE_EMP] = nbrMF;
+    }
+
+    /**
+     * Given a minefield type from one of the TYPE_[MINEFIELDTYPE] constants in Minefield.java
+     * returns how many mines of that type this player has
+     */
+    public int getMinefieldCount(int minefieldType) {
+        return minefieldCounts[minefieldType];
+    }
+
+    public int getNbrMFConventional() {
+        return minefieldCounts[Minefield.TYPE_CONVENTIONAL];
+    }
+
+    public int getNbrMFCommand() {
+        return minefieldCounts[Minefield.TYPE_COMMAND_DETONATED];
+    }
+
+    public int getNbrMFVibra() {
+        return minefieldCounts[Minefield.TYPE_VIBRABOMB];
+    }
+
+    public int getNbrMFActive() {
+        return minefieldCounts[Minefield.TYPE_ACTIVE];
+    }
+
+    public int getNbrMFInferno() {
+        return minefieldCounts[Minefield.TYPE_INFERNO];
     }
 
     public int getNbrMFEMP() {
-        return numMfEMP;
+        return minefieldCounts[Minefield.TYPE_EMP];
+    }
+
+    /**
+     * @return the number of fortified hexes this player may place during the minefield deployment phase
+     *       (Trench/Fieldworks Engineers, TO:AUE p.153)
+     */
+    public int getNbrFortifiedHexes() {
+        return numFortifiedHexes;
+    }
+
+    public void setNbrFortifiedHexes(int nbrFortifiedHexes) {
+        numFortifiedHexes = nbrFortifiedHexes;
     }
 
     public Camouflage getCamouflage() {
@@ -274,6 +312,14 @@ public final class Player extends TurnOrdered {
 
     public void setTeam(int team) {
         this.team = team;
+    }
+
+    public String getTeamName() {
+        if (getTeam() <= TEAM_NONE) {
+            return "No Team";
+        }
+
+        return "Team " + getTeam();
     }
 
     public boolean isDone() {
@@ -368,6 +414,22 @@ public final class Player extends TurnOrdered {
     }
 
     /**
+     * @param artilleryRevealAll Whether the server should reveal all in-flight artillery (both teams) to this player -
+     *                           a client-set testing aid for the Rounds in the Air view
+     */
+    public void setArtilleryRevealAll(boolean artilleryRevealAll) {
+        this.artilleryRevealAll = artilleryRevealAll;
+    }
+
+    /**
+     * @return {@code true} if the server should include enemy artillery attacks in this player's artillery packet (the
+     *       Rounds in the Air testing reveal); {@code false} for normal team-only (double-blind) behavior
+     */
+    public boolean isArtilleryRevealAll() {
+        return artilleryRevealAll;
+    }
+
+    /**
      * If you are checking to see if double-blind applies to this player, use {@link #canIgnoreDoubleBlind()}
      *
      * @return true if {@link #seeAll} is true and is permitted
@@ -434,6 +496,22 @@ public final class Player extends TurnOrdered {
     }
 
     public PlayerColour getColour() {
+        return colour;
+    }
+
+    /**
+     * The colour this player is actually shown in. A player picks a colour in the lobby by choosing a
+     * colour camouflage, and that choice lives on the camouflage - {@link #getColour()} is a separate
+     * field that the lobby never sets, so it stays at its default for most players and cannot be trusted
+     * to say what the player looks like. Anything drawing something in a player's colour wants this.
+     *
+     * @return The colour of this player's colour camouflage, or the plain colour field when the camouflage
+     *       is an image rather than a colour
+     */
+    public PlayerColour getDisplayColour() {
+        if ((camouflage != null) && camouflage.isColourCamouflage()) {
+            return PlayerColour.parseFromString(camouflage.getFilename());
+        }
         return colour;
     }
 
@@ -551,14 +629,6 @@ public final class Player extends TurnOrdered {
         return votedToAllowTeamChange;
     }
 
-    public void setVotedToAllowGameMaster(boolean allowChange) {
-        votedToAllowGameMaster = allowChange;
-    }
-
-    public boolean getVotedToAllowGameMaster() {
-        return votedToAllowGameMaster;
-    }
-
     public void setArtyAutoHitHexes(List<BoardLocation> newArtyAutoHitHexes) {
         artyAutoHitHexes.clear();
         artyAutoHitHexes.addAll(newArtyAutoHitHexes);
@@ -644,6 +714,18 @@ public final class Player extends TurnOrdered {
 
     public int getConstantInitBonus() {
         return constantInitBonus;
+    }
+
+    /**
+     * @return The victory points this player's side starts the game with, as set by a scenario's faction
+     *       definition; 0 unless a scenario set it
+     */
+    public int getStartingVictoryPoints() {
+        return startingVictoryPoints;
+    }
+
+    public void setStartingVictoryPoints(int startingVictoryPoints) {
+        this.startingVictoryPoints = startingVictoryPoints;
     }
 
     /**
@@ -746,7 +828,7 @@ public final class Player extends TurnOrdered {
             if (object instanceof Entity entity && entity.getOwner().equals(this)) {
                 if (isActiveForCommandBonus(entity)) {
                     if (entity.hasCommandConsoleBonus() || entity.getCrew().hasActiveTechOfficer()) {
-                        return 2;
+                        return Game.rulesManager.getRulesEquipment().getCommandConsoleBonus();
                     }
                 }
             }
@@ -965,15 +1047,12 @@ public final class Player extends TurnOrdered {
     }
 
     public String getColoredPlayerNameWithTeam() {
-        if (team == -1) {
-            team = 0;
-        }
         return "<B><font color='" +
               getColour().getHexString(0x00F0F0F0) +
               "'>" +
               getName() +
               " (" +
-              TEAM_NAMES[team] +
+              getTeamName() +
               ")</font></B>";
     }
 
@@ -1037,18 +1116,19 @@ public final class Player extends TurnOrdered {
         copy.startingAnySEx = startingAnySEx;
         copy.startingAnySEy = startingAnySEy;
 
-        copy.numMfConv = numMfConv;
-        copy.numMfCmd = numMfCmd;
-        copy.numMfVibra = numMfVibra;
-        copy.numMfActive = numMfActive;
-        copy.numMfInferno = numMfInferno;
+        copy.minefieldCounts = Arrays.copyOf(minefieldCounts, Minefield.TYPE_SIZE);
 
         copy.artyAutoHitHexes = new ArrayList<>(artyAutoHitHexes);
+
+        // without this, player updates sent to OTHER clients (which are sent as redacted copies) lose the
+        // ground objects, so designated victory hexes would never show up for anyone but their owner
+        copy.groundObjectsToPlace = new ArrayList<>(groundObjectsToPlace);
 
         copy.initialEntityCount = initialEntityCount;
         copy.initialBV = initialBV;
 
         copy.constantInitBonus = constantInitBonus;
+        copy.startingVictoryPoints = startingVictoryPoints;
         copy.streakCompensationBonus = streakCompensationBonus;
 
         copy.camouflage = camouflage;
@@ -1058,7 +1138,7 @@ public final class Player extends TurnOrdered {
 
         copy.admitsDefeat = admitsDefeat;
 
-        copy.setInitiative(getInitiative());
+        copy.setInitiative(new InitiativeRoll(getInitiative()));
 
         return copy;
     }

@@ -36,18 +36,19 @@ package megamek.common.weapons.lasers.clan.large;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
-import megamek.common.weapons.lasers.LaserWeapon;
+import megamek.common.weapons.lasers.ImprovedHeavyLaserWeapon;
 
 /**
  * @author Jason Tighe
  * @since Sep 12, 2004
  */
-public class CLImprovedHeavyLaserLarge extends LaserWeapon {
+public class CLImprovedHeavyLaserLarge extends ImprovedHeavyLaserWeapon {
     @Serial
     private static final long serialVersionUID = 4467522144065588079L;
 
@@ -77,7 +78,12 @@ public class CLImprovedHeavyLaserLarge extends LaserWeapon {
         maxRange = RANGE_MED;
         explosionDamage = 8;
         explosive = true;
-        rulesRefs = "133, TO:AUE";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 133),
+              rulesRef(SourceBookCode.BMM, 101),
+              rulesRef(SourceBookCode.CORE, 185)
+        );
+        flags = flags.or(S_IMPROVED);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)

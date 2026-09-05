@@ -78,7 +78,7 @@ If none of the above options work for you, see the "INSTALLING OR UPDATING YOUR 
 
 ### INSTALLING OR UPDATING YOUR JAVA RUNTIME
 
-Of the versions available, we now require Java 17 LTS as the bare minimal version. Newer versions should work but are
+Of the versions available, we now require Java 21 LTS as the bare minimal version. Newer versions should work but are
 not currently supported.
 
 #### Adoptium (Windows)
@@ -89,7 +89,7 @@ is installed correctly for the most seamless experience.
 #### Adoptium (Mac)
 
 For Mac, download the installer
-from [Adoptium]( https://adoptium.net/temurin/releases/?os=mac&version=17&arch=aarch64&package=jre) directly for your
+from [Adoptium]( https://adoptium.net/temurin/releases/?os=mac&version=21&arch=aarch64&package=jre) directly for your
 version of macOS and underling platform (AARCH64 is for M-Series Mac's).
 
 #### Linux
@@ -427,6 +427,15 @@ When contributing to this project, please enable the EditorConfig option within 
 with our [style guide](https://github.com/MegaMek/megamek/wiki/MegaMek-Coding-Style-Guide) which includes some defaults
 for line length, tabs vs. spaces, etc. When all else fails, we follow
 the [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html).
+
+The build enforces formatting, so it does not matter which editor (or tool) wrote the code. Before you push:
+
+```
+./gradlew spotlessApply
+```
+
+That formats every Java file you changed. `./gradlew spotlessCheck` reports the same violations without changing
+anything. The check runs first on every pull request and lists every violation in one go.
 
 ## Support
 

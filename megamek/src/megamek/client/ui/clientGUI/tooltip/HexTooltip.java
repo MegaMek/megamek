@@ -37,6 +37,7 @@ import static megamek.client.ui.util.UIUtil.uiWhite;
 
 import java.awt.Point;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Vector;
 import java.util.stream.Collectors;
@@ -50,6 +51,7 @@ import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
+import megamek.common.IndustrialElevator;
 import megamek.common.Player;
 import megamek.common.ReportMessages;
 import megamek.common.annotations.Nullable;
@@ -58,11 +60,16 @@ import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.enums.BasementType;
 import megamek.common.equipment.FuelTank;
+import megamek.common.equipment.ObjectiveMarker;
+import megamek.common.equipment.ObjectiveScoringScheme;
+import megamek.client.ui.panels.phaseDisplay.VictoryHexPropertiesPane;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
 import megamek.common.game.Game;
 import megamek.common.planetaryConditions.IlluminationLevel;
 import megamek.common.units.BuildingTarget;
+import megamek.common.units.ConvInfantry;
+import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Terrains;
 
@@ -208,6 +215,10 @@ public final class HexTooltip {
                             sMinefield += ownerName;
                         }
                         break;
+                    case Minefield.TYPE_TRIPWIRE:
+                    case Minefield.TYPE_PITFALL:
+                    	sMinefield = mf.getName();
+                    	break;
                     default:
                         break;
                 }
@@ -223,7 +234,9 @@ public final class HexTooltip {
         if ((game != null) && !game.getGroundObjects(mcoords).isEmpty()) {
             for (ICarryable groundObject : game.getGroundObjects(mcoords)) {
                 result.append("&nbsp");
-                String groundObj = groundObject.specificName();
+                String groundObj = (groundObject instanceof ObjectiveMarker marker)
+                      ? describeControlPoint(marker, game)
+                      : groundObject.specificName();
                 String attr = String.format("FACE=Dialog COLOR=%s",
                       UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
                 groundObj = UIUtil.tag("FONT", attr, groundObj);
@@ -252,7 +265,56 @@ public final class HexTooltip {
             }
         }
 
+        // Bridge under construction indicator (TO:AUE Bridge-Building Engineers)
+        if (game != null) {
+            appendBridgeBuildInfo(result, game, mcoords, boardId);
+        }
+
         return result.toString();
+    }
+
+    /**
+     * Appends a "bridge under construction (turn X of Y)" line when a Bridge-Building Engineer platoon is raising a
+     * bridge in the given hex, TO:AUE. The build state is read from the synced ConvInfantry entities.
+     *
+     * @param result  the tooltip text being built
+     * @param game    the current game
+     * @param coords  the hex the tooltip describes
+     * @param boardId the board of the hex
+     */
+    private static void appendBridgeBuildInfo(StringBuilder result, Game game, Coords coords, int boardId) {
+        for (Entity entity : game.getEntitiesVector()) {
+            if (!(entity instanceof ConvInfantry convInfantry) || !convInfantry.hasBridgeInProgress()
+                  || (entity.getBoardId() != boardId)
+                  || !coords.equals(convInfantry.getBridgeTargetCoords())) {
+                continue;
+            }
+            int builtTurns = Math.min(convInfantry.getBridgeBuildTurns(), convInfantry.getBridgeBuildRequiredTurns());
+            // Identify the engineer platoon so the player can see who is working the hex
+            String builder = convInfantry.getShortName() + " (ID " + convInfantry.getId() + ")";
+            // Repairing a destroyed section reads differently from raising a new bridge (unofficial repair option)
+            boolean isRepair = convInfantry.isBridgeBuildRepair();
+            String buildInfo;
+            if (convInfantry.isDismantlingBridge()) {
+                // Count the standing structure back down on the build's scale (e.g. 4/6, 3/6, ...)
+                buildInfo = Messages.getString(isRepair ? "BoardView1.Tooltip.BridgeRepairDismantling"
+                            : "BoardView1.Tooltip.BridgeDismantling",
+                      convInfantry.getBridgeDismantleRemaining(), convInfantry.getBridgeBuildRequiredTurns(), builder);
+            } else if (convInfantry.isBridgePaused()) {
+                buildInfo = Messages.getString(isRepair ? "BoardView1.Tooltip.BridgeRepairPaused"
+                            : "BoardView1.Tooltip.BridgePaused",
+                      builtTurns, convInfantry.getBridgeBuildRequiredTurns(), builder);
+            } else {
+                buildInfo = Messages.getString(isRepair ? "BoardView1.Tooltip.BridgeRepairing"
+                            : "BoardView1.Tooltip.BridgeBuilding",
+                      builtTurns, convInfantry.getBridgeBuildRequiredTurns(), builder);
+            }
+            String attr = String.format("FACE=Dialog COLOR=%s",
+                  UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
+            buildInfo = UIUtil.tag("FONT", attr, buildInfo);
+            result.append(buildInfo);
+            result.append("<BR>");
+        }
     }
 
     public static String getBuildingTargetTip(BuildingTarget target, Board board) {
@@ -302,17 +364,21 @@ public final class HexTooltip {
         Coords mcoords = mhex.getCoords();
         String indicator = IlluminationLevel.determineIlluminationLevel(game, boardId, mcoords).getIndicator();
         String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
-        String illuminated = UIUtil.tag("FONT", attr, " " + indicator);
-        illuminated = DOT_SPACER + illuminated;
 
         String result;
+        // Hex number and level, with the terrain features following inline on the same line (separated by the
+        // dot spacer) so a single-feature hex like a fortified hex reads as one line.
         StringBuilder sTerrain = new StringBuilder(
               Messages.getString(
                     (inAtmosphere) ? "BoardView1.Tooltip.HexAlt" : "BoardView1.Tooltip.Hex",
                     mcoords.getBoardNum(),
                     mhex.getLevel()
-              ) + illuminated + "<BR>"
+              )
         );
+        // Illumination indicator, only when the hex is specially lit (the NONE level has a blank indicator).
+        if (!indicator.isBlank()) {
+            sTerrain.append(DOT_SPACER).append(UIUtil.tag("FONT", attr, indicator));
+        }
         // Types that represent Elevations need converting and possibly zeroing if board is in Atmosphere (Low Alt.)
         List<Integer> typesThatNeedAltitudeChecked = List.of(
               Terrains.INDUSTRIAL, Terrains.BLDG_ELEV, Terrains.BRIDGE_ELEV, Terrains.FOLIAGE_ELEV
@@ -328,11 +394,18 @@ public final class HexTooltip {
             String name = Terrains.getDisplayName(terType, ttl);
 
             if (name != null) {
+                if (terType == Terrains.INDUSTRIAL_ELEVATOR) {
+                    int capacityTons = (mhex.getTerrain(terType).getExits() & IndustrialElevator.CAPACITY_MASK)
+                          * IndustrialElevator.CAPACITY_MULTIPLIER;
+                    name += " (" + Messages.getString("BoardView1.Tooltip.IndustrialElevatorCapacity", capacityTons)
+                          + ")";
+                }
                 String msg_tf = Messages.getString("BoardView1.Tooltip.TF");
                 name += (tf > 0) ? " (" + msg_tf + ": " + tf + ')' : "";
-                sTerrain.append(name).append("<BR>");
+                sTerrain.append(DOT_SPACER).append(name);
             }
         }
+        sTerrain.append("<BR>");
 
         attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainFGColor()));
         result = UIUtil.tag("FONT", attr, sTerrain.toString());
@@ -491,4 +564,62 @@ public final class HexTooltip {
     }
 
     private HexTooltip() {}
+
+    /**
+     * Describes a control point for the hex tooltip: who placed it, who holds it now, what it is worth, how
+     * far along it is, and what its scheme asks of the players - the same wording the setup pane shows, so
+     * a point explains itself the same way wherever it is read. Both sides matter and are different things:
+     * who placed a Defend or Capture point decides who can score from it, while who holds it is the live
+     * state that changes hands. Without this a marker rendered only as its own name.
+     *
+     * @param marker The control point under the cursor
+     * @param game   The game, for resolving the owning player
+     *
+     * @return The description, as tooltip HTML
+     */
+    /**
+     * @param marker The control point
+     * @param game   The game, for resolving names
+     *
+     * @return who holds the point right now, in words a player reads: the team's members, a player's name,
+     *       or "no one"
+     */
+    private static String currentHolder(ObjectiveMarker marker, Game game) {
+        if (marker.getControllingPlayerId() != ObjectiveMarker.NO_CONTROLLER) {
+            Player holder = game.getPlayer(marker.getControllingPlayerId());
+            return (holder == null) ? Messages.getString("VictoryHex.tooltip.nobody") : holder.getName();
+        }
+        if (marker.getControllingTeam() != ObjectiveMarker.NO_CONTROLLER) {
+            List<String> members = new ArrayList<>();
+            for (Player player : game.getPlayersList()) {
+                if ((player.getTeam() == marker.getControllingTeam()) && !player.isObserver()) {
+                    members.add(player.getName());
+                }
+            }
+            return members.isEmpty() ? "Team " + marker.getControllingTeam() : String.join(", ", members);
+        }
+        return Messages.getString("VictoryHex.tooltip.nobody");
+    }
+
+    private static String describeControlPoint(ObjectiveMarker marker, Game game) {
+        ObjectiveScoringScheme scheme = marker.getScoringScheme();
+        Player owner = game.getPlayer(marker.getOwnerId());
+        StringBuilder description = new StringBuilder("<B>");
+        description.append(marker.generalName()).append("</B>");
+        if (owner != null) {
+            description.append(" &mdash; ").append(Messages.getString("VictoryHex.tooltip.placedBy",
+                  owner.getName()));
+        }
+        description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.heldBy",
+              currentHolder(marker, game)));
+        description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.worth",
+              marker.getVictoryPointValue(), marker.getControlRadius()));
+        String progress = scheme.progressLabel();
+        if (progress != null) {
+            description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.progress",
+                  progress));
+        }
+        description.append("<BR>&nbsp;").append(VictoryHexPropertiesPane.describeScheme(scheme));
+        return description.toString();
+    }
 }

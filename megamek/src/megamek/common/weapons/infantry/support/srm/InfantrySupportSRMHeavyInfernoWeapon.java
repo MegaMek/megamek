@@ -36,6 +36,7 @@ package megamek.common.weapons.infantry.support.srm;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -63,7 +64,7 @@ public class InfantrySupportSRMHeavyInfernoWeapon extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 3000;
         bv = 1.74;
-        flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT);
+        flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT).or(F_SRM);
         infantryDamage = 0.34;
         infantryRange = 2;
         ammoWeight = 0.018;
@@ -71,7 +72,7 @@ public class InfantrySupportSRMHeavyInfernoWeapon extends InfantryWeapon {
         shots = 1;
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         tonnage = 0.020;
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2366, 2370, 2400, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)

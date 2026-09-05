@@ -44,12 +44,16 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
 import java.util.UUID;
 
 import megamek.client.bot.princess.PathRanker.PathRankerType;
@@ -61,6 +65,7 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.IArmorState;
@@ -70,6 +75,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
+import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -139,6 +145,27 @@ class PrincessTest {
 
         // Test a null ticks argument.
         assertEquals(0, Princess.calculateAdjustment(null));
+    }
+
+    @Test
+    void testGetMessageGuardsNonFiniteEstimate() {
+        Entity mockEntity = mock(Entity.class);
+        when(mockEntity.getChassis()).thenReturn("Flashman");
+        List<MovePath> paths = new ArrayList<>();
+
+        // A +Infinity estimate (produced when a prior zero-path turn divided elapsed time by 0) must not
+        // surface as the Integer.MAX_VALUE completion time that results from casting the double to int.
+        String infiniteMessage = Princess.getMessage(mockEntity, Double.POSITIVE_INFINITY, paths);
+        assertTrue(infiniteMessage.contains("unknown."));
+        assertFalse(infiniteMessage.contains(Integer.toString(Integer.MAX_VALUE)));
+
+        // NaN is likewise non-finite and must be reported as unknown rather than the 0 that (int) NaN yields.
+        String nanMessage = Princess.getMessage(mockEntity, Double.NaN, paths);
+        assertTrue(nanMessage.contains("unknown."));
+
+        // A normal finite estimate is still rendered as a seconds value.
+        String finiteMessage = Princess.getMessage(mockEntity, 12.0, paths);
+        assertTrue(finiteMessage.contains("12 seconds"));
     }
 
     @Test
@@ -379,7 +406,8 @@ class PrincessTest {
     @Test
     void testWantsToFallBack() {
         Entity mockMek = mock(BipedMek.class);
-        when(mockMek.isCrippled()).thenReturn(false);
+        // wantsToFallBack checks isCrippled(true), so crew-crippled Meks withdraw too
+        when(mockMek.isCrippled(true)).thenReturn(false);
 
         when(mockPrincess.wantsToFallBack(any(Entity.class))).thenCallRealMethod();
         when(mockPrincess.getForcedWithdrawal()).thenReturn(true);
@@ -402,7 +430,7 @@ class PrincessTest {
         assertFalse(mockPrincess.wantsToFallBack(mockMek));
 
         when(mockPrincess.getFleeBoard()).thenReturn(false);
-        when(mockMek.isCrippled()).thenReturn(true);
+        when(mockMek.isCrippled(true)).thenReturn(true);
         // Fall Back and Flee Board Disabled, Mek Crippled, Forced Withdrawal Enabled
         // Should Fall Back
         assertTrue(mockPrincess.wantsToFallBack(mockMek));
@@ -411,6 +439,68 @@ class PrincessTest {
         // Fall Back and Flee Board Disabled, Mek Crippled, Forced Withdrawal Disabled
         // Should Not Fall Back
         assertFalse(mockPrincess.wantsToFallBack(mockMek));
+    }
+
+    /**
+     * Issue #8818: the attacks that cripple a unit are not an honor violation, because the unit was still a
+     * legitimate target when they were declared. Only an enemy shooting it once it is already visibly
+     * crippled and withdrawing unlocks its return fire.
+     */
+    @Test
+    void testReturnFirePermissionNeedsAnAttackAfterTheUnitWasAlreadyCrippled() {
+        Princess princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
+        princess.getBehaviorSettings().setForcedWithdrawal(true);
+
+        // Healthy when this turn's attacks were declared, and crippled by those very attacks.
+        BipedMek crippledThisTurnMek = mock(BipedMek.class);
+        when(crippledThisTurnMek.getId()).thenReturn(10);
+        when(crippledThisTurnMek.getAttackedByThisTurn()).thenReturn(Set.of(99));
+        when(crippledThisTurnMek.getDisplayName()).thenReturn("Crippled This Turn Mek");
+
+        // Already crippled and withdrawing when this turn's attacks were declared, and attacked anyway.
+        BipedMek withdrawingMek = mock(BipedMek.class);
+        when(withdrawingMek.getId()).thenReturn(11);
+        when(withdrawingMek.getAttackedByThisTurn()).thenReturn(Set.of(99));
+        when(withdrawingMek.getDisplayName()).thenReturn("Withdrawing Mek");
+
+        // Already crippled and withdrawing, but left alone: keeps holding its fire.
+        BipedMek ignoredWithdrawingMek = mock(BipedMek.class);
+        when(ignoredWithdrawingMek.getId()).thenReturn(12);
+        when(ignoredWithdrawingMek.getAttackedByThisTurn()).thenReturn(Set.of());
+        when(ignoredWithdrawingMek.getDisplayName()).thenReturn("Ignored Withdrawing Mek");
+
+        doReturn(List.of(crippledThisTurnMek, withdrawingMek, ignoredWithdrawingMek)).when(princess)
+              .getEntitiesOwned();
+
+        // Only the last two were visibly withdrawing when the enemy declared this turn's attacks.
+        princess.updateReturnFirePermission(Set.of(withdrawingMek.getId(), ignoredWithdrawingMek.getId()));
+
+        assertFalse(princess.canShootWhileFallingBack(crippledThisTurnMek),
+              "the attacks that crippled a unit must not also unlock its return fire");
+        assertTrue(princess.canShootWhileFallingBack(withdrawingMek),
+              "a unit attacked while already crippled and withdrawing may return fire");
+        assertFalse(princess.canShootWhileFallingBack(ignoredWithdrawingMek),
+              "a withdrawing unit no one attacks keeps holding its fire");
+    }
+
+    /**
+     * With Forced Withdrawal switched off there is no withdrawal to protect, so the pass grants nothing and
+     * crippled units fight on under the ordinary firing rules.
+     */
+    @Test
+    void testReturnFirePermissionIsNotGrantedWithoutForcedWithdrawal() {
+        Princess princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
+        princess.getBehaviorSettings().setForcedWithdrawal(false);
+
+        BipedMek withdrawingMek = mock(BipedMek.class);
+        when(withdrawingMek.getId()).thenReturn(11);
+        when(withdrawingMek.getAttackedByThisTurn()).thenReturn(Set.of(99));
+
+        doReturn(List.of(withdrawingMek)).when(princess).getEntitiesOwned();
+
+        princess.updateReturnFirePermission(Set.of(withdrawingMek.getId()));
+
+        assertFalse(princess.canShootWhileFallingBack(withdrawingMek));
     }
 
     @Test
@@ -476,8 +566,8 @@ class PrincessTest {
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
         // Even a crippled mek should not fall back unless fleeBoard or forcedWithdrawal
-        // is enabled
-        when(mockMek.isCrippled()).thenReturn(true);
+        // is enabled (mustFleeBoard checks isCrippled(true), so crew-crippled Meks count too)
+        when(mockMek.isCrippled(true)).thenReturn(true);
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
         // Enabling forcedWithdrawal should cause fleeing, because mek is crippled
@@ -485,7 +575,7 @@ class PrincessTest {
         assertTrue(mockPrincess.mustFleeBoard(mockMek));
 
         // But forcedWithdrawal without a crippled mek should not flee
-        when(mockMek.isCrippled()).thenReturn(false);
+        when(mockMek.isCrippled(true)).thenReturn(false);
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
         // If fleeBoard is true, all units falling back should flee
@@ -1159,6 +1249,284 @@ class PrincessTest {
                 // Assert
                 assertEquals(0, result.size());
             }
+        }
+    }
+
+    /**
+     * Regression tests for {@link Princess#evadeIfNotFiring} (issue #8542): an airborne entity that
+     * is not an {@code IAero} (an ejected pilot descending by parachute) must not trigger the
+     * {@code IAero} cast, which threw a {@code ClassCastException} and hung the bot's whole turn.
+     */
+    @Nested
+    class EvadeIfNotFiringTests {
+
+        private void invokeEvadeIfNotFiring(Princess princess, MovePath path, boolean possibleToInflictDamage) {
+            try {
+                java.lang.reflect.Method method = Princess.class.getDeclaredMethod(
+                      "evadeIfNotFiring", MovePath.class, boolean.class);
+                method.setAccessible(true);
+                method.invoke(princess, path, possibleToInflictDamage);
+            } catch (java.lang.reflect.InvocationTargetException e) {
+                // Unwrap so the original failure (e.g. the ClassCastException this test guards
+                // against) surfaces directly instead of being hidden inside a reflection wrapper.
+                throw new RuntimeException("evadeIfNotFiring threw", e.getCause());
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException("Failed to invoke evadeIfNotFiring", e);
+            }
+        }
+
+        @Test
+        void testDoesNotCrashAndDoesNotEvadeForAirborneEjectedPilot() {
+            // An ejected pilot (MekWarrior) is airborne (altitude > 0) but is not an IAero.
+            // Before the fix, reaching the IAero cast threw a ClassCastException here.
+            Princess princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
+
+            MekWarrior ejectedPilot = mock(MekWarrior.class);
+            when(ejectedPilot.isAirborne()).thenReturn(true);
+
+            MovePath path = mock(MovePath.class);
+            when(path.getEntity()).thenReturn(ejectedPilot);
+
+            invokeEvadeIfNotFiring(princess, path, false);
+
+            verify(path, never()).addStep(MoveStepType.EVADE);
+        }
+
+        @Test
+        void testAddsEvadeForAirborneAeroThatCannotFire() {
+            // An airborne aerospace fighter that cannot inflict damage and can spare the thrust
+            // should still receive an EVADE step - the fix must not change this behavior.
+            Princess princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
+
+            AeroSpaceFighter fighter = mock(AeroSpaceFighter.class);
+            when(fighter.isAirborne()).thenReturn(true);
+            when(fighter.isAero()).thenReturn(true);
+            when(fighter.isOutControlTotal()).thenReturn(false);
+            when(fighter.getCurrentThrust()).thenReturn(5);
+            when(fighter.getSI()).thenReturn(5);
+
+            MovePath path = mock(MovePath.class);
+            when(path.getEntity()).thenReturn(fighter);
+            when(path.getMpUsed()).thenReturn(0);
+
+            invokeEvadeIfNotFiring(princess, path, false);
+
+            verify(path).addStep(MoveStepType.EVADE);
+        }
+    }
+
+    /**
+     * Regression tests for {@link Princess#canRecoverMobility(Entity)} (issue #8775): a Mek whose
+     * movement has been eaten by heat is stalled, not finished, and its crew must not be ejected while
+     * its heat sinks are still winning. The numbers come from the units in the reporter's game log.
+     */
+    @Nested
+    class CanRecoverMobilityTests {
+
+        private Game mockGame;
+        private Hex mockHex;
+
+        @BeforeEach
+        void setUpGate() {
+            mockGame = mock(Game.class);
+            mockHex = mock(Hex.class);
+            when(mockHex.containsTerrain(Terrains.FIRE)).thenReturn(false);
+            when(mockGame.getHex(any(Coords.class), anyInt())).thenReturn(mockHex);
+            doReturn(mockGame).when(mockPrincess).getGame();
+            when(mockPrincess.canRecoverMobility(any(Entity.class))).thenCallRealMethod();
+            when(mockPrincess.recurringHeat(any(Entity.class), anyBoolean())).thenCallRealMethod();
+        }
+
+        /**
+         * A heat-stalled Mek with the given dissipation and engine damage: standing, no jump jets, no
+         * stealth armor, no Nova CEWS, and a hex that is not burning.
+         */
+        private Mek stalledMek(int heatCapacity, int engineCritHeat) {
+            Mek mockMek = mock(BipedMek.class);
+            when(mockMek.isPermanentlyImmobilized(true)).thenReturn(false);
+            when(mockMek.getRunMP()).thenReturn(0);
+            when(mockMek.getHeatCapacity()).thenReturn(heatCapacity);
+            when(mockMek.getHeatCapacityWithWater()).thenReturn(heatCapacity);
+            when(mockMek.getEngineCritHeat()).thenReturn(engineCritHeat);
+            when(mockMek.isProne()).thenReturn(false);
+            when(mockMek.getAnyTypeMaxJumpMP()).thenReturn(0);
+            when(mockMek.tracksHeat()).thenReturn(true);
+            when(mockMek.getAltitude()).thenReturn(0);
+            when(mockMek.getElevation()).thenReturn(0);
+            when(mockMek.getPosition()).thenReturn(new Coords(5, 5));
+            when(mockMek.getBoardId()).thenReturn(0);
+            return mockMek;
+        }
+
+        /** Sets the Mek's hex burning, with the fire having started on an earlier turn. */
+        private void setHexOnFire() {
+            when(mockHex.containsTerrain(Terrains.FIRE)).thenReturn(true);
+            when(mockHex.getFireTurn()).thenReturn(2);
+        }
+
+        /** Gives the Mek working jump jets that cost the stated heat for a single hex. */
+        private void giveJumpJets(Mek mockMek, int jumpMP, int cheapestJumpHeat) {
+            when(mockMek.getAnyTypeMaxJumpMP()).thenReturn(jumpMP);
+            when(mockMek.getJumpHeat(1)).thenReturn(cheapestJumpHeat);
+        }
+
+        @Test
+        void carronadeCoolsAndKeepsItsPilot() {
+            // Carronade CRN-7M from the log: 10 IS doubles, so 20 points of dissipation, against two
+            // engine criticals. It sheds 10 a turn and walks again next turn.
+            assertTrue(mockPrincess.canRecoverMobility(stalledMek(20, 10)));
+        }
+
+        @Test
+        void huronWarriorCoolsSlowlyAndStillKeepsItsPilot() {
+            // Huron Warrior HUR-WO-R4L from the log: 11 single sinks against two engine criticals. One
+            // point a turn is slow, but the heat is coming down, so the Mek is not abandoned.
+            assertTrue(mockPrincess.canRecoverMobility(stalledMek(11, 10)));
+        }
+
+        @Test
+        void breakingEvenIsNotRecovery() {
+            // Dissipation exactly matching the incoming heat holds that heat forever. The comparison has
+            // to be strictly greater or this Mek stands at zero MP for the rest of the game.
+            assertFalse(mockPrincess.canRecoverMobility(stalledMek(10, 10)));
+        }
+
+        @Test
+        void fireInTheHexIsCountedWhenTheMekCannotLeave() {
+            // The same Huron Warrior, now standing in a fire: 11 against 10 engine plus 5 fire. With no
+            // jump jets it cannot get out of the hex, so the fire heat never stops.
+            Mek mockMek = stalledMek(11, 10);
+            setHexOnFire();
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void heatDissipatingArmorHalvesTheFireHeat() {
+            // Intact heat-dissipating armor takes 2 from the fire rather than 5, which brings the Mek
+            // back under its 13 points of dissipation.
+            Mek mockMek = stalledMek(13, 10);
+            when(mockMek.hasIntactHeatDissipatingArmor()).thenReturn(true);
+            setHexOnFire();
+            assertTrue(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void jumpingOutOfAFireLeavesTheFireBehind() {
+            // Grasshopper GHR-5H with 8 sinks shot away, two engine criticals, standing in a fire.
+            // Staying is 14 against 15 and fails; jumping is 14 against 10 engine plus 3 jump heat and
+            // succeeds, because the fire stops being its problem the moment it leaves the hex.
+            Mek mockMek = stalledMek(14, 10);
+            giveJumpJets(mockMek, 4, 3);
+            setHexOnFire();
+            assertTrue(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void jumpHeatCanMakeTheEscapeUnaffordable() {
+            // The same situation with two fewer working sinks: 12 against 15 standing still, and 12
+            // against 13 jumping. The jets are there and it still cannot use them.
+            Mek mockMek = stalledMek(12, 10);
+            giveJumpJets(mockMek, 4, 3);
+            setHexOnFire();
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void anXxlEngineIsChargedTheHigherMinimumJumpHeat() {
+            // Same numbers as the Grasshopper above, but an XXL engine pays max(6, hexes * 2) rather
+            // than max(3, hexes). Six heat rather than three is the difference between getting out of
+            // the fire and not.
+            Mek mockMek = stalledMek(14, 10);
+            giveJumpJets(mockMek, 4, 6);
+            setHexOnFire();
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void aMechanicalJumpBoosterCostsNoHeat() {
+            // Jump boosters are not engine-driven, so they cost nothing to use. The Mek that could not
+            // afford a 3-heat jump out of the fire can afford a free one.
+            Mek mockMek = stalledMek(12, 10);
+            giveJumpJets(mockMek, 2, 0);
+            setHexOnFire();
+            assertTrue(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void aProneMekCannotUseItsJumpJets() {
+            // The Grasshopper again, knocked down. Standing up needs walking MP, which heat has taken,
+            // so the jets are out of reach and the fire keeps burning it.
+            Mek mockMek = stalledMek(14, 10);
+            giveJumpJets(mockMek, 4, 3);
+            setHexOnFire();
+            when(mockMek.isProne()).thenReturn(true);
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void jumpingDoesNotRescueAMekThatCannotCool() {
+            // Wolverine WVR-6R with 3 sinks destroyed and two engine criticals: 9 dissipation against 10
+            // engine heat, with no fire to escape. Jumping only adds heat, so it buys nothing.
+            Mek mockMek = stalledMek(9, 10);
+            giveJumpJets(mockMek, 5, 3);
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void switchableHeatLoadsAreNotCountedBecauseTheBotShedsThem() {
+            // BotHeatEquipmentManager switches all five of these off in the end phase once a unit reaches
+            // shutdown-roll heat, and a Mek stalled badly enough to reach this question is well past that
+            // point. Counting them would abandon pilots over heat the bot has already stopped paying.
+            for (Consumer<Mek> switchOn : List.<Consumer<Mek>>of(
+                  mek -> when(mek.isStealthOn()).thenReturn(true),
+                  mek -> when(mek.isNullSigOn()).thenReturn(true),
+                  mek -> when(mek.isVoidSigOn()).thenReturn(true),
+                  mek -> when(mek.isChameleonShieldOn()).thenReturn(true),
+                  mek -> when(mek.hasActiveNovaCEWS()).thenReturn(true))) {
+                Mek mockMek = stalledMek(11, 10);
+                switchOn.accept(mockMek);
+                assertTrue(mockPrincess.canRecoverMobility(mockMek));
+            }
+        }
+
+        @Test
+        void damageThatIsNotHeatIsStillPermanent() {
+            // Both legs gone. The core rules already measure this with heat ignored, so no amount of
+            // cooling brings the movement back and the crew should get out.
+            Mek mockMek = stalledMek(20, 0);
+            when(mockMek.isPermanentlyImmobilized(true)).thenReturn(true);
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void aUnitThatDoesNotTrackHeatIsUnaffected() {
+            // A vehicle never lost its movement to heat, so the gate leaves it exactly as it was.
+            Tank mockTank = mock(Tank.class);
+            when(mockTank.isPermanentlyImmobilized(true)).thenReturn(false);
+            when(mockTank.getRunMP()).thenReturn(0);
+            when(mockTank.getHeatCapacity()).thenReturn(Entity.DOES_NOT_TRACK_HEAT);
+            assertFalse(mockPrincess.canRecoverMobility(mockTank));
+        }
+
+        @Test
+        void aProneMekThatStillHasMovementIsNotAHeatCase() {
+            // isImmobilized also reports true for a Mek that is prone with poor odds of standing back
+            // up, which has nothing to do with temperature. Found in headless play: a cool, undamaged
+            // Doloire with 28 points of dissipation and no recurring heat was being held on the field
+            // because it had fallen over. If the unit still has run MP, cooling cannot be the answer.
+            Mek mockMek = stalledMek(28, 0);
+            when(mockMek.getRunMP()).thenReturn(6);
+            when(mockMek.isProne()).thenReturn(true);
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
+        }
+
+        @Test
+        void aStuckMekThatStillHasMovementIsNotAHeatCase() {
+            // Same reasoning for a Mek bogged down in a swamp: its movement is not heat's doing.
+            Mek mockMek = stalledMek(28, 0);
+            when(mockMek.getRunMP()).thenReturn(4);
+            when(mockMek.isStuck()).thenReturn(true);
+            assertFalse(mockPrincess.canRecoverMobility(mockMek));
         }
     }
 }

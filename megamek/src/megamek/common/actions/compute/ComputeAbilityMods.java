@@ -117,22 +117,6 @@ class ComputeAbilityMods {
         if (weapon != null) {
             WeaponType weaponType = weapon.getType();
 
-            // Unofficial weapon class specialist - Does not have an unspecialized penalty
-            if (attacker.hasAbility(OptionsConstants.UNOFFICIAL_GUNNERY_LASER)
-                  && weaponType.hasFlag(WeaponType.F_ENERGY)) {
-                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunLSkill"));
-            }
-
-            if (attacker.hasAbility(OptionsConstants.UNOFFICIAL_GUNNERY_BALLISTIC)
-                  && weaponType.hasFlag(WeaponType.F_BALLISTIC)) {
-                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunBSkill"));
-            }
-
-            if (attacker.hasAbility(OptionsConstants.UNOFFICIAL_GUNNERY_MISSILE)
-                  && weaponType.hasFlag(WeaponType.F_MISSILE)) {
-                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunMSkill"));
-            }
-
             // Is the pilot a weapon specialist?
             if ((weaponType instanceof BayWeapon) && isSpecialistForAllBayWeapons(attacker, weapon)) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.WeaponSpec"));

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,16 +47,21 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.KeyStroke;
 
 import megamek.MMConstants;
 import megamek.MegaMek;
+import megamek.client.Client;
 import megamek.client.ui.CopySystemDataAction;
 import megamek.client.ui.Messages;
+import megamek.client.ui.PackageBugReportAction;
 import megamek.client.ui.ShowBugReportDialogAction;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.common.KeyBindParser;
@@ -82,6 +87,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     /** True when this menu is attached to a client (lobby or in game). */
     private final boolean isGame;
 
+    /**
+     * Supplies the client whose game the bug report packager should save. The menu bar is built before any client
+     * exists - and for the main menu, none ever does - so this is resolved lazily and defaults to no client.
+     */
+    private Supplier<Client> clientSupplier = () -> null;
+
     /** The current phase of the game, if any. */
     private GamePhase phase = GamePhase.UNKNOWN;
 
@@ -95,7 +106,32 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JMenuItem gameConnect = new JMenuItem(getString("CommonMenuBar.fileGameConnect"));
     private final JCheckBoxMenuItem gameRoundReport = new JCheckBoxMenuItem(getString("CommonMenuBar.viewRoundReport"));
     private final JMenuItem gameEditBots = new JMenuItem(getString("CommonMenuBar.editBots"));
+    /** Asks for the Game Master role; only shown while nobody holds it and the game allows one. */
+    private final JMenuItem gameRequestGameMaster = new JMenuItem(getString("CommonMenuBar.gameRequestGameMaster"));
+    /** Gives up the Game Master role; only shown while the local player holds it. */
+    private final JMenuItem gameGiveUpGameMaster = new JMenuItem(getString("CommonMenuBar.gameGiveUpGameMaster"));
+
+    /**
+     * Whether the player at this screen holds the Game Master role, which decides whether the reinforcement entries
+     * are theirs to use during a game. Kept because the menu is rebuilt on events that do not carry the role.
+     */
+    private boolean localPlayerHoldsGameMasterRole;
+    /*
+     * Lobby-only shortcuts that set MG burst fire and LRM hot-loading on every unit the player may configure at
+     * once, sharing the labels of the same actions in the unit right-click menu. Shown only in the lobby and only
+     * while the matching game option is on; setLobbyEquipmentOptions keeps them in step.
+     */
+    private final JMenuItem gameAllMgBurstOn = new JMenuItem(getString("ChatLounge.RapidFireToggleOn"));
+    private final JMenuItem gameAllMgBurstOff = new JMenuItem(getString("ChatLounge.RapidFireToggleOff"));
+    private final JMenuItem gameAllHotLoadOn = new JMenuItem(getString("ChatLounge.HotLoadToggleOn"));
+    private final JMenuItem gameAllHotLoadOff = new JMenuItem(getString("ChatLounge.HotLoadToggleOff"));
+    /** Whether the burst MG fire game option is on, which offers the all-units MG entries in the lobby. */
+    private boolean burstMgAvailable = false;
+    /** Whether the hot-loading game option is on, which offers the all-units LRM entries in the lobby. */
+    private boolean hotLoadAvailable = false;
     private final JCheckBoxMenuItem gamePlayerList = new JCheckBoxMenuItem(getString("CommonMenuBar.viewPlayerList"));
+    private final JCheckBoxMenuItem gameRoundsInAir =
+          new JCheckBoxMenuItem(getString("CommonMenuBar.viewRoundsInAir"));
     private final JMenuItem gameGameOptions = new JMenuItem(getString("CommonMenuBar.viewGameOptions"));
     private final JMenuItem gamePlayerSettings = new JMenuItem(getString("CommonMenuBar.viewPlayerSettings"));
     private final JMenuItem gameNetworkInformation = new JMenuItem(getString("CommonMenuBar.viewNetworkInformation"));
@@ -149,7 +185,14 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JMenuItem viewZoomOut = new JMenuItem(getString("CommonMenuBar.viewZoomOut"));
     private final JMenuItem viewZoomOverviewToggle = new JMenuItem(getString("CommonMenuBar.viewZoomOverviewToggle"));
     private final JMenuItem viewLabels = new JMenuItem(getString("CommonMenuBar.viewLabels"));
-    private final JCheckBoxMenuItem viewBotCommands = new JCheckBoxMenuItem(getString("CommonMenuBar.viewBotCommands"));
+    // Bot Commands is a submenu offering three mutually exclusive display modes (Off / Float / Dock).
+    private final JMenu viewBotCommands = new JMenu(getString("CommonMenuBar.viewBotCommands"));
+    private final JRadioButtonMenuItem viewBotCommandsOff =
+          new JRadioButtonMenuItem(getString("CommonMenuBar.viewBotCommandsOff"));
+    private final JRadioButtonMenuItem viewBotCommandsFloat =
+          new JRadioButtonMenuItem(getString("CommonMenuBar.viewBotCommandsFloat"));
+    private final JRadioButtonMenuItem viewBotCommandsDock =
+          new JRadioButtonMenuItem(getString("CommonMenuBar.viewBotCommandsDock"));
     private final JCheckBoxMenuItem toggleIsometric = new JCheckBoxMenuItem(getString(
           "CommonMenuBar.viewToggleIsometric"));
     private final JCheckBoxMenuItem toggleHexCoords = new JCheckBoxMenuItem(getString(
@@ -165,6 +208,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
           "CommonMenuBar.viewToggleFovDarken"));
     private final JCheckBoxMenuItem toggleFovSpotting = new JCheckBoxMenuItem(getString(
           "CommonMenuBar.viewToggleFovSpotting"));
+    private final JCheckBoxMenuItem toggleShowObjects = new JCheckBoxMenuItem(getString(
+          "CommonMenuBar.viewToggleShowObjects"));
     private final JCheckBoxMenuItem toggleFiringSolutions = new JCheckBoxMenuItem(getString(
           "CommonMenuBar.viewToggleFiringSolutions"));
     private final JCheckBoxMenuItem toggleCFWarning = new JCheckBoxMenuItem(getString(
@@ -190,6 +235,18 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
     /** Maps the Action Command to the respective MenuItem. */
     private final Map<String, JMenuItem> itemMap = new HashMap<>();
+
+    /**
+     * Tells this menu bar how to find the client whose game should be saved for a bug report.
+     *
+     * <p>Set this once the client exists. Without it, the bug report packager still works but produces an archive of
+     * logs and system information only, which is the correct behaviour for the main menu and the board editor.</p>
+     *
+     * @param clientSupplier supplies the current client; may return {@code null} when no game is running
+     */
+    public void setClientSupplier(Supplier<Client> clientSupplier) {
+        this.clientSupplier = clientSupplier;
+    }
 
     public static CommonMenuBar getMenuBarForGame() {
         var menuBar = new CommonMenuBar(false, true, false);
@@ -232,6 +289,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu.setMnemonic(VK_G);
 
         initMenuItem(gameEditBots, menu, FILE_GAME_EDIT_BOTS, VK_R);
+        initMenuItem(gameRequestGameMaster, menu, GAME_REQUEST_GAME_MASTER);
+        initMenuItem(gameGiveUpGameMaster, menu, GAME_GIVE_UP_GAME_MASTER);
+        // at most one of the two is shown, by who holds the role; setGameMasterState keeps them in step
+        gameRequestGameMaster.setVisible(false);
+        gameGiveUpGameMaster.setVisible(false);
         menu.addSeparator();
 
         initMenuItem(gameGameOptions, menu, VIEW_GAME_OPTIONS, VK_O);
@@ -244,6 +306,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(fileUnitsReinforce, menu, FILE_UNITS_REINFORCE);
         initMenuItem(isMainMenu ? fileCreateRandom : fileUnitsReinforceRAT, menu, FILE_UNITS_REINFORCE_RAT);
         initMenuItem(fileUnitsSave, menu, FILE_UNITS_SAVE);
+        menu.addSeparator();
+
+        initMenuItem(gameAllMgBurstOn, menu, GAME_ALL_MG_BURST_ON);
+        initMenuItem(gameAllMgBurstOff, menu, GAME_ALL_MG_BURST_OFF);
+        initMenuItem(gameAllHotLoadOn, menu, GAME_ALL_HOT_LOAD_ON);
+        initMenuItem(gameAllHotLoadOff, menu, GAME_ALL_HOT_LOAD_OFF);
         menu.addSeparator();
 
         JMenuItem fileRefreshCache = new JMenuItem(getString("CommonMenuBar.fileUnitsRefreshUnitCache"));
@@ -315,11 +383,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(gameRoundReport, menu, VIEW_ROUND_REPORT, GUIP.getMiniReportEnabled());
         GUIP.setPlayerListEnabled(false);
         initMenuItem(gamePlayerList, menu, VIEW_PLAYER_LIST, GUIP.getPlayerListEnabled());
+        GUIP.setRoundsInAirEnabled(false);
+        initMenuItem(gameRoundsInAir, menu, VIEW_ROUNDS_IN_AIR, GUIP.getRoundsInAirEnabled());
         GUIP.setForceDisplayEnabled(false);
         initMenuItem(viewForceDisplay, menu, VIEW_FORCE_DISPLAY, GUIP.getForceDisplayEnabled());
         initMenuItem(viewNovaNetworks, menu, VIEW_NOVA_NETWORKS);
-        GUIP.setBotCommandsEnabled(false);
-        initMenuItem(viewBotCommands, menu, VIEW_BOT_COMMANDS, VK_G, GUIP.getBotCommandsEnabled());
+        // Do not force the bot commands panel off at startup - its Off/Float/Dock choice is a persistent setting.
+        initBotCommandsMenu(menu);
         menu.addSeparator();
 
         initMenuItem(viewKeybindsOverlay, menu, VIEW_KEYBINDS_OVERLAY, GUIP.getShowKeybindsOverlay());
@@ -351,6 +421,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(toggleFovHighlight, menu, VIEW_TOGGLE_FOV_HIGHLIGHT, GUIP.getFovHighlight());
         initMenuItem(toggleFovSpotting, menu, VIEW_TOGGLE_FOV_SPOTTING, GUIP.getFovSpottingMode());
         toggleFovSpotting.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFovSpottingTooltip"));
+        initMenuItem(toggleShowObjects, menu, VIEW_TOGGLE_SHOW_OBJECTS, GUIP.getShowObjectiveOverlays());
+        toggleShowObjects.setToolTipText(Messages.getString("CommonMenuBar.viewToggleShowObjectsTooltip"));
         initMenuItem(viewMovementEnvelope, menu, VIEW_MOVE_ENV, GUIP.getMoveEnvelope());
         initMenuItem(viewMovModEnvelope, menu, VIEW_MOVE_MOD_ENV);
         menu.addSeparator();
@@ -381,7 +453,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
         menu.addSeparator();
 
-        menu.add(new ShowBugReportDialogAction(this, new CopySystemDataAction()));
+        // The client is resolved when the button is pressed, not now: this menu bar is also built for the main menu,
+        // where no game exists yet. A null client is a supported state and yields a logs-only archive.
+        // This must stay a lambda rather than the method reference clientSupplier::get, which would capture the
+        // placeholder supplier installed above and ignore whatever setClientSupplier later provides.
+        menu.add(new ShowBugReportDialogAction(this, new CopySystemDataAction(),
+              new PackageBugReportAction(this, () -> clientSupplier.get())));
         menu.add(new CopySystemDataAction());
 
         menu.addSeparator();
@@ -399,6 +476,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private void setKeyBinds() {
         toggleSensorRange.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.SENSOR_RANGE));
         toggleFovSpotting.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.FOV_SPOTTING));
+        toggleShowObjects.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.SHOW_OBJECTS));
         toggleFieldOfFire.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.FIELD_FIRE));
         toggleIsometric.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.TOGGLE_ISO));
         viewMovementEnvelope.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.MOVE_ENVELOPE));
@@ -427,7 +505,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         gameSave.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.LOCAL_SAVE));
         gameLoad.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.LOCAL_LOAD));
         gameEditBots.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.REPLACE_PLAYER));
-        viewBotCommands.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.BOT_COMMANDS));
+        // The bot commands show/hide hotkey is handled by the controller (ClientGUI), since a submenu cannot carry a
+        // working menu accelerator.
     }
 
     @Override
@@ -533,6 +612,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         gameSaveServer.setEnabled(isLobby || (isInGame && canSave));
         gameQSave.setEnabled(isLobby || (isInGame && canSave));
         gameEditBots.setEnabled(isLobby || (isInGame && canSave));
+        // the all-units equipment shortcuts belong to lobby setup, and only where their game option is on
+        gameAllMgBurstOn.setVisible(isLobby && burstMgAvailable);
+        gameAllMgBurstOff.setVisible(isLobby && burstMgAvailable);
+        gameAllHotLoadOn.setVisible(isLobby && hotLoadAvailable);
+        gameAllHotLoadOff.setVisible(isLobby && hotLoadAvailable);
         boardSave.setEnabled(isBoardEditor);
         boardSaveAs.setEnabled(isBoardEditor || isInGame); // TODO: should work in the lobby
         boardSaveAsImage.setEnabled(isBoardEditor || isInGame); // TODO: should work in the lobby
@@ -542,12 +626,16 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boardTraceOverlay.setEnabled(isBoardEditor);
         fileUnitsPaste.setEnabled(isLobby);
         fileUnitsCopy.setEnabled(isLobby);
-        fileUnitsReinforce.setEnabled((isInGame) && isNotVictory);
-        fileUnitsReinforceRAT.setEnabled((isMainMenu || isLobby || isInGame) && isNotVictory);
+        // reinforcing a player during a game is a gamemaster's job and lives on the Game Master menu; the same
+        // dialog outside a game is how anybody builds an army, so the main menu and the lobby keep it
+        fileUnitsReinforce.setEnabled(isInGame && isNotVictory && localPlayerHoldsGameMasterRole);
+        fileUnitsReinforceRAT.setEnabled(isNotVictory
+              && (isMainMenu || isLobby || (isInGame && localPlayerHoldsGameMasterRole)));
         fileUnitsSave.setEnabled(isLobby || (isInGame && canSave));
         fileUnitsBrowse.setEnabled(isMainMenu);
         boardSaveAsImageUnits.setEnabled(isInGame);
         gamePlayerList.setEnabled(isInGame);
+        gameRoundsInAir.setEnabled(isInGame);
         viewLabels.setEnabled(isInGameBoardView);
 
         gameGameOptions.setEnabled(isInGame || isLobby);
@@ -601,6 +689,27 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         }
     }
 
+    /**
+     * Shows the Game Master entry that applies: Give Up for the player holding the role, Become for anyone while
+     * the role is free and the game allows one, and neither while another player holds it.
+     */
+    public synchronized void setGameMasterState(boolean localPlayerHoldsRole, boolean roleFreeToRequest) {
+        localPlayerHoldsGameMasterRole = localPlayerHoldsRole;
+        gameGiveUpGameMaster.setVisible(localPlayerHoldsRole);
+        gameRequestGameMaster.setVisible(roleFreeToRequest);
+        updateEnabledStates();
+    }
+
+    /**
+     * Sets which of the lobby's all-units equipment shortcuts the game's options allow, offering the MG burst
+     * entries under the burst fire option and the LRM hot-loading entries under the hot-loading option.
+     */
+    public synchronized void setLobbyEquipmentOptions(boolean burstMgAvailable, boolean hotLoadAvailable) {
+        this.burstMgAvailable = burstMgAvailable;
+        this.hotLoadAvailable = hotLoadAvailable;
+        updateEnabledStates();
+    }
+
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         // Adapt the menu checkboxes to a new state where necessary
@@ -612,6 +721,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
                 // Use invokeLater to avoid interfering with accelerator processing
                 final boolean newState = (Boolean) e.getNewValue();
                 javax.swing.SwingUtilities.invokeLater(() -> toggleFovSpotting.setSelected(newState));
+            }
+            case GUIPreferences.SHOW_OBJECTIVE_OVERLAYS -> {
+                final boolean newState = (Boolean) e.getNewValue();
+                javax.swing.SwingUtilities.invokeLater(() -> toggleShowObjects.setSelected(newState));
             }
             case GUIPreferences.SHOW_KEYBINDS_OVERLAY -> viewKeybindsOverlay.setSelected((Boolean) e.getNewValue());
             case GUIPreferences.SHOW_PLANETARY_CONDITIONS_OVERLAY ->
@@ -625,8 +738,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             case GUIPreferences.FORCE_DISPLAY_ENABLED -> viewForceDisplay.setSelected(GUIP.getForceDisplayEnabled());
             case GUIPreferences.MINI_REPORT_ENABLED -> gameRoundReport.setSelected(GUIP.getMiniReportEnabled());
             case GUIPreferences.PLAYER_LIST_ENABLED -> gamePlayerList.setSelected(GUIP.getPlayerListEnabled());
+            case GUIPreferences.ROUNDS_IN_AIR_ENABLED -> gameRoundsInAir.setSelected(GUIP.getRoundsInAirEnabled());
             case RecentBoardList.RECENT_BOARDS_UPDATED -> initializeRecentBoardsMenu();
-            case GUIPreferences.BOT_COMMANDS_ENABLED -> viewBotCommands.setSelected(GUIP.getBotCommandsEnabled());
+            case GUIPreferences.BOT_COMMANDS_ENABLED, GUIPreferences.BOT_COMMANDS_LOCATION ->
+                  updateBotCommandsSelection();
         }
     }
 
@@ -658,6 +773,40 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(item, menu, command);
         item.setMnemonic(mnemonic);
         item.setSelected(selected);
+    }
+
+    /**
+     * Builds the Bot Commands submenu: three mutually exclusive radio items (Off / Float / Dock) grouped together, and
+     * adds the submenu to the given parent View menu. The submenu replaces the former single checkbox so the player can
+     * choose where the bot commands panel is shown without losing the on/off control.
+     *
+     * @param parentMenu the View menu the submenu is added to
+     */
+    private void initBotCommandsMenu(JMenu parentMenu) {
+        viewBotCommands.setMnemonic(VK_G);
+        initMenuItem(viewBotCommandsOff, viewBotCommands, ClientGUI.VIEW_BOT_COMMANDS_OFF);
+        initMenuItem(viewBotCommandsFloat, viewBotCommands, ClientGUI.VIEW_BOT_COMMANDS_FLOAT);
+        initMenuItem(viewBotCommandsDock, viewBotCommands, ClientGUI.VIEW_BOT_COMMANDS_DOCK);
+        ButtonGroup botCommandsGroup = new ButtonGroup();
+        botCommandsGroup.add(viewBotCommandsOff);
+        botCommandsGroup.add(viewBotCommandsFloat);
+        botCommandsGroup.add(viewBotCommandsDock);
+        parentMenu.add(viewBotCommands);
+        updateBotCommandsSelection();
+    }
+
+    /**
+     * Selects the Bot Commands radio item that matches the current enabled and location preferences: Off when the panel
+     * is disabled, otherwise Dock or Float depending on the configured location.
+     */
+    private void updateBotCommandsSelection() {
+        if (!GUIP.getBotCommandsEnabled()) {
+            viewBotCommandsOff.setSelected(true);
+        } else if (GUIP.getBotCommandsLocation() == ClientGUI.BOT_COMMANDS_LOCATION_DOCKED) {
+            viewBotCommandsDock.setSelected(true);
+        } else {
+            viewBotCommandsFloat.setSelected(true);
+        }
     }
 
     /**

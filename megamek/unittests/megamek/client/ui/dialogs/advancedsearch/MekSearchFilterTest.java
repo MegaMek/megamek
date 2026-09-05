@@ -33,13 +33,94 @@
 
 package megamek.client.ui.dialogs.advancedsearch;
 
+import static megamek.common.SourceBookCode.CORE;
+import static megamek.common.SourceBookCode.IO_AE;
+import static megamek.common.SourceBookCode.SHRAPNEL_1;
+import static megamek.common.SourceBookCode.TW;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Set;
+
 import megamek.common.loaders.MekSummary;
+import megamek.common.units.Entity;
 import org.junit.jupiter.api.Test;
 
 class MekSearchFilterTest {
+
+    /** Tri-state filter value for "must have the trait". */
+    private static final int INCLUDE = 1;
+    /** Tri-state filter value for "must not have the trait". */
+    private static final int EXCLUDE = 2;
+
+    /**
+     * Builds an enabled filter with no active criteria so that a single tri-state field can be tested in isolation.
+     * Every range bound is set to an empty string because {@link MekSearchFilter#isMatch(MekSummary, MekSearchFilter)}
+     * dereferences them unconditionally and they are otherwise null on a fresh filter.
+     */
+    private static MekSearchFilter passThroughFilter() throws IllegalAccessException {
+        MekSearchFilter filter = new MekSearchFilter();
+        filter.isDisabled = false;
+        for (Field field : MekSearchFilter.class.getDeclaredFields()) {
+            if ((field.getType() == String.class) && (field.get(filter) == null)) {
+                field.set(filter, "");
+            }
+        }
+        return filter;
+    }
+
+    /** A summary that reaches the end of the match logic without tripping an unrelated criterion. */
+    private static MekSummary frankenMekSummary(boolean frankenMek) {
+        MekSummary mek = new MekSummary();
+        mek.setFrankenMek(frankenMek);
+        // getEngineName() is dereferenced unconditionally by isMatch, so it must be non-null.
+        mek.setEngineName("");
+        // getEntityType() is auto-unboxed to a primitive by isMatch, so it must be set.
+        mek.setEntityType(Entity.ETYPE_MEK | Entity.ETYPE_BIPED_MEK);
+        return mek;
+    }
+
+    @Test
+    void frankenMekIncludeAcceptsFrankenMek() throws IllegalAccessException {
+        MekSearchFilter filter = passThroughFilter();
+        filter.iFrankenMek = INCLUDE;
+
+        assertTrue(MekSearchFilter.isMatch(frankenMekSummary(true), filter));
+    }
+
+    @Test
+    void frankenMekIncludeRejectsNonFrankenMek() throws IllegalAccessException {
+        MekSearchFilter filter = passThroughFilter();
+        filter.iFrankenMek = INCLUDE;
+
+        assertFalse(MekSearchFilter.isMatch(frankenMekSummary(false), filter));
+    }
+
+    @Test
+    void frankenMekExcludeRejectsFrankenMek() throws IllegalAccessException {
+        MekSearchFilter filter = passThroughFilter();
+        filter.iFrankenMek = EXCLUDE;
+
+        assertFalse(MekSearchFilter.isMatch(frankenMekSummary(true), filter));
+    }
+
+    @Test
+    void frankenMekExcludeAcceptsNonFrankenMek() throws IllegalAccessException {
+        MekSearchFilter filter = passThroughFilter();
+        filter.iFrankenMek = EXCLUDE;
+
+        assertTrue(MekSearchFilter.isMatch(frankenMekSummary(false), filter));
+    }
+
+    @Test
+    void frankenMekIgnoreAcceptsBoth() throws IllegalAccessException {
+        MekSearchFilter filter = passThroughFilter();
+
+        assertTrue(MekSearchFilter.isMatch(frankenMekSummary(true), filter));
+        assertTrue(MekSearchFilter.isMatch(frankenMekSummary(false), filter));
+    }
 
     @Test
     void matchesSourceFilterMatchesSource() {
@@ -85,5 +166,35 @@ class MekSearchFilterTest {
         mek.setPublished("Record Sheets: 3050 Upgrade");
 
         assertFalse(MekSearchFilter.matchesSourceFilter(mek, "Interstellar Operations, Tactical Operations"));
+    }
+
+    @Test
+    void rulesRefsMatchWhenSelectedBooksCoverAnyCompleteBucket() {
+        var buckets = List.of(List.of(CORE), List.of(TW, IO_AE));
+
+        assertTrue(MekSearchFilter.matchesRulesRefs(buckets, Set.of(CORE)));
+        assertTrue(MekSearchFilter.matchesRulesRefs(buckets, Set.of(TW, IO_AE)));
+        assertTrue(MekSearchFilter.matchesRulesRefs(buckets, Set.of(TW, IO_AE, SHRAPNEL_1)));
+        assertFalse(MekSearchFilter.matchesRulesRefs(buckets, Set.of(TW)));
+    }
+
+    @Test
+    void rulesRefsIgnoreBaseBooksWhenOnlyNonBaseBooksAreSelected() {
+        var buckets = List.of(List.of(CORE), List.of(TW, IO_AE), List.of(TW, SHRAPNEL_1, IO_AE));
+
+        assertTrue(MekSearchFilter.matchesRulesRefs(buckets, Set.of(IO_AE)));
+        assertTrue(MekSearchFilter.matchesRulesRefs(buckets, Set.of(SHRAPNEL_1, IO_AE)));
+        assertFalse(MekSearchFilter.matchesRulesRefs(buckets, Set.of(SHRAPNEL_1)));
+    }
+
+    @Test
+    void nonBaseOnlySelectionDoesNotMatchBaseOnlyBuckets() {
+        assertFalse(MekSearchFilter.matchesRulesRefs(List.of(List.of(CORE), List.of(TW)), Set.of(SHRAPNEL_1)));
+    }
+
+    @Test
+    void emptyRulesRefSelectionDoesNotFilterUnits() {
+        assertTrue(MekSearchFilter.matchesRulesRefs(List.of(), Set.of()));
+        assertFalse(MekSearchFilter.matchesRulesRefs(List.of(), Set.of(CORE)));
     }
 }

@@ -36,6 +36,7 @@ package megamek.common.weapons.bombs;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -69,10 +70,8 @@ public class BombArrowIV extends ArtilleryWeapon {
         this.bv = 0;
         this.cost = 0;
         flags = flags.or(F_BOMB_WEAPON);
-        rulesRefs = "171, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 171);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(2622, 2623, DATE_NONE, 2850, 3047)

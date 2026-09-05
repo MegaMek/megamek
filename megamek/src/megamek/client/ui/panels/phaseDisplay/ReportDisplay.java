@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,17 +42,10 @@ import java.util.Map;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
-import megamek.client.ui.dialogs.phaseDisplay.AbandonUnitDialog;
-import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkDialog;
-import megamek.client.ui.dialogs.phaseDisplay.VariableRangeTargetingDialog;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.units.CombatVehicleEscapePod;
-import megamek.common.units.Entity;
-import megamek.common.units.Mek;
-import megamek.common.units.Tank;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -64,10 +57,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
     public enum ReportCommand implements PhaseCommand {
         REPORT_REPORT("reportReport"),
         REPORT_PLAYER_LIST("reportPlayerList"),
-        REPORT_REROLL_INITIATIVE("reportRerollInitiative"),
-        REPORT_NOVA_NETWORK("reportNovaNetwork"),
-        REPORT_VAR_RANGE_TARGETING("reportVarRangeTargeting"),
-        REPORT_ABANDON("reportAbandon");
+        REPORT_REROLL_INITIATIVE("reportRerollInitiative");
 
         final String cmd;
 
@@ -165,11 +155,17 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
 
     @Override
     protected ArrayList<MegaMekButton> getButtonList() {
+        // Reroll Initiative only applies during INITIATIVE_REPORT (the server rejects reroll requests from any other
+        // phase). Hide it on every other report screen so the end report and the rest show only the report controls.
+        boolean initiativeReport = clientgui.getClient().getGame().getPhase() == GamePhase.INITIATIVE_REPORT;
         ArrayList<MegaMekButton> buttonList = new ArrayList<>();
         ReportCommand[] commands = ReportCommand.values();
         CommandComparator comparator = new CommandComparator();
         Arrays.sort(commands, comparator);
         for (ReportCommand cmd : commands) {
+            if ((cmd == ReportCommand.REPORT_REROLL_INITIATIVE) && !initiativeReport) {
+                continue;
+            }
             buttonList.add(buttons.get(cmd));
         }
         return buttonList;
@@ -234,12 +230,6 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
             GUIP.toggleRoundReportEnabled();
         } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_PLAYER_LIST.getCmd()))) {
             GUIP.togglePlayerListEnabled();
-        } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_NOVA_NETWORK.getCmd()))) {
-            showNovaNetworkDialog();
-        } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_VAR_RANGE_TARGETING.getCmd()))) {
-            showVariableRangeTargetingDialog();
-        } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_ABANDON.getCmd()))) {
-            showAbandonDialog();
         }
     }
 
@@ -252,21 +242,6 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
               .getGame()
               .hasTacticalGenius(clientgui.getClient().getLocalPlayer())) {
             setRerollInitiativeEnabled(true);
-        }
-
-        // Enable Nova Network button if player has Nova CEWS units (TT: declare networks in End Phase)
-        // Check both END and END_REPORT phases to ensure button is available during end phase
-        GamePhase currentPhase = clientgui.getClient().getGame().getPhase();
-        if (currentPhase == GamePhase.END || currentPhase == GamePhase.END_REPORT) {
-            setNovaNetworkEnabled(hasNovaUnits());
-            // Enable Variable Range Targeting button (BMM pg. 86: player chooses mode during End Phase)
-            setVariableRangeTargetingEnabled(hasVariableRangeUnits());
-            // Enable Abandon button if player has abandonable units (Meks: prone+shutdown, Vehicles: any)
-            setAbandonEnabled(hasAbandonableUnits());
-        } else {
-            setNovaNetworkEnabled(false);
-            setVariableRangeTargetingEnabled(false);
-            setAbandonEnabled(false);
         }
     }
 
@@ -289,6 +264,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
             case PHYSICAL_REPORT:
             case END_REPORT:
             case VICTORY:
+                // Rebuild the button panel so Reroll Initiative shows only during INITIATIVE_REPORT (see getButtonList).
+                setupButtonPanel();
                 resetButtons();
                 setStatusBarWithNotDonePlayers();
                 break;
@@ -304,99 +281,5 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
         clientgui.boardViews().forEach(bv -> bv.removeBoardViewListener(this));
-    }
-
-    /**
-     * Shows the Nova CEWS network management dialog.
-     */
-    private void showNovaNetworkDialog() {
-        NovaNetworkDialog dialog = new NovaNetworkDialog(clientgui.getFrame(), clientgui);
-        dialog.setVisible(true);
-    }
-
-    /**
-     * Checks if the local player has any Nova CEWS units.
-     */
-    private boolean hasNovaUnits() {
-        int localPlayerId = clientgui.getClient().getLocalPlayer().getId();
-        return clientgui.getClient().getGame().getEntitiesVector().stream()
-                .filter(e -> e.getOwnerId() == localPlayerId)
-                .anyMatch(Entity::hasNovaCEWS);
-    }
-
-    /**
-     * Enables or disables the Nova Network button.
-     */
-    private void setNovaNetworkEnabled(boolean enabled) {
-        MegaMekButton button = buttons.get(ReportCommand.REPORT_NOVA_NETWORK);
-        if (button != null) {
-            button.setEnabled(enabled);
-        }
-    }
-
-    /**
-     * Shows the Variable Range Targeting mode selection dialog (BMM pg. 86).
-     */
-    private void showVariableRangeTargetingDialog() {
-        VariableRangeTargetingDialog dialog = new VariableRangeTargetingDialog(clientgui.getFrame(), clientgui);
-        dialog.setVisible(true);
-        // Clear focus from the button after dialog closes to reset highlight state
-        buttons.get(ReportCommand.REPORT_VAR_RANGE_TARGETING).transferFocus();
-    }
-
-    /**
-     * Checks if the local player has any units with Variable Range Targeting quirk.
-     */
-    private boolean hasVariableRangeUnits() {
-        int localPlayerId = clientgui.getClient().getLocalPlayer().getId();
-        return clientgui.getClient().getGame().getEntitiesVector().stream()
-              .filter(e -> e.getOwnerId() == localPlayerId)
-              .anyMatch(Entity::hasVariableRangeTargeting);
-    }
-
-    /**
-     * Enables or disables the Variable Range Targeting button.
-     */
-    private void setVariableRangeTargetingEnabled(boolean enabled) {
-        MegaMekButton button = buttons.get(ReportCommand.REPORT_VAR_RANGE_TARGETING);
-        if (button != null) {
-            button.setEnabled(enabled);
-        }
-    }
-
-    /**
-     * Shows the Unit Abandonment dialog (TW/TacOps: announce abandonment in End Phase).
-     */
-    private void showAbandonDialog() {
-        AbandonUnitDialog dialog = new AbandonUnitDialog(clientgui.getFrame(), clientgui);
-        dialog.setVisible(true);
-        // Clear focus from the button after dialog closes
-        MegaMekButton button = buttons.get(ReportCommand.REPORT_ABANDON);
-        if (button != null) {
-            button.transferFocus();
-        }
-    }
-
-    /**
-     * Checks if the local player has any units that can be abandoned. Meks must be prone + shutdown; Vehicles can be
-     * abandoned anytime.
-     */
-    private boolean hasAbandonableUnits() {
-        int localPlayerId = clientgui.getClient().getLocalPlayer().getId();
-        return clientgui.getClient().getGame().getEntitiesVector().stream()
-              .filter(e -> e.getOwnerId() == localPlayerId)
-              .anyMatch(e -> (e instanceof Mek mek && mek.canAbandon())
-                    || (e instanceof CombatVehicleEscapePod pod && pod.canCrewExit())
-                    || (e instanceof Tank tank && tank.canAbandon()));
-    }
-
-    /**
-     * Enables or disables the Abandon button.
-     */
-    private void setAbandonEnabled(boolean enabled) {
-        MegaMekButton button = buttons.get(ReportCommand.REPORT_ABANDON);
-        if (button != null) {
-            button.setEnabled(enabled);
-        }
     }
 }

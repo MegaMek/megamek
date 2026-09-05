@@ -37,6 +37,7 @@ package megamek.common.weapons.infantry.laser.pistol;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -61,13 +62,13 @@ public class InfantryLaserPistolAA75L extends InfantryWeapon {
         bv = 0.021;
         tonnage = 0.0001;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.07;
+        infantryDamage = 0.021;
         infantryRange = 1;
         // ammoWeight is not applicable (NA)
         shots = 1;
         // ammoCost is not applicable (NA)
         bursts = 1;
-        rulesRefs = "Shrapnel #9";
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_9);
         techAdvancement
               .setTechBase(TechBase.IS)
               .setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE)

@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support.srm;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -70,14 +71,14 @@ public class InfantrySupportSRMLightWeapon extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1500;
         bv = 2.91;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT);
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT).or(F_SRM);
         infantryDamage = 0.57;
         infantryRange = 2;
         tonnage = .010;
         ammoWeight = 0.009;
         ammoCost = 300;
         shots = 2;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)

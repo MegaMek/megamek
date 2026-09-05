@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -48,6 +48,7 @@ import megamek.common.options.PilotOptions;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.InfantryMount;
 import megamek.common.verifier.TestInfantry;
+import megamek.common.weapons.infantry.InfantryDisposableWeaponHandler;
 
 /**
  * The Entity information shown in the unit selector and many other places in MM, MML and MHQ.
@@ -251,8 +252,12 @@ class InfantryReadout extends GeneralEntityReadout {
               (null != infantry.getPrimaryWeapon()) ? infantry.getPrimaryWeapon().getDesc() : MESSAGE_NONE));
         result.add(new LabeledLine(Messages.getString("MekView.SecondWeapon"),
               secondaryCIWeaponDescriptor()));
+        if (infantry.hasDisposableWeapon()) {
+            result.add(new LabeledLine(Messages.getString("MekView.DisposableWeapon"),
+                  infantry.getDisposableWeapon().getDesc()));
+        }
         result.add(new LabeledLine(Messages.getString("MekView.DmgPerTrooper"),
-              "%3.3f".formatted(infantry.getDamagePerTrooper())));
+              damagePerTrooperDescriptor()));
 
         if (infantry.hasFieldWeapon()) {
             result.add(new PlainLine());
@@ -290,6 +295,20 @@ class InfantryReadout extends GeneralEntityReadout {
         } else {
             return MESSAGE_NONE;
         }
+    }
+
+    /**
+     * @return the per-soldier damage, with the Disposable Weapon's per-soldier contribution (3x its damage, TO:AuE
+     *       p.116, Corrected Sixth Printing) appended as a "+" bonus when the platoon carries one
+     */
+    private String damagePerTrooperDescriptor() {
+        String damage = "%3.3f".formatted(infantry.getDamagePerTrooper());
+        if (infantry.hasDisposableWeapon()) {
+            double disposableDamage = InfantryDisposableWeaponHandler.DISPOSABLE_DAMAGE_MULTIPLIER
+                  * infantry.getDisposableWeapon().getInfantryDamage();
+            damage += " + %3.3f".formatted(disposableDamage);
+        }
+        return damage;
     }
 
     @Override
@@ -330,30 +349,25 @@ class InfantryReadout extends GeneralEntityReadout {
     }
 
     private String getInfantryArmor() {
-        String armorDescription = "None";
-        EquipmentType armorKit = infantry.getArmorKit();
-        if (armorKit != null) {
-            armorDescription = armorKit.getName();
-            StringJoiner abilities = new StringJoiner(", ", " (", ")");
-            abilities.setEmptyValue("");
-
-            if (infantry.hasSpaceSuit()) {
-                abilities.add("Spacesuit");
+        String armorName;
+        if (infantry.hasArmor()) {
+            EquipmentType armor = infantry.getArmorKit();
+            if (null != armor) {
+                armorName = armor.getName();
+            } else {
+                armorName = infantry.getCustomArmorName() != null ? infantry.getCustomArmorName()
+                      : Messages.getString("MekView.Custom");
+                if (!infantry.getArmorSpecials().isBlank()) {
+                    armorName += " " + infantry.getArmorSpecials();
+                }
             }
-
-            if (infantry.hasDEST()) {
-                abilities.add("DEST");
+        } else {
+            armorName = Messages.getString("MekView.None");
+            if (!infantry.getArmorSpecials().isBlank()) {
+                armorName += " " + infantry.getArmorSpecials();
             }
-
-            // Sneak Suit abilities are part of the armor name and don't need to be listed
-            if (!infantry.hasSneakCamo()
-                  && (infantry.getCrew() != null && infantry.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR))) {
-                abilities.add("Camo");
-            }
-
-            armorDescription += abilities.toString();
         }
-        return armorDescription;
+        return armorName;
     }
 
     @Override

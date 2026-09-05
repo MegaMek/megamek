@@ -36,6 +36,7 @@ package megamek.common.weapons.bombs.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -69,10 +70,8 @@ public class ISBombTAG extends TAGWeapon {
         this.bv = 0;
         this.cost = 50000;
         flags = flags.or(F_BOMB_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
-        rulesRefs = "238, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 238);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2600, 2605, 2645, 2835, 3035)

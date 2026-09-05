@@ -38,6 +38,7 @@ import java.util.List;
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -71,8 +72,6 @@ import megamek.common.weapons.battleArmor.clan.CLBALBX;
 import megamek.common.weapons.bayWeapons.ScreenLauncherBayWeapon;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.common.weapons.handlers.ARADEquipmentDetector;
-import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
-import megamek.common.weapons.lasers.innerSphere.ISBombastLaser;
 import megamek.common.weapons.lrms.LRTWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
 import megamek.logging.MMLogger;
@@ -280,6 +279,18 @@ public class ComputeToHit {
               (ammoType != null) &&
               (munition.contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE)));
 
+        boolean bSemiGuided = ((ammoType != null) &&
+              ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_5) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_10) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_15) ||
+                    (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_20)) &&
+              (munition.contains(AmmoType.Munitions.M_SEMIGUIDED)));
+
         if (ae.usesWeaponBays()) {
             for (WeaponMounted bayW : weapon.getBayWeapons()) {
                 Mounted<?> bayWAmmo = bayW.getLinked();
@@ -383,12 +394,7 @@ public class ComputeToHit {
             }
             if ((spotter == null) &&
                   (ammoType != null) &&
-                  ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
-                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) &&
-                  (munition.contains(AmmoType.Munitions.M_SEMIGUIDED))) {
+                  bSemiGuided) {
                 for (TagInfo ti : game.getTagInfo()) {
                     if (target.getId() == ti.target.getId()) {
                         spotter = game.getEntity(ti.attackerId);
@@ -456,6 +462,17 @@ public class ComputeToHit {
             }
 
             losMods = los.losModifiers(game, eiSystemStatus, underWater);
+
+            // Overhead Arms quirk (BMM p.85): a standing Mek treats its arm-mounted weapons as one
+            // level higher when determining terrain LOS modifiers (intervening woods, partial cover).
+            // The quirk may not create line of sight where none exists, so it only applies when the
+            // normal line of sight is not blocked.
+            OverheadArmsLos overheadArmsLos = overheadArmsLos(game, weaponEntity, game.getEntity(ae.getId()),
+                  weapon, target, eiSystemStatus, underWater, losMods);
+            if (overheadArmsLos != null) {
+                los = overheadArmsLos.los();
+                losMods = overheadArmsLos.losMods();
+            }
         } else {
             if (exchangeSwarmTarget) {
                 // Swarm should draw LoS between targets, not attacker, since we don't want LoS to be blocked
@@ -577,22 +594,38 @@ public class ComputeToHit {
         // This attack has now tested possible and doesn't follow any weird special rules, so let's start adding up
         // the to-hit numbers
 
-        // Start with the attacker's weapon skill
-        toHit = new ToHitData(ae.getCrew().getGunnery(), Messages.getString("WeaponAttackAction.GunSkill"));
+        // Start with the attacker's weapon skill. A gamemaster's temporary modifier is taken back out of the
+        // skill number and shown as a line of its own below, so a shifted to-hit number can be traced to the
+        // gamemaster's intervention instead of looking like a different gunner. Each gunnery variant has an
+        // applied modifier of its own, since the clamp to the skill range can eat a different part of the delta.
+        int gamemasterModifier = ae.getCrew().appliedGunneryModifier();
+        toHit = new ToHitData(ae.getCrew().getGunnery() - gamemasterModifier,
+              Messages.getString("WeaponAttackAction.GunSkill"));
         if (game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
             if (weaponType.hasFlag(WeaponType.F_ENERGY)) {
-                toHit = new ToHitData(ae.getCrew().getGunneryL(), Messages.getString("WeaponAttackAction.GunLSkill"));
+                gamemasterModifier = ae.getCrew().appliedGunneryLModifier();
+                toHit = new ToHitData(ae.getCrew().getGunneryL() - gamemasterModifier,
+                      Messages.getString("WeaponAttackAction.GunLSkill"));
             }
             if (weaponType.hasFlag(WeaponType.F_MISSILE)) {
-                toHit = new ToHitData(ae.getCrew().getGunneryM(), Messages.getString("WeaponAttackAction.GunMSkill"));
+                gamemasterModifier = ae.getCrew().appliedGunneryMModifier();
+                toHit = new ToHitData(ae.getCrew().getGunneryM() - gamemasterModifier,
+                      Messages.getString("WeaponAttackAction.GunMSkill"));
             }
             if (weaponType.hasFlag(WeaponType.F_BALLISTIC)) {
-                toHit = new ToHitData(ae.getCrew().getGunneryB(), Messages.getString("WeaponAttackAction.GunBSkill"));
+                gamemasterModifier = ae.getCrew().appliedGunneryBModifier();
+                toHit = new ToHitData(ae.getCrew().getGunneryB() - gamemasterModifier,
+                      Messages.getString("WeaponAttackAction.GunBSkill"));
             }
         }
         if (weaponType.hasFlag(WeaponType.F_ARTILLERY) &&
               game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
-            toHit = new ToHitData(ae.getCrew().getArtillery(), Messages.getString("WeaponAttackAction.ArtySkill"));
+            gamemasterModifier = ae.getCrew().appliedArtilleryModifier();
+            toHit = new ToHitData(ae.getCrew().getArtillery() - gamemasterModifier,
+                  Messages.getString("WeaponAttackAction.ArtySkill"));
+        }
+        if (gamemasterModifier != 0) {
+            toHit.addModifier(gamemasterModifier, Messages.getString("WeaponAttackAction.GamemasterModifier"));
         }
 
         // Is this an Artillery attack?
@@ -747,7 +780,8 @@ public class ComputeToHit {
               inSameBuilding,
               isIndirect,
               isPointblankShot,
-              underWater);
+              underWater,
+              allECMInfo);
 
         // If this is a swarm LRM secondary attack, remove old target movement and
         // terrain mods, then
@@ -855,18 +889,9 @@ public class ComputeToHit {
 
         // Autocannon Munitions
 
-        // Armor Piercing ammo is a flat +1
-        // PLAYTEST3 AP ammo is no longer +1 to hit.
-        if (!game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            if (((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AC) ||
-                  (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LAC) ||
-                  (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_IMP) ||
-                  (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.PAC)) &&
-                  (munition.contains(AmmoType.Munitions.M_ARMOR_PIERCING)
-                        || munition.contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST))) {
-                toHit.addModifier(1, Messages.getString("WeaponAttackAction.ApAmmo"));
-            }
-        }
+        // Armor Piercing ammo checks. Modified toHit if needed.
+        Game.rulesManager.getRulesAmmo().armorPiercingAttackMod(ammoType.getAmmoType(), toHit,
+              munition.contains(AmmoType.Munitions.M_ARMOR_PIERCING));
 
         // Bombs
 
@@ -896,7 +921,9 @@ public class ComputeToHit {
 
         // Apollo FCS for MRMs
         if (bApollo) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.ApolloFcs"));
+            toHit.addModifier(Game.rulesManager.getRulesWeapons().getApolloToHit(), Messages.getString(
+                  "WeaponAttackAction"
+                        + ".ApolloFcs"));
         }
 
         // add Artemis V bonus
@@ -981,6 +1008,70 @@ public class ComputeToHit {
         }
 
         return toHit;
+    }
+
+    /**
+     * The result of applying the Overhead Arms quirk to weapon-fire line of sight: the elevated line of sight and the
+     * matching terrain LOS modifiers.
+     *
+     * @param los     the line of sight recalculated one level higher
+     * @param losMods the terrain LOS modifiers derived from the elevated line of sight
+     */
+    private record OverheadArmsLos(LosEffects los, ToHitData losMods) {}
+
+    /**
+     * Applies the Overhead Arms quirk (BMM p.85) to weapon-fire line of sight. A standing {@code Mek} with this quirk
+     * treats its arm-mounted weapons as one level higher when determining the effect of terrain on line of sight
+     * (intervening woods, partial cover). The quirk may not create line of sight where none exists, so it only takes
+     * effect when the normal line of sight is not blocked.
+     *
+     * @param game           the current {@link Game}
+     * @param weaponEntity   the entity carrying the firing weapon, used for the quirk and weapon-location checks
+     * @param attacker       the attacking entity used as the line-of-sight origin, which may be {@code null}
+     * @param weapon         the firing weapon
+     * @param target         the target of the attack
+     * @param eiSystemStatus the attacker's EI cockpit status used when computing LOS modifiers
+     * @param underWater     whether the weapon is firing under water
+     * @param baseLosMods    the terrain LOS modifiers computed at the normal firing height
+     *
+     * @return the elevated line of sight and its modifiers when the quirk applies and the elevated line of sight is not
+     *       blocked; otherwise {@code null}, meaning the normal line of sight should be used unchanged
+     */
+    private static @Nullable OverheadArmsLos overheadArmsLos(Game game, Entity weaponEntity,
+          @Nullable Entity attacker, WeaponMounted weapon, Targetable target, int eiSystemStatus,
+          boolean underWater, ToHitData baseLosMods) {
+        if (!(weaponEntity instanceof Mek mek) || !mek.hasQuirk(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)) {
+            return null;
+        }
+        if (mek.isProne()) {
+            logger.debug("[OverheadArms] {}: quirk inactive - Mek is prone", mek.getShortName());
+            return null;
+        }
+        int weaponLocation = weapon.getLocation();
+        boolean armMounted = (weaponLocation == Mek.LOC_LEFT_ARM) || (weaponLocation == Mek.LOC_RIGHT_ARM);
+        if (!armMounted) {
+            return null;
+        }
+        // The quirk cannot grant line of sight that does not already exist (BMM p.85), so do nothing when
+        // the normal line of sight is already blocked.
+        if (baseLosMods.getValue() == TargetRoll.IMPOSSIBLE) {
+            logger.debug("[OverheadArms] {}: quirk inactive - no normal line of sight to elevate", mek.getShortName());
+            return null;
+        }
+        Coords firingPosition = weaponEntity.getWeaponFiringPosition(weapon);
+        int elevatedFiringHeight = weaponEntity.getWeaponFiringHeight(weapon) + 1;
+        LosEffects elevatedLos = LosEffects.calculateLOS(game, attacker, target, firingPosition,
+              target.getPosition(), elevatedFiringHeight, weaponEntity.getBoardId(), false);
+        ToHitData elevatedLosMods = elevatedLos.losModifiers(game, eiSystemStatus, underWater);
+        // A higher vantage point can never be more blocked than a lower one, but guard the result so the
+        // quirk can never turn an otherwise-legal shot into an impossible one.
+        if (elevatedLosMods.getValue() == TargetRoll.IMPOSSIBLE) {
+            return null;
+        }
+        logger.debug("[OverheadArms] {}: arm weapon in location {} - terrain LOS modifier recalculated one level "
+                    + "higher: +{} (normal) -> +{} (elevated)",
+              mek.getShortName(), weaponLocation, baseLosMods.getValue(), elevatedLosMods.getValue());
+        return new OverheadArmsLos(elevatedLos, elevatedLosMods);
     }
 
     /**
@@ -1278,16 +1369,9 @@ public class ComputeToHit {
             Entity oldEnt = game.getEntity(swarmSecondaryTarget.getId());
             if (oldEnt != null) {
                 toHit.append(Compute.getTargetMovementModifier(game, oldEnt.getId()));
-                // target in partial water - depth 1 for most units
-                int partialWaterLevel = 1;
-                // Depth 2 for superheavy meks
-                if ((target instanceof Mek) && ((Mek) target).isSuperHeavy()) {
-                    partialWaterLevel = 2;
-                }
-                if (targHex.containsTerrain(Terrains.WATER) &&
-                      (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) &&
-                      (targEl == 0) &&
-                      (oldEnt.height() > 0)) {
+                // Partial water cover is read off the secondary target, which is the unit being shot at here -
+                // the depth that covers it depends on its own height, not the swarm's original target.
+                if (PartialCover.isInPartialWater(oldEnt, targHex, targEl)) {
                     toHit.setCover(toHit.getCover() | LosEffects.COVER_HORIZONTAL);
                 }
                 // Prone
@@ -1313,6 +1397,50 @@ public class ComputeToHit {
             }
         }
         return toHit;
+    }
+
+    /**
+     * Applies the firefighting engineer extras on top of the base fire-extinguisher to-hit (TO:AuE p.153): a +2 for
+     * fuel-fed flamer fires (the same penalty inferno fires already get, not stacking with it) and a cumulative -1 per
+     * consecutive turn the platoon has fought this hex, down to a minimum target number of 3. Does nothing unless the
+     * attacker is a firefighting engineer extinguishing a hex.
+     *
+     * @param toHit           the running fire-extinguisher to-hit (target number 8, +2 if already inferno)
+     * @param attackingEntity the attacking entity
+     * @param target          the hex being extinguished
+     * @param game            the current {@link Game}
+     */
+    private static void applyFirefightingEngineerModifiers(ToHitData toHit, Entity attackingEntity, Targetable target,
+          Game game) {
+        if (!attackingEntity.isFirefighter() || (target.getTargetType() != Targetable.TYPE_HEX_EXTINGUISH)) {
+            return;
+        }
+        Coords targetCoords = target.getPosition();
+        // Inferno fires already added +2 above; apply the same to fuel-fed flamer fires when not inferno.
+        // Label it as a flamer fire so the to-hit breakdown does not misreport a flamer fire as an inferno.
+        if (!game.getBoard(target).isInfernoBurning(targetCoords)
+              && game.getBoard(target).isFlamerStartedFire(targetCoords)) {
+            toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutFlamerFire"));
+        }
+        // Multiple platoons combining into a single roll grant the lead platoon -1 each (TO:AuE p.153). Apply the
+        // penalties (above) before the reductions (here) so the running total honours the minimum target number 3.
+        int supportingPlatoons = FirefightingSupport.supportingPlatoons(game, attackingEntity, target);
+        if (supportingPlatoons > 0) {
+            int reduction = Math.min(supportingPlatoons, toHit.getValue() - 3);
+            if (reduction > 0) {
+                toHit.addModifier(-reduction, Messages.getString("WeaponAttackAction.FirefightSupport"));
+            }
+        }
+        // isFirefighter() is only ever true for ConvInfantry, which holds the consecutive-turn streak state.
+        if (attackingEntity instanceof ConvInfantry firefighter) {
+            int priorStreak = firefighter.getPriorFirefightStreak(targetCoords, game.getRoundCount());
+            if (priorStreak > 0) {
+                int reduction = Math.min(priorStreak, toHit.getValue() - 3);
+                if (reduction > 0) {
+                    toHit.addModifier(-reduction, Messages.getString("WeaponAttackAction.FirefightSustained"));
+                }
+            }
+        }
     }
 
     /**
@@ -1372,6 +1500,21 @@ public class ComputeToHit {
                   game.getBoard(target).isInfernoBurning(target.getPosition())) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));
             }
+            applyFirefightingEngineerModifiers(toHit, ae, target, game);
+            srt.setSpecialResolution(true);
+            return toHit;
+        }
+
+        // Firefighting engineers without a fire extinguisher weapon (e.g. an older platoon that predates the
+        // auto-equipped extinguisher) can still put out an adjacent burning hex with their own gear (TO:AuE
+        // p.153), firing their small arms at the hex. New platoons select the Fire Extinguisher weapon, which
+        // is handled by the F_EXTINGUISHER branch above; both paths apply the same modifiers.
+        if (ae.isFirefighter() && (target.getTargetType() == Targetable.TYPE_HEX_EXTINGUISH)) {
+            toHit = new ToHitData(8, Messages.getString("WeaponAttackAction.FireExt"));
+            if (game.getBoard(target).isInfernoBurning(target.getPosition())) {
+                toHit.addModifier(2, Messages.getString("WeaponAttackAction.PutOutInferno"));
+            }
+            applyFirefightingEngineerModifiers(toHit, ae, target, game);
             srt.setSpecialResolution(true);
             return toHit;
         }
@@ -1444,16 +1587,6 @@ public class ComputeToHit {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AAALaserAtShip"));
         }
 
-        // Bombast Lasers
-        if (weaponType instanceof ISBombastLaser) {
-            double damage = Compute.dialDownDamage(weapon, weaponType);
-            damage = Math.ceil((damage - 7) / 2);
-
-            if (damage > 0) {
-                toHit.addModifier((int) damage, Messages.getString("WeaponAttackAction.WeaponMod"));
-            }
-        }
-
         // Bracketing modes
         if (weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_80)) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Bracket80"));
@@ -1507,20 +1640,20 @@ public class ComputeToHit {
         }
 
         // Flat to hit modifiers defined in WeaponType
-        if (weaponType.getToHitModifier(weapon) != 0) {
-            int modifier = weaponType.getToHitModifier(weapon);
-            if (target != null && weaponType instanceof VariableSpeedPulseLaserWeapon) {
-                int nRange = ae.getPosition().distance(target.getPosition());
-                int[] nRanges = weaponType.getRanges(weapon, ammo);
+        int modifier = weaponType.getToHitModifier(weapon);
+        if ((target != null) && weaponType.hasHitModifiersByRange()) {
+            int nRange = ae.getPosition().distance(target.getPosition());
+            int[] nRanges = weaponType.getRanges(weapon, ammo);
 
-                if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
-                    modifier += RangeType.RANGE_SHORT;
-                } else if (nRange <= nRanges[RangeType.RANGE_MEDIUM]) {
-                    modifier += RangeType.RANGE_MEDIUM;
-                } else {
-                    modifier += RangeType.RANGE_LONG;
-                }
+            if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
+                modifier = weaponType.getToHitModifierAtRange(weapon, RangeType.RANGE_SHORT);
+            } else if (nRange <= nRanges[RangeType.RANGE_MEDIUM]) {
+                modifier = weaponType.getToHitModifierAtRange(weapon, RangeType.RANGE_MEDIUM);
+            } else {
+                modifier = weaponType.getToHitModifierAtRange(weapon, RangeType.RANGE_LONG);
             }
+        }
+        if (modifier != 0) {
             toHit.addModifier(modifier, Messages.getString("WeaponAttackAction.WeaponMod"));
 
         }
@@ -1537,19 +1670,22 @@ public class ComputeToHit {
         // Indirect fire suffers a +1 penalty if the spotter is making attacks of its
         // own
         if (isIndirect) {
-            // semi guided ammo negates this modifier, if TAG succeeded
-            if ((ammoType != null) &&
+            boolean bSemiGuided = ((ammoType != null) &&
                   ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
                         (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
-                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR)) &&
-                  (munition.contains(AmmoType.Munitions.M_SEMIGUIDED)) &&
+                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MEK_MORTAR) ||
+                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_5) ||
+                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_10) ||
+                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_15) ||
+                        (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_20)) &&
+                  (munition.contains(AmmoType.Munitions.M_SEMIGUIDED)));
+            // semi guided ammo negates this modifier, if TAG succeeded
+            if ((ammoType != null) &&
+                  bSemiGuided &&
                   (Compute.isTargetTagged(target, game))) {
-
-
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SemiGuidedIndirect"));
-
             } else if (!narcSpotter && (spotter != null)) {
                 // Unless the target has been tagged, or the spotter has an active command
                 // console
@@ -1592,18 +1728,15 @@ public class ComputeToHit {
         // VSP Lasers
         // Quirks and SPAs now handled in toHit
 
-        // PLAYTEST3 narc gets -1 to hit to units with a homing narc pod attached and not under ECM
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3) && ammoType != null) {
-            Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target : null;
-            boolean isTargetECMAffected = ComputeECM.isAffectedByECM(ae,
-                  target.getPosition(),
-                  target.getPosition());
-            if (entityTarget != null) {
-                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE) && (entityTarget.isNarcedBy(
-                      ae.getOwner().getTeam()) || entityTarget
-                      .isINarcedBy(ae.getOwner().getTeam())) && !isTargetECMAffected) {
-                    toHit.addModifier(-1, "Playtest 3, Narc gets -1 to hit");
-                }
+        Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target : null;
+        boolean isTargetECMAffected = ComputeECM.isAffectedByECM(ae,
+              target.getPosition(),
+              target.getPosition());
+        if (entityTarget != null && ammoType != null) {
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE) && (entityTarget.isNarcedBy(
+                  ae.getOwner().getTeam()) || entityTarget
+                  .isINarcedBy(ae.getOwner().getTeam())) && !isTargetECMAffected && !isIndirect) {
+                Game.rulesManager.getRulesAmmo().narcHomingTarget(toHit);
             }
         }
 
@@ -1750,10 +1883,18 @@ public class ComputeToHit {
         ComputeAbilityMods.processAttackerSPAs(toHit, ae, te, weapon, game);
         ComputeAbilityMods.processDefenderSPAs(toHit, ae, te, game);
 
+        // The attacker's movement modifier applies to every direct-fire artillery attack that resolves here,
+        // including flak attacks against airborne VTOL/WiGE/aerospace targets (TO:AR corrected 7th printing,
+        // p.153). It is added here - after the ADA early return above (ADA falls through to the normal to-hit
+        // path, which already applies this modifier) and before the flak branch returns - so that each direct
+        // artillery path includes it exactly once.
+        toHit.append(Compute.getAttackerMovementModifier(game, ae.getId()));
+
         // If an airborne unit occupies the target hex, standard artillery ammo makes a
         // flak attack against it
         // TN is a flat 3 + the altitude mod + the attacker's weapon skill - 2 for Flak
         // Grounded/destroyed/landed/wrecked ASF/VTOL/WiGE should be treated as normal.
+        int baseMod = 0;
         if ((isArtilleryFLAK || (ammoType.countsAsFlak())) && te != null) {
             if (te.isAirborne() || te.isAirborneVTOLorWIGE()) {
                 srt.setSpecialResolution(true);
@@ -1762,7 +1903,8 @@ public class ComputeToHit {
                     toHit.addModifier(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.FlakIndirect"));
                     return toHit;
                 }
-                toHit.addModifier(3, Messages.getString("WeaponAttackAction.ArtyFlak"));
+                baseMod = Game.rulesManager.getRulesArtillery().computeArtilleryBaseMod(17, true, true);
+                toHit.addModifier(baseMod, Messages.getString("WeaponAttackAction.ArtyFlak"));
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
                 if (te.getAltitude() > 3) {
                     if (te.getAltitude() > 9) {
@@ -1777,9 +1919,9 @@ public class ComputeToHit {
             }
         }
 
-        // All other direct fire artillery attacks
-        toHit.addModifier(4, Messages.getString("WeaponAttackAction.DirectArty"));
-        toHit.append(Compute.getAttackerMovementModifier(game, ae.getId()));
+        // All other direct fire artillery attacks (attacker movement modifier already appended above)
+        baseMod = Game.rulesManager.getRulesArtillery().computeArtilleryBaseMod(17, true, false);
+        toHit.addModifier(baseMod, Messages.getString("WeaponAttackAction.DirectArty"));
         // without LOS, it is a short-range indirect attack that ignores LOS modifiers, TO:AR p.153
         if (!losMods.cannotSucceed()) {
             toHit.append(losMods);
@@ -1821,7 +1963,9 @@ public class ComputeToHit {
           WeaponType weaponType, Mounted<?> weapon, SpecialResolutionTracker specialResolutionTracker) {
 
         // See MegaMek/megamek#5168
-        int mod = (ae.getPosition().distance(target.getPosition()) <= 17) ? 4 : 7;
+        int mod =
+              Game.rulesManager.getRulesArtillery()
+                    .computeArtilleryBaseMod(ae.getPosition().distance(target.getPosition()), false, false);
         if (ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
             mod--;
         }

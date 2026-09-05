@@ -33,6 +33,7 @@
 package megamek.client.ui.panels.phaseDisplay;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -53,6 +54,7 @@ import javax.swing.SwingUtilities;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
@@ -211,6 +213,8 @@ public final class VictoryHexPropertiesPane {
      * @param controls the pane's scheme-dependent controls
      */
     private static void refreshSchemeRows(SchemeControls controls) {
+        Window window = SwingUtilities.getWindowAncestor(controls.schemeCombo());
+        Dimension sizeNeededBefore = (window == null) ? null : window.getPreferredSize();
         SchemePreset preset = (SchemePreset) controls.schemeCombo().getSelectedItem();
         // the description reflects the CONFIGURED point: the chosen mode and the actual numbers,
         // not a generic text covering every possibility
@@ -235,23 +239,29 @@ public final class VictoryHexPropertiesPane {
         controls.rateSpinner().setVisible(usesRate);
         controls.countingLabel().setVisible(usesCounting);
         controls.countingCombo().setVisible(usesCounting);
-        resizeDialogToFit(controls.schemeCombo());
+        resizeDialogToFit(window, sizeNeededBefore);
     }
 
     /**
-     * Re-packs the dialog around its content after the visible rows changed. The dialog is sized once when it
-     * opens; without this, a scheme with more rows is squeezed into the old height and one with fewer has its
-     * rows re-centred in the leftover space, so the scheme selector jumps up and down as schemes are tried.
-     * Packing keeps the top-left corner where it is, so the selector stays put and the dialog grows or shrinks
-     * beneath it.
+     * Re-packs the dialog when its content needs a different size than it did before the refresh. The dialog
+     * is sized once when it opens; without this, a scheme with more rows is squeezed into the old height and
+     * one with fewer has its rows re-centred in the leftover space, so the scheme selector jumps up and down
+     * as schemes are tried. Packing keeps the top-left corner where it is, so the selector stays put and the
+     * dialog grows or shrinks beneath it. A refresh that changes nothing about the size, such as a spinner
+     * tick, leaves the dialog alone.
      *
-     * @param anyControl a control inside the dialog; nothing happens while the pane is still being built
+     * @param window           the dialog, or {@code null} while the pane is still being built
+     * @param sizeNeededBefore the size the content asked for before the refresh, or {@code null} with no dialog
      */
-    private static void resizeDialogToFit(Component anyControl) {
-        Window window = SwingUtilities.getWindowAncestor(anyControl);
-        if (window != null) {
-            window.pack();
+    private static void resizeDialogToFit(@Nullable Window window, @Nullable Dimension sizeNeededBefore) {
+        if (window == null) {
+            return;
         }
+        boolean isSizeNeededUnchanged = window.getPreferredSize().equals(sizeNeededBefore);
+        if (isSizeNeededUnchanged) {
+            return;
+        }
+        window.pack();
     }
 
     /**

@@ -328,7 +328,14 @@ public class VictorySetupDisplay extends StatusBarPhaseDisplay {
                 }
             }
         }
-        int pointsStillToPlace = player.getGroundObjectsToPlace().size();
+        // the to-place list carries every kind of ground object a scenario hands a player, not only control
+        // points, so only the markers in it count here
+        int pointsStillToPlace = 0;
+        for (ICarryable groundObjectToPlace : player.getGroundObjectsToPlace()) {
+            if (groundObjectToPlace instanceof ObjectiveMarker) {
+                pointsStillToPlace++;
+            }
+        }
         if ((pointsOnBoard > 0) && (pointsStillToPlace == 0)) {
             return true;
         }

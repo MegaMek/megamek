@@ -312,6 +312,7 @@ class ObjectivePlacementHandlerTest {
         handler.placeLobbyObjectives();
 
         verify(gameManager, never()).sendServerChat(anyString());
+        verify(gameManager, never()).sendToast(any(), anyString(), any());
     }
 
     private ObjectiveMarker markerFor(Player owner, Coords lobbyPosition) {

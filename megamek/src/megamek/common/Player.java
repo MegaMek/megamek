@@ -34,6 +34,14 @@
 
 package megamek.common;
 
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Vector;
+import java.util.stream.Collectors;
+
 import megamek.client.ui.util.PlayerColour;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
@@ -54,14 +62,6 @@ import megamek.common.turns.TurnOrdered;
 import megamek.common.units.Entity;
 import megamek.common.units.MekWarrior;
 import megamek.logging.MMLogger;
-
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Vector;
-import java.util.stream.Collectors;
 
 /**
  * Represents a player in the game.

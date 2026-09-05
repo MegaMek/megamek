@@ -33,6 +33,17 @@
  */
 package megamek.common.game;
 
+import static java.util.stream.Collectors.toList;
+import static megamek.common.enums.GamePhase.INITIATIVE_REPORT;
+import static megamek.common.options.OptionsConstants.ATOW_COMBAT_PARALYSIS;
+import static megamek.common.options.OptionsConstants.ATOW_COMBAT_SENSE;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import megamek.MMConstants;
 import megamek.Version;
 import megamek.client.bot.AIType;
@@ -104,17 +115,6 @@ import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryHelper;
 import megamek.server.victory.VictoryPointLevel;
 import megamek.server.victory.VictoryResult;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import static java.util.stream.Collectors.toList;
-import static megamek.common.enums.GamePhase.INITIATIVE_REPORT;
-import static megamek.common.options.OptionsConstants.ATOW_COMBAT_PARALYSIS;
-import static megamek.common.options.OptionsConstants.ATOW_COMBAT_SENSE;
 
 /**
  * The game class is the root of all data about the game in progress. Both the Client and the Server should have one of

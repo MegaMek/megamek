@@ -35,6 +35,17 @@
 
 package megamek.common.board;
 
+import static java.util.stream.Collectors.toList;
+import static megamek.common.SpecialHexDisplay.Type.BOMB_DRIFT;
+import static megamek.common.SpecialHexDisplay.Type.BOMB_HIT;
+import static megamek.common.SpecialHexDisplay.Type.BOMB_MISS;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.Configuration;
 import megamek.common.Hex;
@@ -58,17 +69,6 @@ import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static java.util.stream.Collectors.toList;
-import static megamek.common.SpecialHexDisplay.Type.BOMB_DRIFT;
-import static megamek.common.SpecialHexDisplay.Type.BOMB_HIT;
-import static megamek.common.SpecialHexDisplay.Type.BOMB_MISS;
 
 public class Board implements Serializable {
 

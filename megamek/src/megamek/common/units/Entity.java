@@ -34,6 +34,17 @@
 
 package megamek.common.units;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
+import java.awt.*;
+import java.io.Serial;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import megamek.MMConstants;
 import megamek.client.bot.princess.FireControl;
@@ -133,17 +144,6 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
-
-import java.awt.*;
-import java.io.Serial;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static megamek.common.bays.Bay.UNSET_BAY;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.

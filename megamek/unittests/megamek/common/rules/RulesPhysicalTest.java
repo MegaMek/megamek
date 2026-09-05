@@ -18,15 +18,15 @@
  */
 package megamek.common.rules;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import megamek.common.rules.core.CoreRulesPhysical;
 import megamek.common.rules.totalwarfare.TWRulesPhysical;
 import megamek.common.units.Entity;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RulesPhysicalTest {
 
@@ -36,7 +36,7 @@ class RulesPhysicalTest {
         TWRulesPhysical total = new TWRulesPhysical();
         Entity attacker = Mockito.mock(Entity.class);
         Entity target = Mockito.mock(Entity.class);
-        
+
         Mockito.when(attacker.getWeight()).thenReturn(50.0);
         Mockito.when(target.getWeight()).thenReturn(40.0);
         Mockito.when(attacker.getLocationStatus(1)).thenReturn(0);

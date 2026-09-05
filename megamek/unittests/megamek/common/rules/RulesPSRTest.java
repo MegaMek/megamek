@@ -18,16 +18,16 @@
  */
 package megamek.common.rules;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
+
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rules.core.CoreRulesPSR;
 import megamek.common.rules.totalwarfare.TWRulesPSR;
 import megamek.common.units.EntityMovementType;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RulesPSRTest {
 

@@ -33,6 +33,19 @@
 
 package megamek.client.ui.panels.phaseDisplay;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
+
+import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.List;
+
 import megamek.client.Client;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.CommonMenuBar;
@@ -42,8 +55,8 @@ import megamek.client.ui.util.MegaMekController;
 import megamek.common.Hex;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
-import megamek.common.game.Game;
 import megamek.common.enums.MoveStepType;
+import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Targetable;
@@ -52,19 +65,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
-
-import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
 
 @DisplayName("MovementDisplay Unit Tests")
 class MovementDisplayTest {

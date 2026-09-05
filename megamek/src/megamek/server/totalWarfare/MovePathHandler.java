@@ -1014,7 +1014,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 msg += ", Entity: " + entity.getShortName();
                 logger.error(msg);
                 gameManager.send(entity.getOwnerId(), gameManager.getPacketHelper().createTurnListPacket());
-                
+
                 return;
             }
 

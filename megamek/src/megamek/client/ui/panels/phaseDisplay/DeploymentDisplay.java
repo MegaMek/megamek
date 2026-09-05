@@ -33,6 +33,21 @@
  */
 package megamek.client.ui.panels.phaseDisplay;
 
+import static megamek.common.bays.Bay.UNSET_BAY;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+import javax.swing.*;
+
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -69,21 +84,6 @@ import megamek.common.units.IAero;
 import megamek.common.units.Infantry;
 import megamek.common.units.Tank;
 import megamek.logging.MMLogger;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-
-import static megamek.common.bays.Bay.UNSET_BAY;
 
 public class DeploymentDisplay extends StatusBarPhaseDisplay {
 

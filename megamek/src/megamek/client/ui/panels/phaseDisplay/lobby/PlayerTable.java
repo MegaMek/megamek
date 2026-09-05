@@ -32,6 +32,22 @@
  */
 package megamek.client.ui.panels.phaseDisplay.lobby;
 
+import static megamek.client.ui.util.UIUtil.WARNING_SIGN;
+import static megamek.client.ui.util.UIUtil.scaleForGUI;
+import static megamek.client.ui.util.UIUtil.uiGreen;
+import static megamek.client.ui.util.UIUtil.uiYellow;
+
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
+
 import megamek.MegaMek;
 import megamek.client.bot.BotClient;
 import megamek.client.ui.Messages;
@@ -42,22 +58,6 @@ import megamek.common.board.Board;
 import megamek.common.game.Game;
 import megamek.common.interfaces.IStartingPositions;
 import megamek.common.options.OptionsConstants;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumn;
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import static megamek.client.ui.util.UIUtil.WARNING_SIGN;
-import static megamek.client.ui.util.UIUtil.scaleForGUI;
-import static megamek.client.ui.util.UIUtil.uiGreen;
-import static megamek.client.ui.util.UIUtil.uiYellow;
 
 class PlayerTable extends JTable {
 

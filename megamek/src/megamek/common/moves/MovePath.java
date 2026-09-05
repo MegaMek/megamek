@@ -33,6 +33,10 @@
  */
 package megamek.common.moves;
 
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.*;
+
 import megamek.common.Hex;
 import megamek.common.ManeuverType;
 import megamek.common.annotations.Nullable;
@@ -55,10 +59,6 @@ import megamek.common.units.*;
 import megamek.logging.MMLogger;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.*;
 
 /**
  * Holds movement path for an entity.

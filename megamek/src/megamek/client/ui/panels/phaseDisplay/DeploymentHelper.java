@@ -415,8 +415,8 @@ public class DeploymentHelper {
                     default:
                         /**
                          * This we care about direction.
-                         * Player higher than enemy gives us a clockwise offset. 
-                         * If it is a diff higher than 3, then we are on the other side of the board 
+                         * Player higher than enemy gives us a clockwise offset.
+                         * If it is a diff higher than 3, then we are on the other side of the board
                          * and need to go counter-clockwise.
                          * Never a reason to offset more than 1, as it would turn us to face off-board.
                          */
@@ -434,15 +434,20 @@ public class DeploymentHelper {
                     case Board.START_W:
                     case Board.START_NW:
                         offsetFacing = -1;
+                        break;
                     case Board.START_E:
                     case Board.START_NE:
                         offsetFacing = 1;
+                        break;
                     case Board.START_SE:
                         offsetFacing = 2;
+                        break;
                     case Board.START_S:
                         offsetFacing = 3;
+                        break;
                     case Board.START_SW:
                         offsetFacing = -2;
+                        break;
                     default:
                         offsetFacing = 0;
                         break;

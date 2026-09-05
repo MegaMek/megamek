@@ -33433,4 +33433,3 @@ public class TWGameManager extends AbstractGameManager {
         send(new Packet(PacketCommand.UPDATE_INDUSTRIAL_ELEVATORS, new ArrayList<>(elevators)));
     }
 }
-

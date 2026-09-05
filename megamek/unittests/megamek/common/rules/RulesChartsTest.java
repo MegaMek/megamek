@@ -18,16 +18,16 @@
  */
 package megamek.common.rules;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import megamek.common.Messages;
 import megamek.common.ToHitData;
 import megamek.common.rules.core.CoreRulesCharts;
 import megamek.common.rules.totalwarfare.TWRulesCharts;
 import megamek.common.units.Mek;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RulesChartsTest {
 

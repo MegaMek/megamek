@@ -92,6 +92,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(base, OptionsConstants.BASE_AUTO_AMS, true);
         addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true);
         addOption(base, OptionsConstants.BASE_BREEZE, false);
+        addOption(base, OptionsConstants.BASE_WALK_ON_DEPLOYMENT, false);
 
         IBasicOptionGroup gameMaster = addGroup("gameMaster");
         addOption(gameMaster, OptionsConstants.GAME_MASTER_ALLOW, true);

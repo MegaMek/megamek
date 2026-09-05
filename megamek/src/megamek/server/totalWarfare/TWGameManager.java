@@ -59,8 +59,8 @@ import megamek.common.bays.Bay;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
-import megamek.common.board.Coords;
 import megamek.common.board.BuildingEditSpec;
+import megamek.common.board.Coords;
 import megamek.common.board.HexEditSpec;
 import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.comparators.WeaponComparatorBV;
@@ -705,8 +705,8 @@ public class TWGameManager extends AbstractGameManager {
      * <p>The zone is read when a unit deploys, so this affects whatever has not arrived yet and leaves anything
      * already on the board where it stands.</p>
      *
-     * @param player       The player whose deployment zone to set
-     * @param startingPos  The zone, as an index into {@link megamek.common.interfaces.IStartingPositions}
+     * @param player      The player whose deployment zone to set
+     * @param startingPos The zone, as an index into {@link megamek.common.interfaces.IStartingPositions}
      */
     public void setStartingPosition(Player player, int startingPos) {
         player.setStartingPos(startingPos);
@@ -3110,6 +3110,15 @@ public class TWGameManager extends AbstractGameManager {
         for (Entity entity : game.inGameTWEntities()) {
             if (entity.isSelectableThisTurn()) {
                 final Player player = entity.getOwner();
+                boolean includeInPhase = true;
+                if (phase.isDeployment()) {
+                    if (Game.rulesManager.getRulesGame().canWalkOnThisRound(entity)) {
+                        includeInPhase = false;
+                    }
+                }
+                if (!includeInPhase && Game.rulesManager.getRulesGame().isWalkOnDeployment()) {
+                    continue;
+                }
                 if ((entity instanceof SpaceStation) &&
                       (game.getPhase().isMovement() || game.getPhase().isDeployment())) {
                     player.incrementSpaceStationTurns();
@@ -10186,9 +10195,9 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Announces a strafing run the moment it is declared: one report line and its kill-feed toast,
-     * nothing more. Without it the run only surfaces as a burst of unexplained attack lines in the
-     * end-of-phase report - the same reads-as-a-bug problem the maneuver announcement solved.
+     * Announces a strafing run the moment it is declared: one report line and its kill-feed toast, nothing more.
+     * Without it the run only surfaces as a burst of unexplained attack lines in the end-of-phase report - the same
+     * reads-as-a-bug problem the maneuver announcement solved.
      */
     private void announceStrafingRun(Entity entity, List<EntityAction> entityActions) {
         if (entityActions == null) {
@@ -16297,8 +16306,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * End-phase resolution for Tainted and Toxic Atmospheres, TO:AR p.54. Delegates to
-     * {@link TaintedAtmosphereHandler} so the atmosphere rules do not add to this already very large class.
+     * End-phase resolution for Tainted and Toxic Atmospheres, TO:AR p.54. Delegates to {@link TaintedAtmosphereHandler}
+     * so the atmosphere rules do not add to this already very large class.
      */
     void checkTaintedAtmosphereEffects() {
         new TaintedAtmosphereHandler(this).checkTaintedAtmosphereEffects();
@@ -16313,18 +16322,18 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Returns the objective markers on the board to their owners' lobby designations when the game is reset back to
-     * the lobby. Delegates to {@link ObjectivePlacementHandler} so the objectives rules do not add to this already
-     * very large class.
+     * Returns the objective markers on the board to their owners' lobby designations when the game is reset back to the
+     * lobby. Delegates to {@link ObjectivePlacementHandler} so the objectives rules do not add to this already very
+     * large class.
      */
     void returnObjectivesToLobby() {
         new ObjectivePlacementHandler(this).returnObjectivesToLobby();
     }
 
     /**
-     * End-phase resolution for objective markers (Standard Missions, Objectives): objective control and victory
-     * point scoring. Delegates to {@link ObjectiveResolutionHandler} so the objectives rules do not add to this
-     * already very large class.
+     * End-phase resolution for objective markers (Standard Missions, Objectives): objective control and victory point
+     * scoring. Delegates to {@link ObjectiveResolutionHandler} so the objectives rules do not add to this already very
+     * large class.
      */
     void resolveObjectives() {
         new ObjectiveResolutionHandler(this).resolveObjectives();
@@ -27330,9 +27339,9 @@ public class TWGameManager extends AbstractGameManager {
      * still be sent back to overwrite incorrect client changes.
      */
     /**
-     * Applies a gamemaster's edit of one or more hexes. The edit arrives as the terrain the hexes should end up
-     * holding rather than as a chat command, because an edit of a whole hex across several hexes is more than a
-     * command line can carry, and it is checked against every named hex before any of them is changed.
+     * Applies a gamemaster's edit of one or more hexes. The edit arrives as the terrain the hexes should end up holding
+     * rather than as a chat command, because an edit of a whole hex across several hexes is more than a command line
+     * can carry, and it is checked against every named hex before any of them is changed.
      */
     private void receiveHexEdit(Packet packet, int connIndex) {
         if (!(packet.getObject(0) instanceof HexEditSpec spec)) {
@@ -27809,8 +27818,8 @@ public class TWGameManager extends AbstractGameManager {
      * Turns one unit's automatic ejection on or off at its owner's request.
      * <p>
      * The server decides on its own copy of the unit whether a crew is thrown clear, so a change made only on the
-     * client would be ignored when the moment came. Only the owner may make it, and only BattleMeks and aerospace
-     * units carry the setting at all.
+     * client would be ignored when the moment came. Only the owner may make it, and only BattleMeks and aerospace units
+     * carry the setting at all.
      *
      * @param packet    the packet holding the unit id and the new setting
      * @param connIndex the connection the packet arrived on
@@ -28383,10 +28392,10 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Sends the given reports to every player as an immediate special-report packet (surfaced client-side as a
-     * kill-feed toast), respecting double blind: with double blind on, each player receives only the reports they
-     * are entitled to see; otherwise the packet is broadcast unfiltered. Use this instead of broadcasting
-     * {@link #createSpecialReportPacket(Vector)} whenever the reports concern a unit that might be hidden from
-     * some players.
+     * kill-feed toast), respecting double blind: with double blind on, each player receives only the reports they are
+     * entitled to see; otherwise the packet is broadcast unfiltered. Use this instead of broadcasting
+     * {@link #createSpecialReportPacket(Vector)} whenever the reports concern a unit that might be hidden from some
+     * players.
      *
      * @param reports the specific reports to push immediately; they are not added to the phase report here
      */
@@ -30946,8 +30955,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Adds a line to the ejection report when what the crew is wearing is the difference between living and dying
-     * out there.
+     * Adds a line to the ejection report when what the crew is wearing is the difference between living and dying out
+     * there.
      * <p>
      * Called from the one exit every ejection passes through, so Mek pilots, vehicle crews and aerospace crews all
      * reach it. Only raised where the kit answers the danger: nobody needs telling in ordinary weather, and a crew
@@ -33424,4 +33433,3 @@ public class TWGameManager extends AbstractGameManager {
         send(new Packet(PacketCommand.UPDATE_INDUSTRIAL_ELEVATORS, new ArrayList<>(elevators)));
     }
 }
-

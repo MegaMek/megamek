@@ -32,7 +32,6 @@
  */
 package megamek.client.ui.dialogs.randomArmy;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -54,7 +53,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -112,7 +110,7 @@ public class ForceGeneratorViewUi implements ActionListener {
     private final static MMLogger logger = MMLogger.create(ForceGeneratorViewUi.class);
 
     private final JFrame parentFrame;
-    
+
     private JPanel leftPanel;
     private JPanel rightPanel;
 
@@ -243,6 +241,9 @@ public class ForceGeneratorViewUi implements ActionListener {
             }
         });
         forceTree.addMouseListener(treeMouseListener);
+        // Selecting a lance points the formation mix at it, so the palette offers that lance's formations rather
+        // than whatever the settings above it are left on. Deselecting hands it back to the settings.
+        forceTree.addTreeSelectionListener(event -> panControls.setFormationMixContext(selectedForceNode()));
 
         rightPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -1310,6 +1311,26 @@ public class ForceGeneratorViewUi implements ActionListener {
      * lance holds different units than the ones that were on screen. Everything outside it is the same object it
      * was, so its path still matches.</p>
      */
+    /**
+     * The organisation-tree node the player has selected, if it is a formation.
+     *
+     * <p>An individual unit is not one. Selecting a Mek inside a lance says nothing about which formations the
+     * lance could be, so the palette keeps describing whatever it was describing.</p>
+     *
+     * @return the selected formation, or {@code null} when nothing is selected, the selection is not a
+     *       {@link ForceDescriptor}, or it is a single unit rather than a formation
+     */
+    private @Nullable ForceDescriptor selectedForceNode() {
+        TreePath path = forceTree.getSelectionPath();
+        if (path == null) {
+            return null;
+        }
+        if (!(path.getLastPathComponent() instanceof ForceDescriptor node) || node.isElement()) {
+            return null;
+        }
+        return node;
+    }
+
     private void refreshTreeAfterEdit() {
         List<TreePath> expanded = new ArrayList<>();
         for (int row = 0; row < forceTree.getRowCount(); row++) {

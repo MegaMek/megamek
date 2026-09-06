@@ -32,13 +32,18 @@
  */
 package megamek.client.ui.dialogs.randomArmy;
 
+import static megamek.client.ui.dialogs.randomArmy.ForceGeneratorOptionsView.applyFormationMixContext;
 import static megamek.client.ui.dialogs.randomArmy.ForceGeneratorOptionsView.preferredEchelonItem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.client.ratgenerator.ForceDescriptor;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -107,5 +112,66 @@ class ForceGeneratorOptionsViewEchelonTest {
         assertNull(preferredEchelonItem(List.of("^", "+"), 4),
               "an unparseable code must not match, and must not read as echelon 0 either");
         assertNull(preferredEchelonItem(List.of("^"), 0));
+    }
+
+    // --- The formation mix following the organisation tree ---
+
+    @Test
+    void noSelection_leavesTheProbeAsTheSettingsMadeIt() {
+        ForceDescriptor probe = descriptor(UNIT_TYPE_MEK, 4, false);
+
+        assertSame(probe, applyFormationMixContext(probe, null));
+        assertEquals(UNIT_TYPE_MEK, probe.getUnitType());
+        assertEquals(4, probe.getEchelon());
+    }
+
+    @Test
+    void aSelectedNode_shapesTheProbeToIt() {
+        // The combos are left on an infantry company; the player clicks a Mek lance.
+        ForceDescriptor probe = descriptor(UNIT_TYPE_INFANTRY, 4, false);
+        ForceDescriptor selectedMekLance = descriptor(UNIT_TYPE_MEK, 3, false);
+
+        applyFormationMixContext(probe, selectedMekLance);
+
+        assertEquals(UNIT_TYPE_MEK, probe.getUnitType(), "the palette should describe the lance that was clicked");
+        assertEquals(3, probe.getEchelon());
+    }
+
+    @Test
+    void augmentedIsCarriedAcross() {
+        ForceDescriptor probe = descriptor(UNIT_TYPE_MEK, 3, false);
+        applyFormationMixContext(probe, descriptor(UNIT_TYPE_MEK, 3, true));
+        assertTrue(probe.isAugmented());
+
+        ForceDescriptor plain = descriptor(UNIT_TYPE_MEK, 3, true);
+        applyFormationMixContext(plain, descriptor(UNIT_TYPE_MEK, 3, false));
+        assertFalse(plain.isAugmented());
+    }
+
+    @Test
+    void aNodeWithNoEchelonKeepsTheSettingsEchelon() {
+        ForceDescriptor probe = descriptor(UNIT_TYPE_INFANTRY, 4, false);
+        ForceDescriptor nodeWithoutEchelon = descriptor(UNIT_TYPE_MEK, null, false);
+
+        applyFormationMixContext(probe, nodeWithoutEchelon);
+
+        assertEquals(UNIT_TYPE_MEK, probe.getUnitType(), "the unit type still comes from the node");
+        assertEquals(4, probe.getEchelon(), "a node with no echelon must not blank the palette");
+    }
+
+    @Test
+    void aNullProbeIsReturnedUntouched() {
+        assertNull(applyFormationMixContext(null, descriptor(UNIT_TYPE_MEK, 3, false)));
+    }
+
+    private static final int UNIT_TYPE_MEK = 0;
+    private static final int UNIT_TYPE_INFANTRY = 4;
+
+    private static ForceDescriptor descriptor(int unitType, Integer echelon, boolean augmented) {
+        ForceDescriptor descriptor = new ForceDescriptor();
+        descriptor.setUnitType(unitType);
+        descriptor.setEchelon(echelon);
+        descriptor.setAugmented(augmented);
+        return descriptor;
     }
 }

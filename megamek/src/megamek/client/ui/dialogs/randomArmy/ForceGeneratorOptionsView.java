@@ -159,6 +159,16 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      * decide. See {@link #setPreferredEchelon(Integer)}.
      */
     private Integer preferredEchelon;
+
+    /**
+     * The organisation-tree node the formation mix should describe, or {@code null} to describe the force the
+     * settings above it describe.
+     *
+     * <p>Set when the player selects a node in the tree, so the palette offers that lance's formations rather than
+     * the ones the combo boxes happen to be left on. Cleared when nothing is selected, which is also the state
+     * every host starts in and the only state a host with no tree ever has.</p>
+     */
+    private ForceDescriptor formationMixContext;
     /** Holds the mix editor when a host shows it inline rather than opening it from the button. */
     private JPanel panFormationMixInline;
     /** The inline panel's title, which names the selected formation so the pick is visible without scrolling. */
@@ -609,7 +619,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      * state that only exists once the tree is being built.</p>
      */
     private void showFormationMixDialog() {
-        Ruleset ruleset = Ruleset.findRuleset(buildForceDescriptor());
+        Ruleset ruleset = Ruleset.findRuleset(buildFormationMixProbe());
         if (ruleset == null) {
             JOptionPane.showMessageDialog(this,
                   Messages.getString("ForceGeneratorDialog.formationMix.noRuleset"),
@@ -648,7 +658,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     public FormationMixPreview sampleFormationOffer(Ruleset ruleset) {
         List<FormationMixPreview> samples = new ArrayList<>();
         for (int sample = 0; sample < FORMATION_OFFER_SAMPLES; sample++) {
-            ForceDescriptor probe = buildForceDescriptor();
+            ForceDescriptor probe = buildFormationMixProbe();
             ruleset.buildStructureOnly(probe);
             samples.add(FormationMixPreview.of(probe));
         }
@@ -726,7 +736,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             repaint();
             return;
         }
-        Ruleset ruleset = Ruleset.findRuleset(buildForceDescriptor());
+        Ruleset ruleset = Ruleset.findRuleset(buildFormationMixProbe());
         FormationMixEditorPanel palette = new FormationMixEditorPanel(
               (ruleset == null) ? FormationMixPreview.EMPTY : sampleFormationOffer(ruleset));
         palette.selectFormation(selectedFormation);
@@ -818,6 +828,69 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             }
         }
         return modifiedMatch;
+    }
+
+    /**
+     * Points the formation mix at a node of the organisation tree, so the palette describes that node.
+     *
+     * <p>Without this the palette describes whatever the settings above it describe, which is right until a force
+     * exists: once there is a tree, the player is looking at a particular lance and the combo boxes may have been
+     * left on something else entirely. Selecting a Mek lance after generating an infantry company should offer Mek
+     * formations, not the infantry ones the combos still say.</p>
+     *
+     * <p>Both behaviours remain. Pass {@code null} - which is what a deselection does, and the only state a host
+     * with no tree is ever in - and the palette goes back to describing the settings.</p>
+     *
+     * @param node the selected node, or {@code null} to describe the settings instead
+     *
+     * @since 0.51.01
+     */
+    public void setFormationMixContext(@Nullable ForceDescriptor node) {
+        if (formationMixContext == node) {
+            return;
+        }
+        formationMixContext = node;
+        logger.debug("[FormationMix] context is now {}",
+              (node == null) ? "the settings" : ("unitType=" + node.getUnitType() + " echelon=" + node.getEchelon()));
+        refreshInlineFormationMixEditor();
+    }
+
+    /**
+     * The force the formation mix should sample, which is the selected node's shape when there is one and the
+     * settings' own otherwise.
+     *
+     * <p>Only unit type, echelon and whether the formation is augmented are taken from the node. Those are what
+     * decide which formations a ruleset offers; the rest - faction, year, rating, experience - stay as the settings
+     * have them, because they describe the command the node belongs to rather than the node.</p>
+     *
+     * @return a fresh descriptor to build a structure from
+     */
+    private ForceDescriptor buildFormationMixProbe() {
+        return applyFormationMixContext(buildForceDescriptor(), formationMixContext);
+    }
+
+    /**
+     * Shapes {@code probe} to the selected node, where one is selected.
+     *
+     * <p>Split from the view so the choice can be exercised without building it.</p>
+     *
+     * @param probe   the descriptor the settings produced; returned shaped
+     * @param context the selected node, or {@code null} to leave the probe as the settings made it
+     *
+     * @return {@code probe}, shaped to the node when there is one
+     */
+    static ForceDescriptor applyFormationMixContext(ForceDescriptor probe, @Nullable ForceDescriptor context) {
+        if ((probe == null) || (context == null)) {
+            return probe;
+        }
+        probe.setUnitType(context.getUnitType());
+        // A node with no echelon of its own would otherwise blank the palette; the settings' echelon is the
+        // better answer than none.
+        if (context.getEchelon() != null) {
+            probe.setEchelon(context.getEchelon());
+        }
+        probe.setAugmented(context.isAugmented());
+        return probe;
     }
 
     /**

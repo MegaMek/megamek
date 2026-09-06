@@ -33,7 +33,6 @@
 package megamek.client.ui.panels.phaseDisplay;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -54,7 +53,6 @@ import javax.swing.SwingUtilities;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
@@ -213,8 +211,7 @@ public final class VictoryHexPropertiesPane {
      * @param controls the pane's scheme-dependent controls
      */
     private static void refreshSchemeRows(SchemeControls controls) {
-        Window window = SwingUtilities.getWindowAncestor(controls.schemeCombo());
-        Dimension sizeNeededBefore = (window == null) ? null : window.getPreferredSize();
+        String layoutBefore = layoutSignature(controls);
         SchemePreset preset = (SchemePreset) controls.schemeCombo().getSelectedItem();
         // the description reflects the CONFIGURED point: the chosen mode and the actual numbers,
         // not a generic text covering every possibility
@@ -239,26 +236,42 @@ public final class VictoryHexPropertiesPane {
         controls.rateSpinner().setVisible(usesRate);
         controls.countingLabel().setVisible(usesCounting);
         controls.countingCombo().setVisible(usesCounting);
-        resizeDialogToFit(window, sizeNeededBefore);
+        resizeDialogToFit(controls, layoutBefore);
+    }
+
+    /**
+     * What decides how much room the pane needs: which rows are showing and what the description says. Compared
+     * before and after a refresh to decide whether the dialog must be re-packed. The window's preferred size
+     * cannot be used for that: a label's new text only reaches the cached layout sizes on the next validation,
+     * so asking straight after {@code setText} returns the old answer and the dialog never grows.
+     *
+     * @param controls the pane's scheme-dependent controls
+     *
+     * @return a signature that changes exactly when the layout needs to
+     */
+    private static String layoutSignature(SchemeControls controls) {
+        return controls.thresholdSpinner().isVisible() + "/" + controls.countingCombo().isVisible() + "/"
+              + controls.rateSpinner().isVisible() + "/" + controls.schemeDescription().getText();
     }
 
     /**
      * Re-packs the dialog when its content needs a different size than it did before the refresh. The dialog
      * is sized once when it opens; without this, a scheme with more rows is squeezed into the old height and
      * one with fewer has its rows re-centred in the leftover space, so the scheme selector jumps up and down
-     * as schemes are tried. Packing keeps the top-left corner where it is, so the selector stays put and the
-     * dialog grows or shrinks beneath it. A refresh that changes nothing about the size, such as a spinner
-     * tick, leaves the dialog alone.
+     * as schemes are tried, and a description that grew is cut off at its old height. Packing keeps the
+     * top-left corner where it is, so the selector stays put and the dialog grows or shrinks beneath it. A
+     * refresh that changes nothing about the layout, such as a spinner tick, leaves the dialog alone.
      *
-     * @param window           the dialog, or {@code null} while the pane is still being built
-     * @param sizeNeededBefore the size the content asked for before the refresh, or {@code null} with no dialog
+     * @param controls     the pane's scheme-dependent controls, after the refresh
+     * @param layoutBefore the {@link #layoutSignature(SchemeControls)} taken before the refresh
      */
-    private static void resizeDialogToFit(@Nullable Window window, @Nullable Dimension sizeNeededBefore) {
+    private static void resizeDialogToFit(SchemeControls controls, String layoutBefore) {
+        Window window = SwingUtilities.getWindowAncestor(controls.schemeCombo());
         if (window == null) {
+            // still being built: the option pane packs it when it opens
             return;
         }
-        boolean isSizeNeededUnchanged = window.getPreferredSize().equals(sizeNeededBefore);
-        if (isSizeNeededUnchanged) {
+        if (layoutSignature(controls).equals(layoutBefore)) {
             return;
         }
         window.pack();

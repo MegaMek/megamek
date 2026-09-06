@@ -318,11 +318,6 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Advances a {@code CAPTURE} point's progress meter: an enemy of the owner controlling the zone adds progress,
-     * the owner controlling it pushes every side's progress back (to a minimum of zero), and an uncontrolled turn
-     * changes nothing. Reaching the threshold captures the point for that side and awards its value once.
-     */
-    /**
      * Holds a {@code HOLD} point's count where it is for a turn in which its retained holder has nobody in the
      * zone: the streak is neither advanced nor broken, and resumes when a unit returns.
      */
@@ -341,6 +336,11 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         addReport(report);
     }
 
+    /**
+     * Advances a {@code CAPTURE} point's progress meter: an enemy of the owner controlling the zone adds progress,
+     * the owner controlling it pushes every side's progress back (to a minimum of zero), and an uncontrolled turn
+     * changes nothing. Reaching the threshold captures the point for that side and awards its value once.
+     */
     private void resolveCaptureCounter(PlacedObjective objective, @Nullable Side controller,
           @Nullable Side owningSide, VictoryPointTracker tracker) {
         ObjectiveScoringScheme scheme = objective.marker().getScoringScheme();
@@ -722,11 +722,8 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
      */
     private void storeControllerOnMarker(ObjectiveMarker marker, @Nullable Side controller) {
         if (controller == null) {
-            if (marker.getScoringScheme().retainsControlWhenEmpty()) {
-                // the point keeps whoever last held it: an empty zone is not the same as a lost one, which
-                // is what lets a mission use more points than a side has units to garrison
-                return;
-            }
+            // an empty retained zone never reaches here with null, retainedHolder() has already named its
+            // holder; so null means nobody controls it, a contested tie included, and the point goes neutral
             marker.setController(ObjectiveMarker.NO_CONTROLLER, ObjectiveMarker.NO_CONTROLLER);
         } else if (controller.isTeam()) {
             marker.setController(controller.id(), ObjectiveMarker.NO_CONTROLLER);

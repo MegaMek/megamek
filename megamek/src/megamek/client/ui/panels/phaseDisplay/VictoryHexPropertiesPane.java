@@ -125,7 +125,11 @@ public final class VictoryHexPropertiesPane {
         startingControlCombo.addItem(ControlChoice.NOBODY);
         for (Player player : players) {
             int team = (player.getTeam() == Player.TEAM_NONE) ? ObjectiveMarker.NO_CONTROLLER : player.getTeam();
-            startingControlCombo.addItem(new ControlChoice(player.getId(), team, player.getName()));
+            // control is stored by team for a teamed player, so the label says which team the choice is
+            String label = (team == ObjectiveMarker.NO_CONTROLLER)
+                  ? player.getName()
+                  : Messages.getString("VictoryHex.startingControl.teamed", player.getName(), team);
+            startingControlCombo.addItem(new ControlChoice(player.getId(), team, label));
         }
         selectStartingControl(startingControlCombo, marker);
         JCheckBox retainControlCheckbox = new JCheckBox();

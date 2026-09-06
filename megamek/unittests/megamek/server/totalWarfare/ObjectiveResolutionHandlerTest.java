@@ -481,6 +481,25 @@ class ObjectiveResolutionHandlerTest {
     }
 
     @Test
+    void testAContestedTieTakesARetainedPointBackToNeutral() {
+        Coords position = new Coords(2, 2);
+        PlacedObjective objective = objectiveAt(position, 1, teamOnePlayer);
+        objective.marker().setController(1, ObjectiveMarker.NO_CONTROLLER);
+        objective.marker().getScoringScheme().setRetainsControlWhenEmpty(true);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(position, new ArrayList<>(List.of(objective.marker())));
+        // one unit each: the zone is not empty, and nobody has the strict majority
+        List<Entity> entities = List.of(groundUnit(teamOnePlayer, position), groundUnit(teamTwoPlayer, position));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        when(game.getEntitiesVector()).thenReturn(entities);
+
+        handler.resolveObjectives();
+
+        assertEquals(ObjectiveMarker.NO_CONTROLLER, objective.marker().getControllingTeam(),
+              "keeping control when empty is not keeping it when contested: neither side has it");
+    }
+
+    @Test
     void testAPointCanStartTheGameHeldAndScoreFromTheFirstEndPhase() {
         Coords leftPosition = new Coords(2, 2);
         Coords rightPosition = new Coords(12, 2);

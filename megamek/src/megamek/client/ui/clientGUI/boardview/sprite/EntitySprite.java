@@ -521,7 +521,9 @@ public class EntitySprite extends Sprite {
             graph.draw(bv.getFacingPolys()[entity.getFacing()]);
         }
 
-        if ((secondaryPos == -1) || (secondaryPos == 6)) {
+        // A building entity lists its own hex as secondary position 0, so that sprite carries its status labels
+        boolean isBuildingOriginSprite = (entity instanceof AbstractBuildingEntity) && (secondaryPos == 0);
+        if ((secondaryPos == -1) || (secondaryPos == 6) || isBuildingOriginSprite) {
             // Gather unit conditions
             ArrayList<Status> stStr = new ArrayList<>();
             criticalStatus = false;

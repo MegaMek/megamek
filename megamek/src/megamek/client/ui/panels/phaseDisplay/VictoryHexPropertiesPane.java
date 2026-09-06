@@ -87,8 +87,9 @@ public final class VictoryHexPropertiesPane {
     /**
      * Shows the properties editor for the given marker and applies the edits to it on confirmation.
      *
-     * @param frame  the parent frame
-     * @param marker the designated marker to edit
+     * @param frame   the parent frame
+     * @param marker  the designated marker to edit
+     * @param players the players who can be chosen as the point's starting holder
      *
      * @return what the user chose; on {@link Result#REMOVED} the caller removes the marker itself
      */
@@ -405,6 +406,7 @@ public final class VictoryHexPropertiesPane {
      * One entry in the starting-control dropdown: a player, or nobody at all.
      *
      * @param playerId The player who starts in control, or {@link ObjectiveMarker#NO_CONTROLLER} for none
+     * @param team     That player's team, or {@link ObjectiveMarker#NO_CONTROLLER} when they have none
      * @param label    What the dropdown shows
      */
     private record ControlChoice(int playerId, int team, String label) {

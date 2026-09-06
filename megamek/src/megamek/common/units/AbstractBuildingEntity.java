@@ -1631,6 +1631,13 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         return lockedTurretWeapons.contains(getEquipmentNum(weapon));
     }
 
+    /**
+     * @return {@code true} if any turret of this building has been locked by a critical hit
+     */
+    public boolean hasLockedTurret() {
+        return !lockedTurretWeapons.isEmpty();
+    }
+
     @Override
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);

@@ -90,7 +90,8 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
           int turretRoll) {
         Vector<Report> reports = new Vector<>();
         reports.add(publicReport(3800, 0));
-        LOGGER.debug("[BuildingCrit] {} hex {}: critical roll {} (turret roll {})",
+        // A critical roll only happens when a single hit beat the hex's damage threshold, so this stays low-volume
+        LOGGER.info("[BuildingCrit] {} hex {}: critical roll {} (turret roll {})",
               building.getShortName(), coords, criticalRoll, turretRoll);
         switch (criticalRoll) {
             case 6 -> weaponMalfunction(building, coords, reports);

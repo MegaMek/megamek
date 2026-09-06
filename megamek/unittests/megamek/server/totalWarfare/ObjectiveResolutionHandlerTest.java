@@ -449,6 +449,38 @@ class ObjectiveResolutionHandlerTest {
     }
 
     @Test
+    void testARetainedHoldPointPausesItsCountWhileItsHolderIsAway() {
+        Coords position = new Coords(2, 2);
+        PlacedObjective objective = objectiveAt(position, 1, teamOnePlayer);
+        ObjectiveScoringScheme scheme = ObjectiveScoringScheme.hold(3, ObjectiveScoringScheme.HoldCounting.CONSECUTIVE);
+        scheme.setRetainsControlWhenEmpty(true);
+        objective.marker().setScoringScheme(scheme);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(position, new ArrayList<>(List.of(objective.marker())));
+        List<Entity> onThePoint = List.of(groundUnit(teamOnePlayer, position));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        when(game.getEntitiesVector()).thenReturn(onThePoint);
+
+        handler.resolveObjectives();
+        assertEquals(1, scheme.getHeldTurns(1, ObjectiveScoringScheme.NO_SIDE), "one turn standing on it");
+
+        // the unit leaves: the point stays team 1's, but keeping is not taking
+        when(game.getEntitiesVector()).thenReturn(List.of());
+        handler.resolveObjectives();
+        handler.resolveObjectives();
+
+        assertEquals(1, objective.marker().getControllingTeam(), "still team 1's point");
+        assertEquals(1, scheme.getHeldTurns(1, ObjectiveScoringScheme.NO_SIDE),
+              "the count neither climbs nor breaks while nobody is there");
+        assertFalse(scheme.isDecided(), "a point cannot be secured from a distance");
+
+        // the unit comes back and the streak resumes where it paused
+        when(game.getEntitiesVector()).thenReturn(onThePoint);
+        handler.resolveObjectives();
+        assertEquals(2, scheme.getHeldTurns(1, ObjectiveScoringScheme.NO_SIDE));
+    }
+
+    @Test
     void testAPointCanStartTheGameHeldAndScoreFromTheFirstEndPhase() {
         Coords leftPosition = new Coords(2, 2);
         Coords rightPosition = new Coords(12, 2);

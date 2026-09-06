@@ -116,18 +116,6 @@ public final class VictoryHexPropertiesPane {
         countingCombo.addActionListener(event -> refreshCountingTooltip.run());
         refreshCountingTooltip.run();
 
-        JLabel thresholdLabel = new JLabel();
-        JLabel rateLabel = new JLabel();
-        JLabel countingLabel = new JLabel(Messages.getString("VictoryHex.counting"));
-        JLabel schemeDescription = new JLabel();
-        SchemeControls controls = new SchemeControls(schemeCombo, countingCombo, thresholdSpinner, rateSpinner,
-              thresholdLabel, rateLabel, countingLabel, schemeDescription);
-        schemeCombo.addActionListener(event -> refreshSchemeRows(controls));
-        countingCombo.addActionListener(event -> refreshSchemeRows(controls));
-        thresholdSpinner.addChangeListener(event -> refreshSchemeRows(controls));
-        rateSpinner.addChangeListener(event -> refreshSchemeRows(controls));
-        refreshSchemeRows(controls);
-
         // who holds this point when the game begins, and whether it stays held once the zone empties.
         // The two go together: without retention, resolution would set a starting controller back to
         // nobody at the first End Phase and the choice would look broken - so the dropdown wakes only
@@ -145,6 +133,19 @@ public final class VictoryHexPropertiesPane {
         startingControlCombo.setEnabled(retainControlCheckbox.isSelected());
         retainControlCheckbox.addActionListener(event ->
               startingControlCombo.setEnabled(retainControlCheckbox.isSelected()));
+
+        JLabel thresholdLabel = new JLabel();
+        JLabel rateLabel = new JLabel();
+        JLabel countingLabel = new JLabel(Messages.getString("VictoryHex.counting"));
+        JLabel schemeDescription = new JLabel();
+        SchemeControls controls = new SchemeControls(schemeCombo, countingCombo, thresholdSpinner, rateSpinner,
+              retainControlCheckbox, thresholdLabel, rateLabel, countingLabel, schemeDescription);
+        schemeCombo.addActionListener(event -> refreshSchemeRows(controls));
+        countingCombo.addActionListener(event -> refreshSchemeRows(controls));
+        thresholdSpinner.addChangeListener(event -> refreshSchemeRows(controls));
+        rateSpinner.addChangeListener(event -> refreshSchemeRows(controls));
+        retainControlCheckbox.addActionListener(event -> refreshSchemeRows(controls));
+        refreshSchemeRows(controls);
 
         // the order a player decides these in: what kind of point is this, how is it won, who holds it
         // to begin with, how big is it, what is it worth. The scheme comes first because it decides
@@ -213,14 +214,15 @@ public final class VictoryHexPropertiesPane {
      * @param countingCombo     the Hold turn-counting selector
      * @param thresholdSpinner  the threshold value (turns to secure, starting grip or points to capture)
      * @param rateSpinner       the per-turn rate (grip drain or capture progress)
+     * @param retainControl     whether the point keeps its holder once the zone empties
      * @param thresholdLabel    the label naming the threshold for the selected preset
      * @param rateLabel         the label naming the rate for the selected preset
      * @param countingLabel     the label of the counting selector
      * @param schemeDescription the live plain-words description of the configured scheme
      */
     private record SchemeControls(JComboBox<SchemePreset> schemeCombo, JComboBox<HoldCounting> countingCombo,
-          JSpinner thresholdSpinner, JSpinner rateSpinner, JLabel thresholdLabel, JLabel rateLabel,
-          JLabel countingLabel, JLabel schemeDescription) {}
+          JSpinner thresholdSpinner, JSpinner rateSpinner, JCheckBox retainControl, JLabel thresholdLabel,
+          JLabel rateLabel, JLabel countingLabel, JLabel schemeDescription) {}
 
     /**
      * Adds one label-and-control row to the properties grid. Both cells share the row's width equally, so the
@@ -259,7 +261,8 @@ public final class VictoryHexPropertiesPane {
         Object threshold = controls.thresholdSpinner().getValue();
         Object rate = controls.rateSpinner().getValue();
         HoldCounting counting = (HoldCounting) controls.countingCombo().getSelectedItem();
-        String presetDescription = describeConfiguredPreset(preset, threshold, rate, counting);
+        String presetDescription = describeConfiguredPreset(preset, threshold, rate, counting,
+              controls.retainControl().isSelected());
         controls.schemeDescription().setText("<html><body style='width: 260px'>" + presetDescription
               + "</body></html>");
         controls.schemeCombo().setToolTipText(presetDescription);
@@ -327,8 +330,8 @@ public final class VictoryHexPropertiesPane {
      * @return the plain-words what-it-does / how-to-make-it-work description of the point as configured
      */
     private static String describeConfiguredPreset(SchemePreset preset, Object threshold, Object rate,
-          HoldCounting counting) {
-        return switch (preset) {
+          HoldCounting counting, boolean retainsControl) {
+        String presetDescription = switch (preset) {
             case HOLD -> Messages.getString("VictoryHex.describe.hold."
                   + counting.name().toLowerCase(Locale.ROOT), threshold);
             case DEFEND -> Messages.getString("VictoryHex.describe.defend", threshold, rate);
@@ -336,6 +339,11 @@ public final class VictoryHexPropertiesPane {
             case STANDARD, RAID -> Messages.getString("VictoryHex.describe."
                   + preset.name().toLowerCase(Locale.ROOT));
         };
+        if (!retainsControl) {
+            return presetDescription;
+        }
+        // retention changes what leaving the zone costs, so the text must say so or it contradicts the tick
+        return presetDescription + " " + Messages.getString("VictoryHex.describe.retained");
     }
 
     /**
@@ -447,6 +455,6 @@ public final class VictoryHexPropertiesPane {
      */
     public static String describeScheme(ObjectiveScoringScheme scheme) {
         return describeConfiguredPreset(scheme.getPreset(), scheme.getThreshold(), scheme.getRatePerTurn(),
-              scheme.getHoldCounting());
+              scheme.getHoldCounting(), scheme.retainsControlWhenEmpty());
     }
 }

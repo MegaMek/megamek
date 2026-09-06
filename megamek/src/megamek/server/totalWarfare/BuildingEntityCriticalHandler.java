@@ -158,7 +158,7 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
     /** Result 10: turreted weapons in the hex jam (1D6 of 1 to 3) or lock in their current facing (4 to 6). */
     private void turretHit(AbstractBuildingEntity building, Coords coords, int turretRoll, Vector<Report> reports) {
         List<WeaponMounted> turretWeapons = building.getWeaponsAt(coords).stream()
-              .filter(weapon -> weapon.isTurret() && !weapon.isHit())
+              .filter(weapon -> building.isTurretMounted(weapon) && !weapon.isHit())
               .toList();
         if (turretWeapons.isEmpty()) {
             reports.add(publicReport(3826, 1));

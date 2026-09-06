@@ -20155,6 +20155,11 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
+            // An Advanced Building entity is the building at its hexes and was already damaged as a building
+            if (entity instanceof AbstractBuildingEntity) {
+                continue;
+            }
+
             int range = position.distance(entityPos);
 
             if (range >= damages.length) {
@@ -32596,6 +32601,10 @@ public class TWGameManager extends AbstractGameManager {
             // get units in hex at the specified altitude (elevation + hex level for non-Aerospace) ignoring
             // targetability (if it's there, it's fair)
             for (Entity entity : game.getEntitiesVector(coords, boardId, true)) {
+                // An Advanced Building entity is the building at this hex and was already damaged above
+                if (entity instanceof AbstractBuildingEntity) {
+                    continue;
+                }
                 // Check: is entity excluded?
                 if ((entity == exclude) || alreadyHit.contains(entity.getId())) {
                     continue;

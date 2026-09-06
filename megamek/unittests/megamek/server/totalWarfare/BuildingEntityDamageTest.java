@@ -231,6 +231,30 @@ class BuildingEntityDamageTest extends GameBoardTestCase {
     }
 
     @Test
+    void criticalRollOfTenWithLowTurretRollJamsTheTurret() {
+        laser.setMekTurretMounted(true);
+
+        new BuildingEntityCriticalHandler(gameManager).applyCriticalResult(building, BUILDING_HEX, 10, 3);
+
+        assertTrue(laser.jammedThisPhase());
+        assertFalse(building.isTurretLocked(laser));
+    }
+
+    @Test
+    void criticalRollOfTenWithHighTurretRollLocksTheTurretToTheForwardArc() {
+        laser.setMekTurretMounted(true);
+        int allRoundArc = building.getWeaponArc(building.getEquipmentNum(laser));
+
+        new BuildingEntityCriticalHandler(gameManager).applyCriticalResult(building, BUILDING_HEX, 10, 4);
+
+        assertTrue(building.isTurretLocked(laser));
+        assertFalse(laser.jammedThisPhase());
+        assertEquals(0, allRoundArc, "a working turret fires in every direction");
+        assertEquals(1, building.getWeaponArc(building.getEquipmentNum(laser)),
+              "a locked turret fires only into the forward arc");
+    }
+
+    @Test
     void criticalRollOfElevenWithoutAmmunitionHasNoEffect() {
         Vector<Report> reports = new BuildingEntityCriticalHandler(gameManager)
               .applyCriticalResult(building, BUILDING_HEX, 11, 1);

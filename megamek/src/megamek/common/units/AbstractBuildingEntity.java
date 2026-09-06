@@ -1601,8 +1601,20 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
+     * A building weapon is turret-mounted when its unit file marks it {@code (ST)} or {@code (PT)}; the loader stores
+     * that as the Mek or pintle turret flag, so {@link Mounted#isTurret()} does not see it.
+     *
+     * @param weapon a weapon of this building
+     *
+     * @return {@code true} if the weapon sits in a turret and can normally fire in any direction
+     */
+    public boolean isTurretMounted(WeaponMounted weapon) {
+        return weapon.isMekTurretMounted() || weapon.isPintleTurretMounted() || weapon.isSponsonTurretMounted();
+    }
+
+    /**
      * Applies a Turret Locks critical hit (TO:AR p. 118) to one turreted weapon: it keeps firing, but only into the
-     * arc of its current facing.
+     * building's forward arc.
      *
      * @param weapon the turreted weapon to lock
      */

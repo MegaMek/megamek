@@ -218,7 +218,7 @@ class ComputeToHitIsImpossible {
                   && !AmmoType.canDeliverMinefield(ammoType)) {
                 return Messages.getString("WeaponAttackAction.NoMinefields");
             }
-            if (target.getTargetType() == Targetable.TYPE_SATURATION 
+            if (target.getTargetType() == Targetable.TYPE_SATURATION
             && !(
                   weaponType.hasFlag(WeaponType.F_MRM)
                         && weapon.getLinkedBy() != null
@@ -343,6 +343,16 @@ class ComputeToHitIsImpossible {
         // Stunned vehicle crews can't make attacks
         if (attacker instanceof Tank tank && tank.getStunnedTurns() > 0) {
             return Messages.getString("WeaponAttackAction.CrewStunned");
+        }
+
+        // Advanced building gunners stunned or killed by a critical hit cannot fire (TO:AR p. 118)
+        if (attacker instanceof AbstractBuildingEntity buildingAttacker) {
+            if (buildingAttacker.isStunned()) {
+                return Messages.getString("WeaponAttackAction.CrewStunned");
+            }
+            if ((weapon != null) && buildingAttacker.hasDeadGunners(weapon.getLocation())) {
+                return Messages.getString("WeaponAttackAction.BuildingGunnersKilled");
+            }
         }
 
         // Vehicles with a single crewman can't shoot and unjam a RAC in the same turn (like meks...)
@@ -624,7 +634,7 @@ class ComputeToHitIsImpossible {
                 }
             }
         }
-        
+
         // Bombast lasers while charging cannot fire
         if ((weapon != null) && (weaponType.hasFlag(WeaponType.F_BOMBAST_LASER) && weapon.getChargeState().equals(ChargeLevel.CHARGING))) {
             return Messages.getString("WeaponAttackAction.BombastImpossible");

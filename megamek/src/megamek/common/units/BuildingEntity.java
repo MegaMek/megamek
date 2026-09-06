@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -137,7 +137,8 @@ public class BuildingEntity extends AbstractBuildingEntity {
     @Override
     public int getWeaponArc(int weaponNumber) {
         WeaponMounted weapon = getWeapon(weaponNumber);
-        if (weapon.isTurret()) {
+        // A turret locked by a critical hit (TO:AR p. 118) fires only into the arc of its current facing
+        if (weapon.isTurret() && !isTurretLocked(weapon)) {
             return 0;
         }
         return switch (weapon.getFacing()) {
@@ -367,4 +368,3 @@ public class BuildingEntity extends AbstractBuildingEntity {
           .setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
           .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 }
-

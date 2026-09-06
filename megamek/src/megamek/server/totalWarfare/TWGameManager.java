@@ -59,8 +59,8 @@ import megamek.common.bays.Bay;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
-import megamek.common.board.Coords;
 import megamek.common.board.BuildingEditSpec;
+import megamek.common.board.Coords;
 import megamek.common.board.HexEditSpec;
 import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.comparators.WeaponComparatorBV;
@@ -29455,7 +29455,7 @@ public class TWGameManager extends AbstractGameManager {
         // Do nothing if no building or no damage was passed.
         if ((bldg != null) && (damage > 0)) {
             r.messageId = 3434;
-            r.add(bldg.toString());
+            r.add((bldg instanceof Entity buildingEntity) ? buildingEntity.getShortName() : bldg.toString());
             r.add(why);
             r.add(damage);
             r.add(level);
@@ -29548,10 +29548,16 @@ public class TWGameManager extends AbstractGameManager {
                     vPhaseReport.add(r);
                 } else if ((curCF < startingCF) && (damage > damageThresh)) {
                     // need to check for crits
-                    // don't bother unless we have some gun emplacements
-                    Collection<GunEmplacement> guns = game.getGunEmplacements(coords, bldg.getBoardId());
-                    if (!guns.isEmpty()) {
-                        vPhaseReport.addAll(criticalGunEmplacement(guns, bldg, coords));
+                    if (bldg instanceof AbstractBuildingEntity buildingEntity) {
+                        // Advanced Building Critical Hits Table, TO:AR p. 119
+                        vPhaseReport.addAll(new BuildingEntityCriticalHandler(this)
+                              .resolveCriticalHit(buildingEntity, coords));
+                    } else {
+                        // don't bother unless we have some gun emplacements
+                        Collection<GunEmplacement> guns = game.getGunEmplacements(coords, bldg.getBoardId());
+                        if (!guns.isEmpty()) {
+                            vPhaseReport.addAll(criticalGunEmplacement(guns, bldg, coords));
+                        }
                     }
                 }
             }
@@ -33424,4 +33430,3 @@ public class TWGameManager extends AbstractGameManager {
         send(new Packet(PacketCommand.UPDATE_INDUSTRIAL_ELEVATORS, new ArrayList<>(elevators)));
     }
 }
-

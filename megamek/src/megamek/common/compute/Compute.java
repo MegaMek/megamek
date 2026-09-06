@@ -6329,6 +6329,11 @@ public class Compute {
      *       the roof or in the air above the building, or if any input argument is <code>null</code>
      */
     public static boolean isInBuilding(@Nullable Game game, @Nullable Entity entity, @Nullable Coords coords) {
+        // A building entity occupies its hexes but is never "inside" a building; treating it as an occupant makes
+        // weapon fire absorb against it twice (once as the building, once as a unit in the building)
+        if (entity instanceof AbstractBuildingEntity) {
+            return false;
+        }
         return (game != null) && (entity != null) && (coords != null)
               && isInBuilding(game, entity.getElevation(), coords, entity.getBoardId());
     }

@@ -130,7 +130,7 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
     private void gunnersStunned(AbstractBuildingEntity building, Coords coords, Vector<Report> reports) {
         boolean gunnersDead = building.getLocationsAt(coords).stream().allMatch(building::hasDeadGunners);
         if (gunnersDead) {
-            reports.add(publicReport(3805, 1));
+            reports.add(publicReport(3811, 1));
             LOGGER.debug("[BuildingCrit] {}: gunners stunned in hex {} has no effect, gunners already dead",
                   building.getShortName(), coords);
             return;

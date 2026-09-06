@@ -74,6 +74,7 @@ class BuildingEntityDamageTest extends GameBoardTestCase {
     private static final int STARTING_ARMOR = 5;
     private static final int REPORT_CRITICAL_CHECK = 3800;
     private static final int REPORT_NO_CRITICAL = 3805;
+    private static final int REPORT_CREW_ALREADY_DEAD = 3811;
     private static final int REPORT_NO_TURRET = 3826;
     private static final int REPORT_AMMO_NO_EFFECT = 3831;
     private static final int REPORT_EQUIPMENT_NO_EFFECT = 3835;
@@ -211,7 +212,7 @@ class BuildingEntityDamageTest extends GameBoardTestCase {
         Vector<Report> reports = new BuildingEntityCriticalHandler(gameManager)
               .applyCriticalResult(building, BUILDING_HEX, 7, 1);
 
-        assertTrue(containsReport(reports, REPORT_NO_CRITICAL));
+        assertTrue(containsReport(reports, REPORT_CREW_ALREADY_DEAD));
         assertFalse(building.isStunned());
     }
 

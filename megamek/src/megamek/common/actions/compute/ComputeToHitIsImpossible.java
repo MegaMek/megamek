@@ -1953,6 +1953,11 @@ class ComputeToHitIsImpossible {
                 return Messages.getString("WeaponAttackAction.OutOfArc");
             }
 
+            // A jammed weapon gets its own reason so the player can tell a jam from the other not-ready states
+            if ((!evenIfAlreadyFired) && weapon.isJammed()) {
+                return Messages.getString("WeaponAttackAction.WeaponJammed");
+            }
+
             // Weapon operational?
             // TODO move to top for early-out if possible, as this is the most common
             // reason shot is impossible

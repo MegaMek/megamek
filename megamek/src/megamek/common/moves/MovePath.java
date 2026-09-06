@@ -557,7 +557,7 @@ public class MovePath implements Cloneable,
             if ((isJumping() && !contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER)) ||
                 (Compute.useSpheroidAtmosphere(game, getEntity()) && (step.getType() != MoveStepType.HOVER))) {
                 int distance = start.distance(land);
-                boolean isWalkOn = (this.contains(MoveStepType.DEPLOY));
+                boolean isWalkOn = (this.contains(MoveStepType.DEPLOY) || step.getType() == MoveStepType.DEPLOY);
                 boolean distanceInvalid = ((!isWalkOn && (step.getDistance() > distance)) || (isWalkOn && (step.getDistance() > (distance + 1))));
                 if (step.isThisStepBackwards() || distanceInvalid) {
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);

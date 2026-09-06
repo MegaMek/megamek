@@ -87,7 +87,7 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
     MOVE_SHAKE_OFF("moveShakeOff", MovementDisplay.CMD_TANK | MovementDisplay.CMD_VTOL),
     MOVE_BRACE("moveBrace", MovementDisplay.CMD_MEK),
     MOVE_CHAFF("moveChaff", MovementDisplay.CMD_NON_INF),
-    MOVE_CLEAR_DEPLOY("moveClearDeploy", MovementDisplay.CMD_NONE),
+    MOVE_CLEAR_DEPLOY("moveClearDeploy", MovementDisplay.CMD_GROUND | MovementDisplay.CMD_AERO),
 
     // Convert command to a single button, which can cycle through modes because MovePath state is available
     MOVE_MODE_CONVERT("moveModeConvert", MovementDisplay.CMD_CONVERTER),

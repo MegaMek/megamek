@@ -33,8 +33,8 @@
 package megamek.client.ui.dialogs.randomArmy;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -52,7 +52,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
@@ -60,11 +59,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
@@ -795,12 +794,14 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      *
      * <p>Split from the combo so the choice can be exercised without building the view.</p>
      *
-     * @param echelonCodes    the ruleset echelon codes this faction offers, in combo order
+     * @param echelonCodes     the ruleset echelon codes this faction offers, in combo order, or {@code null} when
+     *                         the combo has not been populated
      * @param preferredEchelon the echelon wanted, or {@code null} for no preference
      *
      * @return the matching code, or {@code null} when there is no preference or no match
      */
-    static @Nullable String preferredEchelonItem(List<String> echelonCodes, @Nullable Integer preferredEchelon) {
+    static @Nullable String preferredEchelonItem(@Nullable List<String> echelonCodes,
+          @Nullable Integer preferredEchelon) {
         if ((preferredEchelon == null) || (echelonCodes == null)) {
             return null;
         }

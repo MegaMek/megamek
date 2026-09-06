@@ -95,7 +95,7 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
               building.getShortName(), coords, criticalRoll, turretRoll);
         switch (criticalRoll) {
             case 6 -> weaponMalfunction(building, coords, reports);
-            case 7 -> gunnersStunned(building, reports);
+            case 7 -> gunnersStunned(building, coords, reports);
             case 8 -> weaponDestroyed(building, coords, reports);
             case 9 -> gunnersKilled(building, coords, reports);
             case 10 -> turretHit(building, coords, turretRoll, reports);
@@ -123,8 +123,18 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
         LOGGER.debug("[BuildingCrit] {}: weapon malfunction, {} jammed", building.getShortName(), weapon.getName());
     }
 
-    /** Result 7: the gunners are disoriented and the building takes no actions next turn. */
-    private void gunnersStunned(AbstractBuildingEntity building, Vector<Report> reports) {
+    /**
+     * Result 7: the gunners are disoriented and the building takes no actions next turn. A hex whose gunners are
+     * already dead has nobody to stun, so the result has no effect (TO:AR p. 118, Critical Hit Effects).
+     */
+    private void gunnersStunned(AbstractBuildingEntity building, Coords coords, Vector<Report> reports) {
+        boolean gunnersDead = building.getLocationsAt(coords).stream().allMatch(building::hasDeadGunners);
+        if (gunnersDead) {
+            reports.add(publicReport(3805, 1));
+            LOGGER.debug("[BuildingCrit] {}: gunners stunned in hex {} has no effect, gunners already dead",
+                  building.getShortName(), coords);
+            return;
+        }
         building.stunGunners();
         reports.add(publicReport(3810, 1));
         LOGGER.debug("[BuildingCrit] {}: gunners stunned for {} turns", building.getShortName(),

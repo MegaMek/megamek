@@ -205,6 +205,17 @@ class BuildingEntityDamageTest extends GameBoardTestCase {
     }
 
     @Test
+    void criticalRollOfSevenOnDeadGunnersHasNoEffect() {
+        building.killGunnersAt(BUILDING_HEX);
+
+        Vector<Report> reports = new BuildingEntityCriticalHandler(gameManager)
+              .applyCriticalResult(building, BUILDING_HEX, 7, 1);
+
+        assertTrue(containsReport(reports, REPORT_NO_CRITICAL));
+        assertFalse(building.isStunned());
+    }
+
+    @Test
     void criticalRollOfEightDestroysAWeapon() {
         new BuildingEntityCriticalHandler(gameManager).applyCriticalResult(building, BUILDING_HEX, 8, 1);
 

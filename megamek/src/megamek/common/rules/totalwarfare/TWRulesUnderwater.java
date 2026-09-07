@@ -47,6 +47,14 @@ public class TWRulesUnderwater extends RulesUnderwater {
     }
 
     /**
+     * TW p.121 applies the effects of the individual components in a breached leg.
+     */
+    @Override
+    public boolean treatBreachedLegAsDestroyed() {
+        return false;
+    }
+
+    /**
      * Crossing the waterline blocks LOS
      *
      * @return true if water blocks line of sight

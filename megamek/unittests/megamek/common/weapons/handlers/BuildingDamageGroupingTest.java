@@ -55,6 +55,7 @@ import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
+import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
@@ -68,6 +69,7 @@ import megamek.common.units.CrewType;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.units.Targetable;
+import megamek.common.weapons.handlers.lrm.LRMHandler;
 import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -195,6 +197,28 @@ class BuildingDamageGroupingTest extends GameBoardTestCase {
 
         verify(gameManager, times(2)).damageBuilding(eq(building), eq(5), eq(BUILDING_HEX));
         verify(gameManager, times(1)).damageBuilding(eq(building), eq(2), eq(BUILDING_HEX));
+    }
+
+    /**
+     * The missile handlers resolve building hits in their own loop, which is where the first playtest found the
+     * volley still landing as one lump. Adjacent to the building every missile hits, so a full LRM-20 run through
+     * the real handler must reach the building as four groupings of five.
+     */
+    @Test
+    void lrmHandlerRunEndToEndDamagesTheBuildingPerGrouping() throws Exception {
+        attacker.setPosition(BUILDING_HEX.translated(0));
+        attacker.setFacing(3);
+        Mounted<?> ammo = attacker.addEquipment(EquipmentType.get("IS Ammo LRM-20"), Mek.LOC_LEFT_TORSO);
+        lrm.setLinked(ammo);
+        int targetId = HexTarget.locationToId(BoardLocation.of(BUILDING_HEX, board.getBoardId()));
+        WeaponAttackAction attack = new WeaponAttackAction(attacker.getId(), Targetable.TYPE_BUILDING, targetId,
+              attacker.getEquipmentNum(lrm));
+        LRMHandler handler = new LRMHandler(new ToHitData(2, "test"), attack, game, gameManager);
+
+        handler.handle(GamePhase.FIRING, new Vector<>());
+
+        verify(gameManager, times(4)).damageBuilding(eq(building), eq(5), eq(BUILDING_HEX));
+        verify(gameManager, never()).damageBuilding(eq(building), eq(20), eq(BUILDING_HEX));
     }
 
     @Test

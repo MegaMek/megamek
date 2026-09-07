@@ -1461,11 +1461,32 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     /** Turns the gunners remain stunned; a stunned building takes no actions (TO:AR p. 118, Gunners Stunned). */
     private int stunnedTurns = 0;
 
-    /** Locations whose gunners were killed by a critical hit; no weapon in them fires again (TO:AR p. 118). */
-    private final Set<Integer> deadGunnerLocations = new HashSet<>();
+    /**
+     * Locations whose gunners were killed by a critical hit; no weapon in them fires again (TO:AR p. 118). Not
+     * final: a building deserialized from a save written before this field existed comes back with it {@code null},
+     * so it is created on first use.
+     */
+    private Set<Integer> deadGunnerLocations = new HashSet<>();
 
-    /** Equipment numbers of turreted weapons locked in their current facing by a critical hit (TO:AR p. 118). */
-    private final Set<Integer> lockedTurretWeapons = new HashSet<>();
+    /**
+     * Equipment numbers of turreted weapons locked in their current facing by a critical hit (TO:AR p. 118). Not
+     * final for the same deserialization reason as {@link #deadGunnerLocations}.
+     */
+    private Set<Integer> lockedTurretWeapons = new HashSet<>();
+
+    private Set<Integer> deadGunnerLocations() {
+        if (deadGunnerLocations == null) {
+            deadGunnerLocations = new HashSet<>();
+        }
+        return deadGunnerLocations;
+    }
+
+    private Set<Integer> lockedTurretWeapons() {
+        if (lockedTurretWeapons == null) {
+            lockedTurretWeapons = new HashSet<>();
+        }
+        return lockedTurretWeapons;
+    }
 
     /**
      * A building is never inside a building. Without this override the building entity is treated as a unit standing
@@ -1577,7 +1598,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      * @param coords the board hex whose gunners were killed
      */
     public void killGunnersAt(Coords coords) {
-        deadGunnerLocations.addAll(getLocationsAt(coords));
+        deadGunnerLocations().addAll(getLocationsAt(coords));
         if (allGunnersDead()) {
             getCrew().setDoomed(true);
         }
@@ -1589,7 +1610,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      * @return {@code true} if a Gunners Killed critical hit has silenced that location
      */
     public boolean hasDeadGunners(int location) {
-        return deadGunnerLocations.contains(location);
+        return deadGunnerLocations().contains(location);
     }
 
     /**
@@ -1597,7 +1618,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     public boolean allGunnersDead() {
         return !locationToRelativeCoordsMap.isEmpty()
-              && deadGunnerLocations.containsAll(locationToRelativeCoordsMap.keySet());
+              && deadGunnerLocations().containsAll(locationToRelativeCoordsMap.keySet());
     }
 
     /**
@@ -1619,7 +1640,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      * @param weapon the turreted weapon to lock
      */
     public void lockTurretWeapon(WeaponMounted weapon) {
-        lockedTurretWeapons.add(getEquipmentNum(weapon));
+        lockedTurretWeapons().add(getEquipmentNum(weapon));
     }
 
     /**
@@ -1628,14 +1649,14 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      * @return {@code true} if a Turret Locks critical hit has fixed that weapon's facing
      */
     public boolean isTurretLocked(WeaponMounted weapon) {
-        return lockedTurretWeapons.contains(getEquipmentNum(weapon));
+        return lockedTurretWeapons().contains(getEquipmentNum(weapon));
     }
 
     /**
      * @return {@code true} if any turret of this building has been locked by a critical hit
      */
     public boolean hasLockedTurret() {
-        return !lockedTurretWeapons.isEmpty();
+        return !lockedTurretWeapons().isEmpty();
     }
 
     @Override

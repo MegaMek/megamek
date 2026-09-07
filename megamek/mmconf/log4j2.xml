@@ -145,6 +145,19 @@
           </Logger>
         -->
         <!--
+          Advanced Building (gun emplacement) weapon damage diagnostics. Critical rolls are logged at info by
+          default as [BuildingCrit] lines. Uncomment to also trace every hit's hex, level and damage
+          (TWDamageManager, [BuildingDamage]) and each critical result's effect (BuildingEntityCriticalHandler).
+          Then grep logs/megamek.log for "[Building".
+
+          <Logger name="megamek.server.totalWarfare.TWDamageManager" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.server.totalWarfare.BuildingEntityCriticalHandler" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <!--
           Bulldozer (rubble clearing / movement override / destruction roll) diagnostics, silent by default
           (parent "megamek" logger at info). All emit [Bulldozer]-tagged lines. Uncomment to trace: the Clear
           Rubble button enablement and rubble-hex target selection (MovementDisplay); the clear-rubble move-step
@@ -290,6 +303,20 @@
           "why didn't my probe reveal that unit"; leave commented for normal play.
 
           <Logger name="megamek.feature.HiddenUnits" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <!--
+          Objectives and control point diagnostics, silent by default (parent "megamek" logger at info). Messages
+          are tagged [VictoryHex] on the client (the Victory Setup phase: why a click on a hex did nothing, a Done
+          with no points placed) and [Objective] on the server (marker placement at game start, control points
+          present while Use Objectives is off, the route taken out of the starting phase). Grep logs/megamek.log
+          for either tag. Uncomment to diagnose "why can't I place a control point" or "why did my objectives
+          never score"; leave commented for normal play.
+
+          <Logger name="megamek.feature.VictoryHex" level="debug" additivity="false">
               <AppenderRef ref="${env:mm.profile:-null}" />
               <AppenderRef ref="UnifiedLog" />
               <AppenderRef ref="MegaMekLog" />

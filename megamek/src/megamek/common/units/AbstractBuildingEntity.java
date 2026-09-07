@@ -1541,6 +1541,13 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     private int stunnedTurns = 0;
 
     /**
+     * Whether a gamemaster has cut this structure's power at the switch. This is not a rules state; it is the
+     * gamemaster's way of taking a building off line - a substation lost, a scenario event - without having to
+     * destroy its generator. A structure switched off has no power however healthy its generators are.
+     */
+    private boolean powerSwitchedOff = false;
+
+    /**
      * Locations whose gunners were killed by a critical hit; no weapon in them fires again (TO:AR p. 118). Not
      * final: a building deserialized from a save written before this field existed comes back with it {@code null},
      * so it is created on first use.
@@ -1692,10 +1699,63 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      * @param coords the board hex whose gunners were killed
      */
     public void killGunnersAt(Coords coords) {
-        deadGunnerLocations().addAll(getLocationsAt(coords));
-        if (allGunnersDead()) {
-            getCrew().setDoomed(true);
+        setGunnersKilledAt(coords, true);
+    }
+
+    /**
+     * Sets or clears the Gunners Killed state of one hex. Killing is what a critical hit does; clearing exists so a
+     * gamemaster can take the result back, which the rules themselves never do.
+     *
+     * @param coords the board hex whose gunners are being killed or restored
+     * @param killed {@code true} to silence the hex, {@code false} to give it its gunners back
+     */
+    public void setGunnersKilledAt(Coords coords, boolean killed) {
+        List<Integer> locations = getLocationsAt(coords);
+        if (killed) {
+            deadGunnerLocations().addAll(locations);
+        } else {
+            deadGunnerLocations().removeAll(locations);
         }
+        refreshCrewDoomedState();
+    }
+
+    /**
+     * Keeps the crew's doomed flag in step with the gunners. A building whose every hex has lost its gunners has
+     * nobody left to fight it, and giving a hex its gunners back has to lift that again.
+     */
+    private void refreshCrewDoomedState() {
+        if (getCrew() != null) {
+            getCrew().setDoomed(allGunnersDead());
+        }
+    }
+
+    /**
+     * Sets the number of turns the gunners remain stunned, overriding whatever a critical hit left. A gamemaster
+     * uses this to stun a building or to bring it back to its senses; the rules themselves only ever add turns
+     * through {@link #stunGunners()}.
+     *
+     * @param turns turns remaining, counted the way {@link #stunGunners()} sets them; negative is treated as none
+     */
+    public void setStunnedTurns(int turns) {
+        stunnedTurns = Math.max(turns, 0);
+    }
+
+    /**
+     * @return {@code true} when a gamemaster has cut this structure's power at the switch, which leaves it without
+     *       power however healthy its generators are
+     */
+    public boolean isPowerSwitchedOff() {
+        return powerSwitchedOff;
+    }
+
+    /**
+     * Switches this structure's power on or off. Switching off takes it down as surely as losing its generator
+     * does; switching back on only restores it if its generators can still carry the load.
+     *
+     * @param switchedOff {@code true} to cut the power, {@code false} to put it back on
+     */
+    public void setPowerSwitchedOff(boolean switchedOff) {
+        powerSwitchedOff = switchedOff;
     }
 
     /**
@@ -1734,7 +1794,22 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      * @param weapon the turreted weapon to lock
      */
     public void lockTurretWeapon(WeaponMounted weapon) {
-        lockedTurretWeapons().add(getEquipmentNum(weapon));
+        setTurretLocked(weapon, true);
+    }
+
+    /**
+     * Sets or clears the Turret Locks state of one turreted weapon. Locking is what a critical hit does; unlocking
+     * exists so a gamemaster can take the result back, which the rules themselves never do.
+     *
+     * @param weapon the turreted weapon to lock or free
+     * @param locked {@code true} to fix the weapon to the forward arc, {@code false} to give it its traverse back
+     */
+    public void setTurretLocked(WeaponMounted weapon, boolean locked) {
+        if (locked) {
+            lockedTurretWeapons().add(getEquipmentNum(weapon));
+        } else {
+            lockedTurretWeapons().remove(getEquipmentNum(weapon));
+        }
     }
 
     /**

@@ -108,6 +108,35 @@ public class DamageEditSpec implements Serializable {
     public final Map<Integer, Boolean> equipmentCharged = new HashMap<>();
 
     /*
+     * The Advanced Building critical results a gamemaster can set or take back (TO:AR p. 119). These are only
+     * carried for a building; every other unit type leaves them empty or null.
+     */
+
+    /**
+     * Turns the building's gunners remain stunned, or {@code null} when the unit has no such state. Zero means the
+     * gunners can act.
+     */
+    public Integer buildingStunnedTurns;
+
+    /**
+     * Whether the gunners of each of the building's hexes are dead, keyed by one entity location in that hex.
+     * Gunners are killed a hex at a time, so any location of the hex stands for the whole hex.
+     */
+    public final Map<Integer, Boolean> buildingGunnersKilled = new HashMap<>();
+
+    /** Whether each of the building's turreted weapons is locked to the forward arc, by its equipment number. */
+    public final Map<Integer, Boolean> buildingTurretLocked = new HashMap<>();
+
+    /** Whether each of the building's weapons is jammed, by its equipment number. */
+    public final Map<Integer, Boolean> buildingWeaponJammed = new HashMap<>();
+
+    /**
+     * Whether the building's power is switched off at the mains, or {@code null} when the unit has no such switch.
+     * A structure switched off shuts down however healthy its generators are.
+     */
+    public Boolean buildingPowerSwitchedOff;
+
+    /*
      * the gamemaster's temporary skill modifiers, each with a duration of its own (rounds, ignored while its
      * permanent flag is on). Gunnery and piloting travel together; the initiative trio is present only where the
      * editor offered its row, which is a game using individual initiative.

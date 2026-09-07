@@ -33,6 +33,7 @@
 package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -75,6 +76,7 @@ class LargeSupportVehicleBuildingDamageTest extends GameBoardTestCase {
     private static final int STARTING_CF = 90;
     private static final double UNIT_WEIGHT = 150;
     private static final int STANDARD_DAMAGE = 15;
+    private static final int REPORT_BUILDING_DAMAGED = 6441;
 
     static {
         initializeBoard("LARGE_SUPPORT_BUILDING_BOARD", """
@@ -136,18 +138,25 @@ class LargeSupportVehicleBuildingDamageTest extends GameBoardTestCase {
         return unit;
     }
 
-    private void enterBuilding(Entity unit) {
+    private Vector<Report> enterBuilding(Entity unit) {
+        Vector<Report> reports = new Vector<>();
         gameManager.passBuildingWall(unit, building, OUTSIDE_HEX, BUILDING_HEX, 1, "", false,
-              EntityMovementType.MOVE_WALK, true, new Vector<>());
+              EntityMovementType.MOVE_WALK, true, reports);
+        return reports;
+    }
+
+    private static boolean reportsBuildingDamage(Vector<Report> reports) {
+        return reports.stream().anyMatch(report -> report.messageId == REPORT_BUILDING_DAMAGED);
     }
 
     @Test
     void largeSupportVehicleInflictsDoubleDamageOnTheBuilding() {
         LargeSupportTank largeSupportVehicle = addUnit(new LargeSupportTank());
 
-        enterBuilding(largeSupportVehicle);
+        Vector<Report> reports = enterBuilding(largeSupportVehicle);
 
         assertEquals(STARTING_CF - (2 * STANDARD_DAMAGE), building.getCurrentCF(BUILDING_HEX));
+        assertTrue(reportsBuildingDamage(reports), "the round report must state the building damage");
     }
 
     @Test

@@ -29075,15 +29075,31 @@ public class TWGameManager extends AbstractGameManager {
             } else {
                 toBldg = buildingDamageFromPassingWall(entity, bldg);
             }
-            int curCF = bldg.getCurrentCF(entering ? curPos : lastPos);
+            Coords damagedHex = entering ? curPos : lastPos;
+            int curCF = bldg.getCurrentCF(damagedHex);
             curCF -= Math.min(curCF, toBldg);
-            bldg.setCurrentCF(curCF, entering ? curPos : lastPos);
+            bldg.setCurrentCF(curCF, damagedHex);
+            buildingReport.add(reportBuildingDamageFromPassingWall(entity, bldg, toBldg, curCF, damagedHex));
 
             // Apply the correct amount of damage to infantry in the building.
             // ASSUMPTION: We inflict toBldg damage to infantry and
             // not the amount to bring building to 0 CF.
             buildingReport.addAll(damageInfantryIn(bldg, toBldg, entering ? curPos : lastPos));
         }
+    }
+
+    /** The round report line for the damage a moving unit inflicts on a building hex. */
+    private Report reportBuildingDamageFromPassingWall(Entity entity, IBuilding bldg, int damage, int remainingCF,
+          Coords damagedHex) {
+        Report report = new Report(6441);
+        report.subject = entity.getId();
+        report.indent(2);
+        report.add((bldg instanceof Entity buildingEntity) ? buildingEntity.getShortName() : bldg.toString());
+        report.add(damage);
+        report.add(entity.getShortName());
+        report.add(damagedHex.getBoardNum());
+        report.add(remainingCF);
+        return report;
     }
 
     /**

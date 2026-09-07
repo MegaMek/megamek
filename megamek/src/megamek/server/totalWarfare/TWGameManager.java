@@ -59,8 +59,8 @@ import megamek.common.bays.Bay;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
-import megamek.common.board.Coords;
 import megamek.common.board.BuildingEditSpec;
+import megamek.common.board.Coords;
 import megamek.common.board.HexEditSpec;
 import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.comparators.WeaponComparatorBV;
@@ -29059,6 +29059,7 @@ public class TWGameManager extends AbstractGameManager {
                     hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
                     buildingReport.addAll(damageEntity(entity, hit, damage));
                 }
+                buildingReport.addAll(rollMotiveDamageForFailedBuildingEntry(entity));
             }
 
             // Damage the building. The CF can never drop below 0.
@@ -29084,6 +29085,23 @@ public class TWGameManager extends AbstractGameManager {
             // not the amount to bring building to 0 CF.
             buildingReport.addAll(damageInfantryIn(bldg, toBldg, entering ? curPos : lastPos));
         }
+    }
+
+    /**
+     * A vehicle that fails its Driving Skill Roll while moving through a building wall must also make one immediate
+     * roll on the Motive System Damage Table (TW p. 168, Vehicles). Other unit types are unaffected.
+     *
+     * @param entity the unit that failed the roll
+     *
+     * @return the reports of the motive damage roll, empty when the unit is not a vehicle
+     */
+    private Vector<Report> rollMotiveDamageForFailedBuildingEntry(Entity entity) {
+        if (!(entity instanceof Tank tank)) {
+            return new Vector<>();
+        }
+        LOGGER.info("[BuildingEntry] {} failed its Driving Skill Roll in a building; rolling motive system damage",
+              tank.getShortName());
+        return vehicleMotiveDamage(tank, 0);
     }
 
     /**
@@ -33424,4 +33442,3 @@ public class TWGameManager extends AbstractGameManager {
         send(new Packet(PacketCommand.UPDATE_INDUSTRIAL_ELEVATORS, new ArrayList<>(elevators)));
     }
 }
-

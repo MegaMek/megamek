@@ -222,6 +222,7 @@ class ComputeToHitIsImpossible {
             if (target.getTargetType() == Targetable.TYPE_SATURATION
             && !(
                   (weapon != null)
+                        && (weaponType != null)
                         && weaponType.hasFlag(WeaponType.F_MRM)
                         && weapon.getLinkedBy() != null
                         && weapon.getLinkedBy().getType().hasFlag(MiscType.F_APOLLO)

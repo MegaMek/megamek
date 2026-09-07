@@ -4495,11 +4495,13 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Is this location destroyed or breached?
+     * Is this location destroyed, or a breached leg treated as destroyed by the current rules?
      */
     public boolean isLocationBad(int loc) {
         return (getInternal(loc) == IArmorState.ARMOR_DESTROYED) ||
-              (isLocationBlownOff(loc) && !isLocationBlownOffThisPhase(loc));
+              (isLocationBlownOff(loc) && !isLocationBlownOffThisPhase(loc)) ||
+              (locationIsLeg(loc) && (getLocationStatus(loc) == ILocationExposureStatus.BREACHED) &&
+                    Game.rulesManager.getRulesUnderwater().treatBreachedLegAsDestroyed());
     }
 
     public boolean isLocationTrulyDestroyed(int loc) {

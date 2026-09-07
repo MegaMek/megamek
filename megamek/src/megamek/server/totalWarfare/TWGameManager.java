@@ -59,8 +59,8 @@ import megamek.common.bays.Bay;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
-import megamek.common.board.Coords;
 import megamek.common.board.BuildingEditSpec;
+import megamek.common.board.Coords;
 import megamek.common.board.HexEditSpec;
 import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.comparators.WeaponComparatorBV;
@@ -24335,6 +24335,8 @@ public class TWGameManager extends AbstractGameManager {
             return vDesc;
         }
         if (entity instanceof Mek mek) {
+            boolean breachedLegIsDestroyed = entity.locationIsLeg(loc) &&
+                  Game.rulesManager.getRulesUnderwater().treatBreachedLegAsDestroyed();
             // equipment and crits will be marked in applyDamage?
 
             // equipment marked missing
@@ -24349,7 +24351,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (cs != null) {
                     // for every undamaged actuator destroyed by breaching,
                     // we make a PSR (see bug 1040858)
-                    if (entity.locationIsLeg(loc) && entity.canFall(true)) {
+                    if (!breachedLegIsDestroyed && entity.locationIsLeg(loc) && entity.canFall(true)) {
                         if (cs.isHittable()) {
                             switch (cs.getIndex()) {
                                 case Mek.ACTUATOR_UPPER_LEG:
@@ -24394,11 +24396,15 @@ public class TWGameManager extends AbstractGameManager {
                 vDesc.addElement(r);
             }
 
-            // Set the status of the location.
-            // N.B. if we set the status before rolling water PSRs, we get a
-            // "LEG DESTROYED" modifier; setting the status after gives a hip
-            // actuator modifier.
+            // Keep the location physically intact: even breached critical slots can still take hits.
             entity.setLocationStatus(loc, ILocationExposureStatus.BREACHED);
+
+            if (breachedLegIsDestroyed && entity.canFall()) {
+                // Core pp.90, 127: a breached leg causes an automatic fall. The newly breached location already
+                // supplies the destroyed-leg modifier through isLocationBad(), so do not add it a second time.
+                game.addPSR(new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL, "leg breached", loc));
+                Game.rulesManager.getRulesPSR().checkLegActuatorPsrRolls(game, entity);
+            }
 
             // Did the hull breach destroy the engine?
             int hitsToDestroy = 3;
@@ -33424,4 +33430,3 @@ public class TWGameManager extends AbstractGameManager {
         send(new Packet(PacketCommand.UPDATE_INDUSTRIAL_ELEVATORS, new ArrayList<>(elevators)));
     }
 }
-

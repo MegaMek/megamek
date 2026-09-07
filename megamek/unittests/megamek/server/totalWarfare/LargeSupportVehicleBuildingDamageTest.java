@@ -73,6 +73,7 @@ class LargeSupportVehicleBuildingDamageTest extends GameBoardTestCase {
 
     private static final Coords OUTSIDE_HEX = new Coords(5, 4);
     private static final Coords BUILDING_HEX = new Coords(5, 5);
+    private static final Coords FORTRESS_HEX = new Coords(8, 8);
     private static final int STARTING_CF = 90;
     private static final double UNIT_WEIGHT = 150;
     private static final int STANDARD_DAMAGE = 15;
@@ -111,22 +112,27 @@ class LargeSupportVehicleBuildingDamageTest extends GameBoardTestCase {
         game.setBoard(board);
 
         // A standard-class medium building applies no damage scaling, so the CF drop is the raw damage.
-        building = new BuildingEntity(BuildingType.MEDIUM, IBuilding.STANDARD);
-        building.getInternalBuilding().setBuildingHeight(1);
-        building.getInternalBuilding().addHex(CubeCoords.ZERO, STARTING_CF, 0, BasementType.UNKNOWN, false);
-        building.setOwner(game.getPlayer(0));
-        building.refreshLocations();
-        building.refreshAdditionalLocations();
-        building.setId(0);
-        game.addEntity(building);
-        building.setPosition(BUILDING_HEX);
-        building.updateBuildingEntityHexes(board.getBoardId(), gameManager);
+        building = placeBuilding(IBuilding.STANDARD, BUILDING_HEX);
 
         // The Driving Skill Roll and the damage to the moving unit are not under test.
         doReturn(0).when(gameManager).doSkillCheckWhileMoving(any(Entity.class), anyInt(), any(Coords.class),
               any(Coords.class), any(), anyBoolean(), any());
         doReturn(new Vector<Report>()).when(gameManager)
               .damageEntity(any(Entity.class), any(HitData.class), anyInt());
+    }
+
+    private BuildingEntity placeBuilding(int buildingClass, Coords position) {
+        BuildingEntity placed = new BuildingEntity(BuildingType.MEDIUM, buildingClass);
+        placed.getInternalBuilding().setBuildingHeight(1);
+        placed.getInternalBuilding().addHex(CubeCoords.ZERO, STARTING_CF, 0, BasementType.UNKNOWN, false);
+        placed.setOwner(game.getPlayer(0));
+        placed.refreshLocations();
+        placed.refreshAdditionalLocations();
+        placed.setId(game.getNextEntityId());
+        game.addEntity(placed);
+        placed.setPosition(position);
+        placed.updateBuildingEntityHexes(game.getBoard().getBoardId(), gameManager);
+        return placed;
     }
 
     private <T extends Entity> T addUnit(T unit) {
@@ -139,8 +145,12 @@ class LargeSupportVehicleBuildingDamageTest extends GameBoardTestCase {
     }
 
     private Vector<Report> enterBuilding(Entity unit) {
+        return enterBuilding(unit, building, BUILDING_HEX);
+    }
+
+    private Vector<Report> enterBuilding(Entity unit, BuildingEntity entered, Coords enteredHex) {
         Vector<Report> reports = new Vector<>();
-        gameManager.passBuildingWall(unit, building, OUTSIDE_HEX, BUILDING_HEX, 1, "", false,
+        gameManager.passBuildingWall(unit, entered, OUTSIDE_HEX, enteredHex, 1, "", false,
               EntityMovementType.MOVE_WALK, true, reports);
         return reports;
     }
@@ -157,6 +167,17 @@ class LargeSupportVehicleBuildingDamageTest extends GameBoardTestCase {
 
         assertEquals(STARTING_CF - (2 * STANDARD_DAMAGE), building.getCurrentCF(BUILDING_HEX));
         assertTrue(reportsBuildingDamage(reports), "the round report must state the building damage");
+    }
+
+    /** A fortress halves damage taken; the doubling happens before that scaling, so 150 tons still does 15. */
+    @Test
+    void doublingHappensBeforeTheBuildingClassScaling() {
+        BuildingEntity fortress = placeBuilding(IBuilding.FORTRESS, FORTRESS_HEX);
+        LargeSupportTank largeSupportVehicle = addUnit(new LargeSupportTank());
+
+        enterBuilding(largeSupportVehicle, fortress, FORTRESS_HEX);
+
+        assertEquals(STARTING_CF - STANDARD_DAMAGE, fortress.getCurrentCF(FORTRESS_HEX));
     }
 
     @Test

@@ -29115,8 +29115,9 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Damage a unit inflicts on a building hex it moves into or through: one point per ten tons (TW p. 168), scaled
-     * for the building class. Large Support Vehicles inflict double that damage (TW p. 168, Large Support Vehicles).
+     * Damage a unit inflicts on a building hex it moves into or through: one point per ten tons (TW p. 168), doubled
+     * for a Large Support Vehicle (TW p. 168, Large Support Vehicles), and then scaled for the building class the way
+     * any damage to that class is.
      *
      * @param entity the moving unit
      * @param bldg   the building being passed through
@@ -29124,13 +29125,14 @@ public class TWGameManager extends AbstractGameManager {
      * @return the damage to apply to the building hex
      */
     private int buildingDamageFromPassingWall(Entity entity, IBuilding bldg) {
-        int damage = (int) Math.floor(bldg.getDamageToScale() * Math.ceil(entity.getWeight() / 10.0));
+        int standardDamage = (int) Math.ceil(entity.getWeight() / 10.0);
+        int damage = standardDamage;
         if (entity instanceof LargeSupportTank) {
+            damage = standardDamage * 2;
             LOGGER.debug("[BuildingEntry] {} is a Large Support Vehicle; building damage doubled from {} to {}",
-                  entity.getShortName(), damage, damage * 2);
-            return damage * 2;
+                  entity.getShortName(), standardDamage, damage);
         }
-        return damage;
+        return (int) Math.floor(bldg.getDamageToScale() * damage);
     }
 
     /**

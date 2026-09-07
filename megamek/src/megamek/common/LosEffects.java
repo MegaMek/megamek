@@ -301,7 +301,7 @@ public class LosEffects {
     public int getHeavySmoke() {
         return heavySmoke;
     }
-    
+
     public int getBAPReduceSmoke() { return bapReduceSmoke; }
 
     public int getScreen() {
@@ -1096,6 +1096,20 @@ public class LosEffects {
     }
 
     /**
+     * The attacker's elevation above its hex, without the height of the unit itself. Whether a unit is inside a
+     * building depends on the level it stands on: a Mek's extra level is not added inside a building hex for line of
+     * sight purposes (TW p. 175), so a Mek whose head reaches the roof line is still inside.
+     */
+    private static int attackerElevationInHex(Game game, AttackInfo ai) {
+        return ai.attackAbsHeight - ai.attackHeight - game.getHex(ai.attackPos, ai.boardId).getLevel();
+    }
+
+    /** The target's elevation above its hex, without the height of the unit itself; see {@link #attackerElevationInHex}. */
+    private static int targetElevationInHex(Game game, AttackInfo ai) {
+        return ai.targetAbsHeight - ai.targetHeight - game.getHex(ai.targetPos, ai.boardId).getLevel();
+    }
+
+    /**
      * Returns LosEffects for a line that never passes exactly between two hexes. Since intervening() returns all the
      * coordinates, we just add the effects of all those hexes.
      */
@@ -1104,17 +1118,13 @@ public class LosEffects {
         LosEffects los = new LosEffects();
         boolean targetInBuilding = false;
         if (ai.targetEntity) {
-            targetInBuilding = Compute.isInBuilding(game,
-                  ai.targetAbsHeight - game.getHex(ai.targetPos, ai.boardId).getLevel(),
-                  ai.targetPos, ai.boardId);
+            targetInBuilding = Compute.isInBuilding(game, targetElevationInHex(game, ai), ai.targetPos, ai.boardId);
         }
 
         // If the target and attacker are both in a
         // building, set that as the first LOS effect.
         if (targetInBuilding &&
-              Compute.isInBuilding(game,
-                    ai.attackAbsHeight - game.getHex(ai.attackPos, ai.boardId).getLevel(),
-                    ai.attackPos, ai.boardId)) {
+              Compute.isInBuilding(game, attackerElevationInHex(game, ai), ai.attackPos, ai.boardId)) {
             los.setThruBldg(game.getBoard(ai.boardId).getBuildingAt(in.getFirst()));
             // elevation differences count as building hexes passed through
             los.buildingLevelsOrHexes += (Math.abs((ai.attackAbsHeight - ai.attackHeight) -
@@ -1162,17 +1172,13 @@ public class LosEffects {
         LosEffects los = new LosEffects();
         boolean targetInBuilding = false;
         if (ai.targetEntity) {
-            targetInBuilding = Compute.isInBuilding(game,
-                  ai.targetAbsHeight - game.getHex(ai.targetPos, ai.boardId).getLevel(),
-                  ai.targetPos, ai.boardId);
+            targetInBuilding = Compute.isInBuilding(game, targetElevationInHex(game, ai), ai.targetPos, ai.boardId);
         }
 
         // If the target and attacker are both in a
         // building, set that as the first LOS effect.
         if (targetInBuilding &&
-              Compute.isInBuilding(game,
-                    ai.attackAbsHeight - game.getHex(ai.attackPos, ai.boardId).getLevel(),
-                    ai.attackPos, ai.boardId)) {
+              Compute.isInBuilding(game, attackerElevationInHex(game, ai), ai.attackPos, ai.boardId)) {
             los.setThruBldg(game.getBoard(ai.boardId).getBuildingAt(in.getFirst()));
             // elevation differences count as building hexes passed through
             los.buildingLevelsOrHexes += (Math.abs((ai.attackAbsHeight - ai.attackHeight) -
@@ -1609,7 +1615,7 @@ public class LosEffects {
                           ((terrainEl > ai.attackAbsHeight) && attackerAdjacent) ||
                           ((terrainEl > ai.targetAbsHeight) && targetAdjacent);
                 }
-                
+
                 int smokeModifier = 0;
                 if (affectsLos) {
                     // smoke and woods stack for LOS so check them both
@@ -1631,7 +1637,7 @@ public class LosEffects {
                     }
                     Entity attacker = game.getEntity(ai.attackerId);
                     if (attacker != null && attacker.hasBAP(true) && ai.attackPos.distance(coords) <= attacker.getBAPRange()) {
-                        los.bapReduceSmoke += smokeModifier; 
+                        los.bapReduceSmoke += smokeModifier;
                     }
                     // Check woods/jungle
                     if ((woodsLevel == 1) || (jungleLevel == 1)) {

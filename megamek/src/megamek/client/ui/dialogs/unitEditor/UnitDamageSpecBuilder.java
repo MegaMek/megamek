@@ -176,6 +176,21 @@ public class UnitDamageSpecBuilder {
 
         spec.protoHits = critHitsRow(controls.protoCrits);
 
+        // An Advanced Building's own state: the power switch, and the critical results that persist
+        spec.buildingPowerSwitchedOff = (null == controls.chkBuildingPower)
+              ? null
+              : !controls.chkBuildingPower.isSelected();
+        spec.buildingStunnedTurns = spinnerValue(controls.spnBuildingStunnedTurns);
+        for (Map.Entry<Integer, JCheckBox> gunnersKilled : controls.buildingGunnersKilled.entrySet()) {
+            spec.buildingGunnersKilled.put(gunnersKilled.getKey(), gunnersKilled.getValue().isSelected());
+        }
+        for (Map.Entry<Integer, JCheckBox> turretLocked : controls.buildingTurretLocked.entrySet()) {
+            spec.buildingTurretLocked.put(turretLocked.getKey(), turretLocked.getValue().isSelected());
+        }
+        for (Map.Entry<Integer, JCheckBox> weaponJammed : controls.buildingWeaponJammed.entrySet()) {
+            spec.buildingWeaponJammed.put(weaponJammed.getKey(), weaponJammed.getValue().isSelected());
+        }
+
         return spec;
     }
 

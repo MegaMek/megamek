@@ -133,6 +133,21 @@ public class UnitDamageControls {
     /** The crits of each piece of equipment, by its equipment number. */
     public Map<Integer, CheckCritPanel> equipCrits = new HashMap<>();
 
+    /*
+     * An Advanced Building's critical state and its power switch; null or empty for every other unit type.
+     */
+
+    /** Whether the building's power is switched on. Unchecking it shuts the building down. */
+    public JCheckBox chkBuildingPower;
+    /** How many turns the building's gunners stay stunned; zero means they can act. */
+    public JSpinner spnBuildingStunnedTurns;
+    /** Gunners killed in each of the building's hexes, keyed by that hex's ground floor location. */
+    public final Map<Integer, JCheckBox> buildingGunnersKilled = new HashMap<>();
+    /** Whether each of the building's turreted weapons is locked forward, by equipment number. */
+    public final Map<Integer, JCheckBox> buildingTurretLocked = new HashMap<>();
+    /** Whether each of the building's weapons is jammed, by equipment number. */
+    public final Map<Integer, JCheckBox> buildingWeaponJammed = new HashMap<>();
+
     /* system crits */
     public CheckCritPanel engineCrit;
     public CheckCritPanel leftEngineCrit;

@@ -33,8 +33,8 @@
 package megamek.client.ui.dialogs.randomArmy;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -52,7 +52,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
@@ -60,11 +59,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
@@ -154,6 +153,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     /** The formation the player has picked in the palette, applied to a node from the tree's right-click menu. */
     private String selectedFormation;
+
+    /**
+     * Echelon a host would rather the formation combo opened on, or {@code null} to let the faction's ruleset
+     * decide. See {@link #setPreferredEchelon(Integer)}.
+     */
+    private Integer preferredEchelon;
     /** Holds the mix editor when a host shows it inline rather than opening it from the button. */
     private JPanel panFormationMixInline;
     /** The inline panel's title, which names the selected formation so the pick is visible without scrolling. */
@@ -743,6 +748,79 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     /**
+     * Sets the echelon the formation combo should open on, for a host that generates at a known size.
+     *
+     * <p>Not to be confused with {@link #setSelectedFormation}, which picks the formation applied to nodes in the
+     * organisation tree. This one chooses which entry of the Formation combo - Lance, Company, Battalion and so on -
+     * is selected when the combo is populated.</p>
+     *
+     * <p>Random Army leaves this unset and keeps the faction ruleset's own default echelon. MekHQ's Command Designer
+     * sets it, because a command is built at a size the player chose rather than at whatever size the ruleset
+     * happens to favour.</p>
+     *
+     * <p>The preference only decides the opening selection. A player who picks a different echelon keeps it, and it
+     * survives a change of faction wherever the new faction offers that echelon too. The faction ruleset's default
+     * is used whenever the preferred echelon is unset or is not one this faction fields.</p>
+     *
+     * @param preferredEchelon the echelon to open on, numbered as {@code ForceDescriptor} echelons are
+     *                         (constants.txt: LANCE 3, COMPANY 4, BATTALION 5, REGIMENT 6), or {@code null} to
+     *                         restore the ruleset default
+     */
+    public void setPreferredEchelon(@Nullable Integer preferredEchelon) {
+        this.preferredEchelon = preferredEchelon;
+    }
+
+    /**
+     * The combo entry matching {@link #preferredEchelon}, if this faction fields that echelon.
+     *
+     * <p>Combo entries are the ruleset's own echelon codes, which carry the echelon number plus an optional
+     * modifier - "4" for a company, "4+" reinforced, "4-" understrength, "4^" an augmented formation. The plain
+     * code is preferred so the combo opens on an ordinary formation of that size; a modified code is accepted only
+     * when the faction fields no plain one.</p>
+     *
+     * @return the matching combo entry, or {@code null} when no preference is set or this faction has no such
+     *       echelon
+     */
+    private @Nullable String preferredEchelonItem() {
+        List<String> items = new ArrayList<>(cbFormation.getItemCount());
+        for (int index = 0; index < cbFormation.getItemCount(); index++) {
+            items.add(cbFormation.getItemAt(index));
+        }
+        return preferredEchelonItem(items, preferredEchelon);
+    }
+
+    /**
+     * Picks the echelon code matching {@code preferredEchelon} out of {@code echelonCodes}.
+     *
+     * <p>Split from the combo so the choice can be exercised without building the view.</p>
+     *
+     * @param echelonCodes     the ruleset echelon codes this faction offers, in combo order, or {@code null} when
+     *                         the combo has not been populated
+     * @param preferredEchelon the echelon wanted, or {@code null} for no preference
+     *
+     * @return the matching code, or {@code null} when there is no preference or no match
+     */
+    static @Nullable String preferredEchelonItem(@Nullable List<String> echelonCodes,
+          @Nullable Integer preferredEchelon) {
+        if ((preferredEchelon == null) || (echelonCodes == null)) {
+            return null;
+        }
+        String modifiedMatch = null;
+        for (String code : echelonCodes) {
+            if ((code == null) || (MathUtility.parseInt(code.replaceAll("[^0-9]", ""), -1) != preferredEchelon)) {
+                continue;
+            }
+            if (code.matches("[0-9]+")) {
+                return code;
+            }
+            if (modifiedMatch == null) {
+                modifiedMatch = code;
+            }
+        }
+        return modifiedMatch;
+    }
+
+    /**
      * Clears the picked formation, so nothing is selected and the tree offers nothing to apply.
      *
      * <p>Called when a host resets its options: the selection lives here rather than in the host's own options, so
@@ -1308,10 +1386,14 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         if (hasCurrent) {
             cbFormation.setSelectedItem(currentFormation);
         } else {
-            Ruleset rs = Ruleset.findRuleset(forceDesc.getFaction());
-            String echelon = rs.getDefaultEschelon(forceDesc);
-            if ((echelon == null || !formationDisplayNames.containsKey(echelon) && cbFormation.getItemCount() > 0)) {
-                echelon = cbFormation.getItemAt(0);
+            String echelon = preferredEchelonItem();
+            if (echelon == null) {
+                Ruleset rs = Ruleset.findRuleset(forceDesc.getFaction());
+                echelon = rs.getDefaultEschelon(forceDesc);
+                if ((echelon == null ||
+                           !formationDisplayNames.containsKey(echelon) && cbFormation.getItemCount() > 0)) {
+                    echelon = cbFormation.getItemAt(0);
+                }
             }
             if (echelon != null) {
                 cbFormation.setSelectedItem(echelon);

@@ -20155,6 +20155,11 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
+            // An Advanced Building entity is the building at its hexes and was already damaged as a building
+            if (entity instanceof AbstractBuildingEntity) {
+                continue;
+            }
+
             int range = position.distance(entityPos);
 
             if (range >= damages.length) {
@@ -29461,7 +29466,7 @@ public class TWGameManager extends AbstractGameManager {
         // Do nothing if no building or no damage was passed.
         if ((bldg != null) && (damage > 0)) {
             r.messageId = 3434;
-            r.add(bldg.toString());
+            r.add((bldg instanceof Entity buildingEntity) ? buildingEntity.getShortName() : bldg.toString());
             r.add(why);
             r.add(damage);
             r.add(level);
@@ -29554,10 +29559,16 @@ public class TWGameManager extends AbstractGameManager {
                     vPhaseReport.add(r);
                 } else if ((curCF < startingCF) && (damage > damageThresh)) {
                     // need to check for crits
-                    // don't bother unless we have some gun emplacements
-                    Collection<GunEmplacement> guns = game.getGunEmplacements(coords, bldg.getBoardId());
-                    if (!guns.isEmpty()) {
-                        vPhaseReport.addAll(criticalGunEmplacement(guns, bldg, coords));
+                    if (bldg instanceof AbstractBuildingEntity buildingEntity) {
+                        // Advanced Building Critical Hits Table, TO:AR p. 119
+                        vPhaseReport.addAll(new BuildingEntityCriticalHandler(this)
+                              .resolveCriticalHit(buildingEntity, coords));
+                    } else {
+                        // don't bother unless we have some gun emplacements
+                        Collection<GunEmplacement> guns = game.getGunEmplacements(coords, bldg.getBoardId());
+                        if (!guns.isEmpty()) {
+                            vPhaseReport.addAll(criticalGunEmplacement(guns, bldg, coords));
+                        }
                     }
                 }
             }
@@ -32596,6 +32607,10 @@ public class TWGameManager extends AbstractGameManager {
             // get units in hex at the specified altitude (elevation + hex level for non-Aerospace) ignoring
             // targetability (if it's there, it's fair)
             for (Entity entity : game.getEntitiesVector(coords, boardId, true)) {
+                // An Advanced Building entity is the building at this hex and was already damaged above
+                if (entity instanceof AbstractBuildingEntity) {
+                    continue;
+                }
                 // Check: is entity excluded?
                 if ((entity == exclude) || alreadyHit.contains(entity.getId())) {
                     continue;

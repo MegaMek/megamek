@@ -93,7 +93,7 @@ class ComputeToHitIsImpossible {
      * @param distance              The distance in hexes from attacker to target
      * @param spotter               The spotting entity for indirect fire, if present
      * @param weaponType            The WeaponType of the weapon being used
-     * @param weapon                The Mounted weapon being used
+     * @param weapon                The Mounted weapon being used, or {@code null} when the attack names no mount
      * @param ammoType              The AmmoType being used for this attack
      * @param ammo                  The Mounted ammo being used
      * @param munition              Long indicating the munition type flag being used, if applicable
@@ -116,7 +116,8 @@ class ComputeToHitIsImpossible {
      */
     static String toHitIsImpossible(Game game, Entity weaponEntity, int attackerId, Targetable target, int targetType,
           LosEffects los, ToHitData losMods, ToHitData toHit, int distance, Entity spotter, WeaponType weaponType,
-          WeaponMounted weapon, int weaponId, AmmoType ammoType, AmmoMounted ammo, EnumSet<AmmoType.Munitions> munition,
+          @Nullable WeaponMounted weapon, int weaponId, AmmoType ammoType, AmmoMounted ammo,
+          EnumSet<AmmoType.Munitions> munition,
           boolean isFlakAttack, boolean isArtilleryDirect, boolean isArtilleryFLAK, boolean isArtilleryIndirect,
           boolean isAttackerInfantry, boolean isBearingsOnlyMissile, boolean isCruiseMissile,
           boolean exchangeSwarmTarget, boolean isHoming, boolean isInferno, boolean isIndirect, boolean isStrafing,
@@ -218,9 +219,11 @@ class ComputeToHitIsImpossible {
                   && !AmmoType.canDeliverMinefield(ammoType)) {
                 return Messages.getString("WeaponAttackAction.NoMinefields");
             }
-            if (target.getTargetType() == Targetable.TYPE_SATURATION 
+            if (target.getTargetType() == Targetable.TYPE_SATURATION
             && !(
-                  weaponType.hasFlag(WeaponType.F_MRM)
+                  (weapon != null)
+                        && (weaponType != null)
+                        && weaponType.hasFlag(WeaponType.F_MRM)
                         && weapon.getLinkedBy() != null
                         && weapon.getLinkedBy().getType().hasFlag(MiscType.F_APOLLO)
                         && !(
@@ -343,6 +346,16 @@ class ComputeToHitIsImpossible {
         // Stunned vehicle crews can't make attacks
         if (attacker instanceof Tank tank && tank.getStunnedTurns() > 0) {
             return Messages.getString("WeaponAttackAction.CrewStunned");
+        }
+
+        // Advanced building gunners stunned or killed by a critical hit cannot fire (TO:AR p. 118)
+        if (attacker instanceof AbstractBuildingEntity buildingAttacker) {
+            if (buildingAttacker.isStunned()) {
+                return Messages.getString("WeaponAttackAction.CrewStunned");
+            }
+            if ((weapon != null) && buildingAttacker.hasDeadGunners(weapon.getLocation())) {
+                return Messages.getString("WeaponAttackAction.BuildingGunnersKilled");
+            }
         }
 
         // Vehicles with a single crewman can't shoot and unjam a RAC in the same turn (like meks...)
@@ -624,7 +637,7 @@ class ComputeToHitIsImpossible {
                 }
             }
         }
-        
+
         // Bombast lasers while charging cannot fire
         if ((weapon != null) && (weaponType.hasFlag(WeaponType.F_BOMBAST_LASER) && weapon.getChargeState().equals(ChargeLevel.CHARGING))) {
             return Messages.getString("WeaponAttackAction.BombastImpossible");
@@ -1941,6 +1954,11 @@ class ComputeToHitIsImpossible {
                   !attacker.isMakingVTOLGroundAttack() &&
                   !attacker.isOffBoard()) {
                 return Messages.getString("WeaponAttackAction.OutOfArc");
+            }
+
+            // A jammed weapon gets its own reason so the player can tell a jam from the other not-ready states
+            if ((!evenIfAlreadyFired) && weapon.isJammed()) {
+                return Messages.getString("WeaponAttackAction.WeaponJammed");
             }
 
             // Weapon operational?

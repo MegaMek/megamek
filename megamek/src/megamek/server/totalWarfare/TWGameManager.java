@@ -11085,20 +11085,8 @@ public class TWGameManager extends AbstractGameManager {
                         LOGGER.error("Non-Tank tried to unjam turret");
                     }
                 }
-                case RepairWeaponMalfunctionAction repairWeaponMalfunctionAction -> {
-                    if (entity instanceof Tank tank) {
-                        Mounted<?> m = entity.getEquipment(repairWeaponMalfunctionAction.getWeaponId());
-                        m.setJammed(false);
-                        tank.getJammedWeapons().remove(m);
-                        Report r = new Report(3034);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        r.add(m.getName());
-                        addReport(r);
-                    } else {
-                        LOGGER.error("Non-Tank tried to repair weapon malfunction");
-                    }
-                }
+                case RepairWeaponMalfunctionAction repairWeaponMalfunctionAction ->
+                      new WeaponMalfunctionRepairHandler(this).repair(entity, repairWeaponMalfunctionAction);
                 case DisengageAction ignored -> {
                     MovePath path = new MovePath(game, entity);
                     path.addStep(MoveStepType.FLEE);

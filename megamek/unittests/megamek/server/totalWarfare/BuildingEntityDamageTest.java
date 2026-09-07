@@ -75,6 +75,8 @@ class BuildingEntityDamageTest extends GameBoardTestCase {
     private static final int REPORT_CRITICAL_CHECK = 3800;
     private static final int REPORT_NO_CRITICAL = 3805;
     private static final int REPORT_CREW_ALREADY_DEAD = 3811;
+    private static final int REPORT_NO_WEAPON_LEFT = 3841;
+    private static final int REPORT_NO_WEAPON_TO_JAM = 3846;
     private static final int REPORT_NO_TURRET = 3826;
     private static final int REPORT_AMMO_NO_EFFECT = 3831;
     private static final int REPORT_EQUIPMENT_NO_EFFECT = 3835;
@@ -221,6 +223,22 @@ class BuildingEntityDamageTest extends GameBoardTestCase {
         new BuildingEntityCriticalHandler(gameManager).applyCriticalResult(building, BUILDING_HEX, 8, 1);
 
         assertTrue(laser.isHit());
+    }
+
+    @Test
+    void criticalResultsSkipAWeaponDestroyedWithoutTheHitFlag() {
+        // a weapon in a collapsed hex is destroyed directly, never marked hit
+        laser.setDestroyed(true);
+
+        Vector<Report> destroyedReports = new BuildingEntityCriticalHandler(gameManager)
+              .applyCriticalResult(building, BUILDING_HEX, 8, 1);
+        Vector<Report> malfunctionReports = new BuildingEntityCriticalHandler(gameManager)
+              .applyCriticalResult(building, BUILDING_HEX, 6, 1);
+
+        assertTrue(containsReport(destroyedReports, REPORT_NO_WEAPON_LEFT));
+        assertTrue(containsReport(malfunctionReports, REPORT_NO_WEAPON_TO_JAM));
+        assertFalse(laser.isHit());
+        assertFalse(laser.jammedThisPhase());
     }
 
     @Test

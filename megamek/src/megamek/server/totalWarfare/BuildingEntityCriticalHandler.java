@@ -41,6 +41,7 @@ import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.logging.MMLogger;
@@ -109,7 +110,7 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
     /** Result 6: one working weapon in the hex jams until the gunners clear it. */
     private void weaponMalfunction(AbstractBuildingEntity building, Coords coords, Vector<Report> reports) {
         List<WeaponMounted> candidates = building.getWeaponsAt(coords).stream()
-              .filter(weapon -> !weapon.isHit() && !weapon.isJammed() && !weapon.jammedThisPhase())
+              .filter(weapon -> isWorking(weapon) && !weapon.isJammed() && !weapon.jammedThisPhase())
               .toList();
         if (candidates.isEmpty()) {
             reports.add(publicReport(3846, 1));
@@ -144,7 +145,7 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
     /** Result 8: one working weapon in the hex stops working for the rest of the scenario. */
     private void weaponDestroyed(AbstractBuildingEntity building, Coords coords, Vector<Report> reports) {
         List<WeaponMounted> candidates = building.getWeaponsAt(coords).stream()
-              .filter(weapon -> !weapon.isHit())
+              .filter(this::isWorking)
               .toList();
         if (candidates.isEmpty()) {
             reports.add(publicReport(3841, 1));
@@ -169,7 +170,7 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
     /** Result 10: turreted weapons in the hex jam (1D6 of 1 to 3) or lock in their current facing (4 to 6). */
     private void turretHit(AbstractBuildingEntity building, Coords coords, int turretRoll, Vector<Report> reports) {
         List<WeaponMounted> turretWeapons = building.getWeaponsAt(coords).stream()
-              .filter(weapon -> building.isTurretMounted(weapon) && !weapon.isHit())
+              .filter(weapon -> building.isTurretMounted(weapon) && isWorking(weapon))
               .toList();
         if (turretWeapons.isEmpty()) {
             reports.add(publicReport(3826, 1));
@@ -216,7 +217,7 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
     /** Result 12: one other piece of equipment in the hex is rendered inoperative. */
     private void otherEquipmentHit(AbstractBuildingEntity building, Coords coords, Vector<Report> reports) {
         List<MiscMounted> candidates = building.getMiscAt(coords).stream()
-              .filter(misc -> !misc.isHit() && !misc.isDestroyed())
+              .filter(this::isWorking)
               .toList();
         if (candidates.isEmpty()) {
             reports.add(publicReport(3835, 1));
@@ -228,6 +229,15 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
         report.add(equipment.getDesc());
         reports.add(report);
         LOGGER.debug("[BuildingCrit] {}: other equipment hit, {}", building.getShortName(), equipment.getName());
+    }
+
+    /**
+     * A critical result only lands on equipment that still works. A mount that took a hit this phase is out even
+     * though it is not yet marked destroyed, and a mount can be destroyed, missing or useless without the hit flag,
+     * for example when its hex collapsed.
+     */
+    private boolean isWorking(Mounted<?> mounted) {
+        return !mounted.isHit() && mounted.isOperable();
     }
 
     private Report publicReport(int messageId, int indent) {

@@ -38,7 +38,6 @@ import megamek.common.CriticalSlot;
 import megamek.common.bays.ASFBay;
 import megamek.common.bays.Bay;
 import megamek.common.bays.SmallCraftBay;
-import megamek.common.board.Coords;
 import megamek.common.enums.ChargeLevel;
 import megamek.common.equipment.DockingCollar;
 import megamek.common.equipment.EquipmentActivation;
@@ -451,11 +450,8 @@ public class DamageEditApplier {
             building.setStunnedTurns(spec.buildingStunnedTurns);
         }
         for (Map.Entry<Integer, Boolean> gunnersKilled : spec.buildingGunnersKilled.entrySet()) {
-            Coords hex = building.getLocationCoords(gunnersKilled.getKey());
-            if (null == hex) {
-                continue;
-            }
-            building.setGunnersKilledAt(hex, gunnersKilled.getValue());
+            // by location rather than by board hex: in the lobby the building has no position to translate through
+            building.setGunnersKilledAtLocation(gunnersKilled.getKey(), gunnersKilled.getValue());
         }
         for (Map.Entry<Integer, Boolean> turretLocked : spec.buildingTurretLocked.entrySet()) {
             if (building.getEquipment(turretLocked.getKey()) instanceof WeaponMounted weapon) {

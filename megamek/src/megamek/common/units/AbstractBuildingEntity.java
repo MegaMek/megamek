@@ -1710,7 +1710,28 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      * @param killed {@code true} to silence the hex, {@code false} to give it its gunners back
      */
     public void setGunnersKilledAt(Coords coords, boolean killed) {
-        List<Integer> locations = getLocationsAt(coords);
+        setGunnersKilled(getLocationsAt(coords), killed);
+    }
+
+    /**
+     * Sets or clears the Gunners Killed state of the hex a location belongs to, without going out to the board and
+     * back. A building that has not been placed yet has no board position to translate through, so this is the form
+     * the editor uses: in the lobby the hex a location sits in is known but its board hex is not.
+     *
+     * @param location an entity location of the hex being silenced or restored
+     * @param killed   {@code true} to silence the hex, {@code false} to give it its gunners back
+     */
+    public void setGunnersKilledAtLocation(int location, boolean killed) {
+        setGunnersKilled(locationsForRelativeCoords(locationToRelativeCoordsMap.get(location)), killed);
+    }
+
+    /**
+     * Sets or clears the Gunners Killed state of the given locations, and brings the crew's doomed flag with it.
+     *
+     * @param locations the entity locations to silence or restore
+     * @param killed    {@code true} to silence them, {@code false} to give them their gunners back
+     */
+    private void setGunnersKilled(List<Integer> locations, boolean killed) {
         if (killed) {
             deadGunnerLocations().addAll(locations);
         } else {

@@ -35,6 +35,7 @@ package megamek.common.units;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -149,6 +150,22 @@ class BuildingGmStateEditTest {
             assertTrue(building.hasDeadGunners(FIRST_HEX_GROUND_FLOOR));
             assertTrue(building.hasDeadGunners(FIRST_HEX_TOP_FLOOR), "gunners are killed a hex at a time");
             assertFalse(building.hasDeadGunners(SECOND_HEX_GROUND_FLOOR), "a neighbouring hex keeps its gunners");
+        }
+
+        @Test
+        @DisplayName("gunners can be killed on a building that has not been placed yet")
+        void killingGunnersWorksBeforeDeployment() throws Exception {
+            AbstractBuildingEntity building = load(LARGE_BUILDING_FILE);
+            assertNull(building.getPosition(), "a building in the lobby has not been placed");
+
+            DamageEditSpec spec = new DamageEditSpec();
+            spec.buildingGunnersKilled.put(FIRST_HEX_GROUND_FLOOR, true);
+            apply(building, spec);
+
+            assertTrue(building.hasDeadGunners(FIRST_HEX_GROUND_FLOOR),
+                  "the lobby editor has no board position to translate through, so this must not depend on one");
+            assertTrue(building.hasDeadGunners(FIRST_HEX_TOP_FLOOR));
+            assertFalse(building.hasDeadGunners(SECOND_HEX_GROUND_FLOOR));
         }
 
         @Test

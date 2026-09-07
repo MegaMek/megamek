@@ -384,6 +384,8 @@ public class UnitDamagePanelBuilder {
                   0,
                   Math.max(aero.getFuel(), aero.getCurrentFuel()),
                   1));
+            controls.spnFuel.setToolTipText(UIUtil.formatSideTooltip(
+                  Messages.getString("UnitEditorDialog.status.fuel.tooltip")));
             addLabeledRow(generalPanel(), Messages.getString("UnitEditorDialog.status.fuel"), controls.spnFuel);
         }
     }
@@ -439,6 +441,8 @@ public class UnitDamagePanelBuilder {
             String label = (crew.getSlotCount() > 1)
                   ? String.format(Messages.getString("UnitEditorDialog.crewHitsFor"), crew.getNameAndRole(slot))
                   : Messages.getString("UnitEditorDialog.crewHits");
+            controls.spnCrewHits[slot].setToolTipText(UIUtil.formatSideTooltip(
+                  Messages.getString("UnitEditorDialog.crewHits.tooltip")));
             addLabeledRow(targetPanel(crewLocation()), label, controls.spnCrewHits[slot]);
         }
     }
@@ -449,6 +453,8 @@ public class UnitDamagePanelBuilder {
             return;
         }
         controls.spnHeat = new JSpinner(new SpinnerNumberModel(Math.max(entity.heat, 0), 0, MAX_HEAT, 1));
+        controls.spnHeat.setToolTipText(UIUtil.formatSideTooltip(
+              Messages.getString("UnitEditorDialog.heat.tooltip")));
         addLabeledRow(targetPanel(heatLocation()), Messages.getString("UnitEditorDialog.heat"), controls.spnHeat);
     }
 

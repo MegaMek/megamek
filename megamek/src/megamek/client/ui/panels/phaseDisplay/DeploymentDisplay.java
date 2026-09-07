@@ -86,8 +86,8 @@ import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
-import megamek.common.units.Dropship;
 import megamek.common.units.AutomaticEjectionRules;
+import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.Infantry;
@@ -169,6 +169,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     private int cen = Entity.NONE; // current entity number
     // is the shift key held?
+    private static final MMLogger LOGGER = MMLogger.create(DeploymentDisplay.class);
+
     private boolean turnMode = false;
     private boolean assaultDropPreference = false;
     /** Whether the crews-will-die-if-they-eject warning has already been given this deployment phase. */
@@ -1060,12 +1062,47 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     private void processTurn(Entity entity, Coords coords) {
+        if (AllowedDeploymentHelper.hasFacingDependentFootprint(entity)) {
+            turnBuildingToValidFacing(entity);
+            return;
+        }
         entity.setFacing(entity.getPosition().direction(coords));
         entity.setSecondaryFacing(entity.getFacing());
         clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(entity));
         clientgui.updateFiringArc(entity);
         clientgui.showSensorRanges(entity);
         turnMode = false;
+    }
+
+    /**
+     * A multi-hex building occupies different hexes in each facing, so it cannot simply be turned toward a clicked
+     * hex (#7858). Instead the player picks from the facings where the whole footprint fits where the building
+     * already stands.
+     */
+    private void turnBuildingToValidFacing(Entity building) {
+        turnMode = false;
+        Board board = game.getBoard(building.getBoardId());
+        Coords position = building.getPosition();
+        var deploymentHelper = new AllowedDeploymentHelper(building, position, board, board.getHex(position), game);
+        FacingOption facingOptions = deploymentHelper.findAllowedFacings(building.getElevation());
+        if (facingOptions == null) {
+            LOGGER.debug("[DeployBuilding] {} fits in no facing at {}; turn refused", building.getShortName(),
+                  position.getBoardNum());
+            clientgui.addToast(ToastLevel.WARNING, Messages.getString("DeploymentDisplay.buildingCannotTurn",
+                  building.getShortName(), position.getBoardNum()), building);
+            return;
+        }
+        LOGGER.debug("[DeployBuilding] {} at {}: offering facings {}", building.getShortName(),
+              position.getBoardNum(), facingOptions.getValidFacings());
+        int chosenFacing = showFacingChoiceDialog(facingOptions);
+        if (chosenFacing == -1) {
+            return;
+        }
+        building.setFacing(chosenFacing);
+        building.setSecondaryFacing(chosenFacing);
+        clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(building));
+        clientgui.updateFiringArc(building);
+        clientgui.showSensorRanges(building);
     }
 
     //

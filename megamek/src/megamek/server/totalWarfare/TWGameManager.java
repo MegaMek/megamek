@@ -59,8 +59,8 @@ import megamek.common.bays.Bay;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
-import megamek.common.board.Coords;
 import megamek.common.board.BuildingEditSpec;
+import megamek.common.board.Coords;
 import megamek.common.board.HexEditSpec;
 import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.comparators.WeaponComparatorBV;
@@ -29073,7 +29073,7 @@ public class TWGameManager extends AbstractGameManager {
                     return;
                 }
             } else {
-                toBldg = (int) Math.floor(bldg.getDamageToScale() * Math.ceil(entity.getWeight() / 10.0));
+                toBldg = buildingDamageFromPassingWall(entity, bldg);
             }
             int curCF = bldg.getCurrentCF(entering ? curPos : lastPos);
             curCF -= Math.min(curCF, toBldg);
@@ -29084,6 +29084,25 @@ public class TWGameManager extends AbstractGameManager {
             // not the amount to bring building to 0 CF.
             buildingReport.addAll(damageInfantryIn(bldg, toBldg, entering ? curPos : lastPos));
         }
+    }
+
+    /**
+     * Damage a unit inflicts on a building hex it moves into or through: one point per ten tons (TW p. 168), scaled
+     * for the building class. Large Support Vehicles inflict double that damage (TW p. 168, Large Support Vehicles).
+     *
+     * @param entity the moving unit
+     * @param bldg   the building being passed through
+     *
+     * @return the damage to apply to the building hex
+     */
+    private int buildingDamageFromPassingWall(Entity entity, IBuilding bldg) {
+        int damage = (int) Math.floor(bldg.getDamageToScale() * Math.ceil(entity.getWeight() / 10.0));
+        if (entity instanceof LargeSupportTank) {
+            LOGGER.info("[BuildingEntry] {} is a Large Support Vehicle; building damage doubled from {} to {}",
+                  entity.getShortName(), damage, damage * 2);
+            return damage * 2;
+        }
+        return damage;
     }
 
     /**
@@ -33424,4 +33443,3 @@ public class TWGameManager extends AbstractGameManager {
         send(new Packet(PacketCommand.UPDATE_INDUSTRIAL_ELEVATORS, new ArrayList<>(elevators)));
     }
 }
-

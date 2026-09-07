@@ -36,9 +36,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.GameBoardTestCase;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -52,6 +55,7 @@ class SmallBasementEntryTest extends GameBoardTestCase {
     /** Hex 0101 has a small basement (type ordinal 5); hex 0201 a normal one-level basement (type ordinal 4). */
     private static final Coords SMALL_BASEMENT_HEX = new Coords(0, 0);
     private static final Coords NORMAL_BASEMENT_HEX = new Coords(1, 0);
+    private static final Coords WATER_HEX = new Coords(2, 0);
     private static final int GROUND_LEVEL = 0;
 
     static {
@@ -59,6 +63,7 @@ class SmallBasementEntryTest extends GameBoardTestCase {
               size 3 3
               hex 0101 0 "building:2;bldg_cf:50;bldg_elev:1;bldg_basement_type:5" ""
               hex 0201 0 "building:2;bldg_cf:50;bldg_elev:1;bldg_basement_type:4" ""
+              hex 0301 1 "water:1" ""
               end"""
         );
     }
@@ -78,9 +83,42 @@ class SmallBasementEntryTest extends GameBoardTestCase {
         return entity;
     }
 
+    private <T extends Entity> T standingIn(T entity, Coords position) {
+        inGame(entity);
+        entity.setId(game.getNextEntityId());
+        game.addEntity(entity);
+        entity.setDeployed(true);
+        entity.setPosition(position);
+        entity.setElevation(GROUND_LEVEL);
+        return entity;
+    }
+
+    private ConvInfantry platoon() {
+        ConvInfantry platoon = new ConvInfantry();
+        platoon.setSquadSize(7);
+        platoon.setSquadCount(4);
+        platoon.autoSetInternal();
+        return platoon;
+    }
+
+    private BattleArmor squad() {
+        BattleArmor squad = new BattleArmor();
+        squad.setChassisType(BattleArmor.CHASSIS_TYPE_BIPED);
+        squad.setSquadSize(4);
+        squad.autoSetInternal();
+        return squad;
+    }
+
+    private static boolean goingDownIsLegal(Game game, Entity entity) {
+        MovePath path = new MovePath(game, entity);
+        path.addStep(MoveStepType.DOWN);
+        return path.isMoveLegal();
+    }
+
     private ProtoMek protoMek() {
         ProtoMek protoMek = inGame(new ProtoMek());
         protoMek.setMovementMode(EntityMovementMode.BIPED);
+        protoMek.setOriginalWalkMP(3);
         return protoMek;
     }
 
@@ -103,6 +141,38 @@ class SmallBasementEntryTest extends GameBoardTestCase {
         ProtoMek protoMek = protoMek();
 
         assertTrue(protoMek.canGoDown(GROUND_LEVEL, NORMAL_BASEMENT_HEX, board.getBoardId()));
+    }
+
+    /** The Go Down step itself must be legal, not just offered: a basement level is not water. */
+    @Test
+    void platoonCanStepDownIntoTheSmallBasement() {
+        ConvInfantry platoon = standingIn(platoon(), SMALL_BASEMENT_HEX);
+
+        assertTrue(goingDownIsLegal(game, platoon));
+    }
+
+    @Test
+    void battleArmorCanStepDownIntoTheSmallBasement() {
+        BattleArmor squad = standingIn(squad(), SMALL_BASEMENT_HEX);
+
+        assertTrue(goingDownIsLegal(game, squad));
+    }
+
+    /** Stepping down into a normal basement is MegaMek's existing allowance; the small basement is the new refusal. */
+    @Test
+    void protoMekCanStepDownIntoANormalBasementButNotASmallOne() {
+        ProtoMek inNormal = standingIn(protoMek(), NORMAL_BASEMENT_HEX);
+        ProtoMek inSmall = standingIn(protoMek(), SMALL_BASEMENT_HEX);
+
+        assertTrue(goingDownIsLegal(game, inNormal));
+        assertFalse(goingDownIsLegal(game, inSmall));
+    }
+
+    @Test
+    void belowTheSurfaceOfWaterIsStillForbiddenToFootInfantry() {
+        ConvInfantry platoon = inGame(platoon());
+
+        assertTrue(platoon.isLocationProhibited(WATER_HEX, board.getBoardId(), -1));
     }
 
     @Test

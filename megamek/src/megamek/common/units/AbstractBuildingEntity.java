@@ -149,12 +149,25 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      * @return list of all location numbers at these coords (one per floor)
      */
     private List<Integer> coordsToLocations(@Nullable Coords coords) {
-        CubeCoords relativeCoords = boardToRelative(coords);
+        return locationsForRelativeCoords(boardToRelative(coords));
+    }
+
+    /**
+     * Returns every entity location that sits at the given relative hex, one per floor.
+     *
+     * <p>This works in the building's own coordinate space rather than the board's, so it can be used before the
+     * building is placed. In the lobby a building has no position, which leaves the board translation with nothing
+     * to translate.</p>
+     *
+     * @param relativeCoords the hex in the building's relative coordinate space, or {@code null}
+     *
+     * @return the location numbers at that hex, or an empty list when the hex is not part of this building
+     */
+    private List<Integer> locationsForRelativeCoords(@Nullable CubeCoords relativeCoords) {
         if (relativeCoords == null) {
             return List.of();
         }
 
-        // Find all locations that map to these relative coords
         List<Integer> locations = new ArrayList<>();
         for (Map.Entry<Integer, CubeCoords> entry : locationToRelativeCoordsMap.entrySet()) {
             if (entry.getValue().equals(relativeCoords)) {
@@ -961,46 +974,112 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
-     * Private method to set armor for both the entity and the building simultaneously. Ensures entity armor and
-     * building armor stay synchronized.
+     * Sets armor on both the entity and the wrapped {@link Building}, keeping the two in step.
      *
      * @param armor  the armor value to set
-     * @param coords coordinates that need the armor updated
+     * @param coords board coordinates of the hex whose armor is being set
      */
     private void setArmorInternal(int armor, Coords coords) {
-        for (Integer location : coordsToLocations(coords)) {
-            // Set entity armor
-            super.setArmor(armor, location, false);
-        }
-        CubeCoords relativeCoords = boardToRelative(coords);
-        // Set building Armor
-        building.setArmor(armor, relativeCoords);
+        setArmorForRelativeCoords(armor, boardToRelative(coords));
     }
 
+    /**
+     * Sets armor for one hex of this building, on both the entity and the wrapped {@link Building}.
+     *
+     * <p>A building holds one armor value per hex rather than one per floor, so this writes the entity's armor for
+     * every floor at that hex as well as the building's own value. Reads come back through
+     * {@link #getArmor(int, boolean)}, which answers from the building, so a write that skipped the building would
+     * simply be lost.</p>
+     *
+     * @param armor          the armor value to set; an {@link IArmorState} sentinel is translated first
+     * @param relativeCoords the hex in the building's relative coordinate space, or {@code null} to do nothing
+     */
+    private void setArmorForRelativeCoords(int armor, @Nullable CubeCoords relativeCoords) {
+        if (relativeCoords == null) {
+            logger.debug("[BuildingDamage] {}: armor set to {} ignored, that location is not part of a hex yet",
+                  getShortName(), armor);
+            return;
+        }
+
+        int buildingArmor = withoutArmorStateSentinel(armor);
+        for (int location : locationsForRelativeCoords(relativeCoords)) {
+            super.setArmor(buildingArmor, location, false);
+        }
+        building.setArmor(buildingArmor, relativeCoords);
+    }
 
     /**
-     * Private method to set internal structure/CF for both the entity and the building simultaneously. Ensures entity
-     * internal and building CF stay synchronized.
+     * Sets internal structure - a building hex's Construction Factor - on both the entity and the wrapped
+     * {@link Building}, keeping the two in step.
      *
-     * @param internal the internal/CF value to set
-     * @param coords   coordinates that need the armor updated
+     * @param internal the Construction Factor to set
+     * @param coords   board coordinates of the hex being set
      */
     private void setInternalInternal(int internal, Coords coords) {
-        for (Integer location : coordsToLocations(coords)) {
-            super.setInternal(internal, location);
-        }
-        CubeCoords relativeCoords = boardToRelative(coords);
-        // Set building CF
-        building.setPhaseCF(internal, relativeCoords);
+        setConstructionFactorForRelativeCoords(internal, boardToRelative(coords));
+    }
 
+    /**
+     * Sets the Construction Factor for one hex of this building, on both the entity and the wrapped
+     * {@link Building}.
+     *
+     * @param constructionFactor the Construction Factor to set; an {@link IArmorState} sentinel is translated first
+     * @param relativeCoords     the hex in the building's relative coordinate space, or {@code null} to do nothing
+     */
+    private void setConstructionFactorForRelativeCoords(int constructionFactor,
+          @Nullable CubeCoords relativeCoords) {
+        if (relativeCoords == null) {
+            logger.debug("[BuildingDamage] {}: Construction Factor set to {} ignored, that location is not part of"
+                  + " a hex yet", getShortName(), constructionFactor);
+            return;
+        }
+
+        int buildingConstructionFactor = withoutArmorStateSentinel(constructionFactor);
+        for (int location : locationsForRelativeCoords(relativeCoords)) {
+            super.setInternal(buildingConstructionFactor, location);
+        }
+        building.setPhaseCF(buildingConstructionFactor, relativeCoords);
+    }
+
+    /**
+     * Translates the {@link IArmorState} sentinels the damage code uses into a value a building hex can hold.
+     *
+     * <p>A Mek location can be blown clean off, which {@link IArmorState} records as a negative number. A building
+     * hex has no such state: once its armor or Construction Factor is gone it stands at zero, and {@link Building}
+     * rejects a negative value outright. Anything negative therefore becomes {@code 0} here.</p>
+     *
+     * @param value the value about to be stored, which may be an {@link IArmorState} sentinel
+     *
+     * @return {@code value} when it is zero or greater, otherwise {@code 0}
+     */
+    private static int withoutArmorStateSentinel(int value) {
+        return Math.max(value, 0);
+    }
+
+    /**
+     * Override to keep entity armor and building armor synchronized.
+     *
+     * <p>Without this, a write would land only in the entity's armor array while {@link #getArmor(int, boolean)}
+     * kept answering from the building, so the new value would never be seen - which is what made damage edits
+     * from the unit editor appear to do nothing.</p>
+     */
+    @Override
+    public void setArmor(int value, int location, boolean rear) {
+        if (rear) {
+            // A building hex holds a single armor value and has no rear facing, so a rear write must not stand in
+            // for the hex's real armor
+            super.setArmor(value, location, true);
+            return;
+        }
+        setArmorForRelativeCoords(value, locationToRelativeCoordsMap.get(location));
     }
 
     /**
      * Override to keep entity internal and building CF synchronized.
      */
     @Override
-    public void setInternal(int val, int loc) {
-        setInternalInternal(val, relativeToBoard(locationToRelativeCoordsMap.get(loc)));
+    public void setInternal(int value, int location) {
+        setConstructionFactorForRelativeCoords(value, locationToRelativeCoordsMap.get(location));
     }
 
     @Override

@@ -1479,6 +1479,11 @@ public class BotCommandsPanel extends JPanel {
 
     private boolean canBePaused() {
         var game = client.getGame();
+        // The game is already over at victory, so pausing here would only freeze the server while it waits to be
+        // unpaused, blocking a clean hand-off back to MekHQ. See issue #8888.
+        if (game.getPhase().isVictory()) {
+            return false;
+        }
         List<Player> nonBots = game.getPlayersList().stream().filter(p -> !p.isBot()).toList();
         boolean liveUnitsRemaining = nonBots.stream().anyMatch(p -> game.getEntitiesOwnedBy(p) > 0);
         return !liveUnitsRemaining;

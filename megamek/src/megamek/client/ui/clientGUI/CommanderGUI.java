@@ -274,7 +274,11 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
 
     @Override
     public boolean shouldIgnoreHotKeys() {
-        return false;
+        // The key dispatcher is registered application-wide, but this window is embedded in MekHQ alongside other
+        // windows. Only honor hotkeys (notably the space-bar pause) while this Commander window is the active window
+        // and no modal dialog is showing, so pressing space in a MekHQ window does not pause the running scenario.
+        // See issue #8888.
+        return !frame.isActive() || UIUtil.isModalDialogDisplayed();
     }
 
     @Override

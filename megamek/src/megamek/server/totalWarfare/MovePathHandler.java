@@ -46,8 +46,8 @@ import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.IndustrialElevator;
 import megamek.common.LosEffects;
-import megamek.common.ManeuverType;
 import megamek.common.MPCalculationSetting;
+import megamek.common.ManeuverType;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -1712,8 +1712,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
 
         // update entity's locations' exposure
-        gameManager.addReport(gameManager.doSetLocationsExposure(entity,
-              getGame().getBoard(curBoardId).getHex(curPos), false, entity.getElevation()));
+        setLocationsExposure(getGame().getBoard(curBoardId).getHex(curPos), false, entity.getElevation());
 
         // Check the falls_end_movement option to see if it should be able to
         // move on.
@@ -2074,6 +2073,31 @@ class MovePathHandler extends AbstractTWRuleHandler {
         entity.setPosition(lowAltitudeBoard.embeddedBoardPosition(groundBoard.getBoardId()));
     }
 
+
+    /**
+     * Updates exposure and resolves a newly breached Core leg immediately, including when landing from a jump.
+     * Core pp.90, 127 end movement when the leg is lost, even if the unit has MP left after falling.
+     *
+     * @return true if a leg breach ended movement
+     */
+    private boolean setLocationsExposure(Hex hex, boolean isJump, int elevation) {
+        int badLegs = (entity instanceof Mek mek) ? mek.countBadLegs() : 0;
+        addReport(gameManager.doSetLocationsExposure(entity, hex, isJump, elevation));
+        if ((entity instanceof Mek mek) && Game.rulesManager.getRulesUnderwater().treatBreachedLegAsDestroyed() &&
+              (mek.countBadLegs() > badLegs)) {
+            entity.setPosition(curPos);
+            entity.setFacing(curFacing);
+            addReport(gameManager.resolvePilotingRolls(entity));
+            getGame().resetPSRs(entity);
+            curPos = entity.getPosition();
+            curFacing = entity.getFacing();
+            curVTOLElevation = entity.getElevation();
+            fellDuringMovement |= !wasProne && entity.isProne();
+            turnOver = true;
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Iterate through the steps of the movement path and handle each step.
@@ -3669,10 +3693,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (isOnGround) {
                     boom = gameManager.checkVibraBombs(entity, curPos, false, lastPos, curPos,
                           gameManager.getMainPhaseReport());
-                    
+
                     boom |= gameManager.handleTripwire(entity, lastPos, curPos, stepMoveType, gameManager.getMainPhaseReport());
                     boom |= gameManager.handlePitfall(entity, curPos, gameManager.getMainPhaseReport());
-                    
+
                     // Collect EMP reports separately for popup, then add to main report
                     Vector<Report> empReports = new Vector<>();
                     boolean empBoom = gameManager.checkEMPMines(entity, curPos, empReports);
@@ -3785,9 +3809,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // check during movement, for breach damage, and always
             // set dry if appropriate
             // TODO : possibly make the locations local and set later
-            addReport(gameManager.doSetLocationsExposure(entity, curHex,
-                  stepMoveType == EntityMovementType.MOVE_JUMP,
-                  step.getElevation()));
+            if (setLocationsExposure(curHex, stepMoveType == EntityMovementType.MOVE_JUMP, step.getElevation())) {
+                mpUsed = step.getMpUsed();
+                break;
+            }
 
             // check for breaking ice by breaking through from below
             if ((lastElevation < 0) && (step.getElevation() == 0)

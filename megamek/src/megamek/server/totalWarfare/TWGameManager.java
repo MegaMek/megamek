@@ -29115,7 +29115,7 @@ public class TWGameManager extends AbstractGameManager {
     private int buildingDamageFromPassingWall(Entity entity, IBuilding bldg) {
         int damage = (int) Math.floor(bldg.getDamageToScale() * Math.ceil(entity.getWeight() / 10.0));
         if (entity instanceof LargeSupportTank) {
-            LOGGER.info("[BuildingEntry] {} is a Large Support Vehicle; building damage doubled from {} to {}",
+            LOGGER.debug("[BuildingEntry] {} is a Large Support Vehicle; building damage doubled from {} to {}",
                   entity.getShortName(), damage, damage * 2);
             return damage * 2;
         }

@@ -130,6 +130,12 @@ class InfernoBuildingHexResolverTest extends GameBoardTestCase {
         building.updateBuildingEntityHexes(board.getBoardId(), gameManager);
     }
 
+    private ConvInfantry addPlatoonOnLevel(Coords position, int level) {
+        ConvInfantry platoon = addPlatoon(position);
+        platoon.setElevation(level);
+        return platoon;
+    }
+
     private <T extends Infantry> T addInfantry(T infantry, Coords position, int squadSize, int squadCount) {
         infantry.setOwner(game.getPlayer(0));
         infantry.setId(game.getNextEntityId());
@@ -221,6 +227,24 @@ class InfernoBuildingHexResolverTest extends GameBoardTestCase {
         fireInfernosAtBuilding(4, 4);
 
         verify(gameManager, never()).deliverInfernoMissiles(any(Entity.class), eq(platoon), anyInt(), anyInt());
+    }
+
+    /** TW p. 141: only units inside on the level that was struck are affected; the roof is not inside at all. */
+    @Test
+    void unitsOnTheRoofOrAnotherLevelAreNotStruck() {
+        placeBuilding(BuildingType.LIGHT);
+        ConvInfantry groundFloor = addPlatoonOnLevel(BUILDING_HEX, 0);
+        ConvInfantry upstairs = addPlatoonOnLevel(BUILDING_HEX, 1);
+        ConvInfantry onTheRoof = addPlatoonOnLevel(BUILDING_HEX, 2);
+        stubDelivery(groundFloor);
+        stubDelivery(upstairs);
+        stubDelivery(onTheRoof);
+
+        fireInfernosAtBuilding(4, 6);
+
+        verify(gameManager).deliverInfernoMissiles(any(Entity.class), eq(groundFloor), eq(3), eq(CALLED_NONE));
+        verify(gameManager, never()).deliverInfernoMissiles(any(Entity.class), eq(upstairs), anyInt(), anyInt());
+        verify(gameManager, never()).deliverInfernoMissiles(any(Entity.class), eq(onTheRoof), anyInt(), anyInt());
     }
 
     @Test

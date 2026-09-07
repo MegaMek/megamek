@@ -42,14 +42,14 @@ import megamek.common.rolls.Roll;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Targetable;
-import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
 /**
  * Resolves inferno missiles fired at a building hex against the units in that hex (TW p. 141 and its errata). Every
- * unit at or below the building's height rolls 1D6 per missile and is struck on a 5 or 6. Struck missiles hit every
- * unit type at full effect, except conventional infantry inside the building: the Infantry Damage in Buildings Table
- * (TW p. 172) gives the share of the struck missiles that affect the platoon, rounded normally, so a hardened
+ * unit inside the building on the level that was struck rolls 1D6 per missile and is struck on a 5 or 6; units on
+ * other levels, and units standing on the roof, are not inside on that level and are left alone. Struck missiles hit
+ * every unit type at full effect, except conventional infantry inside the building: the Infantry Damage in Buildings
+ * Table (TW p. 172) gives the share of the struck missiles that affect the platoon, rounded normally, so a hardened
  * building shields it completely.
  */
 class InfernoBuildingHexResolver extends AbstractTWRuleHandler {
@@ -60,6 +60,8 @@ class InfernoBuildingHexResolver extends AbstractTWRuleHandler {
     private static final int REPORT_INFANTRY_BURN_THROUGH = 3571;
     private static final int REPORT_INFANTRY_SHIELDED = 3572;
     private static final int STRUCK_ON = 5;
+    /** A building hex target carries no level choice, so the missiles strike the ground level of the building. */
+    private static final int LEVEL_STRUCK = 0;
 
     InfernoBuildingHexResolver(TWGameManager gameManager) {
         super(gameManager);
@@ -79,9 +81,10 @@ class InfernoBuildingHexResolver extends AbstractTWRuleHandler {
     Vector<Report> strikeUnitsInHex(@Nullable Entity attacker, Targetable target, Hex hex, int missiles, int called) {
         Vector<Report> reports = new Vector<>();
         IBuilding building = getGame().getBoard(target.getBoardId()).getBuildingAt(target.getPosition());
-        int buildingHeight = hex.terrainLevel(Terrains.BLDG_ELEV);
         for (Entity unit : getGame().getEntitiesVector(target.getPosition())) {
-            if (unit.getElevation() > buildingHeight) {
+            if (unit.getElevation() != LEVEL_STRUCK) {
+                LOGGER.debug("[Inferno] {} is on level {} of the building, not the struck level {}; not affected",
+                      unit.getShortName(), unit.getElevation(), LEVEL_STRUCK);
                 continue;
             }
             int struck = rollMissilesAgainst(unit, missiles, reports);

@@ -104,11 +104,11 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         }
         boolean withdrawing = attackersAreWithdrawing(combat);
 
-        // The odds use the defender's building-modified score; the conversion back to people uses each side's
-        // score before the building modifier (TO:AR p. 174).
-        int attackerStrength = totalMarinePoints(combat.attackerIds, building);
+        // Only the defender's score takes the building modifier (TO:AR p. 171); the conversion back to people
+        // uses each side's score before the modifier (TO:AR p. 174).
+        int attackerStrength = totalMarinePoints(combat.attackerIds, null);
         int defenderStrength = totalMarinePoints(combat.defenderIds, building);
-        int attackerOwnStrength = totalMarinePoints(combat.attackerIds, null);
+        int attackerOwnStrength = attackerStrength;
         int defenderOwnStrength = totalMarinePoints(combat.defenderIds, null);
         LOGGER.debug("[InfantryAction] {}: attackers {} (own {}), defenders {} (own {}), withdrawing {}",
               building.getShortName(), attackerStrength, attackerOwnStrength, defenderStrength,
@@ -202,10 +202,13 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
     }
 
     /**
+     * Adds up a side's Marine Points, rounding the total up to a whole number ("round all fractions up", TO:AR
+     * p. 171).
+     *
      * @param building the building whose modifier applies, or {@code null} for the score before the modifier
      */
     private int totalMarinePoints(List<Integer> entityIds, @Nullable AbstractBuildingEntity building) {
-        int total = 0;
+        double total = 0;
         for (int entityId : entityIds) {
             Entity entity = getGame().getEntity(entityId);
             if (entity == null) {
@@ -216,9 +219,9 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
                 LOGGER.debug("[InfantryAction] {} is out of the fight and contributes 0", entity.getShortName());
                 continue;
             }
-            total += MarinePointsScoreCalculator.calculateMPS(entity, building);
+            total += MarinePointsScoreCalculator.calculateScore(entity, building);
         }
-        return total;
+        return (int) Math.ceil(total);
     }
 
     /**

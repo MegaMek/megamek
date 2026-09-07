@@ -58,7 +58,8 @@ public class InfantryCombatHelper {
     private static final double CREW_DEFENDER_PERCENTAGE = 0.5;
 
     /**
-     * Calculate the Marine Points Score for an attacking unit.
+     * Calculate the Marine Points Score for an attacking unit. Attackers never get the building modifier; it
+     * belongs to the defender alone (TO:AR p. 171).
      *
      * @param entity   The attacking entity (must be Infantry)
      * @param building The target building/vessel
@@ -69,7 +70,7 @@ public class InfantryCombatHelper {
         if (!(entity instanceof Infantry) || !(building instanceof AbstractBuildingEntity)) {
             return 0;
         }
-        return MarinePointsScoreCalculator.calculateMPS(entity, (AbstractBuildingEntity) building);
+        return MarinePointsScoreCalculator.calculateMPS(entity);
     }
 
     /**

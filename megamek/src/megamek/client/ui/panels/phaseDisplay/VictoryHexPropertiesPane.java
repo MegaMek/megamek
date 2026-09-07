@@ -37,10 +37,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
+import java.util.List;
 import java.util.Locale;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -53,6 +55,7 @@ import javax.swing.SwingUtilities;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.Player;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
@@ -82,12 +85,13 @@ public final class VictoryHexPropertiesPane {
     /**
      * Shows the properties editor for the given marker and applies the edits to it on confirmation.
      *
-     * @param frame  the parent frame
-     * @param marker the designated marker to edit
+     * @param frame   the parent frame
+     * @param marker  the designated marker to edit
+     * @param players the players who can be chosen as the point's starting holder
      *
      * @return what the user chose; on {@link Result#REMOVED} the caller removes the marker itself
      */
-    public static Result edit(JFrame frame, ObjectiveMarker marker) {
+    public static Result edit(JFrame frame, ObjectiveMarker marker, List<Player> players) {
         ObjectiveScoringScheme scheme = marker.getScoringScheme();
         JSpinner radiusSpinner = new JSpinner(
               new SpinnerNumberModel(marker.getControlRadius(), 0, ObjectiveMarker.MAX_CONTROL_RADIUS, 1));
@@ -111,31 +115,58 @@ public final class VictoryHexPropertiesPane {
         countingCombo.addActionListener(event -> refreshCountingTooltip.run());
         refreshCountingTooltip.run();
 
+        // who holds this point when the game begins, and whether it stays held once the zone empties.
+        // The two go together: without retention, resolution would set a starting controller back to
+        // nobody at the first End Phase and the choice would look broken - so the dropdown wakes only
+        // once retention is ticked
+        JComboBox<ControlChoice> startingControlCombo = new JComboBox<>();
+        startingControlCombo.addItem(ControlChoice.NOBODY);
+        for (Player player : players) {
+            int team = (player.getTeam() == Player.TEAM_NONE) ? ObjectiveMarker.NO_CONTROLLER : player.getTeam();
+            // control is stored by team for a teamed player, so the label says which team the choice is
+            String label = (team == ObjectiveMarker.NO_CONTROLLER)
+                  ? player.getName()
+                  : Messages.getString("VictoryHex.startingControl.teamed", player.getName(), team);
+            startingControlCombo.addItem(new ControlChoice(player.getId(), team, label));
+        }
+        selectStartingControl(startingControlCombo, marker);
+        JCheckBox retainControlCheckbox = new JCheckBox();
+        retainControlCheckbox.setSelected(scheme.retainsControlWhenEmpty());
+        retainControlCheckbox.setToolTipText(Messages.getString("VictoryHex.retainControl.tooltip"));
+        startingControlCombo.setEnabled(retainControlCheckbox.isSelected());
+        retainControlCheckbox.addActionListener(event ->
+              startingControlCombo.setEnabled(retainControlCheckbox.isSelected()));
+
         JLabel thresholdLabel = new JLabel();
         JLabel rateLabel = new JLabel();
         JLabel countingLabel = new JLabel(Messages.getString("VictoryHex.counting"));
         JLabel schemeDescription = new JLabel();
         SchemeControls controls = new SchemeControls(schemeCombo, countingCombo, thresholdSpinner, rateSpinner,
-              thresholdLabel, rateLabel, countingLabel, schemeDescription);
+              retainControlCheckbox, thresholdLabel, rateLabel, countingLabel, schemeDescription);
         schemeCombo.addActionListener(event -> refreshSchemeRows(controls));
         countingCombo.addActionListener(event -> refreshSchemeRows(controls));
         thresholdSpinner.addChangeListener(event -> refreshSchemeRows(controls));
         rateSpinner.addChangeListener(event -> refreshSchemeRows(controls));
+        retainControlCheckbox.addActionListener(event -> refreshSchemeRows(controls));
         refreshSchemeRows(controls);
 
-        // the order a player decides these in: what kind of point is this, how is it won, how big is
-        // it, what is it worth. The scheme comes first because it decides which of the rows below even
-        // appear - with it third, two values had to be filled in before learning what else would be asked.
-        // A grid bag rather than a plain grid: a plain grid keeps a cell for every hidden row, so a scheme with
-        // no rows of its own (Standard) left three empty rows between the scheme and the radius
+        // the order a player decides these in: what kind of point is this, how is it won, who holds it
+        // to begin with, how big is it, what is it worth. The scheme comes first because it decides
+        // which of the rows below even appear - with it third, two values had to be filled in before
+        // learning what else would be asked. A grid bag rather than a plain grid: a plain grid keeps a
+        // cell for every hidden row, so a scheme with no rows of its own (Standard) left three empty rows
+        // between the scheme and the radius
         JPanel propertiesPanel = new JPanel(new GridBagLayout());
         addRow(propertiesPanel, 0, new JLabel(Messages.getString("VictoryHex.scheme")), schemeCombo);
         addRow(propertiesPanel, 1, thresholdLabel, thresholdSpinner);
         addRow(propertiesPanel, 2, countingLabel, countingCombo);
         addRow(propertiesPanel, 3, rateLabel, rateSpinner);
-        addRow(propertiesPanel, 4, new JLabel(Messages.getString("VictoryHex.radius")), radiusSpinner);
-        addRow(propertiesPanel, 5, new JLabel(Messages.getString("VictoryHex.victoryPoints")), victoryPointSpinner);
-        pinRowsToTheTop(propertiesPanel, 6);
+        addRow(propertiesPanel, 4, new JLabel(Messages.getString("VictoryHex.retainControl")), retainControlCheckbox);
+        addRow(propertiesPanel, 5, new JLabel(Messages.getString("VictoryHex.startingControl")),
+              startingControlCombo);
+        addRow(propertiesPanel, 6, new JLabel(Messages.getString("VictoryHex.radius")), radiusSpinner);
+        addRow(propertiesPanel, 7, new JLabel(Messages.getString("VictoryHex.victoryPoints")), victoryPointSpinner);
+        pinRowsToTheTop(propertiesPanel, 8);
 
         JPanel editorPanel = new JPanel();
         editorPanel.setLayout(new BoxLayout(editorPanel, BoxLayout.PAGE_AXIS));
@@ -155,6 +186,19 @@ public final class VictoryHexPropertiesPane {
         if (result != 0) {
             return Result.CANCELLED;
         }
+        boolean retainsControl = retainControlCheckbox.isSelected();
+        scheme.setRetainsControlWhenEmpty(retainsControl);
+        // a greyed dropdown keeps whatever it last showed, so its choice only counts while retention is on;
+        // without retention the first End Phase would clear a starting holder anyway
+        ControlChoice startingControl = retainsControl
+              ? (ControlChoice) startingControlCombo.getSelectedItem()
+              : ControlChoice.NOBODY;
+        if (startingControl != null) {
+            // control is keyed the way scoring keys it: by team for a teamed player, by player otherwise.
+            // Writing a teamed player's id as an unteamed controller would look right on the board and
+            // never match the side the End Phase resolves
+            marker.setController(startingControl.team(), startingControl.unteamedPlayerId());
+        }
         marker.setControlRadius((Integer) radiusSpinner.getValue());
         marker.setVictoryPointValue((Integer) victoryPointSpinner.getValue());
         scheme.setPreset((SchemePreset) schemeCombo.getSelectedItem());
@@ -173,14 +217,15 @@ public final class VictoryHexPropertiesPane {
      * @param countingCombo     the Hold turn-counting selector
      * @param thresholdSpinner  the threshold value (turns to secure, starting grip or points to capture)
      * @param rateSpinner       the per-turn rate (grip drain or capture progress)
+     * @param retainControl     whether the point keeps its holder once the zone empties
      * @param thresholdLabel    the label naming the threshold for the selected preset
      * @param rateLabel         the label naming the rate for the selected preset
      * @param countingLabel     the label of the counting selector
      * @param schemeDescription the live plain-words description of the configured scheme
      */
     private record SchemeControls(JComboBox<SchemePreset> schemeCombo, JComboBox<HoldCounting> countingCombo,
-          JSpinner thresholdSpinner, JSpinner rateSpinner, JLabel thresholdLabel, JLabel rateLabel,
-          JLabel countingLabel, JLabel schemeDescription) {}
+          JSpinner thresholdSpinner, JSpinner rateSpinner, JCheckBox retainControl, JLabel thresholdLabel,
+          JLabel rateLabel, JLabel countingLabel, JLabel schemeDescription) {}
 
     /**
      * Adds one label-and-control row to the properties grid. Both cells share the row's width equally, so the
@@ -218,7 +263,8 @@ public final class VictoryHexPropertiesPane {
         Object threshold = controls.thresholdSpinner().getValue();
         Object rate = controls.rateSpinner().getValue();
         HoldCounting counting = (HoldCounting) controls.countingCombo().getSelectedItem();
-        String presetDescription = describeConfiguredPreset(preset, threshold, rate, counting);
+        String presetDescription = describeConfiguredPreset(preset, threshold, rate, counting,
+              controls.retainControl().isSelected());
         controls.schemeDescription().setText("<html><body style='width: 260px'>" + presetDescription
               + "</body></html>");
         controls.schemeCombo().setToolTipText(presetDescription);
@@ -302,8 +348,8 @@ public final class VictoryHexPropertiesPane {
      * @return the plain-words what-it-does / how-to-make-it-work description of the point as configured
      */
     private static String describeConfiguredPreset(SchemePreset preset, Object threshold, Object rate,
-          HoldCounting counting) {
-        return switch (preset) {
+          HoldCounting counting, boolean retainsControl) {
+        String presetDescription = switch (preset) {
             case HOLD -> Messages.getString("VictoryHex.describe.hold."
                   + counting.name().toLowerCase(Locale.ROOT), threshold);
             case DEFEND -> Messages.getString("VictoryHex.describe.defend", threshold, rate);
@@ -311,6 +357,11 @@ public final class VictoryHexPropertiesPane {
             case STANDARD, RAID -> Messages.getString("VictoryHex.describe."
                   + preset.name().toLowerCase(Locale.ROOT));
         };
+        if (!retainsControl) {
+            return presetDescription;
+        }
+        // retention changes what leaving the zone costs, so the text must say so or it contradicts the tick
+        return presetDescription + " " + Messages.getString("VictoryHex.describe.retained");
     }
 
     /**
@@ -369,6 +420,51 @@ public final class VictoryHexPropertiesPane {
     }
 
     /**
+     * One entry in the starting-control dropdown: a player, or nobody at all.
+     *
+     * @param playerId The player who starts in control, or {@link ObjectiveMarker#NO_CONTROLLER} for none
+     * @param team     That player's team, or {@link ObjectiveMarker#NO_CONTROLLER} when they have none
+     * @param label    What the dropdown shows
+     */
+    private record ControlChoice(int playerId, int team, String label) {
+
+        static final ControlChoice NOBODY = new ControlChoice(ObjectiveMarker.NO_CONTROLLER,
+              ObjectiveMarker.NO_CONTROLLER, Messages.getString("VictoryHex.startingControl.nobody"));
+
+        /** @return The player id to store as the controller, or none when the player is on a team */
+        int unteamedPlayerId() {
+            return (team != ObjectiveMarker.NO_CONTROLLER) ? ObjectiveMarker.NO_CONTROLLER : playerId;
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
+    }
+
+    /**
+     * Preselects whoever already holds the point, so reopening the pane shows the truth rather than
+     * resetting the choice.
+     *
+     * @param combo  The starting-control dropdown
+     * @param marker The point being edited
+     */
+    private static void selectStartingControl(JComboBox<ControlChoice> combo, ObjectiveMarker marker) {
+        for (int index = 0; index < combo.getItemCount(); index++) {
+            ControlChoice choice = combo.getItemAt(index);
+            boolean matchesPlayer = (marker.getControllingPlayerId() != ObjectiveMarker.NO_CONTROLLER)
+                  && (choice.playerId() == marker.getControllingPlayerId());
+            boolean matchesTeam = (marker.getControllingTeam() != ObjectiveMarker.NO_CONTROLLER)
+                  && (choice.team() == marker.getControllingTeam());
+            if (matchesPlayer || matchesTeam) {
+                combo.setSelectedIndex(index);
+                return;
+            }
+        }
+        combo.setSelectedItem(ControlChoice.NOBODY);
+    }
+
+    /**
      * The same "what it does / how to make it work" wording the setup pane shows, for a scheme already
      * configured. The board tooltip uses it so a point explains itself the same way in both places.
      *
@@ -378,6 +474,6 @@ public final class VictoryHexPropertiesPane {
      */
     public static String describeScheme(ObjectiveScoringScheme scheme) {
         return describeConfiguredPreset(scheme.getPreset(), scheme.getThreshold(), scheme.getRatePerTurn(),
-              scheme.getHoldCounting());
+              scheme.getHoldCounting(), scheme.retainsControlWhenEmpty());
     }
 }

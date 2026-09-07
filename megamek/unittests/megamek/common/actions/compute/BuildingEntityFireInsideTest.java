@@ -155,6 +155,14 @@ class BuildingEntityFireInsideTest extends GameBoardTestCase {
     }
 
     @Test
+    void aSquadOnAnotherBoardAtTheSameCoordinatesIsNotInsideThisBuilding() {
+        squad.setElevation(0);
+        squad.setBoardId(building.getBoardId() + 1);
+
+        assertFalse(building.isInsideThisBuilding(squad));
+    }
+
+    @Test
     void canFireOnASquadStandingOnItsRoof() {
         squad.setElevation(BUILDING_HEIGHT);
 

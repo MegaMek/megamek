@@ -1509,8 +1509,9 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      * @return {@code true} if the unit occupies one of this building's hexes below roof level
      */
     public boolean isInsideThisBuilding(Entity unit) {
+        boolean onMyBoard = unit.getBoardId() == getBoardId();
         boolean inOneOfMyHexes = (unit.getPosition() != null) && getCoordsList().contains(unit.getPosition());
-        return inOneOfMyHexes && unit.isInBuilding();
+        return onMyBoard && inOneOfMyHexes && unit.isInBuilding();
     }
 
     /**

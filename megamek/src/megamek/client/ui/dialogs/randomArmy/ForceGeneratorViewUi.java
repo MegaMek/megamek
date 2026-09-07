@@ -1301,17 +1301,6 @@ public class ForceGeneratorViewUi implements ActionListener {
     }
 
     /**
-     * Rebuilds the tree after an edit, leaving it looking as it did.
-     *
-     * <p>The model has to be replaced for the tree to see the change, and that alone would collapse everything back
-     * to the root - so an edit three levels down would cost the player the whole view they were working in. The
-     * open branches and the selection are taken before and put back after.</p>
-     *
-     * <p>Branches inside the part that changed cannot come back, because their nodes no longer exist; a re-rolled
-     * lance holds different units than the ones that were on screen. Everything outside it is the same object it
-     * was, so its path still matches.</p>
-     */
-    /**
      * The organisation-tree node the player has selected, if it is a formation.
      *
      * <p>An individual unit is not one. Selecting a Mek inside a lance says nothing about which formations the
@@ -1331,6 +1320,17 @@ public class ForceGeneratorViewUi implements ActionListener {
         return node;
     }
 
+    /**
+     * Rebuilds the tree after an edit, leaving it looking as it did.
+     *
+     * <p>The model has to be replaced for the tree to see the change, and that alone would collapse everything back
+     * to the root - so an edit three levels down would cost the player the whole view they were working in. The
+     * open branches and the selection are taken before and put back after.</p>
+     *
+     * <p>Branches inside the part that changed cannot come back, because their nodes no longer exist; a re-rolled
+     * lance holds different units than the ones that were on screen. Everything outside it is the same object it
+     * was, so its path still matches.</p>
+     */
     private void refreshTreeAfterEdit() {
         List<TreePath> expanded = new ArrayList<>();
         for (int row = 0; row < forceTree.getRowCount(); row++) {

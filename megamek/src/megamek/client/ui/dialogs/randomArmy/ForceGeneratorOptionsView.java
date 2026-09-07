@@ -169,6 +169,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      * every host starts in and the only state a host with no tree ever has.</p>
      */
     private ForceDescriptor formationMixContext;
+    /** The shape the palette was last built for, so an identical selection does not rebuild it. */
+    private String formationMixShape = "settings";
     /** Holds the mix editor when a host shows it inline rather than opening it from the button. */
     private JPanel panFormationMixInline;
     /** The inline panel's title, which names the selected formation so the pick is visible without scrolling. */
@@ -846,13 +848,37 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      * @since 0.51.01
      */
     public void setFormationMixContext(@Nullable ForceDescriptor node) {
-        if (formationMixContext == node) {
+        formationMixContext = node;
+
+        // Only three fields of the node reach the probe, so two different nodes of the same shape - the sibling
+        // lances of a company, say - produce the same palette. Rebuilding it for them costs FORMATION_OFFER_SAMPLES
+        // structure-only builds on the event thread, which is what an arrow key held down through a battalion would
+        // pay for every node it passed. The reference is still stored above, because a later probe reads the node
+        // itself.
+        String shape = formationMixShapeOf(node);
+        if (shape.equals(formationMixShape)) {
             return;
         }
-        formationMixContext = node;
+        formationMixShape = shape;
+
         logger.debug("[FormationMix] context is now {}",
               (node == null) ? "the settings" : ("unitType=" + node.getUnitType() + " echelon=" + node.getEchelon()));
         refreshInlineFormationMixEditor();
+    }
+
+    /**
+     * The part of a node that changes what the palette offers: the three fields
+     * {@link #applyFormationMixContext} copies onto the probe. Two nodes agreeing on these produce the same palette.
+     *
+     * @param node the selected node, or {@code null} for the settings' own shape
+     *
+     * @return a key that is equal for any two nodes the palette cannot tell apart
+     */
+    private static String formationMixShapeOf(@Nullable ForceDescriptor node) {
+        if (node == null) {
+            return "settings";
+        }
+        return node.getUnitType() + "/" + node.getEchelon() + "/" + node.isAugmented();
     }
 
     /**

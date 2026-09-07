@@ -20133,6 +20133,11 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
+            // An Advanced Building entity is the building at its hexes and was already damaged as a building
+            if (entity instanceof AbstractBuildingEntity) {
+                continue;
+            }
+
             int range = position.distance(entityPos);
 
             if (range >= damages.length) {
@@ -24313,6 +24318,8 @@ public class TWGameManager extends AbstractGameManager {
             return vDesc;
         }
         if (entity instanceof Mek mek) {
+            boolean breachedLegIsDestroyed = entity.locationIsLeg(loc) &&
+                  Game.rulesManager.getRulesUnderwater().treatBreachedLegAsDestroyed();
             // equipment and crits will be marked in applyDamage?
 
             // equipment marked missing
@@ -24327,7 +24334,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (cs != null) {
                     // for every undamaged actuator destroyed by breaching,
                     // we make a PSR (see bug 1040858)
-                    if (entity.locationIsLeg(loc) && entity.canFall(true)) {
+                    if (!breachedLegIsDestroyed && entity.locationIsLeg(loc) && entity.canFall(true)) {
                         if (cs.isHittable()) {
                             switch (cs.getIndex()) {
                                 case Mek.ACTUATOR_UPPER_LEG:
@@ -24372,11 +24379,15 @@ public class TWGameManager extends AbstractGameManager {
                 vDesc.addElement(r);
             }
 
-            // Set the status of the location.
-            // N.B. if we set the status before rolling water PSRs, we get a
-            // "LEG DESTROYED" modifier; setting the status after gives a hip
-            // actuator modifier.
+            // Keep the location physically intact: even breached critical slots can still take hits.
             entity.setLocationStatus(loc, ILocationExposureStatus.BREACHED);
+
+            if (breachedLegIsDestroyed && entity.canFall()) {
+                // Core pp.90, 127: a breached leg causes an automatic fall. The newly breached location already
+                // supplies the destroyed-leg modifier through isLocationBad(), so do not add it a second time.
+                game.addPSR(new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL, "leg breached", loc));
+                Game.rulesManager.getRulesPSR().checkLegActuatorPsrRolls(game, entity);
+            }
 
             // Did the hull breach destroy the engine?
             int hitsToDestroy = 3;
@@ -29433,7 +29444,7 @@ public class TWGameManager extends AbstractGameManager {
         // Do nothing if no building or no damage was passed.
         if ((bldg != null) && (damage > 0)) {
             r.messageId = 3434;
-            r.add(bldg.toString());
+            r.add((bldg instanceof Entity buildingEntity) ? buildingEntity.getShortName() : bldg.toString());
             r.add(why);
             r.add(damage);
             r.add(level);
@@ -29526,10 +29537,16 @@ public class TWGameManager extends AbstractGameManager {
                     vPhaseReport.add(r);
                 } else if ((curCF < startingCF) && (damage > damageThresh)) {
                     // need to check for crits
-                    // don't bother unless we have some gun emplacements
-                    Collection<GunEmplacement> guns = game.getGunEmplacements(coords, bldg.getBoardId());
-                    if (!guns.isEmpty()) {
-                        vPhaseReport.addAll(criticalGunEmplacement(guns, bldg, coords));
+                    if (bldg instanceof AbstractBuildingEntity buildingEntity) {
+                        // Advanced Building Critical Hits Table, TO:AR p. 119
+                        vPhaseReport.addAll(new BuildingEntityCriticalHandler(this)
+                              .resolveCriticalHit(buildingEntity, coords));
+                    } else {
+                        // don't bother unless we have some gun emplacements
+                        Collection<GunEmplacement> guns = game.getGunEmplacements(coords, bldg.getBoardId());
+                        if (!guns.isEmpty()) {
+                            vPhaseReport.addAll(criticalGunEmplacement(guns, bldg, coords));
+                        }
                     }
                 }
             }
@@ -32568,6 +32585,10 @@ public class TWGameManager extends AbstractGameManager {
             // get units in hex at the specified altitude (elevation + hex level for non-Aerospace) ignoring
             // targetability (if it's there, it's fair)
             for (Entity entity : game.getEntitiesVector(coords, boardId, true)) {
+                // An Advanced Building entity is the building at this hex and was already damaged above
+                if (entity instanceof AbstractBuildingEntity) {
+                    continue;
+                }
                 // Check: is entity excluded?
                 if ((entity == exclude) || alreadyHit.contains(entity.getId())) {
                     continue;

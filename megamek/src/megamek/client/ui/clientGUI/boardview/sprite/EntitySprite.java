@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -521,7 +521,9 @@ public class EntitySprite extends Sprite {
             graph.draw(bv.getFacingPolys()[entity.getFacing()]);
         }
 
-        if ((secondaryPos == -1) || (secondaryPos == 6)) {
+        // A building entity lists its own hex as secondary position 0, so that sprite carries its status labels
+        boolean isBuildingOriginSprite = (entity instanceof AbstractBuildingEntity) && (secondaryPos == 0);
+        if ((secondaryPos == -1) || (secondaryPos == 6) || isBuildingOriginSprite) {
             // Gather unit conditions
             ArrayList<Status> stStr = new ArrayList<>();
             criticalStatus = false;
@@ -532,6 +534,10 @@ public class EntitySprite extends Sprite {
             if (entity instanceof Tank tankEntity) {
                 turretLocked = !tankEntity.hasNoTurret() && !tankEntity.canChangeSecondaryFacing();
                 crewStunned = tankEntity.getStunnedTurns();
+            } else if (entity instanceof AbstractBuildingEntity buildingEntity) {
+                // Advanced Building critical hits (TO:AR p. 118) stun the gunners or lock a turret
+                turretLocked = buildingEntity.hasLockedTurret();
+                crewStunned = buildingEntity.getStunnedTurns();
             }
 
             // draw elevation/altitude if non-zero

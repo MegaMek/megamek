@@ -46,6 +46,14 @@ public class CoreRulesUnderwater extends RulesUnderwater {
     }
 
     /**
+     * Core p.127 treats a breached leg as destroyed, replacing its actuator damage effects.
+     */
+    @Override
+    public boolean treatBreachedLegAsDestroyed() {
+        return true;
+    }
+
+    /**
      * {@inheritDoc}
      * Underwater does not break LOS. Core p.58, 62
      */

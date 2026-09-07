@@ -73,8 +73,10 @@ import megamek.common.weapons.bayWeapons.PulseLaserBayWeapon;
 import megamek.common.weapons.bayWeapons.ScreenLauncherBayWeapon;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.common.weapons.gaussRifles.GaussWeapon;
+import megamek.logging.MMLogger;
 
 class ComputeToHitIsImpossible {
+    private static final MMLogger LOGGER = MMLogger.create(ComputeToHitIsImpossible.class);
 
     /**
      * Method that tests each attack to see if it's impossible. If so, a reason string will be returned. A null return
@@ -93,7 +95,7 @@ class ComputeToHitIsImpossible {
      * @param distance              The distance in hexes from attacker to target
      * @param spotter               The spotting entity for indirect fire, if present
      * @param weaponType            The WeaponType of the weapon being used
-     * @param weapon                The Mounted weapon being used
+     * @param weapon                The Mounted weapon being used, or {@code null} when the attack names no mount
      * @param ammoType              The AmmoType being used for this attack
      * @param ammo                  The Mounted ammo being used
      * @param munition              Long indicating the munition type flag being used, if applicable
@@ -116,7 +118,8 @@ class ComputeToHitIsImpossible {
      */
     static String toHitIsImpossible(Game game, Entity weaponEntity, int attackerId, Targetable target, int targetType,
           LosEffects los, ToHitData losMods, ToHitData toHit, int distance, Entity spotter, WeaponType weaponType,
-          WeaponMounted weapon, int weaponId, AmmoType ammoType, AmmoMounted ammo, EnumSet<AmmoType.Munitions> munition,
+          @Nullable WeaponMounted weapon, int weaponId, AmmoType ammoType, AmmoMounted ammo,
+          EnumSet<AmmoType.Munitions> munition,
           boolean isFlakAttack, boolean isArtilleryDirect, boolean isArtilleryFLAK, boolean isArtilleryIndirect,
           boolean isAttackerInfantry, boolean isBearingsOnlyMissile, boolean isCruiseMissile,
           boolean exchangeSwarmTarget, boolean isHoming, boolean isInferno, boolean isIndirect, boolean isStrafing,
@@ -145,6 +148,18 @@ class ComputeToHitIsImpossible {
         }
 
         Entity entityTarget = target instanceof Entity ? (Entity) target : null;
+
+        // An Advanced Building cannot fire on a unit inside one of its own hexes (TO:AR p. 132: its turreted weapons
+        // are rooftop equipment). This comes before the same-building exemption below, which would otherwise treat
+        // the building as a unit standing inside itself.
+        boolean buildingFiringInsideItself = (attacker instanceof AbstractBuildingEntity buildingAttacker)
+              && (entityTarget != null)
+              && buildingAttacker.isInsideThisBuilding(entityTarget);
+        if (buildingFiringInsideItself) {
+            LOGGER.debug("[BuildingFire] {} cannot fire on {}: target is inside the building at {}",
+                  attacker.getShortName(), entityTarget.getShortName(), entityTarget.getPosition());
+            return Messages.getString("WeaponAttackAction.TargetInsideOwnBuilding");
+        }
 
         // If the attacker and target are in the same building & hex, they can
         // always attack each other, TW pg 175.
@@ -220,7 +235,9 @@ class ComputeToHitIsImpossible {
             }
             if (target.getTargetType() == Targetable.TYPE_SATURATION
             && !(
-                  weaponType.hasFlag(WeaponType.F_MRM)
+                  (weapon != null)
+                        && (weaponType != null)
+                        && weaponType.hasFlag(WeaponType.F_MRM)
                         && weapon.getLinkedBy() != null
                         && weapon.getLinkedBy().getType().hasFlag(MiscType.F_APOLLO)
                         && !(

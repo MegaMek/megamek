@@ -301,6 +301,11 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
      *
      * @return the crew lost
      */
+    /** Report ids 5647 and 5648 are the "lose everything" versions of 5642 and 5643. */
+    private static final int WIPED_OUT_MESSAGE_OFFSET = 5;
+    /** Report ids 5649 and 5650 are the "nobody lost" versions of 5633 and 5634. */
+    private static final int NOBODY_LOST_MESSAGE_OFFSET = 16;
+
     private int applyCrewLosses(AbstractBuildingEntity building, double casualtyFraction) {
         Crew crew = building.getCrew();
         int crewBefore = crew.getCurrentSize();
@@ -375,19 +380,27 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         addReport(report);
     }
 
+    /** A side cannot lose more than it has; a loss at or over its strength is reported as losing everything. */
     private void reportMarinePointsLost(int messageId, int marinePointsLost, int ownStrength) {
         if (marinePointsLost <= 0) {
             return;
         }
+        if (marinePointsLost >= ownStrength) {
+            Report report = new Report(messageId + WIPED_OUT_MESSAGE_OFFSET);
+            report.add(ownStrength);
+            addReport(report);
+            return;
+        }
         Report report = new Report(messageId);
-        report.add(marinePointsLost);
         report.add(marinePointsLost);
         report.add(ownStrength);
         addReport(report);
     }
 
+    /** A loss too small to cost a whole trooper is said out loud, so the report does not look like it forgot a side. */
     private void reportPersonnelLost(int messageId, int personnelLost) {
         if (personnelLost <= 0) {
+            addReport(new Report(messageId + NOBODY_LOST_MESSAGE_OFFSET));
             return;
         }
         Report report = new Report(messageId);

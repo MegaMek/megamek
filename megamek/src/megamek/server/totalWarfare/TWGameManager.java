@@ -29094,7 +29094,8 @@ public class TWGameManager extends AbstractGameManager {
         Report report = new Report(6441);
         report.subject = entity.getId();
         report.indent(2);
-        report.add((bldg instanceof Entity buildingEntity) ? buildingEntity.getShortName() : bldg.toString());
+        report.add((bldg instanceof Entity buildingEntity) ? buildingEntity.getShortName()
+              : bldg.getBuildingType() + " " + bldg.getName());
         report.add(damage);
         report.add(entity.getShortName());
         report.add(damagedHex.getBoardNum());

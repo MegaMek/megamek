@@ -41,17 +41,16 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
-import megamek.client.ui.Messages;
-import megamek.common.event.GameToastEvent;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
-import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
+import megamek.common.event.GameToastEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
@@ -175,15 +174,35 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             Map<Side, Integer> presenceBySide = countEligiblePresence(objective, entities);
             Side controller = leadingSide(objective, presenceBySide);
             boolean contested = (controller == null) && !presenceBySide.isEmpty();
+            boolean isHeldWithoutPresence = false;
+            if (presenceBySide.isEmpty()) {
+                controller = retainedHolder(objective, controller);
+                isHeldWithoutPresence = controller != null;
+            }
             Side owningSide = sideOfPlayerId(objective.marker().getOwnerId());
             storeControllerOnMarker(objective.marker(), controller);
             reportObjectiveControl(objective, controller, contested);
+            // a retained holder keeps the point and goes on scoring for it, but taking a point - the Hold
+            // count, the Capture meter - needs someone standing there: possession is kept, progress is not made
             switch (objective.marker().getScoringScheme().getPreset()) {
                 case STANDARD -> standardObjectives.add(new ResolvedObjective(objective, owningSide, controller));
                 case RAID -> { /* end-scored when the game ends; control is stored above for that */ }
-                case HOLD -> resolveHoldCounter(objective, controller, tracker);
+                case HOLD -> {
+                    if (isHeldWithoutPresence) {
+                        pauseHoldCounter(objective);
+                    } else {
+                        resolveHoldCounter(objective, controller, tracker);
+                    }
+                }
                 case DEFEND -> resolveDefendCounter(objective, owningSide, entities, tracker);
-                case CAPTURE -> resolveCaptureCounter(objective, controller, owningSide, tracker);
+                case CAPTURE -> {
+                    if (isHeldWithoutPresence) {
+                        LOGGER.debug("[Objective] {} at {}: held without presence - the capture meter stands",
+                              objective.marker().generalName(), objective.position());
+                    } else {
+                        resolveCaptureCounter(objective, controller, owningSide, tracker);
+                    }
+                }
             }
         }
         // the printed-rules pairing scoring runs over the STANDARD points only; the other presets carry
@@ -296,6 +315,25 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             return;
         }
         decidePoint(objective, taker, tracker, REPORT_POINT_FELL);
+    }
+
+    /**
+     * Holds a {@code HOLD} point's count where it is for a turn in which its retained holder has nobody in the
+     * zone: the streak is neither advanced nor broken, and resumes when a unit returns.
+     */
+    private void pauseHoldCounter(PlacedObjective objective) {
+        ObjectiveScoringScheme scheme = objective.marker().getScoringScheme();
+        if (scheme.isDecided() || (scheme.bestHeldTurns() == 0)) {
+            return;
+        }
+        LOGGER.debug("[Objective] {} at {}: held without presence - the hold count pauses at {} of {}",
+              objective.marker().generalName(), objective.position(), scheme.bestHeldTurns(),
+              scheme.getThreshold());
+        Report report = new Report(REPORT_HOLD_STILL_REQUIRED, Report.PUBLIC);
+        report.add(objective.marker().generalName());
+        report.add(scheme.bestHeldTurns());
+        report.add(scheme.getThreshold());
+        addReport(report);
     }
 
     /**
@@ -646,11 +684,46 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
 
 
     /**
+     * The side an empty zone still belongs to. A point set to keep control when empty stays with whoever
+     * last held it, and that holder goes on scoring for it - which is what lets a mission field more control
+     * points than either side has units to garrison, and lets a point begin the game already held. Any other
+     * point, or one nobody has held yet, is nobody's. Keeping is not taking: the counters that decide a
+     * point wait for a unit to be present again.
+     *
+     * @param objective         The empty point
+     * @param presentController The controller the units present decided, {@code null} for an empty zone
+     *
+     * @return The retained holder, or {@code presentController} when the point does not retain control
+     */
+    private @Nullable Side retainedHolder(PlacedObjective objective, @Nullable Side presentController) {
+        ObjectiveMarker marker = objective.marker();
+        if (!marker.getScoringScheme().retainsControlWhenEmpty()) {
+            return presentController;
+        }
+        Side holder = null;
+        if (marker.getControllingTeam() != ObjectiveMarker.NO_CONTROLLER) {
+            holder = new Side(true, marker.getControllingTeam());
+        } else if (marker.getControllingPlayerId() != ObjectiveMarker.NO_CONTROLLER) {
+            holder = new Side(false, marker.getControllingPlayerId());
+        }
+        if (holder == null) {
+            LOGGER.debug("[Objective] {} is empty and keeps control when empty, but nobody has held it yet",
+                  objective.position().getBoardNum());
+            return presentController;
+        }
+        LOGGER.debug("[Objective] {} is empty but stays with {} - it keeps control when empty",
+              objective.position().getBoardNum(), displayName(holder));
+        return holder;
+    }
+
+    /**
      * Records the resolved controller on the marker itself, so state-based victory triggers
      * (objective control conditions) can read it without re-running the control algorithm.
      */
     private void storeControllerOnMarker(ObjectiveMarker marker, @Nullable Side controller) {
         if (controller == null) {
+            // an empty retained zone never reaches here with null, retainedHolder() has already named its
+            // holder; so null means nobody controls it, a contested tie included, and the point goes neutral
             marker.setController(ObjectiveMarker.NO_CONTROLLER, ObjectiveMarker.NO_CONTROLLER);
         } else if (controller.isTeam()) {
             marker.setController(controller.id(), ObjectiveMarker.NO_CONTROLLER);

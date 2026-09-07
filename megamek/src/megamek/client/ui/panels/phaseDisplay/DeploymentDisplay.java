@@ -169,8 +169,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     private int cen = Entity.NONE; // current entity number
     // is the shift key held?
-    private static final MMLogger LOGGER = MMLogger.create(DeploymentDisplay.class);
-
     private boolean turnMode = false;
     private boolean assaultDropPreference = false;
     /** Whether the crews-will-die-if-they-eject warning has already been given this deployment phase. */
@@ -1086,13 +1084,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         var deploymentHelper = new AllowedDeploymentHelper(building, position, board, board.getHex(position), game);
         FacingOption facingOptions = deploymentHelper.findAllowedFacings(building.getElevation());
         if (facingOptions == null) {
-            LOGGER.debug("[DeployBuilding] {} fits in no facing at {}; turn refused", building.getShortName(),
+            logger.debug("[DeployBuilding] {} fits in no facing at {}; turn refused", building.getShortName(),
                   position.getBoardNum());
             clientgui.addToast(ToastLevel.WARNING, Messages.getString("DeploymentDisplay.buildingCannotTurn",
                   building.getShortName(), position.getBoardNum()), building);
             return;
         }
-        LOGGER.debug("[DeployBuilding] {} at {}: offering facings {}", building.getShortName(),
+        logger.debug("[DeployBuilding] {} at {}: offering facings {}", building.getShortName(),
               position.getBoardNum(), facingOptions.getValidFacings());
         int chosenFacing = showFacingChoiceDialog(facingOptions);
         if (chosenFacing == -1) {

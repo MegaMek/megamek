@@ -186,6 +186,9 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
             @Override
             public void windowClosing(WindowEvent e) {
                 if (getClient().getGame().getPhase() == GamePhase.VICTORY) {
+                    // The game is already over, so no confirmation is needed, but we must still close the client
+                    // connection.
+                    getClient().die();
                     die();
                 } else {
                     int closePrompt = JOptionPane.showConfirmDialog(null,

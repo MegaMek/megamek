@@ -42,13 +42,15 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 
 import megamek.common.Player;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityListFile;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEndEvent;
 import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GameVictoryEvent;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityListFile;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
@@ -62,6 +64,13 @@ public class HeadlessClient extends Client {
     protected static final ClientPreferences PREFERENCES = PreferenceManager.getClientPreferences();
 
     private boolean sendDoneOnVictoryAutomatically = true;
+
+    /**
+     * The game result captured the instant the VICTORY phase begins, before any server-side reset can wipe the board.
+     * This is how the result reaches MekHQ even when the VICTORY phase never formally ends (e.g. a bot disconnect
+     * stalls the readiness check). See issue #8889.
+     */
+    private GameVictoryEvent victorySnapshot;
 
     /**
      * A client with no GUI has nothing to show an entity's picture in, so it does not cache one.
@@ -147,6 +156,10 @@ public class HeadlessClient extends Client {
     @Override
     public void changePhase(GamePhase phase) {
         if (phase == GamePhase.VICTORY) {
+            // Capture the final game state now, while the board is still populated, so a consumer (e.g. MekHQ via the
+            // Commander interface) can be handed the result on demand without depending on the VICTORY phase ending
+            // or on the GAME_VICTORY_EVENT packet arriving. See issue #8889.
+            victorySnapshot = new GameVictoryEvent(this, getGame());
             if (sendDoneOnVictoryAutomatically) {
                 sendDone(true);
             }
@@ -154,6 +167,13 @@ public class HeadlessClient extends Client {
         super.changePhase(phase);
     }
 
+    /**
+     * @return the game result captured when the VICTORY phase began, or {@code null} if the game has not reached
+     *       victory yet
+     */
+    public @Nullable GameVictoryEvent getVictorySnapshot() {
+        return victorySnapshot;
+    }
 
     private void saveVictoryList() {
         String filename = getLocalPlayer().getName();

@@ -38,8 +38,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -72,17 +79,16 @@ import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.entity.GameEntityChangeEvent;
-import megamek.common.event.entity.GameEntityNewEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.game.Game;
 import megamek.common.game.InitiativeRoll;
@@ -751,7 +757,11 @@ public abstract class BotClient extends Client {
                     break;
                 case VICTORY:
                     runEndGame();
-                    sendChat(Messages.getString("BotClient.Bye"));
+                    // Signal done before disconnecting so the server's readiness check never has to wait on this
+                    // bot's socket closing, and skip the farewell chat so the disconnect does not race a chat
+                    // rebroadcast on other connection threads - the lock-contention/deadlock class from issue #8889
+                    // (see also mekhq#8240). Both Princess and CASPAR inherit this.
+                    sendDone(true);
                     die();
                     break;
                 default:

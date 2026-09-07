@@ -60,6 +60,7 @@ import megamek.common.Configuration;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GameVictoryEvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
@@ -223,6 +224,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
                 if (e.getNewPhase() == GamePhase.VICTORY) {
                     audioService.playSound(SoundType.BING_MY_TURN);
                     buttonPanel.setMiscButton("Scenario Completed", "Click here to finish it", evt -> {
+                        deliverVictoryToListeners();
                         client.sendDone(true);
                         die();
                     });
@@ -279,6 +281,22 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
         // and no modal dialog is showing, so pressing space in a MekHQ window does not pause the running scenario.
         // See issue #8888.
         return !frame.isActive() || UIUtil.isModalDialogDisplayed();
+    }
+
+    /**
+     * Delivers the game result to the game's listeners (notably MekHQ) directly from the snapshot captured when the
+     * VICTORY phase began, rather than relying on the {@code GAME_VICTORY_EVENT} packet. That packet is only sent once
+     * the VICTORY phase ends, which can stall indefinitely on bot disconnects, leaving MekHQ uninformed. MekHQ's
+     * {@code gameVictory} guards against double-processing, so the packet is harmlessly ignored if it later arrives.
+     * See issue #8889.
+     */
+    private void deliverVictoryToListeners() {
+        if (client instanceof HeadlessClient headlessClient) {
+            GameVictoryEvent snapshot = headlessClient.getVictorySnapshot();
+            if (snapshot != null) {
+                client.getGame().processGameEvent(snapshot);
+            }
+        }
     }
 
     @Override

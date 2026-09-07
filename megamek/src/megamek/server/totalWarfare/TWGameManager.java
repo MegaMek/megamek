@@ -2399,6 +2399,14 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case VICTORY:
                 datasetLogger.requestNewLogFile();
+                // Mark every bot done as we enter VICTORY. Bots disconnect rather than acknowledging this phase, so
+                // without this the readiness check can wait forever on a bot whose disconnect has not yet been
+                // processed, and MekHQ is never told the game ended. See issue #8889.
+                for (Player victoryPlayer : game.getPlayersList()) {
+                    if (victoryPlayer.isBot()) {
+                        victoryPlayer.setDone(true);
+                    }
+                }
                 break;
             default:
                 break;

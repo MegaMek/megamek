@@ -32,6 +32,7 @@
  */
 package megamek.server.totalWarfare;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,6 +41,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Vector;
@@ -65,6 +67,7 @@ import megamek.common.units.Tank;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 /**
@@ -169,6 +172,22 @@ class BuildingEntryMovementTest extends GameBoardTestCase {
         verify(gameManager).vehicleMotiveDamage(eq(tank), eq(0));
         assertTrue(containsReport(reports, MOTIVE_DAMAGE_SENTINEL_REPORT),
               "the motive damage roll must be reported with the building entry");
+    }
+
+    @Test
+    void aSideHitFromTheWallDoesNotAddASecondMotiveRoll() {
+        Tank tank = Mockito.spy(addUnit(new Tank(), 50));
+        HitData sideHit = new HitData(Tank.LOC_LEFT, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+        doReturn(sideHit).when(tank).rollHitLocation(anyInt(), anyInt());
+        drivingSkillRollFails();
+
+        enterBuilding(tank);
+
+        ArgumentCaptor<HitData> wallHit = ArgumentCaptor.forClass(HitData.class);
+        verify(gameManager).damageEntity(eq(tank), wallHit.capture(), anyInt());
+        assertEquals(0, wallHit.getValue().getEffect() & HitData.EFFECT_VEHICLE_MOVE_DAMAGED,
+              "the wall hit must not carry the location's own motive roll");
+        verify(gameManager, times(1)).vehicleMotiveDamage(eq(tank), eq(0));
     }
 
     @Test

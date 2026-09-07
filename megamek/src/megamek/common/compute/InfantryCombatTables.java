@@ -267,6 +267,28 @@ public class InfantryCombatTables {
      *
      * @return the combat result
      */
+    /**
+     * The highest casualty percentage printed for one side in an odds column, ignoring E results. Used when a
+     * withdrawing attacker turns an E result into a P result (TO:AR p. 172), because the table prints no percentage
+     * for an eliminated side.
+     *
+     * @param ratio        the odds column, as returned by {@link #calculateRatio(int, int)}
+     * @param attackerSide {@code true} for the attacker's percentages, {@code false} for the defender's
+     *
+     * @return the highest percentage below 100 in that column for that side, or {@code 0} if none is printed
+     */
+    public static int highestListedPercent(String ratio, boolean attackerSide) {
+        Map<Integer, InfantryCombatResult> ratioRow = ACTION_TABLE.getOrDefault(ratio, ACTION_TABLE.get("1:1"));
+        int highest = 0;
+        for (InfantryCombatResult result : ratioRow.values()) {
+            int percent = attackerSide ? result.getAttackerCasualtiesPercent() : result.getDefenderCasualtiesPercent();
+            if ((percent < 100) && (percent > highest)) {
+                highest = percent;
+            }
+        }
+        return highest;
+    }
+
     public static InfantryCombatResult resolveAction(String ratio, int roll) {
         Map<Integer, InfantryCombatResult> ratioRow = ACTION_TABLE.get(ratio);
         if (ratioRow == null) {

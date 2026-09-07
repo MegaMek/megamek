@@ -36,6 +36,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.intThat;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -219,6 +221,36 @@ class BuildingDamageGroupingTest extends GameBoardTestCase {
 
         verify(gameManager, times(4)).damageBuilding(eq(building), eq(5), eq(BUILDING_HEX));
         verify(gameManager, never()).damageBuilding(eq(building), eq(20), eq(BUILDING_HEX));
+    }
+
+    /** A missed volley at a unit inside a building damages the building instead (TW p. 171), also per grouping. */
+    @Test
+    void missedVolleyAtAUnitInsideDamagesTheBuildingPerGrouping() throws Exception {
+        BipedMek inside = new BipedMek();
+        inside.setGame(game);
+        inside.setId(game.getNextEntityId());
+        inside.setChassis("Test Mek");
+        inside.setModel("Inside");
+        inside.setCrew(new Crew(CrewType.SINGLE));
+        inside.setOwner(game.getPlayer(0));
+        inside.setWeight(20.0);
+        game.addEntity(inside);
+        inside.setDeployed(true);
+        inside.setPosition(BUILDING_HEX);
+        inside.setElevation(0);
+        attacker.setPosition(BUILDING_HEX.translated(0));
+        attacker.setFacing(3);
+        Mounted<?> ammo = attacker.addEquipment(EquipmentType.get("IS Ammo LRM-20"), Mek.LOC_LEFT_TORSO);
+        lrm.setLinked(ammo);
+        WeaponAttackAction attack = new WeaponAttackAction(attacker.getId(), inside.getId(),
+              attacker.getEquipmentNum(lrm));
+        LRMHandler handler = new LRMHandler(new ToHitData(13, "always misses"), attack, game, gameManager);
+
+        handler.handle(GamePhase.FIRING, new Vector<>());
+
+        verify(gameManager, atLeastOnce()).damageBuilding(eq(building), intThat(damage -> damage <= 5),
+              eq(BUILDING_HEX));
+        verify(gameManager, never()).damageBuilding(eq(building), intThat(damage -> damage > 5), eq(BUILDING_HEX));
     }
 
     @Test

@@ -1053,13 +1053,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 r.subject = attackingEntity.getId();
                 r.newlines--;
                 vPhaseReport.add(r);
-                int nDamage = nDamPerHit * hits;
-                // We want to set bSalvo to true to prevent
-                // handleBuildingDamage from reporting a hit
+                // The missed volley hits the building one damage grouping at a time; bSalvo is forced on so the
+                // building damage does not report a hit
                 boolean savedSalvo = bSalvo;
                 bSalvo = true;
-                handleBuildingDamage(vPhaseReport, bldg, nDamage,
-                      target.getPosition());
+                handleBuildingDamageByGrouping(vPhaseReport, bldg, hits, nCluster, target.getPosition());
                 bSalvo = savedSalvo;
             }
         }

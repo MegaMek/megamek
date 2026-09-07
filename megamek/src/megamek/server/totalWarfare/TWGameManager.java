@@ -7317,8 +7317,7 @@ public class TWGameManager extends AbstractGameManager {
                 vPhaseReport.addAll(vBuildingDamageReport);
 
                 // Each unit in the hex rolls per missile; conventional infantry inside is shielded by the building
-                vPhaseReport.addAll(new InfernoBuildingHexResolver(this).strikeUnitsInHex(ae, t, hex, missiles,
-                      called));
+                vPhaseReport.addAll(new InfernoBuildingHexResolver(this).strikeUnitsInHex(ae, t, missiles, called));
                 break;
             case Targetable.TYPE_ENTITY:
                 Entity te = (Entity) t;

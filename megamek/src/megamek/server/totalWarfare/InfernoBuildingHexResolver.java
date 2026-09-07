@@ -34,7 +34,6 @@ package megamek.server.totalWarfare;
 
 import java.util.Vector;
 
-import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
@@ -72,13 +71,12 @@ class InfernoBuildingHexResolver extends AbstractTWRuleHandler {
      *
      * @param attacker the unit that fired the missiles, or {@code null} when unknown
      * @param target   the building hex that was hit
-     * @param hex      the hex of the target
      * @param missiles the number of missiles that hit the hex
      * @param called   the called-shot mode used for the attack
      *
      * @return the reports of the rolls and the resulting damage
      */
-    Vector<Report> strikeUnitsInHex(@Nullable Entity attacker, Targetable target, Hex hex, int missiles, int called) {
+    Vector<Report> strikeUnitsInHex(@Nullable Entity attacker, Targetable target, int missiles, int called) {
         Vector<Report> reports = new Vector<>();
         IBuilding building = getGame().getBoard(target.getBoardId()).getBuildingAt(target.getPosition());
         for (Entity unit : getGame().getEntitiesVector(target.getPosition())) {

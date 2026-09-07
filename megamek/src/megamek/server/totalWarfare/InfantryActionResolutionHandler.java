@@ -139,7 +139,6 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
             // TO:AR p. 172: the roll is still made, the attacker suffers only half damage, and any E result becomes
             // a P result. The table prints no percentage for an eliminated side, so the converted E uses the
             // highest percentage printed in that column for that side.
-            addReport(new Report(5644));
             if (attackerEliminated) {
                 attackerPercent = InfantryCombatTables.highestListedPercent(ratio, true);
                 attackerEliminated = false;
@@ -148,6 +147,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
                 defenderPercent = InfantryCombatTables.highestListedPercent(ratio, false);
                 defenderEliminated = false;
             }
+            reportWithdrawal(attackerPercent, defenderPercent);
         }
 
         // TO:AR p. 172-173: the defenders take full damage from the roll that gives the attackers partial control
@@ -357,6 +357,14 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         report.add(attackerStrength);
         report.add(defenderStrength);
         report.add(ratio);
+        addReport(report);
+    }
+
+    /** The percentages actually applied after the withdrawal adjustments, so the report matches the arithmetic. */
+    private void reportWithdrawal(int attackerPercent, int defenderPercent) {
+        Report report = new Report(5644);
+        report.add(attackerPercent);
+        report.add(defenderPercent);
         addReport(report);
     }
 

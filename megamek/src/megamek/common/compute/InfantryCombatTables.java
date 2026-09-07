@@ -260,14 +260,6 @@ public class InfantryCombatTables {
     }
 
     /**
-     * Resolve an infantry vs. infantry combat action.
-     *
-     * @param ratio the combat ratio (from calculateRatio)
-     * @param roll  the 2D6 roll (2-12)
-     *
-     * @return the combat result
-     */
-    /**
      * The highest casualty percentage printed for one side in an odds column, ignoring E results. Used when a
      * withdrawing attacker turns an E result into a P result (TO:AR p. 172), because the table prints no percentage
      * for an eliminated side.
@@ -289,6 +281,14 @@ public class InfantryCombatTables {
         return highest;
     }
 
+    /**
+     * Resolve an infantry vs. infantry combat action.
+     *
+     * @param ratio the combat ratio (from calculateRatio)
+     * @param roll  the 2D6 roll (2-12)
+     *
+     * @return the combat result
+     */
     public static InfantryCombatResult resolveAction(String ratio, int roll) {
         Map<Integer, InfantryCombatResult> ratioRow = ACTION_TABLE.get(ratio);
         if (ratioRow == null) {

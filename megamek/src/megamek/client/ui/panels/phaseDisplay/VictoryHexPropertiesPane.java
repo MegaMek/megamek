@@ -33,8 +33,12 @@
 package megamek.client.ui.panels.phaseDisplay;
 
 import java.awt.Component;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
 import java.util.Locale;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
@@ -45,8 +49,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
@@ -117,19 +123,19 @@ public final class VictoryHexPropertiesPane {
         rateSpinner.addChangeListener(event -> refreshSchemeRows(controls));
         refreshSchemeRows(controls);
 
-        JPanel propertiesPanel = new JPanel(new GridLayout(0, 2));
-        propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.radius")));
-        propertiesPanel.add(radiusSpinner);
-        propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.victoryPoints")));
-        propertiesPanel.add(victoryPointSpinner);
-        propertiesPanel.add(new JLabel(Messages.getString("VictoryHex.scheme")));
-        propertiesPanel.add(schemeCombo);
-        propertiesPanel.add(thresholdLabel);
-        propertiesPanel.add(thresholdSpinner);
-        propertiesPanel.add(countingLabel);
-        propertiesPanel.add(countingCombo);
-        propertiesPanel.add(rateLabel);
-        propertiesPanel.add(rateSpinner);
+        // the order a player decides these in: what kind of point is this, how is it won, how big is
+        // it, what is it worth. The scheme comes first because it decides which of the rows below even
+        // appear - with it third, two values had to be filled in before learning what else would be asked.
+        // A grid bag rather than a plain grid: a plain grid keeps a cell for every hidden row, so a scheme with
+        // no rows of its own (Standard) left three empty rows between the scheme and the radius
+        JPanel propertiesPanel = new JPanel(new GridBagLayout());
+        addRow(propertiesPanel, 0, new JLabel(Messages.getString("VictoryHex.scheme")), schemeCombo);
+        addRow(propertiesPanel, 1, thresholdLabel, thresholdSpinner);
+        addRow(propertiesPanel, 2, countingLabel, countingCombo);
+        addRow(propertiesPanel, 3, rateLabel, rateSpinner);
+        addRow(propertiesPanel, 4, new JLabel(Messages.getString("VictoryHex.radius")), radiusSpinner);
+        addRow(propertiesPanel, 5, new JLabel(Messages.getString("VictoryHex.victoryPoints")), victoryPointSpinner);
+        pinRowsToTheTop(propertiesPanel, 6);
 
         JPanel editorPanel = new JPanel();
         editorPanel.setLayout(new BoxLayout(editorPanel, BoxLayout.PAGE_AXIS));
@@ -177,12 +183,35 @@ public final class VictoryHexPropertiesPane {
           JLabel countingLabel, JLabel schemeDescription) {}
 
     /**
+     * Adds one label-and-control row to the properties grid. Both cells share the row's width equally, so the
+     * labels line up on the left and the controls on the right whichever rows are currently visible.
+     *
+     * @param panel   the grid panel
+     * @param row     the grid row
+     * @param label   the row's label
+     * @param control the row's editing control
+     */
+    private static void addRow(JPanel panel, int row, JLabel label, Component control) {
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridy = row;
+        constraints.weightx = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        int padding = UIUtil.scaleForGUI(2);
+        constraints.insets = new Insets(padding, padding, padding, padding);
+        constraints.gridx = 0;
+        panel.add(label, constraints);
+        constraints.gridx = 1;
+        panel.add(control, constraints);
+    }
+
+    /**
      * Rewrites the scheme-dependent rows for the currently selected preset: which rows are visible, what the
      * threshold and rate spinners mean, and the plain-words description of the point as actually configured.
      *
      * @param controls the pane's scheme-dependent controls
      */
     private static void refreshSchemeRows(SchemeControls controls) {
+        String layoutBefore = layoutSignature(controls);
         SchemePreset preset = (SchemePreset) controls.schemeCombo().getSelectedItem();
         // the description reflects the CONFIGURED point: the chosen mode and the actual numbers,
         // not a generic text covering every possibility
@@ -207,6 +236,61 @@ public final class VictoryHexPropertiesPane {
         controls.rateSpinner().setVisible(usesRate);
         controls.countingLabel().setVisible(usesCounting);
         controls.countingCombo().setVisible(usesCounting);
+        resizeDialogToFit(controls, layoutBefore);
+    }
+
+    /**
+     * What decides how much room the pane needs: which rows are showing and what the description says. Compared
+     * before and after a refresh to decide whether the dialog must be re-packed. The window's preferred size
+     * cannot be used for that: a label's new text only reaches the cached layout sizes on the next validation,
+     * so asking straight after {@code setText} returns the old answer and the dialog never grows.
+     *
+     * @param controls the pane's scheme-dependent controls
+     *
+     * @return a signature that changes exactly when the layout needs to
+     */
+    private static String layoutSignature(SchemeControls controls) {
+        return controls.thresholdSpinner().isVisible() + "/" + controls.countingCombo().isVisible() + "/"
+              + controls.rateSpinner().isVisible() + "/" + controls.schemeDescription().getText();
+    }
+
+    /**
+     * Re-packs the dialog when its content needs a different size than it did before the refresh. The dialog
+     * is sized once when it opens; without this, a scheme with more rows is squeezed into the old height and
+     * one with fewer has its rows re-centred in the leftover space, so the scheme selector jumps up and down
+     * as schemes are tried, and a description that grew is cut off at its old height. Packing keeps the
+     * top-left corner where it is, so the selector stays put and the dialog grows or shrinks beneath it. A
+     * refresh that changes nothing about the layout, such as a spinner tick, leaves the dialog alone.
+     *
+     * @param controls     the pane's scheme-dependent controls, after the refresh
+     * @param layoutBefore the {@link #layoutSignature(SchemeControls)} taken before the refresh
+     */
+    private static void resizeDialogToFit(SchemeControls controls, String layoutBefore) {
+        Window window = SwingUtilities.getWindowAncestor(controls.schemeCombo());
+        if (window == null) {
+            // still being built: the option pane packs it when it opens
+            return;
+        }
+        if (layoutSignature(controls).equals(layoutBefore)) {
+            return;
+        }
+        window.pack();
+    }
+
+    /**
+     * Adds an empty, stretchable last row so that any spare height goes below the rows instead of being shared
+     * around them, which would float the rows toward the middle of the panel.
+     *
+     * @param panel the grid panel
+     * @param row   the first unused grid row
+     */
+    private static void pinRowsToTheTop(JPanel panel, int row) {
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridx = 0;
+        constraints.gridy = row;
+        constraints.gridwidth = 2;
+        constraints.weighty = 1;
+        panel.add(Box.createVerticalGlue(), constraints);
     }
 
     /**

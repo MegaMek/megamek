@@ -296,6 +296,20 @@
           </Logger>
         -->
         <!--
+          Objectives and control point diagnostics, silent by default (parent "megamek" logger at info). Messages
+          are tagged [VictoryHex] on the client (the Victory Setup phase: why a click on a hex did nothing, a Done
+          with no points placed) and [Objective] on the server (marker placement at game start, control points
+          present while Use Objectives is off, the route taken out of the starting phase). Grep logs/megamek.log
+          for either tag. Uncomment to diagnose "why can't I place a control point" or "why did my objectives
+          never score"; leave commented for normal play.
+
+          <Logger name="megamek.feature.VictoryHex" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <!--
           Equipment activation/deactivation diagnostics, silent by default (parent "megamek" logger at info).
           All messages are tagged [EquipOff]; grep logs/megamek.log for that tag. Logs every equipment mode
           change the server receives (with the resulting current and pending mode) and rejected deactivations

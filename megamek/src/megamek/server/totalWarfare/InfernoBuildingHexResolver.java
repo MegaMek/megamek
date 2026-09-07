@@ -79,7 +79,7 @@ class InfernoBuildingHexResolver extends AbstractTWRuleHandler {
     Vector<Report> strikeUnitsInHex(@Nullable Entity attacker, Targetable target, int missiles, int called) {
         Vector<Report> reports = new Vector<>();
         IBuilding building = getGame().getBoard(target.getBoardId()).getBuildingAt(target.getPosition());
-        for (Entity unit : getGame().getEntitiesVector(target.getPosition())) {
+        for (Entity unit : getGame().getEntitiesVector(target.getPosition(), target.getBoardId(), false)) {
             if (unit.getElevation() != LEVEL_STRUCK) {
                 LOGGER.debug("[Inferno] {} is on level {} of the building, not the struck level {}; not affected",
                       unit.getShortName(), unit.getElevation(), LEVEL_STRUCK);
@@ -128,7 +128,7 @@ class InfernoBuildingHexResolver extends AbstractTWRuleHandler {
             return;
         }
         int affecting = Math.round(struck * building.getDamageReductionFromOutside());
-        LOGGER.info("[Inferno] {} is inside a {} building: {} of {} struck missiles burn through",
+        LOGGER.debug("[Inferno] {} is inside a {} building: {} of {} struck missiles burn through",
               infantry.getShortName(), building.getBuildingType(), affecting, struck);
         Report report = new Report(affecting > 0 ? REPORT_INFANTRY_BURN_THROUGH : REPORT_INFANTRY_SHIELDED);
         report.subject = infantry.getId();

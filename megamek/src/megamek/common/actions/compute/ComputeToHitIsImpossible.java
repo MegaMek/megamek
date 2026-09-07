@@ -93,7 +93,7 @@ class ComputeToHitIsImpossible {
      * @param distance              The distance in hexes from attacker to target
      * @param spotter               The spotting entity for indirect fire, if present
      * @param weaponType            The WeaponType of the weapon being used
-     * @param weapon                The Mounted weapon being used
+     * @param weapon                The Mounted weapon being used, or {@code null} when the attack names no mount
      * @param ammoType              The AmmoType being used for this attack
      * @param ammo                  The Mounted ammo being used
      * @param munition              Long indicating the munition type flag being used, if applicable
@@ -116,7 +116,8 @@ class ComputeToHitIsImpossible {
      */
     static String toHitIsImpossible(Game game, Entity weaponEntity, int attackerId, Targetable target, int targetType,
           LosEffects los, ToHitData losMods, ToHitData toHit, int distance, Entity spotter, WeaponType weaponType,
-          WeaponMounted weapon, int weaponId, AmmoType ammoType, AmmoMounted ammo, EnumSet<AmmoType.Munitions> munition,
+          @Nullable WeaponMounted weapon, int weaponId, AmmoType ammoType, AmmoMounted ammo,
+          EnumSet<AmmoType.Munitions> munition,
           boolean isFlakAttack, boolean isArtilleryDirect, boolean isArtilleryFLAK, boolean isArtilleryIndirect,
           boolean isAttackerInfantry, boolean isBearingsOnlyMissile, boolean isCruiseMissile,
           boolean exchangeSwarmTarget, boolean isHoming, boolean isInferno, boolean isIndirect, boolean isStrafing,
@@ -220,7 +221,8 @@ class ComputeToHitIsImpossible {
             }
             if (target.getTargetType() == Targetable.TYPE_SATURATION
             && !(
-                  weaponType.hasFlag(WeaponType.F_MRM)
+                  (weapon != null)
+                        && weaponType.hasFlag(WeaponType.F_MRM)
                         && weapon.getLinkedBy() != null
                         && weapon.getLinkedBy().getType().hasFlag(MiscType.F_APOLLO)
                         && !(

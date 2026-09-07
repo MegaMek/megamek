@@ -4902,8 +4902,12 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns the equipment, specified by number
+     *
+     * @param index the equipment number
+     *
+     * @return the mount with that number, or {@code null} when the unit has no equipment with that number
      */
-    public Mounted<?> getEquipment(int index) {
+    public @Nullable Mounted<?> getEquipment(int index) {
         try {
             return equipmentList.get(index);
         } catch (IndexOutOfBoundsException ex) {

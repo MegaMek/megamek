@@ -153,9 +153,28 @@ class BuildingWeaponUnjamTest extends GameBoardTestCase {
         building.killGunnersAt(BUILDING_HEX);
 
         assertFalse(building.canUnjamWeapon());
+        assertTrue(building.getJammedWeapons().isEmpty(), "a jam nobody is left to clear is not offered");
         orderRepair();
 
         assertTrue(laser.jammedThisPhase());
+    }
+
+    @Test
+    void aWeaponThatIsNotJammedIsNotRepaired() {
+        laser.resetJam();
+        WeaponMounted secondLaser = new WeaponMounted(building, new ISLaserMedium());
+        try {
+            building.addEquipment(secondLaser, 0, false);
+        } catch (Exception exception) {
+            throw new IllegalStateException(exception);
+        }
+        jam(secondLaser);
+
+        game.addAction(new RepairWeaponMalfunctionAction(building.getId(), building.getEquipmentNum(laser)));
+        gameManager.resolveAllButWeaponAttacks();
+
+        assertTrue(secondLaser.isJammed(), "asking to repair the working laser must not clear the jammed one");
+        assertTrue(secondLaser.jammedThisPhase());
     }
 
     @Test

@@ -67,6 +67,11 @@ class WeaponMalfunctionRepairHandler extends AbstractTWRuleHandler {
                   entity.getShortName(), action.getWeaponId());
             return;
         }
+        if (!weapon.isJammed()) {
+            LOGGER.warn("[WeaponJam] {} asked to repair {}, which is not jammed", entity.getShortName(),
+                  weapon.getName());
+            return;
+        }
         switch (entity) {
             case Tank tank -> {
                 weapon.setJammed(false);
@@ -77,6 +82,11 @@ class WeaponMalfunctionRepairHandler extends AbstractTWRuleHandler {
                 if (!building.canUnjamWeapon()) {
                     LOGGER.warn("[WeaponJam] {} cannot clear a jam now (stunned, no gunners, or nothing jammed)",
                           building.getShortName());
+                    return;
+                }
+                if (!building.getJammedWeapons().contains(weapon)) {
+                    LOGGER.warn("[WeaponJam] {} cannot clear {}: the gunners in its location are dead",
+                          building.getShortName(), weapon.getName());
                     return;
                 }
                 weapon.setJammed(false);

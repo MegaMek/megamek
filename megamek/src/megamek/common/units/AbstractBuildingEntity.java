@@ -1595,14 +1595,15 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
-     * The weapons jammed by a Weapon Malfunction critical hit (TO:AR p. 119) that the gunners have not yet cleared.
+     * The weapons jammed by a Weapon Malfunction critical hit (TO:AR p. 119) that gunners are still alive to clear.
+     * A jammed weapon in a location whose gunners were killed stays jammed for good and is not listed.
      *
-     * @return the jammed weapons, empty when none are jammed
+     * @return the jammed weapons with living gunners, empty when there are none
      */
     public List<Mounted<?>> getJammedWeapons() {
         List<Mounted<?>> jammedWeapons = new ArrayList<>();
         for (WeaponMounted weapon : getWeaponList()) {
-            if (weapon.isJammed()) {
+            if (weapon.isJammed() && !hasDeadGunners(weapon.getLocation())) {
                 jammedWeapons.add(weapon);
             }
         }

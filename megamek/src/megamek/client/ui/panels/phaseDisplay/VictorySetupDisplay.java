@@ -37,7 +37,9 @@ import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import javax.swing.JOptionPane;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -190,7 +192,8 @@ public class VictorySetupDisplay extends StatusBarPhaseDisplay {
     }
 
     private void editMarker(Coords coords, ObjectiveMarker marker) {
-        VictoryHexPropertiesPane.Result result = VictoryHexPropertiesPane.edit(clientgui.getFrame(), marker);
+        VictoryHexPropertiesPane.Result result = VictoryHexPropertiesPane.edit(clientgui.getFrame(), marker,
+              game().getPlayersList());
         if (result == VictoryHexPropertiesPane.Result.REMOVED) {
             game().removeGroundObject(coords, marker);
             VICTORY_HEX_LOGGER.info("[VictoryHex] {} removed in the Victory Setup phase", coords.getBoardNum());
@@ -213,19 +216,51 @@ public class VictorySetupDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void hexMoused(BoardViewEvent event) {
-        boolean isLeftClickOnHex = !isIgnoringEvents() && isMyTurn()
-              && (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED)
+        if (isIgnoringEvents()) {
+            return;
+        }
+        boolean isLeftClickOnHex = (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED)
               && (event.getButton() == MouseEvent.BUTTON1);
         if (!isLeftClickOnHex) {
+            // pointer movement and right clicks are not attempts to place anything; they pass quietly
+            return;
+        }
+        if (!isMyTurn()) {
+            explainClickOutsideMyTurn(event.getCoords());
             return;
         }
         BoardLocation location = event.getBoardLocation();
         // control points live on the ground map, like the ground objects they are
         if (!game().hasBoardLocation(location) || !game().isOnGroundMap(location)) {
             clientgui.addToast(ToastLevel.ERROR, Messages.getString("VictorySetupDisplay.notGroundMap"));
+            VICTORY_HEX_LOGGER.debug("[VictoryHex] click ignored: {} is not a hex on the ground map",
+                  location);
             return;
         }
         handleHexClick(location.coords());
+    }
+
+    /**
+     * Tells the player why their click did nothing, rather than swallowing it. A player who owns no units
+     * is marked an observer when the phase begins and never receives a turn in it at all, so without this
+     * their clicks are silent and neither the screen nor the log explains why.
+     *
+     * @param coords The hex that was clicked, for the diagnostic log, or {@code null} when the click
+     *               carried no hex
+     */
+    private void explainClickOutsideMyTurn(@Nullable Coords coords) {
+        Player localPlayer = clientgui.getClient().getLocalPlayer();
+        boolean isObserver = (localPlayer != null) && localPlayer.isObserver();
+        String messageKey = isObserver
+              ? "VictorySetupDisplay.observerCannotPlace"
+              : "VictorySetupDisplay.notYourTurn";
+        clientgui.addToast(ToastLevel.WARNING, Messages.getString(messageKey));
+        VICTORY_HEX_LOGGER.debug("[VictoryHex] click on {} ignored for {}: {}",
+              (coords == null) ? "no hex" : coords.getBoardNum(),
+              (localPlayer == null) ? "unknown player" : localPlayer.getName(),
+              isObserver
+                    ? "observer - owns no units, so takes no turn in this phase"
+                    : "not this player's turn yet");
     }
 
     @Override
@@ -269,10 +304,55 @@ public class VictorySetupDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void ready() {
+        if (!confirmLeavingPointsUnplaced()) {
+            return;
+        }
         endMyTurn();
         // sending the ground objects is this phase's turn action: the server stores them, rebroadcasts,
         // and ends the turn
         clientgui.getClient().sendDeployGroundObjects(game().getGroundObjects());
+    }
+
+    /**
+     * Asks before ending a turn that placed nothing, the way the minefield phase asks about undeployed
+     * mines. The phase is easy to click straight through, and a player who does gets a game with victory
+     * points enabled and nothing on the board to score them.
+     *
+     * @return {@code true} to go ahead and end the turn, {@code false} to stay in the phase
+     */
+    private boolean confirmLeavingPointsUnplaced() {
+        int pointsOnBoard = 0;
+        for (List<ICarryable> hexObjects : game().getGroundObjects().values()) {
+            for (ICarryable groundObject : hexObjects) {
+                if ((groundObject instanceof ObjectiveMarker marker) && (marker.getOwnerId() == player.getId())) {
+                    pointsOnBoard++;
+                }
+            }
+        }
+        // the to-place list carries every kind of ground object a scenario hands a player, not only control
+        // points, so only the markers in it count here
+        int pointsStillToPlace = 0;
+        for (ICarryable groundObjectToPlace : player.getGroundObjectsToPlace()) {
+            if (groundObjectToPlace instanceof ObjectiveMarker) {
+                pointsStillToPlace++;
+            }
+        }
+        if ((pointsOnBoard > 0) && (pointsStillToPlace == 0)) {
+            return true;
+        }
+        String message = (pointsStillToPlace > 0)
+              ? Messages.getString("VictorySetupDisplay.unplacedPoints", pointsStillToPlace)
+              : Messages.getString("VictorySetupDisplay.noPointsPlaced");
+        int choice = JOptionPane.showConfirmDialog(clientgui.getFrame(), message,
+              Messages.getString("VictorySetupDisplay.unplacedTitle"),
+              JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        boolean isGoingAhead = choice == JOptionPane.YES_OPTION;
+        if (!isGoingAhead) {
+            VICTORY_HEX_LOGGER.debug("[VictoryHex] {} stayed in the phase rather than end the turn with "
+                  + "{} point(s) placed and {} still to place", player.getName(), pointsOnBoard,
+                  pointsStillToPlace);
+        }
+        return isGoingAhead;
     }
 
     @Override

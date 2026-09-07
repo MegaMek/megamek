@@ -52,7 +52,9 @@ import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.IArmorState;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.exceptions.LocationFullException;
@@ -1452,5 +1454,231 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         // AbstractBuildingEntity can reinforce if it's the target of ongoing combat
         return getGame().getEntitiesVector(getBoardLocation()).stream()
               .anyMatch(e -> e.getInfantryCombatTargetId() == this.getId());
+    }
+
+    // ========== Advanced Building Critical Damage (TO:AR pp. 118-119) ==========
+
+    /** Turns the gunners remain stunned; a stunned building takes no actions (TO:AR p. 118, Gunners Stunned). */
+    private int stunnedTurns = 0;
+
+    /**
+     * Locations whose gunners were killed by a critical hit; no weapon in them fires again (TO:AR p. 118). Not
+     * final: a building deserialized from a save written before this field existed comes back with it {@code null},
+     * so it is created on first use.
+     */
+    private Set<Integer> deadGunnerLocations = new HashSet<>();
+
+    /**
+     * Equipment numbers of turreted weapons locked in their current facing by a critical hit (TO:AR p. 118). Not
+     * final for the same deserialization reason as {@link #deadGunnerLocations}.
+     */
+    private Set<Integer> lockedTurretWeapons = new HashSet<>();
+
+    private Set<Integer> deadGunnerLocations() {
+        if (deadGunnerLocations == null) {
+            deadGunnerLocations = new HashSet<>();
+        }
+        return deadGunnerLocations;
+    }
+
+    private Set<Integer> lockedTurretWeapons() {
+        if (lockedTurretWeapons == null) {
+            lockedTurretWeapons = new HashSet<>();
+        }
+        return lockedTurretWeapons;
+    }
+
+    /**
+     * A building is never inside a building. Without this override the building entity is treated as a unit standing
+     * inside its own hex, which makes weapon fire absorb against it once as a building and again as an occupant.
+     *
+     * @return {@code false}
+     */
+    @Override
+    public boolean isInBuilding() {
+        return false;
+    }
+
+    /**
+     * A building's weapons face outward and its turreted weapons sit on the roof (TO:AR p. 132), so it cannot fire on
+     * a unit inside one of its own hexes. A unit standing on the roof is outside the building and is not refused by
+     * this rule; the ordinary zero-range rule still applies to it.
+     *
+     * @param unit the unit being targeted
+     *
+     * @return {@code true} if the unit occupies one of this building's hexes below roof level
+     */
+    public boolean isInsideThisBuilding(Entity unit) {
+        boolean onMyBoard = unit.getBoardId() == getBoardId();
+        boolean inOneOfMyHexes = (unit.getPosition() != null) && getCoordsList().contains(unit.getPosition());
+        return onMyBoard && inOneOfMyHexes && unit.isInBuilding();
+    }
+
+    /**
+     * @param location an entity location (one hex level of this building)
+     *
+     * @return the board hex that location belongs to, or {@code null} if the location is unknown
+     */
+    public @Nullable Coords getLocationCoords(int location) {
+        CubeCoords relativeCoords = locationToRelativeCoordsMap.get(location);
+        return (relativeCoords == null) ? null : relativeToBoard(relativeCoords);
+    }
+
+    /**
+     * @param location an entity location (one hex level of this building)
+     *
+     * @return the level within the hex that location represents; {@code 0} is the ground level
+     */
+    public int getLocationLevel(int location) {
+        int buildingHeight = getInternalBuilding().getBuildingHeight();
+        return (buildingHeight > 0) ? location % buildingHeight : 0;
+    }
+
+    /**
+     * @param coords a board hex of this building, or {@code null}
+     *
+     * @return every entity location (one per level) that sits in that hex; empty when the hex is not part of this
+     *       building
+     */
+    public List<Integer> getLocationsAt(@Nullable Coords coords) {
+        return coordsToLocations(coords);
+    }
+
+    /**
+     * @param coords a board hex of this building
+     *
+     * @return the weapons mounted in any level of that hex
+     */
+    public List<WeaponMounted> getWeaponsAt(Coords coords) {
+        List<Integer> locations = getLocationsAt(coords);
+        return getWeaponList().stream()
+              .filter(weapon -> locations.contains(weapon.getLocation()))
+              .toList();
+    }
+
+    /**
+     * @param coords a board hex of this building
+     *
+     * @return the ammunition bins mounted in any level of that hex
+     */
+    public List<AmmoMounted> getAmmoAt(Coords coords) {
+        List<Integer> locations = getLocationsAt(coords);
+        return getAmmo().stream()
+              .filter(ammo -> locations.contains(ammo.getLocation()))
+              .toList();
+    }
+
+    /**
+     * @param coords a board hex of this building
+     *
+     * @return the miscellaneous equipment mounted in any level of that hex
+     */
+    public List<MiscMounted> getMiscAt(Coords coords) {
+        List<Integer> locations = getLocationsAt(coords);
+        return getMisc().stream()
+              .filter(misc -> locations.contains(misc.getLocation()))
+              .toList();
+    }
+
+    /**
+     * @return the number of turns the gunners remain stunned; {@code 0} when they can act
+     */
+    public int getStunnedTurns() {
+        return stunnedTurns;
+    }
+
+    /**
+     * @return {@code true} while the gunners are stunned and the building may take no actions
+     */
+    public boolean isStunned() {
+        return stunnedTurns > 0;
+    }
+
+    /**
+     * Applies a Gunners Stunned critical hit (TO:AR p. 118): the building takes no actions during the following turn.
+     * Multiple stuns in the same turn extend the effect by one turn each, matching vehicle crew stuns.
+     */
+    public void stunGunners() {
+        if (stunnedTurns == 0) {
+            stunnedTurns = 2;
+        } else {
+            stunnedTurns++;
+        }
+    }
+
+    /**
+     * Applies a Gunners Killed critical hit (TO:AR p. 118) to one hex: no weapon in that hex fires for the rest of the
+     * scenario. When every hex has lost its gunners the building's crew is marked as doomed.
+     *
+     * @param coords the board hex whose gunners were killed
+     */
+    public void killGunnersAt(Coords coords) {
+        deadGunnerLocations().addAll(getLocationsAt(coords));
+        if (allGunnersDead()) {
+            getCrew().setDoomed(true);
+        }
+    }
+
+    /**
+     * @param location an entity location
+     *
+     * @return {@code true} if a Gunners Killed critical hit has silenced that location
+     */
+    public boolean hasDeadGunners(int location) {
+        return deadGunnerLocations().contains(location);
+    }
+
+    /**
+     * @return {@code true} when every location of this building has lost its gunners
+     */
+    public boolean allGunnersDead() {
+        return !locationToRelativeCoordsMap.isEmpty()
+              && deadGunnerLocations().containsAll(locationToRelativeCoordsMap.keySet());
+    }
+
+    /**
+     * A building weapon is turret-mounted when its unit file marks it {@code (ST)} or {@code (PT)}; the loader stores
+     * that as the Mek or pintle turret flag, so {@link Mounted#isTurret()} does not see it.
+     *
+     * @param weapon a weapon of this building
+     *
+     * @return {@code true} if the weapon sits in a turret and can normally fire in any direction
+     */
+    public boolean isTurretMounted(WeaponMounted weapon) {
+        return weapon.isMekTurretMounted() || weapon.isPintleTurretMounted() || weapon.isSponsonTurretMounted();
+    }
+
+    /**
+     * Applies a Turret Locks critical hit (TO:AR p. 118) to one turreted weapon: it keeps firing, but only into the
+     * building's forward arc.
+     *
+     * @param weapon the turreted weapon to lock
+     */
+    public void lockTurretWeapon(WeaponMounted weapon) {
+        lockedTurretWeapons().add(getEquipmentNum(weapon));
+    }
+
+    /**
+     * @param weapon a weapon of this building
+     *
+     * @return {@code true} if a Turret Locks critical hit has fixed that weapon's facing
+     */
+    public boolean isTurretLocked(WeaponMounted weapon) {
+        return lockedTurretWeapons().contains(getEquipmentNum(weapon));
+    }
+
+    /**
+     * @return {@code true} if any turret of this building has been locked by a critical hit
+     */
+    public boolean hasLockedTurret() {
+        return !lockedTurretWeapons().isEmpty();
+    }
+
+    @Override
+    public void newRound(int roundNumber) {
+        super.newRound(roundNumber);
+        if (stunnedTurns > 0) {
+            stunnedTurns--;
+        }
     }
 }

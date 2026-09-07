@@ -29121,7 +29121,7 @@ public class TWGameManager extends AbstractGameManager {
         if (!(entity instanceof Tank tank)) {
             return new Vector<>();
         }
-        LOGGER.info("[BuildingEntry] {} failed its Driving Skill Roll in a building; rolling motive system damage",
+        LOGGER.debug("[BuildingEntry] {} failed its Driving Skill Roll in a building; rolling motive system damage",
               tank.getShortName());
         return vehicleMotiveDamage(tank, 0);
     }

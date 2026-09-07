@@ -1500,6 +1500,21 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
+     * A building's weapons face outward and its turreted weapons sit on the roof (TO:AR p. 132), so it cannot fire on
+     * a unit inside one of its own hexes. A unit standing on the roof is outside the building and is not refused by
+     * this rule; the ordinary zero-range rule still applies to it.
+     *
+     * @param unit the unit being targeted
+     *
+     * @return {@code true} if the unit occupies one of this building's hexes below roof level
+     */
+    public boolean isInsideThisBuilding(Entity unit) {
+        boolean onMyBoard = unit.getBoardId() == getBoardId();
+        boolean inOneOfMyHexes = (unit.getPosition() != null) && getCoordsList().contains(unit.getPosition());
+        return onMyBoard && inOneOfMyHexes && unit.isInBuilding();
+    }
+
+    /**
      * @param location an entity location (one hex level of this building)
      *
      * @return the board hex that location belongs to, or {@code null} if the location is unknown

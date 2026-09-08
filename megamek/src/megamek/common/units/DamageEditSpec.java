@@ -109,7 +109,7 @@ public class DamageEditSpec implements Serializable {
 
     /*
      * The Advanced Building critical results a gamemaster can set or take back (TO:AR p. 119). These are only
-     * carried for a building; every other unit type leaves them empty or null.
+     * carried for a building; every other unit type leaves them empty or {@code null}.
      */
 
     /**

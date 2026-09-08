@@ -134,7 +134,7 @@ public class UnitDamageControls {
     public Map<Integer, CheckCritPanel> equipCrits = new HashMap<>();
 
     /*
-     * An Advanced Building's critical state and its power switch; null or empty for every other unit type.
+     * An Advanced Building's critical state and its power switch; {@code null} or empty for every other unit type.
      */
 
     /**

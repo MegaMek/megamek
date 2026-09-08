@@ -321,9 +321,15 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     public void createController() {
+        KeyboardFocusManager keyboardFocusManager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+        // Remove any previously registered controller first. Each call to this method (e.g. once per MekHQ scenario)
+        // otherwise adds another dispatcher to the global KeyboardFocusManager that is never removed, leaking
+        // dispatchers that keep catching key events for games that have already ended. See issue #8888.
+        if (controller != null) {
+            keyboardFocusManager.removeKeyEventDispatcher(controller);
+        }
         controller = new MegaMekController();
         controller.megaMekGUI = this;
-        KeyboardFocusManager keyboardFocusManager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         keyboardFocusManager.addKeyEventDispatcher(controller);
         KeyBindParser.parseKeyBindings(controller);
     }

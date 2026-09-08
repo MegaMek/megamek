@@ -123,18 +123,31 @@ public final class MarinePointsScoreCalculator {
      * @return the score, {@code 0} for {@code null} or a unit with nobody left to fight
      */
     public static double calculateScore(@Nullable Entity entity, @Nullable AbstractBuildingEntity defendedBuilding) {
+        return breakdown(entity, defendedBuilding).modifiedScore();
+    }
+
+    /**
+     * The working behind a unit's Marine Points Score, for a report that shows how the total was reached.
+     *
+     * @param entity           the unit, or {@code null} for no unit
+     * @param defendedBuilding the building the unit is defending, or {@code null} for no building modifier
+     *
+     * @return the breakdown; {@link MarinePointsBreakdown#NOBODY} for {@code null}
+     */
+    public static MarinePointsBreakdown breakdown(@Nullable Entity entity,
+          @Nullable AbstractBuildingEntity defendedBuilding) {
         if (entity == null) {
-            return 0;
+            return MarinePointsBreakdown.NOBODY;
         }
-        double score = switch (entity) {
-            case BattleArmor squad -> battleArmorScore(squad);
-            case ConvInfantry platoon -> conventionalInfantryScore(platoon);
-            default -> crewScore(entity);
+        double modifier = buildingModifier(defendedBuilding);
+        MarinePointsBreakdown breakdown = switch (entity) {
+            case BattleArmor squad -> battleArmorScore(squad, modifier);
+            case ConvInfantry platoon -> conventionalInfantryScore(platoon, modifier);
+            default -> crewScore(entity, modifier);
         };
-        double modifiedScore = score * buildingModifier(defendedBuilding);
-        LOGGER.debug("[MarinePoints] {}: score {} (with building modifier {})", entity.getShortName(), score,
-              modifiedScore);
-        return Math.max(0, modifiedScore);
+        LOGGER.debug("[MarinePoints] {}: score {} (with building modifier {})", entity.getShortName(),
+              breakdown.score(), breakdown.modifiedScore());
+        return breakdown;
     }
 
     /**
@@ -160,24 +173,24 @@ public final class MarinePointsScoreCalculator {
         return (int) Math.ceil(calculateScore(entity, building));
     }
 
-    private static double conventionalInfantryScore(ConvInfantry platoon) {
+    private static MarinePointsBreakdown conventionalInfantryScore(ConvInfantry platoon, double buildingModifier) {
         int troopers = Math.max(0, platoon.getInternal(ConvInfantry.LOC_INFANTRY));
         double perTrooper = platoon.hasSpecialization(ConvInfantry.MARINES) ? MARINE : NON_MARINE_SOLDIER;
         if (platoon.calcDamageDivisor() >= ARMORED_DAMAGE_DIVISOR) {
             perTrooper += ARMORED_TROOPER;
         }
-        return troopers * perTrooper;
+        return MarinePointsBreakdown.conventionalInfantry(troopers, perTrooper, buildingModifier);
     }
 
-    private static double battleArmorScore(BattleArmor squad) {
+    private static MarinePointsBreakdown battleArmorScore(BattleArmor squad, double buildingModifier) {
         int activeTroopers = squad.getNumberActiveTroopers();
         if (activeTroopers == 0) {
-            return 0;
+            return MarinePointsBreakdown.battleArmor(0, 0, 0, 0, 0, 0, buildingModifier);
         }
-        double perTrooper = squad.isClan() ? ELEMENTAL_TROOPER : INNER_SPHERE_BATTLE_ARMOR_TROOPER;
-        perTrooper += weightClassModifier(squad.getWeightClass());
-        perTrooper += squadEquipmentModifier(squad);
-        return (activeTroopers * perTrooper) + (intactArmor(squad) * INTACT_ARMOR_POINT);
+        double baseValue = squad.isClan() ? ELEMENTAL_TROOPER : INNER_SPHERE_BATTLE_ARMOR_TROOPER;
+        int intactArmor = intactArmor(squad);
+        return MarinePointsBreakdown.battleArmor(activeTroopers, baseValue, weightClassModifier(squad.getWeightClass()),
+              squadEquipmentModifier(squad), intactArmor, intactArmor * INTACT_ARMOR_POINT, buildingModifier);
     }
 
     private static double weightClassModifier(int weightClass) {
@@ -273,11 +286,13 @@ public final class MarinePointsScoreCalculator {
      * Crew-based units (a building or a vessel): marines, then the non-combat crew, bay personnel and any
      * passengers, who are taken to be civilians.
      */
-    private static double crewScore(Entity entity) {
-        return (entity.getNMarines() * MARINE)
+    private static MarinePointsBreakdown crewScore(Entity entity, double buildingModifier) {
+        double score = (entity.getNMarines() * MARINE)
               + (entity.getNCrew() * NON_COMBAT_CREW)
               + (entity.getBayPersonnel() * NON_COMBAT_CREW)
               + (entity.getNPassenger() * CIVILIAN);
+        return MarinePointsBreakdown.crewed(entity.getNMarines(), entity.getNCrew(), entity.getBayPersonnel(),
+              entity.getNPassenger(), score, buildingModifier);
     }
 
     /**

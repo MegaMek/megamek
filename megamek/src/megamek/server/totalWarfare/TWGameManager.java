@@ -16466,6 +16466,7 @@ public class TWGameManager extends AbstractGameManager {
             r.add(building.getDisplayName());
             r.subject = inf.getId();
             addReport(r);
+            new InfantryActionReporter(this).reportUnitScore(inf, isAttacker ? null : building);
         } else {
             // New combat - find all defenders (building crew AND any infantry)
             List<Entity> defenders = new ArrayList<>();
@@ -16507,6 +16508,8 @@ public class TWGameManager extends AbstractGameManager {
             r.add(building.getDisplayName());
             r.subject = inf.getId();
             addReport(r);
+            new InfantryActionReporter(this).reportSides(List.of(inf.getId()),
+                  defenders.stream().map(Entity::getId).toList(), building);
         }
     }
 

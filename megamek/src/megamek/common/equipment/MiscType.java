@@ -1607,6 +1607,18 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createNeuralInterrogationComputer());
         EquipmentType.addType(MiscType.createBasicToolkit());
         EquipmentType.addType(MiscType.createDeluxeToolkit());
+        EquipmentType.addType(MiscType.createAdvancedFieldKit());
+        EquipmentType.addType(MiscType.createBasicFieldKit());
+        EquipmentType.addType(MiscType.createCompass());
+        EquipmentType.addType(MiscType.createElectronicCompass());
+        EquipmentType.addType(MiscType.createAdvancedMedicalKit());
+        EquipmentType.addType(MiscType.createFieldSurgicalKit());
+        EquipmentType.addType(MiscType.createMedicalKit());
+        EquipmentType.addType(MiscType.createCompad());
+        EquipmentType.addType(MiscType.createNoteputer());
+        EquipmentType.addType(MiscType.createPersonalComputer());
+        EquipmentType.addType(MiscType.createPocketTranscriber());
+        EquipmentType.addType(MiscType.createTelescan());
         EquipmentType.addType(MiscType.createMekSprayer());
         EquipmentType.addType(MiscType.createTankSprayer());
         EquipmentType.addType(MiscType.createFrontDumper());
@@ -8462,6 +8474,66 @@ public class MiscType extends EquipmentType {
     public static MiscType createDeluxeToolkit() {
         return supportGear("Deluxe Toolkit", 0.05, 750, TechRating.D,
               AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A);
+    }
+
+    public static MiscType createAdvancedFieldKit() {
+        return supportGear("Advanced Field Kit", 0.015, 100, TechRating.C,
+              AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+    }
+
+    public static MiscType createBasicFieldKit() {
+        return supportGear("Basic Field Kit", 0.005, 10, TechRating.B,
+              AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+    }
+
+    public static MiscType createCompass() {
+        return supportGear("Compass", 0.0001, 10, TechRating.B,
+              AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+    }
+
+    public static MiscType createElectronicCompass() {
+        return supportGear("Electronic Compass", 0.0001, 30, TechRating.C,
+              AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+    }
+
+    public static MiscType createAdvancedMedicalKit() {
+        return supportGear("Advanced Medical Kit", 0.002, 250, TechRating.C,
+              AvailabilityValue.A, AvailabilityValue.C, AvailabilityValue.B);
+    }
+
+    public static MiscType createFieldSurgicalKit() {
+        return supportGear("Field Surgical Kit", 0.0115, 800, TechRating.D,
+              AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A);
+    }
+
+    public static MiscType createMedicalKit() {
+        return supportGear("Medical Kit", 0.00025, 10, TechRating.C,
+              AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+    }
+
+    public static MiscType createCompad() {
+        return supportGear("Compad", 0.0002, 150, TechRating.D,
+              AvailabilityValue.A, AvailabilityValue.C, AvailabilityValue.B);
+    }
+
+    public static MiscType createNoteputer() {
+        return supportGear("Noteputer", 0.0005, 500, TechRating.C,
+              AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A);
+    }
+
+    public static MiscType createPersonalComputer() {
+        return supportGear("Personal Computer", 0.003, 250, TechRating.C,
+              AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A);
+    }
+
+    public static MiscType createPocketTranscriber() {
+        return supportGear("Pocket Transcriber", 0.0005, 200, TechRating.C,
+              AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.B);
+    }
+
+    public static MiscType createTelescan() {
+        return supportGear("Telescan", 0.00075, 100, TechRating.C,
+              AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
     }
     // endregion Support Gear
 

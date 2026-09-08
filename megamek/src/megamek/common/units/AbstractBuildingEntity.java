@@ -1475,12 +1475,13 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     /**
      * Sets the crew this building was built with. The unit file's {@code crew} block sets it; a value of
-     * {@link #CREW_FROM_MINIMUM_CREW_TABLE} returns to the Advanced Building Minimum Crew Table.
+     * {@link #CREW_FROM_MINIMUM_CREW_TABLE} returns to the Advanced Building Minimum Crew Table, and so does any
+     * other negative value, since a negative crew is not a crew.
      *
      * @param crewCount the crew, or {@link #CREW_FROM_MINIMUM_CREW_TABLE}
      */
     public void setCrewCount(int crewCount) {
-        this.crewCount = crewCount;
+        this.crewCount = Math.max(crewCount, CREW_FROM_MINIMUM_CREW_TABLE);
     }
 
     /**
@@ -1541,9 +1542,10 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
-     * Gunners for the mounted weapons. Light and medium weapons are the conventional infantry weapons and take one
-     * gunner each; every other non-capital weapon is a heavy weapon and takes one gunner per five tons, rounded up;
-     * a capital weapon takes seven (TO:AR pp. 129 to 130).
+     * Gunners for the mounted weapons (TO:AR pp. 129 to 130). The table's light and medium weapons are the
+     * conventional infantry weapons of the TechManual, and take one gunner each. Every weapon of 0.25 tons or more
+     * that a Mek or vehicle can mount, a machine gun or a medium laser included, is a heavy weapon and takes one
+     * gunner per five tons rounded up, which is one gunner up to five tons. A capital weapon takes seven.
      */
     private int calculateGunnerCrew() {
         int gunners = 0;

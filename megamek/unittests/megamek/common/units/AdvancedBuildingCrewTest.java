@@ -218,6 +218,16 @@ class AdvancedBuildingCrewTest {
     }
 
     @Test
+    @DisplayName("A negative crew count from a hand-edited file falls back to the table")
+    void negativeCrewCountFallsBackToTheTable() throws Exception {
+        BuildingEntity building = emplacement();
+        mount(building, new ISMG());
+        building.setCrewCount(-5);
+        assertFalse(building.hasExplicitCrewCount());
+        assertEquals(2, building.getNCrew(), "one gunner and one officer from the table");
+    }
+
+    @Test
     @DisplayName("The full crew size of a building is its crew plus bay personnel")
     void fullCrewSizeIsCrewPlusBayPersonnel() throws Exception {
         BuildingEntity building = emplacement();

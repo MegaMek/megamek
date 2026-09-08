@@ -37,6 +37,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -68,7 +69,7 @@ import megamek.logging.MMLogger;
 /**
  * @author Luana Coppio
  */
-public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
+public class CommanderGUI implements IClientGUI, ILocalBots {
     private static final MMLogger logger = MMLogger.create(CommanderGUI.class);
     private final Client client;
     private final MegaMekController controller;
@@ -77,10 +78,11 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
     private BoardViewLessMinimapPanel minimap;
     private boolean isLoading;
     private JProgressBar progressBar;
-    private boolean alive = true;
     private final AudioService audioService;
     private BotCommandsPanel buttonPanel;
     private JPanel centerPanel;
+    private String serverPassword = "";
+    private volatile boolean readyRequested = false;
 
     private final TreeMap<Integer, String> splashImages = new TreeMap<>();
 
@@ -99,53 +101,50 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
         this.audioService = new SoundManager();
         this.audioService.loadSoundFiles();
         frame = new JFrame(Messages.getString("ClientGUI.mini.title"));
-        frame.setMinimumSize(new Dimension(800, 800));
     }
 
-    @Override
-    public void run() {
-        initialize();
-        loop();
-    }
-
-    private static final long targetFrameTimeNanos = 1_000_000_000 / 60;
-
-    private void loop() {
-        long previousNanos = System.nanoTime() - 16_000_000; // artificially say it has passed 1 FPS in the first loop
-        long currentNanos;
-        long awaitMillis;
-        long elapsedNanos;
-        while (alive) {
-            currentNanos = System.nanoTime();
-            elapsedNanos = currentNanos - previousNanos;
-            // keeps around 60fps, not that it is important now, but anyway
-            tick(elapsedNanos / 1_000_000);
-            previousNanos = currentNanos;
-            awaitMillis = (targetFrameTimeNanos - elapsedNanos) / 1_000_000;
-            try {
-                Thread.sleep(Math.max(1, awaitMillis));
-            } catch (InterruptedException e) {
-                logger.error("Interrupted while waiting for next frame", e);
-                alive = false;
-            }
+    /**
+     * Sets the server password so the "Request Victory" button can authenticate its {@code /victory} command. MekHQ's
+     * Host dialog pre-fills the last password, and {@code VictoryCommand} rejects a passwordless request on a
+     * passworded server. See issue #8891.
+     *
+     * @param serverPassword the server password, or empty/{@code null} when the server has none
+     */
+    public void setServerPassword(String serverPassword) {
+        this.serverPassword = (serverPassword == null) ? "" : serverPassword;
+        if (buttonPanel != null) {
+            buttonPanel.setServerPassword(this.serverPassword);
         }
-    }
-
-    @SuppressWarnings("unused")
-    private void tick(long deltaTime) {
-        // nothing to do here for now
     }
 
     @Override
     public void initialize() {
+        // The whole window is built and shown on the EDT. This is invoked from the MekHQ game thread, so hop over with
+        // invokeAndWait; building Swing off the EDT is what made the window unreliable. See issue #8891.
+        if (SwingUtilities.isEventDispatchThread()) {
+            buildAndShow();
+        } else {
+            try {
+                SwingUtilities.invokeAndWait(this::buildAndShow);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                logger.error("Interrupted while building the Commander window", e);
+            } catch (InvocationTargetException e) {
+                logger.error("Failed to build the Commander window", e);
+            }
+        }
+    }
+
+    private void buildAndShow() {
+        frame.setMinimumSize(UIUtil.scaleForGUI(800, 800));
         JPanel mainPanel = new JPanel(new BorderLayout());
 
         // Center: Splash image with progress bar
         centerPanel = new JPanel(new BorderLayout());
         RawImagePanel splashImage = UIUtil.createSplashComponent(splashImages, getFrame());
         MiniReportDisplayPanel miniReportDisplayPanel = new MiniReportDisplayPanel(this);
-        miniReportDisplayPanel.setMinimumSize(new Dimension(600, 600));
-        miniReportDisplayPanel.setPreferredSize(new Dimension(600, 600));
+        miniReportDisplayPanel.setMinimumSize(UIUtil.scaleForGUI(600, 600));
+        miniReportDisplayPanel.setPreferredSize(UIUtil.scaleForGUI(600, 600));
 
         progressBar = new JProgressBar(0, 100);
         progressBar.setIndeterminate(true);
@@ -159,7 +158,8 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
 
         // Right: List of current entities with their status
         JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.setMinimumSize(new Dimension(600, frame.getHeight()));
+        // Height is left to the layout: frame.getHeight() is still 0 before pack(), so a fixed value here was junk.
+        rightPanel.setMinimumSize(new Dimension(UIUtil.scaleForGUI(600), 0));
 
         JPanel entityListEntries = new JPanel();
         JLabel entitiesHeader = new JLabel("Entities in game");
@@ -167,10 +167,11 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
         entityListEntries.setLayout(new BoxLayout(entityListEntries, BoxLayout.Y_AXIS));
         buttonPanel = new BotCommandsPanel(this.client, audioService, controller);
         buttonPanel.useSpaceForPauseUnpause();
+        buttonPanel.setServerPassword(serverPassword);
 
         var jScroll = new JScrollPane(entityListEntries);
-        jScroll.setMinimumSize(new Dimension(-1, 20));
-        jScroll.setPreferredSize(new Dimension(-1, 300));
+        jScroll.setMinimumSize(new Dimension(-1, UIUtil.scaleForGUI(20)));
+        jScroll.setPreferredSize(new Dimension(-1, UIUtil.scaleForGUI(300)));
 
         rightPanel.add(jScroll, BorderLayout.NORTH);
         rightPanel.add(miniReportDisplayPanel, BorderLayout.CENTER);
@@ -249,7 +250,11 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
                           " (Crippled)" :
                           "");
                     JLabel entityLabel = new JLabel(entityLabelText);
-                    entityLabel.setForeground(entity.getOwner().getColour().getColour());
+                    // Owners are removed at resetGame(), so a late repaint can see a null owner. See issue #8891.
+                    var owner = entity.getOwner();
+                    if (owner != null) {
+                        entityLabel.setForeground(owner.getColour().getColour());
+                    }
                     entityListEntries.add(entityLabel);
                 });
                 entityListEntries.revalidate();
@@ -257,6 +262,9 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
             }
         });
         frame.setVisible(true);
+
+        // The launcher may have called enableReady() before the panel existed; apply it now that it does.
+        applyReadyIfRequested();
     }
 
     private void setupMinimap() {
@@ -329,8 +337,23 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
         return localBots;
     }
 
+    /**
+     * Requests that the Ready button be wired up. This may be called by the MekHQ launcher before {@link #initialize()}
+     * has finished building the panel; if so the request is remembered and applied at the end of {@code initialize()}
+     * rather than silently dropped (which left the Ready button dead and preparation stalled). See issue #8891.
+     */
     public void enableReady() {
-        if (buttonPanel != null) {
+        readyRequested = true;
+        applyReadyIfRequested();
+    }
+
+    private void applyReadyIfRequested() {
+        if (!readyRequested || (buttonPanel == null)) {
+            // Not yet buildable; buildAndShow() calls this again once the panel exists.
+            return;
+        }
+        Runnable apply = () -> {
+            logger.info("Commander GUI: wiring the Ready button");
             buttonPanel.setMiscButton(
                   Messages.getString("BotCommandPanel.Ready.title"),
                   Messages.getString("BotCommandPanel.Ready.tooltip"),
@@ -339,6 +362,11 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
                       client.sendDone(true);
                   });
             setupMinimap();
+        };
+        if (SwingUtilities.isEventDispatchThread()) {
+            apply.run();
+        } else {
+            SwingUtilities.invokeLater(apply);
         }
     }
 }

@@ -986,13 +986,10 @@ public class UnitDamagePanelBuilder {
      * @param building the building whose state is being edited
      */
     private void setupBuildingSystemCrits(AbstractBuildingEntity building) {
-        controls.chkBuildingPower = new JCheckBox();
-        controls.chkBuildingPower.setSelected(!building.isPowerSwitchedOff());
-        controls.chkBuildingPower.setToolTipText(UIUtil.formatSideTooltip(
-              Messages.getString("UnitEditorDialog.building.power.tooltip")));
-        addLabeledRow(generalPanel(),
-              Messages.getString("UnitEditorDialog.building.power"),
-              controls.chkBuildingPower);
+        // Ticked means the power is cut: in this editor a tick always marks something wrong with the unit, so a
+        // box that read "Power" and was ticked while everything was fine stood out as backwards to players.
+        controls.chkBuildingPowerOff = addStatusRow("UnitEditorDialog.building.powerOff",
+              building.isPowerSwitchedOff());
 
         controls.spnBuildingStunnedTurns = new JSpinner(new SpinnerNumberModel(
               Math.max(building.getStunnedTurns(), 0), 0, MAX_STUNNED_TURNS, 1));

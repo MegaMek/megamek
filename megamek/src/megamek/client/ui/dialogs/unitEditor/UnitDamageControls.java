@@ -137,8 +137,11 @@ public class UnitDamageControls {
      * An Advanced Building's critical state and its power switch; null or empty for every other unit type.
      */
 
-    /** Whether the building's power is switched on. Unchecking it shuts the building down. */
-    public JCheckBox chkBuildingPower;
+    /**
+     * Whether the building's power has been cut at the switch. Ticked means off, so that, like every other box in
+     * the editor, a tick marks something wrong with the unit; ticking it shuts the building down.
+     */
+    public JCheckBox chkBuildingPowerOff;
     /** How many turns the building's gunners stay stunned; zero means they can act. */
     public JSpinner spnBuildingStunnedTurns;
     /** Gunners killed in each of the building's hexes, keyed by that hex's ground floor location. */

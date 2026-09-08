@@ -1611,6 +1611,23 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
+     * Locations are laid out hex by hex in the order the building's hexes were declared, one location per level,
+     * so the hex is the location's quotient by the height just as the level is its remainder.
+     *
+     * @param location an entity location (one hex level of this building)
+     *
+     * @return the index of the hex that location sits in, counting the building's hexes from {@code 0} in
+     *       declaration order; {@code -1} if the location is unknown or the building has no height
+     */
+    public int getHexIndex(int location) {
+        int buildingHeight = getInternalBuilding().getBuildingHeight();
+        if ((buildingHeight <= 0) || !locationToRelativeCoordsMap.containsKey(location)) {
+            return -1;
+        }
+        return location / buildingHeight;
+    }
+
+    /**
      * @param location an entity location (one hex level of this building)
      *
      * @return the level within the hex that location represents; {@code 0} is the ground level

@@ -1000,12 +1000,24 @@ public class UnitDamagePanelBuilder {
               controls.spnBuildingStunnedTurns);
 
         // One checkbox per hex rather than per location: a critical hit kills the gunners of a whole hex, so the
-        // ground floor location stands for the hex and the other floors follow it.
+        // ground floor location stands for the hex. It sits on a panel of its own for the hex, which the diagram
+        // shows above that hex's level tabs, so the whole-hex state is not mistaken for a ground floor detail.
         for (int location = 0; location < building.locations(); location++) {
+            int hexIndex = building.getHexIndex(location);
+            if (hexIndex < 0) {
+                continue;
+            }
+            // Inside a hex's tabs a level panel is titled by its level alone; the hex is named on the tab strip
+            // and in the chooser, so the location's own name, which carries coordinates, is not shown.
+            if (controls.locationLabels[location] != null) {
+                controls.locationLabels[location].setText(
+                      Messages.getString("UnitEditorDialog.building.level", building.getLocationLevel(location)));
+            }
             if (building.getLocationLevel(location) != GROUND_FLOOR) {
                 continue;
             }
-            JPanel hexPanel = targetPanel(location);
+            JPanel hexPanel = createTitledPanel(new JLabel(BuildingHexNames.hexName(building, hexIndex)));
+            controls.buildingHexPanels.put(hexIndex, hexPanel);
             JCheckBox gunnersKilled = new JCheckBox();
             gunnersKilled.setSelected(building.hasDeadGunners(location));
             gunnersKilled.setToolTipText(UIUtil.formatSideTooltip(

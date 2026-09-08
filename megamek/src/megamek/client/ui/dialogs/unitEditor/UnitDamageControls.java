@@ -146,6 +146,11 @@ public class UnitDamageControls {
     public JSpinner spnBuildingStunnedTurns;
     /** Gunners killed in each of the building's hexes, keyed by that hex's ground floor location. */
     public final Map<Integer, JCheckBox> buildingGunnersKilled = new HashMap<>();
+    /**
+     * One panel per building hex, keyed by hex index, for the state that belongs to the whole hex rather than to
+     * one of its levels. The diagram shows it above the hex's level tabs.
+     */
+    public final Map<Integer, JPanel> buildingHexPanels = new HashMap<>();
     /** Whether each of the building's turreted weapons is locked forward, by equipment number. */
     public final Map<Integer, JCheckBox> buildingTurretLocked = new HashMap<>();
     /** Whether each of the building's weapons is jammed, by equipment number. */

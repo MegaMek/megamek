@@ -55,8 +55,10 @@ import megamek.common.enums.BuildingType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.rolls.PilotingRollData;
 import megamek.logging.MMLogger;
@@ -1447,80 +1449,130 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         }
     }
 
+    /** A {@link #crewCount} of this value means the crew is derived from the Advanced Building Minimum Crew Table. */
+    public static final int CREW_FROM_MINIMUM_CREW_TABLE = -1;
+
+    /** Gunners a capital-scale weapon needs (TO:AR p. 130). */
+    private static final int GUNNERS_PER_CAPITAL_WEAPON = 7;
+    /** Tons of heavy weapon one gunner serves (TO:AR p. 130): gunners are the weapon's tons divided by this, rounded up. */
+    private static final double HEAVY_WEAPON_TONS_PER_GUNNER = 5.0;
+    /** Non-gunners a field kitchen needs (TO:AR p. 130). */
+    private static final int CREW_PER_FIELD_KITCHEN = 3;
+    /** Non-gunners each MASH operating theater needs (TO:AR p. 130). */
+    private static final int CREW_PER_MASH_THEATER = 5;
+    /** Non-gunners a mobile field base needs (TO:AR p. 130). */
+    private static final int CREW_PER_MOBILE_FIELD_BASE = 5;
+    /** The largest non-officer crew that a single officer commands (TO:AR p. 130). */
+    private static final int LARGEST_CREW_WITH_ONE_OFFICER = 9;
+    /** Crew per officer once the crew is larger than {@link #LARGEST_CREW_WITH_ONE_OFFICER} (TO:AR p. 130). */
+    private static final double CREW_PER_OFFICER = 10.0;
+
     /**
-     * Calculate building crew based on Advanced Building Minimum Crew Table (TO:AUE). Crew = Non-Gunners + Gunners +
-     * Officers
+     * The crew this building was built with, from the {@code crew} block of its unit file, or
+     * {@link #CREW_FROM_MINIMUM_CREW_TABLE} when the file has none and the crew is the table minimum.
+     */
+    private int crewCount = CREW_FROM_MINIMUM_CREW_TABLE;
+
+    /**
+     * Sets the crew this building was built with. The unit file's {@code crew} block sets it; a value of
+     * {@link #CREW_FROM_MINIMUM_CREW_TABLE} returns to the Advanced Building Minimum Crew Table.
      *
-     * @return total crew count
+     * @param crewCount the crew, or {@link #CREW_FROM_MINIMUM_CREW_TABLE}
+     */
+    public void setCrewCount(int crewCount) {
+        this.crewCount = crewCount;
+    }
+
+    /**
+     * @return {@code true} when the crew comes from the unit file rather than the minimum crew table
+     */
+    public boolean hasExplicitCrewCount() {
+        return crewCount != CREW_FROM_MINIMUM_CREW_TABLE;
+    }
+
+    /**
+     * The building's crew: the unit file's {@code crew} block when it has one, otherwise the Advanced Building
+     * Minimum Crew Table (TO:AR p. 130). Bay personnel are separate; see {@link #getBayPersonnel()}.
+     *
+     * @return the crew count
      */
     @Override
     public int getNCrew() {
+        if (hasExplicitCrewCount()) {
+            return crewCount;
+        }
+        return calculateMinimumCrew();
+    }
+
+    /**
+     * The Advanced Building Minimum Crew Table (TO:AR p. 130): non-gunners for the equipment that needs them, one
+     * gunner per light or medium weapon, one per five tons (rounded up) of each heavy weapon, seven per capital
+     * weapon, and officers for the whole.
+     *
+     * @return the minimum crew for this building's equipment
+     */
+    public int calculateMinimumCrew() {
         int nonGunners = calculateNonGunnerCrew();
         int gunners = calculateGunnerCrew();
         int officers = calculateOfficerCrew(nonGunners + gunners);
-
         return nonGunners + gunners + officers;
     }
 
     /**
-     * Calculate non-gunner crew based on building equipment. Does NOT include bay personnel - those are counted
-     * separately via getBayPersonnel().
-     *
-     * @return non-gunner crew count
+     * Non-gunners from the table's equipment rows that exist in MegaMek: one per ton of communications equipment,
+     * three per field kitchen, five per MASH theater and five per mobile field base. Flight decks, landing decks,
+     * helipads and modular structure linkages are not equipment yet and add nothing.
      */
     private int calculateNonGunnerCrew() {
-        int crew = 0;
-
-        // TODO: Implement equipment-based crew calculation when equipment system is available
-        // (Field Kitchens, Helipads, Landing Decks, etc.)
-        // For now, return 0 - bay personnel are counted separately
-
-        return crew;
+        int nonGunners = 0;
+        for (MiscMounted mounted : getMisc()) {
+            MiscType miscType = mounted.getType();
+            if (miscType.hasFlag(MiscType.F_COMMUNICATIONS)) {
+                nonGunners += (int) Math.ceil(mounted.getTonnage());
+            } else if (miscType.hasFlag(MiscType.F_FIELD_KITCHEN)) {
+                nonGunners += CREW_PER_FIELD_KITCHEN;
+            } else if (miscType.hasFlag(MiscType.F_MASH)) {
+                nonGunners += CREW_PER_MASH_THEATER * Math.max(1, (int) mounted.getSize());
+            } else if (miscType.hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
+                nonGunners += CREW_PER_MOBILE_FIELD_BASE;
+            }
+        }
+        return nonGunners;
     }
 
     /**
-     * Calculate gunner crew based on mounted weapons. - Light Weapon: 1 gunner - Medium Weapon: 1 gunner - Heavy
-     * Weapon: Weapon Tons ÷ 5 (round up) - Capital Weapon: 7 gunners
-     *
-     * @return gunner crew count
+     * Gunners for the mounted weapons. Light and medium weapons are the conventional infantry weapons and take one
+     * gunner each; every other non-capital weapon is a heavy weapon and takes one gunner per five tons, rounded up;
+     * a capital weapon takes seven (TO:AR pp. 129 to 130).
      */
     private int calculateGunnerCrew() {
         int gunners = 0;
-
-        for (megamek.common.equipment.Mounted<?> mounted : getWeaponList()) {
-            if (mounted.getType() instanceof megamek.common.equipment.WeaponType weapon) {
-                // Determine weapon size and calculate gunners
-                double weaponTonnage = weapon.getTonnage(this);
-
-                if (weapon.isCapital()) {
-                    gunners += 7;  // Capital weapon
-                } else if (weaponTonnage >= 10) {
-                    gunners += (int) Math.ceil(weaponTonnage / 5.0);  // Heavy weapon
-                } else {
-                    gunners += 1;  // Light or Medium weapon
-                }
+        for (WeaponMounted mounted : getWeaponList()) {
+            WeaponType weaponType = mounted.getType();
+            if (weaponType.isCapital()) {
+                gunners += GUNNERS_PER_CAPITAL_WEAPON;
+            } else if (weaponType.hasFlag(WeaponType.F_INFANTRY)) {
+                gunners += 1;
+            } else {
+                gunners += (int) Math.ceil(mounted.getTonnage() / HEAVY_WEAPON_TONS_PER_GUNNER);
             }
         }
-
         return gunners;
     }
 
     /**
-     * Calculate officer crew based on total non-officer crew. - 1-9 crew: 1 officer - 10+ crew: Total Crew ÷ 10 (round
-     * up)
+     * Officers for a crew: none for an empty crew, one for up to nine, otherwise one per ten rounded up.
      *
-     * @param nonOfficerCrew total non-officer crew
-     *
-     * @return officer crew count
+     * @param nonOfficerCrew the non-gunners and gunners together
      */
     private int calculateOfficerCrew(int nonOfficerCrew) {
         if (nonOfficerCrew == 0) {
             return 0;
-        } else if (nonOfficerCrew <= 9) {
-            return 1;
-        } else {
-            return (int) Math.ceil(nonOfficerCrew / 10.0);
         }
+        if (nonOfficerCrew <= LARGEST_CREW_WITH_ONE_OFFICER) {
+            return 1;
+        }
+        return (int) Math.ceil(nonOfficerCrew / CREW_PER_OFFICER);
     }
 
     @Override

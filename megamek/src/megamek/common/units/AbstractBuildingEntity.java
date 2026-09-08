@@ -1681,6 +1681,45 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
+     * The weapons jammed by a Weapon Malfunction critical hit (TO:AR p. 119) that gunners are still alive to clear.
+     * A jammed weapon in a location whose gunners were killed stays jammed for good and is not listed.
+     *
+     * @return the jammed weapons with living gunners, empty when there are none
+     */
+    public List<Mounted<?>> getJammedWeapons() {
+        List<Mounted<?>> jammedWeapons = new ArrayList<>();
+        for (WeaponMounted weapon : getWeaponList()) {
+            if (weapon.isJammed() && !hasDeadGunners(weapon.getLocation())) {
+                jammedWeapons.add(weapon);
+            }
+        }
+        return jammedWeapons;
+    }
+
+    /**
+     * Whether the gunners can spend this turn clearing a jammed weapon, as a vehicle crew can (TW p. 195): a weapon
+     * must be jammed, and the gunners must be neither stunned nor dead. Shared by the firing display and the server so
+     * both sides agree.
+     *
+     * @return {@code true} when a Clear Weapon Jam action is available
+     */
+    public boolean canUnjamWeapon() {
+        if (getJammedWeapons().isEmpty()) {
+            return false;
+        }
+        if (isStunned()) {
+            logger.debug("[WeaponJam] {}: cannot clear a jam, gunners stunned for {} more turns", getShortName(),
+                  getStunnedTurns());
+            return false;
+        }
+        if (allGunnersDead()) {
+            logger.debug("[WeaponJam] {}: cannot clear a jam, all gunners are dead", getShortName());
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Applies a Gunners Stunned critical hit (TO:AR p. 118): the building takes no actions during the following turn.
      * Multiple stuns in the same turn extend the effect by one turn each, matching vehicle crew stuns.
      */

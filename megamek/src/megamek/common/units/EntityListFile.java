@@ -803,6 +803,27 @@ public class EntityListFile {
      * @throws IOException is thrown on any error.
      */
     public static void saveTo(File file, Client client, Player localPlayer) throws IOException {
+        saveTo(file, client, localPlayer, false);
+    }
+
+    /**
+     * Save the entities from the game of client to the given file, as {@link #saveTo(File, Client, Player)} does, but
+     * optionally treating the local player's whole team as "the player".
+     *
+     * <p>When {@code teamAsLiving} is {@code true}, every unit belonging to a player on the local player's team - not
+     * only the units the local player owns directly - is written to the survivors and retreated sections instead of the
+     * allies section. PACAR hands the player's units off to an "@AI" bot on the player's own team, so after the game
+     * the human player owns nothing and the force can only be recovered by team. See issue #8890.</p>
+     *
+     * @param file         - The current contents of the file will be discarded and all
+     *                     <code>Entity</code>s in the list will be written to the file.
+     * @param client       - a <code>Client</code> containing the <code>Game</code>s to be used
+     * @param localPlayer  - What player should we treat as "the" player?
+     * @param teamAsLiving - when {@code true}, the local player's whole team counts as the player's own units
+     *
+     * @throws IOException is thrown on any error.
+     */
+    public static void saveTo(File file, Client client, Player localPlayer, boolean teamAsLiving) throws IOException {
         if (null == client.getGame() || !client.playerExists(localPlayer.getId())) {
             return;
         }
@@ -824,7 +845,7 @@ public class EntityListFile {
         // Sort entities into player's, enemies, and allies and add to survivors,
         // salvage, and allies.
         for (Entity entity : client.getGame().inGameTWEntities()) {
-            if (entity.getOwner().getId() == localPlayer.getId()) {
+            if (countsAsPlayerOwn(entity.getOwner(), localPlayer, teamAsLiving)) {
                 living.add(entity);
             } else if (entity.getOwner().isEnemyOf(localPlayer)) {
                 if (!entity.canEscape()) {
@@ -840,7 +861,7 @@ public class EntityListFile {
         // sections
         for (Enumeration<Entity> iter = client.getGame().getRetreatedEntities(); iter.hasMoreElements(); ) {
             Entity ent = iter.nextElement();
-            if (ent.getOwner().getId() == localPlayer.getId()) {
+            if (countsAsPlayerOwn(ent.getOwner(), localPlayer, teamAsLiving)) {
                 living.add(ent);
             } else if (!ent.getOwner().isEnemyOf(localPlayer)) {
                 allied.add(ent);
@@ -925,6 +946,20 @@ public class EntityListFile {
         output.write("</" + MULParser.ELE_RECORD + ">\n");
         output.flush();
         output.close();
+    }
+
+    /**
+     * @param owner        the owner of a unit being classified
+     * @param localPlayer  the player treated as "the" player
+     * @param teamAsLiving when {@code true}, any owner on the local player's team counts, not only the local player
+     *
+     * @return {@code true} if the unit should be written as one of the player's own (survivors/retreated)
+     */
+    static boolean countsAsPlayerOwn(Player owner, Player localPlayer, boolean teamAsLiving) {
+        if (owner.getId() == localPlayer.getId()) {
+            return true;
+        }
+        return teamAsLiving && (owner.getTeam() == localPlayer.getTeam());
     }
 
     private static void writeKills(Writer output, Hashtable<String, String> kills) throws IOException {

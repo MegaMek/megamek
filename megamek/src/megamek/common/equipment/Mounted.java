@@ -904,6 +904,18 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
+     * Sets the jam so that it is in force at once, rather than from the next phase as {@link #setJammed(boolean)}
+     * arranges. A jam declared in play only bites when the phase turns over, but a gamemaster editing a unit is
+     * describing its condition as it stands, so the change has to be visible immediately.
+     *
+     * @param jammedNow {@code true} to jam the equipment here and now, {@code false} to clear the jam entirely
+     */
+    public void setJammedImmediately(boolean jammedNow) {
+        jammed = jammedNow;
+        jammedThisPhase = jammedNow;
+    }
+
+    /**
      * Clear all jam statuses - used by MHQ, because phase resetting doesn't work
      */
     public void resetJam() {

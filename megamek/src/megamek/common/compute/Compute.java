@@ -6890,10 +6890,9 @@ public class Compute {
         r.add(mod);
 
         if (isAttackThruBuilding && (priorDamage != damage)) {
-            // Indicates damage halved for thru-building attack; priorDamage != damage
-            r.extend(9972);
+            // Fire inside a building halves burst-fire damage to infantry (TW p. 175); its own line in the report
+            r.extend(9977);
             r.add((int) damage);
-            r.add(ReportMessages.getString(String.valueOf(9973)));
         }
 
         // according to the following ruling, the half damage that mechanized

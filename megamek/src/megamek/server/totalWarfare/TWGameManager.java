@@ -29094,17 +29094,55 @@ public class TWGameManager extends AbstractGameManager {
                     return;
                 }
             } else {
-                toBldg = (int) Math.floor(bldg.getDamageToScale() * Math.ceil(entity.getWeight() / 10.0));
+                toBldg = buildingDamageFromPassingWall(entity, bldg);
             }
-            int curCF = bldg.getCurrentCF(entering ? curPos : lastPos);
+            Coords damagedHex = entering ? curPos : lastPos;
+            int curCF = bldg.getCurrentCF(damagedHex);
             curCF -= Math.min(curCF, toBldg);
-            bldg.setCurrentCF(curCF, entering ? curPos : lastPos);
+            bldg.setCurrentCF(curCF, damagedHex);
+            buildingReport.add(reportBuildingDamageFromPassingWall(entity, bldg, toBldg, curCF, damagedHex));
 
             // Apply the correct amount of damage to infantry in the building.
             // ASSUMPTION: We inflict toBldg damage to infantry and
             // not the amount to bring building to 0 CF.
             buildingReport.addAll(damageInfantryIn(bldg, toBldg, entering ? curPos : lastPos));
         }
+    }
+
+    /** The round report line for the damage a moving unit inflicts on a building hex. */
+    private Report reportBuildingDamageFromPassingWall(Entity entity, IBuilding bldg, int damage, int remainingCF,
+          Coords damagedHex) {
+        Report report = new Report(6441);
+        report.subject = entity.getId();
+        report.indent(2);
+        report.add((bldg instanceof Entity buildingEntity) ? buildingEntity.getShortName()
+              : bldg.getBuildingType() + " " + bldg.getName());
+        report.add(damage);
+        report.add(entity.getShortName());
+        report.add(damagedHex.getBoardNum());
+        report.add(remainingCF);
+        return report;
+    }
+
+    /**
+     * Damage a unit inflicts on a building hex it moves into or through: one point per ten tons (TW p. 168), doubled
+     * for a Large Support Vehicle (TW p. 168, Large Support Vehicles), and then scaled for the building class the way
+     * any damage to that class is.
+     *
+     * @param entity the moving unit
+     * @param bldg   the building being passed through
+     *
+     * @return the damage to apply to the building hex
+     */
+    private int buildingDamageFromPassingWall(Entity entity, IBuilding bldg) {
+        int standardDamage = (int) Math.ceil(entity.getWeight() / 10.0);
+        int damage = standardDamage;
+        if (entity instanceof LargeSupportTank) {
+            damage = standardDamage * 2;
+            LOGGER.debug("[BuildingEntry] {} is a Large Support Vehicle; building damage doubled from {} to {}",
+                  entity.getShortName(), standardDamage, damage);
+        }
+        return (int) Math.floor(bldg.getDamageToScale() * damage);
     }
 
     /**

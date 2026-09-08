@@ -40,9 +40,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.io.Serial;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -55,7 +53,6 @@ import javax.swing.JTabbedPane;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.comboBoxes.SearchableComboBox;
 import megamek.client.ui.dialogs.unitDisplay.ArmorPanel;
 import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.common.annotations.Nullable;
@@ -95,8 +92,6 @@ public class DamageEditorDiagram extends JSplitPane implements LocationSelectLis
     private final CardLayout cardLayout = new CardLayout();
     /** Chooses which location panel is shown; kept in step with the armor diagram. Not used for a building. */
     private final JComboBox<LocationChoice> comboLocation = new JComboBox<>();
-    /** For a building, chooses which hex is shown; {@code null} for every other unit. */
-    private SearchableComboBox<HexChoice> comboHex;
     /** For a building, the level tabs of each hex card, by hex index; empty for every other unit. */
     private final Map<Integer, JTabbedPane> hexLevelTabs = new HashMap<>();
     /** Set while the level tabs are being brought into line with each other, so their own changes are ignored. */
@@ -110,9 +105,10 @@ public class DamageEditorDiagram extends JSplitPane implements LocationSelectLis
         panCards.setLayout(cardLayout);
         JPanel panChooser = new JPanel(new FlowLayout(FlowLayout.LEFT));
         if (entity instanceof AbstractBuildingEntity building) {
-            comboHex = buildHexCards(building);
-            panChooser.add(new JLabel(Messages.getString("UnitEditorDialog.building.hexChooser")));
-            panChooser.add(comboHex);
+            // A building has no chooser: its hexes are picked by clicking them on the diagram, which is drawn
+            // as the footprint, and the chosen hex names itself on the panel above its level tabs.
+            buildHexCards(building);
+            panChooser.add(new JLabel(Messages.getString("UnitEditorDialog.building.clickHex")));
         } else {
             buildLocationCards();
             panChooser.add(new JLabel(Messages.getString("UnitEditorDialog.location")));
@@ -165,20 +161,19 @@ public class DamageEditorDiagram extends JSplitPane implements LocationSelectLis
     }
 
     /**
-     * One card per hex, chosen from a searchable dropdown, each holding the hex's own panel above a tab per level.
+     * One card per hex, chosen by clicking the hex on the diagram, each holding the hex's own panel above a tab
+     * per level.
      *
      * <p>A building is hexes by levels. Listing every level of every hex as one flat location - fifty entries on a
-     * ten hex building - hid that shape and named each entry by its coordinates. Here the dropdown picks the hex,
-     * named by its number and, once the building is placed, by its board hex, so either can be typed to find it;
-     * the tabs pick the level within it; and whatever belongs to the whole hex sits above the tabs.</p>
+     * ten hex building - hid that shape and named each entry by its coordinates. Here the diagram, drawn as the
+     * building's footprint, picks the hex; the tabs pick the level within it; and whatever belongs to the whole
+     * hex sits above the tabs, under the hex's name. The first hex is shown until one is clicked.</p>
      *
      * @param building the building being edited
-     *
-     * @return the hex chooser, already showing the first hex
      */
-    private SearchableComboBox<HexChoice> buildHexCards(AbstractBuildingEntity building) {
+    private void buildHexCards(AbstractBuildingEntity building) {
         int height = building.getInternalBuilding().getBuildingHeight();
-        List<HexChoice> hexes = new ArrayList<>();
+        boolean firstHexShown = false;
         for (int hexIndex = 0; hexIndex < building.getOriginalHexCount(); hexIndex++) {
             JTabbedPane levelTabs = new JTabbedPane();
             for (int level = 0; level < height; level++) {
@@ -210,21 +205,11 @@ public class DamageEditorDiagram extends JSplitPane implements LocationSelectLis
             hexCard.add(levelTabs);
             hexLevelTabs.put(hexIndex, levelTabs);
             panCards.add(hexCard, hexCardName(hexIndex));
-            hexes.add(new HexChoice(hexIndex, BuildingHexNames.hexName(building, hexIndex)));
-        }
-
-        SearchableComboBox<HexChoice> chooser = new SearchableComboBox<>("buildingHexChooser", hexes,
-              HexChoice::name);
-        chooser.addActionListener(event -> {
-            HexChoice choice = chooser.getSelectedItem();
-            if (choice != null) {
-                cardLayout.show(panCards, hexCardName(choice.hexIndex()));
+            if (!firstHexShown) {
+                cardLayout.show(panCards, hexCardName(hexIndex));
+                firstHexShown = true;
             }
-        });
-        if (!hexes.isEmpty()) {
-            chooser.setSelectedItem(hexes.getFirst());
         }
-        return chooser;
     }
 
     /**
@@ -270,7 +255,7 @@ public class DamageEditorDiagram extends JSplitPane implements LocationSelectLis
         if (!isKnownLocation) {
             return;
         }
-        if ((entity instanceof AbstractBuildingEntity building) && (comboHex != null)) {
+        if (entity instanceof AbstractBuildingEntity building) {
             showBuildingLocation(building, location);
             return;
         }
@@ -301,14 +286,14 @@ public class DamageEditorDiagram extends JSplitPane implements LocationSelectLis
         refreshDamageDisplay();
     }
 
-    /** Selects the hex a location sits in, then the tab of its level. */
+    /** Shows the card of the hex a location sits in, then selects the tab of its level. */
     private void showBuildingLocation(AbstractBuildingEntity building, int location) {
         int hexIndex = building.getHexIndex(location);
         JTabbedPane levelTabs = hexLevelTabs.get(hexIndex);
-        if ((levelTabs == null) || (comboHex == null)) {
+        if (levelTabs == null) {
             return;
         }
-        comboHex.setSelectedItem(new HexChoice(hexIndex, ""));
+        cardLayout.show(panCards, hexCardName(hexIndex));
         int tabIndex = levelTabs.indexOfComponent(controls.locationPanels[location]);
         if (tabIndex >= 0) {
             levelTabs.setSelectedIndex(tabIndex);
@@ -481,24 +466,6 @@ public class DamageEditorDiagram extends JSplitPane implements LocationSelectLis
 
     private static String hexCardName(int hexIndex) {
         return "hex-" + hexIndex;
-    }
-
-    /** An entry of a building's hex chooser. Equality is by hex so the chooser can be set by hex alone. */
-    private record HexChoice(int hexIndex, String name) {
-        @Override
-        public boolean equals(Object other) {
-            return (other instanceof HexChoice choice) && (choice.hexIndex == hexIndex);
-        }
-
-        @Override
-        public int hashCode() {
-            return Integer.hashCode(hexIndex);
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
     }
 
     /** An entry of the location chooser. Equality is by location so the chooser can be set by location alone. */

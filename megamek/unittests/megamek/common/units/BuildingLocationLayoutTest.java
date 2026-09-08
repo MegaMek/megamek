@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 
+import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.loaders.MekFileParser;
 import org.junit.jupiter.api.BeforeAll;
@@ -86,6 +87,35 @@ class BuildingLocationLayoutTest {
         for (int location = 0; location < building.locations(); location++) {
             assertEquals(location / height, building.getHexIndex(location), "location " + location);
         }
+    }
+
+    @Test
+    @DisplayName("before placement a location's abbreviation names its hex by number, not by coordinates")
+    void unplacedAbbreviationNamesTheHexByNumber() throws Exception {
+        AbstractBuildingEntity building = loadLargeBuilding();
+
+        assertEquals("LVL 0 H1", building.getLocationAbbr(0));
+        assertEquals("LVL 2 H2", building.getLocationAbbr(5));
+        assertEquals("LVL 1 H7", building.getLocationAbbr(19));
+    }
+
+    @Test
+    @DisplayName("before placement a location's name keeps the cube coordinates the unit file is keyed by")
+    void unplacedNameKeepsTheFileKey() throws Exception {
+        AbstractBuildingEntity building = loadLargeBuilding();
+
+        assertEquals("Level 0 0.0,0.0,0.0", building.getLocationName(0));
+        assertEquals("Level 2 1.0,-1.0,0.0", building.getLocationName(5));
+    }
+
+    @Test
+    @DisplayName("once placed, both the name and the abbreviation carry the board hex")
+    void placedLocationsCarryTheBoardHex() throws Exception {
+        AbstractBuildingEntity building = loadLargeBuilding();
+        building.setPosition(new Coords(3, 4));
+
+        assertEquals("LVL 0 0405", building.getLocationAbbr(0));
+        assertEquals("Level 0 0405", building.getLocationName(0));
     }
 
     @Test

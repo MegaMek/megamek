@@ -89,6 +89,8 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     private static final String LOCATION_ABBREVIATIONS_PREFIX = "LVL";
     private static final String LOCATION_NAMES_PREFIX = "Level";
+    /** Names a hex of a building that is not on the board yet, by its number: {@code H1}, {@code H2} and so on. */
+    private static final String UNPLACED_HEX_PREFIX = "H";
 
     private static final int[] CRITICAL_SLOTS = new int[] { 100 };
 
@@ -591,17 +593,32 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         return 0;
     }
 
+    /**
+     * The location names double as the keys of the equipment blocks in the unit file, so before the building is
+     * placed they carry its relative cube coordinates exactly as the file writes them. They are not meant to be
+     * read by players; {@link #getLocationAbbreviations()} is the form that is.
+     */
     @Override
     public String[] getLocationNames() {
-        return getLocationStrings(LOCATION_NAMES_PREFIX);
+        return getLocationStrings(LOCATION_NAMES_PREFIX, false);
     }
 
+    /**
+     * The abbreviations are what players see - in the armor diagram, the unit display and reports - so before
+     * the building is placed a location is labelled by its hex number rather than by cube coordinates; once it
+     * is placed, by its board hex.
+     */
     @Override
     public String[] getLocationAbbreviations() {
-        return getLocationStrings(LOCATION_ABBREVIATIONS_PREFIX);
+        return getLocationStrings(LOCATION_ABBREVIATIONS_PREFIX, true);
     }
 
-    private String[] getLocationStrings(String locationPrefix) {
+    /**
+     * @param locationPrefix          the word each entry starts with
+     * @param numberHexesWhenUnplaced whether an unplaced building's hexes are named by number, which players can
+     *                                read, rather than by the cube coordinates the unit file is keyed by
+     */
+    private String[] getLocationStrings(String locationPrefix, boolean numberHexesWhenUnplaced) {
         ArrayList<String> locationAbbrvNames = new ArrayList<>();
         if (getInternalBuilding() == null || getInternalBuilding().getOriginalCoordsList() == null) {
             return new String[] { locationPrefix + ' ' + LOC_BASE };
@@ -609,11 +626,13 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         for (int location : locationToRelativeCoordsMap.keySet()) {
             CubeCoords cubeCoords = locationToRelativeCoordsMap.get(location);
             String coordString;
-            if (getPosition() == null) {
-                coordString = cubeCoords.q() + "," + cubeCoords.r() + "," + cubeCoords.s();
-            } else {
+            if (getPosition() != null) {
                 CubeCoords positionCubeCoords = getPosition().toCube();
                 coordString = positionCubeCoords.add(cubeCoords).toOffset().getBoardNum();
+            } else if (numberHexesWhenUnplaced) {
+                coordString = UNPLACED_HEX_PREFIX + (getHexIndex(location) + 1);
+            } else {
+                coordString = cubeCoords.q() + "," + cubeCoords.r() + "," + cubeCoords.s();
             }
 
             // Result is 0 indexed

@@ -37,9 +37,9 @@ package megamek.common.equipment;
 import java.text.NumberFormat;
 import java.util.Map;
 
-import megamek.common.SourceBookCode;
 import megamek.common.Messages;
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.TechConstants;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.AvailabilityValue;
@@ -1580,6 +1580,15 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCargo());
         EquipmentType.addType(MiscType.createLiquidCargo());
         EquipmentType.addType(MiscType.createCargoContainer());
+        // Specialized repair kits (CamOps)
+        EquipmentType.addType(MiscType.createAerospaceRepairKit());
+        EquipmentType.addType(MiscType.createBionicMaintenanceKit());
+        EquipmentType.addType(MiscType.createCuttingJoiningKit());
+        EquipmentType.addType(MiscType.createElectronicsRepairKit());
+        EquipmentType.addType(MiscType.createFissionFusionRepairKit());
+        EquipmentType.addType(MiscType.createMyomerActuatorRepairKit());
+        EquipmentType.addType(MiscType.createVehicleRepairKit());
+        EquipmentType.addType(MiscType.createWeaponRepairKit());
         EquipmentType.addType(MiscType.createMekSprayer());
         EquipmentType.addType(MiscType.createTankSprayer());
         EquipmentType.addType(MiscType.createFrontDumper());
@@ -8188,6 +8197,147 @@ public class MiscType extends EquipmentType {
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
+
+    // region Specialized Repair Kits
+    // Personal/support repair kits from ATOW. These are not unit-mounted equipment (no F_*_EQUIPMENT flags), so they
+    // do not appear in unit construction; they are registered so campaign/logistics code can reference them by name.
+
+    public static MiscType createAerospaceRepairKit() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Aerospace Repair Kit";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.31;
+        misc.criticalSlots = 0;
+        misc.cost = 2500;
+        misc.industrial = true;
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
+              .setAdvancement(DATE_ES, DATE_ES)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
+    public static MiscType createBionicMaintenanceKit() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Bionic Maintenance Kit";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.045;
+        misc.criticalSlots = 0;
+        misc.cost = 5000;
+        misc.industrial = true;
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
+              .setAdvancement(DATE_ES, DATE_ES)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
+    public static MiscType createCuttingJoiningKit() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cutting/Joining Kit";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.175;
+        misc.criticalSlots = 0;
+        misc.cost = 1250;
+        misc.industrial = true;
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
+              .setAdvancement(DATE_ES, DATE_ES)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
+    public static MiscType createElectronicsRepairKit() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Electronics Repair Kit";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.04;
+        misc.criticalSlots = 0;
+        misc.cost = 2000;
+        misc.industrial = true;
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
+              .setAdvancement(DATE_ES, DATE_ES)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
+    public static MiscType createFissionFusionRepairKit() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Fission/Fusion Repair Kit";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.345;
+        misc.criticalSlots = 0;
+        misc.cost = 15000;
+        misc.industrial = true;
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
+              .setAdvancement(DATE_ES, DATE_ES)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
+    public static MiscType createMyomerActuatorRepairKit() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Myomer/Actuator Repair Kit";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.26;
+        misc.criticalSlots = 0;
+        misc.cost = 3000;
+        misc.industrial = true;
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.D, AvailabilityValue.B, AvailabilityValue.B)
+              .setAdvancement(DATE_ES, DATE_ES)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
+    public static MiscType createVehicleRepairKit() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Vehicle Repair Kit";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.225;
+        misc.criticalSlots = 0;
+        misc.cost = 1000;
+        misc.industrial = true;
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
+              .setAdvancement(DATE_ES, DATE_ES)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
+    public static MiscType createWeaponRepairKit() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Weapon Repair Kit";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.2;
+        misc.criticalSlots = 0;
+        misc.cost = 1500;
+        misc.industrial = true;
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
+              .setAdvancement(DATE_ES, DATE_ES)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+    // endregion Specialized Repair Kits
 
     public static MiscType createCargo() {
         MiscType misc = new MiscType();

@@ -7324,30 +7324,8 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 vPhaseReport.addAll(vBuildingDamageReport);
 
-                // For each missile, check to see if it hits a unit in this hex
-                for (Entity e : game.getEntitiesVector(t.getPosition())) {
-                    if (e.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV)) {
-                        continue;
-                    }
-                    for (int m = 0; m < missiles; m++) {
-                        Roll diceRoll = Compute.rollD6(1);
-                        r = new Report(3570);
-                        r.subject = e.getId();
-                        r.indent(3);
-                        r.addDesc(e);
-                        r.add(diceRoll);
-                        vPhaseReport.add(r);
-
-                        if (diceRoll.getIntValue() >= 5) {
-                            Vector<Report> dmgReports = deliverInfernoMissiles(ae, e, 1, called);
-                            for (Report rep : dmgReports) {
-                                rep.indent(4);
-                            }
-                            vPhaseReport.addAll(dmgReports);
-                        }
-                    }
-                }
-
+                // Each unit in the hex rolls per missile; conventional infantry inside is shielded by the building
+                vPhaseReport.addAll(new InfernoBuildingHexResolver(this).strikeUnitsInHex(ae, t, missiles, called));
                 break;
             case Targetable.TYPE_ENTITY:
                 Entity te = (Entity) t;

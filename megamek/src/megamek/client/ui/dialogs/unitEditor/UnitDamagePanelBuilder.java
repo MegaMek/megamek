@@ -815,7 +815,6 @@ public class UnitDamagePanelBuilder {
         return appendedToRow(control, toggle);
     }
 
-    /** Wraps the control and the switch into one row, the switch at its right end. */
     /**
      * Appends an Advanced Building's per-weapon critical switches to a weapon's row: Jammed for any weapon, and
      * Turret Locked as well for a turreted one (TO:AR p. 119). A jammed weapon does not fire; a locked turret
@@ -848,6 +847,7 @@ public class UnitDamagePanelBuilder {
         return row;
     }
 
+    /** Wraps the control and the switch into one row, the switch at its right end. */
     private JComponent appendedToRow(JComponent control, JComponent toggle) {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, UIUtil.scaleForGUI(5), 0));
         row.add(control);

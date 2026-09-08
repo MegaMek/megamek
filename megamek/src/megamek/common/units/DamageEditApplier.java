@@ -459,8 +459,9 @@ public class DamageEditApplier {
             }
         }
         for (Map.Entry<Integer, Boolean> weaponJammed : spec.buildingWeaponJammed.entrySet()) {
-            Mounted<?> weapon = building.getEquipment(weaponJammed.getKey());
-            if (null != weapon) {
+            // Only a weapon can jam; the editor builds the switch for weapons alone, so anything else named
+            // here is a malformed spec and is left untouched
+            if (building.getEquipment(weaponJammed.getKey()) instanceof WeaponMounted weapon) {
                 // immediately, rather than from the next phase: the gamemaster is stating the condition now
                 weapon.setJammedImmediately(weaponJammed.getValue());
             }

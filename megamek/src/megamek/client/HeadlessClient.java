@@ -63,8 +63,11 @@ public class HeadlessClient extends Client {
      * The game result captured the instant the VICTORY phase begins, before any server-side reset can wipe the board.
      * This is how the result reaches MekHQ even when the VICTORY phase never formally ends (e.g. a bot disconnect
      * stalls the readiness check). See issue #8889.
+     *
+     * <p>Written on the game/receive thread in {@link #changePhase(GamePhase)} and read from the Swing EDT in the
+     * Commander window's hand-off, so it is {@code volatile} to publish the snapshot across those threads.</p>
      */
-    private GameVictoryEvent victorySnapshot;
+    private volatile GameVictoryEvent victorySnapshot;
 
     /**
      * A client with no GUI has nothing to show an entity's picture in, so it does not cache one.

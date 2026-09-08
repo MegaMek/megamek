@@ -226,6 +226,11 @@ public class CommanderGUI implements IClientGUI, ILocalBots {
                     audioService.playSound(SoundType.BING_MY_TURN);
                     buttonPanel.setMiscButton("Scenario Completed", "Click here to finish it", evt -> {
                         deliverVictoryToListeners();
+                        // Clear any lingering pause first: while the server is paused it parks DONE in its
+                        // pausedWaitingList (CLOSE_CONNECTION and UNPAUSE are the ones handled immediately), so a DONE
+                        // sent here could sit unprocessed after the window closes and re-strand the hand-off. UNPAUSE
+                        // is idempotent when not paused. See issues #8888/#8891.
+                        client.sendUnpause();
                         client.sendDone(true);
                         die();
                     });

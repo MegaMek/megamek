@@ -1873,7 +1873,8 @@ public class ConvInfantry extends Infantry {
             return true;
         }
 
-        if (currElevation < 0) {
+        // Below the surface means under water, unless the hex has a basement that deep (TW p. 179)
+        if ((currElevation < 0) && !hex.isBasementLevel(currElevation)) {
             if (mount == null) {
                 if (!getMovementMode().isUMUInfantry() && !getMovementMode().isSubmarine()) {
                     return true;

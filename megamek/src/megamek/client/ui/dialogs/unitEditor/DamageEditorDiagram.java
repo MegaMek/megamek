@@ -36,6 +36,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.io.Serial;
@@ -195,6 +196,9 @@ public class DamageEditorDiagram extends JSplitPane implements LocationSelectLis
             JPanel hexPanel = controls.buildingHexPanels.get(hexIndex);
             if (hexPanel != null) {
                 hexPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+                // A box layout hands its spare height to whichever child will take it. The hex panel holds a row
+                // or two and must stay that size; the level tabs below it are what should grow.
+                hexPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, hexPanel.getPreferredSize().height));
                 hexCard.add(hexPanel);
             }
             levelTabs.setAlignmentX(Component.LEFT_ALIGNMENT);

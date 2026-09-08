@@ -29076,8 +29076,10 @@ public class TWGameManager extends AbstractGameManager {
                     }
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, side);
                     hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
+                    withoutLocationMotiveRoll(hit);
                     buildingReport.addAll(damageEntity(entity, hit, damage));
                 }
+                buildingReport.addAll(rollMotiveDamageForFailedBuildingEntry(entity));
             }
 
             // Damage the building. The CF can never drop below 0.
@@ -29103,6 +29105,33 @@ public class TWGameManager extends AbstractGameManager {
             // not the amount to bring building to 0 CF.
             buildingReport.addAll(damageInfantryIn(bldg, toBldg, entering ? curPos : lastPos));
         }
+    }
+
+    /**
+     * A vehicle's hit location can carry its own motive damage roll (TW p. 193). On a failed building entry the rule
+     * asks for exactly one roll (TW p. 168), made by {@link #rollMotiveDamageForFailedBuildingEntry}, so the
+     * location's roll is dropped from the wall damage.
+     */
+    private static void withoutLocationMotiveRoll(HitData hit) {
+        hit.setEffect(hit.getEffect() & ~HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+    }
+
+    /**
+     * A vehicle that fails its Driving Skill Roll while moving through a building wall makes one immediate roll on
+     * the Motive System Damage Table (TW p. 168, Vehicles), whatever location the wall damage hit. Other unit types
+     * are unaffected.
+     *
+     * @param entity the unit that failed the roll
+     *
+     * @return the reports of the motive damage roll, empty when the unit is not a vehicle
+     */
+    private Vector<Report> rollMotiveDamageForFailedBuildingEntry(Entity entity) {
+        if (!(entity instanceof Tank tank)) {
+            return new Vector<>();
+        }
+        LOGGER.debug("[BuildingEntry] {} failed its Driving Skill Roll in a building; rolling motive system damage",
+              tank.getShortName());
+        return vehicleMotiveDamage(tank, 0);
     }
 
     /**

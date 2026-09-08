@@ -98,7 +98,6 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
 
@@ -734,7 +733,10 @@ public class MapMenu extends JPopupMenu {
             JMenu dmgMenu = new JMenu(Messages.getString("Gamemaster.EditDamage"));
             JMenu specialCommandsMenu = GameMasterCommandMenu.createSpecialCommandsMenu(gui, coords);
 
-            var entities = client.getGame().getEntitiesVector(coords);
+            // Ignoring targetability is deliberate: a gamemaster edits units rather than shooting at them, and an
+            // Advanced Building reports itself untargetable because it is shot at as a hex rather than as a unit.
+            // Filtering on it left buildings out of this list entirely, which dropped the whole submenu.
+            var entities = client.getGame().getEntitiesVector(boardLocation, true);
 
             for (Entity entity : entities) {
                 dmgMenu.add(createUnitEditorMenuItem(entity));
@@ -1505,7 +1507,7 @@ public class MapMenu extends JPopupMenu {
                 if (hasAmmoType(AmmoType.AmmoTypeEnum.BA_MICRO_BOMB)) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_BOMB)));
                 }
-                
+
                 if (hasWeaponFlag(WeaponType.F_MRM) && myEntity.hasMisc(MiscType.F_APOLLO) && Game.rulesManager.getRulesWeapons().getApolloSaturationMode()) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_SATURATION)));
                 }

@@ -59,13 +59,13 @@ import megamek.client.ui.buttons.StateToggleButton;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.CriticalSlot;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.ChargeLevel;
 import megamek.common.bays.Bay;
+import megamek.common.enums.ChargeLevel;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.DockingCollar;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.DockingCollar;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
@@ -106,6 +106,10 @@ public class UnitDamagePanelBuilder {
     private static final int MAX_SKILL_DELTA = 8;
     /** The longest a timed skill modifier can last, matching the /skillMod command. */
     private static final int MAX_MODIFIER_ROUNDS = 100;
+    /** The most turns a gamemaster may leave a building's gunners stunned; a critical hit sets two. */
+    private static final int MAX_STUNNED_TURNS = 20;
+    /** The level within a building hex that stands for the whole hex in the editor. */
+    private static final int GROUND_FLOOR = 0;
 
     private final Entity entity;
     private final UnitDamageControls controls;
@@ -345,7 +349,12 @@ public class UnitDamagePanelBuilder {
      * it was built or where it deploys, which is what Configure is for.
      */
     private void initStatus() {
-        controls.chkShutdown = addStatusRow("UnitEditorDialog.status.shutdown", entity.isShutDown());
+        // A building is shut down exactly when it has no power, so its own Power switch stands in for this
+        // checkbox; offering both would let a gamemaster start a building that the next damage pass shuts down
+        // again.
+        if (!(entity instanceof AbstractBuildingEntity)) {
+            controls.chkShutdown = addStatusRow("UnitEditorDialog.status.shutdown", entity.isShutDown());
+        }
 
         // a LAM in fighter mode, or an airborne unit, is neither prone nor hull down
         boolean canLieDown = !entity.isAero() && !entity.isAirborne() && !entity.isAirborneVTOLorWIGE();
@@ -375,6 +384,8 @@ public class UnitDamagePanelBuilder {
                   0,
                   Math.max(aero.getFuel(), aero.getCurrentFuel()),
                   1));
+            controls.spnFuel.setToolTipText(UIUtil.formatSideTooltip(
+                  Messages.getString("UnitEditorDialog.status.fuel.tooltip")));
             addLabeledRow(generalPanel(), Messages.getString("UnitEditorDialog.status.fuel"), controls.spnFuel);
         }
     }
@@ -413,6 +424,11 @@ public class UnitDamagePanelBuilder {
         if ((crew == null) || (crew.getSlotCount() < 1)) {
             return;
         }
+        // A building has no pilot to wound. Its crew is a garrison of gunners, and the rules stun or kill them a
+        // hex at a time (TO:AR p. 119), which the building section offers instead of this injury track.
+        if (entity instanceof AbstractBuildingEntity) {
+            return;
+        }
         controls.spnCrewHits = new JSpinner[crew.getSlotCount()];
         for (int slot = 0; slot < crew.getSlotCount(); slot++) {
             if (crew.isMissing(slot)) {
@@ -425,6 +441,8 @@ public class UnitDamagePanelBuilder {
             String label = (crew.getSlotCount() > 1)
                   ? String.format(Messages.getString("UnitEditorDialog.crewHitsFor"), crew.getNameAndRole(slot))
                   : Messages.getString("UnitEditorDialog.crewHits");
+            controls.spnCrewHits[slot].setToolTipText(UIUtil.formatSideTooltip(
+                  Messages.getString("UnitEditorDialog.crewHits.tooltip")));
             addLabeledRow(targetPanel(crewLocation()), label, controls.spnCrewHits[slot]);
         }
     }
@@ -435,6 +453,8 @@ public class UnitDamagePanelBuilder {
             return;
         }
         controls.spnHeat = new JSpinner(new SpinnerNumberModel(Math.max(entity.heat, 0), 0, MAX_HEAT, 1));
+        controls.spnHeat.setToolTipText(UIUtil.formatSideTooltip(
+              Messages.getString("UnitEditorDialog.heat.tooltip")));
         addLabeledRow(targetPanel(heatLocation()), Messages.getString("UnitEditorDialog.heat"), controls.spnHeat);
     }
 
@@ -620,6 +640,9 @@ public class UnitDamagePanelBuilder {
                     control = withModeChooser(equipmentNumber, mounted, control);
                 }
             }
+            if ((entity instanceof AbstractBuildingEntity building) && (mounted instanceof WeaponMounted weapon)) {
+                control = withBuildingWeaponSwitches(building, equipmentNumber, weapon, control);
+            }
             controls.addCritOfLocation(mounted.getLocation(), crit);
             addLabeledRow(equipmentPanel(mounted.getLocation()), label, control);
         }
@@ -792,6 +815,38 @@ public class UnitDamagePanelBuilder {
         return appendedToRow(control, toggle);
     }
 
+    /**
+     * Appends an Advanced Building's per-weapon critical switches to a weapon's row: Jammed for any weapon, and
+     * Turret Locked as well for a turreted one (TO:AR p. 119). A jammed weapon does not fire; a locked turret
+     * still fires but only into the building's forward arc.
+     *
+     * @param building        the building the weapon belongs to
+     * @param equipmentNumber the weapon's equipment number
+     * @param weapon          the weapon being given switches
+     * @param control         the row built so far
+     *
+     * @return the row with the switches appended
+     */
+    private JComponent withBuildingWeaponSwitches(AbstractBuildingEntity building, int equipmentNumber,
+          WeaponMounted weapon, JComponent control) {
+        JCheckBox jammed = new JCheckBox(Messages.getString("UnitEditorDialog.building.weaponJammed"),
+              weapon.isJammed());
+        jammed.setToolTipText(UIUtil.formatSideTooltip(
+              Messages.getString("UnitEditorDialog.building.weaponJammed.tooltip")));
+        controls.buildingWeaponJammed.put(equipmentNumber, jammed);
+        JComponent row = appendedToRow(control, jammed);
+
+        if (building.isTurretMounted(weapon)) {
+            JCheckBox turretLocked = new JCheckBox(Messages.getString("UnitEditorDialog.building.turretLocked"),
+                  building.isTurretLocked(weapon));
+            turretLocked.setToolTipText(UIUtil.formatSideTooltip(
+                  Messages.getString("UnitEditorDialog.building.turretLocked.tooltip")));
+            controls.buildingTurretLocked.put(equipmentNumber, turretLocked);
+            row = appendedToRow(row, turretLocked);
+        }
+        return row;
+    }
+
     /** Wraps the control and the switch into one row, the switch at its right end. */
     private JComponent appendedToRow(JComponent control, JComponent toggle) {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, UIUtil.scaleForGUI(5), 0));
@@ -915,6 +970,48 @@ public class UnitDamagePanelBuilder {
             setupAeroSystemCrits();
         } else if (entity instanceof ProtoMek) {
             setupProtoSystemCrits();
+        } else if (entity instanceof AbstractBuildingEntity building) {
+            setupBuildingSystemCrits(building);
+        }
+    }
+
+    /**
+     * Builds the controls for an Advanced Building's own state: the power switch, and the critical results from the
+     * Advanced Building Critical Hits Table that persist (TO:AR p. 119).
+     *
+     * <p>Gunners are stunned for the whole structure and killed a hex at a time, so the stun control sits on the
+     * general panel while each hex gets its own Gunners Killed checkbox, on the panel of that hex's ground floor.
+     * Turret locks and weapon jams belong to single weapons and are added to their equipment rows instead.</p>
+     *
+     * @param building the building whose state is being edited
+     */
+    private void setupBuildingSystemCrits(AbstractBuildingEntity building) {
+        // Ticked means the power is cut: in this editor a tick always marks something wrong with the unit, so a
+        // box that read "Power" and was ticked while everything was fine stood out as backwards to players.
+        controls.chkBuildingPowerOff = addStatusRow("UnitEditorDialog.building.powerOff",
+              building.isPowerSwitchedOff());
+
+        controls.spnBuildingStunnedTurns = new JSpinner(new SpinnerNumberModel(
+              Math.max(building.getStunnedTurns(), 0), 0, MAX_STUNNED_TURNS, 1));
+        controls.spnBuildingStunnedTurns.setToolTipText(UIUtil.formatSideTooltip(
+              Messages.getString("UnitEditorDialog.building.gunnersStunned.tooltip")));
+        addLabeledRow(generalPanel(),
+              Messages.getString("UnitEditorDialog.building.gunnersStunned"),
+              controls.spnBuildingStunnedTurns);
+
+        // One checkbox per hex rather than per location: a critical hit kills the gunners of a whole hex, so the
+        // ground floor location stands for the hex and the other floors follow it.
+        for (int location = 0; location < building.locations(); location++) {
+            if (building.getLocationLevel(location) != GROUND_FLOOR) {
+                continue;
+            }
+            JPanel hexPanel = targetPanel(location);
+            JCheckBox gunnersKilled = new JCheckBox();
+            gunnersKilled.setSelected(building.hasDeadGunners(location));
+            gunnersKilled.setToolTipText(UIUtil.formatSideTooltip(
+                  Messages.getString("UnitEditorDialog.building.gunnersKilled.tooltip")));
+            controls.buildingGunnersKilled.put(location, gunnersKilled);
+            addLabeledRow(hexPanel, Messages.getString("UnitEditorDialog.building.gunnersKilled"), gunnersKilled);
         }
     }
 

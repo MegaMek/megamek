@@ -47,6 +47,7 @@ import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.logging.MMLogger;
 
 /**
@@ -427,7 +428,55 @@ public class DamageEditApplier {
         applyEquipmentSettings();
         applyEquipmentActivation();
         applyStatus();
+        applyBuildingCriticalState();
         logAppliedEdits();
+    }
+
+    /**
+     * Applies the Advanced Building critical results and the power switch a gamemaster can set (TO:AR p. 119).
+     *
+     * <p>This runs after {@link #applyStatus()} so that the power switch has the last word on whether the
+     * structure is shut down: a structure with no power is down whatever the shutdown checkbox said.</p>
+     */
+    private void applyBuildingCriticalState() {
+        if (!(entity instanceof AbstractBuildingEntity building)) {
+            return;
+        }
+
+        if (null != spec.buildingPowerSwitchedOff) {
+            building.setPowerSwitchedOff(spec.buildingPowerSwitchedOff);
+        }
+        if (null != spec.buildingStunnedTurns) {
+            building.setStunnedTurns(spec.buildingStunnedTurns);
+        }
+        for (Map.Entry<Integer, Boolean> gunnersKilled : spec.buildingGunnersKilled.entrySet()) {
+            // by location rather than by board hex: in the lobby the building has no position to translate through
+            building.setGunnersKilledAtLocation(gunnersKilled.getKey(), gunnersKilled.getValue());
+        }
+        for (Map.Entry<Integer, Boolean> turretLocked : spec.buildingTurretLocked.entrySet()) {
+            if (building.getEquipment(turretLocked.getKey()) instanceof WeaponMounted weapon) {
+                building.setTurretLocked(weapon, turretLocked.getValue());
+            }
+        }
+        for (Map.Entry<Integer, Boolean> weaponJammed : spec.buildingWeaponJammed.entrySet()) {
+            // Only a weapon can jam; the editor builds the switch for weapons alone, so anything else named
+            // here is a malformed spec and is left untouched
+            if (building.getEquipment(weaponJammed.getKey()) instanceof WeaponMounted weapon) {
+                // immediately, rather than from the next phase: the gamemaster is stating the condition now
+                weapon.setJammedImmediately(weaponJammed.getValue());
+            }
+        }
+
+        // The power switch stands in for the shutdown checkbox on a building: with power it runs, without power
+        // it is down. Reconciled here rather than left to the next applyDamage so the switch takes effect at once,
+        // and set both ways so that switching the power back on actually restarts the structure.
+        if (building instanceof BuildingEntity buildingEntity) {
+            buildingEntity.setShutDown(!buildingEntity.hasPower());
+        }
+        LOGGER.info("[BuildingDamage] GM edit on {}: power off {}, stunned {} turns, gunners dead {}, turrets"
+                    + " locked {}",
+              building.getShortName(), building.isPowerSwitchedOff(), building.getStunnedTurns(),
+              building.allGunnersDead(), building.hasLockedTurret());
     }
 
     /**

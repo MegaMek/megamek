@@ -34,20 +34,20 @@ package megamek.client.ui.dialogs.unitDisplay;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.util.HashSet;
-import java.util.Set;
 import java.io.Serial;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.mapset.*;
 import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.client.ui.widget.picmap.PicMap;
 import megamek.common.CriticalSlot;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.HandheldWeapon;
-import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
@@ -69,6 +69,7 @@ public class ArmorPanel extends PicMap {
     private QuadMapSet quad;
     private TripodMekMapSet tripod;
     private SimpleUnitMapSet simpleUnit;
+    private BuildingMapSet building;
     private LargeSupportTankMapSet largeSupportTank;
     private SuperHeavyTankMapSet superHeavyTank;
     private AeroMapSet aero;
@@ -141,6 +142,7 @@ public class ArmorPanel extends PicMap {
         quad = new QuadMapSet(this, locationSelectListener);
         tripod = new TripodMekMapSet(this, locationSelectListener);
         simpleUnit = new SimpleUnitMapSet(this, locationSelectListener);
+        building = new BuildingMapSet(this, locationSelectListener);
         largeSupportTank = new LargeSupportTankMapSet(this, locationSelectListener);
         superHeavyTank = new SuperHeavyTankMapSet(this, locationSelectListener);
         aero = new AeroMapSet(this, locationSelectListener);
@@ -317,9 +319,17 @@ public class ArmorPanel extends PicMap {
                 minBottomMargin = minAeroTopMargin;
                 minRightMargin = minAeroLeftMargin;
             }
+            // An Advanced Building is drawn from above, hex by hex, one level at a time.
+            case AbstractBuildingEntity ignored -> {
+                ams = building;
+                minLeftMargin = minInfLeftMargin;
+                minTopMargin = minInfTopMargin;
+                minBottomMargin = minInfTopMargin;
+                minRightMargin = minInfLeftMargin;
+            }
             // Units with no drawn figure of their own get the plain box-per-location diagram.
             default -> {
-                if ((en instanceof HandheldWeapon) || (en instanceof AbstractBuildingEntity)) {
+                if (en instanceof HandheldWeapon) {
                     ams = simpleUnit;
                     minLeftMargin = minInfLeftMargin;
                     minTopMargin = minInfTopMargin;
@@ -344,6 +354,16 @@ public class ArmorPanel extends PicMap {
         }
         onResize();
         update();
+    }
+
+    /**
+     * Chooses which level of an Advanced Building the diagram shows, from {@code 0} for the ground level. Takes
+     * effect the next time the building is drawn. Units that are not buildings ignore it.
+     *
+     * @param level the level to show
+     */
+    public void setBuildingLevel(int level) {
+        building.setLevel(level);
     }
 
     /**

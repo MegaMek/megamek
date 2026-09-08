@@ -99,6 +99,8 @@ public class DamageEditorDiagram extends JSplitPane implements LocationSelectLis
     private SearchableComboBox<HexChoice> comboHex;
     /** For a building, the level tabs of each hex card, by hex index; empty for every other unit. */
     private final Map<Integer, JTabbedPane> hexLevelTabs = new HashMap<>();
+    /** Set while the level tabs are being brought into line with each other, so their own changes are ignored. */
+    private boolean isSyncingLevelTabs = false;
 
     public DamageEditorDiagram(Entity entity, UnitDamageControls controls) {
         super(JSplitPane.HORIZONTAL_SPLIT);
@@ -202,6 +204,9 @@ public class DamageEditorDiagram extends JSplitPane implements LocationSelectLis
                 hexCard.add(hexPanel);
             }
             levelTabs.setAlignmentX(Component.LEFT_ALIGNMENT);
+            // The diagram shows one level at a time, so choosing a level tab on any hex shows that level for the
+            // whole building and brings the other hexes' tabs along, so the tabs and the drawing always agree.
+            levelTabs.addChangeListener(event -> showBuildingLevel(levelTabs.getSelectedIndex()));
             hexCard.add(levelTabs);
             hexLevelTabs.put(hexIndex, levelTabs);
             panCards.add(hexCard, hexCardName(hexIndex));
@@ -270,6 +275,30 @@ public class DamageEditorDiagram extends JSplitPane implements LocationSelectLis
             return;
         }
         comboLocation.setSelectedItem(new LocationChoice(location, entity.getLocationName(location)));
+    }
+
+    /**
+     * Shows one level of the building: the diagram redraws for it, and every hex's tab strip moves to it so that
+     * switching hexes keeps the level in view.
+     *
+     * @param level the level to show; a negative value, which a tab strip reports while it has no tabs, is ignored
+     */
+    private void showBuildingLevel(int level) {
+        if ((level < 0) || isSyncingLevelTabs) {
+            return;
+        }
+        isSyncingLevelTabs = true;
+        try {
+            for (JTabbedPane levelTabs : hexLevelTabs.values()) {
+                if ((level < levelTabs.getTabCount()) && (levelTabs.getSelectedIndex() != level)) {
+                    levelTabs.setSelectedIndex(level);
+                }
+            }
+        } finally {
+            isSyncingLevelTabs = false;
+        }
+        paperdoll.setBuildingLevel(level);
+        refreshDamageDisplay();
     }
 
     /** Selects the hex a location sits in, then the tab of its level. */

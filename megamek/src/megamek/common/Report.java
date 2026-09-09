@@ -40,7 +40,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.Serial;
 import java.util.Hashtable;
-import java.util.Optional;
+import java.util.Set;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -236,6 +236,13 @@ public class Report implements ReportEntry {
      * bool for determining when code should be used to show image.
      */
     private transient boolean showImage = false;
+
+    /**
+     * Messages that open a block shaded in the acting player's colour: weapons fire and physical attacks by a unit,
+     * and an infantry action inside a building (5630). The colour is read from the message's second value, the
+     * owner's coloured name that {@link #addDesc(Entity)} adds.
+     */
+    private static final Set<Integer> SHADED_HEADER_MESSAGES = Set.of(3100, 3101, 3102, 4005, 5630);
 
     /**
      * string to add to reports to show sprites
@@ -668,7 +675,7 @@ public class Report implements ReportEntry {
                 rawBuilder.append(extText);
             }
         }
-        
+
         // `raw` may be empty; this is intentional (e.g., 1210 = blank-line spacer)
         // - process zero chars, render nothing.
         String raw = rawBuilder.toString();
@@ -738,7 +745,7 @@ public class Report implements ReportEntry {
         }
 
         String finalReport;
-        if (messageId == 3100 || messageId == 3101 || messageId == 3102 || messageId == 4005) { // if new attack
+        if (SHADED_HEADER_MESSAGES.contains(messageId)) { // a new attack, or an infantry action inside a building
             Color clr = new Color(0, 0, 0);
 
             // get attacker color

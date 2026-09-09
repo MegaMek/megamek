@@ -217,8 +217,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
             if (entity == null) {
                 continue;
             }
-            boolean outOfTheFight = entity.isDestroyed() || entity.isDoomed() || entity.isCarcass();
-            if (outOfTheFight) {
+            if (InfantryActionReporter.isOutOfTheFight(entity)) {
                 LOGGER.debug("[InfantryAction] {} is out of the fight and contributes 0", entity.getShortName());
                 continue;
             }

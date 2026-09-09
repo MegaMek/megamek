@@ -161,6 +161,20 @@ class InfantryActionReporterTest {
     }
 
     @Test
+    @DisplayName("A unit with nobody left is not listed, so the lines add up to the total")
+    void unitsOutOfTheFightAreNotListed() {
+        ConvInfantry attackers = platoon(28, attackingPlayer, 1);
+        ConvInfantry fallen = platoon(28, defendingPlayer, 2);
+        fallen.setDestroyed(true);
+
+        reporter.reportSides(List.of(attackers.getId()), List.of(fallen.getId(), building.getId()), building);
+
+        assertEquals(List.of(InfantryActionReporter.ATTACKERS_HEADER, InfantryActionReporter.CONVENTIONAL_INFANTRY_SCORE,
+                    InfantryActionReporter.DEFENDERS_HEADER, InfantryActionReporter.CREW_SCORE),
+              reportIds(), "the destroyed platoon gets no line");
+    }
+
+    @Test
     @DisplayName("The working behind the numbers is the table's: 28 rifles at 0.75, an Elemental point at 4 each plus armor")
     void breakdownsCarryTheTableArithmetic() {
         ConvInfantry rifles = platoon(28, attackingPlayer, 1);

@@ -92,10 +92,23 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
         addReport(new Report(headerId));
         for (int entityId : entityIds) {
             Entity entity = getGame().getEntity(entityId);
-            if (entity != null) {
+            boolean counts = (entity != null) && !isOutOfTheFight(entity);
+            if (counts) {
                 reportUnitScore(entity, building);
             }
         }
+    }
+
+    /**
+     * Whether a unit no longer counts for its side: destroyed, doomed or a carcass. The side total and the report
+     * use this one test, so the working shown always adds up to the total used.
+     *
+     * @param entity the unit
+     *
+     * @return {@code true} when the unit contributes nothing and is not listed
+     */
+    static boolean isOutOfTheFight(Entity entity) {
+        return entity.isDestroyed() || entity.isDoomed() || entity.isCarcass();
     }
 
     /**

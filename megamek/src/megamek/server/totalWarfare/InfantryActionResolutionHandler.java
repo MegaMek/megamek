@@ -239,6 +239,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         double casualtyFraction = InfantryCombatCasualties.casualtyFraction(marinePointsLost, ownStrength);
         List<Integer> sideIds = isAttacker ? combat.attackerIds : combat.defenderIds;
         int personnelLost = 0;
+        reporter.reportCasualtiesHeader(isAttacker);
         for (int entityId : new ArrayList<>(sideIds)) {
             Entity entity = getGame().getEntity(entityId);
             if ((entity == null) || entity.isDestroyed() || entity.isDoomed() || entity.isCarcass()) {
@@ -274,8 +275,9 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
                 }
                 case AbstractBuildingEntity building -> {
                     int crewBefore = building.getCrew().getCurrentSize();
-                    int crewLost = applyCrewLosses(building, casualtyFraction);
+                    int crewLost = InfantryCombatCasualties.personnelLost(crewBefore, casualtyFraction, false);
                     reporter.reportUnitLoss(building, crewBefore, marinePointsLost, ownStrength, crewLost, true);
+                    applyCrewLosses(building, crewLost);
                     personnelLost += crewLost;
                     eliminated = building.getCrew().getCurrentSize() <= 0;
                 }
@@ -309,17 +311,16 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
      * Table turns the cumulative loss into crew hits. A crew reduced to nobody is doomed, which makes the building a
      * carcass at the next phase change.
      *
-     * @return the crew lost
+     * @param crewLost the crew this building loses, already reported
      */
     /** Report ids 5647 and 5648 are the "lose everything" versions of 5642 and 5643. */
     private static final int WIPED_OUT_MESSAGE_OFFSET = 5;
     /** Report ids 5649 and 5650 are the "nobody lost" versions of 5633 and 5634. */
     private static final int NOBODY_LOST_MESSAGE_OFFSET = 16;
 
-    private int applyCrewLosses(AbstractBuildingEntity building, double casualtyFraction) {
+    private void applyCrewLosses(AbstractBuildingEntity building, int crewLost) {
         Crew crew = building.getCrew();
         int crewBefore = crew.getCurrentSize();
-        int crewLost = InfantryCombatCasualties.personnelLost(crewBefore, casualtyFraction, false);
         crew.setCurrentSize(Math.max(0, crewBefore - crewLost));
         int oldHits = crew.getHits();
         int newHits = crew.calculateHits();
@@ -335,7 +336,6 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         if (crew.getCurrentSize() <= 0) {
             crew.setDoomed(true);
         }
-        return crewLost;
     }
 
     /**

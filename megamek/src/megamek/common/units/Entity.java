@@ -11883,11 +11883,22 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Check if the entity can participate in ONGOING infantry vs. infantry combat. This is for the
-     * INFANTRY_VS_INFANTRY_COMBAT phase.
+     * Whether this unit may announce a withdrawal from the infantry action it is in (TO:AR p. 172): only an
+     * attacker withdraws, and only while it has not already announced one.
+     *
+     * @return {@code true} for an engaged attacker that has not yet declared a withdrawal
+     */
+    public boolean canWithdrawFromInfantryAction() {
+        boolean isEngaged = infantryCombatTargetId != Entity.NONE;
+        return isEngaged && infantryCombatIsAttacker && !infantryCombatWantsWithdrawal;
+    }
+
+    /**
+     * Whether the unit gets a turn in the INFANTRY_VS_INFANTRY_COMBAT phase: a unit that can join an action running
+     * where it stands, or an attacker already in one that may still withdraw.
      */
     public boolean isEligibleForInfantryVsInfantry() {
-        return canReinforceInfantryVsInfantry();
+        return canReinforceInfantryVsInfantry() || canWithdrawFromInfantryAction();
     }
 
     /**

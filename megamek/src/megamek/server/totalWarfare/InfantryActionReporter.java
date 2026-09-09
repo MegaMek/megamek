@@ -67,6 +67,14 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
     static final int TROOPER_LOSS = 5655;
     /** A crewed unit's share of its side's loss, converted to crew. */
     static final int CREW_LOSS = 5656;
+    /** The sub-header before the attackers' casualty lines. */
+    static final int ATTACKERS_CASUALTIES_HEADER = 5659;
+    /** The sub-header before the defenders' casualty lines. */
+    static final int DEFENDERS_CASUALTIES_HEADER = 5660;
+    /** A unit whose share of the loss is under one trooper, so it loses nobody. */
+    static final int NO_TROOPER_LOSS = 5661;
+    /** A crewed unit whose share of the loss is under one crew member. */
+    static final int NO_CREW_LOSS = 5662;
 
     private static final int UNIT_LINE_INDENT = 1;
 
@@ -155,10 +163,20 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
         report.add(number(breakdown.baseValue()));
         report.add(number(breakdown.weightClassModifier()));
         report.add(number(breakdown.equipmentModifier()));
+        report.add(number(breakdown.headCount() * breakdown.perTrooper()));
         report.add(breakdown.intactArmor());
         report.add(number(breakdown.armorPoints()));
         report.add(number(breakdown.score()));
         return report;
+    }
+
+    /**
+     * The sub-header before a side's casualty lines.
+     *
+     * @param isAttacker {@code true} for the attackers' casualties
+     */
+    void reportCasualtiesHeader(boolean isAttacker) {
+        addReport(new Report(isAttacker ? ATTACKERS_CASUALTIES_HEADER : DEFENDERS_CASUALTIES_HEADER));
     }
 
     private static Report crewLine(Entity entity, MarinePointsBreakdown breakdown) {
@@ -186,7 +204,14 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
     void reportUnitLoss(Entity entity, int headCount, int marinePointsLost, int ownStrength, int personnelLost,
           boolean isCrew) {
         double share = (ownStrength <= 0) ? 0 : ((double) headCount * marinePointsLost) / ownStrength;
-        Report report = new Report(isCrew ? CREW_LOSS : TROOPER_LOSS);
+        boolean lostSomeone = personnelLost > 0;
+        int messageId;
+        if (isCrew) {
+            messageId = lostSomeone ? CREW_LOSS : NO_CREW_LOSS;
+        } else {
+            messageId = lostSomeone ? TROOPER_LOSS : NO_TROOPER_LOSS;
+        }
+        Report report = new Report(messageId);
         report.subject = entity.getId();
         report.indent(UNIT_LINE_INDENT);
         report.add(entity.getDisplayName());
@@ -194,7 +219,9 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
         report.add(marinePointsLost);
         report.add(ownStrength);
         report.add(number(share));
-        report.add(personnelLost);
+        if (lostSomeone) {
+            report.add(personnelLost);
+        }
         addReport(report);
     }
 

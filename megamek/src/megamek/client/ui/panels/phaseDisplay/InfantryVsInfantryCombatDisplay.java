@@ -43,7 +43,9 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.phaseDisplay.InfantryActionDeclarationDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.common.actions.ReinforceInfantryCombatAction;
 import megamek.common.actions.WithdrawInfantryCombatAction;
@@ -207,12 +209,9 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
             return;
         }
 
-        String title = Messages.getString("InfantryVsInfantryCombatDisplay.ReinforceInfantryCombatDialog.title");
-        String message = Messages.getString("InfantryVsInfantryCombatDisplay.ReinforceInfantryCombatDialog.message",
-              ce.getDisplayName(),
-              target.getDisplayName());
-
-        if (clientgui.doYesNoDialog(title, message)) {
+        var dialog = InfantryActionDeclarationDialog.forJoining(clientgui.getFrame(), game, inf,
+              (AbstractBuildingEntity) targetEntity);
+        if (dialog.showDialog() == DialogResult.CONFIRMED) {
             addAttack(new ReinforceInfantryCombatAction(currentEntity, target.getId()));
             ready();
         }
@@ -358,11 +357,11 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
         List<Targetable> targets = new ArrayList<>();
 
         // Gather all entities at hex
-        for (Entity e : game.getEntitiesVector()) {
-            if (e.getPosition() != null
-                  && e.getPosition().equals(coords)
-                  && e.getInfantryCombatTargetId() == e.getId()) {
-                targets.add(e);
+        for (Entity entity : game.getEntitiesVector()) {
+            boolean buildingHere = (entity instanceof AbstractBuildingEntity building)
+                  && building.getSecondaryPositions().containsValue(coords);
+            if (buildingHere && hasActionRunning(entity)) {
+                targets.add(entity);
             }
         }
 
@@ -409,11 +408,30 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
         // Can withdraw if:
         // - Already in combat
         // - Is an attacker (defenders cannot withdraw)
-        boolean canWithdraw = inf.getInfantryCombatTargetId() != Entity.NONE
-              && inf.isInfantryCombatAttacker();
+        boolean canWithdraw = inf.canWithdrawFromInfantryAction();
 
         setWithdrawInfantryCombatEnabled(canWithdraw);
+        showWhatTheUnitMayDo(inf, canReinforce, canWithdraw);
         updateDonePanel();
+    }
+
+    /** Whether an action is running in the building: some unit names it as its action. */
+    private boolean hasActionRunning(Entity building) {
+        return game.getEntitiesVector().stream()
+              .anyMatch(entity -> entity.getInfantryCombatTargetId() == building.getId());
+    }
+
+    /** The status bar names the unit and the one thing it may do here, so the phase explains itself. */
+    private void showWhatTheUnitMayDo(Infantry unit, boolean canReinforce, boolean canWithdraw) {
+        String buildingName = (target != null) ? target.getDisplayName() : "";
+        if (canReinforce) {
+            setStatusBarText(Messages.getString("InfantryVsInfantryCombatDisplay.mayReinforce",
+                  unit.getDisplayName(), buildingName));
+        } else if (canWithdraw) {
+            Entity actionBuilding = game.getEntity(unit.getInfantryCombatTargetId());
+            setStatusBarText(Messages.getString("InfantryVsInfantryCombatDisplay.mayWithdraw",
+                  unit.getDisplayName(), (actionBuilding != null) ? actionBuilding.getDisplayName() : ""));
+        }
     }
 
     /**
@@ -458,11 +476,19 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
      * Selects an entity for this turn
      */
     private void selectEntity(int entityId) {
-        if (game.getEntity(entityId) == null) {
+        Entity selected = game.getEntity(entityId);
+        if (selected == null) {
             return;
         }
 
         currentEntity = entityId;
+        if ((target == null) && (selected.getPosition() != null)) {
+            // The building with the action is where the unit stands; no click needed to name it
+            Targetable buildingWithAction = chooseTarget(selected.getPosition());
+            if (buildingWithAction != null) {
+                setTarget(buildingWithAction);
+            }
+        }
         clientgui.setSelectedEntityNum(entityId);
         clientgui.getUnitDisplay().displayEntity(game.getEntity(entityId));
         clientgui.getBoardView().highlight(game.getEntity(entityId).getPosition());

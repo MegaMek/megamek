@@ -16385,106 +16385,17 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Process an infantry combat action declaration (joining or initiating combat). Called when a player declares
-     * InfantryCombatAction during END phase.
+     * Books an infantry action declaration: starting one, joining one, or announcing a withdrawal.
      *
-     * @param action the infantry combat action
+     * @param action the declaration
      */
-    void processInfantryCombatAction(megamek.common.actions.InfantryCombatAction action) {
-        Entity entity = game.getEntity(action.getEntityId());
-        Entity targetEntity = game.getEntity(action.getTargetId());
+    void processInfantryCombatAction(InfantryCombatAction action) {
+        new InfantryActionDeclarationHandler(this, infantryActionTracker).process(action);
+    }
 
-        if (!(entity instanceof Infantry inf)) {
-            return;  // Invalid entity type
-        }
-
-        if (!(targetEntity instanceof megamek.common.units.AbstractBuildingEntity building)) {
-            return;  // Invalid target
-        }
-
-        // Handle withdrawal
-        if (action.isWithdrawing()) {
-            inf.setInfantryCombatWantsWithdrawal(true);
-            return;  // Actual withdrawal processed during combat resolution
-        }
-
-        // Check if combat already exists in this building
-        boolean combatExists = infantryActionTracker.hasCombat(building.getId());
-        boolean isAttacker = true;  // Default to attacker
-
-        if (combatExists) {
-            // Determine if we're joining attackers or defenders
-            InfantryActionTracker.InfantryAction combat = infantryActionTracker.getCombat(building.getId());
-            if (combat != null) {
-                // Check if any defenders are enemies - if so, we're attackers
-                for (int defenderId : combat.defenderIds) {
-                    Entity defender = game.getEntity(defenderId);
-                    if (defender != null && defender.getOwner().isEnemyOf(entity.getOwner())) {
-                        isAttacker = true;
-                        break;
-                    }
-                }
-                // Check if any attackers are allies - if so, join them
-                for (int attackerId : combat.attackerIds) {
-                    Entity attacker = game.getEntity(attackerId);
-                    if (attacker != null && !attacker.getOwner().isEnemyOf(entity.getOwner())) {
-                        isAttacker = true;
-                        break;
-                    }
-                }
-            }
-
-            // Add as reinforcement
-            infantryActionTracker.addReinforcement(building.getId(), inf, isAttacker);
-            Report r = new Report(isAttacker ? 5640 : 5641);  // Reinforces attackers/defenders
-            r.add(building.getDisplayName());
-            r.subject = inf.getId();
-            addReport(r);
-            new InfantryActionReporter(this).reportUnitScore(inf, isAttacker ? null : building);
-        } else {
-            // New combat - find all defenders (building crew AND any infantry)
-            List<Entity> defenders = new ArrayList<>();
-
-            // Check if building has crew - crew are always defenders if present
-            int buildingCrew = building.getNCrew() + building.getBayPersonnel() + building.getNMarines();
-            if (buildingCrew > 0) {
-                // Building crew defends regardless of building ownership
-                // (crew defends their building from attackers)
-                defenders.add(building);
-            }
-
-            // Find enemy infantry in the building (additional defenders)
-            for (Entity e : game.getEntitiesVector()) {
-                if (e instanceof Infantry &&
-                      e.getPosition() != null &&
-                      e.getPosition().equals(building.getPosition()) &&
-                      e.getOwner().isEnemyOf(entity.getOwner())) {
-                    defenders.add(e);
-                }
-            }
-
-            if (defenders.isEmpty()) {
-                // No defenders at all - cannot initiate combat
-                Report r = new Report(5645);  // No defenders in {0}
-                r.add(building.getDisplayName());
-                r.subject = inf.getId();
-                addReport(r);
-                return;
-            }
-
-            // Add new combat with first defender, then add rest as reinforcements
-            infantryActionTracker.addCombat(building.getId(), inf, defenders.getFirst());
-            for (int i = 1; i < defenders.size(); i++) {
-                infantryActionTracker.addReinforcement(building.getId(), defenders.get(i), false);
-            }
-
-            Report r = new Report(5630);  // Infantry combat in {0}
-            r.add(building.getDisplayName());
-            r.subject = inf.getId();
-            addReport(r);
-            new InfantryActionReporter(this).reportSides(List.of(inf.getId()),
-                  defenders.stream().map(Entity::getId).toList(), building);
-        }
+    /** Sends every client the current turn list, after a turn was removed outside the usual flow. */
+    void sendTurnList() {
+        send(packetHelper.createTurnListPacket());
     }
 
     /**

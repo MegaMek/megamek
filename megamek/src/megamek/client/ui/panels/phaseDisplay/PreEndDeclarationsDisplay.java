@@ -45,14 +45,18 @@ import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.phaseDisplay.AbandonUnitDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DetonateChargesDialog;
+import megamek.client.ui.dialogs.phaseDisplay.InfantryActionDeclarationDialog;
 import megamek.client.ui.dialogs.phaseDisplay.MinesweeperActivationDialog;
 import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.VariableRangeTargetingDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.common.Player;
 import megamek.common.actions.InitiateInfantryCombatAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
+import megamek.common.compute.InfantryActionStrengths;
 import megamek.common.equipment.BridgeLayerLogic;
 import megamek.common.equipment.BridgeLayerState;
 import megamek.common.equipment.MiscMounted;
@@ -319,59 +323,52 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     // TODO: Add propertyChange handler for keyboard shortcuts once parent class infrastructure exists
 
     private void initiateInfantryCombat() {
-        if (target == null) {
-            return;
-        }
-
         Entity ce = game.getEntity(currentEntity);
         if (!(ce instanceof Infantry inf)) {
             return;
         }
-
-        // Check if already in combat
         if (inf.getInfantryCombatTargetId() != Entity.NONE) {
             clientgui.addToast(ToastLevel.ERROR,
                   Messages.getString("InfantryVsInfantryCombatDisplay.alreadyEngaged"));
             return;
         }
-
-        // Check if target is a building
-        Entity targetEntity = game.getEntity(target.getId());
-        if (!(targetEntity instanceof AbstractBuildingEntity)) {
+        AbstractBuildingEntity building = buildingToAttack(inf);
+        if (building == null) {
             clientgui.addToast(ToastLevel.ERROR,
                   Messages.getString("InfantryVsInfantryCombatDisplay.targetMustBeBuilding"));
             return;
         }
-
-        // Check if same hex
-        if (!ce.getPosition().equals(targetEntity.getPosition())) {
-            clientgui.addToast(ToastLevel.ERROR,
-                  Messages.getString("InfantryVsInfantryCombatDisplay.mustBeSameHex"));
-            return;
-        }
-
-        // Check if combat already exists in this building
-        boolean combatExists = game.getEntitiesVector().stream()
-              .filter(e -> e instanceof Infantry)
-              .filter(e -> e.getPosition() != null && e.getPosition().equals(targetEntity.getPosition()))
-              .map(e -> (Infantry) e)
-              .anyMatch(e -> e.getInfantryCombatTargetId() != Entity.NONE);
-
-        if (combatExists) {
+        if (!isValidBuildingTargetNoCombat(inf, building)) {
             clientgui.addToast(ToastLevel.WARNING,
                   Messages.getString("InfantryVsInfantryCombatDisplay.combatAlreadyExists"));
             return;
         }
-
-        String title = Messages.getString("PreEndDeclarationsDisplay.InitiateInfantryCombatDialog.title");
-        String message = Messages.getString("PreEndDeclarationsDisplay.InitiateInfantryCombatDialog.message",
-              ce.getDisplayName(),
-              target.getDisplayName());
-
-        if (clientgui.doYesNoDialog(title, message)) {
-            addAttack(new InitiateInfantryCombatAction(currentEntity, target.getId()));
+        var dialog = InfantryActionDeclarationDialog.forInitiation(clientgui.getFrame(), game, inf, building);
+        if (dialog.showDialog() == DialogResult.CONFIRMED) {
+            List<Integer> committed = dialog.getOtherCommittedUnitIds();
+            LOGGER.debug("[PreEnd] {} starts an infantry action in {} with {} other unit(s)", inf.getShortName(),
+                  building.getShortName(), committed.size());
+            addAttack(new InitiateInfantryCombatAction(currentEntity, building.getId(), committed));
             ready();
         }
+    }
+
+    /**
+     * The building the selected unit would attack: the one the player clicked when it is an enemy building the unit
+     * stands in, otherwise the enemy building where the unit stands.
+     *
+     * @param unit the unit whose turn it is
+     *
+     * @return the building, or {@code null} when the unit stands in none
+     */
+    private @Nullable AbstractBuildingEntity buildingToAttack(Infantry unit) {
+        if ((target != null) && (game.getEntity(target.getId()) instanceof AbstractBuildingEntity clicked)
+              && InfantryActionStrengths.isInside(unit, clicked)) {
+            return clicked;
+        }
+        Targetable atFeet = chooseTarget(unit.getPosition());
+        return (atFeet != null) && (game.getEntity(atFeet.getId()) instanceof AbstractBuildingEntity building)
+              ? building : null;
     }
 
     @Override
@@ -547,11 +544,10 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             updateDeployBridgeButtonLabel(entity, BridgeLayerLogic.getDeployableBridgeLayers(entity));
         }
 
-        // Initiate Infantry Combat is entity-scoped: it depends on the selected unit and target building.
+        // Initiate Infantry Combat is entity-scoped: it lights whenever the selected unit could start one, and the
+        // building is found from where the unit stands when the button is pressed.
         boolean canInitiate = (entity instanceof Infantry infantry)
-              && infantry.canInitiateInfantryVsInfantryCombat()
-              && target != null
-              && isValidBuildingTargetNoCombat(entity, target);
+              && infantry.canInitiateInfantryVsInfantryCombat();
         setInitiateInfantryCombatEnabled(canInitiate);
         updateDonePanel();
 

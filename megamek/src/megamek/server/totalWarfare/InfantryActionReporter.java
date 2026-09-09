@@ -67,10 +67,6 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
     static final int TROOPER_LOSS = 5655;
     /** A crewed unit's share of its side's loss, converted to crew. */
     static final int CREW_LOSS = 5656;
-    /** The sub-header before the attackers' casualty lines. */
-    static final int ATTACKERS_CASUALTIES_HEADER = 5659;
-    /** The sub-header before the defenders' casualty lines. */
-    static final int DEFENDERS_CASUALTIES_HEADER = 5660;
     /** A unit whose share of the loss is under one trooper, so it loses nobody. */
     static final int NO_TROOPER_LOSS = 5661;
     /** A crewed unit whose share of the loss is under one crew member. */
@@ -80,7 +76,10 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
     /** A crewed unit that loses exactly one crew member. */
     static final int ONE_CREW_LOSS = 5664;
 
-    private static final int UNIT_LINE_INDENT = 1;
+    /** Side headers and the roll sit one level under the action's header, like a weapon under its unit. */
+    static final int SIDE_LINE_INDENT = 1;
+    /** Unit lines sit under their side, like damage under a weapon. */
+    private static final int UNIT_LINE_INDENT = 2;
 
     InfantryActionReporter(TWGameManager gameManager) {
         super(gameManager);
@@ -96,12 +95,41 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
      */
     void reportSides(List<Integer> attackerIds, List<Integer> defenderIds,
           @Nullable AbstractBuildingEntity building) {
-        reportSide(ATTACKERS_HEADER, attackerIds, null);
-        reportSide(DEFENDERS_HEADER, defenderIds, building);
+        reportSides(attackerIds, defenderIds, building, sideTotal(attackerIds, null), sideTotal(defenderIds, building));
     }
 
-    private void reportSide(int headerId, List<Integer> entityIds, @Nullable AbstractBuildingEntity building) {
-        addReport(new Report(headerId));
+    /**
+     * Reports both sides' unit scores under headers that carry the side totals the action uses.
+     *
+     * @param attackerIds   the attacking units
+     * @param defenderIds   the defending units
+     * @param building      the contested building, or {@code null} for an action with no building modifier
+     * @param attackerTotal the attackers' Marine Points, rounded up
+     * @param defenderTotal the defenders' Marine Points, rounded up
+     */
+    void reportSides(List<Integer> attackerIds, List<Integer> defenderIds,
+          @Nullable AbstractBuildingEntity building, int attackerTotal, int defenderTotal) {
+        reportSide(ATTACKERS_HEADER, attackerIds, null, attackerTotal);
+        reportSide(DEFENDERS_HEADER, defenderIds, building, defenderTotal);
+    }
+
+    private int sideTotal(List<Integer> entityIds, @Nullable AbstractBuildingEntity building) {
+        double total = 0;
+        for (int entityId : entityIds) {
+            Entity entity = getGame().getEntity(entityId);
+            if ((entity != null) && !isOutOfTheFight(entity)) {
+                total += MarinePointsScoreCalculator.calculateScore(entity, building);
+            }
+        }
+        return (int) Math.ceil(total);
+    }
+
+    private void reportSide(int headerId, List<Integer> entityIds, @Nullable AbstractBuildingEntity building,
+          int total) {
+        Report header = new Report(headerId);
+        header.indent(SIDE_LINE_INDENT);
+        header.add(total);
+        addReport(header);
         for (int entityId : entityIds) {
             Entity entity = getGame().getEntity(entityId);
             boolean counts = (entity != null) && !isOutOfTheFight(entity);
@@ -174,14 +202,6 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
         return report;
     }
 
-    /**
-     * The sub-header before a side's casualty lines.
-     *
-     * @param isAttacker {@code true} for the attackers' casualties
-     */
-    void reportCasualtiesHeader(boolean isAttacker) {
-        addReport(new Report(isAttacker ? ATTACKERS_CASUALTIES_HEADER : DEFENDERS_CASUALTIES_HEADER));
-    }
 
     private static Report crewLine(Entity entity, MarinePointsBreakdown breakdown) {
         Report report = new Report(CREW_SCORE);

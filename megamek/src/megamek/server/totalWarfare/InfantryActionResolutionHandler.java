@@ -130,9 +130,8 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         String ratio = InfantryCombatTables.calculateRatio(attackerStrength, defenderStrength);
         InfantryCombatResult result = InfantryCombatTables.resolveAction(ratio, roll);
         reportCombatHeader(building);
-        reporter.reportSides(combat.attackerIds, combat.defenderIds, building);
-        reportCombatRatio(attackerStrength, defenderStrength, ratio);
-        reportCombatRoll(roll, result);
+        reporter.reportSides(combat.attackerIds, combat.defenderIds, building, attackerStrength, defenderStrength);
+        reportRoll(ratio, roll, result);
 
         boolean attackerEliminated = result.getAttackerCasualtiesPercent() >= ELIMINATED_PERCENT;
         boolean defenderEliminated = result.isDefenderEliminated();
@@ -168,13 +167,13 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         int defenderLost = defenderEliminated ? defenderOwnStrength
               : InfantryCombatCasualties.marinePointsLost(attackerStrength, defenderPercent, false,
                     defendersInFullControl);
-        reportMarinePointsLost(5642, attackerLost, attackerOwnStrength);
-        reportMarinePointsLost(5643, defenderLost, defenderOwnStrength);
         LOGGER.info("[InfantryAction] {}: ratio {} roll {} result {}; attackers lose {} of {}, defenders lose {} of {}",
               building.getShortName(), ratio, roll, result, attackerLost, attackerOwnStrength, defenderLost,
               defenderOwnStrength);
 
+        reportMarinePointsLost(5642, attackerLost, attackerOwnStrength);
         int attackerPersonnelLost = applySideLosses(combat, true, attackerLost, attackerOwnStrength);
+        reportMarinePointsLost(5643, defenderLost, defenderOwnStrength);
         int defenderPersonnelLost = applySideLosses(combat, false, defenderLost, defenderOwnStrength);
         reportPersonnelLost(5633, attackerPersonnelLost);
         reportPersonnelLost(5634, defenderPersonnelLost);
@@ -239,7 +238,6 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         double casualtyFraction = InfantryCombatCasualties.casualtyFraction(marinePointsLost, ownStrength);
         List<Integer> sideIds = isAttacker ? combat.attackerIds : combat.defenderIds;
         int personnelLost = 0;
-        reporter.reportCasualtiesHeader(isAttacker);
         for (int entityId : new ArrayList<>(sideIds)) {
             Entity entity = getGame().getEntity(entityId);
             if ((entity == null) || entity.isDestroyed() || entity.isDoomed() || entity.isCarcass()) {
@@ -329,6 +327,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         }
         if (newHits > oldHits) {
             Report report = new Report(5635);
+            report.indent(2);
             report.add(building.getDisplayName());
             report.add(newHits - oldHits);
             addReport(report);
@@ -367,28 +366,25 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         addReport(report);
     }
 
-    private void reportCombatRatio(int attackerStrength, int defenderStrength, String ratio) {
+    /** The odds and the roll on one line, the way a weapon's to-hit and roll share one line. */
+    private void reportRoll(String ratio, int roll, InfantryCombatResult result) {
         Report report = new Report(5631);
-        report.add(attackerStrength);
-        report.add(defenderStrength);
+        report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
         report.add(ratio);
+        report.add(roll);
+        report.add(result.toString());
         addReport(report);
     }
 
     /** The percentages actually applied after the withdrawal adjustments, so the report matches the arithmetic. */
     private void reportWithdrawal(int attackerPercent, int defenderPercent) {
         Report report = new Report(5644);
+        report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
         report.add(attackerPercent);
         report.add(defenderPercent);
         addReport(report);
     }
 
-    private void reportCombatRoll(int roll, InfantryCombatResult result) {
-        Report report = new Report(5632);
-        report.add(roll);
-        report.add(result.toString());
-        addReport(report);
-    }
 
     /** A side cannot lose more than it has; a loss at or over its strength is reported as losing everything. */
     private void reportMarinePointsLost(int messageId, int marinePointsLost, int ownStrength) {
@@ -397,11 +393,13 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         }
         if (marinePointsLost >= ownStrength) {
             Report report = new Report(messageId + WIPED_OUT_MESSAGE_OFFSET);
+            report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
             report.add(ownStrength);
             addReport(report);
             return;
         }
         Report report = new Report(messageId);
+        report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
         report.add(marinePointsLost);
         report.add(ownStrength);
         addReport(report);
@@ -410,26 +408,28 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
     /** A loss too small to cost a whole trooper is said out loud, so the report does not look like it forgot a side. */
     private void reportPersonnelLost(int messageId, int personnelLost) {
         if (personnelLost <= 0) {
-            addReport(new Report(messageId + NOBODY_LOST_MESSAGE_OFFSET));
+            addReport(new Report(messageId + NOBODY_LOST_MESSAGE_OFFSET).indent(InfantryActionReporter.SIDE_LINE_INDENT));
             return;
         }
         Report report = new Report(messageId);
+        report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
         report.add(personnelLost);
         addReport(report);
     }
 
     private void reportSideEliminated(InfantryAction combat, boolean attackersEliminated) {
-        addReport(new Report(attackersEliminated ? 5636 : 5638));
+        addReport(new Report(attackersEliminated ? 5636 : 5638).indent(InfantryActionReporter.SIDE_LINE_INDENT));
         cleanupCombat(combat);
     }
 
     private void reportSideRepulsed(InfantryAction combat) {
-        addReport(new Report(5637));
+        addReport(new Report(5637).indent(InfantryActionReporter.SIDE_LINE_INDENT));
         cleanupCombat(combat);
     }
 
     private void reportWithdrawal(InfantryAction combat, AbstractBuildingEntity building) {
         Report report = new Report(5639);
+        report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
         report.add(building.getDisplayName());
         addReport(report);
         cleanupCombat(combat);

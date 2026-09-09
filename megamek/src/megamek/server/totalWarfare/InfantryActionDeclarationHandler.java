@@ -174,7 +174,9 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
         report.subject = initiator.getId();
         addReport(report);
         reporter.reportSides(attackers.stream().map(Entity::getId).toList(),
-              defenders.stream().map(Entity::getId).toList(), building);
+              defenders.stream().map(Entity::getId).toList(), building,
+              InfantryActionStrengths.roundedUp(InfantryActionStrengths.total(attackers, null)),
+              InfantryActionStrengths.roundedUp(InfantryActionStrengths.total(defenders, building)));
         LOGGER.debug("[InfantryAction] {} starts an action in {} with {} attacker(s) against {} defender(s)",
               initiator.getShortName(), building.getShortName(), attackers.size(), defenders.size());
     }

@@ -63,6 +63,9 @@ import megamek.common.units.Infantry;
  */
 public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
 
+    /** The width, before GUI scaling, that the dialog's lines wrap at. */
+    private static final int TEXT_WIDTH = 440;
+
     private final Game game;
     private final AbstractBuildingEntity building;
     private final Infantry declaringUnit;
@@ -133,7 +136,8 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
         List<Infantry> candidates = InfantryActionStrengths.unengagedFriendlyInfantryInside(game,
               declaringUnit.getOwner(), building);
         for (Infantry unit : candidates) {
-            JCheckBox box = new JCheckBox(unitLine(unit, null), true);
+            JCheckBox box = new JCheckBox("<html><body style='width: " + UIUtil.scaleForGUI(TEXT_WIDTH) + "px'>"
+                  + unitLine(unit, null) + "</body></html>", true);
             box.setEnabled(unit.getId() != declaringUnit.getId());
             box.setAlignmentX(LEFT_ALIGNMENT);
             box.addActionListener(event -> refreshAttackerTotal());
@@ -223,8 +227,10 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
         panel.add(heading);
     }
 
+    /** A line that wraps: labels only wrap as HTML with a width, so every line is given the dialog's text width. */
     private static void addLine(JPanel panel, String text) {
-        JLabel line = new JLabel(text);
+        JLabel line = new JLabel("<html><body style='width: " + UIUtil.scaleForGUI(TEXT_WIDTH) + "px'>" + text
+              + "</body></html>");
         line.setAlignmentX(LEFT_ALIGNMENT);
         panel.add(line);
     }

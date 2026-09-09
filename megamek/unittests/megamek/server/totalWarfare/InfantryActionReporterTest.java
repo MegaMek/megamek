@@ -232,15 +232,6 @@ class InfantryActionReporterTest {
         assertEquals(InfantryActionReporter.NO_TROOPER_LOSS, gameManager.getMainPhaseReport().getFirst().messageId);
     }
 
-    @Test
-    @DisplayName("A side's casualty lines sit under their own header")
-    void casualtiesHaveAHeader() {
-        reporter.reportCasualtiesHeader(true);
-        reporter.reportCasualtiesHeader(false);
-
-        assertEquals(List.of(InfantryActionReporter.ATTACKERS_CASUALTIES_HEADER,
-              InfantryActionReporter.DEFENDERS_CASUALTIES_HEADER), reportIds());
-    }
 
     @Test
     @DisplayName("Report figures drop trailing zeros and keep two places")

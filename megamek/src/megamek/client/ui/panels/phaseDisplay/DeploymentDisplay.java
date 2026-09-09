@@ -304,6 +304,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.setSelectedEntityNum(en);
         clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
         setTurnEnabled(true);
+        labelTurnButtonFor(entity);
         butDone.setEnabled(false);
         markDeploymentHexes(entity);
         // set facing according to starting position
@@ -1444,6 +1445,18 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void setNextEnabled(boolean enabled) {
         buttons.get(DeployCommand.DEPLOY_NEXT).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_NEXT.getCmd(), enabled);
+    }
+
+    /**
+     * A building is not turned, it is given a facing, so the Turn button reads "Facing" while a multi-hex building
+     * is selected and "Turn" for everything else.
+     *
+     * @param entity the unit now selected for deployment
+     */
+    private void labelTurnButtonFor(Entity entity) {
+        String key = AllowedDeploymentHelper.hasFacingDependentFootprint(entity)
+              ? "DeploymentDisplay.deployFacing" : "DeploymentDisplay.deployTurn";
+        buttons.get(DeployCommand.DEPLOY_TURN).setText(Messages.getString(key));
     }
 
     private void setTurnEnabled(boolean enabled) {

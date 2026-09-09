@@ -1180,7 +1180,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (actionCmd.equals(DeployCommand.DEPLOY_NEXT.getCmd())) {
             moveOnToNextDeployableUnit();
         } else if (actionCmd.equals(DeployCommand.DEPLOY_TURN.getCmd())) {
-            turnMode = true;
+            Entity entity = currentEntity();
+            boolean placedBuilding = (entity != null) && (entity.getPosition() != null)
+                  && AllowedDeploymentHelper.hasFacingDependentFootprint(entity);
+            if (placedBuilding) {
+                // A placed multi-hex building offers its fitting facings straight away; no hex click is needed
+                turnBuildingToValidFacing(entity);
+            } else {
+                turnMode = true;
+            }
         } else if (actionCmd.equals(DeployCommand.DEPLOY_LOAD.getCmd())) {
             // What un-deployed units can we load?
             List<Entity> choices = getLoadableEntities();

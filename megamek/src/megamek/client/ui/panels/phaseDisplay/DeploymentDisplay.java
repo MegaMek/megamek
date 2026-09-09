@@ -914,7 +914,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             int previousBoardId = entity.getBoardId();
 
             // use turn mode only when the unit is already on that same board
-            if ((entity.getPosition() != null) && (b.getBoardId() == previousBoardId) && (shiftHeld || turnMode)) {
+            boolean placedOnThisBoard = (entity.getPosition() != null) && (b.getBoardId() == previousBoardId);
+            if (placedOnThisBoard && (shiftHeld || turnMode || isFacingClickOnPlacedBuilding(entity, coords))) {
                 processTurn(entity, coords, turnMode && !shiftHeld);
                 return;
             }
@@ -1060,8 +1061,24 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * Turns the unit being deployed. A shift-click turns it toward the clicked hex; the Turn button, for a
-     * multi-hex building, opens the chooser of facings that fit.
+     * Once a multi-hex building is placed, a plain click on a hex next to it means "face that way" rather than
+     * "move there" (#7858): the player places the building, then clicks the direction it should face. A click
+     * further away still moves it.
+     *
+     * @param entity the unit being deployed
+     * @param coords the clicked hex
+     *
+     * @return {@code true} when the click sets the facing of an already placed building
+     */
+    private static boolean isFacingClickOnPlacedBuilding(Entity entity, Coords coords) {
+        return AllowedDeploymentHelper.hasFacingDependentFootprint(entity)
+              && (entity.getPosition().distance(coords) == 1);
+    }
+
+    /**
+     * Turns the unit being deployed. A shift-click, or for a placed multi-hex building a click on a neighbouring
+     * hex, turns it toward the clicked hex; the Turn button, for a multi-hex building, opens the chooser of facings
+     * that fit.
      *
      * @param entity        the unit being deployed
      * @param coords        the clicked hex
@@ -1085,9 +1102,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * Shift-click on a multi-hex building: turns it toward the clicked hex the way any unit turns, unless that
-     * facing would put part of its footprint off the map, in which case the facing is left alone and the player is
-     * told (#7858).
+     * A click next to a placed multi-hex building, or a shift-click anywhere: turns it toward the clicked hex the
+     * way any unit turns, unless that facing would put part of its footprint off the map, in which case the facing
+     * is left alone and the player is told (#7858).
      *
      * @param building the building being deployed
      * @param clicked  the hex the player shift-clicked

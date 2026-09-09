@@ -33,259 +33,313 @@
 
 package megamek.common.compute;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.CubeCoords;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.units.AbstractBuildingEntity;
+import megamek.common.units.Building;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.IBuilding;
+import megamek.logging.MMLogger;
 
 /**
- * Calculates Marine Points Score (MPS) for infantry vs. infantry combat.
+ * The Marine Points Score of a unit taking part in an infantry vs. infantry action, from the Marine Points Tables
+ * (TO:AR p. 170) and the Building Modifiers Table (TO:AR p. 171).
  *
- * <p>Based on TOAR Marine Points Table (page 170), this calculator determines
- * the combat strength of infantry units accounting for:
- * <ul>
- *   <li>Base trooper type (Elemental, IS BA, Marine, etc.)</li>
- *   <li>Battle armor weight class and armor points</li>
- *   <li>Mounted equipment (burst-fire weapons, flame weapons, etc.)</li>
- *   <li>Building modifiers for multi-level buildings</li>
- * </ul>
+ * <p>Scores carry fractions, as in the book's worked examples (a Star of Elementals scores 186.75). Callers that
+ * need a whole number round the total of a side up, per the building modifier rule "round all fractions up".</p>
  *
- * <p>This calculator is context-agnostic and can be used for both building
- * clearing and naval boarding actions.</p>
+ * <p>Not applied here: the microgravity-only entries of the Battle Armor Modifiers table (quad {@code -2},
+ * magnetic clamps {@code +1}, Space Operations Adaptation {@code +1}), which belong to boarding actions in space,
+ * and the Manei Domini trooper value, which the unit data cannot identify.</p>
  */
-public class MarinePointsScoreCalculator {
+public final class MarinePointsScoreCalculator {
+
+    private static final MMLogger LOGGER = MMLogger.create(MarinePointsScoreCalculator.class);
+
+    // Base Trooper Values (TO:AR p. 170)
+    static final double ELEMENTAL_TROOPER = 2.0;
+    static final double INNER_SPHERE_BATTLE_ARMOR_TROOPER = 1.0;
+    static final double MARINE = 1.0;
+    static final double NON_MARINE_SOLDIER = 0.75;
+    static final double NON_COMBAT_CREW = 0.5;
+    static final double CIVILIAN = 0.15;
+    static final double ARMORED_TROOPER = 0.5;
+    /** The armor Damage Divisor from which conventional infantry count as armored (TO:AUE p. 129). */
+    static final double ARMORED_DAMAGE_DIVISOR = 2.0;
+
+    // Battle Armor Modifiers, per trooper (TO:AR p. 170)
+    static final double WEIGHT_CLASS_PAL = 1.0;
+    static final double WEIGHT_CLASS_LIGHT_OR_MEDIUM = 2.0;
+    static final double WEIGHT_CLASS_HEAVY = 3.0;
+    static final double WEIGHT_CLASS_ASSAULT = 4.0;
+    static final double INTACT_ARMOR_POINT = 0.5;
+    static final double BURST_FIRE_WEAPONS = 2.0;
+    static final double FLAME_WEAPONS = 1.0;
+    static final double PAIRED_MAGNETIC_OR_VIBRO_CLAWS = 3.0;
+    static final double PAIRED_OTHER_CLAWS = 2.0;
+    static final double HEAVY_BATTLE_CLAWS = 0.5;
+    static final double CUTTING_TORCHES = 0.5;
+    static final double INDUSTRIAL_DRILLS = 0.5;
+    static final double ANTI_PERSONNEL_WEAPON_MOUNTS = 0.25;
+
+    // Building Modifiers Table (TO:AR p. 171)
+    static final double MODIFIER_PER_STEP = 0.1;
+    static final int STANDARD_LEVELS_PER_STEP = 6;
+    static final int FORTRESS_LEVELS_PER_STEP = 3;
+    /** A level only counts toward the building modifier when it is made of at least this many hexes. */
+    static final int MINIMUM_HEXES_PER_LEVEL = 60;
+
+    private static final String HEAVY_BATTLE_CLAW_INTERNAL_NAME_PREFIX = "BAHeavyBattleClaw";
+    private static final String INDUSTRIAL_DRILL_INTERNAL_NAME = "BAIndustrialDrill";
+    private static final int CLAWS_IN_A_PAIR = 2;
+
+    private MarinePointsScoreCalculator() {}
 
     /**
-     * Calculate Marine Points Score for an entity. Generic version without building-specific modifiers.
+     * The Marine Points Score of a unit before any building modifier.
      *
-     * @param entity the entity (Infantry or BattleArmor)
+     * @param entity the unit, or {@code null} for no unit
      *
-     * @return Marine Points Score
+     * @return the score, {@code 0} for {@code null} or a unit with nobody left to fight
      */
-    public static int calculateMPS(Entity entity) {
-        return calculateMPS(entity, null);
+    public static double calculateScore(@Nullable Entity entity) {
+        return calculateScore(entity, null);
     }
 
     /**
-     * Calculate Marine Points Score for an entity inside a building. Includes building-specific modifiers.
+     * The Marine Points Score of a unit defending a building, with the Building Modifiers Table applied. Only the
+     * defender's score is modified (TO:AR p. 171); pass {@code null} for an attacker.
      *
-     * @param entity   the entity (Infantry or BattleArmor)
-     * @param building the building (for building modifier), can be null
+     * @param entity           the unit, or {@code null} for no unit
+     * @param defendedBuilding the building the unit is defending, or {@code null} for no building modifier
      *
-     * @return Marine Points Score
+     * @return the score, {@code 0} for {@code null} or a unit with nobody left to fight
      */
-    public static int calculateMPS(Entity entity, AbstractBuildingEntity building) {
+    public static double calculateScore(@Nullable Entity entity, @Nullable AbstractBuildingEntity defendedBuilding) {
+        return breakdown(entity, defendedBuilding).modifiedScore();
+    }
+
+    /**
+     * The working behind a unit's Marine Points Score, for a report that shows how the total was reached.
+     *
+     * @param entity           the unit, or {@code null} for no unit
+     * @param defendedBuilding the building the unit is defending, or {@code null} for no building modifier
+     *
+     * @return the breakdown; {@link MarinePointsBreakdown#NOBODY} for {@code null}
+     */
+    public static MarinePointsBreakdown breakdown(@Nullable Entity entity,
+          @Nullable AbstractBuildingEntity defendedBuilding) {
         if (entity == null) {
-            return 0;
+            return MarinePointsBreakdown.NOBODY;
         }
-
-        int mps = 0;
-
-        // Calculate based on entity type
-        if (entity instanceof BattleArmor ba) {
-            mps = calculateBattleArmorMPS(ba);
-        } else if (entity instanceof ConvInfantry inf) {
-            mps = calculateInfantryMPS(inf);
-        } else {
-            // For other entities (potential naval vessels), use crew
-            mps = calculateCrewMPS(entity);
-        }
-
-        // Apply building modifier if applicable
-        if (building != null) {
-            double buildingMod = calculateBuildingModifier(building);
-            mps = (int) Math.round(mps * (1.0 + buildingMod));
-        }
-
-        return Math.max(0, mps);
+        double modifier = buildingModifier(defendedBuilding);
+        MarinePointsBreakdown breakdown = switch (entity) {
+            case BattleArmor squad -> battleArmorScore(squad, modifier);
+            case ConvInfantry platoon -> conventionalInfantryScore(platoon, modifier);
+            default -> crewScore(entity, modifier);
+        };
+        LOGGER.debug("[MarinePoints] {}: score {} (with building modifier {})", entity.getShortName(),
+              breakdown.score(), breakdown.modifiedScore());
+        return breakdown;
     }
 
     /**
-     * Calculate MPS for Battle Armor squad.
+     * The Marine Points Score of a unit before any building modifier, rounded up to a whole number.
      *
-     * @param ba the battle armor entity
+     * @param entity the unit, or {@code null} for no unit
      *
-     * @return base MPS before building modifier
+     * @return the rounded-up score
      */
-    private static int calculateBattleArmorMPS(BattleArmor ba) {
-        int mps = 0;
+    public static int calculateMPS(@Nullable Entity entity) {
+        return (int) Math.ceil(calculateScore(entity));
+    }
 
-        // Base value per trooper (varies by type - simplified here)
-        // TODO: Distinguish between Elemental (2 points) and IS BA (1 point) based on type
-        int baseTrooperValue = 1;  // Default IS BA trooper value
+    /**
+     * The Marine Points Score of a unit defending a building, rounded up to a whole number.
+     *
+     * @param entity   the unit, or {@code null} for no unit
+     * @param building the defended building, or {@code null} for no building modifier
+     *
+     * @return the rounded-up score
+     */
+    public static int calculateMPS(@Nullable Entity entity, @Nullable AbstractBuildingEntity building) {
+        return (int) Math.ceil(calculateScore(entity, building));
+    }
 
-        // Count active troopers
-        int activeTroopers = 0;
-        for (int i = 0; i < ba.getSquadSize(); i++) {
-            if (ba.isTrooperActive(i)) {
-                activeTroopers++;
+    private static MarinePointsBreakdown conventionalInfantryScore(ConvInfantry platoon, double buildingModifier) {
+        int troopers = Math.max(0, platoon.getInternal(ConvInfantry.LOC_INFANTRY));
+        double perTrooper = platoon.hasSpecialization(ConvInfantry.MARINES) ? MARINE : NON_MARINE_SOLDIER;
+        if (platoon.calcDamageDivisor() >= ARMORED_DAMAGE_DIVISOR) {
+            perTrooper += ARMORED_TROOPER;
+        }
+        return MarinePointsBreakdown.conventionalInfantry(troopers, perTrooper, buildingModifier);
+    }
+
+    private static MarinePointsBreakdown battleArmorScore(BattleArmor squad, double buildingModifier) {
+        int activeTroopers = squad.getNumberActiveTroopers();
+        if (activeTroopers == 0) {
+            return MarinePointsBreakdown.battleArmor(0, 0, 0, 0, 0, 0, buildingModifier);
+        }
+        double baseValue = squad.isClan() ? ELEMENTAL_TROOPER : INNER_SPHERE_BATTLE_ARMOR_TROOPER;
+        int intactArmor = intactArmor(squad);
+        return MarinePointsBreakdown.battleArmor(activeTroopers, baseValue, weightClassModifier(squad.getWeightClass()),
+              squadEquipmentModifier(squad), intactArmor, intactArmor * INTACT_ARMOR_POINT, buildingModifier);
+    }
+
+    private static double weightClassModifier(int weightClass) {
+        return switch (weightClass) {
+            case EntityWeightClass.WEIGHT_ULTRA_LIGHT -> WEIGHT_CLASS_PAL;
+            case EntityWeightClass.WEIGHT_LIGHT, EntityWeightClass.WEIGHT_MEDIUM -> WEIGHT_CLASS_LIGHT_OR_MEDIUM;
+            case EntityWeightClass.WEIGHT_HEAVY -> WEIGHT_CLASS_HEAVY;
+            case EntityWeightClass.WEIGHT_ASSAULT -> WEIGHT_CLASS_ASSAULT;
+            default -> 0;
+        };
+    }
+
+    /** Intact armor on the troopers still standing; the squad location is bookkeeping and carries none. */
+    private static int intactArmor(BattleArmor squad) {
+        int armor = 0;
+        for (int trooper = 1; trooper < squad.locations(); trooper++) {
+            if (squad.isTrooperActive(trooper)) {
+                armor += Math.max(0, squad.getArmor(trooper));
             }
         }
-        mps = activeTroopers * baseTrooperValue;
-
-        // Battle Armor weight class modifiers (cumulative per trooper)
-        double weight = ba.getWeight();
-        int weightMod = 0;
-        if (weight <= 400) {
-            weightMod = 1;  // PA(L)
-        } else if (weight <= 750) {
-            weightMod = 2;  // Light
-        } else if (weight <= 1000) {
-            weightMod = 2;  // Medium
-        } else if (weight <= 1500) {
-            weightMod = 3;  // Heavy
-        } else {
-            weightMod = 4;  // Assault
-        }
-        mps += activeTroopers * weightMod;
-
-        // Armor points modifier
-        // Each point of intact armor adds modifier
-        // Simplified: Count total remaining armor
-        int armorPoints = 0;
-        for (int loc = 0; loc < ba.locations(); loc++) {
-            armorPoints += ba.getArmor(loc);
-        }
-        // Each armor point contributes (simplified - actual table has per-weight-class values)
-        mps += armorPoints / 2;  // Approximate modifier
-
-        // Equipment modifiers
-        mps += calculateEquipmentModifiers(ba);
-
-        return mps;
+        return armor;
     }
 
     /**
-     * Calculate MPS for conventional infantry platoon.
-     *
-     * @param inf the infantry entity
-     *
-     * @return base MPS before building modifier
+     * The "Mounts one or more ..." rows of the Battle Armor Modifiers table. Each row is checked once for the squad
+     * and applies to every trooper.
      */
-    private static int calculateInfantryMPS(ConvInfantry inf) {
-        int mps = 0;
-
-        // Check if marines (specialized infantry)
-        boolean areMarines = (inf.getSpecializations() & ConvInfantry.MARINES) != 0;
-
-        // Base trooper value
-        int baseTrooperValue = 1;  // Marines and non-marines both 1 in basic table
-
-        // Get active strength
-        int activeTroopers = inf.getShootingStrength();
-        mps = activeTroopers * baseTrooperValue;
-
-        // Equipment modifiers for infantry weapons
-        mps += calculateEquipmentModifiers(inf);
-
-        return mps;
-    }
-
-    /**
-     * Calculate MPS for crew-based entities (non-infantry/BA).
-     *
-     * @param entity the entity
-     *
-     * @return base MPS before building modifier
-     */
-    private static int calculateCrewMPS(Entity entity) {
-        double mps = 0;
-
-        // Get crew composition from entity
-        int marines = entity.getNMarines();
-        int crew = entity.getNCrew();
-        int bayPersonnel = entity.getBayPersonnel();  // Bay crew from transport bays
-        int passengers = entity.getNPassenger();
-
-        // Marine Points Table values (page 170):
-        // Marines: 1 point each
-        // Non-marine soldiers: 0.75 each
-        // Crew/pilots: 0.5 each
-        // Bay personnel: 0.5 each (non-combat unit crew)
-        // Civilians: 0.15 each
-
-        mps += marines * 1.0;           // Marines
-        mps += crew * 0.5;             // Crew (officers, enlisted)
-        mps += bayPersonnel * 0.5;     // Bay personnel (technicians, bay crew)
-        // Passengers assumed to be civilians
-        mps += passengers * 0.15;
-
-        return (int) Math.round(mps);
-    }
-
-    /**
-     * Calculate equipment modifiers for mounted weapons and equipment.
-     *
-     * @param entity the entity
-     *
-     * @return equipment modifier points
-     */
-    private static int calculateEquipmentModifiers(Entity entity) {
-        int modifier = 0;
-
-        for (Mounted<?> mounted : entity.getEquipment()) {
+    private static double squadEquipmentModifier(BattleArmor squad) {
+        boolean mountsBurstFireWeapon = false;
+        boolean mountsFlameWeapon = false;
+        boolean mountsHeavyBattleClaw = false;
+        boolean mountsCuttingTorch = false;
+        boolean mountsIndustrialDrill = false;
+        boolean mountsAntiPersonnelMount = false;
+        int claws = 0;
+        int magneticOrVibroClaws = 0;
+        for (Mounted<?> mounted : squad.getEquipment()) {
             if (mounted.getType() instanceof WeaponType weapon) {
-                // Burst-fire weapons: +2
-                if (weapon.hasFlag(WeaponType.F_BURST_FIRE)) {
-                    modifier += 2;
+                mountsBurstFireWeapon |= weapon.hasFlag(WeaponType.F_BURST_FIRE);
+                mountsFlameWeapon |= isFlameWeapon(weapon);
+            } else if (mounted.getType() instanceof MiscType equipment) {
+                if (equipment.hasFlag(MiscTypeFlag.F_BATTLE_CLAW)) {
+                    claws++;
+                    boolean isMagneticOrVibro = equipment.hasFlag(MiscTypeFlag.F_MAGNET_CLAW)
+                          || equipment.hasFlag(MiscTypeFlag.F_VIBROCLAW);
+                    if (isMagneticOrVibro) {
+                        magneticOrVibroClaws++;
+                    }
+                    mountsHeavyBattleClaw |= equipment.getInternalName()
+                          .startsWith(HEAVY_BATTLE_CLAW_INTERNAL_NAME_PREFIX);
                 }
-                // Flame-based weapons: +1
-                if (weapon.hasFlag(WeaponType.F_FLAMER) ||
-                      weapon.hasFlag(WeaponType.F_PLASMA)) {
-                    modifier += 1;
-                }
-                // TODO: Add other weapon modifiers from Marine Points Table
-            } else if (mounted.getType().hasFlag(MiscTypeFlag.F_BA_EQUIPMENT)) {
-                // BA-specific equipment modifiers
-                // TODO: Identify specific equipment types and apply modifiers
+                mountsCuttingTorch |= equipment.hasFlag(MiscTypeFlag.F_CUTTING_TORCH);
+                mountsIndustrialDrill |= INDUSTRIAL_DRILL_INTERNAL_NAME.equals(equipment.getInternalName());
+                mountsAntiPersonnelMount |= equipment.hasFlag(MiscTypeFlag.F_AP_MOUNT);
             }
         }
 
+        double modifier = 0;
+        if (mountsBurstFireWeapon) {
+            modifier += BURST_FIRE_WEAPONS;
+        }
+        if (mountsFlameWeapon) {
+            modifier += FLAME_WEAPONS;
+        }
+        if (magneticOrVibroClaws >= CLAWS_IN_A_PAIR) {
+            modifier += PAIRED_MAGNETIC_OR_VIBRO_CLAWS;
+        } else if (claws >= CLAWS_IN_A_PAIR) {
+            modifier += PAIRED_OTHER_CLAWS;
+        }
+        if (mountsHeavyBattleClaw) {
+            modifier += HEAVY_BATTLE_CLAWS;
+        }
+        if (mountsCuttingTorch) {
+            modifier += CUTTING_TORCHES;
+        }
+        if (mountsIndustrialDrill) {
+            modifier += INDUSTRIAL_DRILLS;
+        }
+        if (mountsAntiPersonnelMount) {
+            modifier += ANTI_PERSONNEL_WEAPON_MOUNTS;
+        }
         return modifier;
     }
 
+    /** Plasma, flamer or Firedrake, the flame-based weapons the table names. */
+    private static boolean isFlameWeapon(WeaponType weapon) {
+        return weapon.hasFlag(WeaponType.F_FLAMER)
+              || weapon.hasFlag(WeaponType.F_PLASMA)
+              || weapon.hasFlag(WeaponType.F_INCENDIARY_NEEDLES);
+    }
+
     /**
-     * Calculate building modifier based on building size and height. Only applies to buildings with 60+ hexes.
-     *
-     * @param building the building entity
-     *
-     * @return modifier multiplier (e.g., 0.1 per level = 10% bonus)
+     * Crew-based units (a building or a vessel): marines, then the non-combat crew, bay personnel and any
+     * passengers, who are taken to be civilians.
      */
-    private static double calculateBuildingModifier(AbstractBuildingEntity building) {
+    private static MarinePointsBreakdown crewScore(Entity entity, double buildingModifier) {
+        double score = (entity.getNMarines() * MARINE)
+              + (entity.getNCrew() * NON_COMBAT_CREW)
+              + (entity.getBayPersonnel() * NON_COMBAT_CREW)
+              + (entity.getNPassenger() * CIVILIAN);
+        return MarinePointsBreakdown.crewed(entity.getNMarines(), entity.getNCrew(), entity.getBayPersonnel(),
+              entity.getNPassenger(), score, buildingModifier);
+    }
+
+    /**
+     * The multiplier from the Building Modifiers Table (TO:AR p. 171): {@code 0.1} per six levels of a standard
+     * building, per three levels of a fortress or gun emplacement, and nothing for a hangar, counting only the
+     * levels beyond the first that are made of at least sixty hexes.
+     *
+     * @param building the defended building, or {@code null} for no building
+     *
+     * @return the multiplier to apply to the defender's score, {@code 1.0} when nothing applies
+     */
+    public static double buildingModifier(@Nullable AbstractBuildingEntity building) {
         if (building == null) {
-            return 0.0;
+            return 1.0;
         }
-
-        // Count building hexes
-        int hexCount = building.getCoordsList().size();
-
-        // Only applies to buildings with 60+ hexes
-        if (hexCount < 60) {
-            return 0.0;
+        int levelsPerStep = switch (building.getBldgClass()) {
+            case IBuilding.HANGAR -> 0;
+            case IBuilding.FORTRESS, IBuilding.GUN_EMPLACEMENT -> FORTRESS_LEVELS_PER_STEP;
+            default -> STANDARD_LEVELS_PER_STEP;
+        };
+        if (levelsPerStep == 0) {
+            LOGGER.debug("[MarinePoints] {} is a hangar; no building modifier", building.getShortName());
+            return 1.0;
         }
+        int qualifyingLevels = levelsWithEnoughHexes(building);
+        int levelsBeyondTheFirst = Math.max(0, qualifyingLevels - 1);
+        double modifier = 1.0 + (MODIFIER_PER_STEP * (levelsBeyondTheFirst / levelsPerStep));
+        LOGGER.debug("[MarinePoints] {}: {} levels of {}+ hexes, one step per {} levels beyond the first, modifier {}",
+              building.getShortName(), qualifyingLevels, MINIMUM_HEXES_PER_LEVEL, levelsPerStep, modifier);
+        return modifier;
+    }
 
-        // Get building height (number of levels)
-        // Use average height across all hexes
-        int totalLevels = 0;
-        int hexesWithLevels = 0;
-        for (var coords : building.getCoordsList()) {
-            int levels = building.getHeight(coords);
-            if (levels > 0) {
-                totalLevels += levels;
-                hexesWithLevels++;
+    /** Counts the levels, from the ground up, that at least {@value #MINIMUM_HEXES_PER_LEVEL} hexes reach. */
+    private static int levelsWithEnoughHexes(AbstractBuildingEntity building) {
+        Building footprint = building.getInternalBuilding();
+        int qualifyingLevels = 0;
+        for (int level = 1; ; level++) {
+            int hexesReachingLevel = 0;
+            for (CubeCoords coords : footprint.getCoordsList()) {
+                if (footprint.getHeight(coords) >= level) {
+                    hexesReachingLevel++;
+                }
             }
+            if (hexesReachingLevel < MINIMUM_HEXES_PER_LEVEL) {
+                return qualifyingLevels;
+            }
+            qualifyingLevels++;
         }
-
-        if (hexesWithLevels == 0) {
-            return 0.0;
-        }
-
-        int avgLevels = totalLevels / hexesWithLevels;
-
-        // 0.1 modifier per level
-        return avgLevels * 0.1;
     }
 }

@@ -34,27 +34,32 @@
 package megamek.common.compute;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.Player;
+import megamek.common.TechConstants;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
-import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.ConvInfantry;
-import megamek.common.units.Infantry;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.IBuilding;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for {@link MarinePointsScoreCalculator} focusing on MPS calculations for infantry vs. infantry combat (TOAR p.
- * 170).
+ * The Marine Points Tables (TO:AR p. 170) and the Building Modifiers Table (TO:AR p. 171), checked against the
+ * printed values and the book's own worked examples.
  */
-public class MarinePointsScoreCalculatorTest {
+class MarinePointsScoreCalculatorTest {
+
+    private static final double TOLERANCE = 1e-9;
+    private static final int PLATOON = 28;
+    private static final int HEX_RADIUS_FOR_61_HEXES = 4;
 
     private Game game;
     private Player player;
@@ -71,162 +76,234 @@ public class MarinePointsScoreCalculatorTest {
         game.addPlayer(0, player);
     }
 
-    /**
-     * Test MPS calculation for conventional infantry platoon. A full-strength infantry platoon should have MPS = number
-     * of troopers.
-     */
-    @Test
-    void testCalculateMPS_ConventionalInfantry() {
+    private ConvInfantry platoon(int troopers) {
         ConvInfantry infantry = new ConvInfantry();
         infantry.setOwner(player);
         infantry.setGame(game);
-        infantry.setSquadSize(28);
+        infantry.setSquadSize(troopers);
         infantry.setSquadCount(1);
-        infantry.initializeInternal(28, ConvInfantry.LOC_INFANTRY);
-
-        // Full strength platoon: 28 troopers * 1 point = 28 MPS
-        int mps = MarinePointsScoreCalculator.calculateMPS(infantry);
-        assertEquals(28, mps, "Full strength infantry should have MPS equal to trooper count");
+        infantry.initializeInternal(troopers, ConvInfantry.LOC_INFANTRY);
+        return infantry;
     }
 
-    /**
-     * Test MPS calculation for damaged infantry platoon. MPS should scale with remaining trooper strength.
-     */
-    @Test
-    void testCalculateMPS_DamagedInfantry() {
-        ConvInfantry infantry = new ConvInfantry();
-        infantry.setOwner(player);
-        infantry.setGame(game);
-        infantry.setSquadSize(14);  // Half strength
-        infantry.setSquadCount(1);
-        infantry.initializeInternal(14, ConvInfantry.LOC_INFANTRY);
-
-        int mps = MarinePointsScoreCalculator.calculateMPS(infantry);
-        assertEquals(14, mps, "Damaged infantry should have MPS equal to remaining troopers");
-    }
-
-    /**
-     * Test MPS calculation for infantry with marine specialization. Marines should have the same base value as regular
-     * infantry (1 point per trooper).
-     */
-    @Test
-    void testCalculateMPS_Marines() {
-        ConvInfantry infantry = new ConvInfantry();
-        infantry.setOwner(player);
-        infantry.setGame(game);
-        infantry.setSquadSize(28);
-        infantry.setSquadCount(1);
-        infantry.initializeInternal(28, ConvInfantry.LOC_INFANTRY);
-        infantry.setSpecializations(ConvInfantry.MARINES);
-
-        int mps = MarinePointsScoreCalculator.calculateMPS(infantry);
-        assertEquals(28, mps, "Marines should have MPS equal to trooper count");
-    }
-
-    /**
-     * Test MPS calculation with building modifier. Buildings with 60+ hexes provide a bonus based on height. Note:
-     * Building must be placed on board for modifier to apply.
-     */
-    @Test
-    void testCalculateMPS_WithBuildingModifier() {
-        ConvInfantry infantry = new ConvInfantry();
-        infantry.setOwner(player);
-        infantry.setGame(game);
-        infantry.setSquadSize(28);
-        infantry.setSquadCount(1);
-        infantry.initializeInternal(28, ConvInfantry.LOC_INFANTRY);
-
-        // Create a large building with 60+ hexes and multiple levels
-        AbstractBuildingEntity building = createLargeBuilding(60, 3);
-
-        // Base MPS = 28
-        // Building modifier requires building to be on board, so may return base MPS
-        int mps = MarinePointsScoreCalculator.calculateMPS(infantry, building);
-        assertTrue(mps >= 28, "MPS with building should be at least base value");
-    }
-
-    /**
-     * Test MPS calculation with small building (< 60 hexes). Small buildings should NOT provide a bonus.
-     */
-    @Test
-    void testCalculateMPS_WithSmallBuilding() {
-        ConvInfantry infantry = new ConvInfantry();
-        infantry.setOwner(player);
-        infantry.setGame(game);
-        infantry.setSquadSize(28);
-        infantry.setSquadCount(1);
-        infantry.initializeInternal(28, ConvInfantry.LOC_INFANTRY);
-
-        // Create a small building (< 60 hexes)
-        AbstractBuildingEntity building = createSmallBuilding(10, 3);
-
-        // Base MPS = 28
-        // No building modifier for buildings < 60 hexes
-        int mps = MarinePointsScoreCalculator.calculateMPS(infantry, building);
-        assertEquals(28, mps, "Small buildings should not provide MPS bonus");
-    }
-
-    /**
-     * Test MPS calculation for null entity. Should return 0.
-     */
-    @Test
-    void testCalculateMPS_NullEntity() {
-        int mps = MarinePointsScoreCalculator.calculateMPS(null);
-        assertEquals(0, mps, "Null entity should return 0 MPS");
-    }
-
-    /**
-     * Test MPS calculation for zero-strength infantry. Should return 0.
-     */
-    @Test
-    void testCalculateMPS_ZeroStrengthInfantry() {
-        Infantry infantry = new ConvInfantry();
-        infantry.setOwner(player);
-        infantry.setGame(game);
-        infantry.setSquadSize(0);  // Zero strength
-        infantry.setSquadCount(0);
-
-        int mps = MarinePointsScoreCalculator.calculateMPS(infantry);
-        assertEquals(0, mps, "Zero-strength infantry should return 0 MPS");
-    }
-
-    /**
-     * Helper method to create a large building with specified hex count and height.
-     */
-    private AbstractBuildingEntity createLargeBuilding(int hexCount, int height) {
-        AbstractBuildingEntity building = new BuildingEntity(BuildingType.MEDIUM, 1);
-        building.getInternalBuilding().setBuildingHeight(height);
-
-        // Add hexes in a grid pattern
-        for (int i = 0; i < hexCount; i++) {
-            int x = i % 10;
-            int z = i / 10;
-            building.getInternalBuilding().addHex(
-                  new CubeCoords(x, -x - z, z),
-                  50, 10, BasementType.UNKNOWN, false
-            );
+    private BattleArmor squad(int troopers, int weightClass, boolean clan, int armorPerTrooper) {
+        BattleArmor battleArmor = new BattleArmor();
+        battleArmor.setOwner(player);
+        battleArmor.setGame(game);
+        battleArmor.setChassisType(BattleArmor.CHASSIS_TYPE_BIPED);
+        battleArmor.setSquadSize(troopers);
+        battleArmor.setWeightClass(weightClass);
+        battleArmor.setTechLevel(clan ? TechConstants.T_CLAN_TW : TechConstants.T_IS_TW_NON_BOX);
+        battleArmor.autoSetInternal();
+        for (int trooper = 1; trooper <= troopers; trooper++) {
+            battleArmor.initializeArmor(armorPerTrooper, trooper);
         }
+        return battleArmor;
+    }
 
+    private static void mount(BattleArmor battleArmor, String internalName) throws Exception {
+        battleArmor.addEquipment(EquipmentType.get(internalName), BattleArmor.LOC_SQUAD);
+    }
+
+    /** A building whose footprint is a filled hexagon of radius 4, which is 61 hexes, at a uniform height. */
+    private static BuildingEntity largeBuilding(int buildingClass, int levels) {
+        BuildingEntity building = new BuildingEntity(BuildingType.HEAVY, buildingClass);
+        building.getInternalBuilding().setBuildingHeight(levels);
+        for (int q = -HEX_RADIUS_FOR_61_HEXES; q <= HEX_RADIUS_FOR_61_HEXES; q++) {
+            for (int r = -HEX_RADIUS_FOR_61_HEXES; r <= HEX_RADIUS_FOR_61_HEXES; r++) {
+                int s = -q - r;
+                if (Math.abs(s) <= HEX_RADIUS_FOR_61_HEXES) {
+                    building.getInternalBuilding().addHex(new CubeCoords(q, r, s), 100, 0, BasementType.NONE, false);
+                }
+            }
+        }
+        building.refreshLocations();
+        building.refreshAdditionalLocations();
         return building;
     }
 
-    /**
-     * Helper method to create a small building with specified hex count and height.
-     */
-    private AbstractBuildingEntity createSmallBuilding(int hexCount, int height) {
-        AbstractBuildingEntity building = new BuildingEntity(BuildingType.LIGHT, 1);
-        building.getInternalBuilding().setBuildingHeight(height);
+    private static BuildingEntity smallBuilding(int buildingClass, int levels) {
+        BuildingEntity building = new BuildingEntity(BuildingType.HEAVY, buildingClass);
+        building.getInternalBuilding().setBuildingHeight(levels);
+        building.getInternalBuilding().addHex(CubeCoords.ZERO, 100, 0, BasementType.NONE, false);
+        building.refreshLocations();
+        building.refreshAdditionalLocations();
+        return building;
+    }
 
-        // Add hexes
-        for (int i = 0; i < hexCount; i++) {
-            int x = i % 5;
-            int z = i / 5;
-            building.getInternalBuilding().addHex(
-                  new CubeCoords(x, -x - z, z),
-                  50, 10, BasementType.UNKNOWN, false
-            );
+    @Test
+    void nonMarineConventionalInfantryAreWorthThreeQuartersEach() {
+        assertEquals(21.0, MarinePointsScoreCalculator.calculateScore(platoon(PLATOON)), TOLERANCE);
+    }
+
+    @Test
+    void marinesAreWorthOneEach() {
+        ConvInfantry marines = platoon(PLATOON);
+        marines.setSpecializations(ConvInfantry.MARINES);
+
+        assertEquals(28.0, MarinePointsScoreCalculator.calculateScore(marines), TOLERANCE);
+    }
+
+    @Test
+    void armoredConventionalInfantryGainHalfAPointEach() {
+        ConvInfantry armored = platoon(PLATOON);
+        armored.setCustomArmorDamageDivisor(2.0);
+
+        assertEquals(35.0, MarinePointsScoreCalculator.calculateScore(armored), TOLERANCE);
+    }
+
+    @Test
+    void onlySurvivingTroopersCount() {
+        ConvInfantry platoon = platoon(PLATOON);
+        platoon.setInternal(14, ConvInfantry.LOC_INFANTRY);
+
+        assertEquals(10.5, MarinePointsScoreCalculator.calculateScore(platoon), TOLERANCE);
+        assertEquals(11, MarinePointsScoreCalculator.calculateMPS(platoon), "whole-number scores round up");
+    }
+
+    @Test
+    void wipedOutPlatoonScoresNothing() {
+        ConvInfantry platoon = platoon(PLATOON);
+        platoon.setInternal(0, ConvInfantry.LOC_INFANTRY);
+
+        assertEquals(0.0, MarinePointsScoreCalculator.calculateScore(platoon), TOLERANCE);
+    }
+
+    @Test
+    void nothingScoresNothing() {
+        assertEquals(0.0, MarinePointsScoreCalculator.calculateScore(null), TOLERANCE);
+    }
+
+    /**
+     * Five Elementals, medium weight class, ten armor each, each mounting a flamer. As in the book's Salamander
+     * example (TO:AR p. 171), a flamer counts both as a burst-fire weapon and as a flame weapon.
+     */
+    @Test
+    void elementalPointWithFlamersScoresSixty() throws Exception {
+        BattleArmor point = squad(5, EntityWeightClass.WEIGHT_MEDIUM, true, 10);
+        mount(point, "CLBAFlamer");
+
+        // 5 troopers x (2 base + 2 medium + 2 burst fire + 1 flame) = 35, plus 50 armor x 0.5 = 25
+        assertEquals(60.0, MarinePointsScoreCalculator.calculateScore(point), TOLERANCE);
+    }
+
+    /** The audit example: an Inner Sphere assault squad, four troopers, seventeen armor each, no burst weapons. */
+    @Test
+    void innerSphereAssaultSquadScoresFiftyFour() {
+        BattleArmor squad = squad(4, EntityWeightClass.WEIGHT_ASSAULT, false, 17);
+
+        // 4 troopers x (1 base + 4 assault) = 20, plus 68 armor x 0.5 = 34
+        assertEquals(54.0, MarinePointsScoreCalculator.calculateScore(squad), TOLERANCE);
+    }
+
+    @Test
+    void pairedVibroClawsAddThreePerTrooper() throws Exception {
+        BattleArmor squad = squad(4, EntityWeightClass.WEIGHT_LIGHT, false, 0);
+        mount(squad, "BABattleClawVibro");
+        mount(squad, "BABattleClawVibro");
+
+        // 4 troopers x (1 base + 2 light + 3 paired vibro-claws)
+        assertEquals(24.0, MarinePointsScoreCalculator.calculateScore(squad), TOLERANCE);
+    }
+
+    @Test
+    void pairedPlainClawsAddTwoAndHeavyClawsAnotherHalf() throws Exception {
+        BattleArmor squad = squad(4, EntityWeightClass.WEIGHT_LIGHT, false, 0);
+        mount(squad, "BAHeavyBattleClaw");
+        mount(squad, "BAHeavyBattleClaw");
+
+        // 4 troopers x (1 base + 2 light + 2 paired claws + 0.5 heavy)
+        assertEquals(22.0, MarinePointsScoreCalculator.calculateScore(squad), TOLERANCE);
+    }
+
+    @Test
+    void aSingleClawIsNotAPair() throws Exception {
+        BattleArmor squad = squad(4, EntityWeightClass.WEIGHT_LIGHT, false, 0);
+        mount(squad, "BABattleClaw");
+
+        assertEquals(12.0, MarinePointsScoreCalculator.calculateScore(squad), TOLERANCE);
+    }
+
+    @Test
+    void torchDrillAndAntiPersonnelMountEachAddTheirFraction() throws Exception {
+        BattleArmor squad = squad(4, EntityWeightClass.WEIGHT_ULTRA_LIGHT, false, 0);
+        mount(squad, "BACuttingTorch");
+        mount(squad, "BAIndustrialDrill");
+        mount(squad, "BAArmoredGlove");
+
+        // 4 troopers x (1 base + 1 PA(L) + 0.5 torch + 0.5 drill + 0.25 AP mount)
+        assertEquals(13.0, MarinePointsScoreCalculator.calculateScore(squad), TOLERANCE);
+    }
+
+    @Test
+    void burstFireWeaponAddsTwoPerTrooperOnce() throws Exception {
+        BattleArmor squad = squad(4, EntityWeightClass.WEIGHT_LIGHT, false, 0);
+        mount(squad, "ISBAHeavyMachineGun");
+        mount(squad, "ISBAHeavyMachineGun");
+
+        // 4 troopers x (1 base + 2 light + 2 burst fire), the second machine gun adds nothing
+        assertEquals(20.0, MarinePointsScoreCalculator.calculateScore(squad), TOLERANCE);
+    }
+
+    @Test
+    void deadTroopersAndTheirArmorDropOut() {
+        BattleArmor squad = squad(4, EntityWeightClass.WEIGHT_ASSAULT, false, 17);
+        squad.setInternal(0, 4);
+
+        // 3 troopers x (1 base + 4 assault) = 15, plus 51 armor x 0.5 = 25.5
+        assertEquals(40.5, MarinePointsScoreCalculator.calculateScore(squad), TOLERANCE);
+    }
+
+    @Test
+    void hangarGivesNoBuildingModifier() {
+        assertEquals(1.0, MarinePointsScoreCalculator.buildingModifier(largeBuilding(IBuilding.HANGAR, 12)),
+              TOLERANCE);
+    }
+
+    @Test
+    void standardBuildingGainsATenthPerSixLevelsBeyondTheFirst() {
+        // 13 levels: 12 beyond the first, two full steps of six
+        assertEquals(1.2, MarinePointsScoreCalculator.buildingModifier(largeBuilding(IBuilding.STANDARD, 13)),
+              TOLERANCE);
+    }
+
+    @Test
+    void fortressGainsATenthPerThreeLevelsBeyondTheFirst() {
+        // 10 levels: 9 beyond the first, three steps of three
+        assertEquals(1.3, MarinePointsScoreCalculator.buildingModifier(largeBuilding(IBuilding.FORTRESS, 10)),
+              TOLERANCE);
+    }
+
+    @Test
+    void smallFootprintGetsNoModifier() {
+        assertEquals(1.0, MarinePointsScoreCalculator.buildingModifier(smallBuilding(IBuilding.FORTRESS, 10)),
+              TOLERANCE);
+    }
+
+    @Test
+    void onlyLevelsMadeOfSixtyHexesCount() {
+        BuildingEntity building = largeBuilding(IBuilding.FORTRESS, 10);
+        // Taper the tower: only two hexes rise above the fourth level.
+        int tallHexes = 0;
+        for (CubeCoords coords : building.getInternalBuilding().getCoordsList()) {
+            if (tallHexes < 2) {
+                tallHexes++;
+                continue;
+            }
+            building.getInternalBuilding().setHeight(4, coords);
         }
 
-        return building;
+        // 4 qualifying levels: 3 beyond the first, one step of three
+        assertEquals(1.1, MarinePointsScoreCalculator.buildingModifier(building), TOLERANCE);
+    }
+
+    @Test
+    void defenderScoreIsMultipliedAndAttackerScoreIsNot() {
+        ConvInfantry marines = platoon(PLATOON);
+        marines.setSpecializations(ConvInfantry.MARINES);
+        BuildingEntity fortress = largeBuilding(IBuilding.FORTRESS, 10);
+
+        assertEquals(36.4, MarinePointsScoreCalculator.calculateScore(marines, fortress), TOLERANCE);
+        assertEquals(28.0, MarinePointsScoreCalculator.calculateScore(marines, null), TOLERANCE);
     }
 }

@@ -74,10 +74,12 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
     private static final int ELIMINATED_PERCENT = 100;
 
     private final InfantryActionTracker tracker;
+    private final InfantryActionReporter reporter;
 
     InfantryActionResolutionHandler(TWGameManager gameManager, InfantryActionTracker tracker) {
         super(gameManager);
         this.tracker = tracker;
+        this.reporter = new InfantryActionReporter(gameManager);
     }
 
     /**
@@ -104,11 +106,11 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         }
         boolean withdrawing = attackersAreWithdrawing(combat);
 
-        // The odds use the defender's building-modified score; the conversion back to people uses each side's
-        // score before the building modifier (TO:AR p. 174).
-        int attackerStrength = totalMarinePoints(combat.attackerIds, building);
+        // Only the defender's score takes the building modifier (TO:AR p. 171); the conversion back to people
+        // uses each side's score before the modifier (TO:AR p. 174).
+        int attackerStrength = totalMarinePoints(combat.attackerIds, null);
         int defenderStrength = totalMarinePoints(combat.defenderIds, building);
-        int attackerOwnStrength = totalMarinePoints(combat.attackerIds, null);
+        int attackerOwnStrength = attackerStrength;
         int defenderOwnStrength = totalMarinePoints(combat.defenderIds, null);
         LOGGER.debug("[InfantryAction] {}: attackers {} (own {}), defenders {} (own {}), withdrawing {}",
               building.getShortName(), attackerStrength, attackerOwnStrength, defenderStrength,
@@ -128,6 +130,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         String ratio = InfantryCombatTables.calculateRatio(attackerStrength, defenderStrength);
         InfantryCombatResult result = InfantryCombatTables.resolveAction(ratio, roll);
         reportCombatHeader(building);
+        reporter.reportSides(combat.attackerIds, combat.defenderIds, building);
         reportCombatRatio(attackerStrength, defenderStrength, ratio);
         reportCombatRoll(roll, result);
 
@@ -202,23 +205,25 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
     }
 
     /**
+     * Adds up a side's Marine Points, rounding the total up to a whole number ("round all fractions up", TO:AR
+     * p. 171).
+     *
      * @param building the building whose modifier applies, or {@code null} for the score before the modifier
      */
     private int totalMarinePoints(List<Integer> entityIds, @Nullable AbstractBuildingEntity building) {
-        int total = 0;
+        double total = 0;
         for (int entityId : entityIds) {
             Entity entity = getGame().getEntity(entityId);
             if (entity == null) {
                 continue;
             }
-            boolean outOfTheFight = entity.isDestroyed() || entity.isDoomed() || entity.isCarcass();
-            if (outOfTheFight) {
+            if (InfantryActionReporter.isOutOfTheFight(entity)) {
                 LOGGER.debug("[InfantryAction] {} is out of the fight and contributes 0", entity.getShortName());
                 continue;
             }
-            total += MarinePointsScoreCalculator.calculateMPS(entity, building);
+            total += MarinePointsScoreCalculator.calculateScore(entity, building);
         }
-        return total;
+        return (int) Math.ceil(total);
     }
 
     /**
@@ -242,8 +247,10 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
             boolean eliminated;
             switch (entity) {
                 case BattleArmor battleArmor -> {
-                    int troopersLost = InfantryCombatCasualties.personnelLost(battleArmor.getNumberActiveTroopers(),
-                          casualtyFraction, false);
+                    int activeTroopers = battleArmor.getNumberActiveTroopers();
+                    int troopersLost = InfantryCombatCasualties.personnelLost(activeTroopers, casualtyFraction, false);
+                    reporter.reportUnitLoss(battleArmor, activeTroopers, marinePointsLost, ownStrength, troopersLost,
+                          false);
                     applyBattleArmorLosses(battleArmor, troopersLost);
                     personnelLost += troopersLost;
                     eliminated = battleArmor.isDestroyed() || (battleArmor.getNumberActiveTroopers() <= 0);
@@ -255,6 +262,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
                     int troopers = platoon.getInternal(ConvInfantry.LOC_INFANTRY);
                     boolean armoured = platoon.calcDamageDivisor() >= 2.0;
                     int troopersLost = InfantryCombatCasualties.personnelLost(troopers, casualtyFraction, armoured);
+                    reporter.reportUnitLoss(platoon, troopers, marinePointsLost, ownStrength, troopersLost, false);
                     if (troopersLost > 0) {
                         platoon.setInternal(Math.max(0, troopers - troopersLost), ConvInfantry.LOC_INFANTRY);
                     }
@@ -265,7 +273,9 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
                     }
                 }
                 case AbstractBuildingEntity building -> {
+                    int crewBefore = building.getCrew().getCurrentSize();
                     int crewLost = applyCrewLosses(building, casualtyFraction);
+                    reporter.reportUnitLoss(building, crewBefore, marinePointsLost, ownStrength, crewLost, true);
                     personnelLost += crewLost;
                     eliminated = building.getCrew().getCurrentSize() <= 0;
                 }

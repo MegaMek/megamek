@@ -195,9 +195,9 @@ class InfantryActionResolutionHandlerTest {
         new InfantryActionResolutionHandler(gameManager, tracker).resolve(combat, 10);
 
         assertTrue(defender.isDoomed() || defender.isDestroyed(), "an E against the defenders destroys the platoon");
-        // attackers lose 25% of 28 = 7 of their 56: floor(28 x 7/56) = 3 each
-        assertEquals(PLATOON - 3, attackerOne.getInternal(ConvInfantry.LOC_INFANTRY));
-        assertEquals(PLATOON - 3, attackerTwo.getInternal(ConvInfantry.LOC_INFANTRY));
+        // 28 non-marines score 21; attackers lose 25% of the defenders' 21 = 6 of their 42: floor(28 x 6/42) = 4 each
+        assertEquals(PLATOON - 4, attackerOne.getInternal(ConvInfantry.LOC_INFANTRY));
+        assertEquals(PLATOON - 4, attackerTwo.getInternal(ConvInfantry.LOC_INFANTRY));
         assertFalse(tracker.hasCombat(building.getId()));
     }
 

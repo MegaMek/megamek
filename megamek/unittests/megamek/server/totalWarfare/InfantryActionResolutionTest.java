@@ -369,8 +369,8 @@ public class InfantryActionResolutionTest {
               mockStatic(MarinePointsScoreCalculator.class, org.mockito.Answers.CALLS_REAL_METHODS);
               MockedStatic<InfantryCombatTables> mockedTables =
                     mockStatic(InfantryCombatTables.class, org.mockito.Answers.CALLS_REAL_METHODS)) {
-            mockedMps.when(() -> MarinePointsScoreCalculator.calculateMPS(any(), any()))
-                  .thenReturn(10); // Give both sides positive MPS so combat proceeds
+            mockedMps.when(() -> MarinePointsScoreCalculator.calculateScore(any(), any()))
+                  .thenReturn(10.0); // Give both sides positive MPS so combat proceeds
             mockedTables.when(() -> InfantryCombatTables.resolveAction(any(String.class), anyInt()))
                   .thenReturn(InfantryCombatResult.eliminated()); // 0% attacker, 100% defender
 

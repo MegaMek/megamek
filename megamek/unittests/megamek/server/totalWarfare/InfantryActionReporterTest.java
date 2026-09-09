@@ -108,6 +108,9 @@ class InfantryActionReporterTest {
         building.refreshAdditionalLocations();
         building.addEquipment(new WeaponMounted(building, new ISLaserMedium()), 0, false);
         building.addEquipment(new WeaponMounted(building, new ISLaserMedium()), 0, false);
+        // The loader sizes a building's crew object to its head-count; a hand-built one needs the same
+        building.getCrew().setSize(building.getNCrew());
+        building.getCrew().setCurrentSize(building.getNCrew());
         building.setId(0);
         game.addEntity(building);
     }
@@ -195,9 +198,20 @@ class InfantryActionReporterTest {
         assertEquals(45.0, elementalsBreakdown.score());
 
         MarinePointsBreakdown buildingBreakdown = MarinePointsScoreCalculator.breakdown(building, building);
-        assertEquals(3, buildingBreakdown.crew(), "two gunners and an officer");
+        assertEquals(3, buildingBreakdown.crew(), "two gunners and an officer, all still standing");
         assertEquals(1.5, buildingBreakdown.score());
         assertEquals(1.0, buildingBreakdown.buildingModifier(), "a one-level emplacement gets no modifier");
+    }
+
+    @Test
+    @DisplayName("A building's score falls with the crew it has lost")
+    void buildingScoreFollowsTheLiveCrew() {
+        building.getCrew().setCurrentSize(1);
+
+        MarinePointsBreakdown afterLosses = MarinePointsScoreCalculator.breakdown(building, building);
+
+        assertEquals(1, afterLosses.crew(), "one crew member left");
+        assertEquals(0.5, afterLosses.score());
     }
 
     @Test

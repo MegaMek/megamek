@@ -915,7 +915,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
             // use turn mode only when the unit is already on that same board
             if ((entity.getPosition() != null) && (b.getBoardId() == previousBoardId) && (shiftHeld || turnMode)) {
-                processTurn(entity, coords);
+                processTurn(entity, coords, turnMode && !shiftHeld);
                 return;
             }
 
@@ -1059,9 +1059,21 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.addToast(ToastLevel.ERROR, msg, currentEntity());
     }
 
-    private void processTurn(Entity entity, Coords coords) {
+    /**
+     * Turns the unit being deployed. A shift-click turns it toward the clicked hex; the Turn button, for a
+     * multi-hex building, opens the chooser of facings that fit.
+     *
+     * @param entity        the unit being deployed
+     * @param coords        the clicked hex
+     * @param viaTurnButton {@code true} when the Turn button was pressed rather than shift held
+     */
+    private void processTurn(Entity entity, Coords coords, boolean viaTurnButton) {
         if (AllowedDeploymentHelper.hasFacingDependentFootprint(entity)) {
-            turnBuildingToValidFacing(entity);
+            if (viaTurnButton) {
+                turnBuildingToValidFacing(entity);
+            } else {
+                turnBuildingToward(entity, coords);
+            }
             return;
         }
         entity.setFacing(entity.getPosition().direction(coords));
@@ -1073,9 +1085,39 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * A multi-hex building occupies different hexes in each facing, so it cannot simply be turned toward a clicked
-     * hex (#7858). Instead the player picks from the facings where the whole footprint fits where the building
-     * already stands.
+     * Shift-click on a multi-hex building: turns it toward the clicked hex the way any unit turns, unless that
+     * facing would put part of its footprint off the map, in which case the facing is left alone and the player is
+     * told (#7858).
+     *
+     * @param building the building being deployed
+     * @param clicked  the hex the player shift-clicked
+     */
+    private void turnBuildingToward(Entity building, Coords clicked) {
+        turnMode = false;
+        Coords position = building.getPosition();
+        int facing = position.direction(clicked);
+        if (facing == building.getFacing()) {
+            return;
+        }
+        Board board = game.getBoard(building.getBoardId());
+        var deploymentHelper = new AllowedDeploymentHelper(building, position, board, board.getHex(position), game);
+        FacingOption facingOptions = deploymentHelper.findAllowedFacings(building.getElevation());
+        boolean fits = (facingOptions != null) && facingOptions.getValidFacings().contains(facing);
+        if (!fits) {
+            logger.debug("[DeployBuilding] {} at {}: facing {} refused, part of the footprint would be off the map",
+                  building.getShortName(), position.getBoardNum(), facing);
+            clientgui.addToast(ToastLevel.WARNING, Messages.getString("DeploymentDisplay.buildingCannotFace",
+                  building.getShortName(), position.getBoardNum()), building);
+            return;
+        }
+        logger.debug("[DeployBuilding] {} at {}: turned to facing {}", building.getShortName(),
+              position.getBoardNum(), facing);
+        applyBuildingFacing(building, facing);
+    }
+
+    /**
+     * The Turn button on a multi-hex building: the player picks from the facings where the whole footprint fits
+     * where the building already stands (#7858).
      */
     private void turnBuildingToValidFacing(Entity building) {
         turnMode = false;
@@ -1096,9 +1138,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (chosenFacing == -1) {
             return;
         }
-        building.setFacing(chosenFacing);
-        building.setSecondaryFacing(chosenFacing);
-        clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(building));
+        applyBuildingFacing(building, chosenFacing);
+    }
+
+    private void applyBuildingFacing(Entity building, int facing) {
+        building.setFacing(facing);
+        building.setSecondaryFacing(facing);
+        clientgui.boardViews().forEach(boardView -> ((BoardView) boardView).redrawEntity(building));
         clientgui.updateFiringArc(building);
         clientgui.showSensorRanges(building);
     }

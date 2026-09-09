@@ -58,6 +58,7 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.CollapseWarning;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.TurretFacingDialog;
 import megamek.client.ui.dialogs.phaseDisplay.AutomaticEjectionDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DeployElevationChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DeployFacingChoiceDialog;
@@ -1151,11 +1152,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
         logger.debug("[DeployBuilding] {} at {}: offering facings {}", building.getShortName(),
               position.getBoardNum(), facingOptions.getValidFacings());
-        int chosenFacing = showFacingChoiceDialog(facingOptions);
-        if (chosenFacing == -1) {
-            return;
-        }
-        applyBuildingFacing(building, chosenFacing);
+        // The same six-direction picker a tank turret uses, with the facings that do not fit greyed out
+        new TurretFacingDialog(clientgui.getFrame(), building, facingOptions.getValidFacings(), clientgui,
+              facing -> applyBuildingFacing(building, facing)).setVisible(true);
     }
 
     private void applyBuildingFacing(Entity building, int facing) {

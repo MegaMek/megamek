@@ -42,6 +42,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.function.IntConsumer;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -301,6 +302,37 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
             }
         }
         layoutFacingPicker(parent, tank);
+    }
+
+    /**
+     * Facing picker for a multi-hex building being placed (#7858). Only the facings whose whole footprint fits on
+     * the map are enabled; the chosen facing is handed to {@code facingConsumer} and the deployment display applies
+     * it. Reuses the six-facing layout the turret dialogs use, so a building turns the way a turret does.
+     *
+     * @param parent         the parent frame
+     * @param building       the building being placed
+     * @param allowedFacings the facings (0-5) whose footprint fits where the building stands
+     * @param clientgui      the client GUI, used for the preview image
+     * @param facingConsumer receives the chosen absolute facing (0-5) when the player confirms
+     */
+    public TurretFacingDialog(JFrame parent, Entity building, Set<Integer> allowedFacings, ClientGUI clientgui,
+          IntConsumer facingConsumer) {
+        super(parent, Messages.getString("DeploymentDisplay.facingChoice"), false);
+        super.setResizable(false);
+        this.clientgui = clientgui;
+        this.facingConsumer = facingConsumer;
+        butOkay.addActionListener(this);
+        butCancel.addActionListener(this);
+
+        for (int facing = 0; facing <= 5; facing++) {
+            JRadioButton button = new JRadioButton();
+            button.setActionCommand(facing + "");
+            button.setEnabled(allowedFacings.contains(facing));
+            button.setSelected(facing == building.getFacing());
+            facings.add(button);
+            buttonGroup.add(button);
+        }
+        layoutFacingPicker(parent, building);
     }
 
     /**

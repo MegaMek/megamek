@@ -33,6 +33,7 @@
 package megamek.client.ui.dialogs.phaseDisplay;
 
 import java.awt.Container;
+import java.awt.Dimension;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -84,6 +85,20 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
         this.building = building;
         this.isInitiation = isInitiation;
         initialize();
+        openWideEnoughForTheText();
+    }
+
+    /**
+     * The remembered size wins over the packed size, and a remembered size from a shorter dialog can be narrower than
+     * the lines wrap at, which clips them. The dialog therefore never opens narrower than its own preferred width.
+     */
+    private void openWideEnoughForTheText() {
+        int neededWidth = getPreferredSize().width;
+        int neededHeight = getPreferredSize().height;
+        setMinimumSize(new Dimension(neededWidth, neededHeight));
+        if ((getWidth() < neededWidth) || (getHeight() < neededHeight)) {
+            setSize(Math.max(getWidth(), neededWidth), Math.max(getHeight(), neededHeight));
+        }
     }
 
     /**

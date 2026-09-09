@@ -2399,6 +2399,14 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case VICTORY:
                 datasetLogger.requestNewLogFile();
+                // Mark every bot done as we enter VICTORY. Bots disconnect rather than acknowledging this phase, so
+                // without this the readiness check can wait forever on a bot whose disconnect has not yet been
+                // processed, and MekHQ is never told the game ended. See issue #8889.
+                for (Player victoryPlayer : game.getPlayersList()) {
+                    if (victoryPlayer.isBot()) {
+                        victoryPlayer.setDone(true);
+                    }
+                }
                 break;
             default:
                 break;
@@ -7316,30 +7324,8 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 vPhaseReport.addAll(vBuildingDamageReport);
 
-                // For each missile, check to see if it hits a unit in this hex
-                for (Entity e : game.getEntitiesVector(t.getPosition())) {
-                    if (e.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV)) {
-                        continue;
-                    }
-                    for (int m = 0; m < missiles; m++) {
-                        Roll diceRoll = Compute.rollD6(1);
-                        r = new Report(3570);
-                        r.subject = e.getId();
-                        r.indent(3);
-                        r.addDesc(e);
-                        r.add(diceRoll);
-                        vPhaseReport.add(r);
-
-                        if (diceRoll.getIntValue() >= 5) {
-                            Vector<Report> dmgReports = deliverInfernoMissiles(ae, e, 1, called);
-                            for (Report rep : dmgReports) {
-                                rep.indent(4);
-                            }
-                            vPhaseReport.addAll(dmgReports);
-                        }
-                    }
-                }
-
+                // Each unit in the hex rolls per missile; conventional infantry inside is shielded by the building
+                vPhaseReport.addAll(new InfernoBuildingHexResolver(this).strikeUnitsInHex(ae, t, missiles, called));
                 break;
             case Targetable.TYPE_ENTITY:
                 Entity te = (Entity) t;
@@ -11085,20 +11071,8 @@ public class TWGameManager extends AbstractGameManager {
                         LOGGER.error("Non-Tank tried to unjam turret");
                     }
                 }
-                case RepairWeaponMalfunctionAction repairWeaponMalfunctionAction -> {
-                    if (entity instanceof Tank tank) {
-                        Mounted<?> m = entity.getEquipment(repairWeaponMalfunctionAction.getWeaponId());
-                        m.setJammed(false);
-                        tank.getJammedWeapons().remove(m);
-                        Report r = new Report(3034);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        r.add(m.getName());
-                        addReport(r);
-                    } else {
-                        LOGGER.error("Non-Tank tried to repair weapon malfunction");
-                    }
-                }
+                case RepairWeaponMalfunctionAction repairWeaponMalfunctionAction ->
+                      new WeaponMalfunctionRepairHandler(this).repair(entity, repairWeaponMalfunctionAction);
                 case DisengageAction ignored -> {
                     MovePath path = new MovePath(game, entity);
                     path.addStep(MoveStepType.FLEE);
@@ -29068,8 +29042,10 @@ public class TWGameManager extends AbstractGameManager {
                     }
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, side);
                     hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
+                    withoutLocationMotiveRoll(hit);
                     buildingReport.addAll(damageEntity(entity, hit, damage));
                 }
+                buildingReport.addAll(rollMotiveDamageForFailedBuildingEntry(entity));
             }
 
             // Damage the building. The CF can never drop below 0.
@@ -29084,17 +29060,82 @@ public class TWGameManager extends AbstractGameManager {
                     return;
                 }
             } else {
-                toBldg = (int) Math.floor(bldg.getDamageToScale() * Math.ceil(entity.getWeight() / 10.0));
+                toBldg = buildingDamageFromPassingWall(entity, bldg);
             }
-            int curCF = bldg.getCurrentCF(entering ? curPos : lastPos);
+            Coords damagedHex = entering ? curPos : lastPos;
+            int curCF = bldg.getCurrentCF(damagedHex);
             curCF -= Math.min(curCF, toBldg);
-            bldg.setCurrentCF(curCF, entering ? curPos : lastPos);
+            bldg.setCurrentCF(curCF, damagedHex);
+            buildingReport.add(reportBuildingDamageFromPassingWall(entity, bldg, toBldg, curCF, damagedHex));
 
             // Apply the correct amount of damage to infantry in the building.
             // ASSUMPTION: We inflict toBldg damage to infantry and
             // not the amount to bring building to 0 CF.
             buildingReport.addAll(damageInfantryIn(bldg, toBldg, entering ? curPos : lastPos));
         }
+    }
+
+    /** The round report line for the damage a moving unit inflicts on a building hex. */
+    private Report reportBuildingDamageFromPassingWall(Entity entity, IBuilding bldg, int damage, int remainingCF,
+          Coords damagedHex) {
+        Report report = new Report(6441);
+        report.subject = entity.getId();
+        report.indent(2);
+        report.add((bldg instanceof Entity buildingEntity) ? buildingEntity.getShortName()
+              : bldg.getBuildingType() + " " + bldg.getName());
+        report.add(damage);
+        report.add(entity.getShortName());
+        report.add(damagedHex.getBoardNum());
+        report.add(remainingCF);
+        return report;
+    }
+
+    /**
+     * Damage a unit inflicts on a building hex it moves into or through: one point per ten tons (TW p. 168), doubled
+     * for a Large Support Vehicle (TW p. 168, Large Support Vehicles), and then scaled for the building class the way
+     * any damage to that class is.
+     *
+     * @param entity the moving unit
+     * @param bldg   the building being passed through
+     *
+     * @return the damage to apply to the building hex
+     */
+    private int buildingDamageFromPassingWall(Entity entity, IBuilding bldg) {
+        int standardDamage = (int) Math.ceil(entity.getWeight() / 10.0);
+        int damage = standardDamage;
+        if (entity instanceof LargeSupportTank) {
+            damage = standardDamage * 2;
+            LOGGER.debug("[BuildingEntry] {} is a Large Support Vehicle; building damage doubled from {} to {}",
+                  entity.getShortName(), standardDamage, damage);
+        }
+        return (int) Math.floor(bldg.getDamageToScale() * damage);
+    }
+
+    /**
+     * A vehicle's hit location can carry its own motive damage roll (TW p. 193). On a failed building entry the rule
+     * asks for exactly one roll (TW p. 168), made by {@link #rollMotiveDamageForFailedBuildingEntry}, so the
+     * location's roll is dropped from the wall damage.
+     */
+    private static void withoutLocationMotiveRoll(HitData hit) {
+        hit.setEffect(hit.getEffect() & ~HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+    }
+
+    /**
+     * A vehicle that fails its Driving Skill Roll while moving through a building wall makes one immediate roll on
+     * the Motive System Damage Table (TW p. 168, Vehicles), whatever location the wall damage hit. Other unit types
+     * are unaffected.
+     *
+     * @param entity the unit that failed the roll
+     *
+     * @return the reports of the motive damage roll, empty when the unit is not a vehicle
+     */
+    private Vector<Report> rollMotiveDamageForFailedBuildingEntry(Entity entity) {
+        if (!(entity instanceof Tank tank)) {
+            return new Vector<>();
+        }
+        LOGGER.debug("[BuildingEntry] {} failed its Driving Skill Roll in a building; rolling motive system damage",
+              tank.getShortName());
+        return vehicleMotiveDamage(tank, 0);
     }
 
     /**

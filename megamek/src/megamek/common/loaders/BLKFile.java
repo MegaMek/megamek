@@ -656,7 +656,7 @@ public class BLKFile {
         if (dataFile.exists("originalBuildYear")) {
             e.setOriginalBuildYear(dataFile.getDataAsInt("originalBuildYear")[0]);
         }
-        
+
         if (!dataFile.exists("type")) {
             throw new EntityLoadingException("Could not find type block.");
         }
@@ -1244,6 +1244,9 @@ public class BLKFile {
                 blk.writeBlockData("building_type", abstractBuildingEntity.getBuildingType().getTypeValue());
                 blk.writeBlockData("height", abstractBuildingEntity.getInternalBuilding().getBuildingHeight());
                 blk.writeBlockData("cf", abstractBuildingEntity.getInternalBuilding().getCurrentCF(CubeCoords.ZERO));
+                if (abstractBuildingEntity.hasExplicitCrewCount()) {
+                    blk.writeBlockData("crew", abstractBuildingEntity.getNCrew());
+                }
 
                 blk.writeBlockData("coords",
                       abstractBuildingEntity.getInternalBuilding().getCoordsList().toArray(new CubeCoords[0]));

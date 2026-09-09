@@ -395,6 +395,21 @@ public class Hex implements Serializable {
         return depth(false);
     }
 
+    /**
+     * Whether an elevation below the hex surface lies within this hex's building basement rather than under water,
+     * so that a unit there is standing on a basement level (TW p. 179), not swimming.
+     *
+     * @param elevation the elevation relative to the hex surface, negative for below it
+     *
+     * @return {@code true} when the hex has a building whose basement reaches that far down
+     */
+    public boolean isBasementLevel(int elevation) {
+        if ((elevation >= 0) || !containsTerrain(Terrains.BUILDING)) {
+            return false;
+        }
+        return -elevation <= BasementType.getType(terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth();
+    }
+
     public int depth(boolean hidden) {
         int depth = 0;
         Terrain water = getTerrain(Terrains.WATER);
@@ -789,7 +804,7 @@ public class Hex implements Serializable {
         }
         return true;
     }
-    
+
     /** Determine whether a minefield of the given type can be placed here.
      * @param minefieldType one of the constants from the Minefield class
      */
@@ -800,7 +815,7 @@ public class Hex implements Serializable {
     	case Minefield.TYPE_PITFALL:
     		return !containsAnyTerrainOf(Terrains.INVALID_PITFALL_TERRAIN);
     	}
-    	
+
     	return true;
     }
 

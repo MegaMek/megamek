@@ -756,17 +756,17 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         if (currentEntity() == null || weaponMounted == null || !weaponMounted.getType().hasFlag(WeaponType.F_BOMBAST_LASER)) {
             return;
         }
-        
+
         // send change to the server
         int nChargeLevel = weaponMounted.switchChargeLevel();
-        
+
         clientgui.getClient().sendChargeLevelChange(weaponMounted.getEntity().getId(), weaponMounted.getEquipmentNum(),
               nChargeLevel);
 
         // notify the player
         clientgui.systemMessage(Messages.getString("FiringDisplay.switched", weaponMounted.getName(),
                   weaponMounted.getChargeState().getDescription()));
-        
+
         updateTarget();
         clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
         clientgui.getUnitDisplay().wPan.selectWeapon(weaponMounted);
@@ -1139,7 +1139,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             return;
         }
 
-        ArrayList<Mounted<?>> weapons = ((Tank) currentEntity).getJammedWeapons();
+        List<Mounted<?>> weapons = jammedWeaponsOf(currentEntity);
         String[] names = new String[weapons.size()];
         for (int loop = 0; loop < names.length; loop++) {
             names[loop] = weapons.get(loop).getDesc();
@@ -1909,7 +1909,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         } else {
             setFireChargeLevelEnabled(false);
         }
-        
+
         updateSearchlight();
         updateRHS();
         updateActivateSPA();
@@ -2280,8 +2280,24 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     }
 
     private void updateClearWeaponJam() {
-        setFireClearWeaponJamEnabled((currentEntity() instanceof Tank) && ((Tank) currentEntity()).canUnjamWeapon()
-              && attacks.isEmpty());
+        setFireClearWeaponJamEnabled(canClearWeaponJam(currentEntity()) && attacks.isEmpty());
+    }
+
+    /** A vehicle crew (TW p. 195) or the gunners of an Advanced Building (TO:AR p. 119) may clear a jammed weapon. */
+    private static boolean canClearWeaponJam(@Nullable Entity entity) {
+        return switch (entity) {
+            case Tank tank -> tank.canUnjamWeapon();
+            case AbstractBuildingEntity building -> building.canUnjamWeapon();
+            case null, default -> false;
+        };
+    }
+
+    private static List<Mounted<?>> jammedWeaponsOf(Entity entity) {
+        return switch (entity) {
+            case Tank tank -> new ArrayList<>(tank.getJammedWeapons());
+            case AbstractBuildingEntity building -> building.getJammedWeapons();
+            default -> new ArrayList<>();
+        };
     }
 
     private void updateExtinguish() {

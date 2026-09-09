@@ -58,6 +58,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.Jumpship;
+import megamek.common.units.SmallCraft;
 import megamek.common.units.Warship;
 import megamek.common.util.RoundWeight;
 import megamek.common.util.StringUtil;
@@ -330,6 +331,15 @@ public class TestAdvancedAerospace extends TestAero {
             crew += equipmentCrewRequirements(m);
         }
         return crew;
+    }
+
+    /**
+     * Returns the number of required officers of the vessel.
+     * @param vessel The vessel
+     * @return The number of required officers
+     */
+    public static int requiredOfficers(Jumpship vessel) {
+        return (int) Math.ceil((minimumBaseCrew(vessel) + requiredGunners(vessel)) / 6.0);
     }
 
     public TestAdvancedAerospace(Jumpship vessel, TestEntityOption option, String fs) {
@@ -860,12 +870,13 @@ public class TestAdvancedAerospace extends TestAero {
         boolean illegal = false;
         int crewSize = vessel.getNCrew() - vessel.getBayPersonnel();
         int reqCrew = minimumBaseCrew(vessel) + requiredGunners(vessel);
+        int reqOfficers = requiredOfficers(vessel);
         if (crewSize < reqCrew) {
             buffer.append("Requires ").append(reqCrew).append(" crew and only has ").append(crewSize).append("\n");
             illegal = true;
         }
-        if (vessel.getNOfficers() < Math.ceil(reqCrew / 6.0)) {
-            buffer.append("Requires at least ").append((int) Math.ceil(reqCrew / 6.0)).append(" officers\n");
+        if (vessel.getNOfficers() < reqOfficers) {
+            buffer.append("Requires at least ").append(reqOfficers).append(" officers\n");
             illegal = true;
         }
         crewSize += vessel.getNPassenger();

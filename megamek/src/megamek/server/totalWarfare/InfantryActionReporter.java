@@ -171,7 +171,7 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
             Report modifierReport = new Report(BUILDING_MODIFIER);
             modifierReport.subject = entity.getId();
             modifierReport.indent(UNIT_LINE_INDENT);
-            modifierReport.add(entity.getDisplayName());
+            modifierReport.addDesc(entity);
             modifierReport.add(number(breakdown.buildingModifier()));
             modifierReport.add(number(breakdown.modifiedScore()));
             addReport(modifierReport);
@@ -180,7 +180,7 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
 
     private static Report conventionalInfantryLine(Entity entity, MarinePointsBreakdown breakdown) {
         Report report = new Report(CONVENTIONAL_INFANTRY_SCORE);
-        report.add(entity.getDisplayName());
+        report.addDesc(entity);
         report.add(breakdown.headCount());
         report.add(number(breakdown.perTrooper()));
         report.add(number(breakdown.score()));
@@ -189,7 +189,7 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
 
     private static Report battleArmorLine(Entity entity, MarinePointsBreakdown breakdown) {
         Report report = new Report(BATTLE_ARMOR_SCORE);
-        report.add(entity.getDisplayName());
+        report.addDesc(entity);
         report.add(breakdown.headCount());
         report.add(number(breakdown.perTrooper()));
         report.add(number(breakdown.baseValue()));
@@ -205,7 +205,7 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
 
     private static Report crewLine(Entity entity, MarinePointsBreakdown breakdown) {
         Report report = new Report(CREW_SCORE);
-        report.add(entity.getDisplayName());
+        report.addDesc(entity);
         report.add(breakdown.marines());
         report.add(breakdown.crew());
         report.add(breakdown.bayPersonnel());
@@ -239,7 +239,7 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
         Report report = new Report(messageId);
         report.subject = entity.getId();
         report.indent(UNIT_LINE_INDENT);
-        report.add(entity.getDisplayName());
+        report.addDesc(entity);
         report.add(headCount);
         report.add(marinePointsLost);
         report.add(ownStrength);

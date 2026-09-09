@@ -328,7 +328,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         if (newHits > oldHits) {
             Report report = new Report(5635);
             report.indent(2);
-            report.add(building.getDisplayName());
+            report.addDesc(building);
             report.add(newHits - oldHits);
             addReport(report);
         }
@@ -362,7 +362,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
 
     private void reportCombatHeader(AbstractBuildingEntity building) {
         Report report = new Report(5630);
-        report.add(building.getDisplayName());
+        report.addDesc(building);
         addReport(report);
     }
 
@@ -430,7 +430,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
     private void reportWithdrawal(InfantryAction combat, AbstractBuildingEntity building) {
         Report report = new Report(5639);
         report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
-        report.add(building.getDisplayName());
+        report.addDesc(building);
         addReport(report);
         cleanupCombat(combat);
     }

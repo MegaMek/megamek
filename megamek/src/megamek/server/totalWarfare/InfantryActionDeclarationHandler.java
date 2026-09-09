@@ -170,7 +170,7 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
             }
         }
         Report report = new Report(ACTION_STARTS);
-        report.add(building.getDisplayName());
+        report.addDesc(building);
         report.subject = initiator.getId();
         addReport(report);
         reporter.reportSides(attackers.stream().map(Entity::getId).toList(),

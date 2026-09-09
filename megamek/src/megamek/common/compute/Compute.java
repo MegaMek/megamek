@@ -7667,6 +7667,9 @@ public class Compute {
             return getAeroCrewNeeds(entity) + getTotalGunnerNeeds(entity) + getAdditionalNonGunner(entity);
         } else if (entity.isSuperHeavy() || entity.isTripodMek()) {
             return getTotalDriverNeeds(entity) + getTotalGunnerNeeds(entity) + getAdditionalNonGunner(entity);
+        } else if (entity instanceof AbstractBuildingEntity building) {
+            // The crew from the unit file or the Advanced Building Minimum Crew Table, plus any bay personnel
+            return building.getNCrew() + building.getBayPersonnel();
         } else {
             return 1;
         }

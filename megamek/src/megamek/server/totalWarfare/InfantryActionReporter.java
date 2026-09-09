@@ -75,6 +75,10 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
     static final int NO_TROOPER_LOSS = 5661;
     /** A crewed unit whose share of the loss is under one crew member. */
     static final int NO_CREW_LOSS = 5662;
+    /** A unit that loses exactly one trooper. */
+    static final int ONE_TROOPER_LOSS = 5663;
+    /** A crewed unit that loses exactly one crew member. */
+    static final int ONE_CREW_LOSS = 5664;
 
     private static final int UNIT_LINE_INDENT = 1;
 
@@ -205,11 +209,12 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
           boolean isCrew) {
         double share = (ownStrength <= 0) ? 0 : ((double) headCount * marinePointsLost) / ownStrength;
         boolean lostSomeone = personnelLost > 0;
+        boolean lostExactlyOne = personnelLost == 1;
         int messageId;
         if (isCrew) {
-            messageId = lostSomeone ? CREW_LOSS : NO_CREW_LOSS;
+            messageId = lostExactlyOne ? ONE_CREW_LOSS : (lostSomeone ? CREW_LOSS : NO_CREW_LOSS);
         } else {
-            messageId = lostSomeone ? TROOPER_LOSS : NO_TROOPER_LOSS;
+            messageId = lostExactlyOne ? ONE_TROOPER_LOSS : (lostSomeone ? TROOPER_LOSS : NO_TROOPER_LOSS);
         }
         Report report = new Report(messageId);
         report.subject = entity.getId();
@@ -219,7 +224,7 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
         report.add(marinePointsLost);
         report.add(ownStrength);
         report.add(number(share));
-        if (lostSomeone) {
+        if (lostSomeone && !lostExactlyOne) {
             report.add(personnelLost);
         }
         addReport(report);

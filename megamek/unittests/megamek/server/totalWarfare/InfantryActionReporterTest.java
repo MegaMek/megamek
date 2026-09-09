@@ -213,6 +213,16 @@ class InfantryActionReporterTest {
     }
 
     @Test
+    @DisplayName("Exactly one trooper lost is said in the singular")
+    void oneTrooperLostIsSingular() {
+        ConvInfantry rifles = platoon(28, attackingPlayer, 1);
+
+        reporter.reportUnitLoss(rifles, 28, 5, 83, 1, false);
+
+        assertEquals(InfantryActionReporter.ONE_TROOPER_LOSS, gameManager.getMainPhaseReport().getFirst().messageId);
+    }
+
+    @Test
     @DisplayName("A unit whose share is under one trooper gets a line saying it lost nobody")
     void shareUnderOneTrooperSaysSo() {
         BattleArmor elementals = elementalPoint(attackingPlayer, 2);

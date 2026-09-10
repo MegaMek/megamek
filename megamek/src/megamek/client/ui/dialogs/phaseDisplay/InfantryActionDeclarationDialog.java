@@ -108,7 +108,12 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
     /** Defend, attack, reinforce a running attack, or, with nothing left to add, continue or withdraw from it. */
     private String titleKey() {
         if (defends) {
-            return "InfantryActionDeclarationDialog.title.defend";
+            boolean nothingToCommit = InfantryActionStrengths.unengagedFriendlyInfantryInside(game, player, building)
+                  .isEmpty() && (InfantryActionStrengths.crewAvailableToCommit(building) <= 0);
+            boolean onlyWithdrawalLeft = nothingToCommit
+                  && InfantryActionStrengths.canWithdrawDefence(game, player, building);
+            return onlyWithdrawalLeft ? "InfantryActionDeclarationDialog.title.holdOrWithdraw"
+                  : "InfantryActionDeclarationDialog.title.defend";
         }
         if (!InfantryActionStrengths.hasActionRunning(game, building)) {
             return "InfantryActionDeclarationDialog.title.attack";
@@ -210,6 +215,12 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
             crewEffect = addText(column, "");
         }
         ownTotal = addText(column, "");
+        if (InfantryActionStrengths.canWithdrawDefence(game, player, building)) {
+            withdrawBox = new JCheckBox(Messages.getString("InfantryActionDeclarationDialog.withdrawDefence"));
+            withdrawBox.addActionListener(event -> refreshTotals());
+            column.add(withdrawBox, rowConstraints());
+            addText(column, Messages.getString("InfantryActionDeclarationDialog.withdrawDefenceExplained"));
+        }
         addHeading(column, Messages.getString("InfantryActionDeclarationDialog.against"));
         double attackers = 0;
         for (Entity attacker : InfantryActionStrengths.engaged(game, building, true)) {
@@ -254,6 +265,7 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
             box.setEnabled(!withdrawing);
         }
         if (defends && (crewSpinner != null)) {
+            crewSpinner.setEnabled(!withdrawing && (InfantryActionStrengths.crewAvailableToCommit(building) > 0));
             int extra = (Integer) crewSpinner.getValue();
             double crewPoints = InfantryActionStrengths.crewPointsIfCommitted(building,
                   building.getCommittedCrew() + extra);
@@ -371,11 +383,11 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
      */
     public InfantryActionDeclaration getDeclaration() {
         List<Integer> unitIds = getCommittedUnits().stream().map(Entity::getId).toList();
+        boolean withdrawing = (withdrawBox != null) && withdrawBox.isSelected();
         if (defends) {
             int crew = (crewSpinner == null) ? 0 : (Integer) crewSpinner.getValue();
-            return InfantryActionDeclaration.defending(player.getId(), building.getId(), unitIds, crew);
+            return InfantryActionDeclaration.defending(player.getId(), building.getId(), unitIds, crew, withdrawing);
         }
-        boolean withdrawing = (withdrawBox != null) && withdrawBox.isSelected();
         return InfantryActionDeclaration.attacking(player.getId(), building.getId(),
               withdrawing ? List.of() : unitIds, withdrawing);
     }

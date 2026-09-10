@@ -38,6 +38,7 @@ import java.util.List;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
@@ -229,7 +230,7 @@ public final class InfantryActionStrengths {
             boolean threatened = !enemyInfantryInside(game, player, building).isEmpty()
                   || hasActionRunning(game, building);
             boolean somethingToCommit = ownUnitsInside || (building.getCrewAvailableToCommit() > 0);
-            return threatened && somethingToCommit;
+            return threatened && (somethingToCommit || canWithdrawDefence(game, player, building));
         }
         boolean ownForceEngaged = engaged(game, building, true).stream()
               .anyMatch(attacker -> attacker.getOwnerId() == player.getId());
@@ -269,6 +270,54 @@ public final class InfantryActionStrengths {
      */
     public static int crewAvailableToCommit(AbstractBuildingEntity building) {
         return building.getCrewAvailableToCommit();
+    }
+
+    /**
+     * Whether the game allows the infantry defending a building to withdraw from an action. A house rule, not in
+     * the book, behind its own option.
+     *
+     * @param game the game
+     *
+     * @return {@code true} when the option is on
+     */
+    public static boolean defenderWithdrawalAllowed(Game game) {
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_INFANTRY_ACTION_DEFENDER_WITHDRAWAL);
+    }
+
+    /**
+     * The player's infantry defending the building in a running action that have not yet asked to withdraw.
+     *
+     * @param game     the game
+     * @param player   the defending player
+     * @param building the building
+     *
+     * @return the units, possibly empty
+     */
+    public static List<Infantry> engagedDefendingInfantry(Game game, Player player, AbstractBuildingEntity building) {
+        List<Infantry> units = new ArrayList<>();
+        for (Entity entity : engaged(game, building, false)) {
+            boolean ownInfantry = (entity instanceof Infantry) && (entity.getOwnerId() == player.getId())
+                  && !entity.isInfantryCombatWantsWithdrawal();
+            if (ownInfantry) {
+                units.add((Infantry) entity);
+            }
+        }
+        return units;
+    }
+
+    /**
+     * Whether the player may declare a defender withdrawal here this turn: the option is on, an action is running,
+     * and the player has infantry defending in it that have not already asked to leave.
+     *
+     * @param game     the game
+     * @param player   the defending player
+     * @param building the building
+     *
+     * @return {@code true} when a withdrawal can be declared
+     */
+    public static boolean canWithdrawDefence(Game game, Player player, AbstractBuildingEntity building) {
+        return defenderWithdrawalAllowed(game) && hasActionRunning(game, building)
+              && !engagedDefendingInfantry(game, player, building).isEmpty();
     }
 
     /**

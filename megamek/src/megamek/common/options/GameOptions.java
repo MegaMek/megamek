@@ -188,6 +188,7 @@ public class GameOptions extends BasicGameOptions {
 
         IBasicOptionGroup advancedCombat = addGroup("advancedCombat");
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS, false);
+        addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_INFANTRY_ACTION_DEFENDER_WITHDRAWAL, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_MANUAL_AMS, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_FLOATING_CRITS, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CRIT_ROLL, false);

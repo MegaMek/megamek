@@ -252,6 +252,10 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
      */
     private void declareDefence(Player player, AbstractBuildingEntity building,
           InfantryActionDeclaration declaration) {
+        if (declaration.withdraw()) {
+            withdrawDefence(player, building);
+            return;
+        }
         InfantryAction combat = tracker.getCombat(building.getId());
         for (Infantry unit : committableUnits(player, building, declaration.committedUnitIds())) {
             if (combat != null) {
@@ -271,6 +275,30 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
                   building.getCommittedCrew(), building.getCrew().getHits());
             gameManager.entityUpdate(building.getId());
         }
+    }
+
+    /**
+     * House rule: the player's infantry defending the building ask to withdraw. They fight one more roll at half
+     * damage, cannot be eliminated by it, and are moved out in the next End Phase; the building falls.
+     */
+    private void withdrawDefence(Player player, AbstractBuildingEntity building) {
+        if (!InfantryActionStrengths.defenderWithdrawalAllowed(getGame())) {
+            LOGGER.warn("[InfantryAction] {} asked to withdraw the defence of {}, but the option is off",
+                  player.getName(), building.getShortName());
+            return;
+        }
+        List<Infantry> defenders = InfantryActionStrengths.engagedDefendingInfantry(getGame(), player, building);
+        if (defenders.isEmpty()) {
+            LOGGER.debug("[InfantryAction] {} has no defending infantry in {} to withdraw", player.getName(),
+                  building.getShortName());
+            return;
+        }
+        for (Infantry defender : defenders) {
+            defender.setInfantryCombatWantsWithdrawal(true);
+            sendState(defender);
+        }
+        LOGGER.info("[InfantryAction] {} withdraws the defence of {}: {} unit(s) leave after one more roll",
+              player.getName(), building.getShortName(), defenders.size());
     }
 
     // ---------------------------------------------------------------- shared

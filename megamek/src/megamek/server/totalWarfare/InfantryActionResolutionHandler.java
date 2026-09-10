@@ -112,6 +112,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
             return;
         }
         boolean withdrawing = attackersAreWithdrawing(combat);
+        boolean defendersWithdrawing = defendersAreWithdrawing(combat);
 
         // Only the defender's score takes the building modifier (TO:AR p. 171); the conversion back to people
         // uses each side's score before the modifier (TO:AR p. 174).
@@ -157,6 +158,11 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
                 defenderEliminated = false;
             }
         }
+        if (defendersWithdrawing && defenderEliminated) {
+            // House rule: a withdrawing defence gets the attacker's terms, so an E against it becomes a P
+            defenderPercent = InfantryCombatTables.highestListedPercent(ratio, false);
+            defenderEliminated = false;
+        }
 
         // TO:AR p. 172-173: the defenders take full damage from the roll that gives the attackers partial control
         boolean defendersInFullControl = !combat.hasPartialControl;
@@ -172,7 +178,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
                     withdrawing);
         int defenderLost = defenderEliminated ? defenderOwnStrength
               : InfantryCombatCasualties.marinePointsLost(attackerStrength, defenderPercent, false,
-                    defendersInFullControl);
+                    defendersInFullControl || defendersWithdrawing);
         LOGGER.info("[InfantryAction] {}: ratio {} roll {} result {}; attackers lose {} of {}, defenders lose {} of {}",
               building.getShortName(), ratio, roll, result, attackerLost, attackerOwnStrength, defenderLost,
               defenderOwnStrength);
@@ -186,18 +192,25 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
               defenderOwnStrength);
         boolean attackersGone = attackerEliminated || attackerLosses.nobodyLeft();
         boolean defendersGone = defenderEliminated || defenderLosses.nobodyLeft();
-        boolean captured = defendersGone && !attackersGone;
+        // A withdrawing defence gives the building up on the roll it leaves
+        boolean captured = !attackersGone && (defendersGone || (defendersWithdrawing && !withdrawing));
         InfantryActionNarrator.Side attackers = InfantryActionNarrator.Side.of(getGame(), combat.attackerIds, null,
               attackerLost, attackerOwnStrength, attackersGone);
         InfantryActionNarrator.Side defenders = InfantryActionNarrator.Side.of(getGame(), combat.defenderIds,
               building, defenderLost, defenderOwnStrength, defendersGone);
 
         reportCombatHeader(building);
-        narrator.narrate(outcomeOf(result, withdrawing, attackersGone, defendersGone), attackers, defenders,
-              captured ? building : null);
+        narrator.narrate(outcomeOf(result, withdrawing, defendersWithdrawing, attackersGone, defendersGone),
+              attackers, defenders, captured ? building : null);
         reportRoll(ratio, attackerStrength, defenderStrength, roll, result);
         if (withdrawing) {
             reportWithdrawal(attackerPercent, defenderPercent);
+        }
+        if (defendersWithdrawing) {
+            Report report = new Report(DEFENDERS_WITHDRAWING);
+            report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
+            report.add(defenderPercent);
+            addReport(report);
         }
         List<Entity> everyone = new ArrayList<>(attackers.units());
         everyone.addAll(defenders.units());
@@ -217,12 +230,14 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
             reportSideRepulsed(combat);
         } else if (withdrawing) {
             reportWithdrawal(combat, building);
+        } else if (defendersWithdrawing) {
+            reportDefenderWithdrawal(combat, building);
         }
     }
 
     /** How the roll went, in the order the lines above decide it. */
     private static InfantryActionNarrator.Outcome outcomeOf(InfantryCombatResult result, boolean withdrawing,
-          boolean attackersGone, boolean defendersGone) {
+          boolean defendersWithdrawing, boolean attackersGone, boolean defendersGone) {
         if (attackersGone) {
             return InfantryActionNarrator.Outcome.ATTACKERS_ELIMINATED;
         }
@@ -235,10 +250,27 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         if (result.isAttackerRepulsed()) {
             return InfantryActionNarrator.Outcome.REPULSED;
         }
+        if (defendersWithdrawing) {
+            return InfantryActionNarrator.Outcome.DEFENDERS_WITHDRAW;
+        }
+        if (result.isAttackerRepulsed()) {
+            return InfantryActionNarrator.Outcome.REPULSED;
+        }
         if (result.isPartialControl()) {
             return InfantryActionNarrator.Outcome.PENETRATION;
         }
         return InfantryActionNarrator.Outcome.ENGAGED;
+    }
+
+    /** House rule: any defending infantry unit that asked to leave takes the whole defence out. */
+    private boolean defendersAreWithdrawing(InfantryAction combat) {
+        for (int defenderId : combat.defenderIds) {
+            Entity defender = getGame().getEntity(defenderId);
+            if ((defender instanceof Infantry) && defender.isInfantryCombatWantsWithdrawal()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean attackersAreWithdrawing(InfantryAction combat) {
@@ -383,6 +415,10 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
     /** The attackers had nobody left to make the roll. */
     private static final int ATTACKERS_ELIMINATED = 5636;
     private static final int BUILDING_FALLS = 5665;
+    /** The defending infantry withdraw and the building falls (house rule). */
+    private static final int DEFENDERS_WITHDRAW = 5721;
+    /** The withdrawing defence's adjustments to this roll. */
+    private static final int DEFENDERS_WITHDRAWING = 5722;
     /** A unit inside a fallen or captured building that never joined the fight surrenders. */
     private static final int SURRENDERS = 5717;
     /** A unit is moved out of the building after a withdrawal or a repulse. */
@@ -478,6 +514,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         for (Entity entity : new ArrayList<>(getGame().getEntitiesVector())) {
             boolean uncommittedDefender = (entity instanceof Infantry)
                   && !InfantryActionReporter.isOutOfTheFight(entity)
+                  && !entity.isInfantryActionLeaving()
                   && !combat.attackerIds.contains(entity.getId())
                   && InfantryActionStrengths.defends(entity.getOwner(), building)
                   && InfantryActionStrengths.isInside(entity, building);
@@ -578,6 +615,31 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         for (Entity attacker : attackersOf(combat)) {
             attacker.setInfantryActionLeaving(true);
         }
+        for (int defenderId : combat.defenderIds) {
+            Entity defender = getGame().getEntity(defenderId);
+            if ((defender instanceof Infantry) && defender.isInfantryCombatWantsWithdrawal()) {
+                defender.setInfantryActionLeaving(true);
+            }
+        }
+        cleanupCombat(combat);
+    }
+
+    /**
+     * House rule: the defending infantry leave after this roll and the building falls to the attackers. The
+     * infantry are moved out in the next End Phase; everyone else left inside surrenders with the building.
+     */
+    private void reportDefenderWithdrawal(InfantryAction combat, AbstractBuildingEntity building) {
+        Report report = new Report(DEFENDERS_WITHDRAW);
+        report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
+        report.addDesc(building);
+        addReport(report);
+        for (int defenderId : combat.defenderIds) {
+            Entity defender = getGame().getEntity(defenderId);
+            if ((defender instanceof Infantry) && defender.isInfantryCombatWantsWithdrawal()) {
+                defender.setInfantryActionLeaving(true);
+            }
+        }
+        captureBuilding(combat, building);
         cleanupCombat(combat);
     }
 

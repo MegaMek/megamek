@@ -227,6 +227,29 @@ class InfantryActionResolutionHandlerTest {
     }
 
     @Test
+    @DisplayName("House rule: a withdrawing defence takes half damage, cannot be eliminated, and gives up the building")
+    void withdrawingDefendersTakeHalfDamageAndGiveUpTheBuilding() {
+        building.getCrew().setSize(4);
+        building.getCrew().setCurrentSize(4);
+        ConvInfantry attackerOne = platoon(attackingPlayer);
+        ConvInfantry attackerTwo = platoon(attackingPlayer);
+        ConvInfantry defender = platoon(defendingPlayer);
+        InfantryAction combat = startCombat(attackerOne, defender);
+        tracker.addReinforcement(building.getId(), attackerTwo, true);
+        defender.setInfantryCombatWantsWithdrawal(true);
+
+        // 2 to 1 column, roll of 10: 25%/E (P). The E against the withdrawing defenders becomes the column's highest
+        // listed defender percentage, 60% of the attackers' 42 = 26, halved to 13 of their 21: floor(28 x 13/21) = 17
+        new InfantryActionResolutionHandler(gameManager, tracker).resolve(combat, 10);
+
+        assertEquals(PLATOON - 17, defender.getInternal(ConvInfantry.LOC_INFANTRY), "half damage, not eliminated");
+        assertTrue(defender.isInfantryActionLeaving(), "moved out in the next End Phase");
+        assertFalse(defender.isCaptured(), "the leavers do not surrender");
+        assertEquals(0, building.getCrew().getCurrentSize(), "the building falls and its crew surrender");
+        assertFalse(tracker.hasCombat(building.getId()), "the action is over");
+    }
+
+    @Test
     @DisplayName("When the building is captured, the owner's infantry inside that never fought surrender")
     void uncommittedInfantryInsideSurrenderWithTheBuilding() {
         ConvInfantry attackerOne = platoon(attackingPlayer);

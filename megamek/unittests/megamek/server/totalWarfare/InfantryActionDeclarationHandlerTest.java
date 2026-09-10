@@ -54,6 +54,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.net.packets.Packet;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
@@ -259,6 +260,27 @@ class InfantryActionDeclarationHandlerTest {
         var combat = tracker.getCombat(building.getId());
         assertNotNull(combat, "the action exists; the End Phase finds nobody defending and the building falls");
         assertEquals(List.of(building.getId()), combat.defenderIds);
+    }
+
+    @Test
+    @DisplayName("With the house rule on, a defender withdrawal flags the defending infantry; off, it is ignored")
+    void defenderWithdrawalNeedsTheOption() {
+        ConvInfantry attacker = platoon(attackingPlayer, 1, HEX_A);
+        ConvInfantry defender = platoon(defendingPlayer, 2, HEX_B);
+        attackerDeclares(List.of(attacker.getId()), false);
+        defenderDeclares(List.of(defender.getId()), 0);
+
+        game.setTurnVector(List.of(new GameTurn(defendingPlayer.getId())));
+        game.setTurnIndex(0, Player.PLAYER_NONE);
+        handler.declare(InfantryActionDeclaration.defending(defendingPlayer.getId(), building.getId(), List.of(), 0,
+              true), defendingPlayer.getId());
+        assertFalse(defender.isInfantryCombatWantsWithdrawal(), "the option is off by default");
+
+        game.getOptions().getOption(OptionsConstants.ADVANCED_COMBAT_INFANTRY_ACTION_DEFENDER_WITHDRAWAL).setValue(true);
+        handler.declare(InfantryActionDeclaration.defending(defendingPlayer.getId(), building.getId(), List.of(), 0,
+              true), defendingPlayer.getId());
+        assertTrue(defender.isInfantryCombatWantsWithdrawal(), "with the option on, the defence withdraws");
+        assertNotNull(tracker.getCombat(building.getId()), "the action still rolls once more");
     }
 
     @Test

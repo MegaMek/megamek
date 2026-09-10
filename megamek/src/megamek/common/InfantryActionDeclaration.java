@@ -45,7 +45,8 @@ import java.util.List;
  * @param committedUnitIds the player's infantry units, by id, committed this turn; empty for none
  * @param committedCrew    crew the defending player commits this turn, on top of any already committed; {@code 0}
  *                         for an attacker
- * @param withdraw         {@code true} when the attacking player withdraws the whole force this turn
+ * @param withdraw         {@code true} when the player withdraws their whole force this turn; a defender may only
+ *                         under the house rule that allows it
  */
 public record InfantryActionDeclaration(int playerId, int buildingId, List<Integer> committedUnitIds,
       int committedCrew, boolean withdraw) implements Serializable {
@@ -77,7 +78,23 @@ public record InfantryActionDeclaration(int playerId, int buildingId, List<Integ
      */
     public static InfantryActionDeclaration defending(int playerId, int buildingId, List<Integer> committedUnitIds,
           int committedCrew) {
-        return new InfantryActionDeclaration(playerId, buildingId, List.copyOf(committedUnitIds), committedCrew,
-              false);
+        return defending(playerId, buildingId, committedUnitIds, committedCrew, false);
+    }
+
+    /**
+     * A defender's declaration that may withdraw the defending infantry, under the house rule that allows it.
+     *
+     * @param playerId         the defending player
+     * @param buildingId       the building
+     * @param committedUnitIds the infantry committed; ignored when withdrawing
+     * @param committedCrew    the crew committed this turn; ignored when withdrawing
+     * @param withdraw         {@code true} to withdraw every defending infantry unit of the player this turn
+     *
+     * @return the declaration
+     */
+    public static InfantryActionDeclaration defending(int playerId, int buildingId, List<Integer> committedUnitIds,
+          int committedCrew, boolean withdraw) {
+        return new InfantryActionDeclaration(playerId, buildingId, withdraw ? List.of() : List.copyOf(committedUnitIds),
+              withdraw ? 0 : committedCrew, withdraw);
     }
 }

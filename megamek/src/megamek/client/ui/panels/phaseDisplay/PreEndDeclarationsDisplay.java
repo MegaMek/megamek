@@ -381,7 +381,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
                   building.getDisplayName());
             boolean yes = clientgui.doYesNoDialog(title, body);
             promptAnswered = true;
-            if ("continueAttack".equals(promptKey)) {
+            if ("continueAttack".equals(promptKey) || "continueDefence".equals(promptKey)) {
                 // Yes keeps fighting, which needs no declaration; No opens the dialog, where the force can withdraw
                 if (!yes) {
                     declared |= declareFor(localPlayer, building);
@@ -406,7 +406,16 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     private @Nullable String promptFor(Player localPlayer, AbstractBuildingEntity building) {
         boolean running = InfantryActionStrengths.hasActionRunning(game, building);
         if (InfantryActionStrengths.defends(localPlayer, building)) {
-            return running ? "underAttack" : null;
+            if (!running) {
+                return null;
+            }
+            boolean somethingToCommit = !InfantryActionStrengths.unengagedFriendlyInfantryInside(game, localPlayer,
+                  building).isEmpty() || (InfantryActionStrengths.crewAvailableToCommit(building) > 0);
+            if (somethingToCommit) {
+                return "underAttack";
+            }
+            // Nothing left to commit: the only question is whether to hold, under the house rule that lets them go
+            return InfantryActionStrengths.canWithdrawDefence(game, localPlayer, building) ? "continueDefence" : null;
         }
         boolean unengagedInside = !InfantryActionStrengths.unengagedFriendlyInfantryInside(game, localPlayer,
               building).isEmpty();

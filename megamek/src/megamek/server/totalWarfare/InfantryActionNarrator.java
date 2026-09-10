@@ -76,7 +76,9 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
         /** A P result: the attackers hold most of the building. */
         PENETRATION(5679),
         /** Both sides still stand where they stood. */
-        ENGAGED(5676);
+        ENGAGED(5676),
+        /** House rule: the defending infantry chose to leave, giving up the building. */
+        DEFENDERS_WITHDRAW(5718);
 
         private final int firstLead;
 

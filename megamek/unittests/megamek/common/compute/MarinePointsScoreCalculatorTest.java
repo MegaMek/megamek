@@ -42,6 +42,7 @@ import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.game.Game;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.ConvInfantry;
@@ -243,6 +244,50 @@ class MarinePointsScoreCalculatorTest {
 
         // 4 troopers x (1 base + 2 light + 2 burst fire), the second machine gun adds nothing
         assertEquals(20.0, MarinePointsScoreCalculator.calculateScore(squad), TOLERANCE);
+    }
+
+    @Test
+    void microgravityRowsCountForNothingOnAWorldWithGravity() throws Exception {
+        BattleArmor squad = squad(4, EntityWeightClass.WEIGHT_LIGHT, false, 0);
+        squad.setChassisType(BattleArmor.CHASSIS_TYPE_QUAD);
+        mount(squad, "ISBASpaceOperationsAdaptation");
+        mount(squad, EquipmentTypeLookup.BA_MAGNETIC_CLAMP);
+
+        // 4 troopers x (1 base + 2 light); the quad, adaptation and clamp rows are marked microgravity only
+        assertEquals(12.0, MarinePointsScoreCalculator.calculateScore(squad), TOLERANCE);
+    }
+
+    @Test
+    void microgravityRowsApplyUnderZeroGravity() throws Exception {
+        game.getPlanetaryConditions().setGravity(0.0f);
+        BattleArmor squad = squad(4, EntityWeightClass.WEIGHT_LIGHT, false, 0);
+        squad.setChassisType(BattleArmor.CHASSIS_TYPE_QUAD);
+        mount(squad, "ISBASpaceOperationsAdaptation");
+        mount(squad, EquipmentTypeLookup.BA_MAGNETIC_CLAMP);
+
+        // 4 troopers x (1 base + 2 light - 2 quad + 1 adaptation + 1 clamps)
+        assertEquals(12.0, MarinePointsScoreCalculator.calculateScore(squad), TOLERANCE);
+        MarinePointsBreakdown breakdown = MarinePointsScoreCalculator.breakdown(squad, null);
+        assertEquals(0.0, breakdown.equipmentModifier(), TOLERANCE, "-2 + 1 + 1");
+    }
+
+    @Test
+    void clampsAloneUnderZeroGravityAddOnePerTrooper() throws Exception {
+        game.getPlanetaryConditions().setGravity(0.0f);
+        BattleArmor squad = squad(4, EntityWeightClass.WEIGHT_LIGHT, false, 0);
+        mount(squad, EquipmentTypeLookup.BA_MAGNETIC_CLAMP);
+
+        // 4 troopers x (1 base + 2 light + 1 clamps)
+        assertEquals(16.0, MarinePointsScoreCalculator.calculateScore(squad), TOLERANCE);
+    }
+
+    @Test
+    void aLowGravityWorldIsNotMicrogravity() throws Exception {
+        game.getPlanetaryConditions().setGravity(0.1f);
+        BattleArmor squad = squad(4, EntityWeightClass.WEIGHT_LIGHT, false, 0);
+        mount(squad, EquipmentTypeLookup.BA_MAGNETIC_CLAMP);
+
+        assertEquals(12.0, MarinePointsScoreCalculator.calculateScore(squad), TOLERANCE);
     }
 
     @Test

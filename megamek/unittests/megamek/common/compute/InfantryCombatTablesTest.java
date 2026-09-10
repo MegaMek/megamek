@@ -206,6 +206,68 @@ public class InfantryCombatTablesTest {
         }
     }
 
+    /**
+     * The printed table, TO:AR p. 173, one row per 2D6 roll from 2 to 12 and one column per odds ratio from
+     * "1 to 3 <" to "> 3 to 1", each cell exactly as the book prints it.
+     */
+    private static final String[][] PRINTED_TABLE = {
+          { "E/1% (R)", "E/1% (R)", "E/5% (R)", "E/10% (R)", "75%/25% (R)", "70%/25% (R)", "65%/25% (R)",
+            "60%/25% (R)", "55%/25% (R)" },
+          { "E/3% (R)", "E/3% (R)", "E/7% (R)", "E/15% (R)", "70%/30% (R)", "65%/30%", "60%/30%", "55%/30%",
+            "50%/30%" },
+          { "E/5% (R)", "E/5% (R)", "E/10% (R)", "65%/20%", "65%/35%", "60%/35%", "55%/35%", "50%/35%", "45%/35%" },
+          { "E/7% (R)", "E/7%", "E/15%", "60%/25%", "60%/40%", "55%/40%", "50%/40%", "45%/40%", "40%/40%" },
+          { "E/10%", "E/10%", "E/20%", "55%/30%", "55%/45%", "50%/45%", "45%/45%", "40%/45%", "35%/45%" },
+          { "E/15%", "E/15%", "E/25%", "50%/35%", "50%/50%", "45%/50%", "40%/50%", "35%/50%", "30%/50%" },
+          { "E/20%", "E/20%", "45%/30%", "45%/40%", "45%/55%", "40%/55%", "35%/55%", "30%/55%", "25%/55%" },
+          { "E/25%", "E/25%", "40%/35%", "40%/45%", "40%/60%", "35%/60%", "30%/60%", "25%/E (P)", "20%/E (P)" },
+          { "E/30%", "E/30%", "35%/40%", "35%/50%", "35%/65%", "30%/65% (P)", "25%/E (P)", "20%/E (P)",
+            "15%/E (P)" },
+          { "E/35%", "30%/35%", "30%/45% (P)", "30%/55% (P)", "30%/70% (P)", "25%/E (P)", "20%/E (P)",
+            "15%/E (P)", "10%/E (P)" },
+          { "30%/40% (P)", "25%/40% (P)", "25%/50% (P)", "25%/60% (P)", "25%/75% (P)", "20%/E (P)", "15%/E (P)",
+            "10%/E (P)", "5%/E (P)" },
+    };
+
+    private static final String[] PRINTED_COLUMNS = { "1:3<", "1:3", "1:2", "2:3", "1:1", "3:2", "2:1", "3:1",
+                                                      ">3:1" };
+
+    @Test
+    void everyCellMatchesThePrintedTable() {
+        for (int row = 0; row < PRINTED_TABLE.length; row++) {
+            int roll = row + 2;
+            for (int column = 0; column < PRINTED_COLUMNS.length; column++) {
+                String ratio = PRINTED_COLUMNS[column];
+                InfantryCombatResult result = InfantryCombatTables.resolveAction(ratio, roll);
+                assertEquals(withoutRepulsedFlagOnAnEliminatedAttacker(PRINTED_TABLE[row][column]),
+                      printedCell(result), "odds " + ratio + ", roll " + roll);
+            }
+        }
+    }
+
+    /**
+     * The book prints the R flag on some eliminated-attacker cells and not others; the flag changes nothing for a
+     * force that no longer exists, so those cells compare on the percentages alone.
+     */
+    private static String withoutRepulsedFlagOnAnEliminatedAttacker(String printed) {
+        return printed.startsWith("E/") ? printed.replace(" (R)", "") : printed;
+    }
+
+    /** Renders a result the way the book prints it. */
+    private static String printedCell(InfantryCombatResult result) {
+        boolean attackerEliminated = result.getAttackerCasualtiesPercent() >= 100;
+        boolean defenderEliminated = result.isDefenderEliminated();
+        String attacker = attackerEliminated ? "E" : result.getAttackerCasualtiesPercent() + "%";
+        String defender = defenderEliminated ? "E" : result.getDefenderCasualtiesPercent() + "%";
+        String flag = "";
+        if (result.isPartialControl()) {
+            flag = " (P)";
+        } else if (result.isAttackerRepulsed() && !attackerEliminated) {
+            flag = " (R)";
+        }
+        return attacker + "/" + defender + flag;
+    }
+
     // ==================== Crew Casualties Table Tests ====================
 
     @Test

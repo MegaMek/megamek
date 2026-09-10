@@ -40,6 +40,7 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.game.Game;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Building;
 import megamek.common.units.ConvInfantry;
@@ -55,9 +56,10 @@ import megamek.logging.MMLogger;
  * <p>Scores carry fractions, as in the book's worked examples (a Star of Elementals scores 186.75). Callers that
  * need a whole number round the total of a side up, per the building modifier rule "round all fractions up".</p>
  *
- * <p>Not applied here: the microgravity-only entries of the Battle Armor Modifiers table (quad {@code -2},
- * magnetic clamps {@code +1}, Space Operations Adaptation {@code +1}), which belong to boarding actions in space,
- * and the Manei Domini trooper value, which the unit data cannot identify.</p>
+ * <p>The microgravity-only rows of the Battle Armor Modifiers table (quad {@code -2}, magnetic clamps {@code +1},
+ * Space Operations Adaptation {@code +1}) apply when the squad is spaceborne or the planetary conditions are
+ * Zero-G, the same reading of the conditions the ejection rules use (TO:AR p. 165). A Low-G world is not
+ * microgravity. Not applied here: the Manei Domini trooper value, which the unit data cannot identify.</p>
  */
 public final class MarinePointsScoreCalculator {
 
@@ -88,6 +90,12 @@ public final class MarinePointsScoreCalculator {
     static final double CUTTING_TORCHES = 0.5;
     static final double INDUSTRIAL_DRILLS = 0.5;
     static final double ANTI_PERSONNEL_WEAPON_MOUNTS = 0.25;
+
+    // Battle Armor Modifiers that only apply in microgravity, per trooper (TO:AR p. 170)
+    static final double QUAD_IN_MICROGRAVITY = -2.0;
+    static final double SPACE_OPERATIONS_ADAPTATION = 1.0;
+    static final double MAGNETIC_CLAMPS = 1.0;
+    static final float ZERO_GRAVITY = 0.0f;
 
     // Building Modifiers Table (TO:AR p. 171)
     static final double MODIFIER_PER_STEP = 0.1;
@@ -189,8 +197,42 @@ public final class MarinePointsScoreCalculator {
         }
         double baseValue = squad.isClan() ? ELEMENTAL_TROOPER : INNER_SPHERE_BATTLE_ARMOR_TROOPER;
         int intactArmor = intactArmor(squad);
+        double equipmentModifier = squadEquipmentModifier(squad) + microgravityModifier(squad);
         return MarinePointsBreakdown.battleArmor(activeTroopers, baseValue, weightClassModifier(squad.getWeightClass()),
-              squadEquipmentModifier(squad), intactArmor, intactArmor * INTACT_ARMOR_POINT, buildingModifier);
+              equipmentModifier, intactArmor, intactArmor * INTACT_ARMOR_POINT, buildingModifier);
+    }
+
+    /**
+     * The rows of the Battle Armor Modifiers table marked "only applies in microgravity": a quad chassis, Space
+     * Operations Adaptation and magnetic clamps. They count when the squad is spaceborne or the game's planetary
+     * conditions are Zero-G, and never on a world with any gravity at all.
+     */
+    private static double microgravityModifier(BattleArmor squad) {
+        if (!isInMicrogravity(squad)) {
+            return 0;
+        }
+        double modifier = 0;
+        if (squad.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
+            modifier += QUAD_IN_MICROGRAVITY;
+        }
+        if (squad.hasWorkingMisc(MiscTypeFlag.F_SPACE_ADAPTATION)) {
+            modifier += SPACE_OPERATIONS_ADAPTATION;
+        }
+        if (squad.hasWorkingMisc(MiscTypeFlag.F_MAGNETIC_CLAMP)) {
+            modifier += MAGNETIC_CLAMPS;
+        }
+        LOGGER.debug("[MarinePoints] {} fights in microgravity: modifier {} per trooper", squad.getShortName(),
+              modifier);
+        return modifier;
+    }
+
+    /** Spaceborne, or on a board whose planetary conditions are Zero-G; a unit with no game is on the ground. */
+    private static boolean isInMicrogravity(BattleArmor squad) {
+        if (squad.isSpaceborne()) {
+            return true;
+        }
+        Game game = squad.getGame();
+        return (game != null) && (game.getPlanetaryConditions().getGravity() == ZERO_GRAVITY);
     }
 
     private static double weightClassModifier(int weightClass) {

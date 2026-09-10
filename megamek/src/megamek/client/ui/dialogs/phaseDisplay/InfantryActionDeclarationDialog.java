@@ -101,12 +101,22 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
         this.building = building;
         this.defends = InfantryActionStrengths.defends(player, building);
         initialize();
-        boolean reinforcing = !defends && InfantryActionStrengths.hasActionRunning(game, building);
-        String titleKey = defends ? "InfantryActionDeclarationDialog.title.defend"
-              : (reinforcing ? "InfantryActionDeclarationDialog.title.reinforce"
-                    : "InfantryActionDeclarationDialog.title.attack");
-        setTitle(Messages.getString(titleKey, building.getDisplayName()));
+        setTitle(Messages.getString(titleKey(), building.getDisplayName()));
         setMinimumSize(new Dimension(UIUtil.scaleForGUI(360), UIUtil.scaleForGUI(240)));
+    }
+
+    /** Defend, attack, reinforce a running attack, or, with nothing left to add, continue or withdraw from it. */
+    private String titleKey() {
+        if (defends) {
+            return "InfantryActionDeclarationDialog.title.defend";
+        }
+        if (!InfantryActionStrengths.hasActionRunning(game, building)) {
+            return "InfantryActionDeclarationDialog.title.attack";
+        }
+        boolean somethingToAdd = !InfantryActionStrengths.unengagedFriendlyInfantryInside(game, player, building)
+              .isEmpty();
+        return somethingToAdd ? "InfantryActionDeclarationDialog.title.reinforce"
+              : "InfantryActionDeclarationDialog.title.continue";
     }
 
     @Override
@@ -148,6 +158,7 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
             withdrawBox = new JCheckBox(Messages.getString("InfantryActionDeclarationDialog.withdraw"));
             withdrawBox.addActionListener(event -> refreshTotals());
             column.add(withdrawBox, rowConstraints());
+            addText(column, Messages.getString("InfantryActionDeclarationDialog.withdrawExplained"));
         }
         addHeading(column, Messages.getString("InfantryActionDeclarationDialog.against"));
         double known = 0;

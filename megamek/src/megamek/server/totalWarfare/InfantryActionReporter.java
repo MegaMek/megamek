@@ -273,9 +273,12 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
     private static Report unitLossFragment(InfantryActionSideLosses.UnitLoss loss, InfantryActionSideLosses losses) {
         double share = (losses.ownStrength() <= 0) ? 0
               : ((double) loss.headCount() * losses.marinePointsLost()) / losses.ownStrength();
+        List<Entity> sideUnits = losses.units().stream()
+              .map(InfantryActionSideLosses.UnitLoss::entity)
+              .toList();
         Report fragment = new Report(loss.isCrew() ? CREW_LOSS : TROOPER_LOSS);
         fragment.subject = loss.entity().getId();
-        fragment.addEntityName(loss.entity());
+        fragment.addEntityName(loss.entity(), InfantryActionNarrator.storyName(loss.entity(), sideUnits));
         fragment.add(number(share));
         fragment.add(loss.headCount());
         return fragment;

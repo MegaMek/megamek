@@ -570,8 +570,20 @@ public class Report implements ReportEntry {
      * @return This Report to allow chaining
      */
     public Report addEntityName(Entity entity) {
+        return addEntityName(entity, (entity == null) ? "" : entity.getShortName());
+    }
+
+    /**
+     * Adds a unit's linked name alone, shown as the given text: no owner, no crew nickname and no sprite.
+     *
+     * @param entity      the entity to name
+     * @param displayName the text of the link, such as the chassis alone
+     *
+     * @return This Report to allow chaining
+     */
+    public Report addEntityName(Entity entity, String displayName) {
         if (entity != null) {
-            String unitName = href(ENTITY_LINK + entity.getId(), entity.getShortName());
+            String unitName = href(ENTITY_LINK + entity.getId(), displayName);
             add(span("entity-name", unitName, "data-entity-id='" + entity.getId() + "'"), true);
         }
         return this;

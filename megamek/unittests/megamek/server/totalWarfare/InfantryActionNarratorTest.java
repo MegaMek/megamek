@@ -232,6 +232,24 @@ class InfantryActionNarratorTest {
     }
 
     @Test
+    @DisplayName("Units go by their chassis, unless two in the story share one")
+    void unitsGoByChassisUnlessShared() {
+        ConvInfantry rifles = platoon(attackingPlayer, 1);
+        rifles.setChassis("Foot Platoon");
+        rifles.setModel("(Rifle)");
+        ConvInfantry lasers = platoon(defendingPlayer, 2);
+        lasers.setChassis("Foot Platoon");
+        lasers.setModel("(Laser)");
+        ConvInfantry jump = platoon(defendingPlayer, 3);
+        jump.setChassis("Jump Platoon");
+        jump.setModel("(SRM)");
+
+        assertEquals("Jump Platoon", InfantryActionNarrator.storyName(jump, List.of(rifles, lasers, jump)));
+        assertEquals(rifles.getShortName(), InfantryActionNarrator.storyName(rifles, List.of(rifles, lasers, jump)));
+        assertEquals("Foot Platoon", InfantryActionNarrator.storyName(rifles, List.of(rifles, jump)));
+    }
+
+    @Test
     @DisplayName("The strongest trait is the one that most shaped the fighting")
     void strongestTraitWins() {
         assertEquals(MarinePointsTrait.BURST_FIRE, InfantryActionNarrator.strongestTrait(

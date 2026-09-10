@@ -196,12 +196,17 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
         int lead = outcome.firstLead + Math.floorMod(leadPicker.applyAsInt(LEADS_PER_OUTCOME), LEADS_PER_OUTCOME);
         LOGGER.debug("[InfantryAction] narrative: {} lead {}, attackers {} {}, defenders {} {}", outcome, lead,
               attackers.units().size(), attackers.traits(), defenders.units().size(), defenders.traits());
+        List<Entity> everyone = new ArrayList<>(attackers.units());
+        everyone.addAll(defenders.units());
+        if (capturedBuilding != null) {
+            everyone.add(capturedBuilding);
+        }
         List<Report> story = new ArrayList<>();
         Report leadReport = new Report(lead);
         leadReport.indent(InfantryActionReporter.SIDE_LINE_INDENT);
         story.add(leadReport);
-        story.addAll(sideSentence(attackers, THE_ATTACKERS, null));
-        story.addAll(sideSentence(defenders, THE_DEFENDERS, capturedBuilding));
+        story.addAll(sideSentence(attackers, THE_ATTACKERS, null, everyone));
+        story.addAll(sideSentence(defenders, THE_DEFENDERS, capturedBuilding, everyone));
         addParagraph(story);
     }
 
@@ -214,7 +219,7 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
 
     /** The names, the clause for the strongest trait, the loss, and the full stop or the building's fall. */
     private static List<Report> sideSentence(Side side, int fallbackSubject,
-          @Nullable AbstractBuildingEntity capturedBuilding) {
+          @Nullable AbstractBuildingEntity capturedBuilding, List<Entity> everyone) {
         List<Report> sentence = new ArrayList<>();
         if (side.units().isEmpty()) {
             sentence.add(new Report(fallbackSubject));
@@ -224,13 +229,13 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
             if (index > 0) {
                 sentence.add(new Report((index == last) ? AND : COMMA));
             }
-            sentence.add(nameOf(side.units().get(index)));
+            sentence.add(nameOf(side.units().get(index), everyone));
         }
         sentence.add(new Report(clauseFor(strongestTrait(side.traits()))));
         sentence.add(lossFragment(side));
         if (capturedBuilding != null) {
             sentence.add(new Report(AND_THE_BUILDING));
-            sentence.add(plainNameOf(capturedBuilding));
+            sentence.add(plainNameOf(capturedBuilding, everyone));
             int uncommittedCrew = capturedBuilding.getCrew().getCurrentSize() - capturedBuilding.getCommittedCrew();
             sentence.add(new Report((uncommittedCrew > 0) ? BUILDING_FALLS : BUILDING_FALLS_NOBODY_LEFT));
         } else {
@@ -240,18 +245,41 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
     }
 
     /** A unit's linked name; a building is named by its crew, since the crew are who fought. */
-    private static Report nameOf(Entity entity) {
+    private static Report nameOf(Entity entity, List<Entity> everyone) {
         Report name = new Report((entity instanceof AbstractBuildingEntity) ? BUILDING_CREW_NAME : UNIT_NAME);
         name.subject = entity.getId();
-        name.addEntityName(entity);
+        name.addEntityName(entity, storyName(entity, everyone));
         return name;
     }
 
-    private static Report plainNameOf(Entity entity) {
+    private static Report plainNameOf(Entity entity, List<Entity> everyone) {
         Report name = new Report(UNIT_NAME);
         name.subject = entity.getId();
-        name.addEntityName(entity);
+        name.addEntityName(entity, storyName(entity, everyone));
         return name;
+    }
+
+    /**
+     * The name a unit goes by in prose: its chassis alone, unless another unit in the same story shares the
+     * chassis, when the full short name keeps the two apart.
+     *
+     * @param entity  the unit
+     * @param company every unit the story names
+     *
+     * @return the display name
+     */
+    static String storyName(Entity entity, List<Entity> company) {
+        String chassis = entity.getChassis();
+        if ((chassis == null) || chassis.isBlank()) {
+            return entity.getShortName();
+        }
+        for (Entity other : company) {
+            boolean sameChassisOtherUnit = (other.getId() != entity.getId()) && chassis.equals(other.getChassis());
+            if (sameChassisOtherUnit) {
+                return entity.getShortName();
+            }
+        }
+        return chassis;
     }
 
     private static Report lossFragment(Side side) {

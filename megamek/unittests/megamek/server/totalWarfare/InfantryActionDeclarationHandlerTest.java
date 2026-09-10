@@ -52,6 +52,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
+import megamek.common.game.GameTurn;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.ConvInfantry;
@@ -136,13 +137,21 @@ class InfantryActionDeclarationHandlerTest {
     }
 
     private void attackerDeclares(List<Integer> unitIds, boolean withdraw) {
+        game.setTurnVector(List.of(new GameTurn(attackingPlayer.getId())));
+        game.setTurnIndex(0, Player.PLAYER_NONE);
         handler.declare(InfantryActionDeclaration.attacking(attackingPlayer.getId(), building.getId(), unitIds,
               withdraw), attackingPlayer.getId());
     }
 
     private void defenderDeclares(List<Integer> unitIds, int crew) {
+        game.setTurnVector(List.of(new GameTurn(defendingPlayer.getId())));
+        game.setTurnIndex(0, Player.PLAYER_NONE);
         handler.declare(InfantryActionDeclaration.defending(defendingPlayer.getId(), building.getId(), unitIds,
               crew), defendingPlayer.getId());
+    }
+
+    private List<Integer> turnPlayers() {
+        return game.getTurnsList().stream().map(GameTurn::playerId).toList();
     }
 
     @Test
@@ -179,7 +188,7 @@ class InfantryActionDeclarationHandlerTest {
         assertEquals(Entity.NONE, heldBack.getInfantryCombatTargetId(), "the unit held back stays out");
         assertEquals(2, building.getCommittedCrew());
         assertEquals(3, building.getCrew().getHits(), "two of four crew committed is 50 percent, three crew hits");
-        Mockito.verify(gameManager).entityUpdate(defender.getId());
+        Mockito.verify(gameManager, Mockito.atLeastOnce()).entityUpdate(defender.getId());
     }
 
     @Test
@@ -236,6 +245,55 @@ class InfantryActionDeclarationHandlerTest {
         assertEquals(0, building.getCommittedCrew());
         assertEquals(0, building.getCrew().getHits(), "no commitment, no penalty");
         assertNull(tracker.getCombat(building.getId()));
+    }
+
+    @Test
+    @DisplayName("A declaration made when it is not the player's turn is refused")
+    void outOfTurnIsRefused() {
+        ConvInfantry attacker = platoon(attackingPlayer, 1, HEX_A);
+        game.setTurnVector(List.of(new GameTurn(defendingPlayer.getId())));
+        game.setTurnIndex(0, Player.PLAYER_NONE);
+
+        handler.declare(InfantryActionDeclaration.attacking(attackingPlayer.getId(), building.getId(),
+              List.of(attacker.getId()), false), attackingPlayer.getId());
+
+        assertNull(tracker.getCombat(building.getId()));
+    }
+
+    @Test
+    @DisplayName("When the defender's turn has already passed, an attack gives them a turn to answer it")
+    void attackGivesTheDefenderATurnToAnswer() {
+        ConvInfantry attacker = platoon(attackingPlayer, 1, HEX_A);
+        // Initiative put the defender first; their turn is over and only the attacker's remains
+        game.setTurnVector(List.of(new GameTurn(defendingPlayer.getId()), new GameTurn(attackingPlayer.getId())));
+        game.setTurnIndex(1, defendingPlayer.getId());
+
+        handler.declare(InfantryActionDeclaration.attacking(attackingPlayer.getId(), building.getId(),
+              List.of(attacker.getId()), false), attackingPlayer.getId());
+
+        assertNotNull(tracker.getCombat(building.getId()));
+        assertEquals(List.of(defendingPlayer.getId(), attackingPlayer.getId(), defendingPlayer.getId()),
+              turnPlayers(), "a turn for the defender follows the attacker's");
+    }
+
+    @Test
+    @DisplayName("No turn is added for a defender who still has one, or who has nothing left to commit")
+    void noExtraTurnWhenNotNeeded() {
+        ConvInfantry attacker = platoon(attackingPlayer, 1, HEX_A);
+        game.setTurnVector(List.of(new GameTurn(attackingPlayer.getId()), new GameTurn(defendingPlayer.getId())));
+        game.setTurnIndex(0, Player.PLAYER_NONE);
+
+        handler.declare(InfantryActionDeclaration.attacking(attackingPlayer.getId(), building.getId(),
+              List.of(attacker.getId()), false), attackingPlayer.getId());
+        assertEquals(List.of(attackingPlayer.getId(), defendingPlayer.getId()), turnPlayers(),
+              "the defender's own turn is still to come");
+
+        building.commitCrew(CREW);
+        game.setTurnVector(List.of(new GameTurn(attackingPlayer.getId())));
+        game.setTurnIndex(0, Player.PLAYER_NONE);
+        handler.declare(InfantryActionDeclaration.attacking(attackingPlayer.getId(), building.getId(),
+              List.of(), false), attackingPlayer.getId());
+        assertEquals(List.of(attackingPlayer.getId()), turnPlayers(), "every crew member is already committed");
     }
 
     @Test

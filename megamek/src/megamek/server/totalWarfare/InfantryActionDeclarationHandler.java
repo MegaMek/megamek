@@ -41,6 +41,7 @@ import megamek.common.Report;
 import megamek.common.actions.InfantryCombatAction;
 import megamek.common.actions.InitiateInfantryCombatAction;
 import megamek.common.compute.InfantryActionStrengths;
+import megamek.common.game.GameTurn;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
@@ -82,6 +83,11 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
                   declaration.playerId(), connId);
             return;
         }
+        GameTurn turn = getGame().getTurn();
+        if ((turn == null) || (turn.playerId() != player.getId())) {
+            LOGGER.warn("[InfantryAction] {} declared out of turn; refused", player.getName());
+            return;
+        }
         if (!(getGame().getEntity(declaration.buildingId()) instanceof AbstractBuildingEntity building)) {
             LOGGER.warn("[InfantryAction] {} declared for {}, which is not a building", player.getName(),
                   declaration.buildingId());
@@ -95,7 +101,37 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
             declareDefence(player, building, declaration);
         } else {
             declareAttack(player, building, declaration);
+            giveTheDefenderATurn(building);
         }
+    }
+
+    /**
+     * The book's order is attacker first, then the defender answers (TO:AR pp. 169 to 172), but the phase's turn
+     * order follows initiative. When the defending player's declaration turn has already gone by, or never existed
+     * because nothing threatened them when the turns were built, a turn is added right after this one so they can
+     * commit units and crew before the roll. Nothing is added when they have nothing left to commit.
+     */
+    private void giveTheDefenderATurn(AbstractBuildingEntity building) {
+        Player defender = building.getOwner();
+        if ((defender == null) || !tracker.hasCombat(building.getId())) {
+            return;
+        }
+        boolean canStillCommit = InfantryActionStrengths.stakes(getGame(), defender).contains(building);
+        if (!canStillCommit) {
+            LOGGER.debug("[InfantryAction] {} has nothing left to commit to {}; no turn added", defender.getName(),
+                  building.getShortName());
+            return;
+        }
+        List<GameTurn> turns = getGame().getTurnsList();
+        for (int index = getGame().getTurnIndex() + 1; index < turns.size(); index++) {
+            if (turns.get(index).playerId() == defender.getId()) {
+                return;
+            }
+        }
+        getGame().insertTurnAfter(new GameTurn(defender.getId()), getGame().getTurnIndex());
+        gameManager.sendTurnList();
+        LOGGER.info("[InfantryAction] {} gets a declaration turn to answer the attack on {}", defender.getName(),
+              building.getShortName());
     }
 
     /**

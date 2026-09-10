@@ -566,7 +566,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         }
 
         // Infantry actions are player-wide: one declaration per building the player has a stake in
-        boolean canInitiate = hasInfantryActionStake() && !declarationMade;
+        boolean canInitiate = isMyTurn() && hasInfantryActionStake() && !declarationMade;
         setInfantryActionEnabled(canInitiate);
         updateDonePanel();
 

@@ -92,7 +92,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
             toReturn /= 2;
             toReturn = Math.floor(toReturn);
         }
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                   getInfantryDamageClassShift(),
                   resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),

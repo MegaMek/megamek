@@ -36,6 +36,7 @@ package megamek.common.units;
 
 import java.util.*;
 
+import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CriticalSlot;
 import megamek.common.Hex;
@@ -55,6 +56,7 @@ import megamek.common.enums.BuildingType;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.rolls.PilotingRollData;
 import megamek.logging.MMLogger;
@@ -228,6 +230,12 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         return locations;
     }
 
+    /** Board hex containing an entity hit location, including rotation of a multi-hex structure. */
+    public Coords getLocationCoords(int location) {
+        CubeCoords relative = locationToRelativeCoordsMap.get(location);
+        return relative == null ? null : relativeToBoard(relative);
+    }
+
     @Override
     public Coords getWeaponFiringPosition(WeaponMounted weapon) {
         if (weapon == null) {
@@ -261,14 +269,17 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     @Override
     public void setPosition(Coords position) {
-        super.setPosition(position);
-        updateRelativeLayout();
+        setPosition(position, true);
     }
 
     @Override
     public void setPosition(Coords position, boolean gameUpdate) {
-        super.setPosition(position, gameUpdate);
+        HashSet<Coords> oldPositions = getOccupiedCoords();
+        super.setPosition(position, false);
         updateRelativeLayout();
+        if (game != null && gameUpdate) {
+            game.updateEntityPositionLookup(this, oldPositions);
+        }
     }
 
     /**
@@ -360,18 +371,8 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      * @return true if all building hexes would be valid at this position/facing
      */
     public boolean isPositionAndFacingValid(Coords testPosition, int testFacing, int testElevation, int testBoardId) {
-        if (!game.hasBoardLocation(testPosition, testBoardId)) {
+        if (game == null || !game.hasBoardLocation(testPosition, testBoardId)) {
             return false;
-        }
-
-        Hex primaryHex = game.getHex(testPosition, testBoardId);
-        if (primaryHex == null) {
-            return false;
-        }
-
-        // At non-zero elevation, only check for IMPASSABLE terrain
-        if (testElevation != 0) {
-            return !primaryHex.containsTerrain(Terrains.IMPASSABLE);
         }
 
         // Calculate where this building's hexes would be at testPosition with testFacing
@@ -380,6 +381,11 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         // Check that all hexes exist and are valid
         if (!areCoordsValid(thisBuildingCoords, testBoardId)) {
             return false;
+        }
+
+        // Even above ground, the entire footprint must fit on passable board hexes.
+        if (testElevation != 0) {
+            return true;
         }
 
         // Check that all hexes are at the same elevation
@@ -393,7 +399,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         }
 
         // Check for other entities at all positions
-        if (hasEntityConflict(thisBuildingCoords)) {
+        if (hasEntityConflict(thisBuildingCoords, testBoardId)) {
             return false;
         }
 
@@ -406,6 +412,17 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         }
 
         return true;
+    }
+
+    /**
+     * Tests a deployment without changing the building or the board. Every hex of the rotated footprint must fit
+     * in the deployment zone, including hexes beyond the building's origin.
+     */
+    public boolean isDeploymentPositionAndFacingValid(Coords position, int facing, int elevation, int boardId) {
+        return isPositionAndFacingValid(position, facing, elevation, boardId)
+              && !isBoardProhibited(game.getBoard(boardId))
+              && computeBuildingCoordsForPositionAndFacing(position, facing).stream()
+                    .allMatch(coords -> game.getBoard(boardId).isLegalDeployment(coords, this));
     }
 
     /**
@@ -458,7 +475,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
             if (!game.hasBoardLocation(coord, testBoardId)) {
                 return false;
             }
-            if (board.getHex(coord) == null) {
+            if (board.getHex(coord) == null || board.getHex(coord).containsTerrain(Terrains.IMPASSABLE)) {
                 return false;
             }
         }
@@ -533,15 +550,14 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     /**
      * Checks if there are any entity conflicts at the given coordinates.
      *
-     * @param coords The coordinates to check
+     * @param coords      The coordinates to check
+     * @param testBoardId The board to check
      *
      * @return true if there's an entity conflict (another entity at any of the coords)
      */
-    private boolean hasEntityConflict(List<Coords> coords) {
+    private boolean hasEntityConflict(List<Coords> coords, int testBoardId) {
         for (Coords coord : coords) {
-            var entitiesAtCoord = game.getEntities(coord);
-            while (entitiesAtCoord.hasNext()) {
-                Entity otherEntity = entitiesAtCoord.next();
+            for (Entity otherEntity : game.getEntitiesVector(coord, testBoardId)) {
                 if (!this.equals(otherEntity)) {
                     return true;
                 }
@@ -556,6 +572,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     private void updateRelativeLayout() {
         relativeLayout.clear();
+        secondaryPositions.clear();
 
         if (getPosition() == null) {
             return;
@@ -610,8 +627,14 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     @Override
     public void setFacing(int facing) {
-        super.setFacing(facing);
+        HashSet<Coords> oldPositions = getOccupiedCoords();
+        this.facing = FireControl.correctFacing(facing);
         updateRelativeLayout();
+        if (game != null) {
+            game.updateEntityPositionLookup(this, oldPositions);
+            // Listeners must see the new footprint and position lookup when redrawing the building.
+            game.processGameEvent(new GameEntityChangeEvent(this, this));
+        }
     }
 
     /**
@@ -643,27 +666,37 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     @Override
     public String[] getLocationNames() {
-        return getLocationStrings(LOCATION_NAMES_PREFIX);
+        return getLocationStrings(LOCATION_NAMES_PREFIX, true);
     }
 
     @Override
     public String[] getLocationAbbreviations() {
-        return getLocationStrings(LOCATION_ABBREVIATIONS_PREFIX);
+        return getLocationStrings(LOCATION_ABBREVIATIONS_PREFIX, true);
     }
 
-    private String[] getLocationStrings(String locationPrefix) {
+    /** Stable equipment block name in a building design, independent of placement and facing. */
+    public String getConstructionLocationName(int location) {
+        return getLocationStrings(LOCATION_NAMES_PREFIX, false)[location];
+    }
+
+    /** Stable location abbreviation for design weapon quirks. */
+    public String getConstructionLocationAbbr(int location) {
+        return location < 0 ? getLocationAbbr(location) : getLocationStrings(LOCATION_ABBREVIATIONS_PREFIX, false)[location];
+    }
+
+    private String[] getLocationStrings(String locationPrefix, boolean boardCoordinates) {
         ArrayList<String> locationAbbrvNames = new ArrayList<>();
         if (getInternalBuilding() == null || getInternalBuilding().getOriginalCoordsList() == null) {
             return new String[] { locationPrefix + ' ' + LOC_BASE };
         }
-        for (int location : locationToRelativeCoordsMap.keySet()) {
+        for (int location = 0; location < locationToRelativeCoordsMap.size(); location++) {
             CubeCoords cubeCoords = locationToRelativeCoordsMap.get(location);
             String coordString;
-            if (getPosition() == null) {
+            if (!boardCoordinates || getPosition() == null) {
                 coordString = cubeCoords.q() + "," + cubeCoords.r() + "," + cubeCoords.s();
             } else {
-                CubeCoords positionCubeCoords = getPosition().toCube();
-                coordString = positionCubeCoords.add(cubeCoords).toOffset().getBoardNum();
+                coordString = getPosition().toCube().add(rotateCoordByFacing(cubeCoords, getFacing()))
+                      .toOffset().getBoardNum();
             }
 
             // Result is 0 indexed

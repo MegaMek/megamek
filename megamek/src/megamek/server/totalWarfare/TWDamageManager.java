@@ -167,6 +167,19 @@ public class TWDamageManager implements IDamageManager {
         Report report;
         int entityId = entity.getId();
 
+        if (entity instanceof AbstractBuildingEntity building && building.usesCapitalScale()) {
+            Coords coords = building.getLocationCoords(hit.getLocation());
+            if (coords != null && building.hasCFIn(coords)) {
+                Entity attacker = game.getEntity(hit.getAttackerId());
+                boolean fromInside = attacker != null && attacker.getBoardId() == building.getBoardId()
+                      && building.isIn(attacker.getPosition()) && attacker.isInBuilding();
+                reportVec.addAll(manager.damageBuilding(building, hit.isCapital() ? damage * 10 : damage,
+                      " absorbs ", coords, hit.getLocation() % building.getInternalBuilding().getBuildingHeight(),
+                      attacker, ammoExplosion || damageIS || fromInside));
+            }
+            return reportVec;
+        }
+
         // A bulldozer is destroyed on a 2D6 roll of 2 each time damage is dealt to the location mounting it (TacOps).
         if ((damage > 0) && (entity instanceof Tank bulldozerTank)) {
             BulldozerRules.rollDestructionFromLocationDamage(bulldozerTank, hit.getLocation())

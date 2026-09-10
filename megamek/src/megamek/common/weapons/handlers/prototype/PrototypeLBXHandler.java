@@ -71,7 +71,7 @@ public class PrototypeLBXHandler extends LBXHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs can't mount LBXs
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             return 1;
         }
         int shotMod = getClusterModifiers(true);

@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
@@ -78,6 +80,12 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class AreaEffectHelper {
     private static final MMLogger logger = MMLogger.create(AreaEffectHelper.class);
+
+    /** Strongest blast first, so a capital building hex is struck once even when the blast spans several levels. */
+    public static List<Entry<Integer, Coords>> blastLocationsByDamage(Map<Entry<Integer, Coords>, Integer> blast) {
+        return blast.entrySet().stream().sorted(Map.Entry.<Entry<Integer, Coords>, Integer>comparingByValue().reversed())
+              .map(Map.Entry::getKey).toList();
+    }
 
     // maps equipment name to blast radius index for fuel-air ordnance
     private static Map<String, Integer> fuelAirBlastRadiusIndex;
@@ -225,6 +233,14 @@ public class AreaEffectHelper {
             damage = (int) Math.ceil(damage / 2.0);
         }
 
+        IBuilding building = game.getBuildingAt(target.getBoardLocation()).orElse(null);
+        if (building != null && building.usesCapitalScale()
+              && (target instanceof IBuilding || Compute.isInBuilding(game, target))) {
+            vPhaseReport.addAll(gameManager.damageBuilding(building, damage / 2, " absorbs ", target.getPosition(),
+                  target.getElevation(), attacker, false));
+            return;
+        }
+
         checkInfantryDestruction(target, distFromCenter, attacker, entitiesToExclude, vPhaseReport, game, gameManager);
 
         artilleryDamageEntity(target, damage, null, 0, false, false, false, 0, center, (AmmoType) ordnanceType,
@@ -280,11 +296,12 @@ public class AreaEffectHelper {
         // Use DamageFalloff to signal building damage factor
         DamageFalloff falloff = calculateDamageFallOff(ammo, 0, false);
         HashMap<Entry<Integer, Coords>, Integer> blastShape = shapeBlast(
-              ammo, center, falloff, height, !(ammo instanceof BombType), false, false, game, false
+              ammo, center, boardId, falloff, height, !(ammo instanceof BombType), false, false, game, false
         );
         ArrayList<Coords> checkedAdditional = new ArrayList<>();
+        Set<BoardLocation> damagedCapitalBuildings = new HashSet<>();
 
-        for (Entry<Integer, Coords> entry : blastShape.keySet()) {
+        for (Entry<Integer, Coords> entry : blastLocationsByDamage(blastShape)) {
             Coords bCoords = entry.getValue();
             int bLevel = entry.getKey();
             int distance = bCoords.distance(center);
@@ -294,7 +311,7 @@ public class AreaEffectHelper {
             }
             gameManager.artilleryDamageHex(bCoords, boardId, center, damage, ammo, attacker.getId(),
                   attacker, null, false, bLevel, height, vPhaseReport, false,
-                  entitiesToExclude, false, falloff);
+                  entitiesToExclude, false, falloff, damagedCapitalBuildings);
 
             if (!checkedAdditional.contains(bCoords)) {
                 // Perform additional destruction / ignition / minefield checks once per coordinate
@@ -332,6 +349,11 @@ public class AreaEffectHelper {
      */
     public static void checkInfantryDestruction(Entity entity, int distFromCenter, Entity attacker,
           Vector<Integer> alreadyHit, Vector<Report> vPhaseReport, Game game, TWGameManager gameManager) {
+        IBuilding building = entity.getPosition() == null ? null
+              : game.getBoard(entity).getBuildingAt(entity.getPosition());
+        if (building != null && building.usesCapitalScale() && Compute.isInBuilding(game, entity)) {
+            return;
+        }
         int rollTarget;
         if (entity instanceof BattleArmor) {
             rollTarget = 7;
@@ -408,6 +430,11 @@ public class AreaEffectHelper {
           TWGameManager gameManager) {
         Report report;
 
+        if (bldg != null && bldg.usesCapitalScale()
+              && (entity instanceof IBuilding || Compute.isInBuilding(gameManager.getGame(), entity, coords))) {
+            return; // damageBuilding() already resolved the shell and any threshold breach, including infantry.
+        }
+
         int hits = damage;
         if (variableDamage) {
             hits = Compute.d6(damage);
@@ -425,7 +452,6 @@ public class AreaEffectHelper {
               && (entity.getElevation() < hex.terrainLevel(Terrains.BLDG_ELEV))) {
             cluster -= bldgAbsorbs;
             // some buildings scale remaining damage that is not absorbed
-            // TODO : this isn't quite right for castles brian
             cluster = (int) Math.floor(bldg.getDamageToScale() * cluster);
             if (entity instanceof Infantry) {
                 return; // took its damage already from building damage

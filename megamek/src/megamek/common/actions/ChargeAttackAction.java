@@ -528,10 +528,11 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     /**
      * Damage that a mek suffers after a successful charge.
      */
-    public static int getDamageTakenBy(Entity entity, IBuilding bldg, Coords coords) {
+    public static int getDamageTakenBy(Entity entity, IBuilding building, Coords coords) {
         // Charges against targets that have no tonnage use the attacker's tonnage to
         // compute damage.
-        return getDamageTakenBy(entity, entity, false, entity.delta_distance);
+        int damage = getDamageTakenBy(entity, entity, false, entity.delta_distance);
+        return building.usesCapitalScale() ? damage * 10 : damage;
     }
 
     public static int getDamageTakenBy(Entity entity, Entity target) {

@@ -203,7 +203,7 @@ public class LRMHandler extends MissileWeaponHandler {
 
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
                 Report r = new Report(3325);
@@ -455,7 +455,7 @@ public class LRMHandler extends MissileWeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         // For infantry targets with incendiary mixed, apply +1 damage per 5 missiles bonus
-        if (isIncendiaryMixed() && target.isConventionalInfantry()) {
+        if (isIncendiaryMixed() && usesConventionalInfantryDamage()) {
             int effectiveRack = getEffectiveRackSize();
             // Calculate bonus: +1 per 5 missiles in the volley (round up), per TO:AUE pg 181
             int bonusDamage = getIncendiaryMissileCount();

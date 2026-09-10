@@ -314,18 +314,42 @@ public interface IBuilding extends Serializable {
         return switch (getBldgClass()) {
             case IBuilding.HANGAR -> 0.5;
             case IBuilding.FORTRESS, IBuilding.GUN_EMPLACEMENT -> 2.0;
+            case IBuilding.CASTLE_BRIAN -> 10.0;
             default -> 1.0;
         };
     }
 
     /**
-     * @return the damage scale multiplier for damage applied to this building (and occupants)
+     * @return the multiplier from standard damage to this building's CF. Castles Brian require per-attacker
+     *       accumulation before rounding, and resolve occupant damage separately (TO:AR p. 124, errata).
      */
     default double getDamageToScale() {
         return switch (getBldgClass()) {
             case IBuilding.FORTRESS, IBuilding.GUN_EMPLACEMENT -> 0.5;
+            case IBuilding.CASTLE_BRIAN -> 0.05;
             default -> 1.0;
         };
+    }
+
+    /** Whether CF and armor are stored in capital points (TO:AR pp. 124, 127-128). */
+    default boolean usesCapitalScale() {
+        return getBldgClass() == CASTLE_BRIAN;
+    }
+
+    /** Standard-scale tons supported by this hex, before applying any load-specific modifiers. */
+    default int getLoadCapacity(Coords coords) {
+        return getCurrentCF(coords) * (usesCapitalScale() ? 10 : 1);
+    }
+
+    /** Scale a single non-weapon event. Weapon attacks must use the per-attacker damage tracker instead. */
+    default int scaleDamageToCF(int standardDamage) {
+        return usesCapitalScale() ? (int) Math.round(standardDamage / 20.0)
+              : (int) Math.floor(standardDamage * getDamageToScale());
+    }
+
+    /** Standard-scale threshold that an individual hit must exceed to injure Castles Brian occupants. */
+    default int getCapitalDamageThreshold(Coords coords) {
+        return (int) Math.ceil(getCurrentCF(coords) / 10.0) * 10;
     }
 
     /**

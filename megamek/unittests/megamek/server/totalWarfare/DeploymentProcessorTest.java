@@ -35,15 +35,20 @@ package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Stream;
 
@@ -56,15 +61,22 @@ import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
+import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
+import megamek.common.game.GameTurn;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.Packet;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.IBuilding;
+import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
+import megamek.server.GameManagerPacketHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Tests for {@link DeploymentProcessor}
@@ -147,6 +159,88 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
               hex 0303 0 "" ""
               end"""
         );
+    }
+
+    private BuildingEntity rotatingBuilding() {
+        BuildingEntity building = new BuildingEntity(BuildingType.MEDIUM, IBuilding.STANDARD);
+        building.configureConstruction(BuildingType.MEDIUM, IBuilding.STANDARD, 2, 50, 10,
+              List.of(CubeCoords.ZERO, new CubeCoords(0, -1, 1)));
+        building.setId(4);
+        building.setOwner(game.getPlayer(0));
+        building.setStartingPos(Board.START_ANY);
+        game.addEntity(building);
+        game.setPhase(GamePhase.DEPLOYMENT);
+        GameTurn turn = mock(GameTurn.class);
+        when(turn.isValid(0, building, game)).thenReturn(true);
+        game.setTurnVector(List.of(turn));
+        game.setTurnIndex(0, 0);
+        when(mockTWGameManager.getPacketHelper()).thenReturn(mock(GameManagerPacketHelper.class));
+        return building;
+    }
+
+    private void sendBuildingDeployment(BuildingEntity building, Coords origin, int facing) throws Exception {
+        deploymentProcessor.receiveDeployment(new Packet(PacketCommand.ENTITY_DEPLOY,
+              building.getId(), origin, 0, facing, 0, 0, false), 0);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = { 0, 1, 2, 3, 4, 5 })
+    void deploymentPacketStampsTheRotatedBuildingFootprint(int facing) throws Exception {
+        BuildingEntity building = rotatingBuilding();
+        Coords origin = new Coords(1, 1);
+        Set<Coords> expected = Set.of(origin, origin.translated(facing));
+        sendBuildingDeployment(building, origin, facing);
+
+        assertEquals(facing, building.getFacing());
+        assertTrue(building.isDeployed());
+        assertEquals(expected, game.getEntityPositions(building));
+        for (int x = 0; x < 3; x++) {
+            for (int y = 0; y < 3; y++) {
+                Coords hex = new Coords(x, y);
+                assertEquals(expected.contains(hex), board.getHex(hex).containsTerrain(Terrains.BUILDING));
+                if (expected.contains(hex)) {
+                    assertEquals(building, board.getBuildingAt(hex));
+                    assertEquals(50, board.getHex(hex).terrainLevel(Terrains.BLDG_CF));
+                }
+            }
+        }
+        verify(mockTWGameManager).endCurrentTurn(building);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "edge", "deployment zone", "impassable", "uneven", "occupied" })
+    void rejectsIllegalRotatedFootprintBeforeChangingTheBuildingOrBoard(String obstruction) throws Exception {
+        BuildingEntity building = rotatingBuilding();
+        Coords origin = new Coords(1, 1);
+        switch (obstruction) {
+            case "edge" -> origin = new Coords(1, 0);
+            case "deployment zone" -> building.setStartingAnyNWy(1);
+            case "impassable" -> board.getHex(origin.translated(0)).addTerrain(new Terrain(Terrains.IMPASSABLE, 1));
+            case "uneven" -> board.getHex(origin.translated(0)).setLevel(1);
+            case "occupied" -> {
+                var blocker = new megamek.common.units.BipedMek();
+                blocker.setId(5);
+                blocker.setOwner(game.getPlayer(0));
+                blocker.setPosition(origin.translated(0));
+                blocker.setDeployed(true);
+                game.addEntity(blocker);
+            }
+            default -> throw new IllegalArgumentException(obstruction);
+        }
+        building.setFacing(3);
+        sendBuildingDeployment(building, origin, 0);
+
+        assertNull(building.getPosition());
+        assertEquals(3, building.getFacing());
+        assertFalse(building.isDeployed());
+        assertTrue(game.getEntityPositions(building).isEmpty());
+        for (int x = 0; x < 3; x++) {
+            for (int y = 0; y < 3; y++) {
+                assertFalse(board.getHex(new Coords(x, y)).containsTerrain(Terrains.BUILDING));
+            }
+        }
+        verify(mockTWGameManager, never()).sendNewBuildings(any());
+        verify(mockTWGameManager, never()).endCurrentTurn(any());
     }
 
     // ========== Test Data Providers ==========

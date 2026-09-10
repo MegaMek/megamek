@@ -1536,6 +1536,7 @@ public final class BoardView extends AbstractBoardView
                     drawHexBorder(graphics2D, getHexLocation(coords), Color.yellow);
                 }
             }
+            return;
         }
 
         if (!en_Deployer.isLocationProhibited(BoardLocation.of(coords, boardId)) && !boardProhibited) {

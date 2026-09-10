@@ -138,7 +138,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
                 hit.makeGlancingBlow();
             }
 
-            if (bDirect && !target.isConventionalInfantry()) {
+            if (bDirect && !usesConventionalInfantryDamage()) {
                 hit.makeDirectBlow(toHit.getMoS() / 3);
             }
 
@@ -171,7 +171,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
 
     @Override
     protected int calcDamagePerHit() {
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             double toReturn = Compute.directBlowInfantryDamage(
                   weaponType.getRackSize(), getInfantryDamageClassShift(),
                   resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),

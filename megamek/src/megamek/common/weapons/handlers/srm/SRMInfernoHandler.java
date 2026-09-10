@@ -195,7 +195,7 @@ public class SRMInfernoHandler extends SRMHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit with all missiles
         // BAs do one lump of damage per BA suit
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
                 Report r = new Report(3325);

@@ -200,6 +200,9 @@ public class TWGameManager extends AbstractGameManager {
     // canceling each other
     private final Vector<PhysicalResult> physicalResults = new Vector<>();
 
+    /** Attribution for building damage produced while resolving a physical attack, restored after nested resolution. */
+    private Entity physicalBuildingAttacker;
+
     // Woods clearing tracker is stored on Game for serialization - access via game.getWoodsClearingTracker()
 
     private final List<DynamicTerrainProcessor> terrainProcessors = new ArrayList<>();
@@ -12042,7 +12045,13 @@ public class TWGameManager extends AbstractGameManager {
         }
         int cen = Entity.NONE;
         for (PhysicalResult pr : physicalResults) {
-            resolvePhysicalAttack(pr, cen);
+            Entity previousAttacker = physicalBuildingAttacker;
+            try {
+                physicalBuildingAttacker = game.getEntity(pr.aaa.getEntityId());
+                resolvePhysicalAttack(pr, cen);
+            } finally {
+                physicalBuildingAttacker = previousAttacker;
+            }
             cen = pr.aaa.getEntityId();
         }
         physicalResults.removeAllElements();
@@ -12261,7 +12270,8 @@ public class TWGameManager extends AbstractGameManager {
                 game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed punch attack"));
             }
             // If the target is in a building, the building absorbs the damage.
-            if (targetInBuilding && (bldg != null)) {
+            if (targetInBuilding && (bldg != null)
+                  && (!bldg.usesCapitalScale() || !isInsideBuilding(bldg, ae))) {
                 // Only report if damage was done to the building.
                 if (damage > 0) {
                     Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
@@ -12317,8 +12327,9 @@ public class TWGameManager extends AbstractGameManager {
 
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
-        if (targetInBuilding && (bldg != null)) {
-            int bldgAbsorbs = bldg.getAbsorption(target.getPosition());
+        if (targetInBuilding && (bldg != null)
+              && (!bldg.usesCapitalScale() || !isInsideBuilding(bldg, ae))) {
+            int bldgAbsorbs = bldg.usesCapitalScale() ? damage : bldg.getAbsorption(target.getPosition());
             int toBldg = Math.min(bldgAbsorbs, damage);
             damage -= toBldg;
             addNewLines();
@@ -12329,7 +12340,6 @@ public class TWGameManager extends AbstractGameManager {
             addReport(buildingReport);
 
             // some buildings scale remaining damage that is not absorbed
-            // TODO : this isn't quite right for castles brian
             damage = (int) Math.floor(bldg.getDamageToScale() * damage);
         }
 
@@ -12565,7 +12575,8 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // If the target is in a building, the building absorbs the damage.
-            if (targetInBuilding && (bldg != null)) {
+            if (targetInBuilding && (bldg != null)
+                  && (!bldg.usesCapitalScale() || !isInsideBuilding(bldg, ae))) {
                 // Only report if damage was done to the building.
                 if (damage > 0) {
                     Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
@@ -12609,19 +12620,20 @@ public class TWGameManager extends AbstractGameManager {
 
             // The building shields all units from a certain amount of damage.
             // The amount is based upon the building's CF at the phase's start.
-            if (targetInBuilding && (bldg != null)) {
-                int bldgAbsorbs = bldg.getAbsorption(target.getPosition());
+            if (targetInBuilding && (bldg != null)
+                  && (!bldg.usesCapitalScale() || !isInsideBuilding(bldg, ae))) {
+                int bldgAbsorbs = bldg.usesCapitalScale() ? damage : bldg.getAbsorption(target.getPosition());
                 int toBldg = Math.min(bldgAbsorbs, damage);
                 damage -= toBldg;
                 addNewLines();
-                Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
+                Vector<Report> buildingReport = damageBuilding(bldg, bldg.usesCapitalScale() ? toBldg : damage,
+                      target.getPosition());
                 for (Report report : buildingReport) {
                     report.subject = ae.getId();
                 }
                 addReport(buildingReport);
 
                 // some buildings scale remaining damage that is not absorbed
-                // TODO : this isn't quite right for castles brian
                 damage = (int) Math.floor(bldg.getDamageToScale() * damage);
             }
 
@@ -12806,7 +12818,8 @@ public class TWGameManager extends AbstractGameManager {
             addReport(r);
 
             // If the target is in a building, the building absorbs the damage.
-            if (targetInBuilding && (bldg != null)) {
+            if (targetInBuilding && (bldg != null)
+                  && (!bldg.usesCapitalScale() || !isInsideBuilding(bldg, ae))) {
                 damage += pr.damageRight;
                 // Only report if damage was done to the building.
                 if (damage > 0) {
@@ -12863,19 +12876,20 @@ public class TWGameManager extends AbstractGameManager {
 
             // The building shields all units from a certain amount of damage.
             // The amount is based upon the building's CF at the phase's start.
-            if (targetInBuilding && (bldg != null)) {
-                int bldgAbsorbs = bldg.getAbsorption(target.getPosition());
+            if (targetInBuilding && (bldg != null)
+                  && (!bldg.usesCapitalScale() || !isInsideBuilding(bldg, ae))) {
+                int bldgAbsorbs = bldg.usesCapitalScale() ? damage : bldg.getAbsorption(target.getPosition());
                 int toBldg = Math.min(bldgAbsorbs, damage);
                 damage -= toBldg;
                 addNewLines();
-                Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
+                Vector<Report> buildingReport = damageBuilding(bldg, bldg.usesCapitalScale() ? toBldg : damage,
+                      target.getPosition());
                 for (Report report : buildingReport) {
                     report.subject = ae.getId();
                 }
                 addReport(buildingReport);
 
                 // some buildings scale remaining damage that is not absorbed
-                // TODO : this isn't quite right for castles brian
                 damage = (int) Math.floor(bldg.getDamageToScale() * damage);
             }
 
@@ -13015,7 +13029,8 @@ public class TWGameManager extends AbstractGameManager {
             addReport(r);
 
             // If the target is in a building, the building absorbs the damage.
-            if (targetInBuilding && (bldg != null)) {
+            if (targetInBuilding && (bldg != null)
+                  && (!bldg.usesCapitalScale() || !isInsideBuilding(bldg, ae))) {
                 // Only report if damage was done to the building.
                 if (damage > 0) {
                     Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
@@ -13060,19 +13075,20 @@ public class TWGameManager extends AbstractGameManager {
 
             // The building shields all units from a certain amount of damage.
             // The amount is based upon the building's CF at the phase's start.
-            if (targetInBuilding && (bldg != null)) {
-                int bldgAbsorbs = bldg.getAbsorption(target.getPosition());
+            if (targetInBuilding && (bldg != null)
+                  && (!bldg.usesCapitalScale() || !isInsideBuilding(bldg, ae))) {
+                int bldgAbsorbs = bldg.usesCapitalScale() ? damage : bldg.getAbsorption(target.getPosition());
                 int toBldg = Math.min(bldgAbsorbs, damage);
                 damage -= toBldg;
                 addNewLines();
-                Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
+                Vector<Report> buildingReport = damageBuilding(bldg, bldg.usesCapitalScale() ? toBldg : damage,
+                      target.getPosition());
                 for (Report report : buildingReport) {
                     report.subject = ae.getId();
                 }
                 addReport(buildingReport);
 
                 // some buildings scale remaining damage that is not absorbed
-                // TODO : this isn't quite right for castles brian
                 damage = (int) Math.floor(bldg.getDamageToScale() * damage);
             }
 
@@ -14283,7 +14299,8 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             // If the target is in a building, the building absorbs the damage.
-            if (targetInBuilding && (bldg != null)) {
+            if (targetInBuilding && (bldg != null)
+                  && (!bldg.usesCapitalScale() || !isInsideBuilding(bldg, ae))) {
                 // Only report if damage was done to the building.
                 if (damage > 0) {
                     Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
@@ -14350,19 +14367,20 @@ public class TWGameManager extends AbstractGameManager {
 
             // The building shields all units from a certain amount of damage.
             // The amount is based upon the building's CF at the phase's start.
-            if (targetInBuilding && (bldg != null)) {
-                int bldgAbsorbs = bldg.getAbsorption(target.getPosition());
+            if (targetInBuilding && (bldg != null)
+                  && (!bldg.usesCapitalScale() || !isInsideBuilding(bldg, ae))) {
+                int bldgAbsorbs = bldg.usesCapitalScale() ? damage : bldg.getAbsorption(target.getPosition());
                 int toBldg = Math.min(bldgAbsorbs, damage);
                 damage -= toBldg;
                 addNewLines();
-                Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
+                Vector<Report> buildingReport = damageBuilding(bldg, bldg.usesCapitalScale() ? toBldg : damage,
+                      target.getPosition());
                 for (Report report : buildingReport) {
                     report.subject = ae.getId();
                 }
                 addReport(buildingReport);
 
                 // some buildings scale remaining damage that is not absorbed
-                // TODO : this isn't quite right for castles brian
                 damage = (int) Math.floor(bldg.getDamageToScale() * damage);
             }
 
@@ -15920,7 +15938,8 @@ public class TWGameManager extends AbstractGameManager {
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
-        if (targetInBuilding && (bldg != null)) {
+        if (targetInBuilding && (bldg != null)
+              && (!bldg.usesCapitalScale() || !isInsideBuilding(bldg, ae))) {
             bldgAbsorbs = bldg.getAbsorption(te.getPosition());
         }
 
@@ -16028,18 +16047,20 @@ public class TWGameManager extends AbstractGameManager {
             }
             damage -= cluster;
             if (bldgAbsorbs > 0) {
-                int toBldg = Math.min(bldgAbsorbs, cluster);
+                int toBldg = bldg.usesCapitalScale() ? cluster : Math.min(bldgAbsorbs, cluster);
                 cluster -= toBldg;
                 addNewLines();
-                Vector<Report> buildingReport = damageBuilding(bldg, damage, te.getPosition());
+                Vector<Report> buildingReport = damageBuilding(bldg, bldg.usesCapitalScale() ? toBldg : damage,
+                      te.getPosition());
                 for (Report report : buildingReport) {
                     report.subject = ae.getId();
                 }
                 addReport(buildingReport);
 
                 // some buildings scale remaining damage that is not absorbed
-                // TODO : this isn't quite right for castles brian
-                damage = (int) Math.floor(bldg.getDamageToScale() * damage);
+                if (!bldg.usesCapitalScale()) {
+                    damage = (int) Math.floor(bldg.getDamageToScale() * damage);
+                }
             }
 
             // A building may absorb the entire shot.
@@ -29040,6 +29061,9 @@ public class TWGameManager extends AbstractGameManager {
                 // then Meks and vehicles.
                 if (entity instanceof Infantry) {
                     damage = bldg.getBuildingType().getTypeValue() + 1;
+                    if (bldg.usesCapitalScale()) {
+                        damage *= 10;
+                    }
                 }
                 // It is possible that the unit takes no damage.
                 if (damage == 0) {
@@ -29073,7 +29097,12 @@ public class TWGameManager extends AbstractGameManager {
                     return;
                 }
             } else {
-                toBldg = (int) Math.floor(bldg.getDamageToScale() * Math.ceil(entity.getWeight() / 10.0));
+                int wallDamage = (int) Math.ceil(entity.getWeight() / 10.0);
+                toBldg = bldg.usesCapitalScale() ? wallDamage : bldg.scaleDamageToCF(wallDamage);
+            }
+            if (bldg.usesCapitalScale()) {
+                buildingReport.addAll(damageBuilding(bldg, toBldg, entering ? curPos : lastPos));
+                return;
             }
             int curCF = bldg.getCurrentCF(entering ? curPos : lastPos);
             curCF -= Math.min(curCF, toBldg);
@@ -29125,7 +29154,8 @@ public class TWGameManager extends AbstractGameManager {
     public Vector<Report> damageInfantryIn(IBuilding bldg, int damage, Coords hexCoords, int infDamageClass) {
         Vector<Report> vDesc = new Vector<>();
 
-        if (bldg == null) {
+        if (bldg == null || bldg.usesCapitalScale()) {
+            // Capital building threshold hits already affected every occupant in damageBuilding().
             return vDesc;
         }
         // Calculate the amount of damage the infantry will sustain.
@@ -29354,7 +29384,8 @@ public class TWGameManager extends AbstractGameManager {
                     collapseCoords.addElement(coords);
                 }
                 // If the building took damage this round, update it.
-                else if (bldg.getPhaseCF(coords) != bldg.getCurrentCF(coords)) {
+                else if (bldg.getPhaseCF(coords) != bldg.getCurrentCF(coords)
+                      || (bldg.usesCapitalScale() && game.getBuildingDamageTracker().hasChanges(bldg, coords))) {
                     bldg.setPhaseCF(bldg.getCurrentCF(coords), coords);
                     updateCoords.addElement(coords);
                 }
@@ -29401,6 +29432,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
+        game.getBuildingDamageTracker().clearChanges();
         // If we have any buildings to update, send the message.
         if (!update.isEmpty()) {
             sendChangedBuildings(new Vector<>(update.keySet()));
@@ -29412,9 +29444,19 @@ public class TWGameManager extends AbstractGameManager {
         return damageBuilding(bldg, damage, defaultWhy, coords);
     }
 
+    /** Apply standard-scale attack damage, retaining the attacker for capital-scale aggregation. */
+    public Vector<Report> damageBuilding(IBuilding bldg, int damage, Coords coords, Entity attacker) {
+        return damageBuilding(bldg, damage, " absorbs ", coords, 0, attacker, isInsideBuilding(bldg, attacker));
+    }
+
+    private boolean isInsideBuilding(IBuilding building, Entity entity) {
+        return building != null && entity != null && entity.getBoardId() == building.getBoardId()
+              && building.isIn(entity.getPosition()) && entity.isInBuilding();
+    }
+
     /**
-     * Apply the given amount of damage to the building. Please note, this method does <b>not</b> apply any damage to
-     * units inside the building, update the clients, or check for the building's collapse.
+     * Apply damage to the building, including Castles Brian threshold hits against occupants. Ordinary building
+     * occupant damage, client updates and collapse checks remain the caller's responsibility.
      * <p>
      * A default message will be used to describe why the building took the damage.
      *
@@ -29436,8 +29478,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Apply the given amount of damage to the building. Please note, this method does <b>not</b> apply any damage to
-     * units inside the building, update the clients, or check for the building's collapse.
+     * Apply damage to the building, including Castles Brian threshold hits against occupants. Ordinary building
+     * occupant damage, client updates and collapse checks remain the caller's responsibility.
      *
      * @param bldg   - the <code>Building</code> that has been damaged. This value should not be <code>null</code>, but
      *               no exception will occur.
@@ -29449,6 +29491,19 @@ public class TWGameManager extends AbstractGameManager {
      * @return a <code>Report</code> to be shown to the players.
      */
     public Vector<Report> damageBuilding(IBuilding bldg, int damage, String why, Coords coords, int level) {
+        return damageBuilding(bldg, damage, why, coords, level, physicalBuildingAttacker,
+              isInsideBuilding(bldg, physicalBuildingAttacker));
+    }
+
+    /**
+     * Apply standard-scale damage to a building. Castles Brian also resolve their threshold hits against occupants
+     * here; callers must not additionally apply ordinary absorption or infantry damage for those buildings.
+     */
+    public Vector<Report> damageBuilding(IBuilding bldg, int damage, String why, Coords coords, int level,
+          Entity attacker, boolean ignoreArmor) {
+        if (bldg != null && bldg.usesCapitalScale() && damage > 0) {
+            return damageCapitalBuilding(bldg, damage, why, coords, level, attacker, ignoreArmor);
+        }
         Vector<Report> vPhaseReport = new Vector<>();
         Report r = new Report(1210, Report.PUBLIC);
 
@@ -29558,6 +29613,68 @@ public class TWGameManager extends AbstractGameManager {
         }
         Report.indentAll(vPhaseReport, 2);
         return vPhaseReport;
+    }
+
+    private Vector<Report> damageCapitalBuilding(IBuilding building, int damage, String why, Coords coords,
+          int level, Entity attacker, boolean ignoreArmor) {
+        int threshold = building.getCapitalDamageThreshold(coords);
+        int attackerId = attacker == null ? Entity.NONE : attacker.getId();
+        var scaled = game.getBuildingDamageTracker().resolve(building, coords, damage, attackerId, ignoreArmor,
+              game.getRoundCount(), game.getPhase());
+        Vector<Report> reports = new Vector<>();
+        Report report = new Report(3434, Report.PUBLIC);
+        report.add(building.toString());
+        report.add(why);
+        report.add(damage);
+        report.add(level);
+        reports.add(report);
+
+        if (scaled.armor() > 0) {
+            int armor = building.getArmor(coords) - scaled.armor();
+            building.setArmor(armor, coords);
+            report = new Report(3436, Report.PUBLIC);
+            report.add(scaled.armor());
+            report.add(armor);
+            reports.add(report);
+        }
+        report = new Report(3437, Report.PUBLIC);
+        report.add(scaled.cf());
+        reports.add(report);
+
+        int oldCF = building.getCurrentCF(coords);
+        int cf = Math.max(0, oldCF - scaled.cf());
+        building.setCurrentCF(cf, coords);
+        report = new Report(6436, Report.PUBLIC);
+        report.indent();
+        report.add(cf);
+        reports.add(report);
+        if (cf == 0 && oldCF > 0) {
+            reports.add(new Report(3440, Report.PUBLIC));
+        } else if (scaled.throughArmor() > threshold && cf < oldCF) {
+            Collection<GunEmplacement> guns = game.getGunEmplacements(coords, building.getBoardId());
+            if (!guns.isEmpty()) {
+                reports.addAll(criticalGunEmplacement(guns, building, coords));
+            }
+        }
+        Report.indentAll(reports, 2);
+
+        // A threshold breach is a fixed standard-scale area hit, never a fraction of the weapon's damage.
+        if (scaled.throughArmor() > threshold) {
+            for (Entity occupant : game.getEntitiesVector(coords, building.getBoardId(), true)) {
+                if (occupant instanceof IBuilding || !Compute.isInBuilding(game, occupant, coords)) {
+                    continue;
+                }
+                for (int cluster = 0; cluster < 2; cluster++) {
+                    HitData hit = occupant.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                    hit.setAttackerId(attackerId);
+                    reports.addAll(damageEntity(occupant, hit, 5, false, DamageType.NONE, false, true, false));
+                }
+                if (attacker != null) {
+                    creditKill(occupant, attacker);
+                }
+            }
+        }
+        return reports;
     }
 
     private Vector<Report> criticalGunEmplacement(Collection<GunEmplacement> guns, IBuilding bldg, Coords coords) {
@@ -29683,7 +29800,7 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 }
             }
-            boom = (int) Math.floor(bldg.getDamageToScale() * boom);
+            boom = bldg.scaleDamageToCF(boom);
 
             if (boom == 0) {
                 Report rNoAmmo = new Report(3831);
@@ -32475,6 +32592,15 @@ public class TWGameManager extends AbstractGameManager {
           AmmoType ammo, int subjectId, Entity killer, Entity exclude, boolean flak, int altitude, int targetLevel,
           Vector<Report> vPhaseReport, boolean asfFlak, Vector<Integer> alreadyHit, boolean variableDamage,
           DamageFalloff falloff) {
+        return artilleryDamageHex(coords, boardId, attackSource, damage, ammo, subjectId, killer, exclude, flak,
+              altitude, targetLevel, vPhaseReport, asfFlak, alreadyHit, variableDamage, falloff, new HashSet<>());
+    }
+
+    /** Track capital building hexes once per explosion, while still resolving exposed units at every blast level. */
+    public Vector<Integer> artilleryDamageHex(Coords coords, int boardId, Coords attackSource, int damage,
+          AmmoType ammo, int subjectId, Entity killer, Entity exclude, boolean flak, int altitude, int targetLevel,
+          Vector<Report> vPhaseReport, boolean asfFlak, Vector<Integer> alreadyHit, boolean variableDamage,
+          DamageFalloff falloff, Set<BoardLocation> damagedCapitalBuildings) {
 
         // Values used later
         boolean isFuelAirBomb = ammo != null &&
@@ -32513,15 +32639,19 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
-            // Buildings do _not_ shield housed units from artillery damage!
+            // Castles Brian resolve their threshold protection; ordinary buildings do not shield artillery targets.
             if ((bldg != null) &&
                   ((altitude < effectiveLevel + hex.terrainLevel(Terrains.BLDG_ELEV)) ||
                         (altitude < effectiveLevel + hex.terrainLevel(Terrains.BRIDGE_ELEV)) ||
                         (altitude < effectiveLevel + hex.terrainLevel(Terrains.FUEL_TANK_ELEV))) &&
-                  !(asfFlak)) {
+                  !(asfFlak) && (!bldg.usesCapitalScale()
+                        || !damagedCapitalBuildings.contains(BoardLocation.of(coords, boardId)))) {
                 if (!((ammo != null) && (ammo.getMunitionType().contains(Munitions.M_FLECHETTE)))) {
                     int buildingDamage;
-                    if (variableDamage) {
+                    if (bldg.usesCapitalScale()) {
+                        // Castles Brian receive no area-effect building damage bonus (TO:AR p. 113).
+                        buildingDamage = variableDamage ? Compute.d6(damage) : damage;
+                    } else if (variableDamage) {
                         // Dropship exhaust? Sayonara, buildings!
                         buildingDamage = Compute.d6(damage) * 3;
                     } else {
@@ -32557,10 +32687,8 @@ public class TWGameManager extends AbstractGameManager {
                             vPhaseReport.addElement(r);
                         }
 
-                        // armored and "castle brian" buildings take .5 damage from fuel-air bombs,
-                        // but I have no idea how to determine if a building is a castle or a brian
-                        // note that being armored and being "light" are not mutually exclusive
-                        if (bldg.getArmor(coords) > 0) {
+                        // Armor and Castles Brian each qualify for the same reduction, applied only once.
+                        if (bldg.getArmor(coords) > 0 || bldg.usesCapitalScale()) {
                             buildingDamage = (int) Math.floor(buildingDamage * .5);
 
                             r = new Report(9992);
@@ -32573,7 +32701,11 @@ public class TWGameManager extends AbstractGameManager {
 
                     // damage the building (skip basement damage if no basement has been discovered)
                     if (altitude >= hex.getLevel() || !(bldg.getBasement(coords).isUnknownOrNone())) {
-                        Vector<Report> buildingReport = damageBuilding(bldg, buildingDamage, coords, altitude);
+                        if (bldg.usesCapitalScale()) {
+                            damagedCapitalBuildings.add(BoardLocation.of(coords, boardId));
+                        }
+                        Vector<Report> buildingReport = damageBuilding(bldg, buildingDamage, " absorbs ", coords,
+                              altitude, killer, false);
                         for (Report report : buildingReport) {
                             report.subject = subjectId;
                         }
@@ -32685,6 +32817,7 @@ public class TWGameManager extends AbstractGameManager {
         // This is artillery damage
         HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(ammo,
               centre,
+              boardId,
               falloff,
               altitude,
               true,
@@ -32693,7 +32826,8 @@ public class TWGameManager extends AbstractGameManager {
               game,
               false);
 
-        for (Map.Entry<Integer, Coords> entry : blastShape.keySet()) {
+        Set<BoardLocation> damagedCapitalBuildings = new HashSet<>();
+        for (Map.Entry<Integer, Coords> entry : AreaEffectHelper.blastLocationsByDamage(blastShape)) {
             Coords bCoords = entry.getValue();
             int bLevel = entry.getKey();
             alreadyHit = artilleryDamageHex(bCoords,
@@ -32711,7 +32845,7 @@ public class TWGameManager extends AbstractGameManager {
                   asfFlak,
                   alreadyHit,
                   false,
-                  falloff);
+                  falloff, damagedCapitalBuildings);
         }
 
         // Lets reports assess if anything was caught in area
@@ -32772,7 +32906,8 @@ public class TWGameManager extends AbstractGameManager {
                   game,
                   false);
 
-            for (Map.Entry<Integer, Coords> entry : blastShape.keySet()) {
+            Set<BoardLocation> damagedCapitalBuildings = new HashSet<>();
+            for (Map.Entry<Integer, Coords> entry : AreaEffectHelper.blastLocationsByDamage(blastShape)) {
                 Coords bCoords = entry.getValue();
                 int bLevel = entry.getKey();
                 alreadyHit = artilleryDamageHex(bCoords,
@@ -32790,7 +32925,7 @@ public class TWGameManager extends AbstractGameManager {
                       false,
                       alreadyHit,
                       false,
-                      falloff);
+                      falloff, damagedCapitalBuildings);
             }
         }
 
@@ -33424,4 +33559,3 @@ public class TWGameManager extends AbstractGameManager {
         send(new Packet(PacketCommand.UPDATE_INDUSTRIAL_ELEVATORS, new ArrayList<>(elevators)));
     }
 }
-

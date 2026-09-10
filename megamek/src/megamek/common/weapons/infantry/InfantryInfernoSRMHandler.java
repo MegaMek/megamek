@@ -81,7 +81,7 @@ public class InfantryInfernoSRMHandler extends InfantryWeaponHandler {
 
         // super.calcHits() reports the platoon's Damage Value and returns it, except against conventional
         // infantry, where it returns a single hit and puts the Damage Value in nDamPerHit instead.
-        damageValue = target.isConventionalInfantry() ? nDamPerHit : hits;
+        damageValue = usesConventionalInfantryDamage() ? nDamPerHit : hits;
         infernoMissiles = damageValue / 2;
 
         Report report = new Report(3331);

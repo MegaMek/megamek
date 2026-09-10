@@ -147,7 +147,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
                   || infantry.hasAbility(OptionsConstants.MD_PL_I_ENHANCED);
 
             if (isInSameHex && hasProsthetics && hasEnhancedAbility) {
-                boolean targetIsConventionalInfantry = target.isConventionalInfantry();
+                boolean targetIsConventionalInfantry = usesConventionalInfantryDamage();
 
                 // Check slot 1
                 if (infantry.hasProstheticEnhancement1()) {
@@ -186,7 +186,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
         if ((attackingEntity instanceof ConvInfantry infantry) && (nRange == 0)
               && infantry.hasExtraneousLimbs()
               && infantry.hasAbility(OptionsConstants.MD_PL_EXTRA_LIMBS)) {
-            boolean targetIsConventionalInfantry = target.isConventionalInfantry();
+            boolean targetIsConventionalInfantry = usesConventionalInfantryDamage();
 
             // Check pair 1 (2 items per pair)
             if (infantry.hasExtraneousPair1()) {
@@ -236,7 +236,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
         if ((attackingEntity instanceof ConvInfantry infantry) && (nRange == 0)) {
             InfantryMount mount = infantry.getMount();
             if (mount != null) {
-                if (!target.isConventionalInfantry()) {
+                if (!usesConventionalInfantryDamage()) {
                     damageDealt += mount.vehicleDamage();
                 } else if (mount.getBurstDamageDice() > 0) {
                     mountBurstDamageDealt = Compute.d6(mount.getBurstDamageDice());
@@ -251,18 +251,20 @@ public class InfantryWeaponHandler extends WeaponHandler {
         int heavyBurstDamageDealt = 0;
         // Kept as instanceof, not isConventionalInfantry(): CombatVehicleEscapePod is a ConvInfantry subclass that
         // answers false, so switching would silently drop the bonus against escape pods.
-        if ((target instanceof ConvInfantry)
+        if ((target instanceof ConvInfantry) && !isTargetShieldedByCapitalBuilding()
               && (weaponType.hasFlag(WeaponType.F_INF_BURST)
                     || ((attackingEntity instanceof ConvInfantry attackingInfantry)
                           && attackingInfantry.primaryWeaponDamageCapped()))) {
             heavyBurstDamageDealt = Compute.d6();
             damageDealt += heavyBurstDamageDealt;
         }
-        if ((target instanceof Infantry) && ((Infantry) target).isMechanized()) {
+        if ((target instanceof Infantry) && ((Infantry) target).isMechanized()
+              && !isTargetShieldedByCapitalBuilding()) {
             damageDealt /= 2;
         }
         // this doesn't work...
-        if ((target instanceof IBuilding) && (weaponType.hasFlag(WeaponType.F_INF_NONPENETRATING))) {
+        if ((target instanceof IBuilding || isTargetShieldedByCapitalBuilding())
+              && weaponType.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
             damageDealt = 0;
         }
         if (weaponType.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
@@ -364,7 +366,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
             vPhaseReport.addElement(mountBurstReport);
         }
 
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             // this is a little strange, but I can't just do this in calcDamagePerHit
             // because
             // that is called up before misses are determined and will lead to weird

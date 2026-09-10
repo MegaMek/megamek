@@ -521,7 +521,8 @@ public class EntitySprite extends Sprite {
             graph.draw(bv.getFacingPolys()[entity.getFacing()]);
         }
 
-        if ((secondaryPos == -1) || (secondaryPos == 6)) {
+        // Buildings number their footprint from the origin at index 0, regardless of its size.
+        if ((secondaryPos == -1) || (entity instanceof AbstractBuildingEntity ? secondaryPos == 0 : secondaryPos == 6)) {
             // Gather unit conditions
             ArrayList<Status> stStr = new ArrayList<>();
             criticalStatus = false;

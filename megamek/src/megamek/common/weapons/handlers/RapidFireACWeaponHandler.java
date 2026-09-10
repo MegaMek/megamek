@@ -173,10 +173,10 @@ public class RapidFireACWeaponHandler extends UltraWeaponHandler {
         if (shotsHit > 0) {
             // For infantry, all shots hit as a single "lump" so shotsHit=1,
             // but we need to spawn attacks for all shots that actually fired
-            int attacksToSpawn = target.isConventionalInfantry() ? howManyShots : shotsHit;
+            int attacksToSpawn = usesConventionalInfantryDamage() ? howManyShots : shotsHit;
 
             // Report number of shots hitting (UltraWeaponHandler skips this for infantry)
-            if (target.isConventionalInfantry() && (howManyShots > 1)) {
+            if (usesConventionalInfantryDamage() && (howManyShots > 1)) {
                 Report r = new Report(3325);
                 r.subject = subjectId;
                 r.add(howManyShots);

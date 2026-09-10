@@ -109,7 +109,7 @@ public class CLIATMHandler extends ATMHandler {
             toReturn = 2;
         }
 
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             toReturn = Compute.directBlowInfantryDamage(
                   weaponType.getRackSize(), getInfantryDamageClassShift(),
                   resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
@@ -158,7 +158,7 @@ public class CLIATMHandler extends ATMHandler {
         // wrong for infernos), so deliver one inferno missile per missile in the rack instead - this
         // matches the count already reported by calcMissileHits() and the standard SRM inferno rule.
         if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW)) {
-            if (target.isConventionalInfantry()) {
+            if (usesConventionalInfantryDamage()) {
                 return infernoMissilesVersusInfantry();
             }
             return hits;
@@ -198,7 +198,7 @@ public class CLIATMHandler extends ATMHandler {
         // The infantry hit line keeps the default line break (Report.newlines = 1) so the following
         // damage or destruction reports render on their own line, matching the standard SRM/LRM
         // inferno output.
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
                 Report report = new Report(3325);

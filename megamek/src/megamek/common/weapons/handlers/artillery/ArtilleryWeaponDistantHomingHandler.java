@@ -280,6 +280,7 @@ public class ArtilleryWeaponDistantHomingHandler extends ArtilleryWeaponDistantF
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
+        boolean capitalBuildingDamaged = false;
         if (targetInBuilding && (bldg != null)) {
             bldgAbsorbs = bldg.getAbsorption(target.getPosition());
         }
@@ -289,12 +290,16 @@ public class ArtilleryWeaponDistantHomingHandler extends ArtilleryWeaponDistantF
             r.subject = entityTarget.getId();
             r.add(bldgAbsorbs);
             vPhaseReport.addElement(r);
-            Vector<Report> buildingReport = gameManager.damageBuilding(bldg,
+            Vector<Report> buildingReport = damageBuilding(bldg,
                   nDamPerHit, target.getPosition());
             for (Report report : buildingReport) {
                 report.subject = entityTarget.getId();
             }
             vPhaseReport.addAll(buildingReport);
+            if (bldg.usesCapitalScale()) {
+                capitalBuildingDamaged = true;
+                bldgAbsorbs = nDamPerHit;
+            }
         }
         nDamPerHit -= bldgAbsorbs;
 
@@ -303,7 +308,9 @@ public class ArtilleryWeaponDistantHomingHandler extends ArtilleryWeaponDistantF
             r = new Report(3365);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
-            return false;
+            if (!capitalBuildingDamaged) {
+                return false;
+            }
         }
 
         boolean targetingHex = false;
@@ -316,8 +323,9 @@ public class ArtilleryWeaponDistantHomingHandler extends ArtilleryWeaponDistantF
             r = new Report(3390);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
-            vPhaseReport.addAll(gameManager.damageBuilding(bldg,
+            vPhaseReport.addAll(damageBuilding(bldg,
                   nDamPerHit, target.getPosition()));
+            capitalBuildingDamaged = bldg.usesCapitalScale();
         } else if (!bMissed) { // Hex is targeted, need to report a hit
             r = new Report(3390);
             r.subject = subjectId;
@@ -343,6 +351,12 @@ public class ArtilleryWeaponDistantHomingHandler extends ArtilleryWeaponDistantF
         bldg = game.getBoard().getBuildingAt(coords);
         bldgAbsorbs = (bldg != null) ? bldg.getAbsorption(coords) : 0;
         bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
+        if (bldg != null && bldg.usesCapitalScale()) {
+            if (!capitalBuildingDamaged) {
+                vPhaseReport.addAll(damageBuilding(bldg, targetingHex ? weaponType.getRackSize() : ratedDamage, coords));
+            }
+            bldgAbsorbs = 0; // Sheltered occupants were handled above; exposed units receive normal splash damage.
+        }
         handleClearDamage(vPhaseReport, bldg, hexDamage, false);
         ratedDamage -= bldgAbsorbs;
 

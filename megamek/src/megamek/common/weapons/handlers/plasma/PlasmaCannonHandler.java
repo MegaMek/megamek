@@ -189,7 +189,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             hits = calcHits(vPhaseReport);
             // Plasma Cannons do double damage per-hit to buildings
             int nDamage = 2 * hits;
-            Vector<Report> buildingReport = gameManager.damageBuilding(coverBuilding, nDamage,
+            Vector<Report> buildingReport = damageBuilding(coverBuilding, nDamage,
                   " blocks the shot and takes ", coverLoc);
             target = origTarget;
             for (Report report : buildingReport) {
@@ -212,7 +212,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
           IBuilding bldg, int hits, int nCluster, int bldgAbsorbs) {
 
-        if (entityTarget.tracksHeat()) {
+        if (entityTarget.tracksHeat() && !isTargetShieldedByCapitalBuilding()) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                   toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
                   weaponAttackAction.getAimingMode(), toHit.getCover());
@@ -260,10 +260,10 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
 
     @Override
     protected int calcDamagePerHit() {
-        if (target.tracksHeat()) {
+        if (target.tracksHeat() && !isTargetShieldedByCapitalBuilding()) {
             return 0;
         }
-        boolean targetIsConventionalInfantry = target.isConventionalInfantry();
+        boolean targetIsConventionalInfantry = usesConventionalInfantryDamage();
         int toReturn = 1;
         if (targetIsConventionalInfantry) {
             toReturn = Compute.d6(3);
@@ -285,7 +285,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
 
     @Override
     protected int calculateNumCluster() {
-        if (target.tracksHeat()) {
+        if (target.tracksHeat() && !isTargetShieldedByCapitalBuilding()) {
             bSalvo = false;
             return 1;
         }
@@ -297,9 +297,10 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs can't mount Plasma Cannons
-        if (target.isConventionalInfantry() || target.tracksHeat()) {
+        if (usesConventionalInfantryDamage() || (target.tracksHeat() && !isTargetShieldedByCapitalBuilding())) {
             return 1;
-        } else if ((target instanceof BattleArmor battleArmorTarget) && battleArmorTarget.isFireResistant()) {
+        } else if ((target instanceof BattleArmor battleArmorTarget) && battleArmorTarget.isFireResistant()
+              && !isTargetShieldedByCapitalBuilding()) {
             return 0;
         } else {
             // Pain-shunted battle armor halves flame damage (IO p. 78). Plasma damage against battle armor

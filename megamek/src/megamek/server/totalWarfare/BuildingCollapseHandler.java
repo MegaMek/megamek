@@ -106,6 +106,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
         }
 
         int currentCF = bldg.getCurrentCF(coords);
+        int loadCapacity = bldg.usesCapitalScale() ? bldg.getLoadCapacity(coords) : currentCF;
 
         // Track all units that fall into the building's basement by Coords.
         Map<BoardLocation, List<Entity>> basementMap = new HashMap<>();
@@ -207,7 +208,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
 
                     if (wigeFlyover) {
                         wigeLoad += load;
-                        if (wigeLoad > currentCF * 4) {
+                        if (wigeLoad > loadCapacity * 4) {
                             topFloorCollapse = true;
                             // There are bridges with 0 elevation, so the numFloors is 0, meaning that
                             // loads[numFloors-1] would cause an out-of-bounds exception.
@@ -221,7 +222,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                         }
                     } else {
                         loads[floor] += load;
-                        if (loads[floor] > currentCF) {
+                        if (loads[floor] > loadCapacity) {
                             // If the load on any floor but the first floor
                             // exceeds the building's current CF it collapses.
                             if (floor != 0) {
@@ -342,7 +343,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                         // elevation is correct in this case
                         vPhaseReport.addAll(gameManager.doEntityFall(entity, coords, 0, Compute.d6(), psr, true,
                               false));
-                        runningCFTotal -= cfDamage * 2;
+                        runningCFTotal -= bldg.usesCapitalScale() ? bldg.scaleDamageToCF(cfDamage * 2) : cfDamage * 2;
                         break;
                     default:
                         LOGGER.info("{} is falling 1 floor into {}", entity.getDisplayName(), coords.toString());
@@ -355,7 +356,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                               psr,
                               true,
                               false));
-                        runningCFTotal -= cfDamage;
+                        runningCFTotal -= bldg.usesCapitalScale() ? bldg.scaleDamageToCF(cfDamage) : cfDamage;
                         break;
                 }
 

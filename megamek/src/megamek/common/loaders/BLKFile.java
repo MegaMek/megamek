@@ -833,7 +833,9 @@ public class BLKFile {
             for (IOption weaponQuirk : equipment.getQuirks().activeQuirks()) {
                 weaponQuirkList.add(weaponQuirk.getName() +
                       ":" +
-                      t.getLocationAbbr(equipment.getLocation()) +
+                      (t instanceof AbstractBuildingEntity building
+                            ? building.getConstructionLocationAbbr(equipment.getLocation())
+                            : t.getLocationAbbr(equipment.getLocation())) +
                       ":" +
                       t.slotNumber(equipment) +
                       ":" +
@@ -920,13 +922,14 @@ public class BLKFile {
                 blk.writeBlockData("armor_type", EquipmentType.T_ARMOR_PATCHWORK);
                 for (int i = 0; i < t.locations(); i++) {
                     ArmorType armor = ArmorType.forEntity(t, i);
-                    blk.writeBlockData(t.getLocationName(i) + "_armor_type", armor.getArmorType());
-                    blk.writeBlockData(t.getLocationName(i) + "_armor_tech",
+                    String locationName = getDesignLocationName(t, i);
+                    blk.writeBlockData(locationName + "_armor_type", armor.getArmorType());
+                    blk.writeBlockData(locationName + "_armor_tech",
                           TechConstants.getTechName(t.getArmorTechLevel(i)));
-                    blk.writeBlockData(t.getLocationName(i) + "_armor_tech_rating",
+                    blk.writeBlockData(locationName + "_armor_tech_rating",
                           armor.getTechRating().getIndex());
                     if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
-                        blk.writeBlockData(t.getLocationName(i) + "_barrating", armor.getBAR());
+                        blk.writeBlockData(locationName + "_barrating", armor.getBAR());
                     }
                 }
             } else {
@@ -1027,7 +1030,7 @@ public class BLKFile {
             }
         }
         for (int i = 0; i < numLocs; i++) {
-            blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
+            blk.writeBlockData(getDesignLocationName(t, i) + " Equipment", eq.get(i));
         }
 
         // Write slotless equipment (LOC_NONE) - e.g., cockpit modifications like DNI.
@@ -1358,6 +1361,11 @@ public class BLKFile {
             blk.writeBlockData("armorWeight", t.getLabArmorTonnage());
         }
         return blk;
+    }
+
+    private static String getDesignLocationName(Entity entity, int location) {
+        return entity instanceof AbstractBuildingEntity building
+              ? building.getConstructionLocationName(location) : entity.getLocationName(location);
     }
 
     private static String getType(Entity t) {

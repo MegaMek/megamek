@@ -93,7 +93,7 @@ public class BPodHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         double toReturn = 0;
         // we default to direct fire weapons for anti-infantry damage
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             toReturn = Compute.d6();
             if (((Infantry) target).isMechanized()) {
                 toReturn /= 3;

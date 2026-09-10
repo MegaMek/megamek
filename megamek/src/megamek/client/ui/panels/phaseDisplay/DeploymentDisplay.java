@@ -86,6 +86,7 @@ import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Dropship;
 import megamek.common.units.AutomaticEjectionRules;
 import megamek.common.units.Entity;
@@ -438,6 +439,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private boolean checkNags() {
         Entity entity = currentEntity();
         if (entity == null || entity.getPosition() == null) {
+            return true;
+        }
+        if (entity instanceof AbstractBuildingEntity building
+              && !building.isDeploymentPositionAndFacingValid(entity.getPosition(), entity.getFacing(),
+                    entity.getElevation(), entity.getBoardId())) {
+            showCannotDeployHereMessage(entity.getPosition());
             return true;
         }
         if ((entity instanceof Dropship) && !entity.isAirborne()) {
@@ -890,6 +897,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
         }
 
+        if (finalFacing == -1) {
+            return null;
+        }
+        if (entity instanceof AbstractBuildingEntity building
+              && !building.isDeploymentPositionAndFacingValid(coords, finalFacing, finalElevation, board.getBoardId())) {
+            showCannotDeployHereMessage(coords);
+            return null;
+        }
         return new DeploymentPosition(finalElevation, finalFacing);
     }
 
@@ -1059,12 +1074,23 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.addToast(ToastLevel.ERROR, msg, currentEntity());
     }
 
-    private void processTurn(Entity entity, Coords coords) {
-        entity.setFacing(entity.getPosition().direction(coords));
+    void processTurn(Entity entity, Coords coords) {
+        if (coords.equals(entity.getPosition())) {
+            return;
+        }
+        int facing = entity.getPosition().direction(coords);
+        if (entity instanceof AbstractBuildingEntity building
+              && !building.isDeploymentPositionAndFacingValid(entity.getPosition(), facing,
+                    entity.getElevation(), entity.getBoardId())) {
+            clientgui.addToast(ToastLevel.WARNING, Messages.getString("DeploymentDisplay.buildingCannotRotate"), entity);
+            return;
+        }
+        entity.setFacing(facing);
         entity.setSecondaryFacing(entity.getFacing());
         clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(entity));
         clientgui.updateFiringArc(entity);
         clientgui.showSensorRanges(entity);
+        clientgui.boardViews().forEach(IBoardView::repaint);
         turnMode = false;
     }
 
@@ -1425,7 +1451,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      * @param facingOption  The FacingOption containing valid facings, or null if not applicable
      * @param currentFacing The entity's current facing
      *
-     * @return The chosen facing (0-5), or currentFacing if no selection was made
+     * @return The chosen facing (0-5), or -1 if the choice dialog was cancelled
      */
     private int promptForFacingIfNeeded(FacingOption facingOption, int currentFacing) {
         if (facingOption == null || !facingOption.hasValidFacings()) {
@@ -1443,7 +1469,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
 
         // Show facing choice dialog
-        int chosenFacing = showFacingChoiceDialog(facingOption);
-        return (chosenFacing != -1) ? chosenFacing : currentFacing;
+        return showFacingChoiceDialog(facingOption);
     }
 }

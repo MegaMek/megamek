@@ -1355,6 +1355,28 @@ public class WeaponHandler implements AttackHandler, Serializable {
               : shiftedClass;
     }
 
+    /** Infantry damage conversion applies only when the shot actually reaches the infantry. */
+    protected boolean usesConventionalInfantryDamage() {
+        return target.isConventionalInfantry() && !isTargetShieldedByCapitalBuilding();
+    }
+
+    /** External attacks hit the capital structure before any target-specific damage conversion. */
+    protected boolean isTargetShieldedByCapitalBuilding() {
+        if (!(target instanceof Entity entity) || game == null || !entity.isInBuilding()
+              || (toHit != null && toHit.getThruBldg() != null)) {
+            return false;
+        }
+        IBuilding building = game.getBuildingAt(target.getBoardLocation()).orElse(null);
+        return building != null && building.usesCapitalScale() && !isAttackFromInsideBuilding(building)
+              && !unitStickingOutOfBuilding(game.getHex(target.getPosition(), target.getBoardId()), entity);
+    }
+
+    private boolean isAttackFromInsideBuilding(IBuilding building) {
+        return building != null && attackingEntity != null
+              && attackingEntity.getBoardId() == building.getBoardId()
+              && building.isIn(attackingEntity.getPosition()) && attackingEntity.isInBuilding();
+    }
+
     /**
      * Calculate the damage per hit.
      *
@@ -1365,7 +1387,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         // Check for BA vs BA weapon effectiveness, if option is on
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BA_VS_BA)
-              && (target instanceof BattleArmor)) {
+              && (target instanceof BattleArmor) && !isTargetShieldedByCapitalBuilding()) {
             // We don't check to make sure the attacker is BA, as most weapons
             // will return their normal damage.
             toReturn = Compute.directBlowBADamage(toReturn,
@@ -1373,7 +1395,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
 
         // we default to direct fire weapons for anti-infantry damage
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             // Flechette ammo is treated "as though attack were from infantry unit" (TW p.208)
             // so it should NOT get the non-infantry vs mechanized damage bonus
             boolean isNonInfantryVsMechanized = ((Infantry) target).isMechanized()
@@ -1388,7 +1410,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             toReturn = Math.min(toReturn + (int) floor(toHit.getMoS() / 3.0), toReturn * 2);
         }
 
-        toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
+        toReturn = applyGlancingBlowModifier(toReturn, usesConventionalInfantryDamage());
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
               && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
@@ -1407,7 +1429,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
      *       nothing to it.
      */
     protected boolean targetIgnoresHeatWeaponDamage() {
-        return (target instanceof BattleArmor battleArmorTarget) && battleArmorTarget.isFireResistant();
+        return (target instanceof BattleArmor battleArmorTarget) && battleArmorTarget.isFireResistant()
+              && !isTargetShieldedByCapitalBuilding();
     }
 
     /**
@@ -1431,7 +1454,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     protected double applyPainShuntModifier(double damage) {
         if (!(target instanceof Infantry infantryTarget)
-              || !infantryTarget.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
+              || !infantryTarget.hasAbility(OptionsConstants.MD_PAIN_SHUNT) || isTargetShieldedByCapitalBuilding()) {
             return damage;
         }
 
@@ -1631,7 +1654,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         } else if (damageableCoverType == LosEffects.DAMAGABLE_COVER_BUILDING) {
             // Normal damage
             int nDamage = nDamPerHit * Math.min(nCluster, hits);
-            Vector<Report> buildingReport = gameManager.damageBuilding(coverBuilding, nDamage,
+            Vector<Report> buildingReport = damageBuilding(coverBuilding, nDamage,
                   " blocks the shot and takes ", coverLoc);
             for (Report report : buildingReport) {
                 report.subject = subjectId;
@@ -1806,13 +1829,18 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected int absorbBuildingDamage(int nDamage, Entity entityTarget, int bldgAbsorbs,
           Vector<Report> vPhaseReport, IBuilding bldg,
           boolean targetStickingOutOfBuilding) {
+        if (bldg != null && bldg.usesCapitalScale() && !targetStickingOutOfBuilding
+              && toHit.getThruBldg() == null && entityTarget.isInBuilding() && !isAttackFromInsideBuilding(bldg)) {
+            vPhaseReport.addAll(damageBuilding(bldg, nDamage, entityTarget.getPosition()));
+            return 0; // The building resolves fixed threshold damage to all occupants itself.
+        }
         // if the building will absorb some damage and the target is actually
         // entirely inside the building:
         if ((bldgAbsorbs > 0) && !targetStickingOutOfBuilding) {
             int toBldg = Math.min(bldgAbsorbs, nDamage);
             nDamage -= toBldg;
             Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = gameManager.damageBuilding(bldg, toBldg,
+            Vector<Report> buildingReport = damageBuilding(bldg, toBldg,
                   entityTarget.getPosition());
             for (Report report : buildingReport) {
                 report.subject = subjectId;
@@ -1829,7 +1857,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         } else if ((bldgAbsorbs < 0) && !targetStickingOutOfBuilding) {
             int toBldg = -bldgAbsorbs;
             Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = gameManager.damageBuilding(bldg, toBldg,
+            Vector<Report> buildingReport = damageBuilding(bldg, toBldg,
                   entityTarget.getPosition());
             for (Report report : buildingReport) {
                 report.subject = subjectId;
@@ -1903,7 +1931,16 @@ public class WeaponHandler implements AttackHandler, Serializable {
             vPhaseReport.addElement(r);
         }
         Report.addNewline(vPhaseReport);
-        Vector<Report> buildingReport = gameManager.damageBuilding(bldg, nDamage, coords);
+        Vector<Report> buildingReport = new Vector<>();
+        if (bldg != null && bldg.usesCapitalScale()) {
+            // A salvo contributes all damage to CF, but each hit/cluster tests the occupant threshold separately.
+            int clusterDamage = Math.max(1, nDamPerHit * calculateNumCluster());
+            for (int remaining = nDamage; remaining > 0; remaining -= Math.min(clusterDamage, remaining)) {
+                buildingReport.addAll(damageBuilding(bldg, Math.min(clusterDamage, remaining), coords));
+            }
+        } else {
+            buildingReport.addAll(damageBuilding(bldg, nDamage, coords));
+        }
         for (Report report : buildingReport) {
             report.subject = subjectId;
         }
@@ -1914,6 +1951,23 @@ public class WeaponHandler implements AttackHandler, Serializable {
             vPhaseReport.addAll(gameManager.damageInfantryIn(bldg, nDamage, coords,
                   weaponType.getInfantryDamageClass()));
         }
+    }
+
+    /** Route weapon damage with its attacker and scale, including handlers invoked outside the firing phase. */
+    protected Vector<Report> damageBuilding(IBuilding building, int damage, Coords coords) {
+        if (building == null || !building.usesCapitalScale()) {
+            return gameManager.damageBuilding(building, damage, coords);
+        }
+        return damageBuilding(building, damage, " absorbs ", coords);
+    }
+
+    protected Vector<Report> damageBuilding(IBuilding building, int damage, String why, Coords coords) {
+        if (building == null || !building.usesCapitalScale()) {
+            return gameManager.damageBuilding(building, damage, why, coords);
+        }
+        int standardDamage = weaponType.isCapital() ? damage * 10 : damage;
+        return gameManager.damageBuilding(building, standardDamage, why, coords, 0, attackingEntity,
+              isAttackFromInsideBuilding(building));
     }
 
     protected boolean allShotsHit() {

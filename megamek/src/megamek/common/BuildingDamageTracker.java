@@ -38,6 +38,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import megamek.common.board.BoardLocation;
@@ -60,7 +61,34 @@ public class BuildingDamageTracker implements Serializable {
     private int round = -1;
     private GamePhase phase;
 
-    private record DamageKey(int attackerId, int boardId, int buildingId, Coords coords) implements Serializable {}
+    // Use an ordinary class: save-game XStream cannot restore records without a dedicated converter.
+    private static final class DamageKey implements Serializable {
+        @Serial
+        private static final long serialVersionUID = 1L;
+
+        private final int attackerId;
+        private final int boardId;
+        private final int buildingId;
+        private final Coords coords;
+
+        private DamageKey(int attackerId, int boardId, int buildingId, Coords coords) {
+            this.attackerId = attackerId;
+            this.boardId = boardId;
+            this.buildingId = buildingId;
+            this.coords = coords;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            return other instanceof DamageKey key && attackerId == key.attackerId && boardId == key.boardId
+                  && buildingId == key.buildingId && Objects.equals(coords, key.coords);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(attackerId, boardId, buildingId, coords);
+        }
+    }
 
     private static class Remainders implements Serializable {
         @Serial

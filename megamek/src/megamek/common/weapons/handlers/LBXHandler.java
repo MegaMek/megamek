@@ -73,7 +73,7 @@ public class LBXHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             double toReturn = Compute.directBlowInfantryDamage(
                   weaponType.getDamage(), getInfantryDamageClassShift(),
                   resolveInfantryDamageClass(WeaponType.WEAPON_CLUSTER_BALLISTIC),
@@ -95,7 +95,7 @@ public class LBXHandler extends AmmoWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs can't mount LBXs
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             return 1;
         }
 

@@ -48,6 +48,7 @@ import megamek.MMConstants;
 import megamek.Version;
 import megamek.client.bot.AIType;
 import megamek.client.bot.princess.BehaviorSettings;
+import megamek.common.BuildingDamageTracker;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.IndustrialElevator;
@@ -202,6 +203,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /** Tracks ongoing woods clearing operations for chainsaws and dual saws. Serialized with game saves. */
     private WoodsClearingTracker woodsClearingTracker = new WoodsClearingTracker();
 
+    private BuildingDamageTracker buildingDamageTracker = new BuildingDamageTracker();
+
     /** Hex locations being cleared by saws, mapped to turns remaining. For board view rendering. */
     private Map<BoardLocation, Integer> hexesBeingCut = new HashMap<>();
     private Vector<AttackHandler> attacks = new Vector<>();
@@ -325,9 +328,15 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         processGameEvent(new GameBoardChangeEvent(this));
     }
 
-    /**
-     * Returns the woods clearing tracker for this game. Serialized with game saves.
-     */
+    /** Lazily initialized for saves made before capital building damage was supported. */
+    public BuildingDamageTracker getBuildingDamageTracker() {
+        if (buildingDamageTracker == null) {
+            buildingDamageTracker = new BuildingDamageTracker();
+        }
+        return buildingDamageTracker;
+    }
+
+    /** Returns the woods clearing tracker for this game. Serialized with game saves. */
     public WoodsClearingTracker getWoodsClearingTracker() {
         if (woodsClearingTracker == null) {
             woodsClearingTracker = new WoodsClearingTracker();
@@ -1615,6 +1624,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     @Override
     public synchronized void reset() {
+        getBuildingDamageTracker().clear();
         super.reset();
         uuid = UUID.randomUUID();
 

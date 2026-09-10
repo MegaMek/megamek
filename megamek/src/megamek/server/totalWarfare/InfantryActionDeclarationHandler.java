@@ -57,7 +57,6 @@ import megamek.server.totalWarfare.InfantryActionTracker.InfantryAction;
 class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
     private static final MMLogger LOGGER = MMLogger.create(InfantryActionDeclarationHandler.class);
 
-    private static final int NO_DEFENDERS = 5645;
     /** A unit joining an action already running, on the attackers' side. */
     private static final int REINFORCES_ATTACKERS = 5640;
     /** A unit joining an action already running, on the defenders' side. */
@@ -203,25 +202,16 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
      * unit its owner has already committed; the attacker's committed units attack.
      */
     private void initiate(Player player, AbstractBuildingEntity building, List<Infantry> attackers) {
+        // The building itself anchors the defence, crew or no crew: with nobody committed to it, it scores nothing
+        // and falls at the End Phase (an undefended target is simply taken)
         List<Entity> defenders = new ArrayList<>();
-        if (InfantryActionStrengths.hasCrewToDefend(building)) {
-            defenders.add(building);
-        }
+        defenders.add(building);
         for (Infantry inside : InfantryActionStrengths.enemyInfantryInside(getGame(), player, building)) {
             boolean committedToDefend = (inside.getInfantryCombatTargetId() == building.getId())
                   && !inside.isInfantryCombatAttacker();
             if (committedToDefend) {
                 defenders.add(inside);
             }
-        }
-        if (defenders.isEmpty()) {
-            Report report = new Report(NO_DEFENDERS);
-            report.add(building.getDisplayName());
-            report.subject = attackers.getFirst().getId();
-            addReport(report);
-            LOGGER.info("[InfantryAction] {} cannot start an action in {}: nobody defends it", player.getName(),
-                  building.getShortName());
-            return;
         }
         tracker.addCombat(building.getId(), attackers.getFirst(), defenders.getFirst());
         for (int index = 1; index < attackers.size(); index++) {

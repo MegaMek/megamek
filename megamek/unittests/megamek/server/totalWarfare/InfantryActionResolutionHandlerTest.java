@@ -34,6 +34,7 @@ package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -41,6 +42,7 @@ import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
+import megamek.common.compute.InfantryActionStrengths;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
@@ -53,6 +55,7 @@ import megamek.common.units.Entity;
 import megamek.server.totalWarfare.InfantryActionTracker.InfantryAction;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -221,6 +224,31 @@ class InfantryActionResolutionHandlerTest {
         assertEquals(0, building.getCrew().getCurrentSize(), "the uncommitted crew surrender");
         assertTrue(building.getCrew().isDoomed());
         assertFalse(tracker.hasCombat(building.getId()), "the action is over");
+    }
+
+    @Test
+    @DisplayName("When the building is captured, the owner's infantry inside that never fought surrender")
+    void uncommittedInfantryInsideSurrenderWithTheBuilding() {
+        ConvInfantry attackerOne = platoon(attackingPlayer);
+        ConvInfantry attackerTwo = platoon(attackingPlayer);
+        ConvInfantry defender = platoon(defendingPlayer);
+        ConvInfantry heldBack = platoon(defendingPlayer);
+        InfantryAction combat = startCombat(attackerOne, defender);
+        tracker.addReinforcement(building.getId(), attackerTwo, true);
+        // This class's building has its one hex away from the anchor, so its footprint is never laid out on the
+        // board; give it an anchor hex and lay it out, so "inside" means something here
+        building.getInternalBuilding().addHex(CubeCoords.ZERO, 50, 10, BasementType.UNKNOWN, false);
+        building.refreshLocations();
+        building.refreshAdditionalLocations();
+        building.setPosition(BUILDING_HEX);
+        assertTrue(InfantryActionStrengths.isInside(heldBack, building), "precondition: the platoon is inside");
+
+        // 2 to 1 column, roll of 10: 25%/E (P), the defenders are eliminated and the building captured
+        new InfantryActionResolutionHandler(gameManager, tracker).resolve(combat, 10);
+
+        assertTrue(heldBack.isCaptured(), "the platoon that sat out the fight surrenders");
+        assertNull(game.getEntity(heldBack.getId()), "and leaves play");
+        assertFalse(attackerOne.isCaptured(), "the attackers inside are not touched");
     }
 
     @Test

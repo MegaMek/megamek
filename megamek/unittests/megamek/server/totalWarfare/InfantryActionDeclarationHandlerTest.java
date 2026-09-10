@@ -248,6 +248,20 @@ class InfantryActionDeclarationHandlerTest {
     }
 
     @Test
+    @DisplayName("An attack on a building with no crew and no defending infantry still starts, so it can fall")
+    void undefendedBuildingIsStillAttacked() {
+        building.getCrew().setSize(0);
+        building.getCrew().setCurrentSize(0);
+        ConvInfantry attacker = platoon(attackingPlayer, 1, HEX_A);
+
+        attackerDeclares(List.of(attacker.getId()), false);
+
+        var combat = tracker.getCombat(building.getId());
+        assertNotNull(combat, "the action exists; the End Phase finds nobody defending and the building falls");
+        assertEquals(List.of(building.getId()), combat.defenderIds);
+    }
+
+    @Test
     @DisplayName("A declaration made when it is not the player's turn is refused")
     void outOfTurnIsRefused() {
         ConvInfantry attacker = platoon(attackingPlayer, 1, HEX_A);

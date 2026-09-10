@@ -44,13 +44,16 @@ import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.InfantryActionStrengths;
 import megamek.common.compute.InfantryCombatCasualties;
 import megamek.common.compute.InfantryCombatTables;
 import megamek.common.compute.MarinePointsScoreCalculator;
+import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
 import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.InfantryActionTracker.InfantryAction;
@@ -208,7 +211,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
             LOGGER.info("[InfantryAction] {}: the attackers are gone", building.getShortName());
             cleanupCombat(combat);
         } else if (defendersGone) {
-            captureBuilding(building);
+            captureBuilding(combat, building);
             cleanupCombat(combat);
         } else if (result.isAttackerRepulsed()) {
             reportSideRepulsed(combat);
@@ -380,6 +383,8 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
     /** The attackers had nobody left to make the roll. */
     private static final int ATTACKERS_ELIMINATED = 5636;
     private static final int BUILDING_FALLS = 5665;
+    /** A unit inside a fallen or captured building that never joined the fight surrenders. */
+    private static final int SURRENDERS = 5717;
     /** A unit is moved out of the building after a withdrawal or a repulse. */
     private static final int MOVES_OUT = 5666;
     /** Report ids 5647 and 5648 are the "lose everything" versions of 5642 and 5643. */
@@ -442,30 +447,57 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         addReport(report);
     }
 
-    /** The defenders committed nothing: the building falls to the attackers and its crew surrenders. */
+    /** The defenders committed nothing: the building falls to the attackers and everyone left inside surrenders. */
     private void reportBuildingFalls(InfantryAction combat, AbstractBuildingEntity building) {
         Report report = new Report(BUILDING_FALLS);
         report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
         report.addDesc(building);
         addReport(report);
-        surrenderCrew(building);
+        surrenderEveryoneLeft(combat, building);
         LOGGER.info("[InfantryAction] {} falls: nothing was committed to its defence", building.getShortName());
         cleanupCombat(combat);
     }
 
     /**
-     * The defenders' Marine Points are at zero: the building is captured, and the crew who were not committed
-     * surrender with it (TO:AR p. 172, the Castles Brian example).
+     * The defenders' Marine Points are at zero: the building is captured, and everyone left inside who was not in
+     * the fight surrenders with it (TO:AR p. 172, the Castles Brian example).
      */
-    private void captureBuilding(AbstractBuildingEntity building) {
-        surrenderCrew(building);
+    private void captureBuilding(InfantryAction combat, AbstractBuildingEntity building) {
+        surrenderEveryoneLeft(combat, building);
         LOGGER.info("[InfantryAction] {} is captured: its defenders are at zero Marine Points",
               building.getShortName());
     }
 
-    private static void surrenderCrew(AbstractBuildingEntity building) {
+    /**
+     * The crew who were not committed and the owner's infantry inside that never joined the fight surrender: the
+     * crew are gone from the building, and the infantry leave play as captured units.
+     */
+    private void surrenderEveryoneLeft(InfantryAction combat, AbstractBuildingEntity building) {
         building.getCrew().setCurrentSize(0);
         building.getCrew().setDoomed(true);
+        for (Entity entity : new ArrayList<>(getGame().getEntitiesVector())) {
+            boolean uncommittedDefender = (entity instanceof Infantry)
+                  && !InfantryActionReporter.isOutOfTheFight(entity)
+                  && !combat.attackerIds.contains(entity.getId())
+                  && InfantryActionStrengths.defends(entity.getOwner(), building)
+                  && InfantryActionStrengths.isInside(entity, building);
+            if (uncommittedDefender) {
+                surrender(entity);
+            }
+        }
+    }
+
+    private void surrender(Entity entity) {
+        Report report = new Report(SURRENDERS);
+        report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
+        report.subject = entity.getId();
+        report.addDesc(entity);
+        addReport(report);
+        entity.clearInfantryCombatState();
+        entity.setCaptured(true);
+        getGame().removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_CAPTURED);
+        gameManager.send(gameManager.createRemoveEntityPacket(entity.getId(), IEntityRemovalConditions.REMOVE_CAPTURED));
+        LOGGER.info("[InfantryAction] {} surrenders with the building", entity.getShortName());
     }
 
     /**

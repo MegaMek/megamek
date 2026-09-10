@@ -1580,7 +1580,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCargo());
         EquipmentType.addType(MiscType.createLiquidCargo());
         EquipmentType.addType(MiscType.createCargoContainer());
-        // Specialized repair kits (CamOps)
+        // Specialized repair kits (ATOW)
         EquipmentType.addType(MiscType.createAerospaceRepairKit());
         EquipmentType.addType(MiscType.createBionicMaintenanceKit());
         EquipmentType.addType(MiscType.createCuttingJoiningKit());
@@ -1589,7 +1589,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createMyomerActuatorRepairKit());
         EquipmentType.addType(MiscType.createVehicleRepairKit());
         EquipmentType.addType(MiscType.createWeaponRepairKit());
-        // Support gear (CamOps): diagnostic scanners, toolkits, lock-pick/security-bypass sets, espionage gear
+        // Support gear (ATOW): diagnostic scanners, toolkits, lock-pick/security-bypass sets, espionage gear
         EquipmentType.addType(MiscType.createDescartesMkXXI());
         EquipmentType.addType(MiscType.createDescartesMkXXV());
         EquipmentType.addType(MiscType.createScanalyzer());

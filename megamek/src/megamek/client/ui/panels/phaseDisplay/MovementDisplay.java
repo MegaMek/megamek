@@ -1235,7 +1235,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private void updateMove(boolean redrawMovement) {
         Entity currentEntity = currentEntity();
-        if (redrawMovement && (currentEntity != null) && currentEntity.isDeployed()) {
+        if (redrawMovement &&
+            (currentEntity != null) &&
+            currentEntity.isDeployed() &&
+            currentEntity.getPosition() != null &&
+            currentEntity.getBoardId() != Entity.NONE) {
             clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
         }
 
@@ -1315,13 +1319,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 clientgui.getClient().sendUpdateEntity(currentEntity);
                 // Recompile the path with the chosen level count
                 cmd.compile(game, currentEntity);
-                if (redrawMovement) {
+                if (redrawMovement && currentEntity.getPosition() != null) {
                     clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
                 }
             } else {
                 // Cancelled - remove the climbing step
                 cmd.removeLastStep();
-                if (redrawMovement) {
+                if (redrawMovement && currentEntity.getPosition() != null) {
                     clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
                 }
             }
@@ -1518,7 +1522,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     if (!isRoutedAround) {
                         cmd.removeLastStep();
                     }
-                    if (redrawMovement) {
+                    if (redrawMovement && currentEntity.getPosition() != null) {
                         clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
                     }
                 }
@@ -1584,7 +1588,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     if (!clientgui.doYesNoDialog(
                             Messages.getString("MovementDisplay.ClimbingDialog.title"), warning)) {
                         cmd.removeLastStep();
-                        if (redrawMovement) {
+                        if (redrawMovement && currentEntity.getPosition() != null) {
                             clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
                         }
                     }
@@ -2114,9 +2118,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // clear board cursors
             clientgui.getBoardView(currentEntity()).select(cmd.getFinalCoords());
             clientgui.getBoardView(currentEntity()).cursor(cmd.getFinalCoords());
-            clientgui.getBoardView(currentEntity()).drawMovementData(currentlySelectedEntity, cmd);
-            clientgui.updateFiringArc(currentlySelectedEntity);
-            clientgui.showSensorRanges(currentlySelectedEntity, cmd.getFinalCoords());
+            if (currentlySelectedEntity.getPosition() != null) {
+                clientgui.getBoardView(currentEntity()).drawMovementData(currentlySelectedEntity, cmd);
+                clientgui.updateFiringArc(currentlySelectedEntity);
+                clientgui.showSensorRanges(currentlySelectedEntity, cmd.getFinalCoords());
+            }
 
             // FIXME what is this
             // Set the button's label to "Done" if the entire move is impossible.

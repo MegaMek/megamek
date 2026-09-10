@@ -196,8 +196,10 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         if (withdrawing) {
             reportWithdrawal(attackerPercent, defenderPercent);
         }
-        reporter.reportSideLosses(true, attackerLosses);
-        reporter.reportSideLosses(false, defenderLosses);
+        List<Entity> everyone = new ArrayList<>(attackers.units());
+        everyone.addAll(defenders.units());
+        reporter.reportSideLosses(true, attackerLosses, everyone);
+        reporter.reportSideLosses(false, defenderLosses, everyone);
         applySideLosses(combat, true, attackerLosses);
         applySideLosses(combat, false, defenderLosses);
         checkAndApplyStructureDamage(building);

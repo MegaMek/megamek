@@ -232,8 +232,9 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
      *
      * @param attackers {@code true} for the attackers' line, {@code false} for the defenders'
      * @param losses    the side's planned losses
+     * @param company   every unit named in the action, both sides, so the short names tell them apart
      */
-    void reportSideLosses(boolean attackers, InfantryActionSideLosses losses) {
+    void reportSideLosses(boolean attackers, InfantryActionSideLosses losses, List<Entity> company) {
         List<Report> line = new ArrayList<>();
         boolean lostEverything = (losses.ownStrength() > 0) && (losses.marinePointsLost() >= losses.ownStrength());
         Report head;
@@ -262,7 +263,7 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
                 line.add(new Report(SEPARATOR));
             }
             first = false;
-            line.add(unitLossFragment(loss, losses));
+            line.add(unitLossFragment(loss, losses, company));
         }
         if ((casualties == 0) && !losses.units().isEmpty()) {
             line.add(new Report(TOO_SMALL_FOR_ANYONE));
@@ -270,15 +271,13 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
         addLine(line);
     }
 
-    private static Report unitLossFragment(InfantryActionSideLosses.UnitLoss loss, InfantryActionSideLosses losses) {
+    private static Report unitLossFragment(InfantryActionSideLosses.UnitLoss loss, InfantryActionSideLosses losses,
+          List<Entity> company) {
         double share = (losses.ownStrength() <= 0) ? 0
               : ((double) loss.headCount() * losses.marinePointsLost()) / losses.ownStrength();
-        List<Entity> sideUnits = losses.units().stream()
-              .map(InfantryActionSideLosses.UnitLoss::entity)
-              .toList();
         Report fragment = new Report(loss.isCrew() ? CREW_LOSS : TROOPER_LOSS);
         fragment.subject = loss.entity().getId();
-        fragment.addEntityName(loss.entity(), InfantryActionNarrator.storyName(loss.entity(), sideUnits));
+        fragment.addEntityName(loss.entity(), InfantryActionNarrator.storyName(loss.entity(), company));
         fragment.add(number(share));
         fragment.add(loss.headCount());
         return fragment;

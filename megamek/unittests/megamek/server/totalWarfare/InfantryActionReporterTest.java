@@ -224,7 +224,7 @@ class InfantryActionReporterTest {
               new InfantryActionSideLosses.UnitLoss(rifles, 28, 3, false),
               new InfantryActionSideLosses.UnitLoss(elementals, 5, 0, false)));
 
-        reporter.reportSideLosses(true, losses);
+        reporter.reportSideLosses(true, losses, List.of());
 
         assertEquals(List.of(InfantryActionReporter.ATTACKERS_LOSE, InfantryActionReporter.CASUALTIES,
               InfantryActionReporter.TROOPER_LOSS, InfantryActionReporter.SEPARATOR,
@@ -243,7 +243,7 @@ class InfantryActionReporterTest {
         InfantryActionSideLosses losses = new InfantryActionSideLosses(5, 83,
               List.of(new InfantryActionSideLosses.UnitLoss(rifles, 28, 1, false)));
 
-        reporter.reportSideLosses(false, losses);
+        reporter.reportSideLosses(false, losses, List.of());
 
         assertEquals(List.of(InfantryActionReporter.DEFENDERS_LOSE, InfantryActionReporter.ONE_CASUALTY,
               InfantryActionReporter.TROOPER_LOSS), reportIds());
@@ -254,9 +254,9 @@ class InfantryActionReporterTest {
     void nobodyLostAndEverythingLost() {
         BattleArmor elementals = elementalPoint(attackingPlayer, 2);
         reporter.reportSideLosses(true, new InfantryActionSideLosses(2, 83,
-              List.of(new InfantryActionSideLosses.UnitLoss(elementals, 5, 0, false))));
+              List.of(new InfantryActionSideLosses.UnitLoss(elementals, 5, 0, false))), List.of());
         reporter.reportSideLosses(false, new InfantryActionSideLosses(21, 21,
-              List.of(new InfantryActionSideLosses.UnitLoss(building, 3, 3, true))));
+              List.of(new InfantryActionSideLosses.UnitLoss(building, 3, 3, true))), List.of());
 
         assertEquals(List.of(InfantryActionReporter.ATTACKERS_LOSE, InfantryActionReporter.NO_CASUALTIES,
               InfantryActionReporter.TROOPER_LOSS, InfantryActionReporter.TOO_SMALL_FOR_ANYONE,

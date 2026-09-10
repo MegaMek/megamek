@@ -34,8 +34,8 @@
 package megamek.server.totalWarfare;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
@@ -210,6 +210,10 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                     collapsePreEndPlayerWideTurns();
                 }
                 gameManager.determineTurnOrder(phase);
+                if (phase.isPreEndDeclarations()) {
+                    // The book asks the attacker first and the defender answers; initiative alone may not
+                    InfantryActionTurnOrder.putAttackersFirst(gameManager.getGame());
+                }
                 if (phase.isDeployment()) {
                     // "my units never got a deployment turn" has several causes that look identical on the map, and
                     // none of them say anything; this is what tells them apart

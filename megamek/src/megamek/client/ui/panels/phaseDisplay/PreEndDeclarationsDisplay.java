@@ -54,6 +54,7 @@ import megamek.client.ui.dialogs.phaseDisplay.VariableRangeTargetingDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.common.Player;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.InfantryActionStrengths;
 import megamek.common.equipment.BridgeLayerLogic;
@@ -129,6 +130,8 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * end-turn button to read "Done" instead of "Skip Turn" - otherwise the player gets no sign the declaration took.
      */
     private boolean declarationMade;
+    /** The last state the Infantry Action button was set to, so the log records changes and not every refresh. */
+    private boolean infantryActionOffered;
 
     /**
      * Sets the current target and updates button states
@@ -346,7 +349,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     private boolean declareFor(Player localPlayer, AbstractBuildingEntity building) {
         var dialog = new InfantryActionDeclarationDialog(clientgui.getFrame(), game, localPlayer, building);
         boolean confirmed = dialog.showDialog() == DialogResult.CONFIRMED;
-        LOGGER.debug("[InfantryAction] dialog for {}: {}", building.getShortName(),
+        LOGGER.info("[PreEnd] dialog for {}: {}", building.getShortName(),
               confirmed ? dialog.getDeclaration() : "cancelled");
         if (confirmed && dialog.declaresAnything()) {
             clientgui.getClient().sendInfantryActionDeclaration(dialog.getDeclaration());
@@ -356,34 +359,53 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     }
 
     /**
-     * When the turn begins with the player's building already under an infantry attack, asks whether they want to
-     * respond, and opens the defence dialog for it if they do. A building nothing is committed to falls (TO:AR
-     * p. 172), so the question says so. Declining leaves the button and the skip-turn check as they were.
+     * When the turn begins with an infantry action to decide on, asks the player about it and opens the dialog if
+     * they say yes: an attacker whose infantry stand inside an enemy building is asked whether to start the action,
+     * or to reinforce one already under way; a defender whose building is under attack is asked whether to respond,
+     * and told that a building nothing is committed to falls (TO:AR p. 172). Declining leaves the button and the
+     * skip-turn check as they were.
      */
-    private void offerDefenceOfAttackedBuildings() {
+    private void offerDeclarations() {
         Player localPlayer = clientgui.getClient().getLocalPlayer();
         boolean declared = false;
         for (AbstractBuildingEntity building : InfantryActionStrengths.stakes(game, localPlayer)) {
-            boolean underAttack = InfantryActionStrengths.defends(localPlayer, building)
-                  && InfantryActionStrengths.hasActionRunning(game, building);
-            if (!underAttack) {
+            String promptKey = promptFor(localPlayer, building);
+            if (promptKey == null) {
                 continue;
             }
-            LOGGER.debug("[InfantryAction] {} is under attack; asking {} whether to respond",
-                  building.getShortName(), localPlayer.getName());
-            String title = Messages.getString("PreEndDeclarationsDisplay.underAttack.title");
-            String body = Messages.getString("PreEndDeclarationsDisplay.underAttack.message",
+            LOGGER.info("[PreEnd] {}: asking {} ({})", building.getShortName(), localPlayer.getName(), promptKey);
+            String title = Messages.getString("PreEndDeclarationsDisplay." + promptKey + ".title");
+            String body = Messages.getString("PreEndDeclarationsDisplay." + promptKey + ".message",
                   building.getDisplayName());
             if (clientgui.doYesNoDialog(title, body)) {
                 declared |= declareFor(localPlayer, building);
             } else {
-                LOGGER.debug("[InfantryAction] {} declined to respond for {}", localPlayer.getName(),
+                LOGGER.info("[PreEnd] {} declined the {} prompt for {}", localPlayer.getName(), promptKey,
                       building.getShortName());
             }
         }
         if (declared) {
             registerDeclaration("PreEndDeclarationsDisplay.declared.infantryAction");
         }
+    }
+
+    /**
+     * Which question, if any, the player is asked about a building at the start of their turn.
+     *
+     * @return the message key stem, or {@code null} when there is nothing to ask
+     */
+    private @Nullable String promptFor(Player localPlayer, AbstractBuildingEntity building) {
+        boolean running = InfantryActionStrengths.hasActionRunning(game, building);
+        if (InfantryActionStrengths.defends(localPlayer, building)) {
+            return running ? "underAttack" : null;
+        }
+        boolean unengagedInside = !InfantryActionStrengths.unengagedFriendlyInfantryInside(game, localPlayer,
+              building).isEmpty();
+        if (!unengagedInside) {
+            // Only engaged units: withdrawing is a deliberate choice made from the button, not a prompt
+            return null;
+        }
+        return running ? "reinforce" : "startAttack";
     }
 
     /** Whether the local player has an infantry action to declare for anywhere on the board. */
@@ -567,6 +589,11 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
 
         // Infantry actions are player-wide: one declaration per building the player has a stake in
         boolean canInitiate = isMyTurn() && hasInfantryActionStake() && !declarationMade;
+        if (canInitiate != infantryActionOffered) {
+            infantryActionOffered = canInitiate;
+            LOGGER.info("[PreEnd] Infantry Action button {}: myTurn={}, stake={}, declarationMade={}",
+                  canInitiate ? "enabled" : "disabled", isMyTurn(), hasInfantryActionStake(), declarationMade);
+        }
         setInfantryActionEnabled(canInitiate);
         updateDonePanel();
 
@@ -809,7 +836,12 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      */
     private void beginMyTurn() {
         declarationMade = false;
-        LOGGER.debug("[PreEnd] pre-end declarations turn begins for the local player");
+        Player localPlayer = clientgui.getClient().getLocalPlayer();
+        LOGGER.info("[PreEnd] {}'s declaration turn begins; infantry action stakes: {}", localPlayer.getName(),
+              InfantryActionStrengths.stakes(game, localPlayer).stream()
+                    .map(building -> (InfantryActionStrengths.defends(localPlayer, building) ? "defends "
+                          : "attacks ") + building.getShortName())
+                    .toList());
         clientgui.maybeShowUnitDisplay();
         setTarget(null);
         selectingDeployBridgeHex = false;
@@ -827,7 +859,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         LOGGER.debug("[PreEnd] beginMyTurn complete: currentEntity={}, butDoneEnabled={}, butSkipEnabled={}",
               currentEntity, butDone.isEnabled(), butSkipTurn.isEnabled());
         // After the turn's buttons are settled, so the player can still act from the button if they say no
-        SwingUtilities.invokeLater(this::offerDefenceOfAttackedBuildings);
+        SwingUtilities.invokeLater(this::offerDeclarations);
     }
 
     /**

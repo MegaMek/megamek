@@ -158,6 +158,8 @@ public abstract class TestEntity implements TestEntityOption {
             testEntity = new TestBattleArmor((BattleArmor) unit, entityVerifier.baOption, null);
         } else if (unit.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
             testEntity = new TestInfantry((ConvInfantry) unit, entityVerifier.infOption, null);
+        } else if (unit instanceof BuildingEntity building) {
+            testEntity = new TestBuilding(building, entityVerifier.tankOption, null);
         }
         return testEntity;
     }

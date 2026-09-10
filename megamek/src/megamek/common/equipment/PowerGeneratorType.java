@@ -85,6 +85,11 @@ public class PowerGeneratorType extends MiscType {
     }
 
     @Override
+    public Double variableStepSize() {
+        return 1.0;
+    }
+
+    @Override
     public double getTonnage(Entity entity, int location, double size, RoundWeight defaultRounding) {
         return size;
     }

@@ -354,10 +354,12 @@ public class BLKFile {
                         } else if (t instanceof AbstractBuildingEntity) {
                             mount.setFacing(facing);
                         }
-                        if (shots > 0) {
+                        if (shots > 0 || (shots == 0 && t instanceof AbstractBuildingEntity)) {
                             mount.setOriginalShots(shots);
                             mount.setShotsLeft(shots);
-                            mount.setSize(shots);
+                            if (!(t instanceof AbstractBuildingEntity)) {
+                                mount.setSize(shots);
+                            }
                         }
                         if (etype instanceof MiscType && mount.getType().hasFlag(MiscType.F_LIFT_HOIST)) { //
                             // Cargo
@@ -974,17 +976,12 @@ public class BLKFile {
         for (Mounted<?> m : t.getEquipment()) {
             // Ignore Mounted's that represent a WeaponGroup
             // BA anti-personnel weapon are written just after the mount
-            if (m.isWeaponGroup() || m.isAPMMounted() || (m.getType() instanceof InfantryAttack)) {
+            if (isImplicitEquipment(m)) {
                 continue;
             }
 
             // Infantry primary and secondary are written separately
             if (t.isConventionalInfantry() && m.getType() instanceof InfantryWeapon) {
-                continue;
-            }
-
-            // Ignore ammo for one-shot launchers
-            if ((m.getLinkedBy() != null) && (m.getLinkedBy().isOneShot())) {
                 continue;
             }
 
@@ -1247,6 +1244,9 @@ public class BLKFile {
 
                 blk.writeBlockData("coords",
                       abstractBuildingEntity.getInternalBuilding().getCoordsList().toArray(new CubeCoords[0]));
+                if (abstractBuildingEntity instanceof BuildingEntity buildingEntity) {
+                    BuildingDesignCodec.write(blk, buildingEntity);
+                }
             }
             default -> blk.writeBlockData("tonnage", t.getWeight());
         }
@@ -1456,6 +1456,12 @@ public class BLKFile {
         return quirk.getName();
     }
 
+    /** Entries recreated by their parent mount or written outside the ordinary location equipment list. */
+    static boolean isImplicitEquipment(Mounted<?> mount) {
+        return mount.isWeaponGroup() || mount.isAPMMounted() || mount.getType() instanceof InfantryAttack
+              || (mount.getLinkedBy() != null && mount.getLinkedBy().isOneShot());
+    }
+
     private static String encodeEquipmentLine(Mounted<?> m) {
         String name = m.getType().getInternalName();
         if (m.getEntity() instanceof AbstractBuildingEntity) {
@@ -1508,7 +1514,8 @@ public class BLKFile {
         }
         // For BattleArmor and ProtoMeks, we need to save how many shots are in this
         // location, but they have different formats, yay!
-        if ((m.getEntity() instanceof BattleArmor || m.getEntity() instanceof HandheldWeapon) &&
+        if ((m.getEntity() instanceof BattleArmor || m.getEntity() instanceof HandheldWeapon
+              || m.getEntity() instanceof AbstractBuildingEntity) &&
               (m.getType() instanceof AmmoType)) {
             name += ":Shots" + m.getBaseShotsLeft() + "#";
         } else if (m.getEntity() instanceof ProtoMek && (m.getType() instanceof AmmoType)) {

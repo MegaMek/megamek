@@ -157,6 +157,10 @@ public enum StructureEngine implements Serializable {
         return buildingWeightMultiplier;
     }
 
+    public double getBuildingDailyFuelWeight() {
+        return buildingDailyFuelWeight;
+    }
+
     public double getBaseCost() {
         return baseCost;
     }

@@ -500,12 +500,7 @@ public class Building implements Serializable {
      * Returns a string representation of the given building class, e.g. "Hangar".
      */
     public static String className(int bldgClass) {
-        return switch (bldgClass) {
-            case IBuilding.HANGAR -> "Hangar";
-            case IBuilding.FORTRESS -> "Fortress";
-            case IBuilding.GUN_EMPLACEMENT -> "Gun Emplacement";
-            default -> "Building";
-        };
+        return IBuilding.className(bldgClass);
     }
 
     @Override

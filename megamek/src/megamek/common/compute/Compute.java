@@ -7385,6 +7385,9 @@ public class Compute {
      * @return The number of required gunners
      */
     public static int getTotalGunnerNeeds(Entity entity) {
+        if (entity instanceof BuildingEntity building) {
+            return BuildingConstruction.crew(building).gunners();
+        }
         if (entity.hasDroneOs()) {
             return 0;
         }
@@ -7516,6 +7519,10 @@ public class Compute {
      * @return The number of additional non-gunner crew required for the given unit
      */
     public static int getAdditionalNonGunner(Entity entity) {
+        if (entity instanceof BuildingEntity building) {
+            var crew = BuildingConstruction.crew(building);
+            return crew.crew() + crew.officers();
+        }
         if (entity.hasDroneOs()) {
             return 0;
         }
@@ -7620,6 +7627,9 @@ public class Compute {
 
     // Taken from MekHQ, assumptions are whatever Taharqa made for there - Dylan
     public static int getFullCrewSize(Entity entity) {
+        if (entity instanceof BuildingEntity building) {
+            return BuildingConstruction.crew(building).total();
+        }
         if (entity.hasDroneOs()) {
             return 0;
         }

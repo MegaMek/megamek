@@ -37,7 +37,6 @@ import megamek.common.board.CubeCoords;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.Engine;
-import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.util.BuildingBlock;
@@ -66,7 +65,7 @@ public class BLKStructureFile extends BLKFile implements IMekLoader {
         int buildingClass = dataFile.getDataAsInt("building_class")[0];
 
 
-        AbstractBuildingEntity be = new BuildingEntity(buildingType, buildingClass);
+        BuildingEntity be = new BuildingEntity(buildingType, buildingClass);
         setBasicEntityData(be);
 
         // Buildings don't use engines.
@@ -81,19 +80,24 @@ public class BLKStructureFile extends BLKFile implements IMekLoader {
             throw new EntityLoadingException("Could not find cf block.");
         }
         int cf = dataFile.getDataAsInt("cf")[0];
-        be.setInternal(cf, 0);
 
 
         if (!dataFile.exists("armor")) {
             throw new EntityLoadingException("Could not find armor block.");
         }
         int armor = dataFile.getDataAsInt("armor")[0];
-        be.initializeArmor(armor, 0);
 
         if (!dataFile.exists("coords")) {
             throw new EntityLoadingException("Could not find coords block.");
         }
-        for (CubeCoords coords : dataFile.getDataAsCubeCoords("coords")) {
+        if (be.getInternalBuilding().getBuildingHeight() < 1) {
+            throw new EntityLoadingException("Building height must be positive.");
+        }
+        CubeCoords[] coordinates = dataFile.getDataAsCubeCoords("coords");
+        if (coordinates.length == 0) {
+            throw new EntityLoadingException("A building needs at least one hex.");
+        }
+        for (CubeCoords coords : coordinates) {
             be.getInternalBuilding().addHex(coords, cf, armor, BasementType.NONE, false);
         }
 
@@ -124,6 +128,9 @@ public class BLKStructureFile extends BLKFile implements IMekLoader {
                 loadEquipment(be, equipmentBlockName, loc);
             }
         }
+
+        addTransports(be);
+        BuildingDesignCodec.read(dataFile, be);
 
         // Reset our armor type & tech level now that we have all our locations set up
         be.recalculateTechAdvancement();

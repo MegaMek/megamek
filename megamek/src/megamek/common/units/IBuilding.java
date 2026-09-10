@@ -68,8 +68,12 @@ public interface IBuilding extends Serializable {
     int HANGAR = 1;
     int FORTRESS = 2;
     int GUN_EMPLACEMENT = 3;
-    // TODO: leaving out Castles Brian until issues with damage scaling are resolved
-    // public static final int CASTLE_BRIAN = 3;
+    // Append new classes: these values are also stored in existing BLK files.
+    int CASTLE_BRIAN = 4;
+    int TENT = 5;
+    int WALL = 6;
+    int FENCE = 7;
+    int BRIDGE = 8;
 
     static int currentId(Board board, Coords coords) {
         if (board != null && coords != null) {
@@ -261,6 +265,11 @@ public interface IBuilding extends Serializable {
             case IBuilding.HANGAR -> "Hangar";
             case IBuilding.FORTRESS -> "Fortress";
             case IBuilding.GUN_EMPLACEMENT -> "Gun Emplacement";
+            case IBuilding.CASTLE_BRIAN -> "Castles Brian";
+            case IBuilding.TENT -> "Tent";
+            case IBuilding.WALL -> "Wall";
+            case IBuilding.FENCE -> "Fence";
+            case IBuilding.BRIDGE -> "Bridge";
             default -> "Building";
         };
     }

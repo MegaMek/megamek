@@ -72,7 +72,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     private static final MMLogger logger = MMLogger.create(AbstractBuildingEntity.class);
 
-    private final Building building;
+    private Building building;
     /**
      * Relative {@link CubeCoords} -> actual board {@link Coords}
      */
@@ -117,6 +117,71 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     @Override
     public Building getInternalBuilding() {
         return building;
+    }
+
+    /**
+     * Changes an undamaged building's construction, retaining equipment at its hex and level. Equipment whose hex or
+     * level is removed becomes unallocated. This is a construction operation, not a way to apply combat damage.
+     */
+    public void configureConstruction(BuildingType type, int buildingClass, int levels, int cf, int armor,
+          List<CubeCoords> coordinates) {
+        configureConstruction(type, buildingClass, levels, cf, armor, coordinates, java.util.function.UnaryOperator.identity(),
+              facing -> facing);
+    }
+
+    /** Rebuild the construction and carry equipment and authored features through the same hex/facing transform. */
+    public void configureConstruction(BuildingType type, int buildingClass, int levels, int cf, int armor,
+          List<CubeCoords> coordinates, java.util.function.UnaryOperator<CubeCoords> hexTransform,
+          java.util.function.IntUnaryOperator facingTransform) {
+        if (levels < 1 || coordinates.isEmpty()
+              || new HashSet<>(coordinates).size() != coordinates.size()
+              || coordinates.stream().anyMatch(c -> c.q() != Math.rint(c.q()) || c.r() != Math.rint(c.r())
+                    || c.s() != Math.rint(c.s()) || c.q() + c.r() + c.s() != 0)) {
+            throw new IllegalArgumentException("A building needs whole cube coordinates and at least one hex and level.");
+        }
+        int oldHeight = Math.max(1, building.getBuildingHeight());
+        if (this instanceof BuildingEntity entity && BuildingConstruction.usesHexsides(entity)) {
+            building.getOriginalCoordsList().forEach(hex -> entity.getDesign().getWallSides().putIfAbsent(hex, 1));
+        }
+        Map<Integer, CubeCoords> oldLocations = new HashMap<>(locationToRelativeCoordsMap);
+        building = new Building(type, buildingClass, getId(), Terrains.BUILDING);
+        building.setBuildingHeight(levels);
+        CubeCoords origin = coordinates.contains(CubeCoords.ZERO) ? CubeCoords.ZERO : coordinates.getFirst();
+        for (CubeCoords coords : coordinates) {
+            CubeCoords relative = new CubeCoords((int) (coords.q() - origin.q()), (int) (coords.r() - origin.r()),
+                  (int) (coords.s() - origin.s()));
+            building.addHex(relative, cf, armor, BasementType.NONE, false);
+        }
+        refreshLocations();
+        refreshAdditionalLocations();
+        for (int loc = 0; loc < locations(); loc++) {
+            initializeInternal(cf, loc);
+            initializeArmor(armor, loc);
+        }
+        for (Mounted<?> mount : getEquipment()) {
+            int oldLocation = mount.getLocation();
+            CubeCoords oldHex = oldLocations.get(oldLocation);
+            int hexIndex = oldHex == null ? -1 : coordinates.indexOf(hexTransform.apply(oldHex));
+            int level = oldLocation < 0 ? -1 : oldLocation % oldHeight;
+            int location = hexIndex < 0 || level < 0 || level >= levels ? LOC_NONE : hexIndex * levels + level;
+            mount.setLocation(location);
+            if (mount.getFacing() >= 0) {
+                mount.setFacing(facingTransform.applyAsInt(mount.getFacing()));
+            }
+            if (location != LOC_NONE) {
+                addCritical(location, new CriticalSlot(mount));
+            }
+        }
+        if (this instanceof BuildingEntity entity) {
+            entity.getDesign().remap(position -> {
+                CubeCoords hex = hexTransform.apply(position.hex());
+                int level = position.level() == oldHeight ? levels : position.level();
+                return !coordinates.contains(hex) || (position.level() != oldHeight && level >= levels) ? null
+                      : new BuildingDesign.Position(hex.subtract(origin), level);
+            }, facingTransform);
+        }
+        updateRelativeLayout();
+        recalculateTechAdvancement();
     }
 
     @Override
@@ -671,7 +736,35 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     @Override
     public int[] getNoOfSlots() {
-        return CRITICAL_SLOTS;
+        int[] slots = new int[locations()];
+        for (int location = 0; location < slots.length; location++) {
+            slots[location] = getNumberOfCriticalSlots(location);
+        }
+        return slots;
+    }
+
+    @Override
+    public int getNumberOfCriticalSlots(int location) {
+        if (location < 0 || location >= locations()) {
+            return 0;
+        }
+        return crits != null && location < crits.length && crits[location] != null
+              ? crits[location].length : CRITICAL_SLOTS[0];
+    }
+
+    /** Structures have a mass limit, not a critical-slot limit. Grow the backing hit-location list as required. */
+    @Override
+    public boolean addCritical(int location, CriticalSlot slot) {
+        if (super.addCritical(location, slot)) {
+            return true;
+        }
+        if (location < 0 || location >= locations()) {
+            return false;
+        }
+        int index = crits[location].length;
+        crits[location] = Arrays.copyOf(crits[location], index + Math.max(16, index / 2));
+        setCritical(location, index, slot);
+        return true;
     }
 
     @Override
@@ -679,7 +772,9 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
           throws LocationFullException {
         super.addEquipment(mounted, loc, rearMounted);
         // Add the piece equipment to our slots.
-        addCritical(loc, new CriticalSlot(mounted));
+        if (loc != LOC_NONE) {
+            addCritical(loc, new CriticalSlot(mounted));
+        }
     }
 
     /**
@@ -923,7 +1018,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     @Override
     public int getArmorTechLevel(int loc) {
-        return TechConstants.T_INTRO_BOX_SET;
+        return isClan() ? TechConstants.T_CLAN_TW : TechConstants.T_INTRO_BOX_SET;
     }
 
     @Override
@@ -998,7 +1093,20 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     @Override
     public void setInternal(int val, int loc) {
-        setInternalInternal(val, relativeToBoard(locationToRelativeCoordsMap.get(loc)));
+        super.setInternal(val, loc);
+        CubeCoords coords = locationToRelativeCoordsMap.get(loc);
+        if (coords != null) {
+            building.setPhaseCF(val, coords);
+        }
+    }
+
+    @Override
+    public void setArmor(int val, int loc, boolean rear) {
+        super.setArmor(val, loc, rear);
+        CubeCoords coords = locationToRelativeCoordsMap.get(loc);
+        if (coords != null) {
+            building.setArmor(val, coords);
+        }
     }
 
     @Override
@@ -1308,6 +1416,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     public void refreshLocations() {
         // We do not remove locations when the internal building removes a hex - we need to track the destroyed
         // locations!
+        locationToRelativeCoordsMap.clear();
         if (!(getInternalBuilding() == null || getInternalBuilding().getOriginalCoordsList() == null)) {
             int location = 0;
             for (CubeCoords coords : getInternalBuilding().getOriginalCoordsList()) {

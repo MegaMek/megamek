@@ -33,6 +33,30 @@
  */
 package megamek.client.ui.panels.phaseDisplay.lobby;
 
+import static megamek.client.ui.Messages.getString;
+import static megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility.isValidStartPos;
+import static megamek.client.ui.util.UIUtil.teamColor;
+import static megamek.client.ui.util.UIUtil.uiYellow;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.Serial;
+import java.math.RoundingMode;
+import java.nio.file.Paths;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
+
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
@@ -74,30 +98,6 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.server.ServerBoardHelper;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.NumberFormatter;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.Serial;
-import java.math.RoundingMode;
-import java.nio.file.Paths;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static megamek.client.ui.Messages.getString;
-import static megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility.isValidStartPos;
-import static megamek.client.ui.util.UIUtil.teamColor;
-import static megamek.client.ui.util.UIUtil.uiYellow;
 
 /**
  * A dialog that can be used to adjust advanced player settings like initiative, minefields, and maybe other things in

@@ -190,13 +190,16 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         reportPersonnelLost(5634, defenderPersonnelLost);
         checkAndApplyStructureDamage(building);
 
-        // Units with nobody left were dropped from their side while the losses were applied
-        boolean attackersGone = attackerEliminated || combat.attackerIds.isEmpty();
-        boolean defendersGone = defenderEliminated || combat.defenderIds.isEmpty();
+        // Units with nobody left were dropped from their side while the losses were applied. A side can also be
+        // left with units that count for nothing, such as a building whose crew were never committed; a side at
+        // zero Marine Points is gone (TO:AR p. 172).
+        boolean attackersGone = attackerEliminated || (totalMarinePoints(combat.attackerIds, null) <= 0);
+        boolean defendersGone = defenderEliminated || (totalMarinePoints(combat.defenderIds, null) <= 0);
         if (attackersGone) {
             reportSideEliminated(combat, true);
         } else if (defendersGone) {
             reportSideEliminated(combat, false);
+            captureBuilding(building);
         } else if (result.isAttackerRepulsed()) {
             reportSideRepulsed(combat);
         } else if (withdrawing) {
@@ -349,6 +352,8 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
      */
     /** The defenders committed nothing and the building falls. */
     private static final int BUILDING_FALLS = 5665;
+    /** The building is captured because its defenders are at zero Marine Points. */
+    private static final int BUILDING_CAPTURED = 5708;
     /** A unit is moved out of the building after a withdrawal or a repulse. */
     private static final int MOVES_OUT = 5666;
     /** Report ids 5647 and 5648 are the "lose everything" versions of 5642 and 5643. */
@@ -419,10 +424,28 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
         report.addDesc(building);
         addReport(report);
-        building.getCrew().setCurrentSize(0);
-        building.getCrew().setDoomed(true);
+        surrenderCrew(building);
         LOGGER.info("[InfantryAction] {} falls: nothing was committed to its defence", building.getShortName());
         cleanupCombat(combat);
+    }
+
+    /**
+     * The defenders' Marine Points are at zero: the building is captured, and the crew who were not committed
+     * surrender with it (TO:AR p. 172, the Castles Brian example).
+     */
+    private void captureBuilding(AbstractBuildingEntity building) {
+        Report report = new Report(BUILDING_CAPTURED);
+        report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
+        report.addDesc(building);
+        addReport(report);
+        surrenderCrew(building);
+        LOGGER.info("[InfantryAction] {} is captured: its defenders are at zero Marine Points",
+              building.getShortName());
+    }
+
+    private static void surrenderCrew(AbstractBuildingEntity building) {
+        building.getCrew().setCurrentSize(0);
+        building.getCrew().setDoomed(true);
     }
 
     /**

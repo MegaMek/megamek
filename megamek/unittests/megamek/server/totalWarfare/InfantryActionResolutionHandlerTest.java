@@ -202,6 +202,28 @@ class InfantryActionResolutionHandlerTest {
     }
 
     @Test
+    void aGarrisonAtZeroPointsLosesTheBuildingAndItsUncommittedCrewSurrender() {
+        building.getCrew().setSize(4);
+        building.getCrew().setCurrentSize(4);
+        ConvInfantry attackerOne = platoon(attackingPlayer);
+        ConvInfantry attackerTwo = platoon(attackingPlayer);
+        ConvInfantry defender = platoon(defendingPlayer);
+        InfantryAction combat = startCombat(attackerOne, defender);
+        tracker.addReinforcement(building.getId(), attackerTwo, true);
+        combat.defenderIds.add(building.getId());
+        combat.hasPartialControl = true;
+
+        // 2 to 1 column, roll of 9: 30%/60%. The defenders take the full 60% of 42 = 26 against their 21: everything.
+        // The building's crew were never committed, so it still stands on the defenders' list scoring nothing.
+        new InfantryActionResolutionHandler(gameManager, tracker).resolve(combat, 9);
+
+        assertTrue(defender.isDoomed() || defender.isDestroyed(), "the platoon is wiped out");
+        assertEquals(0, building.getCrew().getCurrentSize(), "the uncommitted crew surrender");
+        assertTrue(building.getCrew().isDoomed());
+        assertFalse(tracker.hasCombat(building.getId()), "the action is over");
+    }
+
+    @Test
     void partialControlRemovesTheDefendersHalfDamageOnLaterRolls() {
         ConvInfantry attacker = platoon(attackingPlayer);
         ConvInfantry defender = platoon(defendingPlayer);

@@ -216,37 +216,53 @@ class InfantryActionReporterTest {
     }
 
     @Test
-    @DisplayName("A loss line shows head-count times points lost over own strength, and the people lost")
-    void lossLineShowsTheConversion() {
+    @DisplayName("A side's loss is one line: the points, the casualties, then each unit's share")
+    void sideLossIsOneLine() {
         ConvInfantry rifles = platoon(28, attackingPlayer, 1);
-
-        reporter.reportUnitLoss(rifles, 28, 10, 83, 3, false);
-
-        List<Report> reports = gameManager.getMainPhaseReport();
-        assertEquals(1, reports.size());
-        assertEquals(InfantryActionReporter.TROOPER_LOSS, reports.getFirst().messageId);
-    }
-
-    @Test
-    @DisplayName("Exactly one trooper lost is said in the singular")
-    void oneTrooperLostIsSingular() {
-        ConvInfantry rifles = platoon(28, attackingPlayer, 1);
-
-        reporter.reportUnitLoss(rifles, 28, 5, 83, 1, false);
-
-        assertEquals(InfantryActionReporter.ONE_TROOPER_LOSS, gameManager.getMainPhaseReport().getFirst().messageId);
-    }
-
-    @Test
-    @DisplayName("A unit whose share is under one trooper gets a line saying it lost nobody")
-    void shareUnderOneTrooperSaysSo() {
         BattleArmor elementals = elementalPoint(attackingPlayer, 2);
+        InfantryActionSideLosses losses = new InfantryActionSideLosses(10, 83, List.of(
+              new InfantryActionSideLosses.UnitLoss(rifles, 28, 3, false),
+              new InfantryActionSideLosses.UnitLoss(elementals, 5, 0, false)));
 
-        reporter.reportUnitLoss(elementals, 5, 10, 83, 0, false);
+        reporter.reportSideLosses(true, losses);
 
-        assertEquals(InfantryActionReporter.NO_TROOPER_LOSS, gameManager.getMainPhaseReport().getFirst().messageId);
+        assertEquals(List.of(InfantryActionReporter.ATTACKERS_LOSE, InfantryActionReporter.CASUALTIES,
+              InfantryActionReporter.TROOPER_LOSS, InfantryActionReporter.SEPARATOR,
+              InfantryActionReporter.TROOPER_LOSS), reportIds());
+        List<Report> reports = gameManager.getMainPhaseReport();
+        for (int index = 0; index < reports.size() - 1; index++) {
+            assertEquals(0, reports.get(index).newlines, "fragment " + index + " runs on");
+        }
+        assertEquals(1, reports.getLast().newlines);
     }
 
+    @Test
+    @DisplayName("Exactly one casualty is said in the singular")
+    void oneCasualtyIsSingular() {
+        ConvInfantry rifles = platoon(28, attackingPlayer, 1);
+        InfantryActionSideLosses losses = new InfantryActionSideLosses(5, 83,
+              List.of(new InfantryActionSideLosses.UnitLoss(rifles, 28, 1, false)));
+
+        reporter.reportSideLosses(false, losses);
+
+        assertEquals(List.of(InfantryActionReporter.DEFENDERS_LOSE, InfantryActionReporter.ONE_CASUALTY,
+              InfantryActionReporter.TROOPER_LOSS), reportIds());
+    }
+
+    @Test
+    @DisplayName("A side whose shares are all under one loses nobody and says why; losing everything says so")
+    void nobodyLostAndEverythingLost() {
+        BattleArmor elementals = elementalPoint(attackingPlayer, 2);
+        reporter.reportSideLosses(true, new InfantryActionSideLosses(2, 83,
+              List.of(new InfantryActionSideLosses.UnitLoss(elementals, 5, 0, false))));
+        reporter.reportSideLosses(false, new InfantryActionSideLosses(21, 21,
+              List.of(new InfantryActionSideLosses.UnitLoss(building, 3, 3, true))));
+
+        assertEquals(List.of(InfantryActionReporter.ATTACKERS_LOSE, InfantryActionReporter.NO_CASUALTIES,
+              InfantryActionReporter.TROOPER_LOSS, InfantryActionReporter.TOO_SMALL_FOR_ANYONE,
+              InfantryActionReporter.DEFENDERS_LOSE_ALL, InfantryActionReporter.CASUALTIES,
+              InfantryActionReporter.CREW_LOSS), reportIds());
+    }
 
     @Test
     @DisplayName("Report figures drop trailing zeros and keep two places")

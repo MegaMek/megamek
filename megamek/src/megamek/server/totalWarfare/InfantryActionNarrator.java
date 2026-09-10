@@ -32,6 +32,7 @@
  */
 package megamek.server.totalWarfare;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -40,20 +41,23 @@ import java.util.function.IntUnaryOperator;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
+import megamek.common.compute.MarinePointsBreakdown;
 import megamek.common.compute.MarinePointsScoreCalculator;
 import megamek.common.compute.MarinePointsTrait;
+import megamek.common.game.Game;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
- * Tells the story of an infantry vs. infantry action's roll in a few sentences under the numbers: how it went, what
- * each side brought to it, and what each side paid. The numbers are the shares of each side's own strength that the
- * resolution already worked out, so the story never disagrees with the lines above it.
+ * Tells the story of an infantry vs. infantry action's roll in a few sentences under the action's header: how it
+ * went, who fought on each side, what they did and what they paid. The numbers are the shares of each side's own
+ * strength that the resolution worked out, so the story never disagrees with the working below it.
  *
- * <p>The text is three sentences at most: a lead for the outcome, then one sentence per side built from that side's
- * strongest {@link MarinePointsTrait} and its loss. Each outcome has several leads and one is chosen at random, so a
- * siege that runs for turns does not read the same every time.</p>
+ * <p>The text is three sentences: a lead for the outcome, then one sentence per side that names the side's units
+ * with their report links, follows them with a clause for the side's strongest {@link MarinePointsTrait}, and ends
+ * with the side's loss. Each outcome has several leads and one is chosen at random, so a siege that runs for turns
+ * does not read the same every time.</p>
  */
 class InfantryActionNarrator extends AbstractTWRuleHandler {
 
@@ -84,12 +88,47 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
     /**
      * One side's part in the story.
      *
+     * @param units            the units that counted for the side, in order, named in the story
+     * @param traits           what the side brought, the union over its units
      * @param marinePointsLost the Marine Points the side lost this roll
      * @param ownStrength      the side's own strength the loss is measured against
      * @param eliminated       {@code true} when nothing of the side remains
-     * @param traits           what the side brought, the union over its units
      */
-    record Side(int marinePointsLost, int ownStrength, boolean eliminated, Set<MarinePointsTrait> traits) {}
+    record Side(List<Entity> units, Set<MarinePointsTrait> traits, int marinePointsLost, int ownStrength,
+          boolean eliminated) {
+
+        /**
+         * A side read from the game before its losses are applied: the units still in the fight that score
+         * anything, and everything they brought.
+         *
+         * @param game       the game
+         * @param entityIds  the side's units
+         * @param building   the building whose modifier applies to this side, or {@code null} for none
+         * @param lost       the Marine Points the side loses this roll
+         * @param own        the side's own strength
+         * @param eliminated whether the loss leaves nobody
+         *
+         * @return the side
+         */
+        static Side of(Game game, List<Integer> entityIds, @Nullable AbstractBuildingEntity building, int lost,
+              int own, boolean eliminated) {
+            List<Entity> units = new ArrayList<>();
+            EnumSet<MarinePointsTrait> traits = EnumSet.noneOf(MarinePointsTrait.class);
+            for (int entityId : entityIds) {
+                Entity entity = game.getEntity(entityId);
+                if ((entity == null) || InfantryActionReporter.isOutOfTheFight(entity)) {
+                    continue;
+                }
+                MarinePointsBreakdown breakdown = MarinePointsScoreCalculator.breakdown(entity, building);
+                if (breakdown.modifiedScore() <= 0) {
+                    continue;
+                }
+                units.add(entity);
+                traits.addAll(breakdown.traits());
+            }
+            return new Side(List.copyOf(units), traits, lost, own, eliminated);
+        }
+    }
 
     /** Every outcome has this many leads to choose from. */
     static final int LEADS_PER_OUTCOME = 3;
@@ -97,18 +136,32 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
     static final int NO_DEFENCE = 5685;
     /** The clause for a side with no trait worth a mention. */
     static final int PLAIN_TROOPERS = 5701;
-    /** The attackers lost a share of their strength. */
-    static final int ATTACKERS_LOST_SHARE = 5702;
-    /** The attackers were wiped out. */
-    static final int ATTACKERS_LOST_ALL = 5703;
-    /** The attackers lost nothing. */
-    static final int ATTACKERS_LOST_NOBODY = 5704;
-    /** The defenders lost a share of their strength. */
-    static final int DEFENDERS_LOST_SHARE = 5705;
-    /** The defenders were wiped out. */
-    static final int DEFENDERS_LOST_ALL = 5706;
-    /** The defenders lost nothing. */
-    static final int DEFENDERS_LOST_NOBODY = 5707;
+    /** Several units lost a share of their strength. */
+    static final int LOST_SHARE = 5702;
+    /** Several units, none survived. */
+    static final int NONE_SURVIVED = 5703;
+    /** The side lost nothing. */
+    static final int LOST_NOBODY = 5704;
+    /** One unit lost a share of its strength. */
+    static final int LOST_SHARE_ONE_UNIT = 5705;
+    /** One unit, wiped out. */
+    static final int WIPED_OUT = 5706;
+    /** A unit's linked name inside the sentence. */
+    static final int UNIT_NAME = 5707;
+    /** Joins the captured building on to the defenders' sentence. */
+    static final int AND_THE_BUILDING = 5708;
+    /** A comma between names. */
+    static final int COMMA = 5709;
+    /** "and" before the last name. */
+    static final int AND = 5710;
+    /** The building falls and its uncommitted crew surrender. */
+    static final int BUILDING_FALLS = 5711;
+    /** Ends a side's sentence. */
+    static final int FULL_STOP = 5712;
+    /** The attackers, when none of them can be named. */
+    static final int THE_ATTACKERS = 5713;
+    /** The defenders, when none of them can be named. */
+    static final int THE_DEFENDERS = 5714;
 
     private static final int NO_LINE_BREAK = 0;
     private static final int WHOLE_PERCENT = 100;
@@ -128,41 +181,24 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
     }
 
     /**
-     * The traits of a side: everything its units still in the fight brought to it.
+     * Writes the story of one roll as one paragraph: the lead for the outcome, then a sentence for each side.
      *
-     * @param entityIds the side's units
-     * @param building  the building whose modifier applies to this side, or {@code null} for none
-     *
-     * @return the union of the units' traits
+     * @param outcome          how the roll went
+     * @param attackers        the attackers' part
+     * @param defenders        the defenders' part
+     * @param capturedBuilding the building that falls to the attackers on this roll, or {@code null} for none
      */
-    Set<MarinePointsTrait> traitsOf(List<Integer> entityIds, @Nullable AbstractBuildingEntity building) {
-        EnumSet<MarinePointsTrait> traits = EnumSet.noneOf(MarinePointsTrait.class);
-        for (int entityId : entityIds) {
-            Entity entity = getGame().getEntity(entityId);
-            if ((entity != null) && !InfantryActionReporter.isOutOfTheFight(entity)) {
-                traits.addAll(MarinePointsScoreCalculator.breakdown(entity, building).traits());
-            }
-        }
-        return traits;
-    }
-
-    /**
-     * Writes the story of one roll: the lead for the outcome, then a sentence for each side.
-     *
-     * @param outcome   how the roll went
-     * @param attackers the attackers' part
-     * @param defenders the defenders' part
-     */
-    void narrate(Outcome outcome, Side attackers, Side defenders) {
+    void narrate(Outcome outcome, Side attackers, Side defenders, @Nullable AbstractBuildingEntity capturedBuilding) {
         int lead = outcome.firstLead + Math.floorMod(leadPicker.applyAsInt(LEADS_PER_OUTCOME), LEADS_PER_OUTCOME);
-        LOGGER.debug("[InfantryAction] narrative: {} lead {}, attackers {}, defenders {}", outcome, lead,
-              attackers.traits(), defenders.traits());
+        LOGGER.debug("[InfantryAction] narrative: {} lead {}, attackers {} {}, defenders {} {}", outcome, lead,
+              attackers.units().size(), attackers.traits(), defenders.units().size(), defenders.traits());
+        List<Report> story = new ArrayList<>();
         Report leadReport = new Report(lead);
         leadReport.indent(InfantryActionReporter.SIDE_LINE_INDENT);
-        leadReport.newlines = NO_LINE_BREAK;
-        addReport(leadReport);
-        narrateSide(attackers, ATTACKERS_LOST_SHARE, ATTACKERS_LOST_ALL, ATTACKERS_LOST_NOBODY, NO_LINE_BREAK);
-        narrateSide(defenders, DEFENDERS_LOST_SHARE, DEFENDERS_LOST_ALL, DEFENDERS_LOST_NOBODY, 1);
+        story.add(leadReport);
+        story.addAll(sideSentence(attackers, THE_ATTACKERS, null));
+        story.addAll(sideSentence(defenders, THE_DEFENDERS, capturedBuilding));
+        addParagraph(story);
     }
 
     /** The one line for a building that fell because nothing was committed to its defence. */
@@ -172,22 +208,61 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
         addReport(report);
     }
 
-    private void narrateSide(Side side, int lostShareId, int lostAllId, int lostNobodyId, int newlinesAfter) {
-        Report clause = new Report(clauseFor(strongestTrait(side.traits())));
-        clause.newlines = NO_LINE_BREAK;
-        addReport(clause);
-
-        Report loss;
-        if (side.eliminated()) {
-            loss = new Report(lostAllId);
-        } else if (side.marinePointsLost() <= 0) {
-            loss = new Report(lostNobodyId);
-        } else {
-            loss = new Report(lostShareId);
-            loss.add(percentOfOwnStrength(side));
+    /** The names, the clause for the strongest trait, the loss, and the full stop or the building's fall. */
+    private static List<Report> sideSentence(Side side, int fallbackSubject,
+          @Nullable AbstractBuildingEntity capturedBuilding) {
+        List<Report> sentence = new ArrayList<>();
+        if (side.units().isEmpty()) {
+            sentence.add(new Report(fallbackSubject));
         }
-        loss.newlines = newlinesAfter;
-        addReport(loss);
+        int last = side.units().size() - 1;
+        for (int index = 0; index <= last; index++) {
+            if (index > 0) {
+                sentence.add(new Report((index == last) ? AND : COMMA));
+            }
+            sentence.add(nameOf(side.units().get(index)));
+        }
+        sentence.add(new Report(clauseFor(strongestTrait(side.traits()))));
+        sentence.add(lossFragment(side));
+        if (capturedBuilding != null) {
+            sentence.add(new Report(AND_THE_BUILDING));
+            sentence.add(nameOf(capturedBuilding));
+            sentence.add(new Report(BUILDING_FALLS));
+        } else {
+            sentence.add(new Report(FULL_STOP));
+        }
+        return sentence;
+    }
+
+    private static Report nameOf(Entity entity) {
+        Report name = new Report(UNIT_NAME);
+        name.subject = entity.getId();
+        name.addEntityName(entity);
+        return name;
+    }
+
+    private static Report lossFragment(Side side) {
+        boolean severalUnits = side.units().size() != 1;
+        if (side.eliminated()) {
+            return new Report(severalUnits ? NONE_SURVIVED : WIPED_OUT);
+        }
+        if (side.marinePointsLost() <= 0) {
+            return new Report(LOST_NOBODY);
+        }
+        Report loss = new Report(severalUnits ? LOST_SHARE : LOST_SHARE_ONE_UNIT);
+        loss.add(percentOfOwnStrength(side));
+        return loss;
+    }
+
+    /** Runs the reports on as one line: no line break until the last of them. */
+    private void addParagraph(List<Report> reports) {
+        for (Report report : reports) {
+            report.newlines = NO_LINE_BREAK;
+        }
+        reports.getLast().newlines = 1;
+        for (Report report : reports) {
+            addReport(report);
+        }
     }
 
     /** The share of a side's own strength it lost, as a whole percentage of at least one. */
@@ -209,7 +284,7 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
         return null;
     }
 
-    /** The report message for a side's strongest trait. */
+    /** The report message for a side's strongest trait: a clause that follows the side's names. */
     static int clauseFor(@Nullable MarinePointsTrait trait) {
         if (trait == null) {
             return PLAIN_TROOPERS;

@@ -34,6 +34,7 @@ package megamek.server.totalWarfare;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.Report;
@@ -63,18 +64,28 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
     static final int CREW_SCORE = 5653;
     /** The building modifier applied to a defender's score. */
     static final int BUILDING_MODIFIER = 5654;
-    /** A unit's share of its side's loss, converted to troopers. */
+    /** The attackers lose some of their Marine Points. */
+    static final int ATTACKERS_LOSE = 5642;
+    /** The defenders lose some of their Marine Points. */
+    static final int DEFENDERS_LOSE = 5643;
+    /** The attackers lose every Marine Point. */
+    static final int ATTACKERS_LOSE_ALL = 5647;
+    /** The defenders lose every Marine Point. */
+    static final int DEFENDERS_LOSE_ALL = 5648;
+    /** "and N casualties:" */
+    static final int CASUALTIES = 5633;
+    /** "and one casualty:" */
+    static final int ONE_CASUALTY = 5634;
+    /** "and nobody:" */
+    static final int NO_CASUALTIES = 5649;
+    /** A unit's share of its side's loss, in troopers. */
     static final int TROOPER_LOSS = 5655;
-    /** A crewed unit's share of its side's loss, converted to crew. */
+    /** A building's share of its side's loss, in crew. */
     static final int CREW_LOSS = 5656;
-    /** A unit whose share of the loss is under one trooper, so it loses nobody. */
-    static final int NO_TROOPER_LOSS = 5661;
-    /** A crewed unit whose share of the loss is under one crew member. */
-    static final int NO_CREW_LOSS = 5662;
-    /** A unit that loses exactly one trooper. */
-    static final int ONE_TROOPER_LOSS = 5663;
-    /** A crewed unit that loses exactly one crew member. */
-    static final int ONE_CREW_LOSS = 5664;
+    /** Every unit's share was under one, so nobody was lost. */
+    static final int TOO_SMALL_FOR_ANYONE = 5661;
+    /** A comma between unit fragments. */
+    static final int SEPARATOR = 5709;
 
     /** Side headers and the roll sit one level under the action's header, like a weapon under its unit. */
     static final int SIDE_LINE_INDENT = 1;
@@ -215,39 +226,70 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
     }
 
     /**
-     * Reports how a unit's share of its side's Marine Points loss became people (TO:AR p. 174): head-count times
-     * points lost over the side's own strength, rounded down.
+     * Reports a side's loss on one line: the Marine Points lost of its strength, the casualties, then each unit's
+     * share of the loss as head-count times points lost over the side's own strength (TO:AR p. 174), rounded down
+     * when it became people.
      *
-     * @param entity           the unit
-     * @param headCount        the troopers or crew it had before the loss
-     * @param marinePointsLost the side's loss in points
-     * @param ownStrength      the side's own strength the loss is measured against
-     * @param personnelLost    the people this unit loses
-     * @param isCrew           {@code true} for a crewed unit or building, {@code false} for troopers
+     * @param attackers {@code true} for the attackers' line, {@code false} for the defenders'
+     * @param losses    the side's planned losses
      */
-    void reportUnitLoss(Entity entity, int headCount, int marinePointsLost, int ownStrength, int personnelLost,
-          boolean isCrew) {
-        double share = (ownStrength <= 0) ? 0 : ((double) headCount * marinePointsLost) / ownStrength;
-        boolean lostSomeone = personnelLost > 0;
-        boolean lostExactlyOne = personnelLost == 1;
-        int messageId;
-        if (isCrew) {
-            messageId = lostExactlyOne ? ONE_CREW_LOSS : (lostSomeone ? CREW_LOSS : NO_CREW_LOSS);
+    void reportSideLosses(boolean attackers, InfantryActionSideLosses losses) {
+        List<Report> line = new ArrayList<>();
+        boolean lostEverything = (losses.ownStrength() > 0) && (losses.marinePointsLost() >= losses.ownStrength());
+        Report head;
+        if (lostEverything) {
+            head = new Report(attackers ? ATTACKERS_LOSE_ALL : DEFENDERS_LOSE_ALL);
         } else {
-            messageId = lostExactlyOne ? ONE_TROOPER_LOSS : (lostSomeone ? TROOPER_LOSS : NO_TROOPER_LOSS);
+            head = new Report(attackers ? ATTACKERS_LOSE : DEFENDERS_LOSE);
+            head.add(losses.marinePointsLost());
         }
-        Report report = new Report(messageId);
-        report.subject = entity.getId();
-        report.indent(UNIT_LINE_INDENT);
-        report.addDesc(entity);
-        report.add(headCount);
-        report.add(marinePointsLost);
-        report.add(ownStrength);
-        report.add(number(share));
-        if (lostSomeone && !lostExactlyOne) {
-            report.add(personnelLost);
+        head.add(losses.ownStrength());
+        head.indent(SIDE_LINE_INDENT);
+        line.add(head);
+
+        int casualties = losses.personnelLost();
+        if (casualties == 0) {
+            line.add(new Report(NO_CASUALTIES));
+        } else if (casualties == 1) {
+            line.add(new Report(ONE_CASUALTY));
+        } else {
+            line.add(new Report(CASUALTIES).add(casualties));
         }
-        addReport(report);
+
+        boolean first = true;
+        for (InfantryActionSideLosses.UnitLoss loss : losses.units()) {
+            if (!first) {
+                line.add(new Report(SEPARATOR));
+            }
+            first = false;
+            line.add(unitLossFragment(loss, losses));
+        }
+        if ((casualties == 0) && !losses.units().isEmpty()) {
+            line.add(new Report(TOO_SMALL_FOR_ANYONE));
+        }
+        addLine(line);
+    }
+
+    private static Report unitLossFragment(InfantryActionSideLosses.UnitLoss loss, InfantryActionSideLosses losses) {
+        double share = (losses.ownStrength() <= 0) ? 0
+              : ((double) loss.headCount() * losses.marinePointsLost()) / losses.ownStrength();
+        Report fragment = new Report(loss.isCrew() ? CREW_LOSS : TROOPER_LOSS);
+        fragment.subject = loss.entity().getId();
+        fragment.addEntityName(loss.entity());
+        fragment.add(number(share));
+        fragment.add(loss.headCount());
+        return fragment;
+    }
+
+    /** Runs the reports on as one line: no line break until the last of them. */
+    private void addLine(List<Report> reports) {
+        for (Report report : reports) {
+            report.newlines = 0;
+        }
+        reports.getLast().newlines = 1;
+        for (Report report : reports) {
+            addReport(report);
+        }
     }
 
     /** A Marine Points figure for the report: whole numbers plain, fractions to two places, no trailing zeros. */

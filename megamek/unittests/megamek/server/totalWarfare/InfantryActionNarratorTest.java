@@ -54,6 +54,7 @@ import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.ConvInfantry;
+import megamek.common.units.Entity;
 import megamek.server.totalWarfare.InfantryActionNarrator.Outcome;
 import megamek.server.totalWarfare.InfantryActionNarrator.Side;
 import org.junit.jupiter.api.BeforeAll;
@@ -63,7 +64,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 /**
- * The story under the numbers: a lead for the outcome, a clause per side from its strongest trait, and its loss.
+ * The story under the header: a lead for the outcome, then for each side its linked names, a clause from its
+ * strongest trait, and its loss.
  */
 @DisplayName("Infantry action narrative")
 class InfantryActionNarratorTest {
@@ -104,9 +106,21 @@ class InfantryActionNarratorTest {
         building.refreshAdditionalLocations();
         building.getCrew().setSize(4);
         building.getCrew().setCurrentSize(4);
-        building.commitCrew(4);
         building.setId(0);
         game.addEntity(building);
+    }
+
+    private ConvInfantry platoon(Player owner, int id) {
+        ConvInfantry infantry = new ConvInfantry();
+        infantry.setOwner(owner);
+        infantry.setGame(game);
+        infantry.setSquadSize(28);
+        infantry.setSquadCount(1);
+        infantry.initializeInternal(28, ConvInfantry.LOC_INFANTRY);
+        infantry.setId(id);
+        game.addEntity(infantry);
+        infantry.setPosition(BUILDING_HEX);
+        return infantry;
     }
 
     private InfantryActionNarrator narratorPicking(int lead) {
@@ -117,50 +131,86 @@ class InfantryActionNarratorTest {
         return gameManager.getMainPhaseReport().stream().map(report -> report.messageId).toList();
     }
 
-    private static Side side(int lost, int own, boolean eliminated, MarinePointsTrait... traits) {
+    private static Side side(List<Entity> units, int lost, int own, boolean eliminated, MarinePointsTrait... traits) {
         Set<MarinePointsTrait> traitSet = EnumSet.noneOf(MarinePointsTrait.class);
         traitSet.addAll(List.of(traits));
-        return new Side(lost, own, eliminated, traitSet);
+        return new Side(units, traitSet, lost, own, eliminated);
     }
 
     @Test
-    @DisplayName("A repulse reads as the lead, the marines' clause and their loss, then the crew's clause and loss")
+    @DisplayName("A repulse: the lead, then each side's name, clause and loss, each sentence closed")
     void repulseTellsBothSides() {
-        narratorPicking(SECOND_LEAD).narrate(Outcome.REPULSED, side(40, 40, false, MarinePointsTrait.MARINES),
-              side(6, 40, false, MarinePointsTrait.BUILDING_CREW));
+        ConvInfantry marines = platoon(attackingPlayer, 1);
 
-        assertEquals(List.of(5674, 5688, InfantryActionNarrator.ATTACKERS_LOST_SHARE, 5691,
-              InfantryActionNarrator.DEFENDERS_LOST_SHARE), reportIds());
+        narratorPicking(SECOND_LEAD).narrate(Outcome.REPULSED,
+              side(List.of(marines), 40, 40, false, MarinePointsTrait.MARINES),
+              side(List.of(building), 6, 40, false, MarinePointsTrait.BUILDING_CREW), null);
+
+        assertEquals(List.of(5674,
+              InfantryActionNarrator.UNIT_NAME, 5688, InfantryActionNarrator.LOST_SHARE_ONE_UNIT,
+              InfantryActionNarrator.FULL_STOP,
+              InfantryActionNarrator.UNIT_NAME, 5691, InfantryActionNarrator.LOST_SHARE_ONE_UNIT,
+              InfantryActionNarrator.FULL_STOP), reportIds());
     }
 
     @Test
-    @DisplayName("An eliminated side is wiped out and a side that lost nothing lost nobody")
-    void eliminatedAndUntouchedSides() {
-        narratorPicking(0).narrate(Outcome.ATTACKERS_ELIMINATED, side(20, 20, true, MarinePointsTrait.CIVILIANS),
-              side(0, 60, false, MarinePointsTrait.ELEMENTALS));
+    @DisplayName("Several names are joined with commas and a final and; a wiped-out side says none survived")
+    void severalNamesAndAWipedOutSide() {
+        ConvInfantry first = platoon(attackingPlayer, 1);
+        ConvInfantry second = platoon(attackingPlayer, 2);
+        ConvInfantry third = platoon(attackingPlayer, 3);
+        ConvInfantry defender = platoon(defendingPlayer, 4);
 
-        assertEquals(List.of(5667, 5692, InfantryActionNarrator.ATTACKERS_LOST_ALL, 5686,
-              InfantryActionNarrator.DEFENDERS_LOST_NOBODY), reportIds());
+        narratorPicking(0).narrate(Outcome.ATTACKERS_ELIMINATED,
+              side(List.of(first, second, third), 20, 20, true, MarinePointsTrait.CIVILIANS),
+              side(List.of(defender), 0, 60, false, MarinePointsTrait.ELEMENTALS), null);
+
+        assertEquals(List.of(5667,
+              InfantryActionNarrator.UNIT_NAME, InfantryActionNarrator.COMMA, InfantryActionNarrator.UNIT_NAME,
+              InfantryActionNarrator.AND, InfantryActionNarrator.UNIT_NAME, 5692,
+              InfantryActionNarrator.NONE_SURVIVED, InfantryActionNarrator.FULL_STOP,
+              InfantryActionNarrator.UNIT_NAME, 5686, InfantryActionNarrator.LOST_NOBODY,
+              InfantryActionNarrator.FULL_STOP), reportIds());
     }
 
     @Test
-    @DisplayName("Only the lead's last line ends the paragraph")
-    void theStoryIsOneParagraph() {
-        narratorPicking(0).narrate(Outcome.ENGAGED, side(12, 50, false), side(12, 25, false));
+    @DisplayName("When the building falls, the defenders' sentence ends with its name and the surrender")
+    void capturedBuildingEndsTheDefendersSentence() {
+        ConvInfantry attacker = platoon(attackingPlayer, 1);
+        ConvInfantry defender = platoon(defendingPlayer, 2);
 
+        narratorPicking(0).narrate(Outcome.DEFENDERS_ELIMINATED,
+              side(List.of(attacker), 6, 93, false, MarinePointsTrait.BURST_FIRE),
+              side(List.of(defender), 21, 21, true, MarinePointsTrait.LINE_INFANTRY), building);
+
+        List<Integer> ids = reportIds();
+        assertEquals(List.of(InfantryActionNarrator.UNIT_NAME, 5689, InfantryActionNarrator.WIPED_OUT,
+              InfantryActionNarrator.AND_THE_BUILDING, InfantryActionNarrator.UNIT_NAME,
+              InfantryActionNarrator.BUILDING_FALLS), ids.subList(ids.size() - 6, ids.size()));
         List<Report> reports = gameManager.getMainPhaseReport();
         for (int index = 0; index < reports.size() - 1; index++) {
-            assertEquals(0, reports.get(index).newlines, "line " + index + " runs on");
+            assertEquals(0, reports.get(index).newlines, "fragment " + index + " runs on");
         }
         assertEquals(1, reports.getLast().newlines);
-        assertEquals(InfantryActionNarrator.PLAIN_TROOPERS, reports.get(1).messageId, "no trait, plain clause");
+    }
+
+    @Test
+    @DisplayName("A side with nobody to name is called the attackers or the defenders")
+    void unnamedSidesGetAPlainSubject() {
+        narratorPicking(0).narrate(Outcome.ENGAGED, side(List.of(), 12, 50, false), side(List.of(), 12, 25, false),
+              null);
+
+        List<Integer> ids = reportIds();
+        assertEquals(InfantryActionNarrator.THE_ATTACKERS, ids.get(1));
+        assertEquals(InfantryActionNarrator.PLAIN_TROOPERS, ids.get(2));
+        assertTrue(ids.contains(InfantryActionNarrator.THE_DEFENDERS));
     }
 
     @Test
     @DisplayName("The lead picker's choice wraps into the outcome's leads")
     void leadChoiceWraps() {
         narratorPicking(InfantryActionNarrator.LEADS_PER_OUTCOME + 2).narrate(Outcome.PENETRATION,
-              side(12, 60, false), side(39, 40, false));
+              side(List.of(), 12, 60, false), side(List.of(), 39, 40, false), null);
 
         assertEquals(5681, reportIds().getFirst());
     }
@@ -178,28 +228,24 @@ class InfantryActionNarratorTest {
     @Test
     @DisplayName("The loss is a share of the side's own strength, never zero for a real loss")
     void lossIsAShareOfOwnStrength() {
-        assertEquals(15, InfantryActionNarrator.percentOfOwnStrength(side(6, 40, false)));
-        assertEquals(100, InfantryActionNarrator.percentOfOwnStrength(side(56, 40, false)));
-        assertEquals(1, InfantryActionNarrator.percentOfOwnStrength(side(1, 500, false)));
+        assertEquals(15, InfantryActionNarrator.percentOfOwnStrength(side(List.of(), 6, 40, false)));
+        assertEquals(100, InfantryActionNarrator.percentOfOwnStrength(side(List.of(), 56, 40, false)));
+        assertEquals(1, InfantryActionNarrator.percentOfOwnStrength(side(List.of(), 1, 500, false)));
     }
 
     @Test
-    @DisplayName("A side's traits are the union over its units")
-    void sideTraitsAreTheUnion() {
-        ConvInfantry platoon = new ConvInfantry();
-        platoon.setOwner(defendingPlayer);
-        platoon.setGame(game);
-        platoon.setSquadSize(28);
-        platoon.setSquadCount(1);
-        platoon.initializeInternal(28, ConvInfantry.LOC_INFANTRY);
-        platoon.setId(1);
-        game.addEntity(platoon);
-        platoon.setPosition(BUILDING_HEX);
+    @DisplayName("A side read from the game names only the units that scored, and gathers their traits")
+    void sideFromTheGameNamesWhoCounted() {
+        ConvInfantry platoon = platoon(defendingPlayer, 1);
+        // The building's crew are not committed, so it scores nothing and is not named
+        Side defenders = Side.of(game, List.of(building.getId(), platoon.getId()), building, 5, 21, false);
 
-        Set<MarinePointsTrait> traits = narratorPicking(0).traitsOf(List.of(building.getId(), platoon.getId()),
-              building);
+        assertEquals(List.of(platoon), defenders.units());
+        assertTrue(defenders.traits().contains(MarinePointsTrait.LINE_INFANTRY));
 
-        assertTrue(traits.contains(MarinePointsTrait.BUILDING_CREW));
-        assertTrue(traits.contains(MarinePointsTrait.LINE_INFANTRY));
+        building.commitCrew(4);
+        Side withCrew = Side.of(game, List.of(building.getId(), platoon.getId()), building, 5, 23, false);
+        assertEquals(List.of(building, platoon), withCrew.units());
+        assertTrue(withCrew.traits().contains(MarinePointsTrait.BUILDING_CREW));
     }
 }

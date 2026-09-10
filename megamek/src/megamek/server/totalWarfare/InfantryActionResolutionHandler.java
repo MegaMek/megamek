@@ -34,7 +34,6 @@ package megamek.server.totalWarfare;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import megamek.common.Hex;
 import megamek.common.HitData;
@@ -48,7 +47,6 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.InfantryCombatCasualties;
 import megamek.common.compute.InfantryCombatTables;
 import megamek.common.compute.MarinePointsScoreCalculator;
-import megamek.common.compute.MarinePointsTrait;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Crew;
@@ -124,7 +122,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
 
         if (attackerStrength <= 0) {
             reportCombatHeader(building);
-            reportSideEliminated(combat, true);
+            reportAttackersEliminated(combat);
             return;
         }
         if (defenderStrength <= 0) {
@@ -138,8 +136,6 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
 
         String ratio = InfantryCombatTables.calculateRatio(attackerStrength, defenderStrength);
         InfantryCombatResult result = InfantryCombatTables.resolveAction(ratio, roll);
-        reportCombatHeader(building);
-        reportRoll(ratio, attackerStrength, defenderStrength, roll, result);
 
         boolean attackerEliminated = result.getAttackerCasualtiesPercent() >= ELIMINATED_PERCENT;
         boolean defenderEliminated = result.isDefenderEliminated();
@@ -157,7 +153,6 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
                 defenderPercent = InfantryCombatTables.highestListedPercent(ratio, false);
                 defenderEliminated = false;
             }
-            reportWithdrawal(attackerPercent, defenderPercent);
         }
 
         // TO:AR p. 172-173: the defenders take full damage from the roll that gives the attackers partial control
@@ -179,35 +174,45 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
               building.getShortName(), ratio, roll, result, attackerLost, attackerOwnStrength, defenderLost,
               defenderOwnStrength);
 
-        // Traits are read before the losses are applied, while every unit that fought is still on its side
-        Set<MarinePointsTrait> attackerTraits = narrator.traitsOf(combat.attackerIds, null);
-        Set<MarinePointsTrait> defenderTraits = narrator.traitsOf(combat.defenderIds, building);
-        reportMarinePointsLost(5642, attackerLost, attackerOwnStrength);
-        int attackerPersonnelLost = applySideLosses(combat, true, attackerLost, attackerOwnStrength);
-        reportMarinePointsLost(5643, defenderLost, defenderOwnStrength);
-        int defenderPersonnelLost = applySideLosses(combat, false, defenderLost, defenderOwnStrength);
-        reportPersonnelLost(5633, attackerPersonnelLost);
-        reportPersonnelLost(5634, defenderPersonnelLost);
+        // The losses are planned before anything is applied, so the story and the working come first and the
+        // destroyed lines follow them. A side is gone when the result eliminates it or nobody who counted is left;
+        // a building whose crew were never committed counts for nothing and cannot keep a side alive (p. 172).
+        InfantryActionSideLosses attackerLosses = planSideLosses(combat.attackerIds, attackerLost,
+              attackerOwnStrength);
+        InfantryActionSideLosses defenderLosses = planSideLosses(combat.defenderIds, defenderLost,
+              defenderOwnStrength);
+        boolean attackersGone = attackerEliminated || attackerLosses.nobodyLeft();
+        boolean defendersGone = defenderEliminated || defenderLosses.nobodyLeft();
+        boolean captured = defendersGone && !attackersGone;
+        InfantryActionNarrator.Side attackers = InfantryActionNarrator.Side.of(getGame(), combat.attackerIds, null,
+              attackerLost, attackerOwnStrength, attackersGone);
+        InfantryActionNarrator.Side defenders = InfantryActionNarrator.Side.of(getGame(), combat.defenderIds,
+              building, defenderLost, defenderOwnStrength, defendersGone);
+
+        reportCombatHeader(building);
+        narrator.narrate(outcomeOf(result, withdrawing, attackersGone, defendersGone), attackers, defenders,
+              captured ? building : null);
+        reportRoll(ratio, attackerStrength, defenderStrength, roll, result);
+        if (withdrawing) {
+            reportWithdrawal(attackerPercent, defenderPercent);
+        }
+        reporter.reportSideLosses(true, attackerLosses);
+        reporter.reportSideLosses(false, defenderLosses);
+        applySideLosses(combat, true, attackerLosses);
+        applySideLosses(combat, false, defenderLosses);
         checkAndApplyStructureDamage(building);
 
-        // Units with nobody left were dropped from their side while the losses were applied. A side can also be
-        // left with units that count for nothing, such as a building whose crew were never committed; a side at
-        // zero Marine Points is gone (TO:AR p. 172).
-        boolean attackersGone = attackerEliminated || (totalMarinePoints(combat.attackerIds, null) <= 0);
-        boolean defendersGone = defenderEliminated || (totalMarinePoints(combat.defenderIds, null) <= 0);
         if (attackersGone) {
-            reportSideEliminated(combat, true);
+            LOGGER.info("[InfantryAction] {}: the attackers are gone", building.getShortName());
+            cleanupCombat(combat);
         } else if (defendersGone) {
-            reportSideEliminated(combat, false);
             captureBuilding(building);
+            cleanupCombat(combat);
         } else if (result.isAttackerRepulsed()) {
             reportSideRepulsed(combat);
         } else if (withdrawing) {
             reportWithdrawal(combat, building);
         }
-        narrator.narrate(outcomeOf(result, withdrawing, attackersGone, defendersGone),
-              new InfantryActionNarrator.Side(attackerLost, attackerOwnStrength, attackersGone, attackerTraits),
-              new InfantryActionNarrator.Side(defenderLost, defenderOwnStrength, defendersGone, defenderTraits));
     }
 
     /** How the roll went, in the order the lines above decide it. */
@@ -264,69 +269,88 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Converts a side's Marine Points loss back into casualties on each of its units (TO:AR p. 174) and applies
-     * them. Units that no longer have anyone left drop out of the action.
+     * Works out what each unit on a side loses for the side's Marine Points loss (TO:AR p. 174): the side's casualty
+     * fraction applied to each unit's head-count, rounded down. Nothing is applied here.
      *
-     * @return the people lost across the side, for the report
+     * @param sideIds          the side's units
+     * @param marinePointsLost the side's loss in points
+     * @param ownStrength      the side's own strength the loss is measured against
+     *
+     * @return the planned losses, listing only units that had someone to lose
      */
-    private int applySideLosses(InfantryAction combat, boolean isAttacker, int marinePointsLost, int ownStrength) {
-        if (marinePointsLost <= 0) {
-            return 0;
-        }
-        double casualtyFraction = InfantryCombatCasualties.casualtyFraction(marinePointsLost, ownStrength);
-        List<Integer> sideIds = isAttacker ? combat.attackerIds : combat.defenderIds;
-        int personnelLost = 0;
-        for (int entityId : new ArrayList<>(sideIds)) {
+    private InfantryActionSideLosses planSideLosses(List<Integer> sideIds, int marinePointsLost, int ownStrength) {
+        double casualtyFraction = (marinePointsLost <= 0) ? 0
+              : InfantryCombatCasualties.casualtyFraction(marinePointsLost, ownStrength);
+        List<InfantryActionSideLosses.UnitLoss> units = new ArrayList<>();
+        for (int entityId : sideIds) {
             Entity entity = getGame().getEntity(entityId);
-            if ((entity == null) || entity.isDestroyed() || entity.isDoomed() || entity.isCarcass()) {
+            if ((entity == null) || InfantryActionReporter.isOutOfTheFight(entity)) {
                 continue;
             }
+            InfantryActionSideLosses.UnitLoss loss = switch (entity) {
+                case BattleArmor battleArmor -> {
+                    int activeTroopers = battleArmor.getNumberActiveTroopers();
+                    yield new InfantryActionSideLosses.UnitLoss(battleArmor, activeTroopers,
+                          InfantryCombatCasualties.personnelLost(activeTroopers, casualtyFraction, false), false);
+                }
+                case ConvInfantry platoon -> {
+                    int troopers = platoon.getInternal(ConvInfantry.LOC_INFANTRY);
+                    boolean armoured = platoon.calcDamageDivisor() >= 2.0;
+                    yield new InfantryActionSideLosses.UnitLoss(platoon, troopers,
+                          InfantryCombatCasualties.personnelLost(troopers, casualtyFraction, armoured), false);
+                }
+                case AbstractBuildingEntity crewed -> {
+                    int committedCrew = crewed.getCommittedCrew();
+                    yield new InfantryActionSideLosses.UnitLoss(crewed, committedCrew,
+                          InfantryCombatCasualties.personnelLost(committedCrew, casualtyFraction, false), true);
+                }
+                default -> null;
+            };
+            if ((loss != null) && (loss.headCount() > 0)) {
+                units.add(loss);
+            }
+        }
+        return new InfantryActionSideLosses(marinePointsLost, ownStrength, units);
+    }
+
+    /**
+     * Applies a side's planned losses to its units. Units that no longer have anyone left drop out of the action.
+     */
+    private void applySideLosses(InfantryAction combat, boolean isAttacker, InfantryActionSideLosses losses) {
+        List<Integer> sideIds = isAttacker ? combat.attackerIds : combat.defenderIds;
+        for (InfantryActionSideLosses.UnitLoss loss : losses.units()) {
+            Entity entity = loss.entity();
             boolean eliminated;
             switch (entity) {
                 case BattleArmor battleArmor -> {
-                    int activeTroopers = battleArmor.getNumberActiveTroopers();
-                    int troopersLost = InfantryCombatCasualties.personnelLost(activeTroopers, casualtyFraction, false);
-                    reporter.reportUnitLoss(battleArmor, activeTroopers, marinePointsLost, ownStrength, troopersLost,
-                          false);
-                    applyBattleArmorLosses(battleArmor, troopersLost);
-                    personnelLost += troopersLost;
+                    applyBattleArmorLosses(battleArmor, loss.personnelLost());
                     eliminated = battleArmor.isDestroyed() || (battleArmor.getNumberActiveTroopers() <= 0);
                 }
                 case ConvInfantry platoon -> {
                     // The casualties are already people, so they come straight off the live trooper count. Going
                     // through the weapon damage routine would divide by the armour divisor and double for units in
                     // the open, neither of which applies to a casualty figure from the action table.
-                    int troopers = platoon.getInternal(ConvInfantry.LOC_INFANTRY);
-                    boolean armoured = platoon.calcDamageDivisor() >= 2.0;
-                    int troopersLost = InfantryCombatCasualties.personnelLost(troopers, casualtyFraction, armoured);
-                    reporter.reportUnitLoss(platoon, troopers, marinePointsLost, ownStrength, troopersLost, false);
-                    if (troopersLost > 0) {
-                        platoon.setInternal(Math.max(0, troopers - troopersLost), ConvInfantry.LOC_INFANTRY);
+                    if (loss.personnelLost() > 0) {
+                        platoon.setInternal(Math.max(0, loss.remaining()), ConvInfantry.LOC_INFANTRY);
                     }
-                    personnelLost += troopersLost;
                     eliminated = platoon.getInternal(ConvInfantry.LOC_INFANTRY) <= 0;
                     if (eliminated && !platoon.isDestroyed()) {
                         addReport(gameManager.destroyEntity(platoon, "infantry action casualties"));
                     }
                 }
-                case AbstractBuildingEntity building -> {
-                    int crewBefore = building.getCommittedCrew();
-                    int crewLost = InfantryCombatCasualties.personnelLost(crewBefore, casualtyFraction, false);
-                    reporter.reportUnitLoss(building, crewBefore, marinePointsLost, ownStrength, crewLost, true);
-                    applyCrewLosses(building, crewLost);
-                    personnelLost += crewLost;
+                case AbstractBuildingEntity crewed -> {
+                    applyCrewLosses(crewed, loss.personnelLost());
                     // A building with crew left to commit stays in the action; only a dead crew leaves it
-                    eliminated = building.getCrew().getCurrentSize() <= 0;
+                    eliminated = crewed.getCrew().getCurrentSize() <= 0;
                 }
                 default -> eliminated = false;
             }
             if (eliminated) {
                 LOGGER.debug("[InfantryAction] {} has no one left and leaves the action", entity.getShortName());
                 entity.clearInfantryCombatState();
-                sideIds.remove(Integer.valueOf(entityId));
+                sideIds.remove(Integer.valueOf(entity.getId()));
             }
         }
-        return personnelLost;
     }
 
     /**
@@ -351,15 +375,13 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
      * @param crewLost the crew this building loses, already reported
      */
     /** The defenders committed nothing and the building falls. */
+    /** The attackers had nobody left to make the roll. */
+    private static final int ATTACKERS_ELIMINATED = 5636;
     private static final int BUILDING_FALLS = 5665;
-    /** The building is captured because its defenders are at zero Marine Points. */
-    private static final int BUILDING_CAPTURED = 5708;
     /** A unit is moved out of the building after a withdrawal or a repulse. */
     private static final int MOVES_OUT = 5666;
     /** Report ids 5647 and 5648 are the "lose everything" versions of 5642 and 5643. */
-    private static final int WIPED_OUT_MESSAGE_OFFSET = 5;
     /** Report ids 5649 and 5650 are the "nobody lost" versions of 5633 and 5634. */
-    private static final int NOBODY_LOST_MESSAGE_OFFSET = 16;
 
     private void applyCrewLosses(AbstractBuildingEntity building, int crewLost) {
         Crew crew = building.getCrew();
@@ -434,10 +456,6 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
      * surrender with it (TO:AR p. 172, the Castles Brian example).
      */
     private void captureBuilding(AbstractBuildingEntity building) {
-        Report report = new Report(BUILDING_CAPTURED);
-        report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
-        report.addDesc(building);
-        addReport(report);
         surrenderCrew(building);
         LOGGER.info("[InfantryAction] {} is captured: its defenders are at zero Marine Points",
               building.getShortName());
@@ -501,39 +519,9 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
     }
 
 
-    /** A side cannot lose more than it has; a loss at or over its strength is reported as losing everything. */
-    private void reportMarinePointsLost(int messageId, int marinePointsLost, int ownStrength) {
-        if (marinePointsLost <= 0) {
-            return;
-        }
-        if (marinePointsLost >= ownStrength) {
-            Report report = new Report(messageId + WIPED_OUT_MESSAGE_OFFSET);
-            report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
-            report.add(ownStrength);
-            addReport(report);
-            return;
-        }
-        Report report = new Report(messageId);
-        report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
-        report.add(marinePointsLost);
-        report.add(ownStrength);
-        addReport(report);
-    }
-
-    /** A loss too small to cost a whole trooper is said out loud, so the report does not look like it forgot a side. */
-    private void reportPersonnelLost(int messageId, int personnelLost) {
-        if (personnelLost <= 0) {
-            addReport(new Report(messageId + NOBODY_LOST_MESSAGE_OFFSET).indent(InfantryActionReporter.SIDE_LINE_INDENT));
-            return;
-        }
-        Report report = new Report(messageId);
-        report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
-        report.add(personnelLost);
-        addReport(report);
-    }
-
-    private void reportSideEliminated(InfantryAction combat, boolean attackersEliminated) {
-        addReport(new Report(attackersEliminated ? 5636 : 5638).indent(InfantryActionReporter.SIDE_LINE_INDENT));
+    /** The attackers had nobody left before the roll: the action ends without one. */
+    private void reportAttackersEliminated(InfantryAction combat) {
+        addReport(new Report(ATTACKERS_ELIMINATED).indent(InfantryActionReporter.SIDE_LINE_INDENT));
         cleanupCombat(combat);
     }
 

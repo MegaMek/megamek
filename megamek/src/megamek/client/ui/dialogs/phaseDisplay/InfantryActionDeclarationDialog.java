@@ -34,21 +34,29 @@ package megamek.client.ui.dialogs.phaseDisplay;
 
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.UIManager;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.InfantryActionDeclaration;
+import megamek.common.Player;
 import megamek.common.compute.InfantryActionStrengths;
 import megamek.common.game.Game;
 import megamek.common.units.AbstractBuildingEntity;
@@ -56,179 +64,186 @@ import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 
 /**
- * The declaration of an infantry vs. infantry action, with the strengths on show (TO:AR pp. 169 to 172). Starting an
- * action lists every friendly unit in the building with a tick box each, so the player commits one, some or all in
- * one declaration, and shows what they face: the enemy infantry inside exactly, the building's crew as an upper
- * bound, since crew commitment is the one figure the book keeps hidden. Joining an action shows what the unit adds
- * and the totals it produces.
+ * One player's declaration for an infantry vs. infantry action in one building (TO:AR pp. 169 to 172). The
+ * attacker ticks the units to commit, or withdraws the force; the defender ticks the infantry to field and sets the
+ * crew to commit, seeing the Marine Points it adds and the crew hits it costs. Each side sees its own strength unit
+ * by unit and the other side as known. The dialog resizes freely and its text reflows to the width it is given.
  */
 public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
 
-    /** The width, before GUI scaling, that the dialog's lines wrap at. */
-    private static final int TEXT_WIDTH = 440;
-
     private final Game game;
+    private final Player player;
     private final AbstractBuildingEntity building;
-    private final Infantry declaringUnit;
-    private final boolean isInitiation;
+    private final boolean defends;
     private final List<JCheckBox> unitBoxes = new ArrayList<>();
     private final List<Infantry> offeredUnits = new ArrayList<>();
-    private JLabel attackerTotal;
-
-    private InfantryActionDeclarationDialog(JFrame frame, Game game, Infantry declaringUnit,
-          AbstractBuildingEntity building, boolean isInitiation) {
-        super(frame, "InfantryActionDeclarationDialog", isInitiation
-              ? "PreEndDeclarationsDisplay.InitiateInfantryCombatDialog.title"
-              : "InfantryVsInfantryCombatDisplay.ReinforceInfantryCombatDialog.title");
-        this.game = game;
-        this.declaringUnit = declaringUnit;
-        this.building = building;
-        this.isInitiation = isInitiation;
-        initialize();
-        openWideEnoughForTheText();
-    }
+    private JTextArea ownTotal;
+    private JCheckBox withdrawBox;
+    private JSpinner crewSpinner;
+    private JTextArea crewEffect;
 
     /**
-     * The remembered size wins over the packed size, and a remembered size from a shorter dialog can be narrower than
-     * the lines wrap at, which clips them. The dialog therefore never opens narrower than its own preferred width.
-     */
-    private void openWideEnoughForTheText() {
-        int neededWidth = getPreferredSize().width;
-        int neededHeight = getPreferredSize().height;
-        setMinimumSize(new Dimension(neededWidth, neededHeight));
-        if ((getWidth() < neededWidth) || (getHeight() < neededHeight)) {
-            setSize(Math.max(getWidth(), neededWidth), Math.max(getHeight(), neededHeight));
-        }
-    }
-
-    /**
-     * The dialog for starting an action.
-     *
-     * @param frame     the parent frame
-     * @param game      the game
-     * @param initiator the unit whose turn it is
-     * @param building  the building to attack
-     *
-     * @return the dialog, not yet shown
-     */
-    public static InfantryActionDeclarationDialog forInitiation(JFrame frame, Game game, Infantry initiator,
-          AbstractBuildingEntity building) {
-        return new InfantryActionDeclarationDialog(frame, game, initiator, building, true);
-    }
-
-    /**
-     * The dialog for joining a running action.
-     *
      * @param frame    the parent frame
      * @param game     the game
-     * @param joiner   the unit whose turn it is
-     * @param building the building the action is in
-     *
-     * @return the dialog, not yet shown
+     * @param player   the declaring player
+     * @param building the building the action is in, or would be in
      */
-    public static InfantryActionDeclarationDialog forJoining(JFrame frame, Game game, Infantry joiner,
-          AbstractBuildingEntity building) {
-        return new InfantryActionDeclarationDialog(frame, game, joiner, building, false);
+    public InfantryActionDeclarationDialog(JFrame frame, Game game, Player player, AbstractBuildingEntity building) {
+        super(frame, "InfantryActionDeclarationDialog", InfantryActionStrengths.defends(player, building)
+              ? "InfantryActionDeclarationDialog.title.defend" : "InfantryActionDeclarationDialog.title.attack");
+        this.game = game;
+        this.player = player;
+        this.building = building;
+        this.defends = InfantryActionStrengths.defends(player, building);
+        initialize();
+        setTitle(Messages.getString(defends ? "InfantryActionDeclarationDialog.title.defend"
+              : "InfantryActionDeclarationDialog.title.attack", building.getDisplayName()));
+        setMinimumSize(new Dimension(UIUtil.scaleForGUI(360), UIUtil.scaleForGUI(240)));
     }
 
     @Override
     protected Container createCenterPane() {
-        int verticalPadding = UIUtil.scaleForGUI(8);
-        int horizontalPadding = UIUtil.scaleForGUI(14);
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-        panel.setBorder(new EmptyBorder(verticalPadding, horizontalPadding, verticalPadding, horizontalPadding));
-        if (isInitiation) {
-            addInitiationSections(panel, verticalPadding);
+        JPanel column = new JPanel(new GridBagLayout());
+        int padding = UIUtil.scaleForGUI(6);
+        column.setBorder(javax.swing.BorderFactory.createEmptyBorder(padding, padding * 2, padding, padding * 2));
+        if (defends) {
+            addDefenceRows(column);
         } else {
-            addJoiningSections(panel, verticalPadding);
+            addAttackRows(column);
         }
-        return panel;
+        // A filler row takes the spare height, so the rows stay at the top when the dialog is tall
+        GridBagConstraints filler = rowConstraints();
+        filler.weighty = 1;
+        column.add(new JPanel(), filler);
+        JScrollPane scroller = new JScrollPane(column, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+              ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scroller.setBorder(null);
+        return scroller;
     }
 
-    private void addInitiationSections(JPanel panel, int verticalPadding) {
-        addHeading(panel, Messages.getString("InfantryActionDeclarationDialog.attackingWith", building.getDisplayName()));
-        List<Infantry> candidates = InfantryActionStrengths.unengagedFriendlyInfantryInside(game,
-              declaringUnit.getOwner(), building);
-        for (Infantry unit : candidates) {
-            JCheckBox box = new JCheckBox("<html><body style='width: " + UIUtil.scaleForGUI(TEXT_WIDTH) + "px'>"
-                  + unitLine(unit, null) + "</body></html>", true);
-            box.setEnabled(unit.getId() != declaringUnit.getId());
-            box.setAlignmentX(LEFT_ALIGNMENT);
-            box.addActionListener(event -> refreshAttackerTotal());
-            unitBoxes.add(box);
-            offeredUnits.add(unit);
-            panel.add(box);
-        }
-        attackerTotal = new JLabel();
-        attackerTotal.setAlignmentX(LEFT_ALIGNMENT);
-        panel.add(attackerTotal);
-        refreshAttackerTotal();
-        panel.add(Box.createVerticalStrut(verticalPadding));
+    // ---------------------------------------------------------------- attacker
 
-        addHeading(panel, Messages.getString("InfantryActionDeclarationDialog.against"));
-        List<Infantry> enemies = InfantryActionStrengths.enemyInfantryInside(game, declaringUnit.getOwner(), building);
+    private void addAttackRows(JPanel column) {
+        List<Entity> engaged = InfantryActionStrengths.engaged(game, building, true).stream()
+              .filter(entity -> entity.getOwnerId() == player.getId()).toList();
+        addHeading(column, Messages.getString("InfantryActionDeclarationDialog.attackingWith"));
+        for (Entity unit : engaged) {
+            addText(column, Messages.getString("InfantryActionDeclarationDialog.alreadyIn", unit.getDisplayName(),
+                  number(InfantryActionStrengths.points(unit, null))));
+        }
+        for (Infantry unit : InfantryActionStrengths.unengagedFriendlyInfantryInside(game, player, building)) {
+            addUnitBox(column, unit, true);
+        }
+        ownTotal = addText(column, "");
+        if (!engaged.isEmpty()) {
+            withdrawBox = new JCheckBox(Messages.getString("InfantryActionDeclarationDialog.withdraw"));
+            withdrawBox.addActionListener(event -> refreshTotals());
+            column.add(withdrawBox, rowConstraints());
+        }
+        addHeading(column, Messages.getString("InfantryActionDeclarationDialog.against"));
         double known = 0;
-        for (Infantry enemy : enemies) {
-            addLine(panel, unitLine(enemy, building));
+        for (Infantry enemy : InfantryActionStrengths.enemyInfantryInside(game, player, building)) {
+            addText(column, unitLine(enemy, building));
             known += InfantryActionStrengths.points(enemy, building);
         }
         double crewPoints = InfantryActionStrengths.hasCrewToDefend(building)
-              ? InfantryActionStrengths.points(building, building) : 0;
+              ? InfantryActionStrengths.crewPointsIfAllCommitted(building) : 0;
         if (crewPoints > 0) {
-            addLine(panel, Messages.getString("InfantryActionDeclarationDialog.crewUpTo", building.getDisplayName(),
+            addText(column, Messages.getString("InfantryActionDeclarationDialog.crewUpTo", building.getDisplayName(),
                   number(crewPoints)));
         }
-        if (enemies.isEmpty() && (crewPoints <= 0)) {
-            addLine(panel, Messages.getString("InfantryActionDeclarationDialog.nobodyDefends"));
+        if ((known <= 0) && (crewPoints <= 0)) {
+            addText(column, Messages.getString("InfantryActionDeclarationDialog.nobodyDefends"));
         }
-        addLine(panel, Messages.getString("InfantryActionDeclarationDialog.defenderTotal", number(known),
+        addText(column, Messages.getString("InfantryActionDeclarationDialog.defenderTotal", number(known),
               number(known + crewPoints)));
+        refreshTotals();
     }
 
-    private void addJoiningSections(JPanel panel, int verticalPadding) {
-        boolean joinsAttackers = joinsAttackers();
-        AbstractBuildingEntity defended = joinsAttackers ? null : building;
-        double joinerPoints = InfantryActionStrengths.points(declaringUnit, defended);
-        addLine(panel, Messages.getString("InfantryActionDeclarationDialog.joinsWith", declaringUnit.getDisplayName(),
-              number(joinerPoints), Messages.getString(joinsAttackers
-                    ? "InfantryActionDeclarationDialog.theAttackers" : "InfantryActionDeclarationDialog.theDefenders")));
-        panel.add(Box.createVerticalStrut(verticalPadding));
-        double attackers = InfantryActionStrengths.total(InfantryActionStrengths.engaged(game, building, true), null);
-        double defenders = InfantryActionStrengths.total(InfantryActionStrengths.engaged(game, building, false),
-              building);
-        double attackersAfter = joinsAttackers ? attackers + joinerPoints : attackers;
-        double defendersAfter = joinsAttackers ? defenders : defenders + joinerPoints;
-        addLine(panel, Messages.getString("InfantryActionDeclarationDialog.sideNowThen",
-              Messages.getString("InfantryActionDeclarationDialog.attackers"),
-              InfantryActionStrengths.roundedUp(attackers), InfantryActionStrengths.roundedUp(attackersAfter)));
-        addLine(panel, Messages.getString("InfantryActionDeclarationDialog.sideNowThen",
-              Messages.getString("InfantryActionDeclarationDialog.defenders"),
-              InfantryActionStrengths.roundedUp(defenders), InfantryActionStrengths.roundedUp(defendersAfter)));
-    }
+    // ---------------------------------------------------------------- defender
 
-    /** The side a joining unit lands on: with the attackers when any defender is its enemy, else the defenders. */
-    private boolean joinsAttackers() {
-        for (Entity defender : InfantryActionStrengths.engaged(game, building, false)) {
-            if (defender.getOwner().isEnemyOf(declaringUnit.getOwner())) {
-                return true;
-            }
+    private void addDefenceRows(JPanel column) {
+        List<Entity> engaged = InfantryActionStrengths.engaged(game, building, false).stream()
+              .filter(entity -> (entity.getOwnerId() == player.getId()) && (entity != building)).toList();
+        addHeading(column, Messages.getString("InfantryActionDeclarationDialog.defendingWith"));
+        for (Entity unit : engaged) {
+            addText(column, Messages.getString("InfantryActionDeclarationDialog.alreadyIn", unit.getDisplayName(),
+                  number(InfantryActionStrengths.points(unit, building))));
         }
+        for (Infantry unit : InfantryActionStrengths.unengagedFriendlyInfantryInside(game, player, building)) {
+            addUnitBox(column, unit, true);
+        }
+        int available = InfantryActionStrengths.crewAvailableToCommit(building);
+        if (InfantryActionStrengths.hasCrewToDefend(building)) {
+            addText(column, Messages.getString("InfantryActionDeclarationDialog.crewState",
+                  building.getCommittedCrew(), building.getCrew().getCurrentSize()));
+            JPanel spinnerRow = new JPanel(new GridBagLayout());
+            GridBagConstraints labelConstraints = new GridBagConstraints();
+            labelConstraints.insets = new Insets(0, 0, 0, UIUtil.scaleForGUI(6));
+            spinnerRow.add(new JLabel(Messages.getString("InfantryActionDeclarationDialog.commitCrew")),
+                  labelConstraints);
+            crewSpinner = new JSpinner(new SpinnerNumberModel(0, 0, Math.max(0, available), 1));
+            crewSpinner.setEnabled(available > 0);
+            crewSpinner.addChangeListener(event -> refreshTotals());
+            spinnerRow.add(crewSpinner, new GridBagConstraints());
+            column.add(spinnerRow, rowConstraints());
+            crewEffect = addText(column, "");
+        }
+        ownTotal = addText(column, "");
+        addHeading(column, Messages.getString("InfantryActionDeclarationDialog.against"));
+        double attackers = 0;
         for (Entity attacker : InfantryActionStrengths.engaged(game, building, true)) {
-            if (attacker.getOwner().isEnemyOf(declaringUnit.getOwner())) {
-                return false;
+            addText(column, unitLine(attacker, null));
+            attackers += InfantryActionStrengths.points(attacker, null);
+        }
+        for (Infantry enemy : InfantryActionStrengths.enemyInfantryInside(game, player, building)) {
+            if (enemy.getInfantryCombatTargetId() == Entity.NONE) {
+                addText(column, Messages.getString("InfantryActionDeclarationDialog.couldAttack",
+                      enemy.getDisplayName(), number(InfantryActionStrengths.points(enemy, null))));
+                attackers += InfantryActionStrengths.points(enemy, null);
             }
         }
-        return true;
+        addText(column, Messages.getString("InfantryActionDeclarationDialog.attackerTotal", number(attackers),
+              InfantryActionStrengths.roundedUp(attackers)));
+        refreshTotals();
     }
 
-    private void refreshAttackerTotal() {
-        double total = 0;
+    // ---------------------------------------------------------------- shared rows
+
+    private void addUnitBox(JPanel column, Infantry unit, boolean ticked) {
+        JCheckBox box = new JCheckBox(unitLine(unit, defends ? building : null), ticked);
+        box.addActionListener(event -> refreshTotals());
+        unitBoxes.add(box);
+        offeredUnits.add(unit);
+        column.add(box, rowConstraints());
+    }
+
+    private void refreshTotals() {
+        double units = 0;
         for (Infantry unit : getCommittedUnits()) {
-            total += InfantryActionStrengths.points(unit, null);
+            units += InfantryActionStrengths.points(unit, defends ? building : null);
         }
-        attackerTotal.setText(Messages.getString("InfantryActionDeclarationDialog.attackerTotal", number(total),
-              InfantryActionStrengths.roundedUp(total)));
+        for (Entity engaged : InfantryActionStrengths.engaged(game, building, !defends)) {
+            boolean own = (engaged.getOwnerId() == player.getId()) && (engaged != building);
+            if (own) {
+                units += InfantryActionStrengths.points(engaged, defends ? building : null);
+            }
+        }
+        boolean withdrawing = (withdrawBox != null) && withdrawBox.isSelected();
+        for (JCheckBox box : unitBoxes) {
+            box.setEnabled(!withdrawing);
+        }
+        if (defends && (crewSpinner != null)) {
+            int extra = (Integer) crewSpinner.getValue();
+            double crewPoints = InfantryActionStrengths.crewPointsIfCommitted(building,
+                  building.getCommittedCrew() + extra);
+            int hits = InfantryActionStrengths.crewHitsIfCommitted(building, extra);
+            crewEffect.setText(Messages.getString("InfantryActionDeclarationDialog.crewEffect", extra,
+                  number(crewPoints), hits));
+            units += crewPoints;
+        }
+        ownTotal.setText(Messages.getString(withdrawing ? "InfantryActionDeclarationDialog.withdrawing"
+              : "InfantryActionDeclarationDialog.ownTotal", number(units), InfantryActionStrengths.roundedUp(units)));
     }
 
     private String unitLine(Entity unit, AbstractBuildingEntity defended) {
@@ -236,18 +251,37 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
               number(InfantryActionStrengths.points(unit, defended)));
     }
 
-    private static void addHeading(JPanel panel, String text) {
-        JLabel heading = new JLabel("<html><b>" + text + "</b></html>");
-        heading.setAlignmentX(LEFT_ALIGNMENT);
-        panel.add(heading);
+    private static GridBagConstraints rowConstraints() {
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridx = 0;
+        constraints.gridy = GridBagConstraints.RELATIVE;
+        constraints.weightx = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.anchor = GridBagConstraints.NORTHWEST;
+        constraints.insets = new Insets(UIUtil.scaleForGUI(2), 0, UIUtil.scaleForGUI(2), 0);
+        return constraints;
     }
 
-    /** A line that wraps: labels only wrap as HTML with a width, so every line is given the dialog's text width. */
-    private static void addLine(JPanel panel, String text) {
-        JLabel line = new JLabel("<html><body style='width: " + UIUtil.scaleForGUI(TEXT_WIDTH) + "px'>" + text
-              + "</body></html>");
-        line.setAlignmentX(LEFT_ALIGNMENT);
-        panel.add(line);
+    private static void addHeading(JPanel column, String text) {
+        JLabel heading = new JLabel("<html><b>" + text + "</b></html>");
+        GridBagConstraints constraints = rowConstraints();
+        constraints.insets = new Insets(UIUtil.scaleForGUI(8), 0, UIUtil.scaleForGUI(2), 0);
+        column.add(heading, constraints);
+    }
+
+    /** A line of text that wraps to whatever width the column has, so the dialog can be any size. */
+    private static JTextArea addText(JPanel column, String text) {
+        JTextArea area = new JTextArea(text);
+        area.setLineWrap(true);
+        area.setWrapStyleWord(true);
+        area.setEditable(false);
+        area.setFocusable(false);
+        area.setOpaque(false);
+        area.setBorder(null);
+        area.setFont(UIManager.getFont("Label.font"));
+        area.setForeground(UIManager.getColor("Label.foreground"));
+        column.add(area, rowConstraints());
+        return area;
     }
 
     /** A Marine Points figure: whole numbers plain, fractions to two places. */
@@ -255,17 +289,15 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
         return BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
     }
 
+    // ---------------------------------------------------------------- results
+
     /**
-     * The units the player ticked, the declaring unit always among them. Empty for a joining dialog.
-     *
-     * @return the committed units
+     * @return the units the player ticked
      */
     public List<Infantry> getCommittedUnits() {
         List<Infantry> committed = new ArrayList<>();
         for (int index = 0; index < unitBoxes.size(); index++) {
-            boolean committedUnit = unitBoxes.get(index).isSelected()
-                  || (offeredUnits.get(index).getId() == declaringUnit.getId());
-            if (committedUnit) {
+            if (unitBoxes.get(index).isSelected()) {
                 committed.add(offeredUnits.get(index));
             }
         }
@@ -273,17 +305,25 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
     }
 
     /**
-     * The ids of the committed units other than the declaring one, for the initiation action.
-     *
-     * @return the other units' ids
+     * @return the declaration the player made, for the server
      */
-    public List<Integer> getOtherCommittedUnitIds() {
-        List<Integer> ids = new ArrayList<>();
-        for (Infantry unit : getCommittedUnits()) {
-            if (unit.getId() != declaringUnit.getId()) {
-                ids.add(unit.getId());
-            }
+    public InfantryActionDeclaration getDeclaration() {
+        List<Integer> unitIds = getCommittedUnits().stream().map(Entity::getId).toList();
+        if (defends) {
+            int crew = (crewSpinner == null) ? 0 : (Integer) crewSpinner.getValue();
+            return InfantryActionDeclaration.defending(player.getId(), building.getId(), unitIds, crew);
         }
-        return ids;
+        boolean withdrawing = (withdrawBox != null) && withdrawBox.isSelected();
+        return InfantryActionDeclaration.attacking(player.getId(), building.getId(),
+              withdrawing ? List.of() : unitIds, withdrawing);
+    }
+
+    /**
+     * @return {@code true} when the declaration commits something or withdraws, so there is something to send
+     */
+    public boolean declaresAnything() {
+        InfantryActionDeclaration declaration = getDeclaration();
+        return declaration.withdraw() || !declaration.committedUnitIds().isEmpty()
+              || (declaration.committedCrew() > 0);
     }
 }

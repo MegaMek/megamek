@@ -35,14 +35,14 @@ package megamek.server.totalWarfare;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.util.List;
 
+import megamek.common.InfantryActionDeclaration;
 import megamek.common.Player;
-import megamek.common.actions.InitiateInfantryCombatAction;
-import megamek.common.actions.ReinforceInfantryCombatAction;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
@@ -64,14 +64,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 /**
- * Starting and joining an infantry action (TO:AR pp. 169 to 172): everyone the initiator commits attacks, every
- * enemy in any hex of the building defends, and a unit joins the side it belongs to.
+ * Declaring an infantry action (TO:AR pp. 169 to 172): the attacker commits units or withdraws the force, the
+ * defender commits infantry and crew, and each declaration lands on the right side.
  */
 @DisplayName("Infantry action declarations")
 class InfantryActionDeclarationHandlerTest {
 
     private static final Coords HEX_A = new Coords(5, 5);
     private static final Coords HEX_B = new Coords(6, 5);
+    private static final int CREW = 4;
 
     private Game game;
     private TWGameManager gameManager;
@@ -104,7 +105,7 @@ class InfantryActionDeclarationHandlerTest {
         tracker = new InfantryActionTracker();
         handler = new InfantryActionDeclarationHandler(gameManager, tracker);
 
-        // A two-hex emplacement with a crew, anchored on hex A and reaching hex B
+        // A two-hex emplacement with four crew, anchored on hex A and reaching hex B
         building = new BuildingEntity(BuildingType.MEDIUM, 3);
         building.setOwner(defendingPlayer);
         building.setGame(game);
@@ -114,6 +115,8 @@ class InfantryActionDeclarationHandlerTest {
         building.refreshLocations();
         building.refreshAdditionalLocations();
         building.addEquipment(new WeaponMounted(building, new ISLaserMedium()), 0, false);
+        building.getCrew().setSize(CREW);
+        building.getCrew().setCurrentSize(CREW);
         building.setId(0);
         game.addEntity(building);
         building.setPosition(HEX_A);
@@ -132,45 +135,56 @@ class InfantryActionDeclarationHandlerTest {
         return infantry;
     }
 
+    private void attackerDeclares(List<Integer> unitIds, boolean withdraw) {
+        handler.declare(InfantryActionDeclaration.attacking(attackingPlayer.getId(), building.getId(), unitIds,
+              withdraw), attackingPlayer.getId());
+    }
+
+    private void defenderDeclares(List<Integer> unitIds, int crew) {
+        handler.declare(InfantryActionDeclaration.defending(defendingPlayer.getId(), building.getId(), unitIds,
+              crew), defendingPlayer.getId());
+    }
+
     @Test
-    @DisplayName("The initiator and the units it commits all attack, and a committed unit's turn is spent")
+    @DisplayName("The attacker's committed units all attack together")
     void committedUnitsAttackTogether() {
-        ConvInfantry initiator = platoon(attackingPlayer, 1, HEX_A);
-        ConvInfantry committed = platoon(attackingPlayer, 2, HEX_A);
-        platoon(defendingPlayer, 3, HEX_A);
+        ConvInfantry first = platoon(attackingPlayer, 1, HEX_A);
+        ConvInfantry second = platoon(attackingPlayer, 2, HEX_B);
 
-        handler.process(new InitiateInfantryCombatAction(initiator.getId(), building.getId(),
-              List.of(committed.getId())));
+        attackerDeclares(List.of(first.getId(), second.getId()), false);
 
         var combat = tracker.getCombat(building.getId());
         assertNotNull(combat);
-        assertEquals(List.of(initiator.getId(), committed.getId()), combat.attackerIds);
-        assertTrue(committed.isInfantryCombatAttacker());
-        assertTrue(committed.isDone(), "the committed unit has no declaration left to make");
+        assertEquals(List.of(first.getId(), second.getId()), combat.attackerIds);
+        assertEquals(List.of(building.getId()), combat.defenderIds, "the crewed building defends by itself");
     }
 
     @Test
-    @DisplayName("Enemy infantry in any hex of the building defends, with the crew")
-    void defendersComeFromEveryHexOfTheBuilding() {
-        ConvInfantry initiator = platoon(attackingPlayer, 1, HEX_A);
-        ConvInfantry inTheOtherHex = platoon(defendingPlayer, 2, HEX_B);
+    @DisplayName("Infantry the defender committed before the attack defends alongside the building")
+    void defenderCommittedBeforeTheAttackDefends() {
+        ConvInfantry attacker = platoon(attackingPlayer, 1, HEX_A);
+        ConvInfantry defender = platoon(defendingPlayer, 2, HEX_B);
+        ConvInfantry heldBack = platoon(defendingPlayer, 3, HEX_A);
 
-        handler.process(new InitiateInfantryCombatAction(initiator.getId(), building.getId()));
+        defenderDeclares(List.of(defender.getId()), 2);
+        attackerDeclares(List.of(attacker.getId()), false);
 
         var combat = tracker.getCombat(building.getId());
         assertNotNull(combat);
-        assertEquals(List.of(building.getId(), inTheOtherHex.getId()), combat.defenderIds);
+        assertEquals(List.of(building.getId(), defender.getId()), combat.defenderIds);
+        assertEquals(Entity.NONE, heldBack.getInfantryCombatTargetId(), "the unit held back stays out");
+        assertEquals(2, building.getCommittedCrew());
+        assertEquals(3, building.getCrew().getHits(), "two of four crew committed is 50 percent, three crew hits");
     }
 
     @Test
-    @DisplayName("A defender's unit that enters later joins the defenders, not the attackers")
+    @DisplayName("A defender's unit that enters later joins the defenders")
     void defendingPlayersUnitJoinsTheDefenders() {
-        ConvInfantry initiator = platoon(attackingPlayer, 1, HEX_A);
-        platoon(defendingPlayer, 2, HEX_A);
-        handler.process(new InitiateInfantryCombatAction(initiator.getId(), building.getId()));
+        ConvInfantry attacker = platoon(attackingPlayer, 1, HEX_A);
+        attackerDeclares(List.of(attacker.getId()), false);
         ConvInfantry lateDefender = platoon(defendingPlayer, 3, HEX_A);
 
-        handler.process(new ReinforceInfantryCombatAction(lateDefender.getId(), building.getId()));
+        defenderDeclares(List.of(lateDefender.getId()), 0);
 
         var combat = tracker.getCombat(building.getId());
         assertTrue(combat.defenderIds.contains(lateDefender.getId()));
@@ -179,29 +193,54 @@ class InfantryActionDeclarationHandlerTest {
     }
 
     @Test
-    @DisplayName("An attacker's unit that enters later joins the attackers")
-    void attackingPlayersUnitJoinsTheAttackers() {
-        ConvInfantry initiator = platoon(attackingPlayer, 1, HEX_A);
-        platoon(defendingPlayer, 2, HEX_A);
-        handler.process(new InitiateInfantryCombatAction(initiator.getId(), building.getId()));
-        ConvInfantry lateAttacker = platoon(attackingPlayer, 3, HEX_A);
+    @DisplayName("Withdrawing flags the whole attacking force")
+    void withdrawalFlagsTheWholeForce() {
+        ConvInfantry first = platoon(attackingPlayer, 1, HEX_A);
+        ConvInfantry second = platoon(attackingPlayer, 2, HEX_B);
+        attackerDeclares(List.of(first.getId(), second.getId()), false);
 
-        handler.process(new ReinforceInfantryCombatAction(lateAttacker.getId(), building.getId()));
+        attackerDeclares(List.of(), true);
 
-        assertTrue(tracker.getCombat(building.getId()).attackerIds.contains(lateAttacker.getId()));
+        assertTrue(first.isInfantryCombatWantsWithdrawal());
+        assertTrue(second.isInfantryCombatWantsWithdrawal());
+        assertNotNull(tracker.getCombat(building.getId()), "the action still rolls once more");
     }
 
     @Test
-    @DisplayName("A committed unit that is not inside the building is refused")
+    @DisplayName("A committed unit outside the building is refused")
     void committedUnitOutsideIsRefused() {
-        ConvInfantry initiator = platoon(attackingPlayer, 1, HEX_A);
+        ConvInfantry inside = platoon(attackingPlayer, 1, HEX_A);
         ConvInfantry outside = platoon(attackingPlayer, 2, new Coords(9, 9));
-        platoon(defendingPlayer, 3, HEX_A);
 
-        handler.process(new InitiateInfantryCombatAction(initiator.getId(), building.getId(),
-              List.of(outside.getId())));
+        attackerDeclares(List.of(inside.getId(), outside.getId()), false);
 
-        assertEquals(List.of(initiator.getId()), tracker.getCombat(building.getId()).attackerIds);
+        assertEquals(List.of(inside.getId()), tracker.getCombat(building.getId()).attackerIds);
         assertEquals(Entity.NONE, outside.getInfantryCombatTargetId());
+    }
+
+    @Test
+    @DisplayName("A defence that no attack answered stands down at the End Phase")
+    void unansweredDefenceStandsDown() {
+        ConvInfantry defender = platoon(defendingPlayer, 2, HEX_A);
+        defenderDeclares(List.of(defender.getId()), 3);
+        assertEquals(building.getId(), defender.getInfantryCombatTargetId());
+
+        handler.clearUnansweredDefences();
+
+        assertEquals(Entity.NONE, defender.getInfantryCombatTargetId());
+        assertEquals(0, building.getCommittedCrew());
+        assertEquals(0, building.getCrew().getHits(), "no commitment, no penalty");
+        assertNull(tracker.getCombat(building.getId()));
+    }
+
+    @Test
+    @DisplayName("A declaration from the wrong connection is refused")
+    void wrongConnectionIsRefused() {
+        ConvInfantry attacker = platoon(attackingPlayer, 1, HEX_A);
+
+        handler.declare(InfantryActionDeclaration.attacking(attackingPlayer.getId(), building.getId(),
+              List.of(attacker.getId()), false), defendingPlayer.getId());
+
+        assertNull(tracker.getCombat(building.getId()));
     }
 }

@@ -289,10 +289,10 @@ public final class MarinePointsScoreCalculator {
     private static MarinePointsBreakdown crewScore(Entity entity, double buildingModifier) {
         int crew;
         int bayPersonnel;
-        if (entity instanceof AbstractBuildingEntity) {
-            // A building's crew object is sized to its crew and bay personnel together when it loads, and the
-            // action's casualties come off it, so the people still standing are what it counts (TO:AR p. 172)
-            crew = Math.max(0, entity.getCrew().getCurrentSize());
+        if (entity instanceof AbstractBuildingEntity building) {
+            // A building's crew count for nothing until the defender commits them, and the action's casualties come
+            // off the committed crew, so the committed and living are what it counts (TO:AR pp. 169 to 172)
+            crew = building.getCommittedCrew();
             bayPersonnel = 0;
         } else {
             crew = entity.getNCrew();

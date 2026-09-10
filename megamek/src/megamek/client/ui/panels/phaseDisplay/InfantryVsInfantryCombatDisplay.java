@@ -47,7 +47,6 @@ import megamek.client.ui.dialogs.phaseDisplay.InfantryActionDeclarationDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.widget.MegaMekButton;
-import megamek.common.actions.ReinforceInfantryCombatAction;
 import megamek.common.actions.WithdrawInfantryCombatAction;
 import megamek.common.board.Coords;
 import megamek.common.units.AbstractBuildingEntity;
@@ -209,10 +208,12 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
             return;
         }
 
-        var dialog = InfantryActionDeclarationDialog.forJoining(clientgui.getFrame(), game, inf,
-              (AbstractBuildingEntity) targetEntity);
-        if (dialog.showDialog() == DialogResult.CONFIRMED) {
-            addAttack(new ReinforceInfantryCombatAction(currentEntity, target.getId()));
+        // This phase is no longer entered in the normal flow (declarations happen in Pre-End Declarations), but a
+        // client that reaches it still declares through the same dialog and packet
+        var dialog = new InfantryActionDeclarationDialog(clientgui.getFrame(), game,
+              clientgui.getClient().getLocalPlayer(), (AbstractBuildingEntity) targetEntity);
+        if ((dialog.showDialog() == DialogResult.CONFIRMED) && dialog.declaresAnything()) {
+            clientgui.getClient().sendInfantryActionDeclaration(dialog.getDeclaration());
             ready();
         }
     }

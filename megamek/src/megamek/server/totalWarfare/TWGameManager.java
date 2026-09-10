@@ -52,6 +52,7 @@ import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.common.*;
+import megamek.common.InfantryActionDeclaration;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
@@ -1209,6 +1210,9 @@ public class TWGameManager extends AbstractGameManager {
                     break;
                 case ENTITY_DEPLOY_BRIDGE:
                     receiveDeployBridge(packet, connId);
+                    break;
+                case INFANTRY_ACTION_DECLARATION:
+                    receiveInfantryActionDeclaration(packet, connId);
                     break;
                 case ENTITY_NOVA_NETWORK_CHANGE:
                     receiveEntityNovaNetworkModeChange(packet, connId);
@@ -16393,6 +16397,24 @@ public class TWGameManager extends AbstractGameManager {
         new InfantryActionDeclarationHandler(this, infantryActionTracker).process(action);
     }
 
+    /**
+     * Receives a player's declaration for an infantry action in a building, made in the Pre-End Declarations phase.
+     *
+     * @param packet the packet carrying the {@link InfantryActionDeclaration}
+     * @param connId the declaring player's connection
+     */
+    private void receiveInfantryActionDeclaration(Packet packet, int connId) {
+        if (!(packet.data()[0] instanceof InfantryActionDeclaration declaration)) {
+            LOGGER.warn("[InfantryAction] connection {} sent a malformed declaration", connId);
+            return;
+        }
+        if (!getGame().getPhase().isPreEndDeclarations()) {
+            LOGGER.warn("[InfantryAction] connection {} declared outside the Pre-End Declarations phase", connId);
+            return;
+        }
+        new InfantryActionDeclarationHandler(this, infantryActionTracker).declare(declaration, connId);
+    }
+
     /** Sends every client the current turn list, after a turn was removed outside the usual flow. */
     void sendTurnList() {
         send(packetHelper.createTurnListPacket());
@@ -16405,6 +16427,8 @@ public class TWGameManager extends AbstractGameManager {
      * <p>Supports actions in buildings, Large Naval Vessels, and aerospace units.</p>
      */
     void resolveInfantryActions() {
+        new InfantryActionResolutionHandler(this, infantryActionTracker).moveWithdrawnUnitsOut();
+        new InfantryActionDeclarationHandler(this, infantryActionTracker).clearUnansweredDefences();
         // Get all active actions from persistent tracker
         Map<Integer, InfantryActionTracker.InfantryAction> actions = infantryActionTracker.getAllCombats();
 

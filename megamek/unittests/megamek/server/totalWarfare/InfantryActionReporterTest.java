@@ -111,6 +111,7 @@ class InfantryActionReporterTest {
         // The loader sizes a building's crew object to its head-count; a hand-built one needs the same
         building.getCrew().setSize(building.getNCrew());
         building.getCrew().setCurrentSize(building.getNCrew());
+        building.commitCrew(building.getNCrew());
         building.setId(0);
         game.addEntity(building);
     }
@@ -204,13 +205,13 @@ class InfantryActionReporterTest {
     }
 
     @Test
-    @DisplayName("A building's score falls with the crew it has lost")
-    void buildingScoreFollowsTheLiveCrew() {
-        building.getCrew().setCurrentSize(1);
+    @DisplayName("A building's score falls with the committed crew it has lost")
+    void buildingScoreFollowsTheCommittedCrew() {
+        building.loseCommittedCrew(2);
 
         MarinePointsBreakdown afterLosses = MarinePointsScoreCalculator.breakdown(building, building);
 
-        assertEquals(1, afterLosses.crew(), "one crew member left");
+        assertEquals(1, afterLosses.crew(), "one committed crew member left of three");
         assertEquals(0.5, afterLosses.score());
     }
 

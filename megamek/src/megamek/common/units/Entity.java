@@ -784,6 +784,12 @@ public abstract class Entity extends TurnOrdered
     private boolean infantryCombatWantsWithdrawal = false;
 
     /**
+     * Whether this unit withdrew from an infantry action and is moved to a hex next to the building in the following
+     * End Phase (TO:AR p. 172).
+     */
+    private boolean infantryActionLeaving = false;
+
+    /**
      * Flag that indicates that the unit can still be salvaged (given enough time and parts).
      */
     private boolean salvageable = true;
@@ -10722,6 +10728,20 @@ public abstract class Entity extends TurnOrdered
     /**
      * Clear all infantry combat state (called when combat ends).
      */
+    /**
+     * @return {@code true} when the unit withdrew from an infantry action and has yet to be moved out of the building
+     */
+    public boolean isInfantryActionLeaving() {
+        return infantryActionLeaving;
+    }
+
+    /**
+     * @param leaving {@code true} once the unit's force has withdrawn and it waits to be moved out of the building
+     */
+    public void setInfantryActionLeaving(boolean leaving) {
+        infantryActionLeaving = leaving;
+    }
+
     public void clearInfantryCombatState() {
         infantryCombatTargetId = Entity.NONE;
         infantryCombatIsAttacker = false;
@@ -11847,7 +11867,7 @@ public abstract class Entity extends TurnOrdered
      * activation, and detonating a demolition charge this player has set.
      */
     public boolean isEligibleForPreEndDeclarations() {
-        return canInitiateInfantryVsInfantryCombat()
+        return canDeclareInfantryAction()
               || hasNovaCEWS()
               || hasVariableRangeTargeting()
               || canAnnounceAbandon()
@@ -11878,8 +11898,20 @@ public abstract class Entity extends TurnOrdered
      * player while keeping the per-unit turns.
      */
     public boolean hasEntityScopedPreEndDeclaration() {
-        // Infantry-vs-infantry combat and Bridge-Layer (AVLB) deployment are both declared per unit (TM p.242 / TW).
-        return canInitiateInfantryVsInfantryCombat() || BridgeLayerLogic.canDeclareBridgeDeploy(this, game);
+        // Bridge-Layer (AVLB) deployment is declared per unit (TM p.242 / TW); an infantry action is declared once
+        // per player per building, so it collapses to one turn like the other player-wide declarations.
+        return BridgeLayerLogic.canDeclareBridgeDeploy(this, game);
+    }
+
+    /**
+     * Whether this unit gives its player a Pre-End Declarations turn for an infantry action (TO:AR pp. 169 to 172):
+     * infantry that could attack, join or withdraw, and a crewed building with enemies inside. The base
+     * implementation returns {@code false}; infantry and buildings override it.
+     *
+     * @return {@code true} when there is a declaration to make
+     */
+    public boolean canDeclareInfantryAction() {
+        return false;
     }
 
     /**

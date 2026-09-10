@@ -62,6 +62,7 @@ import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
 import megamek.common.IndustrialElevator;
+import megamek.common.InfantryActionDeclaration;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
@@ -72,7 +73,9 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
+import megamek.common.board.BuildingEditSpec;
 import megamek.common.board.Coords;
+import megamek.common.board.HexEditSpec;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.equipment.Flare;
@@ -105,8 +108,6 @@ import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.turns.UnloadStrandedTurn;
 import megamek.common.units.Crew;
-import megamek.common.board.BuildingEditSpec;
-import megamek.common.board.HexEditSpec;
 import megamek.common.units.DamageEditSpec;
 import megamek.common.units.DemolitionCharge;
 import megamek.common.units.Entity;
@@ -1700,6 +1701,15 @@ public class Client extends AbstractClient {
      */
     public void sendDeployBridge(int entityId, int equipNum) {
         send(new Packet(PacketCommand.ENTITY_DEPLOY_BRIDGE, entityId, equipNum));
+    }
+
+    /**
+     * Sends the local player's declaration for an infantry action in a building (TO:AR pp. 169 to 172).
+     *
+     * @param declaration what the player commits or withdraws
+     */
+    public void sendInfantryActionDeclaration(InfantryActionDeclaration declaration) {
+        send(new Packet(PacketCommand.INFANTRY_ACTION_DECLARATION, declaration));
     }
 
     /**

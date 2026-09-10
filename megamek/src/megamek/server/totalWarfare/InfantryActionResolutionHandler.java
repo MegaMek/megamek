@@ -35,6 +35,7 @@ package megamek.server.totalWarfare;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.InfantryCombatResult;
 import megamek.common.Report;
@@ -50,6 +51,7 @@ import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.InfantryActionTracker.InfantryAction;
 
@@ -122,16 +124,17 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
             return;
         }
         if (defenderStrength <= 0) {
+            // Nobody fights for the building this turn: it falls, and its uncommitted crew surrenders
+            // (TO:AR p. 172)
             reportCombatHeader(building);
-            reportSideEliminated(combat, false);
+            reportBuildingFalls(combat, building);
             return;
         }
 
         String ratio = InfantryCombatTables.calculateRatio(attackerStrength, defenderStrength);
         InfantryCombatResult result = InfantryCombatTables.resolveAction(ratio, roll);
         reportCombatHeader(building);
-        reporter.reportSides(combat.attackerIds, combat.defenderIds, building, attackerStrength, defenderStrength);
-        reportRoll(ratio, roll, result);
+        reportRoll(ratio, attackerStrength, defenderStrength, roll, result);
 
         boolean attackerEliminated = result.getAttackerCasualtiesPercent() >= ELIMINATED_PERCENT;
         boolean defenderEliminated = result.isDefenderEliminated();
@@ -272,11 +275,12 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
                     }
                 }
                 case AbstractBuildingEntity building -> {
-                    int crewBefore = building.getCrew().getCurrentSize();
+                    int crewBefore = building.getCommittedCrew();
                     int crewLost = InfantryCombatCasualties.personnelLost(crewBefore, casualtyFraction, false);
                     reporter.reportUnitLoss(building, crewBefore, marinePointsLost, ownStrength, crewLost, true);
                     applyCrewLosses(building, crewLost);
                     personnelLost += crewLost;
+                    // A building with crew left to commit stays in the action; only a dead crew leaves it
                     eliminated = building.getCrew().getCurrentSize() <= 0;
                 }
                 default -> eliminated = false;
@@ -311,6 +315,10 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
      *
      * @param crewLost the crew this building loses, already reported
      */
+    /** The defenders committed nothing and the building falls. */
+    private static final int BUILDING_FALLS = 5665;
+    /** A unit is moved out of the building after a withdrawal or a repulse. */
+    private static final int MOVES_OUT = 5666;
     /** Report ids 5647 and 5648 are the "lose everything" versions of 5642 and 5643. */
     private static final int WIPED_OUT_MESSAGE_OFFSET = 5;
     /** Report ids 5649 and 5650 are the "nobody lost" versions of 5633 and 5634. */
@@ -318,13 +326,9 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
 
     private void applyCrewLosses(AbstractBuildingEntity building, int crewLost) {
         Crew crew = building.getCrew();
-        int crewBefore = crew.getCurrentSize();
-        crew.setCurrentSize(Math.max(0, crewBefore - crewLost));
         int oldHits = crew.getHits();
-        int newHits = crew.calculateHits();
-        for (int slot = 0; slot < crew.getSlotCount(); slot++) {
-            crew.setHits(newHits, slot);
-        }
+        building.loseCommittedCrew(crewLost);
+        int newHits = crew.getHits();
         if (newHits > oldHits) {
             Report report = new Report(5635);
             report.indent(2);
@@ -332,9 +336,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
             report.add(newHits - oldHits);
             addReport(report);
         }
-        if (crew.getCurrentSize() <= 0) {
-            crew.setDoomed(true);
-        }
+        gameManager.entityUpdate(building.getId());
     }
 
     /**
@@ -366,14 +368,72 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         addReport(report);
     }
 
-    /** The odds and the roll on one line, the way a weapon's to-hit and roll share one line. */
-    private void reportRoll(String ratio, int roll, InfantryCombatResult result) {
+    /** The odds, both totals and the roll on one line, the way a weapon's to-hit and roll share one line. */
+    private void reportRoll(String ratio, int attackerStrength, int defenderStrength, int roll,
+          InfantryCombatResult result) {
         Report report = new Report(5631);
         report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
         report.add(ratio);
+        report.add(attackerStrength);
+        report.add(defenderStrength);
         report.add(roll);
         report.add(result.toString());
         addReport(report);
+    }
+
+    /** The defenders committed nothing: the building falls to the attackers and its crew surrenders. */
+    private void reportBuildingFalls(InfantryAction combat, AbstractBuildingEntity building) {
+        Report report = new Report(BUILDING_FALLS);
+        report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
+        report.addDesc(building);
+        addReport(report);
+        building.getCrew().setCurrentSize(0);
+        building.getCrew().setDoomed(true);
+        LOGGER.info("[InfantryAction] {} falls: nothing was committed to its defence", building.getShortName());
+        cleanupCombat(combat);
+    }
+
+    /**
+     * Units that withdrew last turn are moved to a hex next to the building in this End Phase (TO:AR p. 172), before
+     * the actions roll.
+     */
+    void moveWithdrawnUnitsOut() {
+        for (Entity entity : new ArrayList<>(getGame().getEntitiesVector())) {
+            if (entity.isInfantryActionLeaving()) {
+                entity.setInfantryActionLeaving(false);
+                moveOutOfBuilding(entity);
+            }
+        }
+    }
+
+    /** Puts a unit in the nearest hex outside the building it stands in, the first legal one clockwise from north. */
+    private void moveOutOfBuilding(Entity unit) {
+        Coords from = unit.getPosition();
+        if (from == null) {
+            return;
+        }
+        for (Coords candidate : from.allAdjacent()) {
+            Hex hex = getGame().getBoard(unit.getBoardId()).getHex(candidate);
+            if (hex == null) {
+                continue;
+            }
+            boolean outsideBuilding = !hex.containsTerrain(Terrains.BUILDING);
+            boolean allowed = outsideBuilding && !unit.isLocationProhibited(candidate)
+                  && (Compute.stackingViolation(getGame(), unit.getId(), candidate, false) == null);
+            if (allowed) {
+                Report report = new Report(MOVES_OUT);
+                report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
+                report.addDesc(unit);
+                report.add(candidate.getBoardNum());
+                addReport(report);
+                addReport(gameManager.doEntityDisplacement(unit, from, candidate, null));
+                LOGGER.info("[InfantryAction] {} moves out of the building to {}", unit.getShortName(),
+                      candidate.getBoardNum());
+                return;
+            }
+        }
+        LOGGER.warn("[InfantryAction] {} has no hex to move out to and stays at {}", unit.getShortName(),
+              from.getBoardNum());
     }
 
     /** The percentages actually applied after the withdrawal adjustments, so the report matches the arithmetic. */
@@ -422,17 +482,37 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         cleanupCombat(combat);
     }
 
+    /** Repulsed: the attackers are out of the building at once and the defenders regain full control (p. 173). */
     private void reportSideRepulsed(InfantryAction combat) {
         addReport(new Report(5637).indent(InfantryActionReporter.SIDE_LINE_INDENT));
+        List<Entity> attackers = attackersOf(combat);
         cleanupCombat(combat);
+        for (Entity attacker : attackers) {
+            moveOutOfBuilding(attacker);
+        }
     }
 
+    /** Withdrawn: the action ends, and the force is moved out in the following End Phase (p. 172). */
     private void reportWithdrawal(InfantryAction combat, AbstractBuildingEntity building) {
         Report report = new Report(5639);
         report.indent(InfantryActionReporter.SIDE_LINE_INDENT);
         report.addDesc(building);
         addReport(report);
+        for (Entity attacker : attackersOf(combat)) {
+            attacker.setInfantryActionLeaving(true);
+        }
         cleanupCombat(combat);
+    }
+
+    private List<Entity> attackersOf(InfantryAction combat) {
+        List<Entity> attackers = new ArrayList<>();
+        for (int attackerId : combat.attackerIds) {
+            Entity attacker = getGame().getEntity(attackerId);
+            if (attacker != null) {
+                attackers.add(attacker);
+            }
+        }
+        return attackers;
     }
 
     private void cleanupCombat(InfantryAction combat) {
@@ -446,6 +526,11 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
             Entity entity = getGame().getEntity(entityId);
             if (entity != null) {
                 entity.clearInfantryCombatState();
+            }
+            if (entity instanceof AbstractBuildingEntity building) {
+                // The action is over, so the commitment penalty ends; the crew actually lost still count
+                building.clearCommittedCrew();
+                gameManager.entityUpdate(building.getId());
             }
         }
         tracker.removeCombat(combat.targetId);

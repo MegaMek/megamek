@@ -411,7 +411,10 @@ public class InfantryActionResolutionTest {
 
     private AbstractBuildingEntity createBuildingWithCrew(Player owner, Coords position, int crewSize) {
         AbstractBuildingEntity building = createBuilding(owner, position);
+        building.getCrew().setSize(crewSize);
         building.getCrew().setCurrentSize(crewSize);
+        // Crew count for nothing until the defender commits them; these tests commit the whole crew
+        building.commitCrew(crewSize);
         return building;
     }
 
@@ -420,6 +423,11 @@ public class InfantryActionResolutionTest {
      * the private infantryActionTracker field.
      */
     private static class TestableGameManager extends TWGameManager {
+        @Override
+        public void entityUpdate(int entityId) {
+            // No server behind this manager; the resolution's unit updates have nowhere to go
+        }
+
         public InfantryActionTracker getInfantryCombatTracker() {
             try {
                 var field = TWGameManager.class.getDeclaredField("infantryActionTracker");

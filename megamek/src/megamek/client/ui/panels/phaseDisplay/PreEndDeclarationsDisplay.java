@@ -53,7 +53,6 @@ import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.VariableRangeTargetingDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.widget.MegaMekButton;
-import megamek.common.InfantryActionDeclaration;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
@@ -371,7 +370,6 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     private void offerDeclarations() {
         Player localPlayer = clientgui.getClient().getLocalPlayer();
         boolean declared = false;
-        boolean withdrew = false;
         for (AbstractBuildingEntity building : InfantryActionStrengths.stakes(game, localPlayer)) {
             String promptKey = promptFor(localPlayer, building);
             if (promptKey == null) {
@@ -384,13 +382,9 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             boolean yes = clientgui.doYesNoDialog(title, body);
             promptAnswered = true;
             if ("continueAttack".equals(promptKey)) {
-                // Yes keeps fighting, which needs no declaration; No withdraws the whole force
+                // Yes keeps fighting, which needs no declaration; No opens the dialog, where the force can withdraw
                 if (!yes) {
-                    LOGGER.info("[PreEnd] {} withdraws the attack on {}", localPlayer.getName(),
-                          building.getShortName());
-                    clientgui.getClient().sendInfantryActionDeclaration(InfantryActionDeclaration.attacking(
-                          localPlayer.getId(), building.getId(), List.of(), true));
-                    withdrew = true;
+                    declared |= declareFor(localPlayer, building);
                 }
             } else if (yes) {
                 declared |= declareFor(localPlayer, building);
@@ -399,9 +393,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
                       building.getShortName());
             }
         }
-        if (withdrew) {
-            registerDeclaration("PreEndDeclarationsDisplay.declared.withdraw");
-        } else if (declared) {
+        if (declared) {
             registerDeclaration("PreEndDeclarationsDisplay.declared.infantryAction");
         }
     }

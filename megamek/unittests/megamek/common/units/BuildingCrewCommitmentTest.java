@@ -33,6 +33,7 @@
 package megamek.common.units;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.compute.MarinePointsScoreCalculator;
@@ -83,6 +84,16 @@ class BuildingCrewCommitmentTest {
         assertEquals(4, building.commitCrew(9));
         assertEquals(0, building.getCrewAvailableToCommit());
         assertEquals(6, building.getCrew().getHits(), "every crew member committed, the 81 to 100 row");
+    }
+
+    @Test
+    @DisplayName("Committing every crew member costs six hits but does not kill the crew")
+    void committingEveryoneIsAPenaltyNotADeath() {
+        building.commitCrew(4);
+
+        assertEquals(6, building.getCrew().getHits(), "the 81 to 100 row");
+        assertFalse(building.getCrew().isDead(), "six hits from the table are a +6 to fire, not a dead crew");
+        assertTrue(building.getCrew().isActive(), "the crew still man the building");
     }
 
     @Test

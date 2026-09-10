@@ -1660,10 +1660,16 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     private void refreshCrewHits() {
         int hits = getCrewHitsIfCommitted(0);
+        boolean anyoneLeft = getCrew().getCurrentSize() > 0;
         for (int slot = 0; slot < getCrew().getSlotCount(); slot++) {
             getCrew().setHits(hits, slot);
+            if (anyoneLeft) {
+                // The Crew Casualties Table's hits are a weapon attack modifier (TO:AR p. 174), not a death: a crew
+                // that commits everyone fights at +6 and still mans the building. Only losing them all kills them.
+                getCrew().setDead(false, slot);
+            }
         }
-        if (getCrew().getCurrentSize() <= 0) {
+        if (!anyoneLeft) {
             getCrew().setDoomed(true);
         }
     }

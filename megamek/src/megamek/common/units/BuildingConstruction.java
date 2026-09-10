@@ -1,7 +1,36 @@
 /*
  * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
- * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.units;
 
 import java.util.List;
@@ -32,20 +61,20 @@ import megamek.common.weapons.bayWeapons.BayWeapon;
 public final class BuildingConstruction {
     private BuildingConstruction() { }
 
-    public static boolean usesHexsides(BuildingEntity building) {
+    public static boolean usesHexsides(AbstractBuildingEntity building) {
         return building.getBldgClass() == IBuilding.WALL || building.getBldgClass() == IBuilding.FENCE;
     }
 
-    public static boolean hasNoInterior(BuildingEntity building) {
+    public static boolean hasNoInterior(AbstractBuildingEntity building) {
         return building.getBldgClass() == IBuilding.TENT || building.getBldgClass() == IBuilding.FENCE
               || building.getBldgClass() == IBuilding.BRIDGE;
     }
 
-    public static int segmentsInHex(BuildingEntity building, CubeCoords hex) {
+    public static int segmentsInHex(AbstractBuildingEntity building, CubeCoords hex) {
         return usesHexsides(building) ? Integer.bitCount(building.getDesign().wallSides(hex)) : 1;
     }
 
-    public static List<Integer> mapLevels(BuildingEntity building) {
+    public static List<Integer> mapLevels(AbstractBuildingEntity building) {
         return building.getBldgClass() == IBuilding.BRIDGE
               ? building.getInternalBuilding().getOriginalCoordsList().stream().map(building.getDesign()::bridgeDeck)
                     .distinct().sorted(java.util.Comparator.reverseOrder()).toList()
@@ -53,9 +82,25 @@ public final class BuildingConstruction {
                     .sorted(java.util.Comparator.reverseOrder()).toList();
     }
 
-    public static boolean occupiesMapLevel(BuildingEntity building, CubeCoords hex, int level) {
+    /** Floor numbering only. Native floor indices and bridge deck elevations retain their own datum. */
+    public static int baseLevel(AbstractBuildingEntity building) {
+        if (building.getBldgClass() == IBuilding.BRIDGE) {
+            return 0;
+        }
+        var design = building.getDesign();
+        if (design.getBaseLevel() != null) {
+            return design.getBaseLevel();
+        }
+        if (building instanceof MobileStructure mobile) {
+            return mobile.getStructureBaseElevation();
+        }
+        return design.getSite() == BuildingDesign.Site.SURFACE ? 0
+              : -building.getInternalBuilding().getBuildingHeight() - design.getDepth();
+    }
+
+    public static boolean occupiesMapLevel(AbstractBuildingEntity building, CubeCoords hex, int level) {
         return building.getBldgClass() == IBuilding.BRIDGE ? building.getDesign().bridgeDeck(hex) == level
-              : level >= 0 && level < building.getInternalBuilding().getBuildingHeight();
+              : level >= 0 && level < building.getInternalBuilding().getHeight(hex);
     }
 
     public record BridgeSpan(CubeCoords start, CubeCoords end, Map<CubeCoords, Integer> distances, int length) {
@@ -96,7 +141,7 @@ public final class BuildingConstruction {
         return result;
     }
 
-    public static void setBridgeSlope(BuildingEntity building, int startLevel, int endLevel) {
+    public static void setBridgeSlope(AbstractBuildingEntity building, int startLevel, int endLevel) {
         var span = bridgeSpan(building.getInternalBuilding().getOriginalCoordsList());
         if (span == null || startLevel < 0 || endLevel < 0 || Math.abs(startLevel - endLevel) > span.length()) {
             throw new IllegalArgumentException("A bridge needs connected hexes and no more than one level of rise per hex.");
@@ -105,14 +150,15 @@ public final class BuildingConstruction {
         span.distances().keySet().forEach(hex -> building.getDesign().getBridgeDecks().put(hex, span.level(hex, startLevel, endLevel)));
     }
 
-    public static double capacityInHex(BuildingEntity building, CubeCoords hex) {
+    public static double capacityInHex(AbstractBuildingEntity building, CubeCoords hex) {
         if (hasNoInterior(building)) {
             return 0;
         }
-        int height = building.getInternalBuilding().getHeight(hex);
+        int height = building instanceof MobileStructure ? building.getInternalBuilding().getBuildingHeight()
+              : building.getInternalBuilding().getHeight(hex);
         double capacity = building.getInternalBuilding().getPhaseCF(hex) * building.getConstructionCFScale() * height;
         if (building.getBldgClass() == IBuilding.HANGAR) {
-            capacity = Math.min(capacity * 3, 600 * Math.ceil(height / 4.0));
+            capacity = Math.min(capacity * 3, (building instanceof MobileStructure ? 300 : 600) * Math.ceil(height / 4.0));
         }
         if (building.getDesign().isOpenSpace()) {
             capacity = Math.min(600, capacity);
@@ -121,7 +167,7 @@ public final class BuildingConstruction {
         return capacity * segmentsInHex(building, hex);
     }
 
-    public static Position position(BuildingEntity building, int location) {
+    public static Position position(AbstractBuildingEntity building, int location) {
         if (location < 0 || location >= building.locations()) {
             return null;
         }
@@ -129,26 +175,26 @@ public final class BuildingConstruction {
         return new Position(building.getInternalBuilding().getOriginalCoordsList().get(location / height), location % height);
     }
 
-    public static int location(BuildingEntity building, Position position) {
+    public static int location(AbstractBuildingEntity building, Position position) {
         int index = building.getInternalBuilding().getOriginalCoordsList().indexOf(position.hex());
         int height = building.getInternalBuilding().getBuildingHeight();
         return index < 0 || position.level() < 0 || position.level() >= height ? Entity.LOC_NONE
               : index * height + position.level();
     }
 
-    public static List<Position> equipmentPositions(BuildingEntity building, Mounted<?> mount) {
+    public static List<Position> equipmentPositions(AbstractBuildingEntity building, Mounted<?> mount) {
         Position anchor = position(building, mount.getLocation());
         return anchor == null ? List.of() : building.getDesign().getEquipmentSpace().getOrDefault(mount, List.of(anchor));
     }
 
     /** Spreadable equipment is one item. Its mass, not its count or output, is shared among its occupied hexes. */
-    public static double equipmentWeightInHex(BuildingEntity building, Mounted<?> mount, CubeCoords hex) {
+    public static double equipmentWeightInHex(AbstractBuildingEntity building, Mounted<?> mount, CubeCoords hex) {
         List<Position> positions = equipmentPositions(building, mount);
         return positions.isEmpty() ? 0 : mount.getTonnage() * positions.stream().filter(p -> p.hex().equals(hex)).count()
               / positions.size();
     }
 
-    public static List<Space> baySpaces(BuildingEntity building, Bay bay) {
+    public static List<Space> baySpaces(AbstractBuildingEntity building, Bay bay) {
         if (building.getDesign().getBaySpace().containsKey(bay)) {
             return building.getDesign().getBaySpace().get(bay);
         }
@@ -159,14 +205,14 @@ public final class BuildingConstruction {
               .map(loc -> new Space(position(building, loc), bay.getWeight() / locations.size())).toList();
     }
 
-    public static double bayWeightInHex(BuildingEntity building, CubeCoords hex) {
+    public static double bayWeightInHex(AbstractBuildingEntity building, CubeCoords hex) {
         return building.getTransportBays().stream().flatMap(bay -> baySpaces(building, bay).stream())
               .filter(space -> space.position().hex().equals(hex)).mapToDouble(Space::tons).sum()
               + building.getTroopCarryingSpace() / building.getInternalBuilding().getOriginalCoordsList().size();
     }
 
     /** TO:AUE p. 83: non-missile capital weapons require an additional ten percent for controls/stabilizers. */
-    public static double capitalControls(BuildingEntity building, CubeCoords hex) {
+    public static double capitalControls(AbstractBuildingEntity building, CubeCoords hex) {
         return building.getEquipmentInHex(hex).stream().filter(m -> isNonMissileCapital(m.getType()))
               .mapToDouble(m -> equipmentWeightInHex(building, m, hex) * .1).sum();
     }
@@ -220,74 +266,29 @@ public final class BuildingConstruction {
               && !type.hasFlag(MiscType.F_ADVANCED_FIRE_CONTROL));
     }
 
-    public record CrewRequirements(int crew, int gunners, int officers) {
-        public int total() {
-            return crew + gunners + officers;
-        }
-    }
-
-    /** TO:AR p. 130. Residential quarters are optional; they do not determine the operating crew. */
-    public static CrewRequirements crew(BuildingEntity building) {
-        int crew = 0;
-        int gunners = 0;
-        for (Mounted<?> mount : building.getEquipment()) {
-            if (mount.isOneShotAmmo() || mount.isWeaponGroup()) {
-                continue;
-            }
-            EquipmentType type = mount.getType();
-            if (type.hasFlag(MiscType.F_COMMUNICATIONS)) {
-                crew += (int) Math.ceil(mount.getTonnage());
-            }
-            if (type.hasFlag(MiscType.F_FIELD_KITCHEN)) {
-                crew += 3;
-            }
-            if (type.hasFlag(MiscType.F_MASH)) {
-                crew += 5 * (int) mount.getSize();
-            }
-            if (type.hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
-                crew += 5;
-            }
-            if (type instanceof BuildingEquipmentType facility) {
-                crew += switch (facility.getFacility()) {
-                    case FLIGHT_DECK -> 20;
-                    case HELIPAD -> 5;
-                    case LANDING_DECK -> 3 * (int) mount.getSize();
-                    default -> 0;
-                };
-            }
-            if (requiresGunner(type) && !building.getDesign().getAutomatedWeapons().contains(mount)) {
-                gunners += isCapital(type) ? 7 : type instanceof InfantryWeapon ? 1 : (int) Math.ceil(mount.getTonnage() / 5);
-            }
-        }
-        boolean officers = building.getBldgClass() == IBuilding.FORTRESS || building.getBldgClass() == IBuilding.GUN_EMPLACEMENT
-              || building.getBldgClass() == IBuilding.CASTLE_BRIAN
-              || building.getDesign().hasCivilianOfficers();
-        return new CrewRequirements(crew, gunners, officers ? Math.max(1, (int) Math.ceil((crew + gunners) / 10.0)) : 0);
-    }
-
-    public static int energyHeat(BuildingEntity building) {
+    public static int energyHeat(AbstractBuildingEntity building) {
         return building.getWeaponList().stream().filter(m -> m.getType().hasFlag(WeaponType.F_ENERGY)
               && !(m.getType() instanceof InfantryWeapon)).mapToInt(m -> m.getType().getHeat()).sum();
     }
 
-    public static int heatDissipation(BuildingEntity building) {
+    public static int heatDissipation(AbstractBuildingEntity building) {
         return building.getMisc().stream().mapToInt(m -> m.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK) ? 2
               : m.getType().hasFlag(MiscType.F_HEAT_SINK) ? 1 : 0).sum();
     }
 
-    public static double generatorTons(BuildingEntity building, StructureEngine engine) {
+    public static double generatorTons(AbstractBuildingEntity building, StructureEngine engine) {
         return Math.ceil(building.getBaseGeneratorWeight() * engine.getBuildingWeightMultiplier());
     }
 
     /** TO:AR p. 132: a liquid-storage-only building does not need power. Reuse native liquid cargo bays. */
-    public static boolean isLiquidStorageOnly(BuildingEntity building) {
+    public static boolean isLiquidStorageOnly(AbstractBuildingEntity building) {
         return building.getEquipment().isEmpty() && building.getTroopCarryingSpace() == 0
               && building.getDesign().getElevators().isEmpty() && !building.getTransportBays().isEmpty()
               && building.getTransportBays().stream().allMatch(bay -> bay instanceof LiquidCargoBay);
     }
 
     /** Daily fuel for this building; storage may be off site (TO:AR p. 133). Hours is a planning input, not saved data. */
-    public static double dailyFuel(BuildingEntity building, StructureEngine engine, int combatHours) {
+    public static double dailyFuel(AbstractBuildingEntity building, StructureEngine engine, int combatHours) {
         if (hasNoInterior(building) || usesHexsides(building) || isLiquidStorageOnly(building)) {
             return 0;
         }
@@ -297,8 +298,9 @@ public final class BuildingConstruction {
               + Math.clamp(combatHours, 0, 24) * (heavy + 10 * capital)) * engine.getBuildingDailyFuelWeight();
     }
 
-    public static double installedWeightInHex(BuildingEntity building, CubeCoords hex) {
+    public static double installedWeightInHex(AbstractBuildingEntity building, CubeCoords hex) {
         return building.getEquipmentInHex(hex).stream().mapToDouble(m -> equipmentWeightInHex(building, m, hex)).sum()
+              + (building instanceof MobileStructure mobile ? mobile.systemWeightInHex(hex) : 0)
               + building.armorWeightInHex(hex)
               + building.getPowerAmplifierWeight(hex) + building.getTurretWeight(hex) + building.getPintleWeight(hex)
               + capitalControls(building, hex) + bayWeightInHex(building, hex)
@@ -306,7 +308,7 @@ public final class BuildingConstruction {
                     .mapToDouble(BuildingDesign.Elevator::weight).sum();
     }
 
-    public static double structureMultiplier(BuildingEntity building) {
+    public static double structureMultiplier(AbstractBuildingEntity building) {
         var design = building.getDesign();
         return (building.hasEnvironmentalSealing() ? 1.5 : 1) * (design.hasHeavyMetal() ? 1.25 : 1)
               * (design.getCeiling() == BuildingDesign.Ceiling.STANDARD ? 1 : 1.1)
@@ -314,7 +316,7 @@ public final class BuildingConstruction {
               * (design.isOpenSpace() ? 2.5 : 1);
     }
 
-    public static double additionalCost(BuildingEntity building) {
+    public static double additionalCost(AbstractBuildingEntity building) {
         return building.getDesign().getDoors().stream().mapToInt(BuildingDesign.Door::height).sum() * 10000.0
               + building.getDesign().getElevators().stream().mapToDouble(BuildingDesign.Elevator::weight).sum() * 15000
               + building.getDesign().getAutomatedWeapons().stream().mapToDouble(Mounted::getTonnage).sum() * 1000

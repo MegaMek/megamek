@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -170,6 +170,43 @@ public interface IBuilding extends Serializable {
      *       than or equal to zero.
      */
     int getCurrentCF(Coords coords);
+
+    default boolean usesExpandedCF() {
+        return getInternalBuilding().usesExpandedCF();
+    }
+
+    default BuildingFloorState getFloorState(Coords coords) {
+        return getInternalBuilding().getFloorState(boardToRelative(coords));
+    }
+
+    /** Levels are relative to the base of the building in this hex. */
+    default int getCurrentCF(Coords coords, int level) {
+        BuildingFloorState floors = getFloorState(coords);
+        return floors == null ? getCurrentCF(coords) : floors.getCF(floors.floorAtLevel(level));
+    }
+
+    default int getArmor(Coords coords, int level) {
+        BuildingFloorState floors = getFloorState(coords);
+        return floors == null ? getArmor(coords) : floors.getArmor(floors.floorAtLevel(level));
+    }
+
+    default void setCurrentCF(int cf, Coords coords, int level) {
+        BuildingFloorState floors = getFloorState(coords);
+        if (floors == null) {
+            setCurrentCF(cf, coords);
+        } else {
+            floors.setCF(floors.floorAtLevel(level), cf);
+        }
+    }
+
+    default void setArmor(int armor, Coords coords, int level) {
+        BuildingFloorState floors = getFloorState(coords);
+        if (floors == null) {
+            setArmor(armor, coords);
+        } else {
+            floors.setArmor(floors.floorAtLevel(level), armor);
+        }
+    }
 
     /**
      * Get the construction factor of the building hex at the passed coords at the start of the current phase. Damage
@@ -360,14 +397,15 @@ public interface IBuilding extends Serializable {
     }
 
     /**
-     * Returns the percentage of damage done to the building for attacks against infantry in the building from other
-     * units within the building. TW pg175.
+     * Returns the share of the damage the building absorbs when a unit inside it attacks infantry in the same
+     * building (Infantry Damage From Attacks Inside Buildings Table, TW p. 175): light and medium buildings absorb
+     * nothing, heavy buildings a quarter, hardened buildings half.
      */
     default double getInfDmgFromInside() {
         return switch (getBuildingType()) {
             case LIGHT, MEDIUM -> 0.0;
-            case HEAVY -> 0.5;
-            case HARDENED -> 0.75;
+            case HEAVY -> 0.25;
+            case HARDENED -> 0.5;
             default -> 0;
         };
     }

@@ -38,8 +38,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -72,17 +79,16 @@ import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.entity.GameEntityChangeEvent;
-import megamek.common.event.entity.GameEntityNewEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.game.Game;
 import megamek.common.game.InitiativeRoll;
@@ -346,6 +352,9 @@ public abstract class BotClient extends Client {
                         break;
                     case CFR_TAG_TARGET:
                         sendTAGTargetCFRResponse(pickTagTarget(evt));
+                        break;
+                    case CFR_BUILDING_WEAPON:
+                        sendBuildingWeaponCFRResponse(evt.getEntityId(), evt.getBuildingWeaponIds().getFirst());
                         break;
                     default:
                         break;
@@ -751,7 +760,11 @@ public abstract class BotClient extends Client {
                     break;
                 case VICTORY:
                     runEndGame();
-                    sendChat(Messages.getString("BotClient.Bye"));
+                    // Signal done before disconnecting so the server's readiness check never has to wait on this
+                    // bot's socket closing, and skip the farewell chat so the disconnect does not race a chat
+                    // rebroadcast on other connection threads - the lock-contention/deadlock class from issue #8889
+                    // (see also mekhq#8240). Both Princess and CASPAR inherit this.
+                    sendDone(true);
                     die();
                     break;
                 default:
@@ -1485,22 +1498,22 @@ public abstract class BotClient extends Client {
     protected void deployMinefields() {
     	MinefieldDeploymentPlanner mdp = new MinefieldDeploymentPlanner(getLocalPlayer(), getGame());
     	Vector<Minefield> deployedMinefields = new Vector<>();
-    	
+
     	// cycle through all possible mine field types
     	for (int minefieldType = 0; minefieldType < Minefield.TYPE_SIZE; minefieldType++) {
     		int minesToPlace = getLocalPlayer().getMinefieldCount(minefieldType);
-    		
+
     		// avoid unnecessary loops and evaluations
     		if (minesToPlace <= 0) {
     			continue;
     		}
-    		
-    		Map<Double, List<Coords>> potentialCoords = 
-    				mdp.getBucketedCandidateCoords(minefieldType, getBoard());    		    		
-    		
+
+            Map<Double, List<Coords>> potentialCoords =
+                  mdp.getBucketedCandidateCoords(minefieldType, getBoard());
+
     		// complicated loop:
     		// while we have mines to place (minesToPlace > 0)
-    		// AND we have buckets left with coordinates in them, place mines.    		
+            // AND we have buckets left with coordinates in them, place mines.
     		bucketloop:
     		for (double bucket : potentialCoords.keySet()) {
     			for (Coords coords : potentialCoords.get(bucket)) {
@@ -1508,10 +1521,10 @@ public abstract class BotClient extends Client {
 	    			// but hardly fair when players may be bound by scenario restrictions
 	    			// while the bot is not
 	    			int density = Compute.randomIntInclusive(30) + 5;
-	    			
-	    			Minefield minefield;
-	    			
-	    			// vibrabombs require a "setting"
+
+                    Minefield minefield;
+
+                    // vibrabombs require a "setting"
 	    			if (minefieldType != Minefield.TYPE_VIBRABOMB) {
 	    				minefield = Minefield.createMinefield(coords,
 	    					getLocalPlayer().getId(),
@@ -1524,22 +1537,22 @@ public abstract class BotClient extends Client {
 	    						density,
 	    						mdp.getVibrabombSetting(),
 	    						false,
-	    						0);	    						
+                              0);
 	    			}
-	    			
-	    			deployedMinefields.add(minefield);
+
+                    deployedMinefields.add(minefield);
 	    			mdp.markMinePlacement(coords);
-	    			
-	    			minesToPlace--;
-	    			
-	    			// if we run out of mines to place, break out of both loops
+
+                    minesToPlace--;
+
+                    // if we run out of mines to place, break out of both loops
 	    			if (minesToPlace == 0) {
 	    				break bucketloop;
 	    			}
     			}
     		}
     	}
-    	
+
         performMinefieldDeployment(deployedMinefields);
     }
 
@@ -1571,7 +1584,7 @@ public abstract class BotClient extends Client {
     public String receiveReport(List<Report> reports) {
         return "";
     }
-    
+
     /**
      * In addition to handling the entity update normally, the bot needs to decide
      * if it should activate its hidden units
@@ -1579,20 +1592,20 @@ public abstract class BotClient extends Client {
     @Override
     protected void receiveEntityUpdate(Packet packet) throws InvalidPacketDataException {
     	super.receiveEntityUpdate(packet);
-    	
-    	if (this.getGame().getPhase() == GamePhase.MOVEMENT) {
+
+        if (this.getGame().getPhase() == GamePhase.MOVEMENT) {
     		int entityIndex = packet.getIntValue(0);
     		revealEntities(entityIndex);
     	}
     }
-    
+
     /**
      * Given an entity that just moved, decide if I should reveal any entities in response
      */
     protected void revealEntities(int movedEntityID) {
     	// default does nothing
     }
-    
+
     /**
      * Let the bot decide whether to reroll initiative based on report info
      *

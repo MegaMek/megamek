@@ -3695,6 +3695,18 @@ public class ClientGUI extends AbstractClientGUI
                         client.sendHiddenPBSCFRResponse(null);
                     }
                     break;
+                case CFR_BUILDING_WEAPON:
+                    Entity criticalBuilding = client.getGame().getEntity(gameCFREvent.getEntityId());
+                    List<Integer> criticalWeapons = gameCFREvent.getBuildingWeaponIds();
+                    List<String> criticalChoices = criticalWeapons.stream()
+                          .map(id -> id + ": " + criticalBuilding.getEquipment(id).getDesc()).toList();
+                    input = (String) JOptionPane.showInputDialog(frame,
+                          Messages.getString("BuildingCriticalWeaponDialog.message"),
+                          Messages.getString("BuildingCriticalWeaponDialog.title"),
+                          JOptionPane.QUESTION_MESSAGE, null, criticalChoices.toArray(), criticalChoices.getFirst());
+                    client.sendBuildingWeaponCFRResponse(criticalBuilding.getId(),
+                          criticalWeapons.get(Math.max(0, criticalChoices.indexOf(input))));
+                    break;
                 case CFR_TELEGUIDED_TARGET:
                     logger.debug("CFR_TELEGUIDED_TARGET: processing teleguided missile target selection");
                     List<Integer> targetIds = gameCFREvent.getTelemissileTargetIds();

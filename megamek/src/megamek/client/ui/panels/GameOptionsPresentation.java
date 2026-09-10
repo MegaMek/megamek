@@ -364,6 +364,8 @@ final class GameOptionsPresentation {
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CLUSTER_HIT_PEN,
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS,
               OptionsConstants.ADVANCED_COMBAT_CASE_PILOT_DAMAGE);
+        register(ADVANCED_RULES, COMBAT_DAMAGE, "combat.damage.damage",
+              OptionsConstants.ADVANCED_BUILDING_EXPANDED_CF);
         register(ADVANCED_COMBAT, COMBAT_DAMAGE, "combat.damage.heatAndFire",
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE,
               OptionsConstants.ADVANCED_COMBAT_FOREST_FIRES_NO_SMOKE,

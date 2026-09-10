@@ -303,9 +303,8 @@ public class BLKStructureFileTest {
      * @return The location index, or -1 if not found
      */
     private int getLocationByName(AbstractBuildingEntity building, String locationName) {
-        String[] locationNames = building.getLocationNames();
-        for (int i = 0; i < locationNames.length; i++) {
-            if (locationNames[i].equals(locationName)) {
+        for (int i = 0; i < building.locations(); i++) {
+            if (building.getConstructionLocationName(i).equals(locationName)) {
                 return i;
             }
         }

@@ -1214,10 +1214,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         hits = 0;
                         // Targeting a building.
                     } else if (target.getTargetType() == Targetable.TYPE_BUILDING) {
-                        // The building takes the full brunt of the attack.
-                        nDamage = nDamPerHit * hits;
-                        handleBuildingDamage(vPhaseReport, bldg, nDamage, target.getPosition());
-                        hits = 0;
+                        // The building takes the full brunt of the attack, one damage grouping at a time.
+                        hits = handleBuildingDamageByGrouping(vPhaseReport, bldg, hits, nCluster,
+                              target.getPosition());
                     } else if (entityTarget != null) {
                         handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
                         gameManager.creditKill(entityTarget, attackingEntity);
@@ -1239,13 +1238,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     report.subject = attackingEntity.getId();
                     report.newlines--;
                     vPhaseReport.add(report);
-                    int nDamage = nDamPerHit * hits;
-                    // We want to set bSalvo to true to prevent
-                    // handleBuildingDamage from reporting a hit
+                    // The missed volley hits the building one damage grouping at a time; bSalvo is forced on so the
+                    // building damage does not report a hit
                     boolean savedSalvo = bSalvo;
                     bSalvo = true;
-                    handleBuildingDamage(vPhaseReport, bldg, nDamage,
-                          target.getPosition());
+                    handleBuildingDamageByGrouping(vPhaseReport, bldg, hits, nCluster, target.getPosition());
                     bSalvo = savedSalvo;
                 }
             }
@@ -1922,6 +1919,32 @@ public class WeaponHandler implements AttackHandler, Serializable {
         vPhaseReport.addAll(clearReports);
     }
 
+    /**
+     * Applies an attack on a building hex one Damage Value grouping at a time. TW p. 171 treats each grouping of a
+     * cluster weapon as a separate attack against the building, so the building's absorption and the share passed
+     * through to infantry inside (p. 172) are rounded per grouping rather than once on the whole volley. A weapon
+     * that does not fire a salvo is a single grouping.
+     *
+     * @param vPhaseReport the phase report to add to
+     * @param bldg         the building that was hit
+     * @param hits         the number of hits to resolve
+     * @param nCluster     the number of hits in one damage grouping
+     * @param coords       the building hex that was hit
+     *
+     * @return the hits left to resolve, always {@code 0}
+     */
+    protected int handleBuildingDamageByGrouping(Vector<Report> vPhaseReport, IBuilding bldg, int hits,
+          int nCluster, Coords coords) {
+        int groupingSize = bSalvo ? Math.max(1, nCluster) : hits;
+        int remainingHits = hits;
+        while (remainingHits > 0) {
+            int groupingHits = Math.min(groupingSize, remainingHits);
+            handleBuildingDamage(vPhaseReport, bldg, nDamPerHit * groupingHits, coords);
+            remainingHits -= groupingHits;
+        }
+        return 0;
+    }
+
     protected void handleBuildingDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage,
           Coords coords) {
         if (!bSalvo) {
@@ -1955,16 +1978,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     /** Route weapon damage with its attacker and scale, including handlers invoked outside the firing phase. */
     protected Vector<Report> damageBuilding(IBuilding building, int damage, Coords coords) {
-        if (building == null || !building.usesCapitalScale()) {
-            return gameManager.damageBuilding(building, damage, coords);
-        }
         return damageBuilding(building, damage, " absorbs ", coords);
     }
 
     protected Vector<Report> damageBuilding(IBuilding building, int damage, String why, Coords coords) {
-        if (building == null || !building.usesCapitalScale()) {
-            return gameManager.damageBuilding(building, damage, why, coords);
-        }
         int standardDamage = weaponType.isCapital() ? damage * 10 : damage;
         return gameManager.damageBuilding(building, standardDamage, why, coords, 0, attackingEntity,
               isAttackFromInsideBuilding(building));

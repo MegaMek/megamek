@@ -206,6 +206,7 @@ public enum PacketCommand {
     CFR_HIDDEN_PBS,
     CFR_TELEGUIDED_TARGET,
     CFR_TAG_TARGET,
+    CFR_BUILDING_WEAPON,
     GAME_VICTORY_EVENT,
 
     /** A Server to Client packet instructing the Client to show a message (e.g. story message) to the player. */
@@ -332,7 +333,7 @@ public enum PacketCommand {
 
     public boolean isCFR() {
         return isCFRDominoEffect() || isCFRAMSAssign() || isCFRAPDSAssign() || isCFRHiddenPBS()
-              || isCFRTeleguidedTarget() || isCFRTagTarget();
+              || isCFRTeleguidedTarget() || isCFRTagTarget() || this == CFR_BUILDING_WEAPON;
     }
     //endregion Boolean Comparison Methods
 }

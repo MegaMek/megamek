@@ -59,6 +59,8 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
+import megamek.common.units.AbstractBuildingEntity;
+import megamek.common.units.BuildingTarget;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
@@ -110,6 +112,14 @@ public class ComputeToHit {
         if (target == null) {
             logger.error("{} Attempting to attack null target", attackerId);
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("MovementDisplay.NoTarget"));
+        }
+
+        if (target instanceof AbstractBuildingEntity building && aimingAt != Entity.LOC_NONE && !aimingMode.isNone()) {
+            if (aimingAt < 0 || aimingAt >= building.locations() || building.getInternal(aimingAt) <= 0
+                  || (ae.getBoardId() == building.getBoardId() && building.isIn(ae.getPosition()) && ae.isInBuilding())) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Aimed building shots require a standing location and an outside attacker");
+            }
+            target = new BuildingTarget(building, aimingAt);
         }
 
         Targetable swarmSecondaryTarget = target;

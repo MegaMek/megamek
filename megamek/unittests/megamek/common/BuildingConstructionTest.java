@@ -1,7 +1,36 @@
 /*
  * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
- * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +51,7 @@ import megamek.common.loaders.BLKFile;
 import megamek.common.loaders.BLKStructureFile;
 import megamek.common.loaders.BuildingDesignCodec;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.BuildingConstruction;
 import megamek.common.units.BuildingDesign;
 import megamek.common.units.BuildingEntity;
@@ -57,6 +87,31 @@ class BuildingConstructionTest {
     }
 
     @Test
+    void displayLevelsUseGroundWhileNativeEquipmentNamesKeepTheirIndices() throws Exception {
+        var building = building(4);
+        building.getDesign().setBaseLevel(-2);
+        var weapon = building.addEquipment(EquipmentType.get("ISMediumLaser"), 2);
+        weapon.getQuirks().getOption(OptionsConstants.QUIRK_WEAPON_POS_ACCURATE).setValue(true);
+        assertEquals("-2", building.getLevelLabel(0));
+        assertEquals("Ground", building.getLevelLabel(2));
+        assertEquals("G", building.getLevelLabel(2, true));
+        assertEquals("Level Ground 0.0,0.0,0.0", building.getLocationName(2));
+        assertEquals("LVL Ground 0.0,0.0,0.0", building.getLocationAbbr(2));
+        assertEquals("Level 2 0.0,0.0,0.0", building.getConstructionLocationName(2));
+        assertEquals("LVL 2 0.0,0.0,0.0", building.getConstructionLocationAbbr(2));
+        var block = BLKFile.getBlock(building);
+        assertTrue(block.getDataAsString("weaponQuirks")[0].contains(":LVL 2 0.0,0.0,0.0:"));
+        var loaded = (BuildingEntity) new BLKStructureFile(block).getEntity();
+        assertEquals(2, loaded.getEquipment().getFirst().getLocation());
+        assertTrue(loaded.getEquipment().getFirst().getQuirks().booleanOption(OptionsConstants.QUIRK_WEAPON_POS_ACCURATE));
+        assertEquals("Ground", loaded.getLevelLabel(2));
+        building.configureConstruction(BuildingType.MEDIUM, IBuilding.BRIDGE, 1, 40, 0, List.of(CubeCoords.ZERO));
+        building.getDesign().getBridgeDecks().put(CubeCoords.ZERO, 3);
+        assertEquals("Level 3 0.0,0.0,0.0", building.getLocationName(0));
+        assertEquals("Level 0 0.0,0.0,0.0", building.getConstructionLocationName(0));
+    }
+
+    @Test
     void castleBrianCommandTowerUsesCapitalProtectionAndAutomaticSealing() throws Exception {
         var tower = building(4);
         tower.configureConstruction(BuildingType.HEAVY, IBuilding.CASTLE_BRIAN, 4, 50, 50, List.of(CubeCoords.ZERO));
@@ -85,7 +140,7 @@ class BuildingConstructionTest {
         equipment.setSize(550);
         assertTrue(verifier(cave).constructionIssues().isEmpty(), verifier(cave).constructionIssues().toString());
         equipment.setLocation(1);
-        assertTrue(verifier(cave).constructionIssues().stream().anyMatch(s -> s.contains("ground level")));
+        assertTrue(verifier(cave).constructionIssues().stream().anyMatch(s -> s.contains("lowest floor")));
         equipment.setLocation(0);
         equipment.setSize(601);
         assertTrue(verifier(cave).constructionIssues().stream().anyMatch(s -> s.contains("carrying capacity")));
@@ -169,14 +224,14 @@ class BuildingConstructionTest {
         building.addEquipment(EquipmentType.get("ISAMS"), 0);
         building.addEquipment(EquipmentType.get("Field Kitchen"), 0);
         building.addEquipment(EquipmentType.get("MASH Equipment"), 0).setSize(2);
-        var crew = BuildingConstruction.crew(building);
+        var crew = building.calculateMinimumCrewRequirements();
         assertEquals(13, crew.crew());
         assertEquals(5, crew.gunners());
         assertEquals(2, crew.officers());
         assertEquals(20, Compute.getFullCrewSize(building));
         assertEquals(5, Compute.getTotalGunnerNeeds(building));
         building.getDesign().getAutomatedWeapons().add(laser);
-        assertEquals(4, BuildingConstruction.crew(building).gunners());
+        assertEquals(4, building.calculateMinimumCrewRequirements().gunners());
         assertTrue(building.getTransportBays().isEmpty());
     }
 
@@ -269,7 +324,7 @@ class BuildingConstructionTest {
         building.getDesign().getEquipmentSpace().put(deck,
               hexes.stream().map(hex -> new BuildingDesign.Position(hex, 9)).toList());
         assertEquals(3500, verifier(building).calculateWeight());
-        assertEquals(21, BuildingConstruction.crew(building).crew());
+        assertEquals(21, building.calculateMinimumCrewRequirements().crew());
         assertTrue(verifier(building).constructionIssues().isEmpty(), verifier(building).constructionIssues().toString());
         var loaded = (BuildingEntity) new BLKStructureFile(BLKFile.getBlock(building)).getEntity();
         assertEquals(type, loaded.getMisc().getFirst().getType());

@@ -59,8 +59,8 @@ import megamek.common.bays.Bay;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
-import megamek.common.board.Coords;
 import megamek.common.board.BuildingEditSpec;
+import megamek.common.board.Coords;
 import megamek.common.board.HexEditSpec;
 import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.comparators.WeaponComparatorBV;
@@ -918,6 +918,13 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     void resetEntityRound() {
+        for (IBuilding structure : game.getBoards().values().stream().flatMap(board -> board.getBuildingsVector().stream())
+              .distinct().toList()) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_BUILDING_EXPANDED_CF)) {
+                structure.getInternalBuilding().enableExpandedCF();
+            }
+            structure.getInternalBuilding().newRound();
+        }
         for (Entity entity : game.getEntitiesVector()) {
             // Snapshot Magnetic Pulse effect state so we can notify the player when it wears off.
             boolean wasMagneticPulseAffected = entity.getMagneticPulseRounds() > 0;
@@ -2402,6 +2409,14 @@ public class TWGameManager extends AbstractGameManager {
                 break;
             case VICTORY:
                 datasetLogger.requestNewLogFile();
+                // Mark every bot done as we enter VICTORY. Bots disconnect rather than acknowledging this phase, so
+                // without this the readiness check can wait forever on a bot whose disconnect has not yet been
+                // processed, and MekHQ is never told the game ended. See issue #8889.
+                for (Player victoryPlayer : game.getPlayersList()) {
+                    if (victoryPlayer.isBot()) {
+                        victoryPlayer.setDone(true);
+                    }
+                }
                 break;
             default:
                 break;
@@ -6786,6 +6801,29 @@ public class TWGameManager extends AbstractGameManager {
         return result;
     }
 
+    /** The player selected by the TO:AR p. 119 roll chooses among eligible weapons, not a random weapon. */
+    WeaponMounted chooseBuildingCriticalWeapon(AbstractBuildingEntity building, int playerId,
+          List<WeaponMounted> weapons) {
+        if (weapons.size() == 1 || Server.getServerInstance() == null || game.getPlayer(playerId) == null
+              || game.getPlayer(playerId).isGhost()) {
+            return weapons.getFirst();
+        }
+        List<Integer> ids = weapons.stream().map(building::getEquipmentNum).toList();
+        send(playerId, new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_BUILDING_WEAPON,
+              building.getId(), ids));
+        Server.ReceivedPacket response = pollCFRPacket(packet -> {
+            Object[] data = packet.getPacket().data();
+            return packet.getConnectionId() == playerId && data.length == 3
+                  && data[0] == PacketCommand.CFR_BUILDING_WEAPON
+                  && data[1] instanceof Integer id && id == building.getId()
+                  && data[2] instanceof Integer weaponId && ids.contains(weaponId);
+        });
+        if (response != null) {
+            return weapons.get(ids.indexOf((Integer) response.getPacket().data()[2]));
+        }
+        return weapons.getFirst();
+    }
+
     public int processTAGTargetCFR(int playerId, List<Integer> targetIds, List<Integer> targetTypes)
           throws InvalidPacketDataException {
         LOGGER.debug("processTAGTargetCFR: playerId={}, targetCount={}", playerId, targetIds.size());
@@ -7319,30 +7357,8 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 vPhaseReport.addAll(vBuildingDamageReport);
 
-                // For each missile, check to see if it hits a unit in this hex
-                for (Entity e : game.getEntitiesVector(t.getPosition())) {
-                    if (e.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV)) {
-                        continue;
-                    }
-                    for (int m = 0; m < missiles; m++) {
-                        Roll diceRoll = Compute.rollD6(1);
-                        r = new Report(3570);
-                        r.subject = e.getId();
-                        r.indent(3);
-                        r.addDesc(e);
-                        r.add(diceRoll);
-                        vPhaseReport.add(r);
-
-                        if (diceRoll.getIntValue() >= 5) {
-                            Vector<Report> dmgReports = deliverInfernoMissiles(ae, e, 1, called);
-                            for (Report rep : dmgReports) {
-                                rep.indent(4);
-                            }
-                            vPhaseReport.addAll(dmgReports);
-                        }
-                    }
-                }
-
+                // Each unit in the hex rolls per missile; conventional infantry inside is shielded by the building
+                vPhaseReport.addAll(new InfernoBuildingHexResolver(this).strikeUnitsInHex(ae, t, missiles, called));
                 break;
             case Targetable.TYPE_ENTITY:
                 Entity te = (Entity) t;
@@ -11088,20 +11104,8 @@ public class TWGameManager extends AbstractGameManager {
                         LOGGER.error("Non-Tank tried to unjam turret");
                     }
                 }
-                case RepairWeaponMalfunctionAction repairWeaponMalfunctionAction -> {
-                    if (entity instanceof Tank tank) {
-                        Mounted<?> m = entity.getEquipment(repairWeaponMalfunctionAction.getWeaponId());
-                        m.setJammed(false);
-                        tank.getJammedWeapons().remove(m);
-                        Report r = new Report(3034);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        r.add(m.getName());
-                        addReport(r);
-                    } else {
-                        LOGGER.error("Non-Tank tried to repair weapon malfunction");
-                    }
-                }
+                case RepairWeaponMalfunctionAction repairWeaponMalfunctionAction ->
+                      new WeaponMalfunctionRepairHandler(this).repair(entity, repairWeaponMalfunctionAction);
                 case DisengageAction ignored -> {
                     MovePath path = new MovePath(game, entity);
                     path.addStep(MoveStepType.FLEE);
@@ -20176,6 +20180,11 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
+            // An Advanced Building entity is the building at its hexes and was already damaged as a building
+            if (entity instanceof AbstractBuildingEntity) {
+                continue;
+            }
+
             int range = position.distance(entityPos);
 
             if (range >= damages.length) {
@@ -24356,6 +24365,8 @@ public class TWGameManager extends AbstractGameManager {
             return vDesc;
         }
         if (entity instanceof Mek mek) {
+            boolean breachedLegIsDestroyed = entity.locationIsLeg(loc) &&
+                  Game.rulesManager.getRulesUnderwater().treatBreachedLegAsDestroyed();
             // equipment and crits will be marked in applyDamage?
 
             // equipment marked missing
@@ -24370,7 +24381,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (cs != null) {
                     // for every undamaged actuator destroyed by breaching,
                     // we make a PSR (see bug 1040858)
-                    if (entity.locationIsLeg(loc) && entity.canFall(true)) {
+                    if (!breachedLegIsDestroyed && entity.locationIsLeg(loc) && entity.canFall(true)) {
                         if (cs.isHittable()) {
                             switch (cs.getIndex()) {
                                 case Mek.ACTUATOR_UPPER_LEG:
@@ -24415,11 +24426,15 @@ public class TWGameManager extends AbstractGameManager {
                 vDesc.addElement(r);
             }
 
-            // Set the status of the location.
-            // N.B. if we set the status before rolling water PSRs, we get a
-            // "LEG DESTROYED" modifier; setting the status after gives a hip
-            // actuator modifier.
+            // Keep the location physically intact: even breached critical slots can still take hits.
             entity.setLocationStatus(loc, ILocationExposureStatus.BREACHED);
+
+            if (breachedLegIsDestroyed && entity.canFall()) {
+                // Core pp.90, 127: a breached leg causes an automatic fall. The newly breached location already
+                // supplies the destroyed-leg modifier through isLocationBad(), so do not add it a second time.
+                game.addPSR(new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL, "leg breached", loc));
+                Game.rulesManager.getRulesPSR().checkLegActuatorPsrRolls(game, entity);
+            }
 
             // Did the hull breach destroy the engine?
             int hitsToDestroy = 3;
@@ -29081,8 +29096,10 @@ public class TWGameManager extends AbstractGameManager {
                     }
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, side);
                     hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
+                    withoutLocationMotiveRoll(hit);
                     buildingReport.addAll(damageEntity(entity, hit, damage));
                 }
+                buildingReport.addAll(rollMotiveDamageForFailedBuildingEntry(entity));
             }
 
             // Damage the building. The CF can never drop below 0.
@@ -29097,22 +29114,87 @@ public class TWGameManager extends AbstractGameManager {
                     return;
                 }
             } else {
-                int wallDamage = (int) Math.ceil(entity.getWeight() / 10.0);
-                toBldg = bldg.usesCapitalScale() ? wallDamage : bldg.scaleDamageToCF(wallDamage);
+                toBldg = buildingDamageFromPassingWall(entity, bldg);
             }
             if (bldg.usesCapitalScale()) {
                 buildingReport.addAll(damageBuilding(bldg, toBldg, entering ? curPos : lastPos));
                 return;
             }
-            int curCF = bldg.getCurrentCF(entering ? curPos : lastPos);
+            Coords damagedHex = entering ? curPos : lastPos;
+            int curCF = bldg.getCurrentCF(damagedHex);
             curCF -= Math.min(curCF, toBldg);
-            bldg.setCurrentCF(curCF, entering ? curPos : lastPos);
+            bldg.setCurrentCF(curCF, damagedHex);
+            buildingReport.add(reportBuildingDamageFromPassingWall(entity, bldg, toBldg, curCF, damagedHex));
 
             // Apply the correct amount of damage to infantry in the building.
             // ASSUMPTION: We inflict toBldg damage to infantry and
             // not the amount to bring building to 0 CF.
             buildingReport.addAll(damageInfantryIn(bldg, toBldg, entering ? curPos : lastPos));
         }
+    }
+
+    /** The round report line for the damage a moving unit inflicts on a building hex. */
+    private Report reportBuildingDamageFromPassingWall(Entity entity, IBuilding bldg, int damage, int remainingCF,
+          Coords damagedHex) {
+        Report report = new Report(6441);
+        report.subject = entity.getId();
+        report.indent(2);
+        report.add((bldg instanceof Entity buildingEntity) ? buildingEntity.getShortName()
+              : bldg.getBuildingType() + " " + bldg.getName());
+        report.add(damage);
+        report.add(entity.getShortName());
+        report.add(damagedHex.getBoardNum());
+        report.add(remainingCF);
+        return report;
+    }
+
+    /**
+     * Damage a unit inflicts on a building hex it moves into or through: one point per ten tons (TW p. 168), doubled
+     * for a Large Support Vehicle (TW p. 168, Large Support Vehicles), and then scaled for the building class the way
+     * any damage to that class is.
+     *
+     * @param entity the moving unit
+     * @param bldg   the building being passed through
+     *
+     * @return the damage to apply to the building hex
+     */
+    private int buildingDamageFromPassingWall(Entity entity, IBuilding bldg) {
+        int standardDamage = (int) Math.ceil(entity.getWeight() / 10.0);
+        int damage = standardDamage;
+        if (entity instanceof LargeSupportTank) {
+            damage = standardDamage * 2;
+            LOGGER.debug("[BuildingEntry] {} is a Large Support Vehicle; building damage doubled from {} to {}",
+                  entity.getShortName(), standardDamage, damage);
+        }
+        // Castle Brian threshold damage needs the original standard points; damageBuilding owns that conversion.
+        return bldg.usesCapitalScale() ? damage : bldg.scaleDamageToCF(damage);
+    }
+
+    /**
+     * A vehicle's hit location can carry its own motive damage roll (TW p. 193). On a failed building entry the rule
+     * asks for exactly one roll (TW p. 168), made by {@link #rollMotiveDamageForFailedBuildingEntry}, so the
+     * location's roll is dropped from the wall damage.
+     */
+    private static void withoutLocationMotiveRoll(HitData hit) {
+        hit.setEffect(hit.getEffect() & ~HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+    }
+
+    /**
+     * A vehicle that fails its Driving Skill Roll while moving through a building wall makes one immediate roll on
+     * the Motive System Damage Table (TW p. 168, Vehicles), whatever location the wall damage hit. Other unit types
+     * are unaffected.
+     *
+     * @param entity the unit that failed the roll
+     *
+     * @return the reports of the motive damage roll, empty when the unit is not a vehicle
+     */
+    private Vector<Report> rollMotiveDamageForFailedBuildingEntry(Entity entity) {
+        if (!(entity instanceof Tank tank)) {
+            return new Vector<>();
+        }
+        LOGGER.debug("[BuildingEntry] {} failed its Driving Skill Roll in a building; rolling motive system damage",
+              tank.getShortName());
+        return vehicleMotiveDamage(tank, 0);
     }
 
     /**
@@ -29379,6 +29461,12 @@ public class TWGameManager extends AbstractGameManager {
             Enumeration<Coords> buildingCoords = bldg.getCoords();
             while (buildingCoords.hasMoreElements()) {
                 Coords coords = buildingCoords.nextElement();
+                if (bldg.getFloorState(coords) != null) {
+                    if (bldg.getFloorState(coords).hasChanges()) {
+                        updateCoords.add(coords);
+                    }
+                    continue;
+                }
                 // If the CF is zero, the building should fall.
                 if (bldg.getCurrentCF(coords) == 0) {
                     collapseCoords.addElement(coords);
@@ -29421,7 +29509,13 @@ public class TWGameManager extends AbstractGameManager {
                 Vector<Coords> coordsToRemove = new Vector<>();
                 for (Coords coords : updateCoords) {
                     if (buildingCollapseHandler.checkForCollapse(bldg, positionMap, coords, false, mainPhaseReport)) {
-                        coordsToRemove.add(coords);
+                        if (!bldg.usesExpandedCF() || bldg.getHeight(coords) == 0) {
+                            coordsToRemove.add(coords);
+                        }
+                    }
+                    if (bldg.getFloorState(coords) != null) {
+                        bldg.getFloorState(coords).newPhase();
+                        bldg.getInternalBuilding().synchronizeFloorState(bldg.boardToRelative(coords));
                     }
                     // TacOps Climbing (TO:AR p.20): check if any climbing entity
                     // can no longer be supported after CF reduction
@@ -29501,8 +29595,27 @@ public class TWGameManager extends AbstractGameManager {
      */
     public Vector<Report> damageBuilding(IBuilding bldg, int damage, String why, Coords coords, int level,
           Entity attacker, boolean ignoreArmor) {
+        return damageBuilding(bldg, damage, why, coords, level, attacker, ignoreArmor, 0);
+    }
+
+    public Vector<Report> damageBuilding(IBuilding bldg, int damage, String why, Coords coords, int level,
+          Entity attacker, boolean ignoreArmor, int criticalModifier) {
+        if (bldg != null && game.getOptions().booleanOption(OptionsConstants.ADVANCED_BUILDING_EXPANDED_CF)) {
+            bldg.getInternalBuilding().enableExpandedCF();
+        }
+        if (bldg != null && bldg.usesExpandedCF()) {
+            level = Math.clamp(level, 0, Math.max(0, bldg.getHeight(coords) - 1));
+        }
+        int damageThresh = bldg instanceof AbstractBuildingEntity buildingEntity
+              ? buildingEntity.getCriticalDamageThreshold(coords)
+              : bldg == null ? 0 : (int) Math.ceil(bldg.getPhaseCF(coords) / 10.0);
+        if (bldg != null && bldg.getFloorState(coords) != null) {
+            var floors = bldg.getFloorState(coords);
+            damageThresh = floors.getCriticalThreshold(floors.floorAtLevel(level));
+        }
         if (bldg != null && bldg.usesCapitalScale() && damage > 0) {
-            return damageCapitalBuilding(bldg, damage, why, coords, level, attacker, ignoreArmor);
+            return damageCapitalBuilding(bldg, damage, why, coords, level, attacker, ignoreArmor, damageThresh,
+                  criticalModifier);
         }
         Vector<Report> vPhaseReport = new Vector<>();
         Report r = new Report(1210, Report.PUBLIC);
@@ -29510,15 +29623,15 @@ public class TWGameManager extends AbstractGameManager {
         // Do nothing if no building or no damage was passed.
         if ((bldg != null) && (damage > 0)) {
             r.messageId = 3434;
-            r.add(bldg.toString());
+            r.add((bldg instanceof Entity buildingEntity) ? buildingEntity.getShortName() : bldg.toString());
             r.add(why);
             r.add(damage);
             r.add(level);
             vPhaseReport.add(r);
-            int curArmor = bldg.getArmor(coords);
+            int curArmor = ignoreArmor ? 0 : bldg.getArmor(coords, level);
             if (curArmor >= damage) {
                 curArmor -= damage;
-                bldg.setArmor(curArmor, coords);
+                bldg.setArmor(curArmor, coords, level);
                 r = new Report(3436, Report.PUBLIC);
                 r.indent(0);
                 r.add(damage);
@@ -29527,7 +29640,7 @@ public class TWGameManager extends AbstractGameManager {
             } else {
                 r.add(damage);
                 if (curArmor > 0) {
-                    bldg.setArmor(0, coords);
+                    bldg.setArmor(0, coords, level);
                     damage = damage - curArmor;
                     r = new Report(3436, Report.PUBLIC);
                     r.indent(0);
@@ -29548,10 +29661,10 @@ public class TWGameManager extends AbstractGameManager {
                     r.add(damage);
                     vPhaseReport.add(r);
                 }
-                int curCF = bldg.getCurrentCF(coords);
+                int curCF = bldg.getCurrentCF(coords, level);
                 final int startingCF = curCF;
                 curCF -= Math.min(curCF, damage);
-                bldg.setCurrentCF(curCF, coords);
+                bldg.setCurrentCF(curCF, coords, level);
 
                 r = new Report(6436, Report.PUBLIC);
                 r.indent(1);
@@ -29562,7 +29675,6 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 vPhaseReport.add(r);
 
-                final int damageThresh = (int) Math.ceil(bldg.getPhaseCF(coords) / 10.0);
 
                 // If the CF is zero, the building should fall.
                 if ((curCF == 0) && (startingCF != 0)) {
@@ -29602,12 +29714,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.indent(0);
                     vPhaseReport.add(r);
                 } else if ((curCF < startingCF) && (damage > damageThresh)) {
-                    // need to check for crits
-                    // don't bother unless we have some gun emplacements
-                    Collection<GunEmplacement> guns = game.getGunEmplacements(coords, bldg.getBoardId());
-                    if (!guns.isEmpty()) {
-                        vPhaseReport.addAll(criticalGunEmplacement(guns, bldg, coords));
-                    }
+                    vPhaseReport.addAll(criticalBuilding(bldg, coords, level, attacker, criticalModifier));
                 }
             }
         }
@@ -29616,10 +29723,10 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     private Vector<Report> damageCapitalBuilding(IBuilding building, int damage, String why, Coords coords,
-          int level, Entity attacker, boolean ignoreArmor) {
+          int level, Entity attacker, boolean ignoreArmor, int damageThresh, int criticalModifier) {
         int threshold = building.getCapitalDamageThreshold(coords);
         int attackerId = attacker == null ? Entity.NONE : attacker.getId();
-        var scaled = game.getBuildingDamageTracker().resolve(building, coords, damage, attackerId, ignoreArmor,
+        var scaled = game.getBuildingDamageTracker().resolve(building, coords, level, damage, attackerId, ignoreArmor,
               game.getRoundCount(), game.getPhase());
         Vector<Report> reports = new Vector<>();
         Report report = new Report(3434, Report.PUBLIC);
@@ -29630,8 +29737,8 @@ public class TWGameManager extends AbstractGameManager {
         reports.add(report);
 
         if (scaled.armor() > 0) {
-            int armor = building.getArmor(coords) - scaled.armor();
-            building.setArmor(armor, coords);
+            int armor = building.getArmor(coords, level) - scaled.armor();
+            building.setArmor(armor, coords, level);
             report = new Report(3436, Report.PUBLIC);
             report.add(scaled.armor());
             report.add(armor);
@@ -29641,20 +29748,17 @@ public class TWGameManager extends AbstractGameManager {
         report.add(scaled.cf());
         reports.add(report);
 
-        int oldCF = building.getCurrentCF(coords);
+        int oldCF = building.getCurrentCF(coords, level);
         int cf = Math.max(0, oldCF - scaled.cf());
-        building.setCurrentCF(cf, coords);
+        building.setCurrentCF(cf, coords, level);
         report = new Report(6436, Report.PUBLIC);
         report.indent();
         report.add(cf);
         reports.add(report);
         if (cf == 0 && oldCF > 0) {
             reports.add(new Report(3440, Report.PUBLIC));
-        } else if (scaled.throughArmor() > threshold && cf < oldCF) {
-            Collection<GunEmplacement> guns = game.getGunEmplacements(coords, building.getBoardId());
-            if (!guns.isEmpty()) {
-                reports.addAll(criticalGunEmplacement(guns, building, coords));
-            }
+        } else if (scaled.cf() > damageThresh && cf < oldCF) {
+            reports.addAll(criticalBuilding(building, coords, level, attacker, criticalModifier));
         }
         Report.indentAll(reports, 2);
 
@@ -29675,6 +29779,14 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
         return reports;
+    }
+
+    private Vector<Report> criticalBuilding(IBuilding building, Coords coords, int level, Entity attacker, int criticalModifier) {
+        if (building instanceof AbstractBuildingEntity buildingEntity) {
+            return new BuildingEntityCriticalHandler(this).resolveCriticalHit(buildingEntity, coords, level, attacker, criticalModifier);
+        }
+        Collection<GunEmplacement> guns = game.getGunEmplacements(coords, building.getBoardId());
+        return guns.isEmpty() ? new Vector<>() : criticalGunEmplacement(guns, building, coords);
     }
 
     private Vector<Report> criticalGunEmplacement(Collection<GunEmplacement> guns, IBuilding bldg, Coords coords) {
@@ -32645,6 +32757,7 @@ public class TWGameManager extends AbstractGameManager {
                         (altitude < effectiveLevel + hex.terrainLevel(Terrains.BRIDGE_ELEV)) ||
                         (altitude < effectiveLevel + hex.terrainLevel(Terrains.FUEL_TANK_ELEV))) &&
                   !(asfFlak) && (!bldg.usesCapitalScale()
+                        || game.getOptions().booleanOption(OptionsConstants.ADVANCED_BUILDING_EXPANDED_CF)
                         || !damagedCapitalBuildings.contains(BoardLocation.of(coords, boardId)))) {
                 if (!((ammo != null) && (ammo.getMunitionType().contains(Munitions.M_FLECHETTE)))) {
                     int buildingDamage;
@@ -32705,7 +32818,7 @@ public class TWGameManager extends AbstractGameManager {
                             damagedCapitalBuildings.add(BoardLocation.of(coords, boardId));
                         }
                         Vector<Report> buildingReport = damageBuilding(bldg, buildingDamage, " absorbs ", coords,
-                              altitude, killer, false);
+                              altitude - effectiveLevel, killer, false);
                         for (Report report : buildingReport) {
                             report.subject = subjectId;
                         }
@@ -32722,6 +32835,10 @@ public class TWGameManager extends AbstractGameManager {
             // get units in hex at the specified altitude (elevation + hex level for non-Aerospace) ignoring
             // targetability (if it's there, it's fair)
             for (Entity entity : game.getEntitiesVector(coords, boardId, true)) {
+                // An Advanced Building entity is the building at this hex and was already damaged above
+                if (entity instanceof AbstractBuildingEntity) {
+                    continue;
+                }
                 // Check: is entity excluded?
                 if ((entity == exclude) || alreadyHit.contains(entity.getId())) {
                     continue;

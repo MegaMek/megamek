@@ -46,6 +46,7 @@ import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.SuicideImplantsAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -166,19 +167,6 @@ public class TWDamageManager implements IDamageManager {
 
         Report report;
         int entityId = entity.getId();
-
-        if (entity instanceof AbstractBuildingEntity building && building.usesCapitalScale()) {
-            Coords coords = building.getLocationCoords(hit.getLocation());
-            if (coords != null && building.hasCFIn(coords)) {
-                Entity attacker = game.getEntity(hit.getAttackerId());
-                boolean fromInside = attacker != null && attacker.getBoardId() == building.getBoardId()
-                      && building.isIn(attacker.getPosition()) && attacker.isInBuilding();
-                reportVec.addAll(manager.damageBuilding(building, hit.isCapital() ? damage * 10 : damage,
-                      " absorbs ", coords, hit.getLocation() % building.getInternalBuilding().getBuildingHeight(),
-                      attacker, ammoExplosion || damageIS || fromInside));
-            }
-            return reportVec;
-        }
 
         // A bulldozer is destroyed on a 2D6 roll of 2 each time damage is dealt to the location mounting it (TacOps).
         if ((damage > 0) && (entity instanceof Tank bulldozerTank)) {
@@ -426,6 +414,8 @@ public class TWDamageManager implements IDamageManager {
                   underWater,
                   nukeS2S,
                   mods);
+            case AbstractBuildingEntity buildingEntity -> damageBuildingEntity(reportVec, buildingEntity, hit, damage,
+                  ammoExplosion || damageIS);
             default -> logger.error(new UnknownEntityTypeException(entity.toString()));
         }
 
@@ -818,7 +808,7 @@ public class TWDamageManager implements IDamageManager {
                     }
                 }
             }
-            
+
             if (ammoExplosion && Game.rulesManager.getRulesExplosions().explosionsAreReduced()) {
                 boolean cased = mek.locationHasCase(hit.getLocation());
                 boolean caseIId = mek.hasCASEII(hit.getLocation());
@@ -830,7 +820,7 @@ public class TWDamageManager implements IDamageManager {
                 } else if (damage > 20) {
                     reducedDamage = 20;
                 }
-                
+
                 // Report this either way
                 report = new Report(6129);
                 report.subject = entityId;
@@ -853,7 +843,7 @@ public class TWDamageManager implements IDamageManager {
                 report.add(mek.getLocationAbbr(hit));
                 reportVec.addElement(report);
             }
-            
+
             if (ammoExplosion) {
                 if (mek instanceof LandAirMek lam) {
                     // LAMs eject if the CT-destroyed switch is on
@@ -1945,6 +1935,71 @@ public class TWDamageManager implements IDamageManager {
      * @param nukeS2S       Whether damage is from a nuclear weapon
      * @param mods          damage modifiers and state tracking
      */
+    /**
+     * Applies weapon damage to an Advanced Building entity (TO:AR p. 118). The building's armour and Construction
+     * Factor live per hex, so the hit is resolved through the same building damage method map buildings use, which
+     * also makes the damage threshold critical hit check for the hex.
+     *
+     * @param reportVec the phase report to add to
+     * @param building  the building entity that was hit
+     * @param hit       the hit data; its location selects the hex and level, and its attacker id is used to pick the
+     *                  nearest standing hex of a multi-hex building
+     * @param damage    the damage to apply
+     * @param ignoreArmor whether the damage goes directly to the construction factor
+     */
+    private void damageBuildingEntity(Vector<Report> reportVec, AbstractBuildingEntity building, HitData hit,
+          int damage, boolean ignoreArmor) {
+        Coords hitCoords = resolveBuildingHitCoords(building, hit);
+        if (hitCoords == null) {
+            logger.warn("[BuildingDamage] {} has no standing hex for hit location {}; {} damage discarded",
+                  building.getShortName(), hit.getLocation(), damage);
+            return;
+        }
+        int level = building.getLocationLevel(hit.getLocation());
+        logger.debug("[BuildingDamage] {} takes {} damage in hex {} level {}", building.getShortName(), damage,
+              hitCoords, level);
+        Entity attacker = game.getEntity(hit.getAttackerId());
+        boolean fromInside = attacker != null && attacker.getBoardId() == building.getBoardId()
+              && building.isIn(attacker.getPosition()) && attacker.isInBuilding();
+        reportVec.addAll(manager.damageBuilding(building, hit.isCapital() ? damage * 10 : damage,
+              " takes ", hitCoords, level, attacker, ignoreArmor || fromInside, hit.hitAimedLocation() ? 2 : 0));
+    }
+
+    /**
+     * Picks the hex of a building entity that a hit lands in. Single-hex buildings and hits with no known attacker use
+     * the hex the hit location belongs to. For a multi-hex building the attacker strikes the standing hex nearest to
+     * it, with ties broken at random.
+     *
+     * @return the hex to damage, or {@code null} if the building has no standing hex left
+     */
+    private @Nullable Coords resolveBuildingHitCoords(AbstractBuildingEntity building, HitData hit) {
+        List<Coords> standingHexes = building.getCoordsList().stream()
+              .filter(coords -> building.getCurrentCF(coords) > 0)
+              .toList();
+        Coords locationCoords = building.getLocationCoords(hit.getLocation());
+        if (hit.isAimedShotAttempt() && locationCoords != null && building.getCurrentCF(locationCoords) > 0) {
+            return locationCoords;
+        }
+        Entity attacker = game.getEntity(hit.getAttackerId());
+        boolean attackerPositionKnown = (attacker != null) && (attacker.getPosition() != null)
+              && (attacker.getBoardId() == building.getBoardId());
+        if (!attackerPositionKnown || (standingHexes.size() <= 1)) {
+            if (locationCoords != null && building.getCurrentCF(locationCoords) > 0) {
+                return locationCoords;
+            }
+            return standingHexes.isEmpty() ? null : standingHexes.getFirst();
+        }
+        Coords attackerPosition = attacker.getPosition();
+        int nearestDistance = standingHexes.stream()
+              .mapToInt(hex -> hex.distance(attackerPosition))
+              .min()
+              .orElse(0);
+        List<Coords> nearestHexes = standingHexes.stream()
+              .filter(hex -> hex.distance(attackerPosition) == nearestDistance)
+              .toList();
+        return nearestHexes.get(Compute.randomInt(nearestHexes.size()));
+    }
+
     public void damageHandheldWeapon(Vector<Report> reportVec, HandheldWeapon hhw, HitData hit, int damage,
           boolean ammoExplosion,
           DamageType damageType, boolean areaSatArty, boolean throughFront, boolean underWater, boolean nukeS2S,

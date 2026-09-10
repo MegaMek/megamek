@@ -1462,6 +1462,10 @@ public class Client extends AbstractClient {
                                 cfrEvt.setTAGTargets(packet.getIntList(1));
                                 cfrEvt.setTAGTargetTypes(packet.getIntList(2));
                                 break;
+                            case CFR_BUILDING_WEAPON:
+                                cfrEvt.setEntityId(packet.getIntValue(1));
+                                cfrEvt.setBuildingWeaponIds(packet.getIntList(2));
+                                break;
                             default:
                                 break;
                         }
@@ -1557,6 +1561,11 @@ public class Client extends AbstractClient {
 
     public void sendTAGTargetCFRResponse(int index) {
         send(new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_TAG_TARGET, index));
+    }
+
+    public void sendBuildingWeaponCFRResponse(int buildingId, int equipmentId) {
+        send(new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_BUILDING_WEAPON,
+              buildingId, equipmentId));
     }
 
     public Set<BoardDimensions> getAvailableMapSizes() {

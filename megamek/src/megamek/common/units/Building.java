@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -115,6 +115,57 @@ public class Building implements Serializable {
      * The current construction factor of the building hexes. Any damage immediately updates this value.
      */
     private final Map<CubeCoords, Integer> currentCF = new HashMap<>();
+    private Map<CubeCoords, BuildingFloorState> floorStates;
+
+    public boolean usesExpandedCF() {
+        return floorStates != null;
+    }
+
+    /** A scenario option, not a construction-file field. Existing games keep their per-hex state. */
+    public void enableExpandedCF() {
+        if (floorStates == null) {
+            floorStates = new HashMap<>();
+            for (CubeCoords coords : getCoordsList()) {
+                floorStates.put(coords, new BuildingFloorState(getHeight(coords), getCurrentCF(coords), getArmor(coords)));
+            }
+        }
+    }
+
+    public BuildingFloorState getFloorState(CubeCoords coords) {
+        return floorStates == null ? null : floorStates.get(coords);
+    }
+
+    /** Replace a received floor snapshot without sharing mutable state with the packet/entity. */
+    public void copyFloorState(CubeCoords coords, BuildingFloorState source) {
+        if (source == null) {
+            if (floorStates != null) {
+                floorStates.remove(coords);
+                if (floorStates.isEmpty()) {
+                    floorStates = null;
+                }
+            }
+        } else {
+            if (floorStates == null) {
+                floorStates = new HashMap<>();
+            }
+            floorStates.put(coords, new BuildingFloorState(source));
+        }
+    }
+
+    public void newRound() {
+        if (floorStates != null) {
+            floorStates.values().forEach(BuildingFloorState::newRound);
+        }
+    }
+
+    public void synchronizeFloorState(CubeCoords coords) {
+        BuildingFloorState floors = getFloorState(coords);
+        if (floors != null && isIn(coords)) {
+            currentCF.put(coords, floors.maximumCF());
+            phaseCF.put(coords, floors.maximumCF());
+            height.put(coords, floors.height());
+        }
+    }
 
     /**
      * The construction factor of the building hexes at the start of this attack phase. Damage that is received during
@@ -323,20 +374,7 @@ public class Building implements Serializable {
             Roll diceRoll = Compute.rollD6(2);
             r.add(diceRoll);
 
-            BasementType rolledType;
-            if (diceRoll.getIntValue() == 2) {
-                rolledType = BasementType.TWO_DEEP_FEET;
-            } else if (diceRoll.getIntValue() == 3) {
-                rolledType = BasementType.ONE_DEEP_FEET;
-            } else if (diceRoll.getIntValue() == 4 || diceRoll.getIntValue() == 10) {
-                rolledType = BasementType.ONE_DEEP_NORMAL;
-            } else if (diceRoll.getIntValue() == 11) {
-                rolledType = BasementType.ONE_DEEP_HEAD;
-            } else if (diceRoll.getIntValue() == 12) {
-                rolledType = BasementType.TWO_DEEP_HEAD;
-            } else {
-                rolledType = BasementType.NONE;
-            }
+            BasementType rolledType = basementTypeForRoll(diceRoll.getIntValue());
 
             basement.put(coords, rolledType);
             r.add(rolledType.toString());
@@ -346,6 +384,28 @@ public class Building implements Serializable {
         }
 
         return false;
+    }
+
+    /**
+     * The Basements Table (TW p. 179): 2 is a two-level basement entered feet first, 3 a one-level basement entered
+     * feet first, 4 and 10 a one-level basement with a normal fall, 9 a small basement that only infantry can enter,
+     * 11 a one-level basement entered head first and 12 a two-level basement entered head first. Every other result
+     * is no basement.
+     *
+     * @param roll the 2D6 result
+     *
+     * @return the basement type for that result
+     */
+    static BasementType basementTypeForRoll(int roll) {
+        return switch (roll) {
+            case 2 -> BasementType.TWO_DEEP_FEET;
+            case 3 -> BasementType.ONE_DEEP_FEET;
+            case 4, 10 -> BasementType.ONE_DEEP_NORMAL;
+            case 9 -> BasementType.ONE_DEEP_NORMAL_INFANTRY_ONLY;
+            case 11 -> BasementType.ONE_DEEP_HEAD;
+            case 12 -> BasementType.TWO_DEEP_HEAD;
+            default -> BasementType.NONE;
+        };
     }
 
     /**
@@ -394,6 +454,12 @@ public class Building implements Serializable {
         }
 
         currentCF.put(coords, cf);
+        BuildingFloorState floors = getFloorState(coords);
+        if (floors != null) {
+            for (int floor = 0; floor < floors.size(); floor++) {
+                floors.setCF(floor, cf);
+            }
+        }
     }
 
     /**

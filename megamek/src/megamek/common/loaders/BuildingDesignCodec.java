@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import megamek.common.board.CubeCoords;
 import megamek.common.equipment.Mounted;
 import megamek.common.units.BuildingDesign;
-import megamek.common.units.BuildingEntity;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.bayWeapons.BayWeapon;
 
@@ -22,7 +22,7 @@ import megamek.common.weapons.bayWeapons.BayWeapon;
 public final class BuildingDesignCodec {
     private BuildingDesignCodec() { }
 
-    public static void write(BuildingBlock block, BuildingEntity entity) {
+    public static void write(BuildingBlock block, AbstractBuildingEntity entity) {
         var design = entity.getDesign();
         List<String> options = new ArrayList<>();
         if (design.hasEnvironmentalSealing()) {
@@ -49,6 +49,9 @@ public final class BuildingDesignCodec {
         if (design.getSite() != BuildingDesign.Site.SURFACE) {
             options.add("site=" + design.getSite());
             options.add("depth=" + design.getDepth());
+        }
+        if (design.getBaseLevel() != null) {
+            options.add("base_level=" + design.getBaseLevel());
         }
         write(block, "building_options", options);
         write(block, "building_wall_sides", entity.getInternalBuilding().getOriginalCoordsList().stream()
@@ -86,7 +89,7 @@ public final class BuildingDesignCodec {
         write(block, "building_bay_space", bays);
     }
 
-    private static List<Mounted<?>> storedMounts(BuildingEntity entity, int location) {
+    private static List<Mounted<?>> storedMounts(AbstractBuildingEntity entity, int location) {
         return entity.getEquipment().stream().filter(m -> m.getLocation() == location && !BLKFile.isImplicitEquipment(m)
               && !(m.getType() instanceof BayWeapon)).toList();
     }
@@ -148,7 +151,7 @@ public final class BuildingDesignCodec {
         return block.exists(key) ? List.of(block.getDataAsString(key)) : List.of();
     }
 
-    public static void read(BuildingBlock block, BuildingEntity entity) throws EntityLoadingException {
+    public static void read(BuildingBlock block, AbstractBuildingEntity entity) throws EntityLoadingException {
         var design = entity.getDesign();
         if (block.exists("building_equipment_space") && entity.getFailedEquipment().hasNext()) {
             throw new EntityLoadingException("Cannot resolve building equipment placements while equipment types are missing.");
@@ -179,6 +182,7 @@ public final class BuildingDesignCodec {
                     case "ceiling" -> design.setCeiling(BuildingDesign.Ceiling.valueOf(pair[1]));
                     case "site" -> design.setSite(BuildingDesign.Site.valueOf(pair[1]));
                     case "depth" -> design.setDepth(Integer.parseInt(pair[1]));
+                    case "base_level" -> design.setBaseLevel(Integer.parseInt(pair[1]));
                     default -> throw new IllegalArgumentException("Unknown building option " + pair[0]);
                 }
             }

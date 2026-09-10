@@ -34,19 +34,32 @@
 package megamek.common.units;
 
 import megamek.common.TechAdvancement;
+import megamek.common.SimpleTechLevel;
+import megamek.common.MPCalculationSetting;
+import megamek.common.board.CubeCoords;
+import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.BuildingType;
+import megamek.common.enums.TechBase;
+import megamek.common.enums.TechRating;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.enums.StructureEngine;
 
 /**
- * <b>Not Implemented</b>
- * <br>
- * Implementation of TO:AUE's Mobile Structures.
+ * TO:AUE Mobile Structures. Construction height excludes a ground structure's two-level undercarriage.
  * <br>
  * Extends {@link AbstractBuildingEntity}
  */
 public class MobileStructure extends AbstractBuildingEntity {
+    private StructureEngine powerSystem = StructureEngine.FUSION;
+    private int maximumMPQuarters = 4;
+    private double operatingRange;
+    private int mobileCrewHits;
 
     public MobileStructure(BuildingType type, int bldgClass) {
         super(type, bldgClass);
+        setMovementMode(EntityMovementMode.TRACKED);
+        setPowerSystem(StructureEngine.FUSION);
     }
 
     /**
@@ -62,7 +75,10 @@ public class MobileStructure extends AbstractBuildingEntity {
      */
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return new TechAdvancement(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     /**
@@ -71,7 +87,7 @@ public class MobileStructure extends AbstractBuildingEntity {
      */
     @Override
     public String getMovementString(EntityMovementType movementType) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return movementType == EntityMovementType.MOVE_NONE ? "Stationary" : "Flanking";
     }
 
     /**
@@ -80,7 +96,7 @@ public class MobileStructure extends AbstractBuildingEntity {
      */
     @Override
     public String getMovementAbbr(EntityMovementType movementType) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return movementType == EntityMovementType.MOVE_NONE ? "N" : "F";
     }
 
     /**
@@ -95,7 +111,7 @@ public class MobileStructure extends AbstractBuildingEntity {
      */
     @Override
     public int getGenericBattleValue() {
-        return 0;
+        return calculateBattleValue();
     }
 
     /**
@@ -103,11 +119,174 @@ public class MobileStructure extends AbstractBuildingEntity {
      */
     @Override
     public int getMaxElevationChange() {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return getMovementMode() == EntityMovementMode.TRACKED ? 2 : 1;
+    }
+
+    public StructureEngine getPowerSystem() {
+        return powerSystem;
+    }
+
+    public void setPowerSystem(StructureEngine power) {
+        powerSystem = java.util.Objects.requireNonNull(power);
+        setEngine(new Engine(0, power.getEngineType(), isClan() ? Engine.CLAN_ENGINE : 0));
+    }
+
+    public double getMaximumMP() {
+        return maximumMPQuarters / 4.0;
+    }
+
+    public void setMaximumMP(double mp) {
+        if (!Double.isFinite(mp) || mp < .25 || mp * 4 != Math.rint(mp * 4) || mp > 4) {
+            throw new IllegalArgumentException("Mobile Structure MP must be 0.25 to 4 in quarter-point increments");
+        }
+        maximumMPQuarters = (int) (mp * 4);
+        setOriginalWalkMP(maximumMPQuarters);
+    }
+
+    public int getMaximumMPQuarters() {
+        return maximumMPQuarters;
+    }
+
+    public int motiveMaximumMP() {
+        return switch (getMovementMode()) {
+            case TRACKED -> 2;
+            case NAVAL -> 3;
+            case VTOL, SUBMARINE -> 4;
+            default -> 0;
+        };
+    }
+
+    /** The movement engine counts quarters for Mobile Structures, including terrain costs. */
+    @Override
+    public int getWalkMP(MPCalculationSetting setting) {
+        return isImmobile() ? 0 : maximumMPQuarters;
     }
 
     @Override
-    public boolean hasEngine() {
-        throw new UnsupportedOperationException("Not implemented yet.");
+    public int getRunMP(MPCalculationSetting setting) {
+        return getWalkMP(setting);
+    }
+
+    @Override
+    public int getSprintMP(MPCalculationSetting setting) {
+        return getWalkMP(setting);
+    }
+
+    @Override
+    public int getJumpMP(MPCalculationSetting setting) {
+        return 0;
+    }
+
+    @Override
+    public boolean isImmobile() {
+        return mobileCrewHits >= 6 || isShutDown() || isPowerSwitchedOff();
+    }
+
+    public double getOperatingRange() {
+        return operatingRange;
+    }
+
+    public void setOperatingRange(double kilometers) {
+        if (!Double.isFinite(kilometers) || kilometers < 0) {
+            throw new IllegalArgumentException("Operating range must be a non-negative number of kilometers");
+        }
+        operatingRange = kilometers;
+    }
+
+    public double getPowerSystemWeight() {
+        return Math.ceil(getInternalBuilding().getOriginalCoordsList().size()
+              * getInternalBuilding().getBuildingHeight() * getMaximumMP()
+              * powerSystem.mobilePowerMultiplier(getMovementMode(), isClan()));
+    }
+
+    public double getMotiveSystemWeight() {
+        double multiplier = switch (getMovementMode()) {
+            case TRACKED -> isClan() ? 3.5 : 4;
+            case VTOL -> isClan() ? 4 : 5;
+            case NAVAL -> isClan() ? 1.8 : 2;
+            case SUBMARINE -> 3.5;
+            default -> 0;
+        };
+        double structureMultiplier = getBldgClass() == HANGAR ? .3 : getBldgClass() == STANDARD ? .5 : 1;
+        return Math.ceil(getInternalBuilding().getOriginalCoordsList().size()
+              * getInternalBuilding().getBuildingHeight() * multiplier * structureMultiplier);
+    }
+
+    public double getFuelWeight() {
+        return Math.ceil(operatingRange / 100 * Math.max(0, powerSystem.getMobileFuelMultiplier()) * getPowerSystemWeight());
+    }
+
+    public double systemWeightInHex(CubeCoords hex) {
+        int count = getInternalBuilding().getOriginalCoordsList().size();
+        if (count == 0 || !getInternalBuilding().getOriginalCoordsList().contains(hex)) {
+            return 0;
+        }
+        double sealing = getMovementMode() != EntityMovementMode.SUBMARINE && hasEnvironmentalSealing()
+              ? Math.ceil(getOInternal(0) * getInternalBuilding().getBuildingHeight() / 10.0) : 0;
+        return (getPowerSystemWeight() + getMotiveSystemWeight() + getFuelWeight()) / count + sealing;
+    }
+
+    @Override
+    protected int calculateBaseCrew() {
+        int crew = switch (getBldgClass()) {
+            case HANGAR -> switch (getMovementMode()) {
+                case VTOL, SUBMARINE -> 3;
+                default -> 2;
+            };
+            case STANDARD -> switch (getMovementMode()) {
+                case VTOL, SUBMARINE -> 4;
+                default -> 3;
+            };
+            case FORTRESS -> switch (getMovementMode()) {
+                case NAVAL -> 5;
+                case SUBMARINE -> 6;
+                case TRACKED -> 4;
+                default -> 0;
+            };
+            default -> 0;
+        };
+        return crew * getInternalBuilding().getOriginalCoordsList().size();
+    }
+
+    @Override
+    public boolean hasEnvironmentalSealing() {
+        return getMovementMode() == EntityMovementMode.SUBMARINE || super.hasEnvironmentalSealing();
+    }
+
+    @Override
+    public boolean hasFusionOrFissionPower() {
+        return powerSystem == StructureEngine.FUSION || powerSystem == StructureEngine.FISSION;
+    }
+
+    public boolean hasPower() {
+        return !isPowerSwitchedOff() && powerSystem.mobilePowerMultiplier(getMovementMode(), isClan()) > 0;
+    }
+
+    /** Relative elevation of the lowest usable floor; motive levels consume no equipment capacity. */
+    public int getStructureBaseElevation() {
+        return switch (getMovementMode()) {
+            case TRACKED -> 2;
+            case NAVAL, SUBMARINE -> -(getInternalBuilding().getBuildingHeight() + 1) / 2;
+            default -> 0;
+        };
+    }
+
+    @Override
+    public int getWeaponFiringHeight(WeaponMounted weapon) {
+        return getStructureBaseElevation() + super.getWeaponFiringHeight(weapon);
+    }
+
+    @Override
+    public int height() {
+        return Math.max(0, getInternalBuilding().getBuildingHeight() - 1 + Math.max(0, getStructureBaseElevation()));
+    }
+
+    public int getMobileCrewHits() {
+        return mobileCrewHits;
+    }
+
+    /** TO:AUE p.40: six hits stop movement, but surviving individual gunners can still fire. */
+    public void addMobileCrewHit() {
+        mobileCrewHits = Math.min(6, mobileCrewHits + 1);
     }
 }

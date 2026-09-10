@@ -1,7 +1,36 @@
 /*
  * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
- * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.equipment;
 
 import megamek.common.SimpleTechLevel;
@@ -18,7 +47,8 @@ public class BuildingEquipmentType extends MiscType {
         UNSPECIFIED("Unspecified Building Equipment", "Unspecified equipment", 0, 0),
         FLIGHT_DECK("Building Flight Deck", "Flight deck", 1500, 1000000),
         HELIPAD("Building Helipad", "Helipad", 500, 200000),
-        LANDING_DECK("Building Landing Deck", "Landing deck", 500, 500000);
+        LANDING_DECK("Building Landing Deck", "Landing deck", 500, 500000),
+        MODULAR_LINKAGE("Modular Structure Linkage", "Modular structure linkage", 1, 0);
 
         private final String id;
         private final String label;
@@ -60,7 +90,8 @@ public class BuildingEquipmentType extends MiscType {
             flags = flags.or(F_VARIABLE_SIZE);
         }
         rulesRefs = facility.isRoof() ? rulesRefs(SourceBookCode.TO_AUE, 124, 131)
-              : rulesRefs(SourceBookCode.TO_AR, 129, 133, 208);
+              : facility == Facility.MODULAR_LINKAGE ? rulesRefs(SourceBookCode.TO_AUE, 81)
+                    : rulesRefs(SourceBookCode.TO_AR, 129, 133, 208);
         techAdvancement.setTechBase(TechBase.ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
               .setTechRating(TechRating.B).setAvailability(AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A)
               .setStaticTechLevel(SimpleTechLevel.ADVANCED);
@@ -82,6 +113,9 @@ public class BuildingEquipmentType extends MiscType {
 
     @Override
     public double getTonnage(Entity entity, int location, double size, RoundWeight rounding) {
+        if (facility == Facility.MODULAR_LINKAGE) {
+            return Math.ceil(entity.getOInternal(location) / 2.0);
+        }
         return facility == Facility.LANDING_DECK ? facility.weight * size : facility.weight == 0 ? size : facility.weight;
     }
 

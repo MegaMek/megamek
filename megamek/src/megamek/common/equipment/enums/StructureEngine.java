@@ -164,4 +164,18 @@ public enum StructureEngine implements Serializable {
     public double getBaseCost() {
         return baseCost;
     }
+
+    public double mobilePowerMultiplier(megamek.common.units.EntityMovementMode motive, boolean clan) {
+        return switch (motive) {
+            case TRACKED -> clan ? groundMobileStructurePowerSystemWeightMultiplierClan : groundMobileStructurePowerSystemWeightMultiplierIS;
+            case VTOL -> clan ? airMobileStructurePowerSystemWeightMultiplierClan : airMobileStructurePowerSystemWeightMultiplierIS;
+            case NAVAL -> clan ? surfaceNavalMobileStructurePowerSystemWeightMultiplierClan : surfaceNavalMobileStructurePowerSystemWeightMultiplierIS;
+            case SUBMARINE -> clan ? submarineNavalMobileStructurePowerSystemWeightMultiplierClan : submarineNavalMobileStructurePowerSystemWeightMultiplierIS;
+            default -> -1;
+        };
+    }
+
+    public double getMobileFuelMultiplier() {
+        return mobileStructureFuelMultiplier / 100;
+    }
 }

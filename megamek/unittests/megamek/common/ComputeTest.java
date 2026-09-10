@@ -1017,7 +1017,7 @@ class ComputeTest {
         );
         assertTrue(newDamage >= 2.0 && newDamage <= 12.0, "10 -> 4D6 / 2.0, rounded up: " + newDamage);
         assertEquals(1, reports.size(), "Report size");
-        assertTrue(reports.getFirst().text().contains("in building"));
+        assertTrue(reports.getFirst().text().contains("inside the building"), "the report says why the damage halved");
     }
 
     /**

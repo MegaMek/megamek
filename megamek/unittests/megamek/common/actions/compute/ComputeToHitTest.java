@@ -440,7 +440,7 @@ public class ComputeToHitTest extends GameBoardTestCase {
                 // Target at hex 0101, LOS passes through hex 0103 (elevation 1)
                 // Expected: BLOCKED (height 0 < terrain elevation 1)
                 mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
-                      attacker.getLocationFromAbbr("LVL 0 0105"));
+                      attacker.getLocationsAt(new Coords(0, 4)).getFirst());
                 mediumLaser.setFacing(0);
                 targetEntity.setPosition(new Coords(0, 0));
 
@@ -459,7 +459,7 @@ public class ComputeToHitTest extends GameBoardTestCase {
                       "LOS should be BLOCKED - firing from height 0 through elevation 1 terrain. Modifiers: "
                             + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
                             .collect(java.util.stream.Collectors.joining(", ")));
-                assertFalse(result.cannotSucceed(), "Shot should NOT succeed when LOS is blocked");
+                assertTrue(result.cannotSucceed(), "Shot should NOT succeed when LOS is blocked");
             }
 
             @Test
@@ -498,7 +498,7 @@ public class ComputeToHitTest extends GameBoardTestCase {
                 // Target at hex 0301, LOS passes through hex 0303 (elevation 2)
                 // Expected: BLOCKED (height 0 < terrain elevation 2)
                 mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
-                      attacker.getLocationFromAbbr("LVL 0 0305"));
+                      attacker.getLocationsAt(new Coords(2, 4)).getFirst());
                 mediumLaser.setFacing(0);
                 targetEntity.setPosition(new Coords(2, 0));
                 assertEquals(0, attacker.getWeaponFiringHeight(mediumLaser), "Weapon should be at height 0");
@@ -615,7 +615,7 @@ public class ComputeToHitTest extends GameBoardTestCase {
                 // Target at hex 0201, LOS passes through hex 0203 (elevation 4)
                 // Expected: BLOCKED (height 0 < terrain elevation 4)
                 mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
-                      attacker.getLocationFromAbbr("LVL 0 0205"));
+                      attacker.getLocationsAt(new Coords(1, 4)).getFirst());
                 mediumLaser.setFacing(0);
                 targetEntity.setPosition(new Coords(1, 0));
                 assertEquals(0, attacker.getWeaponFiringHeight(mediumLaser), "Weapon should be at height 0");

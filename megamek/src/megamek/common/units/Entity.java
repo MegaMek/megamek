@@ -2806,6 +2806,22 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * The depth of the basement under the hex that this unit may move down into. A small basement (Basements Table
+     * result 9, TW p. 179) can only be entered by infantry, so it counts as no basement for every other unit.
+     *
+     * @param hex the hex being checked
+     *
+     * @return the number of levels this unit may descend below the hex, never negative
+     */
+    private int enterableBasementDepth(Hex hex) {
+        BasementType basement = BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE));
+        if (basement.isOneDeepNormalInfantryOnly() && !(this instanceof Infantry)) {
+            return 0;
+        }
+        return Math.max(0, basement.getDepth());
+    }
+
+    /**
      * is it possible to go down, or are we landed/just above the water/treeline? assuming passed elevation.
      */
     public boolean canGoDown(int assumedElevation, Coords assumedPos, int boardId) {
@@ -2820,7 +2836,7 @@ public abstract class Entity extends TurnOrdered
             case INF_JUMP:
             case INF_LEG:
             case INF_MOTORIZED:
-                minAlt -= Math.max(0, BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth());
+                minAlt -= enterableBasementDepth(hex);
                 break;
             case WIGE:
                 // Per errata, WiGEs have flotation hull, which makes no sense unless it changes the rule
@@ -2884,8 +2900,7 @@ public abstract class Entity extends TurnOrdered
             case BIPED:
             case QUAD:
                 if (this instanceof ProtoMek) {
-                    minAlt -= Math.max(0,
-                          BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth());
+                    minAlt -= enterableBasementDepth(hex);
                 } else {
                     return false;
                 }
@@ -4495,11 +4510,13 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Is this location destroyed or breached?
+     * Is this location destroyed, or a breached leg treated as destroyed by the current rules?
      */
     public boolean isLocationBad(int loc) {
         return (getInternal(loc) == IArmorState.ARMOR_DESTROYED) ||
-              (isLocationBlownOff(loc) && !isLocationBlownOffThisPhase(loc));
+              (isLocationBlownOff(loc) && !isLocationBlownOffThisPhase(loc)) ||
+              (locationIsLeg(loc) && (getLocationStatus(loc) == ILocationExposureStatus.BREACHED) &&
+                    Game.rulesManager.getRulesUnderwater().treatBreachedLegAsDestroyed());
     }
 
     public boolean isLocationTrulyDestroyed(int loc) {
@@ -4902,8 +4919,12 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns the equipment, specified by number
+     *
+     * @param index the equipment number
+     *
+     * @return the mount with that number, or {@code null} when the unit has no equipment with that number
      */
-    public Mounted<?> getEquipment(int index) {
+    public @Nullable Mounted<?> getEquipment(int index) {
         try {
             return equipmentList.get(index);
         } catch (IndexOutOfBoundsException ex) {

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -111,7 +111,9 @@ public class BuildingTarget implements Targetable {
             throw new IllegalArgumentException("No building at %s.".formatted(getBoardLocation()));
         }
 
-        name = "Hex %s of %s".formatted(position.getBoardNum(), bldg.toString());
+        // An Advanced Building is an Entity whose toString() is a debug form; use its unit name instead
+        String buildingName = (bldg instanceof Entity buildingEntity) ? buildingEntity.getShortName() : bldg.toString();
+        name = "Hex %s of %s".formatted(position.getBoardNum(), buildingName);
         if (boardId > 0) {
             name += " (Board #%d - %s)".formatted(boardId, board.getBoardName());
         }
@@ -147,6 +149,17 @@ public class BuildingTarget implements Targetable {
      */
     public BuildingTarget(Coords coords, Board board, int nType) {
         init(coords, board, nType);
+    }
+
+    /** A single floor and hex for range and LOS checks on an aimed shot against a structure entity. */
+    public BuildingTarget(AbstractBuildingEntity building, int location) {
+        position = building.getLocationCoords(location);
+        boardId = building.getBoardId();
+        id = HexTarget.locationToId(getBoardLocation());
+        type = TYPE_BUILDING;
+        height = 0;
+        elevation = building.getElevation() + building.getLocationLevel(location);
+        name = building.getShortName() + " " + building.getLocationName(location);
     }
 
     public BuildingTarget(Game game, BoardLocation boardLocation, int nType) {

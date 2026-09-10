@@ -297,6 +297,9 @@ public class TestBuilding extends TestEntity {
         if (calculateWeight() > building.getWeight() + .00001) {
             issues.add("Installed components exceed the building's carrying capacity.");
         }
+        if (building.getNCrew() < building.calculateMinimumCrew()) {
+            issues.add("The specified crew is below the minimum required to operate the installed equipment.");
+        }
         if (!entity.hasPower()) {
             issues.add("The installed generators do not meet the building's power requirements.");
         }
@@ -380,6 +383,11 @@ public class TestBuilding extends TestEntity {
                 }
             }
             if (mount.getType() instanceof BuildingEquipmentType facility) {
+                if (facility.getFacility() == BuildingEquipmentType.Facility.MODULAR_LINKAGE
+                      && BuildingConstruction.equipmentPositions(entity, mount).stream()
+                            .anyMatch(p -> p.hex().neighbors().stream().allMatch(hexes::contains))) {
+                    issues.add("Modular structure linkages must be installed in an outermost hex.");
+                }
                 if (facility.getFacility().isRoof() && BuildingConstruction.equipmentPositions(entity, mount).stream()
                       .anyMatch(p -> p.level() != height - 1)) {
                     issues.add("Decks and helipads must be assigned to the highest internal level (the roof above it).");
@@ -502,7 +510,7 @@ public class TestBuilding extends TestEntity {
                   || entity.getTransportBays().stream().flatMap(bay -> BuildingConstruction.baySpaces(entity, bay).stream())
                         .anyMatch(space -> space.tons() > 0 && space.position().level() != 0)
                   || !design.getElevators().isEmpty()) {
-                issues.add("Open-space equipment and bays must be on ground level; rooftop equipment and internal elevators are not allowed.");
+                issues.add("Open-space equipment and bays must be on the lowest floor; rooftop equipment and internal elevators are not allowed.");
             }
         }
         if (design.hasHeavyMetal() && entity.getBuildingType() != BuildingType.HEAVY

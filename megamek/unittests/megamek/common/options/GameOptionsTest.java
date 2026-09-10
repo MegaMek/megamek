@@ -71,6 +71,24 @@ class GameOptionsTest {
     }
 
     @Test
+    void optionalBuildingDamageTrackingDefaultsOffAndCanBeSaved() {
+        String name = OptionsConstants.ADVANCED_BUILDING_EXPANDED_CF;
+        assertFalse(testMe.booleanOption(name));
+        File file = tempDirectory.resolve("expanded-building-cf.xml").toFile();
+        Vector<IBasicOption> saved = new Vector<>();
+        saved.add(new BasicOption(name, true));
+        GameOptions.saveOptions(saved, file.getAbsolutePath());
+
+        testMe.loadOptions(file, false);
+        assertTrue(testMe.booleanOption(name));
+
+        saved.set(0, new BasicOption(name, false));
+        GameOptions.saveOptions(saved, file.getAbsolutePath());
+        testMe.loadOptions(file, false);
+        assertFalse(testMe.booleanOption(name));
+    }
+
+    @Test
     void testSaveAndLoadOptions() throws IOException {
         assertTrue(Files.isDirectory(tempDirectory));
         final Path createdFilePath = Files.createFile(tempDirectory.resolve("test-game-options.xml"));

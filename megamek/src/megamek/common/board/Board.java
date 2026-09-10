@@ -1651,10 +1651,16 @@ public class Board implements Serializable {
             logger.error("Could not find a match for {} to update.", receivedBuilding);
             return;
         }
+        if (localBuilding.getInternalBuilding() == receivedBuilding.getInternalBuilding()) {
+            return;
+        }
         for (Coords coords : localBuilding.getCoordsList()) {
             localBuilding.setCurrentCF(receivedBuilding.getCurrentCF(coords), coords);
             localBuilding.setPhaseCF(receivedBuilding.getPhaseCF(coords), coords);
             localBuilding.setArmor(receivedBuilding.getArmor(coords), coords);
+            localBuilding.setHeight(receivedBuilding.getHeight(coords), coords);
+            localBuilding.getInternalBuilding().copyFloorState(localBuilding.boardToRelative(coords),
+                  receivedBuilding.getFloorState(coords));
             localBuilding.setBasement(coords,
                   BasementType.getType(getHex(coords).terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
             localBuilding.setBasementCollapsed(coords, receivedBuilding.getBasementCollapsed(coords));

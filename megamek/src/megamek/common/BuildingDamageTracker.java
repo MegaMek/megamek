@@ -70,23 +70,25 @@ public class BuildingDamageTracker implements Serializable {
         private final int boardId;
         private final int buildingId;
         private final Coords coords;
+        private final int level;
 
-        private DamageKey(int attackerId, int boardId, int buildingId, Coords coords) {
+        private DamageKey(int attackerId, int boardId, int buildingId, Coords coords, int level) {
             this.attackerId = attackerId;
             this.boardId = boardId;
             this.buildingId = buildingId;
             this.coords = coords;
+            this.level = level;
         }
 
         @Override
         public boolean equals(Object other) {
             return other instanceof DamageKey key && attackerId == key.attackerId && boardId == key.boardId
-                  && buildingId == key.buildingId && Objects.equals(coords, key.coords);
+                  && buildingId == key.buildingId && level == key.level && Objects.equals(coords, key.coords);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(attackerId, boardId, buildingId, coords);
+            return Objects.hash(attackerId, boardId, buildingId, coords, level);
         }
     }
 
@@ -108,6 +110,11 @@ public class BuildingDamageTracker implements Serializable {
      */
     public Damage resolve(IBuilding building, Coords coords, int damage, int attackerId, boolean ignoreArmor,
           int currentRound, GamePhase currentPhase) {
+        return resolve(building, coords, 0, damage, attackerId, ignoreArmor, currentRound, currentPhase);
+    }
+
+    public Damage resolve(IBuilding building, Coords coords, int level, int damage, int attackerId, boolean ignoreArmor,
+          int currentRound, GamePhase currentPhase) {
         if (round != currentRound || phase != currentPhase) {
             clear();
             round = currentRound;
@@ -117,13 +124,14 @@ public class BuildingDamageTracker implements Serializable {
             return new Damage(0, 0, 0);
         }
         Remainders remainder = attackerId == Entity.NONE ? new Remainders()
-              : remainders.computeIfAbsent(new DamageKey(attackerId, building.getBoardId(), building.getId(), coords),
+              : remainders.computeIfAbsent(new DamageKey(attackerId, building.getBoardId(), building.getId(), coords,
+                    building.usesExpandedCF() ? level : 0),
                     key -> new Remainders());
 
         int armorDamage = 0;
         long toCF = damage;
         if (!ignoreArmor) {
-            int armor = Math.max(0, building.getArmor(coords));
+            int armor = Math.max(0, building.getArmor(coords, level));
             long pending = damage + remainder.armor;
             toCF = Math.max(0, pending - armor * 10L);
             armorDamage = (int) Math.min(armor, (pending + 5) / 10);

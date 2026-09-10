@@ -165,10 +165,7 @@ public abstract class RulesGame {
         int startingPos = entity.getStartingPos();
         return (!entity.isDeployed() && deploymentRound >= 0
                 && deploymentRound <= currentRound
-                && startingPos != Board.START_ANY
-                && startingPos != Board.START_CENTER
-                && startingPos <= Board.NUM_ZONES
-                && !entity.getOwner().isBot());
+                && restrictDeploymentWidth(entity.getOwner(), startingPos));
     }
 
     /**
@@ -196,14 +193,32 @@ public abstract class RulesGame {
                                   int deploymentWidth) {
         if (isWalkOnDeployment()) {
             int width = 1;
-            if (deploymentArea == Board.START_ANY ||
-                deploymentArea == Board.START_CENTER ||
-                deploymentArea > Board.NUM_ZONES ||
-                player.isBot()) {
+            if (!restrictDeploymentWidth(player, deploymentArea)) {
                 width = deploymentWidth;
             }
             return width;
         }
         return deploymentWidth;
+    }
+
+    /**
+     * Checks if it should restrict the deployment width.
+     *
+     * @param player         The player to check
+     * @param deploymentArea the deployment area
+     * @return true if it should restrict the deployment width, false otherwise
+     */
+    public boolean restrictDeploymentWidth(@Nullable Player player,
+                                           int deploymentArea) {
+        if ((player != null) && player.isBot()) {
+            return false;
+        }
+        if (isWalkOnDeployment() &&
+            (deploymentArea != Board.START_CENTER &&
+             deploymentArea != Board.START_ANY &&
+             deploymentArea < Board.NUM_ZONES)) {
+            return true;
+        }
+        return false;
     }
 }

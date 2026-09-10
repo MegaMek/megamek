@@ -34,6 +34,7 @@ package megamek.server.totalWarfare;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import megamek.common.Hex;
 import megamek.common.HitData;
@@ -47,6 +48,7 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.InfantryCombatCasualties;
 import megamek.common.compute.InfantryCombatTables;
 import megamek.common.compute.MarinePointsScoreCalculator;
+import megamek.common.compute.MarinePointsTrait;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Crew;
@@ -76,12 +78,14 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
     private static final int ELIMINATED_PERCENT = 100;
 
     private final InfantryActionTracker tracker;
+    private final InfantryActionNarrator narrator;
     private final InfantryActionReporter reporter;
 
     InfantryActionResolutionHandler(TWGameManager gameManager, InfantryActionTracker tracker) {
         super(gameManager);
         this.tracker = tracker;
         this.reporter = new InfantryActionReporter(gameManager);
+        narrator = new InfantryActionNarrator(gameManager);
     }
 
     /**
@@ -128,6 +132,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
             // (TO:AR p. 172)
             reportCombatHeader(building);
             reportBuildingFalls(combat, building);
+            narrator.narrateNoDefence();
             return;
         }
 
@@ -174,6 +179,9 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
               building.getShortName(), ratio, roll, result, attackerLost, attackerOwnStrength, defenderLost,
               defenderOwnStrength);
 
+        // Traits are read before the losses are applied, while every unit that fought is still on its side
+        Set<MarinePointsTrait> attackerTraits = narrator.traitsOf(combat.attackerIds, null);
+        Set<MarinePointsTrait> defenderTraits = narrator.traitsOf(combat.defenderIds, building);
         reportMarinePointsLost(5642, attackerLost, attackerOwnStrength);
         int attackerPersonnelLost = applySideLosses(combat, true, attackerLost, attackerOwnStrength);
         reportMarinePointsLost(5643, defenderLost, defenderOwnStrength);
@@ -194,6 +202,30 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         } else if (withdrawing) {
             reportWithdrawal(combat, building);
         }
+        narrator.narrate(outcomeOf(result, withdrawing, attackersGone, defendersGone),
+              new InfantryActionNarrator.Side(attackerLost, attackerOwnStrength, attackersGone, attackerTraits),
+              new InfantryActionNarrator.Side(defenderLost, defenderOwnStrength, defendersGone, defenderTraits));
+    }
+
+    /** How the roll went, in the order the lines above decide it. */
+    private static InfantryActionNarrator.Outcome outcomeOf(InfantryCombatResult result, boolean withdrawing,
+          boolean attackersGone, boolean defendersGone) {
+        if (attackersGone) {
+            return InfantryActionNarrator.Outcome.ATTACKERS_ELIMINATED;
+        }
+        if (defendersGone) {
+            return InfantryActionNarrator.Outcome.DEFENDERS_ELIMINATED;
+        }
+        if (withdrawing) {
+            return InfantryActionNarrator.Outcome.WITHDRAWAL;
+        }
+        if (result.isAttackerRepulsed()) {
+            return InfantryActionNarrator.Outcome.REPULSED;
+        }
+        if (result.isPartialControl()) {
+            return InfantryActionNarrator.Outcome.PENETRATION;
+        }
+        return InfantryActionNarrator.Outcome.ENGAGED;
     }
 
     private boolean attackersAreWithdrawing(InfantryAction combat) {
@@ -377,7 +409,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         report.add(attackerStrength);
         report.add(defenderStrength);
         report.add(roll);
-        report.add(result.toString());
+        report.add(result.printedCell());
         addReport(report);
     }
 

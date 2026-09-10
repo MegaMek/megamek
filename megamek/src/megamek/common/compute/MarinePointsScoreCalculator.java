@@ -33,6 +33,8 @@
 
 package megamek.common.compute;
 
+import java.util.EnumSet;
+
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.CubeCoords;
@@ -183,23 +185,41 @@ public final class MarinePointsScoreCalculator {
 
     private static MarinePointsBreakdown conventionalInfantryScore(ConvInfantry platoon, double buildingModifier) {
         int troopers = Math.max(0, platoon.getInternal(ConvInfantry.LOC_INFANTRY));
-        double perTrooper = platoon.hasSpecialization(ConvInfantry.MARINES) ? MARINE : NON_MARINE_SOLDIER;
+        EnumSet<MarinePointsTrait> traits = EnumSet.noneOf(MarinePointsTrait.class);
+        boolean marines = platoon.hasSpecialization(ConvInfantry.MARINES);
+        double perTrooper = marines ? MARINE : NON_MARINE_SOLDIER;
+        traits.add(marines ? MarinePointsTrait.MARINES : MarinePointsTrait.LINE_INFANTRY);
         if (platoon.calcDamageDivisor() >= ARMORED_DAMAGE_DIVISOR) {
             perTrooper += ARMORED_TROOPER;
+            traits.add(MarinePointsTrait.ARMORED_INFANTRY);
         }
-        return MarinePointsBreakdown.conventionalInfantry(troopers, perTrooper, buildingModifier);
+        return MarinePointsBreakdown.conventionalInfantry(troopers, perTrooper, buildingModifier, traits);
     }
 
     private static MarinePointsBreakdown battleArmorScore(BattleArmor squad, double buildingModifier) {
         int activeTroopers = squad.getNumberActiveTroopers();
+        EnumSet<MarinePointsTrait> traits = EnumSet.noneOf(MarinePointsTrait.class);
         if (activeTroopers == 0) {
-            return MarinePointsBreakdown.battleArmor(0, 0, 0, 0, 0, 0, buildingModifier);
+            return MarinePointsBreakdown.battleArmor(0, 0, 0, 0, 0, 0, buildingModifier, traits);
         }
         double baseValue = squad.isClan() ? ELEMENTAL_TROOPER : INNER_SPHERE_BATTLE_ARMOR_TROOPER;
+        traits.add(squad.isClan() ? MarinePointsTrait.ELEMENTALS : MarinePointsTrait.INNER_SPHERE_BATTLE_ARMOR);
+        addWeightClassTrait(squad.getWeightClass(), traits);
         int intactArmor = intactArmor(squad);
-        double equipmentModifier = squadEquipmentModifier(squad) + microgravityModifier(squad);
+        double equipmentModifier = squadEquipmentModifier(squad, traits) + microgravityModifier(squad, traits);
         return MarinePointsBreakdown.battleArmor(activeTroopers, baseValue, weightClassModifier(squad.getWeightClass()),
-              equipmentModifier, intactArmor, intactArmor * INTACT_ARMOR_POINT, buildingModifier);
+              equipmentModifier, intactArmor, intactArmor * INTACT_ARMOR_POINT, buildingModifier, traits);
+    }
+
+    private static void addWeightClassTrait(int weightClass, EnumSet<MarinePointsTrait> traits) {
+        switch (weightClass) {
+            case EntityWeightClass.WEIGHT_ULTRA_LIGHT -> traits.add(MarinePointsTrait.LIGHT_SUITS);
+            case EntityWeightClass.WEIGHT_HEAVY, EntityWeightClass.WEIGHT_ASSAULT ->
+                  traits.add(MarinePointsTrait.HEAVY_SUITS);
+            default -> {
+                // light and medium suits are the ordinary case and get no trait of their own
+            }
+        }
     }
 
     /**
@@ -207,7 +227,7 @@ public final class MarinePointsScoreCalculator {
      * Operations Adaptation and magnetic clamps. They count when the squad is spaceborne or the game's planetary
      * conditions are Zero-G, and never on a world with any gravity at all.
      */
-    private static double microgravityModifier(BattleArmor squad) {
+    private static double microgravityModifier(BattleArmor squad, EnumSet<MarinePointsTrait> traits) {
         if (!isInMicrogravity(squad)) {
             return 0;
         }
@@ -220,6 +240,7 @@ public final class MarinePointsScoreCalculator {
         }
         if (squad.hasWorkingMisc(MiscTypeFlag.F_MAGNETIC_CLAMP)) {
             modifier += MAGNETIC_CLAMPS;
+            traits.add(MarinePointsTrait.MAGNETIC_CLAMPS);
         }
         LOGGER.debug("[MarinePoints] {} fights in microgravity: modifier {} per trooper", squad.getShortName(),
               modifier);
@@ -258,9 +279,9 @@ public final class MarinePointsScoreCalculator {
 
     /**
      * The "Mounts one or more ..." rows of the Battle Armor Modifiers table. Each row is checked once for the squad
-     * and applies to every trooper.
+     * and applies to every trooper; the rows earned are added to the squad's traits.
      */
-    private static double squadEquipmentModifier(BattleArmor squad) {
+    private static double squadEquipmentModifier(BattleArmor squad, EnumSet<MarinePointsTrait> traits) {
         boolean mountsBurstFireWeapon = false;
         boolean mountsFlameWeapon = false;
         boolean mountsHeavyBattleClaw = false;
@@ -293,26 +314,33 @@ public final class MarinePointsScoreCalculator {
         double modifier = 0;
         if (mountsBurstFireWeapon) {
             modifier += BURST_FIRE_WEAPONS;
+            traits.add(MarinePointsTrait.BURST_FIRE);
         }
         if (mountsFlameWeapon) {
             modifier += FLAME_WEAPONS;
+            traits.add(MarinePointsTrait.FLAME);
         }
         if (magneticOrVibroClaws >= CLAWS_IN_A_PAIR) {
             modifier += PAIRED_MAGNETIC_OR_VIBRO_CLAWS;
+            traits.add(MarinePointsTrait.CLAWS);
         } else if (claws >= CLAWS_IN_A_PAIR) {
             modifier += PAIRED_OTHER_CLAWS;
+            traits.add(MarinePointsTrait.CLAWS);
         }
         if (mountsHeavyBattleClaw) {
             modifier += HEAVY_BATTLE_CLAWS;
         }
         if (mountsCuttingTorch) {
             modifier += CUTTING_TORCHES;
+            traits.add(MarinePointsTrait.TORCHES_OR_DRILLS);
         }
         if (mountsIndustrialDrill) {
             modifier += INDUSTRIAL_DRILLS;
+            traits.add(MarinePointsTrait.TORCHES_OR_DRILLS);
         }
         if (mountsAntiPersonnelMount) {
             modifier += ANTI_PERSONNEL_WEAPON_MOUNTS;
+            traits.add(MarinePointsTrait.ANTI_PERSONNEL_MOUNTS);
         }
         return modifier;
     }
@@ -344,8 +372,18 @@ public final class MarinePointsScoreCalculator {
               + (crew * NON_COMBAT_CREW)
               + (bayPersonnel * NON_COMBAT_CREW)
               + (entity.getNPassenger() * CIVILIAN);
+        EnumSet<MarinePointsTrait> traits = EnumSet.noneOf(MarinePointsTrait.class);
+        if (entity.getNMarines() > 0) {
+            traits.add(MarinePointsTrait.MARINES);
+        }
+        if ((crew > 0) || (bayPersonnel > 0)) {
+            traits.add(MarinePointsTrait.BUILDING_CREW);
+        }
+        if (entity.getNPassenger() > 0) {
+            traits.add(MarinePointsTrait.CIVILIANS);
+        }
         return MarinePointsBreakdown.crewed(entity.getNMarines(), crew, bayPersonnel, entity.getNPassenger(), score,
-              buildingModifier);
+              buildingModifier, traits);
     }
 
     /**

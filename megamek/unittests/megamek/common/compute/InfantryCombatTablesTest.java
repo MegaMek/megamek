@@ -240,7 +240,7 @@ public class InfantryCombatTablesTest {
                 String ratio = PRINTED_COLUMNS[column];
                 InfantryCombatResult result = InfantryCombatTables.resolveAction(ratio, roll);
                 assertEquals(withoutRepulsedFlagOnAnEliminatedAttacker(PRINTED_TABLE[row][column]),
-                      printedCell(result), "odds " + ratio + ", roll " + roll);
+                      result.printedCell(), "odds " + ratio + ", roll " + roll);
             }
         }
     }
@@ -251,21 +251,6 @@ public class InfantryCombatTablesTest {
      */
     private static String withoutRepulsedFlagOnAnEliminatedAttacker(String printed) {
         return printed.startsWith("E/") ? printed.replace(" (R)", "") : printed;
-    }
-
-    /** Renders a result the way the book prints it. */
-    private static String printedCell(InfantryCombatResult result) {
-        boolean attackerEliminated = result.getAttackerCasualtiesPercent() >= 100;
-        boolean defenderEliminated = result.isDefenderEliminated();
-        String attacker = attackerEliminated ? "E" : result.getAttackerCasualtiesPercent() + "%";
-        String defender = defenderEliminated ? "E" : result.getDefenderCasualtiesPercent() + "%";
-        String flag = "";
-        if (result.isPartialControl()) {
-            flag = " (P)";
-        } else if (result.isAttackerRepulsed() && !attackerEliminated) {
-            flag = " (R)";
-        }
-        return attacker + "/" + defender + flag;
     }
 
     // ==================== Crew Casualties Table Tests ====================

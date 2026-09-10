@@ -32,6 +32,9 @@
  */
 package megamek.common.compute;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 /**
  * How one unit's Marine Points Score was arrived at (TO:AR pp. 170 to 171), so a report can show the working
  * rather than only the total. Which fields carry meaning depends on the {@link #kind()}: a platoon has troopers at a
@@ -54,10 +57,12 @@ package megamek.common.compute;
  * @param score               the unit's score before any building modifier
  * @param buildingModifier    the Building Modifiers Table multiplier applied, {@code 1.0} for none
  * @param modifiedScore       the score after the building modifier, what the side total uses
+ * @param traits              the kinds of people and the table rows that shaped the score, for the narrative
  */
 public record MarinePointsBreakdown(Kind kind, int headCount, double baseValue, double weightClassModifier,
       double equipmentModifier, double perTrooper, int intactArmor, double armorPoints, int marines, int crew,
-      int bayPersonnel, int civilians, double score, double buildingModifier, double modifiedScore) {
+      int bayPersonnel, int civilians, double score, double buildingModifier, double modifiedScore,
+      Set<MarinePointsTrait> traits) {
 
     /** The three shapes the Marine Points Tables give a unit. */
     public enum Kind {
@@ -71,18 +76,20 @@ public record MarinePointsBreakdown(Kind kind, int headCount, double baseValue, 
 
     /** Nobody to count: the breakdown of a {@code null} or empty unit. */
     static final MarinePointsBreakdown NOBODY = new MarinePointsBreakdown(Kind.CREW, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 1.0, 0);
+          0, 0, 1.0, 0, EnumSet.noneOf(MarinePointsTrait.class));
 
     /**
      * A platoon of conventional infantry.
      *
      * @param troopers   the troopers standing
      * @param perTrooper the value of each, marine or not, armored or not
+     * @param traits     what kind of platoon it is
      */
-    static MarinePointsBreakdown conventionalInfantry(int troopers, double perTrooper, double buildingModifier) {
+    static MarinePointsBreakdown conventionalInfantry(int troopers, double perTrooper, double buildingModifier,
+          Set<MarinePointsTrait> traits) {
         double score = troopers * perTrooper;
         return new MarinePointsBreakdown(Kind.CONVENTIONAL_INFANTRY, troopers, perTrooper, 0, 0, perTrooper, 0, 0,
-              0, 0, 0, 0, score, buildingModifier, Math.max(0, score * buildingModifier));
+              0, 0, 0, 0, score, buildingModifier, Math.max(0, score * buildingModifier), traits);
     }
 
     /**
@@ -94,25 +101,29 @@ public record MarinePointsBreakdown(Kind kind, int headCount, double baseValue, 
      * @param equipmentModifier   the equipment rows per trooper
      * @param intactArmor         the intact armor points on the active troopers
      * @param armorPoints         what that armor is worth in Marine Points
+     * @param traits              the kind of squad and the table rows it earned
      */
     static MarinePointsBreakdown battleArmor(int troopers, double baseValue, double weightClassModifier,
-          double equipmentModifier, int intactArmor, double armorPoints, double buildingModifier) {
+          double equipmentModifier, int intactArmor, double armorPoints, double buildingModifier,
+          Set<MarinePointsTrait> traits) {
         double perTrooper = baseValue + weightClassModifier + equipmentModifier;
         double score = (troopers * perTrooper) + armorPoints;
         return new MarinePointsBreakdown(Kind.BATTLE_ARMOR, troopers, baseValue, weightClassModifier,
               equipmentModifier, perTrooper, intactArmor, armorPoints, 0, 0, 0, 0, score, buildingModifier,
-              Math.max(0, score * buildingModifier));
+              Math.max(0, score * buildingModifier), traits);
     }
 
     /**
      * A crewed unit or building.
      *
-     * @param score the marines, crew, bay personnel and civilians at their values, already added up
+     * @param score  the marines, crew, bay personnel and civilians at their values, already added up
+     * @param traits who is aboard
      */
     static MarinePointsBreakdown crewed(int marines, int crew, int bayPersonnel, int civilians, double score,
-          double buildingModifier) {
+          double buildingModifier, Set<MarinePointsTrait> traits) {
         return new MarinePointsBreakdown(Kind.CREW, marines + crew + bayPersonnel + civilians, 0, 0, 0, 0, 0, 0,
-              marines, crew, bayPersonnel, civilians, score, buildingModifier, Math.max(0, score * buildingModifier));
+              marines, crew, bayPersonnel, civilians, score, buildingModifier, Math.max(0, score * buildingModifier),
+              traits);
     }
 
     /** @return {@code true} when the building modifier changed the score */

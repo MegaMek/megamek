@@ -149,7 +149,7 @@ class InfantryActionNarratorTest {
         assertEquals(List.of(5674,
               InfantryActionNarrator.UNIT_NAME, 5688, InfantryActionNarrator.LOST_SHARE_ONE_UNIT,
               InfantryActionNarrator.FULL_STOP,
-              InfantryActionNarrator.UNIT_NAME, 5691, InfantryActionNarrator.LOST_SHARE_ONE_UNIT,
+              InfantryActionNarrator.BUILDING_CREW_NAME, 5691, InfantryActionNarrator.LOST_SHARE_ONE_UNIT,
               InfantryActionNarrator.FULL_STOP), reportIds());
     }
 
@@ -174,7 +174,7 @@ class InfantryActionNarratorTest {
     }
 
     @Test
-    @DisplayName("When the building falls, the defenders' sentence ends with its name and the surrender")
+    @DisplayName("When the building falls with crew uncommitted, the sentence ends with its name and their surrender")
     void capturedBuildingEndsTheDefendersSentence() {
         ConvInfantry attacker = platoon(attackingPlayer, 1);
         ConvInfantry defender = platoon(defendingPlayer, 2);
@@ -192,6 +192,22 @@ class InfantryActionNarratorTest {
             assertEquals(0, reports.get(index).newlines, "fragment " + index + " runs on");
         }
         assertEquals(1, reports.getLast().newlines);
+    }
+
+    @Test
+    @DisplayName("When every crew member was committed and lost, the building simply falls")
+    void capturedBuildingWithNoCrewLeftSimplyFalls() {
+        building.commitCrew(4);
+        ConvInfantry attacker = platoon(attackingPlayer, 1);
+
+        narratorPicking(0).narrate(Outcome.DEFENDERS_ELIMINATED,
+              side(List.of(attacker), 6, 93, false, MarinePointsTrait.BURST_FIRE),
+              side(List.of(building), 2, 2, true, MarinePointsTrait.BUILDING_CREW), building);
+
+        List<Integer> ids = reportIds();
+        assertEquals(List.of(InfantryActionNarrator.BUILDING_CREW_NAME, 5691, InfantryActionNarrator.WIPED_OUT,
+              InfantryActionNarrator.AND_THE_BUILDING, InfantryActionNarrator.UNIT_NAME,
+              InfantryActionNarrator.BUILDING_FALLS_NOBODY_LEFT), ids.subList(ids.size() - 6, ids.size()));
     }
 
     @Test

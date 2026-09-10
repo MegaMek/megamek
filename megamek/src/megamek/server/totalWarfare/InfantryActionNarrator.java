@@ -156,6 +156,10 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
     static final int AND = 5710;
     /** The building falls and its uncommitted crew surrender. */
     static final int BUILDING_FALLS = 5711;
+    /** A building's crew, named as the unit that fought. */
+    static final int BUILDING_CREW_NAME = 5715;
+    /** The building falls with no crew left to surrender. */
+    static final int BUILDING_FALLS_NOBODY_LEFT = 5716;
     /** Ends a side's sentence. */
     static final int FULL_STOP = 5712;
     /** The attackers, when none of them can be named. */
@@ -226,15 +230,24 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
         sentence.add(lossFragment(side));
         if (capturedBuilding != null) {
             sentence.add(new Report(AND_THE_BUILDING));
-            sentence.add(nameOf(capturedBuilding));
-            sentence.add(new Report(BUILDING_FALLS));
+            sentence.add(plainNameOf(capturedBuilding));
+            int uncommittedCrew = capturedBuilding.getCrew().getCurrentSize() - capturedBuilding.getCommittedCrew();
+            sentence.add(new Report((uncommittedCrew > 0) ? BUILDING_FALLS : BUILDING_FALLS_NOBODY_LEFT));
         } else {
             sentence.add(new Report(FULL_STOP));
         }
         return sentence;
     }
 
+    /** A unit's linked name; a building is named by its crew, since the crew are who fought. */
     private static Report nameOf(Entity entity) {
+        Report name = new Report((entity instanceof AbstractBuildingEntity) ? BUILDING_CREW_NAME : UNIT_NAME);
+        name.subject = entity.getId();
+        name.addEntityName(entity);
+        return name;
+    }
+
+    private static Report plainNameOf(Entity entity) {
         Report name = new Report(UNIT_NAME);
         name.subject = entity.getId();
         name.addEntityName(entity);

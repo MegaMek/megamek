@@ -157,6 +157,10 @@ class InfantryActionDeclarationHandlerTest {
         assertNotNull(combat);
         assertEquals(List.of(first.getId(), second.getId()), combat.attackerIds);
         assertEquals(List.of(building.getId()), combat.defenderIds, "the crewed building defends by itself");
+        // The clients learn the action is running from the units' state, so every unit that joined is sent
+        Mockito.verify(gameManager).entityUpdate(first.getId());
+        Mockito.verify(gameManager).entityUpdate(second.getId());
+        Mockito.verify(gameManager).entityUpdate(building.getId());
     }
 
     @Test
@@ -175,6 +179,7 @@ class InfantryActionDeclarationHandlerTest {
         assertEquals(Entity.NONE, heldBack.getInfantryCombatTargetId(), "the unit held back stays out");
         assertEquals(2, building.getCommittedCrew());
         assertEquals(3, building.getCrew().getHits(), "two of four crew committed is 50 percent, three crew hits");
+        Mockito.verify(gameManager).entityUpdate(defender.getId());
     }
 
     @Test

@@ -154,6 +154,7 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
         } else {
             for (Infantry unit : units) {
                 tracker.addReinforcement(building.getId(), unit, true);
+                sendState(unit);
                 reportReinforcement(unit, REINFORCES_ATTACKERS);
                 LOGGER.info("[InfantryAction] {} joins the attack on {}", unit.getShortName(),
                       building.getShortName());
@@ -193,6 +194,8 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
         for (int index = 1; index < defenders.size(); index++) {
             tracker.addReinforcement(building.getId(), defenders.get(index), false);
         }
+        attackers.forEach(this::sendState);
+        defenders.forEach(this::sendState);
         LOGGER.info("[InfantryAction] {} starts an action in {} with {} attacker(s) against {} defender(s)",
               player.getName(), building.getShortName(), attackers.size(), defenders.size());
     }
@@ -209,6 +212,7 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
             Entity attacker = getGame().getEntity(attackerId);
             if ((attacker != null) && (attacker.getOwnerId() == player.getId())) {
                 attacker.setInfantryCombatWantsWithdrawal(true);
+                sendState(attacker);
             }
         }
         LOGGER.info("[InfantryAction] {} withdraws the attack on {}", player.getName(), building.getShortName());
@@ -231,6 +235,7 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
                 unit.setInfantryCombatTargetId(building.getId());
                 unit.setInfantryCombatAttacker(false);
             }
+            sendState(unit);
             LOGGER.info("[InfantryAction] {} defends {}", unit.getShortName(), building.getShortName());
         }
         if (declaration.committedCrew() > 0) {
@@ -243,6 +248,14 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
     }
 
     // ---------------------------------------------------------------- shared
+
+    /**
+     * Sends a unit's changed action state to every client. The clients read that state to know an action is running,
+     * to list who is already in it, and to prompt the defender, so a change kept on the server is invisible to them.
+     */
+    private void sendState(Entity entity) {
+        gameManager.entityUpdate(entity.getId());
+    }
 
     /** Says in the round report that a unit has joined a running action, so a reinforcement is never silent. */
     private void reportReinforcement(Infantry unit, int messageId) {
@@ -291,6 +304,7 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
                   && !entity.isInfantryCombatAttacker() && (entity != building);
             if (committedDefender) {
                 entity.clearInfantryCombatState();
+                sendState(entity);
                 LOGGER.debug("[InfantryAction] {} stands down: no attack came on {}", entity.getShortName(),
                       building.getShortName());
             }

@@ -216,8 +216,8 @@ class InfantryActionReporterTest {
     }
 
     @Test
-    @DisplayName("A side's loss is one line: the points, the casualties, then each unit's share")
-    void sideLossIsOneLine() {
+    @DisplayName("A side's casualties are one line: the count, then each unit's whole-number loss and what is left")
+    void sideCasualtiesAreOneLine() {
         ConvInfantry rifles = platoon(28, attackingPlayer, 1);
         BattleArmor elementals = elementalPoint(attackingPlayer, 2);
         InfantryActionSideLosses losses = new InfantryActionSideLosses(10, 83, List.of(
@@ -226,9 +226,8 @@ class InfantryActionReporterTest {
 
         reporter.reportSideLosses(true, losses, List.of());
 
-        assertEquals(List.of(InfantryActionReporter.ATTACKERS_LOSE, InfantryActionReporter.CASUALTIES,
-              InfantryActionReporter.TROOPER_LOSS, InfantryActionReporter.SEPARATOR,
-              InfantryActionReporter.TROOPER_LOSS), reportIds());
+        assertEquals(List.of(InfantryActionReporter.ATTACKERS_CASUALTIES, InfantryActionReporter.TROOPER_LOSS,
+              InfantryActionReporter.SEPARATOR, InfantryActionReporter.TROOPERS_KEPT), reportIds());
         List<Report> reports = gameManager.getMainPhaseReport();
         for (int index = 0; index < reports.size() - 1; index++) {
             assertEquals(0, reports.get(index).newlines, "fragment " + index + " runs on");
@@ -245,23 +244,21 @@ class InfantryActionReporterTest {
 
         reporter.reportSideLosses(false, losses, List.of());
 
-        assertEquals(List.of(InfantryActionReporter.DEFENDERS_LOSE, InfantryActionReporter.ONE_CASUALTY,
-              InfantryActionReporter.TROOPER_LOSS), reportIds());
+        assertEquals(List.of(InfantryActionReporter.DEFENDERS_ONE_CASUALTY, InfantryActionReporter.TROOPER_LOSS),
+              reportIds());
     }
 
     @Test
-    @DisplayName("A side whose shares are all under one loses nobody and says why; losing everything says so")
-    void nobodyLostAndEverythingLost() {
+    @DisplayName("A side that lost nobody says so, and a building's crew are reported as crew")
+    void nobodyLostAndCrewLost() {
         BattleArmor elementals = elementalPoint(attackingPlayer, 2);
         reporter.reportSideLosses(true, new InfantryActionSideLosses(2, 83,
               List.of(new InfantryActionSideLosses.UnitLoss(elementals, 5, 0, false))), List.of());
         reporter.reportSideLosses(false, new InfantryActionSideLosses(21, 21,
               List.of(new InfantryActionSideLosses.UnitLoss(building, 3, 3, true))), List.of());
 
-        assertEquals(List.of(InfantryActionReporter.ATTACKERS_LOSE, InfantryActionReporter.NO_CASUALTIES,
-              InfantryActionReporter.TROOPER_LOSS, InfantryActionReporter.TOO_SMALL_FOR_ANYONE,
-              InfantryActionReporter.DEFENDERS_LOSE_ALL, InfantryActionReporter.CASUALTIES,
-              InfantryActionReporter.CREW_LOSS), reportIds());
+        assertEquals(List.of(InfantryActionReporter.ATTACKERS_NOBODY, InfantryActionReporter.TROOPERS_KEPT,
+              InfantryActionReporter.DEFENDERS_CASUALTIES, InfantryActionReporter.CREW_LOSS), reportIds());
     }
 
     @Test

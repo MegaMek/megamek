@@ -53,6 +53,7 @@ import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.VariableRangeTargetingDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.widget.MegaMekButton;
+import megamek.common.InfantryActionDeclaration;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
@@ -130,6 +131,8 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * end-turn button to read "Done" instead of "Skip Turn" - otherwise the player gets no sign the declaration took.
      */
     private boolean declarationMade;
+    /** The player answered a prompt about an infantry action this turn, so ending the turn needs no warning. */
+    private boolean promptAnswered;
     /** The last state the Infantry Action button was set to, so the log records changes and not every refresh. */
     private boolean infantryActionOffered;
 
@@ -368,6 +371,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     private void offerDeclarations() {
         Player localPlayer = clientgui.getClient().getLocalPlayer();
         boolean declared = false;
+        boolean withdrew = false;
         for (AbstractBuildingEntity building : InfantryActionStrengths.stakes(game, localPlayer)) {
             String promptKey = promptFor(localPlayer, building);
             if (promptKey == null) {
@@ -377,14 +381,27 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             String title = Messages.getString("PreEndDeclarationsDisplay." + promptKey + ".title");
             String body = Messages.getString("PreEndDeclarationsDisplay." + promptKey + ".message",
                   building.getDisplayName());
-            if (clientgui.doYesNoDialog(title, body)) {
+            boolean yes = clientgui.doYesNoDialog(title, body);
+            promptAnswered = true;
+            if ("continueAttack".equals(promptKey)) {
+                // Yes keeps fighting, which needs no declaration; No withdraws the whole force
+                if (!yes) {
+                    LOGGER.info("[PreEnd] {} withdraws the attack on {}", localPlayer.getName(),
+                          building.getShortName());
+                    clientgui.getClient().sendInfantryActionDeclaration(InfantryActionDeclaration.attacking(
+                          localPlayer.getId(), building.getId(), List.of(), true));
+                    withdrew = true;
+                }
+            } else if (yes) {
                 declared |= declareFor(localPlayer, building);
             } else {
                 LOGGER.info("[PreEnd] {} declined the {} prompt for {}", localPlayer.getName(), promptKey,
                       building.getShortName());
             }
         }
-        if (declared) {
+        if (withdrew) {
+            registerDeclaration("PreEndDeclarationsDisplay.declared.withdraw");
+        } else if (declared) {
             registerDeclaration("PreEndDeclarationsDisplay.declared.infantryAction");
         }
     }
@@ -402,8 +419,8 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         boolean unengagedInside = !InfantryActionStrengths.unengagedFriendlyInfantryInside(game, localPlayer,
               building).isEmpty();
         if (!unengagedInside) {
-            // Only engaged units: withdrawing is a deliberate choice made from the button, not a prompt
-            return null;
+            // Only engaged units: the fight goes on unless the player withdraws the force
+            return running ? "continueAttack" : null;
         }
         return running ? "reinforce" : "startAttack";
     }
@@ -435,7 +452,8 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         }
         // Only nag about un-declared infantry combat for a unit that could actually initiate it. Other units in this
         // phase (a unit making an end-phase declaration, or a bridgelayer that chose not to deploy) end silently.
-        boolean undeclaredAction = attacks.isEmpty() && !declarationMade && hasInfantryActionStake();
+        boolean undeclaredAction = attacks.isEmpty() && !declarationMade && !promptAnswered
+              && hasInfantryActionStake();
         if (undeclaredAction) {
             LOGGER.debug("[PreEnd] {}: nag - an infantry action awaits a declaration; confirming skip",
                   entity.getShortName());
@@ -836,6 +854,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      */
     private void beginMyTurn() {
         declarationMade = false;
+        promptAnswered = false;
         Player localPlayer = clientgui.getClient().getLocalPlayer();
         LOGGER.info("[PreEnd] {}'s declaration turn begins; infantry action stakes: {}", localPlayer.getName(),
               InfantryActionStrengths.stakes(game, localPlayer).stream()

@@ -57,6 +57,10 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
     private static final MMLogger LOGGER = MMLogger.create(InfantryActionDeclarationHandler.class);
 
     private static final int NO_DEFENDERS = 5645;
+    /** A unit joining an action already running, on the attackers' side. */
+    private static final int REINFORCES_ATTACKERS = 5640;
+    /** A unit joining an action already running, on the defenders' side. */
+    private static final int REINFORCES_DEFENDERS = 5641;
 
     private final InfantryActionTracker tracker;
 
@@ -150,6 +154,7 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
         } else {
             for (Infantry unit : units) {
                 tracker.addReinforcement(building.getId(), unit, true);
+                reportReinforcement(unit, REINFORCES_ATTACKERS);
                 LOGGER.info("[InfantryAction] {} joins the attack on {}", unit.getShortName(),
                       building.getShortName());
             }
@@ -221,6 +226,7 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
         for (Infantry unit : committableUnits(player, building, declaration.committedUnitIds())) {
             if (combat != null) {
                 tracker.addReinforcement(building.getId(), unit, false);
+                reportReinforcement(unit, REINFORCES_DEFENDERS);
             } else {
                 unit.setInfantryCombatTargetId(building.getId());
                 unit.setInfantryCombatAttacker(false);
@@ -237,6 +243,14 @@ class InfantryActionDeclarationHandler extends AbstractTWRuleHandler {
     }
 
     // ---------------------------------------------------------------- shared
+
+    /** Says in the round report that a unit has joined a running action, so a reinforcement is never silent. */
+    private void reportReinforcement(Infantry unit, int messageId) {
+        Report report = new Report(messageId);
+        report.subject = unit.getId();
+        report.addEntityName(unit);
+        addReport(report);
+    }
 
     /** The declared units that are the player's infantry, inside the building, and not already in an action. */
     private List<Infantry> committableUnits(Player player, AbstractBuildingEntity building, List<Integer> unitIds) {

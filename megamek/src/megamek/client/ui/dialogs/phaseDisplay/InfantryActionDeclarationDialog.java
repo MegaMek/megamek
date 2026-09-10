@@ -101,8 +101,11 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
         this.building = building;
         this.defends = InfantryActionStrengths.defends(player, building);
         initialize();
-        setTitle(Messages.getString(defends ? "InfantryActionDeclarationDialog.title.defend"
-              : "InfantryActionDeclarationDialog.title.attack", building.getDisplayName()));
+        boolean reinforcing = !defends && InfantryActionStrengths.hasActionRunning(game, building);
+        String titleKey = defends ? "InfantryActionDeclarationDialog.title.defend"
+              : (reinforcing ? "InfantryActionDeclarationDialog.title.reinforce"
+                    : "InfantryActionDeclarationDialog.title.attack");
+        setTitle(Messages.getString(titleKey, building.getDisplayName()));
         setMinimumSize(new Dimension(UIUtil.scaleForGUI(360), UIUtil.scaleForGUI(240)));
     }
 
@@ -131,7 +134,8 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
     private void addAttackRows(JPanel column) {
         List<Entity> engaged = InfantryActionStrengths.engaged(game, building, true).stream()
               .filter(entity -> entity.getOwnerId() == player.getId()).toList();
-        addHeading(column, Messages.getString("InfantryActionDeclarationDialog.attackingWith"));
+        addHeading(column, Messages.getString(engaged.isEmpty() ? "InfantryActionDeclarationDialog.attackingWith"
+              : "InfantryActionDeclarationDialog.reinforcingWith"));
         for (Entity unit : engaged) {
             addText(column, Messages.getString("InfantryActionDeclarationDialog.alreadyIn", unit.getDisplayName(),
                   number(InfantryActionStrengths.points(unit, null))));

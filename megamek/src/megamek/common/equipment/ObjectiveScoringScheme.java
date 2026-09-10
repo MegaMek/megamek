@@ -34,10 +34,10 @@ package megamek.common.equipment;
 
 import java.io.Serial;
 import java.io.Serializable;
-
-import megamek.common.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
+
+import megamek.common.annotations.Nullable;
 
 /**
  * How a control point is fought over and what it is worth: the scoring scheme of an {@link ObjectiveMarker}.
@@ -105,6 +105,7 @@ public class ObjectiveScoringScheme implements Serializable {
     private boolean victoryPointsAwarded = false;
     private int defendGrip = 0;
     private boolean defendGripInitialized = false;
+    private boolean retainsControlWhenEmpty = false;
     private Map<Integer, Integer> heldTurnsByTeam = new HashMap<>();
     private Map<Integer, Integer> heldTurnsByPlayer = new HashMap<>();
     private Map<Integer, Integer> captureProgressByTeam = new HashMap<>();
@@ -405,6 +406,22 @@ public class ObjectiveScoringScheme implements Serializable {
         } else {
             byPlayer.put(playerId, value);
         }
+    }
+
+    /**
+     * Whether this point keeps its last controller after the zone empties. Off by default, which is how
+     * control has always worked: a point nobody stands in goes neutral at the next End Phase. On, the point
+     * stays with whoever last held it until another side takes it, so a mission can use more control points
+     * than either side has units to garrison - and so a point can begin the game already held.
+     *
+     * @return {@code true} when control survives an empty zone
+     */
+    public boolean retainsControlWhenEmpty() {
+        return retainsControlWhenEmpty;
+    }
+
+    public void setRetainsControlWhenEmpty(boolean retainsControlWhenEmpty) {
+        this.retainsControlWhenEmpty = retainsControlWhenEmpty;
     }
 
     /**

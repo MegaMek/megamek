@@ -52,9 +52,13 @@ import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.IArmorState;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.rolls.PilotingRollData;
 import megamek.logging.MMLogger;
@@ -147,12 +151,25 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      * @return list of all location numbers at these coords (one per floor)
      */
     private List<Integer> coordsToLocations(@Nullable Coords coords) {
-        CubeCoords relativeCoords = boardToRelative(coords);
+        return locationsForRelativeCoords(boardToRelative(coords));
+    }
+
+    /**
+     * Returns every entity location that sits at the given relative hex, one per floor.
+     *
+     * <p>This works in the building's own coordinate space rather than the board's, so it can be used before the
+     * building is placed. In the lobby a building has no position, which leaves the board translation with nothing
+     * to translate.</p>
+     *
+     * @param relativeCoords the hex in the building's relative coordinate space, or {@code null}
+     *
+     * @return the location numbers at that hex, or an empty list when the hex is not part of this building
+     */
+    private List<Integer> locationsForRelativeCoords(@Nullable CubeCoords relativeCoords) {
         if (relativeCoords == null) {
             return List.of();
         }
 
-        // Find all locations that map to these relative coords
         List<Integer> locations = new ArrayList<>();
         for (Map.Entry<Integer, CubeCoords> entry : locationToRelativeCoordsMap.entrySet()) {
             if (entry.getValue().equals(relativeCoords)) {
@@ -959,46 +976,112 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     }
 
     /**
-     * Private method to set armor for both the entity and the building simultaneously. Ensures entity armor and
-     * building armor stay synchronized.
+     * Sets armor on both the entity and the wrapped {@link Building}, keeping the two in step.
      *
      * @param armor  the armor value to set
-     * @param coords coordinates that need the armor updated
+     * @param coords board coordinates of the hex whose armor is being set
      */
     private void setArmorInternal(int armor, Coords coords) {
-        for (Integer location : coordsToLocations(coords)) {
-            // Set entity armor
-            super.setArmor(armor, location, false);
-        }
-        CubeCoords relativeCoords = boardToRelative(coords);
-        // Set building Armor
-        building.setArmor(armor, relativeCoords);
+        setArmorForRelativeCoords(armor, boardToRelative(coords));
     }
 
+    /**
+     * Sets armor for one hex of this building, on both the entity and the wrapped {@link Building}.
+     *
+     * <p>A building holds one armor value per hex rather than one per floor, so this writes the entity's armor for
+     * every floor at that hex as well as the building's own value. Reads come back through
+     * {@link #getArmor(int, boolean)}, which answers from the building, so a write that skipped the building would
+     * simply be lost.</p>
+     *
+     * @param armor          the armor value to set; an {@link IArmorState} sentinel is translated first
+     * @param relativeCoords the hex in the building's relative coordinate space, or {@code null} to do nothing
+     */
+    private void setArmorForRelativeCoords(int armor, @Nullable CubeCoords relativeCoords) {
+        if (relativeCoords == null) {
+            logger.debug("[BuildingDamage] {}: armor set to {} ignored, that location is not part of a hex yet",
+                  getShortName(), armor);
+            return;
+        }
+
+        int buildingArmor = withoutArmorStateSentinel(armor);
+        for (int location : locationsForRelativeCoords(relativeCoords)) {
+            super.setArmor(buildingArmor, location, false);
+        }
+        building.setArmor(buildingArmor, relativeCoords);
+    }
 
     /**
-     * Private method to set internal structure/CF for both the entity and the building simultaneously. Ensures entity
-     * internal and building CF stay synchronized.
+     * Sets internal structure - a building hex's Construction Factor - on both the entity and the wrapped
+     * {@link Building}, keeping the two in step.
      *
-     * @param internal the internal/CF value to set
-     * @param coords   coordinates that need the armor updated
+     * @param internal the Construction Factor to set
+     * @param coords   board coordinates of the hex being set
      */
     private void setInternalInternal(int internal, Coords coords) {
-        for (Integer location : coordsToLocations(coords)) {
-            super.setInternal(internal, location);
-        }
-        CubeCoords relativeCoords = boardToRelative(coords);
-        // Set building CF
-        building.setPhaseCF(internal, relativeCoords);
+        setConstructionFactorForRelativeCoords(internal, boardToRelative(coords));
+    }
 
+    /**
+     * Sets the Construction Factor for one hex of this building, on both the entity and the wrapped
+     * {@link Building}.
+     *
+     * @param constructionFactor the Construction Factor to set; an {@link IArmorState} sentinel is translated first
+     * @param relativeCoords     the hex in the building's relative coordinate space, or {@code null} to do nothing
+     */
+    private void setConstructionFactorForRelativeCoords(int constructionFactor,
+          @Nullable CubeCoords relativeCoords) {
+        if (relativeCoords == null) {
+            logger.debug("[BuildingDamage] {}: Construction Factor set to {} ignored, that location is not part of"
+                  + " a hex yet", getShortName(), constructionFactor);
+            return;
+        }
+
+        int buildingConstructionFactor = withoutArmorStateSentinel(constructionFactor);
+        for (int location : locationsForRelativeCoords(relativeCoords)) {
+            super.setInternal(buildingConstructionFactor, location);
+        }
+        building.setPhaseCF(buildingConstructionFactor, relativeCoords);
+    }
+
+    /**
+     * Translates the {@link IArmorState} sentinels the damage code uses into a value a building hex can hold.
+     *
+     * <p>A Mek location can be blown clean off, which {@link IArmorState} records as a negative number. A building
+     * hex has no such state: once its armor or Construction Factor is gone it stands at zero, and {@link Building}
+     * rejects a negative value outright. Anything negative therefore becomes {@code 0} here.</p>
+     *
+     * @param value the value about to be stored, which may be an {@link IArmorState} sentinel
+     *
+     * @return {@code value} when it is zero or greater, otherwise {@code 0}
+     */
+    private static int withoutArmorStateSentinel(int value) {
+        return Math.max(value, 0);
+    }
+
+    /**
+     * Override to keep entity armor and building armor synchronized.
+     *
+     * <p>Without this, a write would land only in the entity's armor array while {@link #getArmor(int, boolean)}
+     * kept answering from the building, so the new value would never be seen - which is what made damage edits
+     * from the unit editor appear to do nothing.</p>
+     */
+    @Override
+    public void setArmor(int value, int location, boolean rear) {
+        if (rear) {
+            // A building hex holds a single armor value and has no rear facing, so a rear write must not stand in
+            // for the hex's real armor
+            super.setArmor(value, location, true);
+            return;
+        }
+        setArmorForRelativeCoords(value, locationToRelativeCoordsMap.get(location));
     }
 
     /**
      * Override to keep entity internal and building CF synchronized.
      */
     @Override
-    public void setInternal(int val, int loc) {
-        setInternalInternal(val, relativeToBoard(locationToRelativeCoordsMap.get(loc)));
+    public void setInternal(int value, int location) {
+        setConstructionFactorForRelativeCoords(value, locationToRelativeCoordsMap.get(location));
     }
 
     @Override
@@ -1366,80 +1449,132 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         }
     }
 
+    /** A {@link #crewCount} of this value means the crew is derived from the Advanced Building Minimum Crew Table. */
+    public static final int CREW_FROM_MINIMUM_CREW_TABLE = -1;
+
+    /** Gunners a capital-scale weapon needs (TO:AR p. 130). */
+    private static final int GUNNERS_PER_CAPITAL_WEAPON = 7;
+    /** Tons of heavy weapon one gunner serves (TO:AR p. 130): gunners are the weapon's tons divided by this, rounded up. */
+    private static final double HEAVY_WEAPON_TONS_PER_GUNNER = 5.0;
+    /** Non-gunners a field kitchen needs (TO:AR p. 130). */
+    private static final int CREW_PER_FIELD_KITCHEN = 3;
+    /** Non-gunners each MASH operating theater needs (TO:AR p. 130). */
+    private static final int CREW_PER_MASH_THEATER = 5;
+    /** Non-gunners a mobile field base needs (TO:AR p. 130). */
+    private static final int CREW_PER_MOBILE_FIELD_BASE = 5;
+    /** The largest non-officer crew that a single officer commands (TO:AR p. 130). */
+    private static final int LARGEST_CREW_WITH_ONE_OFFICER = 9;
+    /** Crew per officer once the crew is larger than {@link #LARGEST_CREW_WITH_ONE_OFFICER} (TO:AR p. 130). */
+    private static final double CREW_PER_OFFICER = 10.0;
+
     /**
-     * Calculate building crew based on Advanced Building Minimum Crew Table (TO:AUE). Crew = Non-Gunners + Gunners +
-     * Officers
+     * The crew this building was built with, from the {@code crew} block of its unit file, or
+     * {@link #CREW_FROM_MINIMUM_CREW_TABLE} when the file has none and the crew is the table minimum.
+     */
+    private int crewCount = CREW_FROM_MINIMUM_CREW_TABLE;
+
+    /**
+     * Sets the crew this building was built with. The unit file's {@code crew} block sets it; a value of
+     * {@link #CREW_FROM_MINIMUM_CREW_TABLE} returns to the Advanced Building Minimum Crew Table, and so does any
+     * other negative value, since a negative crew is not a crew.
      *
-     * @return total crew count
+     * @param crewCount the crew, or {@link #CREW_FROM_MINIMUM_CREW_TABLE}
+     */
+    public void setCrewCount(int crewCount) {
+        this.crewCount = Math.max(crewCount, CREW_FROM_MINIMUM_CREW_TABLE);
+    }
+
+    /**
+     * @return {@code true} when the crew comes from the unit file rather than the minimum crew table
+     */
+    public boolean hasExplicitCrewCount() {
+        return crewCount != CREW_FROM_MINIMUM_CREW_TABLE;
+    }
+
+    /**
+     * The building's crew: the unit file's {@code crew} block when it has one, otherwise the Advanced Building
+     * Minimum Crew Table (TO:AR p. 130). Bay personnel are separate; see {@link #getBayPersonnel()}.
+     *
+     * @return the crew count
      */
     @Override
     public int getNCrew() {
+        if (hasExplicitCrewCount()) {
+            return crewCount;
+        }
+        return calculateMinimumCrew();
+    }
+
+    /**
+     * The Advanced Building Minimum Crew Table (TO:AR p. 130): non-gunners for the equipment that needs them, one
+     * gunner per light or medium weapon, one per five tons (rounded up) of each heavy weapon, seven per capital
+     * weapon, and officers for the whole.
+     *
+     * @return the minimum crew for this building's equipment
+     */
+    public int calculateMinimumCrew() {
         int nonGunners = calculateNonGunnerCrew();
         int gunners = calculateGunnerCrew();
         int officers = calculateOfficerCrew(nonGunners + gunners);
-
         return nonGunners + gunners + officers;
     }
 
     /**
-     * Calculate non-gunner crew based on building equipment. Does NOT include bay personnel - those are counted
-     * separately via getBayPersonnel().
-     *
-     * @return non-gunner crew count
+     * Non-gunners from the table's equipment rows that exist in MegaMek: one per ton of communications equipment,
+     * three per field kitchen, five per MASH theater and five per mobile field base. Flight decks, landing decks,
+     * helipads and modular structure linkages are not equipment yet and add nothing.
      */
     private int calculateNonGunnerCrew() {
-        int crew = 0;
-
-        // TODO: Implement equipment-based crew calculation when equipment system is available
-        // (Field Kitchens, Helipads, Landing Decks, etc.)
-        // For now, return 0 - bay personnel are counted separately
-
-        return crew;
+        int nonGunners = 0;
+        for (MiscMounted mounted : getMisc()) {
+            MiscType miscType = mounted.getType();
+            if (miscType.hasFlag(MiscType.F_COMMUNICATIONS)) {
+                nonGunners += (int) Math.ceil(mounted.getTonnage());
+            } else if (miscType.hasFlag(MiscType.F_FIELD_KITCHEN)) {
+                nonGunners += CREW_PER_FIELD_KITCHEN;
+            } else if (miscType.hasFlag(MiscType.F_MASH)) {
+                nonGunners += CREW_PER_MASH_THEATER * Math.max(1, (int) mounted.getSize());
+            } else if (miscType.hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
+                nonGunners += CREW_PER_MOBILE_FIELD_BASE;
+            }
+        }
+        return nonGunners;
     }
 
     /**
-     * Calculate gunner crew based on mounted weapons. - Light Weapon: 1 gunner - Medium Weapon: 1 gunner - Heavy
-     * Weapon: Weapon Tons ÷ 5 (round up) - Capital Weapon: 7 gunners
-     *
-     * @return gunner crew count
+     * Gunners for the mounted weapons (TO:AR pp. 129 to 130). The table's light and medium weapons are the
+     * conventional infantry weapons of the TechManual, and take one gunner each. Every weapon of 0.25 tons or more
+     * that a Mek or vehicle can mount, a machine gun or a medium laser included, is a heavy weapon and takes one
+     * gunner per five tons rounded up, which is one gunner up to five tons. A capital weapon takes seven.
      */
     private int calculateGunnerCrew() {
         int gunners = 0;
-
-        for (megamek.common.equipment.Mounted<?> mounted : getWeaponList()) {
-            if (mounted.getType() instanceof megamek.common.equipment.WeaponType weapon) {
-                // Determine weapon size and calculate gunners
-                double weaponTonnage = weapon.getTonnage(this);
-
-                if (weapon.isCapital()) {
-                    gunners += 7;  // Capital weapon
-                } else if (weaponTonnage >= 10) {
-                    gunners += (int) Math.ceil(weaponTonnage / 5.0);  // Heavy weapon
-                } else {
-                    gunners += 1;  // Light or Medium weapon
-                }
+        for (WeaponMounted mounted : getWeaponList()) {
+            WeaponType weaponType = mounted.getType();
+            if (weaponType.isCapital()) {
+                gunners += GUNNERS_PER_CAPITAL_WEAPON;
+            } else if (weaponType.hasFlag(WeaponType.F_INFANTRY)) {
+                gunners += 1;
+            } else {
+                gunners += (int) Math.ceil(mounted.getTonnage() / HEAVY_WEAPON_TONS_PER_GUNNER);
             }
         }
-
         return gunners;
     }
 
     /**
-     * Calculate officer crew based on total non-officer crew. - 1-9 crew: 1 officer - 10+ crew: Total Crew ÷ 10 (round
-     * up)
+     * Officers for a crew: none for an empty crew, one for up to nine, otherwise one per ten rounded up.
      *
-     * @param nonOfficerCrew total non-officer crew
-     *
-     * @return officer crew count
+     * @param nonOfficerCrew the non-gunners and gunners together
      */
     private int calculateOfficerCrew(int nonOfficerCrew) {
         if (nonOfficerCrew == 0) {
             return 0;
-        } else if (nonOfficerCrew <= 9) {
-            return 1;
-        } else {
-            return (int) Math.ceil(nonOfficerCrew / 10.0);
         }
+        if (nonOfficerCrew <= LARGEST_CREW_WITH_ONE_OFFICER) {
+            return 1;
+        }
+        return (int) Math.ceil(nonOfficerCrew / CREW_PER_OFFICER);
     }
 
     @Override
@@ -1452,5 +1587,366 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         // AbstractBuildingEntity can reinforce if it's the target of ongoing combat
         return getGame().getEntitiesVector(getBoardLocation()).stream()
               .anyMatch(e -> e.getInfantryCombatTargetId() == this.getId());
+    }
+
+    // ========== Advanced Building Critical Damage (TO:AR pp. 118-119) ==========
+
+    /** Turns the gunners remain stunned; a stunned building takes no actions (TO:AR p. 118, Gunners Stunned). */
+    private int stunnedTurns = 0;
+
+    /**
+     * Whether a gamemaster has cut this structure's power at the switch. This is not a rules state; it is the
+     * gamemaster's way of taking a building off line - a substation lost, a scenario event - without having to
+     * destroy its generator. A structure switched off has no power however healthy its generators are.
+     */
+    private boolean powerSwitchedOff = false;
+
+    /**
+     * Locations whose gunners were killed by a critical hit; no weapon in them fires again (TO:AR p. 118). Not
+     * final: a building deserialized from a save written before this field existed comes back with it {@code null},
+     * so it is created on first use.
+     */
+    private Set<Integer> deadGunnerLocations = new HashSet<>();
+
+    /**
+     * Equipment numbers of turreted weapons locked in their current facing by a critical hit (TO:AR p. 118). Not
+     * final for the same deserialization reason as {@link #deadGunnerLocations}.
+     */
+    private Set<Integer> lockedTurretWeapons = new HashSet<>();
+
+    private Set<Integer> deadGunnerLocations() {
+        if (deadGunnerLocations == null) {
+            deadGunnerLocations = new HashSet<>();
+        }
+        return deadGunnerLocations;
+    }
+
+    private Set<Integer> lockedTurretWeapons() {
+        if (lockedTurretWeapons == null) {
+            lockedTurretWeapons = new HashSet<>();
+        }
+        return lockedTurretWeapons;
+    }
+
+    /**
+     * A building is never inside a building. Without this override the building entity is treated as a unit standing
+     * inside its own hex, which makes weapon fire absorb against it once as a building and again as an occupant.
+     *
+     * @return {@code false}
+     */
+    @Override
+    public boolean isInBuilding() {
+        return false;
+    }
+
+    /**
+     * A building's weapons face outward and its turreted weapons sit on the roof (TO:AR p. 132), so it cannot fire on
+     * a unit inside one of its own hexes. A unit standing on the roof is outside the building and is not refused by
+     * this rule; the ordinary zero-range rule still applies to it.
+     *
+     * @param unit the unit being targeted
+     *
+     * @return {@code true} if the unit occupies one of this building's hexes below roof level
+     */
+    public boolean isInsideThisBuilding(Entity unit) {
+        boolean onMyBoard = unit.getBoardId() == getBoardId();
+        boolean inOneOfMyHexes = (unit.getPosition() != null) && getCoordsList().contains(unit.getPosition());
+        return onMyBoard && inOneOfMyHexes && unit.isInBuilding();
+    }
+
+    /**
+     * @param location an entity location (one hex level of this building)
+     *
+     * @return the board hex that location belongs to, or {@code null} if the location is unknown
+     */
+    public @Nullable Coords getLocationCoords(int location) {
+        CubeCoords relativeCoords = locationToRelativeCoordsMap.get(location);
+        return (relativeCoords == null) ? null : relativeToBoard(relativeCoords);
+    }
+
+    /**
+     * @param location an entity location (one hex level of this building)
+     *
+     * @return the level within the hex that location represents; {@code 0} is the ground level
+     */
+    public int getLocationLevel(int location) {
+        int buildingHeight = getInternalBuilding().getBuildingHeight();
+        return (buildingHeight > 0) ? location % buildingHeight : 0;
+    }
+
+    /**
+     * @param coords a board hex of this building, or {@code null}
+     *
+     * @return every entity location (one per level) that sits in that hex; empty when the hex is not part of this
+     *       building
+     */
+    public List<Integer> getLocationsAt(@Nullable Coords coords) {
+        return coordsToLocations(coords);
+    }
+
+    /**
+     * @param coords a board hex of this building
+     *
+     * @return the weapons mounted in any level of that hex
+     */
+    public List<WeaponMounted> getWeaponsAt(Coords coords) {
+        List<Integer> locations = getLocationsAt(coords);
+        return getWeaponList().stream()
+              .filter(weapon -> locations.contains(weapon.getLocation()))
+              .toList();
+    }
+
+    /**
+     * @param coords a board hex of this building
+     *
+     * @return the ammunition bins mounted in any level of that hex
+     */
+    public List<AmmoMounted> getAmmoAt(Coords coords) {
+        List<Integer> locations = getLocationsAt(coords);
+        return getAmmo().stream()
+              .filter(ammo -> locations.contains(ammo.getLocation()))
+              .toList();
+    }
+
+    /**
+     * @param coords a board hex of this building
+     *
+     * @return the miscellaneous equipment mounted in any level of that hex
+     */
+    public List<MiscMounted> getMiscAt(Coords coords) {
+        List<Integer> locations = getLocationsAt(coords);
+        return getMisc().stream()
+              .filter(misc -> locations.contains(misc.getLocation()))
+              .toList();
+    }
+
+    /**
+     * @return the number of turns the gunners remain stunned; {@code 0} when they can act
+     */
+    public int getStunnedTurns() {
+        return stunnedTurns;
+    }
+
+    /**
+     * @return {@code true} while the gunners are stunned and the building may take no actions
+     */
+    public boolean isStunned() {
+        return stunnedTurns > 0;
+    }
+
+    /**
+     * The weapons jammed by a Weapon Malfunction critical hit (TO:AR p. 119) that gunners are still alive to clear.
+     * A jammed weapon in a location whose gunners were killed stays jammed for good and is not listed.
+     *
+     * @return the jammed weapons with living gunners, empty when there are none
+     */
+    public List<Mounted<?>> getJammedWeapons() {
+        List<Mounted<?>> jammedWeapons = new ArrayList<>();
+        for (WeaponMounted weapon : getWeaponList()) {
+            if (weapon.isJammed() && !hasDeadGunners(weapon.getLocation())) {
+                jammedWeapons.add(weapon);
+            }
+        }
+        return jammedWeapons;
+    }
+
+    /**
+     * Whether the gunners can spend this turn clearing a jammed weapon, as a vehicle crew can (TW p. 195): a weapon
+     * must be jammed, and the gunners must be neither stunned nor dead. Shared by the firing display and the server so
+     * both sides agree.
+     *
+     * @return {@code true} when a Clear Weapon Jam action is available
+     */
+    public boolean canUnjamWeapon() {
+        if (getJammedWeapons().isEmpty()) {
+            return false;
+        }
+        if (isStunned()) {
+            logger.debug("[WeaponJam] {}: cannot clear a jam, gunners stunned for {} more turns", getShortName(),
+                  getStunnedTurns());
+            return false;
+        }
+        if (allGunnersDead()) {
+            logger.debug("[WeaponJam] {}: cannot clear a jam, all gunners are dead", getShortName());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Applies a Gunners Stunned critical hit (TO:AR p. 118): the building takes no actions during the following turn.
+     * Multiple stuns in the same turn extend the effect by one turn each, matching vehicle crew stuns.
+     */
+    public void stunGunners() {
+        if (stunnedTurns == 0) {
+            stunnedTurns = 2;
+        } else {
+            stunnedTurns++;
+        }
+    }
+
+    /**
+     * Applies a Gunners Killed critical hit (TO:AR p. 118) to one hex: no weapon in that hex fires for the rest of the
+     * scenario. When every hex has lost its gunners the building's crew is marked as doomed.
+     *
+     * @param coords the board hex whose gunners were killed
+     */
+    public void killGunnersAt(Coords coords) {
+        setGunnersKilledAt(coords, true);
+    }
+
+    /**
+     * Sets or clears the Gunners Killed state of one hex. Killing is what a critical hit does; clearing exists so a
+     * gamemaster can take the result back, which the rules themselves never do.
+     *
+     * @param coords the board hex whose gunners are being killed or restored
+     * @param killed {@code true} to silence the hex, {@code false} to give it its gunners back
+     */
+    public void setGunnersKilledAt(Coords coords, boolean killed) {
+        setGunnersKilled(getLocationsAt(coords), killed);
+    }
+
+    /**
+     * Sets or clears the Gunners Killed state of the hex a location belongs to, without going out to the board and
+     * back. A building that has not been placed yet has no board position to translate through, so this is the form
+     * the editor uses: in the lobby the hex a location sits in is known but its board hex is not.
+     *
+     * @param location an entity location of the hex being silenced or restored
+     * @param killed   {@code true} to silence the hex, {@code false} to give it its gunners back
+     */
+    public void setGunnersKilledAtLocation(int location, boolean killed) {
+        setGunnersKilled(locationsForRelativeCoords(locationToRelativeCoordsMap.get(location)), killed);
+    }
+
+    /**
+     * Sets or clears the Gunners Killed state of the given locations, and brings the crew's doomed flag with it.
+     *
+     * @param locations the entity locations to silence or restore
+     * @param killed    {@code true} to silence them, {@code false} to give them their gunners back
+     */
+    private void setGunnersKilled(List<Integer> locations, boolean killed) {
+        if (killed) {
+            deadGunnerLocations().addAll(locations);
+        } else {
+            deadGunnerLocations().removeAll(locations);
+        }
+        refreshCrewDoomedState();
+    }
+
+    /**
+     * Keeps the crew's doomed flag in step with the gunners. A building whose every hex has lost its gunners has
+     * nobody left to fight it, and giving a hex its gunners back has to lift that again.
+     */
+    private void refreshCrewDoomedState() {
+        if (getCrew() != null) {
+            getCrew().setDoomed(allGunnersDead());
+        }
+    }
+
+    /**
+     * Sets the number of turns the gunners remain stunned, overriding whatever a critical hit left. A gamemaster
+     * uses this to stun a building or to bring it back to its senses; the rules themselves only ever add turns
+     * through {@link #stunGunners()}.
+     *
+     * @param turns turns remaining, counted the way {@link #stunGunners()} sets them; negative is treated as none
+     */
+    public void setStunnedTurns(int turns) {
+        stunnedTurns = Math.max(turns, 0);
+    }
+
+    /**
+     * @return {@code true} when a gamemaster has cut this structure's power at the switch, which leaves it without
+     *       power however healthy its generators are
+     */
+    public boolean isPowerSwitchedOff() {
+        return powerSwitchedOff;
+    }
+
+    /**
+     * Switches this structure's power on or off. Switching off takes it down as surely as losing its generator
+     * does; switching back on only restores it if its generators can still carry the load.
+     *
+     * @param switchedOff {@code true} to cut the power, {@code false} to put it back on
+     */
+    public void setPowerSwitchedOff(boolean switchedOff) {
+        powerSwitchedOff = switchedOff;
+    }
+
+    /**
+     * @param location an entity location
+     *
+     * @return {@code true} if a Gunners Killed critical hit has silenced that location
+     */
+    public boolean hasDeadGunners(int location) {
+        return deadGunnerLocations().contains(location);
+    }
+
+    /**
+     * @return {@code true} when every location of this building has lost its gunners
+     */
+    public boolean allGunnersDead() {
+        return !locationToRelativeCoordsMap.isEmpty()
+              && deadGunnerLocations().containsAll(locationToRelativeCoordsMap.keySet());
+    }
+
+    /**
+     * A building weapon is turret-mounted when its unit file marks it {@code (ST)} or {@code (PT)}; the loader stores
+     * that as the Mek or pintle turret flag, so {@link Mounted#isTurret()} does not see it.
+     *
+     * @param weapon a weapon of this building
+     *
+     * @return {@code true} if the weapon sits in a turret and can normally fire in any direction
+     */
+    public boolean isTurretMounted(WeaponMounted weapon) {
+        return weapon.isMekTurretMounted() || weapon.isPintleTurretMounted() || weapon.isSponsonTurretMounted();
+    }
+
+    /**
+     * Applies a Turret Locks critical hit (TO:AR p. 118) to one turreted weapon: it keeps firing, but only into the
+     * building's forward arc.
+     *
+     * @param weapon the turreted weapon to lock
+     */
+    public void lockTurretWeapon(WeaponMounted weapon) {
+        setTurretLocked(weapon, true);
+    }
+
+    /**
+     * Sets or clears the Turret Locks state of one turreted weapon. Locking is what a critical hit does; unlocking
+     * exists so a gamemaster can take the result back, which the rules themselves never do.
+     *
+     * @param weapon the turreted weapon to lock or free
+     * @param locked {@code true} to fix the weapon to the forward arc, {@code false} to give it its traverse back
+     */
+    public void setTurretLocked(WeaponMounted weapon, boolean locked) {
+        if (locked) {
+            lockedTurretWeapons().add(getEquipmentNum(weapon));
+        } else {
+            lockedTurretWeapons().remove(getEquipmentNum(weapon));
+        }
+    }
+
+    /**
+     * @param weapon a weapon of this building
+     *
+     * @return {@code true} if a Turret Locks critical hit has fixed that weapon's facing
+     */
+    public boolean isTurretLocked(WeaponMounted weapon) {
+        return lockedTurretWeapons().contains(getEquipmentNum(weapon));
+    }
+
+    /**
+     * @return {@code true} if any turret of this building has been locked by a critical hit
+     */
+    public boolean hasLockedTurret() {
+        return !lockedTurretWeapons().isEmpty();
+    }
+
+    @Override
+    public void newRound(int roundNumber) {
+        super.newRound(roundNumber);
+        if (stunnedTurns > 0) {
+            stunnedTurns--;
+        }
     }
 }

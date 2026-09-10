@@ -62,8 +62,10 @@ final class InfantryActionTurnOrder {
      * initiative order. Does nothing when nobody has an attack to declare.
      *
      * @param game the game, with the phase's turns already built
+     *
+     * @return {@code true} when the order changed and the clients need the new list
      */
-    static void putAttackersFirst(Game game) {
+    static boolean putAttackersFirst(Game game) {
         Set<Integer> attackingPlayers = new HashSet<>();
         for (Player player : game.getPlayersList()) {
             if (attacksSomewhere(game, player)) {
@@ -72,7 +74,7 @@ final class InfantryActionTurnOrder {
         }
         List<GameTurn> turns = game.getTurnsList();
         if (attackingPlayers.isEmpty() || turns.isEmpty()) {
-            return;
+            return false;
         }
         List<GameTurn> attackers = new ArrayList<>();
         List<GameTurn> others = new ArrayList<>();
@@ -85,10 +87,14 @@ final class InfantryActionTurnOrder {
         }
         List<GameTurn> reordered = new ArrayList<>(attackers);
         reordered.addAll(others);
+        if (reordered.equals(turns)) {
+            return false;
+        }
         game.setTurnVector(reordered);
         LOGGER.info("[InfantryAction] declaration turn order, attackers first: {}", reordered.stream()
               .map(turn -> describe(game, turn.playerId()))
               .collect(Collectors.joining(", ")));
+        return true;
     }
 
     /** Whether the player has infantry inside an enemy building, or an attack already running, anywhere. */

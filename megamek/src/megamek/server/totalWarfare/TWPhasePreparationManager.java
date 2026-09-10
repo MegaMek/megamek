@@ -211,8 +211,13 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 }
                 gameManager.determineTurnOrder(phase);
                 if (phase.isPreEndDeclarations()) {
-                    // The book asks the attacker first and the defender answers; initiative alone may not
-                    InfantryActionTurnOrder.putAttackersFirst(gameManager.getGame());
+                    // The book asks the attacker first and the defender answers; initiative alone may not. The
+                    // clients already hold the initiative order from determineTurnOrder, so a change is sent again
+                    // or they would wait on the wrong player.
+                    boolean reordered = InfantryActionTurnOrder.putAttackersFirst(gameManager.getGame());
+                    if (reordered) {
+                        gameManager.sendTurnList();
+                    }
                 }
                 if (phase.isDeployment()) {
                     // "my units never got a deployment turn" has several causes that look identical on the map, and

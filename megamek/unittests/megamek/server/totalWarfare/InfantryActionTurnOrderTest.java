@@ -33,6 +33,8 @@
 package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -120,7 +122,7 @@ class InfantryActionTurnOrderTest {
         platoon(attackingPlayer, 1, BUILDING_HEX);
         game.setTurnVector(List.of(new GameTurn(defendingPlayer.getId()), new GameTurn(attackingPlayer.getId())));
 
-        InfantryActionTurnOrder.putAttackersFirst(game);
+        assertTrue(InfantryActionTurnOrder.putAttackersFirst(game), "the order changed, so the clients need it");
 
         assertEquals(List.of(attackingPlayer.getId(), defendingPlayer.getId()), turnPlayers());
     }
@@ -131,7 +133,7 @@ class InfantryActionTurnOrderTest {
         platoon(attackingPlayer, 1, new Coords(9, 9));
         game.setTurnVector(List.of(new GameTurn(defendingPlayer.getId()), new GameTurn(attackingPlayer.getId())));
 
-        InfantryActionTurnOrder.putAttackersFirst(game);
+        assertFalse(InfantryActionTurnOrder.putAttackersFirst(game), "nothing changed, nothing to send");
 
         assertEquals(List.of(defendingPlayer.getId(), attackingPlayer.getId()), turnPlayers());
     }

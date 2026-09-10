@@ -37,6 +37,9 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.LayoutManager;
+import java.awt.Rectangle;
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -49,7 +52,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.Scrollable;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
 import megamek.client.ui.Messages;
@@ -103,7 +108,7 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
 
     @Override
     protected Container createCenterPane() {
-        JPanel column = new JPanel(new GridBagLayout());
+        JPanel column = new WidthTrackingPanel(new GridBagLayout());
         int padding = UIUtil.scaleForGUI(6);
         column.setBorder(javax.swing.BorderFactory.createEmptyBorder(padding, padding * 2, padding, padding * 2));
         if (defends) {
@@ -282,6 +287,48 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
         area.setForeground(UIManager.getColor("Label.foreground"));
         column.add(area, rowConstraints());
         return area;
+    }
+
+    /**
+     * The scroll pane's view, which takes the viewport's width rather than its own preferred width. A plain panel
+     * inside a scroll pane is laid out as wide as its longest line, so the text areas wrap at a width the dialog
+     * cannot show and their ends are cut off; tracking the viewport width makes them wrap at the dialog's edge.
+     * Height stays free, so the dialog still scrolls vertically when it is short.
+     */
+    private static class WidthTrackingPanel extends JPanel implements Scrollable {
+        @Serial
+        private static final long serialVersionUID = 6098141276423589341L;
+
+        private static final int SCROLL_UNIT_INCREMENT = 16;
+
+        WidthTrackingPanel(LayoutManager layoutManager) {
+            super(layoutManager);
+        }
+
+        @Override
+        public Dimension getPreferredScrollableViewportSize() {
+            return getPreferredSize();
+        }
+
+        @Override
+        public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return SCROLL_UNIT_INCREMENT;
+        }
+
+        @Override
+        public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return (orientation == SwingConstants.VERTICAL) ? visibleRect.height : visibleRect.width;
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportWidth() {
+            return true;
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportHeight() {
+            return false;
+        }
     }
 
     /** A Marine Points figure: whole numbers plain, fractions to two places. */

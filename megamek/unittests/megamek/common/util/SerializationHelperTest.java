@@ -37,6 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.thoughtworks.xstream.XStream;
+import megamek.common.RulesRef;
+import megamek.common.SourceBookCode;
 import megamek.common.units.HeatBreakdown;
 import org.junit.jupiter.api.Test;
 
@@ -51,6 +53,24 @@ class SerializationHelperTest {
     @Test
     void heatContributionRecordSurvivesSaveGameRoundTrip() {
         HeatBreakdown.HeatContribution original = new HeatBreakdown.HeatContribution(3, 30);
+
+        XStream saveXStream = SerializationHelper.getSaveGameXStream();
+        String xml = saveXStream.toXML(original);
+
+        XStream loadXStream = SerializationHelper.getLoadSaveGameXStream();
+        Object restored = loadXStream.fromXML(xml);
+
+        assertEquals(original, restored);
+    }
+
+    /**
+     * Equipment rules references are records stored in save-game object graphs (for example on an ejected
+     * MekWarrior's infantry weapon). Without the matching load-side converter, saves taken after an ejection fail
+     * to load and no units are reattached to players.
+     */
+    @Test
+    void rulesRefRecordSurvivesSaveGameRoundTrip() {
+        RulesRef original = new RulesRef(SourceBookCode.TM, 273);
 
         XStream saveXStream = SerializationHelper.getSaveGameXStream();
         String xml = saveXStream.toXML(original);

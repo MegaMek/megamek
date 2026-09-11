@@ -40,6 +40,8 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import megamek.common.RulesRef;
+import megamek.common.SourceBookCode;
 import megamek.common.TargetRollModifier;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
@@ -460,6 +462,40 @@ public class SerializationHelper {
                 } else {
                     return null;
                 }
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        // Necessary because XStream 1.4.x cannot deserialize records natively. RulesRef is stored on equipment
+        // types carried into save games (including ejected MekWarriors' infantry weapons), so without this
+        // converter in-combat saves taken after an ejection fail to load.
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == RulesRef.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                SourceBookCode book = null;
+                Integer page = null;
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    try {
+                        switch (reader.getNodeName()) {
+                            case "book" -> book = SourceBookCode.valueOf(reader.getValue());
+                            case "page" -> page = reader.getValue().isBlank() ? null : Integer.parseInt(reader.getValue());
+                        }
+                    } catch (IllegalArgumentException e) {
+                        return null;
+                    }
+                    reader.moveUp();
+                }
+                return (book == null) ? null : new RulesRef(book, page);
             }
 
             @Override

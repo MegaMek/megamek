@@ -785,7 +785,7 @@ public class BLKFile {
         } else if (t instanceof HandheldWeapon) {
             blk.writeBlockData("UnitType", "HandheldWeapon");
         } else if (t instanceof AbstractBuildingEntity) {
-            blk.writeBlockData("UnitType", "BuildingEntity");
+            blk.writeBlockData("UnitType", t instanceof MobileStructure ? "MobileStructure" : "BuildingEntity");
         }
 
         blk.writeBlockData("Name", t.getChassis());
@@ -874,7 +874,8 @@ public class BLKFile {
             }
         }
 
-        if (!(t.isConventionalInfantry() || t.isHandheldWeapon() || t instanceof GunEmplacement)) {
+        if (!(t.isConventionalInfantry() || t.isHandheldWeapon() || t instanceof GunEmplacement
+              || t instanceof AbstractBuildingEntity)) {
             if (t instanceof Aero) {
                 blk.writeBlockData("SafeThrust", t.getOriginalWalkMP());
             } else {

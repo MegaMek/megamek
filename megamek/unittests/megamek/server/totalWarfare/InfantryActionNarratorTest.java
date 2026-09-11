@@ -147,9 +147,9 @@ class InfantryActionNarratorTest {
               side(List.of(building), 6, 40, false, MarinePointsTrait.BUILDING_CREW), null);
 
         assertEquals(List.of(5674,
-              InfantryActionNarrator.UNIT_NAME, 5688, InfantryActionNarrator.LOST_SHARE_ONE_UNIT,
+              InfantryActionNarrator.UNIT_NAME, 5688, InfantryActionNarrator.LOST_SHARE,
               InfantryActionNarrator.FULL_STOP,
-              InfantryActionNarrator.BUILDING_CREW_NAME, 5691, InfantryActionNarrator.LOST_SHARE_ONE_UNIT,
+              InfantryActionNarrator.BUILDING_CREW_NAME, 5691, InfantryActionNarrator.LOST_SHARE,
               InfantryActionNarrator.FULL_STOP), reportIds());
     }
 
@@ -184,7 +184,7 @@ class InfantryActionNarratorTest {
               side(List.of(defender), 21, 21, true, MarinePointsTrait.LINE_INFANTRY), building);
 
         List<Integer> ids = reportIds();
-        assertEquals(List.of(InfantryActionNarrator.UNIT_NAME, 5689, InfantryActionNarrator.WIPED_OUT,
+        assertEquals(List.of(InfantryActionNarrator.UNIT_NAME, 5689, InfantryActionNarrator.NONE_SURVIVED,
               InfantryActionNarrator.AND_THE_BUILDING, InfantryActionNarrator.UNIT_NAME,
               InfantryActionNarrator.BUILDING_FALLS), ids.subList(ids.size() - 6, ids.size()));
         List<Report> reports = gameManager.getMainPhaseReport();
@@ -205,7 +205,7 @@ class InfantryActionNarratorTest {
               side(List.of(building), 2, 2, true, MarinePointsTrait.BUILDING_CREW), building);
 
         List<Integer> ids = reportIds();
-        assertEquals(List.of(InfantryActionNarrator.BUILDING_CREW_NAME, 5691, InfantryActionNarrator.WIPED_OUT,
+        assertEquals(List.of(InfantryActionNarrator.BUILDING_CREW_NAME, 5691, InfantryActionNarrator.NONE_SURVIVED,
               InfantryActionNarrator.AND_THE_BUILDING, InfantryActionNarrator.UNIT_NAME,
               InfantryActionNarrator.BUILDING_FALLS_NOBODY_LEFT), ids.subList(ids.size() - 6, ids.size()));
     }

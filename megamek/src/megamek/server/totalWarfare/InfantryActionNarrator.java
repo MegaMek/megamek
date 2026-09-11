@@ -138,16 +138,12 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
     static final int NO_DEFENCE = 5685;
     /** The clause for a side with no trait worth a mention. */
     static final int PLAIN_TROOPERS = 5701;
-    /** Several units lost a share of their strength. */
+    /** The side lost a share of its strength; a platoon or a squad is a body of troops, so always "their". */
     static final int LOST_SHARE = 5702;
-    /** Several units, none survived. */
+    /** None of the side survived. */
     static final int NONE_SURVIVED = 5703;
     /** The side lost nothing. */
     static final int LOST_NOBODY = 5704;
-    /** One unit lost a share of its strength. */
-    static final int LOST_SHARE_ONE_UNIT = 5705;
-    /** One unit, wiped out. */
-    static final int WIPED_OUT = 5706;
     /** A unit's linked name inside the sentence. */
     static final int UNIT_NAME = 5707;
     /** Joins the captured building on to the defenders' sentence. */
@@ -285,14 +281,13 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
     }
 
     private static Report lossFragment(Side side) {
-        boolean severalUnits = side.units().size() != 1;
         if (side.eliminated()) {
-            return new Report(severalUnits ? NONE_SURVIVED : WIPED_OUT);
+            return new Report(NONE_SURVIVED);
         }
         if (side.marinePointsLost() <= 0) {
             return new Report(LOST_NOBODY);
         }
-        Report loss = new Report(severalUnits ? LOST_SHARE : LOST_SHARE_ONE_UNIT);
+        Report loss = new Report(LOST_SHARE);
         loss.add(percentOfOwnStrength(side));
         return loss;
     }

@@ -360,13 +360,8 @@ public class BLKFile {
                         }
                         if (shots > 0) {
                             mount.setOriginalShots(shots);
-                            mount.setShotsLeft(shots);
-                            if (!(t instanceof AbstractBuildingEntity)) {
-                                mount.setSize(shots);
-                            }
-                        } else if (shots == -1 && t instanceof AbstractBuildingEntity && etype instanceof AmmoType) {
-                            // Building clean sheets use the authored starting load, including default full bins.
-                            mount.setOriginalShots(mount.getBaseShotsLeft());
+                            mount.setShotsLeft(shots);mount.setShotsLeft(shots);
+                            mount.setSize(shots);
                         }
                         if (etype instanceof MiscType && mount.getType().hasFlag(MiscType.F_LIFT_HOIST)) { //
                             // Cargo
@@ -795,7 +790,7 @@ public class BLKFile {
         } else if (t instanceof HandheldWeapon) {
             blk.writeBlockData("UnitType", "HandheldWeapon");
         } else if (t instanceof AbstractBuildingEntity) {
-            blk.writeBlockData("UnitType", t instanceof MobileStructure ? "MobileStructure" : "BuildingEntity");
+            blk.writeBlockData("UnitType", "BuildingEntity");
         }
 
         blk.writeBlockData("Name", t.getChassis());
@@ -882,8 +877,7 @@ public class BLKFile {
             }
         }
 
-        if (!(t.isConventionalInfantry() || t.isHandheldWeapon() || t instanceof GunEmplacement
-              || t instanceof AbstractBuildingEntity)) {
+        if (!(t.isConventionalInfantry() || t.isHandheldWeapon() || t instanceof GunEmplacement)) {
             if (t instanceof Aero) {
                 blk.writeBlockData("SafeThrust", t.getOriginalWalkMP());
             } else {
@@ -970,7 +964,7 @@ public class BLKFile {
             }
             blk.writeBlockData("armor", armor_array);
         } else if (t instanceof AbstractBuildingEntity abstractBuildingEntity) {
-            blk.writeBlockData("armor", abstractBuildingEntity.getOArmor(0));
+            blk.writeBlockData("armor", abstractBuildingEntity.getInternalBuilding().getArmor(CubeCoords.ZERO));
         }
 
         // Write out armor_type and armor_tech entries for BA
@@ -1256,7 +1250,7 @@ public class BLKFile {
                 blk.writeBlockData("building_class", abstractBuildingEntity.getBldgClass());
                 blk.writeBlockData("building_type", abstractBuildingEntity.getBuildingType().getTypeValue());
                 blk.writeBlockData("height", abstractBuildingEntity.getInternalBuilding().getBuildingHeight());
-                blk.writeBlockData("cf", abstractBuildingEntity.getOInternal(0));
+                blk.writeBlockData("cf", abstractBuildingEntity.getInternalBuilding().getCurrentCF(CubeCoords.ZERO));
                 if (abstractBuildingEntity.hasExplicitCrewCount()) {
                     blk.writeBlockData("crew", abstractBuildingEntity.getNCrew());
                 }

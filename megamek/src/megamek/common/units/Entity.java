@@ -289,6 +289,7 @@ public abstract class Entity extends TurnOrdered
      * Persistent identity of this unit design in MTF and BLK files.
      */
     private String unitFileUUID;
+    private String refitFromUUID;
     private transient String originalChassis;
     private transient String originalModel;
     private transient String originalUnitFileUUID;
@@ -1266,6 +1267,15 @@ public abstract class Entity extends TurnOrdered
 
     public String getUnitFileUUID() {
         return unitFileUUID;
+    }
+
+    /** Source design reference retained in native unit files for custom refits. */
+    public @Nullable String getRefitFromUUID() {
+        return refitFromUUID;
+    }
+
+    public void setRefitFromUUID(@Nullable String refitFromUUID) {
+        this.refitFromUUID = StringUtility.isNullOrBlank(refitFromUUID) ? null : refitFromUUID.trim();
     }
 
     public void setUnitFileUUID(String unitFileUUID) {
@@ -16026,17 +16036,13 @@ public abstract class Entity extends TurnOrdered
         return getBoobyTrap() != null;
     }
 
-    // Mobile Structures need this overridden if ever implemented
     public int getBoobyTrapDamage() {
-        int damage = 0;
-        if (hasBoobyTrap()) {
-            if ((getEngine() != null) && !(getEngine().hasFlag(Engine.SUPPORT_VEE_ENGINE))) {
-                damage = getEngine().getRating();
-            } else {
-                damage = (int) getWeight() * getOriginalWalkMP();
-            }
+        if (!hasBoobyTrap()) {
+            return 0;
         }
-        return Math.min(500, damage);
+        double damage = hasEngine() ? getEngine().getRating(this) : getWeight() * getOriginalWalkMP();
+        // TO:AUE p.109: use the engine rating (or mass times MP) and round fractions up.
+        return (int) Math.ceil(Math.min(500, damage));
     }
 
     public abstract int getEngineHits();

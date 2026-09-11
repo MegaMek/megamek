@@ -73,6 +73,7 @@ public class BLKFile {
     private static final MMLogger logger = MMLogger.create(BLKFile.class);
 
     public static final String UNIT_FILE_UUID = "UUID";
+    public static final String REFIT_FROM_UUID = "refitFromUUID";
 
     BuildingBlock dataFile;
 
@@ -127,6 +128,9 @@ public class BLKFile {
     }
 
     protected void setBasicEntityData(Entity entity) throws EntityLoadingException {
+        if (dataFile.exists(REFIT_FROM_UUID)) {
+            entity.setRefitFromUUID(dataFile.getDataAsString(REFIT_FROM_UUID)[0]);
+        }
         if (dataFile.exists(UNIT_FILE_UUID)) {
             String unitFileUUID = dataFile.getDataAsString(UNIT_FILE_UUID)[0];
             if (!StringUtility.isNullOrBlank(unitFileUUID)) {
@@ -741,6 +745,9 @@ public class BLKFile {
         BuildingBlock blk = new BuildingBlock();
         blk.createNewBlock();
         blk.writeBlockData(UNIT_FILE_UUID, t.getUnitFileUUID());
+        if (t.getRefitFromUUID() != null) {
+            blk.writeBlockData(REFIT_FROM_UUID, t.getRefitFromUUID());
+        }
 
         if (t instanceof BattleArmor) {
             blk.writeBlockData("UnitType", "BattleArmor");

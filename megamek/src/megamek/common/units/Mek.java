@@ -2086,9 +2086,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
         /*
          CO:213
-         Jump jet performance depends on the weight class of the FrankenMech. 
+         Jump jet performance depends on the weight class of the FrankenMech.
          Smaller jump jets can be retained on larger ’Mechs, but their performance is reduced and fractional
-         Jumping MPs are dropped, meaning two half-ton jump jets are required to give the same performance 
+         Jumping MPs are dropped, meaning two half-ton jump jets are required to give the same performance
          as a 1-ton jump jet while four half-ton jump jets would be required to match a 2-ton jump jet.
         */
         int centerTorsoTonnage = getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO);
@@ -2114,9 +2114,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             movement += locationJumpJetTonnage / centerTorsoJumpJetTonnage;
         }
 
-        // A FrankenMek might have more jump jets than the standard limitation 
-        // (TM:51, Max Jump = Maximum Walking MP for Standard Jump Jets; Max Jump = Maximum Running MP for Improved Jump Jets) 
-        // so, we clamp it to that limitation. 
+        // A FrankenMek might have more jump jets than the standard limitation
+        // (TM:51, Max Jump = Maximum Walking MP for Standard Jump Jets; Max Jump = Maximum Running MP for Improved Jump Jets)
+        // so, we clamp it to that limitation.
         return Math.min((int) Math.floor(movement), getJumpJetMovementCap());
     }
 
@@ -5113,6 +5113,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         String newLine = "\n";
 
         sb.append(MtfFile.UUID).append(getUnitFileUUID()).append(newLine);
+        if (getRefitFromUUID() != null) {
+            sb.append(MtfFile.REFIT_FROM_UUID).append(getRefitFromUUID()).append(newLine);
+        }
         sb.append(MtfFile.GENERATOR).append(SuiteConstants.PROJECT_NAME)
               .append(" ").append(SuiteConstants.VERSION).append(" on ").append(LocalDate.now()).append(newLine);
 

@@ -11153,7 +11153,7 @@ public class TWGameManager extends AbstractGameManager {
 
                 // Blow it up...
                 if (diceRoll.getIntValue() >= target) {
-                    int engineRating = e.getEngine().getRating();
+                    double engineRating = e.getEngine().getRating(e);
                     report = new Report(5400, Report.PUBLIC);
                     report.subject = e.getId();
                     report.indent(2);
@@ -19482,7 +19482,7 @@ public class TWGameManager extends AbstractGameManager {
 
             // ICE explosions don't hurt anyone else, but fusion do
             if (engine.isFusion()) {
-                int engineRating = en.getEngine().getRating();
+                double engineRating = en.getEngine().getRating(en);
                 Report.addNewline(vDesc);
                 r = new Report(5400, Report.PUBLIC);
                 r.subject = en.getId();
@@ -19519,9 +19519,11 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Extract explosion functionality for generalized explosions in areas.
      */
-    public void doFusionEngineExplosion(int engineRating, BoardLocation location, Vector<Report> vDesc,
+    public void doFusionEngineExplosion(double engineRating, BoardLocation location, Vector<Report> vDesc,
           Vector<Integer> vUnits) {
-        int[] myDamages = { engineRating, (engineRating / 10), (engineRating / 20), (engineRating / 40) };
+        // TO:AR p.76, engine explosions: nearest whole number, with exact halves rounded down.
+        int[] myDamages = { (int) Math.ceil(engineRating - 0.5), (int) Math.ceil((engineRating / 10) - 0.5),
+                            (int) Math.ceil((engineRating / 20) - 0.5), (int) Math.ceil((engineRating / 40) - 0.5) };
         doExplosion(myDamages, true, location.coords(), location.boardId(), false, vDesc, vUnits, 5, -1, true, false);
     }
 

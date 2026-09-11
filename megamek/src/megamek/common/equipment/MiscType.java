@@ -961,7 +961,7 @@ public class MiscType extends EquipmentType {
                     } else if (getInternalName().equals(EquipmentTypeLookup.CLAN_MASC)) {
                         mascTonnage = (int) Math.round(entity.getWeight() / 25.0f);
                     }
-                    costValue = (entity.hasEngine() ? entity.getEngine().getRating() : 0) * mascTonnage * 1000;
+                    costValue = (entity.hasEngine() ? entity.getEngine().getRating(entity) : 0) * mascTonnage * 1000;
                 }
             } else if (hasFlag(MiscType.F_TARGETING_COMPUTER)) {
                 double relevantEquipmentWeight = targetingComputerRelevantEquipmentWeight(entity);
@@ -8939,7 +8939,7 @@ public class MiscType extends EquipmentType {
               .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.CSF)
               .setProductionFactions(Faction.CSF)
-              .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
 
@@ -8968,7 +8968,7 @@ public class MiscType extends EquipmentType {
               .setClanApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.CSF)
               .setProductionFactions(Faction.CSF)
-              .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
 

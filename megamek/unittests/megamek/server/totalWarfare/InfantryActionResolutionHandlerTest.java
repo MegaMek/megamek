@@ -39,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
 import megamek.common.Player;
+import megamek.common.TechConstants;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
@@ -52,6 +54,7 @@ import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
 import megamek.server.totalWarfare.InfantryActionTracker.InfantryAction;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -121,6 +124,23 @@ class InfantryActionResolutionHandlerTest {
         infantry.initializeInternal(PLATOON, ConvInfantry.LOC_INFANTRY);
         game.addEntity(infantry);
         return infantry;
+    }
+
+    private BattleArmor elementalPoint(Player owner) {
+        BattleArmor squad = new BattleArmor();
+        squad.setOwner(owner);
+        squad.setGame(game);
+        squad.setPosition(BUILDING_HEX);
+        squad.setChassisType(BattleArmor.CHASSIS_TYPE_BIPED);
+        squad.setSquadSize(5);
+        squad.setWeightClass(EntityWeightClass.WEIGHT_MEDIUM);
+        squad.setTechLevel(TechConstants.T_CLAN_TW);
+        squad.autoSetInternal();
+        for (int trooper = 1; trooper <= 5; trooper++) {
+            squad.initializeArmor(10, trooper);
+        }
+        game.addEntity(squad);
+        return squad;
     }
 
     private InfantryAction startCombat(ConvInfantry firstAttacker, ConvInfantry firstDefender) {
@@ -224,6 +244,29 @@ class InfantryActionResolutionHandlerTest {
         assertEquals(0, building.getCrew().getCurrentSize(), "the uncommitted crew surrender");
         assertTrue(building.getCrew().isDoomed());
         assertFalse(tracker.hasCombat(building.getId()), "the action is over");
+    }
+
+    @Test
+    @DisplayName("Battle armor losses land a point at a time on each trooper, with no hit-location criticals")
+    void battleArmorDamageIsSpreadATrooperAtATime() {
+        ConvInfantry attackerOne = platoon(attackingPlayer);
+        ConvInfantry attackerTwo = platoon(attackingPlayer);
+        BattleArmor elementals = elementalPoint(defendingPlayer);
+        InfantryAction combat = new InfantryAction(building.getId());
+        tracker.addCombat(building.getId(), attackerOne, elementals);
+        combat = tracker.getCombat(building.getId());
+        tracker.addReinforcement(building.getId(), attackerTwo, true);
+        combat.hasPartialControl = true;
+
+        // 42 against 45 is the 2 to 3 column; roll of 12 is 25%/60% (P). The Elementals lose 60% of 42 = 26 of their
+        // 45 at full value: 5 x 26/45 = 2.89, two troopers' worth, 20 points spread four to each of five troopers.
+        new InfantryActionResolutionHandler(gameManager, tracker).resolve(combat, 12);
+
+        assertEquals(5, elementals.getNumberActiveTroopers(), "four points each kills nobody in ten-point armor");
+        for (int trooper = 1; trooper <= 5; trooper++) {
+            assertEquals(6, elementals.getArmor(trooper), "trooper " + trooper);
+        }
+        assertTrue(tracker.hasCombat(building.getId()), "the point is still in the fight");
     }
 
     @Test

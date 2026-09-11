@@ -84,6 +84,8 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
     static final int TROOPERS_KEPT = 5661;
     /** A building keeps all its crew. */
     static final int CREW_KEPT = 5647;
+    /** A battle armor squad took damage that killed nobody. */
+    static final int BATTLE_ARMOR_DAMAGED_ONLY = 5723;
     /** A comma between unit fragments. */
     static final int SEPARATOR = 5709;
 
@@ -262,6 +264,14 @@ class InfantryActionReporter extends AbstractTWRuleHandler {
 
     private static Report unitLossFragment(InfantryActionSideLosses.UnitLoss loss, List<Entity> company) {
         Report fragment;
+        if ((loss.personnelLost() <= 0) && (loss.damageDealt() > 0)) {
+            fragment = new Report(BATTLE_ARMOR_DAMAGED_ONLY);
+            fragment.subject = loss.entity().getId();
+            fragment.addEntityName(loss.entity(), InfantryActionNarrator.storyName(loss.entity(), company));
+            fragment.add(loss.damageDealt());
+            fragment.add(loss.headCount());
+            return fragment;
+        }
         if (loss.personnelLost() <= 0) {
             fragment = new Report(loss.isCrew() ? CREW_KEPT : TROOPERS_KEPT);
             fragment.subject = loss.entity().getId();

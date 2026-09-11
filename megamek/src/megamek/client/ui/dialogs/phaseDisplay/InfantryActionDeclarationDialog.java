@@ -147,8 +147,12 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
     // ---------------------------------------------------------------- attacker
 
     private void addAttackRows(JPanel column) {
-        List<Entity> engaged = InfantryActionStrengths.engaged(game, building, true).stream()
-              .filter(entity -> entity.getOwnerId() == player.getId()).toList();
+        List<Entity> engaged = new ArrayList<>();
+        for (Entity entity : InfantryActionStrengths.engaged(game, building, true)) {
+            if (entity.getOwnerId() == player.getId()) {
+                engaged.add(entity);
+            }
+        }
         addHeading(column, Messages.getString(engaged.isEmpty() ? "InfantryActionDeclarationDialog.attackingWith"
               : "InfantryActionDeclarationDialog.reinforcingWith"));
         for (Entity unit : engaged) {
@@ -188,8 +192,13 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
     // ---------------------------------------------------------------- defender
 
     private void addDefenceRows(JPanel column) {
-        List<Entity> engaged = InfantryActionStrengths.engaged(game, building, false).stream()
-              .filter(entity -> (entity.getOwnerId() == player.getId()) && (entity != building)).toList();
+        List<Entity> engaged = new ArrayList<>();
+        for (Entity entity : InfantryActionStrengths.engaged(game, building, false)) {
+            boolean ownInfantry = (entity.getOwnerId() == player.getId()) && (entity != building);
+            if (ownInfantry) {
+                engaged.add(entity);
+            }
+        }
         addHeading(column, Messages.getString("InfantryActionDeclarationDialog.defendingWith"));
         for (Entity unit : engaged) {
             addText(column, Messages.getString("InfantryActionDeclarationDialog.alreadyIn", unit.getDisplayName(),

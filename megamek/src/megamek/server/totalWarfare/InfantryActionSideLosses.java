@@ -34,6 +34,7 @@ package megamek.server.totalWarfare;
 
 import java.util.List;
 
+import megamek.common.Report;
 import megamek.common.units.Entity;
 
 /**
@@ -52,10 +53,19 @@ record InfantryActionSideLosses(int marinePointsLost, int ownStrength, List<Unit
      *
      * @param entity        the unit
      * @param headCount     the troopers or committed crew it had before the loss
-     * @param personnelLost the people it loses, rounded down from its share
+     * @param personnelLost the people it loses: rounded down from its share, or for battle armor the troopers the
+     *                      damage actually killed
      * @param isCrew        {@code true} for a building's crew, {@code false} for troopers
+     * @param damageDealt   the standard-scale damage a battle armor squad took (TO:AR p. 174), {@code 0} otherwise
+     * @param damageReports the engine's lines for that damage, written after the casualty lines
      */
-    record UnitLoss(Entity entity, int headCount, int personnelLost, boolean isCrew) {
+    record UnitLoss(Entity entity, int headCount, int personnelLost, boolean isCrew, int damageDealt,
+          List<Report> damageReports) {
+
+        /** A loss with no damage of its own to report: infantry and crew. */
+        UnitLoss(Entity entity, int headCount, int personnelLost, boolean isCrew) {
+            this(entity, headCount, personnelLost, isCrew, 0, List.of());
+        }
 
         /** @return the people the unit keeps */
         int remaining() {

@@ -39,7 +39,6 @@ import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.InfantryCombatResult;
 import megamek.common.Report;
-import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
@@ -186,6 +185,11 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         // The losses are planned before anything is applied, so the story and the working come first and the
         // destroyed lines follow them. A side is gone when the result eliminates it or nobody who counted is left;
         // a building whose crew were never committed counts for nothing and cannot keep a side alive (p. 172).
+        // Who fought is read before the plans, because battle armor damage lands while the losses are planned
+        InfantryActionNarrator.Side attackersBefore = InfantryActionNarrator.Side.of(getGame(), combat.attackerIds,
+              null, attackerLost, attackerOwnStrength, false);
+        InfantryActionNarrator.Side defendersBefore = InfantryActionNarrator.Side.of(getGame(), combat.defenderIds,
+              building, defenderLost, defenderOwnStrength, false);
         InfantryActionSideLosses attackerLosses = planSideLosses(combat.attackerIds, attackerLost,
               attackerOwnStrength);
         InfantryActionSideLosses defenderLosses = planSideLosses(combat.defenderIds, defenderLost,
@@ -194,10 +198,8 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
         boolean defendersGone = defenderEliminated || defenderLosses.nobodyLeft();
         // A withdrawing defence gives the building up on the roll it leaves
         boolean captured = !attackersGone && (defendersGone || (defendersWithdrawing && !withdrawing));
-        InfantryActionNarrator.Side attackers = InfantryActionNarrator.Side.of(getGame(), combat.attackerIds, null,
-              attackerLost, attackerOwnStrength, attackersGone);
-        InfantryActionNarrator.Side defenders = InfantryActionNarrator.Side.of(getGame(), combat.defenderIds,
-              building, defenderLost, defenderOwnStrength, defendersGone);
+        InfantryActionNarrator.Side attackers = attackersBefore.withEliminated(attackersGone);
+        InfantryActionNarrator.Side defenders = defendersBefore.withEliminated(defendersGone);
 
         reportCombatHeader(building);
         narrator.narrate(outcomeOf(result, withdrawing, defendersWithdrawing, attackersGone, defendersGone),
@@ -326,9 +328,18 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
             }
             InfantryActionSideLosses.UnitLoss loss = switch (entity) {
                 case BattleArmor battleArmor -> {
+                    // The complex conversion (TO:AR p. 174): ten points of standard-scale damage per trooper's worth
+                    // of loss, applied a point at a time to each trooper in turn. The damage lands now so the
+                    // troopers it actually kills are known when the report is written; its lines are kept for
+                    // after the casualty lines.
                     int activeTroopers = battleArmor.getNumberActiveTroopers();
-                    yield new InfantryActionSideLosses.UnitLoss(battleArmor, activeTroopers,
-                          InfantryCombatCasualties.personnelLost(activeTroopers, casualtyFraction, false), false);
+                    int troopersWorth = InfantryCombatCasualties.personnelLost(activeTroopers, casualtyFraction,
+                          false);
+                    int damage = troopersWorth * DAMAGE_PER_TROOPER;
+                    List<Report> damageReports = applyBattleArmorDamage(battleArmor, damage);
+                    int killed = activeTroopers - battleArmor.getNumberActiveTroopers();
+                    yield new InfantryActionSideLosses.UnitLoss(battleArmor, activeTroopers, killed, false, damage,
+                          damageReports);
                 }
                 case ConvInfantry platoon -> {
                     int troopers = platoon.getInternal(ConvInfantry.LOC_INFANTRY);
@@ -360,7 +371,10 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
             boolean eliminated;
             switch (entity) {
                 case BattleArmor battleArmor -> {
-                    applyBattleArmorLosses(battleArmor, loss.personnelLost());
+                    // The damage landed when the losses were planned; its lines belong here, after the casualties
+                    for (Report report : loss.damageReports()) {
+                        addReport(report);
+                    }
                     eliminated = battleArmor.isDestroyed() || (battleArmor.getNumberActiveTroopers() <= 0);
                 }
                 case ConvInfantry platoon -> {
@@ -391,17 +405,43 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Complex conversion for battle armor (TO:AR p. 174): ten points of standard-scale damage per eliminated trooper,
-     * applied one point at a time. A squad holds one weight class, so the lightest-first rule reduces to random
-     * trooper selection within the squad.
+     * The complex conversion for battle armor (TO:AR p. 174): the damage is applied one point at a time to each
+     * trooper in turn, so a heavier suit outlasts a lighter one. A squad holds one weight class, so the
+     * lightest-first rule reduces to going round the squad; when fewer points remain than troopers, which of them
+     * take the last points is random. The points go straight to the trooper, so there is no hit-location roll and
+     * none of the critical hits that roll can bring.
+     *
+     * @return the engine's damage lines, in order
      */
-    private void applyBattleArmorLosses(BattleArmor battleArmor, int troopersLost) {
-        int remainingDamage = troopersLost * DAMAGE_PER_TROOPER;
-        while ((remainingDamage > 0) && (battleArmor.getNumberActiveTroopers() > 0)) {
-            HitData hit = battleArmor.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-            addReport(gameManager.damageEntity(battleArmor, hit, 1));
-            remainingDamage--;
+    private List<Report> applyBattleArmorDamage(BattleArmor battleArmor, int damage) {
+        List<Report> reports = new ArrayList<>();
+        int remaining = damage;
+        while (remaining > 0) {
+            List<Integer> troopers = activeTroopers(battleArmor);
+            if (troopers.isEmpty()) {
+                break;
+            }
+            int start = Compute.randomInt(troopers.size());
+            for (int offset = 0; (offset < troopers.size()) && (remaining > 0); offset++) {
+                int trooper = troopers.get((start + offset) % troopers.size());
+                if (!battleArmor.isTrooperActive(trooper)) {
+                    continue;
+                }
+                reports.addAll(gameManager.damageEntity(battleArmor, new HitData(trooper), 1));
+                remaining--;
+            }
         }
+        return reports;
+    }
+
+    private static List<Integer> activeTroopers(BattleArmor battleArmor) {
+        List<Integer> troopers = new ArrayList<>();
+        for (int trooper = 1; trooper < battleArmor.locations(); trooper++) {
+            if (battleArmor.isTrooperActive(trooper)) {
+                troopers.add(trooper);
+            }
+        }
+        return troopers;
     }
 
     /**

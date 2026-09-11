@@ -130,6 +130,15 @@ class InfantryActionNarrator extends AbstractTWRuleHandler {
             }
             return new Side(List.copyOf(units), traits, lost, own, eliminated);
         }
+
+        /**
+         * @param eliminated whether the loss leaves nobody, once the losses are known
+         *
+         * @return this side with that answer
+         */
+        Side withEliminated(boolean eliminated) {
+            return new Side(units, traits, marinePointsLost, ownStrength, eliminated);
+        }
     }
 
     /** Every outcome has this many leads to choose from. */

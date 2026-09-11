@@ -349,6 +349,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * @return {@code true} when a declaration went to the server
      */
     private boolean declareFor(Player localPlayer, AbstractBuildingEntity building) {
+        clientgui.centerOnUnit(building);
         var dialog = new InfantryActionDeclarationDialog(clientgui.getFrame(), game, localPlayer, building);
         boolean confirmed = dialog.showDialog() == DialogResult.CONFIRMED;
         LOGGER.info("[PreEnd] dialog for {}: {}", building.getShortName(),
@@ -376,6 +377,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
                 continue;
             }
             LOGGER.info("[PreEnd] {}: asking {} ({})", building.getShortName(), localPlayer.getName(), promptKey);
+            clientgui.centerOnUnit(building);
             String title = Messages.getString("PreEndDeclarationsDisplay." + promptKey + ".title");
             String body = Messages.getString("PreEndDeclarationsDisplay." + promptKey + ".message",
                   building.getDisplayName());

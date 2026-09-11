@@ -169,14 +169,9 @@ public class InfantryCombatResult {
         return attacker + "/" + defender + flag;
     }
 
+    /** The table cell, which is locale-neutral, so the same text serves logs and reports. */
     @Override
     public String toString() {
-        return switch (type) {
-            case ELIMINATED -> "E (Defender Eliminated)";
-            case REPULSED -> "R (Attacker Repulsed, " + attackerCasualtiesPercent + "% casualties)";
-            case PARTIAL -> "P (Partial, A:" + attackerCasualtiesPercent + "% D:" +
-                  (defenderCasualtiesPercent >= 100 ? "Eliminated" : defenderCasualtiesPercent + "%") + ")";
-            case CASUALTIES -> attackerCasualtiesPercent + "%/" + defenderCasualtiesPercent + "%";
-        };
+        return printedCell();
     }
 }

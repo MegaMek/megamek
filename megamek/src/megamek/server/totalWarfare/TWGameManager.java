@@ -52,7 +52,6 @@ import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.common.*;
-import megamek.common.InfantryActionDeclaration;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
@@ -3122,6 +3121,13 @@ public class TWGameManager extends AbstractGameManager {
         for (Entity entity : game.inGameTWEntities()) {
             if (entity.isSelectableThisTurn()) {
                 final Player player = entity.getOwner();
+                boolean includeInPhase = true;
+                if (phase.isDeployment() && Game.rulesManager.getRulesGame().canWalkOnThisRound(entity)) {
+                    continue;
+                }
+                if (!Game.rulesManager.getRulesGame().eligibleForPhase(entity, phase)) {
+                    continue;
+                }
                 if ((entity instanceof SpaceStation) &&
                       (game.getPhase().isMovement() || game.getPhase().isDeployment())) {
                     player.incrementSpaceStationTurns();

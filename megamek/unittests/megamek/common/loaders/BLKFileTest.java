@@ -107,16 +107,16 @@ class BLKFileTest {
         Tank tank = createMinimalTank();
         String sourceUuid = "019f6767-0dcb-7bb8-992f-000000000001";
         assertFalse(BLKFile.getBlock(tank).exists(BLKFile.REFIT_FROM_UUID));
-        assertEquals(null, new BLKTankFile(BLKFile.getBlock(tank)).getEntity().getRefitFromUuid());
+        assertEquals(null, new BLKTankFile(BLKFile.getBlock(tank)).getEntity().getRefitFromUUID());
 
         tank.setRefitFromUuid(sourceUuid);
         Entity loaded = new BLKTankFile(BLKFile.getBlock(tank)).getEntity();
-        assertEquals(sourceUuid, loaded.getRefitFromUuid());
-        assertEquals(sourceUuid, new BLKTankFile(BLKFile.getBlock(loaded)).getEntity().getRefitFromUuid());
+        assertEquals(sourceUuid, loaded.getRefitFromUUID());
+        assertEquals(sourceUuid, new BLKTankFile(BLKFile.getBlock(loaded)).getEntity().getRefitFromUUID());
 
         loaded.setRefitFromUuid(null);
         assertFalse(BLKFile.getBlock(loaded).exists(BLKFile.REFIT_FROM_UUID));
-        assertEquals(null, new BLKTankFile(BLKFile.getBlock(loaded)).getEntity().getRefitFromUuid());
+        assertEquals(null, new BLKTankFile(BLKFile.getBlock(loaded)).getEntity().getRefitFromUUID());
     }
 
     @Test

@@ -750,8 +750,8 @@ public class BLKFile {
         BuildingBlock blk = new BuildingBlock();
         blk.createNewBlock();
         blk.writeBlockData(UNIT_FILE_UUID, t.getUnitFileUUID());
-        if (t.getRefitFromUuid() != null) {
-            blk.writeBlockData(REFIT_FROM_UUID, t.getRefitFromUuid());
+        if (t.getRefitFromUUID() != null) {
+            blk.writeBlockData(REFIT_FROM_UUID, t.getRefitFromUUID());
         }
 
         if (t instanceof BattleArmor) {

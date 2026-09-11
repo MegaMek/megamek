@@ -109,18 +109,18 @@ class MtfFileTest {
     void refitSourceRoundTripsAndCanBeRemoved() throws Exception {
         Mek mek = new BipedMek();
         String sourceUuid = "019f6767-0dcb-7bb8-992f-000000000001";
-        assertFalse(mek.getMtf().contains("refitFromUUID:"));
-        assertEquals(null, toMtfFile(mek).getEntity().getRefitFromUuid());
+        assertFalse(mek.getMtf().contains("refitfromuuid:"));
+        assertEquals(null, toMtfFile(mek).getEntity().getRefitFromUUID());
 
         mek.setRefitFromUuid(sourceUuid);
-        assertTrue(mek.getMtf().contains("refitFromUUID:" + sourceUuid));
+        assertTrue(mek.getMtf().contains("refitfromuuid:" + sourceUuid));
         Mek loaded = (Mek) toMtfFile(mek).getEntity();
-        assertEquals(sourceUuid, loaded.getRefitFromUuid());
-        assertEquals(sourceUuid, toMtfFile(loaded).getEntity().getRefitFromUuid());
+        assertEquals(sourceUuid, loaded.getRefitFromUUID());
+        assertEquals(sourceUuid, toMtfFile(loaded).getEntity().getRefitFromUUID());
 
         loaded.setRefitFromUuid(null);
-        assertFalse(loaded.getMtf().contains("refitFromUUID:"));
-        assertEquals(null, toMtfFile(loaded).getEntity().getRefitFromUuid());
+        assertFalse(loaded.getMtf().contains("refitfromuuid:"));
+        assertEquals(null, toMtfFile(loaded).getEntity().getRefitFromUUID());
     }
 
     @Test

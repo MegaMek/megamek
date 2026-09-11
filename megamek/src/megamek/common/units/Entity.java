@@ -1264,7 +1264,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /** Source design reference retained in native unit files for custom refits. */
-    public @Nullable String getRefitFromUuid() {
+    public @Nullable String getRefitFromUUID() {
         return refitFromUUID;
     }
 

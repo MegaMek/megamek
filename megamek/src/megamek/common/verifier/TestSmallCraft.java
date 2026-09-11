@@ -323,6 +323,15 @@ public class TestSmallCraft extends TestAero {
     }
 
     /**
+     * Returns the number of required officers of the SmallCraft.
+     * @param smallCraft The SmallCraft
+     * @return The number of required officers
+     */
+    public static int requiredOfficers(SmallCraft smallCraft) {
+        return (int) Math.ceil((minimumBaseCrew(smallCraft) + requiredGunners(smallCraft)) / 5.0);
+    }
+
+    /**
      * Emergency-scale Small Craft do not use the standard vessel crew and quarters requirements.
      *
      * @param smallCraft the Small Craft to check
@@ -764,27 +773,28 @@ public class TestSmallCraft extends TestAero {
      * @return true if the crew data is valid.
      */
     public boolean correctCrew(StringBuffer buffer) {
-        if (!requiresMinimumCrewAndQuarters(getSmallCraft())) {
+        if (!requiresMinimumCrewAndQuarters(smallCraft)) {
             return true;
         }
 
         boolean illegal = false;
-        int crewSize = getSmallCraft().getNCrew() - getSmallCraft().getBayPersonnel();
-        int reqCrew = minimumBaseCrew(getSmallCraft()) + requiredGunners(getSmallCraft());
+        int crewSize = smallCraft.getNCrew() - smallCraft.getBayPersonnel();
+        int reqCrew = minimumBaseCrew(smallCraft) + requiredGunners(smallCraft);
+        int reqOfficers = requiredOfficers(smallCraft);
         if (crewSize < reqCrew) {
             buffer.append("Requires ").append(reqCrew).append(" crew and only has ").append(crewSize).append("\n");
             illegal = true;
         }
 
-        if (getSmallCraft().getNOfficers() * 5 < reqCrew) {
-            buffer.append("Requires at least ").append((int) Math.ceil(reqCrew / 5.0)).append(" officers\n");
+        if (smallCraft.getNOfficers() < reqOfficers) {
+            buffer.append("Requires at least ").append(reqOfficers).append(" officers\n");
             illegal = true;
         }
-        crewSize += getSmallCraft().getNPassenger();
-        crewSize += getSmallCraft().getNMarines();
-        crewSize += getSmallCraft().getNBattleArmor();
+        crewSize += smallCraft.getNPassenger();
+        crewSize += smallCraft.getNMarines();
+        crewSize += smallCraft.getNBattleArmor();
         int quarters = 0;
-        for (Bay bay : getSmallCraft().getTransportBays()) {
+        for (Bay bay : smallCraft.getTransportBays()) {
             Quarters q = Quarters.getQuartersForBay(bay);
             if (null != q) {
                 quarters += (int) bay.getCapacity();
@@ -882,7 +892,7 @@ public class TestSmallCraft extends TestAero {
             }
         }
 
-        double[] extra = extraSlotCost(getSmallCraft());
+        double[] extra = extraSlotCost(smallCraft);
         for (int i = 0; i < extra.length; i++) {
             if (extra[i] > 0) {
                 if (i < getEntity().locations()) {

@@ -155,4 +155,82 @@ class SerializationHelperTest {
         assertInstanceOf(RulesRef.class, restored);
         assertNull(((RulesRef) restored).page());
     }
+
+    // ---------------------------------------------------------------------------------------------------------
+    // Generic record converter (issue #8938). XStream 1.4 rebuilds objects by writing to their fields, which the
+    // JVM forbids on a record, so every record reaching a save game needed a hand-written converter and
+    // forgetting one produced a save that would not load. These pin the fallback that handles any record.
+    // ---------------------------------------------------------------------------------------------------------
+
+    /** A record of primitives, which the converter has to default rather than leave null. */
+    record PrimitiveComponents(int count, boolean enabled, double weight, char code) {}
+
+    /** A record holding an enum and a nullable reference. */
+    record EnumAndReference(SourceBookCode book, String label) {}
+
+    /** A record holding another record. */
+    record NestedRecords(PrimitiveComponents inner, String name) {}
+
+    @Test
+    void recordOfPrimitivesSurvivesSaveGameRoundTrip() {
+        PrimitiveComponents original = new PrimitiveComponents(4, true, 2.5, 'x');
+
+        String xml = SerializationHelper.getSaveGameXStream().toXML(original);
+        Object restored = SerializationHelper.getLoadSaveGameXStream().fromXML(xml);
+
+        assertEquals(original, restored);
+    }
+
+    @Test
+    void recordWithAnEnumAndANullSurvivesSaveGameRoundTrip() {
+        EnumAndReference original = new EnumAndReference(SourceBookCode.TO_AUE, null);
+
+        String xml = SerializationHelper.getSaveGameXStream().toXML(original);
+        Object restored = SerializationHelper.getLoadSaveGameXStream().fromXML(xml);
+
+        assertEquals(original, restored);
+    }
+
+    @Test
+    void recordNestedInsideAnotherRecordSurvivesSaveGameRoundTrip() {
+        NestedRecords original = new NestedRecords(new PrimitiveComponents(1, false, 0.5, 'q'), "outer");
+
+        String xml = SerializationHelper.getSaveGameXStream().toXML(original);
+        Object restored = SerializationHelper.getLoadSaveGameXStream().fromXML(xml);
+
+        assertEquals(original, restored);
+    }
+
+    /**
+     * A save written before a component existed does not carry it. The component must fall back to its type's
+     * default rather than failing the load, which is the whole point of the fallback.
+     */
+    @Test
+    void componentMissingFromAnOlderSaveGetsItsTypeDefault() {
+        String xml = SerializationHelper.getSaveGameXStream().toXML(new PrimitiveComponents(4, true, 2.5, 'x'));
+        String olderSave = xml.replaceAll("\s*<weight>[^<]*</weight>", "");
+
+        Object restored = SerializationHelper.getLoadSaveGameXStream().fromXML(olderSave);
+
+        assertInstanceOf(PrimitiveComponents.class, restored);
+        PrimitiveComponents components = (PrimitiveComponents) restored;
+        assertEquals(4, components.count());
+        assertEquals(0.0, components.weight());
+    }
+
+    /**
+     * The generic converter is registered at the lowest priority, so a record that has a specific converter must
+     * still go through that one. {@link RulesRef} is the proof: its converter turns an unrecognized book code
+     * into {@code UNOFFICIAL}, while the generic converter would let the record's own validation fail and drop it.
+     */
+    @Test
+    void aSpecificConverterStillWinsOverTheGenericOne() {
+        String xml = SerializationHelper.getSaveGameXStream().toXML(new RulesRef(SourceBookCode.TM, 273));
+        String corrupted = xml.replace("<book>TM</book>", "<book>NoSuchBook</book>");
+
+        Object restored = SerializationHelper.getLoadSaveGameXStream().fromXML(corrupted);
+
+        assertNotNull(restored, "the RulesRef converter must have handled this, not the generic fallback");
+        assertEquals(SourceBookCode.UNOFFICIAL, ((RulesRef) restored).book());
+    }
 }

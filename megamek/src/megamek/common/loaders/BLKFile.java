@@ -360,7 +360,7 @@ public class BLKFile {
                         }
                         if (shots > 0) {
                             mount.setOriginalShots(shots);
-                            mount.setShotsLeft(shots);mount.setShotsLeft(shots);
+                            mount.setShotsLeft(shots);
                             mount.setSize(shots);
                         }
                         if (etype instanceof MiscType && mount.getType().hasFlag(MiscType.F_LIFT_HOIST)) { //

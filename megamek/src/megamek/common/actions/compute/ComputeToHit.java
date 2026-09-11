@@ -57,6 +57,7 @@ import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.AbstractBuildingEntity;
@@ -535,7 +536,7 @@ public class ComputeToHit {
         }
 
         // determine some more variables
-        int aElev = weaponEntity.getWeaponFiringHeight(weapon);
+        int aElev = attackerLevelForHitTables(weaponEntity, ae, weapon);
         int tElev = target.getElevation();
         int distance = Compute.effectiveWeaponDistance(game, weaponEntity, weapon, target);
 
@@ -2115,4 +2116,23 @@ public class ComputeToHit {
     }
 
     private ComputeToHit() {}
+
+    /**
+     * The level the attacker fires from, for the above and below hit tables inside a building (TW p. 175). The rule
+     * compares the levels the two units stand on, so this is the attacker's elevation; a building fires from the
+     * level its weapon is mounted on. The weapon's firing height, the unit's height above its feet, is what line of
+     * sight needs and is not the same thing.
+     *
+     * @param weaponEntity the unit the weapon is mounted on
+     * @param attacker     the unit making the attack: the same, unless the weapon is a handheld one carried by it
+     * @param weapon       the weapon fired
+     *
+     * @return the elevation the attack comes from, on the same scale as the target's elevation
+     */
+    static int attackerLevelForHitTables(Entity weaponEntity, Entity attacker, WeaponMounted weapon) {
+        if (weaponEntity instanceof AbstractBuildingEntity building) {
+            return building.getElevation() + building.getWeaponFiringHeight(weapon);
+        }
+        return attacker.getElevation();
+    }
 }

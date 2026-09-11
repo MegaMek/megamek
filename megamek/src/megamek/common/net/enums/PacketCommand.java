@@ -295,7 +295,9 @@ public enum PacketCommand {
      * only that one setting, so the server's copy of the unit keeps every piece of state the sender does not own.
      * Accepted only from the unit's owner.
      */
-    ENTITY_EJECTION_SETTING_CHANGE;
+    ENTITY_EJECTION_SETTING_CHANGE,
+    /** A player's declaration for an infantry action in a building, in the Pre-End Declarations phase. */
+    INFANTRY_ACTION_DECLARATION;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

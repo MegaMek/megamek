@@ -59,6 +59,7 @@ import megamek.client.ui.clientGUI.boardview.CollapseWarning;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.phaseDisplay.AutomaticEjectionDialog;
+import megamek.client.ui.dialogs.phaseDisplay.BuildingFacingDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DeployElevationChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DeployFacingChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.EntityChoiceDialog;
@@ -89,6 +90,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Dropship;
 import megamek.common.units.AutomaticEjectionRules;
+import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.Infantry;
@@ -304,6 +306,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.setSelectedEntityNum(en);
         clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
         setTurnEnabled(true);
+        labelTurnButtonFor(entity);
         butDone.setEnabled(false);
         markDeploymentHexes(entity);
         // set facing according to starting position
@@ -929,8 +932,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             int previousBoardId = entity.getBoardId();
 
             // use turn mode only when the unit is already on that same board
-            if ((entity.getPosition() != null) && (b.getBoardId() == previousBoardId) && (shiftHeld || turnMode)) {
-                processTurn(entity, coords);
+            boolean placedOnThisBoard = (entity.getPosition() != null) && (b.getBoardId() == previousBoardId);
+            if (placedOnThisBoard && (shiftHeld || turnMode || isFacingClickOnPlacedBuilding(entity, coords))) {
+                processTurn(entity, coords, turnMode && !shiftHeld);
                 return;
             }
 
@@ -1074,7 +1078,39 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.addToast(ToastLevel.ERROR, msg, currentEntity());
     }
 
-    void processTurn(Entity entity, Coords coords) {
+    /**
+     * Once a multi-hex building is placed, a plain click on a hex next to it means "face that way" rather than
+     * "move there" (#7858): the player places the building, then clicks the direction it should face. A click
+     * further away still moves it.
+     *
+     * @param entity the unit being deployed
+     * @param coords the clicked hex
+     *
+     * @return {@code true} when the click sets the facing of an already placed building
+     */
+    private static boolean isFacingClickOnPlacedBuilding(Entity entity, Coords coords) {
+        return AllowedDeploymentHelper.hasFacingDependentFootprint(entity)
+              && (entity.getPosition().distance(coords) == 1);
+    }
+
+    /**
+     * Turns the unit being deployed. A shift-click, or for a placed multi-hex building a click on a neighbouring
+     * hex, turns it toward the clicked hex; the Turn button, for a multi-hex building, opens the chooser of facings
+     * that fit.
+     *
+     * @param entity        the unit being deployed
+     * @param coords        the clicked hex
+     * @param viaTurnButton {@code true} when the Turn button was pressed rather than shift held
+     */
+    void processTurn(Entity entity, Coords coords, boolean viaTurnButton) {
+        if (AllowedDeploymentHelper.hasFacingDependentFootprint(entity)) {
+            if (viaTurnButton) {
+                turnBuildingToValidFacing(entity);
+            } else {
+                turnBuildingToward(entity, coords);
+            }
+            return;
+        }        
         if (coords.equals(entity.getPosition())) {
             return;
         }
@@ -1094,6 +1130,74 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         turnMode = false;
     }
 
+    /**
+     * A click next to a placed multi-hex building, or a shift-click anywhere: turns it toward the clicked hex the
+     * way any unit turns, unless that facing would put part of its footprint off the map, in which case the facing
+     * is left alone and the player is told (#7858).
+     *
+     * @param building the building being deployed
+     * @param clicked  the hex the player shift-clicked
+     */
+    private void turnBuildingToward(Entity building, Coords clicked) {
+        turnMode = false;
+        Coords position = building.getPosition();
+        int facing = position.direction(clicked);
+        if (facing == building.getFacing()) {
+            return;
+        }
+        Board board = game.getBoard(building.getBoardId());
+        var deploymentHelper = new AllowedDeploymentHelper(building, position, board, board.getHex(position), game);
+        FacingOption facingOptions = deploymentHelper.findAllowedFacings(building.getElevation());
+        boolean fits = (facingOptions != null) && facingOptions.getValidFacings().contains(facing);
+        if (!fits) {
+            logger.debug("[DeployBuilding] {} at {}: facing {} refused, part of the footprint would be off the map",
+                  building.getShortName(), position.getBoardNum(), facing);
+            clientgui.addToast(ToastLevel.WARNING, Messages.getString("DeploymentDisplay.buildingCannotFace",
+                  building.getShortName(), position.getBoardNum()), building);
+            return;
+        }
+        logger.debug("[DeployBuilding] {} at {}: turned to facing {}", building.getShortName(),
+              position.getBoardNum(), facing);
+        applyBuildingFacing(building, facing);
+    }
+
+    /**
+     * The Turn button on a multi-hex building: the player picks from the facings where the whole footprint fits
+     * where the building already stands (#7858).
+     */
+    private void turnBuildingToValidFacing(Entity building) {
+        turnMode = false;
+        Board board = game.getBoard(building.getBoardId());
+        Coords position = building.getPosition();
+        var deploymentHelper = new AllowedDeploymentHelper(building, position, board, board.getHex(position), game);
+        FacingOption facingOptions = deploymentHelper.findAllowedFacings(building.getElevation());
+        if (facingOptions == null) {
+            logger.debug("[DeployBuilding] {} fits in no facing at {}; turn refused", building.getShortName(),
+                  position.getBoardNum());
+            clientgui.addToast(ToastLevel.WARNING, Messages.getString("DeploymentDisplay.buildingCannotTurn",
+                  building.getShortName(), position.getBoardNum()), building);
+            return;
+        }
+        logger.debug("[DeployBuilding] {} at {}: offering facings {}", building.getShortName(),
+              position.getBoardNum(), facingOptions.getValidFacings());
+        // The same six-direction picker a tank turret uses, with the facings that do not fit greyed out
+        var dialog = new BuildingFacingDialog(clientgui.getFrame(), clientgui, building,
+              facingOptions.getValidFacings());
+        boolean confirmed = (dialog.showDialog() == DialogResult.CONFIRMED)
+              && (dialog.getChosenFacing() != BuildingFacingDialog.NO_FACING);
+        if (confirmed) {
+            applyBuildingFacing(building, dialog.getChosenFacing());
+        }
+    }
+
+    private void applyBuildingFacing(Entity building, int facing) {
+        building.setFacing(facing);
+        building.setSecondaryFacing(facing);
+        clientgui.boardViews().forEach(boardView -> ((BoardView) boardView).redrawEntity(building));
+        clientgui.updateFiringArc(building);
+        clientgui.showSensorRanges(building);
+    }
+
     //
     // ActionListener
     //
@@ -1108,7 +1212,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (actionCmd.equals(DeployCommand.DEPLOY_NEXT.getCmd())) {
             moveOnToNextDeployableUnit();
         } else if (actionCmd.equals(DeployCommand.DEPLOY_TURN.getCmd())) {
-            turnMode = true;
+            Entity entity = currentEntity();
+            boolean placedBuilding = (entity != null) && (entity.getPosition() != null)
+                  && AllowedDeploymentHelper.hasFacingDependentFootprint(entity);
+            if (placedBuilding) {
+                // A placed multi-hex building offers its fitting facings straight away; no hex click is needed
+                turnBuildingToValidFacing(entity);
+            } else {
+                turnMode = true;
+            }
         } else if (actionCmd.equals(DeployCommand.DEPLOY_LOAD.getCmd())) {
             // What un-deployed units can we load?
             List<Entity> choices = getLoadableEntities();
@@ -1365,6 +1477,18 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void setNextEnabled(boolean enabled) {
         buttons.get(DeployCommand.DEPLOY_NEXT).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_NEXT.getCmd(), enabled);
+    }
+
+    /**
+     * A building is not turned, it is given a facing, so the Turn button reads "Facing" while a multi-hex building
+     * is selected and "Turn" for everything else.
+     *
+     * @param entity the unit now selected for deployment
+     */
+    private void labelTurnButtonFor(Entity entity) {
+        String key = AllowedDeploymentHelper.hasFacingDependentFootprint(entity)
+              ? "DeploymentDisplay.deployFacing" : "DeploymentDisplay.deployTurn";
+        buttons.get(DeployCommand.DEPLOY_TURN).setText(Messages.getString(key));
     }
 
     private void setTurnEnabled(boolean enabled) {

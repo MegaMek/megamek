@@ -43,6 +43,7 @@ import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.InfantryActionStrengths;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.TechBase;
@@ -838,6 +839,14 @@ public abstract class Infantry extends Entity {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean canDeclareInfantryAction() {
+        if ((game == null) || !game.hasBoardLocationOf(this)) {
+            return false;
+        }
+        return InfantryActionStrengths.hasStake(game, this);
     }
 
     @Override

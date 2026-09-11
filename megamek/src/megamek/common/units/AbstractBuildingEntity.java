@@ -53,6 +53,8 @@ import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.InfantryActionStrengths;
+import megamek.common.compute.InfantryCombatTables;
 import megamek.common.cost.CostCalculator;
 import megamek.common.cost.BuildingCostCalculator;
 import megamek.common.enums.AimingMode;
@@ -1955,6 +1957,104 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     @Override
     public boolean isBoardable() {
         return true;
+    }
+
+    // ========== Crew committed to an infantry action (TO:AR pp. 169 to 170) ==========
+
+    /** Crew fighting in the action now: the building's Marine Points come from these. */
+    private int committedCrew = 0;
+    /** Crew ever committed to the running action, dead or alive: the to-hit penalty while committed comes from these. */
+    private int committedCrewEver = 0;
+
+    /**
+     * @return the crew fighting in the infantry action now
+     */
+    public int getCommittedCrew() {
+        // Crew killed by other means (a critical hit, the building's collapse) count as gone from the committed too
+        return Math.max(0, Math.min(committedCrew, getCrew().getCurrentSize()));
+    }
+
+    /**
+     * @return the crew not yet committed and still alive, available to commit
+     */
+    public int getCrewAvailableToCommit() {
+        return Math.max(0, getCrew().getCurrentSize() - committedCrew);
+    }
+
+    /**
+     * Commits more of the crew to the infantry action. Committing crew degrades the building: the Crew Casualties
+     * Table turns the share of the crew ever committed into crew hits for as long as the action runs (TO:AR p. 170).
+     *
+     * @param requested the crew the defender commits this turn
+     *
+     * @return the crew actually committed, capped at those available
+     */
+    public int commitCrew(int requested) {
+        int committed = Math.max(0, Math.min(requested, getCrewAvailableToCommit()));
+        committedCrew += committed;
+        committedCrewEver += committed;
+        refreshCrewHits();
+        return committed;
+    }
+
+    /**
+     * Crew hits the building would carry with more crew committed, for the player deciding how many.
+     *
+     * @param additional the crew about to be committed
+     *
+     * @return the crew hits from the Crew Casualties Table for that share of the crew
+     */
+    public int getCrewHitsIfCommitted(int additional) {
+        return Math.max(InfantryCombatTables.getCrewHits(percentOfCrew(committedCrewEver + additional)),
+              getCrew().calculateHits());
+    }
+
+    /**
+     * Removes casualties from the committed crew: they fall off the committed count and the crew itself.
+     *
+     * @param lost the crew lost
+     */
+    public void loseCommittedCrew(int lost) {
+        int actualLoss = Math.max(0, Math.min(lost, committedCrew));
+        committedCrew -= actualLoss;
+        getCrew().setCurrentSize(Math.max(0, getCrew().getCurrentSize() - actualLoss));
+        refreshCrewHits();
+    }
+
+    /** The action is over: nobody is committed, and only the crew actually lost still counts against the building. */
+    public void clearCommittedCrew() {
+        committedCrew = 0;
+        committedCrewEver = 0;
+        refreshCrewHits();
+    }
+
+    private int percentOfCrew(int people) {
+        int crewSize = getCrew().getSize();
+        return (crewSize <= 0) ? 0 : (int) Math.round(100.0 * people / crewSize);
+    }
+
+    private void refreshCrewHits() {
+        int hits = getCrewHitsIfCommitted(0);
+        boolean anyoneLeft = getCrew().getCurrentSize() > 0;
+        for (int slot = 0; slot < getCrew().getSlotCount(); slot++) {
+            getCrew().setHits(hits, slot);
+            if (anyoneLeft) {
+                // The Crew Casualties Table's hits are a weapon attack modifier (TO:AR p. 174), not a death: a crew
+                // that commits everyone fights at +6 and still mans the building. Only losing them all kills them.
+                getCrew().setDead(false, slot);
+            }
+        }
+        if (!anyoneLeft) {
+            getCrew().setDoomed(true);
+        }
+    }
+
+    @Override
+    public boolean canDeclareInfantryAction() {
+        if ((game == null) || !game.hasBoardLocationOf(this)) {
+            return false;
+        }
+        return InfantryActionStrengths.hasStake(game, this);
     }
 
     @Override

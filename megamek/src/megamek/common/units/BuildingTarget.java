@@ -54,6 +54,7 @@ import megamek.common.game.Game;
  * @author Suvarov454@sourceforge.net (James A. Damour)
  */
 public class BuildingTarget implements Targetable {
+    protected BuildingTarget() { }
     @Serial
     private static final long serialVersionUID = 6432766092407639630L;
 
@@ -67,6 +68,11 @@ public class BuildingTarget implements Targetable {
      * The ID of the building being targeted.
      */
     private int id = IBuilding.UNKNOWN;
+    private Integer buildingEntityId;
+
+    public Integer getBuildingEntityId() {
+        return buildingEntityId;
+    }
 
     /**
      * The height of the building at the targeted position, used to indicate the number of levels of the building.  A
@@ -110,6 +116,7 @@ public class BuildingTarget implements Targetable {
         if (bldg == null) {
             throw new IllegalArgumentException("No building at %s.".formatted(getBoardLocation()));
         }
+        buildingEntityId = bldg instanceof Entity entity ? entity.getId() : null;
 
         // An Advanced Building is an Entity whose toString() is a debug form; use its unit name instead
         String buildingName = (bldg instanceof Entity buildingEntity) ? buildingEntity.getShortName() : bldg.toString();
@@ -135,6 +142,10 @@ public class BuildingTarget implements Targetable {
         } else {
             height--;
         }
+        if (bldg instanceof AbstractBuildingEntity || bldg.getBldgClass() == IBuilding.BRIDGE) {
+            elevation = BuildingElevation.base(bldg, coords);
+            height = Math.max(0, bldg.getHeight(coords) - 1);
+        }
     }
 
     /**
@@ -157,8 +168,9 @@ public class BuildingTarget implements Targetable {
         boardId = building.getBoardId();
         id = HexTarget.locationToId(getBoardLocation());
         type = TYPE_BUILDING;
+        buildingEntityId = building.getId();
         height = 0;
-        elevation = building.getElevation() + building.getLocationLevel(location);
+        elevation = BuildingElevation.base(building, position) + building.getLocationLevel(location);
         name = building.getShortName() + " " + building.getLocationName(location);
     }
 

@@ -87,6 +87,11 @@ public class BuildingEntity extends AbstractBuildingEntity {
         return UnitType.ADVANCED_BUILDING;
     }
 
+    @Override
+    public int height() {
+        return BuildingConstruction.baseLevel(this) + getInternalBuilding().getBuildingHeight() - 1;
+    }
+
 
 
 

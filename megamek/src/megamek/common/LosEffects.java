@@ -78,6 +78,7 @@ public class LosEffects {
     private static final MMLogger logger = MMLogger.create(LosEffects.class);
 
     public static class AttackInfo {
+        public megamek.common.units.WallTarget targetedWall;
         public boolean attUnderWater;
         public boolean attInWater;
         public boolean attOnLand;
@@ -164,6 +165,7 @@ public class LosEffects {
     int softBuildings = 0;
     int hardBuildings = 0;
     int buildingLevelsOrHexes = 0;
+    int buildingContentsModifier = 0;
     boolean blockedByHill = false;
     boolean blockedByWater = false;
     boolean shotBlockedByWater = false;
@@ -185,6 +187,9 @@ public class LosEffects {
      * and secondary, the primary cover protects the right side.
      */
     IBuilding coverBuildingPrimary = null;
+    private megamek.common.units.WallTarget coverWall;
+
+    public megamek.common.units.WallTarget getCoverWall() { return coverWall; }
     /**
      * Keeps track of the building that provides cover. This is used to assign damage for shots that hit cover. The
      * secondary cover is used if there are two buildings that provide cover, like in the case of 75% cover or two
@@ -255,6 +260,7 @@ public class LosEffects {
         heavySmoke += other.heavySmoke;
         bapReduceSmoke += other.bapReduceSmoke;
         buildingLevelsOrHexes += other.buildingLevelsOrHexes;
+        buildingContentsModifier += other.buildingContentsModifier;
         screen += other.screen;
         softBuildings += other.softBuildings;
         hardBuildings += other.hardBuildings;
@@ -651,6 +657,7 @@ public class LosEffects {
               game.hasRooftopGunEmplacement(targetHex.getCoords(), boardId) ? 1 : 0;
 
         final AttackInfo ai = new AttackInfo();
+        ai.targetedWall = target instanceof megamek.common.units.WallTarget wall ? wall : null;
         ai.attackerIsMek = attacker instanceof Mek;
         ai.attackPos = attackerPosition;
         ai.boardId = boardId;
@@ -677,7 +684,10 @@ public class LosEffects {
 
         ai.targetInfantry = target instanceof Infantry;
         ai.attackHeight = (ai.attLowAlt) ? attacker.getAltitude() : attackHeight;
-        ai.targetHeight = (ai.targetLowAlt) ? target.getAltitude() : target.getHeight() + targetHeightAdjustment;
+        ai.targetHeight = ai.targetLowAlt ? target.getAltitude()
+              : target instanceof megamek.common.units.AbstractBuildingEntity buildingTarget
+                    ? Math.max(0, buildingTarget.getHeight(targetPosition) - 1) + targetHeightAdjustment
+                    : target.getHeight() + targetHeightAdjustment;
 
         int attackerElevation = (ai.attLowAlt) ? attacker.getAltitude() :
               attackHeight + attacker.getElevation() + attackerHex.getLevel();
@@ -685,9 +695,10 @@ public class LosEffects {
         if (spotting && attacker.hasWorkingMisc(MiscType.F_MAST_MOUNT)) {
             attackerElevation += (ai.attLowAlt) ? 0 : 1;
         }
-        final int targetElevation = (ai.targetLowAlt) ?
-              target.getAltitude() :
-              target.relHeight() + targetHex.getLevel() + targetHeightAdjustment;
+        final int targetElevation = ai.targetLowAlt ? target.getAltitude()
+              : target instanceof megamek.common.units.AbstractBuildingEntity buildingTarget
+                    ? megamek.common.units.BuildingElevation.base(buildingTarget, ai.targetPos) + ai.targetHeight + targetHex.getLevel()
+                    : target.relHeight() + targetHex.getLevel() + targetHeightAdjustment;
 
         ai.attackAbsHeight = attackerElevation;
         ai.targetAbsHeight = targetElevation;
@@ -865,8 +876,20 @@ public class LosEffects {
         // hex, treated as ultra-heavy woods. losForCoords() ignores the attacker's and target's
         // own hexes, so those endpoints are handled here.
         addEruptingGeyserEndpointBlock(game, ai, finalLoS);
+        if (megamek.common.units.WallRules.blocksLOS(game, ai.boardId, ai.attackPos, ai.targetPos,
+              ai.attackAbsHeight, ai.targetAbsHeight, diagramLos, ai.targetedWall)) {
+            finalLoS.blocked = true;
+        }
+        if (!finalLoS.blocked && ai.targetIsMek && ai.targetHeight > 0) {
+            finalLoS.coverWall = megamek.common.units.WallRules.targetCover(game, ai.boardId, ai.attackPos,
+                  ai.targetPos, ai.targetAbsHeight);
+            if (finalLoS.coverWall != null) {
+                finalLoS.targetCover |= COVER_HORIZONTAL;
+                finalLoS.damagableCoverTypePrimary = DAMAGABLE_COVER_BUILDING;
+            }
+        }
 
-        finalLoS.hasLoS = !finalLoS.blocked &&
+        finalLoS.hasLoS = !finalLoS.blocked && (finalLoS.buildingLevelsOrHexes <= 2) &&
               (finalLoS.screen < 1) &&
               (finalLoS.plantedFields < 6) &&
               (finalLoS.heavyIndustrial < 3) &&
@@ -1048,6 +1071,9 @@ public class LosEffects {
             modifiers.addModifier(buildingLevelsOrHexes,
                   buildingLevelsOrHexes + " intervening building levels or hexes");
         }
+        if (buildingContentsModifier > 0) {
+            modifiers.addModifier(buildingContentsModifier, "building interior contents");
+        }
 
         if (heavyWoods > 0) {
             // Always add full heavy woods modifier (+2 per hex)
@@ -1115,10 +1141,15 @@ public class LosEffects {
               Compute.isInBuilding(game,
                     ai.attackAbsHeight - game.getHex(ai.attackPos, ai.boardId).getLevel(),
                     ai.attackPos, ai.boardId)) {
-            los.setThruBldg(game.getBoard(ai.boardId).getBuildingAt(in.getFirst()));
+            los.setThruBldg(megamek.common.units.BuildingInteriorRules.shared(game, ai.attackPos,
+                  ai.attackAbsHeight - ai.attackHeight - game.getHex(ai.attackPos, ai.boardId).getLevel(), ai.targetPos,
+                  ai.targetAbsHeight - ai.targetHeight - game.getHex(ai.targetPos, ai.boardId).getLevel(), ai.boardId));
             // elevation differences count as building hexes passed through
-            los.buildingLevelsOrHexes += (Math.abs((ai.attackAbsHeight - ai.attackHeight) -
-                  (ai.targetAbsHeight - ai.targetHeight)));
+            if (!(los.getThruBldg() instanceof megamek.common.units.AbstractBuildingEntity authored
+                  && authored.getDesign().isOpenSpace())) {
+                los.buildingLevelsOrHexes += Math.abs((ai.attackAbsHeight - ai.attackHeight)
+                      - (ai.targetAbsHeight - ai.targetHeight));
+            }
         }
 
         for (Coords c : in) {
@@ -1173,11 +1204,19 @@ public class LosEffects {
               Compute.isInBuilding(game,
                     ai.attackAbsHeight - game.getHex(ai.attackPos, ai.boardId).getLevel(),
                     ai.attackPos, ai.boardId)) {
-            los.setThruBldg(game.getBoard(ai.boardId).getBuildingAt(in.getFirst()));
+            los.setThruBldg(megamek.common.units.BuildingInteriorRules.shared(game, ai.attackPos,
+                  ai.attackAbsHeight - ai.attackHeight - game.getHex(ai.attackPos, ai.boardId).getLevel(), ai.targetPos,
+                  ai.targetAbsHeight - ai.targetHeight - game.getHex(ai.targetPos, ai.boardId).getLevel(), ai.boardId));
             // elevation differences count as building hexes passed through
-            los.buildingLevelsOrHexes += (Math.abs((ai.attackAbsHeight - ai.attackHeight) -
-                  (ai.targetAbsHeight - ai.targetHeight)));
+            if (!(los.getThruBldg() instanceof megamek.common.units.AbstractBuildingEntity authored
+                  && authored.getDesign().isOpenSpace())) {
+                los.buildingLevelsOrHexes += Math.abs((ai.attackAbsHeight - ai.attackHeight)
+                      - (ai.targetAbsHeight - ai.targetHeight));
+            }
         }
+
+        // The target's contents apply even when the intervening line splits between hexes.
+        los.add(losForCoords(game, ai, ai.targetPos, los.getThruBldg(), diagramLoS, partialCover));
 
         // add non-divided line segments
         for (int i = 3; i < in.size() - 2; i += 3) {
@@ -1393,7 +1432,8 @@ public class LosEffects {
         }
 
         // Is there a building in this hex?
-        IBuilding bldg = game.getBoard(ai.boardId).getBuildingAt(coords);
+        IBuilding bldg = thruBldg != null && thruBldg.isIn(coords) ? thruBldg
+              : game.getBoard(ai.boardId).getBuildingAt(coords);
 
         // We're only tracing through a single building if there
         // is a building in this hex, and if it isn't the same
@@ -1402,6 +1442,21 @@ public class LosEffects {
             los.setThruBldg(thruBldg);
         }
 
+        if (thruBldg instanceof megamek.common.units.AbstractBuildingEntity authored && thruBldg.isIn(coords)
+              && !coords.equals(ai.attackPos)) {
+            if (authored.getDesign().isOpenSpace()) {
+                if (coords.equals(ai.targetPos) && ai.targetInfantry) {
+                    los.buildingContentsModifier++;
+                }
+            } else {
+                int distance = Math.max(1, ai.attackPos.distance(ai.targetPos));
+                int altitude = ai.attackAbsHeight - ai.attackHeight + (int) Math.round(
+                      (ai.targetAbsHeight - ai.targetHeight - ai.attackAbsHeight + ai.attackHeight)
+                            * coords.distance(ai.attackPos) / (double) distance);
+                int elevation = altitude - game.getHex(coords, ai.boardId).getLevel();
+                los.buildingContentsModifier += megamek.common.units.BuildingInteriorRules.features(authored, coords, elevation).shooting();
+            }
+        }
         // ignore hexes the attacker or target are in
         if (coords.equals(ai.attackPos) || coords.equals(ai.targetPos)) {
             return los;
@@ -1409,19 +1464,16 @@ public class LosEffects {
 
         // we are an attack in a building, +1 for each building hex between the
         // 2 units
-        if ((game.getBoard(ai.boardId).getBuildingAt(ai.attackPos) != null) &&
-              (game.getBoard(ai.boardId).getBuildingAt(ai.targetPos) != null) &&
-              (thruBldg != null) &&
-              game.getBoard(ai.boardId)
-                    .getBuildingAt(ai.attackPos)
-                    .equals(game.getBoard(ai.boardId).getBuildingAt(ai.targetPos)) &&
-              ai.targetEntity &&
-              thruBldg.equals(game.getBoard(ai.boardId).getBuildingAt(ai.attackPos))) {
+        if (thruBldg != null && thruBldg.isIn(ai.attackPos) && thruBldg.isIn(ai.targetPos) && ai.targetEntity
+              && !(thruBldg instanceof megamek.common.units.AbstractBuildingEntity authored && authored.getDesign().isOpenSpace())) {
             los.buildingLevelsOrHexes += 1;
         }
 
         Hex hex = game.getBoard(ai.boardId).getHex(coords);
         int hexEl = ai.underWaterCombat ? hex.floor() : hex.getLevel();
+        if (thruBldg != null && thruBldg.isIn(coords)) {
+            hexEl = Math.min(hexEl, hex.getLevel() + megamek.common.units.BuildingElevation.base(thruBldg, coords));
+        }
 
         // Handle minimum water depth.
         // Applies to Torpedoes.
@@ -1483,6 +1535,31 @@ public class LosEffects {
               ai.attackAbsHeight * ai.targetPos.distance(coords);
         double totalDistance = ai.targetPos.distance(coords) + ai.attackPos.distance(coords);
         double losElevation = 1 + weightedHeight / totalDistance;
+
+        // Published terrain describes the outer silhouette. Authored structures can have usable space beneath
+        // that silhouette or contain a separate building; resolve the actual volume at the sightline instead.
+        var volumes = game.getBoard(ai.boardId).getBuildingsAt(coords);
+        if (!coveredByDropship && volumes.stream().anyMatch(megamek.common.units.AbstractBuildingEntity.class::isInstance)) {
+            bldgEl = 0;
+            for (IBuilding volume : volumes) {
+                if (volume == thruBldg || volume.getBldgClass() == IBuilding.BRIDGE
+                      || volume.getBldgClass() == IBuilding.WALL || volume.getBldgClass() == IBuilding.FENCE) {
+                    continue;
+                }
+                int bottom = hex.getLevel() + megamek.common.units.BuildingElevation.base(volume, coords);
+                if (losElevation <= bottom && volume instanceof megamek.common.units.MobileStructure mobile) {
+                    // AUE p.36: only the two motive levels of ground structures count as Light Woods.
+                    if (mobile.getMovementMode() == megamek.common.units.EntityMovementMode.TRACKED
+                          && losElevation > bottom - 2 && !hex.containsTerrain(Terrains.WOODS)
+                          && !hex.containsTerrain(Terrains.JUNGLE)) {
+                        los.lightWoods++;
+                    }
+                    continue;
+                }
+                bldgEl = Math.max(bldgEl, hex.getLevel()
+                      + megamek.common.units.BuildingElevation.roof(volume, coords) - hexEl);
+            }
+        }
 
         // The higher of the attacker's height and defender's height
         int maxUnitHeight = Math.max(ai.attackAbsHeight, ai.targetAbsHeight);

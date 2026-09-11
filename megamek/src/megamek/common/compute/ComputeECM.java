@@ -632,7 +632,7 @@ public class ComputeECM {
                 }
             }
         }
-        return applyEmiRangeBonus(bestInfo, game);
+        return applyEmiRangeBonus(bestInfo, entity);
     }
 
     /**
@@ -715,7 +715,7 @@ public class ComputeECM {
                 }
             }
         }
-        return applyEmiRangeBonus(bestInfo, game);
+        return applyEmiRangeBonus(bestInfo, entity);
     }
 
     /**
@@ -726,12 +726,12 @@ public class ComputeECM {
      * doubling on its own, so they must not be routed through this method.
      *
      * @param ecmInfo the computed E(C)CM info for a ground unit, or null if the unit emits none
-     * @param game    the current game, used to read the active planetary conditions
+     * @param entity  the emitter, used to check both planetary and local building interference
      *
      * @return the same ecmInfo with its range doubled when EMI is active; otherwise the unchanged ecmInfo (or null)
      */
-    private static @Nullable ECMInfo applyEmiRangeBonus(@Nullable ECMInfo ecmInfo, Game game) {
-        if ((ecmInfo != null) && game.getPlanetaryConditions().getEMI().isEMI()) {
+    private static @Nullable ECMInfo applyEmiRangeBonus(@Nullable ECMInfo ecmInfo, Entity entity) {
+        if ((ecmInfo != null) && entity.isAffectedByEMI(entity.getPosition())) {
             ecmInfo.setRange(ecmInfo.getRange() * 2);
         }
         return ecmInfo;

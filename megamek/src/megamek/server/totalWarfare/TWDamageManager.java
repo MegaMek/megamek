@@ -414,7 +414,8 @@ public class TWDamageManager implements IDamageManager {
                   underWater,
                   nukeS2S,
                   mods);
-            case AbstractBuildingEntity buildingEntity -> damageBuildingEntity(reportVec, buildingEntity, hit, damage);
+            case AbstractBuildingEntity buildingEntity -> damageBuildingEntity(reportVec, buildingEntity, hit, damage,
+                  ammoExplosion || damageIS);
             default -> logger.error(new UnknownEntityTypeException(entity.toString()));
         }
 
@@ -1944,9 +1945,10 @@ public class TWDamageManager implements IDamageManager {
      * @param hit       the hit data; its location selects the hex and level, and its attacker id is used to pick the
      *                  nearest standing hex of a multi-hex building
      * @param damage    the damage to apply
+     * @param ignoreArmor whether the damage goes directly to the construction factor
      */
     private void damageBuildingEntity(Vector<Report> reportVec, AbstractBuildingEntity building, HitData hit,
-          int damage) {
+          int damage, boolean ignoreArmor) {
         Coords hitCoords = resolveBuildingHitCoords(building, hit);
         if (hitCoords == null) {
             logger.warn("[BuildingDamage] {} has no standing hex for hit location {}; {} damage discarded",
@@ -1956,7 +1958,11 @@ public class TWDamageManager implements IDamageManager {
         int level = building.getLocationLevel(hit.getLocation());
         logger.debug("[BuildingDamage] {} takes {} damage in hex {} level {}", building.getShortName(), damage,
               hitCoords, level);
-        reportVec.addAll(manager.damageBuilding(building, damage, " takes ", hitCoords, level));
+        Entity attacker = game.getEntity(hit.getAttackerId());
+        boolean fromInside = attacker != null && attacker.getBoardId() == building.getBoardId()
+              && building.isIn(attacker.getPosition()) && attacker.isInBuilding();
+        reportVec.addAll(manager.damageBuilding(building, hit.isCapital() ? damage * 10 : damage,
+              " takes ", hitCoords, level, attacker, ignoreArmor || fromInside, hit.hitAimedLocation() ? 2 : 0));
     }
 
     /**
@@ -1968,13 +1974,17 @@ public class TWDamageManager implements IDamageManager {
      */
     private @Nullable Coords resolveBuildingHitCoords(AbstractBuildingEntity building, HitData hit) {
         List<Coords> standingHexes = building.getCoordsList().stream()
-              .filter(building::hasCFIn)
+              .filter(coords -> building.getCurrentCF(coords) > 0)
               .toList();
         Coords locationCoords = building.getLocationCoords(hit.getLocation());
+        if (hit.isAimedShotAttempt() && locationCoords != null && building.getCurrentCF(locationCoords) > 0) {
+            return locationCoords;
+        }
         Entity attacker = game.getEntity(hit.getAttackerId());
-        boolean attackerPositionKnown = (attacker != null) && (attacker.getPosition() != null);
+        boolean attackerPositionKnown = (attacker != null) && (attacker.getPosition() != null)
+              && (attacker.getBoardId() == building.getBoardId());
         if (!attackerPositionKnown || (standingHexes.size() <= 1)) {
-            if (locationCoords != null) {
+            if (locationCoords != null && building.getCurrentCF(locationCoords) > 0) {
                 return locationCoords;
             }
             return standingHexes.isEmpty() ? null : standingHexes.getFirst();

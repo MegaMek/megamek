@@ -64,7 +64,7 @@ public class SRMHandler extends MissileWeaponHandler {
 
     @Override
     protected int calcDamagePerHit() {
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             double toReturn = Compute.directBlowInfantryDamage(
                   weaponType.getRackSize() * 2, getInfantryDamageClassShift(),
                   resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),

@@ -57,7 +57,6 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Aero;
 import megamek.common.units.ConvInfantry;
@@ -109,7 +108,7 @@ public class CLIATMHandler extends ATMHandler {
             toReturn = 2;
         }
 
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             toReturn = Compute.directBlowInfantryDamage(
                   weaponType.getRackSize(), getInfantryDamageClassShift(),
                   resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
@@ -158,7 +157,7 @@ public class CLIATMHandler extends ATMHandler {
         // wrong for infernos), so deliver one inferno missile per missile in the rack instead - this
         // matches the count already reported by calcMissileHits() and the standard SRM inferno rule.
         if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW)) {
-            if (target.isConventionalInfantry()) {
+            if (usesConventionalInfantryDamage()) {
                 return infernoMissilesVersusInfantry();
             }
             return hits;
@@ -198,7 +197,7 @@ public class CLIATMHandler extends ATMHandler {
         // The infantry hit line keeps the default line break (Report.newlines = 1) so the following
         // damage or destruction reports render on their own line, matching the standard SRM/LRM
         // inferno output.
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
                 Report report = new Report(3325);
@@ -297,8 +296,7 @@ public class CLIATMHandler extends ATMHandler {
         }
 
         // Affects streak too.
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
-        if (conditions.getEMI().isEMI()) {
+        if (attackingEntity.isAffectedByEMI(target.getPosition())) {
             nMissilesModifier -= 2;
         }
 
@@ -532,7 +530,7 @@ public class CLIATMHandler extends ATMHandler {
                   && attackingEntity.getPosition().distance(target.getPosition()) <= 1;
 
             // Which building takes the damage?
-            IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
+            IBuilding bldg = megamek.common.units.WallRules.getBuilding(game, target);
 
             // Report weapon attack and its to-hit value.
             Report r = new Report(3115);
@@ -655,7 +653,7 @@ public class CLIATMHandler extends ATMHandler {
             }
 
             // Which building takes the damage?
-            IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
+            IBuilding bldg = megamek.common.units.WallRules.getBuilding(game, target);
             String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
             // Report weapon attack and its to-hit value.
             Report report = new Report(3115);
@@ -911,7 +909,7 @@ public class CLIATMHandler extends ATMHandler {
                     return false;
                 }
                 // Targeting a building.
-                if (target.getTargetType() == Targetable.TYPE_BUILDING) {
+                if (Targetable.isBuildingType(target.getTargetType())) {
                     // The building takes the full brunt of the attack, one damage grouping at a time.
                     handleBuildingDamageByGrouping(vPhaseReport, bldg, hits, nCluster, target.getPosition());
                     // And we're done!

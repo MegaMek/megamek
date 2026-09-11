@@ -34,6 +34,7 @@
 
 package megamek.common.units;
 
+import java.io.Serial;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +58,9 @@ import megamek.logging.MMLogger;
  * and the Building's relative coordinate space.
  */
 public class BuildingTerrain implements IBuilding {
+    // Preserve the class's previous implicit UID so older Java saves can supply the missing terrain metadata below.
+    @Serial
+    private static final long serialVersionUID = 1859718866548871526L;
     private static final MMLogger logger = MMLogger.create(BuildingTerrain.class);
 
     private final Building building;
@@ -64,12 +68,15 @@ public class BuildingTerrain implements IBuilding {
     private final int facing;          // Rotation: 0-5 (0 = north, clockwise)
     private final Map<Coords, CubeCoords> boardToRelativeMap = new HashMap<>();  // Board Coords -> Relative CubeCoords
     private final Map<CubeCoords, Coords> relativeToBoardMap = new HashMap<>();  // Relative CubeCoords -> Board Coords
+    private int structureType;
+    private Map<CubeCoords, Integer> bridgeDecks = new HashMap<>();
 
     /**
      * Construct a BuildingTerrain from board information. Reads the building from the board and creates internal
      * Building with relative coords.
      */
     public BuildingTerrain(Coords coords, Board board, int structureType, BasementType basementType) {
+        this.structureType = structureType;
         this.boardOrigin = coords;
         this.facing = 0;  // Buildings on board are not rotated
 
@@ -89,7 +96,8 @@ public class BuildingTerrain implements IBuilding {
         building = new Building(type, bldgClass, id, structureType);
 
         // Set building height from BLDG_ELEV
-        int buildingHeight = startHex.containsTerrain(Terrains.BLDG_ELEV) ? startHex.terrainLevel(Terrains.BLDG_ELEV) : 0;
+        int buildingHeight = structureType == Terrains.BRIDGE ? 1
+              : startHex.containsTerrain(Terrains.BLDG_ELEV) ? startHex.terrainLevel(Terrains.BLDG_ELEV) : 0;
         building.setBuildingHeight(buildingHeight);
 
         // Recursively scan and add hexes starting from relative (0,0,0)
@@ -137,6 +145,9 @@ public class BuildingTerrain implements IBuilding {
 
         // Add hex to building with CubeCoords
         building.addHex(relativeCoords, cf, armor, basement, collapsed);
+        if (structureType == Terrains.BRIDGE) {
+            bridgeDecks.put(relativeCoords, hex.terrainLevel(Terrains.BRIDGE_ELEV));
+        }
 
         // Scan adjacent hexes
         for (int dir = 0; dir < 6; dir++) {
@@ -235,7 +246,32 @@ public class BuildingTerrain implements IBuilding {
      */
     @Override
     public int getBldgClass() {
-        return building.getBldgClass();
+        return structureType == Terrains.BRIDGE ? IBuilding.BRIDGE : building.getBldgClass();
+    }
+
+    public int getBridgeDeck(Coords coords) {
+        return bridgeDecks == null ? 0 : bridgeDecks.getOrDefault(boardToRelative(coords), 0);
+    }
+
+    /** Old saves omitted terrain type/deck data. Reconcile from the owning board before indexing its buildings. */
+    public void reconcileTerrainData(Board board) {
+        if (structureType == 0) {
+            Hex reference = getCoordsList().stream().map(board::getHex).filter(java.util.Objects::nonNull)
+                  .findFirst().orElse(null);
+            structureType = reference != null && reference.containsTerrain(Terrains.BRIDGE)
+                  && (!reference.containsTerrain(Terrains.BUILDING) || building.getBuildingHeight() == 0) ? Terrains.BRIDGE
+                  : reference != null && reference.containsTerrain(Terrains.FUEL_TANK) ? Terrains.FUEL_TANK : Terrains.BUILDING;
+        }
+        if (structureType != Terrains.BRIDGE) { return; }
+        if (bridgeDecks == null) { bridgeDecks = new HashMap<>(); }
+        building.setBuildingHeight(1);
+        for (Coords coords : getCoordsList()) {
+            Hex hex = board.getHex(coords);
+            if (hex != null && hex.containsTerrain(Terrains.BRIDGE_ELEV)) {
+                bridgeDecks.putIfAbsent(boardToRelative(coords), hex.terrainLevel(Terrains.BRIDGE_ELEV));
+            }
+            building.setHeight(1, boardToRelative(coords));
+        }
     }
 
     /**

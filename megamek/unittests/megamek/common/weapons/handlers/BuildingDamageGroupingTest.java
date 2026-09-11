@@ -34,6 +34,7 @@ package megamek.common.weapons.handlers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.intThat;
@@ -65,6 +66,7 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
@@ -153,7 +155,8 @@ class BuildingDamageGroupingTest extends GameBoardTestCase {
 
         // The damage itself is not under test; only how the attack is split up.
         doReturn(new Vector<Report>()).when(gameManager)
-              .damageBuilding(any(IBuilding.class), anyInt(), any(Coords.class));
+              .damageBuilding(any(IBuilding.class), anyInt(), any(String.class), any(Coords.class), anyInt(),
+                    any(Entity.class), anyBoolean());
         doReturn(new Vector<Report>()).when(gameManager)
               .damageInfantryIn(any(IBuilding.class), anyInt(), any(Coords.class), anyInt());
     }
@@ -176,8 +179,10 @@ class BuildingDamageGroupingTest extends GameBoardTestCase {
               BUILDING_HEX);
 
         assertEquals(0, hitsLeft);
-        verify(gameManager, times(4)).damageBuilding(eq(building), eq(5), eq(BUILDING_HEX));
-        verify(gameManager, never()).damageBuilding(eq(building), eq(20), eq(BUILDING_HEX));
+        verify(gameManager, times(4)).damageBuilding(eq(building), eq(5), eq(" absorbs "), eq(BUILDING_HEX), eq(0),
+              eq(attacker), eq(false));
+        verify(gameManager, never()).damageBuilding(eq(building), eq(20), eq(" absorbs "), eq(BUILDING_HEX), eq(0),
+              eq(attacker), eq(false));
     }
 
     @Test
@@ -197,8 +202,10 @@ class BuildingDamageGroupingTest extends GameBoardTestCase {
 
         handler.handleBuildingDamageByGrouping(new Vector<>(), building, 12, LRM_CLUSTER, BUILDING_HEX);
 
-        verify(gameManager, times(2)).damageBuilding(eq(building), eq(5), eq(BUILDING_HEX));
-        verify(gameManager, times(1)).damageBuilding(eq(building), eq(2), eq(BUILDING_HEX));
+        verify(gameManager, times(2)).damageBuilding(eq(building), eq(5), eq(" absorbs "), eq(BUILDING_HEX), eq(0),
+              eq(attacker), eq(false));
+        verify(gameManager, times(1)).damageBuilding(eq(building), eq(2), eq(" absorbs "), eq(BUILDING_HEX), eq(0),
+              eq(attacker), eq(false));
     }
 
     /**
@@ -219,8 +226,10 @@ class BuildingDamageGroupingTest extends GameBoardTestCase {
 
         handler.handle(GamePhase.FIRING, new Vector<>());
 
-        verify(gameManager, times(4)).damageBuilding(eq(building), eq(5), eq(BUILDING_HEX));
-        verify(gameManager, never()).damageBuilding(eq(building), eq(20), eq(BUILDING_HEX));
+        verify(gameManager, times(4)).damageBuilding(eq(building), eq(5), eq(" absorbs "), eq(BUILDING_HEX), eq(0),
+              eq(attacker), eq(false));
+        verify(gameManager, never()).damageBuilding(eq(building), eq(20), eq(" absorbs "), eq(BUILDING_HEX), eq(0),
+              eq(attacker), eq(false));
     }
 
     /** A missed volley at a unit inside a building damages the building instead (TW p. 171), also per grouping. */
@@ -248,9 +257,10 @@ class BuildingDamageGroupingTest extends GameBoardTestCase {
 
         handler.handle(GamePhase.FIRING, new Vector<>());
 
-        verify(gameManager, atLeastOnce()).damageBuilding(eq(building), intThat(damage -> damage <= 5),
-              eq(BUILDING_HEX));
-        verify(gameManager, never()).damageBuilding(eq(building), intThat(damage -> damage > 5), eq(BUILDING_HEX));
+        verify(gameManager, atLeastOnce()).damageBuilding(eq(building), intThat(damage -> damage <= 5), eq(" absorbs "), eq(BUILDING_HEX), eq(0),
+              eq(attacker), eq(false));
+        verify(gameManager, never()).damageBuilding(eq(building), intThat(damage -> damage > 5), eq(" absorbs "), eq(BUILDING_HEX), eq(0),
+              eq(attacker), eq(false));
     }
 
     @Test
@@ -259,6 +269,7 @@ class BuildingDamageGroupingTest extends GameBoardTestCase {
 
         handler.handleBuildingDamageByGrouping(new Vector<>(), building, SINGLE_HIT, 1, BUILDING_HEX);
 
-        verify(gameManager, times(1)).damageBuilding(eq(building), eq(20), eq(BUILDING_HEX));
+        verify(gameManager, times(1)).damageBuilding(eq(building), eq(20), eq(" absorbs "), eq(BUILDING_HEX), eq(0),
+              eq(attacker), eq(false));
     }
 }

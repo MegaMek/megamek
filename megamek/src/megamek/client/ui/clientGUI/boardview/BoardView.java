@@ -1536,6 +1536,7 @@ public final class BoardView extends AbstractBoardView
                     drawHexBorder(graphics2D, getHexLocation(coords), Color.yellow);
                 }
             }
+            return;
         }
 
         if (!en_Deployer.isLocationProhibited(BoardLocation.of(coords, boardId)) && !boardProhibited) {
@@ -2527,11 +2528,32 @@ public final class BoardView extends AbstractBoardView
             }
         }
 
+        drawWallSegments(graphics2D);
         if (!saveBoardImage) {
             // If we are using Isometric rendering, redraw the entity sprites at 50% transparent so sprites
             // hidden behind hills can still be seen by the user.
             drawIsometricSprites(graphics2D, isometricSprites);
         }
+    }
+
+    /** Authored walls occupy actual hexsides; an ordinary whole-hex building tile would misrepresent open sides. */
+    private void drawWallSegments(Graphics2D graphics) {
+        Graphics2D g = (Graphics2D) graphics.create();
+        double[] x = { .25, .75, 1, .75, .25, 0 };
+        double[] y = { 0, 0, .5, 1, 1, .5 };
+        for (var segment : megamek.common.units.WallRules.segments(game, boardId)) {
+            Point point = getHexLocation(segment.hex());
+            int side = segment.side();
+            int next = (side + 1) % 6;
+            g.setColor(segment.fence() ? new Color(50, 100, 50) : new Color(85, 50, 30));
+            g.setStroke(segment.fence() ? new BasicStroke((float) (2 * scale), BasicStroke.CAP_BUTT,
+                  BasicStroke.JOIN_MITER, 10, new float[] { (float) (5 * scale), (float) (3 * scale) }, 0)
+                  : new BasicStroke((float) (4 * scale), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+            g.draw(new java.awt.geom.Line2D.Double(point.x + HEX_W * scale * x[side],
+                  point.y + HEX_H * scale * y[side], point.x + HEX_W * scale * x[next],
+                  point.y + HEX_H * scale * y[next]));
+        }
+        g.dispose();
     }
 
     /**

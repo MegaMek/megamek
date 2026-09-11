@@ -116,6 +116,8 @@ public class DeploymentProcessor extends AbstractTWRuleHandler {
               && isLegalTrainFootprint(entity, coords, boardId, nFacing);
 
         if ((turn == null) || !turn.isValid(connId, entity, getGame())
+              || (entity instanceof AbstractBuildingEntity building
+              && !building.isDeploymentPositionAndFacingValid(coords, nFacing, elevation, boardId))
               // FIXME: The combination with assault drop and the assault drop check dont look right:
               || !(isLegalLocation
               || (assaultDrop && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP)

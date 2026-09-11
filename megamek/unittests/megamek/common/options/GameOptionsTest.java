@@ -70,6 +70,25 @@ class GameOptionsTest {
         testMe = new GameOptions();
     }
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {
+          OptionsConstants.ADVANCED_BUILDING_EXPANDED_CF, OptionsConstants.ADVANCED_BUILDING_EXPANDED_COLLAPSE })
+    void optionalBuildingDamageTrackingDefaultsOffAndCanBeSaved(String name) {
+        assertFalse(testMe.booleanOption(name));
+        File file = tempDirectory.resolve("expanded-building-cf.xml").toFile();
+        Vector<IBasicOption> saved = new Vector<>();
+        saved.add(new BasicOption(name, true));
+        GameOptions.saveOptions(saved, file.getAbsolutePath());
+
+        testMe.loadOptions(file, false);
+        assertTrue(testMe.booleanOption(name));
+
+        saved.set(0, new BasicOption(name, false));
+        GameOptions.saveOptions(saved, file.getAbsolutePath());
+        testMe.loadOptions(file, false);
+        assertFalse(testMe.booleanOption(name));
+    }
+
     @Test
     void testSaveAndLoadOptions() throws IOException {
         assertTrue(Files.isDirectory(tempDirectory));

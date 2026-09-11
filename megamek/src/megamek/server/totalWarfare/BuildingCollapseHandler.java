@@ -34,10 +34,14 @@
 package megamek.server.totalWarfare;
 
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.Hex;
@@ -60,9 +64,13 @@ import megamek.logging.MMLogger;
 public class BuildingCollapseHandler extends AbstractTWRuleHandler {
 
     private static final MMLogger LOGGER = MMLogger.create(BuildingCollapseHandler.class);
+    private final ExpandedBuildingCollapseHandler expandedCollapse;
+    private final Set<IBuilding> subsurfaceCascades = new HashSet<>();
+    private final Set<IBuilding> resolvingBridgeSpans = new HashSet<>();
 
     BuildingCollapseHandler(TWGameManager gameManager) {
         super(gameManager);
+        expandedCollapse = new ExpandedBuildingCollapseHandler(gameManager, this);
     }
 
     /**
@@ -100,12 +108,23 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
         // If the input is meaningless, do nothing and throw no exception. An empty position map is legal: nothing
         // is standing on the board, but the building can still come down (a building burning down on an empty map).
         if ((bldg == null) || (positionMap == null) || (coords == null)
-              || !bldg.isIn(coords) || !bldg.hasCFIn(coords)) {
+              || !bldg.isIn(coords)) {
             LOGGER.error("Illegal/null arguments");
             return false;
         }
 
+        var foundation = megamek.common.units.BuildingFoundationRules.below(getGame(), bldg, coords);
+        boolean strongFoundation = megamek.common.units.BuildingFoundationRules.stronger(foundation, bldg, coords);
+        if (strongFoundation && positionMap.getOrDefault(BoardLocation.of(coords, bldg.getBoardId()), List.of()).stream()
+              .anyMatch(unit -> !(unit instanceof IBuilding) && !unit.isAirborne() && !unit.isAirborneVTOLorWIGE()
+                    && unit.getElevation() == 0 && unit.getWeight() > foundation.getLoadCapacity(coords))) {
+            checkForCollapse(foundation, positionMap, coords, false, vPhaseReport);
+        }
+        if (bldg.getFloorState(coords) != null) {
+            return resolveExpandedCollapse(bldg, coords, vPhaseReport);
+        }
         int currentCF = bldg.getCurrentCF(coords);
+        int loadCapacity = bldg.usesCapitalScale() ? bldg.getLoadCapacity(coords) : currentCF;
 
         // Track all units that fall into the building's basement by Coords.
         Map<BoardLocation, List<Entity>> basementMap = new HashMap<>();
@@ -125,7 +144,8 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
         if (unitsInHex != null) {
             // How many levels does this building have in this hex?
             final Hex curHex = getGame().getBoard(bldg.getBoardId()).getHex(coords);
-            final int numFloors = Math.max(0, curHex.terrainLevel(Terrains.BLDG_ELEV));
+            final int numFloors = bldg instanceof AbstractBuildingEntity ? bldg.getHeight(coords)
+                  : Math.max(0, curHex.terrainLevel(Terrains.BLDG_ELEV));
             final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
             int numLoads = numFloors;
             if (bridgeEl != Terrain.LEVEL_NONE) {
@@ -160,8 +180,12 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                 Enumeration<Entity> entities = unitsAsVector.elements();
                 while (!collapse && entities.hasMoreElements()) {
                     final Entity entity = entities.nextElement();
+                    if (entity instanceof IBuilding || entity.isAirborne()
+                          || entity.isAirborneVTOLorWIGE() && entity.getMovementMode() != EntityMovementMode.WIGE) {
+                        continue;
+                    }
                     // WiGEs can collapse the top floor of a building by flying over it.
-                    final int entityElev = entity.getElevation();
+                    final int entityElev = BuildingElevation.floor(bldg, entity.getPosition(), entity.getElevation());
                     final boolean wigeFlyover = entity.getMovementMode() == EntityMovementMode.WIGE &&
                           entityElev == numFloors + 1;
 
@@ -207,7 +231,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
 
                     if (wigeFlyover) {
                         wigeLoad += load;
-                        if (wigeLoad > currentCF * 4) {
+                        if (wigeLoad > loadCapacity * 4) {
                             topFloorCollapse = true;
                             // There are bridges with 0 elevation, so the numFloors is 0, meaning that
                             // loads[numFloors-1] would cause an out-of-bounds exception.
@@ -221,12 +245,12 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                         }
                     } else {
                         loads[floor] += load;
-                        if (loads[floor] > currentCF) {
+                        if (loads[floor] > loadCapacity) {
                             // If the load on any floor but the first floor
                             // exceeds the building's current CF it collapses.
                             if (floor != 0) {
                                 collapse = true;
-                            } else if (!bldg.getBasementCollapsed(coords)) {
+                            } else if (!strongFoundation && !bldg.getBasementCollapsed(coords)) {
                                 basementCollapse = true;
                             }
                         }
@@ -309,14 +333,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
         if (entities != null) {
 
             // Sort in elevation order
-            entities.sort((a, b) -> {
-                if (a.getElevation() > b.getElevation()) {
-                    return -1;
-                } else if (a.getElevation() > b.getElevation()) {
-                    return 1;
-                }
-                return 0;
-            });
+            entities.sort(Comparator.comparingInt(Entity::getElevation));
             // Walk through the entities in this position.
             for (Entity entity : entities) {
 
@@ -342,7 +359,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                         // elevation is correct in this case
                         vPhaseReport.addAll(gameManager.doEntityFall(entity, coords, 0, Compute.d6(), psr, true,
                               false));
-                        runningCFTotal -= cfDamage * 2;
+                        runningCFTotal -= bldg.usesCapitalScale() ? bldg.scaleDamageToCF(cfDamage * 2) : cfDamage * 2;
                         break;
                     default:
                         LOGGER.info("{} is falling 1 floor into {}", entity.getDisplayName(), coords.toString());
@@ -355,7 +372,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                               psr,
                               true,
                               false));
-                        runningCFTotal -= cfDamage;
+                        runningCFTotal -= bldg.usesCapitalScale() ? bldg.scaleDamageToCF(cfDamage) : cfDamage;
                         break;
                 }
 
@@ -393,9 +410,26 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
      */
     void collapseBuilding(IBuilding bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
           boolean collapseAll, boolean topFloor, Vector<Report> vPhaseReport) {
+        if (!bldg.isIn(coords)) {
+            return;
+        }
+        if (bldg instanceof AbstractBuildingEntity authored && authored.getDesign().isOpenSpace()
+              && authored.getDesign().getSite() == BuildingDesign.Site.UNDERGROUND) {
+            new OpenSpaceCollapseHandler(gameManager).collapse(authored, coords, vPhaseReport);
+            return;
+        }
+        int previousCollapsedHexes = bldg.getCollapsedHexCount();
+        Set<Integer> releasedVessels = bldg instanceof MobileStructure mobile
+              ? new MobileStructureNavalHandler(gameManager).releaseVesselsInHex(mobile, coords) : Set.of();
+        var collapseSnapshot = expandedCollapse.capture(bldg, coords);
+        int physicalBase = BuildingElevation.base(bldg, coords);
+        int authoredHeight = bldg.getHeight(coords);
+        if (bldg instanceof AbstractBuildingEntity authored) {
+            new BuildingEnvironmentHandler(gameManager).collapsed(authored, coords, authoredHeight, vPhaseReport);
+        }
         // sometimes, buildings that reach CF 0 decide against collapsing,
         // but we want them to go away anyway, as a building with CF 0 cannot stand
-        final int phaseCF = bldg.hasCFIn(coords) ? bldg.getPhaseCF(coords) : 0;
+        final int phaseCF = bldg.getPhaseCF(coords);
 
         // Loop through the hexes in the building, and apply
         // damage to all entities inside or on top of the building.
@@ -409,33 +443,32 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
             // How many levels does this building have in this hex?
             final Hex curHex = getGame().getBoard(bldg.getBoardId()).getHex(coords);
             final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
-            final int numFloors = Math.max(bridgeEl, curHex.terrainLevel(Terrains.BLDG_ELEV));
+            final int numFloors = bldg instanceof AbstractBuildingEntity ? authoredHeight
+                  : Math.max(bridgeEl, curHex.terrainLevel(Terrains.BLDG_ELEV));
 
             // Now collapse the building in this hex, so entities fall to
             // the ground
             if (topFloor && numFloors > 1) {
                 curHex.removeTerrain(Terrains.BLDG_ELEV);
-                curHex.addTerrain(new Terrain(Terrains.BLDG_ELEV, numFloors - 1));
+                if (physicalBase + numFloors - 1 > 0) {
+                    curHex.addTerrain(new Terrain(Terrains.BLDG_ELEV, physicalBase + numFloors - 1));
+                }
                 gameManager.sendChangedHex(coords, bldg.getBoardId());
             } else {
                 bldg.setCurrentCF(0, coords);
                 bldg.setPhaseCF(0, coords);
-                gameManager.send(createCollapseBuildingPacket(coords, bldg.getBoardId()));
-                getGame().getBoard(bldg.getBoardId()).collapseBuilding(coords);
-                disableIndustrialElevatorAt(coords, bldg.getBoardId());
+                gameManager.send(createCollapseBuildingPacket(coords, bldg));
+                getGame().getBoard(bldg.getBoardId()).collapseBuilding(bldg, coords);
+                disableIndustrialElevatorAt(coords, bldg);
             }
 
             // Sort in elevation order
-            vector.sort((a, b) -> {
-                if (a.getElevation() > b.getElevation()) {
-                    return -1;
-                } else if (a.getElevation() > b.getElevation()) {
-                    return 1;
-                }
-                return 0;
-            });
+            vector.sort(Comparator.comparingInt(Entity::getElevation));
             // Walk through the entities in this position.
             for (Entity entity : vector) {
+                if (releasedVessels.contains(entity.getId())) {
+                    continue;
+                }
                 // all gun emplacements are simply destroyed
                 if (entity instanceof GunEmplacement) {
                     vPhaseReport.addAll(gameManager.destroyEntity(entity, "building collapse"));
@@ -443,14 +476,25 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                     continue;
                 }
 
-                if (bldg.equals(entity) && entity instanceof BuildingEntity buildingEntity) {
+                if (bldg.equals(entity) && entity instanceof AbstractBuildingEntity buildingEntity) {
                     int numFloorsToCollappse = topFloor ? 1 : numFloors;
                     buildingEntity.collapseFloorsOnHex(coords, numFloorsToCollappse);
                     gameManager.entityUpdate(entity.getId());
                     continue;
                 }
+                if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
+                    continue;
+                }
 
-                int floor = entity.getElevation();
+                int floor = entity.getElevation() - physicalBase;
+                boolean subsurface = bldg instanceof AbstractBuildingEntity authored
+                      && authored.getDesign().getSite() != BuildingDesign.Site.SURFACE;
+                // A different structure at this XY coordinate is not an occupant of the collapsing volume.
+                if (entity instanceof IBuilding || floor < 0 && (physicalBase != 0
+                      || getGame().getBoard(bldg.getBoardId()).getBuildingsAt(coords).stream()
+                            .anyMatch(other -> other != bldg && BuildingElevation.contains(other, coords, entity.getElevation())))) {
+                    continue;
+                }
                 // If only the top floor collapses, we only care about units on the top level
                 // or on the roof.
                 if (topFloor && floor < numFloors - 1) {
@@ -458,11 +502,16 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                 }
                 // units trapped in a basement under a collapsing building are
                 // destroyed
-                if (floor < 0) {
+                if (floor < 0 && physicalBase == 0) {
                     vPhaseReport.addAll(gameManager.destroyEntity(entity,
                           "Crushed under building rubble",
                           false,
                           false));
+                }
+                if (subsurface && entity instanceof Infantry
+                      && !EnvironmentalSealingRules.canOperateFullySubmerged(entity)) {
+                    vPhaseReport.addAll(gameManager.destroyEntity(entity, "trapped in a collapsed subsurface structure"));
+                    continue;
                 }
 
                 // Ignore units above the building / bridge.
@@ -477,8 +526,9 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                 }
 
                 // Calculate collapse damage for this entity.
+                int overburden = subsurface ? Math.max(0, -(physicalBase + numFloors)) : 0;
                 int damage = (int) Math.floor(bldg.getDamageFromScale() *
-                      Math.ceil((phaseCF * (numFloors - floor)) / 10.0));
+                      Math.ceil((phaseCF * (numFloors + overburden - floor)) / 10.0));
 
                 // Infantry suffer more damage.
                 if (entity instanceof Infantry) {
@@ -489,6 +539,9 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                     }
                 }
 
+                if (subsurfaceCascades.contains(bldg)) {
+                    damage /= 2;
+                }
                 // Apply collapse damage the entity.
                 r = new Report(6455);
                 r.indent();
@@ -506,7 +559,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                     int table;
                     if (entity instanceof ProtoMek) {
                         table = ToHitData.HIT_SPECIAL_PROTO;
-                    } else if (entity.getElevation() == numFloors) {
+                    } else if (entity.getElevation() == physicalBase + numFloors) {
                         table = ToHitData.HIT_NORMAL;
                     } else {
                         table = ToHitData.HIT_PUNCH;
@@ -519,7 +572,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                 vPhaseReport.add(new Report(1210, Report.PUBLIC));
 
                 // all entities should fall
-                floor = entity.getElevation();
+                floor = entity.getElevation() - physicalBase;
                 if ((floor > 0) || (floor == bridgeEl)) {
                     // ASSUMPTION: PSR to avoid pilot damage
                     // should use mods for entity damage and
@@ -529,7 +582,17 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                     if (damage >= 20) {
                         psr.addModifier(1, "20+ damage");
                     }
-                    vPhaseReport.addAll(gameManager.doEntityFallsInto(entity, coords, psr, true));
+                    if (physicalBase == 0) {
+                        vPhaseReport.addAll(gameManager.doEntityFallsInto(entity, coords, psr, true));
+                    } else {
+                        // doEntityFallsInto normally measures from the terrain bed/roof. Adjust that datum to this
+                        // volume's surviving floor, so a negative elevation does not increase the fall distance.
+                        int landing = topFloor ? physicalBase + numFloors - 1 : physicalBase;
+                        int reduction = fallReduction(curHex, entity.getElevation(), landing);
+                        vPhaseReport.addAll(gameManager.doEntityFallsInto(entity, entity.getElevation(), coords, coords,
+                              psr, true, reduction));
+                        entity.setElevation(landing);
+                    }
                 }
                 // Update this entity.
                 // ASSUMPTION: this is the correct thing to do.
@@ -539,19 +602,39 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
             // Update the building.
             bldg.setCurrentCF(0, coords);
             bldg.setPhaseCF(0, coords);
-            gameManager.send(createCollapseBuildingPacket(coords, bldg.getBoardId()));
-            getGame().getBoard(bldg.getBoardId()).collapseBuilding(coords);
-            disableIndustrialElevatorAt(coords, bldg.getBoardId());
+            gameManager.send(createCollapseBuildingPacket(coords, bldg));
+            getGame().getBoard(bldg.getBoardId()).collapseBuilding(bldg, coords);
+            disableIndustrialElevatorAt(coords, bldg);
         }
-        // if more than half of the hexes are gone, collapse all
-        if (bldg.getCollapsedHexCount() > ((double) bldg.getOriginalHexCount() / 2.0)) {
-            for (Enumeration<Coords> coordsEnum = bldg.getCoords(); coordsEnum.hasMoreElements(); ) {
-                coords = coordsEnum.nextElement();
-                collapseBuilding(bldg, getGame().getPositionMapMulti(), coords, false, vPhaseReport);
+        if (bldg instanceof MobileStructure mobile && bldg.getCollapsedHexCount() > previousCollapsedHexes) {
+            // TO:AUE p.40: loss of a hex damages its neighbors and can injure the structure's main crew.
+            for (Coords adjacent : coords.allAdjacent()) {
+                if (!mobile.isIn(adjacent)) {
+                    continue;
+                }
+                int levels = mobile.usesExpandedCF() ? mobile.getHeight(adjacent) : 1;
+                for (int level = 0; level < levels; level++) {
+                    int cf = mobile.getCurrentCF(adjacent, level);
+                    int armor = mobile.getArmor(adjacent, level);
+                    mobile.setCurrentCF(cf - mobile.scaleDamageToCF(cf - cf / 2), adjacent, level);
+                    mobile.setArmor(armor - mobile.scaleDamageToCF(armor - armor / 2), adjacent, level);
+                }
             }
-            if (bldg instanceof BuildingEntity buildingEntity) {
-                vPhaseReport.addAll(gameManager.destroyEntity(buildingEntity, "building collapse"));
+            if (Compute.d6(2) + mobile.getCollapsedHexCount() >= 10) {
+                mobile.addMobileCrewHit();
             }
+            gameManager.entityUpdate(mobile.getId());
+        }
+        expandedCollapse.collapsed(collapseSnapshot,
+              topFloor && collapseSnapshot != null ? Set.of(collapseSnapshot.height() - 1) : Set.of(),
+              !topFloor || !bldg.isIn(coords), vPhaseReport);
+        if (bldg.getBldgClass() == IBuilding.BRIDGE) {
+            collapseDisconnectedBridgeSpans(bldg, vPhaseReport);
+        } else if (collapseAll && !(bldg instanceof MobileStructure)
+              && bldg.getCollapsedHexCount() * 2 > bldg.getOriginalHexCount()) {
+            collapseRemainingBuilding(bldg, vPhaseReport);
+        } else if (bldg instanceof MobileStructure mobile && mobile.isSplit()) {
+            vPhaseReport.addAll(gameManager.destroyEntity(mobile, "structure split by destroyed hexes"));
         }
     }
 
@@ -560,19 +643,245 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
      * (TO:AR), so its platform can no longer be ridden or called. Broadcasts the change so clients update their
      * elevator controls.
      * <p>
-     * TODO: An elevator should also cease to function when any level of its hex is breached or flooded (TO:AR). Neither
-     * mechanic is modeled yet - MegaMek has no sealed-building breach roll and no dynamic hex flooding - so only the
-     * collapse case is handled here. Wire those in once the engine tracks them.
+     * Environmental breaches and flooding disable the same registry entries in {@link BuildingEnvironmentHandler}.
      *
      * @param coords  the hex that collapsed
      * @param boardId the board the hex is on
      */
-    private void disableIndustrialElevatorAt(Coords coords, int boardId) {
-        IndustrialElevator elevator = getGame().getIndustrialElevator(BoardLocation.of(coords, boardId));
-        if ((elevator != null) && elevator.isFunctional()) {
-            LOGGER.info("[IndustrialElevator] Elevator at {} disabled by building collapse", coords);
-            elevator.setFunctional(false);
+    private void disableIndustrialElevatorAt(Coords coords, IBuilding building) {
+        boolean changed = false;
+        for (IndustrialElevator elevator : getGame().getIndustrialElevators()) {
+            if (elevator.getLocation().equals(BoardLocation.of(coords, building.getBoardId())) && elevator.isFunctional()
+                  && elevator.getBuildingId() == (building instanceof Entity entity ? entity.getId() : Entity.NONE)) {
+                elevator.setFunctional(false);
+                changed = true;
+            }
+        }
+        if (changed) {
             gameManager.sendIndustrialElevatorUpdate();
+        }
+    }
+
+    /** Resolves per-floor CF, overloaded floors, and the fall of surviving upper floors (TO:AR pp.119–121). */
+    boolean resolveExpandedCollapse(IBuilding building, Coords coords, Vector<Report> reports) {
+        BuildingFloorState floors = building.getFloorState(coords);
+        if (floors == null || floors.height() == 0) {
+            return false;
+        }
+        List<Entity> occupants = new ArrayList<>(getGame().getEntitiesVector(coords, building.getBoardId(), true));
+        occupants.removeIf(entity -> entity instanceof IBuilding || entity.isAirborne() || entity.isAirborneVTOLorWIGE());
+        int oldHeight = floors.height();
+        int[] oldLevels = floors.levels();
+        var collapseSnapshot = expandedCollapse.capture(building, coords);
+        // Ground-floor occupants never overload a building. Check each occupied level separately (TW p.176).
+        for (int level = 1; level <= oldHeight; level++) {
+            final int occupiedLevel = level;
+            double load = occupants.stream().filter(entity -> BuildingElevation.floor(building, coords, entity.getElevation()) == occupiedLevel)
+                  .mapToDouble(Entity::getWeight).sum();
+            for (int floor = 0; floor < floors.size(); floor++) {
+                if (oldLevels[floor] >= 0 && oldLevels[floor] < level
+                      && load > floors.getCF(floor) * (building.usesCapitalScale() ? 10 : 1)) {
+                    floors.setCF(floor, 0);
+                }
+            }
+        }
+        int fallingDebrisCF = java.util.stream.IntStream.range(0, floors.size())
+              .filter(floor -> oldLevels[floor] > 0).map(floors::getPhaseCF).sum();
+        int fallingCF = floors.resolveCollapse(subsurfaceCascades.contains(building) ? 2 : 1);
+        if (Arrays.equals(oldLevels, floors.levels())) {
+            return false;
+        }
+        if (floors.height() == 0) {
+            collapseThroughFoundation(building, coords, fallingCF, fallingDebrisCF, reports);
+            collapseBuilding(building, getGame().getPositionMapMulti(), coords, reports);
+
+            collapseShortenedBuilding(building, reports);
+            return true;
+        }
+        if (building instanceof AbstractBuildingEntity entity) {
+            for (int location : entity.getLocationsAt(coords)) {
+                int floor = location % floors.size();
+                if (oldLevels[floor] >= 0 && floors.getLevel(floor) < 0) {
+                    entity.destroyLocation(location, true);
+                }
+            }
+        }
+        building.getInternalBuilding().synchronizeFloorState(building.boardToRelative(coords));
+        Hex hex = getGame().getBoard(building.getBoardId()).getHex(coords);
+        if (BuildingElevation.base(building, coords) + floors.height() > 0) {
+            hex.addTerrain(new Terrain(Terrains.BLDG_ELEV, BuildingElevation.base(building, coords) + floors.height()));
+        }
+        gameManager.sendChangedHex(coords, building.getBoardId());
+        disableIndustrialElevatorAt(coords, building);
+        // Lower levels settle first (TW p.177); retain original levels to measure each fall.
+        occupants.sort(Comparator.comparingInt(Entity::getElevation));
+        for (Entity occupant : occupants) {
+            int oldLevel = BuildingElevation.floor(building, coords, occupant.getElevation());
+            if (oldLevel < 0 || oldLevel > oldHeight || occupant.isAirborne()) {
+                continue;
+            }
+            int landing = oldLevel == oldHeight ? floors.height() : 0;
+            int debrisCF = 0;
+            for (int floor = 0; floor < floors.size(); floor++) {
+                if (oldLevels[floor] <= oldLevel && floors.getLevel(floor) >= 0) {
+                    landing = Math.max(landing, floors.getLevel(floor));
+                }
+                if (oldLevels[floor] > oldLevel) {
+                    debrisCF += floors.getPhaseCF(floor);
+                }
+            }
+            int damage = (int) Math.floor(building.getDamageFromScale() * Math.ceil(debrisCF / 10.0));
+            if (occupant instanceof Infantry infantry) {
+                damage *= infantry instanceof BattleArmor || infantry.isMechanized() ? 2 : 3;
+            }
+            if (subsurfaceCascades.contains(building)) {
+                damage /= 2;
+            }
+            while (damage > 0) {
+                int cluster = Math.min(5, damage);
+                HitData hit = occupant.rollHitLocation(occupant instanceof ProtoMek ? ToHitData.HIT_SPECIAL_PROTO
+                      : oldLevel == oldHeight ? ToHitData.HIT_NORMAL : ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
+                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
+                reports.addAll(gameManager.damageEntity(occupant, hit, cluster));
+                damage -= cluster;
+            }
+            if (landing >= oldLevel) {
+                continue;
+            }
+            reports.addAll(gameManager.doEntityFallsInto(occupant, oldLevel + BuildingElevation.base(building, coords), coords, coords,
+                  occupant.getBasePilotingRoll(), true,
+                  fallReduction(hex, occupant.getElevation(), landing + BuildingElevation.base(building, coords))));
+            occupant.setElevation(landing + BuildingElevation.base(building, coords));
+            int floorHit = floors.floorAtLevel(landing);
+            int impact = Math.max(1, (int) Math.ceil(occupant.getWeight() / 10.0)) * (oldLevel - landing);
+            floors.setCF(floorHit, floors.getCF(floorHit) - building.scaleDamageToCF(impact));
+            gameManager.entityUpdate(occupant.getId());
+        }
+        // Falls can overload or destroy the floor on which they land.
+        resolveExpandedCollapse(building, coords, reports);
+        Set<Integer> collapsedLevels = new HashSet<>();
+        for (int floor = 0; floor < oldLevels.length; floor++) {
+            if (oldLevels[floor] >= 0 && floors.getLevel(floor) < 0) {
+                collapsedLevels.add(oldLevels[floor]);
+            }
+        }
+        expandedCollapse.collapsed(collapseSnapshot, collapsedLevels, false, reports);
+        collapseShortenedBuilding(building, reports);
+        return true;
+    }
+
+    /** A top-down collapse crosses the shared ground-level ceiling at half damage, before target scaling. */
+    private void collapseThroughFoundation(IBuilding surface, Coords coords, int fallingCF, int debrisCF,
+          Vector<Report> reports) {
+        var foundation = megamek.common.units.BuildingFoundationRules.below(getGame(), surface, coords);
+        if (foundation == null || fallingCF <= 0 || foundation.getFloorState(coords) == null) {
+            return;
+        }
+        var lower = foundation.getFloorState(coords);
+        int damage = fallingCF * (surface.usesCapitalScale() ? 10 : 1) / 3 / 2;
+        // Each destroyed floor passes only the excess onward; the reduction at G is applied once.
+        for (int level = lower.height() - 1; level >= 0 && damage > 0; level--) {
+            int floor = lower.floorAtLevel(level);
+            int cf = lower.getCF(floor);
+            int toCF = foundation.scaleDamageToCF(damage);
+            lower.setCF(floor, cf - toCF);
+            if (toCF < cf) { break; }
+            int standardPerCF = foundation.usesCapitalScale() ? 10
+                  : (int) Math.round(1.0 / foundation.getDamageToScale());
+            damage -= cf * standardPerCF;
+        }
+        int toUnit = (int) Math.floor(surface.getDamageFromScale() * Math.ceil(debrisCF / 10.0) / 2);
+        for (Entity unit : List.copyOf(getGame().getEntitiesVector(coords, surface.getBoardId(), true))) {
+            if (unit instanceof IBuilding || !BuildingElevation.contains(foundation, coords, unit.getElevation())
+                  || unit.isAirborne() || unit.isAirborneVTOLorWIGE()) {
+                continue;
+            }
+            int remaining = toUnit;
+            if (unit instanceof Infantry infantry) {
+                remaining *= infantry instanceof BattleArmor || infantry.isMechanized() ? 2 : 3;
+            }
+            while (remaining > 0) {
+                int cluster = Math.min(5, remaining);
+                HitData hit = unit.rollHitLocation(unit instanceof ProtoMek ? ToHitData.HIT_SPECIAL_PROTO
+                      : ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
+                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
+                reports.addAll(gameManager.damageEntity(unit, hit, cluster));
+                remaining -= cluster;
+            }
+            gameManager.entityUpdate(unit.getId());
+        }
+        subsurfaceCascades.add(foundation);
+        try {
+            resolveExpandedCollapse(foundation, coords, reports);
+        } finally {
+            subsurfaceCascades.remove(foundation);
+        }
+        gameManager.sendChangedBuildings(new Vector<>(List.of(foundation)));
+    }
+    /** Translate the standard terrain-relative fall routine to the selected volume's physical landing floor. */
+    static int fallReduction(Hex terrain, int sourceElevation, int landingElevation) {
+        int terrainFloor = terrain.containsTerrain(Terrains.ICE) ? 0 : -terrain.depth(false);
+        int terrainFall = Math.abs(sourceElevation - terrainFloor)
+              - (terrain.containsTerrain(Terrains.BLDG_ELEV) ? terrain.terrainLevel(Terrains.BLDG_ELEV) : 0);
+        return terrainFall - Math.max(0, sourceElevation - landingElevation);
+    }
+    private void collapseShortenedBuilding(IBuilding building, Vector<Report> reports) {
+        // Mobile Structures use the split-footprint destruction rule (TO:AUE p.40).
+        if (building instanceof MobileStructure) {
+            return;
+        }
+        // TO:AR p.120: a majority of columns at half their original height collapses the entire structure.
+        // Use the explicit "more than half" rule; the six-hex example is inconsistent at the exact-half boundary.
+        long shortened = building.getInternalBuilding().getOriginalCoordsList().stream()
+              .map(building.getInternalBuilding()::getFloorState)
+              .filter(state -> state != null && state.height() * 2 <= state.size()).count();
+        if (shortened * 2 > building.getOriginalHexCount()) {
+            collapseRemainingBuilding(building, reports);
+        }
+    }
+
+    private void collapseRemainingBuilding(IBuilding building, Vector<Report> reports) {
+        for (Coords remaining : List.copyOf(building.getCoordsList())) {
+            collapseBuilding(building, getGame().getPositionMapMulti(), remaining, false, reports);
+        }
+        if (building instanceof AbstractBuildingEntity entity && !entity.isDestroyed()) {
+            reports.addAll(gameManager.destroyEntity(entity, "building collapse"));
+        }
+    }
+
+    /** A bridge remnant survives only while connected to either original bank (TO:AR p.115). */
+    private void collapseDisconnectedBridgeSpans(IBuilding bridge, Vector<Report> reports) {
+        if (!resolvingBridgeSpans.add(bridge)) {
+            return;
+        }
+        try {
+            var span = BuildingConstruction.bridgeSpan(bridge.getInternalBuilding().getOriginalCoordsList());
+            if (span == null) {
+                return;
+            }
+            Set<Coords> anchored = new HashSet<>();
+            List<Coords> pending = new ArrayList<>();
+            for (var endpoint : List.of(span.start(), span.end())) {
+                Coords hex = bridge.relativeToBoard(endpoint);
+                if (bridge.isIn(hex)) {
+                    pending.add(hex);
+                    anchored.add(hex);
+                }
+            }
+            for (int index = 0; index < pending.size(); index++) {
+                for (Coords adjacent : pending.get(index).allAdjacent()) {
+                    if (bridge.isIn(adjacent) && anchored.add(adjacent)) {
+                        pending.add(adjacent);
+                    }
+                }
+            }
+            for (Coords hex : List.copyOf(bridge.getCoordsList())) {
+                if (!anchored.contains(hex)) {
+                    collapseBuilding(bridge, getGame().getPositionMapMulti(), hex, false, reports);
+                }
+            }
+        } finally {
+            resolvingBridgeSpans.remove(bridge);
         }
     }
 
@@ -585,5 +894,11 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
      */
     Packet createCollapseBuildingPacket(Coords coords, int boardId) {
         return new Packet(PacketCommand.BLDG_COLLAPSE, new Vector<>(List.of(coords)), boardId);
+    }
+
+    Packet createCollapseBuildingPacket(Coords coords, IBuilding building) {
+        return building instanceof Entity entity
+              ? new Packet(PacketCommand.BLDG_COLLAPSE, new Vector<>(List.of(coords)), building.getBoardId(), entity.getId())
+              : createCollapseBuildingPacket(coords, building.getBoardId());
     }
 }

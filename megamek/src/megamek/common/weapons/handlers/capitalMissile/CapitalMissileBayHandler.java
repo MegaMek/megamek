@@ -106,7 +106,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             attackingEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
-        IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding bldg = megamek.common.units.WallRules.getBuilding(game, target);
         String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
         for (int i = numAttacks; i > 0; i--) {
             // Report weapon attack and its to-hit value.
@@ -577,7 +577,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             attackingEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
-        IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding bldg = megamek.common.units.WallRules.getBuilding(game, target);
         // Report weapon attack and its to-hit value.
         Report report = new Report(3115);
         report.indent();

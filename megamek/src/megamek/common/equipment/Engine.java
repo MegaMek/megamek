@@ -563,7 +563,8 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
-     * @return The rating of the engine
+     * @return The fixed engine rating for non-support units. Support-vehicle ratings depend on the owning unit;
+     *         use {@link #getRating(Entity)} for those engines.
      */
     public int getRating() {
         return engineRating;

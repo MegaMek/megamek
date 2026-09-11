@@ -142,6 +142,26 @@ public class PlanetaryConditions implements Serializable {
         runOnce = other.runOnce;
     }
 
+    /** TO:AUE p.33: Mobile Structures experience weather two levels lower, with full lighting and terrain conditions. */
+    public PlanetaryConditions forEntity(Entity entity) {
+        if (!(entity instanceof megamek.common.units.MobileStructure)) {
+            return this;
+        }
+        PlanetaryConditions effective = new PlanetaryConditions(this);
+        effective.weather = switch (weather) {
+            case HEAVY_RAIN -> Weather.LIGHT_RAIN;
+            case GUSTING_RAIN -> Weather.MOD_RAIN;
+            case DOWNPOUR -> Weather.HEAVY_RAIN;
+            case SNOW_FLURRIES -> Weather.LIGHT_SNOW;
+            case HEAVY_SNOW -> Weather.MOD_SNOW;
+            default -> Weather.CLEAR;
+        };
+        effective.wind = Wind.values()[Math.max(0, wind.ordinal() - 2)];
+        effective.fog = Fog.FOG_NONE;
+        effective.blowingSand = BlowingSand.BLOWING_SAND_NONE;
+        return effective;
+    }
+
     /** clone! */
     @Override
     public Object clone() {
@@ -628,13 +648,14 @@ public class PlanetaryConditions implements Serializable {
      * @return a string given the reason for being doomed, null if not doomed
      */
     public String whyDoomed(Entity en, Game game) {
-        if (getAtmosphere().isLighterThan(Atmosphere.THIN) && en.doomedInVacuum()) {
+        boolean sheltered = megamek.common.units.BuildingRuntimeState.protectsFromEnvironment(game, en);
+        if (!sheltered && getAtmosphere().isLighterThan(Atmosphere.THIN) && en.doomedInVacuum()) {
             // "Vacuum" alone does not tell the player what to change, and three quite different things cause it.
             String vacuumReason = EnvironmentalSealingRules.whyCannotOperateInVacuum(en);
             return (vacuumReason != null) ? vacuumReason : MSG_DOOMED_VACUUM;
         }
         String taintReason = whyDoomedByAtmosphericTaint(en);
-        if (taintReason != null) {
+        if (!sheltered && taintReason != null) {
             return taintReason;
         }
         if (getWind().isTornadoF4() && !(en instanceof Mek)) {

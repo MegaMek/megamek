@@ -403,6 +403,8 @@ public class OptionsConstants {
     public static final String ADVANCED_ASSAULT_DROP = "assault_drop";
     public static final String ADVANCED_PARATROOPERS = "paratroopers";
     public static final String ADVANCED_BRIDGE_BUILDING_ENGINEERS = "bridge_building_engineers";
+    public static final String ADVANCED_BUILDING_EXPANDED_CF = "building_expanded_cf";
+    public static final String ADVANCED_BUILDING_EXPANDED_COLLAPSE = "building_expanded_collapse";
     public static final String UNOFFICIAL_BRIDGE_REPAIR_ENGINEERS = "unofficial_bridge_repair_engineers";
     public static final String ADVANCED_INCLUSIVE_SENSOR_RANGE = "inclusive_sensor_range";
     public static final String ADVANCED_SENSORS_DETECT_ALL = "sensors_detect_all";

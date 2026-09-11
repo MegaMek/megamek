@@ -1714,8 +1714,6 @@ public class MtfFile implements IMekLoader {
             return true;
         }
 
-
-
         if (lineLower.startsWith(RULES_LEVEL)) {
             rulesLevel = line;
             return true;

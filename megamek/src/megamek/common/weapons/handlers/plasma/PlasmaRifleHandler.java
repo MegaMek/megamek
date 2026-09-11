@@ -131,7 +131,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
 
     @Override
     protected int calcDamagePerHit() {
-        if (target.tracksHeat()) {
+        if (target.tracksHeat() && !isTargetShieldedByCapitalBuilding()) {
             int toReturn = weapon.getType().getDamage();
             toReturn = applyGlancingBlowModifier(toReturn, false);
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE) &&
@@ -149,14 +149,14 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
 
     @Override
     protected int calculateNumCluster() {
-        if (target.tracksHeat()) {
+        if (target.tracksHeat() && !isTargetShieldedByCapitalBuilding()) {
             bSalvo = false;
             return 1;
         }
 
         int toReturn = 5;
 
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             if (weapon.getType() instanceof ISLightPlasmaRifle) {
                 toReturn = Compute.d6();
             } else if (weapon.getType() instanceof ISHeavyPlasmaRifle) {
@@ -174,13 +174,14 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         int toReturn;
         // against meks, 1 hit with 10 damage, plus heat
-        if (target.tracksHeat()) {
+        if (target.tracksHeat() && !isTargetShieldedByCapitalBuilding()) {
             toReturn = 1;
             // otherwise, 10+2d6 damage but fire-resistant BA armor gets no damage from heat, and half the normal
             // one, so only 5 damage
         } else {
             WeaponType plasmaWeapon = weapon.getType();
-            if ((target instanceof BattleArmor) && ((BattleArmor) target).isFireResistant()) {
+            if ((target instanceof BattleArmor) && ((BattleArmor) target).isFireResistant()
+                  && !isTargetShieldedByCapitalBuilding()) {
                 toReturn = plasmaWeapon.getDamage() / 2;
             } else {
                 int damage = plasmaWeapon.getDamage();

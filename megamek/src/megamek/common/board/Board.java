@@ -1498,6 +1498,20 @@ public class Board implements Serializable {
         return bldgByCoords.get(coords);
     }
 
+    /** All authored volumes at a coordinate, including structures inside an open-space enclosure. */
+    public List<IBuilding> getBuildingsAt(Coords coords) {
+        return buildings.stream().filter(building -> building.isIn(coords)).toList();
+    }
+
+    /** Innermost volume at a physical elevation. Roofs and hexside walls are not interiors. */
+    public @Nullable IBuilding getBuildingAt(Coords coords, int elevation) {
+        return getBuildingsAt(coords).stream()
+              .filter(building -> megamek.common.units.BuildingElevation.contains(building, coords, elevation))
+              .min(java.util.Comparator.comparingInt(building -> building instanceof AbstractBuildingEntity authored
+                    && authored.getDesign().isOpenSpace() ? Integer.MAX_VALUE : building.getCoordsList().size()))
+              .orElse(null);
+    }
+
     /**
      * Get the local object for the given building. Call this routine any time the input <code>Building</code> is
      * suspect.
@@ -1532,10 +1546,14 @@ public class Board implements Serializable {
      * @param coords the <code>Building</code> that has collapsed.
      */
     public void collapseBuilding(Coords coords) {
+        collapseBuilding(bldgByCoords.get(coords), coords);
+    }
+
+    /** Collapse the identified structure, preserving any other structure above, below or inside it. */
+    public void collapseBuilding(IBuilding bldg, Coords coords) {
         final Hex curHex = getHex(coords);
 
         // Remove the building from the building map.
-        IBuilding bldg = bldgByCoords.get(coords);
         if (bldg == null) {
             // Reaching this guard is expected when callers hand us coords that do not currently map to a building,
             // such as a non-building hex, a duplicate collapse request for the same hex, or a coord that was already
@@ -1545,8 +1563,23 @@ public class Board implements Serializable {
             logger.debug("No building found at {}", coords);
             return;
         }
+        int collapsedBase = megamek.common.units.BuildingElevation.base(bldg, coords);
         bldg.removeHex(coords);
         bldgByCoords.remove(coords);
+        refreshBuildingAt(coords);
+        if (bldgByCoords.containsKey(coords)) {
+            if (bldg.getBldgClass() == IBuilding.BRIDGE) {
+                curHex.removeTerrain(Terrains.BRIDGE);
+                curHex.removeTerrain(Terrains.BRIDGE_CF);
+                curHex.removeTerrain(Terrains.BRIDGE_ELEV);
+            }
+            restoreBuildingTerrain(coords);
+            if (collapsedBase == 0) {
+                curHex.addTerrain(new Terrain(Terrains.RUBBLE, bldg.getBuildingType().getTypeValue()));
+            }
+            setHex(coords, curHex);
+            return;
+        }
 
         // determine type of rubble
         // Terrain type can be a max of 4 for hardened building
@@ -1602,10 +1635,8 @@ public class Board implements Serializable {
         buildings.removeElement(bldg);
 
         // Walk through the building's hexes.
-        Enumeration<Coords> bldgCoords = bldg.getCoords();
-        while (bldgCoords.hasMoreElements()) {
-            final Coords coords = bldgCoords.nextElement();
-            collapseBuilding(coords);
+        for (Coords coords : List.copyOf(bldg.getCoordsList())) {
+            collapseBuilding(bldg, coords);
         }
     }
 
@@ -1616,11 +1647,15 @@ public class Board implements Serializable {
      * @param bldg The building to remove
      */
     public void removeBuilding(IBuilding bldg) {
+        IBuilding localBuilding = getLocalBuilding(bldg);
+        if (localBuilding == null) {
+            return;
+        }
         // Remove the building from our building vector.
-        buildings.removeElement(bldg);
+        buildings.removeElement(localBuilding);
 
         // Walk through the building's hexes and remove building terrain
-        for (Coords coords : bldg.getCoordsList()) {
+        for (Coords coords : localBuilding.getCoordsList()) {
             final Hex curHex = getHex(coords);
             if (curHex == null) {
                 continue;
@@ -1636,6 +1671,13 @@ public class Board implements Serializable {
             curHex.removeTerrain(Terrains.BLDG_CLASS);
             curHex.removeTerrain(Terrains.BLDG_ARMOR);
             curHex.removeTerrain(Terrains.BLDG_BASEMENT_TYPE);
+            if (localBuilding.getBldgClass() == IBuilding.BRIDGE) {
+                curHex.removeTerrain(Terrains.BRIDGE);
+                curHex.removeTerrain(Terrains.BRIDGE_CF);
+                curHex.removeTerrain(Terrains.BRIDGE_ELEV);
+            }
+            refreshBuildingAt(coords);
+            restoreBuildingTerrain(coords);
         }
     }
 
@@ -1651,10 +1693,20 @@ public class Board implements Serializable {
             logger.error("Could not find a match for {} to update.", receivedBuilding);
             return;
         }
+        if (localBuilding.getInternalBuilding() == receivedBuilding.getInternalBuilding()) {
+            return;
+        }
+        if (localBuilding instanceof AbstractBuildingEntity local
+              && receivedBuilding instanceof AbstractBuildingEntity received) {
+            local.copyWallSegmentState(received);
+        }
         for (Coords coords : localBuilding.getCoordsList()) {
             localBuilding.setCurrentCF(receivedBuilding.getCurrentCF(coords), coords);
             localBuilding.setPhaseCF(receivedBuilding.getPhaseCF(coords), coords);
             localBuilding.setArmor(receivedBuilding.getArmor(coords), coords);
+            localBuilding.setHeight(receivedBuilding.getHeight(coords), coords);
+            localBuilding.getInternalBuilding().copyFloorState(localBuilding.boardToRelative(coords),
+                  receivedBuilding.getFloorState(coords));
             localBuilding.setBasement(coords,
                   BasementType.getType(getHex(coords).terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
             localBuilding.setBasementCollapsed(coords, receivedBuilding.getBasementCollapsed(coords));
@@ -1691,6 +1743,8 @@ public class Board implements Serializable {
     private void createBldgByCoords() {
         // Make a new hashtable.
         bldgByCoords = new Hashtable<>();
+        buildings.stream().filter(BuildingTerrain.class::isInstance).map(BuildingTerrain.class::cast)
+              .forEach(building -> building.reconcileTerrainData(this));
 
         // Walk through the vector of buildings.
         Enumeration<IBuilding> loop = buildings.elements();
@@ -1700,7 +1754,7 @@ public class Board implements Serializable {
             // Each building identifies the hexes it covers.
             Enumeration<Coords> iter = bldg.getCoords();
             while (iter.hasMoreElements()) {
-                bldgByCoords.put(iter.nextElement(), bldg);
+                refreshBuildingAt(iter.nextElement());
             }
         }
     }
@@ -2313,12 +2367,68 @@ public class Board implements Serializable {
      * @param bldg {@link IBuilding} to add to the board
      */
     public void addBuildingToBoard(IBuilding bldg) {
-        buildings.addElement(bldg);
+        if (bldg instanceof BuildingTerrain terrain) { terrain.reconcileTerrainData(this); }
+        int existing = buildings.indexOf(bldg);
+        if (existing < 0) {
+            buildings.addElement(bldg);
+        } else {
+            buildings.set(existing, bldg);
+            // Entity updates replace the object. Keep the vector and coordinate index on the same snapshot.
+            bldgByCoords.entrySet().removeIf(entry -> entry.getValue().equals(bldg));
+        }
 
         // Each building will identify the hexes it covers.
         Enumeration<Coords> iter = bldg.getCoords();
         while (iter.hasMoreElements()) {
-            bldgByCoords.put(iter.nextElement(), bldg);
+            refreshBuildingAt(iter.nextElement());
+        }
+    }
+
+    private void refreshBuildingAt(Coords coords) {
+        IBuilding selected = getBuildingsAt(coords).stream()
+              .filter(building -> building.getBldgClass() != IBuilding.WALL && building.getBldgClass() != IBuilding.FENCE)
+              .max(java.util.Comparator.comparingInt(building -> megamek.common.units.BuildingElevation.roof(building, coords)))
+              .orElse(null);
+        if (selected == null) {
+            bldgByCoords.remove(coords);
+        } else {
+            bldgByCoords.put(coords, selected);
+        }
+    }
+
+    private void restoreBuildingTerrain(Coords coords) {
+        Hex hex = getHex(coords);
+        if (hex == null) {
+            return;
+        }
+        var bridge = getBuildingsAt(coords).stream().filter(building -> building.getBldgClass() == IBuilding.BRIDGE)
+              .max(java.util.Comparator.comparingInt(building -> megamek.common.units.BuildingElevation.base(building, coords)))
+              .orElse(null);
+        if (bridge != null) {
+            int exits = 0;
+            for (int side = 0; side < 6; side++) {
+                if (bridge.isIn(coords.translated(side))) { exits |= 1 << side; }
+            }
+            hex.addTerrain(new Terrain(Terrains.BRIDGE, bridge.getBuildingType().getTypeValue(), true, exits));
+            hex.addTerrain(new Terrain(Terrains.BRIDGE_CF, bridge.getCurrentCF(coords)));
+            hex.addTerrain(new Terrain(Terrains.BRIDGE_ELEV, megamek.common.units.BuildingElevation.base(bridge, coords)));
+        }
+        IBuilding remaining = getBuildingsAt(coords).stream().filter(building -> building.getBldgClass() != IBuilding.BRIDGE
+                    && building.getBldgClass() != IBuilding.WALL && building.getBldgClass() != IBuilding.FENCE)
+              .max(java.util.Comparator.comparingInt(building -> megamek.common.units.BuildingElevation.roof(building, coords)))
+              .orElse(null);
+        if (remaining != null && megamek.common.units.BuildingElevation.roof(remaining, coords) > 0) {
+            hex.addTerrain(new Terrain(Terrains.BUILDING, remaining.getBuildingType().getTypeValue()));
+            hex.addTerrain(new Terrain(Terrains.BLDG_CF, remaining.getCurrentCF(coords)));
+            hex.addTerrain(new Terrain(Terrains.BLDG_ELEV, megamek.common.units.BuildingElevation.roof(remaining, coords)));
+            hex.addTerrain(new Terrain(Terrains.BLDG_CLASS, remaining.getBldgClass()));
+            hex.addTerrain(new Terrain(Terrains.BLDG_ARMOR, remaining.getArmor(coords)));
+        } else {
+            hex.removeTerrain(Terrains.BUILDING);
+            hex.removeTerrain(Terrains.BLDG_ELEV);
+            hex.removeTerrain(Terrains.BLDG_CF);
+            hex.removeTerrain(Terrains.BLDG_CLASS);
+            hex.removeTerrain(Terrains.BLDG_ARMOR);
         }
     }
 }

@@ -1707,7 +1707,7 @@ public class FireControl {
             // building, or infantry/BA that won't be killed off in one shot.
         }
         if ((damageFraction < 0.5)
-              || (target.getTargetType() == Targetable.TYPE_BUILDING)
+              || (Targetable.isBuildingType(target.getTargetType()))
               || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
         ) {
             return 0;

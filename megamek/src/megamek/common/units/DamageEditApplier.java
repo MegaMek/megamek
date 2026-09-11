@@ -330,35 +330,6 @@ public class DamageEditApplier {
             if ((null != spec.kfBoomHits) && (aero instanceof Dropship)) {
                 ((Dropship) aero).setDamageKFBoom(spec.kfBoomHits > 0);
             }
-            // cargo bays and bay doors
-            if (((aero instanceof Dropship) || (aero instanceof Jumpship)) && (null != spec.bayCapacityRemaining)) {
-                int b = 0;
-                for (Bay bay : aero.getTransportBays()) {
-                    Double bayCapacity = spec.bayCapacityRemaining[b];
-                    if (null == bayCapacity) {
-                        continue;
-                    }
-                    bay.setBayDamage(bay.getCapacity() - bayCapacity);
-                    Integer doorHits = spec.bayDoorHits[b];
-                    if (null == doorHits) {
-                        continue;
-                    }
-                    if ((bay.getCurrentDoors() > 0) && (doorHits > 0)) {
-                        bay.setCurrentDoors(bay.getDoors() - doorHits);
-
-                    } else if (doorHits == 0) {
-                        bay.setCurrentDoors(bay.getDoors());
-                    }
-                    // for ASF and SC bays, we have to update recovery slots as doors are changed
-                    if (bay instanceof ASFBay asfBay) {
-                        asfBay.initializeRecoverySlots();
-                    }
-                    if (bay instanceof SmallCraftBay smallCraftBay) {
-                        smallCraftBay.initializeRecoverySlots();
-                    }
-                    b++;
-                }
-            }
             // Jumpship Docking Collars, KF Drive, Sail and Grav Decks
             if (aero instanceof Jumpship jumpship) {
                 double damagedCollars = 0.0;
@@ -421,6 +392,7 @@ public class DamageEditApplier {
             }
         }
 
+        applyBayDamage();
         applyCrewHits();
         applySkillModifiers();
         applyHeat();
@@ -609,6 +581,44 @@ public class DamageEditApplier {
               summary);
     }
 
+    /** Bay damage edits address each bay independently, including buildings outside a running game. */
+    private void applyBayDamage() {
+        if (!(entity instanceof Dropship || entity instanceof Jumpship || entity instanceof AbstractBuildingEntity)) {
+            return;
+        }
+        var bays = entity.getTransportBays();
+        for (int index = 0; index < bays.size(); index++) {
+            Bay bay = bays.get(index);
+            if (spec.bayCapacityRemaining != null && index < spec.bayCapacityRemaining.length
+                  && spec.bayCapacityRemaining[index] != null) {
+                bay.setBayDamage(bay.getCapacity() - spec.bayCapacityRemaining[index]);
+            }
+            if (spec.bayDoorHits == null || index >= spec.bayDoorHits.length || spec.bayDoorHits[index] == null) {
+                continue;
+            }
+            int remaining = bay.getDoors() - Math.clamp(spec.bayDoorHits[index], 0, bay.getDoors());
+            if (entity instanceof AbstractBuildingEntity building) {
+                while (bay.getCurrentDoors() > remaining && BuildingBayDoors.damage(building, bay, null)) {
+                    // A count edit chooses intact physical doors just like an untargeted door critical.
+                }
+                if (remaining == bay.getDoors()) {
+                    BuildingBayDoors.restoreAll(building, bay);
+                } else {
+                    BuildingBayDoors.restore(building, bay, remaining - bay.getCurrentDoors());
+                }
+            } else {
+                bay.setCurrentDoors(remaining);
+                bay.setDoorsNext(remaining);
+                // Ordinary aerospace carriers retain their existing scenario-editor slot reset.
+                if (bay instanceof ASFBay asfBay) {
+                    asfBay.initializeRecoverySlots();
+                } else if (bay instanceof SmallCraftBay smallCraftBay) {
+                    smallCraftBay.initializeRecoverySlots();
+                }
+            }
+        }
+    }
+
     /**
      * Writes the crew hits back to the unit. A crew member who is brought back below six hits is revived, which
      * {@link Crew#setHits} does not do on its own: it kills at six hits but never undoes it, and a dead crew
@@ -678,6 +688,9 @@ public class DamageEditApplier {
         }
         if (null != spec.stealth) {
             setStealth(spec.stealth);
+        }
+        if (spec.survivalGearStored != null && entity instanceof ConvInfantry infantry) {
+            infantry.setSurvivalGearStored(spec.survivalGearStored);
         }
         if ((null != spec.dugIn) && (entity instanceof Infantry infantry)) {
             infantry.setDugIn(spec.dugIn ? Infantry.DUG_IN_COMPLETE : Infantry.DUG_IN_NONE);

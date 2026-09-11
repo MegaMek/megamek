@@ -30,6 +30,7 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
+
 package megamek.client.ui.clientGUI.boardview.sprite;
 
 import java.awt.*;
@@ -521,9 +522,8 @@ public class EntitySprite extends Sprite {
             graph.draw(bv.getFacingPolys()[entity.getFacing()]);
         }
 
-        // A building entity lists its own hex as secondary position 0, so that sprite carries its status labels
-        boolean isBuildingOriginSprite = (entity instanceof AbstractBuildingEntity) && (secondaryPos == 0);
-        if ((secondaryPos == -1) || (secondaryPos == 6) || isBuildingOriginSprite) {
+        // Buildings number their footprint from the origin at index 0, regardless of its size.
+        if ((secondaryPos == -1) || (entity instanceof AbstractBuildingEntity ? secondaryPos == 0 : secondaryPos == 6)) {
             // Gather unit conditions
             ArrayList<Status> stStr = new ArrayList<>();
             criticalStatus = false;

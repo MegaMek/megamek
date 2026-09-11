@@ -33,6 +33,7 @@
 package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -182,6 +183,42 @@ class BuildingWeaponUnjamTest extends GameBoardTestCase {
         laser.resetJam();
 
         assertFalse(building.canUnjamWeapon());
+    }
+
+    @Test
+    void malfunctionRepairSilencesItsHexAndOnlyOneWeaponCanBeRepaired() throws Exception {
+        var second = (WeaponMounted) building.addEquipment(new ISLaserMedium(), 0);
+        jam(second);
+        game.addAction(new RepairWeaponMalfunctionAction(building.getId(), building.getEquipmentNum(laser)));
+        assertTrue(building.isWeaponBlockedByRepair(second), "restriction applies while attacks are declared");
+        game.addAction(new RepairWeaponMalfunctionAction(building.getId(), building.getEquipmentNum(second)));
+        gameManager.resolveAllButWeaponAttacks();
+        assertFalse(laser.jammedThisPhase());
+        assertTrue(second.jammedThisPhase(), "one malfunction per hex per weapon attack phase");
+        assertTrue(building.isWeaponBlockedByRepair(second));
+        building.newRound(2);
+        game.clearActions();
+        assertFalse(building.isWeaponBlockedByRepair(second));
+    }
+
+    @Test
+    void turretRepairAllowsFixedWeaponsToFireAndClearsRotationNextTurn() throws Exception {
+        laser.resetJam();
+        laser.setMekTurretMounted(true);
+        laser.setFacing(2);
+        building.jamTurretWeapon(laser);
+        var fixed = (WeaponMounted) building.addEquipment(new ISLaserMedium(), 0);
+        assertEquals(51, building.getWeaponArc(building.getEquipmentNum(laser)));
+        assertTrue(building.canUnjamWeapon());
+        orderRepair();
+        assertTrue(building.isWeaponBlockedByRepair(laser));
+        assertFalse(building.isWeaponBlockedByRepair(fixed));
+        building.newRound(2);
+        game.clearActions();
+        assertFalse(building.isTurretJammed(laser));
+        assertEquals(0, building.getWeaponArc(building.getEquipmentNum(laser)));
+        building.jamTurretWeapon(laser);
+        assertTrue(building.isTurretLocked(laser), "a second jam is permanent even after the first was repaired");
     }
 
     @Test

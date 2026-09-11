@@ -83,7 +83,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
 
         double toReturn = weaponType.getDamage();
         // we default to direct fire weapons for anti-infantry damage
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                   bDirect ? toHit.getMoS() : 0,
                   weaponType.getInfantryDamageClass(),
@@ -100,12 +100,13 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
                   toHit.getCover());
             hit.setAttackerId(getAttackerId());
             if (!(te instanceof Infantry)
+                  && !isTargetShieldedByCapitalBuilding()
                   && (!te.hasBARArmor(hit.getLocation()) || (te.getBARRating(hit.getLocation()) >= 8))) {
                 toReturn = Math.max(0, toReturn - 3);
             }
         }
 
-        toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
+        toReturn = applyGlancingBlowModifier(toReturn, usesConventionalInfantryDamage());
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
               && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {

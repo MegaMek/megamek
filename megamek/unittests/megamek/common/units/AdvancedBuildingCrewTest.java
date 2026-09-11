@@ -41,14 +41,19 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import megamek.common.board.CubeCoords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.BuildingEquipmentType;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.BLKFile;
+import megamek.common.loaders.BLKStructureFile;
 import megamek.common.weapons.autoCannons.innerSphere.ISAC2;
 import megamek.common.weapons.capitalWeapons.naval.NL35Weapon;
 import megamek.common.weapons.gaussRifles.innerSphere.ISGaussRifle;
@@ -58,6 +63,8 @@ import megamek.common.weapons.mgs.innerSphere.ISMG;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * The Advanced Building Minimum Crew Table (TO:AR p. 130) and the {@code crew} block of a building unit file.
@@ -233,6 +240,66 @@ class AdvancedBuildingCrewTest {
         BuildingEntity building = emplacement();
         building.setCrewCount(9);
         assertEquals(9 + building.getBayPersonnel(), Compute.getFullCrewSize(building));
+    }
+
+    @Test
+    void civilianOfficersAreOptionalAndAutomaticWeaponsNeedNoGunners() throws Exception {
+        BuildingEntity building = new BuildingEntity(BuildingType.MEDIUM, IBuilding.STANDARD);
+        building.getInternalBuilding().addHex(CubeCoords.ZERO, 40, 0, BasementType.UNKNOWN, false);
+        building.refreshLocations();
+        mount(building, new ISMG());
+        assertEquals(1, building.calculateMinimumCrew());
+        building.getDesign().setCivilianOfficers(true);
+        assertEquals(2, building.calculateMinimumCrew());
+        building.getDesign().getAutomatedWeapons().add(building.getWeaponList().getFirst());
+        assertEquals(0, building.calculateMinimumCrew());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+          "Communications Equipment, 1, 1", "Communications Equipment, 7, 7",
+          "FieldKitchen, 1, 3", "MASH Equipment, 1, 5", "MASH Equipment, 3, 15",
+          "ISMobileFieldBase, 1, 5", "Building Flight Deck, 1, 20", "Building Helipad, 1, 5",
+          "Building Landing Deck, 7, 21", "Modular Structure Linkage, 1, 4"
+    })
+    void eachNonGunnerTableRowUsesItsSpecifiedUnit(String equipment, double size, int operators) throws Exception {
+        BuildingEntity building = emplacement();
+        mount(building, (MiscType) EquipmentType.get(equipment), size);
+        assertEquals(operators, building.calculateMinimumCrewRequirements().crew());
+        assertEquals(operators + (int) Math.ceil(operators / 10.0), building.calculateMinimumCrew());
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "0, 0", "1, 1", "9, 1", "10, 1", "11, 2", "20, 2", "21, 3" })
+    void officerRoundingBoundaries(int operators, int officers) throws Exception {
+        BuildingEntity building = emplacement();
+        if (operators > 0) {
+            mount(building, (MiscType) EquipmentType.get("Communications Equipment"), operators);
+        }
+        assertEquals(officers, building.calculateMinimumCrewRequirements().officers());
+    }
+
+    @Test
+    void equipmentWithoutGunneryAndQuartersDoNotAddOperatingCrew() throws Exception {
+        BuildingEntity building = emplacement();
+        building.addEquipment(EquipmentType.get("ISAMS"), 0);
+        building.addEquipment(EquipmentType.get("ISBPod"), 0);
+        building.addEquipment(EquipmentType.get(BuildingEquipmentType.Facility.UNSPECIFIED.internalName()), 0)
+              .setSize(50);
+        building.addTransporter(new megamek.common.bays.FirstClassQuartersCargoBay(20, 0));
+        assertEquals(0, building.calculateMinimumCrew());
+    }
+
+    @Test
+    void fileRoundTripPreservesExplicitCrewAndRecalculatesAutomaticCrew() throws Exception {
+        BuildingEntity original = (BuildingEntity) load(LIGHT_LASER_EMPLACEMENT_WITH_CREW.formatted("9"));
+        var explicit = (BuildingEntity) new BLKStructureFile(BLKFile.getBlock(original)).getEntity();
+        assertEquals(9, explicit.getNCrew());
+        assertEquals(9, explicit.getCrew().getCurrentSize());
+        original.setCrewCount(AbstractBuildingEntity.CREW_FROM_MINIMUM_CREW_TABLE);
+        var automatic = (BuildingEntity) new BLKStructureFile(BLKFile.getBlock(original)).getEntity();
+        assertFalse(automatic.hasExplicitCrewCount());
+        assertEquals(automatic.calculateMinimumCrew(), automatic.getNCrew());
     }
 
     @Test

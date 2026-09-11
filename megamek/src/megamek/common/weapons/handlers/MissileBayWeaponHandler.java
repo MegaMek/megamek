@@ -289,7 +289,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
               && target != null
               && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR
               && target.getTargetType() != Targetable.TYPE_HEX_IGNITE
-              && target.getTargetType() != Targetable.TYPE_BUILDING))
+              && !Targetable.isBuildingType(target.getTargetType())))
               || game.getBoard().isSpace()) {
             return super.handle(phase, vPhaseReport);
         }
@@ -310,7 +310,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         }
 
         // Which building takes the damage?
-        IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding bldg = megamek.common.units.WallRules.getBuilding(game, target);
         String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
 
         // Report weapon attack and its to-hit value.
@@ -442,7 +442,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
             return false;
         }
         // Targeting a building.
-        if (target.getTargetType() == Targetable.TYPE_BUILDING) {
+        if (Targetable.isBuildingType(target.getTargetType())) {
             // The building takes the full brunt of the attack
             handleBuildingDamage(vPhaseReport, bldg, nDamPerHit,
                   target.getPosition());

@@ -52,11 +52,18 @@ import megamek.common.enums.BuildingType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
+import megamek.common.options.OptionsConstants;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingEntity;
+import megamek.common.units.BipedMek;
+import megamek.common.units.IBuilding;
+import megamek.common.units.MobileStructure;
 import megamek.common.weapons.lasers.innerSphere.medium.ISLaserMedium;
+import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -81,14 +88,11 @@ class BuildingEntityDamageTest extends GameBoardTestCase {
     private static final int REPORT_AMMO_NO_EFFECT = 3831;
     private static final int REPORT_EQUIPMENT_NO_EFFECT = 3835;
 
-    static {
-        initializeBoard("BUILDING_ENTITY_DAMAGE_BOARD", """
+    private static final String BOARD_DATA = """
               size 16 17
               hex 0505 0 "" ""
               hex 0506 0 "" ""
-              end"""
-        );
-    }
+              end""";
 
     private TWGameManager gameManager;
     private Game game;
@@ -111,7 +115,7 @@ class BuildingEntityDamageTest extends GameBoardTestCase {
         game = gameManager.getGame();
         game.addPlayer(0, player);
 
-        Board board = getBoard("BUILDING_ENTITY_DAMAGE_BOARD");
+        Board board = BoardLoader.initializeBoard(BOARD_DATA);
         game.setBoard(board);
 
         building = new BuildingEntity(BuildingType.MEDIUM, 1);
@@ -247,7 +251,7 @@ class BuildingEntityDamageTest extends GameBoardTestCase {
 
         assertTrue(building.hasDeadGunners(laser.getLocation()));
         assertTrue(building.allGunnersDead(), "a single-hex building has lost all of its gunners");
-        assertTrue(building.getCrew().isDoomed());
+        assertFalse(building.getCrew().isDoomed(), "gunner casualties do not kill equipment operators or occupants");
     }
 
     @Test
@@ -266,7 +270,8 @@ class BuildingEntityDamageTest extends GameBoardTestCase {
 
         new BuildingEntityCriticalHandler(gameManager).applyCriticalResult(building, BUILDING_HEX, 10, 3);
 
-        assertTrue(laser.jammedThisPhase());
+        assertTrue(building.isTurretJammed(laser));
+        assertFalse(laser.jammedThisPhase(), "a frozen turret can still fire in its current facing until repair");
         assertFalse(building.isTurretLocked(laser));
     }
 
@@ -321,5 +326,229 @@ class BuildingEntityDamageTest extends GameBoardTestCase {
     void buildingEntityIsNeverInsideABuilding() {
         assertFalse(building.isInBuilding(),
               "a building entity treated as an occupant of its own hex absorbs its own damage twice");
+    }
+
+    @Test
+    void castleBrianUsesTheSharedDamagePathAndKeepsAttackerRounding() {
+        building.configureConstruction(BuildingType.HEAVY, IBuilding.CASTLE_BRIAN, 1, 40, 0,
+              java.util.List.of(CubeCoords.ZERO));
+        BipedMek attacker = new BipedMek();
+        attacker.setId(1);
+        attacker.setOwner(game.getPlayer(0));
+        game.addEntity(attacker);
+        attacker.setPosition(new Coords(2, 2));
+        HitData hit = new HitData(0);
+        hit.setAttackerId(attacker.getId());
+
+        gameManager.damageEntity(building, hit, 5);
+        assertEquals(40, building.getCurrentCF(BUILDING_HEX));
+        gameManager.damageEntity(building, hit, 5);
+        assertEquals(39, building.getCurrentCF(BUILDING_HEX));
+    }
+
+    @Test
+    void castleBrianCriticalThresholdUsesCapitalCF() {
+        building.configureConstruction(BuildingType.HEAVY, IBuilding.CASTLE_BRIAN, 1, 40, 0,
+              java.util.List.of(CubeCoords.ZERO));
+        assertFalse(containsReport(hitBuilding(50), REPORT_CRITICAL_CHECK),
+              "the occupant threshold is separate from the advanced-building critical threshold");
+        assertTrue(containsReport(hitBuilding(100), REPORT_CRITICAL_CHECK));
+    }
+
+    @Test
+    void criticalThresholdDoesNotDropWhenPhaseCFIsUpdated() {
+        building.setArmor(0, BUILDING_HEX);
+        hitBuilding(4);
+        building.setPhaseCF(20, BUILDING_HEX);
+        assertFalse(containsReport(hitBuilding(3), REPORT_CRITICAL_CHECK));
+        assertEquals(4, building.getCriticalDamageThreshold(BUILDING_HEX));
+        building.setCurrentCF(20, BUILDING_HEX);
+        building.newRound(2);
+        assertEquals(2, building.getCriticalDamageThreshold(BUILDING_HEX));
+    }
+
+    @Test
+    void lockedTurretRetainsItsSelectedFacing() {
+        laser.setMekTurretMounted(true);
+        laser.setFacing(3);
+        building.lockTurretWeapon(laser);
+        assertEquals(52, building.getWeaponArc(building.getEquipmentNum(laser)));
+    }
+
+    @Test
+    void fireFromInsideBypassesBuildingArmor() {
+        BipedMek attacker = new BipedMek();
+        attacker.setId(1);
+        attacker.setOwner(game.getPlayer(0));
+        game.addEntity(attacker);
+        attacker.setPosition(BUILDING_HEX);
+        attacker.setElevation(0);
+        HitData hit = new HitData(0);
+        hit.setAttackerId(attacker.getId());
+
+        gameManager.damageEntity(building, hit, 4);
+
+        assertEquals(STARTING_ARMOR, building.getArmor(BUILDING_HEX));
+        assertEquals(STARTING_CF - 4, building.getCurrentCF(BUILDING_HEX));
+    }
+
+    private Coords addSecondHex() {
+        CubeCoords second = new CubeCoords(1, 0, -1);
+        building.getInternalBuilding().addHex(second, STARTING_CF, 0, BasementType.UNKNOWN, false);
+        building.refreshLocations();
+        building.refreshAdditionalLocations();
+        building.setPosition(BUILDING_HEX);
+        return building.relativeToBoard(second);
+    }
+
+    @Test
+    void staleHitLocationFallsBackToTheRemainingStandingHex() {
+        Coords second = addSecondHex();
+        building.setCurrentCF(0, BUILDING_HEX);
+
+        hitBuilding(4);
+
+        assertEquals(STARTING_CF - 4, building.getCurrentCF(second));
+        assertEquals(0, building.getCurrentCF(BUILDING_HEX));
+    }
+
+    @Test
+    void gunnerStunIsConfinedToTheHitHexAndExpires() {
+        Coords second = addSecondHex();
+        int firstLocation = building.getLocationsAt(BUILDING_HEX).getFirst();
+        int secondLocation = building.getLocationsAt(second).getFirst();
+        new BuildingEntityCriticalHandler(gameManager).applyCriticalResult(building, BUILDING_HEX, 7, 1);
+
+        assertFalse(building.isGunnersStunned(firstLocation), "the critical affects the following turn");
+        assertFalse(building.isGunnersStunned(secondLocation));
+        building.newRound(2);
+        assertTrue(building.isGunnersStunned(firstLocation));
+        building.newRound(3);
+        assertFalse(building.isGunnersStunned(firstLocation));
+    }
+
+    @Test
+    void secondTurretJamLocksEvenAfterRepairAndFurtherHitsHaveNoEffect() {
+        laser.setMekTurretMounted(true);
+        var handler = new BuildingEntityCriticalHandler(gameManager);
+        handler.applyCriticalResult(building, BUILDING_HEX, 10, 1);
+        laser.setJammedImmediately(false);
+        handler.applyCriticalResult(building, BUILDING_HEX, 10, 1);
+
+        assertTrue(building.isTurretLocked(laser));
+        assertFalse(laser.jammedThisPhase());
+        handler.applyCriticalResult(building, BUILDING_HEX, 10, 1);
+        assertFalse(laser.jammedThisPhase());
+    }
+
+    @Test
+    void caseReducesAmmoExplosionAndDestroyedAmmoCannotExplodeAgain() throws Exception {
+        var ammo = (AmmoMounted) building.addEquipment(EquipmentType.get("ISAC5 Ammo"), 0);
+        ammo.setShotsLeft(4);
+        building.addEquipment(MiscType.createISCASE(), 0);
+        var handler = new BuildingEntityCriticalHandler(gameManager);
+
+        handler.applyCriticalResult(building, BUILDING_HEX, 11, 1);
+        assertEquals(STARTING_CF - 2, building.getCurrentCF(BUILDING_HEX));
+        assertEquals(STARTING_ARMOR, building.getArmor(BUILDING_HEX));
+        handler.applyCriticalResult(building, BUILDING_HEX, 11, 1);
+        assertEquals(STARTING_CF - 2, building.getCurrentCF(BUILDING_HEX));
+    }
+
+    @Test
+    void automatedWeaponsHaveNoGunnersToStunOrKill() {
+        building.getDesign().getAutomatedWeapons().add(laser);
+        var handler = new BuildingEntityCriticalHandler(gameManager);
+        handler.applyCriticalResult(building, BUILDING_HEX, 7, 1);
+        handler.applyCriticalResult(building, BUILDING_HEX, 9, 1);
+        assertEquals(0, building.getStunnedTurns());
+        assertFalse(building.hasDeadGunners(laser.getLocation()));
+        assertFalse(building.getCrew().isDoomed());
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({ "false, false", "false, true", "true, false", "true, true" })
+    void perFloorDamageRequiresTheGameOptionForStaticAndMobileStructures(boolean mobile, boolean expandedCF) {
+        AbstractBuildingEntity target = mobile ? new MobileStructure(BuildingType.MEDIUM, 1)
+              : new BuildingEntity(BuildingType.MEDIUM, 1);
+        target.getInternalBuilding().setBuildingHeight(3);
+        target.getInternalBuilding().addHex(CubeCoords.ZERO, STARTING_CF, STARTING_ARMOR, BasementType.UNKNOWN, false);
+        target.refreshLocations();
+        target.refreshAdditionalLocations();
+        target.setPosition(BUILDING_HEX);
+        game.getOptions().getOption(OptionsConstants.ADVANCED_BUILDING_EXPANDED_CF).setValue(expandedCF);
+
+        gameManager.damageBuilding(target, 7, " takes ", BUILDING_HEX, 1, null, false);
+
+        assertEquals(expandedCF, target.usesExpandedCF());
+        assertEquals(STARTING_CF - 2, target.getCurrentCF(BUILDING_HEX, 1));
+        assertEquals(0, target.getArmor(BUILDING_HEX, 1));
+        assertEquals(expandedCF ? STARTING_CF : STARTING_CF - 2, target.getCurrentCF(BUILDING_HEX, 0));
+        assertEquals(expandedCF ? STARTING_ARMOR : 0, target.getArmor(BUILDING_HEX, 2));
+    }
+
+    @Test
+    void expandedCFHitsOnlyTheSelectedFloorAndSurvivesPhaseResolution() {
+        building.getInternalBuilding().setBuildingHeight(3);
+        building.getInternalBuilding().setHeight(3, CubeCoords.ZERO);
+        building.refreshLocations();
+        building.refreshAdditionalLocations();
+        building.updateBuildingEntityHexes(building.getBoardId(), gameManager);
+        game.getOptions().getOption(OptionsConstants.ADVANCED_BUILDING_EXPANDED_CF).setValue(true);
+        gameManager.damageBuilding(building, 9, " takes ", BUILDING_HEX, 1, null, false);
+        assertEquals(STARTING_CF - 4, building.getCurrentCF(BUILDING_HEX, 1));
+        assertEquals(0, building.getArmor(BUILDING_HEX, 1));
+        assertEquals(STARTING_CF, building.getCurrentCF(BUILDING_HEX, 0));
+        assertEquals(STARTING_ARMOR, building.getArmor(BUILDING_HEX, 2));
+        gameManager.applyBuildingDamage();
+        assertEquals(STARTING_CF - 4, building.getInternal(1));
+        assertEquals(STARTING_CF, building.getInternal(0));
+        assertEquals(3, building.getHeight(BUILDING_HEX));
+    }
+
+    @Test
+    void expandedCriticalsCannotHitEquipmentOnAnotherFloor() {
+        building.getInternalBuilding().setBuildingHeight(3);
+        building.getInternalBuilding().setHeight(3, CubeCoords.ZERO);
+        building.refreshLocations();
+        building.refreshAdditionalLocations();
+        game.getOptions().getOption(OptionsConstants.ADVANCED_BUILDING_EXPANDED_CF).setValue(true);
+        try (var dice = Mockito.mockStatic(megamek.common.compute.Compute.class, Mockito.CALLS_REAL_METHODS)) {
+            dice.when(() -> megamek.common.compute.Compute.d6(2)).thenReturn(8);
+            dice.when(megamek.common.compute.Compute::d6).thenReturn(1);
+            gameManager.damageBuilding(building, 10, " takes ", BUILDING_HEX, 1, null, false);
+            assertFalse(laser.isHit(), "the weapon is on the lowest floor, not the damaged floor");
+            gameManager.damageBuilding(building, 10, " takes ", BUILDING_HEX, 0, null, false);
+            assertTrue(laser.isHit());
+        }
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({ "5, false", "6, true", "7, true", "8, true", "9, false" })
+    void aimedBuildingShotsUseTheImmobileTargetRoll(int roll, boolean hitsAimedLocation) {
+        try (var dice = Mockito.mockStatic(megamek.common.compute.Compute.class, Mockito.CALLS_REAL_METHODS)) {
+            dice.when(() -> megamek.common.compute.Compute.d6(2)).thenReturn(roll);
+            HitData hit = building.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT, 0,
+                  megamek.common.enums.AimingMode.IMMOBILE, 0);
+            assertTrue(hit.isAimedShotAttempt());
+            assertEquals(hitsAimedLocation, hit.hitAimedLocation());
+            assertEquals(0, hit.getLocation());
+        }
+    }
+
+    @Test
+    void aimedHitBonusDoesNotBypassArmorOrDamageThreshold() {
+        HitData hit = new HitData(0, false, true);
+        try (var dice = Mockito.mockStatic(megamek.common.compute.Compute.class, Mockito.CALLS_REAL_METHODS)) {
+            dice.when(() -> megamek.common.compute.Compute.d6(2)).thenReturn(5);
+            dice.when(megamek.common.compute.Compute::d6).thenReturn(1);
+            var reports = gameManager.damageEntity(building, hit, 5);
+            assertFalse(containsReport(reports, REPORT_CRITICAL_CHECK));
+            reports = gameManager.damageEntity(building, hit, 4);
+            assertFalse(containsReport(reports, REPORT_CRITICAL_CHECK));
+            reports = gameManager.damageEntity(building, hit, 5);
+            assertTrue(containsReport(reports, REPORT_CRITICAL_CHECK));
+            assertEquals(2, building.getStunnedTurns(), "5 + 2 from the aimed shot is a gunner stun");
+        }
     }
 }

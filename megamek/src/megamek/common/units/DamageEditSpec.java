@@ -79,6 +79,7 @@ public class DamageEditSpec implements Serializable {
     public Boolean hidden;
     public Boolean stealth;
     public Boolean dugIn;
+    public Boolean survivalGearStored;
     /** The fuel left in an aero. */
     public Integer fuel;
 

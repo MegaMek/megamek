@@ -73,7 +73,6 @@ import megamek.common.units.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -897,8 +896,7 @@ class ComputeTest {
             }
 
             @Test
-            @Disabled
-            void getRangeModsTargetBehind2LevelHill() throws LocationFullException {
+            void elevatedTargetWithinMediumLaserShortRange() throws LocationFullException {
                 // Arrange
                 targetEntity.setPosition(new Coords(1, 2));
                 WeaponMounted mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType, 0);
@@ -909,7 +907,7 @@ class ComputeTest {
 
 
                 // Assert
-                assertEquals(4, result.getValue(), "Should have +4 range modifier at long range (3 hexes)");
+                assertEquals(0, result.getValue(), "A medium laser is at short range two hexes away; the hill does not add range");
             }
         }
     }

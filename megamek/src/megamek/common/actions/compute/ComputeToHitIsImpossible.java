@@ -148,6 +148,21 @@ class ComputeToHitIsImpossible {
         }
 
         Entity entityTarget = target instanceof Entity ? (Entity) target : null;
+        IBuilding targetStructure = (target instanceof IBuilding || target instanceof BuildingTarget)
+              ? megamek.common.units.WallRules.getBuilding(game, target) : null;
+        if (targetStructure instanceof MobileStructure mobile
+              && mobile.getNavalState().getStrandedVessels().containsKey(attacker.getId())) {
+            return "A vessel stranded on a Mobile Structure cannot fire at its carrier (TO:AUE p.41)";
+        }
+        int structureElevation = target instanceof AbstractBuildingEntity && targetStructure != null
+              ? BuildingElevation.base(targetStructure, target.getPosition()) : target.getElevation();
+        if (!BuildingElevation.canAttack(game, targetStructure, attacker, target.getPosition(), structureElevation)) {
+            return "Underground structures are protected by the surrounding ground; attack from inside or through a tunnel opening";
+        }
+        if (attacker instanceof MobileStructure mobile && target.getPosition() != null && mobile.isIn(target.getPosition())
+              && target.getElevation() + target.getHeight() < BuildingElevation.base(mobile, target.getPosition())) {
+            return "Mobile structures cannot attack units underneath them (TO:AUE p.39)";
+        }
 
         // An Advanced Building cannot fire on a unit inside one of its own hexes (TO:AR p. 132: its turreted weapons
         // are rooftop equipment). This comes before the same-building exemption below, which would otherwise treat
@@ -271,7 +286,10 @@ class ComputeToHitIsImpossible {
         }
 
         // is the attacker even active?
-        if (attacker.isShutDown() || !attacker.getCrew().isActive()) {
+        boolean automatedBuildingWeapon = attacker instanceof AbstractBuildingEntity building
+              && building.getDesign().getAutomatedWeapons().contains(weapon);
+        if (attacker.isShutDown() || (!automatedBuildingWeapon && !attacker.getCrew().isActive())
+              || (attacker instanceof AbstractBuildingEntity building && !building.hasPower())) {
             return Messages.getString("WeaponAttackAction.AttackerNotReady");
         }
 
@@ -364,10 +382,15 @@ class ComputeToHitIsImpossible {
 
         // Advanced building gunners stunned or killed by a critical hit cannot fire (TO:AR p. 118)
         if (attacker instanceof AbstractBuildingEntity buildingAttacker) {
-            if (buildingAttacker.isStunned()) {
+            if ((weapon != null) && buildingAttacker.isWeaponBlockedByRepair(weapon)) {
+                return "The gunners are repairing a building weapon or turret";
+            }
+            if ((weapon != null) && buildingAttacker.requiresGunner(weapon)
+                  && buildingAttacker.isGunnersStunned(weapon.getLocation())) {
                 return Messages.getString("WeaponAttackAction.CrewStunned");
             }
-            if ((weapon != null) && buildingAttacker.hasDeadGunners(weapon.getLocation())) {
+            if ((weapon != null) && buildingAttacker.requiresGunner(weapon)
+                  && buildingAttacker.hasDeadGunners(weapon.getLocation())) {
                 return Messages.getString("WeaponAttackAction.BuildingGunnersKilled");
             }
         }
@@ -1225,7 +1248,7 @@ class ComputeToHitIsImpossible {
             }
 
             // Ballistic and Missile weapons are subject to wind conditions
-            PlanetaryConditions conditions = game.getPlanetaryConditions();
+            PlanetaryConditions conditions = game.getPlanetaryConditions().forEntity(attacker);
             if (conditions.getWind().isTornadoF1ToF3() &&
                   weaponType.hasFlag(WeaponType.F_MISSILE) &&
                   !attacker.isSpaceborne()) {

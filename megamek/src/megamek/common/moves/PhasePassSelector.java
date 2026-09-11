@@ -57,6 +57,7 @@ class PhasePassSelector {
     private static final PhasePass START_JUMP_STEP = new StartJumpStep();
     private static final PhasePass UP_STEP = new UpStep();
     private static final PhasePass DOWN_STEP = new DownStep();
+    private static final PhasePass WALL_STEP = new WallStep();
     private static final PhasePass ELEVATOR_ASCEND_STEP = new ElevatorAscendStep();
     private static final PhasePass ELEVATOR_DESCEND_STEP = new ElevatorDescendStep();
     private static final PhasePass HULL_DOWN_STEP = new HullDownStep();
@@ -103,6 +104,7 @@ class PhasePassSelector {
             case START_JUMP -> START_JUMP_STEP;
             case UP -> UP_STEP;
             case DOWN -> DOWN_STEP;
+            case WALL_ASCEND, WALL_DESCEND, WALL_LAND -> WALL_STEP;
             case ELEVATOR_ASCEND -> ELEVATOR_ASCEND_STEP;
             case ELEVATOR_DESCEND -> ELEVATOR_DESCEND_STEP;
             case HULL_DOWN -> HULL_DOWN_STEP;

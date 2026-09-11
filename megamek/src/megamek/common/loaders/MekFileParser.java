@@ -251,7 +251,7 @@ public class MekFileParser {
                     case "Warship" -> new BLKWarshipFile(bb);
                     case "SpaceStation" -> new BLKSpaceStationFile(bb);
                     case "HandheldWeapon" -> new BLKHandheldWeaponFile(bb);
-                    case "BuildingEntity" -> new BLKStructureFile(bb);
+                    case "BuildingEntity", "MobileStructure" -> new BLKStructureFile(bb);
                     default -> throw new EntityLoadingException("Unknown UnitType: " + sType);
                 };
             } else {

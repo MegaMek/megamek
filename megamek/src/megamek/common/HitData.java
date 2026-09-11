@@ -63,6 +63,15 @@ public class HitData {
     private int effect;
     private boolean heat_weapon;
     private final boolean hitAimedLocation;
+    private boolean aimedShotAttempt;
+
+    public boolean isAimedShotAttempt() {
+        return aimedShotAttempt || hitAimedLocation;
+    }
+
+    public void setAimedShotAttempt(boolean aimedShotAttempt) {
+        this.aimedShotAttempt = aimedShotAttempt;
+    }
     private int specCritMod;
     private boolean specCrit;
     private int motiveMod = 0;

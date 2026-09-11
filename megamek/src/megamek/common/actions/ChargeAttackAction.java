@@ -169,7 +169,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         IBuilding bldg = game.getBoard().getBuildingAt(getTargetPos());
         ToHitData toHit;
         boolean targIsBuilding = ((getTargetType() == Targetable.TYPE_FUEL_TANK)
-              || (getTargetType() == Targetable.TYPE_BUILDING));
+              || (Targetable.isBuildingType(getTargetType())));
 
         boolean inSameBuilding = Compute.isInSameBuilding(game, attackingEntity, te);
 
@@ -263,7 +263,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
 
         // Attacks against adjacent buildings automatically hit.
-        if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+        if ((Targetable.isBuildingType(target.getTargetType()))
               || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
               || (target.isBuildingEntityOrGunEmplacement())) {
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Targeting adjacent building.");
@@ -528,10 +528,11 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     /**
      * Damage that a mek suffers after a successful charge.
      */
-    public static int getDamageTakenBy(Entity entity, IBuilding bldg, Coords coords) {
+    public static int getDamageTakenBy(Entity entity, IBuilding building, Coords coords) {
         // Charges against targets that have no tonnage use the attacker's tonnage to
         // compute damage.
-        return getDamageTakenBy(entity, entity, false, entity.delta_distance);
+        int damage = getDamageTakenBy(entity, entity, false, entity.delta_distance);
+        return building.usesCapitalScale() ? damage * 10 : damage;
     }
 
     public static int getDamageTakenBy(Entity entity, Entity target) {

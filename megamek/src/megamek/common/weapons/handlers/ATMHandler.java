@@ -86,7 +86,7 @@ public class ATMHandler extends MissileWeaponHandler {
         } else {
             toReturn = 2;
         }
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             toReturn = Compute.directBlowInfantryDamage(
                   weaponType.getRackSize(), getInfantryDamageClassShift(),
                   resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
@@ -102,7 +102,7 @@ public class ATMHandler extends MissileWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // don't need to check for BAs, because BA can't mount ATMs
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             return 1;
         }
         int hits;
@@ -169,7 +169,7 @@ public class ATMHandler extends MissileWeaponHandler {
     protected int calcStandardAndExtendedAmmoHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
                 Report r = new Report(3325);

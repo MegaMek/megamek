@@ -34,23 +34,30 @@
 
 package megamek.common.units;
 
+import java.util.List;
+
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.MPCalculationSetting;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
+import megamek.common.cost.BuildingCostCalculator;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.PowerGeneratorType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.equipment.enums.StructureEngine;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * Implementation of TO:AR's Advanced Buildings.
@@ -59,8 +66,14 @@ import megamek.common.equipment.enums.StructureEngine;
  */
 public class BuildingEntity extends AbstractBuildingEntity {
 
-    /** The weapon arc a fixed weapon facing forward fires into; also used for a turret locked by a critical hit. */
-    private static final int FORWARD_ARC = 1;
+
+
+
+
+
+
+
+
 
     public BuildingEntity(BuildingType type, int bldgClass) {
         super(type, bldgClass);
@@ -73,6 +86,15 @@ public class BuildingEntity extends AbstractBuildingEntity {
     public int getUnitType() {
         return UnitType.ADVANCED_BUILDING;
     }
+
+    @Override
+    public int height() {
+        return BuildingConstruction.baseLevel(this) + getInternalBuilding().getBuildingHeight() - 1;
+    }
+
+
+
+
 
     @Override
     public boolean isImmobile() {
@@ -130,46 +152,9 @@ public class BuildingEntity extends AbstractBuildingEntity {
         return "!";
     }
 
-    /**
-     * Returns the Rules.ARC that the weapon, specified by number, fires into.
-     *
-     * @param weaponNumber integer equipment number, index from equipment list
-     *
-     * @return arc the specified weapon is in
-     */
-    @Override
-    public int getWeaponArc(int weaponNumber) {
-        WeaponMounted weapon = getWeapon(weaponNumber);
-        if (isTurretMounted(weapon)) {
-            // A turret locked by a critical hit (TO:AR p. 118) fires only into the building's forward arc
-            return isTurretLocked(weapon) ? FORWARD_ARC : 0;
-        }
-        return switch (weapon.getFacing()) {
-            case 0 -> 1;
-            case 1 -> 50;
-            case 2 -> 51;
-            case 3 -> 52;
-            case 4 -> 53;
-            case 5 -> 54;
-            default -> 0;
-        };
-    }
 
-    /**
-     * What height is this weapon physically firing from?
-     *
-     * @param weapon {@link WeaponMounted}
-     *
-     * @return int
-     */
-    @Override
-    public int getWeaponFiringHeight(WeaponMounted weapon) {
-        if (weapon == null) {
-            return super.getWeaponFiringHeight(weapon);
-        }
-        int location = weapon.getLocation();
-        return location % getInternalBuilding().getBuildingHeight();
-    }
+
+
 
     /**
      * Calculates a "generic" Battle Value that is based on the average of all units of this type and tonnage. The
@@ -220,11 +205,14 @@ public class BuildingEntity extends AbstractBuildingEntity {
      * @return true if the unit has power, otherwise false
      */
     public boolean hasPower() {
-        // A structure switched off at the mains has no power, however healthy its generators are
+        // A structure switched off at the mains has no power, including one supplied by the local grid.
         if (isPowerSwitchedOff()) {
             return false;
         }
-
+        // Static buildings use the local grid unless an independent supply was installed (TO:AR p. 129).
+        if (getMiscEquipment(MiscTypeFlag.F_POWER_GENERATOR).isEmpty()) {
+            return true;
+        }
         // Return true if we have enough power - calculate the base generator weight and compare it to all the
         // generators we have that're working
         double powerNeeded = getBaseGeneratorWeight();
@@ -232,128 +220,36 @@ public class BuildingEntity extends AbstractBuildingEntity {
 
         for (MiscMounted miscMountedPowerGenerator : getMiscEquipment(MiscTypeFlag.F_POWER_GENERATOR)) {
             if (miscMountedPowerGenerator.getType() instanceof PowerGeneratorType powerGeneratorType
-                  && miscMountedPowerGenerator.isOperable()) {
+                  && miscMountedPowerGenerator.isOperable()
+                  && BuildingConstruction.equipmentPositions(this, miscMountedPowerGenerator).stream()
+                        .allMatch(p -> getInternalBuilding().getCoordsList().contains(p.hex())
+                              && getInternalBuilding().getCurrentCF(p.hex()) > 0)) {
                 StructureEngine engineType = powerGeneratorType.getStructureEngine();
                 effectivePower += miscMountedPowerGenerator.getSize() / engineType.getBuildingWeightMultiplier();
             }
         }
 
-        // TODO: Support `External` power properly
         // TODO: Fuel?
         // TODO: Make sure if this is false the BuildingEntity cannot attack
 
         return effectivePower >= powerNeeded;
     }
 
-    @Override
-    public boolean isBuildingEntityOrGunEmplacement() {
-        return true;
-    }
 
-    /**
-     * Calculates the base generator weight for an advanced building.
-     * <p>
-     * To find the Base Generator Weight for an advanced building (or a complex of buildings): 1. Add up the total
-     * number of hexes for all advanced buildings intended to receive power 2. Exclude Tent-, Fence-, Wall- and
-     * Bridge-class buildings 3. For multi-level buildings: multiply the building's hex-count by its height in levels
-     * (plus any basement levels) before adding it to the sum 4. Add to this sum 10 percent of the total tonnage for all
-     * Heavy-class energy weapons used by any of these buildings
-     *
-     * @return The base generator weight in tons
-     */
-    private double getBaseGeneratorWeight() {
-        if (getInternalBuilding() == null) {
-            return 0.0;
-        }
-        // Exclude Wall-type buildings (Tent, Fence, and Bridge are not implemented yet)
-        if (getBuildingType() == BuildingType.WALL) {
-            return 0.0;
-        }
 
-        Building building = getInternalBuilding();
-        if (building == null) {
-            return 0.0;
-        }
 
-        // Calculate base hex count multiplied by height + basement levels
-        int hexCount = building.getCoordsList().size();
-        int buildingHeight = building.getBuildingHeight();
 
-        // Find the maximum basement depth across all hexes
-        int maxBasementDepth = 0;
-        for (CubeCoords coords : building.getCoordsList()) {
-            BasementType basement = building.getBasement(coords);
-            if (basement != null) {
-                maxBasementDepth = Math.max(maxBasementDepth, basement.getDepth());
-            }
-        }
 
-        // Calculate effective hex count (hex count * (height + basement levels))
-        double baseHexWeight = hexCount * (buildingHeight + maxBasementDepth);
 
-        // Calculate 10% of total tonnage for all energy weapons
-        double energyWeaponTonnage = 0.0;
-        for (Mounted<?> equipment : getEquipment()) {
-            if (equipment.getType() instanceof WeaponType weaponType && equipment.getTonnage() >= .25) {
-                if (weaponType.hasFlag(WeaponType.F_ENERGY)) {
-                    energyWeaponTonnage += weaponType.getTonnage(this);
-                }
-            }
-        }
 
-        // Base Generator Weight = base hex weight + 10% of energy weapon tonnage
-        return baseHexWeight + (energyWeaponTonnage * 0.1);
-    }
 
-    /**
-     * Calculates the internal weight capacity for this building.
-     * <p>
-     * For each hex of area covered, advanced buildings may internally carry a total tonnage of equipment equal to their
-     * Construction Factor times the number of levels of structure height.
-     * <p>
-     * Hangar-type structures may triple this capacity, but are limited to a maximum of 600 tons per hex for every 4
-     * levels of structural height (or fraction thereof).
-     *
-     * @return The total internal weight capacity in tons
-     */
-    @Override
-    public double getWeight() {
-        Building building = getInternalBuilding();
-        if (building == null) {
-            return 0.0;
-        }
 
-        double totalWeight = 0.0;
-        boolean isHangar = getBldgClass() == IBuilding.HANGAR;
 
-        // Calculate weight capacity for each hex
-        for (CubeCoords coords : building.getCoordsList()) {
-            int cf = building.getPhaseCF(coords);
-            int height = building.getHeight(coords);
 
-            if (height <= 0 || cf <= 0) {
-                continue;
-            }
 
-            // Base capacity: CF × height
-            double hexCapacity = cf * height;
 
-            if (isHangar) {
-                // Hangars triple the capacity
-                hexCapacity *= 3;
 
-                // But limited to 600 tons per hex for every 4 levels (or fraction)
-                int levelGroups = (int) Math.ceil(height / 4.0);
-                double maxCapacity = 600.0 * levelGroups;
 
-                hexCapacity = Math.min(hexCapacity, maxCapacity);
-            }
-
-            totalWeight += hexCapacity;
-        }
-
-        return totalWeight;
-    }
 
     /**
      * Places a demolition charge on this building (TO:AUE p.152). Demolition charges anchor to an absolute board hex,

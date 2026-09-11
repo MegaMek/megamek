@@ -286,6 +286,7 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 // whatever hex. Please don't move it above the other things again.
                 // Thanks! Ralgith - 2018/03/15
                 gameManager.clearHexUpdateSet();
+                new BuildingEnvironmentHandler(gameManager).endPhase(gameManager.getMainPhaseReport());
                 for (DynamicTerrainProcessor tp : gameManager.getTerrainProcessors()) {
                     tp.doEndPhaseChanges(gameManager.getMainPhaseReport());
                 }

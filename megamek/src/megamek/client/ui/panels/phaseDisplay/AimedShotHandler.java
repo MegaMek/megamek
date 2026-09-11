@@ -51,6 +51,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.units.Entity;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.LargeSupportTank;
 import megamek.common.units.Mek;
 import megamek.common.units.SuperHeavyTank;
@@ -83,7 +84,8 @@ public class AimedShotHandler implements ActionListener, ItemListener {
             String[] options;
             boolean[] enabled;
 
-            if (this.firingDisplay.getTarget().isBuildingEntityOrGunEmplacement()) {
+            if (this.firingDisplay.getTarget().isBuildingEntityOrGunEmplacement()
+                  && !(this.firingDisplay.getTarget() instanceof AbstractBuildingEntity)) {
                 return;
             }
             if (this.firingDisplay.getTarget() instanceof Entity) {
@@ -92,7 +94,9 @@ public class AimedShotHandler implements ActionListener, ItemListener {
             } else {
                 return;
             }
-            if (this.firingDisplay.getTarget() instanceof Mek) {
+            if (this.firingDisplay.getTarget() instanceof AbstractBuildingEntity) {
+                aimingAt = 0;
+            } else if (this.firingDisplay.getTarget() instanceof Mek) {
                 if (aimingMode.isImmobile()) {
                     aimingAt = Mek.LOC_HEAD;
                 } else if (aimingMode.isTargetingComputer()) {
@@ -149,6 +153,13 @@ public class AimedShotHandler implements ActionListener, ItemListener {
         boolean[] mask = new boolean[length];
 
         Arrays.fill(mask, true);
+
+        if (firingDisplay.getTarget() instanceof AbstractBuildingEntity building) {
+            for (int location = 0; location < length; location++) {
+                mask[location] = building.getInternal(location) > 0;
+            }
+            return mask;
+        }
 
         int side = ComputeSideTable.sideTable(firingDisplay.currentEntity(), firingDisplay.getTarget());
 
@@ -344,7 +355,7 @@ public class AimedShotHandler implements ActionListener, ItemListener {
     public String getAimingLocation() {
         if ((this.firingDisplay.getTarget() != null) && (aimingAt != Entity.LOC_NONE)
               && !getAimingMode().isNone()) {
-            if (this.firingDisplay.getTarget().isBuildingEntityOrGunEmplacement()) {
+            if (this.firingDisplay.getTarget() instanceof GunEmplacement) {
                 return GunEmplacement.HIT_LOCATION_NAMES[aimingAt];
             } else if (this.firingDisplay.getTarget() instanceof Entity) {
                 return ((Entity) this.firingDisplay.getTarget()).getLocationName(aimingAt);

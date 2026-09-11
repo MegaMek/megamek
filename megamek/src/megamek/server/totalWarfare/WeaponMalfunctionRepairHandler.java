@@ -35,6 +35,7 @@ package megamek.server.totalWarfare;
 import megamek.common.Report;
 import megamek.common.actions.RepairWeaponMalfunctionAction;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.Tank;
@@ -67,7 +68,8 @@ class WeaponMalfunctionRepairHandler extends AbstractTWRuleHandler {
                   entity.getShortName(), action.getWeaponId());
             return;
         }
-        if (!weapon.isJammed()) {
+        if (!weapon.isJammed() && !(entity instanceof AbstractBuildingEntity building
+              && weapon instanceof WeaponMounted mountedWeapon && building.isTurretJammed(mountedWeapon))) {
             LOGGER.warn("[WeaponJam] {} asked to repair {}, which is not jammed", entity.getShortName(),
                   weapon.getName());
             return;
@@ -84,12 +86,11 @@ class WeaponMalfunctionRepairHandler extends AbstractTWRuleHandler {
                           building.getShortName());
                     return;
                 }
-                if (!building.getJammedWeapons().contains(weapon)) {
-                    LOGGER.warn("[WeaponJam] {} cannot clear {}: the gunners in its location are dead",
+                if (!(weapon instanceof WeaponMounted mountedWeapon) || !building.repairBuildingWeapon(mountedWeapon)) {
+                    LOGGER.warn("[WeaponJam] {} cannot clear {}: the gunners in its location are dead or stunned",
                           building.getShortName(), weapon.getName());
                     return;
                 }
-                weapon.setJammed(false);
                 reportRepaired(entity, weapon);
             }
             default -> LOGGER.error("[WeaponJam] {} is neither a vehicle nor a building and cannot repair a weapon "

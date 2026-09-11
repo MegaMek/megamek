@@ -482,6 +482,12 @@ public class UnitDamagePanelBuilder {
               1));
         JPanel panel = createTitledPanel(new JLabel(Messages.getString("UnitEditorDialog.troopersLeft")));
         addLabeledRow(panel, Messages.getString("UnitEditorDialog.menLeft"), controls.spnInternal[0]);
+        if (entity instanceof ConvInfantry conventional && entity.getGame() != null) {
+            controls.chkSurvivalGearStored = new JCheckBox();
+            controls.chkSurvivalGearStored.setSelected(conventional.isSurvivalGearStored());
+            controls.chkSurvivalGearStored.setToolTipText("Carried survival gear is not being worn. An open-space atmosphere loss requires an 8+ roll to don it (TO:AR p.137).");
+            addLabeledRow(panel, "Survival gear stowed", controls.chkSurvivalGearStored);
+        }
         if (offersSkillModifiers()) {
             initSkillModifiers(panel);
         }

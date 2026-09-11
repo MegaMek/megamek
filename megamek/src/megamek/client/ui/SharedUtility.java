@@ -515,7 +515,9 @@ public class SharedUtility {
                     bldg = board.getBuildingAt(curPos);
                 }
 
-                if (bldg != null) {
+                if (bldg != null && !(bldg instanceof AbstractBuildingEntity buildingEntity
+                      && buildingEntity.getBuildingRuntimeState().openPassage(buildingEntity, entity,
+                            lastPos, curPos, step.getElevation()))) {
                     rollTarget = entity.rollMovementInBuilding(bldg, distance, reason, overallMoveType);
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
                 }

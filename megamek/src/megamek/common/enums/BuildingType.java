@@ -45,7 +45,8 @@ public enum BuildingType {
     MEDIUM("BuildingType.MEDIUM.text", 2, 40, 16, 40),
     HEAVY("BuildingType.HEAVY.text", 3, 90, 41, 90),
     HARDENED("BuildingType.HARDENED.text", 4, 120, 91, 150),
-    WALL("BuildingType.WALL.text", 5, 120, 91, 150);
+    WALL("BuildingType.WALL.text", 5, 120, 91, 150),
+    RAIL("BuildingType.RAIL.text", 6, 650, 151, 650);
 
     private final String name;
     private final int type;

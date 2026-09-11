@@ -109,7 +109,7 @@ class GameLogTest {
             assertTrue(Files.readString(logFile.toPath(), StandardCharsets.UTF_8)
                   .contains("a line that must be written"));
         } finally {
-            gameLog.close();
+            closeQuietly(gameLog);
             deleteQuietly(logFile);
         }
     }
@@ -130,6 +130,18 @@ class GameLogTest {
             appender.stop();
         }
         return appender.message;
+    }
+
+    /**
+     * Closes the log without letting a close failure mask an assertion failure from the test body, or stop the
+     * log file from being deleted.
+     */
+    private void closeQuietly(GameLog gameLog) {
+        try {
+            gameLog.close();
+        } catch (Exception exception) {
+            // Nothing useful to do in cleanup; the assertions above are what the test is reporting on.
+        }
     }
 
     private void deleteQuietly(File file) {

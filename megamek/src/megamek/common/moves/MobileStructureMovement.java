@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Set;
 
 import megamek.common.Hex;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BuildingType;
@@ -80,9 +81,9 @@ public final class MobileStructureMovement {
         if (entity.getGame() == null || entity instanceof MobileStructure || from == null || to == null) {
             return null;
         }
-        var board = entity.getGame().getBoard(entity);
-        var source = board.getHex(from);
-        var destination = board.getHex(to);
+        Board board = entity.getGame().getBoard(entity);
+        Hex source = board.getHex(from);
+        Hex destination = board.getHex(to);
         if (source == null || destination == null) { return null; }
         int base = Math.max(source.getLevel() + entity.getElevation(), destination.floor()) - destination.getLevel();
         return board.getBuildingsAt(to).stream().filter(MobileStructure.class::isInstance)
@@ -131,20 +132,21 @@ public final class MobileStructureMovement {
     /** Swept height at each contacted cell; a short local hex does not inherit the tallest hex's height. */
     public static Map<Coords, HullInterval> sweptHull(Game game, MobileStructure unit, Coords from, int fromFacing,
           int fromElevation, Coords to, int toFacing, int toElevation, Set<Coords> entered) {
-        var source = unit.computeLayoutForPositionAndFacing(from, fromFacing);
-        var startFootprint = MobileStructureLinkage.footprint(unit, from, fromFacing, fromElevation);
-        var endFootprint = MobileStructureLinkage.footprint(unit, to, toFacing, toElevation);
-        var contacts = new java.util.ArrayList<>(MobileStructureGeometry.contacts(unit, from, fromFacing, to, toFacing));
+          Map<CubeCoords, Coords> source = unit.computeLayoutForPositionAndFacing(from, fromFacing);
+          List<Coords> startFootprint = MobileStructureLinkage.footprint(unit, from, fromFacing, fromElevation);
+          List<Coords> endFootprint = MobileStructureLinkage.footprint(unit, to, toFacing, toElevation);
+          List<MobileStructureGeometry.Contact> contacts = new java.util.ArrayList<>(
+              MobileStructureGeometry.contacts(unit, from, fromFacing, to, toFacing));
         if (fromElevation != toElevation) {
             unit.computeLayoutForPositionAndFacing(to, toFacing).forEach((relative, cell) ->
                   contacts.add(new MobileStructureGeometry.Contact(relative, cell, 1)));
         }
         Map<Coords, HullInterval> result = new HashMap<>();
-        for (var contact : contacts) {
+        for (MobileStructureGeometry.Contact contact : contacts) {
             if (!entered.contains(contact.boardHex())) { continue; }
-            var start = hullAt(game, unit, contact.hex(), from, fromElevation, source.get(contact.hex()), startFootprint);
-            var end = hullAt(game, unit, contact.hex(), to, toElevation, contact.boardHex(), endFootprint);
-            var swept = new HullInterval(Math.min(start.bottom(), end.bottom()), Math.max(start.top(), end.top()));
+            HullInterval start = hullAt(game, unit, contact.hex(), from, fromElevation, source.get(contact.hex()), startFootprint);
+            HullInterval end = hullAt(game, unit, contact.hex(), to, toElevation, contact.boardHex(), endFootprint);
+            HullInterval swept = new HullInterval(Math.min(start.bottom(), end.bottom()), Math.max(start.top(), end.top()));
             result.merge(contact.boardHex(), swept, (a, b) ->
                   new HullInterval(Math.min(a.bottom(), b.bottom()), Math.max(a.top(), b.top())));
         }
@@ -172,7 +174,7 @@ public final class MobileStructureMovement {
     /** MP and server demolition use exactly the same physical wall contact, including elevation changes. */
     public static List<WallRules.Segment> wallContacts(Game game, MobileStructure unit, Coords from, int fromFacing,
           int fromElevation, Coords to, int toFacing, int toElevation, Set<Coords> entered) {
-        var hull = sweptHull(game, unit, from, fromFacing, fromElevation, to, toFacing, toElevation, entered);
+        Map<Coords, HullInterval> hull = sweptHull(game, unit, from, fromFacing, fromElevation, to, toFacing, toElevation, entered);
         return WallRules.intersecting(game, unit.getBoardId(), entered).stream()
               .filter(segment -> hull.entrySet().stream().anyMatch(cell -> segment.borders(cell.getKey())
                     && cell.getValue().intersects(segment.baseAltitude(), segment.topAltitude()))).toList();
@@ -183,14 +185,14 @@ public final class MobileStructureMovement {
         if (from == null || to == null) {
             return PROHIBITED;
         }
-        var modules = MobileStructureLinkage.group(unit);
-        var footprint = MobileStructureLinkage.footprint(unit, to, toFacing, toElevation);
-        var oldFootprint = MobileStructureLinkage.footprint(unit, from, fromFacing, fromElevation);
+        List<MobileStructure> modules = MobileStructureLinkage.group(unit);
+        List<Coords> footprint = MobileStructureLinkage.footprint(unit, to, toFacing, toElevation);
+        List<Coords> oldFootprint = MobileStructureLinkage.footprint(unit, from, fromFacing, fromElevation);
         Set<Coords> allEntered = new HashSet<>();
         int maximum = 0;
-        for (var module : modules) {
-            var start = MobileStructureLinkage.pose(unit, module, from, fromFacing, fromElevation);
-            var end = MobileStructureLinkage.pose(unit, module, to, toFacing, toElevation);
+        for (MobileStructure module : modules) {
+            MobileStructureLinkage.Pose start = MobileStructureLinkage.pose(unit, module, from, fromFacing, fromElevation);
+            MobileStructureLinkage.Pose end = MobileStructureLinkage.pose(unit, module, to, toFacing, toElevation);
             int cost = moduleCost(game, module, start.position(), start.facing(), start.elevation(),
                   end.position(), end.facing(), end.elevation(), footprint, oldFootprint);
             if (cost == PROHIBITED) {
@@ -202,7 +204,7 @@ public final class MobileStructureMovement {
         allEntered.removeAll(oldFootprint);
         if (unit.getMovementMode() == EntityMovementMode.TRACKED && fromFacing == toFacing && !from.equals(to)
               && !allEntered.isEmpty()) {
-            var changes = allEntered.stream().map(coords -> MobileStructureSupport.level(game, unit, footprint, coords)
+            Map<Integer, Long> changes = allEntered.stream().map(coords -> MobileStructureSupport.level(game, unit, footprint, coords)
                   - MobileStructureSupport.level(game, unit, oldFootprint, coords.translated(to.direction(from))))
                   .collect(java.util.stream.Collectors.groupingBy(change -> change, java.util.stream.Collectors.counting()));
             long sameChange = changes.values().stream().mapToLong(Long::longValue).max().orElse(0);
@@ -265,7 +267,7 @@ public final class MobileStructureMovement {
         if (toElevation != fromElevation) {
             entered.addAll(footprint);
         }
-        var walls = wallContacts(game, unit, from, fromFacing, fromElevation, to, toFacing, toElevation, entered);
+        List<WallRules.Segment> walls = wallContacts(game, unit, from, fromFacing, fromElevation, to, toFacing, toElevation, entered);
         for (Coords coords : entered) {
             Hex hex = game.getBoard(unit.getBoardId()).getHex(coords);
             // Part of a Mobile Structure may extend beyond the map (TO:AUE p.35).
@@ -324,7 +326,7 @@ public final class MobileStructureMovement {
 
     /** Off-board portions continue the level at the nearest map edge (TO:AUE p.35). */
     public static Hex terrain(Game game, MobileStructure unit, Coords coords) {
-        var board = game.getBoard(unit.getBoardId());
+        Board board = game.getBoard(unit.getBoardId());
         Hex onBoard = board.getHex(coords);
         Integer tunnelFloor = megamek.common.units.MobileStructurePortalRules.supportElevation(unit, coords);
         if (onBoard != null && tunnelFloor != null) {
@@ -342,7 +344,7 @@ public final class MobileStructureMovement {
     public static int plannedCost(Game game, MobileStructure unit, Coords from, int fromFacing, int fromElevation,
           Coords to, int toFacing, int toElevation) {
         int cost = cost(game, unit, from, fromFacing, fromElevation, to, toFacing, toElevation);
-        var progress = unit.getMovementProgress();
+        MobileStructure.MovementProgress progress = unit.getMovementProgress();
         if (cost != PROHIBITED && progress != null && from.equals(unit.getPosition())
               && fromFacing == unit.getFacing() && fromElevation == unit.getElevation()
               && progress.destination().equals(to) && progress.facing() == toFacing && progress.elevation() == toElevation) {

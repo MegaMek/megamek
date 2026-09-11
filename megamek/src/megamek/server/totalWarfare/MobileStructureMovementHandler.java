@@ -33,14 +33,19 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.Hex;
 import megamek.common.IndustrialElevator;
 import megamek.common.Report;
+import megamek.common.bays.Bay;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
@@ -57,6 +62,8 @@ import megamek.common.units.IBuilding;
 import megamek.common.units.MobileStructure;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
+import megamek.common.units.Targetable;
+import megamek.common.units.WallRules;
 
 /** Executes committed quarter-MP moves without moving a structure before the entire maneuver has been paid. */
 final class MobileStructureMovementHandler extends AbstractTWRuleHandler {
@@ -66,7 +73,7 @@ final class MobileStructureMovementHandler extends AbstractTWRuleHandler {
 
     /** Called only after receiveMovement validates phase, connection owner and active turn; does not end the turn. */
     boolean processLinkAction(MobileStructure unit, MovePath path) {
-        var affected = new java.util.HashSet<>(MobileStructureLinkage.group(unit));
+        Set<MobileStructure> affected = new HashSet<>(MobileStructureLinkage.group(unit));
         boolean changed = false;
         if (path.length() == 1 && unit.mpUsed == 0 && !unit.isDone()
               && path.getLastStep().getTarget(getGame()) instanceof MobileStructure other
@@ -88,7 +95,7 @@ final class MobileStructureMovementHandler extends AbstractTWRuleHandler {
     }
 
     void process(MobileStructure unit, MovePath path) {
-        var modules = MobileStructureLinkage.group(unit);
+        List<MobileStructure> modules = MobileStructureLinkage.group(unit);
         if (modules.stream().anyMatch(MobileStructure::isDone)) {
             return;
         }
@@ -105,7 +112,7 @@ final class MobileStructureMovementHandler extends AbstractTWRuleHandler {
         int budget = modules.stream().mapToInt(m -> m.isWaterStructure()
               ? m.declareWaterSpeed(path.getMobileSpeedQuarters() == null ? path.getMpUsed()
                     : path.getMobileSpeedQuarters(), getGame().getRoundCount()) : m.getMaximumMPQuarters()).min().orElse(0);
-        var steps = new java.util.ArrayList<>(path.getStepVector());
+          List<MoveStep> steps = new ArrayList<>(path.getStepVector());
         if (hovering) {
             steps.add(new MovePath(getGame(), unit).addStep(megamek.common.enums.MoveStepType.HOVER).getLastStep());
         }
@@ -131,18 +138,18 @@ final class MobileStructureMovementHandler extends AbstractTWRuleHandler {
                 step = coast.getLastStep();
             }
             if (step.getType() == megamek.common.enums.MoveStepType.LOAD) {
-                var passenger = step.getTarget(getGame());
+                Targetable passenger = step.getTarget(getGame());
                 if (passenger instanceof Entity cargo && megamek.common.units.MobileStructureCargoRules.loadableUnits(unit,
                       new MobileStructureLinkage.Pose(unit.getPosition(), unit.getFacing(), unit.getElevation())).contains(cargo)) {
                     Coords source = cargo.getPosition();
                     int absoluteElevation = getGame().getBoard(unit).getHex(source).getLevel() + cargo.getElevation();
-                    var selectedBay = megamek.common.units.MobileStructureCargoRules.mountingBays(unit, cargo, source,
+                  Bay selectedBay = megamek.common.units.MobileStructureCargoRules.mountingBays(unit, cargo, source,
                           absoluteElevation, new MobileStructureLinkage.Pose(unit.getPosition(), unit.getFacing(), unit.getElevation()))
                           .stream().filter(bay -> cargo.getTargetBay() < 0 || bay.getBayNumber() == cargo.getTargetBay())
                           .findFirst().orElse(null);
                     if (selectedBay == null) { continue; }
                     gameManager.loadUnit(unit, cargo, selectedBay.getBayNumber());
-                    var bay = unit.getBay(cargo);
+                  Bay bay = unit.getBay(cargo);
                     if (bay != null) {
                         cargo.mpUsed += (cargo.getWalkMP() + 1) / 2;
                         cargo.moved = megamek.common.units.EntityMovementType.MOVE_WALK;
@@ -159,10 +166,10 @@ final class MobileStructureMovementHandler extends AbstractTWRuleHandler {
                 continue;
             }
             if (step.getType() == megamek.common.enums.MoveStepType.UNLOAD) {
-                var passenger = step.getTarget(getGame());
+                Targetable passenger = step.getTarget(getGame());
                 if (passenger instanceof Entity cargo && unit.getLoadedUnits().contains(cargo)
                       && gameManager.unloadUnit(unit, cargo, step.getTargetPosition(), step.getFacing(), step.getElevation())) {
-                    var report = new Report(2514);
+                    Report report = new Report(2514);
                     report.subject = cargo.getId();
                     report.add(unit.getDisplayName());
                     report.add(cargo.generalName());
@@ -190,14 +197,14 @@ final class MobileStructureMovementHandler extends AbstractTWRuleHandler {
                   || (facing != step.getFacing() && unit.mpUsed > 0)) {
                 break;
             }
-            var destinations = new java.util.LinkedHashMap<MobileStructure, MobileStructureLinkage.Pose>();
-            for (var module : modules) {
+            Map<MobileStructure, MobileStructureLinkage.Pose> destinations = new LinkedHashMap<>();
+            for (MobileStructure module : modules) {
                 destinations.put(module, MobileStructureLinkage.pose(unit, module, step.getPosition(),
                       step.getFacing(), step.getElevation()));
             }
             boolean complete = true;
-            for (var entry : destinations.entrySet()) {
-                var pose = entry.getValue();
+            for (Map.Entry<MobileStructure, MobileStructureLinkage.Pose> entry : destinations.entrySet()) {
+                MobileStructureLinkage.Pose pose = entry.getValue();
                 complete &= entry.getKey().advanceMovement(pose.position(), pose.facing(), pose.elevation(), cost, available);
             }
             if (!complete) {
@@ -211,15 +218,15 @@ final class MobileStructureMovementHandler extends AbstractTWRuleHandler {
             }
             // Check the whole assembly before relocating its first member. Collisions still inflict their normal damage.
             boolean clear = true;
-            for (var entry : destinations.entrySet()) {
-                var memberStep = MobileStructureLinkage.step(entry.getKey(), step, entry.getValue());
+            for (Map.Entry<MobileStructure, MobileStructureLinkage.Pose> entry : destinations.entrySet()) {
+                MoveStep memberStep = MobileStructureLinkage.step(entry.getKey(), step, entry.getValue());
                 clear &= clearBuildings(entry.getKey(), memberStep);
             }
             if (!clear) {
                 break;
             }
-            for (var entry : destinations.entrySet()) {
-                var memberStep = MobileStructureLinkage.step(entry.getKey(), step, entry.getValue());
+            for (Map.Entry<MobileStructure, MobileStructureLinkage.Pose> entry : destinations.entrySet()) {
+                MoveStep memberStep = MobileStructureLinkage.step(entry.getKey(), step, entry.getValue());
                 if (!new MobileStructureCollisionHandler(gameManager).resolve(entry.getKey(), memberStep)) {
                     clear = false;
                     break;
@@ -229,9 +236,9 @@ final class MobileStructureMovementHandler extends AbstractTWRuleHandler {
                   || !MobileStructureLinkage.group(unit).equals(modules)) {
                 break;
             }
-            for (var entry : destinations.entrySet()) {
-                var module = entry.getKey();
-                var pose = entry.getValue();
+            for (Map.Entry<MobileStructure, MobileStructureLinkage.Pose> entry : destinations.entrySet()) {
+                MobileStructure module = entry.getKey();
+                MobileStructureLinkage.Pose pose = entry.getValue();
                 if (pose.elevation() != module.getElevation()) {
                     module.recordDepthChange();
                 }
@@ -247,7 +254,7 @@ final class MobileStructureMovementHandler extends AbstractTWRuleHandler {
     }
 
     private void finishMovement(MobileStructure unit, List<MobileStructure> modules) {
-        for (var module : modules) {
+        for (MobileStructure module : modules) {
             module.moved = module.mpUsed == 0 ? EntityMovementType.MOVE_NONE : EntityMovementType.MOVE_RUN;
             if (module != unit && !module.isDone()) {
                 getGame().removeTurnFor(module);
@@ -266,12 +273,12 @@ final class MobileStructureMovementHandler extends AbstractTWRuleHandler {
         if (!landing && unit.getMovementMode() != EntityMovementMode.TRACKED && step.getElevation() > 0) {
             return true;
         }
-        var entered = MobileStructureMovement.enteredHexes(unit, unit.getPosition(), unit.getFacing(),
+        Set<Coords> entered = MobileStructureMovement.enteredHexes(unit, unit.getPosition(), unit.getFacing(),
               step.getPosition(), step.getFacing());
         if (landing || step.getElevation() != unit.getElevation()) {
             entered.addAll(unit.computeBuildingCoordsForPositionAndFacing(step.getPosition(), step.getFacing()));
         }
-        var hull = MobileStructureMovement.sweptHull(getGame(), unit, unit.getPosition(), unit.getFacing(),
+                Map<Coords, MobileStructureMovement.HullInterval> hull = MobileStructureMovement.sweptHull(getGame(), unit, unit.getPosition(), unit.getFacing(),
               unit.getElevation(), step.getPosition(), step.getFacing(), step.getElevation(), entered);
         boolean blocked = false;
         for (Coords coords : entered) {
@@ -289,13 +296,13 @@ final class MobileStructureMovementHandler extends AbstractTWRuleHandler {
                     }
                     blocked = true;
                 }
-        }
+            }
         }
         if (blocked) {
             gameManager.applyBuildingDamage();
             return false;
         }
-        for (var side : MobileStructureMovement.wallContacts(getGame(), unit, unit.getPosition(), unit.getFacing(),
+                for (WallRules.Segment side : MobileStructureMovement.wallContacts(getGame(), unit, unit.getPosition(), unit.getFacing(),
               unit.getElevation(), step.getPosition(), step.getFacing(), step.getElevation(), entered)) {
             addReport(gameManager.damageWall(side, side.armor() + side.cf(), false));
         }
@@ -335,9 +342,9 @@ final class MobileStructureMovementHandler extends AbstractTWRuleHandler {
 
     private List<IBuilding> obstructions(MobileStructure unit, Coords coords, MoveStep step,
           Map<Coords, MobileStructureMovement.HullInterval> hull) {
-        var next = MobileStructureLinkage.footprint(unit, step.getPosition(), step.getFacing(), step.getElevation());
-        var volume = hull.get(coords);
-        var hex = getGame().getBoard(unit.getBoardId()).getHex(coords);
+          List<Coords> next = MobileStructureLinkage.footprint(unit, step.getPosition(), step.getFacing(), step.getElevation());
+          MobileStructureMovement.HullInterval volume = hull.get(coords);
+          Hex hex = getGame().getBoard(unit.getBoardId()).getHex(coords);
         if (volume == null || hex == null) { return List.of(); }
         return getGame().getBoard(unit.getBoardId()).getBuildingsAt(coords).stream()
               .filter(building -> building != unit && !(building instanceof MobileStructure))
@@ -347,9 +354,10 @@ final class MobileStructureMovementHandler extends AbstractTWRuleHandler {
               .filter(building -> !megamek.common.units.MobileStructurePortalRules.canEnter(unit, building, next, step.getFacing()))
               .toList();
     }
+
     void relocate(MobileStructure unit, Coords position, int facing, int elevation) {
-        var destinations = new java.util.LinkedHashMap<MobileStructure, MobileStructureLinkage.Pose>();
-        for (var module : MobileStructureLinkage.group(unit)) {
+        Map<MobileStructure, MobileStructureLinkage.Pose> destinations = new LinkedHashMap<>();
+        for (MobileStructure module : MobileStructureLinkage.group(unit)) {
             destinations.put(module, MobileStructureLinkage.pose(unit, module, position, facing, elevation));
         }
         relocateGroup(destinations);
@@ -394,9 +402,10 @@ final class MobileStructureMovementHandler extends AbstractTWRuleHandler {
 
     /** Capture every rider first and remove all old terrain before publishing any member's destination. */
     void relocateGroup(Map<MobileStructure, MobileStructureLinkage.Pose> destinations) {
-        var states = destinations.entrySet().stream()
+          List<CarriedState> states = destinations.entrySet().stream()
               .map(e -> captureCarriedState(e.getKey(), e.getValue().facing())).toList();
-        var oldFootprint = states.stream().flatMap(state -> state.oldFootprint().stream()).collect(java.util.stream.Collectors.toSet());
+          Set<Coords> oldFootprint = states.stream().flatMap(state -> state.oldFootprint().stream())
+              .collect(java.util.stream.Collectors.toSet());
         destinations.forEach((unit, pose) -> megamek.common.units.MobileStructurePortalRules.recordMovement(unit,
               MobileStructureLinkage.footprint(unit, pose.position(), pose.facing(), pose.elevation()), pose.facing()));
         gameManager.sendRemovedBuildings(new Vector<IBuilding>(destinations.keySet()));
@@ -406,33 +415,33 @@ final class MobileStructureMovementHandler extends AbstractTWRuleHandler {
             unit.setPosition(pose.position());
             unit.setElevation(pose.elevation());
         });
-        for (var state : states) {
+        for (CarriedState state : states) {
             MobileStructure unit = state.unit();
             Board board = getGame().getBoard(unit.getBoardId());
             state.riders().forEach((rider, relative) -> {
-            rider.setPosition(unit.relativeToBoard(relative));
-            rider.setElevation(unit.getBaseElevation(rider.getPosition()) + state.riderFloors().get(rider));
-            rider.setFacing(Math.floorMod(rider.getFacing() + state.rotation(), 6));
-            gameManager.entityUpdate(rider.getId());
-        });
-        state.elevators().forEach((relative, shafts) -> shafts.forEach(shaft -> getGame().addIndustrialElevator(
-              shaft.relocated(BoardLocation.of(unit.relativeToBoard(relative), unit.getBoardId()),
-                    unit.getBaseElevation(unit.relativeToBoard(relative)) - state.elevatorBases().get(relative), state.rotation()))));
-        for (Coords coords : unit.getCoordsList()) {
-            Hex hex = board.getHex(coords);
-            if (hex != null && !oldFootprint.contains(coords) && (unit.getMovementMode() == EntityMovementMode.TRACKED
-                  || (unit.getMovementMode() == EntityMovementMode.VTOL && unit.getElevation() == 0))) {
-                for (int terrain : new int[] { Terrains.WOODS, Terrains.JUNGLE, Terrains.FOLIAGE_ELEV,
-                                              Terrains.ROAD, Terrains.PAVEMENT, Terrains.FIELDS }) {
-                    hex.removeTerrain(terrain);
-                }
-                if (!hex.containsTerrain(Terrains.RUBBLE)) {
-                    hex.addTerrain(new Terrain(Terrains.ROUGH, 1));
+                rider.setPosition(unit.relativeToBoard(relative));
+                rider.setElevation(unit.getBaseElevation(rider.getPosition()) + state.riderFloors().get(rider));
+                rider.setFacing(Math.floorMod(rider.getFacing() + state.rotation(), 6));
+                gameManager.entityUpdate(rider.getId());
+            });
+            state.elevators().forEach((relative, shafts) -> shafts.forEach(shaft -> getGame().addIndustrialElevator(
+                  shaft.relocated(BoardLocation.of(unit.relativeToBoard(relative), unit.getBoardId()),
+                        unit.getBaseElevation(unit.relativeToBoard(relative)) - state.elevatorBases().get(relative), state.rotation()))));
+            for (Coords coords : unit.getCoordsList()) {
+                Hex hex = board.getHex(coords);
+                if (hex != null && !oldFootprint.contains(coords) && (unit.getMovementMode() == EntityMovementMode.TRACKED
+                      || (unit.getMovementMode() == EntityMovementMode.VTOL && unit.getElevation() == 0))) {
+                    for (int terrain : new int[] { Terrains.WOODS, Terrains.JUNGLE, Terrains.FOLIAGE_ELEV,
+                                                  Terrains.ROAD, Terrains.PAVEMENT, Terrains.FIELDS }) {
+                        hex.removeTerrain(terrain);
+                    }
+                    if (!hex.containsTerrain(Terrains.RUBBLE)) {
+                        hex.addTerrain(new Terrain(Terrains.ROUGH, 1));
+                    }
                 }
             }
-        }
-        unit.updateBuildingEntityHexes(unit.getBoardId(), gameManager);
-        state.oldFootprint().stream().filter(board::contains).forEach(c -> gameManager.sendChangedHex(c, unit.getBoardId()));
+            unit.updateBuildingEntityHexes(unit.getBoardId(), gameManager);
+            state.oldFootprint().stream().filter(board::contains).forEach(c -> gameManager.sendChangedHex(c, unit.getBoardId()));
         }
     }
 }

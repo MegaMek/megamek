@@ -33,12 +33,6 @@
  */
 package megamek.common.units;
 
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Vector;
-
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CompositeTechLevel;
 import megamek.common.Hex;
@@ -65,6 +59,12 @@ import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.util.ConditionalStringJoiner;
 
+import java.io.Serial;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Vector;
+
 /**
  * @author Jay Lawson
  * @since Jun 17, 2007
@@ -74,7 +74,9 @@ public class Dropship extends SmallCraft {
     @Serial
     private static final long serialVersionUID = 1528728632696989565L;
 
-    /** A DropShip is far too large to be hidden (hidden units, TW pg 259). */
+    /**
+     * A DropShip is far too large to be hidden (hidden units, TW pg 259).
+     */
     @Override
     public boolean canHide() {
         return false;
@@ -91,7 +93,8 @@ public class Dropship extends SmallCraft {
      * @param turns - integer specifying the number of end phases that the effects last through Technically, about 1.5
      *              turns elapse per the rules for ASEW missiles in TO
      */
-    public void setASEWAffected(int arc, int turns) {
+    public void setASEWAffected(int arc,
+                                int turns) {
         if (arc < asewAffectedTurns.length) {
             asewAffectedTurns[arc] = turns;
         }
@@ -117,7 +120,7 @@ public class Dropship extends SmallCraft {
     public static final int COLLAR_NO_BOOM = 2;
 
     private static final String[] COLLAR_NAMES = {
-          "KF-Boom", "Prototype KF-Boom", "No Boom"
+            "KF-Boom", "Prototype KF-Boom", "No Boom"
     };
 
     // Likewise, you can have a prototype or standard K-F Boom
@@ -183,13 +186,15 @@ public class Dropship extends SmallCraft {
 
     public static TechAdvancement getCollarTA() {
         return new TechAdvancement(TechBase.ALL).setAdvancement(2458, 2470, 2500)
-              .setPrototypeFactions(Faction.TH).setProductionFactions(Faction.TH).setTechRating(
-                    TechRating.C)
-              .setAvailability(AvailabilityValue.C,
-                    AvailabilityValue.C,
-                    AvailabilityValue.C,
-                    AvailabilityValue.C)
-              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+                                                .setPrototypeFactions(Faction.TH)
+                                                .setProductionFactions(Faction.TH)
+                                                .setTechRating(
+                                                        TechRating.C)
+                                                .setAvailability(AvailabilityValue.C,
+                                                                 AvailabilityValue.C,
+                                                                 AvailabilityValue.C,
+                                                                 AvailabilityValue.C)
+                                                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     //KF Boom Stuff
@@ -216,7 +221,9 @@ public class Dropship extends SmallCraft {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c, int testBoardId, int currElevation) {
+    public boolean isLocationProhibited(Coords c,
+                                        int testBoardId,
+                                        int currElevation) {
         if (!game.hasBoardLocation(c, testBoardId)) {
             return true;
         }
@@ -289,7 +296,7 @@ public class Dropship extends SmallCraft {
         // TODO: get updated ruling; this code causes a hex with one single lower- or higher-level neighbor
         // to be disqualified, but it would seem that a single lower-level neighbor should be fine.
         if ((elevDifference > 1) || (elevations.get(elevationsKeys[0]) < elevMinCount)
-              || (elevations.get(elevationsKeys[1]) < elevMinCount)) {
+            || (elevations.get(elevationsKeys[1]) < elevMinCount)) {
             return true;
         }
 
@@ -409,22 +416,22 @@ public class Dropship extends SmallCraft {
     }
 
     protected static final TechAdvancement TA_DROPSHIP = new TechAdvancement(TechBase.ALL)
-          .setAdvancement(ITechnology.DATE_NONE, 2470, 2490).setISApproximate(false, true, false)
-          .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
-          .setAvailability(AvailabilityValue.D,
-                AvailabilityValue.E,
-                AvailabilityValue.D,
-                AvailabilityValue.D)
-          .setStaticTechLevel(SimpleTechLevel.STANDARD);
+            .setAdvancement(ITechnology.DATE_NONE, 2470, 2490).setISApproximate(false, true, false)
+            .setProductionFactions(Faction.TH).setTechRating(TechRating.D)
+            .setAvailability(AvailabilityValue.D,
+                             AvailabilityValue.E,
+                             AvailabilityValue.D,
+                             AvailabilityValue.D)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     protected static final TechAdvancement TA_DROPSHIP_PRIMITIVE = new TechAdvancement(TechBase.IS)
-          .setISAdvancement(ITechnology.DATE_ES, 2200, ITechnology.DATE_NONE, 2500)
-          .setISApproximate(false, true, false, false)
-          .setProductionFactions(Faction.TA).setTechRating(TechRating.D)
-          .setAvailability(AvailabilityValue.D,
-                AvailabilityValue.X,
-                AvailabilityValue.X,
-                AvailabilityValue.X)
-          .setStaticTechLevel(SimpleTechLevel.STANDARD);
+            .setISAdvancement(ITechnology.DATE_ES, 2200, ITechnology.DATE_NONE, 2500)
+            .setISApproximate(false, true, false, false)
+            .setProductionFactions(Faction.TA).setTechRating(TechRating.D)
+            .setAvailability(AvailabilityValue.D,
+                             AvailabilityValue.X,
+                             AvailabilityValue.X,
+                             AvailabilityValue.X)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -440,7 +447,8 @@ public class Dropship extends SmallCraft {
     }
 
     @Override
-    public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
+    public double getCost(CalculationReport calcReport,
+                          boolean ignoreAmmo) {
         return DropShipCostCalculator.calculateCost(this, calcReport, ignoreAmmo);
     }
 
@@ -453,7 +461,8 @@ public class Dropship extends SmallCraft {
      * need to check bay location before loading ammo
      */
     @Override
-    public boolean loadWeapon(WeaponMounted mounted, AmmoMounted mountedAmmo) {
+    public boolean loadWeapon(WeaponMounted mounted,
+                              AmmoMounted mountedAmmo) {
         boolean success = false;
         WeaponType weaponType = mounted.getType();
         AmmoType ammoType = mountedAmmo.getType();
@@ -469,9 +478,9 @@ public class Dropship extends SmallCraft {
         }
 
         if (mountedAmmo.isAmmoUsable()
-              && !weaponType.hasFlag(WeaponType.F_ONE_SHOT)
-              && (ammoType.getAmmoType() == weaponType.getAmmoType())
-              && (ammoType.getRackSize() == weaponType.getRackSize())) {
+            && !weaponType.hasFlag(WeaponType.F_ONE_SHOT)
+            && (ammoType.getAmmoType() == weaponType.getAmmoType())
+            && (ammoType.getRackSize() == weaponType.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             success = true;
         }
@@ -506,7 +515,7 @@ public class Dropship extends SmallCraft {
      * What's the range of the ECM equipment?
      *
      * @return the <code>int</code> range of this unit's ECM. This value will be
-     *       <code>Entity.NONE</code> if no ECM is active.
+     * <code>Entity.NONE</code> if no ECM is active.
      */
     @Override
     public int getECMRange() {
@@ -565,6 +574,10 @@ public class Dropship extends SmallCraft {
         }
 
         super.setPosition(position, false);
+        if (position == null) {
+            // Used for when clearing deployment positions. We need to clear the secondary positions as well.
+            secondaryPositions.clear();
+        }
         if ((getAltitude() == 0) && (null != game) && !isSpaceborne() && (position != null)) {
             secondaryPositions.put(0, position);
             secondaryPositions.put(1, position.translated(getFacing()));
@@ -642,7 +655,8 @@ public class Dropship extends SmallCraft {
     }
 
     @Override
-    public HitData rollHitLocation(int table, int side) {
+    public HitData rollHitLocation(int table,
+                                   int side) {
         if ((table == ToHitData.HIT_KICK) || (table == ToHitData.HIT_PUNCH)) {
             // we don't really have any good rules on how to apply this,
             // I have a rules question posted about it:
@@ -752,7 +766,7 @@ public class Dropship extends SmallCraft {
         int rotate = dir - getFacing();
         if (canChangeSecondaryFacing()) {
             return (rotate == 0) || (rotate == 1) || (rotate == -1)
-                  || (rotate == -5) || (rotate == 5);
+                   || (rotate == -5) || (rotate == 5);
         }
         return rotate == 0;
     }
@@ -804,7 +818,7 @@ public class Dropship extends SmallCraft {
     public boolean canLandVertically() {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         return isSpheroid()
-              || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
+               || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
     }
 
     /**
@@ -818,7 +832,7 @@ public class Dropship extends SmallCraft {
         }
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         boolean spheroidOrLessThanThin = isSpheroid()
-              || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
+                                         || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
         return spheroidOrLessThanThin && (getCurrentThrust() > 2);
     }
 

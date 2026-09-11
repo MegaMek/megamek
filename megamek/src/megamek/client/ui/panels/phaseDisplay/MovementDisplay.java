@@ -1237,9 +1237,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         Entity currentEntity = currentEntity();
         if (redrawMovement &&
             (currentEntity != null) &&
-            currentEntity.isDeployed() &&
-            currentEntity.getPosition() != null &&
-            currentEntity.getBoardId() != Entity.NONE) {
+            currentEntity.isDeployed()) {
             clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
         }
 
@@ -1319,13 +1317,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 clientgui.getClient().sendUpdateEntity(currentEntity);
                 // Recompile the path with the chosen level count
                 cmd.compile(game, currentEntity);
-                if (redrawMovement && currentEntity.getPosition() != null) {
+                if (redrawMovement) {
                     clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
                 }
             } else {
                 // Cancelled - remove the climbing step
                 cmd.removeLastStep();
-                if (redrawMovement && currentEntity.getPosition() != null) {
+                if (redrawMovement) {
                     clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
                 }
             }
@@ -1522,7 +1520,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     if (!isRoutedAround) {
                         cmd.removeLastStep();
                     }
-                    if (redrawMovement && currentEntity.getPosition() != null) {
+                    if (redrawMovement) {
                         clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
                     }
                 }
@@ -1588,7 +1586,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     if (!clientgui.doYesNoDialog(
                             Messages.getString("MovementDisplay.ClimbingDialog.title"), warning)) {
                         cmd.removeLastStep();
-                        if (redrawMovement && currentEntity.getPosition() != null) {
+                        if (redrawMovement) {
                             clientgui.getBoardView(currentEntity).drawMovementData(currentEntity, cmd);
                         }
                     }
@@ -2099,10 +2097,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         if (cmd.getLastStep().getType() == MoveStepType.DEPLOY) {
             currentlySelectedEntity.setDeployed(false);
-            if (currentlySelectedEntity.getPosition() != null) {
-                clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
-            }
             currentlySelectedEntity.setPosition(null);
+            clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
             markDeploymentHexes(currentlySelectedEntity);
         }
         cmd.removeLastStep();
@@ -2118,11 +2114,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // clear board cursors
             clientgui.getBoardView(currentEntity()).select(cmd.getFinalCoords());
             clientgui.getBoardView(currentEntity()).cursor(cmd.getFinalCoords());
-            if (currentlySelectedEntity.getPosition() != null) {
-                clientgui.getBoardView(currentEntity()).drawMovementData(currentlySelectedEntity, cmd);
-                clientgui.updateFiringArc(currentlySelectedEntity);
-                clientgui.showSensorRanges(currentlySelectedEntity, cmd.getFinalCoords());
-            }
+            clientgui.getBoardView(currentEntity()).drawMovementData(currentlySelectedEntity, cmd);
+            clientgui.updateFiringArc(currentlySelectedEntity);
+            clientgui.showSensorRanges(currentlySelectedEntity, cmd.getFinalCoords());
 
             // FIXME what is this
             // Set the button's label to "Done" if the entire move is impossible.
@@ -2851,9 +2845,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                                     coords.getBoardNum());
                     clientgui.addToast(ToastLevel.ERROR, msg, currentlySelectedEntity);
                 }
-                if (currentlySelectedEntity.getPosition() != null) {
-                    clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
-                }
+                clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
                 clientgui.updateFiringArc(currentlySelectedEntity);
                 clientgui.showSensorRanges(currentlySelectedEntity);
                 clientgui.boardViews().forEach(IBoardView::repaint);

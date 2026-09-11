@@ -570,6 +570,19 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
+     * Returns the engine rating for its owning unit. Support ratings are derived from the current design rather than
+     * stored in the engine: TM p.126, Errata v8 p.6, cruising/safe-thrust MP times tonnage, capped at 500.
+     * Fractional tonnage is retained, with no suspension adjustment or rounding to a multiple of five.
+     *
+     * @param entity the unit using this engine
+     * @return the effective engine rating, which may be fractional for support vehicles
+     */
+    public double getRating(Entity entity) {
+        return entity.isSupportVehicle() || hasFlag(SUPPORT_VEE_ENGINE)
+              ? Math.min(500, entity.getOriginalWalkMP() * entity.getWeight()) : engineRating;
+    }
+
+    /**
      * @return The slots taken up by the engine in the center torso.
      */
     public int[] getCenterTorsoCriticalSlots(int gyroType) {

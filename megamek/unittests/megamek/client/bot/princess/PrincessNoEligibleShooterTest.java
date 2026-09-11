@@ -121,5 +121,30 @@ class PrincessNoEligibleShooterTest {
         assertDoesNotThrow(princess::calculateTargetingOffBoardTurn);
 
         verify(princess, never()).sendAttackData(anyInt(), nullable(Vector.class));
+        verify(princess).sendDone(true);
+    }
+
+    /**
+     * {@code getEntityToFire} can also throw. A plain return there is treated as success by
+     * {@code BotClient.calculateMyTurnWorker}, so the turn has to be cleared the same way.
+     */
+    @Test
+    void firingTurnWhereFindingAShooterThrowsStillClearsTheTurn() {
+        Princess princess = mock(Princess.class);
+        Game game = mock(Game.class);
+        GameTurn turn = mock(GameTurn.class);
+
+        doCallRealMethod().when(princess).calculateFiringTurn();
+        when(princess.getEntityToFire(nullable(FireControlState.class)))
+              .thenThrow(new IllegalStateException("no fire control state"));
+        when(princess.getGame()).thenReturn(game);
+        when(princess.getMyTurn()).thenReturn(turn);
+        when(game.getFirstEntityNum(turn)).thenReturn(FALLBACK_ENTITY_ID);
+
+        assertDoesNotThrow(princess::calculateFiringTurn);
+
+        ArgumentCaptor<Vector<EntityAction>> attacks = ArgumentCaptor.forClass(Vector.class);
+        verify(princess).sendAttackData(eq(FALLBACK_ENTITY_ID), attacks.capture());
+        assertTrue(attacks.getValue().isEmpty(), "the turn must be cleared with an empty attack");
     }
 }

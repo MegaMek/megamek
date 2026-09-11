@@ -1493,8 +1493,8 @@ public class Princess extends BotClient {
             // are loaded
             shooter = getEntityToFire(fireControlState);
         } catch (Exception exception) {
-            // If we fail to get the shooter, literally nothing can be done.
             LOGGER.error(exception.getMessage(), exception);
+            clearFiringTurnWithoutShooter("Failed to determine which entity should fire");
             return;
         }
 
@@ -1504,15 +1504,7 @@ public class Princess extends BotClient {
             // which units can still act. Without this guard the next line dereferences that null, and the
             // handler at the end of the method then dereferences it a second time, so the bot sends nothing at
             // all and stands mute for the rest of the phase.
-            int firstEntityId = getGame().getFirstEntityNum(getMyTurn());
-            if (firstEntityId == Entity.NONE) {
-                LOGGER.warn("No entity is eligible to fire this turn and the game has none to fall back on; "
-                      + "skipping the firing turn.");
-                return;
-            }
-            LOGGER.warn("No entity is eligible to fire this turn; sending an empty attack for entity ID {} so "
-                  + "the turn is not lost.", firstEntityId);
-            sendAttackData(firstEntityId, new Vector<>());
+            clearFiringTurnWithoutShooter("No entity is eligible to fire this turn");
             return;
         }
 
@@ -1763,6 +1755,30 @@ public class Princess extends BotClient {
     }
 
     /**
+     * Ends a firing turn that has no shooter to declare for. A plain {@code return} is treated as success by
+     * {@link BotClient#calculateMyTurnWorker(boolean)}, so without an empty attack the turn is never resolved and
+     * the bot falls silent. Mirrors what {@code calculateMyTurnWorker} already does for the physical phase.
+     *
+     * @param reason why no shooter could be determined, for the log
+     */
+    private void clearFiringTurnWithoutShooter(String reason) {
+        int firstEntityId = Entity.NONE;
+        try {
+            firstEntityId = getGame().getFirstEntityNum(getMyTurn());
+        } catch (Exception exception) {
+            LOGGER.error(exception, "Could not find a fallback entity to clear the firing turn with.");
+        }
+
+        if (firstEntityId == Entity.NONE) {
+            LOGGER.warn("{}, and the game has no entity to fall back on; skipping the firing turn.", reason);
+            return;
+        }
+
+        LOGGER.warn("{}; sending an empty attack for entity ID {} so the turn is not lost.", reason, firstEntityId);
+        sendAttackData(firstEntityId, new Vector<>());
+    }
+
+    /**
      * Calculates the targeting/ off board turn This includes firing TAG and non-direct-fire artillery
      */
     @Override
@@ -1771,8 +1787,10 @@ public class Princess extends BotClient {
 
         if (entityToFire == null) {
             // Same hole as calculateFiringTurn: the game can legitimately report no eligible entity, and every
-            // use below dereferences this one.
-            LOGGER.warn("No entity is eligible for the targeting turn; skipping it.");
+            // use below dereferences this one. The turn still has to be declared done, exactly as the normal
+            // path does at the end of this method, or the targeting phase never advances.
+            LOGGER.warn("No entity is eligible for the targeting turn; declaring it done without acting.");
+            sendDone(true);
             return;
         }
 

@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.SwingUtilities;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -45,20 +46,22 @@ import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.phaseDisplay.AbandonUnitDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DetonateChargesDialog;
+import megamek.client.ui.dialogs.phaseDisplay.InfantryActionDeclarationDialog;
 import megamek.client.ui.dialogs.phaseDisplay.MinesweeperActivationDialog;
 import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.VariableRangeTargetingDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.common.Player;
-import megamek.common.actions.InitiateInfantryCombatAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
+import megamek.common.compute.InfantryActionStrengths;
 import megamek.common.equipment.BridgeLayerLogic;
 import megamek.common.equipment.BridgeLayerState;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 
@@ -71,7 +74,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     private static final MMLogger AVLB_LOGGER = MMLogger.create(BridgeLayerState.DIAGNOSTIC_LOGGER_NAME);
 
     public enum PreEndCommand implements PhaseCommand {
-        PREEND_INITIATE_INFANTRY_COMBAT("initiateInfantryCombat"),
+        PREEND_INFANTRY_ACTION("infantryAction"),
         PREEND_NOVA_NETWORK("novaNetwork"),
         PREEND_VAR_RANGE_TARGETING("varRangeTargeting"),
         PREEND_ABANDON("abandon"),
@@ -127,6 +130,10 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * end-turn button to read "Done" instead of "Skip Turn" - otherwise the player gets no sign the declaration took.
      */
     private boolean declarationMade;
+    /** The player answered a prompt about an infantry action this turn, so ending the turn needs no warning. */
+    private boolean promptAnswered;
+    /** The last state the Infantry Action button was set to, so the log records changes and not every refresh. */
+    private boolean infantryActionOffered;
 
     /**
      * Sets the current target and updates button states
@@ -150,7 +157,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         setupButtonPanel();
 
         // Initialize buttons to disabled state
-        setInitiateInfantryCombatEnabled(false);
+        setInfantryActionEnabled(false);
         updateDonePanel();
     }
 
@@ -185,7 +192,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     @Override
     protected List<MegaMekButton> getButtonList() {
         ArrayList<MegaMekButton> buttonList = new ArrayList<>();
-        buttonList.add(buttons.get(PreEndCommand.PREEND_INITIATE_INFANTRY_COMBAT));
+        buttonList.add(buttons.get(PreEndCommand.PREEND_INFANTRY_ACTION));
         buttonList.add(buttons.get(PreEndCommand.PREEND_NOVA_NETWORK));
         buttonList.add(buttons.get(PreEndCommand.PREEND_VAR_RANGE_TARGETING));
         buttonList.add(buttons.get(PreEndCommand.PREEND_ABANDON));
@@ -198,8 +205,8 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getActionCommand().equals(PreEndCommand.PREEND_INITIATE_INFANTRY_COMBAT.getCmd())) {
-            initiateInfantryCombat();
+        if (ev.getActionCommand().equals(PreEndCommand.PREEND_INFANTRY_ACTION.getCmd())) {
+            showInfantryActionDialogs();
         } else if (ev.getActionCommand().equals(PreEndCommand.PREEND_NOVA_NETWORK.getCmd())) {
             showNovaNetworkDialog();
         } else if (ev.getActionCommand().equals(PreEndCommand.PREEND_VAR_RANGE_TARGETING.getCmd())) {
@@ -318,60 +325,112 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
 
     // TODO: Add propertyChange handler for keyboard shortcuts once parent class infrastructure exists
 
-    private void initiateInfantryCombat() {
-        if (target == null) {
-            return;
+    /**
+     * One declaration per building the local player has a stake in: the attacker commits units or withdraws, the
+     * defender commits units and crew (TO:AR pp. 169 to 172). Each confirmed dialog goes to the server at once.
+     */
+    private void showInfantryActionDialogs() {
+        Player localPlayer = clientgui.getClient().getLocalPlayer();
+        List<AbstractBuildingEntity> stakes = InfantryActionStrengths.stakes(game, localPlayer);
+        LOGGER.debug("[InfantryAction] {} declares for {} building(s)", localPlayer.getName(), stakes.size());
+        boolean declared = false;
+        for (AbstractBuildingEntity building : stakes) {
+            declared |= declareFor(localPlayer, building);
         }
-
-        Entity ce = game.getEntity(currentEntity);
-        if (!(ce instanceof Infantry inf)) {
-            return;
+        if (declared) {
+            registerDeclaration("PreEndDeclarationsDisplay.declared.infantryAction");
         }
+        buttons.get(PreEndCommand.PREEND_INFANTRY_ACTION).transferFocus();
+    }
 
-        // Check if already in combat
-        if (inf.getInfantryCombatTargetId() != Entity.NONE) {
-            clientgui.addToast(ToastLevel.ERROR,
-                  Messages.getString("InfantryVsInfantryCombatDisplay.alreadyEngaged"));
-            return;
+    /**
+     * Opens the declaration dialog for one building and sends what the player confirmed.
+     *
+     * @return {@code true} when a declaration went to the server
+     */
+    private boolean declareFor(Player localPlayer, AbstractBuildingEntity building) {
+        clientgui.centerOnUnit(building);
+        var dialog = new InfantryActionDeclarationDialog(clientgui.getFrame(), game, localPlayer, building);
+        boolean confirmed = dialog.showDialog() == DialogResult.CONFIRMED;
+        LOGGER.info("[PreEnd] dialog for {}: {}", building.getShortName(),
+              confirmed ? dialog.getDeclaration() : "cancelled");
+        if (confirmed && dialog.declaresAnything()) {
+            clientgui.getClient().sendInfantryActionDeclaration(dialog.getDeclaration());
+            return true;
         }
+        return false;
+    }
 
-        // Check if target is a building
-        Entity targetEntity = game.getEntity(target.getId());
-        if (!(targetEntity instanceof AbstractBuildingEntity)) {
-            clientgui.addToast(ToastLevel.ERROR,
-                  Messages.getString("InfantryVsInfantryCombatDisplay.targetMustBeBuilding"));
-            return;
+    /**
+     * When the turn begins with an infantry action to decide on, asks the player about it and opens the dialog if
+     * they say yes: an attacker whose infantry stand inside an enemy building is asked whether to start the action,
+     * or to reinforce one already under way; a defender whose building is under attack is asked whether to respond,
+     * and told that a building nothing is committed to falls (TO:AR p. 172). Declining leaves the button and the
+     * skip-turn check as they were.
+     */
+    private void offerDeclarations() {
+        Player localPlayer = clientgui.getClient().getLocalPlayer();
+        boolean declared = false;
+        for (AbstractBuildingEntity building : InfantryActionStrengths.stakes(game, localPlayer)) {
+            String promptKey = promptFor(localPlayer, building);
+            if (promptKey == null) {
+                continue;
+            }
+            LOGGER.info("[PreEnd] {}: asking {} ({})", building.getShortName(), localPlayer.getName(), promptKey);
+            clientgui.centerOnUnit(building);
+            String title = Messages.getString("PreEndDeclarationsDisplay." + promptKey + ".title");
+            String body = Messages.getString("PreEndDeclarationsDisplay." + promptKey + ".message",
+                  building.getDisplayName());
+            boolean yes = clientgui.doYesNoDialog(title, body);
+            promptAnswered = true;
+            if ("continueAttack".equals(promptKey) || "continueDefence".equals(promptKey)) {
+                // Yes keeps fighting, which needs no declaration; No opens the dialog, where the force can withdraw
+                if (!yes) {
+                    declared |= declareFor(localPlayer, building);
+                }
+            } else if (yes) {
+                declared |= declareFor(localPlayer, building);
+            } else {
+                LOGGER.info("[PreEnd] {} declined the {} prompt for {}", localPlayer.getName(), promptKey,
+                      building.getShortName());
+            }
         }
-
-        // Check if same hex
-        if (!ce.getPosition().equals(targetEntity.getPosition())) {
-            clientgui.addToast(ToastLevel.ERROR,
-                  Messages.getString("InfantryVsInfantryCombatDisplay.mustBeSameHex"));
-            return;
+        if (declared) {
+            registerDeclaration("PreEndDeclarationsDisplay.declared.infantryAction");
         }
+    }
 
-        // Check if combat already exists in this building
-        boolean combatExists = game.getEntitiesVector().stream()
-              .filter(e -> e instanceof Infantry)
-              .filter(e -> e.getPosition() != null && e.getPosition().equals(targetEntity.getPosition()))
-              .map(e -> (Infantry) e)
-              .anyMatch(e -> e.getInfantryCombatTargetId() != Entity.NONE);
-
-        if (combatExists) {
-            clientgui.addToast(ToastLevel.WARNING,
-                  Messages.getString("InfantryVsInfantryCombatDisplay.combatAlreadyExists"));
-            return;
+    /**
+     * Which question, if any, the player is asked about a building at the start of their turn.
+     *
+     * @return the message key stem, or {@code null} when there is nothing to ask
+     */
+    private @Nullable String promptFor(Player localPlayer, AbstractBuildingEntity building) {
+        boolean running = InfantryActionStrengths.hasActionRunning(game, building);
+        if (InfantryActionStrengths.defends(localPlayer, building)) {
+            if (!running) {
+                return null;
+            }
+            boolean somethingToCommit = !InfantryActionStrengths.unengagedFriendlyInfantryInside(game, localPlayer,
+                  building).isEmpty() || (InfantryActionStrengths.crewAvailableToCommit(building) > 0);
+            if (somethingToCommit) {
+                return "underAttack";
+            }
+            // Nothing left to commit: the only question is whether to hold, under the house rule that lets them go
+            return InfantryActionStrengths.canWithdrawDefence(game, localPlayer, building) ? "continueDefence" : null;
         }
-
-        String title = Messages.getString("PreEndDeclarationsDisplay.InitiateInfantryCombatDialog.title");
-        String message = Messages.getString("PreEndDeclarationsDisplay.InitiateInfantryCombatDialog.message",
-              ce.getDisplayName(),
-              target.getDisplayName());
-
-        if (clientgui.doYesNoDialog(title, message)) {
-            addAttack(new InitiateInfantryCombatAction(currentEntity, target.getId()));
-            ready();
+        boolean unengagedInside = !InfantryActionStrengths.unengagedFriendlyInfantryInside(game, localPlayer,
+              building).isEmpty();
+        if (!unengagedInside) {
+            // Only engaged units: the fight goes on unless the player withdraws the force
+            return running ? "continueAttack" : null;
         }
+        return running ? "reinforce" : "startAttack";
+    }
+
+    /** Whether the local player has an infantry action to declare for anywhere on the board. */
+    private boolean hasInfantryActionStake() {
+        return !InfantryActionStrengths.stakes(game, clientgui.getClient().getLocalPlayer()).isEmpty();
     }
 
     @Override
@@ -396,8 +455,10 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         }
         // Only nag about un-declared infantry combat for a unit that could actually initiate it. Other units in this
         // phase (a unit making an end-phase declaration, or a bridgelayer that chose not to deploy) end silently.
-        if (attacks.isEmpty() && entity.canInitiateInfantryVsInfantryCombat()) {
-            LOGGER.debug("[PreEnd] {}: nag - infantry-combat-capable but none declared; confirming skip",
+        boolean undeclaredAction = attacks.isEmpty() && !declarationMade && !promptAnswered
+              && hasInfantryActionStake();
+        if (undeclaredAction) {
+            LOGGER.debug("[PreEnd] {}: nag - an infantry action awaits a declaration; confirming skip",
                   entity.getShortName());
             String title = Messages.getString("PreEndDeclarationsDisplay.skipTurn.title");
             String body = Messages.getString("PreEndDeclarationsDisplay.skipTurn.message");
@@ -547,12 +608,14 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             updateDeployBridgeButtonLabel(entity, BridgeLayerLogic.getDeployableBridgeLayers(entity));
         }
 
-        // Initiate Infantry Combat is entity-scoped: it depends on the selected unit and target building.
-        boolean canInitiate = (entity instanceof Infantry infantry)
-              && infantry.canInitiateInfantryVsInfantryCombat()
-              && target != null
-              && isValidBuildingTargetNoCombat(entity, target);
-        setInitiateInfantryCombatEnabled(canInitiate);
+        // Infantry actions are player-wide: one declaration per building the player has a stake in
+        boolean canInitiate = isMyTurn() && hasInfantryActionStake() && !declarationMade;
+        if (canInitiate != infantryActionOffered) {
+            infantryActionOffered = canInitiate;
+            LOGGER.info("[PreEnd] Infantry Action button {}: myTurn={}, stake={}, declarationMade={}",
+                  canInitiate ? "enabled" : "disabled", isMyTurn(), hasInfantryActionStake(), declarationMade);
+        }
+        setInfantryActionEnabled(canInitiate);
         updateDonePanel();
 
         LOGGER.debug("[PreEnd] updateButtons: currentEntity={}, infantryCombat={}, deployBridge={}, nova={}, vrt={}, "
@@ -591,35 +654,13 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         updateButtons();
     }
 
-    /**
-     * Checks if the target is a valid building with no existing combat
-     */
-    private boolean isValidBuildingTargetNoCombat(Entity entity, Targetable target) {
-        Entity targetEntity = game.getEntity(target.getId());
-        if (!(targetEntity instanceof AbstractBuildingEntity)) {
-            return false;
-        }
-
-        if (!entity.getPosition().equals(targetEntity.getPosition())) {
-            return false;
-        }
-
-        // Check if combat already exists in this building
-        boolean combatExists = game.getEntitiesVector().stream()
-              .filter(e -> e instanceof Infantry)
-              .filter(e -> e.getPosition() != null && e.getPosition().equals(targetEntity.getPosition()))
-              .map(e -> (Infantry) e)
-              .anyMatch(e -> e.getInfantryCombatTargetId() != Entity.NONE);
-
-        return !combatExists;
-    }
 
     /**
      * Enables or disables the initiate infantry combat button
      */
-    protected void setInitiateInfantryCombatEnabled(boolean enabled) {
-        buttons.get(PreEndCommand.PREEND_INITIATE_INFANTRY_COMBAT).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(PreEndCommand.PREEND_INITIATE_INFANTRY_COMBAT.getCmd(), enabled);
+    protected void setInfantryActionEnabled(boolean enabled) {
+        buttons.get(PreEndCommand.PREEND_INFANTRY_ACTION).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(PreEndCommand.PREEND_INFANTRY_ACTION.getCmd(), enabled);
     }
 
     /**
@@ -816,7 +857,13 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      */
     private void beginMyTurn() {
         declarationMade = false;
-        LOGGER.debug("[PreEnd] pre-end declarations turn begins for the local player");
+        promptAnswered = false;
+        Player localPlayer = clientgui.getClient().getLocalPlayer();
+        LOGGER.info("[PreEnd] {}'s declaration turn begins; infantry action stakes: {}", localPlayer.getName(),
+              InfantryActionStrengths.stakes(game, localPlayer).stream()
+                    .map(building -> (InfantryActionStrengths.defends(localPlayer, building) ? "defends "
+                          : "attacks ") + building.getShortName())
+                    .toList());
         clientgui.maybeShowUnitDisplay();
         setTarget(null);
         selectingDeployBridgeHex = false;
@@ -833,6 +880,8 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         startTimer();
         LOGGER.debug("[PreEnd] beginMyTurn complete: currentEntity={}, butDoneEnabled={}, butSkipEnabled={}",
               currentEntity, butDone.isEnabled(), butSkipTurn.isEnabled());
+        // After the turn's buttons are settled, so the player can still act from the button if they say no
+        SwingUtilities.invokeLater(this::offerDeclarations);
     }
 
     /**
@@ -851,7 +900,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * Disables all action buttons
      */
     private void disableButtons() {
-        setInitiateInfantryCombatEnabled(false);
+        setInfantryActionEnabled(false);
         setNovaNetworkEnabled(false);
         setVariableRangeTargetingEnabled(false);
         setAbandonEnabled(false);

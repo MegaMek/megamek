@@ -431,6 +431,8 @@ public class OptionsConstants {
     public static final String ADVANCED_ALTERNATE_MASC = "alternate_masc";
     public static final String ADVANCED_ALTERNATE_MASC_ENHANCED = "alternate_masc_enhanced";
     public static final String ADVANCED_COMBAT_TAC_OPS_AMS = "tacops_ams";
+    /** House rule: the infantry defending a building in an infantry action may withdraw on the attacker's terms. */
+    public static final String ADVANCED_COMBAT_INFANTRY_ACTION_DEFENDER_WITHDRAWAL = "infantry_action_defender_withdrawal";
     public static final String ADVANCED_COMBAT_TAC_OPS_MANUAL_AMS = "tacops_manual_ams";
     public static final String ADVANCED_COMBAT_FLOATING_CRITS = "floating_crits";
     public static final String ADVANCED_COMBAT_TAC_OPS_CRIT_ROLL = "tacops_crit_roll";

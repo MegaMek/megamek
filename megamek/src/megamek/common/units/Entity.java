@@ -36,7 +36,7 @@ package megamek.common.units;
 
 import static megamek.common.bays.Bay.UNSET_BAY;
 
-import java.awt.*;
+import java.awt.Image;
 import java.io.Serial;
 import java.util.*;
 import java.util.List;
@@ -150,15 +150,8 @@ import megamek.utilities.xml.MMXMLUtility;
  */
 @JsonDeserialize(using = EntityDeserializer.class)
 public abstract class Entity extends TurnOrdered
-        implements Transporter,
-                   Targetable,
-                   RoundUpdated,
-                   PhaseUpdated,
-                   ITechnology,
-                   ForceAssignable,
-                   CombatRole,
-                   Deployable,
-                   ICarryable {
+      implements Transporter, Targetable, RoundUpdated, PhaseUpdated, ITechnology, ForceAssignable, CombatRole,
+                 Deployable, ICarryable {
 
     private static final MMLogger LOGGER = MMLogger.create(Entity.class);
 
@@ -177,7 +170,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * @return this unit's Magnetic Pulse effect state, lazily created so it is non-null even after an older save (which
-     * predates the field) is loaded.
+     *       predates the field) is loaded.
      */
     private MagneticPulseState getMagneticPulseState() {
         if (magneticPulseState == null) {
@@ -263,13 +256,9 @@ public abstract class Entity extends TurnOrdered
     public static final int MAX_C3_NODES = 12;
     public static final int MAX_C3i_NODES = 6;
     public static final int MAX_NOVA_CEWS_NODES = 3;
-    /**
-     * A C3 Master computer controls one to three C3 Slaves or one to three C3 Masters (CR p.198).
-     */
+    /** A C3 Master computer controls one to three C3 Slaves or one to three C3 Masters (CR p.198). */
     public static final int MAX_C3M_SUBORDINATES = 3;
-    /**
-     * A C3 Emergency Master overloads after this many operating turns (TO:AUE p.110).
-     */
+    /** A C3 Emergency Master overloads after this many operating turns (TO:AUE p.110). */
     public static final int C3EM_MAX_OPERATING_TURNS = 6;
     public static final String C3_NETWORK_ID_SEPARATOR = ".";
 
@@ -587,19 +576,13 @@ public abstract class Entity extends TurnOrdered
      */
     protected int c3MasterLostId = NONE;
 
-    /**
-     * True while this unit's C3 Emergency Master has taken over as lance master (TO:AUE p.110).
-     */
+    /** True while this unit's C3 Emergency Master has taken over as lance master (TO:AUE p.110). */
     protected boolean c3emActive = false;
 
-    /**
-     * Operating turns the C3 Emergency Master has used; at {@link #C3EM_MAX_OPERATING_TURNS} it overloads.
-     */
+    /** Operating turns the C3 Emergency Master has used; at {@link #C3EM_MAX_OPERATING_TURNS} it overloads. */
     protected int c3emOperatingTurns = 0;
 
-    /**
-     * The master unit the C3 Emergency Master substituted for, so an ECM-jammed master can resume afterward.
-     */
+    /** The master unit the C3 Emergency Master substituted for, so an ECM-jammed master can resume afterward. */
     protected int c3emOriginalMasterId = NONE;
     private String c3UUID = null;
     private String c3MasterIsUUID = null;
@@ -803,6 +786,12 @@ public abstract class Entity extends TurnOrdered
     private boolean infantryCombatWantsWithdrawal = false;
 
     /**
+     * Whether this unit withdrew from an infantry action and is moved to a hex next to the building in the following
+     * End Phase (TO:AR p. 172).
+     */
+    private boolean infantryActionLeaving = false;
+
+    /**
      * Flag that indicates that the unit can still be salvaged (given enough time and parts).
      */
     private boolean salvageable = true;
@@ -932,8 +921,8 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * End Phases this unit has spent out in the open in a tainted atmosphere, TO:AR p.54. An {@code int} rather than a
-     * state object so that a unit deserialized from a save written before this field existed simply starts its clock at
-     * zero instead of coming back {@code null}.
+     * state object so that a unit deserialized from a save written before this field existed simply starts its clock
+     * at zero instead of coming back {@code null}.
      */
     private int taintedAtmosphereExposureTurns = 0;
 
@@ -1132,7 +1121,7 @@ public abstract class Entity extends TurnOrdered
     private boolean hasFleeZone = false;
     private HexArea fleeZone = HexArea.EMPTY_AREA;
 
-    /**
+     /**
      * Generates a new, blank, entity.
      */
     public Entity() {
@@ -1191,8 +1180,8 @@ public abstract class Entity extends TurnOrdered
         // Bomb-mounted weapons are expendable ordnance, not inherent to the unit,
         // and should never factor into crippled status determination.
         List<WeaponMounted> nonBombWeapons = getTotalWeaponList().stream()
-                                                                 .filter(w -> !w.isBombMounted())
-                                                                 .toList();
+              .filter(w -> !w.isBombMounted())
+              .toList();
 
         int totalDmg = Compute.computeTotalDamage(nonBombWeapons);
 
@@ -1423,9 +1412,7 @@ public abstract class Entity extends TurnOrdered
         this.chassis = chassis;
     }
 
-    /**
-     * Sets the {@link #clanChassisName} for this unit, e.g. "Timber Wolf".
-     */
+    /** Sets the {@link #clanChassisName} for this unit, e.g. "Timber Wolf". */
     public void setClanChassisName(String name) {
         clanChassisName = Objects.requireNonNullElse(name, "");
     }
@@ -1508,8 +1495,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getIntroductionDate(boolean clan,
-                                   Faction faction) {
+    public int getIntroductionDate(boolean clan, Faction faction) {
         return year;
     }
 
@@ -1545,8 +1531,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getPrototypeDate(boolean clan,
-                                Faction faction) {
+    public int getPrototypeDate(boolean clan, Faction faction) {
         return compositeTechLevel.getPrototypeDate(clan, faction);
     }
 
@@ -1556,8 +1541,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getProductionDate(boolean clan,
-                                 Faction faction) {
+    public int getProductionDate(boolean clan, Faction faction) {
         return compositeTechLevel.getProductionDate(clan, faction);
     }
 
@@ -1572,8 +1556,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getExtinctionDate(boolean clan,
-                                 Faction faction) {
+    public int getExtinctionDate(boolean clan, Faction faction) {
         return compositeTechLevel.getExtinctionDate(clan, faction);
     }
 
@@ -1583,8 +1566,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     @Override
-    public int getReintroductionDate(boolean clan,
-                                     Faction faction) {
+    public int getReintroductionDate(boolean clan, Faction faction) {
         return compositeTechLevel.getReintroductionDate(clan, faction);
     }
 
@@ -10908,6 +10890,20 @@ public abstract class Entity extends TurnOrdered
     /**
      * Clear all infantry combat state (called when combat ends).
      */
+    /**
+     * @return {@code true} when the unit withdrew from an infantry action and has yet to be moved out of the building
+     */
+    public boolean isInfantryActionLeaving() {
+        return infantryActionLeaving;
+    }
+
+    /**
+     * @param leaving {@code true} once the unit's force has withdrawn and it waits to be moved out of the building
+     */
+    public void setInfantryActionLeaving(boolean leaving) {
+        infantryActionLeaving = leaving;
+    }
+
     public void clearInfantryCombatState() {
         infantryCombatTargetId = Entity.NONE;
         infantryCombatIsAttacker = false;
@@ -12034,13 +12030,13 @@ public abstract class Entity extends TurnOrdered
      * activation, and detonating a demolition charge this player has set.
      */
     public boolean isEligibleForPreEndDeclarations() {
-        return canInitiateInfantryVsInfantryCombat()
-               || hasNovaCEWS()
-               || hasVariableRangeTargeting()
-               || canAnnounceAbandon()
-               || hasMinesweeper()
-               || ownerHasDemolitionCharge()
-               || BridgeLayerLogic.canDeclareBridgeDeploy(this, game);
+        return canDeclareInfantryAction()
+              || hasNovaCEWS()
+              || hasVariableRangeTargeting()
+              || canAnnounceAbandon()
+              || hasMinesweeper()
+              || ownerHasDemolitionCharge()
+              || BridgeLayerLogic.canDeclareBridgeDeploy(this, game);
     }
 
     /**
@@ -12065,16 +12061,39 @@ public abstract class Entity extends TurnOrdered
      * player while keeping the per-unit turns.
      */
     public boolean hasEntityScopedPreEndDeclaration() {
-        // Infantry-vs-infantry combat and Bridge-Layer (AVLB) deployment are both declared per unit (TM p.242 / TW).
-        return canInitiateInfantryVsInfantryCombat() || BridgeLayerLogic.canDeclareBridgeDeploy(this, game);
+        // Bridge-Layer (AVLB) deployment is declared per unit (TM p.242 / TW); an infantry action is declared once
+        // per player per building, so it collapses to one turn like the other player-wide declarations.
+        return BridgeLayerLogic.canDeclareBridgeDeploy(this, game);
     }
 
     /**
-     * Check if the entity can participate in ONGOING infantry vs. infantry combat. This is for the
-     * INFANTRY_VS_INFANTRY_COMBAT phase.
+     * Whether this unit gives its player a Pre-End Declarations turn for an infantry action (TO:AR pp. 169 to 172):
+     * infantry that could attack, join or withdraw, and a crewed building with enemies inside. The base
+     * implementation returns {@code false}; infantry and buildings override it.
+     *
+     * @return {@code true} when there is a declaration to make
+     */
+    public boolean canDeclareInfantryAction() {
+        return false;
+    }
+
+    /**
+     * Whether this unit may announce a withdrawal from the infantry action it is in (TO:AR p. 172): only an
+     * attacker withdraws, and only while it has not already announced one.
+     *
+     * @return {@code true} for an engaged attacker that has not yet declared a withdrawal
+     */
+    public boolean canWithdrawFromInfantryAction() {
+        boolean isEngaged = infantryCombatTargetId != Entity.NONE;
+        return isEngaged && infantryCombatIsAttacker && !infantryCombatWantsWithdrawal;
+    }
+
+    /**
+     * Whether the unit gets a turn in the INFANTRY_VS_INFANTRY_COMBAT phase: a unit that can join an action running
+     * where it stands, or an attacker already in one that may still withdraw.
      */
     public boolean isEligibleForInfantryVsInfantry() {
-        return canReinforceInfantryVsInfantry();
+        return canReinforceInfantryVsInfantry() || canWithdrawFromInfantryAction();
     }
 
     /**

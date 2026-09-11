@@ -396,6 +396,8 @@ final class GameOptionsPresentation {
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BA_CRITICAL_SLOTS,
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BA_VS_BA,
               OptionsConstants.ADVANCED_COMBAT_PROTOMEKS_SAFE_FROM_INFERNOS);
+        register(ADVANCED_COMBAT, COMBAT_UNITS, "combat.units.infantryActions",
+              OptionsConstants.ADVANCED_COMBAT_INFANTRY_ACTION_DEFENDER_WITHDRAWAL);
     }
 
     private static void registerGroundMovementOptions() {

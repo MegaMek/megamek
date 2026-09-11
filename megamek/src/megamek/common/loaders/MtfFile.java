@@ -66,13 +66,13 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
+import megamek.common.units.ForceGeneratorAvailability;
 import megamek.common.units.LandAirMek;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
 import megamek.common.units.QuadVee;
 import megamek.common.units.System;
 import megamek.common.units.TripodMek;
-import megamek.common.units.ForceGeneratorAvailability;
 import megamek.common.units.UnitRole;
 import megamek.logging.MMLogger;
 
@@ -142,6 +142,7 @@ public class MtfFile implements IMekLoader {
     private String missionRoles;
     private String faction;
     private String unitFileUUID;
+    private String refitFromUUID;
 
     private final List<String> availabilityLines = new ArrayList<>();
 
@@ -209,6 +210,7 @@ public class MtfFile implements IMekLoader {
     public static final String LOCATION_DONOR_TYPE = "donor type:";
     public static final String SIZE = ":SIZE:";
     public static final String UUID = "uuid:";
+    public static final String REFIT_FROM_UUID = "refitfromuuid:";
     public static final String MUL_ID = "mul id:";
     public static final String QUIRK = "quirk:";
     public static final String WEAPON_QUIRK = "weaponquirk:";
@@ -343,11 +345,12 @@ public class MtfFile implements IMekLoader {
             if (!StringUtility.isNullOrBlank(unitFileUUID)) {
                 mek.setUnitFileUUID(unitFileUUID);
             }
+            mek.setRefitFromUUID(refitFromUUID);
             mek.storeOriginalUnitData();
             mek.setMulId(mulId);
             mek.setYear(Integer.parseInt(techYear.substring(ERA.length()).trim()));
             String originalYearStr = originalTechYear.substring(ORIGINAL_ERA.length()).trim();
-            if (!originalYearStr.isBlank()) {            
+            if (!originalYearStr.isBlank()) {
                 int originalYear = Integer.parseInt(originalYearStr);
                 if (originalYear>0) {
                     mek.setOriginalBuildYear(originalYear);
@@ -1695,7 +1698,7 @@ public class MtfFile implements IMekLoader {
             techYear = line;
             return true;
         }
-        
+
         if (lineLower.startsWith(ORIGINAL_ERA)) {
             originalTechYear = line;
             return true;
@@ -1710,8 +1713,6 @@ public class MtfFile implements IMekLoader {
             published = line;
             return true;
         }
-        
-
 
         if (lineLower.startsWith(RULES_LEVEL)) {
             rulesLevel = line;
@@ -1820,6 +1821,11 @@ public class MtfFile implements IMekLoader {
 
         if (lineLower.startsWith(UUID)) {
             unitFileUUID = line.substring(UUID.length()).trim();
+            return true;
+        }
+
+        if (lineLower.startsWith(REFIT_FROM_UUID)) {
+            refitFromUUID = line.substring(REFIT_FROM_UUID.length()).trim();
             return true;
         }
 

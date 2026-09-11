@@ -290,7 +290,7 @@ public abstract class Entity extends TurnOrdered
      * Persistent identity of this unit design in MTF and BLK files.
      */
     private String unitFileUUID;
-    private String refitFromUuid;
+    private String refitFromUUID;
     private transient String originalChassis;
     private transient String originalModel;
     private transient String originalUnitFileUUID;
@@ -1271,12 +1271,12 @@ public abstract class Entity extends TurnOrdered
     }
 
     /** Source design reference retained in native unit files for custom refits. */
-    public @Nullable String getRefitFromUuid() {
-        return refitFromUuid;
+    public @Nullable String getRefitFromUUID() {
+        return refitFromUUID;
     }
 
-    public void setRefitFromUuid(@Nullable String refitFromUuid) {
-        this.refitFromUuid = StringUtility.isNullOrBlank(refitFromUuid) ? null : refitFromUuid.trim();
+    public void setRefitFromUUID(@Nullable String refitFromUUID) {
+        this.refitFromUUID = StringUtility.isNullOrBlank(refitFromUUID) ? null : refitFromUUID.trim();
     }
 
     public void setUnitFileUUID(String unitFileUUID) {
@@ -16116,7 +16116,6 @@ public abstract class Entity extends TurnOrdered
         return getBoobyTrap() != null;
     }
 
-    // Mobile Structures need this overridden if ever implemented
     public int getBoobyTrapDamage() {
         if (!hasBoobyTrap()) {
             return 0;

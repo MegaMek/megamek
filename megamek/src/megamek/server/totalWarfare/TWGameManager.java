@@ -19732,7 +19732,7 @@ public class TWGameManager extends AbstractGameManager {
 
             // ICE explosions don't hurt anyone else, but fusion do
             if (engine.isFusion()) {
-                int engineRating = en.getEngine().getRating();
+                double engineRating = en.getEngine().getRating(en);
                 Report.addNewline(vDesc);
                 r = new Report(5400, Report.PUBLIC);
                 r.subject = en.getId();

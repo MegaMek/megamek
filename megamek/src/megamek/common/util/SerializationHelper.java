@@ -33,6 +33,12 @@
 
 package megamek.common.util;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.RecordComponent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -40,10 +46,11 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import megamek.common.RulesRef;
+import megamek.common.SourceBookCode;
 import megamek.common.TargetRollModifier;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
-import megamek.server.victory.VictoryPointTracker;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.equipment.INarcPod;
@@ -66,14 +73,15 @@ import megamek.common.units.IBuilding;
 import megamek.common.units.InfantryMount;
 import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.AttackHandler;
+import megamek.logging.MMLogger;
 import megamek.server.victory.VictoryCondition;
-
-import java.util.ArrayList;
+import megamek.server.victory.VictoryPointTracker;
 
 /**
  * Class that off-loads serialization related code from Server.java
  */
 public class SerializationHelper {
+    private static final MMLogger LOGGER = MMLogger.create(SerializationHelper.class);
 
     private SerializationHelper() {
     }
@@ -124,7 +132,7 @@ public class SerializationHelper {
         xStream.omitField(Mek.class, "sinksOnNextRound");
         xStream.aliasField("pendingCharges", Game.class, "pendingDisplacementAttacks");
         xStream.aliasField("pilotRolls", Game.class, "pilotingRolls");
-        
+
         xStream.registerLocalConverter(Game.class, "pilotingRolls", new CollectionConverter(xStream.getMapper(),
               ArrayList.class));
 
@@ -560,6 +568,134 @@ public class SerializationHelper {
                 // Unused here
             }
         });
+
+        // Necessary because XStream 1.4.x cannot deserialize records natively. RulesRef is the sourcebook
+        // reference held by every EquipmentType, and an ejected crew serializes its infantry weapon (and so that
+        // weapon's whole EquipmentType) inline, so without this converter any save taken after a crew ejects
+        // fails to load.
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class type) {
+                return (type == RulesRef.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                SourceBookCode book = null;
+                Integer page = null;
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    try {
+                        switch (reader.getNodeName()) {
+                            case "book" -> book = SourceBookCode.valueOf(reader.getValue());
+                            case "page" -> page = Integer.parseInt(reader.getValue());
+                        }
+                    } catch (IllegalArgumentException exception) {
+                        // Keep the default for this field on a value this version no longer recognizes.
+                    }
+                    reader.moveUp();
+                }
+                // Never return null and never let the record's own validation throw: a null entry in
+                // EquipmentType.rulesRefs would NPE in TechAdvancement.guessStaticTechLevel, and the compact
+                // constructor rejects a non-positive page.
+                if (book == null) {
+                    book = SourceBookCode.UNOFFICIAL;
+                }
+                if ((page != null) && (page < 1)) {
+                    page = null;
+                }
+                return new RulesRef(book, page);
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        // XStream 1.4.x can write a record but cannot read one back: it rebuilds objects by writing straight to
+        // their fields, which the JVM forbids on a record. Every record reaching a save game therefore needs a
+        // converter, and forgetting one does not fail the build - it produces a save that will not load, with the
+        // players present and none of their units (issue #8924). This fallback rebuilds any record through its
+        // canonical constructor so that cannot happen again. It is registered at the lowest priority, so every
+        // specific converter above still wins; those exist to supply safe defaults this one cannot know about.
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class type) {
+                return (type != null) && type.isRecord();
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                Class<?> recordType = context.getRequiredType();
+                RecordComponent[] components = recordType.getRecordComponents();
+
+                Map<String, Object> readValues = new HashMap<>();
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    Class<?> componentType = componentType(components, reader.getNodeName());
+                    if (componentType != null) {
+                        readValues.put(reader.getNodeName(), context.convertAnother(null, componentType));
+                    }
+                    reader.moveUp();
+                }
+
+                // A component the save does not carry keeps its type's default, so a save written before that
+                // component existed still loads.
+                Object[] arguments = new Object[components.length];
+                Class<?>[] parameterTypes = new Class<?>[components.length];
+                for (int index = 0; index < components.length; index++) {
+                    parameterTypes[index] = components[index].getType();
+                    arguments[index] = readValues.containsKey(components[index].getName())
+                          ? readValues.get(components[index].getName())
+                          : defaultValue(parameterTypes[index]);
+                }
+
+                try {
+                    Constructor<?> canonicalConstructor = recordType.getDeclaredConstructor(parameterTypes);
+                    canonicalConstructor.setAccessible(true);
+                    return canonicalConstructor.newInstance(arguments);
+                } catch (Exception exception) {
+                    // A record may reject its own values, as RulesRef does for a page below 1. Dropping the one
+                    // record keeps the rest of the save loadable; a record that cannot tolerate being dropped
+                    // gets its own converter, which is what the specific ones above are for.
+                    LOGGER.warn(exception, "Could not rebuild record {} from the save game; dropping it.",
+                          recordType.getSimpleName());
+                    return null;
+                }
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here; records are written correctly by reflection.
+            }
+
+            private Class<?> componentType(RecordComponent[] components, String name) {
+                for (RecordComponent component : components) {
+                    if (component.getName().equals(name)) {
+                        return component.getType();
+                    }
+                }
+                return null;
+            }
+
+            private Object defaultValue(Class<?> type) {
+                if (!type.isPrimitive()) {
+                    return null;
+                }
+                return switch (type.getName()) {
+                    case "boolean" -> false;
+                    case "byte" -> (byte) 0;
+                    case "short" -> (short) 0;
+                    case "int" -> 0;
+                    case "long" -> 0L;
+                    case "float" -> 0.0f;
+                    case "double" -> 0.0d;
+                    case "char" -> (char) 0;
+                    default -> null;
+                };
+            }
+        }, XStream.PRIORITY_VERY_LOW);
 
         return xStream;
     }

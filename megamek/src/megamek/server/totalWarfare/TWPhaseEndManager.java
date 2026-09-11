@@ -53,7 +53,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
         switch (gameManager.getGame().getPhase()) {
             case LOUNGE:
                 gameManager.getGame().addReports(gameManager.getMainPhaseReport());
-                // Case for if the options didn't set the rules properly 
+                // Case for if the options didn't set the rules properly
                 IOption rules_system = gameManager.getGame().getOptions().getOption(OptionsConstants.RULES_SYSTEM);
                 String loadedOption = (gameManager.getGame().rulesManager instanceof CoreRulesManager) ?
                       OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW;
@@ -252,9 +252,9 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.changePhase(GamePhase.PREEND_DECLARATIONS);
                 break;
             case PREEND_DECLARATIONS:
-                // Actions already added during player turns
-                // No processing needed here - just transition
-                gameManager.changePhase(GamePhase.INFANTRY_VS_INFANTRY_COMBAT);
+                // Infantry actions are declared here by both sides and resolved in the End Phase (TO:AR p. 172), so
+                // the separate Infantry vs Infantry Combat phase is no longer entered
+                gameManager.changePhase(GamePhase.END);
                 break;
             case INFANTRY_VS_INFANTRY_COMBAT:
                 // Actions already added during player turns

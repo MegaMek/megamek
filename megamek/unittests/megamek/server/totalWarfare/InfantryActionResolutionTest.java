@@ -369,8 +369,8 @@ public class InfantryActionResolutionTest {
               mockStatic(MarinePointsScoreCalculator.class, org.mockito.Answers.CALLS_REAL_METHODS);
               MockedStatic<InfantryCombatTables> mockedTables =
                     mockStatic(InfantryCombatTables.class, org.mockito.Answers.CALLS_REAL_METHODS)) {
-            mockedMps.when(() -> MarinePointsScoreCalculator.calculateMPS(any(), any()))
-                  .thenReturn(10); // Give both sides positive MPS so combat proceeds
+            mockedMps.when(() -> MarinePointsScoreCalculator.calculateScore(any(), any()))
+                  .thenReturn(10.0); // Give both sides positive MPS so combat proceeds
             mockedTables.when(() -> InfantryCombatTables.resolveAction(any(String.class), anyInt()))
                   .thenReturn(InfantryCombatResult.eliminated()); // 0% attacker, 100% defender
 
@@ -411,7 +411,10 @@ public class InfantryActionResolutionTest {
 
     private AbstractBuildingEntity createBuildingWithCrew(Player owner, Coords position, int crewSize) {
         AbstractBuildingEntity building = createBuilding(owner, position);
+        building.getCrew().setSize(crewSize);
         building.getCrew().setCurrentSize(crewSize);
+        // Crew count for nothing until the defender commits them; these tests commit the whole crew
+        building.commitCrew(crewSize);
         return building;
     }
 
@@ -420,6 +423,11 @@ public class InfantryActionResolutionTest {
      * the private infantryActionTracker field.
      */
     private static class TestableGameManager extends TWGameManager {
+        @Override
+        public void entityUpdate(int entityId) {
+            // No server behind this manager; the resolution's unit updates have nowhere to go
+        }
+
         public InfantryActionTracker getInfantryCombatTracker() {
             try {
                 var field = TWGameManager.class.getDeclaredField("infantryActionTracker");

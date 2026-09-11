@@ -1360,6 +1360,21 @@ public class TestAero extends TestEntity {
     }
 
     /**
+     * Returns the number of required officers of the entity.
+     * @param aero The entity
+     * @return The number of required officers
+     */
+    public static int requiredOfficers(Aero aero) {
+        if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+            return TestSmallCraft.requiredOfficers((SmallCraft) aero);
+        } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            return TestAdvancedAerospace.requiredOfficers((Jumpship) aero);
+        } else {
+            return 0;
+        }
+    }
+
+    /**
      * Determines whether a piece of equipment should be mounted in a specific location, as opposed to the fuselage.
      *
      * @param eq      The equipment

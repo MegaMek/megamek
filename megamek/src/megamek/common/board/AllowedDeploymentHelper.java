@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -49,7 +49,6 @@ import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EnvironmentalSealingRules;
-import megamek.common.units.Infantry;
 import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
 import megamek.common.units.VTOL;
@@ -149,6 +148,18 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
      * @return true if deployment validity varies with facing
      */
     private boolean isFacingDependentDeployment() {
+        return hasFacingDependentFootprint(entity);
+    }
+
+    /**
+     * Whether the unit's deployment validity depends on its facing: a multi-hex building occupies different hexes
+     * in each facing, so only the facings where every hex of its footprint fits are open to it.
+     *
+     * @param entity the unit being deployed
+     *
+     * @return {@code true} for a multi-hex building entity
+     */
+    public static boolean hasFacingDependentFootprint(Entity entity) {
         return entity instanceof AbstractBuildingEntity buildingEntity
               && buildingEntity.getInternalBuilding() != null
               && buildingEntity.getInternalBuilding().getCoordsList().size() > 1;

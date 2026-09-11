@@ -1492,9 +1492,19 @@ public class Princess extends BotClient {
             // get the first entity that can act this turn make sure weapons
             // are loaded
             shooter = getEntityToFire(fireControlState);
-        } catch (Exception e) {
-            // If we fail to get the shooter, literally nothing can be done.
-            LOGGER.error(e.getMessage(), e);
+        } catch (Exception exception) {
+            LOGGER.error(exception.getMessage(), exception);
+            clearFiringTurnWithoutShooter("Failed to determine which entity should fire");
+            return;
+        }
+
+        if (shooter == null) {
+            // getEntityToFire does not throw when nothing is eligible; it falls back to the game's first
+            // eligible entity, which is itself null when the turn list and the fire control state disagree about
+            // which units can still act. Without this guard the next line dereferences that null, and the
+            // handler at the end of the method then dereferences it a second time, so the bot sends nothing at
+            // all and stands mute for the rest of the phase.
+            clearFiringTurnWithoutShooter("No entity is eligible to fire this turn");
             return;
         }
 
@@ -1745,11 +1755,44 @@ public class Princess extends BotClient {
     }
 
     /**
+     * Ends a firing turn that has no shooter to declare for. A plain {@code return} is treated as success by
+     * {@link BotClient#calculateMyTurnWorker(boolean)}, so without an empty attack the turn is never resolved and
+     * the bot falls silent. Mirrors what {@code calculateMyTurnWorker} already does for the physical phase.
+     *
+     * @param reason why no shooter could be determined, for the log
+     */
+    private void clearFiringTurnWithoutShooter(String reason) {
+        int firstEntityId = Entity.NONE;
+        try {
+            firstEntityId = getGame().getFirstEntityNum(getMyTurn());
+        } catch (Exception exception) {
+            LOGGER.error(exception, "Could not find a fallback entity to clear the firing turn with.");
+        }
+
+        if (firstEntityId == Entity.NONE) {
+            LOGGER.warn("{}, and the game has no entity to fall back on; skipping the firing turn.", reason);
+            return;
+        }
+
+        LOGGER.warn("{}; sending an empty attack for entity ID {} so the turn is not lost.", reason, firstEntityId);
+        sendAttackData(firstEntityId, new Vector<>());
+    }
+
+    /**
      * Calculates the targeting/ off board turn This includes firing TAG and non-direct-fire artillery
      */
     @Override
     protected void calculateTargetingOffBoardTurn() {
         Entity entityToFire = getGame().getFirstEntity(getMyTurn());
+
+        if (entityToFire == null) {
+            // Same hole as calculateFiringTurn: the game can legitimately report no eligible entity, and every
+            // use below dereferences this one. The turn still has to be declared done, exactly as the normal
+            // path does at the end of this method, or the targeting phase never advances.
+            LOGGER.warn("No entity is eligible for the targeting turn; declaring it done without acting.");
+            sendDone(true);
+            return;
+        }
 
         // if we're crippled, off-board and can do so, disengage
         if (entityToFire.isOffBoard() &&
@@ -5070,35 +5113,35 @@ public class Princess extends BotClient {
     	// then send the reveal command for that entity
     	if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
     		Entity target = getGame().getEntity(movedEntityID);
-    		
+
     		// if the target is not hostile/destroyed/abandoned/"broken", we don't bother considering it
     		// also, don't bother if the target can still move after this update
-    		if (target == null || target.isDestroyed() || target.isAbandoned() 
+    		if (target == null || target.isDestroyed() || target.isAbandoned()
     				|| (target.turnWasInterrupted() && !target.isDone())
     				|| !target.getOwner().isEnemyOf(getLocalPlayer())
     				|| getHonorUtil().isEnemyBroken(movedEntityID, target.getOwnerId(), getForcedWithdrawal())) {
     			return;
     		}
-    		
+
     		for (Entity shooter : getGame().getEntitiesVector()) {
     			// if the shooter is hidden, owned by me, on the board and not already activating
-                if (shooter.isHidden() && shooter.getOwnerId() == getLocalPlayerNumber() && 
-                		(shooter.getPosition() != null) && 
+                if (shooter.isHidden() && shooter.getOwnerId() == getLocalPlayerNumber() &&
+                		(shooter.getPosition() != null) &&
                 		(shooter.getHiddenActivationPhase() == GamePhase.UNKNOWN)) {
                 	final Map<WeaponMounted, Double> ammoConservation = calcAmmoConservation(shooter);
-                	
-                	double maxDamage = FireControl.getMaxDamageAtRange(shooter, 
+
+                	double maxDamage = FireControl.getMaxDamageAtRange(shooter,
                 			target.getPosition().distance(shooter.getPosition()), false, false);
-                	
+
                 	// if we're not going to do any damage, don't reveal
                 	if (maxDamage <= 0) {
                 		continue;
                 	}
-                	
+
                 	FiringPlan firingPlan = getFireControl(shooter).getBestFiringPlan(shooter, target, getGame(), ammoConservation);
-                	
+
                 	double percentage = firingPlan.getExpectedDamage() / maxDamage;
-                	
+
                 	// if the expected damage (% of max possible damage at that range)
                 	// is higher than our aggression value (e.g. aggression 7 means we tolerate 30%)
                 	// then reveal
@@ -5109,7 +5152,7 @@ public class Princess extends BotClient {
     		}
         }
     }
-    
+
     /**
      * Determines whether Princess should reroll initiative using the Tactical Genius special ability.
      *

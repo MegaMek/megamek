@@ -235,7 +235,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private final List<SmokeCloud> smokeCloudList = new CopyOnWriteArrayList<>();
 
     // industrial elevators (player-controlled)
-    private final Map<BoardLocation, IndustrialElevator> industrialElevators = new ConcurrentHashMap<>();
+    private Map<BoardLocation, List<IndustrialElevator>> industrialElevators = new ConcurrentHashMap<>();
 
     // temporary ECM fields (from EMP mines, etc.)
     private final List<TemporaryECMField> temporaryECMFields = new CopyOnWriteArrayList<>();
@@ -297,6 +297,20 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     public void setBoardDirect(final Board board) {
         setBoard(0, board);
+    }
+
+    @Override
+    public void setBoard(int boardId, Board board) {
+        super.setBoard(boardId, board);
+        inGameTWEntities().stream().filter(entity -> entity.getBoardId() == boardId).forEach(this::bindBuildingEntity);
+    }
+
+    /** Boards and entity snapshots arrive in separate packets, but must reference the same authored building. */
+    private void bindBuildingEntity(Entity entity) {
+        if (entity instanceof AbstractBuildingEntity building && hasBoard(building.getBoardId())
+              && getBoard(building.getBoardId()).getBuildingsVector().contains(building)) {
+            getBoard(building.getBoardId()).addBuildingToBoard(building);
+        }
     }
 
     public boolean containsMinefield(@Nullable Coords coords) {
@@ -1405,6 +1419,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         try {
             return switch (targetType) {
                 case Targetable.TYPE_ENTITY -> getEntity(targetId);
+                case Targetable.TYPE_WALL_N, Targetable.TYPE_WALL_NE, Targetable.TYPE_WALL_SE,
+                     Targetable.TYPE_WALL_S, Targetable.TYPE_WALL_SW, Targetable.TYPE_WALL_NW ->
+                      megamek.common.units.WallTarget.fromId(this, targetType, targetId);
 
                 case Targetable.TYPE_HEX_CLEAR, Targetable.TYPE_HEX_IGNITE, Targetable.TYPE_HEX_BOMB,
                      Targetable.TYPE_MINEFIELD_DELIVER, Targetable.TYPE_FLARE_DELIVER, Targetable.TYPE_HEX_EXTINGUISH,
@@ -1553,6 +1570,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         } else {
             entity.setGame(this);
             inGameObjects.put(id, entity);
+            bindBuildingEntity(entity);
             // Get the collection of positions
             HashSet<Coords> oldPositions = oldEntity.getOccupiedCoords();
             // Update position lookup table
@@ -1682,6 +1700,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         // fully formed before this is called, since setGame also calls setGame for loaded Entities
         for (Entity entity : inGameTWEntities()) {
             entity.setGame(this);
+            bindBuildingEntity(entity);
         }
     }
 
@@ -2739,6 +2758,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     public void initializeAfterLoad() {
+        restoreIndustrialElevators();
         if (pendingRams == null) {
             pendingRams = new Vector<>();
         }
@@ -3671,7 +3691,13 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @param elevator The industrial elevator to add
      */
     public void addIndustrialElevator(IndustrialElevator elevator) {
-        industrialElevators.put(elevator.getLocation(), elevator);
+        industrialElevators.compute(elevator.getLocation(), (location, current) -> {
+            List<IndustrialElevator> shafts = new ArrayList<>(current == null ? List.of() : current);
+            shafts.removeIf(shaft -> shaft.getBuildingId() == elevator.getBuildingId()
+                  && shaft.getShaftBottom() == elevator.getShaftBottom());
+            shafts.add(elevator);
+            return List.copyOf(shafts);
+        });
     }
 
     /**
@@ -3682,7 +3708,34 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @return The elevator at this location, or {@code null} if none exists
      */
     public @Nullable IndustrialElevator getIndustrialElevator(BoardLocation location) {
-        return industrialElevators.get(location);
+        return industrialElevators.getOrDefault(location, List.of()).stream().findFirst().orElse(null);
+    }
+
+    /** Older games stored one elevator directly at each location. Preserve those shafts and their runtime state. */
+    private void restoreIndustrialElevators() {
+        Map<BoardLocation, List<IndustrialElevator>> restored = new ConcurrentHashMap<>();
+        if (industrialElevators != null) {
+            Map<BoardLocation, ?> previous = industrialElevators;
+            previous.forEach((location, value) -> {
+                if (value instanceof IndustrialElevator elevator) {
+                    restored.put(location, List.of(elevator));
+                } else if (value instanceof List<?> shafts) {
+                    restored.put(location, shafts.stream().map(IndustrialElevator.class::cast).toList());
+                }
+            });
+        }
+        industrialElevators = restored;
+    }
+
+    @java.io.Serial
+    private void readObject(java.io.ObjectInputStream input) throws java.io.IOException, ClassNotFoundException {
+        input.defaultReadObject();
+        restoreIndustrialElevators();
+    }
+
+    public @Nullable IndustrialElevator getIndustrialElevator(BoardLocation location, int level) {
+        return industrialElevators.getOrDefault(location, List.of()).stream()
+              .filter(shaft -> shaft.isWithinShaft(level)).findFirst().orElse(null);
     }
 
     /**
@@ -3703,7 +3756,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @return An unmodifiable collection of all industrial elevators
      */
     public Collection<IndustrialElevator> getIndustrialElevators() {
-        return Collections.unmodifiableCollection(industrialElevators.values());
+        return industrialElevators.values().stream().flatMap(List::stream).toList();
     }
 
     /**
@@ -3724,8 +3777,18 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @return The removed elevator, or {@code null} if none was found
      */
+    public boolean removeIndustrialElevator(IndustrialElevator elevator) {
+        boolean[] removed = { false };
+        industrialElevators.computeIfPresent(elevator.getLocation(), (location, shafts) -> {
+            var remaining = shafts.stream().filter(shaft -> shaft != elevator).toList();
+            removed[0] = remaining.size() != shafts.size();
+            return remaining.isEmpty() ? null : remaining;
+        });
+        return removed[0];
+    }
     public @Nullable IndustrialElevator removeIndustrialElevator(BoardLocation location) {
-        return industrialElevators.remove(location);
+        var shafts = industrialElevators.remove(location);
+        return shafts == null || shafts.isEmpty() ? null : shafts.getFirst();
     }
 
     /**
@@ -3743,7 +3806,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public void setIndustrialElevators(Collection<IndustrialElevator> elevators) {
         industrialElevators.clear();
         for (IndustrialElevator elevator : elevators) {
-            industrialElevators.put(elevator.getLocation(), elevator);
+            addIndustrialElevator(elevator);
         }
     }
 

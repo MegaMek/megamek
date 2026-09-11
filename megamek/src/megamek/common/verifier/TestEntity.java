@@ -1130,7 +1130,8 @@ public abstract class TestEntity implements TestEntityOption {
         if (unit.isProtoMek()) {
             return Math.round(armorTons / ArmorType.forEntity(unit).getWeightPerPoint());
         } else if (unit.isSupportVehicle()) {
-            return Math.floor(armorTons / TestSupportVehicle.armorWeightPerPoint(unit));
+            // Avoid losing a whole point when decimal tonnages divide just below an integer (0.15 / 0.025).
+            return Math.floor(Math.nextUp(armorTons / TestSupportVehicle.armorWeightPerPoint(unit)));
         } else {
             return armorTons * getArmorPointsPerTon(unit);
         }

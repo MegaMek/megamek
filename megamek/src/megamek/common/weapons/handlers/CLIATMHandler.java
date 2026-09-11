@@ -57,7 +57,6 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Aero;
 import megamek.common.units.ConvInfantry;
@@ -297,8 +296,7 @@ public class CLIATMHandler extends ATMHandler {
         }
 
         // Affects streak too.
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
-        if (conditions.getEMI().isEMI()) {
+        if (attackingEntity.isAffectedByEMI(target.getPosition())) {
             nMissilesModifier -= 2;
         }
 
@@ -532,7 +530,7 @@ public class CLIATMHandler extends ATMHandler {
                   && attackingEntity.getPosition().distance(target.getPosition()) <= 1;
 
             // Which building takes the damage?
-            IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
+            IBuilding bldg = megamek.common.units.WallRules.getBuilding(game, target);
 
             // Report weapon attack and its to-hit value.
             Report r = new Report(3115);
@@ -655,7 +653,7 @@ public class CLIATMHandler extends ATMHandler {
             }
 
             // Which building takes the damage?
-            IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
+            IBuilding bldg = megamek.common.units.WallRules.getBuilding(game, target);
             String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
             // Report weapon attack and its to-hit value.
             Report report = new Report(3115);
@@ -911,7 +909,7 @@ public class CLIATMHandler extends ATMHandler {
                     return false;
                 }
                 // Targeting a building.
-                if (target.getTargetType() == Targetable.TYPE_BUILDING) {
+                if (Targetable.isBuildingType(target.getTargetType())) {
                     // The building takes the full brunt of the attack, one damage grouping at a time.
                     handleBuildingDamageByGrouping(vPhaseReport, bldg, hits, nCluster, target.getPosition());
                     // And we're done!

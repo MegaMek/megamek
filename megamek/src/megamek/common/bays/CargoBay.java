@@ -70,7 +70,7 @@ public final class CargoBay extends Bay implements InfantryTransporter {
     }
 
     @Override
-    public boolean canLoad(Entity unit) {
+    public boolean canLoad(Entity unit, int usableDoors) {
         return InfantryTransporter.super.canLoad(unit);
     }
 

@@ -33,6 +33,8 @@
  */
 package megamek.client.ui.clientGUI;
 
+import megamek.common.enums.MoveStepType;
+
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -155,6 +157,7 @@ public class MapMenu extends JPopupMenu {
 
         addIfNotEmpty(createSelectMenu());
         addIfNotEmpty(createViewMenu());
+        addIfNotEmpty(createBuildingDoorsMenu());
 
         if (client.isMyTurn() && (myEntity != null)) {
             selectTarget();
@@ -167,6 +170,7 @@ public class MapMenu extends JPopupMenu {
                         addSeparator();
                     }
                     addIfNotEmpty(createMovementMenu(myEntity.getPosition().equals(coords)));
+                    addIfNotEmpty(createWallMovementMenu());
                     addIfNotEmpty(createTurnMenu());
                     addIfNotEmpty(createStandMenu());
                     addIfNotEmpty(createConvertMenu());
@@ -209,6 +213,66 @@ public class MapMenu extends JPopupMenu {
         if (subMenu.getItemCount() > 0) {
             add(subMenu);
         }
+    }
+
+    private JMenu createBuildingDoorsMenu() {
+        return buildingDoorsMenu(game, board, coords, client);
+    }
+
+    static JMenu buildingDoorsMenu(Game game, Board board, Coords coords, Client client) {
+        JMenu menu = new JMenu("Building doors");
+        if (!game.getPhase().isEnd()) {
+            return menu;
+        }
+        String[] directions = { "N", "NE", "SE", "S", "SW", "NW" };
+        for (IBuilding candidate : board.getBuildingsAt(coords)) {
+            if (!(candidate instanceof AbstractBuildingEntity building)) { continue; }
+            var doors = building.getDesign().getDoors();
+            for (int index = 0; index < doors.size(); index++) {
+                var door = doors.get(index);
+                int floor = BuildingElevation.currentFloor(building, door.position().hex(), door.position().level());
+                if (!building.relativeToBoard(door.position().hex()).equals(coords) || floor < 0) {
+                    continue;
+                }
+                boolean open = building.getBuildingRuntimeState().isDoorOpen(door);
+                int facing = (door.facing() + building.getFacing()) % 6;
+                int elevation = BuildingElevation.base(building, coords) + floor;
+                JMenuItem item = new JMenuItem((open ? "Close " : "Open ") + directions[facing] + " door: "
+                      + building.getShortName() + ", Level " + (elevation == 0 ? "G" : elevation));
+                item.setEnabled(building.getBuildingRuntimeState().canChangeDoor(building, door, client.getLocalPlayer()));
+                int doorIndex = index;
+                item.addActionListener(event -> client.sendBuildingDoor(building.getId(), doorIndex, !open));
+                menu.add(item);
+            }
+        }
+        return menu;
+    }
+
+    private JMenu createWallMovementMenu() {
+        JMenu menu = new JMenu("Wall position");
+        if (!(currentPanel instanceof MovementDisplay movement) || myEntity == null
+              || movement.getPlannedMovement() == null) {
+            return menu;
+        }
+        var path = movement.getPlannedMovement();
+        if (!coords.equals(path.getFinalCoords())) {
+            return menu;
+        }
+        for (var segment : megamek.common.units.WallRules.beside(game, board.getBoardId(), coords)) {
+            var target = segment.target(coords);
+            var stepTypes = path.isJumping() ? java.util.List.of(MoveStepType.WALL_LAND)
+                  : java.util.List.of(MoveStepType.WALL_ASCEND, MoveStepType.WALL_DESCEND);
+            for (var stepType : stepTypes) {
+                var candidate = path.clone().addStep(stepType, target);
+                JMenuItem item = new JMenuItem((stepType == MoveStepType.WALL_LAND ? "Land on "
+                      : stepType == MoveStepType.WALL_ASCEND ? "Climb up " : "Climb down ")
+                      + target.getDisplayName());
+                item.setEnabled(candidate.getLastStep().getMovementType(false) != EntityMovementType.MOVE_ILLEGAL);
+                item.addActionListener(event -> movement.planWallStep(stepType, target));
+                menu.add(item);
+            }
+        }
+        return menu;
     }
 
     private void addIfNotEmptyWithSeparator(JMenu subMenu) {
@@ -255,6 +319,7 @@ public class MapMenu extends JPopupMenu {
     private static String getTargetCode(Targetable t) {
         return switch (t) {
             case Entity ignored -> "E|" + t.getId();
+            case megamek.common.units.WallTarget wall -> "W|" + wall.getTargetType() + "|" + wall.getId();
             case BuildingTarget ignored ->
                   "B|" + t.getPosition().getX() + "|" + t.getPosition().getY() + "|" + t.getTargetType();
             case MinefieldTarget ignored -> "M|" + t.getPosition().getX() + "|" + t.getPosition().getY();
@@ -1448,12 +1513,18 @@ public class MapMenu extends JPopupMenu {
 
         // Add menu item to target each entity in the coords
         for (Entity entity : client.getGame().getEntitiesVector(coords, board.getBoardId(), false)) {
+            if (entity instanceof AbstractBuildingEntity building && BuildingConstruction.usesHexsides(building)) {
+                continue;
+            }
             // Only add the unit if it's actually visible; with double-blind on, the game may have unseen units
             if (!entity.isSensorReturn(localPlayer) && entity.hasSeenEntity(localPlayer) && !entity.isHidden()) {
                 menu.add(targetMenuItem(entity));
             }
         }
 
+        for (var segment : megamek.common.units.WallRules.beside(game, board.getBoardId(), coords)) {
+            menu.add(targetMenuItem(segment.target(myEntity.getPosition())));
+        }
         Hex h = board.getHex(coords);
 
         // Clearing hexes and igniting hexes
@@ -1586,6 +1657,11 @@ public class MapMenu extends JPopupMenu {
 
         if (type.equalsIgnoreCase("E")) {
             return game.getEntity(Integer.parseInt(target.nextToken()));
+        }
+        if (type.equals("W")) {
+            var wall = (megamek.common.units.WallTarget) game.getTarget(Integer.parseInt(target.nextToken()),
+                  Integer.parseInt(target.nextToken()));
+            return wall == null ? null : wall.viewFrom(myEntity.getPosition());
         }
 
         Coords targetCoords = new Coords(Integer.parseInt(target.nextToken()), Integer.parseInt(target.nextToken()));

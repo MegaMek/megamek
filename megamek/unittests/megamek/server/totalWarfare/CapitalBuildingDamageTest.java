@@ -372,13 +372,13 @@ class CapitalBuildingDamageTest {
     }
 
     @Test
-    void ordinaryFortressDamageStillUsesTheExistingArmorAndHalfDamageRules() {
+    void ordinaryFortressScalesIncomingDamageBeforeArmorAbsorbsIt() {
         Board board = BoardLoader.initializeBoard(BOARD_DATA.replace("bldg_class:4", "bldg_class:2"));
         IBuilding fortress = board.getBuildingAt(HEX);
         fortress.setArmor(5, HEX);
         manager.damageBuilding(fortress, 15, HEX, attacker);
         assertEquals(0, fortress.getArmor(HEX));
-        assertEquals(35, fortress.getCurrentCF(HEX));
+        assertEquals(38, fortress.getCurrentCF(HEX), "15 halves to 7; armor absorbs 5 and CF absorbs 2 (TO:AR p.124)");
     }
 
     @Test

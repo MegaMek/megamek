@@ -92,7 +92,7 @@ public class LRMSwarmHandler extends LRMHandler {
         }
 
         // Which building takes the damage?
-        IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding bldg = megamek.common.units.WallRules.getBuilding(game, target);
 
         // Report weapon attack and its to-hit value.
         Report report = new Report(3115);
@@ -262,7 +262,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 hits = 0;
             }
             // Targeting a building.
-            if (target.getTargetType() == Targetable.TYPE_BUILDING) {
+            if (Targetable.isBuildingType(target.getTargetType())) {
                 // The building takes the full brunt of the attack, one damage grouping at a time.
                 handleBuildingDamageByGrouping(vPhaseReport, bldg, hits, nCluster, target.getPosition());
                 hits = 0;

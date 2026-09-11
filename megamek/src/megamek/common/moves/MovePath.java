@@ -103,6 +103,15 @@ public class MovePath implements Cloneable, Serializable {
 
     // is this move path being done using careful movement?
     private boolean careful = true;
+    private Integer mobileSpeedQuarters;
+
+    public Integer getMobileSpeedQuarters() {
+        return mobileSpeedQuarters;
+    }
+
+    public void setMobileSpeedQuarters(Integer speed) {
+        mobileSpeedQuarters = speed;
+    }
     private boolean gravityConcern = false;
     private final float gravity;
 
@@ -1439,7 +1448,10 @@ public class MovePath implements Cloneable, Serializable {
 
     public boolean isMoveLegal() {
         // Moves which end up off of the board are not legal.
-        if (!getGame().getBoard(getFinalBoardId()).contains(getFinalCoords())) {
+        if (getEntity() instanceof megamek.common.units.MobileStructure mobile
+              ? MobileStructureLinkage.footprint(mobile, getFinalCoords(), getFinalFacing(), getFinalElevation()).stream()
+                    .noneMatch(coords -> getGame().getBoard(getFinalBoardId()).contains(coords))
+              : !getGame().getBoard(getFinalBoardId()).contains(getFinalCoords())) {
             return false;
         }
 

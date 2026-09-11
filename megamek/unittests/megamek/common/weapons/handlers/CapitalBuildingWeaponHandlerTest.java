@@ -151,10 +151,12 @@ class CapitalBuildingWeaponHandlerTest {
         }
 
         void fireAtBuilding(int hits) {
+            target = new megamek.common.units.BuildingTarget(HEX, game.getBoard(), false);
             handleBuildingDamage(new Vector<>(), building, nDamPerHit * hits, HEX);
         }
 
         int fireAtOccupant(int damage, boolean stickingOut) {
+            target = CapitalBuildingWeaponHandlerTest.this.target;
             int remaining = absorbBuildingDamage(damage, CapitalBuildingWeaponHandlerTest.this.target,
                   toHit.getThruBldg() == null ? building.getAbsorption(HEX) : 0, new Vector<>(), building, stickingOut);
             return getBuildingDamageAdjustment(CapitalBuildingWeaponHandlerTest.this.target, building,

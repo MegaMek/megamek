@@ -87,7 +87,7 @@ public class SRMInfernoHandler extends SRMHandler {
               && attackingEntity.getPosition().distance(target.getPosition()) <= 1;
 
         // Which building takes the damage?
-        IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding bldg = megamek.common.units.WallRules.getBuilding(game, target);
 
         // Report weapon attack and its to-hit value.
         Report r = new Report(3115);

@@ -37,6 +37,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import megamek.common.annotations.Nullable;
@@ -44,6 +45,7 @@ import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 
@@ -91,7 +93,13 @@ public class IndustrialElevator implements Serializable {
     private final int shaftTop;
 
     /** Maximum cargo capacity in tons */
+    // Retain the original serialized integer field for older saved games.
     private final int capacityTons;
+    private final Double preciseCapacityTons;
+    /** Null for terrain-authored shafts with unrestricted access; otherwise authored clockwise hexsides by level. */
+    private Map<Integer, Integer> accessSides;
+    /** Runtime owner; null preserves terrain-authored and old saved shafts. */
+    private Integer buildingId;
 
     /** Current level of the elevator platform within the shaft */
     private int platformLevel;
@@ -110,7 +118,7 @@ public class IndustrialElevator implements Serializable {
      * @param shaftTop     The highest level the platform can reach
      * @param capacityTons Maximum cargo capacity in tons
      */
-    public IndustrialElevator(BoardLocation location, int shaftBottom, int shaftTop, int capacityTons) {
+    public IndustrialElevator(BoardLocation location, int shaftBottom, int shaftTop, double capacityTons) {
         if (shaftBottom > shaftTop) {
             throw new IllegalArgumentException(
                   "shaftBottom (" + shaftBottom + ") must be <= shaftTop (" + shaftTop + ")");
@@ -118,7 +126,11 @@ public class IndustrialElevator implements Serializable {
         this.location = location;
         this.shaftBottom = shaftBottom;
         this.shaftTop = shaftTop;
-        this.capacityTons = capacityTons;
+        if (!Double.isFinite(capacityTons) || capacityTons < 0 || capacityTons > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Elevator capacity must be a finite, non-negative tonnage");
+        }
+        this.capacityTons = (int) capacityTons;
+        this.preciseCapacityTons = capacityTons;
         this.platformLevel = shaftTop; // Platform starts at top (entry level)
         this.functional = true;
         this.callQueue = new CopyOnWriteArrayList<>();
@@ -161,6 +173,14 @@ public class IndustrialElevator implements Serializable {
         return location.boardId();
     }
 
+    public int getBuildingId() {
+        return buildingId == null ? Entity.NONE : buildingId;
+    }
+
+    public void setBuildingId(int id) {
+        buildingId = id == Entity.NONE ? null : id;
+    }
+
     public int getShaftBottom() {
         return shaftBottom;
     }
@@ -169,8 +189,41 @@ public class IndustrialElevator implements Serializable {
         return shaftTop;
     }
 
-    public int getCapacityTons() {
-        return capacityTons;
+    public double getCapacityTons() {
+        return preciseCapacityTons == null ? capacityTons : preciseCapacityTons;
+    }
+
+    /** A moving structure carries its platforms, damage and access orientation along with its occupied floors. */
+    public IndustrialElevator relocated(BoardLocation destination, int levelChange, int rotation) {
+        IndustrialElevator moved = new IndustrialElevator(destination, shaftBottom + levelChange,
+              shaftTop + levelChange, getCapacityTons());
+        moved.platformLevel = platformLevel + levelChange;
+        moved.functional = functional;
+        moved.buildingId = buildingId;
+        if (accessSides != null) {
+            Map<Integer, Integer> rotated = new java.util.HashMap<>();
+            accessSides.forEach((level, mask) -> {
+                int sides = 0;
+                for (int side = 0; side < 6; side++) {
+                    if ((mask & (1 << side)) != 0) {
+                        sides |= 1 << Math.floorMod(side + rotation, 6);
+                    }
+                }
+                rotated.put(level + levelChange, sides);
+            });
+            moved.setAccessSides(rotated);
+        }
+        // Calls name a board position. Movement invalidates them; callers may call the relocated shaft again.
+        return moved;
+    }
+
+    public void setAccessSides(Map<Integer, Integer> sides) {
+        accessSides = Map.copyOf(sides);
+    }
+
+    public boolean canAccess(int level, int side) {
+        return isWithinShaft(level) && side >= 0 && side < 6
+              && (accessSides == null || (accessSides.getOrDefault(level, 0) & (1 << side)) != 0);
     }
 
     public int getPlatformLevel() {
@@ -259,7 +312,7 @@ public class IndustrialElevator implements Serializable {
      * @return {@code true} if the entity is on the platform
      */
     public boolean isEntityOnPlatform(@Nullable Entity entity) {
-        if (entity == null) {
+        if (entity == null || entity instanceof IBuilding || entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
             return false;
         }
         Coords entityCoords = entity.getPosition();
@@ -279,7 +332,7 @@ public class IndustrialElevator implements Serializable {
      * @return {@code true} if current load is within capacity
      */
     public boolean canMove(Game game) {
-        return functional && (getCurrentLoad(game) <= capacityTons);
+        return functional && (getCurrentLoad(game) <= getCapacityTons());
     }
 
     // --- Call Queue Management ---
@@ -406,7 +459,7 @@ public class IndustrialElevator implements Serializable {
      * @return The exits value encoding shaft top and capacity
      */
     public int encodeExits() {
-        int capacityTens = capacityTons / CAPACITY_MULTIPLIER;
+        int capacityTens = (int) (capacityTons / CAPACITY_MULTIPLIER);
         return (shaftTop << SHAFT_TOP_SHIFT) | (capacityTens & CAPACITY_MASK);
     }
 
@@ -436,7 +489,7 @@ public class IndustrialElevator implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("IndustrialElevator[%s, shaft=%d-%d, platform=%d, capacity=%dt, %s]",
+        return String.format("IndustrialElevator[%s, shaft=%d-%d, platform=%d, capacity=%st, %s]",
               location, shaftBottom, shaftTop, platformLevel, capacityTons,
               functional ? "functional" : "disabled");
     }

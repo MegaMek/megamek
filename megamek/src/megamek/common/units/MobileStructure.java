@@ -55,11 +55,101 @@ public class MobileStructure extends AbstractBuildingEntity {
     private int maximumMPQuarters = 4;
     private double operatingRange;
     private int mobileCrewHits;
+    private MovementProgress movementProgress;
+    private java.util.Map<CubeCoords, Double> fuelLocations = new java.util.LinkedHashMap<>();
+    private int waterSpeedQuarters;
+    private int speedDeclaredRound = Integer.MIN_VALUE;
+    private int driftingTurns;
+    private int depthChangesThisTurn;
+    private int travelDirection;
+    private boolean grounded;
+    private MobileStructureNavalState navalState;
+    private boolean airLandingGearDamaged;
+
+    public boolean isAirLandingGearDamaged() { return airLandingGearDamaged; }
+
+    public void setAirLandingGearDamaged(boolean damaged) { airLandingGearDamaged = damaged; }
+
+    @Override
+    public boolean isAirborneVTOLorWIGE() {
+        return megamek.common.moves.MobileStructureAirMovement.isAirborne(this);
+    }
+
+    @Override
+    public boolean canGoDown() {
+        return canGoDown(getElevation(), getPosition(), getBoardId());
+    }
+
+    @Override
+    public boolean canGoDown(int assumed, megamek.common.board.Coords coords, int boardId) {
+        if (getGame() == null || getBoardId() != boardId || coords == null || isImmobile()
+              || getMovementMode() != EntityMovementMode.SUBMARINE && getMovementMode() != EntityMovementMode.VTOL) {
+            return false;
+        }
+        return megamek.common.moves.MobileStructureMovement.cost(getGame(), this, coords, getFacing(), assumed,
+              coords, getFacing(), assumed - 1) != megamek.common.moves.MobileStructureMovement.PROHIBITED;
+    }
+
+    @Override
+    public boolean canGoUp(int assumed, megamek.common.board.Coords coords, int boardId) {
+        if (getGame() == null || getBoardId() != boardId || coords == null || isImmobile()
+              || getMovementMode() != EntityMovementMode.SUBMARINE && getMovementMode() != EntityMovementMode.VTOL) {
+            return false;
+        }
+        return megamek.common.moves.MobileStructureMovement.cost(getGame(), this, coords, getFacing(), assumed,
+              coords, getFacing(), assumed + 1) != megamek.common.moves.MobileStructureMovement.PROHIBITED;
+    }
+    private java.util.List<megamek.common.moves.MobileStructureLinkage.Link> moduleLinks = new java.util.ArrayList<>();
+
+    public java.util.List<megamek.common.moves.MobileStructureLinkage.Link> getModuleLinks() {
+        return moduleLinks == null ? java.util.List.of() : java.util.List.copyOf(moduleLinks);
+    }
+
+    public void setModuleLinks(java.util.List<megamek.common.moves.MobileStructureLinkage.Link> links) {
+        moduleLinks = new java.util.ArrayList<>(links);
+    }
+
+    @Override
+    public void removeHex(megamek.common.board.Coords coords) {
+        megamek.common.moves.MobileStructureLinkage.removeHex(this, boardToRelative(coords));
+        super.removeHex(coords);
+    }
+
+    public MobileStructureNavalState getNavalState() {
+        if (navalState == null) {
+            navalState = new MobileStructureNavalState();
+        }
+        return navalState;
+    }
+
+    public record MovementProgress(megamek.common.board.Coords destination, int facing, int elevation, int quarters)
+          implements java.io.Serializable { }
+
+    public MovementProgress getMovementProgress() {
+        return movementProgress;
+    }
+
+    public void cancelMovementProgress() {
+        movementProgress = null;
+    }
+
+    /** Quarter points are committed to one move, never banked for a later unrelated maneuver. */
+    public boolean advanceMovement(megamek.common.board.Coords destination, int facing, int elevation, int cost, int available) {
+        int paid = movementProgress != null && movementProgress.destination().equals(destination)
+              && movementProgress.facing() == facing && movementProgress.elevation() == elevation
+              ? movementProgress.quarters() : 0;
+        int expenditure = Math.min(available, Math.max(0, cost - paid));
+        mpUsed += expenditure;
+        paid += expenditure;
+        movementProgress = paid >= cost ? null : new MovementProgress(destination, facing, elevation, paid);
+        return paid >= cost;
+    }
 
     public MobileStructure(BuildingType type, int bldgClass) {
         super(type, bldgClass);
         setMovementMode(EntityMovementMode.TRACKED);
         setPowerSystem(StructureEngine.FUSION);
+        setMaximumMP(1);
     }
 
     /**
@@ -68,6 +158,11 @@ public class MobileStructure extends AbstractBuildingEntity {
     @Override
     public int getUnitType() {
         return UnitType.MOBILE_STRUCTURE;
+    }
+
+    @Override
+    public long getEntityType() {
+        return ETYPE_BUILDING_ENTITY | ETYPE_MOBILE_STRUCTURE;
     }
 
     /**
@@ -159,6 +254,12 @@ public class MobileStructure extends AbstractBuildingEntity {
     /** The movement engine counts quarters for Mobile Structures, including terrain costs. */
     @Override
     public int getWalkMP(MPCalculationSetting setting) {
+        if (grounded) {
+            return 0;
+        }
+        if (isWaterStructure()) {
+            return isImmobile() ? waterSpeedQuarters : Math.min(maximumMPQuarters, waterSpeedQuarters + 4);
+        }
         return isImmobile() ? 0 : maximumMPQuarters;
     }
 
@@ -179,7 +280,82 @@ public class MobileStructure extends AbstractBuildingEntity {
 
     @Override
     public boolean isImmobile() {
-        return mobileCrewHits >= 6 || isShutDown() || isPowerSwitchedOff();
+        return megamek.common.moves.MobileStructureLinkage.group(this).stream().anyMatch(MobileStructure::isModuleImmobile);
+    }
+
+    public boolean isModuleImmobile() {
+        return getNavalState().isSinking() || grounded || mobileCrewHits >= 6 || isShutDown() || isPowerSwitchedOff();
+    }
+
+    public boolean isWaterStructure() {
+        return getMovementMode().isNaval() || getMovementMode().isSubmarine();
+    }
+
+    public int getWaterSpeedQuarters() {
+        return waterSpeedQuarters;
+    }
+
+    public boolean isGrounded() {
+        return grounded;
+    }
+
+    public void setGrounded(boolean value) {
+        grounded = value;
+        if (value) {
+            waterSpeedQuarters = 0;
+            cancelMovementProgress();
+        }
+    }
+
+    /** Acceleration is declared once per turn. A disabled vessel coasts and loses one MP every other turn. */
+    public int declareWaterSpeed(int requestedQuarters, int round) {
+        if (speedDeclaredRound != round) {
+            speedDeclaredRound = round;
+            if (grounded) {
+                waterSpeedQuarters = 0;
+            } else if (isImmobile()) {
+                if (++driftingTurns % 2 == 0) {
+                    waterSpeedQuarters = Math.max(0, waterSpeedQuarters - 4);
+                }
+            } else {
+                driftingTurns = 0;
+                waterSpeedQuarters = Math.clamp(requestedQuarters, Math.max(0, waterSpeedQuarters - 4),
+                      Math.min(maximumMPQuarters, waterSpeedQuarters + 4));
+            }
+        }
+        return waterSpeedQuarters;
+    }
+
+    public int getDepthChangesThisTurn() {
+        return depthChangesThisTurn;
+    }
+
+    public void recordDepthChange() {
+        depthChangesThisTurn++;
+    }
+
+    public int getTravelDirection() {
+        return travelDirection;
+    }
+
+    public void setTravelDirection(int direction) {
+        travelDirection = Math.floorMod(direction, 6);
+    }
+
+    @Override
+    public void newRound(int roundNumber) {
+        super.newRound(roundNumber);
+        depthChangesThisTurn = 0;
+    }
+
+    @Override
+    public boolean isEligibleForMovement() {
+        if (getNavalState().isSinking()) {
+            return false;
+        }
+        return (!megamek.common.moves.MobileStructureLinkage.partners(this).isEmpty() && !isDestroyed() && !isDoomed())
+              || (isWaterStructure() && !grounded && waterSpeedQuarters > 0 && !isDestroyed() && !isDoomed())
+              || super.isEligibleForMovement();
     }
 
     public double getOperatingRange() {
@@ -213,7 +389,37 @@ public class MobileStructure extends AbstractBuildingEntity {
     }
 
     public double getFuelWeight() {
-        return Math.ceil(operatingRange / 100 * Math.max(0, powerSystem.getMobileFuelMultiplier()) * getPowerSystemWeight());
+        return java.math.BigDecimal.valueOf(operatingRange)
+              .multiply(java.math.BigDecimal.valueOf(Math.max(0, powerSystem.getMobileFuelMultiplier())))
+              .multiply(java.math.BigDecimal.valueOf(getPowerSystemWeight()))
+              .divide(java.math.BigDecimal.valueOf(100), 0, java.math.RoundingMode.CEILING).doubleValue();
+    }
+
+    /** An empty allocation means uniform fuel storage; explicit entries are tons in construction coordinates. */
+    public java.util.Map<CubeCoords, Double> getFuelLocations() {
+        if (fuelLocations == null) {
+            fuelLocations = new java.util.LinkedHashMap<>();
+        }
+        return java.util.Collections.unmodifiableMap(fuelLocations);
+    }
+
+    public void setFuelLocations(java.util.Map<CubeCoords, Double> locations) {
+        locations.forEach((hex, tons) -> {
+            if (!getInternalBuilding().getOriginalCoordsList().contains(hex)
+                  || !Double.isFinite(tons) || tons < 0) {
+                throw new IllegalArgumentException("Fuel locations require an occupied hex and non-negative tons");
+            }
+        });
+        fuelLocations = new java.util.LinkedHashMap<>(locations);
+    }
+
+    public double fuelWeightInHex(CubeCoords hex) {
+        if (!getInternalBuilding().getOriginalCoordsList().contains(hex)) {
+            return 0;
+        }
+        var fuel = getFuelLocations();
+        return fuel.isEmpty() ? getFuelWeight() / getInternalBuilding().getOriginalCoordsList().size()
+              : fuel.getOrDefault(hex, 0.0);
     }
 
     public double systemWeightInHex(CubeCoords hex) {
@@ -223,7 +429,9 @@ public class MobileStructure extends AbstractBuildingEntity {
         }
         double sealing = getMovementMode() != EntityMovementMode.SUBMARINE && hasEnvironmentalSealing()
               ? Math.ceil(getOInternal(0) * getInternalBuilding().getBuildingHeight() / 10.0) : 0;
-        return (getPowerSystemWeight() + getMotiveSystemWeight() + getFuelWeight()) / count + sealing;
+        // TO:AUE pp.79–80: each system is spread uniformly and rounded separately to the next half ton.
+        return Math.ceil(getPowerSystemWeight() / count * 2) / 2
+              + Math.ceil(getMotiveSystemWeight() / count * 2) / 2 + fuelWeightInHex(hex) + sealing;
     }
 
     @Override
@@ -262,6 +470,11 @@ public class MobileStructure extends AbstractBuildingEntity {
         return !isPowerSwitchedOff() && powerSystem.mobilePowerMultiplier(getMovementMode(), isClan()) > 0;
     }
 
+    @Override
+    public boolean requiresGunner(WeaponMounted weapon) {
+        return super.requiresGunner(weapon) && weapon.getType().getLongRange() > 1;
+    }
+
     /** Relative elevation of the lowest usable floor; motive levels consume no equipment capacity. */
     public int getStructureBaseElevation() {
         return switch (getMovementMode()) {
@@ -271,18 +484,59 @@ public class MobileStructure extends AbstractBuildingEntity {
         };
     }
 
-    @Override
-    public int getWeaponFiringHeight(WeaponMounted weapon) {
-        return getStructureBaseElevation() + super.getWeaponFiringHeight(weapon);
+    /** Ground motives follow the local bed; naval and air motives use their commanded surface-relative elevation. */
+    public int getBaseElevation(megamek.common.board.Coords coords) {
+        if (getMovementMode() == EntityMovementMode.VTOL) {
+            return megamek.common.moves.MobileStructureAirMovement.translatedElevation(this, getPosition(), coords, getElevation());
+        }
+        if (getNavalState().isSinking()) {
+            return getElevation() + getNavalState().getBaseOffsets()
+                  .getOrDefault(boardToRelative(coords), getStructureBaseElevation());
+        }
+        if (getMovementMode() == EntityMovementMode.TRACKED && getGame() != null && coords != null) {
+            Integer tunnelFloor = MobileStructurePortalRules.supportElevation(this, coords);
+            if (tunnelFloor != null) {
+                return tunnelFloor + getStructureBaseElevation();
+            }
+            var footprint = megamek.common.moves.MobileStructureLinkage.group(this).stream()
+                  .flatMap(module -> module.getCoordsList().stream()).distinct().toList();
+            int support = megamek.common.moves.MobileStructureSupport.level(getGame(), this, footprint, coords);
+            var boardHex = getGame().getBoard(this).getHex(coords);
+            int surface = boardHex == null
+                  ? megamek.common.moves.MobileStructureMovement.terrain(getGame(), this, coords).getLevel()
+                  : boardHex.getLevel();
+            return getStructureBaseElevation() + support - surface;
+        }
+        return getElevation() + getStructureBaseElevation();
     }
 
     @Override
     public int height() {
-        return Math.max(0, getInternalBuilding().getBuildingHeight() - 1 + Math.max(0, getStructureBaseElevation()));
+        return Math.max(0, getInternalBuilding().getBuildingHeight() - 1 + getStructureBaseElevation());
     }
 
     public int getMobileCrewHits() {
         return mobileCrewHits;
+    }
+
+    /** Removing a complete interior row disconnects the surviving footprint (TO:AUE p.40). */
+    public boolean isSplit() {
+        var hexes = getInternalBuilding().getCoordsList().stream()
+              .filter(hex -> getGame() == null || getPosition() == null
+                    || getGame().getBoard(this).contains(relativeToBoard(hex))).toList();
+        if (hexes.isEmpty()) {
+            return true;
+        }
+        var visited = new java.util.HashSet<CubeCoords>();
+        var pending = new java.util.ArrayDeque<CubeCoords>();
+        pending.add(hexes.getFirst());
+        while (!pending.isEmpty()) {
+            var hex = pending.removeFirst();
+            if (visited.add(hex)) {
+                hex.neighbors().stream().filter(hexes::contains).filter(h -> !visited.contains(h)).forEach(pending::add);
+            }
+        }
+        return visited.size() != hexes.size();
     }
 
     /** TO:AUE p.40: six hits stop movement, but surviving individual gunners can still fire. */

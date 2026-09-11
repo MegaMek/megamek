@@ -869,7 +869,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             attackingEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
-        IBuilding bldg = game.getBuildingAt(target.getBoardLocation()).orElse(null);
+        IBuilding bldg = megamek.common.units.WallRules.getBuilding(game, target);
         String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
         for (int i = numAttacks; i > 0; i--) {
             // Skip weapon announcement for spawned attacks (e.g., rapid-fire AC special ammo)
@@ -1213,7 +1213,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         handleClearDamage(vPhaseReport, bldg, nDamage);
                         hits = 0;
                         // Targeting a building.
-                    } else if (target.getTargetType() == Targetable.TYPE_BUILDING) {
+                    } else if (Targetable.isBuildingType(target.getTargetType())) {
                         // The building takes the full brunt of the attack, one damage grouping at a time.
                         hits = handleBuildingDamageByGrouping(vPhaseReport, bldg, hits, nCluster,
                               target.getPosition());
@@ -1612,7 +1612,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
             coverLoc = toHit.getCoverLocPrimary();
         }
         // Check if we need to damage the cover that absorbed the hit.
-        if (damageableCoverType == LosEffects.DAMAGABLE_COVER_DROPSHIP) {
+        if (toHit.getCoverWall() != null) {
+            int damage = nDamPerHit * Math.min(nCluster, hits);
+            vPhaseReport.addAll(gameManager.damageWall(toHit.getCoverWall().segment(game),
+                  weaponType.isCapital() ? damage * 10 : damage, false));
+        } else if (damageableCoverType == LosEffects.DAMAGABLE_COVER_DROPSHIP) {
             // We need to adjust some state and then restore it later
             // This allows us to make a call to handleEntityDamage
             ToHitData savedToHit = toHit;
@@ -1970,7 +1974,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         vPhaseReport.addAll(buildingReport);
 
         // Damage any infantry in hex, unless attack between units in same bldg
-        if (toHit.getThruBldg() == null) {
+        if (toHit.getThruBldg() == null && !(target instanceof megamek.common.units.WallTarget)) {
             vPhaseReport.addAll(gameManager.damageInfantryIn(bldg, nDamage, coords,
                   weaponType.getInfantryDamageClass()));
         }
@@ -1983,13 +1987,21 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     protected Vector<Report> damageBuilding(IBuilding building, int damage, String why, Coords coords) {
         int standardDamage = weaponType.isCapital() ? damage * 10 : damage;
-        return gameManager.damageBuilding(building, standardDamage, why, coords, 0, attackingEntity,
+        if (target instanceof megamek.common.units.WallTarget wall) {
+            return gameManager.damageWall(wall.segment(game), standardDamage, false);
+        }
+        int level = megamek.common.units.BuildingElevation.floor(building, coords, target.getElevation());
+        if (target == building && building instanceof AbstractBuildingEntity authored
+              && weaponAttackAction.getAimedLocation() >= 0 && weaponAttackAction.getAimedLocation() < authored.locations()) {
+            level = authored.getLocationLevel(weaponAttackAction.getAimedLocation());
+        }
+        return gameManager.damageBuilding(building, standardDamage, why, coords, level, attackingEntity,
               isAttackFromInsideBuilding(building));
     }
 
     protected boolean allShotsHit() {
-        if ((((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE) || (target
-              .getTargetType() == Targetable.TYPE_BUILDING)) && (nRange <= 1))
+        if ((((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE) ||
+              Targetable.isBuildingType(target.getTargetType())) && (nRange <= 1))
               || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)) {
             return true;
         }
@@ -2367,8 +2379,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             nMissilesModifier += (toHit.getMoS() / 3) * 2;
         }
 
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
-        if (conditions.getEMI().isEMI()) {
+        if (attackingEntity.isAffectedByEMI(target.getPosition())) {
             nMissilesModifier -= 2;
         }
 

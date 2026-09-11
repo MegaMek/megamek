@@ -82,7 +82,7 @@ public final class BuildingConstruction {
                     .sorted(java.util.Comparator.reverseOrder()).toList();
     }
 
-    /** Floor numbering only. Native floor indices and bridge deck elevations retain their own datum. */
+    /** Physical elevation of native floor zero, also used for sheet numbering. Bridge decks retain their own datum. */
     public static int baseLevel(AbstractBuildingEntity building) {
         if (building.getBldgClass() == IBuilding.BRIDGE) {
             return 0;
@@ -101,6 +101,27 @@ public final class BuildingConstruction {
     public static boolean occupiesMapLevel(AbstractBuildingEntity building, CubeCoords hex, int level) {
         return building.getBldgClass() == IBuilding.BRIDGE ? building.getDesign().bridgeDeck(hex) == level
               : level >= 0 && level < building.getInternalBuilding().getHeight(hex);
+    }
+
+    /** Heavy-metal structure interferes with lines passing through its hexes or adjacent hexes (TO:AR p.135). */
+    public static boolean hasHeavyMetalInterference(Entity source, megamek.common.board.Coords from,
+          megamek.common.board.Coords to) {
+        if (source.getGame() == null || from == null || to == null) {
+            return false;
+        }
+        var board = source.getGame().getBoard(source.getBoardId());
+        if (board == null) {
+            return false;
+        }
+        var path = megamek.common.board.Coords.intervening(from, to);
+        for (IBuilding candidate : board.getBuildingsVector()) {
+            if (candidate instanceof AbstractBuildingEntity building && building != source && !building.isDestroyed()
+                  && building.getDesign().hasHeavyMetal()
+                  && building.getCoordsList().stream().anyMatch(hex -> path.stream().anyMatch(point -> point.distance(hex) <= 1))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public record BridgeSpan(CubeCoords start, CubeCoords end, Map<CubeCoords, Integer> distances, int length) {
@@ -178,7 +199,8 @@ public final class BuildingConstruction {
     public static int location(AbstractBuildingEntity building, Position position) {
         int index = building.getInternalBuilding().getOriginalCoordsList().indexOf(position.hex());
         int height = building.getInternalBuilding().getBuildingHeight();
-        return index < 0 || position.level() < 0 || position.level() >= height ? Entity.LOC_NONE
+        return index < 0 || position.level() < 0
+              || position.level() >= building.getInternalBuilding().getHeight(position.hex()) ? Entity.LOC_NONE
               : index * height + position.level();
     }
 
@@ -190,8 +212,9 @@ public final class BuildingConstruction {
     /** Spreadable equipment is one item. Its mass, not its count or output, is shared among its occupied hexes. */
     public static double equipmentWeightInHex(AbstractBuildingEntity building, Mounted<?> mount, CubeCoords hex) {
         List<Position> positions = equipmentPositions(building, mount);
-        return positions.isEmpty() ? 0 : mount.getTonnage() * positions.stream().filter(p -> p.hex().equals(hex)).count()
-              / positions.size();
+        double tons = positions.isEmpty() ? 0
+              : mount.getTonnage() * positions.stream().filter(p -> p.hex().equals(hex)).count() / positions.size();
+        return building instanceof MobileStructure && positions.size() > 1 ? Math.ceil(tons * 2) / 2 : tons;
     }
 
     public static List<Space> baySpaces(AbstractBuildingEntity building, Bay bay) {
@@ -200,6 +223,7 @@ public final class BuildingConstruction {
         }
         // Older BLKs have no bay placement. Their accommodation is distributed evenly, which is legal (TO:AR p. 129).
         var locations = java.util.stream.IntStream.range(0, building.locations())
+              .filter(loc -> location(building, position(building, loc)) >= 0)
               .filter(loc -> !building.getDesign().isOpenSpace() || position(building, loc).level() == 0).boxed().toList();
         return locations.stream()
               .map(loc -> new Space(position(building, loc), bay.getWeight() / locations.size())).toList();
@@ -299,10 +323,16 @@ public final class BuildingConstruction {
     }
 
     public static double installedWeightInHex(AbstractBuildingEntity building, CubeCoords hex) {
-        return building.getEquipmentInHex(hex).stream().mapToDouble(m -> equipmentWeightInHex(building, m, hex)).sum()
+        double equipment = building.getEquipmentInHex(hex).stream().mapToDouble(m -> equipmentWeightInHex(building, m, hex)).sum()
+              + building.getPintleWeight(hex);
+        // TO:AUE pp. 71, 83: combine the small items (including pintles) before rounding their final total.
+        if (building instanceof MobileStructure) {
+            equipment = Math.ceil(equipment * 2 - 1e-9) / 2;
+        }
+        return equipment
               + (building instanceof MobileStructure mobile ? mobile.systemWeightInHex(hex) : 0)
               + building.armorWeightInHex(hex)
-              + building.getPowerAmplifierWeight(hex) + building.getTurretWeight(hex) + building.getPintleWeight(hex)
+              + building.getPowerAmplifierWeight(hex) + building.getTurretWeight(hex)
               + capitalControls(building, hex) + bayWeightInHex(building, hex)
               + building.getDesign().getElevators().stream().filter(lift -> lift.hex().equals(hex))
                     .mapToDouble(BuildingDesign.Elevator::weight).sum();

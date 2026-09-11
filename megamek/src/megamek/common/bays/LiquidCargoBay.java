@@ -82,7 +82,7 @@ public final class LiquidCargoBay extends Bay {
      *       otherwise.
      */
     @Override
-    public boolean canLoad(Entity unit) {
+    public boolean canLoad(Entity unit, int usableDoors) {
         // Assume that we cannot carry the unit.
 
         return false;

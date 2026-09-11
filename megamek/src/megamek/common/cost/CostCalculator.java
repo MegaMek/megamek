@@ -118,6 +118,11 @@ public class CostCalculator {
         Map<String, Integer> weaponsNumberMap = new HashMap<>();
         Map<String, Long> weaponsCostMap = new HashMap<>();
         for (Mounted<?> mounted : entity.getEquipment()) {
+            // TM p. 346: rocket launchers include their one shot; the ammo price is for post-battle reloads.
+            if (mounted.isOneShotAmmo() && mounted.getType() instanceof AmmoType ammo
+                  && ammo.getAmmoType() == AmmoType.AmmoTypeEnum.ROCKET_LAUNCHER) {
+                continue;
+            }
             if (ignoreAmmo && (mounted.getType() instanceof AmmoType)
                   && (!(((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD))) {
                 continue;

@@ -63,6 +63,7 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
     /** On the Turret Jammed/Turret Locked result a 1D6 of this value or less jams; higher locks (TO:AR p. 119). */
     private static final int TURRET_JAM_MAX_ROLL = 3;
     private int targetLevel = -1;
+    private int criticalModifier;
 
     BuildingEntityCriticalHandler(TWGameManager gameManager) {
         super(gameManager);
@@ -78,7 +79,13 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
      */
     Vector<Report> resolveCriticalHit(AbstractBuildingEntity building, Coords coords, int level, Entity attacker, int modifier) {
         targetLevel = building.usesExpandedCF() ? level : -1;
-        return applyCriticalResult(building, coords, Math.min(12, Compute.d6(2) + modifier), Compute.d6(), attacker);
+        criticalModifier = modifier;
+        try {
+            return applyCriticalResult(building, coords, Math.min(12, Compute.d6(2) + modifier), Compute.d6(), attacker);
+        } finally {
+            targetLevel = -1;
+            criticalModifier = 0;
+        }
     }
 
     private <T extends Mounted<?>> List<T> atTargetLevel(AbstractBuildingEntity building, List<T> equipment) {
@@ -114,7 +121,7 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
                 criticalRoll = 2;
             }
             while (criticalRoll >= 6 && !hasMobileCriticalTarget(building, coords, criticalRoll, turretRoll)) {
-                criticalRoll = Compute.d6(2);
+                criticalRoll = Math.min(12, Compute.d6(2) + criticalModifier);
                 turretRoll = Compute.d6();
             }
             if (criticalRoll == 6 && turretRoll > TURRET_JAM_MAX_ROLL) {

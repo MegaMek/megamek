@@ -60,6 +60,20 @@ public class BuildingDamageTracker implements Serializable {
     private final Set<BoardLocation> changedHexes = new HashSet<>();
     private int round = -1;
     private GamePhase phase;
+    private Set<DamageKey> collapseAffected;
+
+    /** A surviving hex/floor receives connected-collapse damage only once in the same phase (TO:AR p.121). */
+    public boolean claimCollapseDamage(IBuilding building, Coords coords, int level, int currentRound, GamePhase currentPhase) {
+        if (round != currentRound || phase != currentPhase) {
+            clear();
+            round = currentRound;
+            phase = currentPhase;
+        }
+        if (collapseAffected == null) {
+            collapseAffected = new HashSet<>();
+        }
+        return collapseAffected.add(new DamageKey(Entity.NONE, building.getBoardId(), building.getId(), coords, level));
+    }
 
     // Use an ordinary class: save-game XStream cannot restore records without a dedicated converter.
     private static final class DamageKey implements Serializable {
@@ -159,6 +173,9 @@ public class BuildingDamageTracker implements Serializable {
 
     public void clear() {
         remainders.clear();
+        if (collapseAffected != null) {
+            collapseAffected.clear();
+        }
         clearChanges();
         round = -1;
         phase = null;

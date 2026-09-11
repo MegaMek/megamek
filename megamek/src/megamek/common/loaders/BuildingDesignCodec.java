@@ -54,6 +54,10 @@ public final class BuildingDesignCodec {
             options.add("base_level=" + design.getBaseLevel());
         }
         write(block, "building_options", options);
+        var templates = new ArrayList<String>();
+        if (design.getPortalHex2() != null) { templates.add("2;" + cube(design.getPortalHex2())); }
+        if (design.getPortalHex3() != null) { templates.add("3;" + cube(design.getPortalHex3())); }
+        write(block, "building_portal_templates", templates);
         write(block, "building_wall_sides", entity.getInternalBuilding().getOriginalCoordsList().stream()
               .filter(design.getWallSides()::containsKey).map(hex -> cube(hex) + ";" + design.wallSides(hex)).toList());
         write(block, "building_bridge_decks", entity.getInternalBuilding().getOriginalCoordsList().stream()
@@ -87,6 +91,8 @@ public final class BuildingDesignCodec {
             }
         }
         write(block, "building_bay_space", bays);
+        write(block, "building_bay_doors", design.getBayDoors().stream()
+              .map(door -> door.bayNumber() + ";" + position(door.position()) + ";" + door.facing()).toList());
     }
 
     private static List<Mounted<?>> storedMounts(AbstractBuildingEntity entity, int location) {
@@ -186,6 +192,20 @@ public final class BuildingDesignCodec {
                     default -> throw new IllegalArgumentException("Unknown building option " + pair[0]);
                 }
             }
+            for (String line : lines(block, "building_portal_templates")) {
+                String[] values = parts(line, ";", 2);
+                CubeCoords hex = cube(values[1]);
+                if (!entity.getInternalBuilding().getOriginalCoordsList().contains(hex)) {
+                    throw new IllegalArgumentException("Portal template is outside the footprint");
+                }
+                if (values[0].equals("2") && design.getPortalHex2() == null) {
+                    design.setPortalHex2(hex);
+                } else if (values[0].equals("3") && design.getPortalHex3() == null) {
+                    design.setPortalHex3(hex);
+                } else {
+                    throw new IllegalArgumentException("Invalid or duplicate portal template role");
+                }
+            }
             for (String line : lines(block, "building_doors")) {
                 String[] values = parts(line, ";", 3);
                 design.getDoors().add(new BuildingDesign.Door(position(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2])));
@@ -220,6 +240,19 @@ public final class BuildingDesignCodec {
                 if (source > 0) {
                     design.getPcmtSources().put(mount, source);
                 }
+            }
+            for (String line : lines(block, "building_bay_doors")) {
+                String[] values = parts(line, ";", 3);
+                int bayNumber = Integer.parseInt(values[0]);
+                BuildingDesign.Position position = position(values[1]);
+                int facing = Integer.parseInt(values[2]);
+                if (entity.getTransportBays().stream().noneMatch(bay -> bay.getBayNumber() == bayNumber)
+                      || !entity.getInternalBuilding().getOriginalCoordsList().contains(position.hex())
+                      || facing < 0 || facing > 5 || position.level() < 0
+                      || position.level() >= entity.getInternalBuilding().getHeight(position.hex())) {
+                    throw new IllegalArgumentException("Invalid bay door placement");
+                }
+                design.getBayDoors().add(new BuildingDesign.BayDoor(bayNumber, position, facing));
             }
             for (String line : lines(block, "building_bay_space")) {
                 String[] values = parts(line, ";", 2);

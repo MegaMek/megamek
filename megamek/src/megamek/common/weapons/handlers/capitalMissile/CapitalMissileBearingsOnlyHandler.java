@@ -413,7 +413,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         // Bearings-only missiles shouldn't be able to target buildings, being
         // space-only weapons
         // but if these two things aren't defined, handleEntityDamage() doesn't work.
-        IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding bldg = megamek.common.units.WallRules.getBuilding(game, target);
         int bldgAbsorbs = 0;
 
         // We have to adjust the reports on a miss, so they line up

@@ -37,6 +37,7 @@ package megamek.common.equipment.enums;
 import java.io.Serializable;
 
 import megamek.common.equipment.Engine;
+import megamek.common.equipment.EquipmentMessages;
 
 /**
  * {@link megamek.common.units.MobileStructure} and {@link megamek.common.units.BuildingEntity} both have some unique
@@ -151,6 +152,15 @@ public enum StructureEngine implements Serializable {
 
     public int getEngineType() {
         return engineType;
+    }
+
+    /**
+     * Returns the localized display name for this structure engine.
+     *
+     * @return the engine name
+     */
+    public String getEngineName() {
+        return EquipmentMessages.getString("EquipmentType.StructureEngine." + name());
     }
 
     public double getBuildingWeightMultiplier() {

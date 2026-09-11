@@ -356,6 +356,25 @@ public abstract class BotClient extends Client {
                     case CFR_BUILDING_WEAPON:
                         sendBuildingWeaponCFRResponse(evt.getEntityId(), evt.getBuildingWeaponIds().getFirst());
                         break;
+                    case CFR_MOBILE_AVOIDANCE:
+                        Entity avoiding = getGame().getEntity(evt.getEntityId());
+                        MovePath escape = new MovePath(getGame(), avoiding);
+                        for (int direction = 0; direction < 6; direction++) {
+                            MovePath candidate = new MovePath(getGame(), avoiding);
+                            candidate.findSimplePathTo(avoiding.getPosition().translated(direction,
+                                  Math.max(1, avoiding.getWalkMP())), megamek.common.enums.MoveStepType.FORWARDS,
+                                  direction, avoiding.getFacing());
+                            while (candidate.length() > 0 && (candidate.getMpUsed() > avoiding.getWalkMP()
+                                  || !candidate.getLastStep().isLegal(candidate))) {
+                                candidate.removeLastStep();
+                            }
+                            if (candidate.getFinalCoords().distance(avoiding.getPosition())
+                                  > escape.getFinalCoords().distance(avoiding.getPosition())) {
+                                escape = candidate;
+                            }
+                        }
+                        sendMobileAvoidanceCFRResponse(avoiding.getId(), escape);
+                        break;
                     default:
                         break;
                 }

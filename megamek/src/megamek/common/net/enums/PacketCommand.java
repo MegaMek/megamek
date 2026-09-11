@@ -207,6 +207,7 @@ public enum PacketCommand {
     CFR_TELEGUIDED_TARGET,
     CFR_TAG_TARGET,
     CFR_BUILDING_WEAPON,
+    CFR_MOBILE_AVOIDANCE,
     GAME_VICTORY_EVENT,
 
     /** A Server to Client packet instructing the Client to show a message (e.g. story message) to the player. */
@@ -287,6 +288,7 @@ public enum PacketCommand {
      * there and takes it away; the server works out which by looking at the hex. Accepted only from a Game Master.
      */
     BUILDING_EDIT,
+    BUILDING_DOOR,
 
     /**
      * A Client to Server packet turning one unit's automatic ejection on or off after the lobby has closed. Carries
@@ -333,7 +335,8 @@ public enum PacketCommand {
 
     public boolean isCFR() {
         return isCFRDominoEffect() || isCFRAMSAssign() || isCFRAPDSAssign() || isCFRHiddenPBS()
-              || isCFRTeleguidedTarget() || isCFRTagTarget() || this == CFR_BUILDING_WEAPON;
+              || isCFRTeleguidedTarget() || isCFRTagTarget() || this == CFR_BUILDING_WEAPON
+              || this == CFR_MOBILE_AVOIDANCE;
     }
     //endregion Boolean Comparison Methods
 }

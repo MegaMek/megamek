@@ -265,6 +265,7 @@ public class ComputeTerrainMods {
                 toHit.setCoverLocPrimary(los.getCoverLocPrimary());
                 toHit.setCoverDropshipPrimary(los.getCoverDropshipPrimary());
                 toHit.setCoverBuildingPrimary(los.getCoverBuildingPrimary());
+                toHit.setCoverWall(los.getCoverWall());
                 toHit.setDamagableCoverTypeSecondary(los.getDamagableCoverTypeSecondary());
                 toHit.setCoverLocSecondary(los.getCoverLocSecondary());
                 toHit.setCoverDropshipSecondary(los.getCoverDropshipSecondary());

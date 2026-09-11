@@ -864,8 +864,10 @@ public class TestAdvancedAerospace extends TestAero {
             buffer.append("Requires ").append(reqCrew).append(" crew and only has ").append(crewSize).append("\n");
             illegal = true;
         }
-        if (vessel.getNOfficers() < Math.ceil(reqCrew / 6.0)) {
-            buffer.append("Requires at least ").append((int) Math.ceil(reqCrew / 6.0)).append(" officers\n");
+        // SO:AA pp. 137-138: officers are included in all assigned crew, not only the minimum crew.
+        int requiredOfficers = (int) Math.ceil(Math.max(reqCrew, crewSize) / 6.0);
+        if (vessel.getNOfficers() < requiredOfficers) {
+            buffer.append("Requires at least ").append(requiredOfficers).append(" officers\n");
             illegal = true;
         }
         crewSize += vessel.getNPassenger();

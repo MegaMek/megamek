@@ -43,7 +43,6 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -92,8 +91,7 @@ public class MPodHandler extends LBXHandler {
             hitMod -= 4;
         }
 
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
-        if (conditions.getEMI().isEMI()) {
+        if (attackingEntity.isAffectedByEMI(target.getPosition())) {
             hitMod -= 2;
         }
 

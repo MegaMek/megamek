@@ -45,10 +45,12 @@ import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingEntity;
+import megamek.common.util.BuildingBlock;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 public class BLKStructureFileTest {
@@ -68,6 +70,23 @@ public class BLKStructureFileTest {
         AbstractBuildingEntity e = getBuildingEntity(FILENAME_SIMPLE_BUILDING_ENTITY);
         assertEquals(0, e.getOArmor(0), "Failed to load tonnage");
         assertEquals(9, e.getEquipment().size(), "Failed to load equipment");
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "-1, 20", "0, 0", "17, 17" })
+    void buildingAmmoRetainsDefaultAndExplicitStartingLoads(int authoredShots, int expectedShots) throws Exception {
+        AbstractBuildingEntity building = getBuildingEntity(FILENAME_SIMPLE_BUILDING_ENTITY);
+        BuildingBlock block = new BuildingBlock();
+        block.writeBlockData("Audit Equipment", "IS Ammo AC/5"
+              + (authoredShots < 0 ? "" : ":Shots" + authoredShots + "#"));
+        BLKFile loader = new BLKFile();
+        loader.dataFile = block;
+        loader.loadEquipment(building, "Audit", 0);
+
+        var ammo = building.getAmmo().getLast();
+        assertEquals(expectedShots, ammo.getBaseShotsLeft());
+        assertEquals(expectedShots, ammo.getOriginalShots());
+        assertEquals(1.0, ammo.getTonnage(), "Starting load does not resize the building's ammo bin");
     }
 
     static Stream<Arguments> buildingTestData() {

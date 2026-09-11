@@ -175,6 +175,14 @@ public interface IBuilding extends Serializable {
         return getInternalBuilding().usesExpandedCF();
     }
 
+    /** Open-space buildings cannot contain damage and breaches to individual levels (TO:AR p.137). */
+    default void enableExpandedCF() {
+        if (getBldgClass() != BRIDGE && !(this instanceof AbstractBuildingEntity entity && (entity.getDesign().isOpenSpace()
+              || BuildingConstruction.usesHexsides(entity)))) {
+            getInternalBuilding().enableExpandedCF();
+        }
+    }
+
     default BuildingFloorState getFloorState(Coords coords) {
         return getInternalBuilding().getFloorState(boardToRelative(coords));
     }

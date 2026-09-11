@@ -144,7 +144,7 @@ public class ArtilleryBayWeaponDistantHomingHandler extends ArtilleryBayWeaponDi
               && attackingEntity.getPosition().distance(target.getPosition()) <= 1;
 
         // Which building takes the damage?
-        IBuilding building = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding building = megamek.common.units.WallRules.getBuilding(game, target);
 
         // Determine what ammo we're firing for reporting and (later) damage
         AmmoMounted ammoUsed = attackingEntity.getAmmo(artilleryAttackAction.getAmmoId());

@@ -69,7 +69,6 @@ import megamek.common.units.*;
 import megamek.server.totalWarfare.TWGameManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -432,13 +431,13 @@ public class ComputeToHitTest extends GameBoardTestCase {
                 assertFalse(result.cannotSucceed(), "Shot should succeed when LOS is clear");
             }
 
-            @Test
-            @DisplayName("LOS from 0105 level 0 to 0101 - blocked by elevation 1 terrain")
-            @Disabled("IDK the rules on this, let's ignore for now")
-            void testLOS_0105L0_To0101_Blocked() throws LocationFullException {
-                // Weapon at level 0 in hex 0105
-                // Target at hex 0101, LOS passes through hex 0103 (elevation 1)
-                // Expected: BLOCKED (height 0 < terrain elevation 1)
+            @org.junit.jupiter.params.ParameterizedTest
+            @org.junit.jupiter.params.provider.CsvSource({ "2,false", "3,true" })
+            @DisplayName("A level-1 hill below the target only blocks when adjacent to the ground-floor attacker")
+            void groundFloorLOSDependsOnHillAdjacency(int hillY, boolean blocked) throws LocationFullException {
+                // TW pp.99-100: a standing Mek is two levels high. The lower hill only intervenes when
+                // adjacent to the lower attacker; it is not enough to be higher than the weapon's floor.
+                game.getBoard().getHex(new Coords(0, hillY)).setLevel(1);
                 mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType,
                       attacker.getLocationsAt(new Coords(0, 4)).getFirst());
                 mediumLaser.setFacing(0);
@@ -455,11 +454,11 @@ public class ComputeToHitTest extends GameBoardTestCase {
                       .filter(m -> TARGET_IMPOSSIBLE == m.value() && LOS_BLOCKED_BY_TERRAIN.equals(m.description()))
                       .findFirst();
 
-                assertTrue(blockingModifier.isPresent(),
-                      "LOS should be BLOCKED - firing from height 0 through elevation 1 terrain. Modifiers: "
+                assertEquals(blocked, blockingModifier.isPresent(),
+                      "A lower hill intervenes according to its adjacency. Modifiers: "
                             + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
                             .collect(java.util.stream.Collectors.joining(", ")));
-                assertTrue(result.cannotSucceed(), "Shot should NOT succeed when LOS is blocked");
+                assertEquals(blocked, result.cannotSucceed());
             }
 
             @Test

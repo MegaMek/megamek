@@ -70,9 +70,10 @@ class GameOptionsTest {
         testMe = new GameOptions();
     }
 
-    @Test
-    void optionalBuildingDamageTrackingDefaultsOffAndCanBeSaved() {
-        String name = OptionsConstants.ADVANCED_BUILDING_EXPANDED_CF;
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {
+          OptionsConstants.ADVANCED_BUILDING_EXPANDED_CF, OptionsConstants.ADVANCED_BUILDING_EXPANDED_COLLAPSE })
+    void optionalBuildingDamageTrackingDefaultsOffAndCanBeSaved(String name) {
         assertFalse(testMe.booleanOption(name));
         File file = tempDirectory.resolve("expanded-building-cf.xml").toFile();
         Vector<IBasicOption> saved = new Vector<>();

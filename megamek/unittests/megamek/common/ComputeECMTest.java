@@ -88,6 +88,7 @@ class ComputeECMTest {
 
         // Mock the board
         Board mockBoard = mock(Board.class);
+        when(mockBoard.getBuildingsVector()).thenReturn(new java.util.Vector<>());
         when(mockBoard.isSpace()).thenReturn(false);
         when(mockBoard.contains(any(Coords.class))).thenReturn(true);
         when(mockBoard.contains(anyInt(), anyInt())).thenReturn(true);

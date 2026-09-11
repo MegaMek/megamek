@@ -1029,7 +1029,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     return false;
                 }
                 // Targeting a building.
-                if (target.getTargetType() == Targetable.TYPE_BUILDING) {
+                if (Targetable.isBuildingType(target.getTargetType())) {
                     // The building takes the full brunt of the attack, one damage grouping at a time.
                     handleBuildingDamageByGrouping(vPhaseReport, bldg, hits, nCluster, target.getPosition());
                     // And we're done!

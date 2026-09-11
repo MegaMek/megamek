@@ -115,6 +115,7 @@ public class Building implements Serializable {
      * The current construction factor of the building hexes. Any damage immediately updates this value.
      */
     private final Map<CubeCoords, Integer> currentCF = new HashMap<>();
+    private Map<CubeCoords, Integer> startTurnCF;
     private Map<CubeCoords, BuildingFloorState> floorStates;
 
     public boolean usesExpandedCF() {
@@ -153,9 +154,14 @@ public class Building implements Serializable {
     }
 
     public void newRound() {
+        startTurnCF = new HashMap<>(currentCF);
         if (floorStates != null) {
             floorStates.values().forEach(BuildingFloorState::newRound);
         }
+    }
+
+    public int getStartTurnCF(CubeCoords coords) {
+        return startTurnCF == null ? getPhaseCF(coords) : startTurnCF.getOrDefault(coords, getPhaseCF(coords));
     }
 
     public void synchronizeFloorState(CubeCoords coords) {
@@ -627,9 +633,19 @@ public class Building implements Serializable {
      * @param coords - the <code>CubeCoords</code> of the hex to be removed
      */
     public void removeHex(CubeCoords coords) {
-        coordinates.remove(coords);
+        if (!coordinates.remove(coords)) {
+            return;
+        }
         currentCF.remove(coords);
         phaseCF.remove(coords);
+        height.put(coords, 0);
+        BuildingFloorState floors = getFloorState(coords);
+        if (floors != null) {
+            for (int floor = 0; floor < floors.size(); floor++) {
+                floors.setCF(floor, 0);
+            }
+            floors.resolveCollapse();
+        }
         collapsedHexes++;
     }
 

@@ -79,6 +79,7 @@ public class UnitDamageControls {
 
     /* the unit's conditions: what state it is in, rather than how it was built */
     public JCheckBox chkShutdown;
+    public JCheckBox chkSurvivalGearStored;
     public JCheckBox chkProne;
     public JCheckBox chkHullDown;
     public JCheckBox chkHidden;

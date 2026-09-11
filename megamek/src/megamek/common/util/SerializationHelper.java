@@ -116,6 +116,55 @@ public class SerializationHelper {
     public static XStream getLoadSaveGameXStream() {
         XStream xStream = getSaveGameXStream();
 
+        // These immutable construction/movement values have no no-argument constructor. Restore through their
+        // canonical constructors; XStream 1.4 cannot populate a record's final fields through reflection.
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class type) {
+                return type == megamek.common.units.BuildingDesign.Position.class
+                      || type == megamek.common.units.BuildingDesign.Door.class
+                      || type == megamek.common.units.BuildingDesign.Elevator.class
+                      || type == megamek.common.units.BuildingDesign.Space.class
+                      || type == megamek.common.units.BuildingDesign.BayDoor.class
+                      || type == megamek.common.units.MobileStructure.MovementProgress.class
+                      || type == megamek.common.moves.MobileStructureLinkage.Link.class
+                      || type == megamek.common.units.BuildingFlightDeckRules.Occupant.class
+                      || type == megamek.common.units.MobileStructurePortalRules.Connection.class;
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                Class<?> type = context.getRequiredType();
+                var components = type.getRecordComponents();
+                Object[] values = new Object[components.length];
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    for (int index = 0; index < components.length; index++) {
+                        if (components[index].getName().equals(reader.getNodeName())) {
+                            String serializedClass = reader.getAttribute(xStream.getMapper().aliasForSystemAttribute("class"));
+                            Class<?> valueType = serializedClass == null ? components[index].getType()
+                                  : xStream.getMapper().realClass(serializedClass);
+                            values[index] = context.convertAnother(null, valueType);
+                            break;
+                        }
+                    }
+                    reader.moveUp();
+                }
+                try {
+                    return type.getDeclaredConstructor(java.util.Arrays.stream(components)
+                          .map(java.lang.reflect.RecordComponent::getType).toArray(Class<?>[]::new)).newInstance(values);
+                } catch (ReflectiveOperationException | IllegalArgumentException error) {
+                    throw new com.thoughtworks.xstream.converters.ConversionException(
+                          "Invalid saved building value: " + type.getSimpleName(), error);
+                }
+            }
+
+            @Override
+            public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Registered only by the load factory; the save factory writes the record's named fields.
+            }
+        });
+
         // Mek heat sink activation used to be a pair of counter fields; it is now tracked per mount via
         // equipment modes (activation/deactivation rules), and the fields no longer exist. Save games written
         // before that change still contain the elements, and this XStream setup rejects unknown elements, so

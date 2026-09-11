@@ -84,6 +84,12 @@ public class BuildingDesign implements Serializable {
     /** Bay/quarters space can be divided among hexes and levels, independently of its occupant count. */
     public record Space(Position position, double tons) implements Serializable { }
 
+    /** A transport bay door is associated with one bay and an exterior edge, independently of bay tonnage. */
+    public record BayDoor(int bayNumber, Position position, int facing) implements Serializable { }
+
+    private List<BayDoor> bayDoors = new ArrayList<>();
+    private CubeCoords portalHex2;
+    private CubeCoords portalHex3;
     private boolean environmentalSealing;
     private boolean heavyMetal;
     private boolean civilianOfficers;
@@ -178,6 +184,21 @@ public class BuildingDesign implements Serializable {
         ceiling = value;
     }
 
+    /** Additional non-infantry movement costs, TO:AR pp.118,135. */
+    public int movementMPModifier() {
+        return (ceiling == Ceiling.LOW ? 1 : 0) + (heavyMetal ? 1 : 0);
+    }
+
+    public int movementPilotingModifier() {
+        return (ceiling == Ceiling.HIGH ? -1 : ceiling == Ceiling.LOW ? 1 : 0) + (heavyMetal ? 2 : 0);
+    }
+
+    /** Ceiling modifiers affect both participants; heavy metal doubles only the moving unit's damage. */
+    public int movementDamage(int damage, boolean toMovingUnit) {
+        double factor = ceiling == Ceiling.HIGH ? .5 : ceiling == Ceiling.LOW ? 2 : 1;
+        return (int) Math.floor(damage * factor * (toMovingUnit && heavyMetal ? 2 : 1));
+    }
+
     public Site getSite() {
         return site;
     }
@@ -194,7 +215,7 @@ public class BuildingDesign implements Serializable {
         depth = value;
     }
 
-    /** Display level of the lowest floor; null derives the reference from site and roof cover. */
+    /** Physical level of the lowest floor relative to the local surface; null derives it from site and roof cover. */
     public Integer getBaseLevel() {
         return baseLevel;
     }
@@ -205,6 +226,25 @@ public class BuildingDesign implements Serializable {
 
     public List<Door> getDoors() {
         return doors;
+    }
+
+    /** Author-selected template identities from the Large Portal rule; no canonical map ordering is assumed. */
+    public CubeCoords getPortalHex2() { return portalHex2; }
+    public void setPortalHex2(CubeCoords hex) { portalHex2 = hex; }
+    public CubeCoords getPortalHex3() { return portalHex3; }
+    public void setPortalHex3(CubeCoords hex) { portalHex3 = hex; }
+
+    public List<BayDoor> getBayDoors() {
+        if (bayDoors == null) {
+            bayDoors = new ArrayList<>();
+        }
+        return bayDoors;
+    }
+
+    /** Map symbols include transport bay doors, while environmental pressure uses only large structural doors. */
+    public List<Door> getMapDoors() {
+        return java.util.stream.Stream.concat(doors.stream(), getBayDoors().stream()
+              .map(door -> new Door(door.position(), door.facing(), 1))).distinct().toList();
     }
 
     public List<Elevator> getElevators() {
@@ -229,6 +269,8 @@ public class BuildingDesign implements Serializable {
     }
 
     public void replaceBay(Bay oldBay, Bay newBay) {
+        getBayDoors().replaceAll(door -> door.bayNumber() == oldBay.getBayNumber()
+              ? new BayDoor(newBay.getBayNumber(), door.position(), door.facing()) : door);
         var spaces = baySpace.remove(oldBay);
         if (spaces != null && oldBay.getWeight() > 0) {
             double scale = newBay.getWeight() / oldBay.getWeight();
@@ -238,6 +280,10 @@ public class BuildingDesign implements Serializable {
 
     /** Keep authored placements attached to physical hexes when the footprint is edited or transformed. */
     public void remap(UnaryOperator<Position> transform, java.util.function.IntUnaryOperator facing) {
+        Position template2 = portalHex2 == null ? null : transform.apply(new Position(portalHex2, 0));
+        Position template3 = portalHex3 == null ? null : transform.apply(new Position(portalHex3, 0));
+        portalHex2 = template2 == null ? null : template2.hex();
+        portalHex3 = template3 == null ? null : template3.hex();
         Map<CubeCoords, Integer> sides = new HashMap<>();
         wallSides.forEach((hex, mask) -> {
             Position target = transform.apply(new Position(hex, 0));
@@ -264,6 +310,8 @@ public class BuildingDesign implements Serializable {
         bridgeDecks.putAll(decks);
         doors.replaceAll(door -> new Door(transform.apply(door.position()), facing.applyAsInt(door.facing()), door.height()));
         doors.removeIf(door -> door.position() == null);
+        getBayDoors().replaceAll(door -> new BayDoor(door.bayNumber(), transform.apply(door.position()), facing.applyAsInt(door.facing())));
+        getBayDoors().removeIf(door -> door.position() == null);
         elevators.replaceAll(lift -> {
             Map<Integer, Integer> exits = new HashMap<>();
             CubeCoords hex = null;
@@ -292,7 +340,8 @@ public class BuildingDesign implements Serializable {
         baySpace.values().removeIf(List::isEmpty);
     }
 
-    public void removeDeletedComponents(BuildingEntity entity) {
+    public void removeDeletedComponents(AbstractBuildingEntity entity) {
+        getBayDoors().removeIf(door -> entity.getTransportBays().stream().noneMatch(bay -> bay.getBayNumber() == door.bayNumber()));
         automatedWeapons.retainAll(entity.getEquipment());
         equipmentSpace.keySet().retainAll(entity.getEquipment());
         baySpace.keySet().retainAll(entity.getTransportBays());

@@ -40,6 +40,7 @@ import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CriticalSlot;
 import megamek.common.Hex;
+import megamek.common.IndustrialElevator;
 import megamek.common.HitData;
 import megamek.common.QuirkEntry;
 import megamek.common.Report;
@@ -48,6 +49,7 @@ import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
 import megamek.common.actions.RepairWeaponMalfunctionAction;
 import megamek.common.board.Board;
+import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.compute.Compute;
@@ -88,6 +90,19 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     private Building building;
     private final BuildingDesign design = new BuildingDesign();
+    private WallSegmentState wallSegmentState;
+
+    /** Independent combat state for authored hexsides; old saves initialize it from their undamaged design. */
+    public WallSegmentState getWallSegmentState() {
+        if (wallSegmentState == null) {
+            wallSegmentState = new WallSegmentState();
+        }
+        return wallSegmentState;
+    }
+
+    public void copyWallSegmentState(AbstractBuildingEntity source) {
+        wallSegmentState = new WallSegmentState(source.getWallSegmentState());
+    }
     /**
      * Relative {@link CubeCoords} -> actual board {@link Coords}
      */
@@ -155,6 +170,13 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
             throw new IllegalArgumentException("A building needs whole cube coordinates and at least one hex and level.");
         }
         int oldHeight = Math.max(1, building.getBuildingHeight());
+        wallSegmentState = null;
+        Map<CubeCoords, Integer> oldHexHeights = new HashMap<>();
+        Map<CubeCoords, Double> oldFuelLocations = this instanceof MobileStructure mobile
+              ? new HashMap<>(mobile.getFuelLocations()) : Map.of();
+        if (this instanceof MobileStructure) {
+            building.getOriginalCoordsList().forEach(hex -> oldHexHeights.put(hexTransform.apply(hex), building.getHeight(hex)));
+        }
         if (this instanceof BuildingEntity entity && BuildingConstruction.usesHexsides(entity)) {
             building.getOriginalCoordsList().forEach(hex -> entity.getDesign().getWallSides().putIfAbsent(hex, 1));
         }
@@ -166,6 +188,8 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
             CubeCoords relative = new CubeCoords((int) (coords.q() - origin.q()), (int) (coords.r() - origin.r()),
                   (int) (coords.s() - origin.s()));
             building.addHex(relative, cf, armor, BasementType.NONE, false);
+            int previousHeight = oldHexHeights.getOrDefault(coords, oldHeight);
+            building.setHeight(previousHeight == oldHeight ? levels : Math.min(previousHeight, levels), relative);
         }
         refreshLocations();
         refreshAdditionalLocations();
@@ -187,13 +211,23 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
                 addCritical(location, new CriticalSlot(mount));
             }
         }
-        if (this instanceof BuildingEntity entity) {
-            entity.getDesign().remap(position -> {
+        getDesign().remap(position -> {
                 CubeCoords hex = hexTransform.apply(position.hex());
                 int level = position.level() == oldHeight ? levels : position.level();
                 return !coordinates.contains(hex) || (position.level() != oldHeight && level >= levels) ? null
                       : new BuildingDesign.Position(hex.subtract(origin), level);
-            }, facingTransform);
+        }, facingTransform);
+        if (this instanceof MobileStructure mobile && !oldFuelLocations.isEmpty()) {
+            Map<CubeCoords, Double> fuel = new HashMap<>();
+            // Keep an explicit zero for surviving hexes so deleting the only fuel tank cannot silently redistribute it.
+            building.getOriginalCoordsList().forEach(hex -> fuel.put(hex, 0.0));
+            oldFuelLocations.forEach((hex, tons) -> {
+                CubeCoords transformed = hexTransform.apply(hex);
+                if (coordinates.contains(transformed)) {
+                    fuel.put(transformed.subtract(origin), tons);
+                }
+            });
+            mobile.setFuelLocations(fuel);
         }
         updateRelativeLayout();
         recalculateTechAdvancement();
@@ -281,10 +315,10 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         if (weapon == null) {
             return super.getWeaponFiringHeight(weapon);
         }
-        if (weapon.isSponsonTurretMounted()) {
-            return getInternalBuilding().getBuildingHeight();
-        }
-        return getLocationLevel(weapon.getLocation());
+        Coords coords = getLocationCoords(weapon.getLocation());
+        int baseHeight = BuildingElevation.base(this, coords) - getElevation();
+        int turretHeight = this instanceof MobileStructure ? building.getBuildingHeight() - 1 : getHeight(coords);
+        return baseHeight + (weapon.isSponsonTurretMounted() ? turretHeight : getLocationLevel(weapon.getLocation()));
     }
 
     /**
@@ -357,7 +391,6 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      *
      * @return Map of relative CubeCoords to their board Coords at the given position/facing
      */
-    @Deprecated(since = "0.51.0", forRemoval = true)
     public Map<CubeCoords, Coords> computeLayoutForPositionAndFacing(Coords testPosition, int testFacing) {
         Map<CubeCoords, Coords> hypotheticalLayout = new HashMap<>();
 
@@ -365,19 +398,11 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
             return hypotheticalLayout;
         }
 
-        // Add origin
-        hypotheticalLayout.put(CubeCoords.ZERO, testPosition);
-
         // Map each relative CubeCoord to its hypothetical board coordinate
         for (CubeCoords relCoord : building.getCoordsList()) {
-            if (!relCoord.equals(CubeCoords.ZERO)) {
-                // Rotate by the TEST facing, not the entity's actual facing
-                CubeCoords rotatedRelCoord = rotateCoordByFacing(relCoord, testFacing);
-                CubeCoords positionCubeCoords = testPosition.toCube();
-                Coords boardCoord = positionCubeCoords.add(rotatedRelCoord).toOffset();
-
-                hypotheticalLayout.put(relCoord, boardCoord);
-            }
+            CubeCoords rotatedRelCoord = rotateCoordByFacing(relCoord, testFacing);
+            Coords boardCoord = testPosition.toCube().add(rotatedRelCoord).toOffset();
+            hypotheticalLayout.put(relCoord, boardCoord);
         }
 
         return hypotheticalLayout;
@@ -407,10 +432,11 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
             return false;
         }
 
-        // Even above ground, the entire footprint must fit on passable board hexes.
-        if (testElevation != 0) {
-            return true;
+        if (BuildingConstruction.usesHexsides(this)
+              && WallRules.hasOverlappingSegment(this, testPosition, testFacing, testBoardId)) {
+            return false;
         }
+
 
         // Check that all hexes are at the same elevation
         if (!areAllCoordsAtSameElevation(thisBuildingCoords, testBoardId)) {
@@ -418,12 +444,12 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         }
 
         // Check for overlapping buildings
-        if (hasInvalidBuildingOverlap(thisBuildingCoords, testBoardId)) {
+        if (hasInvalidBuildingOverlap(thisBuildingCoords, testBoardId, testElevation)) {
             return false;
         }
 
         // Check for other entities at all positions
-        if (hasEntityConflict(thisBuildingCoords, testBoardId)) {
+        if (hasEntityConflict(thisBuildingCoords, testBoardId, testElevation)) {
             return false;
         }
 
@@ -445,20 +471,29 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     public boolean isDeploymentPositionAndFacingValid(Coords position, int facing, int elevation, int boardId) {
         return isPositionAndFacingValid(position, facing, elevation, boardId)
               && !isBoardProhibited(game.getBoard(boardId))
+              && hasRequiredSurfacePart(position, facing, elevation, boardId)
+              && (!(this instanceof MobileStructure mobile) || MobileStructurePortalRules.validDeployment(mobile, position, facing))
               && computeBuildingCoordsForPositionAndFacing(position, facing).stream()
                     .allMatch(coords -> game.getBoard(boardId).isLegalDeployment(coords, this));
     }
 
-    /**
-     * Returns all valid facings for this building at the given position and elevation. Does NOT modify the entity's
-     * facing - this is a pure calculation method.
-     *
-     * @param testPosition  The position to test
-     * @param testElevation The elevation to test
-     * @param testBoardId   The board ID to test
-     *
-     * @return List of valid facings (0-5), or empty list if none valid
-     */
+    /** A semi-subsurface design comprises co-located surface and subsurface structures (TO:AR p.139). */
+    private boolean hasRequiredSurfacePart(Coords position, int facing, int elevation, int boardId) {
+        int bottom = BuildingConstruction.baseLevel(this) + elevation;
+        if (this instanceof MobileStructure || getDesign().getSite() == BuildingDesign.Site.SURFACE
+              || bottom + getInternalBuilding().getBuildingHeight() != 0) {
+            return true;
+        }
+        // A roof exactly at the surface is a connected basement/foundation rather than a freestanding
+        // subsurface design. Deploy its surface portion first so its supporting limits can be verified.
+        var footprint = computeBuildingCoordsForPositionAndFacing(position, facing);
+        return footprint.stream().flatMap(coords -> game.getBoard(boardId).getBuildingsAt(coords).stream())
+              .filter(AbstractBuildingEntity.class::isInstance).map(AbstractBuildingEntity.class::cast)
+              .anyMatch(other -> other != this && other.getDesign().getSite() == BuildingDesign.Site.SURFACE
+                    && BuildingElevation.base(other) == 0 && BuildingElevation.canCoexist(this, footprint, bottom, other));
+    }
+
+    /** Returns valid facings at a proposed position/elevation without changing this building's current pose. */
     public List<Integer> getValidFacingsAt(Coords testPosition, int testElevation, int testBoardId) {
         List<Integer> validFacings = new ArrayList<>();
 
@@ -479,7 +514,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      *
      * @return List of all board coordinates the building would occupy
      */
-    private List<Coords> computeBuildingCoordsForPositionAndFacing(Coords testPosition, int testFacing) {
+    public List<Coords> computeBuildingCoordsForPositionAndFacing(Coords testPosition, int testFacing) {
         return getInternalBuilding().getCoordsList().stream()
               .map(cube -> testPosition.toCube().add(rotateCoordByFacing(cube, testFacing)).toOffset())
               .toList();
@@ -544,21 +579,23 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      *
      * @return true if there's an invalid overlap
      */
-    private boolean hasInvalidBuildingOverlap(List<Coords> thisBuildingCoords, int testBoardId) {
+    private boolean hasInvalidBuildingOverlap(List<Coords> thisBuildingCoords, int testBoardId, int elevation) {
         // Collect all unique buildings we'd be overlapping with
         Set<IBuilding> overlappingBuildings = new HashSet<>();
         for (Coords coord : thisBuildingCoords) {
-            Optional<IBuilding> buildingAtCoord = game.getBuildingAt(coord, testBoardId);
-            if (buildingAtCoord.isPresent() && !equals(buildingAtCoord.get())) {
-                overlappingBuildings.add(buildingAtCoord.get());
-            }
+            game.getBoard(testBoardId).getBuildingsAt(coord).stream().filter(other -> !equals(other))
+                  .forEach(overlappingBuildings::add);
         }
 
         // Check each overlapping building
         for (IBuilding otherBuilding : overlappingBuildings) {
             // Can't replace another AbstractBuildingEntity
             if (otherBuilding instanceof AbstractBuildingEntity) {
-                return true;
+                if (!BuildingElevation.canCoexist(this, thisBuildingCoords,
+                      BuildingConstruction.baseLevel(this) + elevation, otherBuilding)) {
+                    return true;
+                }
+                continue;
             }
 
             // For any other IBuilding, we can only be placed if we contain ALL hexes of that building
@@ -579,10 +616,11 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      *
      * @return true if there's an entity conflict (another entity at any of the coords)
      */
-    private boolean hasEntityConflict(List<Coords> coords, int testBoardId) {
+    private boolean hasEntityConflict(List<Coords> coords, int testBoardId, int elevation) {
         for (Coords coord : coords) {
             for (Entity otherEntity : game.getEntitiesVector(coord, testBoardId)) {
-                if (!this.equals(otherEntity)) {
+                if (!this.equals(otherEntity) && !(otherEntity instanceof IBuilding otherBuilding
+                      && BuildingElevation.canCoexist(this, coords, BuildingConstruction.baseLevel(this) + elevation, otherBuilding))) {
                     return true;
                 }
             }
@@ -1475,6 +1513,18 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     public void updateBuildingEntityHexes(int boardId, TWGameManager gameManager) {
         Board board = getGame().getBoard(boardId);
+        if (BuildingConstruction.usesHexsides(this)) {
+            // Hexsides have no occupied volume. In particular, retain buildings and roads beside the wall.
+            getWallSegmentState().initialize(this);
+            board.addBuildingToBoard(this);
+        for (MobileStructure portal : MobileStructurePortalRules.published(getGame())) {
+            if (portal != this) {
+                gameManager.entityUpdate(portal.getId());
+            }
+        }
+            gameManager.entityUpdate(getId());
+            return;
+        }
         Vector<IBuilding> removedBuildings = new Vector<>();
 
         for (Coords buildingCoords : getCoordsList()) {
@@ -1482,7 +1532,8 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
             if (targetHex != null) {
                 // Remove any existing building at this hex
                 Optional<IBuilding> existingBuilding = getGame().getBuildingAt(buildingCoords, boardId);
-                if (existingBuilding.isPresent() && !existingBuilding.get().equals(this)) {
+                if (existingBuilding.isPresent() && !existingBuilding.get().equals(this)
+                      && !BuildingElevation.canCoexist(this, existingBuilding.get())) {
                     removedBuildings.add(existingBuilding.get());
                     targetHex.removeTerrain(Terrains.BUILDING);
                     targetHex.removeTerrain(Terrains.BLDG_CF);
@@ -1493,6 +1544,39 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
                 }
 
                 // Add building terrain with the building type
+                if (getBldgClass() == BRIDGE) {
+                    boolean sharedVolume = board.getBuildingsAt(buildingCoords).stream()
+                          .anyMatch(other -> other != this && other.getBldgClass() != BRIDGE
+                                && other.getBldgClass() != WALL && other.getBldgClass() != FENCE
+                                && BuildingElevation.canCoexist(this, other));
+                    if (!sharedVolume) {
+                        targetHex.removeTerrain(Terrains.BUILDING);
+                        targetHex.removeTerrain(Terrains.BLDG_ELEV);
+                        targetHex.removeTerrain(Terrains.BLDG_CF);
+                    }
+                    int exits = 0;
+                    for (int side = 0; side < 6; side++) {
+                        if (isIn(buildingCoords.translated(side))) {
+                            exits |= 1 << side;
+                        }
+                    }
+                    targetHex.addTerrain(new Terrain(Terrains.BRIDGE, getBuildingType().getTypeValue(), true, exits));
+                    targetHex.addTerrain(new Terrain(Terrains.BRIDGE_CF, getCurrentCF(buildingCoords)));
+                    targetHex.addTerrain(new Terrain(Terrains.BRIDGE_ELEV, BuildingElevation.base(this, buildingCoords)));
+                    continue;
+                }
+                // Entirely buried buildings are gameplay volumes, not a solid building placed on the ground above.
+                if (BuildingElevation.roof(this, buildingCoords) <= 0) {
+                    continue;
+                }
+                // The terrain envelope must retain an enclosing dome's roof when an interior structure is added.
+                if (existingBuilding.isPresent() && existingBuilding.get() != this
+                      && existingBuilding.get().getBldgClass() != BRIDGE
+                      && BuildingElevation.canCoexist(this, existingBuilding.get())
+                      && BuildingElevation.roof(existingBuilding.get(), buildingCoords)
+                            > BuildingElevation.roof(this, buildingCoords)) {
+                    continue;
+                }
                 targetHex.addTerrain(new Terrain(Terrains.BUILDING,
                       getBuildingType().getTypeValue()));
 
@@ -1510,7 +1594,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
                 }
 
                 // Add height (BLDG_ELEV)
-                int height = getHeight(buildingCoords);
+                int height = BuildingElevation.roof(this, buildingCoords);
                 targetHex.addTerrain(new Terrain(Terrains.BLDG_ELEV, height));
 
                 // Add basement type if present
@@ -1522,6 +1606,53 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         }
 
         board.addBuildingToBoard(this);
+        for (MobileStructure portal : MobileStructurePortalRules.published(getGame())) {
+            if (portal != this) {
+                gameManager.entityUpdate(portal.getId());
+            }
+        }
+
+        for (var shaft : getDesign().getElevators()) {
+            Coords coords = relativeToBoard(shaft.hex());
+            if (!isIn(coords) || board.getHex(coords) == null) {
+                continue;
+            }
+            int base = BuildingElevation.base(this, coords);
+            BoardLocation location = BoardLocation.of(coords, boardId);
+            var elevator = getGame().getIndustrialElevators().stream()
+                  .filter(lift -> lift.getLocation().equals(location) && lift.getBuildingId() == getId()
+                        && lift.getShaftBottom() == shaft.lowerLevel() + base).findFirst().orElse(null);
+            if (elevator == null) {
+                elevator = getGame().getIndustrialElevators().stream()
+                      .filter(lift -> lift.getLocation().equals(location) && lift.getBuildingId() == Entity.NONE
+                            && lift.getShaftBottom() == shaft.lowerLevel() + base && lift.getShaftTop() == shaft.upperLevel() + base
+                            && lift.getCapacityTons() == shaft.capacity()).findFirst().orElse(null);
+                if (elevator != null) {
+                    elevator.setBuildingId(getId());
+                }
+            }
+            if (elevator == null) {
+                elevator = new IndustrialElevator(location, shaft.lowerLevel() + base, shaft.upperLevel() + base,
+                      shaft.capacity());
+                Map<Integer, Integer> sides = new HashMap<>();
+                shaft.exits().forEach((level, mask) -> {
+                    int rotated = 0;
+                    for (int side = 0; side < 6; side++) {
+                        if ((mask & (1 << side)) != 0) {
+                            rotated |= 1 << ((side + getFacing()) % 6);
+                        }
+                    }
+                    sides.put(level + base, rotated);
+                });
+                elevator.setBuildingId(getId());
+                elevator.setAccessSides(sides);
+                getGame().addIndustrialElevator(elevator);
+            }
+            board.getHex(coords).addTerrain(new Terrain(Terrains.INDUSTRIAL_ELEVATOR, elevator.getPlatformLevel()));
+        }
+        if (!getDesign().getElevators().isEmpty()) {
+            gameManager.sendIndustrialElevatorUpdate();
+        }
 
         // Send removed buildings to clients if any were replaced
         if (!removedBuildings.isEmpty()) {
@@ -1612,6 +1743,12 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         }
         int startHexBuildingHeight = getHeight(coords);
         if (startHexBuildingHeight <= 0) {
+            if (!isIn(coords)) {
+                for (int floor = 0; floor < building.getBuildingHeight(); floor++) {
+                    applyCollapseFloorLocationDamage(coords, floor);
+                }
+                updateRelativeLayout();
+            }
             return;
         }
         for (int levelsRemoved = 1; levelsRemoved <= numLevelsToCollapse; levelsRemoved++) {
@@ -1949,7 +2086,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     public boolean isInsideThisBuilding(Entity unit) {
         boolean onMyBoard = unit.getBoardId() == getBoardId();
         boolean inOneOfMyHexes = (unit.getPosition() != null) && getCoordsList().contains(unit.getPosition());
-        return onMyBoard && inOneOfMyHexes && unit.isInBuilding();
+        return onMyBoard && inOneOfMyHexes && BuildingRuntimeState.inside(this, unit);
     }
 
     /**
@@ -2323,6 +2460,7 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
         building.newRound();
+        getBuildingRuntimeState().newRound(this);
         for (int weaponId : repairedBuildingWeapons()) {
             WeaponMounted repaired = getWeapon(weaponId);
             if (repaired != null && isTurretJammed(repaired)) {
@@ -2346,6 +2484,15 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     public BuildingDesign getDesign() {
         return design;
+    }
+
+    private BuildingRuntimeState buildingRuntimeState;
+
+    public BuildingRuntimeState getBuildingRuntimeState() {
+        if (buildingRuntimeState == null) {
+            buildingRuntimeState = new BuildingRuntimeState();
+        }
+        return buildingRuntimeState;
     }
 
 
@@ -2391,16 +2538,19 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
                     || generator.getStructureEngine() == StructureEngine.FISSION));
     }
 
+    public abstract boolean hasPower();
 
-    /** Ten percent, rounded up to a tenth of a ton separately for each hex (TO:AR p. 129). */
+
+    /** Ten percent per hex; static buildings round to 0.1 tons, mobile structures to 0.5 (TO:AR p. 129; TO:AUE p. 83). */
     public double getPowerAmplifierWeight(CubeCoords hex) {
         if (hasFusionOrFissionPower()) {
             return 0;
         }
         double energyWeapons = getEquipmentInHex(hex).stream().filter(m -> m.getType() instanceof WeaponType weapon
-              && weapon.hasFlag(WeaponType.F_ENERGY) && !(weapon instanceof InfantryWeapon) && m.getTonnage() >= .25)
+              && weapon.hasFlag(WeaponType.F_ENERGY) && !(weapon instanceof InfantryWeapon)
+              && m.getTonnage() >= (this instanceof MobileStructure ? .5 : .25))
               .mapToDouble(m -> BuildingConstruction.equipmentWeightInHex(this, m, hex)).sum();
-        return Math.ceil(energyWeapons) / 10;
+        return this instanceof MobileStructure ? Math.ceil(energyWeapons / 5) / 2 : Math.ceil(energyWeapons) / 10;
     }
 
 

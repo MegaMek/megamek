@@ -157,16 +157,23 @@ public class BuildingFloorState implements Serializable {
      * upper levels settle onto the surviving lower structure; destroying its lowest level destroys the entire hex.
      */
     public void resolveCollapse() {
+        resolveCollapse(1);
+    }
+
+    /** A cascade entering a semi-subsurface foundation halves its subsequent collapse damage (TO:AR p.139). */
+    public int resolveCollapse(int damageDivisor) {
+        int remainingFallingCF = 0;
         for (int floor = 0; floor < size(); floor++) {
             if (levels[floor] < 0 || cf[floor] > 0) {
                 continue;
             }
             if (levels[floor] == 0) {
+                remainingFallingCF = Arrays.stream(cf).sum();
                 Arrays.fill(cf, 0);
                 Arrays.fill(armor, 0);
                 Arrays.fill(levels, -1);
                 changed = true;
-                return;
+                return remainingFallingCF;
             }
             levels[floor] = -1;
             changed = true;
@@ -177,7 +184,7 @@ public class BuildingFloorState implements Serializable {
                 for (int i = upper; i < size(); i++) {
                     fallingCF += cf[i];
                 }
-                int damage = fallingCF / 3;
+                int damage = fallingCF / 3 / Math.max(1, damageDivisor);
                 if (damage == 0) {
                     break;
                 }
@@ -190,10 +197,14 @@ public class BuildingFloorState implements Serializable {
                 upper = nextStanding(upper - 1);
             }
             if (lower < 0) {
+                remainingFallingCF = Arrays.stream(cf).sum();
                 Arrays.fill(cf, 0);
+                compactLevels();
+                return remainingFallingCF;
             }
         }
         compactLevels();
+        return remainingFallingCF;
     }
 
     private int previousStanding(int floor) {

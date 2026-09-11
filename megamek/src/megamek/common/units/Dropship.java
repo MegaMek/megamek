@@ -611,6 +611,9 @@ public class Dropship extends SmallCraft {
 
     @Override
     public String hasRoomForVerticalLanding() {
+        if (!BuildingFlightDeckRules.decksAt(game, getBoardId(), getPosition()).isEmpty()) {
+            return hasRoomForVerticalLanding(getBoardId(), getPosition());
+        }
         // dropships can land just about anywhere they want, unless it is off
         // the map
         Vector<Coords> positions = new Vector<>();

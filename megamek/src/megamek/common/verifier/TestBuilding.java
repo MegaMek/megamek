@@ -51,6 +51,8 @@ import megamek.common.units.BuildingDesign;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
+import megamek.common.units.MobileStructure;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 public class TestBuilding extends TestEntity {
@@ -65,6 +67,16 @@ public class TestBuilding extends TestEntity {
     private static Structure getStructure(AbstractBuildingEntity building) {
         int type = building.getStructureType();
         return new Structure(type, false, building.getMovementMode());
+    }
+
+    /** TO:AR p. 128 (classification table p. 113): armor capacity follows the original construction factor. */
+    public static int maxArmorPoints(AbstractBuildingEntity building, int location) {
+        int cf = building.getOInternal(location);
+        return switch (building.getBldgClass()) {
+            case IBuilding.CASTLE_BRIAN -> cf * 2;
+            case IBuilding.FORTRESS, IBuilding.GUN_EMPLACEMENT, IBuilding.WALL -> cf;
+            default -> 0;
+        };
     }
 
     @Override
@@ -104,14 +116,15 @@ public class TestBuilding extends TestEntity {
 
     @Override
     public double getWeightControls() {
-        return building instanceof BuildingEntity entity ? building.getInternalBuilding().getOriginalCoordsList().stream()
-              .mapToDouble(hex -> BuildingConstruction.capitalControls(entity, hex)).sum() : 0;
+        return building.getInternalBuilding().getOriginalCoordsList().stream()
+              .mapToDouble(hex -> BuildingConstruction.capitalControls(building, hex)).sum();
     }
 
     @Override
     public double getWeightMisc() {
-        return building instanceof BuildingEntity entity ? entity.getDesign().getElevators().stream()
-              .mapToDouble(BuildingDesign.Elevator::weight).sum() : 0;
+        return building.getDesign().getElevators().stream().mapToDouble(BuildingDesign.Elevator::weight).sum()
+              + (building instanceof MobileStructure mobile ? building.getInternalBuilding().getOriginalCoordsList().stream()
+                    .mapToDouble(mobile::systemWeightInHex).sum() : 0);
     }
 
     @Override
@@ -143,10 +156,6 @@ public class TestBuilding extends TestEntity {
 
     @Override
     public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
-        if (!(building instanceof BuildingEntity)) {
-            // Mobile Structures use a different construction table; their verifier remains to be implemented.
-            return true;
-        }
         List<String> issues = constructionIssues();
         issues.forEach(issue -> buff.append(issue).append('\n'));
         boolean correct = issues.isEmpty();
@@ -173,8 +182,8 @@ public class TestBuilding extends TestEntity {
 
     @Override
     public double getWeightPowerAmp() {
-        return building instanceof BuildingEntity entity ? building.getInternalBuilding().getOriginalCoordsList().stream()
-              .mapToDouble(entity::getPowerAmplifierWeight).sum() : 0;
+        return building.getInternalBuilding().getOriginalCoordsList().stream()
+              .mapToDouble(building::getPowerAmplifierWeight).sum();
     }
 
     /** TO:AR p. 113. These limits concern static buildings; Mobile Structures have their own table. */
@@ -241,6 +250,29 @@ public class TestBuilding extends TestEntity {
         return new Limits(type.getMinimumCF(), type.getMaximumCF(), hexes, levels);
     }
 
+    /** TO:AUE p.76; the two middle Hangar CF bands differ from the static table. */
+    public static Limits limits(AbstractBuildingEntity entity) {
+        return limits(entity, entity.getBuildingType(), entity.getBldgClass());
+    }
+
+    public static Limits limits(AbstractBuildingEntity entity, BuildingType type, int classification) {
+        if (!(entity instanceof MobileStructure)) {
+            return limits(type, classification);
+        }
+        if (classification != IBuilding.STANDARD && classification != IBuilding.HANGAR
+              && classification != IBuilding.FORTRESS) {
+            return null;
+        }
+        Limits limits = limits(type, classification);
+        if (classification == IBuilding.HANGAR && type == BuildingType.MEDIUM) {
+            return new Limits(9, 20, 14, 10);
+        }
+        if (classification == IBuilding.HANGAR && type == BuildingType.HEAVY) {
+            return new Limits(21, 45, 18, 13);
+        }
+        return limits;
+    }
+
     @Override
     public double getWeightArmor() {
         return building.getArmorWeight();
@@ -253,10 +285,14 @@ public class TestBuilding extends TestEntity {
 
     @Override
     public double calculateWeightExact() {
+        if (building instanceof MobileStructure) {
+            return building.getInternalBuilding().getOriginalCoordsList().stream()
+                  .mapToDouble(hex -> BuildingConstruction.installedWeightInHex(building, hex)).sum();
+        }
         double weight = building.getEquipment().stream().filter(m -> !m.isOneShotAmmo() && !m.isWeaponGroup())
               .mapToDouble(Mounted::getTonnage).sum();
-        double turrets = building instanceof BuildingEntity entity ? building.getInternalBuilding().getOriginalCoordsList().stream()
-              .mapToDouble(hex -> entity.getTurretWeight(hex) + entity.getPintleWeight(hex)).sum() : 0;
+        double turrets = building.getInternalBuilding().getOriginalCoordsList().stream()
+              .mapToDouble(hex -> building.getTurretWeight(hex) + building.getPintleWeight(hex)).sum();
         return weight + getWeightArmor() + getWeightPowerAmp() + getWeightCarryingSpace() + turrets
               + getWeightControls() + getWeightMisc();
     }
@@ -269,16 +305,14 @@ public class TestBuilding extends TestEntity {
     /** Validate the construction represented by the native static-building model. */
     public List<String> constructionIssues() {
         List<String> issues = new ArrayList<>();
-        if (!(building instanceof BuildingEntity entity)) {
-            return issues;
-        }
+        AbstractBuildingEntity entity = building;
         var structure = building.getInternalBuilding();
         List<CubeCoords> hexes = structure.getOriginalCoordsList();
         int height = structure.getBuildingHeight();
         int classification = building.getBldgClass();
-        Limits limits = limits(building.getBuildingType(), classification);
+        Limits limits = limits(building);
         if (limits == null) {
-            issues.add("This building type/classification is not supported by the static-building construction table.");
+            issues.add("This type/classification is not supported by the structure's construction table.");
         } else {
             int cf = building.getOInternal(0);
             if (cf < limits.minimumCF() || cf > limits.maximumCF()) {
@@ -286,7 +320,7 @@ public class TestBuilding extends TestEntity {
             }
             boolean reduceSize = entity.getDesign().getSite() == BuildingDesign.Site.UNDERGROUND
                   && classification != IBuilding.CASTLE_BRIAN;
-            int maximumHexes = reduceSize
+            int maximumHexes = reduceSize && limits.hexes() != Integer.MAX_VALUE
                   ? (limits.hexes() + 1) / 2 : limits.hexes();
             int maximumLevels = reduceSize
                   ? (limits.levels() + 1) / 2 : limits.levels();
@@ -296,6 +330,42 @@ public class TestBuilding extends TestEntity {
         }
         if (calculateWeight() > building.getWeight() + .00001) {
             issues.add("Installed components exceed the building's carrying capacity.");
+        }
+        if (hexes.isEmpty() || height < 1) {
+            issues.add("A structure needs an occupied hex and at least one level.");
+            return issues;
+        }
+        if (building instanceof MobileStructure mobile) {
+            if (!mobile.getFuelLocations().isEmpty()
+                  && Math.abs(mobile.getFuelLocations().values().stream().mapToDouble(Double::doubleValue).sum()
+                        - mobile.getFuelWeight()) > 0.000001) {
+                issues.add("Fuel locations must allocate exactly the fuel required by the operating range.");
+            }
+            if (hexes.size() < 2) {
+                issues.add("Mobile Structures require at least two connected hexes.");
+            }
+            if (mobile.motiveMaximumMP() == 0 || mobile.getMaximumMP() > mobile.motiveMaximumMP()
+                  || (classification == IBuilding.FORTRESS && mobile.getMovementMode() == EntityMovementMode.VTOL)) {
+                issues.add("The Mobile Structure's motive type or speed is not allowed for this classification.");
+            }
+            if (hexes.stream().anyMatch(hex -> structure.getHeight(hex) < 1 || structure.getHeight(hex) > height)
+                  || hexes.stream().mapToInt(structure::getHeight).max().orElse(0) != height) {
+                issues.add("Mobile Structure height must equal its tallest occupied hex.");
+            }
+            if (entity.getDesign().getSite() != BuildingDesign.Site.SURFACE) {
+                issues.add("Mobile Structures use their motive system, rather than a fixed underground/underwater site.");
+            }
+            var transportBays = entity.getTransportBays().stream().filter(bay -> !bay.isQuarters()).toList();
+            int bayDoors = transportBays.stream().mapToInt(Bay::getDoors).sum();
+            int exteriorSides = hexes.stream().mapToInt(hex -> (int) hex.neighbors().stream()
+                  .filter(neighbor -> !hexes.contains(neighbor)).count()).sum();
+            int maximumDoors = (exteriorSides / 2) * (classification == IBuilding.HANGAR ? 2 : 1);
+            if (!transportBays.isEmpty() && bayDoors < 1) {
+                issues.add("A Mobile Structure with transport bays requires at least one bay door.");
+            }
+            if (bayDoors > maximumDoors) {
+                issues.add("Mobile transport bay doors exceed the " + maximumDoors + " available exterior door positions.");
+            }
         }
         if (building.getNCrew() < building.calculateMinimumCrew()) {
             issues.add("The specified crew is below the minimum required to operate the installed equipment.");
@@ -311,20 +381,31 @@ public class TestBuilding extends TestEntity {
         for (int index = 0; index < hexes.size(); index++) {
             int cf = building.getOInternal(index * height);
             int armor = building.getOArmor(index * height);
-            int maximumArmor = classification == IBuilding.CASTLE_BRIAN ? cf * 2
-                  : classification == IBuilding.FORTRESS || classification == IBuilding.GUN_EMPLACEMENT
-                        || classification == IBuilding.WALL ? cf : 0;
+            int maximumArmor = maxArmorPoints(building, index * height);
             if (armor < 0 || armor > maximumArmor) {
                 issues.add("Hex " + (index + 1) + ": armor must be between 0 and " + maximumArmor + ".");
             }
             CubeCoords hex = hexes.get(index);
             List<Mounted<?>> equipment = entity.getEquipmentInHex(hex);
+            if (entity instanceof MobileStructure) {
+                // TO:AUE p.84 applies the ordinary per-unit equipment limits separately in every occupied hex.
+                if (equipment.stream().filter(m -> m.getType().hasFlag(MiscType.F_LIFT_HOIST)).count() > 4) {
+                    issues.add("Hex " + (index + 1) + ": a maximum of four lift hoists is allowed.");
+                }
+                if (equipment.stream().filter(m -> m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)).count() > 3) {
+                    issues.add("Hex " + (index + 1) + ": a maximum of three field kitchens is allowed.");
+                }
+                if (equipment.stream().filter(m -> m.getType().hasFlag(MiscType.F_MINESWEEPER)).count() > 1) {
+                    issues.add("Hex " + (index + 1) + ": a maximum of one minesweeper is allowed.");
+                }
+            }
             double installed = BuildingConstruction.installedWeightInHex(entity, hex);
             if (installed > BuildingConstruction.capacityInHex(entity, hex) + .00001) {
                 issues.add("Hex " + (index + 1) + ": components exceed this hex's carrying capacity.");
             }
             double heavyWeapons = equipment.stream().filter(m -> m.getType() instanceof WeaponType
-                  && !(m.getType() instanceof InfantryWeapon) && !BuildingConstruction.isCapital(m.getType()) && m.getTonnage() >= .25)
+                  && !(m.getType() instanceof InfantryWeapon) && !BuildingConstruction.isCapital(m.getType())
+                  && m.getTonnage() >= (entity instanceof MobileStructure ? .5 : .25))
                   .mapToDouble(m -> BuildingConstruction.equipmentWeightInHex(entity, m, hex)).sum();
             double weaponLimit = classification == IBuilding.GUN_EMPLACEMENT ? Math.floor(cf / 3.0)
                   : classification == IBuilding.FORTRESS ? cf * height / 10.0
@@ -368,6 +449,11 @@ public class TestBuilding extends TestEntity {
             }
             if (mount.getLocation() < 0 || mount.getLocation() >= building.locations()) {
                 issues.add(mount.getName() + " has no valid hex/level.");
+            } else {
+                var position = BuildingConstruction.position(entity, mount.getLocation());
+                if (!BuildingConstruction.occupiesMapLevel(entity, position.hex(), position.level())) {
+                    issues.add(mount.getName() + " is assigned above its hex's roof.");
+                }
             }
             if (!BuildingConstruction.canMount(mount.getType())) {
                 issues.add(mount.getName() + " is not equipment available to buildings.");
@@ -389,7 +475,7 @@ public class TestBuilding extends TestEntity {
                     issues.add("Modular structure linkages must be installed in an outermost hex.");
                 }
                 if (facility.getFacility().isRoof() && BuildingConstruction.equipmentPositions(entity, mount).stream()
-                      .anyMatch(p -> p.level() != height - 1)) {
+                      .anyMatch(p -> p.level() != entity.getInternalBuilding().getHeight(p.hex()) - 1)) {
                     issues.add("Decks and helipads must be assigned to the highest internal level (the roof above it).");
                 }
                 var positions = BuildingConstruction.equipmentPositions(entity, mount);
@@ -432,7 +518,9 @@ public class TestBuilding extends TestEntity {
                 if (mount.isPintleTurretMounted() && !(weapon instanceof InfantryWeapon)) {
                     issues.add("Pintles can mount only infantry weapons.");
                 }
-                if (mount.isSponsonTurretMounted() && mount.getLocation() % height != height - 1) {
+                var weaponPosition = BuildingConstruction.position(entity, mount.getLocation());
+                if (mount.isSponsonTurretMounted() && weaponPosition != null
+                      && weaponPosition.level() != structure.getHeight(weaponPosition.hex()) - 1) {
                     issues.add("Turret weapons must be on the highest level.");
                 }
                 var position = BuildingConstruction.position(entity, mount.getLocation());
@@ -451,10 +539,12 @@ public class TestBuilding extends TestEntity {
             }
         }
         checkDesign(entity, issues);
+        issues.addAll(megamek.common.units.BuildingBayDoors.validationIssues(entity));
+        issues.addAll(megamek.common.units.MobileStructurePortalRules.validationIssues(entity));
         return issues;
     }
 
-    private void checkDesign(BuildingEntity entity, List<String> issues) {
+    private void checkDesign(AbstractBuildingEntity entity, List<String> issues) {
         var design = entity.getDesign();
         var hexes = entity.getInternalBuilding().getOriginalCoordsList();
         int height = entity.getInternalBuilding().getBuildingHeight();
@@ -502,8 +592,8 @@ public class TestBuilding extends TestEntity {
             }
         }
         if (design.isOpenSpace()) {
-            if (entity.getBldgClass() != IBuilding.CASTLE_BRIAN) {
-                issues.add("Open-space construction requires Castles Brian.");
+            if (entity.getBldgClass() != IBuilding.CASTLE_BRIAN && !megamek.common.units.MobileStructurePortalRules.isPortal(entity)) {
+                issues.add("Open-space construction requires Castles Brian or a Mobile Hangar used as a Large Portal.");
             }
             if (entity.getEquipment().stream().anyMatch(m -> BuildingConstruction.occupiesRoof(m)
                   || BuildingConstruction.equipmentPositions(entity, m).stream().anyMatch(p -> p.level() != 0))
@@ -512,6 +602,10 @@ public class TestBuilding extends TestEntity {
                   || !design.getElevators().isEmpty()) {
                 issues.add("Open-space equipment and bays must be on the lowest floor; rooftop equipment and internal elevators are not allowed.");
             }
+        }
+        if (entity instanceof MobileStructure && (design.hasHeavyMetal() || design.getCeiling() != BuildingDesign.Ceiling.STANDARD
+              || design.getSite() != BuildingDesign.Site.SURFACE || design.isTunnel() || design.hasRoofClearance())) {
+            issues.add("Mobile structures cannot use static-only heavy-metal, ceiling, tunnel or subsurface construction. Large Portals use Mobile Hangar plus open-space construction.");
         }
         if (design.hasHeavyMetal() && entity.getBuildingType() != BuildingType.HEAVY
               && entity.getBuildingType() != BuildingType.HARDENED) {
@@ -526,15 +620,22 @@ public class TestBuilding extends TestEntity {
             issues.add("This classification has no enclosed interior to seal.");
         }
         if (design.getSite() != BuildingDesign.Site.SURFACE) {
+            if (BuildingConstruction.baseLevel(entity) + height > 0 && !design.hasRoofClearance()) {
+                issues.add("Subsurface rooms must remain below ground. A roof at ground level requires a paired surface building when deploying.");
+            }
             if (design.getDepth() < 1 || (entity.getBldgClass() != IBuilding.STANDARD
                   && entity.getBldgClass() != IBuilding.HANGAR && entity.getBldgClass() != IBuilding.FORTRESS
                   && entity.getBldgClass() != IBuilding.CASTLE_BRIAN)) {
                 issues.add("Subsurface construction needs cover and a Standard, Hangar, Fortress or Castles Brian building.");
             }
             if (design.getSite() == BuildingDesign.Site.UNDERWATER
-                  && (!entity.hasEnvironmentalSealing() || design.getDepth() + height > entity.getOInternal(0))) {
+                  && (!entity.hasEnvironmentalSealing() || -BuildingConstruction.baseLevel(entity) > entity.getOInternal(0))) {
                 issues.add("Underwater buildings require environmental sealing and a total depth no greater than CF.");
             }
+        }
+        if (!(entity instanceof MobileStructure) && design.getSite() == BuildingDesign.Site.SURFACE
+              && BuildingConstruction.baseLevel(entity) < 0) {
+            issues.add("Semi-subsurface complexes use separate surface and subsurface designs. Set this part's site to Underground or Underwater and co-locate the surface design above it when deploying.");
         }
         if (design.hasRoofClearance() && design.getSite() != BuildingDesign.Site.UNDERGROUND) {
             issues.add("The cave roof-clearance exception applies to underground buildings only.");
@@ -551,17 +652,22 @@ public class TestBuilding extends TestEntity {
         var doorSides = new HashSet<String>();
         for (var door : design.getDoors()) {
             if (BuildingConstruction.location(entity, door.position()) < 0 || door.height() < 1
-                  || door.position().level() + door.height() > height || door.facing() < 0 || door.facing() > 5
-                  || hexes.contains(door.position().hex().toOffset().translated(door.facing()).toCube())
+                  || door.position().level() + door.height() > entity.getInternalBuilding().getHeight(door.position().hex())
+                  || door.facing() < 0 || door.facing() > 5
+                  || (BuildingConstruction.usesHexsides(entity)
+                        ? (design.wallSides(door.position().hex()) & (1 << door.facing())) == 0
+                        : hexes.contains(door.position().hex().toOffset().translated(door.facing()).toCube()))
                   || !doorSides.add(door.position().hex() + ":" + door.facing())
-                  || entity.getBldgClass() == IBuilding.GUN_EMPLACEMENT || BuildingConstruction.hasNoInterior(entity)) {
+                  || entity.getBldgClass() == IBuilding.GUN_EMPLACEMENT
+                  || (BuildingConstruction.hasNoInterior(entity) && entity.getBldgClass() != IBuilding.FENCE)) {
                 issues.add("Large doors require a unique exterior hexside and valid height in an eligible building.");
             }
         }
         for (var lift : design.getElevators()) {
             if (!hexes.contains(lift.hex()) || !Double.isFinite(lift.capacity())
                   || lift.capacity() <= 0 || lift.capacity() > entity.getOInternal(0) * entity.getConstructionCFScale()
-                  || lift.exits().size() < 2 || lift.lowerLevel() < 0 || lift.upperLevel() > height
+                  || lift.exits().size() < 2 || lift.lowerLevel() < 0
+                  || lift.upperLevel() > entity.getInternalBuilding().getHeight(lift.hex())
                   || lift.exits().size() != lift.upperLevel() - lift.lowerLevel() + 1) {
                 issues.add("Industrial elevators need a continuous range of at least two valid levels and a capacity no greater than CF.");
             }
@@ -582,7 +688,8 @@ public class TestBuilding extends TestEntity {
             }
             boolean occupied = entity.getEquipmentInHex(lift.hex()).stream().anyMatch(m ->
                   BuildingConstruction.equipmentPositions(entity, m).stream().anyMatch(p -> p.hex().equals(lift.hex())
-                        && (lift.reaches(p.level()) || (BuildingConstruction.occupiesRoof(m) && lift.reaches(height)))))
+                        && (lift.reaches(p.level()) || (BuildingConstruction.occupiesRoof(m)
+                              && lift.reaches(entity.getInternalBuilding().getHeight(lift.hex()))))))
                   || entity.getTransportBays().stream().flatMap(bay -> BuildingConstruction.baySpaces(entity, bay).stream())
                         .anyMatch(space -> space.tons() > 0 && space.position().hex().equals(lift.hex())
                               && lift.reaches(space.position().level()));

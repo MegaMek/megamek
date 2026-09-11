@@ -453,7 +453,8 @@ public interface IAero {
         // We will just treat this as having paved terrain
         Coords pos = ((Entity) this).getPosition();
         Hex hex = ((Entity) this).getGame().getHexOf((Entity) this);
-        if ((null != hex) && hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.RUBBLE)) {
+        if (BuildingFlightDeckRules.onDeck((Entity) this) != null
+              || (null != hex) && hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.RUBBLE)) {
             roll.addModifier(-1, "on landing pad");
         }
 
@@ -594,7 +595,12 @@ public interface IAero {
 
         // Per TW p. 87, the modifier is added once for each terrain type
         Set<List<Integer>> terrains = new HashSet<>();
-        Set<Coords> landingPositions = getLandingCoords(isVertical, landingPos, face);
+        Entity deckUnit = (Entity) this;
+        var landingDeck = BuildingFlightDeckRules.landingDeck(deckUnit, deckUnit.getBoardId(), landingPos, face, isVertical);
+        Set<Coords> landingPositions = landingDeck == null ? getLandingCoords(isVertical, landingPos, face) : Set.of();
+        if (landingDeck != null && deckUnit.isEnemyOf(landingDeck.carrier())) {
+            roll.addModifier(3, "enemy flight deck (+1 unfriendly airfield, +2 enemy carrier)");
+        }
         // Any hex without terrain is clear, which is a +2 modifier.
         boolean clear = false;
         // FIXME I suspect this going to fail when an aero flies in from an atmosphere board into a ground board and
@@ -644,6 +650,9 @@ public interface IAero {
     }
 
     default Set<Coords> getLandingCoords(boolean isVertical, Coords landingPos, int facing) {
+        Entity deckUnit = (Entity) this;
+        var deck = BuildingFlightDeckRules.landingDeck(deckUnit, deckUnit.getBoardId(), landingPos, facing, isVertical);
+        if (deck != null) { return BuildingFlightDeckRules.operationHexes(deck, deckUnit, landingPos, facing, isVertical, false); }
         Set<Coords> landingPositions = new HashSet<>();
         if (isVertical) {
             landingPositions.add(landingPos);
@@ -789,6 +798,10 @@ public interface IAero {
     }
 
     default String hasRoomForHorizontalTakeOff() {
+        Entity deckUnit = (Entity) this;
+        if (BuildingFlightDeckRules.onDeck(deckUnit) != null) {
+            return BuildingFlightDeckRules.canTakeOff(deckUnit, false) ? null : "Flight deck is unavailable for launch";
+        }
         // walk along the hexes in the facing of the unit
         Entity thisAero = ((Entity) this);
         if (!thisAero.game.hasBoardLocationOf(thisAero)) {
@@ -856,6 +869,11 @@ public interface IAero {
     }
 
     default String hasRoomForHorizontalLanding(int assumedBoardId, Coords assumedPosition) {
+        Entity deckUnit = (Entity) this;
+        if (!BuildingFlightDeckRules.decksAt(deckUnit.getGame(), assumedBoardId, assumedPosition).isEmpty()) {
+            return BuildingFlightDeckRules.landingDeck(deckUnit, assumedBoardId, assumedPosition, deckUnit.getFacing(), false) != null
+                  ? null : "Flight deck is occupied, unavailable, too small, or not aligned with the approach";
+        }
         Entity thisEntity = ((Entity) this);
         Game game = thisEntity.getGame();
         if (game == null || !game.hasBoardLocationOf(thisEntity)) {
@@ -910,6 +928,11 @@ public interface IAero {
     }
 
     default String hasRoomForVerticalLanding(int assumedBoardId, Coords assumedPosition) {
+        Entity deckUnit = (Entity) this;
+        if (!BuildingFlightDeckRules.decksAt(deckUnit.getGame(), assumedBoardId, assumedPosition).isEmpty()) {
+            return BuildingFlightDeckRules.landingDeck(deckUnit, assumedBoardId, assumedPosition, deckUnit.getFacing(), true) != null
+                  ? null : "Flight deck or helipad is occupied or unavailable";
+        }
         Hex hex = ((Entity) this).getGame().getHex(assumedPosition, assumedBoardId);
         if (((Entity) this).getGame().getBuildingAt(assumedPosition, ((Entity) this).getBoardId()).isPresent()) {
             return "Buildings in the way";

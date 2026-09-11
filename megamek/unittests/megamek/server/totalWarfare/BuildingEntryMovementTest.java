@@ -60,6 +60,9 @@ import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.BipedMek;
 import megamek.common.units.BuildingEntity;
+import megamek.common.units.BuildingDesign;
+import megamek.common.moves.MovePath;
+import megamek.common.enums.MoveStepType;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.IBuilding;
@@ -67,6 +70,8 @@ import megamek.common.units.Tank;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
@@ -209,5 +214,26 @@ class BuildingEntryMovementTest extends GameBoardTestCase {
         enterBuilding(mek);
 
         verify(gameManager, never()).vehicleMotiveDamage(any(Tank.class), anyInt());
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "STANDARD, false, 5, 4, 3, 0", "HIGH, false, 2, 2, 3, -1",
+          "LOW, false, 10, 8, 4, 1", "STANDARD, true, 5, 8, 4, 2", "LOW, true, 10, 16, 5, 3" })
+    void ceilingsAndSuperstructureAffectActualMovementAndWallDamage(BuildingDesign.Ceiling ceiling, boolean metal,
+          int damageToBuilding, int damageToUnit, int movementCost, int pilotingModifier) {
+        BipedMek mek = addUnit(new BipedMek(), 50);
+        mek.setClimbMode(false);
+        int standardPiloting = mek.rollMovementInBuilding(building, 1, "", EntityMovementType.MOVE_WALK).getValue();
+        building.getDesign().setCeiling(ceiling);
+        building.getDesign().setHeavyMetal(metal);
+        assertEquals(standardPiloting + pilotingModifier,
+              mek.rollMovementInBuilding(building, 1, "", EntityMovementType.MOVE_WALK).getValue());
+        var movement = new MovePath(game, mek).addStep(MoveStepType.BACKWARDS);
+        assertEquals(BUILDING_HEX, movement.getFinalCoords());
+        assertEquals(movementCost, movement.getMpUsed());
+        drivingSkillRollFails();
+        enterBuilding(mek);
+        assertEquals(STARTING_CF - damageToBuilding, building.getCurrentCF(BUILDING_HEX));
+        verify(gameManager).damageEntity(eq(mek), any(HitData.class), eq(damageToUnit));
     }
 }

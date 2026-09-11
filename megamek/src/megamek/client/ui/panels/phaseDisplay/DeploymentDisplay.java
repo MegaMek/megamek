@@ -107,7 +107,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         DEPLOY_REMOVE("deployRemove"),
         DEPLOY_ASSAULT_DROP("assaultDrop"),
         DEPLOY_HULL_DOWN("deployHullDown"),
-        DEPLOY_DOCK("deployDock");
+        DEPLOY_DOCK("deployDock"),
+        DEPLOY_CLEAR_DEPLOY("deployClear");
 
         public final String cmd;
 
@@ -350,6 +351,16 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         selectEntity(clientgui.getClient().getFirstDeployableEntityNum());
         setNextEnabled(true);
         setRemoveEnabled(true);
+        setClearEnabled(false);
+    }
+
+    /**
+     * Enabled or disables the clear deployment button.
+     *
+     * @param enabled
+     */
+    private void setClearEnabled(boolean enabled) {
+        buttons.get(DeployCommand.DEPLOY_CLEAR_DEPLOY).setEnabled(enabled);
     }
 
     /**
@@ -853,6 +864,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
 
             updateDeploymentUI(entity, coords, b.getBoardId(), shiftHeld);
+            setClearEnabled(true);
         } finally {
             ToolTipManager.sharedInstance().setEnabled(true);
         }
@@ -1164,6 +1176,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 clientgui.getClient().sendUpdateEntity(entity);
                 clientgui.getUnitDisplay().displayEntity(entity);
             }
+        } else if (actionCmd.equals(DeployCommand.DEPLOY_CLEAR_DEPLOY.getCmd())) {
+            Entity entity = currentEntity();
+            if (entity != null) {
+                lastDeploymentOption = null;
+                lastHexDeploymentOptions.clear();
+                clear();
+            }
         }
     }
 
@@ -1178,7 +1197,16 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void clear() {
-        beginMyTurn();
+        clientgui.maybeShowUnitDisplay();
+        selectEntity(currentEntity().getId());
+        if (currentEntity() != null) {
+            currentEntity().setPosition(null);
+            clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentEntity()));
+        }
+        clientgui.boardViews().forEach(IBoardView::repaint);
+        setNextEnabled(true);
+        setRemoveEnabled(true);
+        setClearEnabled(false);
     }
 
     //

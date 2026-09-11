@@ -37,9 +37,9 @@ package megamek.common.equipment;
 import java.text.NumberFormat;
 import java.util.Map;
 
-import megamek.common.SourceBookCode;
 import megamek.common.Messages;
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.TechConstants;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.AvailabilityValue;
@@ -405,7 +405,7 @@ public class MiscType extends EquipmentType {
     public boolean isBoobyTrap() {
         return hasFlag(F_BOOBY_TRAP);
     }
-    
+
     public boolean isVibroblade() {
         return hasFlag(F_CLUB)
               && hasAnyFlag(
@@ -1580,6 +1580,45 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCargo());
         EquipmentType.addType(MiscType.createLiquidCargo());
         EquipmentType.addType(MiscType.createCargoContainer());
+        // Specialized repair kits (ATOW)
+        EquipmentType.addType(MiscType.createAerospaceRepairKit());
+        EquipmentType.addType(MiscType.createBionicMaintenanceKit());
+        EquipmentType.addType(MiscType.createCuttingJoiningKit());
+        EquipmentType.addType(MiscType.createElectronicsRepairKit());
+        EquipmentType.addType(MiscType.createFissionFusionRepairKit());
+        EquipmentType.addType(MiscType.createMyomerActuatorRepairKit());
+        EquipmentType.addType(MiscType.createVehicleRepairKit());
+        EquipmentType.addType(MiscType.createWeaponRepairKit());
+        // Support gear (ATOW): diagnostic scanners, toolkits, lock-pick/security-bypass sets, espionage gear
+        EquipmentType.addType(MiscType.createDescartesMkXXI());
+        EquipmentType.addType(MiscType.createDescartesMkXXV());
+        EquipmentType.addType(MiscType.createScanalyzer());
+        EquipmentType.addType(MiscType.createBasicLockPickSet());
+        EquipmentType.addType(MiscType.createVibroLockPickSet());
+        EquipmentType.addType(MiscType.createElectronicSecurityBypassKit());
+        EquipmentType.addType(MiscType.createAdvancedElectronicCodebreaker());
+        EquipmentType.addType(MiscType.createDisguiseMakeUpKit());
+        EquipmentType.addType(MiscType.createForgeryKit());
+        EquipmentType.addType(MiscType.createAdvancedForensicsAnalysisKit());
+        EquipmentType.addType(MiscType.createBasicForensicsAnalysisKit());
+        EquipmentType.addType(MiscType.createBasicCounterForgeryKit());
+        EquipmentType.addType(MiscType.createElectronicCounterForgeryKit());
+        EquipmentType.addType(MiscType.createLieDetectorPolygraph());
+        EquipmentType.addType(MiscType.createNeuralInterrogationComputer());
+        EquipmentType.addType(MiscType.createBasicToolkit());
+        EquipmentType.addType(MiscType.createDeluxeToolkit());
+        EquipmentType.addType(MiscType.createAdvancedFieldKit());
+        EquipmentType.addType(MiscType.createBasicFieldKit());
+        EquipmentType.addType(MiscType.createCompass());
+        EquipmentType.addType(MiscType.createElectronicCompass());
+        EquipmentType.addType(MiscType.createAdvancedMedicalKit());
+        EquipmentType.addType(MiscType.createFieldSurgicalKit());
+        EquipmentType.addType(MiscType.createMedicalKit());
+        EquipmentType.addType(MiscType.createCompad());
+        EquipmentType.addType(MiscType.createNoteputer());
+        EquipmentType.addType(MiscType.createPersonalComputer());
+        EquipmentType.addType(MiscType.createPocketTranscriber());
+        EquipmentType.addType(MiscType.createTelescan());
         EquipmentType.addType(MiscType.createMekSprayer());
         EquipmentType.addType(MiscType.createTankSprayer());
         EquipmentType.addType(MiscType.createFrontDumper());
@@ -8188,6 +8227,315 @@ public class MiscType extends EquipmentType {
               .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
+
+    // region Specialized Repair Kits
+    // Personal/support repair kits from ATOW. These are not unit-mounted equipment (no F_*_EQUIPMENT flags), so they
+    // do not appear in unit construction; they are registered so campaign/logistics code can reference them by name.
+
+    public static MiscType createAerospaceRepairKit() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Aerospace Repair Kit";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.31;
+        misc.criticalSlots = 0;
+        misc.cost = 2500;
+        misc.industrial = true;
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
+              .setAdvancement(DATE_ES, DATE_ES)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
+    public static MiscType createBionicMaintenanceKit() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Bionic Maintenance Kit";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.045;
+        misc.criticalSlots = 0;
+        misc.cost = 5000;
+        misc.industrial = true;
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
+              .setAdvancement(DATE_ES, DATE_ES)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
+    public static MiscType createCuttingJoiningKit() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cutting/Joining Kit";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.175;
+        misc.criticalSlots = 0;
+        misc.cost = 1250;
+        misc.industrial = true;
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
+              .setAdvancement(DATE_ES, DATE_ES)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
+    public static MiscType createElectronicsRepairKit() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Electronics Repair Kit";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.04;
+        misc.criticalSlots = 0;
+        misc.cost = 2000;
+        misc.industrial = true;
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
+              .setAdvancement(DATE_ES, DATE_ES)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
+    public static MiscType createFissionFusionRepairKit() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Fission/Fusion Repair Kit";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.345;
+        misc.criticalSlots = 0;
+        misc.cost = 15000;
+        misc.industrial = true;
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
+              .setAdvancement(DATE_ES, DATE_ES)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
+    public static MiscType createMyomerActuatorRepairKit() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Myomer/Actuator Repair Kit";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.26;
+        misc.criticalSlots = 0;
+        misc.cost = 3000;
+        misc.industrial = true;
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.D, AvailabilityValue.B, AvailabilityValue.B)
+              .setAdvancement(DATE_ES, DATE_ES)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
+    public static MiscType createVehicleRepairKit() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Vehicle Repair Kit";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.225;
+        misc.criticalSlots = 0;
+        misc.cost = 1000;
+        misc.industrial = true;
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
+              .setAdvancement(DATE_ES, DATE_ES)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
+    public static MiscType createWeaponRepairKit() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Weapon Repair Kit";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.2;
+        misc.criticalSlots = 0;
+        misc.cost = 1500;
+        misc.industrial = true;
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.D)
+              .setAvailability(AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A, AvailabilityValue.A)
+              .setAdvancement(DATE_ES, DATE_ES)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+    // endregion Specialized Repair Kits
+
+    // region Support Gear
+    // Personal/support gear from ATOW (diagnostic scanners, toolkits, lock-pick/security-bypass sets, and espionage
+    // gear). Like the repair kits above, these are inert (no F_*_EQUIPMENT flags) so they never appear in unit
+    // construction.
+
+    private static MiscType supportGear(String name, double tonnage, double cost, TechRating techRating,
+          AvailabilityValue sl, AvailabilityValue sw, AvailabilityValue ci) {
+        MiscType misc = new MiscType();
+        misc.name = name;
+        misc.setInternalName(name);
+        misc.tonnage = tonnage;
+        misc.criticalSlots = 0;
+        misc.cost = cost;
+        misc.industrial = true;
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(techRating)
+              .setAvailability(sl, sw, ci, ci)
+              .setAdvancement(DATE_ES, DATE_ES)
+              .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
+    public static MiscType createDescartesMkXXI() {
+        return supportGear("Descartes MK XXI", 0.007, 1000, TechRating.D,
+              AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.C);
+    }
+
+    public static MiscType createDescartesMkXXV() {
+        return supportGear("Descartes MK XXV", 0.005, 2500, TechRating.E,
+              AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D);
+    }
+
+    public static MiscType createScanalyzer() {
+        return supportGear("Scanalyzer", 0.003, 5000, TechRating.D,
+              AvailabilityValue.B, AvailabilityValue.D, AvailabilityValue.C);
+    }
+
+    public static MiscType createBasicLockPickSet() {
+        return supportGear("Basic Lock Pick Set", 0.000365, 100, TechRating.B,
+              AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+    }
+
+    public static MiscType createVibroLockPickSet() {
+        return supportGear("Vibro Lock Pick Set", 0.00052, 2000, TechRating.D,
+              AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.D);
+    }
+
+    public static MiscType createElectronicSecurityBypassKit() {
+        return supportGear("Electronic Security Bypass Kit", 0.002, 1200, TechRating.C,
+              AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D);
+    }
+
+    public static MiscType createAdvancedElectronicCodebreaker() {
+        return supportGear("Electronic Codebreaker, Advanced", 0.003, 20000, TechRating.E,
+              AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E);
+    }
+
+    public static MiscType createDisguiseMakeUpKit() {
+        return supportGear("Disguise/Make-Up Kit", 0.0065, 1000, TechRating.C,
+              AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.B);
+    }
+
+    public static MiscType createForgeryKit() {
+        return supportGear("Forgery Kit", 0.005, 1225, TechRating.D,
+              AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.C);
+    }
+
+    public static MiscType createAdvancedForensicsAnalysisKit() {
+        return supportGear("Forensics Analysis Kit, Advanced", 0.008, 4500, TechRating.D,
+              AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.B);
+    }
+
+    public static MiscType createBasicForensicsAnalysisKit() {
+        return supportGear("Forensics Analysis Kit, Basic", 0.005, 300, TechRating.C,
+              AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.A);
+    }
+
+    public static MiscType createBasicCounterForgeryKit() {
+        return supportGear("Counter-Forgery Kit, Basic", 0.004, 700, TechRating.D,
+              AvailabilityValue.B, AvailabilityValue.C, AvailabilityValue.A);
+    }
+
+    public static MiscType createElectronicCounterForgeryKit() {
+        return supportGear("Counter-Forgery Kit, Electronic", 0.004, 900, TechRating.D,
+              AvailabilityValue.C, AvailabilityValue.E, AvailabilityValue.B);
+    }
+
+    public static MiscType createLieDetectorPolygraph() {
+        return supportGear("Lie Detector/Polygraph", 0.0095, 380, TechRating.B,
+              AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E);
+    }
+
+    public static MiscType createNeuralInterrogationComputer() {
+        return supportGear("Neural Interrogation Computer", 0.2, 45000, TechRating.D,
+              AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E);
+    }
+
+    public static MiscType createBasicToolkit() {
+        return supportGear("Basic Toolkit", 0.01, 250, TechRating.C,
+              AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A);
+    }
+
+    public static MiscType createDeluxeToolkit() {
+        return supportGear("Deluxe Toolkit", 0.05, 750, TechRating.D,
+              AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A);
+    }
+
+    public static MiscType createAdvancedFieldKit() {
+        return supportGear("Advanced Field Kit", 0.015, 100, TechRating.C,
+              AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+    }
+
+    public static MiscType createBasicFieldKit() {
+        return supportGear("Basic Field Kit", 0.005, 10, TechRating.B,
+              AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+    }
+
+    public static MiscType createCompass() {
+        return supportGear("Compass", 0.0001, 10, TechRating.B,
+              AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+    }
+
+    public static MiscType createElectronicCompass() {
+        return supportGear("Electronic Compass", 0.0001, 30, TechRating.C,
+              AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+    }
+
+    public static MiscType createAdvancedMedicalKit() {
+        return supportGear("Advanced Medical Kit", 0.002, 250, TechRating.C,
+              AvailabilityValue.A, AvailabilityValue.C, AvailabilityValue.B);
+    }
+
+    public static MiscType createFieldSurgicalKit() {
+        return supportGear("Field Surgical Kit", 0.0115, 800, TechRating.D,
+              AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A);
+    }
+
+    public static MiscType createMedicalKit() {
+        return supportGear("Medical Kit", 0.00025, 10, TechRating.C,
+              AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+    }
+
+    public static MiscType createCompad() {
+        return supportGear("Compad", 0.0002, 150, TechRating.D,
+              AvailabilityValue.A, AvailabilityValue.C, AvailabilityValue.B);
+    }
+
+    public static MiscType createNoteputer() {
+        return supportGear("Noteputer", 0.0005, 500, TechRating.C,
+              AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A);
+    }
+
+    public static MiscType createPersonalComputer() {
+        return supportGear("Personal Computer", 0.003, 250, TechRating.C,
+              AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.A);
+    }
+
+    public static MiscType createPocketTranscriber() {
+        return supportGear("Pocket Transcriber", 0.0005, 200, TechRating.C,
+              AvailabilityValue.A, AvailabilityValue.B, AvailabilityValue.B);
+    }
+
+    public static MiscType createTelescan() {
+        return supportGear("Telescan", 0.00075, 100, TechRating.C,
+              AvailabilityValue.A, AvailabilityValue.A, AvailabilityValue.A);
+    }
+    // endregion Support Gear
 
     public static MiscType createCargo() {
         MiscType misc = new MiscType();

@@ -65,6 +65,7 @@ import megamek.common.units.ForceGeneratorAvailability;
 import megamek.common.units.Jumpship;
 import megamek.common.units.NavalRepairFacility;
 import megamek.common.units.PlatoonType;
+import megamek.common.units.SuperHeavyTank;
 import megamek.common.units.Tank;
 import megamek.common.util.BuildingBlock;
 import org.junit.jupiter.api.BeforeAll;
@@ -99,6 +100,23 @@ class BLKFileTest {
         assertTrue(uuidIndex >= 0);
         assertTrue(uuidIndex < serialized.indexOf("<UnitType>"));
         assertTrue(serialized.indexOf(tank.getUnitFileUUID()) > uuidIndex);
+    }
+
+    @Test
+    void refitSourceRoundTripsAndCanBeRemoved() throws Exception {
+        Tank tank = createMinimalTank();
+        String sourceUuid = "019f6767-0dcb-7bb8-992f-000000000001";
+        assertFalse(BLKFile.getBlock(tank).exists(BLKFile.REFIT_FROM_UUID));
+        assertEquals(null, new BLKTankFile(BLKFile.getBlock(tank)).getEntity().getRefitFromUuid());
+
+        tank.setRefitFromUuid(sourceUuid);
+        Entity loaded = new BLKTankFile(BLKFile.getBlock(tank)).getEntity();
+        assertEquals(sourceUuid, loaded.getRefitFromUuid());
+        assertEquals(sourceUuid, new BLKTankFile(BLKFile.getBlock(loaded)).getEntity().getRefitFromUuid());
+
+        loaded.setRefitFromUuid(null);
+        assertFalse(BLKFile.getBlock(loaded).exists(BLKFile.REFIT_FROM_UUID));
+        assertEquals(null, new BLKTankFile(BLKFile.getBlock(loaded)).getEntity().getRefitFromUuid());
     }
 
     @Test
@@ -495,6 +513,30 @@ class BLKFileTest {
 
         assertEquals(Faction.DC, loaded.getTechFaction(),
               "Tech faction should survive BLK roundtrip");
+    }
+
+    @Test
+    void superheavyTankLoadsEachRearSideFromItsOwnEquipmentBlock() throws Exception {
+        BuildingBlock blk = new BuildingBlock();
+        blk.writeBlockData("Name", "Asymmetric Superheavy");
+        blk.writeBlockData("year", 3075);
+        blk.writeBlockData("type", "IS Level 2");
+        blk.writeBlockData("tonnage", 150);
+        blk.writeBlockData("motion_type", "Tracked");
+        blk.writeBlockData("cruiseMP", 2);
+        blk.writeBlockData("armor", new int[] { 10, 10, 10, 10, 10, 10 });
+        blk.writeBlockData("Rear Left Equipment", "ISSmallLaser");
+        blk.writeBlockData("Rear Right Equipment", "ISMediumLaser");
+
+        SuperHeavyTank loaded = assertInstanceOf(SuperHeavyTank.class, new BLKTankFile(blk).getEntity());
+
+        assertEquals(2, loaded.getWeaponList().size());
+        assertTrue(loaded.getWeaponList().stream().anyMatch(mount ->
+              mount.getLocation() == SuperHeavyTank.LOC_REAR_LEFT
+                    && mount.getType() == EquipmentType.get("ISSmallLaser")));
+        assertTrue(loaded.getWeaponList().stream().anyMatch(mount ->
+              mount.getLocation() == SuperHeavyTank.LOC_REAR_RIGHT
+                    && mount.getType() == EquipmentType.get("ISMediumLaser")));
     }
 
     @Test

@@ -106,6 +106,24 @@ class MtfFileTest {
     }
 
     @Test
+    void refitSourceRoundTripsAndCanBeRemoved() throws Exception {
+        Mek mek = new BipedMek();
+        String sourceUuid = "019f6767-0dcb-7bb8-992f-000000000001";
+        assertFalse(mek.getMtf().contains("refitFromUUID:"));
+        assertEquals(null, toMtfFile(mek).getEntity().getRefitFromUuid());
+
+        mek.setRefitFromUuid(sourceUuid);
+        assertTrue(mek.getMtf().contains("refitFromUUID:" + sourceUuid));
+        Mek loaded = (Mek) toMtfFile(mek).getEntity();
+        assertEquals(sourceUuid, loaded.getRefitFromUuid());
+        assertEquals(sourceUuid, toMtfFile(loaded).getEntity().getRefitFromUuid());
+
+        loaded.setRefitFromUuid(null);
+        assertFalse(loaded.getMtf().contains("refitFromUUID:"));
+        assertEquals(null, toMtfFile(loaded).getEntity().getRefitFromUuid());
+    }
+
+    @Test
     void forceGeneratorAvailabilityRoundTrips() throws Exception {
         Mek mek = new BipedMek();
         mek.setForceGeneratorAvailability(List.of(

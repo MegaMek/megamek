@@ -289,6 +289,7 @@ public abstract class Entity extends TurnOrdered
      * Persistent identity of this unit design in MTF and BLK files.
      */
     private String unitFileUUID;
+    private String refitFromUUID;
     private transient String originalChassis;
     private transient String originalModel;
     private transient String originalUnitFileUUID;
@@ -1260,6 +1261,15 @@ public abstract class Entity extends TurnOrdered
 
     public String getUnitFileUUID() {
         return unitFileUUID;
+    }
+
+    /** Source design reference retained in native unit files for custom refits. */
+    public @Nullable String getRefitFromUuid() {
+        return refitFromUUID;
+    }
+
+    public void setRefitFromUuid(@Nullable String refitFromUUID) {
+        this.refitFromUUID = StringUtility.isNullOrBlank(refitFromUUID) ? null : refitFromUUID.trim();
     }
 
     public void setUnitFileUUID(String unitFileUUID) {

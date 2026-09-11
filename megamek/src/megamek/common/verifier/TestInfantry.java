@@ -221,6 +221,7 @@ public class TestInfantry extends TestEntity {
               inf.getSpecializations(), inf.getMount());
         if (inf.getSquadCount() > max) {
             buff.append("Maximum squad count is ").append(max).append("\n\n");
+            correct = false;
         }
 
         max = maxUnitSize(baseMode, inf.hasMicrolite() || (inf.getAllUMUCount() > 1),

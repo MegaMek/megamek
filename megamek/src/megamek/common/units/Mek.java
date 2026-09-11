@@ -5113,6 +5113,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         String newLine = "\n";
 
         sb.append(MtfFile.UUID).append(getUnitFileUUID()).append(newLine);
+        if (getRefitFromUuid() != null) {
+            sb.append("refitFromUUID:").append(getRefitFromUuid()).append(newLine);
+        }
         sb.append(MtfFile.GENERATOR).append(SuiteConstants.PROJECT_NAME)
               .append(" ").append(SuiteConstants.VERSION).append(" on ").append(LocalDate.now()).append(newLine);
 

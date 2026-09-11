@@ -110,11 +110,12 @@ class MarinePointsScoreCalculatorTest {
     private static BuildingEntity largeBuilding(int buildingClass, int levels) {
         BuildingEntity building = new BuildingEntity(BuildingType.HEAVY, buildingClass);
         building.getInternalBuilding().setBuildingHeight(levels);
-        for (int q = -HEX_RADIUS_FOR_61_HEXES; q <= HEX_RADIUS_FOR_61_HEXES; q++) {
-            for (int r = -HEX_RADIUS_FOR_61_HEXES; r <= HEX_RADIUS_FOR_61_HEXES; r++) {
-                int s = -q - r;
-                if (Math.abs(s) <= HEX_RADIUS_FOR_61_HEXES) {
-                    building.getInternalBuilding().addHex(new CubeCoords(q, r, s), 100, 0, BasementType.NONE, false);
+        for (int cubeQ = -HEX_RADIUS_FOR_61_HEXES; cubeQ <= HEX_RADIUS_FOR_61_HEXES; cubeQ++) {
+            for (int cubeR = -HEX_RADIUS_FOR_61_HEXES; cubeR <= HEX_RADIUS_FOR_61_HEXES; cubeR++) {
+                int cubeS = -cubeQ - cubeR;
+                if (Math.abs(cubeS) <= HEX_RADIUS_FOR_61_HEXES) {
+                    building.getInternalBuilding().addHex(new CubeCoords(cubeQ, cubeR, cubeS), 100, 0,
+                          BasementType.NONE, false);
                 }
             }
         }

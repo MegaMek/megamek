@@ -169,12 +169,12 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
         }
 
         Entity ce = game.getEntity(currentEntity);
-        if (!(ce instanceof Infantry inf)) {
+        if (!(ce instanceof Infantry infantry)) {
             return;
         }
 
         // Check if already in combat
-        if (inf.getInfantryCombatTargetId() != Entity.NONE) {
+        if (infantry.getInfantryCombatTargetId() != Entity.NONE) {
             clientgui.addToast(ToastLevel.ERROR,
                   Messages.getString("InfantryVsInfantryCombatDisplay.alreadyEngaged"));
             return;
@@ -220,22 +220,22 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
 
     private void withdrawInfantryCombat() {
         Entity ce = game.getEntity(currentEntity);
-        if (!(ce instanceof Infantry inf)) {
+        if (!(ce instanceof Infantry infantry)) {
             return;
         }
 
-        if (inf.getInfantryCombatTargetId() == Entity.NONE) {
+        if (infantry.getInfantryCombatTargetId() == Entity.NONE) {
             return;
         }
 
-        int targetId = inf.getInfantryCombatTargetId();
+        int targetId = infantry.getInfantryCombatTargetId();
         Entity targetEntity = game.getEntity(targetId);
         if (targetEntity == null) {
             return;
         }
 
         // Only attackers can withdraw
-        if (!inf.isInfantryCombatAttacker()) {
+        if (!infantry.isInfantryCombatAttacker()) {
             clientgui.addToast(ToastLevel.ERROR,
                   Messages.getString("InfantryVsInfantryCombatDisplay.onlyAttackersWithdraw"));
             return;
@@ -389,7 +389,7 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
     protected void updateButtons() {
         Entity ce = game.getEntity(currentEntity);
 
-        if (!(ce instanceof Infantry inf)) {
+        if (!(ce instanceof Infantry infantry)) {
             setReinforceInfantryCombatEnabled(false);
             setWithdrawInfantryCombatEnabled(false);
             return;
@@ -409,10 +409,10 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
         // Can withdraw if:
         // - Already in combat
         // - Is an attacker (defenders cannot withdraw)
-        boolean canWithdraw = inf.canWithdrawFromInfantryAction();
+        boolean canWithdraw = infantry.canWithdrawFromInfantryAction();
 
         setWithdrawInfantryCombatEnabled(canWithdraw);
-        showWhatTheUnitMayDo(inf, canReinforce, canWithdraw);
+        showWhatTheUnitMayDo(infantry, canReinforce, canWithdraw);
         updateDonePanel();
     }
 

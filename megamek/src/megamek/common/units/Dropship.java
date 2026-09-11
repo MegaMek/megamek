@@ -33,6 +33,12 @@
  */
 package megamek.common.units;
 
+import java.io.Serial;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Vector;
+
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CompositeTechLevel;
 import megamek.common.Hex;
@@ -58,12 +64,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.util.ConditionalStringJoiner;
-
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Vector;
 
 /**
  * @author Jay Lawson

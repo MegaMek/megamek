@@ -33,13 +33,13 @@
 
 package megamek.common.moves;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.units.Entity;
-
-import java.util.EnumSet;
-import java.util.Set;
 
 /**
  * This class handles the deployment step for Walk On Deployment.

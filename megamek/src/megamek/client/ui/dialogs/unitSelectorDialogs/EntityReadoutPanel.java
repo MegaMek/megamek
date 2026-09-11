@@ -36,16 +36,22 @@ package megamek.client.ui.dialogs.unitSelectorDialogs;
 import java.awt.BorderLayout;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -58,30 +64,49 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 
+import megamek.client.ui.FluffImageTooltip;
+import megamek.client.ui.Messages;
 import megamek.client.ui.entityreadout.EntityReadout;
 import megamek.client.ui.entityreadout.ReadoutSections;
 import megamek.client.ui.util.FluffImageHelper;
 import megamek.client.ui.util.UIUtil;
-import megamek.client.ui.util.UIUtil.FixedXPanel;
 import megamek.client.ui.util.ViewFormatting;
+import megamek.common.Configuration;
 import megamek.common.Report;
+import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;
 import megamek.common.units.Entity;
 import megamek.common.util.StringUtil;
+import megamek.logging.MMLogger;
 
 /**
  * @author Jay Lawson
  * @since November 2, 2009
  */
 public class EntityReadoutPanel extends JPanel {
+    private static final MMLogger LOGGER = MMLogger.create(EntityReadoutPanel.class);
+
     private final int TOOLTIP_MAX_SIZE = 85;
 
     private final JTextPane readoutTextComponent = new JTextPane();
-    private final JLabel fluffImageComponent = new JLabel();
     private final JScrollPane scrollPane = new JScrollPane(readoutTextComponent);
 
+    private final JLabel fluffImageLabel = new JLabel();
+    private final List<FluffImageHelper.FluffImageRecord> fluffImageList = new ArrayList<>();
+    private int fluffImageIndex = 0;
+    private final JButton nextImageButton = new JButton(">");
+    private final JButton prevImageButton = new JButton("<");
+    private final JLabel imageInfoLabel = new JLabel("", JLabel.CENTER);
+
     public static final int DEFAULT_WIDTH = 360;
+
+    /** The vertical gap between the fluff image and the info line below it, before GUI scaling. */
+    private static final int IMAGE_INFO_GAP = 10;
+
+    private static final String PLACEHOLDER_IMAGE_NAME =
+            new File(Configuration.fluffImagesDir(), "fluff_placeholder.png").getPath();
+    private static final Image PLACEHOLDER_IMAGE = readPlaceHolderImage();
 
     public EntityReadoutPanel() {
         this(-1, -1);
@@ -147,21 +172,34 @@ public class EntityReadoutPanel extends JPanel {
         }
         textPanel.add(scrollPane);
 
-        var fluffPanel = new FixedXPanel();
-        if (width != -1) {
-            fluffPanel.setMinimumSize(new Dimension(width, height));
-            fluffPanel.setPreferredSize(new Dimension(width, height));
-        }
-        fluffPanel.add(fluffImageComponent);
+        prevImageButton.setToolTipText(Messages.getString("EntityReadoutPanel.previousImage.toolTipText"));
+        nextImageButton.setToolTipText(Messages.getString("EntityReadoutPanel.nextImage.toolTipText"));
 
-        JPanel p = new JPanel();
-        p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
-        p.add(textPanel);
-        p.add(fluffPanel);
-        p.add(Box.createHorizontalGlue());
+        var imageControlsPanel = new UIUtil.FixedYPanel(new FlowLayout());
+        imageControlsPanel.add(prevImageButton);
+        imageControlsPanel.add(nextImageButton);
+
+        imageControlsPanel.setAlignmentX(CENTER_ALIGNMENT);
+        fluffImageLabel.setAlignmentX(CENTER_ALIGNMENT);
+        imageInfoLabel.setAlignmentX(CENTER_ALIGNMENT);
+
+        Box fluffPanel = Box.createVerticalBox();
+        fluffPanel.setAlignmentY(TOP_ALIGNMENT);
+        fluffPanel.add(imageControlsPanel);
+        fluffPanel.add(fluffImageLabel);
+        fluffPanel.add(Box.createVerticalStrut(UIUtil.scaleForGUI(IMAGE_INFO_GAP)));
+        fluffPanel.add(imageInfoLabel);
+
+        Box readoutAndFluffPanel = Box.createHorizontalBox();
+        readoutAndFluffPanel.add(textPanel);
+        readoutAndFluffPanel.add(fluffPanel);
+        readoutAndFluffPanel.add(Box.createHorizontalGlue());
         setLayout(new BorderLayout());
-        add(p);
+        add(readoutAndFluffPanel);
         addMouseWheelListener(wheelForwarder);
+
+        nextImageButton.addActionListener(event -> showNextFluffImage());
+        prevImageButton.addActionListener(event -> showPrevFluffImage());
     }
 
     public void showEntity(Entity entity, EntityReadout mekView) {
@@ -215,31 +253,114 @@ public class EntityReadoutPanel extends JPanel {
         showEntity(entity, mekView, fontName, sections);
     }
 
-    private void setFluffImage(Entity entity) {
-        boolean isSpritesOnly = PreferenceManager.getClientPreferences().getSpritesOnly();
-        Image image = isSpritesOnly ? null : FluffImageHelper.getFluffImage(entity);
-        // Scale down to the default width if the image is wider than that
-        if (null != image) {
-            if (image.getWidth(this) > DEFAULT_WIDTH) {
-                image = image.getScaledInstance(DEFAULT_WIDTH, -1, Image.SCALE_SMOOTH);
-            }
-            fluffImageComponent.setIcon(new ImageIcon(image));
-        } else {
-            fluffImageComponent.setIcon(null);
+    /**
+     * Shows the given image as the fluff image, scaled down to {@link #DEFAULT_WIDTH} if it is wider than that.
+     *
+     * @param image The image to show, or {@code null} to clear the fluff image
+     */
+    private void displayFluffImage(@Nullable Image image) {
+        if (image == null) {
+            fluffImageLabel.setIcon(null);
+            fluffImageLabel.setToolTipText(null);
+            return;
         }
+        Image displayedImage = image;
+        if (displayedImage.getWidth(this) > DEFAULT_WIDTH) {
+            displayedImage = displayedImage.getScaledInstance(DEFAULT_WIDTH, -1, Image.SCALE_SMOOTH);
+        }
+        fluffImageLabel.setIcon(new ImageIcon(displayedImage));
+    }
+
+    private void setFluffImage(@Nullable Entity entity) {
+        fluffImageList.clear();
+        fluffImageIndex = 0;
+
+        boolean isSpritesOnly = PreferenceManager.getClientPreferences().getSpritesOnly();
+        if (isSpritesOnly || (entity == null)) {
+            nextImageButton.setEnabled(false);
+            prevImageButton.setEnabled(false);
+            imageInfoLabel.setText("");
+            displayFluffImage(null);
+            return;
+        }
+
+        fluffImageList.addAll(FluffImageHelper.getFluffRecords(entity));
+        boolean hasMultipleImages = fluffImageList.size() > 1;
+        nextImageButton.setEnabled(hasMultipleImages);
+        prevImageButton.setEnabled(hasMultipleImages);
+        // Show the first image, not the next one - stepping by 1 here would open on the second image
+        changeFluffImageIndex(0);
     }
 
     public void reset() {
         readoutTextComponent.setText("");
-        fluffImageComponent.setIcon(null);
+        fluffImageList.clear();
+        fluffImageIndex = 0;
+        nextImageButton.setEnabled(false);
+        prevImageButton.setEnabled(false);
+        imageInfoLabel.setText("");
+        displayFluffImage(null);
     }
 
     /** Forwards a mouse wheel scroll on the fluff image or free space to the TRO entry. */
-    MouseWheelListener wheelForwarder = e -> {
-        MouseWheelEvent converted = (MouseWheelEvent) SwingUtilities.convertMouseEvent(EntityReadoutPanel.this, e,
+    MouseWheelListener wheelForwarder = event -> {
+        MouseWheelEvent converted = (MouseWheelEvent) SwingUtilities.convertMouseEvent(EntityReadoutPanel.this, event,
               scrollPane);
         for (MouseWheelListener listener : scrollPane.getMouseWheelListeners()) {
             listener.mouseWheelMoved(converted);
         }
     };
+
+    private void showNextFluffImage() {
+        changeFluffImageIndex(1);
+    }
+
+    private void showPrevFluffImage() {
+        changeFluffImageIndex(-1);
+    }
+
+    private void changeFluffImageIndex(int delta) {
+        fluffImageIndex += delta;
+        if (fluffImageIndex >= fluffImageList.size()) {
+            fluffImageIndex = 0;
+        }
+        if (fluffImageIndex < 0) {
+            fluffImageIndex = fluffImageList.size() - 1;
+        }
+        boolean hasImageAtIndex = (fluffImageIndex >= 0) && (fluffImageIndex < fluffImageList.size());
+        if (!hasImageAtIndex) {
+            LOGGER.debug("[FluffImages] No fluff image available; showing the placeholder image.");
+            displayFluffImage(PLACEHOLDER_IMAGE);
+            imageInfoLabel.setText("");
+            return;
+        }
+
+        FluffImageHelper.FluffImageRecord record = fluffImageList.get(fluffImageIndex);
+        try {
+            displayFluffImage(record.getImage());
+        } catch (IOException exception) {
+            LOGGER.warn("[FluffImages] Could not load fluff image {}", record.file(), exception);
+            displayFluffImage(null);
+            imageInfoLabel.setText(Messages.getString("EntityReadoutPanel.imageLoadError"));
+            return;
+        }
+        String imageInfo = FluffImageTooltip.getTooltip(record);
+        fluffImageLabel.setToolTipText(imageInfo);
+        imageInfoLabel.setText((imageInfo != null) ? imageInfo : "");
+    }
+
+    private static @Nullable Image readPlaceHolderImage() {
+        File placeholderFile = new File(PLACEHOLDER_IMAGE_NAME);
+        if (!placeholderFile.exists()) {
+            LOGGER.debug("[FluffImages] No placeholder image at {}; units without fluff will show no image.",
+                  PLACEHOLDER_IMAGE_NAME);
+            return null;
+        }
+        try {
+            return ImageIO.read(placeholderFile);
+        } catch (IOException exception) {
+            LOGGER.warn("[FluffImages] Could not read the placeholder image {}", PLACEHOLDER_IMAGE_NAME, exception);
+            return null;
+        }
+    }
 }

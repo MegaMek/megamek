@@ -32,6 +32,21 @@
  */
 package megamek.server.totalWarfare;
 
+import static megamek.common.game.Game.TEAM_HAS_COMBAT_PARALYSIS;
+import static megamek.common.game.Game.TEAM_HAS_COMBAT_SENSE;
+import static megamek.common.game.Game.TEAM_HAS_NO_INITIATIVE_APTITUDE;
+import static megamek.common.options.OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION;
+import static megamek.common.options.OptionsConstants.RPG_INDIVIDUAL_INITIATIVE;
+import static megamek.common.weapons.handlers.AreaEffectHelper.calculateDamageFallOff;
+
+import java.io.File;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import megamek.client.bot.AIType;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.Messages;
@@ -132,21 +147,6 @@ import megamek.server.*;
 import megamek.server.commands.*;
 import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryResult;
-
-import java.io.File;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static megamek.common.game.Game.TEAM_HAS_COMBAT_PARALYSIS;
-import static megamek.common.game.Game.TEAM_HAS_COMBAT_SENSE;
-import static megamek.common.game.Game.TEAM_HAS_NO_INITIATIVE_APTITUDE;
-import static megamek.common.options.OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION;
-import static megamek.common.options.OptionsConstants.RPG_INDIVIDUAL_INITIATIVE;
-import static megamek.common.weapons.handlers.AreaEffectHelper.calculateDamageFallOff;
 
 /**
  * Manages the Game and processes player actions.

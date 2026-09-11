@@ -42,7 +42,10 @@ import megamek.common.Player;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
+import megamek.common.board.CubeCoords;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.BasementType;
+import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
@@ -51,9 +54,11 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.BipedMek;
+import megamek.common.units.BuildingEntity;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -151,6 +156,28 @@ class HitTablesInsideBuildingTest extends GameBoardTestCase {
     @DisplayName("Firing up one level inside the building uses the Below table")
     void firingUpUsesTheBelowTable() {
         assertEquals(ToHitData.HIT_BELOW, fire(0, 1).getHitTable());
+    }
+
+    @Test
+    @DisplayName("A building's own weapon fires from the level it is mounted on")
+    void buildingWeaponFiresFromItsMountedLevel() throws Exception {
+        BuildingEntity building = new BuildingEntity(BuildingType.MEDIUM, IBuilding.GUN_EMPLACEMENT);
+        building.setGame(game);
+        building.getInternalBuilding().setBuildingHeight(3);
+        building.getInternalBuilding().addHex(CubeCoords.ZERO, 40, 20, BasementType.NONE, false);
+        building.refreshLocations();
+        building.refreshAdditionalLocations();
+        building.setElevation(0);
+        WeaponMounted groundFloorGun = new WeaponMounted(building, mediumLaserType);
+        building.addEquipment(groundFloorGun, 0, false);
+        WeaponMounted secondLevelGun = new WeaponMounted(building, mediumLaserType);
+        building.addEquipment(secondLevelGun, 1, false);
+
+        assertEquals(0, ComputeToHit.attackerLevelForHitTables(building, building, groundFloorGun));
+        assertEquals(1, ComputeToHit.attackerLevelForHitTables(building, building, secondLevelGun));
+        attacker.setElevation(2);
+        assertEquals(2, ComputeToHit.attackerLevelForHitTables(attacker, attacker, laser),
+              "a unit fires from its own elevation");
     }
 
     @Test

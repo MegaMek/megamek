@@ -510,7 +510,7 @@ public class ComputeToHit {
         }
 
         // determine some more variables
-        int aElev = attackerLevelForHitTables(weaponEntity, weapon);
+        int aElev = attackerLevelForHitTables(weaponEntity, ae, weapon);
         int tElev = target.getElevation();
         int distance = Compute.effectiveWeaponDistance(game, weaponEntity, weapon, target);
 
@@ -2088,15 +2088,16 @@ public class ComputeToHit {
      * level its weapon is mounted on. The weapon's firing height, the unit's height above its feet, is what line of
      * sight needs and is not the same thing.
      *
-     * @param weaponEntity the unit firing the weapon
+     * @param weaponEntity the unit the weapon is mounted on
+     * @param attacker     the unit making the attack: the same, unless the weapon is a handheld one carried by it
      * @param weapon       the weapon fired
      *
      * @return the elevation the attack comes from, on the same scale as the target's elevation
      */
-    private static int attackerLevelForHitTables(Entity weaponEntity, WeaponMounted weapon) {
+    static int attackerLevelForHitTables(Entity weaponEntity, Entity attacker, WeaponMounted weapon) {
         if (weaponEntity instanceof AbstractBuildingEntity building) {
             return building.getElevation() + building.getWeaponFiringHeight(weapon);
         }
-        return weaponEntity.getElevation();
+        return attacker.getElevation();
     }
 }

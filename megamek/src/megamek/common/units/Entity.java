@@ -16035,18 +16035,14 @@ public abstract class Entity extends TurnOrdered
     public boolean hasBoobyTrap() {
         return getBoobyTrap() != null;
     }
-
-    // Mobile Structures need this overridden if ever implemented
+    
     public int getBoobyTrapDamage() {
-        int damage = 0;
-        if (hasBoobyTrap()) {
-            if ((getEngine() != null) && !(getEngine().hasFlag(Engine.SUPPORT_VEE_ENGINE))) {
-                damage = getEngine().getRating();
-            } else {
-                damage = (int) getWeight() * getOriginalWalkMP();
-            }
+        if (!hasBoobyTrap()) {
+            return 0;
         }
-        return Math.min(500, damage);
+        double damage = hasEngine() ? getEngine().getRating(this) : getWeight() * getOriginalWalkMP();
+        // TO:AUE p.109: use the engine rating (or mass times MP) and round fractions up.
+        return (int) Math.ceil(Math.min(500, damage));
     }
 
     public abstract int getEngineHits();

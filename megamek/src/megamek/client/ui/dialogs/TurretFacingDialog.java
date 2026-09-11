@@ -55,6 +55,7 @@ import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.panels.FacingPickerPanel;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Hex;
 import megamek.common.equipment.MiscType;
@@ -312,39 +313,10 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
      */
     private void layoutFacingPicker(JFrame parent, Entity unit) {
         setLayout(new BorderLayout());
-        JPanel tempPanel = new JPanel(new BorderLayout());
-        JPanel panNorth = new JPanel(new GridBagLayout());
-        JPanel panWest = new JPanel(new BorderLayout());
-        JPanel panEast = new JPanel(new BorderLayout());
-        JPanel panSouth = new JPanel(new GridBagLayout());
-        panNorth.add(facings.getFirst());
-        panSouth.add(facings.get(3));
-        panWest.add(facings.get(5), BorderLayout.NORTH);
-        panWest.add(facings.get(4), BorderLayout.SOUTH);
-        panEast.add(facings.get(1), BorderLayout.NORTH);
-        panEast.add(facings.get(2), BorderLayout.SOUTH);
-        tempPanel.add(panNorth, BorderLayout.NORTH);
-        tempPanel.add(panWest, BorderLayout.WEST);
-
-        JLabel labImage = new JLabel();
-        clientgui.loadPreviewImage(labImage, unit);
-        Image unitImage = ((ImageIcon) labImage.getIcon()).getImage();
-        Image hexImage = clientgui.getTilesetManager().baseFor(new Hex());
-        BufferedImage toDraw = new BufferedImage(84, 72, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = toDraw.createGraphics();
-        graphics.drawImage(hexImage, 0, 0, null);
-        graphics.drawImage(unitImage, 0, 0, null);
-        graphics.dispose();
-        labImage.setIcon(new ImageIcon(toDraw));
-        labImage.setHorizontalAlignment(SwingConstants.CENTER);
-        labImage.setOpaque(false);
-        tempPanel.add(labImage, BorderLayout.CENTER);
-        tempPanel.add(panEast, BorderLayout.EAST);
-        tempPanel.add(panSouth, BorderLayout.SOUTH);
+        add(new FacingPickerPanel(facings, FacingPickerPanel.previewOnHex(clientgui, unit, 0)), BorderLayout.CENTER);
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(butOkay);
         buttonPanel.add(butCancel);
-        add(tempPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
         pack();
         setLocation((parent.getLocation().x + (parent.getSize().width / 2)) - (getSize().width / 2),

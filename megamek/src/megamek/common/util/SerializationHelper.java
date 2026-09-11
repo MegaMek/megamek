@@ -33,6 +33,8 @@
 
 package megamek.common.util;
 
+import java.util.ArrayList;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -45,7 +47,6 @@ import megamek.common.SourceBookCode;
 import megamek.common.TargetRollModifier;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
-import megamek.server.victory.VictoryPointTracker;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.equipment.INarcPod;
@@ -69,8 +70,7 @@ import megamek.common.units.InfantryMount;
 import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.server.victory.VictoryCondition;
-
-import java.util.ArrayList;
+import megamek.server.victory.VictoryPointTracker;
 
 /**
  * Class that off-loads serialization related code from Server.java
@@ -126,7 +126,7 @@ public class SerializationHelper {
         xStream.omitField(Mek.class, "sinksOnNextRound");
         xStream.aliasField("pendingCharges", Game.class, "pendingDisplacementAttacks");
         xStream.aliasField("pilotRolls", Game.class, "pilotingRolls");
-        
+
         xStream.registerLocalConverter(Game.class, "pilotingRolls", new CollectionConverter(xStream.getMapper(),
               ArrayList.class));
 
@@ -589,6 +589,50 @@ public class SerializationHelper {
                     reader.moveUp();
                 }
                 return new HeatBreakdown.HeatContribution(count, totalHeat);
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        // Necessary because XStream 1.4.x cannot deserialize records natively. RulesRef is the sourcebook
+        // reference held by every EquipmentType, and an ejected crew serializes its infantry weapon (and so that
+        // weapon's whole EquipmentType) inline, so without this converter any save taken after a crew ejects
+        // fails to load.
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class type) {
+                return (type == RulesRef.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                SourceBookCode book = null;
+                Integer page = null;
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    try {
+                        switch (reader.getNodeName()) {
+                            case "book" -> book = SourceBookCode.valueOf(reader.getValue());
+                            case "page" -> page = Integer.parseInt(reader.getValue());
+                        }
+                    } catch (IllegalArgumentException exception) {
+                        // Keep the default for this field on a value this version no longer recognizes.
+                    }
+                    reader.moveUp();
+                }
+                // Never return null and never let the record's own validation throw: a null entry in
+                // EquipmentType.rulesRefs would NPE in TechAdvancement.guessStaticTechLevel, and the compact
+                // constructor rejects a non-positive page.
+                if (book == null) {
+                    book = SourceBookCode.UNOFFICIAL;
+                }
+                if ((page != null) && (page < 1)) {
+                    page = null;
+                }
+                return new RulesRef(book, page);
             }
 
             @Override

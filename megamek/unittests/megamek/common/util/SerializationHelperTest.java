@@ -35,6 +35,7 @@ package megamek.common.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.thoughtworks.xstream.XStream;
 import megamek.common.RulesRef;
@@ -100,5 +101,76 @@ class SerializationHelperTest {
         HeatBreakdown.HeatContribution contribution = (HeatBreakdown.HeatContribution) restored;
         assertEquals(3, contribution.count());
         assertEquals(0, contribution.totalHeat());
+    }
+
+    /**
+     * {@link RulesRef} is the sourcebook reference on every {@code EquipmentType}. An ejected crew serializes its
+     * infantry weapon inline, so without a converter every save taken after a crew ejects fails to load and the
+     * game comes back with its players present but no units (issue #8924). This pins the converter.
+     */
+    @Test
+    void rulesRefRecordSurvivesSaveGameRoundTrip() {
+        RulesRef original = new RulesRef(SourceBookCode.TM, 273);
+
+        XStream saveXStream = SerializationHelper.getSaveGameXStream();
+        String xml = saveXStream.toXML(original);
+
+        XStream loadXStream = SerializationHelper.getLoadSaveGameXStream();
+        Object restored = loadXStream.fromXML(xml);
+
+        assertEquals(original, restored);
+    }
+
+    /**
+     * A page-less reference is valid, so the missing {@code page} element must come back as {@code null} rather
+     * than tripping the record's own validation.
+     */
+    @Test
+    void pagelessRulesRefSurvivesSaveGameRoundTrip() {
+        RulesRef original = new RulesRef(SourceBookCode.TO_AR, null);
+
+        XStream saveXStream = SerializationHelper.getSaveGameXStream();
+        String xml = saveXStream.toXML(original);
+
+        XStream loadXStream = SerializationHelper.getLoadSaveGameXStream();
+        Object restored = loadXStream.fromXML(xml);
+
+        assertEquals(original, restored);
+    }
+
+    /**
+     * A book code this version no longer knows must not produce a {@code null} list entry: {@code
+     * TechAdvancement.guessStaticTechLevel} maps {@code RulesRef::book} over the list and would NPE.
+     */
+    @Test
+    void unknownBookCodeDeserializesToNonNullReference() {
+        XStream saveXStream = SerializationHelper.getSaveGameXStream();
+        String xml = saveXStream.toXML(new RulesRef(SourceBookCode.TM, 273));
+        String corrupted = xml.replace("<book>TM</book>", "<book>NoSuchBook</book>");
+
+        XStream loadXStream = SerializationHelper.getLoadSaveGameXStream();
+        Object restored = loadXStream.fromXML(corrupted);
+
+        assertNotNull(restored);
+        assertInstanceOf(RulesRef.class, restored);
+        assertEquals(SourceBookCode.UNOFFICIAL, ((RulesRef) restored).book());
+    }
+
+    /**
+     * The record's compact constructor rejects a page below 1, so a corrupted page must be dropped rather than
+     * thrown from inside the load.
+     */
+    @Test
+    void nonPositivePageDeserializesToNoPage() {
+        XStream saveXStream = SerializationHelper.getSaveGameXStream();
+        String xml = saveXStream.toXML(new RulesRef(SourceBookCode.TM, 273));
+        String corrupted = xml.replace("<page>273</page>", "<page>0</page>");
+
+        XStream loadXStream = SerializationHelper.getLoadSaveGameXStream();
+        Object restored = loadXStream.fromXML(corrupted);
+
+        assertNotNull(restored);
+        assertInstanceOf(RulesRef.class, restored);
+        assertNull(((RulesRef) restored).page());
     }
 }

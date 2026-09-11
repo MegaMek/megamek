@@ -1243,15 +1243,25 @@ public class BLKFile {
                 blk.writeBlockData("building_class", abstractBuildingEntity.getBldgClass());
                 blk.writeBlockData("building_type", abstractBuildingEntity.getBuildingType().getTypeValue());
                 blk.writeBlockData("height", abstractBuildingEntity.getInternalBuilding().getBuildingHeight());
-                blk.writeBlockData("cf", abstractBuildingEntity.getInternalBuilding().getCurrentCF(CubeCoords.ZERO));
+                blk.writeBlockData("cf", abstractBuildingEntity.getOInternal(0));
                 if (abstractBuildingEntity.hasExplicitCrewCount()) {
                     blk.writeBlockData("crew", abstractBuildingEntity.getNCrew());
                 }
 
                 blk.writeBlockData("coords",
                       abstractBuildingEntity.getInternalBuilding().getCoordsList().toArray(new CubeCoords[0]));
-                if (abstractBuildingEntity instanceof BuildingEntity buildingEntity) {
-                    BuildingDesignCodec.write(blk, buildingEntity);
+                BuildingDesignCodec.write(blk, abstractBuildingEntity);
+                if (abstractBuildingEntity instanceof MobileStructure mobile) {
+                    blk.writeBlockData("cruiseMP", mobile.getMaximumMP());
+                    blk.writeBlockData("power_system", mobile.getPowerSystem().name());
+                    blk.writeBlockData("operating_range", mobile.getOperatingRange());
+                    if (!mobile.getFuelLocations().isEmpty()) {
+                        blk.writeBlockData("fuel_locations", mobile.getFuelLocations().entrySet().stream()
+                              .map(entry -> (int) entry.getKey().q() + "," + (int) entry.getKey().r() + ","
+                                    + (int) entry.getKey().s() + ";" + entry.getValue()).toArray(String[]::new));
+                    }
+                    blk.writeBlockData("hex_heights", mobile.getInternalBuilding().getOriginalCoordsList().stream()
+                          .mapToInt(mobile.getInternalBuilding()::getHeight).toArray());
                 }
             }
             default -> blk.writeBlockData("tonnage", t.getWeight());

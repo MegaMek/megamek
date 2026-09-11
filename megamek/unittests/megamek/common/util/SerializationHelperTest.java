@@ -208,7 +208,7 @@ class SerializationHelperTest {
     @Test
     void componentMissingFromAnOlderSaveGetsItsTypeDefault() {
         String xml = SerializationHelper.getSaveGameXStream().toXML(new PrimitiveComponents(4, true, 2.5, 'x'));
-        String olderSave = xml.replaceAll("\s*<weight>[^<]*</weight>", "");
+        String olderSave = xml.replaceAll("\\s*<weight>[^<]*</weight>", "");
 
         Object restored = SerializationHelper.getLoadSaveGameXStream().fromXML(olderSave);
 

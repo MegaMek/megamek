@@ -659,7 +659,7 @@ public class SerializationHelper {
                     // A record may reject its own values, as RulesRef does for a page below 1. Dropping the one
                     // record keeps the rest of the save loadable; a record that cannot tolerate being dropped
                     // gets its own converter, which is what the specific ones above are for.
-                    LOGGER.warn("Could not rebuild record {} from the save game; dropping it.",
+                    LOGGER.warn(exception, "Could not rebuild record {} from the save game; dropping it.",
                           recordType.getSimpleName());
                     return null;
                 }

@@ -545,7 +545,7 @@ class MtfFileTest {
         String rightLeg = "Right Leg:\nHip\nUpper Leg Actuator\nLower Leg Actuator\nFoot Actuator\n-Empty-\n-Empty-\n";
         String rightLegWithEndoSteel = "Right Leg:\nHip\nUpper Leg Actuator\nLower Leg Actuator\nFoot Actuator\n"
             + endoSteel.getInternalName() + "\n" + endoSteel.getInternalName() + "\n";
-        
+
         // We replace the 2 empty slots with 2 endo steel (to simulate a "donor" leg layout)
         String mtf = mek.getMtf().replace(rightLeg, rightLegWithEndoSteel);
 

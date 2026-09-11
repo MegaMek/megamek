@@ -66,13 +66,13 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
+import megamek.common.units.ForceGeneratorAvailability;
 import megamek.common.units.LandAirMek;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
 import megamek.common.units.QuadVee;
 import megamek.common.units.System;
 import megamek.common.units.TripodMek;
-import megamek.common.units.ForceGeneratorAvailability;
 import megamek.common.units.UnitRole;
 import megamek.logging.MMLogger;
 
@@ -350,7 +350,7 @@ public class MtfFile implements IMekLoader {
             mek.setMulId(mulId);
             mek.setYear(Integer.parseInt(techYear.substring(ERA.length()).trim()));
             String originalYearStr = originalTechYear.substring(ORIGINAL_ERA.length()).trim();
-            if (!originalYearStr.isBlank()) {            
+            if (!originalYearStr.isBlank()) {
                 int originalYear = Integer.parseInt(originalYearStr);
                 if (originalYear>0) {
                     mek.setOriginalBuildYear(originalYear);
@@ -1698,7 +1698,7 @@ public class MtfFile implements IMekLoader {
             techYear = line;
             return true;
         }
-        
+
         if (lineLower.startsWith(ORIGINAL_ERA)) {
             originalTechYear = line;
             return true;
@@ -1713,7 +1713,7 @@ public class MtfFile implements IMekLoader {
             published = line;
             return true;
         }
-        
+
 
 
         if (lineLower.startsWith(RULES_LEVEL)) {

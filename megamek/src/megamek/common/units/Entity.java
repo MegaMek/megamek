@@ -16035,7 +16035,7 @@ public abstract class Entity extends TurnOrdered
     public boolean hasBoobyTrap() {
         return getBoobyTrap() != null;
     }
-    
+
     public int getBoobyTrapDamage() {
         if (!hasBoobyTrap()) {
             return 0;

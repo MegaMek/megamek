@@ -1274,7 +1274,7 @@ public abstract class Entity extends TurnOrdered
         return refitFromUUID;
     }
 
-    public void setRefitFromUuid(@Nullable String refitFromUUID) {
+    public void setRefitFromUUID(@Nullable String refitFromUUID) {
         this.refitFromUUID = StringUtility.isNullOrBlank(refitFromUUID) ? null : refitFromUUID.trim();
     }
 

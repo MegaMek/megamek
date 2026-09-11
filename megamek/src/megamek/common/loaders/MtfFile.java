@@ -345,7 +345,7 @@ public class MtfFile implements IMekLoader {
             if (!StringUtility.isNullOrBlank(unitFileUUID)) {
                 mek.setUnitFileUUID(unitFileUUID);
             }
-            mek.setRefitFromUuid(refitFromUUID);
+            mek.setRefitFromUUID(refitFromUUID);
             mek.storeOriginalUnitData();
             mek.setMulId(mulId);
             mek.setYear(Integer.parseInt(techYear.substring(ERA.length()).trim()));

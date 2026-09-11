@@ -129,7 +129,7 @@ public class BLKFile {
 
     protected void setBasicEntityData(Entity entity) throws EntityLoadingException {
         if (dataFile.exists(REFIT_FROM_UUID)) {
-            entity.setRefitFromUuid(dataFile.getDataAsString(REFIT_FROM_UUID)[0]);
+            entity.setRefitFromUUID(dataFile.getDataAsString(REFIT_FROM_UUID)[0]);
         }
         if (dataFile.exists(UNIT_FILE_UUID)) {
             String unitFileUUID = dataFile.getDataAsString(UNIT_FILE_UUID)[0];

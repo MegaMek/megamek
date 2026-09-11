@@ -105,16 +105,16 @@ class BLKFileTest {
     @Test
     void refitSourceRoundTripsAndCanBeRemoved() throws Exception {
         Tank tank = createMinimalTank();
-        String sourceUuid = "019f6767-0dcb-7bb8-992f-000000000001";
+        String sourceUUID = "019f6767-0dcb-7bb8-992f-000000000001";
         assertFalse(BLKFile.getBlock(tank).exists(BLKFile.REFIT_FROM_UUID));
         assertEquals(null, new BLKTankFile(BLKFile.getBlock(tank)).getEntity().getRefitFromUUID());
 
-        tank.setRefitFromUuid(sourceUuid);
+        tank.setRefitFromUUID(sourceUUID);
         Entity loaded = new BLKTankFile(BLKFile.getBlock(tank)).getEntity();
-        assertEquals(sourceUuid, loaded.getRefitFromUUID());
-        assertEquals(sourceUuid, new BLKTankFile(BLKFile.getBlock(loaded)).getEntity().getRefitFromUUID());
+        assertEquals(sourceUUID, loaded.getRefitFromUUID());
+        assertEquals(sourceUUID, new BLKTankFile(BLKFile.getBlock(loaded)).getEntity().getRefitFromUUID());
 
-        loaded.setRefitFromUuid(null);
+        loaded.setRefitFromUUID(null);
         assertFalse(BLKFile.getBlock(loaded).exists(BLKFile.REFIT_FROM_UUID));
         assertEquals(null, new BLKTankFile(BLKFile.getBlock(loaded)).getEntity().getRefitFromUUID());
     }

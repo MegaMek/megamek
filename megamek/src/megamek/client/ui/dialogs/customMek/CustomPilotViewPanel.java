@@ -36,7 +36,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.util.HashMap;
 import java.util.Map;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
@@ -61,6 +60,7 @@ import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.client.ui.comboBoxes.SearchableComboBox;
 import megamek.common.units.CrewArmorKitRules;
 import megamek.client.ui.dialogs.iconChooser.PortraitChooserDialog;
 import megamek.client.ui.util.UIUtil;
@@ -96,9 +96,13 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
     private final JCheckBox chkMissing = new JCheckBox(Messages.getString("CustomMekDialog.chkMissing"));
     private final JTextField fldName = new JTextField(30);
     private final JTextField fldNick = new JTextField(30);
-    private final Map<String, String> armorKitNamesByDisplayName = new HashMap<>();
     private final JCheckBox chkClanPilot = new JCheckBox(Messages.getString("CustomMekDialog.chkClanPilot"));
-    private final JComboBox<String> choArmorKit = new JComboBox<>();
+    /**
+     * The armor kit the crew member wears. Searchable because the list runs to dozens of kits, and typing a few
+     * letters beats scrolling for one, the same way the ammunition dropdowns work.
+     */
+    private SearchableComboBox<ArmorKitChoice> choArmorKit = new SearchableComboBox<>("choArmorKit",
+          List.of(ArmorKitChoice.NONE), ArmorKitChoice::displayName);
     private final JTextField fldGunnery = new JTextField(4);
     private final JTextField fldGunneryL = new JTextField(4);
     private final JTextField fldGunneryM = new JTextField(4);
@@ -241,18 +245,37 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
      * @param slot   the crew slot this panel is for
      */
     private void populateArmorKitChoices(Game game, Entity entity, int slot) {
-        String noKit = Messages.getString("CustomMekDialog.choArmorKit.none");
-        choArmorKit.addItem(noKit);
+        List<ArmorKitChoice> choices = new ArrayList<>();
+        choices.add(ArmorKitChoice.NONE);
         for (EquipmentType armorKit : CrewArmorKitRules.availableArmorKits()) {
             if (!CrewArmorKitRules.isAvailableIn(armorKit, entity, game)) {
                 continue;
             }
-            armorKitNamesByDisplayName.put(armorKit.getName(), armorKit.getInternalName());
-            choArmorKit.addItem(armorKit.getName());
+            choices.add(new ArmorKitChoice(armorKit.getName(), armorKit.getInternalName()));
         }
+        choArmorKit = new SearchableComboBox<>("choArmorKit", choices, ArmorKitChoice::displayName);
+
         String wornKitName = entity.getCrew().getArmorKitName(slot);
         EquipmentType wornKit = (wornKitName == null) ? null : EquipmentType.get(wornKitName);
-        choArmorKit.setSelectedItem((wornKit == null) ? noKit : wornKit.getName());
+        ArmorKitChoice worn = (wornKit == null)
+              ? ArmorKitChoice.NONE
+              : new ArmorKitChoice(wornKit.getName(), wornKit.getInternalName());
+        choArmorKit.setSelectedItem(choices.contains(worn) ? worn : ArmorKitChoice.NONE);
+    }
+
+    /**
+     * One entry in the armor kit dropdown: what the player reads, and the internal name the crew is given.
+     *
+     * <p>{@link #NONE} stands for wearing nothing, carrying a {@code null} internal name so the caller can hand it
+     * straight back without a special case.</p>
+     *
+     * @param displayName  the kit's name as the player sees it
+     * @param internalName the name the crew records, or {@code null} for no kit
+     */
+    private record ArmorKitChoice(String displayName, @Nullable String internalName) {
+
+        private static final ArmorKitChoice NONE =
+              new ArmorKitChoice(Messages.getString("CustomMekDialog.choArmorKit.none"), null);
     }
 
     /**
@@ -618,11 +641,8 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
      * @return the internal name of the armor kit chosen for this crew member, or {@code null} for none
      */
     public @Nullable String getArmorKitName() {
-        Object chosen = choArmorKit.getSelectedItem();
-        if ((chosen == null) || chosen.equals(Messages.getString("CustomMekDialog.choArmorKit.none"))) {
-            return null;
-        }
-        return armorKitNamesByDisplayName.get(chosen.toString());
+        ArmorKitChoice chosen = choArmorKit.getSelectedItem();
+        return (chosen == null) ? null : chosen.internalName();
     }
 
     public int getGunnery() {

@@ -74,7 +74,7 @@ public abstract class MRMWeapon extends MissileWeapon {
     public int getToHitModifier(@Nullable Mounted<?> mounted) {
         return Game.rulesManager.getRulesWeapons().getMRMModifier(toHitModifier);
     }
-    
+
     @Override
     @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {

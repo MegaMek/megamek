@@ -34,8 +34,8 @@ package megamek.common.weapons.handlers;
 
 import java.util.Iterator;
 
-import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.EquipmentActivation;
+import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.units.Entity;

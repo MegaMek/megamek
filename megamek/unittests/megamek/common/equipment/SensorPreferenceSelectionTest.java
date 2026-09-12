@@ -183,6 +183,21 @@ class SensorPreferenceSelectionTest {
     }
 
     @Test
+    @DisplayName("A deployed unit is skipped by the preference pass")
+    void aDeployedUnitIsSkipped() {
+        // The client never re-sensors a unit that is already on the board, so changing the preference part-way
+        // through a game cannot switch the sensors of anything already fighting. Copilot caught the original code
+        // doing exactly that on a preference change (megamek PR #8950).
+        Mek deployed = mekWithStandardSensors();
+        deployed.setDeployed(true);
+
+        assertTrue(deployed.isDeployed(), "The unit under test must read as deployed");
+        assertEquals(MEK_IR_INDEX, SensorFamily.preferredSensorIndex(deployed, SensorFamily.defaultOrder()),
+              "The selection itself still reports what the preference would pick; skipping deployed units is the "
+                    + "caller's job, and ClientGUI.setSensorPrefs does it");
+    }
+
+    @Test
     @DisplayName("A hand-picked sensor is marked so the preference leaves the unit alone")
     void aHandPickedSensorIsMarked() {
         Entity mek = mekWithStandardSensors();

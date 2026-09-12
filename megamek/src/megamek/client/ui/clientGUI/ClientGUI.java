@@ -3177,15 +3177,15 @@ public class ClientGUI extends AbstractClientGUI
      * <p>Units belonging to anyone else are left alone, bots included, so this never changes what Princess or CASPAR
      * do. A unit whose sensor the player picked by hand is left alone as well, in the lobby or in round zero.</p>
      *
-     * @param prefChange {@code true} when the player just changed the preference, which also re-applies it to units
-     *                   that have already deployed
+     * <p>A unit that has already deployed is never touched. Changing the preference part-way through a game switches
+     * the sensors of reinforcements still waiting to come on, and nothing that is already on the board.</p>
      */
-    private void setSensorPrefs(boolean prefChange) {
+    private void setSensorPrefs() {
         List<SensorFamily> preferenceOrder = GUIP.getSensorPreferenceOrder();
         for (Entity entity : client.getGame().getEntitiesVector()) {
             if (!entity.getOwner().equals(client.getLocalPlayer())
                   || entity.hasCustomSensorChoice()
-                  || (entity.isDeployed() && !prefChange)) {
+                  || entity.isDeployed()) {
                 continue;
             }
             int preferredSensorIndex = SensorFamily.preferredSensorIndex(entity, preferenceOrder);
@@ -3345,7 +3345,7 @@ public class ClientGUI extends AbstractClientGUI
 
             if (phase.isDeployment()) {
                 setWeaponOrderPrefs(false);
-                setSensorPrefs(false);
+                setSensorPrefs();
             }
 
             menuBar.setPhase(phase);
@@ -4157,7 +4157,7 @@ public class ClientGUI extends AbstractClientGUI
                 getUnitDisplay().displayEntity(getUnitDisplay().getCurrentEntity());
             }
             case GUIPreferences.SENSOR_PREFERENCE_ORDER -> {
-                setSensorPrefs(true);
+                setSensorPrefs();
                 getUnitDisplay().displayEntity(getUnitDisplay().getCurrentEntity());
             }
             case GUIPreferences.SOUND_BING_FILENAME_CHAT,

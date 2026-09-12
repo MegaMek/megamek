@@ -56,7 +56,6 @@ import java.util.*;
 import java.util.function.Consumer;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
@@ -95,11 +94,11 @@ import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.PlayerColour;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.SkinXMLHandler;
-import megamek.codeUtilities.MathUtility;
 import megamek.common.Configuration;
 import megamek.common.KeyBindParser;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.WeaponSortOrder;
+import megamek.common.equipment.SensorFamily;
 import megamek.common.loaders.MapSettings;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
@@ -128,6 +127,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private static final int BEHAVIOR_OPTION_COLUMNS = 2;
     private static final int SLIDER_VALUE_COLUMNS = 5;
     private static final int UNIT_DISPLAY_ORDER_COLUMNS = 3;
+    private static final int SENSOR_PREFERENCE_COLUMNS = 3;
     private static final int BUTTON_ORDER_COLUMNS = 4;
     private static final String REORDER_LIST_CELL_WIDTH = "CommonSettingsDialog.reorderListCellWidth";
 
@@ -406,6 +406,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
     // Unit Display order
     private final DefaultListModel<String> unitDisplayNonTabbed = new DefaultListModel<>();
+
+    // Sensor preference order, most preferred first
+    private final DefaultListModel<SensorFamily> sensorPreferenceOrder = new DefaultListModel<>();
+    private final SettingsButton defaultSensorPreferenceButton = createSensorPreferenceResetButton();
     private final StatusBarPhaseDisplay.CommandComparator cmdComp = new StatusBarPhaseDisplay.CommandComparator();
 
     private JComboBox<String> tileSetChoice;
@@ -666,7 +670,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
                     section("unitDisplay.tooltip", 0), section("unitDisplay.armor", 1)),
               optionPage("unitDisplay.interface", path("unitDisplay", "unitDisplay.interface"), unitDisplay,
                     section("unitDisplay.heat", 2), section("unitDisplay.order", 3),
-                    section("unitDisplay.weapons", 4), section("unitDisplay.fonts", 5)));
+                    section("unitDisplay.weapons", 4), section("unitDisplay.sensors", 5),
+                    section("unitDisplay.fonts", 6)));
 
         CommonSettingsPane.SectionedContent miniMap = sectionedContent(getMiniMapPanel(), "miniMap");
         addMappedPages(pages, "miniMap", miniMap,
@@ -1714,6 +1719,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         addLineSpacer(comps);
 
+        loadSensorPreferenceOrder(sensorPreferenceOrder, GUIP.getSensorPreferenceOrder());
+        defaultSensorPreferenceButton.addActionListener(
+              event -> loadSensorPreferenceOrder(sensorPreferenceOrder, SensorFamily.defaultOrder()));
+        comps.add(List.of(createSensorPreferenceGrid(sensorPreferenceOrder, defaultSensorPreferenceButton)));
+
+        addLineSpacer(comps);
+
         JLabel unitDisplayMekArmorLargeFontSizeLabel = new JLabel(Messages.getString(
             "CommonSettingsDialog.unitDisplayMekArmorLargeFontSize"));
         unitDisplayMekArmorLargeFontSizeSpinner = createIntegerSpinner(
@@ -1810,6 +1822,51 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     static void loadUnitDisplayOrder(DefaultListModel<String> orderModel, List<String> panelOrder) {
         orderModel.clear();
         panelOrder.forEach(orderModel::addElement);
+    }
+
+    /**
+     * Builds the drag-to-reorder list the player ranks the sensor families with. The list shows every family, since a
+     * family the player cannot use on any of their units simply never matches and costs them nothing.
+     */
+    static JPanel createSensorPreferenceGrid(DefaultListModel<SensorFamily> orderModel, JComponent resetControl) {
+        JList<SensorFamily> orderList = new JList<>(orderModel);
+        orderList.setName("sensorPreferenceOrder");
+        orderList.setToolTipText(Messages.getString("CommonSettingsDialog.sensorPreference.tooltip"));
+        orderList.setCellRenderer(new SensorFamilyRenderer());
+        JPanel reorderPanel = createReorderListPanel(orderList, SENSOR_PREFERENCE_COLUMNS);
+
+        int gap = UIUtil.scaleForGUI(12);
+        JPanel content = new JPanel(new BorderLayout(0, gap));
+        content.setName("pnlCommonSettingsSensorPreference");
+        content.setOpaque(false);
+        content.add(reorderPanel, BorderLayout.CENTER);
+        content.add(resetControl, BorderLayout.SOUTH);
+        return content;
+    }
+
+    static SettingsButton createSensorPreferenceResetButton() {
+        return new SettingsButton("defaultSensorPreference", SETTINGS_TEXT,
+              "CommonSettingsDialog.sensorPreference.buttonDefault");
+    }
+
+    static void loadSensorPreferenceOrder(DefaultListModel<SensorFamily> orderModel,
+          List<SensorFamily> familyOrder) {
+        orderModel.clear();
+        familyOrder.forEach(orderModel::addElement);
+    }
+
+    /** Draws a sensor family in the reorder list using its localized name rather than its enum constant name. */
+    private static class SensorFamilyRenderer extends DefaultListCellRenderer {
+
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+              boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            if (value instanceof SensorFamily sensorFamily) {
+                setText(sensorFamily.getDisplayName());
+            }
+            return this;
+        }
     }
 
     private static List<String> savedUnitDisplayOrder() {
@@ -2929,6 +2986,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         bombsDisplayDrifts.setSelected(GUIP.getShowBombDrifts());
 
         loadUnitDisplayOrder(unitDisplayNonTabbed, savedUnitDisplayOrder());
+        loadSensorPreferenceOrder(sensorPreferenceOrder, GUIP.getSensorPreferenceOrder());
 
         unitDisplayAutoDisplayReportCombo.setSelectedItem(GUIP.getUnitDisplayAutoDisplayReportPhase());
         unitDisplayAutoDisplayNonReportCombo.setSelectedItem(GUIP.getUnitDisplayAutoDisplayNonReportPhase());
@@ -3048,6 +3106,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setAutoEndFiring(autoEndFiring.isSelected());
         GUIP.setAutoDeclareSearchlight(autoDeclareSearchlight.isSelected());
         GUIP.setDefaultWeaponSortOrder(Objects.requireNonNull(comboDefaultWeaponSortOrder.getSelectedItem()));
+        GUIP.setSensorPreferenceOrder(Collections.list(sensorPreferenceOrder.elements()));
         GUIP.setNagForMASC(nagForMASC.isSelected());
         GUIP.setNagForPSR(nagForPSR.isSelected());
         GUIP.setNagForWiGELanding(nagForWiGELanding.isSelected());

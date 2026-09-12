@@ -37,7 +37,9 @@ package megamek.common.planetaryConditions;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import megamek.common.Messages;
@@ -45,8 +47,8 @@ import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
-import megamek.common.units.CrewArmorKitRules;
 import megamek.common.units.ConvInfantry;
+import megamek.common.units.CrewArmorKitRules;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.EnvironmentalSealingRules;
@@ -747,28 +749,40 @@ public class PlanetaryConditions implements Serializable {
      */
     private List<String> lethalToEjectedCrewConditions() {
         List<String> lethalConditions = new ArrayList<>();
+        for (EjectionHazard hazard : lethalEjectionHazards()) {
+            lethalConditions.add(hazard.getDisplayName());
+        }
+        return lethalConditions;
+    }
+
+    /**
+     * Everything out there that would kill a crew who ejects into it, as separate hazards.
+     * <p>
+     * The warning before deployment needs these one at a time rather than as a sentence, because a crew's armor kit
+     * answers some of them and not others.
+     *
+     * @return the hazards present, in reading order, or an empty set when ejecting is survivable
+     */
+    public Set<EjectionHazard> lethalEjectionHazards() {
+        Set<EjectionHazard> hazards = EnumSet.noneOf(EjectionHazard.class);
         boolean isAirTooThinToBreathe = getAtmosphere().isLighterThan(Atmosphere.THIN);
         if (isAirTooThinToBreathe) {
-            lethalConditions.add(Messages.getString("PlanetaryConditions.LethalToEjectedCrew.Vacuum"));
+            hazards.add(EjectionHazard.VACUUM);
         }
         // With no atmosphere to speak of there is nothing for a taint to be carried in, so naming it as well as the
         // vacuum would be saying the same thing twice in different words.
         if (!isAirTooThinToBreathe && TaintedAtmosphereRules.requiresXctInfantry(getAtmosphericTaint())) {
-            lethalConditions.add(getAtmosphericTaint().isToxic()
-                  ? Messages.getString("PlanetaryConditions.LethalToEjectedCrew.ToxicAir")
-                  : Messages.getString("PlanetaryConditions.LethalToEjectedCrew.TaintedAir"));
+            hazards.add(getAtmosphericTaint().isToxic() ? EjectionHazard.TOXIC_AIR : EjectionHazard.TAINTED_AIR);
         }
         if (getWind().isTornadoF1ToF3() || getWind().isTornadoF4()) {
-            lethalConditions.add(Messages.getString("PlanetaryConditions.LethalToEjectedCrew.Tornado"));
+            hazards.add(EjectionHazard.TORNADO);
         } else if (getWind().isStorm()) {
-            lethalConditions.add(Messages.getString("PlanetaryConditions.LethalToEjectedCrew.Storm"));
+            hazards.add(EjectionHazard.STORM);
         }
         if (isExtremeTemperature()) {
-            lethalConditions.add((getTemperature() > 0)
-                  ? Messages.getString("PlanetaryConditions.LethalToEjectedCrew.ExtremeHeat")
-                  : Messages.getString("PlanetaryConditions.LethalToEjectedCrew.ExtremeCold"));
+            hazards.add((getTemperature() > 0) ? EjectionHazard.EXTREME_HEAT : EjectionHazard.EXTREME_COLD);
         }
-        return lethalConditions;
+        return hazards;
     }
 
     public boolean isBlowingSandActive() {

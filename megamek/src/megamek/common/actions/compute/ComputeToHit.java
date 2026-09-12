@@ -47,6 +47,7 @@ import megamek.common.compute.ComputeSideTable;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscType;
@@ -260,25 +261,15 @@ public class ComputeToHit {
 
         Mounted<?> mLinker = weapon.getLinkedBy();
 
-        boolean bApollo = ((mLinker != null) &&
-              (mLinker.getType() instanceof MiscType) &&
-              !mLinker.isDestroyed() &&
-              !mLinker.isMissing() &&
-              !mLinker.isBreached() &&
-              mLinker.getType().hasFlag(MiscType.F_APOLLO)) &&
+        boolean bApollo = EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_APOLLO) &&
               (ammoType != null) &&
               (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM);
 
-        boolean bArtemisV = ((mLinker != null) &&
-              (mLinker.getType() instanceof MiscType) &&
-              !mLinker.isDestroyed() &&
-              !mLinker.isMissing() &&
-              !mLinker.isBreached() &&
-              mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V) &&
+        boolean bArtemisV = EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_ARTEMIS_V) &&
               !isECMAffected &&
               !bMekTankStealthActive &&
               (ammoType != null) &&
-              (munition.contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE)));
+              (munition.contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE));
 
         boolean bSemiGuided = ((ammoType != null) &&
               ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
@@ -313,26 +304,16 @@ public class ComputeToHit {
                 }
 
                 mLinker = bayW.getLinkedBy();
-                bApollo = ((mLinker != null) &&
-                      (mLinker.getType() instanceof MiscType) &&
-                      !mLinker.isDestroyed() &&
-                      !mLinker.isMissing() &&
-                      !mLinker.isBreached() &&
-                      mLinker.getType().hasFlag(MiscType.F_APOLLO)) &&
+                bApollo = EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_APOLLO) &&
                       (bAmmo != null) &&
                       (bAmmo.getAmmoType() == AmmoType.AmmoTypeEnum.MRM);
 
-                bArtemisV = ((mLinker != null) &&
-                      (mLinker.getType() instanceof MiscType) &&
-                      !mLinker.isDestroyed() &&
-                      !mLinker.isMissing() &&
-                      !mLinker.isBreached() &&
-                      mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V) &&
+                bArtemisV = EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_ARTEMIS_V) &&
                       !isECMAffected &&
                       !bMekTankStealthActive &&
                       (ammoType != null) &&
                       (bAmmo != null) &&
-                      (bAmmo.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE)));
+                      (bAmmo.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE));
             }
         }
 

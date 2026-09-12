@@ -333,12 +333,12 @@ public class TestAdvancedAerospace extends TestAero {
     }
 
     /**
-     * Returns the number of required officers of the vessel.
+     * Returns the number of required officers of the vessel from total base crew and gunners.
      * @param vessel The vessel
      * @return The number of required officers
      */
     public static int requiredOfficers(Jumpship vessel) {
-        return (int) Math.ceil((minimumBaseCrew(vessel) + requiredGunners(vessel)) / 6.0);
+        return (int) Math.ceil((vessel.getNCrew() - vessel.getBayPersonnel()) / 6.0);
     }
 
     public TestAdvancedAerospace(Jumpship vessel, TestEntityOption option, String fs) {

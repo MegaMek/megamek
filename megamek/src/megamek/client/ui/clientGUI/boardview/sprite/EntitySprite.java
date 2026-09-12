@@ -286,6 +286,7 @@ public class EntitySprite extends Sprite {
         // Move to the board position, save this origin for correct drawing
         hexOrigin = bounds.getLocation();
         Point ePos;
+
         if (secondaryPos == -1) {
             ePos = bv.getHexLocation(entity.getPosition());
         } else {

@@ -379,7 +379,6 @@ public class DeploymentHelper {
         int enemyStartingPos = -1;
         int enemyTeamNumber = -1;
         int teamCount = 0;
-        int offsetFacing = 0;
         List<Player> enemiesList = new ArrayList<Player>();
         for (Player player : players) {
             if (player.getId() == entity.getOwnerId()) {

@@ -342,10 +342,12 @@ public final class MobileStructureMovement {
 
     /** The preview uses the same committed progress as server execution, including any MP left for a second step. */
     public static int plannedCost(Game game, MobileStructure unit, Coords from, int fromFacing, int fromElevation,
-          Coords to, int toFacing, int toElevation) {
+          Coords to, int toFacing, int toElevation, int priorMp) {
         int cost = cost(game, unit, from, fromFacing, fromElevation, to, toFacing, toElevation);
         MobileStructure.MovementProgress progress = unit.getMovementProgress();
-        if (cost != PROHIBITED && progress != null && from.equals(unit.getPosition())
+        // Credit belongs to the first maneuver only, even if a later step returns to the starting pose.
+        // Zero-cost loading/unloading before that maneuver must leave the credit available.
+        if (cost != PROHIBITED && priorMp == 0 && progress != null && from.equals(unit.getPosition())
               && fromFacing == unit.getFacing() && fromElevation == unit.getElevation()
               && progress.destination().equals(to) && progress.facing() == toFacing && progress.elevation() == toElevation) {
             return Math.max(0, cost - progress.quarters());

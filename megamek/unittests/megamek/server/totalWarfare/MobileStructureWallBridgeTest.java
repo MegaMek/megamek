@@ -77,6 +77,7 @@ class MobileStructureWallBridgeTest {
 
     private TWGameManager manager(EntityMovementMode mode, int elevation, List<CubeCoords> footprint, int ground) {
         var manager = spy(new LocalManager());
+        manager.getGame().getOptions().initialize();
         doNothing().when(manager).entityUpdate(anyInt());
         doNothing().when(manager).sendChangedHex(any(Coords.class), anyInt());
         doNothing().when(manager).sendChangedBuildings(any());
@@ -202,6 +203,7 @@ class MobileStructureWallBridgeTest {
         assertTrue(board.getBuildingsAt(destination).containsAll(List.of(bridge, mobile)));
         assertEquals(5, board.getHex(destination).terrainLevel(Terrains.BRIDGE_ELEV));
         assertEquals(2, board.getHex(destination).terrainLevel(Terrains.BLDG_ELEV));
+        board.getHex(destination).addTerrain(new Terrain(Terrains.BRIDGE_REPAIRED, 1));
         bridge.updateBuildingEntityHexes(0, manager);
         assertTrue(board.getBuildingsAt(destination).containsAll(List.of(bridge, mobile)));
         assertEquals(2, board.getHex(destination).terrainLevel(Terrains.BLDG_ELEV));
@@ -209,6 +211,11 @@ class MobileStructureWallBridgeTest {
         assertEquals(List.of(bridge), board.getBuildingsAt(destination));
         assertEquals(5, board.getHex(destination).terrainLevel(Terrains.BRIDGE_ELEV));
         assertFalse(board.getHex(destination).containsTerrain(Terrains.BUILDING));
+        assertTrue(board.getHex(destination).containsTerrain(Terrains.BRIDGE_REPAIRED),
+              "a departing mobile must retain the surviving bridge's repair badge");
+        board.removeBuilding(bridge);
+        assertFalse(board.getHex(destination).containsTerrain(Terrains.BRIDGE_REPAIRED),
+              "clean removal of the last bridge also removes its repair badge");
     }
 
     @Test void aSurfaceVesselActuallyContactingTheDeckDemolishesOnlyThatBridgeHex() {
@@ -228,6 +235,7 @@ class MobileStructureWallBridgeTest {
         var manager = manager(EntityMovementMode.SUBMARINE, -1, List.of(CubeCoords.ZERO), 0);
         var mobile = mobile(manager);
         var bridge = structure(manager, IBuilding.BRIDGE, 1, 1, ORIGIN);
+        manager.getGame().getBoard().getHex(ORIGIN).addTerrain(new Terrain(Terrains.BRIDGE_REPAIRED, 1));
         assertTrue(BuildingElevation.canCoexist(mobile, bridge));
         new MobileStructureMovementHandler(manager).process(mobile,
               new MovePath(manager.getGame(), mobile).addStep(MoveStepType.UP));
@@ -235,6 +243,8 @@ class MobileStructureWallBridgeTest {
         assertFalse(bridge.hasCFIn(ORIGIN));
         assertTrue(mobile.getCurrentCF(ORIGIN) < 150);
         assertFalse(manager.getGame().getBoard().getHex(ORIGIN).containsTerrain(Terrains.BRIDGE));
+        assertFalse(manager.getGame().getBoard().getHex(ORIGIN).containsTerrain(Terrains.BRIDGE_REPAIRED),
+              "the surviving mobile is not a repaired bridge");
     }
 
     @Test void bridgeTargetsAndRoofUseEachDeckPlaneWhileConstructionHeightStaysOne() {
@@ -265,6 +275,8 @@ class MobileStructureWallBridgeTest {
         assertEquals(deck, BuildingElevation.roof(bridge, destination));
         assertEquals(1, bridge.getHeight(destination));
         assertEquals(deck > 2, BuildingElevation.canCoexist(mobile, List.of(destination), -2, bridge));
+        assertEquals(deck > 2, mobile.isPositionAndFacingValid(destination, 0, 0, 0),
+              "placement below a native bridge must use the same physical clearance as movement");
         var handler = new MobileStructureMovementHandler(manager);
         handler.process(mobile, new MovePath(manager.getGame(), mobile).addStep(MoveStepType.FORWARDS));
         assertEquals(destination, mobile.getPosition());
@@ -318,8 +330,8 @@ class MobileStructureWallBridgeTest {
         assertEquals(5, BuildingElevation.roof(bridge, coords));
         assertEquals(40, bridge.getCurrentCF(coords));
         assertTrue(board.getBuildingsAt(coords).containsAll(List.of(bridge, mobile)));
-        var xml = SerializationHelper.getSaveGameXStream();
-        var restored = (megamek.common.game.Game) xml.fromXML(xml.toXML(manager.getGame()));
+        String saved = SerializationHelper.getSaveGameXStream().toXML(manager.getGame());
+        var restored = (megamek.common.game.Game) SerializationHelper.getLoadSaveGameXStream().fromXML(saved);
         var restoredBridge = restored.getBoard().getBuildingsAt(coords).stream()
               .filter(BuildingTerrain.class::isInstance).findFirst().orElseThrow();
         assertEquals(5, BuildingElevation.roof(restoredBridge, coords));

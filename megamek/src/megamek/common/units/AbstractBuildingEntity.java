@@ -591,8 +591,8 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
         // Check each overlapping building
         for (IBuilding otherBuilding : overlappingBuildings) {
-            // Can't replace another AbstractBuildingEntity
-            if (otherBuilding instanceof AbstractBuildingEntity) {
+            // Authored structures and bridge spans may share a footprint when their physical volumes do not overlap.
+            if (otherBuilding instanceof AbstractBuildingEntity || otherBuilding.getBldgClass() == IBuilding.BRIDGE) {
                 if (!BuildingElevation.canCoexist(this, thisBuildingCoords,
                       BuildingConstruction.baseLevel(this) + elevation, otherBuilding)) {
                     return true;

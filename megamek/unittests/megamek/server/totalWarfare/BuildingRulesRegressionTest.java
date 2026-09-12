@@ -105,6 +105,7 @@ class BuildingRulesRegressionTest {
 
     private TWGameManager manager(AbstractBuildingEntity unit) {
         TWGameManager manager = spy(new ReviewGameManager());
+        manager.getGame().getOptions().initialize();
         doNothing().when(manager).send(any(Packet.class));
         doNothing().when(manager).sendChangedHex(any(Coords.class), any(int.class));
         doNothing().when(manager).entityUpdate(any(int.class));

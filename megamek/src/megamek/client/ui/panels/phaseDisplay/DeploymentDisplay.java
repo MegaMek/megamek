@@ -1141,6 +1141,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void turnBuildingToward(Entity building, Coords clicked) {
         turnMode = false;
         Coords position = building.getPosition();
+        if (position.equals(clicked)) {
+            return;
+        }
         int facing = position.direction(clicked);
         if (facing == building.getFacing()) {
             return;

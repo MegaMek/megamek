@@ -275,6 +275,7 @@ class BuildingInteriorEnvironmentTest {
 
     private TWGameManager manager(AbstractBuildingEntity building) {
         var manager = spy(new SilentManager());
+        manager.getGame().getOptions().initialize();
         doNothing().when(manager).entityUpdate(anyInt());
         doNothing().when(manager).sendChangedHex(any(Coords.class), anyInt());
         doNothing().when(manager).sendChangedBuildings(any());

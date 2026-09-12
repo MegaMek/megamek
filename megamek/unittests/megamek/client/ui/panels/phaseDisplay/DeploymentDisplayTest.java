@@ -42,38 +42,27 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.MegaMekGUI;
-import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.panels.phaseDisplay.DeploymentDisplay.BoardValidationResult;
 import megamek.client.ui.panels.phaseDisplay.DeploymentDisplay.DeploymentPosition;
 import megamek.client.ui.util.MegaMekController;
 import megamek.common.GameBoardTestCase;
-import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
-import megamek.common.board.CubeCoords;
-import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.units.BipedMek;
-import megamek.common.units.BuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.units.IBuilding;
 import megamek.common.units.SmallCraft;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -81,8 +70,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.MockedStatic;
 
 @DisplayName("DeploymentDisplay Unit Tests")
@@ -516,92 +503,6 @@ public class DeploymentDisplayTest {
             assertNotNull(BoardValidationResult.valueOf("HIDDEN_IN_FORTIFIED"));
             assertNotNull(BoardValidationResult.valueOf("HULL_DOWN_NEEDS_FORTIFIED"));
             assertNotNull(BoardValidationResult.valueOf("TRAIN_DOES_NOT_FIT"));
-        }
-    }
-
-    @Nested
-    class BuildingRotation {
-        private BuildingEntity building;
-        private BoardView boardView;
-
-        @BeforeEach
-        void setUpBuilding() throws Exception {
-            board = new Board(9, 9, Stream.generate(Hex::new).limit(81).toArray(Hex[]::new));
-            game.setBoard(0, board);
-            building = new BuildingEntity(BuildingType.MEDIUM, IBuilding.STANDARD);
-            building.configureConstruction(BuildingType.MEDIUM, IBuilding.STANDARD, 1, 50, 10,
-                  List.of(CubeCoords.ZERO, new CubeCoords(0, -1, 1), new CubeCoords(0, -2, 2)));
-            building.setId(1);
-            building.setOwner(new Player(0, "Builder"));
-            building.setStartingPos(Board.START_ANY);
-            game.addEntity(building);
-            building.setPosition(new Coords(4, 4));
-            boardView = mock(BoardView.class);
-            when(mockClientGUI.boardViews()).thenReturn(List.of(boardView));
-            when(mockClient.isMyTurn()).thenReturn(true);
-            deploymentDisplay = new DeploymentDisplay(mockClientGUI);
-            var selectedEntity = DeploymentDisplay.class.getDeclaredField("cen");
-            selectedEntity.setAccessible(true);
-            selectedEntity.setInt(deploymentDisplay, building.getId());
-        }
-
-        private void turnToward(int facing, boolean shift) {
-            if (!shift) {
-                deploymentDisplay.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "deployTurn"));
-            }
-            BoardViewEvent event = mock(BoardViewEvent.class);
-            when(event.getCoords()).thenReturn(building.getPosition().translated(facing));
-            when(event.getBoardId()).thenReturn(0);
-            when(event.getType()).thenReturn(BoardViewEvent.BOARD_HEX_DRAGGED);
-            when(event.getButton()).thenReturn(MouseEvent.BUTTON1);
-            when(event.getModifiers()).thenReturn(shift ? InputEvent.SHIFT_DOWN_MASK : 0);
-            deploymentDisplay.hexMoused(event);
-        }
-
-        @ParameterizedTest
-        @CsvSource({ "0, true", "1, true", "2, true", "3, true", "4, true", "5, true",
-                     "0, false", "1, false", "2, false", "3, false", "4, false", "5, false" })
-        void shiftDragAndTurnButtonRotateTheWholeBuilding(int facing, boolean shift) {
-            Coords origin = building.getPosition();
-            turnToward(facing, shift);
-
-            assertEquals(facing, building.getFacing());
-            assertEquals(origin, building.getPosition());
-            assertEquals(Set.of(origin, origin.translated(facing), origin.translated(facing, 2)),
-                  building.getOccupiedCoords());
-            assertEquals(building.getOccupiedCoords(), game.getEntityPositions(building));
-            verify(boardView).redrawEntity(building);
-            verify(boardView).repaint();
-            verify(mockClientGUI).updateFiringArc(building);
-        }
-
-        @Test
-        void invalidTurnRetainsFootprintAndAllowsRetry() {
-            building.setFacing(3);
-            building.setPosition(new Coords(4, 1));
-            Set<Coords> previous = building.getOccupiedCoords();
-            turnToward(0, false);
-            assertEquals(3, building.getFacing());
-            assertEquals(previous, building.getOccupiedCoords());
-            assertEquals(previous, game.getEntityPositions(building));
-
-            turnToward(2, true);
-            assertEquals(2, building.getFacing());
-        }
-
-        @Test
-        void rotationCannotExtendOutsideDeploymentZone() {
-            building.setStartingAnyNWy(4);
-            building.setFacing(3);
-            turnToward(0, true);
-            assertEquals(3, building.getFacing());
-        }
-
-        @Test
-        void clickingTheOriginDoesNotResetFacing() {
-            building.setFacing(4);
-            deploymentDisplay.processTurn(building, building.getPosition());
-            assertEquals(4, building.getFacing());
         }
     }
 

@@ -108,6 +108,7 @@ class BuildingEntityDamageTest extends GameBoardTestCase {
     void beforeEach() throws Exception {
         Player player = new Player(0, "Test");
         gameManager = Mockito.spy(new TWGameManager());
+        gameManager.getGame().getOptions().initialize();
         Mockito.doNothing().when(gameManager).send(any(Packet.class));
         Mockito.doNothing().when(gameManager).sendChangedHex(any(Coords.class), any(int.class));
         Mockito.doNothing().when(gameManager).entityUpdate(any(int.class));

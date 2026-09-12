@@ -46,11 +46,14 @@ import megamek.common.board.CubeCoords;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.net.packets.Packet;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.*;
 import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /** Actual server AFFA processing, TO:AUE p.41, including exact struck floors and complete mobile footprints. */
 class MobileStructureFallTest {
@@ -64,6 +67,7 @@ class MobileStructureFallTest {
 
     private TWGameManager manager(int depth) {
         var manager = spy(new LocalManager());
+        manager.getGame().setOptions(new GameOptions());
         doNothing().when(manager).entityUpdate(anyInt());
         doNothing().when(manager).sendChangedHex(any(Coords.class), anyInt());
         doNothing().when(manager).sendChangedBuildings(any());
@@ -132,12 +136,14 @@ class MobileStructureFallTest {
         assertTrue(mek.isProne());
     }
 
-    @Test void failedSinkingDeckFootingFallsOntoAnAdjacentLowerMobileRoof() {
+    @ParameterizedTest
+    @CsvSource({ "-3,150", "-4,146" })
+    void failedSinkingDeckFootingFallsOntoAnAdjacentLowerMobileRoof(int lowerRoof, int remainingCF) {
         var manager = manager(20);
         manager.getGame().setRoundCount(1);
         var upper = mobile(manager, 1, 4, -4, EntityMovementMode.SUBMARINE, ORIGIN, List.of(CubeCoords.ZERO), 0);
         var destination = ORIGIN.translated(0);
-        var lower = mobile(manager, 2, 4, -5, EntityMovementMode.SUBMARINE, destination, List.of(CubeCoords.ZERO), 0);
+        var lower = mobile(manager, 2, 4, lowerRoof - 2, EntityMovementMode.SUBMARINE, destination, List.of(CubeCoords.ZERO), 0);
         for (Coords adjacent : ORIGIN.allAdjacent()) {
             if (!adjacent.equals(destination)) {
                 manager.getGame().getBoard().getHex(adjacent).addTerrain(new Terrain(Terrains.IMPASSABLE, 1));
@@ -149,8 +155,9 @@ class MobileStructureFallTest {
         upper.getNavalState().descended(1);
         new MobileStructureNavalHandler(manager).endTurn();
         assertEquals(destination, mek.getPosition());
-        assertEquals(-3, mek.getElevation(), "the lower roof is encountered before the seabed at -20");
-        assertEquals(148, lower.getCurrentCF(destination));
+        assertEquals(lowerRoof, mek.getElevation(), "the lower roof is encountered before the seabed at -20");
+        // TW p.68 requires at least two levels for AFFA; TO:AUE p.41 uses that rule for mobile structures.
+        assertEquals(remainingCF, lower.getCurrentCF(destination));
         assertTrue(mek.isProne());
     }
 

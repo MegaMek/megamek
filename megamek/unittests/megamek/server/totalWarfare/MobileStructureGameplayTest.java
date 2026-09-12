@@ -55,6 +55,7 @@ import megamek.common.moves.MobileStructureMovement;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.net.packets.Packet;
+import megamek.common.options.GameOptions;
 import megamek.common.units.*;
 import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.BeforeAll;
@@ -85,6 +86,7 @@ class MobileStructureGameplayTest {
 
     private TWGameManager manager(MobileStructure unit, int waterDepth) {
         var manager = spy(new TestManager());
+        manager.getGame().setOptions(new GameOptions());
         doNothing().when(manager).sendChangedHex(any(Coords.class), anyInt());
         doNothing().when(manager).entityUpdate(anyInt());
         doNothing().when(manager).sendChangedBuildings(any());

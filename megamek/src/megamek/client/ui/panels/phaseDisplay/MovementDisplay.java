@@ -115,6 +115,7 @@ import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.game.IGame;
 import megamek.common.moves.ClimbingHelper;
+import megamek.common.moves.MobileStructureMovement;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
@@ -270,7 +271,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     public static final int GEAR_SUB_STANDARD = 0;
     public static final int GEAR_SUB_MEK_BOOSTERS = 2;
 
-    public static final String turnDetailsFormat = "%s%-3s %-14s %1s %2dMP%s";
+    public static final String turnDetailsFormat = "%s%-3s %-14s %1s %2sMP%s";
 
     /**
      * Creates and lays out a new movement phase display for the specified clientGUI.getClient().
@@ -1617,7 +1618,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                   || (!SharedUtility.doThrustCheck(cmd.clone(), clientgui.getClient()).isBlank());
             boolean damageCheck = cmd.shouldMechanicalJumpCauseFallDamage() || cmd.hasActiveMASC()
                   || (!(currentEntity instanceof VTOL) && cmd.hasActiveSupercharger()) || cmd.willCrushBuildings();
-            String moveMsg = Messages.getString("MovementDisplay.Move") + " (" + mp + "MP)" + (psrCheck ? "*" : "")
+            String moveMsg = Messages.getString("MovementDisplay.Move") + " ("
+                  + SharedUtility.formatMovementPoints(currentEntity, mp) + "MP)" + (psrCheck ? "*" : "")
                   + (damageCheck ? "!" : "");
             updateDonePanelButtons(moveMsg, Messages.getString("MovementDisplay.Skip"), true, computeTurnDetails());
         }
@@ -1655,7 +1657,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       accumTypeCount == 1 ? "" : "x" + accumTypeCount,
                       accumType,
                       unicodeIcon,
-                      accumMP,
+                      SharedUtility.formatMovementPoints(cmd.getEntity(), accumMP),
                       "*".repeat(accumDanger)));
             }
 
@@ -1679,7 +1681,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         turnDetails.add(String.format(turnDetailsFormat,
               accumLegal ? validTextColor : invalidTextColor,
               accumTypeCount == 1 ? "" : "x" + accumTypeCount,
-              accumType, unicodeIcon, accumMP, "*".repeat(accumDanger)));
+              accumType, unicodeIcon, SharedUtility.formatMovementPoints(cmd.getEntity(), accumMP),
+              "*".repeat(accumDanger)));
         return turnDetails;
     }
 
@@ -2435,7 +2438,24 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void currentMove(Coords dest, int boardId) {
         if (shiftHeld || (gear == GEAR_TURN)) {
             if (buttons.get(MoveCommand.MOVE_TURN).isEnabled()) {
-                cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false, ManeuverType.MAN_NONE);
+                if (currentEntity() instanceof MobileStructure mobile) {
+                    if (cmd.getFinalCoords().equals(dest)) {
+                        return;
+                    }
+                    int destFacing = cmd.getFinalCoords().direction(dest);
+                    while (cmd.getFinalFacing() != destFacing && cmd.getMpUsed() < mobile.getWalkMP()
+                          && (cmd.getLastStep() == null
+                                || cmd.getLastStep().getMovementType(true) != EntityMovementType.MOVE_ILLEGAL)) {
+                        int previousFacing = cmd.getFinalFacing();
+                        addStepToMovePath(MovePath.getDirection(previousFacing, destFacing));
+                        // Canceling the pivot chooser leaves the existing path unchanged.
+                        if (cmd.getFinalFacing() == previousFacing) {
+                            break;
+                        }
+                    }
+                } else {
+                    cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false, ManeuverType.MAN_NONE);
+                }
             }
         } else if ((gear == GEAR_JUMP) && (jumpSubGear == GEAR_SUB_MEK_BOOSTERS)) {
             if (cmd.getFinalBoardId() != boardId) {
@@ -3203,6 +3223,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private synchronized void updateElevationButtons() {
         final Entity currentEntity = currentEntity();
         if (currentEntity == null) {
+            return;
+        }
+
+        if (currentEntity instanceof MobileStructure mobile) {
+            Coords position = cmd.getFinalCoords();
+            int facing = cmd.getFinalFacing();
+            int elevation = cmd.getFinalElevation();
+            boolean canChangeElevation = position != null && cmd.getFinalBoardId() == mobile.getBoardId()
+                  && !mobile.isImmobile() && cmd.getMpUsed() < mobile.getWalkMP()
+                  && (cmd.getLastStep() == null
+                        || cmd.getLastStep().getMovementType(true) != EntityMovementType.MOVE_ILLEGAL)
+                  && (mobile.getMovementMode() == EntityMovementMode.SUBMARINE
+                        || mobile.getMovementMode() == EntityMovementMode.VTOL);
+            setRaiseEnabled(canChangeElevation && MobileStructureMovement.cost(game, mobile,
+                  position, facing, elevation, position, facing, elevation + 1) != MobileStructureMovement.PROHIBITED);
+            setLowerEnabled(canChangeElevation && MobileStructureMovement.cost(game, mobile,
+                  position, facing, elevation, position, facing, elevation - 1) != MobileStructureMovement.PROHIBITED);
             return;
         }
 

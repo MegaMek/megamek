@@ -52,6 +52,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.moves.MobileStructureAirMovement;
 import megamek.common.moves.MovePath;
 import megamek.common.net.packets.Packet;
+import megamek.common.options.GameOptions;
 import megamek.common.planetaryConditions.Light;
 import megamek.common.planetaryConditions.Weather;
 import megamek.common.rolls.Roll;
@@ -75,6 +76,7 @@ class MobileStructureAirMovementTest {
 
     private TWGameManager manager() {
         var manager = spy(new TestManager());
+        manager.getGame().setOptions(new GameOptions());
         doNothing().when(manager).sendChangedHex(any(Coords.class), anyInt());
         doNothing().when(manager).entityUpdate(anyInt());
         doNothing().when(manager).sendChangedBuildings(any());

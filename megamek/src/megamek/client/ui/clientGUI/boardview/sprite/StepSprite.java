@@ -45,6 +45,7 @@ import java.awt.image.BufferedImage;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
+import megamek.client.ui.SharedUtility;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.HexDrawUtilities;
@@ -433,7 +434,7 @@ public class StepSprite extends Sprite {
             int walkMP = stepEntity.getWalkMP();
             costStringBuf.append(Math.min(step.getMpUsed(), walkMP));
         } else {
-            costStringBuf.append(step.getMpUsed());
+            costStringBuf.append(SharedUtility.formatMovementPoints(stepEntity, step.getMpUsed()));
         }
 
         // If the step is using a road bonus, mark it.

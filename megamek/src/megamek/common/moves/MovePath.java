@@ -522,13 +522,16 @@ public class MovePath implements Cloneable, Serializable {
             }
         }
 
-        // can't do anything after loading except loading again (if MPs exist)
-        if (contains(MoveStepType.LOAD) && !(getLastStep().getType() == MoveStepType.LOAD)) {
+        // TO:AUE p.38: mobile structures use grounded DropShip cargo rules; the passenger pays the MP.
+        // Ordinary carriers cannot do anything after loading except loading again (if MPs exist).
+        if (!(getEntity() instanceof MobileStructure)
+              && contains(MoveStepType.LOAD) && !(getLastStep().getType() == MoveStepType.LOAD)) {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             return;
         }
         // can't do anything after unloading except unloading again
-        if (contains(MoveStepType.UNLOAD) && !(getLastStep().getType() == MoveStepType.UNLOAD)) {
+        if (!(getEntity() instanceof MobileStructure)
+              && contains(MoveStepType.UNLOAD) && !(getLastStep().getType() == MoveStepType.UNLOAD)) {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             return;
         }
@@ -1632,6 +1635,16 @@ public class MovePath implements Cloneable, Serializable {
     public List<MovePath> getNextMoves(boolean backward, boolean forward) {
         final ArrayList<MovePath> result = new ArrayList<>();
         final MoveStep last = getLastStep();
+
+        if (getEntity() instanceof megamek.common.units.MobileStructure) {
+            // TO:AUE p.35: translation has no facing. A pivot is explicitly chosen, not a navigation shortcut.
+            for (MoveStepType type : List.of(MoveStepType.FORWARDS, MoveStepType.LATERAL_RIGHT,
+                  MoveStepType.LATERAL_RIGHT_BACKWARDS, MoveStepType.BACKWARDS,
+                  MoveStepType.LATERAL_LEFT_BACKWARDS, MoveStepType.LATERAL_LEFT)) {
+                result.add(clone().addStep(type));
+            }
+            return result;
+        }
 
         // need to do a separate section here for Aerospace.
         // just like jumping for now, but I could add some other stuff here later

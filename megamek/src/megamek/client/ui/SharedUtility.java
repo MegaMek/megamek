@@ -34,6 +34,7 @@
 
 package megamek.client.ui;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -62,6 +63,14 @@ import megamek.server.totalWarfare.TWGameManager;
 
 public class SharedUtility {
     private final static MMLogger LOGGER = MMLogger.create(SharedUtility.class);
+
+    /** Displays Mobile Structure quarter-points as MP, retaining integer text for other units. */
+    public static String formatMovementPoints(@Nullable Entity entity, int points) {
+        if (entity instanceof MobileStructure) {
+            return BigDecimal.valueOf(points).divide(BigDecimal.valueOf(4)).stripTrailingZeros().toPlainString();
+        }
+        return Integer.toString(points);
+    }
 
     public static String doPSRCheck(MovePath md) {
         return (String) doPSRCheck(md, true);

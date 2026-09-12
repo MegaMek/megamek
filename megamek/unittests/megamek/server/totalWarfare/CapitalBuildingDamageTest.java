@@ -111,6 +111,7 @@ class CapitalBuildingDamageTest {
     @BeforeEach
     void setup() {
         manager = spy(new TWGameManager());
+        manager.getGame().getOptions().initialize();
         doNothing().when(manager).send(any(Packet.class));
         doNothing().when(manager).sendChangedBuildings(any());
         doNothing().when(manager).sendChangedHex(any(Coords.class), anyInt());

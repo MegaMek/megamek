@@ -516,7 +516,7 @@ public class MoveStep implements Serializable {
                   : prev.getElevation());
             addDistance(1);
             setMp(MobileStructureMovement.plannedCost(game, mobile, prev.getPosition(), prev.getFacing(), prev.getElevation(),
-                  getPosition(), getFacing(), getElevation()));
+                  getPosition(), getFacing(), getElevation(), prev.getMpUsed()));
             return;
         }
 
@@ -878,7 +878,7 @@ public class MoveStep implements Serializable {
         // Update the entity's total MP used.
         if (entity instanceof MobileStructure mobile && MobileStructureMovement.isMovementStep(type)) {
             setMp(MobileStructureMovement.plannedCost(game, mobile, prev.getPosition(), prev.getFacing(), prev.getElevation(),
-                  getPosition(), getFacing(), getElevation()));
+                  getPosition(), getFacing(), getElevation(), prev.getMpUsed()));
         }
         if (entity instanceof MobileStructure && (getMp() == MobileStructureMovement.PROHIBITED
               || (long) getMpUsed() + getMp() > Integer.MAX_VALUE)) {
@@ -1359,7 +1359,7 @@ public class MoveStep implements Serializable {
         } else if (isJumping() && (distance == 0)) {
             // Can't jump zero hexes.
             legal = false;
-        } else if (hasEverUnloaded &&
+        } else if (hasEverUnloaded && !(getEntity() instanceof MobileStructure) &&
               (type != MoveStepType.UNLOAD) &&
               (type != MoveStepType.LAUNCH) &&
               (type != MoveStepType.DROP) &&
@@ -1368,7 +1368,7 @@ public class MoveStep implements Serializable {
               (type != MoveStepType.CHAFF) &&
               (type != MoveStepType.DROP_CARGO) &&
               (getAltitude() == 0)) {
-            // Can't be after unloading BA/inf
+            // Ordinary carriers stop after unloading BA/inf; mobile structures may move (TO:AUE p.38).
             legal = false;
         }
 

@@ -92,6 +92,7 @@ class CapitalBuildingWeaponHandlerTest {
     @BeforeEach
     void setup() {
         manager = spy(new TWGameManager());
+        manager.getGame().getOptions().initialize();
         doReturn(new Vector<Report>()).when(manager).damageEntity(any(Entity.class), any(HitData.class), anyInt(),
               anyBoolean(), any(DamageType.class), anyBoolean(), anyBoolean(), anyBoolean());
         Game game = manager.getGame();

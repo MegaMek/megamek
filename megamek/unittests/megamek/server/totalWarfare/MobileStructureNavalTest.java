@@ -66,6 +66,9 @@ class MobileStructureNavalTest {
 
     private TWGameManager manager(int depth, int height, EntityMovementMode mode) {
         var manager = spy(new LocalManager());
+        manager.getGame().setOptions(new megamek.common.options.GameOptions());
+        // Damage callbacks must use the spy so the independent hull-breach stub remains effective.
+        manager.setDamageManager(new TWDamageManager());
         doNothing().when(manager).entityUpdate(anyInt());
         doNothing().when(manager).sendChangedHex(any(Coords.class), anyInt());
         doNothing().when(manager).sendChangedBuildings(any());

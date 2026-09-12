@@ -2412,6 +2412,8 @@ public class Board implements Serializable {
             hex.addTerrain(new Terrain(Terrains.BRIDGE, bridge.getBuildingType().getTypeValue(), true, exits));
             hex.addTerrain(new Terrain(Terrains.BRIDGE_CF, bridge.getCurrentCF(coords)));
             hex.addTerrain(new Terrain(Terrains.BRIDGE_ELEV, megamek.common.units.BuildingElevation.base(bridge, coords)));
+        } else {
+            hex.removeTerrain(Terrains.BRIDGE_REPAIRED);
         }
         IBuilding remaining = getBuildingsAt(coords).stream().filter(building -> building.getBldgClass() != IBuilding.BRIDGE
                     && building.getBldgClass() != IBuilding.WALL && building.getBldgClass() != IBuilding.FENCE)

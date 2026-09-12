@@ -53,10 +53,13 @@ import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
+import megamek.common.turns.SpecificEntityTurn;
 import megamek.common.units.BuildingBayDoors;
 import megamek.common.units.BuildingDesign;
 import megamek.common.units.IBuilding;
@@ -114,10 +117,11 @@ class BuildingNetworkIntegrationTest {
         SwingUtilities.invokeAndWait(() -> { });
     }
 
-    @Test void twoClientsReceiveFloorDamageMovedDoorsAndTheSavedStateAfterReconnecting() throws Exception {
+    @Test void twoClientsReceiveFloorDamageActualMovementAndTheSavedStateAfterReconnecting() throws Exception {
         EquipmentType.initializeTypes();
         var manager = new TWGameManager();
         var game = manager.getGame();
+        game.getOptions().initialize();
         game.setBoard(BoardLoader.initializeBoard("size 16 17\nend\n"));
         game.setPhase(GamePhase.LOUNGE);
         game.setRoundCount(3);
@@ -139,9 +143,22 @@ class BuildingNetworkIntegrationTest {
         mobile.getDesign().getBayDoors().add(DOOR);
         game.addEntity(mobile);
         mobile.setPosition(ORIGIN);
+        mobile.setFacing(1);
         mobile.updateBuildingEntityHexes(0, manager);
         mobile.getInternalBuilding().enableExpandedCF();
+        // Keep another legal activation after this one, so Done can advance a real movement turn.
+        var reserve = new MobileStructure(BuildingType.HEAVY, IBuilding.FORTRESS);
+        reserve.configureConstruction(BuildingType.HEAVY, IBuilding.FORTRESS, 1, 90, 0, List.of(CubeCoords.ZERO));
+        reserve.setId(BUILDING_ID + 1);
+        reserve.setOwner(game.getPlayer(0));
+        reserve.setDeployed(true);
+        game.addEntity(reserve);
+        reserve.setPosition(new Coords(12, 12));
+        reserve.updateBuildingEntityHexes(0, manager);
         game.setPhase(GamePhase.MOVEMENT);
+        game.setTurnVector(List.of(new SpecificEntityTurn(0, BUILDING_ID),
+              new SpecificEntityTurn(0, reserve.getId())));
+        game.setTurnIndex(0, 0);
         var owner = connect("Building owner");
         var observer = connect("Building observer");
         for (var peer : List.of(owner, observer)) {
@@ -162,7 +179,22 @@ class BuildingNetworkIntegrationTest {
 
         assertTrue(BuildingBayDoors.damage(mobile, mobile.getTransportBays().getFirst(), DOOR));
         Coords moved = ORIGIN.translated(2);
-        new MobileStructureMovementHandler(manager).relocate(mobile, moved, 1, 0);
+        owner.awaitState(state -> owner.isMyTurn(), "owner receives the mobile's movement activation");
+        // Use the same path builder, clipping and client packet as a player's move followed by Done.
+        SwingUtilities.invokeAndWait(() -> {
+            var command = new MovePath(owner.getGame(), owner.getGame().getEntity(BUILDING_ID));
+            command.findPathTo(moved, MoveStepType.FORWARDS);
+            command.clipToPossible();
+            assertEquals(moved, command.getFinalCoords());
+            assertEquals(1, command.getFinalFacing(), "sideways mobile movement preserves heading");
+            assertTrue(command.isMoveLegal());
+            owner.moveEntity(BUILDING_ID, command);
+        });
+        owner.awaitState(state -> moved.equals(state.getEntity(BUILDING_ID).getPosition())
+              && state.getTurnIndex() == 1, "server executes the movement packet and advances the turn");
+        assertEquals(moved, mobile.getPosition());
+        assertTrue(mobile.isDone());
+        assertEquals(4, mobile.mpUsed);
         manager.entityUpdate(BUILDING_ID);
         for (var peer : List.of(owner, observer)) {
             peer.awaitState(state -> savedStateMatches(state, moved), "moved entity and physical door damage");

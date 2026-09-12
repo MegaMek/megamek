@@ -10410,6 +10410,12 @@ public class TWGameManager extends AbstractGameManager {
                 entity.setAltitude(entity.getAltitude() - aero.getAltLoss());
                 aero.setAltLossThisRound(aero.getAltLoss());
                 aero.resetAltLoss();
+                // Altitude knocked off by weapon fire can reach the ground, and a unit that arrives there has
+                // crashed. Without this the fighter sits at altitude zero still counted as airborne, unable to
+                // spend the velocity it is holding and unable to do anything else either (issue #8931).
+                if (checkCrash(entity)) {
+                    addReport(processCrash(entity, aero.getCurrentVelocity(), entity.getPosition()));
+                }
                 entityUpdate(entity.getId());
             }
         }

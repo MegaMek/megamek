@@ -88,6 +88,7 @@ import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.AutomaticEjectionRules;
+import megamek.common.units.CrewArmorKitRules;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
@@ -581,8 +582,26 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (!game.getPlanetaryConditions().isLethalToEjectedCrew()) {
             return false;
         }
-        return unitsWithAnEjectionSystem().stream()
-              .anyMatch(entity -> AutomaticEjectionRules.willEjectAutomatically(entity, game));
+        return anyCrewWouldDieEjecting();
+    }
+
+    /**
+     * Whether any of this player's units is set to throw a crew into something their kit does not answer.
+     * <p>
+     * A crew whose armor kit answers everything out there survives ejecting, so warning about them would be telling
+     * the player about a danger they have already dealt with. Asked per unit and per hazard, because a kit that
+     * answers the tainted air does not necessarily answer the vacuum.
+     *
+     * @return {@code true} if at least one crew would be killed by ejecting
+     */
+    private boolean anyCrewWouldDieEjecting() {
+        for (Entity entity : unitsWithAnEjectionSystem()) {
+            if (AutomaticEjectionRules.willEjectAutomatically(entity, game)
+                  && !CrewArmorKitRules.survivesEjection(entity, game)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

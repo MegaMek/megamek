@@ -34,7 +34,9 @@
 package megamek.common.units;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.EquipmentType;
@@ -43,6 +45,7 @@ import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
+import megamek.common.planetaryConditions.EjectionHazard;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.TaintedAtmosphereRules;
 
@@ -111,7 +114,10 @@ public final class CrewArmorKitRules {
     public static List<EquipmentType> availableArmorKits() {
         List<EquipmentType> armorKits = new ArrayList<>();
         for (EquipmentType equipment : EquipmentType.allTypes()) {
-            if (equipment.hasFlag(MiscType.F_ARMOR_KIT)) {
+            // Narrow to MiscType before testing a MiscType flag. Asking a weapon or an ammo type about a
+            // MiscTypeFlag makes it log a warning with a full stack trace, and this loop walks every equipment
+            // type MegaMek knows, so one call produced tens of thousands of them.
+            if ((equipment instanceof MiscType miscType) && miscType.hasFlag(MiscType.F_ARMOR_KIT)) {
                 armorKits.add(equipment);
             }
         }
@@ -218,6 +224,80 @@ public final class CrewArmorKitRules {
     }
 
     /**
+     * Whether a kit answers one particular hazard, so a crew wearing it lives through that much.
+     *
+     * <p>Answered one hazard at a time because no kit answers all of them. A MekWarrior combat suit supplies air
+     * through its sealed neurohelmet, so it answers a tainted atmosphere and, being armored cooling gear, extreme
+     * heat. It has no gloves and never becomes pressure-tight, so it does not answer vacuum. Nothing anyone wears
+     * answers a tornado.</p>
+     *
+     * @param armorKit the kit the crew is wearing, or {@code null} if they wear none
+     * @param hazard   the hazard to test against
+     *
+     * @return {@code true} if the kit keeps its wearer alive in that hazard
+     */
+    public static boolean answers(@Nullable EquipmentType armorKit, EjectionHazard hazard) {
+        if (armorKit == null) {
+            return false;
+        }
+        boolean isCombatSuit = armorKit.hasFlag(MiscTypeFlag.S_COMBAT_SUIT);
+        return switch (hazard) {
+            // Only a sealed kit holds pressure; the combat suit explicitly does not.
+            case VACUUM -> armorKit.hasAnyFlag(MiscTypeFlag.S_SPACE_SUIT, MiscTypeFlag.S_XCT_VACUUM);
+            // Kept apart because a Light Environment Suit is rated for tainted air and not for toxic air,
+            // TO:AUE p.162, which is the same split ConvInfantry draws for XCT troops.
+            case TAINTED_AIR -> isCombatSuit
+                  || armorKit.hasAnyFlag(MiscTypeFlag.S_TAINTED_ATMOSPHERE, MiscTypeFlag.S_TOXIC_ATMOSPHERE);
+            case TOXIC_AIR -> isCombatSuit || armorKit.hasFlag(MiscTypeFlag.S_TOXIC_ATMOSPHERE);
+            case EXTREME_HEAT -> isCombatSuit || armorKit.hasFlag(MiscTypeFlag.S_HOT_WEATHER);
+            case EXTREME_COLD -> armorKit.hasAnyFlag(MiscTypeFlag.S_COLD_WEATHER, MiscTypeFlag.S_XCT_VACUUM);
+            // Being picked up and thrown is not something a suit answers.
+            case TORNADO, STORM -> false;
+        };
+    }
+
+    /**
+     * The lethal hazards out there that this crew's kit does not answer, which is what would actually kill them.
+     *
+     * <p>An empty result means the crew survives ejecting into these conditions, so there is nothing to warn the
+     * player about. A crew wearing nothing gets every hazard back.</p>
+     *
+     * @param entity the unit the crew is aboard, or {@code null}
+     * @param game   the game whose conditions and options apply, or {@code null}
+     *
+     * @return the hazards the crew is not protected from, empty if they would survive
+     */
+    public static Set<EjectionHazard> unansweredBy(@Nullable Entity entity, @Nullable Game game) {
+        if (game == null) {
+            return EnumSet.noneOf(EjectionHazard.class);
+        }
+        Set<EjectionHazard> hazards = game.getPlanetaryConditions().lethalEjectionHazards();
+        if (hazards.isEmpty()) {
+            return hazards;
+        }
+        EquipmentType armorKit = crewArmorKit(entity, game);
+        Set<EjectionHazard> unanswered = EnumSet.noneOf(EjectionHazard.class);
+        for (EjectionHazard hazard : hazards) {
+            if (!answers(armorKit, hazard)) {
+                unanswered.add(hazard);
+            }
+        }
+        return unanswered;
+    }
+
+    /**
+     * Whether this crew would survive ejecting into the conditions, because their kit answers everything out there.
+     *
+     * @param entity the unit the crew is aboard, or {@code null}
+     * @param game   the game whose conditions and options apply, or {@code null}
+     *
+     * @return {@code true} if nothing out there would kill them
+     */
+    public static boolean survivesEjection(@Nullable Entity entity, @Nullable Game game) {
+        return unansweredBy(entity, game).isEmpty();
+    }
+
+    /**
      * Whether a kit is worth mentioning in the ejection report, being the difference between the crew living and
      * dying out there.
      * <p>
@@ -244,8 +324,8 @@ public final class CrewArmorKitRules {
         // A taint needs an atmosphere to be carried in. The combat suit answers it by interpretation; other kits
         // carry the flags for it themselves.
         boolean isAirPoisonous = TaintedAtmosphereRules.requiresXctInfantry(conditions.getAtmosphericTaint());
-        boolean answersTheAir = isCombatSuit
-              || armorKit.hasAnyFlag(MiscTypeFlag.S_TAINTED_ATMOSPHERE, MiscTypeFlag.S_TOXIC_ATMOSPHERE);
+        boolean answersTheAir = answers(armorKit,
+              conditions.getAtmosphericTaint().isToxic() ? EjectionHazard.TOXIC_AIR : EjectionHazard.TAINTED_AIR);
         if (isAirPoisonous && answersTheAir) {
             return true;
         }

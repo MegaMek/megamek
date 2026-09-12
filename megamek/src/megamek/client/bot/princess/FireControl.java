@@ -41,8 +41,8 @@ import megamek.client.bot.princess.coverage.Builder;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.LosEffects;
-import megamek.common.PartialCover;
 import megamek.common.Messages;
+import megamek.common.PartialCover;
 import megamek.common.Player;
 import megamek.common.RangeType;
 import megamek.common.TargetRollModifier;
@@ -74,7 +74,6 @@ import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.planetaryConditions.IlluminationLevel;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.*;
 import megamek.common.weapons.Weapon;
@@ -1109,13 +1108,7 @@ public class FireControl {
             }
             // Apollo FCS gives MRMs -1 to-hit (TO:AR). Apollo is not negated by ECM.
             Mounted<?> ammoLinker = weapon.getLinkedBy();
-            boolean isApolloFcs = (ammoLinker != null)
-                  && (ammoLinker.getType() instanceof MiscType)
-                  && ammoLinker.getType().hasFlag(MiscType.F_APOLLO);
-            boolean isApolloFcsOperational = isApolloFcs
-                  && !ammoLinker.isDestroyed()
-                  && !ammoLinker.isMissing()
-                  && !ammoLinker.isBreached();
+            boolean isApolloFcsOperational = EquipmentActivation.isGuidanceActive(ammoLinker, MiscType.F_APOLLO);
             boolean isMrmAmmo = (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM);
             if (isApolloFcsOperational && isMrmAmmo) {
                 toHit.addModifier(TH_APOLLO);
@@ -3328,7 +3321,7 @@ public class FireControl {
                 weaponDamage = weaponType.getRackSize();
             } else if (weaponDamage == WeaponType.DAMAGE_VARIABLE && shooter.isConventionalInfantry()) {
             	ConvInfantry infantryShooter = (ConvInfantry) shooter;
-            	
+
             	weaponDamage = (int) Math.round(infantryShooter.getDamagePerTrooper() * infantryShooter.getShootingStrength());
             }
 

@@ -6476,7 +6476,9 @@ public class Compute {
                 continue;
             }
             entities = game.getEntities(tempcoords);
-            if (entities.hasNext()) {
+            // Every unit in the hex, not just the first: a hex whose first unit is infantry sheltering in a
+            // building would otherwise contribute nothing, hiding whatever else is standing there.
+            while (entities.hasNext()) {
                 tempEntity = entities.next();
                 if (!tempEntity.getTargetedBySwarm(aeId, weaponId)
                       && canBeSwarmedFrom(game, attacker, tempEntity)) {

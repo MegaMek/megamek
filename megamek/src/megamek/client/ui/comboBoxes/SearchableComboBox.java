@@ -148,6 +148,22 @@ public class SearchableComboBox<E> extends JComboBox<E> {
     }
 
     /**
+     * Also puts the tooltip on the editor field, which is what the pointer is actually over on an editable combo box.
+     *
+     * <p>Without this, a caller's tooltip never shows: the constructor puts the "type to search" hint on the editor,
+     * and that hint sits in front of whatever the caller sets on the combo box itself.</p>
+     *
+     * @param text the tooltip to show, or {@code null} to fall back to the search hint
+     */
+    @Override
+    public void setToolTipText(@Nullable String text) {
+        super.setToolTipText(text);
+        if (editorField != null) {
+            editorField.setToolTipText((text == null) ? Messages.getString("SearchableComboBox.tooltip") : text);
+        }
+    }
+
+    /**
      * Sizes the box for its widest entry, so narrowing the list while typing does not make the box shrink and
      * grow with every keystroke.
      */

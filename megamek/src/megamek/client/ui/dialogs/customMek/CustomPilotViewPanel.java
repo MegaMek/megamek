@@ -36,7 +36,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.util.Map;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.io.Serial;

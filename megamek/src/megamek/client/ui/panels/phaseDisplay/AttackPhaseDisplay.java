@@ -334,6 +334,7 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
                 new TurretFacingDialog(clientgui.getFrame(), tank, clientgui, this::declareSecondaryFacing)
                       .setVisible(true);
             }
+            refreshAfterRotation();
             return;
         }
         WeaponMounted weapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
@@ -348,6 +349,26 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
                 new TurretFacingDialog(clientgui.getFrame(), turretMek, turretItem, clientgui).setVisible(true);
             }
         }
+        refreshAfterRotation();
+    }
+
+    /**
+     * Redraws the unit and its firing arc after a turret or mount rotation.
+     *
+     * <p>Only one of the rotation paths refreshed the board on its own. A vehicle main turret is declared as a twist,
+     * which refreshes; a Mek turret and a Directional Torso Mount only send the new facing to the server, which
+     * applies it and echoes nothing, so the unit kept its old facing on screen until something else redrew it.</p>
+     *
+     * <p>The dialog is modal, so this runs once the player has accepted or cancelled it. Redrawing after a cancel
+     * costs nothing.</p>
+     */
+    private void refreshAfterRotation() {
+        Entity entity = currentEntity();
+        if (entity == null) {
+            return;
+        }
+        clientgui.onAllBoardViews(boardView -> boardView.redrawEntity(entity));
+        clientgui.updateFiringArc(entity);
     }
 
     /**
@@ -358,6 +379,7 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
         if ((currentEntity() instanceof Tank tank) && !tank.hasNoDualTurret()) {
             new TurretFacingDialog(clientgui.getFrame(), tank, clientgui, this::declareSecondaryFacing)
                   .setVisible(true);
+            refreshAfterRotation();
         }
     }
 

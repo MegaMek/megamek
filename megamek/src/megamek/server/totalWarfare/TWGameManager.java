@@ -27510,6 +27510,10 @@ public class TWGameManager extends AbstractGameManager {
         } else {
             m.setFacing(facing);
         }
+        // Tell the clients. Without this the facing changed only on the server and on the client that sent it,
+        // so nobody else saw the turret move and the sender's own board kept the old facing until some other
+        // update happened to redraw the unit.
+        entityUpdate(entityId);
     }
 
     /**

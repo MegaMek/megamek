@@ -52,7 +52,6 @@ import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.common.*;
-import megamek.common.InfantryActionDeclaration;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
@@ -19375,7 +19374,7 @@ public class TWGameManager extends AbstractGameManager {
                     HitData.DAMAGE_ARMOR_PIERCING_MISSILE);
         // Check for reflective armor
         if ((armorType == EquipmentType.T_ARMOR_BA_REFLECTIVE) &&
-              (hit.getGeneralDamageType() == HitData.DAMAGE_ENERGY)) {
+            (hit.getGeneralDamageType() == HitData.DAMAGE_ENERGY || hit.getGeneralDamageType() == HitData.DAMAGE_HEAT)) {
             armorDamageReduction = true;
         }
         return armorDamageReduction;

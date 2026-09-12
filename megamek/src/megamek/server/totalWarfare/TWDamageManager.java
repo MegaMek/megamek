@@ -3544,7 +3544,7 @@ public class TWDamageManager implements IDamageManager {
                 report.add(dmgToDouble);
                 report.add(damage);
                 reportVec.addElement(report);
-            } else if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_ENERGY)) {
+            } else if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_ENERGY || hit.getGeneralDamageType() == HitData.DAMAGE_HEAT)) {
                 tmpDamageHold = damage;
                 damage = (int) Math.floor(((double) damage) / 2);
                 if (tmpDamageHold == 1) {
@@ -3578,6 +3578,7 @@ public class TWDamageManager implements IDamageManager {
                 report = new Report(6093);
                 report.subject = entityId;
                 report.indent(3);
+                report.add(tmpDamageHold);
                 report.add(damage);
                 reportVec.addElement(report);
             } else if (hit.getGeneralDamageType() == HitData.DAMAGE_AX) {

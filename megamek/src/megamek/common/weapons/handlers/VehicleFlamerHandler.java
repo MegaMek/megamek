@@ -67,7 +67,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
     public VehicleFlamerHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
           throws EntityLoadingException {
         super(toHit, waa, g, m);
-        generalDamageType = HitData.DAMAGE_ENERGY;
+        generalDamageType = HitData.DAMAGE_HEAT;
     }
 
     /*

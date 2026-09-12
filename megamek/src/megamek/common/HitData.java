@@ -57,6 +57,7 @@ public class HitData {
     public static final int DAMAGE_IGNORES_DMG_REDUCTION = -8;
     public static final int DAMAGE_AX = -9;
     public static final int DAMAGE_PHYSICAL_NONATTACK = -10;
+    public static final int DAMAGE_HEAT = -11;
 
     private int location;
     private final boolean rear;
@@ -138,6 +139,9 @@ public class HitData {
         fromFront = fromWhere;
         generalDamageType = damageType;
         this.glancing = glancing;
+        if (damageType == HitData.DAMAGE_HEAT) {
+            this.heat_weapon = true;
+        }
     }
 
     public void setHeatWeapon(boolean heatWeapon) {
@@ -234,7 +238,8 @@ public class HitData {
     }
 
     public boolean getHeatWeapon() {
-        return Game.rulesManager.getRulesArmor().allowHeatWeapon(heat_weapon);
+        boolean isHeat = heat_weapon || generalDamageType == HitData.DAMAGE_HEAT;
+        return Game.rulesManager.getRulesArmor().allowHeatWeapon(isHeat);
     }
 
     public void setGeneralDamageType(int type) {

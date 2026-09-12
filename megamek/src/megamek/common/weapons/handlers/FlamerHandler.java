@@ -63,7 +63,7 @@ public class FlamerHandler extends WeaponHandler {
     public FlamerHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
           throws EntityLoadingException {
         super(toHit, waa, g, m);
-        generalDamageType = HitData.DAMAGE_ENERGY;
+        generalDamageType = HitData.DAMAGE_HEAT;
     }
 
     @Override

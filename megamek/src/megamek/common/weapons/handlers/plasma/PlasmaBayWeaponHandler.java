@@ -34,15 +34,12 @@
 
 package megamek.common.weapons.handlers.plasma;
 
-import java.io.Serial;
-import java.util.Vector;
-
-import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponMounted;
@@ -61,6 +58,9 @@ import megamek.common.weapons.ppc.innerSphere.ISLightPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISPlasmaRifle;
 import megamek.server.totalWarfare.TWGameManager;
 
+import java.io.Serial;
+import java.util.Vector;
+
 @Deprecated(since = "0.51.0", forRemoval = true)
 public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
     @Serial
@@ -72,7 +72,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
     public PlasmaBayWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
           throws EntityLoadingException {
         super(toHit, waa, g, m);
-        generalDamageType = HitData.DAMAGE_ENERGY;
+        generalDamageType = HitDamageType.DAMAGE_HEAT;
     }
 
     /*

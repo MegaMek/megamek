@@ -34,6 +34,7 @@
 
 package megamek.common;
 
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
@@ -73,7 +74,7 @@ public class HitData {
     // in case of usage of Edge it is document what the previous location was
     private HitData undoneLocation = null;
     private boolean fallDamage = false; // did the damage come from a fall?
-    private int generalDamageType;
+    private HitDamageType generalDamageType;
     private boolean capital = false;
     private int capMisCritMod = 0;
     private boolean boxcars = false;
@@ -116,20 +117,23 @@ public class HitData {
     public HitData(int location, boolean rear, int effect,
           boolean hitAimedLocation, int specCritMod, boolean specCrit) {
         this(location, rear, effect, hitAimedLocation, specCritMod, specCrit,
-              true, HitData.DAMAGE_NONE);
+             true, HitDamageType.DAMAGE_NONE);
 
     }
 
     public HitData(int location, boolean rear, int effect,
           boolean hitAimedLocation, int specCritMod, boolean specCrit,
-          boolean fromWhere, int damageType) {
+                   boolean fromWhere,
+                   HitDamageType damageType) {
         this(location, rear, effect, hitAimedLocation, specCritMod, specCrit,
               fromWhere, damageType, 0);
     }
 
     public HitData(int location, boolean rear, int effect,
           boolean hitAimedLocation, int specCritMod, boolean specCrit,
-          boolean fromWhere, int damageType, int glancing) {
+                   boolean fromWhere,
+                   HitDamageType damageType,
+                   int glancing) {
         this.location = location;
         this.rear = rear;
         this.effect = effect;
@@ -139,7 +143,7 @@ public class HitData {
         fromFront = fromWhere;
         generalDamageType = damageType;
         this.glancing = glancing;
-        if (damageType == HitData.DAMAGE_HEAT) {
+        if (damageType == HitDamageType.DAMAGE_HEAT) {
             this.heat_weapon = true;
         }
     }
@@ -226,23 +230,23 @@ public class HitData {
 
     public void makeFallDamage(boolean fall) {
         fallDamage = fall;
-        generalDamageType = HitData.DAMAGE_PHYSICAL;
+        generalDamageType = HitDamageType.DAMAGE_PHYSICAL;
     }
 
     public boolean isFallDamage() {
         return fallDamage;
     }
 
-    public int getGeneralDamageType() {
+    public HitDamageType getGeneralDamageType() {
         return generalDamageType;
     }
 
     public boolean getHeatWeapon() {
-        boolean isHeat = heat_weapon || generalDamageType == HitData.DAMAGE_HEAT;
+        boolean isHeat = heat_weapon || generalDamageType == HitDamageType.DAMAGE_HEAT;
         return Game.rulesManager.getRulesArmor().allowHeatWeapon(isHeat);
     }
 
-    public void setGeneralDamageType(int type) {
+    public void setGeneralDamageType(HitDamageType type) {
         generalDamageType = type;
     }
 

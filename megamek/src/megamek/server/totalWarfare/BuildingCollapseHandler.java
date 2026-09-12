@@ -33,13 +33,6 @@
 
 package megamek.server.totalWarfare;
 
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.IndustrialElevator;
@@ -49,6 +42,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscType;
 import megamek.common.net.enums.PacketCommand;
@@ -56,6 +50,13 @@ import megamek.common.net.packets.Packet;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
+
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 public class BuildingCollapseHandler extends AbstractTWRuleHandler {
 
@@ -512,7 +513,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                         table = ToHitData.HIT_PUNCH;
                     }
                     HitData hit = entity.rollHitLocation(table, ToHitData.SIDE_FRONT);
-                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
+                    hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL_NONATTACK);
                     vPhaseReport.addAll(gameManager.damageEntity(entity, hit, next));
                     remaining -= next;
                 }

@@ -34,10 +34,6 @@
 
 package megamek.common.weapons.handlers.plasma;
 
-import java.io.Serial;
-import java.util.Vector;
-
-import megamek.common.HitData;
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -45,6 +41,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponType;
@@ -59,6 +56,9 @@ import megamek.common.weapons.ppc.innerSphere.ISHeavyPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISLightPlasmaRifle;
 import megamek.server.totalWarfare.TWGameManager;
 
+import java.io.Serial;
+import java.util.Vector;
+
 public class PlasmaRifleHandler extends AmmoWeaponHandler {
     @Serial
     private static final long serialVersionUID = -2092721653693187140L;
@@ -72,7 +72,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     public PlasmaRifleHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
           TWGameManager twGameManager) throws EntityLoadingException {
         super(toHitData, weaponAttackAction, game, twGameManager);
-        generalDamageType = HitData.DAMAGE_HEAT;
+        generalDamageType = HitDamageType.DAMAGE_HEAT;
     }
 
     @Override

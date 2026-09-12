@@ -34,15 +34,13 @@
 
 package megamek.common.weapons.handlers.ac;
 
-import java.io.Serial;
-import java.util.Vector;
-
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.ComputeSideTable;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.AmmoType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -50,6 +48,9 @@ import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalWarfare.TWGameManager;
+
+import java.io.Serial;
+import java.util.Vector;
 
 /**
  * @author Andrew Hunter
@@ -62,7 +63,7 @@ public class ACAPHandler extends ACWeaponHandler {
     public ACAPHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
           TWGameManager twGameManager) throws EntityLoadingException {
         super(toHitData, weaponAttackAction, game, twGameManager);
-        generalDamageType = HitData.DAMAGE_ARMOR_PIERCING;
+        generalDamageType = HitDamageType.DAMAGE_ARMOR_PIERCING;
     }
 
     @Override

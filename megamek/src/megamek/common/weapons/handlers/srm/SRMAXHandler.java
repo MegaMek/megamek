@@ -34,16 +34,15 @@
 
 package megamek.common.weapons.handlers.srm;
 
-import java.io.Serial;
-
-import megamek.common.HitData;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.HitDamageType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalWarfare.TWGameManager;
+
+import java.io.Serial;
 
 /**
  * @author Sebastian Brocks
@@ -58,7 +57,7 @@ public class SRMAXHandler extends SRMHandler {
 
         nSalvoBonus = Game.rulesManager.getRulesAmmo().getAXMissileModifier();
         damageType = DamageType.ACID;
-        generalDamageType = HitData.DAMAGE_AX;
+        generalDamageType = HitDamageType.DAMAGE_AX;
     }
 }
 //Rules for AX Warheads are found in Tactical Operations: Advanced Units and Equipment (6th Printing), pg. 179

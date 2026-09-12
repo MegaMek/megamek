@@ -34,18 +34,14 @@
 
 package megamek.common.weapons.handlers;
 
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.Vector;
-
 import megamek.common.HexTarget;
-import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
@@ -56,6 +52,10 @@ import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.server.totalWarfare.TWGameManager;
+
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Weapon handler for vehicular grenade launchers.  Rather than have a separate handler for each ammo type, all ammo
@@ -69,7 +69,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
 
     public VGLWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
-        generalDamageType = HitData.DAMAGE_NONE;
+        generalDamageType = HitDamageType.DAMAGE_NONE;
     }
 
     /**

@@ -34,9 +34,6 @@
 
 package megamek.common.weapons.handlers.srm;
 
-import java.io.Serial;
-import java.util.Vector;
-
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.Report;
@@ -45,6 +42,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeSideTable;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.IArmorState;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -55,6 +53,9 @@ import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalWarfare.TWGameManager;
+
+import java.io.Serial;
+import java.util.Vector;
 
 /**
  * @author Jason Tighe
@@ -67,7 +68,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
           throws EntityLoadingException {
         super(t, w, g, m);
         sSalvoType = " tandem charge missile(s) ";
-        generalDamageType = HitData.DAMAGE_ARMOR_PIERCING_MISSILE;
+        generalDamageType = HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE;
     }
 
     @Override

@@ -35,6 +35,7 @@ package megamek.common.rules.core;
 
 import megamek.common.HitData;
 import megamek.common.Report;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.rules.RulesArmor;
@@ -117,9 +118,13 @@ public class CoreRulesArmor extends RulesArmor {
      * Impact armor reduces damage from falls, collisions, and buildings by half. 1/3 for physical
      */
     @Override
-    public int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec, int damageType) {
+    public int reduceImpactDamage(int entityId,
+                                  HitData hit,
+                                  int damage,
+                                  Vector<Report> reportVec,
+                                  HitDamageType damageType) {
         Report report;
-        if (hit.isFallDamage() || damageType == HitData.DAMAGE_PHYSICAL_NONATTACK) {
+        if (hit.isFallDamage() || damageType == HitDamageType.DAMAGE_PHYSICAL_NONATTACK) {
             damage = Math.max(1, damage / 2);
             report = new Report(6099);
             report.subject = entityId;

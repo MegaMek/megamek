@@ -34,9 +34,6 @@
 
 package megamek.common.weapons.handlers.plasma;
 
-import java.io.Serial;
-import java.util.Vector;
-
 import megamek.common.HitData;
 import megamek.common.LosEffects;
 import megamek.common.Report;
@@ -47,6 +44,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.ArmorType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -59,6 +57,9 @@ import megamek.common.units.Targetable;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.server.totalWarfare.TWGameManager;
 
+import java.io.Serial;
+import java.util.Vector;
+
 public class PlasmaCannonHandler extends AmmoWeaponHandler {
     @Serial
     private static final long serialVersionUID = 2304364403526293671L;
@@ -69,7 +70,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
     public PlasmaCannonHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
           throws EntityLoadingException {
         super(toHit, waa, g, m);
-        generalDamageType = HitData.DAMAGE_HEAT;
+        generalDamageType = HitDamageType.DAMAGE_HEAT;
     }
 
     /**

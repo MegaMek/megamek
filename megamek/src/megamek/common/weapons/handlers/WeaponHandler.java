@@ -34,18 +34,6 @@
 
 package megamek.common.weapons.handlers;
 
-import static java.lang.Math.floor;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Vector;
-
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.LosEffects;
@@ -67,6 +55,7 @@ import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
@@ -87,6 +76,18 @@ import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
 import megamek.server.totalWarfare.TWGameManager;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Vector;
+
+import static java.lang.Math.floor;
 
 /**
  * A basic, simple attack handler. May or may not work for any particular weapon; must be overloaded to support special
@@ -135,7 +136,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean announcedEntityFiring = false;
     protected boolean missed = false;
     protected DamageType damageType;
-    protected int generalDamageType = HitData.DAMAGE_NONE;
+    protected HitDamageType generalDamageType = HitDamageType.DAMAGE_NONE;
     protected Vector<Integer> insertedAttacks = new Vector<>();
     protected int numWeapons; // for capital fighters/fighter squadrons
     protected int numWeaponsHit; // for capital fighters/fighter squadrons

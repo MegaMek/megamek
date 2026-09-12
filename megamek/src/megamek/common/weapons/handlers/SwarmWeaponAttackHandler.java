@@ -34,14 +34,11 @@
 
 package megamek.common.weapons.handlers;
 
-import java.io.Serial;
-import java.util.Vector;
-
-import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.enums.HitDamageType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
@@ -49,6 +46,9 @@ import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.server.totalWarfare.TWGameManager;
+
+import java.io.Serial;
+import java.util.Vector;
 
 /**
  * @author Jay Lawson
@@ -64,7 +64,7 @@ public class SwarmWeaponAttackHandler extends WeaponHandler {
     public SwarmWeaponAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
           throws EntityLoadingException {
         super(toHit, waa, g, m);
-        generalDamageType = HitData.DAMAGE_NONE;
+        generalDamageType = HitDamageType.DAMAGE_NONE;
     }
 
     @Override

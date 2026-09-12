@@ -35,7 +35,7 @@ package megamek.common.rules;
 
 import megamek.common.HitData;
 import megamek.common.Report;
-import megamek.common.units.Entity;
+import megamek.common.enums.HitDamageType;
 import megamek.server.totalWarfare.TWDamageManager;
 
 import java.util.Vector;
@@ -115,5 +115,5 @@ public abstract class RulesArmor {
      * @return the reduced damage amount
      */
     public abstract int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec,
-          int damageType);
+                                           HitDamageType damageType);
 }

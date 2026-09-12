@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2013 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,25 +31,21 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.weapons.handlers;
+package megamek.common.enums;
 
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.enums.HitDamageType;
-import megamek.common.game.Game;
-import megamek.common.loaders.EntityLoadingException;
-import megamek.server.totalWarfare.TWGameManager;
-
-import java.io.Serial;
-
-public class ReengineeredLaserWeaponHandler extends EnergyWeaponHandler {
-    @Serial
-    private static final long serialVersionUID = -7390162086880372388L;
-
-    public ReengineeredLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
-          TWGameManager m) throws EntityLoadingException {
-        super(toHit, waa, g, m);
-        // so that reflective armor doesn't halve the damage
-        generalDamageType = HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION;
-    }
+/**
+ * Used by HitData for the damage types. Used by Armor for damage reductions
+ */
+public enum HitDamageType {
+    DAMAGE_NONE,
+    DAMAGE_PHYSICAL,
+    DAMAGE_ENERGY,
+    DAMAGE_MISSILE,
+    DAMAGE_BALLISTIC,
+    DAMAGE_ARMOR_PIERCING,
+    DAMAGE_ARMOR_PIERCING_MISSILE,
+    DAMAGE_IGNORES_DMG_REDUCTION,
+    DAMAGE_AX,
+    DAMAGE_PHYSICAL_NONATTACK,
+    DAMAGE_HEAT;
 }

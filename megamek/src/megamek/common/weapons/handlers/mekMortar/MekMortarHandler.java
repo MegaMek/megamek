@@ -34,20 +34,20 @@
 
 package megamek.common.weapons.handlers.mekMortar;
 
-import java.io.Serial;
-import java.util.Vector;
-
-import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
+import megamek.common.enums.HitDamageType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.server.totalWarfare.TWGameManager;
+
+import java.io.Serial;
+import java.util.Vector;
 
 /**
  * @author Jason Tighe
@@ -62,7 +62,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
      */
     public MekMortarHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
-        generalDamageType = HitData.DAMAGE_MISSILE;
+        generalDamageType = HitDamageType.DAMAGE_MISSILE;
     }
 
     /*

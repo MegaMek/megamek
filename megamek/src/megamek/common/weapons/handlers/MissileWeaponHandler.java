@@ -34,14 +34,6 @@
 
 package megamek.common.weapons.handlers;
 
-import static megamek.common.equipment.AmmoType.INCENDIARY_MOD;
-
-import java.io.Serial;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Vector;
-
-import megamek.common.HitData;
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -51,6 +43,7 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeECM;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
@@ -73,6 +66,13 @@ import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
 import megamek.server.totalWarfare.TWGameManager;
 
+import java.io.Serial;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Vector;
+
+import static megamek.common.equipment.AmmoType.INCENDIARY_MOD;
+
 /**
  * @author Sebastian Brocks
  */
@@ -86,7 +86,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     public MissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)
           throws EntityLoadingException {
         super(t, w, g, m);
-        generalDamageType = HitData.DAMAGE_MISSILE;
+        generalDamageType = HitDamageType.DAMAGE_MISSILE;
         advancedAMS =
               Game.rulesManager.getRulesEquipment().getAMSReduction(g.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AMS));
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADV_POINT_DEFENSE);

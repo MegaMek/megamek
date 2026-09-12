@@ -34,12 +34,10 @@
 
 package megamek.common.weapons.handlers.plasma;
 
-import java.io.Serial;
-import java.util.Vector;
-
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
@@ -51,6 +49,9 @@ import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.EnergyWeaponHandler;
 import megamek.server.totalWarfare.TWGameManager;
 
+import java.io.Serial;
+import java.util.Vector;
+
 public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
     @Serial
     private static final long serialVersionUID = -6816799343788643259L;
@@ -58,6 +59,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
     public PlasmaMFUKWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
           throws EntityLoadingException {
         super(toHit, waa, g, m);
+        generalDamageType = HitDamageType.DAMAGE_HEAT;
     }
 
     @Override

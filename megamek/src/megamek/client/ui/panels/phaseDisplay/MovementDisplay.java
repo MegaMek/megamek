@@ -661,9 +661,18 @@ public class MovementDisplay extends ActionPhaseDisplay {
                      selectedEntity.getElevation(), selectedEntity.getPosition(), selectedEntity.getFacing());
 
         clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
-        clientgui.getBoardView(selectedEntity).highlight(selectedEntity.getPosition());
+        if (selectedEntity.getPosition() != null) {
+            clientgui.getBoardView(selectedEntity).highlight(selectedEntity.getPosition());
+        }
         if (!clientgui.isCurrentBoardViewShowingAnimation()) {
-            clientgui.centerOnUnit(selectedEntity);
+            if (selectedEntity.getPosition() != null) {
+                clientgui.centerOnUnit(selectedEntity);
+            } else {
+                Coords coords = game.getBoard().getDeploymentCenter(selectedEntity.getStartingPos());
+                BoardLocation location = new BoardLocation(coords, game.getBoard().getBoardId(), false);
+                clientgui.centerOnHex(location);
+            }
+
         }
 
         initializeStatusBarText(selectedEntity);

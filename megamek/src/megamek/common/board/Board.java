@@ -331,6 +331,36 @@ public class Board implements Serializable {
     }
 
     /**
+     * for a given deployment position, return the center point of it
+     *
+     * @param deploymentPosition Deployment zone
+     * @return a coordinate
+     */
+    public Coords getDeploymentCenter(int deploymentPosition) {
+        switch (deploymentPosition) {
+            case Board.START_E:
+                return new Coords(0, getHeight() / 2);
+            case Board.START_SE:
+                return new Coords(0, getHeight());
+            case Board.START_SW:
+                return new Coords(getWidth(), getHeight());
+            case Board.START_W:
+                return new Coords(getWidth(), getHeight() / 2);
+            case Board.START_NE:
+                return new Coords(0, 0);
+            case Board.START_NW:
+                return new Coords(getWidth(), 0);
+            case Board.START_N:
+                return new Coords(getWidth() / 2, 0);
+            case Board.START_S:
+                return new Coords(getWidth() / 2, getHeight());
+            default:
+                // Any, Center, custom zones
+                return getCenter();
+        }
+    }
+
+    /**
      * Creates a new data set for the board, with the specified dimensions and data; notifies listeners that a new data
      * set has been created.
      *

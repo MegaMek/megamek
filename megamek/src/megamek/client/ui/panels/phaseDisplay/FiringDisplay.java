@@ -2467,9 +2467,29 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         updateRHS();
     }
 
+    /**
+     * Enables or disables one firing button and its menu item.
+     *
+     * <p>The button may be absent. {@link PointblankShotDisplay} declares its own command set and its own button
+     * map, so this map is never filled in for it; it overrides the setters for the buttons it has and inherits the
+     * rest, which have no button to enable. Reaching straight into the map threw instead: firing a point-blank shot
+     * crashed on the Fire button, because disabling the buttons ran through a command that display does not carry.</p>
+     *
+     * @param command the button to change
+     * @param enabled whether it should be usable
+     */
+    private void enableFiringButton(FiringCommand command, boolean enabled) {
+        if (buttons != null) {
+            MegaMekButton button = buttons.get(command);
+            if (button != null) {
+                button.setEnabled(enabled);
+            }
+        }
+        clientgui.getMenuBar().setEnabled(command.getCmd(), enabled);
+    }
+
     protected void setFireEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_FIRE).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FIRE.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_FIRE, enabled);
     }
 
     /**
@@ -2485,50 +2505,46 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      * @return {@code true} if firing the selected weapon is currently allowed
      */
     public boolean isFireAllowed() {
-        return buttons.get(FiringCommand.FIRE_FIRE).isEnabled();
+        if (buttons == null) {
+            return false;
+        }
+        MegaMekButton fireButton = buttons.get(FiringCommand.FIRE_FIRE);
+        return (fireButton != null) && fireButton.isEnabled();
     }
 
     protected void setTwistEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_TWIST).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_TWIST.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_TWIST, enabled);
     }
 
     protected void setSkipEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_SKIP).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_SKIP.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_SKIP, enabled);
     }
 
     protected void setFindClubEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_FIND_CLUB).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FIND_CLUB.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_FIND_CLUB, enabled);
     }
 
     protected void setNextTargetEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_NEXT_TARG).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_NEXT_TARG.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_NEXT_TARG, enabled);
     }
 
     protected void setFlipArmsEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_FLIP_ARMS).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FLIP_ARMS.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_FLIP_ARMS, enabled);
     }
 
     @Override
     protected void setFlipMountEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_FLIP_MOUNT).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FLIP_MOUNT.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_FLIP_MOUNT, enabled);
     }
 
     @Override
     protected void setRotateTurretEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_ROTATE_TURRET).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_ROTATE_TURRET.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_ROTATE_TURRET, enabled);
     }
 
     @Override
     protected void setRotateRearTurretEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_ROTATE_TURRET_2).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_ROTATE_TURRET_2.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_ROTATE_TURRET_2, enabled);
     }
 
     @Override
@@ -2538,23 +2554,19 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     }
 
     protected void setSpotEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_SPOT).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_SPOT.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_SPOT, enabled);
     }
 
     protected void setSearchlightEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_SEARCHLIGHT).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_SEARCHLIGHT.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_SEARCHLIGHT, enabled);
     }
 
     protected void setFireModeEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_MODE).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_MODE.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_MODE, enabled);
     }
 
     protected void setFireChargeLevelEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_CHARGE).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_CHARGE.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_CHARGE, enabled);
     }
 
     /**
@@ -2591,48 +2603,39 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     }
 
     protected void setFireCalledEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_CALLED).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_CALLED.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_CALLED, enabled);
     }
 
     protected void setFireClearTurretEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_CLEAR_TURRET).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_CLEAR_TURRET.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_CLEAR_TURRET, enabled);
     }
 
     protected void setFireClearWeaponJamEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_CLEAR_WEAPON).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_CLEAR_WEAPON.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_CLEAR_WEAPON, enabled);
     }
 
     protected void setFireExtinguishEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_EXTINGUISH).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_EXTINGUISH.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_EXTINGUISH, enabled);
     }
 
     protected void setStrafeEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_STRAFE).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_STRAFE.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_STRAFE, enabled);
     }
 
     protected void setNextEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_NEXT).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_NEXT.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_NEXT, enabled);
     }
 
     protected void setActivateSPAEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_ACTIVATE_SPA).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_ACTIVATE_SPA.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_ACTIVATE_SPA, enabled);
     }
 
     protected void setRHSEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_RHS).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_RHS.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_RHS, enabled);
     }
 
     protected void setSuicideImplantsEnabled(boolean enabled) {
-        buttons.get(FiringCommand.FIRE_SUICIDE_IMPLANTS).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_SUICIDE_IMPLANTS.getCmd(), enabled);
+        enableFiringButton(FiringCommand.FIRE_SUICIDE_IMPLANTS, enabled);
     }
 
     @Override

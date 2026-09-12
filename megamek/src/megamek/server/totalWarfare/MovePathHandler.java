@@ -2195,15 +2195,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
 
                         // Potential point-blank shot when not causing stacking violation, but only in some situations:
-                        // 1. mover is ground unit _and_ ends its movement adjacent to / in the hidden unit's hex;
+                        // 1. mover is a ground unit and moves adjacent to / into the hidden unit's hex;
                         // 2. mover is Aerospace and hidden unit is within detection range of its flight path
                         //    (with or without Active Probe).
                         // and the revealed hidden unit has not already made a pointblank shot this turn.
-                    } else if (
-                          (dist <= 1) && !hiddenEntity.madePointblankShot() &&
-                                ((!this.entity.isAirborne() && md.isEndStep(step)) ||
-                                      (this.entity.isAirborne() && (dist == ((this.entity.getBAPRange() > 0) ? 1 : 0))))
-                    ) {
+                        //
+                        // The ground case deliberately does not wait for the end of the move. TW: a hidden unit
+                        // revealed by enemy movement may immediately make the shot, and the target "may continue
+                        // its move after the attack" if it has MP left - which can only happen part way through a
+                        // move. Requiring the mover to stop meant walking past a hidden unit did nothing at all.
+                    } else if (!hiddenEntity.madePointblankShot()
+                          && Compute.revealsHiddenUnitForPointblankShot(this.entity, dist)) {
                         // Hidden unit should always be revealed as the PBS trigger _is_ getting revealed.
                         hiddenEntity.setHidden(false);
 

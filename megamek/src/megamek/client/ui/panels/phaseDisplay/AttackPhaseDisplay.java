@@ -331,7 +331,7 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
             } else if (!tank.hasNoTurret()) {
                 // The main turret follows the unit's secondary facing, so rotating it is a turret twist: the dialog
                 // only picks the facing and the twist is declared through the same path as the Twist button.
-                new TurretFacingDialog(clientgui.getFrame(), tank, clientgui, this::declareSecondaryFacing)
+                new TurretFacingDialog(clientgui.getFrame(), tank, clientgui, this::rotateMainTurretTo)
                       .setVisible(true);
             }
             return;
@@ -351,12 +351,50 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     }
 
     /**
+     * Declares the main turret's new facing and redraws the unit. Called back by the facing dialog when the player
+     * accepts it.
+     *
+     * <p>The dialog is not modal, so {@code setVisible} returns as soon as it is on screen. Refreshing there ran
+     * before the player had chosen anything, which is why the board kept the old facing.</p>
+     *
+     * @param facing the absolute facing (0-5) the player picked
+     */
+    private void rotateMainTurretTo(int facing) {
+        declareSecondaryFacing(facing);
+        refreshAfterRotation();
+    }
+
+    /**
+     * Redraws the unit and its firing arc after a turret or mount rotation.
+     *
+     * <p>Only one of the rotation paths refreshed the board on its own. A vehicle main turret is declared as a twist,
+     * which refreshes; a Mek turret and a Directional Torso Mount only send the new facing to the server, which
+     * applies it and echoes nothing, so the unit kept its old facing on screen until something else redrew it.</p>
+     */
+    private void refreshAfterRotation() {
+        Entity entity = currentEntity();
+        if (entity == null) {
+            return;
+        }
+        clientgui.onAllBoardViews(boardView -> boardView.redrawEntity(entity));
+        // The arc is drawn for whatever weapon the unit display currently shows, so it only picks up the new
+        // facing when the weapon panel is rebuilt. Reselecting the same weapon keeps the player's choice, which a
+        // full refresh would drop back to the first weapon. Same sequence the flip-mount button uses.
+        WeaponMounted selectedWeapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        clientgui.getUnitDisplay().wPan.displayMek(entity);
+        if (selectedWeapon != null) {
+            clientgui.getUnitDisplay().wPan.selectWeapon(selectedWeapon);
+        }
+        clientgui.updateFiringArc(entity);
+    }
+
+    /**
      * Opens the facing dialog for a dual-turret vehicle's rear (main) turret - the "Rotate Rr. Turret" button. The rear
      * turret follows the unit's secondary facing, so the rotation is declared as a turret twist.
      */
     public void rotateRearTurret() {
         if ((currentEntity() instanceof Tank tank) && !tank.hasNoDualTurret()) {
-            new TurretFacingDialog(clientgui.getFrame(), tank, clientgui, this::declareSecondaryFacing)
+            new TurretFacingDialog(clientgui.getFrame(), tank, clientgui, this::rotateMainTurretTo)
                   .setVisible(true);
         }
     }

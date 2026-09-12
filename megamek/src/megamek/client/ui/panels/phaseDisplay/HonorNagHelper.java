@@ -32,6 +32,9 @@
  */
 package megamek.client.ui.panels.phaseDisplay;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.common.actions.AbstractAttackAction;
@@ -69,12 +72,16 @@ final class HonorNagHelper {
     private HonorNagHelper() {}
 
     /**
-     * The full warning text, naming which of the honor conditions this attack actually trips.
+     * The full warning text, listing every honor rule the pending attacks break.
      *
-     * <p>The generic warning lists three possibilities and leaves the player to guess. That guess is often wrong:
-     * a lightly armed unit such as a Kestrel VTOL counts as a civilian because {@link Entity#isMilitary()} means
-     * "carries weapons worth the name", so a player firing one at an intact target blames whatever else is nearby
-     * (issue #8933).</p>
+     * <p>The old warning named none of them: it recited all three possibilities and left the player to work out
+     * which applied, which they routinely got wrong. A lightly armed unit counts as a civilian because
+     * {@link Entity#isMilitary()} means "carries weapons worth the name", so someone firing a scout VTOL at an
+     * intact target blamed whatever else was standing nearby (issue #8933).</p>
+     *
+     * <p>Every reason is listed, not the first one found. One attack can break more than one rule at once, and a
+     * player firing on several units in a hex may break a different rule against each of them: a crippled combat
+     * tank and an unarmed truck sharing a hex produce two different lines, each naming its unit.</p>
      *
      * @param game    the game being played
      * @param attacks the attacks about to be committed
@@ -82,20 +89,18 @@ final class HonorNagHelper {
      * @return the warning to show, or {@code null} if nothing here dishonors the player
      */
     static @Nullable String warningFor(Game game, Iterable<EntityAction> attacks) {
+        List<String> reasons = new ArrayList<>();
         for (EntityAction action : attacks) {
             if (!(action instanceof AbstractAttackAction attackAction) || !isOffensiveAttack(attackAction)) {
                 continue;
             }
-            String warning = warningFor(game, attackAction.getEntity(game), attackAction.getTarget(game));
-            if (warning != null) {
-                return warning;
-            }
+            collectReasons(game, attackAction.getEntity(game), attackAction.getTarget(game), reasons);
         }
-        return null;
+        return buildWarning(reasons);
     }
 
     /**
-     * The full warning text for one attack, naming the condition it trips. See {@link #warningFor(Game, Iterable)}.
+     * The full warning text for one attack. See {@link #warningFor(Game, Iterable)}.
      *
      * @param game     the game being played
      * @param attacker the attacking unit, or {@code null}
@@ -104,21 +109,70 @@ final class HonorNagHelper {
      * @return the warning to show, or {@code null} if this attack does not dishonor the player
      */
     static @Nullable String warningFor(Game game, @Nullable Entity attacker, @Nullable Targetable target) {
+        List<String> reasons = new ArrayList<>();
+        collectReasons(game, attacker, target, reasons);
+        return buildWarning(reasons);
+    }
+
+    /**
+     * Adds every honor rule this one attack breaks to the running list, skipping any already recorded.
+     *
+     * <p>All three conditions are tested rather than stopping at the first. A crippled truck attacking a crippled
+     * enemy breaks all three at once, and a player told about only one of them will fix that one and be warned
+     * again.</p>
+     *
+     * <p>Duplicates are dropped because a unit firing five weapons at one target is one reason, not five.</p>
+     *
+     * @param game     the game being played
+     * @param attacker the attacking unit, or {@code null}
+     * @param target   the target, or {@code null}
+     * @param reasons  the list being built, added to in place
+     */
+    private static void collectReasons(Game game, @Nullable Entity attacker, @Nullable Targetable target,
+          List<String> reasons) {
         if (!wouldBeDishonored(game, attacker, target)) {
-            return null;
+            return;
         }
         // wouldBeDishonored guarantees a non-null attacker and an Entity target.
         Entity targetEntity = (Entity) target;
-        String reason;
         if (!attacker.isMilitary()) {
-            reason = Messages.getString("HonorNag.reason.attackerCivilian", attacker.getShortName());
-        } else if (attacker.isCrippled()) {
-            reason = Messages.getString("HonorNag.reason.attackerCrippled", attacker.getShortName());
-        } else {
-            reason = Messages.getString("HonorNag.reason.targetCrippled", targetEntity.getShortName());
+            addReason(reasons, Messages.getString("HonorNag.reason.attackerCivilian", attacker.getShortName()));
         }
-        return reason + System.lineSeparator() + System.lineSeparator()
-              + Messages.getString("HonorNag.message");
+        if (attacker.isCrippled()) {
+            addReason(reasons, Messages.getString("HonorNag.reason.attackerCrippled", attacker.getShortName()));
+        }
+        if (targetEntity.isCrippled()) {
+            addReason(reasons, Messages.getString("HonorNag.reason.targetCrippled", targetEntity.getShortName()));
+        }
+    }
+
+    private static void addReason(List<String> reasons, String reason) {
+        if (!reasons.contains(reason)) {
+            reasons.add(reason);
+        }
+    }
+
+    /**
+     * Assembles the dialog text: what is wrong, what it costs, and the question.
+     *
+     * @param reasons every rule broken, in the order they were found
+     *
+     * @return the warning, or {@code null} when nothing is wrong
+     */
+    private static @Nullable String buildWarning(List<String> reasons) {
+        if (reasons.isEmpty()) {
+            return null;
+        }
+        String newline = System.lineSeparator();
+        StringBuilder warning = new StringBuilder(Messages.getString("HonorNag.intro"));
+        for (String reason : reasons) {
+            warning.append(newline).append(Messages.getString("HonorNag.bullet", reason));
+        }
+        return warning.append(newline).append(newline)
+              .append(Messages.getString("HonorNag.consequence"))
+              .append(newline).append(newline)
+              .append(Messages.getString("HonorNag.confirm"))
+              .toString();
     }
 
     /**

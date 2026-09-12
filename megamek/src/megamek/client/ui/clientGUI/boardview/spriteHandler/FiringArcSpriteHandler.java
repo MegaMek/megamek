@@ -39,9 +39,9 @@ import java.util.Set;
 
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.panels.phaseDisplay.PointblankShotDisplay;
 import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.TextMarkerSprite;
+import megamek.client.ui.panels.phaseDisplay.PointblankShotDisplay;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.RangeType;

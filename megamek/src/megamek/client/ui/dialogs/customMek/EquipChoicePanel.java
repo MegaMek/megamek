@@ -139,6 +139,13 @@ public class EquipChoicePanel extends JPanel {
     private final Map<Integer, JComboBox<String>> ecmModeSelectors = new LinkedHashMap<>();
     /** Set while the ECM dropdowns are being changed in code, so those changes do not re-trigger the conflict check. */
     private boolean adjustingEcmModes;
+    /**
+     * Picks which sensor the unit starts the game with. Null when the unit has fewer than two sensors, which leaves
+     * it nothing to choose.
+     */
+    private JComboBox<String> chSensors;
+    /** Ticked to remember the chosen sensor for every unit of this chassis and model, not just this one. */
+    private JCheckBox chRememberSensor;
     private final JComboBox<String> choC3 = new JComboBox<>();
     ClientGUI clientgui;
     Client client;
@@ -287,6 +294,9 @@ public class EquipChoicePanel extends JPanel {
 
         // Set up mines
         setupMines(gbc);
+
+        // Set up the starting sensor choice
+        setupSensorChoice(gbc);
 
         // Set up ECM equipment mode selectors (ECM/ECCM, and Ghost Targets per TO:AR p.100)
         setupEcmModes(game, gbc);
@@ -1099,6 +1109,10 @@ public class EquipChoicePanel extends JPanel {
         // Apply ghost target equipment mode selections
         applyEcmModes();
 
+        // Apply the starting sensor choice
+        applySensorChoice();
+        applyRememberedSensorChoice();
+
         if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {
             Entity chosen = client.getEntity(entityCorrespondence[choC3.getSelectedIndex()]);
             int entC3nodeCount = client.getGame().getC3SubNetworkMembers(entity).size();
@@ -1188,6 +1202,96 @@ public class EquipChoicePanel extends JPanel {
      * activation/deactivation ("Off") modes, Communications Equipment (7+ tons) and Cockpit Command Console when they
      * can be set to Ghost Targets mode.
      */
+    /**
+     * Sets up the dropdown that picks which sensor the unit starts the game with.
+     *
+     * <p>Without this the player can only change a unit's sensor once the game has started, during round zero. The
+     * choice made here is the same one that dropdown makes, so a unit set up in the lobby deploys on the sensor the
+     * player wanted rather than on whichever sensor it happened to load with.</p>
+     *
+     * <p>Nothing is shown for a unit with fewer than two sensors, since it has no choice to make. A ProtoMek, for
+     * one, carries no sensors at all.</p>
+     */
+    private void setupSensorChoice(GBC2 constraints) {
+        Vector<Sensor> sensors = entity.getSensors();
+        if (sensors.size() < 2) {
+            return;
+        }
+
+        add(new SectionTitleLabel(Messages.getString("CustomMekDialog.sensorSection")), constraints.fullLine());
+
+        chSensors = new JComboBox<>();
+        chSensors.setToolTipText(Messages.getString("CustomMekDialog.labSensors.tooltip"));
+        for (int sensorIndex = 0; sensorIndex < sensors.size(); sensorIndex++) {
+            Sensor sensor = sensors.elementAt(sensorIndex);
+            // An installed probe the unit cannot currently use is still listed, marked, so the player can see why
+            // the unit is not using it. This matches the round zero dropdown.
+            String condition = (sensor.isBAP() && !entity.hasBAP(false))
+                  ? Messages.getString("CustomMekDialog.sensorDisabled")
+                  : "";
+            chSensors.addItem(sensor.getDisplayName() + condition);
+            if ((entity.getNextSensor() != null) && (sensor.type() == entity.getNextSensor().type())) {
+                chSensors.setSelectedIndex(sensorIndex);
+            }
+        }
+
+        JLabel labSensors = new JLabel(Messages.getString("CustomMekDialog.labSensors"), SwingConstants.RIGHT);
+        labSensors.setToolTipText(Messages.getString("CustomMekDialog.labSensors.tooltip"));
+        add(labSensors, constraints.forLabel());
+        add(chSensors, constraints.eol());
+
+        // Saving is keyed on chassis and model, so a unit with neither has nothing to save against
+        if (!entity.getChassis().isBlank() && !entity.getModel().isBlank()) {
+            chRememberSensor = new JCheckBox(Messages.getString("CustomMekDialog.labRememberSensor"));
+            chRememberSensor.setToolTipText(Messages.getString("CustomMekDialog.labRememberSensor.tooltip"));
+            chRememberSensor.setSelected(
+                  SensorChoiceHandler.getSensorChoice(entity.getChassis(), entity.getModel()) != null);
+            add(new JLabel(), constraints.forLabel());
+            add(chRememberSensor, constraints.eol());
+        }
+    }
+
+    /**
+     * Applies the sensor picked in the dropdown, and marks the unit so the player's sensor preference leaves it
+     * alone from here on.
+     */
+    private void applySensorChoice() {
+        if (chSensors == null) {
+            return;
+        }
+        int sensorIndex = chSensors.getSelectedIndex();
+        if ((sensorIndex < 0) || (sensorIndex >= entity.getSensors().size())) {
+            return;
+        }
+        Sensor chosenSensor = entity.getSensors().elementAt(sensorIndex);
+        Sensor currentSensor = entity.getNextSensor();
+        if ((currentSensor != null) && (currentSensor.type() == chosenSensor.type())) {
+            return;
+        }
+        entity.setNextSensor(chosenSensor);
+        entity.setCustomSensorChoice(true);
+    }
+
+    /**
+     * Saves or forgets the chosen sensor for this chassis and model, so every unit of the design starts on it.
+     *
+     * <p>The file this writes is read by the unit file parser, which MekHQ and MegaMekLab share, so a choice saved
+     * here also applies in a campaign.</p>
+     */
+    private void applyRememberedSensorChoice() {
+        if ((chRememberSensor == null) || (chSensors == null)) {
+            return;
+        }
+        int sensorIndex = chSensors.getSelectedIndex();
+        if ((sensorIndex < 0) || (sensorIndex >= entity.getSensors().size())) {
+            return;
+        }
+        SensorFamily chosenFamily = chRememberSensor.isSelected()
+              ? SensorFamily.familyOf(entity.getSensors().elementAt(sensorIndex))
+              : null;
+        SensorChoiceHandler.setSensorChoice(entity.getChassis(), entity.getModel(), chosenFamily);
+    }
+
     private void setupEcmModes(Game game, GBC2 gbc) {
         boolean hasEccmOption = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_ECCM);
         boolean hasGhostTargetOption = game.getOptions()
@@ -1240,7 +1344,12 @@ public class EquipChoicePanel extends JPanel {
             } else if (hasGhostTargetOption && type.hasFlag(MiscType.F_COMMAND_CONSOLE)) {
                 modes.add("Default");
                 modes.add("Ghost Targets");
-            } else if ((type.hasFlag(MiscType.F_BAP) || type.hasFlag(MiscTypeFlag.ANY_C3))
+            } else if ((type.hasFlag(MiscType.F_BAP)
+                  || type.hasFlag(MiscTypeFlag.ANY_C3)
+                  || type.hasFlag(MiscType.F_ARTEMIS)
+                  || type.hasFlag(MiscType.F_ARTEMIS_V)
+                  || type.hasFlag(MiscType.F_ARTEMIS_PROTO)
+                  || type.hasFlag(MiscType.F_APOLLO))
                   && (type.getModesCount() > 1)) {
                 // Active probes, Nova CEWS (which carries F_BAP but is excluded from the ECM branch above) and C3
                 // computers can be activated/deactivated at game start; offer the modes defined on the equipment

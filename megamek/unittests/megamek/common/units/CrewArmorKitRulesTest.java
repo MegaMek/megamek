@@ -218,6 +218,13 @@ class CrewArmorKitRulesTest {
         assertTrue(CrewArmorKitRules.answers(spacesuit, EjectionHazard.VACUUM));
         assertTrue(CrewArmorKitRules.answers(spacesuit, EjectionHazard.EXTREME_COLD));
 
+        // A Light Environment Suit is rated for tainted air and not for toxic air, TO:AUE p.162. Treating the two
+        // as the same hazard would tell the player this crew is safe in air that kills them.
+        EquipmentType lightSuit = EquipmentType.get("Environment Suit, Light");
+        assertNotNull(lightSuit, "Environment Suit, Light should exist");
+        assertTrue(CrewArmorKitRules.answers(lightSuit, EjectionHazard.TAINTED_AIR));
+        assertFalse(CrewArmorKitRules.answers(lightSuit, EjectionHazard.TOXIC_AIR));
+
         // Nothing anyone wears answers being picked up and thrown
         for (EquipmentType kit : List.of(advancedKit, spacesuit)) {
             assertFalse(CrewArmorKitRules.answers(kit, EjectionHazard.TORNADO));

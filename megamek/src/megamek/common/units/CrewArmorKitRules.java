@@ -241,8 +241,11 @@ public final class CrewArmorKitRules {
         return switch (hazard) {
             // Only a sealed kit holds pressure; the combat suit explicitly does not.
             case VACUUM -> armorKit.hasAnyFlag(MiscTypeFlag.S_SPACE_SUIT, MiscTypeFlag.S_XCT_VACUUM);
-            case TAINTED_AIR, TOXIC_AIR -> isCombatSuit
+            // Kept apart because a Light Environment Suit is rated for tainted air and not for toxic air,
+            // TO:AUE p.162, which is the same split ConvInfantry draws for XCT troops.
+            case TAINTED_AIR -> isCombatSuit
                   || armorKit.hasAnyFlag(MiscTypeFlag.S_TAINTED_ATMOSPHERE, MiscTypeFlag.S_TOXIC_ATMOSPHERE);
+            case TOXIC_AIR -> isCombatSuit || armorKit.hasFlag(MiscTypeFlag.S_TOXIC_ATMOSPHERE);
             case EXTREME_HEAT -> isCombatSuit || armorKit.hasFlag(MiscTypeFlag.S_HOT_WEATHER);
             case EXTREME_COLD -> armorKit.hasAnyFlag(MiscTypeFlag.S_COLD_WEATHER, MiscTypeFlag.S_XCT_VACUUM);
             // Being picked up and thrown is not something a suit answers.
@@ -318,8 +321,8 @@ public final class CrewArmorKitRules {
         // A taint needs an atmosphere to be carried in. The combat suit answers it by interpretation; other kits
         // carry the flags for it themselves.
         boolean isAirPoisonous = TaintedAtmosphereRules.requiresXctInfantry(conditions.getAtmosphericTaint());
-        boolean answersTheAir = isCombatSuit
-              || armorKit.hasAnyFlag(MiscTypeFlag.S_TAINTED_ATMOSPHERE, MiscTypeFlag.S_TOXIC_ATMOSPHERE);
+        boolean answersTheAir = answers(armorKit,
+              conditions.getAtmosphericTaint().isToxic() ? EjectionHazard.TOXIC_AIR : EjectionHazard.TAINTED_AIR);
         if (isAirPoisonous && answersTheAir) {
             return true;
         }

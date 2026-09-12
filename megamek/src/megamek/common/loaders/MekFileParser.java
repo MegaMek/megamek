@@ -834,18 +834,18 @@ public class MekFileParser {
      *
      * <p>A design that carries nothing from the saved family keeps its normal default.</p>
      */
-    private static void applySavedSensorChoice(Entity ent) {
-        if (ent.getSensors().size() < 2) {
+    private static void applySavedSensorChoice(Entity entity) {
+        if (entity.getSensors().size() < 2) {
             return;
         }
-        SensorFamily savedFamily = SensorChoiceHandler.getSensorChoice(ent.getChassis(), ent.getModel());
+        SensorFamily savedFamily = SensorChoiceHandler.getSensorChoice(entity.getChassis(), entity.getModel());
         if (savedFamily == null) {
             return;
         }
-        for (Sensor sensor : ent.getSensors()) {
+        for (Sensor sensor : entity.getSensors()) {
             if (savedFamily.covers(sensor.type())) {
-                ent.setNextSensor(sensor);
-                ent.setCustomSensorChoice(true);
+                entity.setNextSensor(sensor);
+                entity.setCustomSensorChoice(true);
                 return;
             }
         }

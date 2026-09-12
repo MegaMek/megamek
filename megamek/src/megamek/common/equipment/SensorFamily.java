@@ -33,8 +33,6 @@
 
 package megamek.common.equipment;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -254,22 +252,5 @@ public enum SensorFamily {
             }
         }
         return families;
-    }
-
-    /**
-     * @return an unmodifiable view of the sensor types this family covers, for testing
-     */
-    Set<Integer> sensorTypes() {
-        return Collections.unmodifiableSet(sensorTypes);
-    }
-
-    /**
-     * @return every sensor type covered by any family, for testing
-     */
-    static List<Integer> allCoveredSensorTypes() {
-        return Arrays.stream(values())
-              .flatMap(family -> family.sensorTypes.stream())
-              .sorted()
-              .toList();
     }
 }

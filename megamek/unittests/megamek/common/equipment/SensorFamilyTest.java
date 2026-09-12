@@ -53,11 +53,17 @@ class SensorFamilyTest {
 
     @Test
     void everySensorTypeBelongsToExactlyOneFamily() {
-        List<Integer> covered = SensorFamily.allCoveredSensorTypes();
-
+        // Built here rather than in the enum: the coverage view exists only to be checked, so it belongs in the
+        // test rather than in the shipped class.
+        List<Integer> covered = new ArrayList<>();
         List<Integer> expected = new ArrayList<>();
         for (int sensorType = 0; sensorType < Sensor.SIZE; sensorType++) {
             expected.add(sensorType);
+            for (SensorFamily family : SensorFamily.values()) {
+                if (family.covers(sensorType)) {
+                    covered.add(sensorType);
+                }
+            }
         }
 
         assertEquals(expected, covered,

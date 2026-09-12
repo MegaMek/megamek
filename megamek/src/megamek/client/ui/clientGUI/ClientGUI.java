@@ -3182,8 +3182,9 @@ public class ClientGUI extends AbstractClientGUI
      */
     private void setSensorPrefs() {
         List<SensorFamily> preferenceOrder = GUIP.getSensorPreferenceOrder();
+        Player localPlayer = client.getLocalPlayer();
         for (Entity entity : client.getGame().getEntitiesVector()) {
-            if (!entity.getOwner().equals(client.getLocalPlayer())
+            if (!entity.getOwner().equals(localPlayer)
                   || entity.hasCustomSensorChoice()
                   || entity.isDeployed()) {
                 continue;

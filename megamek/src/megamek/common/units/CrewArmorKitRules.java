@@ -111,7 +111,10 @@ public final class CrewArmorKitRules {
     public static List<EquipmentType> availableArmorKits() {
         List<EquipmentType> armorKits = new ArrayList<>();
         for (EquipmentType equipment : EquipmentType.allTypes()) {
-            if (equipment.hasFlag(MiscType.F_ARMOR_KIT)) {
+            // Narrow to MiscType before testing a MiscType flag. Asking a weapon or an ammo type about a
+            // MiscTypeFlag makes it log a warning with a full stack trace, and this loop walks every equipment
+            // type MegaMek knows, so one call produced tens of thousands of them.
+            if ((equipment instanceof MiscType miscType) && miscType.hasFlag(MiscType.F_ARMOR_KIT)) {
                 armorKits.add(equipment);
             }
         }

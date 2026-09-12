@@ -87,6 +87,7 @@ import megamek.common.board.Coords;
 import megamek.common.comparators.WeaponComparatorDamage;
 import megamek.common.compute.TurretFacing;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.EquipmentFlag;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.MinefieldTarget;
@@ -1508,7 +1509,9 @@ public class MapMenu extends JPopupMenu {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_BOMB)));
                 }
 
-                if (hasWeaponFlag(WeaponType.F_MRM) && myEntity.hasMisc(MiscType.F_APOLLO) && Game.rulesManager.getRulesWeapons().getApolloSaturationMode()) {
+                if (hasWeaponFlag(WeaponType.F_MRM)
+                      && EquipmentActivation.hasActiveGuidance(myEntity, MiscType.F_APOLLO)
+                      && Game.rulesManager.getRulesWeapons().getApolloSaturationMode()) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_SATURATION)));
                 }
 

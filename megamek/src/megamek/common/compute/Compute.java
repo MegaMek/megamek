@@ -3619,9 +3619,7 @@ public class Compute {
                       || (wt.getAmmoType() == AmmoTypeEnum.SRM)
                       || (wt.getAmmoType() == AmmoTypeEnum.SRM_IMP)) {
                     lnk_guide = weapon.getLinkedBy();
-                    if ((lnk_guide != null) && (lnk_guide.getType() instanceof MiscType) && !lnk_guide.isDestroyed()
-                          && !lnk_guide.isMissing() && !lnk_guide.isBreached()
-                          && lnk_guide.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                    if (EquipmentActivation.isGuidanceActive(lnk_guide, MiscType.F_ARTEMIS)) {
 
                         // Don't use artemis if this is indirect fire
                         // -> Hook for Artemis V Level 3 Clan tech here; use
@@ -3660,11 +3658,7 @@ public class Compute {
 
             if (wt.getAmmoType() == AmmoTypeEnum.MRM) {
                 lnk_guide = weapon.getLinkedBy();
-                if ((lnk_guide != null)
-                      && (lnk_guide.getType() instanceof MiscType)
-                      && !lnk_guide.isDestroyed() && !lnk_guide.isMissing()
-                      && !lnk_guide.isBreached()
-                      && lnk_guide.getType().hasFlag(MiscType.F_APOLLO)) {
+                if (EquipmentActivation.isGuidanceActive(lnk_guide, MiscType.F_APOLLO)) {
                     // 90% damage expected with Apollo, but instead divide by 3 if Saturation mode
                     boolean saturation = weaponAttackAction.getTargetType() == Targetable.TYPE_SATURATION;
                     fHits *= (saturation) ? .333f : .9f;

@@ -291,6 +291,7 @@ public class TWGameManager extends AbstractGameManager {
         EquipmentType.initializeTypes();
         game.getOptions().initialize();
         game.getOptions().loadOptions();
+        Compute.setRNG(game.getOptions().intOption(OptionsConstants.BASE_RNG_TYPE));
 
         game.setPhase(GamePhase.LOUNGE);
         MapSettings mapSettings = game.getMapSettings();
@@ -32660,6 +32661,18 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Resolves one attack handler. Human-controlled weapon attacks prompt for follow-up combat dice (hit location,
+     * cluster, criticals); bot attacks stay automatic.
+     */
+    private boolean handleAttack(AttackHandler ah, Vector<Report> reports) {
+        if (ah instanceof WeaponHandler weaponHandler && weaponHandler.isHumanControlledAttack()) {
+            return ManualDice.duringWeaponAttack(weaponHandler.formatAttackSummary(),
+                  () -> ah.handle(game.getPhase(), reports));
+        }
+        return ah.handle(game.getPhase(), reports);
+    }
+
+    /**
      * Loops through all the attacks the game has. Checks if they care about current phase, if so, runs them, and
      * removes them if they don't want to stay.
      * <p>
@@ -32705,7 +32718,7 @@ public class TWGameManager extends AbstractGameManager {
                     ah.setAnnouncedEntityFiring(true);
                     lastAttackerId = aId;
                 }
-                boolean keep = ah.handle(game.getPhase(), handleAttackReports);
+                boolean keep = handleAttack(ah, handleAttackReports);
                 if (keep) {
                     keptAttacks.add(ah);
                 }
@@ -32748,7 +32761,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (ah.getAttacker() instanceof Infantry firingInfantry && firingInfantry.isHitTheDeck()) {
                     firingInfantry.setFiredWhileOnDeck(true);
                 }
-                boolean keep = ah.handle(game.getPhase(), handleAttackReports);
+                boolean keep = handleAttack(ah, handleAttackReports);
                 if (keep) {
                     keptAttacks.add(ah);
                 }

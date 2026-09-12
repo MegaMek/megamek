@@ -588,6 +588,7 @@ public class GameOptionsPane extends JPanel {
             choices.put(MMRandom.R_SUN, getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.rngType.sunRandom"));
             choices.put(MMRandom.R_CRYPTO, getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.rngType.cryptoRandom"));
             choices.put(MMRandom.R_POOL36, getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.rngType.pool36Random"));
+            choices.put(MMRandom.R_MANUAL, getTextAt(CLIENT_BUNDLE, "GameOptionsDialog.rngType.manual"));
             return choices;
         }
 

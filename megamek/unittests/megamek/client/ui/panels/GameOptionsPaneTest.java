@@ -32,8 +32,8 @@
  */
 package megamek.client.ui.panels;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -70,8 +70,8 @@ import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
-import javax.swing.JTree;
 import javax.swing.JTextField;
+import javax.swing.JTree;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
@@ -508,14 +508,18 @@ class GameOptionsPaneTest {
             assertEquals(3, rotatingSaves.getValue());
 
             JComboBox<?> rngTypes = (JComboBox<?>) rngType.settingsControl();
-            assertEquals(3, rngTypes.getItemCount());
+            assertEquals(4, rngTypes.getItemCount());
             assertEquals("SunRandom", rngTypes.getItemAt(0));
             assertEquals("Java CryptoRandom", rngTypes.getItemAt(1));
             assertEquals("Pool36Random (Unofficial)", rngTypes.getItemAt(2));
+            assertEquals("Manual dice (Unofficial)", rngTypes.getItemAt(3));
             assertEquals(MMRandom.R_DEFAULT, rngType.getValue());
             rngType.setValue(MMRandom.R_POOL36);
             assertEquals(MMRandom.R_POOL36, rngType.getValue());
             assertEquals(2, rngTypes.getSelectedIndex());
+            rngType.setValue(MMRandom.R_MANUAL);
+            assertEquals(MMRandom.R_MANUAL, rngType.getValue());
+            assertEquals(3, rngTypes.getSelectedIndex());
         });
     }
 

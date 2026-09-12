@@ -49,7 +49,9 @@ import java.util.Vector;
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.LosEffects;
+import megamek.common.ManualDice;
 import megamek.common.Messages;
+import megamek.common.Player;
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
@@ -1263,11 +1265,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     report.indent();
                     report.subject = attackingEntity.getId();
                     vPhaseReport.addElement(report);
-                    if (null != attackingEntity.getCrew()) {
-                        roll = attackingEntity.getCrew().rollGunnerySkill();
-                    } else {
-                        roll = Compute.rollD6(2);
-                    }
+                    roll = rollWeaponToHit();
                 }
             }
         }
@@ -1969,6 +1967,88 @@ public class WeaponHandler implements AttackHandler, Serializable {
         vPhaseReport.addElement(r);
     }
 
+    /**
+     * Rolls the weapon to-hit, prompting for manual dice when that RNG is selected. The prompt matches the round
+     * report: attacker, weapon, target, and target number.
+     */
+    /**
+     * @return true if this attack is from a human player and should use manual dice
+     */
+    public boolean isHumanControlledAttack() {
+        if (attackingEntity == null) {
+            return false;
+        }
+        Player owner = attackingEntity.getOwner();
+        return (owner != null) && !owner.isBot();
+    }
+
+    /**
+     * Round-report style summary: attacker, weapon, and target.
+     */
+    public String formatAttackSummary() {
+        String attacker = (attackingEntity != null) ? attackingEntity.getDisplayName() : "Unknown unit";
+        String targetName = (target != null) ? target.getDisplayName() : "unknown target";
+        return attacker + " fires " + formatWeaponNameForPrompt() + " at " + targetName;
+    }
+
+    private Roll rollWeaponToHit() {
+        if (!isHumanControlledAttack()) {
+            return rollGunneryOrFallback();
+        }
+        return ManualDice.withPurpose(formatManualToHitPrompt(), this::rollGunneryOrFallback);
+    }
+
+    private Roll rollGunneryOrFallback() {
+        if (attackingEntity.getCrew() != null) {
+            return attackingEntity.getCrew().rollGunnerySkill();
+        }
+        return Compute.rollD6(2);
+    }
+
+    private String formatManualToHitPrompt() {
+        return "To-hit\n\n" + formatAttackSummary() + "\n" + formatToHitNeed();
+    }
+
+    private String formatWeaponNameForPrompt() {
+        if (weaponType == null) {
+            return "weapon";
+        }
+        StringBuilder name = new StringBuilder(weaponType.getName());
+        if (weaponType.isClan()) {
+            name.append(" (Clan)");
+        }
+        if ((ammoType != null)
+              && (weapon != null)
+              && (weapon.getLinked() != null)
+              && (weapon.getLinked().getType() instanceof AmmoType)
+              && (weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA)) {
+            if (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)
+                  || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MML)
+                  || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX)
+                  || (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ATM)) {
+                name.append(" (").append(ammoType.getSubMunitionName()).append(" ammo)");
+            }
+        }
+        return name.toString();
+    }
+
+    private String formatToHitNeed() {
+        if (toHit == null) {
+            return "Needs ?";
+        }
+        int value = toHit.getValue();
+        if (value == TargetRoll.AUTOMATIC_SUCCESS) {
+            return "Automatic hit";
+        }
+        if (value == TargetRoll.AUTOMATIC_FAIL) {
+            return "Automatic miss";
+        }
+        if (value == TargetRoll.IMPOSSIBLE) {
+            return "Impossible";
+        }
+        return "Needs " + value;
+    }
+
     protected WeaponHandler() {
         // deserialization only
     }
@@ -2008,11 +2088,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
         // is this an underwater attack on a surface naval vessel?
         underWater = toHit.getHitTable() == ToHitData.HIT_UNDERWATER;
-        if (null != attackingEntity.getCrew()) {
-            roll = attackingEntity.getCrew().rollGunnerySkill();
-        } else {
-            roll = Compute.rollD6(2);
-        }
+        roll = rollWeaponToHit();
 
         numWeapons = getNumberWeapons();
         numWeaponsHit = 1;

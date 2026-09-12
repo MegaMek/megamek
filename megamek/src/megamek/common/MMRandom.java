@@ -55,6 +55,7 @@ public abstract class MMRandom {
     public static final int R_SUN = 0;
     public static final int R_CRYPTO = 1;
     public static final int R_POOL36 = 2;
+    public static final int R_MANUAL = 3;
 
     /**
      * Gives you the type asked for, defaulting to SunRandom if there are any errors.
@@ -65,6 +66,7 @@ public abstract class MMRandom {
             return switch (type) {
                 case R_CRYPTO -> new CryptoRandom();
                 case R_POOL36 -> new Pool36Random();
+                case R_MANUAL -> new ManualRandom();
                 default -> new SunRandom();
             };
         } catch (Exception ex) {

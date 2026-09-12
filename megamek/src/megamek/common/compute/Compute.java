@@ -213,21 +213,18 @@ public class Compute {
      * Wrapper to random#d6(n)
      */
     public static Roll rollD6(int dice) {
-        Roll roll = random.d6(dice);
-        if (Server.getServerInstance() != null) {
-            if (Server.getServerInstance().getGame().getOptions()
-                  .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
-                Server.getServerInstance().reportRoll(roll);
-            }
-        }
-        return roll;
+        return rollD6Internal(() -> random.d6(dice));
     }
 
     /**
      * Wrapper to random#d6(n)
      */
     public static Roll rollD6(int dice, int keep) {
-        Roll roll = random.d6(dice, keep);
+        return rollD6Internal(() -> random.d6(dice, keep));
+    }
+
+    private static Roll rollD6Internal(java.util.function.Supplier<Roll> roller) {
+        Roll roll = roller.get();
         if (Server.getServerInstance() != null) {
             if (Server.getServerInstance().getGame().getOptions()
                   .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
@@ -393,6 +390,13 @@ public class Compute {
      */
     public static void setRNG(int type) {
         random = MMRandom.generate(type);
+    }
+
+    /**
+     * @return the RNG currently used by Compute
+     */
+    public static MMRandom getRNG() {
+        return random;
     }
 
     /**

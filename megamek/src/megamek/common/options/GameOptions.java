@@ -53,6 +53,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
+import megamek.common.compute.Compute;
 import megamek.common.enums.NeuralInterfaceMode;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
@@ -362,6 +363,7 @@ public class GameOptions extends BasicGameOptions {
         Vector<IOption> changedOptions = new Vector<>(1, 1);
 
         if (!file.exists()) {
+            applyRngType();
             return changedOptions;
         }
 
@@ -390,7 +392,19 @@ public class GameOptions extends BasicGameOptions {
             logger.error("Error loading XML for game options: {}", e.getMessage(), e);
         }
 
+        applyRngType();
         return changedOptions;
+    }
+
+    /**
+     * Keep {@link megamek.common.compute.Compute}'s RNG in sync with the loaded {@code rng_type} option. Lobby UI can
+     * show Manual dice while Compute is still on the default Crypto generator if this is skipped.
+     */
+    private void applyRngType() {
+        IOption rngType = getOption(OptionsConstants.BASE_RNG_TYPE);
+        if (rngType != null) {
+            Compute.setRNG(rngType.intValue());
+        }
     }
 
     private IOption parseOptionNode(final IBasicOption node, final boolean print, final StringBuilder logMessages) {
@@ -664,6 +678,7 @@ public class GameOptions extends BasicGameOptions {
             }
         }
         migrateLegacyManeiDominiOption(legacyImplantsEnabled);
+        applyRngType();
     }
     // endregion MekHQ I/O
 }

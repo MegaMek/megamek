@@ -331,10 +331,9 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
             } else if (!tank.hasNoTurret()) {
                 // The main turret follows the unit's secondary facing, so rotating it is a turret twist: the dialog
                 // only picks the facing and the twist is declared through the same path as the Twist button.
-                new TurretFacingDialog(clientgui.getFrame(), tank, clientgui, this::declareSecondaryFacing)
+                new TurretFacingDialog(clientgui.getFrame(), tank, clientgui, this::rotateMainTurretTo)
                       .setVisible(true);
             }
-            refreshAfterRotation();
             return;
         }
         WeaponMounted weapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
@@ -349,7 +348,6 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
                 new TurretFacingDialog(clientgui.getFrame(), turretMek, turretItem, clientgui).setVisible(true);
             }
         }
-        refreshAfterRotation();
     }
 
     /**
@@ -362,12 +360,34 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
      * <p>The dialog is modal, so this runs once the player has accepted or cancelled it. Redrawing after a cancel
      * costs nothing.</p>
      */
+    /**
+     * Declares the main turret's new facing and redraws the unit. Called back by the facing dialog when the player
+     * accepts it.
+     *
+     * <p>The dialog is not modal, so {@code setVisible} returns as soon as it is on screen. Refreshing there ran
+     * before the player had chosen anything, which is why the board kept the old facing.</p>
+     *
+     * @param facing the absolute facing (0-5) the player picked
+     */
+    private void rotateMainTurretTo(int facing) {
+        declareSecondaryFacing(facing);
+        refreshAfterRotation();
+    }
+
     private void refreshAfterRotation() {
         Entity entity = currentEntity();
         if (entity == null) {
             return;
         }
         clientgui.onAllBoardViews(boardView -> boardView.redrawEntity(entity));
+        // The arc is drawn for whatever weapon the unit display currently shows, so it only picks up the new
+        // facing when the weapon panel is rebuilt. Reselecting the same weapon keeps the player's choice, which a
+        // full refresh would drop back to the first weapon. Same sequence the flip-mount button uses.
+        WeaponMounted selectedWeapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        clientgui.getUnitDisplay().wPan.displayMek(entity);
+        if (selectedWeapon != null) {
+            clientgui.getUnitDisplay().wPan.selectWeapon(selectedWeapon);
+        }
         clientgui.updateFiringArc(entity);
     }
 
@@ -377,9 +397,8 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
      */
     public void rotateRearTurret() {
         if ((currentEntity() instanceof Tank tank) && !tank.hasNoDualTurret()) {
-            new TurretFacingDialog(clientgui.getFrame(), tank, clientgui, this::declareSecondaryFacing)
+            new TurretFacingDialog(clientgui.getFrame(), tank, clientgui, this::rotateMainTurretTo)
                   .setVisible(true);
-            refreshAfterRotation();
         }
     }
 

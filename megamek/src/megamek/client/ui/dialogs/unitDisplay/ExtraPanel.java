@@ -664,6 +664,8 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             if (entity != null) {
                 Sensor sensor = entity.getSensors().elementAt(sensorIdx);
                 entity.setNextSensor(sensor);
+                // The player picked this themselves, so their sensor preference must not override it later
+                entity.setCustomSensorChoice(true);
                 refreshSensorChoices(entity);
                 String sensorMsg = Messages.getString("MekDisplay.willSwitchAtEnd",
                       "Active Sensors",

@@ -323,7 +323,7 @@ public class TestSmallCraft extends TestAero {
     }
 
     /**
-     * Returns the number of required officers of the SmallCraft.
+     * Returns the number of required officers of the SmallCraft from minimum base crew and gunners.
      * @param smallCraft The SmallCraft
      * @return The number of required officers
      */

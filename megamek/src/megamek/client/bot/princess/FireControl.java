@@ -1109,13 +1109,7 @@ public class FireControl {
             }
             // Apollo FCS gives MRMs -1 to-hit (TO:AR). Apollo is not negated by ECM.
             Mounted<?> ammoLinker = weapon.getLinkedBy();
-            boolean isApolloFcs = (ammoLinker != null)
-                  && (ammoLinker.getType() instanceof MiscType)
-                  && ammoLinker.getType().hasFlag(MiscType.F_APOLLO);
-            boolean isApolloFcsOperational = isApolloFcs
-                  && !ammoLinker.isDestroyed()
-                  && !ammoLinker.isMissing()
-                  && !ammoLinker.isBreached();
+            boolean isApolloFcsOperational = EquipmentActivation.isGuidanceActive(ammoLinker, MiscType.F_APOLLO);
             boolean isMrmAmmo = (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM);
             if (isApolloFcsOperational && isMrmAmmo) {
                 toHit.addModifier(TH_APOLLO);

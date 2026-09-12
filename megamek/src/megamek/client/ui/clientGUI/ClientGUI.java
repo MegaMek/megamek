@@ -147,6 +147,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.SensorFamily;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
 import megamek.common.event.board.GameBoardChangeEvent;
@@ -3164,6 +3165,37 @@ public class ClientGUI extends AbstractClientGUI
         }
     }
 
+    /**
+     * Applies the player's sensor preference to their own units, picking for each one the first sensor family on the
+     * preference list that the unit actually carries a sensor for.
+     *
+     * <p>Example: the preference lists Active Probe, then Infrared, then Magscan. A Marauder MAD-3R carries Mek
+     * Radar, Mek IR, Mek Magscan and Mek Seismic but no probe, so it deploys on Mek IR instead of the Mek Radar it
+     * would otherwise have defaulted to. A Cicada CDA-3M carrying a Beagle Active Probe still deploys on the
+     * probe.</p>
+     *
+     * <p>Units belonging to anyone else are left alone, bots included, so this never changes what Princess or CASPAR
+     * do. A unit whose sensor the player picked by hand is left alone as well, in the lobby or in round zero.</p>
+     *
+     * @param prefChange {@code true} when the player just changed the preference, which also re-applies it to units
+     *                   that have already deployed
+     */
+    private void setSensorPrefs(boolean prefChange) {
+        List<SensorFamily> preferenceOrder = GUIP.getSensorPreferenceOrder();
+        for (Entity entity : client.getGame().getEntitiesVector()) {
+            if (!entity.getOwner().equals(client.getLocalPlayer())
+                  || entity.hasCustomSensorChoice()
+                  || (entity.isDeployed() && !prefChange)) {
+                continue;
+            }
+            int preferredSensorIndex = SensorFamily.preferredSensorIndex(entity, preferenceOrder);
+            if (preferredSensorIndex >= 0) {
+                entity.setNextSensor(entity.getSensors().elementAt(preferredSensorIndex));
+                client.sendSensorChange(entity.getId(), preferredSensorIndex);
+            }
+        }
+    }
+
     private final GameListener gameListener = new GameListenerAdapter() {
 
         @Override
@@ -3313,6 +3345,7 @@ public class ClientGUI extends AbstractClientGUI
 
             if (phase.isDeployment()) {
                 setWeaponOrderPrefs(false);
+                setSensorPrefs(false);
             }
 
             menuBar.setPhase(phase);
@@ -4121,6 +4154,10 @@ public class ClientGUI extends AbstractClientGUI
             }
             case GUIPreferences.DEFAULT_WEAPON_SORT_ORDER -> {
                 setWeaponOrderPrefs(true);
+                getUnitDisplay().displayEntity(getUnitDisplay().getCurrentEntity());
+            }
+            case GUIPreferences.SENSOR_PREFERENCE_ORDER -> {
+                setSensorPrefs(true);
                 getUnitDisplay().displayEntity(getUnitDisplay().getCurrentEntity());
             }
             case GUIPreferences.SOUND_BING_FILENAME_CHAT,

@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.dialogs.buttonDialogs;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -51,12 +52,14 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.DefaultListModel;
@@ -77,6 +80,7 @@ import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.client.ui.panels.CommonSettingsPane;
 import megamek.client.ui.settings.SettingsBadge;
 import megamek.client.ui.settings.SettingsButton;
+import megamek.common.equipment.SensorFamily;
 import megamek.client.ui.settings.SettingsCheckBox;
 import megamek.client.ui.settings.SettingsFormPanel;
 import megamek.client.ui.settings.SettingsPagePanel;
@@ -1688,6 +1692,37 @@ class CommonSettingsDialogTest {
         CommonSettingsDialog.createSettingsPanel(List.of(row(wideButton), row(nestedPanel)));
 
         assertEquals(nestedWidth, nestedButton.getPreferredSize().width);
+    }
+
+    @Test
+    void sensorPreferenceResetRestoresTheShippedOrder() {
+        DefaultListModel<SensorFamily> scrambled = new DefaultListModel<>();
+        scrambled.addElement(SensorFamily.RADAR);
+        scrambled.addElement(SensorFamily.ESM);
+
+        SettingsButton resetButton = CommonSettingsDialog.createSensorPreferenceResetButton();
+        resetButton.addActionListener(
+              event -> CommonSettingsDialog.loadSensorPreferenceOrder(scrambled, SensorFamily.defaultOrder()));
+        CommonSettingsDialog.createSensorPreferenceGrid(scrambled, resetButton);
+
+        resetButton.doClick();
+
+        assertEquals(SensorFamily.defaultOrder(), Collections.list(scrambled.elements()),
+              "Reset to Default must put the sensor ranking back to the order MegaMek ships with");
+    }
+
+    @Test
+    void everySettingsPageMapsEverySectionItBuilds() {
+        // The page tables in createCenterPane index each panel's groups by hand, so adding a settings group without
+        // adding its section entry throws only when a player opens the dialog. Building the real dialog here turns
+        // that into a test failure instead. (Regression: the sensor preference group shipped unmapped.)
+        JFrame owner = new JFrame();
+        try {
+            assertDoesNotThrow(() -> new CommonSettingsDialog(owner).dispose(),
+                  "Every settings group must be mapped to exactly one section on its page");
+        } finally {
+            owner.dispose();
+        }
     }
 
     @Test

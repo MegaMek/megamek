@@ -53,6 +53,8 @@ import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.Sensor;
+import megamek.common.equipment.SensorChoiceHandler;
+import megamek.common.equipment.SensorFamily;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
@@ -814,6 +816,38 @@ public class MekFileParser {
         ent.setCanon(isCanonUnitName(ent.getShortNameRaw()));
         ent.initMilitary();
         linkDumpers(ent);
+
+        // Last, because it overrides the sensor chosen above and needs the probe already in the sensor list
+        applySavedSensorChoice(ent);
+    }
+
+    /**
+     * Applies the sensor the player saved for this chassis and model, if they saved one.
+     *
+     * <p>Without this a unit always starts on the sensor the block above picked for it: the active probe if one is
+     * fitted, otherwise radar. Radar is usually the weakest sensor a military unit carries, which is the complaint
+     * behind RFE #5868.</p>
+     *
+     * <p>Example: a player saves Infrared for the Marauder MAD-3R. Every MAD-3R then starts on Mek IR rather than
+     * Mek Radar, in a MegaMek game and in a MekHQ campaign alike, because both load units through this method.</p>
+     *
+     * <p>A design that carries nothing from the saved family keeps its normal default.</p>
+     */
+    private static void applySavedSensorChoice(Entity ent) {
+        if (ent.getSensors().size() < 2) {
+            return;
+        }
+        SensorFamily savedFamily = SensorChoiceHandler.getSensorChoice(ent.getChassis(), ent.getModel());
+        if (savedFamily == null) {
+            return;
+        }
+        for (Sensor sensor : ent.getSensors()) {
+            if (savedFamily.covers(sensor.type())) {
+                ent.setNextSensor(sensor);
+                ent.setCustomSensorChoice(true);
+                return;
+            }
+        }
     }
 
     /**

@@ -52,6 +52,7 @@ import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeECM;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
 import megamek.common.equipment.AmmoType.Munitions;
@@ -141,10 +142,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
               attackingEntity.getPosition(),
               target.getPosition());
 
-        if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
-              && !mLinker.isDestroyed() && !mLinker.isMissing()
-              && !mLinker.isBreached() && mLinker.getType().hasFlag(
-              MiscType.F_ARTEMIS))
+        if (EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_ARTEMIS)
               && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
             if (bECMAffected) {
                 // ECM prevents bonus
@@ -161,10 +159,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             } else {
                 nMissilesModifier += 2;
             }
-        } else if (((mLinker != null)
-              && (mLinker.getType() instanceof MiscType)
-              && !mLinker.isDestroyed() && !mLinker.isMissing()
-              && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO))
+        } else if (EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_ARTEMIS_PROTO)
               && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
             if (bECMAffected) {
                 // ECM prevents bonus
@@ -181,10 +176,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             } else {
                 nMissilesModifier += 1;
             }
-        } else if (((mLinker != null)
-              && (mLinker.getType() instanceof MiscType)
-              && !mLinker.isDestroyed() && !mLinker.isMissing()
-              && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V))
+        } else if (EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_ARTEMIS_V)
               && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))) {
             if (bECMAffected) {
                 // ECM prevents bonus
@@ -201,10 +193,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             } else {
                 nMissilesModifier += 3;
             }
-        } else if (((mLinker != null)
-              && (mLinker.getType() instanceof MiscType)
-              && !mLinker.isDestroyed() && !mLinker.isMissing()
-              && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO))
+        } else if (EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_APOLLO)
               && (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM)) {
             nMissilesModifier += Game.rulesManager.getRulesWeapons().getMRMClusterModifier(true);
         } else if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.MRM) {
@@ -350,9 +339,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         Mounted<?> mLinker = weapon.getLinkedBy();
         AmmoType ammoType = ammo.getType();
         int bonus = 0;
-        if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
-              && !mLinker.isDestroyed() && !mLinker.isMissing()
-              && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS))
+        if (EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_ARTEMIS)
               && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
             // MML3 gets no bonus from Artemis IV (how sad)
             if (ammoType.getRackSize() > 3) {
@@ -364,9 +351,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             }
         }
 
-        if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
-              && !mLinker.isDestroyed() && !mLinker.isMissing()
-              && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO))
+        if (EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_ARTEMIS_PROTO)
               && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
             // MML3 gets no bonus from Artemis IV (how sad)
             if (ammoType.getRackSize() > 3) {
@@ -378,9 +363,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             }
         }
 
-        if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
-              && !mLinker.isDestroyed() && !mLinker.isMissing()
-              && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V))
+        if (EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_ARTEMIS_V)
               && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))) {
             // MML3 WOULD get a bonus from Artemis V, if you were crazy enough
             // to cross-tech it
@@ -1071,15 +1054,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         AmmoType ammoType = ammo.getType();
         Mounted<?> mLinker = weapon.getLinkedBy();
         if ((weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.ATM)
-              || ((mLinker != null)
-              && (mLinker.getType() instanceof MiscType)
-              && !mLinker.isDestroyed() && !mLinker.isMissing()
-              && !mLinker.isBreached() && (mLinker.getType().hasFlag(
-              MiscType.F_ARTEMIS)
-              || mLinker.getType().hasFlag(
-              MiscType.F_ARTEMIS_V)
-              || mLinker.getType().hasFlag(
-              MiscType.F_ARTEMIS_PROTO)))) {
+              || EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_ARTEMIS)
+              || EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_ARTEMIS_V)
+              || EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_ARTEMIS_PROTO)) {
             if ((!weapon.hasModes() || !weapon.curMode().equals("Indirect"))
                   && (((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.ATM) &&
                   ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_STANDARD))

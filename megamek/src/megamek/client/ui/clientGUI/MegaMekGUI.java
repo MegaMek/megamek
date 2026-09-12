@@ -120,6 +120,7 @@ import megamek.common.KeyBindParser;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
+import megamek.common.equipment.SensorChoiceHandler;
 import megamek.common.game.Game;
 import megamek.common.game.GameType;
 import megamek.common.game.IGame;
@@ -1657,6 +1658,12 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             WeaponOrderHandler.saveWeaponOrderFile();
         } catch (IOException e) {
             LOGGER.error(e, "Error saving custom weapon orders!");
+        }
+
+        try {
+            SensorChoiceHandler.saveSensorChoiceFile();
+        } catch (IOException exception) {
+            LOGGER.error(exception, "Error saving custom sensor choices!");
         }
         System.exit(0);
     }

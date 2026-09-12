@@ -969,7 +969,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                        !selectedUnit.isDeployed() && Game.rulesManager.getRulesGame()
                                                                                       .canWalkOnThisRound(selectedUnit)));
         getBtn(MoveCommand.MOVE_CLEAR_DEPLOY).setEnabled(clearDeployEnabled);
-        getBtn(MoveCommand.MOVE_CLEAR_DEPLOY).setToolTipText("MovementDisplay.moveClearDeployTip");
+        getBtn(MoveCommand.MOVE_CLEAR_DEPLOY).setToolTipText(Messages.getString("MovementDisplay.moveClearDeployTip"));
         updateTurnButton();
 
         updateProneButtons();
@@ -2016,6 +2016,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 markDeploymentHexes(currentlySelectedEntity);
                 currentlySelectedEntity.setDeployed(false);
                 currentlySelectedEntity.setPosition(null);
+                clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
                 refreshButtons();
             }
             return;

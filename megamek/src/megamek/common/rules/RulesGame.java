@@ -163,9 +163,6 @@ public abstract class RulesGame {
         int deploymentRound = entity.getDeployRound();
         int currentRound = entity.getGame().getCurrentRound();
         int startingPos = entity.getStartingPos();
-        if (entity.isDropShip()) {
-            return false;
-        }
         return (!entity.isDeployed() && deploymentRound >= 0
                 && deploymentRound <= currentRound
                 && restrictDeploymentWidth(entity.getOwner(), startingPos));

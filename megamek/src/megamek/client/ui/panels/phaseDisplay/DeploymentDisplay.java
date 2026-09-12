@@ -1198,8 +1198,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     @Override
     public void clear() {
         clientgui.maybeShowUnitDisplay();
-        selectEntity(currentEntity().getId());
         if (currentEntity() != null) {
+            selectEntity(currentEntity().getId());
             currentEntity().setPosition(null);
             clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentEntity()));
         }

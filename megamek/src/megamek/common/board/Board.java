@@ -338,22 +338,22 @@ public class Board implements Serializable {
      */
     public Coords getDeploymentCenter(int deploymentPosition) {
         switch (deploymentPosition) {
-            case Board.START_E:
-                return new Coords(0, getHeight() / 2);
-            case Board.START_SE:
-                return new Coords(0, getHeight());
-            case Board.START_SW:
-                return new Coords(getWidth(), getHeight());
             case Board.START_W:
-                return new Coords(getWidth(), getHeight() / 2);
-            case Board.START_NE:
-                return new Coords(0, 0);
+                return new Coords(0, getHeight() / 2);
+            case Board.START_SW:
+                return new Coords(0, getHeight() - 1);
+            case Board.START_SE:
+                return new Coords(getWidth() - 1, getHeight() - 1);
+            case Board.START_E:
+                return new Coords(getWidth() - 1, getHeight() / 2);
             case Board.START_NW:
-                return new Coords(getWidth(), 0);
+                return new Coords(0, 0);
+            case Board.START_NE:
+                return new Coords(getWidth() - 1, 0);
             case Board.START_N:
                 return new Coords(getWidth() / 2, 0);
             case Board.START_S:
-                return new Coords(getWidth() / 2, getHeight());
+                return new Coords(getWidth() / 2, getHeight() - 1);
             default:
                 // Any, Center, custom zones
                 return getCenter();

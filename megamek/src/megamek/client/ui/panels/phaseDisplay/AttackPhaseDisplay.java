@@ -351,16 +351,6 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     }
 
     /**
-     * Redraws the unit and its firing arc after a turret or mount rotation.
-     *
-     * <p>Only one of the rotation paths refreshed the board on its own. A vehicle main turret is declared as a twist,
-     * which refreshes; a Mek turret and a Directional Torso Mount only send the new facing to the server, which
-     * applies it and echoes nothing, so the unit kept its old facing on screen until something else redrew it.</p>
-     *
-     * <p>The dialog is modal, so this runs once the player has accepted or cancelled it. Redrawing after a cancel
-     * costs nothing.</p>
-     */
-    /**
      * Declares the main turret's new facing and redraws the unit. Called back by the facing dialog when the player
      * accepts it.
      *
@@ -374,6 +364,13 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
         refreshAfterRotation();
     }
 
+    /**
+     * Redraws the unit and its firing arc after a turret or mount rotation.
+     *
+     * <p>Only one of the rotation paths refreshed the board on its own. A vehicle main turret is declared as a twist,
+     * which refreshes; a Mek turret and a Directional Torso Mount only send the new facing to the server, which
+     * applies it and echoes nothing, so the unit kept its old facing on screen until something else redrew it.</p>
+     */
     private void refreshAfterRotation() {
         Entity entity = currentEntity();
         if (entity == null) {

@@ -7886,15 +7886,6 @@ public class Compute {
     }
 
     /**
-     * Lightweight helper for some step evaluation.  No side effects.
-     *
-     * @param detector Entity that will detect a hidden unit
-     * @param distance int Distance from detector to hidden entity
-     * @param endStep  boolean whether this detection is occurring at the last step of a move path
-     *
-     * @return true if detector can detect a unit in this situation
-     */
-    /**
      * Whether a moving enemy reveals a hidden unit in a way that lets it take a point-blank shot (TW p.260).
      *
      * <p>A hidden unit revealed by enemy movement may immediately make the shot, and the rule allows the target to
@@ -7920,6 +7911,15 @@ public class Compute {
         return distance == ((mover.getBAPRange() > 0) ? 1 : 0);
     }
 
+    /**
+     * Lightweight helper for some step evaluation.  No side effects.
+     *
+     * @param detector Entity that will detect a hidden unit
+     * @param distance int Distance from detector to hidden entity
+     * @param endStep  boolean whether this detection is occurring at the last step of a move path
+     *
+     * @return true if detector can detect a unit in this situation
+     */
     public static boolean canDetectHidden(Entity detector, int distance, boolean endStep) {
         // Ending movement adjacent to a hidden unit also reveals it.
         if (detector.isAerospace()) {

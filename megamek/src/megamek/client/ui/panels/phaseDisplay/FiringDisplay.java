@@ -989,10 +989,11 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             }
         }
 
-        if (needNagForDishonor() && HonorNagHelper.wouldBeDishonored(game, attacks)) {
+        String dishonorWarning = needNagForDishonor() ? HonorNagHelper.warningFor(game, attacks) : null;
+        if (dishonorWarning != null) {
             // confirm this action
             String title = Messages.getString("HonorNag.title");
-            String body = Messages.getString("HonorNag.message");
+            String body = dishonorWarning;
             if (checkNagForDishonor(title, body)) {
                 return true;
             }

@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.panels.phaseDisplay;
 
+import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.EntityAction;
@@ -66,6 +67,59 @@ import megamek.common.units.Targetable;
 final class HonorNagHelper {
 
     private HonorNagHelper() {}
+
+    /**
+     * The full warning text, naming which of the honor conditions this attack actually trips.
+     *
+     * <p>The generic warning lists three possibilities and leaves the player to guess. That guess is often wrong:
+     * a lightly armed unit such as a Kestrel VTOL counts as a civilian because {@link Entity#isMilitary()} means
+     * "carries weapons worth the name", so a player firing one at an intact target blames whatever else is nearby
+     * (issue #8933).</p>
+     *
+     * @param game    the game being played
+     * @param attacks the attacks about to be committed
+     *
+     * @return the warning to show, or {@code null} if nothing here dishonors the player
+     */
+    static @Nullable String warningFor(Game game, Iterable<EntityAction> attacks) {
+        for (EntityAction action : attacks) {
+            if (!(action instanceof AbstractAttackAction attackAction) || !isOffensiveAttack(attackAction)) {
+                continue;
+            }
+            String warning = warningFor(game, attackAction.getEntity(game), attackAction.getTarget(game));
+            if (warning != null) {
+                return warning;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The full warning text for one attack, naming the condition it trips. See {@link #warningFor(Game, Iterable)}.
+     *
+     * @param game     the game being played
+     * @param attacker the attacking unit, or {@code null}
+     * @param target   the target, or {@code null}
+     *
+     * @return the warning to show, or {@code null} if this attack does not dishonor the player
+     */
+    static @Nullable String warningFor(Game game, @Nullable Entity attacker, @Nullable Targetable target) {
+        if (!wouldBeDishonored(game, attacker, target)) {
+            return null;
+        }
+        // wouldBeDishonored guarantees a non-null attacker and an Entity target.
+        Entity targetEntity = (Entity) target;
+        String reason;
+        if (!attacker.isMilitary()) {
+            reason = Messages.getString("HonorNag.reason.attackerCivilian", attacker.getShortName());
+        } else if (attacker.isCrippled()) {
+            reason = Messages.getString("HonorNag.reason.attackerCrippled", attacker.getShortName());
+        } else {
+            reason = Messages.getString("HonorNag.reason.targetCrippled", targetEntity.getShortName());
+        }
+        return reason + System.lineSeparator() + System.lineSeparator()
+              + Messages.getString("HonorNag.message");
+    }
 
     /**
      * @return true if any of the given attacks would newly cause an enemy bot following the Forced Withdrawal rules to

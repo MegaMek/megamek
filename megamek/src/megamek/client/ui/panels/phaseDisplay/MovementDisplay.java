@@ -2686,9 +2686,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
                     // Warn if this ram would dishonor the player in the eyes of a Forced Withdrawal bot.
                     if (needNagForDishonor()
-                          && HonorNagHelper.wouldBeDishonored(game, currentlySelectedEntity, target)) {
+                          && (HonorNagHelper.warningFor(game, currentlySelectedEntity, target) != null)) {
                         if (checkNagForDishonor(Messages.getString("HonorNag.title"),
-                              Messages.getString("HonorNag.message"))) {
+                              HonorNagHelper.warningFor(game, currentlySelectedEntity, target))) {
                             clear();
                             return;
                         }
@@ -2796,9 +2796,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     }
                     // Warn if this charge would dishonor the player in the eyes of a Forced Withdrawal bot.
                     if (needNagForDishonor()
-                          && HonorNagHelper.wouldBeDishonored(game, currentlySelectedEntity, target)) {
+                          && (HonorNagHelper.warningFor(game, currentlySelectedEntity, target) != null)) {
                         if (checkNagForDishonor(Messages.getString("HonorNag.title"),
-                              Messages.getString("HonorNag.message"))) {
+                              HonorNagHelper.warningFor(game, currentlySelectedEntity, target))) {
                             clear();
                             return;
                         }
@@ -2910,9 +2910,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
                         // Warn if this DFA would dishonor the player in the eyes of a Forced Withdrawal bot.
                         if (needNagForDishonor()
-                              && HonorNagHelper.wouldBeDishonored(game, currentlySelectedEntity, target)) {
+                              && (HonorNagHelper.warningFor(game, currentlySelectedEntity, target) != null)) {
                             if (checkNagForDishonor(Messages.getString("HonorNag.title"),
-                                  Messages.getString("HonorNag.message"))) {
+                                  HonorNagHelper.warningFor(game, currentlySelectedEntity, target))) {
                                 clear();
                                 return;
                             }

@@ -38,12 +38,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -1715,6 +1717,11 @@ class CommonSettingsDialogTest {
         // The page tables in createCenterPane index each panel's groups by hand, so adding a settings group without
         // adding its section entry throws only when a player opens the dialog. Building the real dialog here turns
         // that into a test failure instead. (Regression: the sensor preference group shipped unmapped.)
+        //
+        // The dialog needs a real window, which a headless CI runner cannot give it, so this one only runs on a
+        // machine with a display. Every other test in this class builds panels rather than windows and runs anywhere.
+        assumeFalse(GraphicsEnvironment.isHeadless(), "Building the settings dialog needs a display");
+
         JFrame owner = new JFrame();
         try {
             assertDoesNotThrow(() -> new CommonSettingsDialog(owner).dispose(),

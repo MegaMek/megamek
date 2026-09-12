@@ -47,6 +47,7 @@ import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
@@ -232,10 +233,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         Mounted<?> bayW = attackingEntity.getEquipment(wId);
         Mounted<?> mLinker = bayW.getLinkedBy();
         int bonus;
-        if ((mLinker != null && mLinker.getType() instanceof MiscType
-              && !mLinker.isDestroyed() && !mLinker.isMissing()
-              && !mLinker.isBreached() && mLinker.getType().hasFlag(
-              MiscType.F_ARTEMIS))
+        if (EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_ARTEMIS)
               && ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)) {
             bonus = (int) Math.ceil(ammoType.getRackSize() / 5.0);
             if ((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) || (ammoType.getAmmoType()
@@ -245,10 +243,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
             current_av = current_av + bonus;
         }
         // check for Artemis V
-        if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
-              && !mLinker.isDestroyed() && !mLinker.isMissing()
-              && !mLinker.isBreached() && mLinker.getType().hasFlag(
-              MiscType.F_ARTEMIS_V))) {
+        if (EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_ARTEMIS_V)) {
             ammoType.getMunitionType();
         }// MML3 WOULD get a bonus from Artemis V, if you were crazy enough
         // to cross-tech it

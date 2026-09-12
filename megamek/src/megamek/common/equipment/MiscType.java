@@ -6556,6 +6556,12 @@ public class MiscType extends EquipmentType {
               F_WS_EQUIPMENT,
               F_SS_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
+        // Missile fire control may be switched on or off (BMM p.12, Electronics). Switching it off gives up the
+        // guidance bonus, which matters most for the Apollo: its -1 on the cluster roll is paid for with a +1 to
+        // hit that MRMs carry. The switch is declared now and takes effect in the End Phase, as it does for every
+        // other electronics system; that is what setInstantModeSwitch(false) does.
+        misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = rulesRefs(
               rulesRef(SourceBookCode.TM, 206),
               rulesRef(SourceBookCode.BMM, 110),
@@ -6595,6 +6601,12 @@ public class MiscType extends EquipmentType {
               F_SS_EQUIPMENT,
               F_HEAVY_EQUIPMENT,
               F_PROTOTYPE);
+        // Missile fire control may be switched on or off (BMM p.12, Electronics). Switching it off gives up the
+        // guidance bonus, which matters most for the Apollo: its -1 on the cluster roll is paid for with a +1 to
+        // hit that MRMs carry. The switch is declared now and takes effect in the End Phase, as it does for every
+        // other electronics system; that is what setInstantModeSwitch(false) does.
+        misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 64);
         misc.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
@@ -6629,6 +6641,12 @@ public class MiscType extends EquipmentType {
               F_WS_EQUIPMENT,
               F_SS_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
+        // Missile fire control may be switched on or off (BMM p.12, Electronics). Switching it off gives up the
+        // guidance bonus, which matters most for the Apollo: its -1 on the cluster roll is paid for with a +1 to
+        // hit that MRMs carry. The switch is declared now and takes effect in the End Phase, as it does for every
+        // other electronics system; that is what setInstantModeSwitch(false) does.
+        misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = rulesRefs(
               rulesRef(SourceBookCode.TM, 206),
               rulesRef(SourceBookCode.BMM, 110),
@@ -6668,6 +6686,12 @@ public class MiscType extends EquipmentType {
               F_WS_EQUIPMENT,
               F_SS_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
+        // Missile fire control may be switched on or off (BMM p.12, Electronics). Switching it off gives up the
+        // guidance bonus, which matters most for the Apollo: its -1 on the cluster roll is paid for with a +1 to
+        // hit that MRMs carry. The switch is declared now and takes effect in the End Phase, as it does for every
+        // other electronics system; that is what setInstantModeSwitch(false) does.
+        misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = rulesRefs(
               rulesRef(SourceBookCode.TO_AUE, 95),
               rulesRef(SourceBookCode.BMM, 110),
@@ -6707,6 +6731,12 @@ public class MiscType extends EquipmentType {
               F_WS_EQUIPMENT,
               F_SS_EQUIPMENT,
               F_HEAVY_EQUIPMENT);
+        // Missile fire control may be switched on or off (BMM p.12, Electronics). Switching it off gives up the
+        // guidance bonus, which matters most for the Apollo: its -1 on the cluster roll is paid for with a +1 to
+        // hit that MRMs carry. The switch is declared now and takes effect in the End Phase, as it does for every
+        // other electronics system; that is what setInstantModeSwitch(false) does.
+        misc.setModes(Mounted.MODE_ON, Mounted.MODE_OFF);
+        misc.setInstantModeSwitch(false);
         misc.rulesRefs = rulesRefs(
               rulesRef(SourceBookCode.TO_AUE, 143),
               rulesRef(SourceBookCode.BMM, 113),

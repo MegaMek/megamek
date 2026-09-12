@@ -74,9 +74,9 @@ import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.commands.*;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
-import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.event.MekDisplayListener;
+import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.audio.AudioService;
 import megamek.client.ui.clientGUI.audio.SoundManager;
@@ -147,6 +147,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.SensorFamily;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
 import megamek.common.event.board.GameBoardChangeEvent;
@@ -3164,6 +3165,38 @@ public class ClientGUI extends AbstractClientGUI
         }
     }
 
+    /**
+     * Applies the player's sensor preference to their own units, picking for each one the first sensor family on the
+     * preference list that the unit actually carries a sensor for.
+     *
+     * <p>Example: the preference lists Active Probe, then Infrared, then Magscan. A Marauder MAD-3R carries Mek
+     * Radar, Mek IR, Mek Magscan and Mek Seismic but no probe, so it deploys on Mek IR instead of the Mek Radar it
+     * would otherwise have defaulted to. A Cicada CDA-3M carrying a Beagle Active Probe still deploys on the
+     * probe.</p>
+     *
+     * <p>Units belonging to anyone else are left alone, bots included, so this never changes what Princess or CASPAR
+     * do. A unit whose sensor the player picked by hand is left alone as well, in the lobby or in round zero.</p>
+     *
+     * <p>A unit that has already deployed is never touched. Changing the preference part-way through a game switches
+     * the sensors of reinforcements still waiting to come on, and nothing that is already on the board.</p>
+     */
+    private void setSensorPrefs() {
+        List<SensorFamily> preferenceOrder = GUIP.getSensorPreferenceOrder();
+        Player localPlayer = client.getLocalPlayer();
+        for (Entity entity : client.getGame().getEntitiesVector()) {
+            if (!entity.getOwner().equals(localPlayer)
+                  || entity.hasCustomSensorChoice()
+                  || entity.isDeployed()) {
+                continue;
+            }
+            int preferredSensorIndex = SensorFamily.preferredSensorIndex(entity, preferenceOrder);
+            if (preferredSensorIndex >= 0) {
+                entity.setNextSensor(entity.getSensors().elementAt(preferredSensorIndex));
+                client.sendSensorChange(entity.getId(), preferredSensorIndex);
+            }
+        }
+    }
+
     private final GameListener gameListener = new GameListenerAdapter() {
 
         @Override
@@ -3313,6 +3346,7 @@ public class ClientGUI extends AbstractClientGUI
 
             if (phase.isDeployment()) {
                 setWeaponOrderPrefs(false);
+                setSensorPrefs();
             }
 
             menuBar.setPhase(phase);
@@ -3494,7 +3528,7 @@ public class ClientGUI extends AbstractClientGUI
                     Object[] options;
                     MovePath[] paths;
                     int optionType;
-                    if (Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepForward, true) 
+                    if (Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepForward, true)
                           && Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepBackward,
                           false)) {
                         options = new Object[3];
@@ -4121,6 +4155,10 @@ public class ClientGUI extends AbstractClientGUI
             }
             case GUIPreferences.DEFAULT_WEAPON_SORT_ORDER -> {
                 setWeaponOrderPrefs(true);
+                getUnitDisplay().displayEntity(getUnitDisplay().getCurrentEntity());
+            }
+            case GUIPreferences.SENSOR_PREFERENCE_ORDER -> {
+                setSensorPrefs();
                 getUnitDisplay().displayEntity(getUnitDisplay().getCurrentEntity());
             }
             case GUIPreferences.SOUND_BING_FILENAME_CHAT,

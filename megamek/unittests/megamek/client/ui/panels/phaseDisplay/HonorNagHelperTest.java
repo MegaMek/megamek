@@ -317,6 +317,8 @@ class HonorNagHelperTest {
 
         assertNotNull(warning);
         int firstMention = warning.indexOf("Kestrel VTOL");
+        // Assert it is there before asserting it is there only once: absent would satisfy the second check on its own.
+        assertTrue(firstMention >= 0, "the reason should name the unit: " + warning);
         assertEquals(firstMention, warning.lastIndexOf("Kestrel VTOL"), "the reason should appear once: " + warning);
     }
 

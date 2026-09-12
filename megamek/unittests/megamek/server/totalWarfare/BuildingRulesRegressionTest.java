@@ -37,19 +37,18 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.HashSet;
-import java.util.Vector;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 import megamek.common.Player;
 import megamek.common.TechConstants;
-import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BuildingType;
@@ -64,17 +63,17 @@ import megamek.common.moves.MovePath;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.*;
+import megamek.common.util.SerializationHelper;
 import megamek.common.verifier.TestBuilding;
 import megamek.common.verifier.TestXMLOption;
-import megamek.common.util.SerializationHelper;
-import megamek.common.weapons.lasers.innerSphere.medium.ISLaserMedium;
 import megamek.common.weapons.handlers.DamageFalloff;
+import megamek.common.weapons.lasers.innerSphere.medium.ISLaserMedium;
 import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /** Rules and persistence regressions found during the building release review. */
 class BuildingRulesRegressionTest {

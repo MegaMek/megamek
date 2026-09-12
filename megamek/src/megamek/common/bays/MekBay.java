@@ -41,7 +41,6 @@ import megamek.common.TechAdvancement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
-import megamek.common.units.EntityWeightClass;
 import megamek.common.units.Entity;
 import megamek.common.units.LandAirMek;
 import megamek.common.units.Mek;

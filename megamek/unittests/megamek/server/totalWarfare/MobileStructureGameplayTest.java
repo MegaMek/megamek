@@ -39,6 +39,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Map;
+
 import megamek.common.Player;
 import megamek.common.TechConstants;
 import megamek.common.board.Coords;

@@ -33,8 +33,6 @@
  */
 package megamek.client.ui.clientGUI;
 
-import megamek.common.enums.MoveStepType;
-
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -88,6 +86,7 @@ import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.comparators.WeaponComparatorDamage;
 import megamek.common.compute.TurretFacing;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentFlag;
 import megamek.common.equipment.EquipmentMode;

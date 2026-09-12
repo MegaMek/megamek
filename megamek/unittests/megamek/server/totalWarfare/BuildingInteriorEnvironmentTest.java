@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.Player;
 import megamek.common.Report;
@@ -58,7 +57,6 @@ import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;

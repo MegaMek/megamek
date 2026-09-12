@@ -88,7 +88,6 @@ import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.AbstractBuildingEntity;
-import megamek.common.units.Dropship;
 import megamek.common.units.AutomaticEjectionRules;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
@@ -1110,7 +1109,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 turnBuildingToward(entity, coords);
             }
             return;
-        }        
+        }
         if (coords.equals(entity.getPosition())) {
             return;
         }

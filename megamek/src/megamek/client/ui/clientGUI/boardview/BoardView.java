@@ -48,7 +48,6 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.lang.System;
 import java.util.*;
 import java.util.List;
 import java.util.Queue;
@@ -1086,7 +1085,7 @@ public final class BoardView extends AbstractBoardView
             return;
         }
         if (GUIP.getShowFPS()) {
-            paintCompsStartTime = System.nanoTime();
+            paintCompsStartTime = java.lang.System.nanoTime();
         }
 
         UIUtil.setHighQualityRendering(graphics2D);
@@ -1293,7 +1292,7 @@ public final class BoardView extends AbstractBoardView
                 totalTime = 0;
                 frameCount = 0;
             } else {
-                totalTime += System.nanoTime() - paintCompsStartTime;
+                totalTime += java.lang.System.nanoTime() - paintCompsStartTime;
                 frameCount++;
             }
 
@@ -1365,23 +1364,23 @@ public final class BoardView extends AbstractBoardView
             }
         }
     }
-    
-    /** 
+
+    /**
      * Debugging method used to render minefield effectiveness ratings
      */
     @SuppressWarnings("unused")
     private void renderMinefieldScores(Graphics2D graphics2D) {
     	/*Map<Coords, Integer> minefieldScores = mdp.getMinefieldScores(Minefield.TYPE_CONVENTIONAL, UnitType.TANK,
     			EntityMovementMode.WHEELED, getBoard());*/
-    	
+
     	MinefieldDeploymentPlanner mdp = new MinefieldDeploymentPlanner(getLocalPlayer(), game);
     	Map<Coords, Double> minefieldScores = mdp.buildCoalescedMinefieldScores(Minefield.TYPE_CONVENTIONAL, getBoard());
-    	
+
     	for (Coords coords : minefieldScores.keySet()) {
     		Point centreHexLocation = getCentreHexLocation(coords.getX(), coords.getY(), true);
             centreHexLocation.translate(HEX_W / 2, HEX_H);
             graphics2D.setColor(Color.pink);
-            drawCenteredString(String.format("%3.1f", minefieldScores.get(coords)), 
+            drawCenteredString(String.format("%3.1f", minefieldScores.get(coords)),
             		centreHexLocation.x, centreHexLocation.y, FONT_14, graphics2D);
     	}
     }
@@ -5183,11 +5182,11 @@ public final class BoardView extends AbstractBoardView
      */
     private class RedrawWorker implements Runnable {
 
-        private long lastTime = System.currentTimeMillis();
+        private long lastTime = java.lang.System.currentTimeMillis();
 
         @Override
         public void run() {
-            long currentTime = System.currentTimeMillis();
+            long currentTime = java.lang.System.currentTimeMillis();
 
             if (boardPanel.isShowing()) {
                 boolean redraw = false;

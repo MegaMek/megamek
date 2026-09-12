@@ -33,9 +33,9 @@
 
 package megamek.common.units;
 
-import megamek.common.TechAdvancement;
-import megamek.common.SimpleTechLevel;
 import megamek.common.MPCalculationSetting;
+import megamek.common.SimpleTechLevel;
+import megamek.common.TechAdvancement;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.BuildingType;

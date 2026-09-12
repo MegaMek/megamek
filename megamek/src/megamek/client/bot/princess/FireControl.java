@@ -41,8 +41,8 @@ import megamek.client.bot.princess.coverage.Builder;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.LosEffects;
-import megamek.common.PartialCover;
 import megamek.common.Messages;
+import megamek.common.PartialCover;
 import megamek.common.Player;
 import megamek.common.RangeType;
 import megamek.common.TargetRollModifier;
@@ -74,7 +74,6 @@ import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.planetaryConditions.IlluminationLevel;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.*;
 import megamek.common.weapons.Weapon;
@@ -3328,7 +3327,7 @@ public class FireControl {
                 weaponDamage = weaponType.getRackSize();
             } else if (weaponDamage == WeaponType.DAMAGE_VARIABLE && shooter.isConventionalInfantry()) {
             	ConvInfantry infantryShooter = (ConvInfantry) shooter;
-            	
+
             	weaponDamage = (int) Math.round(infantryShooter.getDamagePerTrooper() * infantryShooter.getShootingStrength());
             }
 

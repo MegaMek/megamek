@@ -45,7 +45,6 @@ import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AvailabilityValue;
-import megamek.common.enums.ChargeLevel;
 import megamek.common.enums.Era;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -532,7 +531,7 @@ public class EquipmentType implements ITechnology {
               !mounted.curMode().equals("Charge")) {
             return false;
         }
-        
+
         if ((mounted.getType() instanceof PPCWeapon) && (mounted.hasChargedCapacitor() == 0)) {
             return false;
         }

@@ -35,7 +35,6 @@ package megamek.common.moves;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.lang.System;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -69,7 +68,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
-import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
 
@@ -1069,7 +1067,7 @@ public class MoveStep implements Serializable {
         int[] tempMv = entity.getVectors();
 
         mv = new int[] { 0, 0, 0, 0, 0, 0 };
-        System.arraycopy(tempMv, 0, mv, 0, 6);
+        java.lang.System.arraycopy(tempMv, 0, mv, 0, 6);
 
         // if ASF get velocity
         if (entity.isAero()) {
@@ -3957,7 +3955,7 @@ public class MoveStep implements Serializable {
               (movementType == EntityMovementType.MOVE_VTOL_WALK) ||
               (movementType == EntityMovementType.MOVE_VTOL_RUN) ||
               (movementType == EntityMovementType.MOVE_VTOL_SPRINT);
-        
+
         if ((movementType != EntityMovementType.MOVE_JUMP) && !isVTOLFlight) {
             int maxDown = Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(srcHex, destHex,
                   entity.getMaxElevationDown(srcAlt));
@@ -4020,7 +4018,7 @@ public class MoveStep implements Serializable {
         boolean isDownCliff = !src.equals(dest) &&
               srcHex.hasCliffTopTowards(destHex) &&
               (stepHeight == -1 || stepHeight == -2);
-        
+
         // For vehicles exc. VTOL, WIGE, upward Sheer Cliffs is forbidden
         // QuadVees in vehicle mode drive as vehicles, IO p.133
         if ((vehicleAffectedByCliff || quadVeeVehicleMode) && isUpCliff && !isPavementStep) {

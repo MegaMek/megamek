@@ -39,8 +39,8 @@ import java.util.List;
 import megamek.common.bays.Bay;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BuildingType;
-import megamek.common.equipment.MiscType;
 import megamek.common.equipment.BuildingEquipmentType;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.PowerGeneratorType;
 import megamek.common.equipment.WeaponType;
@@ -48,11 +48,10 @@ import megamek.common.equipment.enums.StructureEngine;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingConstruction;
 import megamek.common.units.BuildingDesign;
-import megamek.common.units.BuildingEntity;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.units.IBuilding;
 import megamek.common.units.MobileStructure;
-import megamek.common.units.EntityMovementMode;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 public class TestBuilding extends TestEntity {

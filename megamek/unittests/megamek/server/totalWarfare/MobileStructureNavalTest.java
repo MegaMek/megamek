@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Player;
-import megamek.utils.BoardLoader;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BuildingType;
@@ -52,6 +51,7 @@ import megamek.common.moves.MovePath;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.*;
 import megamek.common.util.SerializationHelper;
+import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

@@ -43,7 +43,6 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.compute.Compute;
-import megamek.common.enums.MoveStepType;
 import megamek.common.moves.MobileStructureGeometry;
 import megamek.common.moves.MobileStructureLinkage;
 import megamek.common.moves.MobileStructureMovement;

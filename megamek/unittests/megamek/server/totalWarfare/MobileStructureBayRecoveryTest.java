@@ -56,11 +56,11 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.units.*;
+import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import megamek.utils.BoardLoader;
 
 class MobileStructureBayRecoveryTest {
     private static final Coords ORIGIN = new Coords(8, 8);

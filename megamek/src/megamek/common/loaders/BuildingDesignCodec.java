@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 import megamek.common.board.CubeCoords;
 import megamek.common.equipment.Mounted;
-import megamek.common.units.BuildingDesign;
 import megamek.common.units.AbstractBuildingEntity;
+import megamek.common.units.BuildingDesign;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.bayWeapons.BayWeapon;
 

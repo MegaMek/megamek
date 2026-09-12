@@ -307,7 +307,7 @@ public class LosEffects {
     public int getHeavySmoke() {
         return heavySmoke;
     }
-    
+
     public int getBAPReduceSmoke() { return bapReduceSmoke; }
 
     public int getScreen() {
@@ -1686,7 +1686,7 @@ public class LosEffects {
                           ((terrainEl > ai.attackAbsHeight) && attackerAdjacent) ||
                           ((terrainEl > ai.targetAbsHeight) && targetAdjacent);
                 }
-                
+
                 int smokeModifier = 0;
                 if (affectsLos) {
                     // smoke and woods stack for LOS so check them both
@@ -1708,7 +1708,7 @@ public class LosEffects {
                     }
                     Entity attacker = game.getEntity(ai.attackerId);
                     if (attacker != null && attacker.hasBAP(true) && ai.attackPos.distance(coords) <= attacker.getBAPRange()) {
-                        los.bapReduceSmoke += smokeModifier; 
+                        los.bapReduceSmoke += smokeModifier;
                     }
                     // Check woods/jungle
                     if ((woodsLevel == 1) || (jungleLevel == 1)) {

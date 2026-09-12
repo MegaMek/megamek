@@ -44,7 +44,6 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.Player;
 import megamek.common.actions.WeaponAttackAction;

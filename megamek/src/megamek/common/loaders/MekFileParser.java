@@ -35,6 +35,8 @@
 
 package megamek.common.loaders;
 
+import static megamek.common.equipment.WeaponType.F_PPC_CAPACITOR_COMPATIBLE;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,7 +74,6 @@ import megamek.common.verifier.TestInfantry;
 import megamek.common.weapons.lasers.clan.CLChemicalLaserWeapon;
 import megamek.common.weapons.ppc.clan.CLERPPC;
 import megamek.logging.MMLogger;
-import static megamek.common.equipment.WeaponType.F_PPC_CAPACITOR_COMPATIBLE;
 
 /**
  * Switches between the various type-specific parsers depending on suffix

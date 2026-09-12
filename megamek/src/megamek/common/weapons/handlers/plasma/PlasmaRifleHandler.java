@@ -57,7 +57,6 @@ import megamek.common.units.IBuilding;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.common.weapons.ppc.innerSphere.ISHeavyPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISLightPlasmaRifle;
-import megamek.common.weapons.ppc.innerSphere.ISPlasmaRifle;
 import megamek.server.totalWarfare.TWGameManager;
 
 public class PlasmaRifleHandler extends AmmoWeaponHandler {

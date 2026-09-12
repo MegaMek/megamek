@@ -606,7 +606,7 @@ public class SharedUtility {
 
             firstStep = false;
         }
-        
+
         // running with destroyed hip or gyro needs a check
         rollTarget = entity.checkRunningWithDamage(overallMoveType, md.getHexesMoved());
         checkNag(rollTarget, nagReport, psrList);

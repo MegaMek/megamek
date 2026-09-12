@@ -511,7 +511,7 @@ public class ComputeECM {
 
         // Get intervening Coords
         ArrayList<Coords> coords = Game.rulesManager.getRulesEquipment().getECMCoordsAffected(a, b);
-        
+
         ECMInfo worstECMEffects = null;
         // Loop through intervening coords, and find the worst effects
         for (Coords c : coords) {
@@ -704,7 +704,7 @@ public class ComputeECM {
                 // Anything that's not Angel ECM
             } else if (m.getType().hasFlag(MiscType.F_ECM) && m.curMode().equals("ECCM")) {
                 int range = Game.rulesManager.getRulesEquipment().getECMRanges(m.getType());
-                
+
                 newInfo = new ECMInfo(range, 0, entity);
                 newInfo.setECCMStrength(1);
             }

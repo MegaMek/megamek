@@ -234,8 +234,8 @@ public class GameCFREvent extends GameEvent {
     public void setTAGTargetTypes(List<Integer> targetTypes) {
         tagTargetTypes = new ArrayList<>(targetTypes);
     }
-    
+
     public void setDirection(int direction) { this.direction = direction;}
-    
+
     public int getDirection() { return direction; }
 }

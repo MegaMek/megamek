@@ -52,8 +52,8 @@ import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.moves.MovePath;
 import megamek.common.moves.MobileStructureAirMovement;
+import megamek.common.moves.MovePath;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.*;
 import megamek.common.util.SerializationHelper;
@@ -61,8 +61,8 @@ import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class BuildingAircraftDeckTest {
     private static final Coords ORIGIN = new Coords(8, 8);

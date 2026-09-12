@@ -48,7 +48,6 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.ArmorType;
-import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.rolls.TargetRoll;

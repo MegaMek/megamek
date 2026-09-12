@@ -37,8 +37,8 @@ import java.util.HashSet;
 
 import megamek.common.Report;
 import megamek.common.compute.Compute;
-import megamek.common.moves.MoveStep;
 import megamek.common.moves.MobileStructureAirMovement;
+import megamek.common.moves.MoveStep;
 import megamek.common.units.BuildingBayDoors;
 import megamek.common.units.MobileStructure;
 import megamek.common.units.MobileStructureBayLaunch;

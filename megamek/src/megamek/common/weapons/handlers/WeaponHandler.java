@@ -77,7 +77,6 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.AtmosphericTaint;
-import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.TaintedAtmosphereRules;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;

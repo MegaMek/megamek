@@ -322,7 +322,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         final boolean hasClaws = ((Mek) ae).hasClaw(armLoc);
         final boolean hasHandActuator = ae.hasSystem(Mek.ACTUATOR_HAND, armLoc);
         // Missing hand actuator is cumulative with missing lower arm actuator
-        if (!hasClaws && !ae.hasWorkingSystem(Mek.ACTUATOR_HAND, armLoc) 
+        if (!hasClaws && !ae.hasWorkingSystem(Mek.ACTUATOR_HAND, armLoc)
               && (((arm == PunchAttackAction.RIGHT) && !ae.hasQuirk(OptionsConstants.QUIRK_POS_BARREL_FIST_RA))
               || ((arm == PunchAttackAction.LEFT) && !ae.hasQuirk(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)))) {
             toHit.addModifier(1, "Hand actuator missing or destroyed");
@@ -401,7 +401,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
         // Add Damage with a shield
         damage += Game.rulesManager.getRulesPhysical().getShieldDamageBoost(entity, armLoc);
-        
+
         // CamOps, pg. 82
         if (zweihandering) {
             damage += (int) Math.floor(entity.getWeight() / 10.0);

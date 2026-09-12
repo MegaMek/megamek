@@ -51,8 +51,8 @@ import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.enums.BuildingType;
-import megamek.common.moves.MobileStructureMovement;
 import megamek.common.moves.MobileStructureLinkage;
+import megamek.common.moves.MobileStructureMovement;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.units.Entity;
@@ -60,9 +60,9 @@ import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.IBuilding;
 import megamek.common.units.MobileStructure;
+import megamek.common.units.Targetable;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
-import megamek.common.units.Targetable;
 import megamek.common.units.WallRules;
 
 /** Executes committed quarter-MP moves without moving a structure before the entire maneuver has been paid. */

@@ -35,8 +35,8 @@ package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.enums.BuildingType;
-import megamek.common.units.BuildingConstruction;
 import megamek.common.units.AbstractBuildingEntity;
+import megamek.common.units.BuildingConstruction;
 import megamek.common.units.IBuilding;
 
 /** Costs for the native static building classifications (TO:AR, Building and Mobile Structure Costs, p. 208). */

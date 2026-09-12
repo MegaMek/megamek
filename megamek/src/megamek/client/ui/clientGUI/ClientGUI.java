@@ -74,9 +74,9 @@ import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.commands.*;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
-import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.event.MekDisplayListener;
+import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.audio.AudioService;
 import megamek.client.ui.clientGUI.audio.SoundManager;
@@ -3494,7 +3494,7 @@ public class ClientGUI extends AbstractClientGUI
                     Object[] options;
                     MovePath[] paths;
                     int optionType;
-                    if (Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepForward, true) 
+                    if (Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepForward, true)
                           && Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepBackward,
                           false)) {
                         options = new Object[3];

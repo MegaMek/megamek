@@ -37,14 +37,12 @@ package megamek.common.weapons.handlers;
 import static java.lang.Math.floor;
 
 import java.io.Serial;
-import java.util.EnumSet;
 import java.util.Vector;
 
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponType;
@@ -52,7 +50,6 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;

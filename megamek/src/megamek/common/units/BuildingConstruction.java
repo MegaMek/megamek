@@ -33,29 +33,29 @@
 
 package megamek.common.units;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.HashSet;
 
 import megamek.common.bays.Bay;
 import megamek.common.bays.LiquidCargoBay;
 import megamek.common.board.CubeCoords;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.BuildingEquipmentType;
-import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.PowerGeneratorType;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.StructureEngine;
 import megamek.common.units.BuildingDesign.Position;
 import megamek.common.units.BuildingDesign.Space;
-import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.attacks.InfantryAttack;
 import megamek.common.weapons.bayWeapons.BayWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /** Shared static-building construction calculations, for the verifier, editor, and record sheet. */
 public final class BuildingConstruction {

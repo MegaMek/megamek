@@ -34,30 +34,19 @@
 
 package megamek.common.units;
 
-import java.util.List;
 
-import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.MPCalculationSetting;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.board.Coords;
-import megamek.common.board.CubeCoords;
-import megamek.common.cost.BuildingCostCalculator;
 import megamek.common.enums.AvailabilityValue;
-import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
-import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.Mounted;
 import megamek.common.equipment.PowerGeneratorType;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.equipment.enums.StructureEngine;
-import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * Implementation of TO:AR's Advanced Buildings.

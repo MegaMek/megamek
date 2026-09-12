@@ -300,7 +300,7 @@ public class ComputeTerrainMods {
                 }
             }
         }
-        
+
         // Special Equipment
 
         // BAP Targeting rule enabled - TO:AR 6th p.97
@@ -334,7 +334,7 @@ public class ComputeTerrainMods {
                 toHit.addModifier(-smokeReduction, Messages.getString("WeaponAttackAction.BAPSmokeReduction"));
             }
         }
-        
+
         // To-hit table changes with no to-hit modifiers
 
         // Aero's in air-to-air combat can hit above and below

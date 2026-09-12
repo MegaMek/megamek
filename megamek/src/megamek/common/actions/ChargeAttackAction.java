@@ -48,7 +48,6 @@ import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
-import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;

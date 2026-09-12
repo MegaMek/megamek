@@ -34,9 +34,9 @@
 
 package megamek.common.bays;
 
+import megamek.common.units.BuildingBayDoors;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
-import megamek.common.units.BuildingBayDoors;
 
 /**
  * This is a base class for the very similar ASFBay and SmallCraftBay.

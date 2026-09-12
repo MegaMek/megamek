@@ -42,8 +42,8 @@ import java.util.Set;
 import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
-import megamek.common.game.Game;
 import megamek.common.enums.GamePhase;
+import megamek.common.game.Game;
 import megamek.common.units.BuildingDesign.Door;
 
 /** Mutable game state for authored doors and environmental integrity; never written into construction BLKs. */

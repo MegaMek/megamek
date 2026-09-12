@@ -37,21 +37,21 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import java.util.List;
 import java.io.ObjectInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
-import megamek.common.enums.BuildingType;
 import megamek.common.enums.BasementType;
+import megamek.common.enums.BuildingType;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.moves.MobileStructureMovement;
 import megamek.common.moves.MobileStructureAirMovement;
+import megamek.common.moves.MobileStructureMovement;
 import megamek.common.moves.MovePath;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.*;

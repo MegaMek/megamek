@@ -56,7 +56,6 @@ import megamek.common.board.Coords;
 import megamek.common.compute.ComputeECM;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.INarcPod;
-import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;

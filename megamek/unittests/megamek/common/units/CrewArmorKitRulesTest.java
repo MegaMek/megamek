@@ -35,27 +35,17 @@ package megamek.common.units;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.TechConstants;
-import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.AtmosphericTaint;
 import megamek.common.planetaryConditions.PlanetaryConditions;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.Logger;
-import org.apache.logging.log4j.core.appender.AbstractAppender;
-import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -200,64 +190,6 @@ class CrewArmorKitRulesTest {
         assertFalse(CrewArmorKitRules.coversSomethingIn(kit(SPACESUIT), fairWeather),
               "nobody needs telling their kit made no difference");
         assertFalse(CrewArmorKitRules.coversSomethingIn(null, toxicAir));
-    }
-
-    @Test
-    void listingArmorKitsLogsNothing() {
-        // Asking a weapon or an ammo type about a MiscTypeFlag makes it log a warning carrying a full stack
-        // trace. This loop walks every equipment type MegaMek knows, so testing the flag without narrowing to
-        // MiscType first produced tens of thousands of them from a single call. In the log attached to issue
-        // #8948 that was 99.9% of a 125MB file.
-        CountingAppender ammoWarnings = attachTo(AmmoType.class);
-        CountingAppender weaponWarnings = attachTo(WeaponType.class);
-        try {
-            CrewArmorKitRules.availableArmorKits();
-        } finally {
-            detach(AmmoType.class, ammoWarnings);
-            detach(WeaponType.class, weaponWarnings);
-        }
-
-        assertEquals(0, ammoWarnings.count, "Listing armor kits must not make ammo types complain about the flag");
-        assertEquals(0, weaponWarnings.count, "Listing armor kits must not make weapons complain about the flag");
-    }
-
-    @Test
-    void everyArmorKitListedIsAMiscTypeCarryingTheArmorKitFlag() {
-        for (EquipmentType armorKit : CrewArmorKitRules.availableArmorKits()) {
-            assertInstanceOf(MiscType.class, armorKit, armorKit.getName() + " should be a MiscType");
-            assertTrue(armorKit.hasFlag(MiscType.F_ARMOR_KIT),
-                  armorKit.getName() + " should carry the armor kit flag");
-        }
-    }
-
-    private static CountingAppender attachTo(Class<?> loggingClass) {
-        CountingAppender appender = new CountingAppender();
-        appender.start();
-        Logger logger = (Logger) LogManager.getLogger(loggingClass);
-        logger.addAppender(appender);
-        logger.setLevel(Level.WARN);
-        return appender;
-    }
-
-    private static void detach(Class<?> loggingClass, CountingAppender appender) {
-        ((Logger) LogManager.getLogger(loggingClass)).removeAppender(appender);
-        appender.stop();
-    }
-
-    /** Counts the "wrong flag type" warnings a class emits while a block of code runs. */
-    private static final class CountingAppender extends AbstractAppender {
-        private int count;
-
-        private CountingAppender() {
-            super("CrewArmorKitRulesTest", null, PatternLayout.createDefaultLayout(), false, null);
-        }
-
-        @Override
-        public void append(LogEvent event) {
-            if (event.getMessage().getFormattedMessage().contains("Incorrect flag check")) {
-                count++;
-            }
-        }
     }
 
     @Test

@@ -34,6 +34,9 @@
 
 package megamek.common.weapons.handlers.plasma;
 
+import java.io.Serial;
+import java.util.Vector;
+
 import megamek.common.HitData;
 import megamek.common.LosEffects;
 import megamek.common.Report;
@@ -56,9 +59,6 @@ import megamek.common.units.Mek;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.server.totalWarfare.TWGameManager;
-
-import java.io.Serial;
-import java.util.Vector;
 
 public class PlasmaCannonHandler extends AmmoWeaponHandler {
     @Serial

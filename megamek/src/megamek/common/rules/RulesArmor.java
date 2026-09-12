@@ -33,12 +33,12 @@ package megamek.common.rules;
  */
 
 
+import java.util.Vector;
+
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.enums.HitDamageType;
 import megamek.server.totalWarfare.TWDamageManager;
-
-import java.util.Vector;
 
 public abstract class RulesArmor {
     /**

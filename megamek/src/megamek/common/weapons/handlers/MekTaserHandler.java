@@ -34,6 +34,9 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
+import java.util.Vector;
+
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -49,9 +52,6 @@ import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
 import megamek.common.units.Tank;
 import megamek.server.totalWarfare.TWGameManager;
-
-import java.io.Serial;
-import java.util.Vector;
 
 public class MekTaserHandler extends AmmoWeaponHandler {
     @Serial

@@ -34,6 +34,11 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
 import megamek.common.HexTarget;
 import megamek.common.Messages;
 import megamek.common.Player;
@@ -62,11 +67,6 @@ import megamek.common.units.Entity;
 import megamek.common.units.IBomber;
 import megamek.common.units.Targetable;
 import megamek.server.totalWarfare.TWGameManager;
-
-import java.io.Serial;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
 
 /**
  * @author Jay Lawson

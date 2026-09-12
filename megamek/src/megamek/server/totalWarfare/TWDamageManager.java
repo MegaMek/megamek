@@ -33,6 +33,10 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
 import megamek.client.ui.Messages;
 import megamek.common.CriticalSlot;
 import megamek.common.DamageInfo;
@@ -65,10 +69,6 @@ import megamek.common.weapons.TeleMissile;
 import megamek.logging.MMLogger;
 import megamek.server.IDamageManager;
 import megamek.server.ServerHelper;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 
 public class TWDamageManager implements IDamageManager {
     private static final MMLogger logger = MMLogger.create(TWDamageManager.class);

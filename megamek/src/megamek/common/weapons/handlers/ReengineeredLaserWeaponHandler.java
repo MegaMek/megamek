@@ -34,14 +34,14 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.HitDamageType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.server.totalWarfare.TWGameManager;
-
-import java.io.Serial;
 
 public class ReengineeredLaserWeaponHandler extends EnergyWeaponHandler {
     @Serial

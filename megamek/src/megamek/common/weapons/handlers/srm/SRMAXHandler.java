@@ -34,6 +34,8 @@
 
 package megamek.common.weapons.handlers.srm;
 
+import java.io.Serial;
+
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.HitDamageType;
@@ -41,8 +43,6 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalWarfare.TWGameManager;
-
-import java.io.Serial;
 
 /**
  * @author Sebastian Brocks

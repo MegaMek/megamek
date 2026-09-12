@@ -34,6 +34,9 @@
 
 package megamek.common.weapons.handlers;
 
+import java.io.Serial;
+import java.util.Vector;
+
 import megamek.common.CriticalSlot;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -50,9 +53,6 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.units.IBomber;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
-
-import java.io.Serial;
-import java.util.Vector;
 
 /**
  * @author Andrew Hunter

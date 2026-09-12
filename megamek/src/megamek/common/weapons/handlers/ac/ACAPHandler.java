@@ -34,6 +34,9 @@
 
 package megamek.common.weapons.handlers.ac;
 
+import java.io.Serial;
+import java.util.Vector;
+
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.Report;
@@ -48,9 +51,6 @@ import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalWarfare.TWGameManager;
-
-import java.io.Serial;
-import java.util.Vector;
 
 /**
  * @author Andrew Hunter

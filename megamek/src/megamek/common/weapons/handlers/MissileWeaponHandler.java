@@ -34,6 +34,13 @@
 
 package megamek.common.weapons.handlers;
 
+import static megamek.common.equipment.AmmoType.INCENDIARY_MOD;
+
+import java.io.Serial;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Vector;
+
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -65,13 +72,6 @@ import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
 import megamek.server.totalWarfare.TWGameManager;
-
-import java.io.Serial;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Vector;
-
-import static megamek.common.equipment.AmmoType.INCENDIARY_MOD;
 
 /**
  * @author Sebastian Brocks

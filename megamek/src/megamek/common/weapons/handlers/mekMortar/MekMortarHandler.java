@@ -34,6 +34,9 @@
 
 package megamek.common.weapons.handlers.mekMortar;
 
+import java.io.Serial;
+import java.util.Vector;
+
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -45,9 +48,6 @@ import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.server.totalWarfare.TWGameManager;
-
-import java.io.Serial;
-import java.util.Vector;
 
 /**
  * @author Jason Tighe

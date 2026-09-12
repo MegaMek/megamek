@@ -34,6 +34,9 @@
 
 package megamek.common.weapons.handlers.plasma;
 
+import java.io.Serial;
+import java.util.Vector;
+
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -57,9 +60,6 @@ import megamek.common.weapons.ppc.innerSphere.ISHeavyPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISLightPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISPlasmaRifle;
 import megamek.server.totalWarfare.TWGameManager;
-
-import java.io.Serial;
-import java.util.Vector;
 
 @Deprecated(since = "0.51.0", forRemoval = true)
 public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {

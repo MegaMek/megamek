@@ -34,6 +34,11 @@
 
 package megamek.common.weapons.handlers;
 
+import static java.lang.Math.floor;
+
+import java.io.Serial;
+import java.util.Vector;
+
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -49,11 +54,6 @@ import megamek.common.rolls.Roll;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.server.totalWarfare.TWGameManager;
-
-import java.io.Serial;
-import java.util.Vector;
-
-import static java.lang.Math.floor;
 
 public class EnergyWeaponHandler extends WeaponHandler {
     @Serial

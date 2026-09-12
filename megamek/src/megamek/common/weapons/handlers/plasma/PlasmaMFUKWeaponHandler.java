@@ -34,6 +34,9 @@
 
 package megamek.common.weapons.handlers.plasma;
 
+import java.io.Serial;
+import java.util.Vector;
+
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -48,9 +51,6 @@ import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.EnergyWeaponHandler;
 import megamek.server.totalWarfare.TWGameManager;
-
-import java.io.Serial;
-import java.util.Vector;
 
 public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
     @Serial

@@ -26351,6 +26351,59 @@ public class TWGameManager extends AbstractGameManager {
      * @param packet    the packet to be processed
      * @param connIndex the id for connection that received the packet.
      */
+    /**
+     * Whether the client on this connection may add a unit owned by the unit's stated owner.
+     *
+     * <p>The owner travels in the payload and used to be taken on trust. The client offers only legal recipients,
+     * but a rule enforced on one side only is a rule the other side cannot rely on: two unrelated client changes
+     * once combined to hand every connecting player's units to the host for several days (issue #8860).</p>
+     *
+     * <p>Three cases are allowed. Adding to yourself, which is the ordinary one. Adding as a gamemaster, who is
+     * meant to be able to set up anybody. And adding to a bot, because since #8808 a unit for your own Princess
+     * travels over your connection carrying the bot's owner id, and the server holds no record of which human runs
+     * which bot. That last case is the known weak point, so it is logged rather than passed over in silence.</p>
+     *
+     * @param entity    the unit being added, carrying the owner the client claims for it
+     * @param connIndex the connection the packet arrived on
+     *
+     * @return {@code true} if the unit may be added
+     */
+    private boolean mayAddUnitFor(Entity entity, int connIndex) {
+        Player sender = game.getPlayer(connIndex);
+        if (sender == null) {
+            LOGGER.error("Refusing a unit from connection {}, which belongs to no player", connIndex);
+            return false;
+        }
+        Player owner = game.getPlayer(entity.getOwnerId());
+        if (owner == null) {
+            LOGGER.error("Player {} tried to add {} for player #{}, who is not in the game",
+                  sender.getName(), entity.getShortNameRaw(), entity.getOwnerId());
+            sendServerChat(String.format(
+                  "Player %s tried to add a unit (%s) for a player who is not in the game; it was rejected.",
+                  sender.getName(), entity.getShortNameRaw()));
+            return false;
+        }
+        if (owner.getId() == sender.getId()) {
+            return true;
+        }
+        if (sender.isGameMaster()) {
+            return true;
+        }
+        if (owner.isBot()) {
+            // The hole this rule cannot close: any client may stock any bot. Recorded so it can be seen after the
+            // fact, since the server cannot tell whose bot this is.
+            LOGGER.info("[AddUnit] {} added {} to the bot {}",
+                  sender.getName(), entity.getShortNameRaw(), owner.getName());
+            return true;
+        }
+        LOGGER.warn("[AddUnit] refusing {} from {}: it is owned by {}, who is neither them nor a bot, and they are "
+                    + "not a gamemaster", entity.getShortNameRaw(), sender.getName(), owner.getName());
+        sendServerChat(String.format(
+              "Player %s attempted to add a unit (%s) belonging to %s, the unit was rejected.",
+              sender.getName(), entity.getShortNameRaw(), owner.getName()));
+        return false;
+    }
+
     private void receiveEntityAdd(Packet packet, int connIndex) throws InvalidPacketDataException {
         final List<Entity> entities = packet.getEntityList(0);
         List<Integer> entityIds = new ArrayList<>(entities.size());
@@ -26363,6 +26416,11 @@ public class TWGameManager extends AbstractGameManager {
         // when removing
         // illegal entities
         for (final Entity entity : new ArrayList<>(entities)) {
+            if (!mayAddUnitFor(entity, connIndex)) {
+                entities.remove(entity);
+                continue;
+            }
+
             // Create a TestEntity instance for supported unit types
             TestEntity testEntity = TestEntity.getEntityVerifier(entity);
             entity.restore();

@@ -941,6 +941,12 @@ public abstract class Entity extends TurnOrdered
     private Sensor activeSensor;
     // the sensor chosen for next turn
     private Sensor nextSensor;
+
+    /**
+     * Set when the player picks this unit's sensor by hand, which stops the client's sensor preference from
+     * overriding their choice. See {@link #hasCustomSensorChoice()}.
+     */
+    private boolean customSensorChoice;
     // roll for sensor check
     private int sensorCheck;
 
@@ -14455,6 +14461,28 @@ public abstract class Entity extends TurnOrdered
 
     public void setNextSensor(Sensor s) {
         nextSensor = s;
+    }
+
+    /**
+     * Whether the player chose this unit's sensor by hand rather than letting their sensor preference pick it.
+     *
+     * <p>A hand-picked sensor outranks the preference, so the client leaves such a unit alone when it applies the
+     * preference at the start of deployment. This mirrors how a hand-sorted weapon list is protected by
+     * {@link megamek.common.enums.WeaponSortOrder#CUSTOM}.</p>
+     *
+     * @return {@code true} when the player picked this unit's sensor themselves
+     */
+    public boolean hasCustomSensorChoice() {
+        return customSensorChoice;
+    }
+
+    /**
+     * Records whether the player chose this unit's sensor by hand.
+     *
+     * @param customSensorChoice {@code true} when the player picked the sensor themselves
+     */
+    public void setCustomSensorChoice(boolean customSensorChoice) {
+        this.customSensorChoice = customSensorChoice;
     }
 
     public int getSensorCheck() {

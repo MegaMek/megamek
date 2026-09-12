@@ -233,19 +233,11 @@ class ComputeToHitIsImpossible {
                   && !AmmoType.canDeliverMinefield(ammoType)) {
                 return Messages.getString("WeaponAttackAction.NoMinefields");
             }
-            if (target.getTargetType() == Targetable.TYPE_SATURATION
-            && !(
-                  (weapon != null)
-                        && (weaponType != null)
-                        && weaponType.hasFlag(WeaponType.F_MRM)
-                        && weapon.getLinkedBy() != null
-                        && weapon.getLinkedBy().getType().hasFlag(MiscType.F_APOLLO)
-                        && !(
-                              weapon.getLinkedBy().isDestroyed() || weapon.getLinkedBy().isMissing()
-                                    || weapon.getLinkedBy().isBreached()
-                            )
-                )
-            ) {
+            if ((target.getTargetType() == Targetable.TYPE_SATURATION)
+                  && !((weapon != null)
+                  && (weaponType != null)
+                  && weaponType.hasFlag(WeaponType.F_MRM)
+                  && EquipmentActivation.isGuidanceActive(weapon.getLinkedBy(), MiscType.F_APOLLO))) {
                 return Messages.getString("WeaponAttackAction.NoSaturation");
             }
 

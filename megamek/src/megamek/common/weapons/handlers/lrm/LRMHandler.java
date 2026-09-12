@@ -47,6 +47,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeECM;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
@@ -245,10 +246,7 @@ public class LRMHandler extends MissileWeaponHandler {
               target.getPosition());
 
         if (!weapon.curMode().equals("Indirect")) {
-            if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
-                  && !mLinker.isDestroyed() && !mLinker.isMissing()
-                  && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                  MiscType.F_ARTEMIS))
+            if (EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_ARTEMIS)
                   && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
                 if (bECMAffected) {
                     // ECM prevents bonus
@@ -265,11 +263,7 @@ public class LRMHandler extends MissileWeaponHandler {
                 } else {
                     nMissilesModifier += 2;
                 }
-            } else if (((mLinker != null)
-                  && (mLinker.getType() instanceof MiscType)
-                  && !mLinker.isDestroyed() && !mLinker.isMissing()
-                  && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                  MiscType.F_ARTEMIS_PROTO))
+            } else if (EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_ARTEMIS_PROTO)
                   && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
                 if (bECMAffected) {
                     // ECM prevents bonus
@@ -286,11 +280,7 @@ public class LRMHandler extends MissileWeaponHandler {
                 } else {
                     nMissilesModifier += 1;
                 }
-            } else if (((mLinker != null)
-                  && (mLinker.getType() instanceof MiscType)
-                  && !mLinker.isDestroyed() && !mLinker.isMissing()
-                  && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                  MiscType.F_ARTEMIS_V))
+            } else if (EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_ARTEMIS_V)
                   && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))) {
                 if (bECMAffected) {
                     // ECM prevents bonus

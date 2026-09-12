@@ -2382,7 +2382,8 @@ public class Compute {
                     mods.addModifier(2, Messages.getString("WeaponAttackAction.AeProne"));
                 }
 
-                if (l3ProneFiringArm != Entity.LOC_NONE) {
+                if (l3ProneFiringArm != Entity.LOC_NONE && !Game.rulesManager.getRulesTarget()
+                                                                             .proneFireWithOneArm(false)) {
                     mods.addModifier(1, Messages.getString("WeaponAttackAction.AePronePropping"));
                 }
             }

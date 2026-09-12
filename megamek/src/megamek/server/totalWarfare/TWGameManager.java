@@ -26346,12 +26346,6 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Checks if an entity added by the client is valid and if so, adds it to the list
-     *
-     * @param packet    the packet to be processed
-     * @param connIndex the id for connection that received the packet.
-     */
-    /**
      * Whether the client on this connection may add a unit owned by the unit's stated owner.
      *
      * <p>The owner travels in the payload and used to be taken on trust. The client offers only legal recipients,
@@ -26404,6 +26398,12 @@ public class TWGameManager extends AbstractGameManager {
         return false;
     }
 
+    /**
+     * Checks if an entity added by the client is valid and if so, adds it to the list
+     *
+     * @param packet    the packet to be processed
+     * @param connIndex the id for connection that received the packet.
+     */
     private void receiveEntityAdd(Packet packet, int connIndex) throws InvalidPacketDataException {
         final List<Entity> entities = packet.getEntityList(0);
         List<Integer> entityIds = new ArrayList<>(entities.size());

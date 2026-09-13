@@ -6443,14 +6443,12 @@ public class Compute {
     public static @Nullable Entity getSwarmMissileTarget(Game game, int aeId, Coords coords,
           int weaponId) {
         Entity tempEntity;
-        Entity attacker = game.getEntity(aeId);
         // first, check the hex of the original target
         Iterator<Entity> entities = game.getEntities(coords);
         Vector<Entity> possibleTargets = new Vector<>();
         while (entities.hasNext()) {
             tempEntity = entities.next();
-            if (!tempEntity.getTargetedBySwarm(aeId, weaponId)
-                  && canBeSwarmedFrom(game, attacker, tempEntity)) {
+            if (!tempEntity.getTargetedBySwarm(aeId, weaponId)) {
                 // we found a target
                 possibleTargets.add(tempEntity);
             }
@@ -6470,12 +6468,11 @@ public class Compute {
                 continue;
             }
             entities = game.getEntities(tempcoords);
-            // Every unit in the hex, not just the first: a hex whose first unit is infantry sheltering in a
-            // building would otherwise contribute nothing, hiding whatever else is standing there.
+            // Every unit in the hex, not just the first. TO:AUE p.183 makes every unit at the same distance a
+            // candidate, chosen at random among them, so stopping at the first one silently narrowed the field.
             while (entities.hasNext()) {
                 tempEntity = entities.next();
-                if (!tempEntity.getTargetedBySwarm(aeId, weaponId)
-                      && canBeSwarmedFrom(game, attacker, tempEntity)) {
+                if (!tempEntity.getTargetedBySwarm(aeId, weaponId)) {
                     // we found a target
                     possibleTargets.add(tempEntity);
                 }
@@ -6489,35 +6486,6 @@ public class Compute {
         return null;
     }
 
-    /**
-     * Whether leftover swarm missiles may pick this unit as their secondary target.
-     *
-     * <p>Conventional infantry inside a building cannot be fired on directly from outside it; the attacker has to
-     * shoot the building hex instead (TW p.172). Leftover swarm missiles look for a target among the units nearby
-     * (TO:AUE p.183), and that search has to obey the same rule, or a volley aimed at a building ends up hitting
-     * the platoon sheltering in it.</p>
-     *
-     * <p>Everything else is fair game, including infantry in the open and non-infantry inside the building, which
-     * the building absorption rules already cover.</p>
-     *
-     * @param game     the game being played
-     * @param attacker the unit that fired the volley, or {@code null} if it has left the board
-     * @param target   the unit being considered as a secondary target
-     *
-     * @return {@code true} if the missiles may attack this unit
-     */
-    private static boolean canBeSwarmedFrom(Game game, @Nullable Entity attacker, Entity target) {
-        boolean isShelteringInfantry = (target instanceof Infantry) && isInBuilding(game, target);
-        if (!isShelteringInfantry) {
-            return true;
-        }
-        if (attacker == null) {
-            return false;
-        }
-        // Fire that reaches them through the building itself is legal, which is how a unit already inside shoots
-        // the platoon it shares the building with.
-        return LosEffects.calculateLOS(game, attacker, target).getThruBldg() != null;
-    }
 
     public static @Nullable Coords getFinalPosition(Coords currentPosition, int... v) {
         if ((v == null) || (v.length != 6) || (currentPosition == null)) {

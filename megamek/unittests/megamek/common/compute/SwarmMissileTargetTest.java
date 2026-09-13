@@ -35,7 +35,10 @@ package megamek.common.compute;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import megamek.common.Hex;
 import megamek.common.Player;
@@ -48,26 +51,29 @@ import megamek.common.units.ConvInfantry;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
-import megamek.common.units.Mek;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 /**
- * Covers which units leftover swarm missiles may pick as a secondary target (GitHub issue #8911). Conventional
- * infantry inside a building cannot be shot at from outside it (TW p.172), so the search that hands leftover missiles
- * a nearby target has to skip them.
+ * Which units leftover swarm missiles may pick as a secondary target (TO:AUE p.183).
+ *
+ * <p>The rule is deliberately wide: any unit, friendly or enemy, in the target's hex or an adjacent one, nearest
+ * first, chosen at random among those at the same distance, and "no form of line of sight from the attacker to the
+ * secondary target is required". A unit sheltering in a building is therefore a legal target, and so is the
+ * launching unit itself.</p>
  */
 class SwarmMissileTargetTest {
 
-    private static final Coords BUILDING_HEX = new Coords(5, 5);
-    private static final Coords OPEN_HEX = new Coords(5, 4);
-    private static final Coords ATTACKER_HEX = new Coords(5, 2);
-    private static final int WEAPON_ID = 0;
     private static final int BOARD_WIDTH = 16;
     private static final int BOARD_HEIGHT = 17;
+    private static final Coords BUILDING_HEX = new Coords(5, 5);
+    private static final Coords OPEN_HEX = new Coords(5, 4);
+    private static final Coords FAR_HEX = new Coords(10, 10);
+    private static final int WEAPON_ID = 0;
 
     private Game game;
     private Entity attacker;
@@ -81,6 +87,7 @@ class SwarmMissileTargetTest {
     void beforeEach() {
         game = new Game();
         game.addPlayer(0, new Player(0, "Test"));
+
         // Built here rather than loaded from a board string: the test board loader fills hexes in file order
         // rather than at the coordinates written, which would put the building in the wrong hex.
         Board board = new Board(BOARD_WIDTH, BOARD_HEIGHT);
@@ -95,7 +102,7 @@ class SwarmMissileTargetTest {
         buildingHex.addTerrain(new Terrain(Terrains.BLDG_CF, 40));
         game.setBoard(board);
 
-        attacker = addUnit(new BipedMek(), ATTACKER_HEX);
+        attacker = addUnit(new BipedMek(), FAR_HEX);
     }
 
     private <E extends Entity> E addUnit(E entity, Coords position) {
@@ -110,43 +117,55 @@ class SwarmMissileTargetTest {
         return entity;
     }
 
-    /** The original target hex is scanned first, so put the candidates there. */
-    private Entity swarmTargetInBuildingHex() {
-        return Compute.getSwarmMissileTarget(game, attacker.getId(), BUILDING_HEX, WEAPON_ID);
+    private Entity swarmTargetAt(Coords coords) {
+        return Compute.getSwarmMissileTarget(game, attacker.getId(), coords, WEAPON_ID);
     }
 
     @Test
-    void infantryShelteringInABuildingIsNotPickedFromOutside() {
-        addUnit(new ConvInfantry(), BUILDING_HEX);
-        assertNull(swarmTargetInBuildingHex(),
-              "missiles from outside must not be handed infantry sheltering in a building");
+    void infantryShelteringInABuildingIsStillAValidTarget() {
+        // TO:AUE p.183: no line of sight to the secondary target is required, so the building does not protect the
+        // platoon from being chosen. Whether the building then absorbs the damage is a separate question.
+        ConvInfantry sheltering = addUnit(new ConvInfantry(), BUILDING_HEX);
+        assertEquals(sheltering.getId(), swarmTargetAt(BUILDING_HEX).getId(),
+              "a platoon inside a building may be picked as a secondary target");
     }
 
     @Test
-    void infantryInTheOpenIsStillPicked() {
-        ConvInfantry inTheOpen = addUnit(new ConvInfantry(), OPEN_HEX);
-        Entity picked = Compute.getSwarmMissileTarget(game, attacker.getId(), OPEN_HEX, WEAPON_ID);
-        assertSame(inTheOpen, picked, "infantry standing in the open is a legal secondary target");
+    void aUnitAlreadyHitByThisFlightIsNotPickedAgain() {
+        // "Neither the original primary target nor any secondary targets may be attacked more than once."
+        ConvInfantry platoon = addUnit(new ConvInfantry(), BUILDING_HEX);
+        platoon.addTargetedBySwarm(attacker.getId(), WEAPON_ID);
+        assertNull(swarmTargetAt(BUILDING_HEX),
+              "a unit this flight has already attacked must not be picked again");
     }
 
     @Test
-    void aMekInTheBuildingIsStillPicked() {
-        // The building absorption rules already cover a unit that is not infantry.
-        Mek insideTheBuilding = addUnit(new BipedMek(), BUILDING_HEX);
-        assertSame(insideTheBuilding, swarmTargetInBuildingHex(),
-              "only infantry gets the shelter, not everything standing in the hex");
+    void theTargetsOwnHexIsPreferredOverAnAdjacentOne() {
+        // "starting from the nearest unit (beginning with any units in the target's hex and moving outward)"
+        Entity inTheHex = addUnit(new BipedMek(), BUILDING_HEX);
+        addUnit(new BipedMek(), OPEN_HEX);
+        assertEquals(inTheHex.getId(), swarmTargetAt(BUILDING_HEX).getId(),
+              "a unit in the target's own hex outranks one in an adjacent hex");
+    }
+
+    @RepeatedTest(20)
+    void everyUnitInAnAdjacentHexIsACandidate() {
+        // "If multiple secondary targets lie within the same distance, the secondary target is chosen at random."
+        // The scan used to look at one unit per adjacent hex, so the rest could never be picked.
+        Entity first = addUnit(new BipedMek(), BUILDING_HEX);
+        Entity second = addUnit(new BipedMek(), BUILDING_HEX);
+        Set<Integer> everPicked = new HashSet<>();
+        for (int attempt = 0; attempt < 40; attempt++) {
+            Entity picked = swarmTargetAt(OPEN_HEX);
+            assertNotNull(picked, "a candidate in the adjacent hex must be found");
+            everPicked.add(picked.getId());
+        }
+        assertTrue(everPicked.contains(first.getId()) && everPicked.contains(second.getId()),
+              "both units in the adjacent hex must be reachable, picked: " + everPicked);
     }
 
     @Test
-    void aUnitBehindShelteringInfantryIsStillFound() {
-        // The adjacent-hex scan used to look at one unit per hex, so a rejected shelterer hid whatever stood
-        // behind it.
-        addUnit(new ConvInfantry(), BUILDING_HEX);
-        Mek alsoThere = addUnit(new BipedMek(), BUILDING_HEX);
-        // Searching from the open hex reaches the building hex through the adjacent-hex scan, which is the loop
-        // that only ever looked at one unit.
-        Entity picked = Compute.getSwarmMissileTarget(game, attacker.getId(), OPEN_HEX, WEAPON_ID);
-        assertNotNull(picked, "a legal target in the hex must still be found");
-        assertEquals(alsoThere.getId(), picked.getId(), "the legal target is the one that is not sheltering");
+    void nothingNearbyMeansTheMissilesAreLost() {
+        assertNull(swarmTargetAt(OPEN_HEX), "with no unit in range the flight finds no target");
     }
 }

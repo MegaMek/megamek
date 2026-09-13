@@ -416,6 +416,12 @@ public class LRMSwarmHandler extends LRMHandler {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
         if (target.isConventionalInfantry()) {
+            // A conventional platoon absorbs every remaining missile and the flight is over: cluster weapons do
+            // not roll on the cluster table against infantry (TW p.215), so there is nothing left to carry on
+            // with. Asked and answered officially - "That's a strange side-effect of the infantry rules, but yes":
+            // https://www.battletech.com/forums/index.php/topic,46840.msg1080115.html#msg1080115
+            // Without this the remainder is never updated here and the missiles chain on to a further target.
+            swarmMissilesNowLeft = 0;
             if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
                 return ((BattleArmor) attackingEntity).getShootingStrength();

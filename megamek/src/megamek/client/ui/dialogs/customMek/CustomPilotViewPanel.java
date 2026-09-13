@@ -187,9 +187,11 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
                   UIUtil.formatSideTooltip(Messages.getString("CustomMekDialog.choSidearm.tooltip")));
             addAdvancedRow(Messages.getString("CustomMekDialog.choSidearm"), choSidearm);
         }
-        fldSmallArms.setText(entity.getCrew().hasSmallArms(slot)
-              ? Integer.toString(entity.getCrew().getSmallArms(slot))
-              : "");
+        // Likewise the Small Arms field opens on the unit's default when nothing was recorded
+        int smallArmsShown = entity.getCrew().hasSmallArms(slot)
+              ? entity.getCrew().getSmallArms(slot)
+              : CrewSidearmRules.defaultSmallArms(entity);
+        fldSmallArms.setText((smallArmsShown == Crew.SMALL_ARMS_UNSET) ? "" : Integer.toString(smallArmsShown));
         fldTough.setText(Integer.toString(entity.getCrew().getToughness(slot)));
         fldFatigue.setText(Integer.toString(entity.getCrew().getCrewFatigue(slot)));
         if (entity.getCrew().getSlotCount() > 1) {
@@ -345,9 +347,15 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
             sidearmNamesByDisplayName.put(sidearm.getName(), sidearm.getInternalName());
             choSidearm.addItem(sidearm.getName());
         }
+        // A crew member with nothing recorded opens on their unit's default, which is what they would step out
+        // with anyway; pressing OK then records it, and None is still there to choose.
         String carriedName = entity.getCrew().getSidearmName(slot);
+        if ((carriedName == null) || carriedName.isBlank()) {
+            carriedName = CrewSidearmRules.defaultSidearmName(entity);
+        }
         EquipmentType carried = (carriedName == null) ? null : EquipmentType.get(carriedName);
-        choSidearm.setSelectedItem((carried == null) ? noSidearm : carried.getName());
+        boolean isOffered = (carried != null) && sidearmNamesByDisplayName.containsKey(carried.getName());
+        choSidearm.setSelectedItem(isOffered ? carried.getName() : noSidearm);
     }
 
     /**

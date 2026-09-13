@@ -2195,8 +2195,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // Check for unused velocity for airborne and spacecraft.
         if (needNagForOther()) {
             if ((currentlySelectedEntity != null) && (null != cmd) && currentlySelectedEntity.isAero()) {
-                boolean airborneOrSpaceborne = currentlySelectedEntity.isAirborne() ||
-                      currentlySelectedEntity.isSpaceborne();
+                // An aerodyne reports itself airborne at any altitude, so a fighter sitting on the ground
+                // still looks like it is flying. Left in, this refuses to end the turn over velocity the unit
+                // has no way to spend: on a ground map one point costs sixteen hexes of movement, and every
+                // move step is illegal at altitude 0 anyway. That combination strands the unit for good.
+                boolean isOnTheGround = (currentlySelectedEntity.getAltitude() == 0)
+                      && game.getBoard(currentlySelectedEntity).isGround();
+                boolean airborneOrSpaceborne = (currentlySelectedEntity.isAirborne() && !isOnTheGround)
+                      || currentlySelectedEntity.isSpaceborne();
                 boolean unusedVelocity;
 
                 if (null != cmd.getLastStep()) {

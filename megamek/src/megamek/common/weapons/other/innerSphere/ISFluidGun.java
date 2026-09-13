@@ -47,7 +47,7 @@ import megamek.common.weapons.other.FluidGunWeapon;
  */
 public class ISFluidGun extends FluidGunWeapon {
     @Serial
-    private static final long serialVersionUID = 5043640099544278749L;
+    private static final long serialVersionUID = -3422153362828320892L;
 
     public ISFluidGun() {
         super();

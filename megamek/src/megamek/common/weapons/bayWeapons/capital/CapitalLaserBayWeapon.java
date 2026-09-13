@@ -54,7 +54,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class CapitalLaserBayWeapon extends BayWeapon {
     @Serial
-    private static final long serialVersionUID = 8756042527483383101L;
+    private static final long serialVersionUID = -829949057316274995L;
 
     public CapitalLaserBayWeapon() {
         name = "Capital Laser Bay";

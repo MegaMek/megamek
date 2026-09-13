@@ -49,7 +49,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  */
 public class InfantrySniperRifleWilimtonRS17Stripped extends InfantryWeapon {
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -8916474307696858521L;
 
     public InfantrySniperRifleWilimtonRS17Stripped() {
         super();

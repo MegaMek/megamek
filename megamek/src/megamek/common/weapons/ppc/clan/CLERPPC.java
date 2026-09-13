@@ -49,7 +49,7 @@ import megamek.common.weapons.ppc.PPCWeapon;
  */
 public class CLERPPC extends PPCWeapon {
     @Serial
-    private static final long serialVersionUID = 5108976056064542099L;
+    private static final long serialVersionUID = 4422517876497292236L;
 
     public CLERPPC() {
         super();

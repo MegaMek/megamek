@@ -50,7 +50,7 @@ import megamek.common.weapons.lasers.clan.CLChemicalLaserWeapon;
  */
 public class CLChemicalLaserMedium extends CLChemicalLaserWeapon {
     @Serial
-    private static final long serialVersionUID = 322396740172378519L;
+    private static final long serialVersionUID = -515195367687722417L;
 
     public CLChemicalLaserMedium() {
         name = "Medium Chemical Laser";

@@ -71,7 +71,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
     private static final MMLogger LOGGER = MMLogger.create(ArtilleryCannonWeaponHandler.class);
 
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -4149976519821344517L;
     boolean handledAmmoAndReport = false;
 
     public ArtilleryCannonWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m)

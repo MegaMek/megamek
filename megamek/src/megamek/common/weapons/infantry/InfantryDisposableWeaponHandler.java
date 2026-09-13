@@ -65,7 +65,7 @@ import megamek.server.totalWarfare.TWGameManager;
 public class InfantryDisposableWeaponHandler extends InfantryWeaponHandler {
 
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -7494999844455396754L;
 
     /**
      * The per-trooper damage of a Disposable Weapon attack is multiplied by this value before being scaled by the

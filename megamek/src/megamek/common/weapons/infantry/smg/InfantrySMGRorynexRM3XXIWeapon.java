@@ -57,7 +57,7 @@ public class InfantrySMGRorynexRM3XXIWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 4808420397596402672L;
 
     public InfantrySMGRorynexRM3XXIWeapon() {
         super();

@@ -52,7 +52,7 @@ public class BarracudaTHandler extends TeleMissileHandler {
      *
      */
     @Serial
-    private static final long serialVersionUID = -2536312899803153911L;
+    private static final long serialVersionUID = -794536686350322497L;
 
     /**
      *

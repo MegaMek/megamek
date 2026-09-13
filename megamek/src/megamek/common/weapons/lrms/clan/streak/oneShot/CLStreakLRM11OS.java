@@ -52,7 +52,7 @@ public class CLStreakLRM11OS extends StreakLRMWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = 5240577239366457930L;
+    private static final long serialVersionUID = 4454431326934316780L;
 
     /**
      *

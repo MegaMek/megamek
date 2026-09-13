@@ -49,7 +49,7 @@ import megamek.common.equipment.AmmoType;
  */
 public class CapMissTeleWhiteSharkWeapon extends CapitalMissileWeapon {
     @Serial
-    private static final long serialVersionUID = 8756042527483383101L;
+    private static final long serialVersionUID = -4717119954164917565L;
 
     public CapMissTeleWhiteSharkWeapon() {
         super();

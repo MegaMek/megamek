@@ -56,7 +56,7 @@ public class InfantryArchaicSingleStunStaffWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -3250842631936208725L;
 
     public InfantryArchaicSingleStunStaffWeapon() {
         super();

@@ -57,7 +57,7 @@ public class InfantrySMGGuntherMP20Weapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -7725074808647222213L;
 
     public InfantrySMGGuntherMP20Weapon() {
         super();

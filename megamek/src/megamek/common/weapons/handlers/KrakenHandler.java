@@ -52,7 +52,7 @@ public class KrakenHandler extends TeleMissileHandler {
      *
      */
     @Serial
-    private static final long serialVersionUID = -2536312899803153911L;
+    private static final long serialVersionUID = 8655279262885087886L;
 
     /**
      *

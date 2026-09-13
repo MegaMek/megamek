@@ -49,7 +49,7 @@ import megamek.common.weapons.lasers.LaserWeapon;
  */
 public class CLERLaserMedium extends LaserWeapon {
     @Serial
-    private static final long serialVersionUID = -2063816167191977118L;
+    private static final long serialVersionUID = -4722653454650071453L;
 
     public CLERLaserMedium() {
         super();

@@ -51,7 +51,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 public class InfantrySMGJinseYanjingsheStandard extends InfantryWeapon {
 
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -5459811722315059592L;
 
     public InfantrySMGJinseYanjingsheStandard() {
         super();

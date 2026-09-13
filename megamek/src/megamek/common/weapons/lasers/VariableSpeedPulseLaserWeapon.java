@@ -54,7 +54,7 @@ import megamek.server.totalWarfare.TWGameManager;
 public class VariableSpeedPulseLaserWeapon extends LaserWeapon {
 
     @Serial
-    private static final long serialVersionUID = -731162221147163665L;
+    private static final long serialVersionUID = -1407534772106289971L;
     private static final int[] TO_HIT_MODIFIERS_BY_RANGE = { -3, -2, -1 };
 
     public VariableSpeedPulseLaserWeapon() {

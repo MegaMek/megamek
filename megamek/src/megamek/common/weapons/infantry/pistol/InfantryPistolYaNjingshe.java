@@ -55,7 +55,7 @@ public class InfantryPistolYaNjingshe extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 9057093573871201555L;
 
     public InfantryPistolYaNjingshe() {
         super();

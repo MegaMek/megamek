@@ -59,7 +59,7 @@ import megamek.common.weapons.Weapon;
  */
 public class CLBAMortarLight extends Weapon {
     @Serial
-    private static final long serialVersionUID = -141763207003813118L;
+    private static final long serialVersionUID = 6156142860124396770L;
 
     public CLBAMortarLight() {
         super();

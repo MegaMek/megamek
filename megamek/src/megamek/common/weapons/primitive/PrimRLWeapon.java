@@ -48,7 +48,7 @@ public abstract class PrimRLWeapon extends RLWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -1718301014226423896L;
+    private static final long serialVersionUID = -8438430608823316670L;
 
     /**
      *

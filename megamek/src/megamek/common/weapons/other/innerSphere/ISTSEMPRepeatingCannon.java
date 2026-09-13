@@ -46,7 +46,7 @@ import megamek.common.weapons.other.TSEMPWeapon;
 public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
 
     @Serial
-    private static final long serialVersionUID = -4861067053206502295L;
+    private static final long serialVersionUID = -3104036552567534403L;
 
     public ISTSEMPRepeatingCannon() {
         cost = 1200000;

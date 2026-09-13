@@ -53,7 +53,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class HGRHandler extends GRHandler {
     @Serial
-    private static final long serialVersionUID = -6599352761593455842L;
+    private static final long serialVersionUID = 574917150695995679L;
 
     /**
      *

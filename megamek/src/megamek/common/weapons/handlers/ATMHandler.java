@@ -68,7 +68,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class ATMHandler extends MissileWeaponHandler {
     @Serial
-    private static final long serialVersionUID = -2536312899803153911L;
+    private static final long serialVersionUID = 8869529247713769374L;
 
     public ATMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);

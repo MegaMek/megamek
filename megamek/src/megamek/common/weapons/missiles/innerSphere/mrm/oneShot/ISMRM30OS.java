@@ -52,7 +52,7 @@ public class ISMRM30OS extends MRMWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = 7118245780649534184L;
+    private static final long serialVersionUID = -442627773689899150L;
 
     /**
      *

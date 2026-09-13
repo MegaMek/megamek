@@ -56,7 +56,7 @@ public class InfantryArchaicHatchetWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 8311275878794892901L;
 
     public InfantryArchaicHatchetWeapon() {
         super();

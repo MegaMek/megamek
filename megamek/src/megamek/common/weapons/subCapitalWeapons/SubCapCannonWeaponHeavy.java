@@ -48,7 +48,7 @@ import megamek.common.enums.TechRating;
  */
 public class SubCapCannonWeaponHeavy extends SubCapCannonWeapon {
     @Serial
-    private static final long serialVersionUID = 8756042527483383101L;
+    private static final long serialVersionUID = -732276028644283918L;
 
     public SubCapCannonWeaponHeavy() {
         super();

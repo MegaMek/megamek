@@ -56,7 +56,7 @@ public class InfantrySupportGrenadeLauncherInfernoWeapon extends InfantryWeapon 
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 6949684890683736565L;
 
     public InfantrySupportGrenadeLauncherInfernoWeapon() {
         super();

@@ -51,7 +51,7 @@ import megamek.common.weapons.AmmoWeapon;
  */
 public class ISAMS extends AmmoWeapon {
     @Serial
-    private static final long serialVersionUID = 5678281956614161074L;
+    private static final long serialVersionUID = 6063579590452724360L;
 
     public ISAMS() {
         super();

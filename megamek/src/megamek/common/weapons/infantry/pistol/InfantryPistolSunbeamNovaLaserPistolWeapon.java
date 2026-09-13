@@ -57,7 +57,7 @@ public class InfantryPistolSunbeamNovaLaserPistolWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -705726583541406840L;
 
     public InfantryPistolSunbeamNovaLaserPistolWeapon() {
         super();

@@ -49,7 +49,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 public class InfantryLaserPistolKelvin000Lancer3MM extends InfantryWeapon {
 
     @Serial
-    private static final long serialVersionUID = 1L; // Update for each unique class
+    private static final long serialVersionUID = 1913407532413320049L; // Update for each unique class
 
     public InfantryLaserPistolKelvin000Lancer3MM() {
         super();

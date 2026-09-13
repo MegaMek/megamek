@@ -67,7 +67,7 @@ public class BayWeaponHandler extends WeaponHandler {
     private static final MMLogger LOGGER = MMLogger.create(BayWeaponHandler.class);
 
     @Serial
-    private static final long serialVersionUID = -1618484541772117621L;
+    private static final long serialVersionUID = -512454555583033360L;
     protected AmmoMounted ammo;
 
     protected BayWeaponHandler() {

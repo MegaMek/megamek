@@ -62,7 +62,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class CLPlasmaCannon extends AmmoWeapon {
     @Serial
-    private static final long serialVersionUID = 322396740172378519L;
+    private static final long serialVersionUID = 8555278379108561379L;
 
     public CLPlasmaCannon() {
         name = "Plasma Cannon";

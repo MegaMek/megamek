@@ -50,7 +50,7 @@ import megamek.common.weapons.autoCannons.HVACWeapon;
  */
 public class ISHVAC2 extends HVACWeapon {
     @Serial
-    private static final long serialVersionUID = 4958849713169213573L;
+    private static final long serialVersionUID = -6403985091488655735L;
 
     public ISHVAC2() {
         super();

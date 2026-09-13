@@ -53,7 +53,7 @@ public class ISEnhancedLRM15 extends EnhancedLRMWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = 3287950524687857609L;
+    private static final long serialVersionUID = 6866107307077046657L;
 
     /**
      *

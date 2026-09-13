@@ -50,7 +50,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  */
 public class InfantryPistolMomoDeBaoyingStandard extends InfantryWeapon {
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 5648396525601371263L;
 
     public InfantryPistolMomoDeBaoyingStandard() {
         super();

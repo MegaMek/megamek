@@ -57,7 +57,7 @@ public class InfantrySupportOneShotMRMInfernoWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 4194828328472925405L;
 
     public InfantrySupportOneShotMRMInfernoWeapon() {
         super();

@@ -48,7 +48,7 @@ import megamek.common.enums.TechRating;
  */
 public class NAC40Weapon extends NavalACWeapon {
     @Serial
-    private static final long serialVersionUID = 8756042527483383101L;
+    private static final long serialVersionUID = -7159663169030736218L;
 
     public NAC40Weapon() {
         super();

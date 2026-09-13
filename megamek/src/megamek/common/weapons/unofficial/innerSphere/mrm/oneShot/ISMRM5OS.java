@@ -48,7 +48,7 @@ import megamek.common.weapons.missiles.MRMWeapon;
  */
 public class ISMRM5OS extends MRMWeapon {
     @Serial
-    private static final long serialVersionUID = 3581161640370371727L;
+    private static final long serialVersionUID = 3817661298095767015L;
 
     public ISMRM5OS() {
         super();

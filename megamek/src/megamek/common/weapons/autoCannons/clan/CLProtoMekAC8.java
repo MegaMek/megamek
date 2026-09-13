@@ -50,7 +50,7 @@ import megamek.common.weapons.autoCannons.ProtoMekACWeapon;
  */
 public class CLProtoMekAC8 extends ProtoMekACWeapon {
     @Serial
-    private static final long serialVersionUID = 4371171653960292873L;
+    private static final long serialVersionUID = -8517651313470367099L;
 
     public CLProtoMekAC8() {
         super();

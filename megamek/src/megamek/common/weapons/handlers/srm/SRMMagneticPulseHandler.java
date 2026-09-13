@@ -54,7 +54,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class SRMMagneticPulseHandler extends SRMHandler {
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -1440288104464612247L;
 
     /** Warheads needed per +1 heat for SRM-class launchers (TO:AUE p.182). */
     private static final int SRM_HEAT_DIVISOR = MagneticPulseState.SRM_HEAT_DIVISOR;

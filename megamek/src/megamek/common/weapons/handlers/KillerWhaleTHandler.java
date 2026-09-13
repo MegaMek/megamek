@@ -52,7 +52,7 @@ public class KillerWhaleTHandler extends TeleMissileHandler {
      *
      */
     @Serial
-    private static final long serialVersionUID = -2536312899803153911L;
+    private static final long serialVersionUID = -7843034435623307377L;
 
     /**
      *

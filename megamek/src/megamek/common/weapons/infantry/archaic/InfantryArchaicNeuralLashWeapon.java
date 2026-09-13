@@ -57,7 +57,7 @@ public class InfantryArchaicNeuralLashWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -5437997290930819409L;
 
     public InfantryArchaicNeuralLashWeapon() {
         super();

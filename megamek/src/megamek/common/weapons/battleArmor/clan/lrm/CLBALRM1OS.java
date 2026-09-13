@@ -48,7 +48,7 @@ import megamek.common.weapons.lrms.LRMWeapon;
  */
 public class CLBALRM1OS extends LRMWeapon {
     @Serial
-    private static final long serialVersionUID = -5262579090950972046L;
+    private static final long serialVersionUID = -467174206244983248L;
 
     public CLBALRM1OS() {
         super();

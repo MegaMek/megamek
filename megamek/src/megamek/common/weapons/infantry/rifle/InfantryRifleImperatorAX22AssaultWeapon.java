@@ -57,7 +57,7 @@ public class InfantryRifleImperatorAX22AssaultWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -7718017417316059485L;
 
     public InfantryRifleImperatorAX22AssaultWeapon() {
         super();

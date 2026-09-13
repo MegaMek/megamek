@@ -52,7 +52,7 @@ import megamek.common.equipment.Mounted;
  */
 public class MassDriverLight extends MassDriverWeapon {
     @Serial
-    private static final long serialVersionUID = 8756042527483383101L;
+    private static final long serialVersionUID = 3013989829341319262L;
 
     public MassDriverLight() {
         super();

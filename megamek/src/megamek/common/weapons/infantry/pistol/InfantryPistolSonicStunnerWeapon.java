@@ -57,7 +57,7 @@ public class InfantryPistolSonicStunnerWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 1888927906016161434L;
 
     public InfantryPistolSonicStunnerWeapon() {
         super();

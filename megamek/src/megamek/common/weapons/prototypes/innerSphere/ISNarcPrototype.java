@@ -49,7 +49,7 @@ import megamek.common.weapons.other.NarcWeapon;
  */
 public class ISNarcPrototype extends NarcWeapon {
     @Serial
-    private static final long serialVersionUID = 5562345335764812479L;
+    private static final long serialVersionUID = -7804125808166256748L;
 
     public ISNarcPrototype() {
         super();

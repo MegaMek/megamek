@@ -56,7 +56,7 @@ public class InfantrySupportRecoillessRifleMediumInfernoWeapon extends InfantryW
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 676260599127905203L;
 
     public InfantrySupportRecoillessRifleMediumInfernoWeapon() {
         super();

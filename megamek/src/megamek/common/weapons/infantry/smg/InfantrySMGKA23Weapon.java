@@ -57,7 +57,7 @@ public class InfantrySMGKA23Weapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -6573152478453426613L;
 
     public InfantrySMGKA23Weapon() {
         super();

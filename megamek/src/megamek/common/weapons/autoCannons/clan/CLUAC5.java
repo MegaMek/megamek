@@ -49,7 +49,7 @@ import megamek.common.weapons.autoCannons.UACWeapon;
  */
 public class CLUAC5 extends UACWeapon {
     @Serial
-    private static final long serialVersionUID = 4371171653960292873L;
+    private static final long serialVersionUID = -1207085592312486708L;
 
     public CLUAC5() {
         super();

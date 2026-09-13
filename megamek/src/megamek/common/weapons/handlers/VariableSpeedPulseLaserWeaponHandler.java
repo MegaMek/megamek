@@ -50,7 +50,7 @@ import megamek.server.totalWarfare.TWGameManager;
 
 public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
     @Serial
-    private static final long serialVersionUID = -5701939682138221449L;
+    private static final long serialVersionUID = 3510664689994400441L;
 
     public VariableSpeedPulseLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
           TWGameManager m) throws EntityLoadingException {

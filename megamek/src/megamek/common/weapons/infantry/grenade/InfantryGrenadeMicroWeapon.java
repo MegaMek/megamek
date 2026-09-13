@@ -56,7 +56,7 @@ public class InfantryGrenadeMicroWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -1868098389974417143L;
 
     public InfantryGrenadeMicroWeapon() {
         super();

@@ -60,7 +60,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class BombISRLP10 extends MissileWeapon {
     @Serial
-    private static final long serialVersionUID = 5763858241912399084L;
+    private static final long serialVersionUID = -8546429392722386512L;
 
     public BombISRLP10() {
         super();

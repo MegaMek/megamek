@@ -57,7 +57,7 @@ public class InfantrySupportFiredrakeNeedlerWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 4084111233404388829L;
 
     public InfantrySupportFiredrakeNeedlerWeapon() {
         super();

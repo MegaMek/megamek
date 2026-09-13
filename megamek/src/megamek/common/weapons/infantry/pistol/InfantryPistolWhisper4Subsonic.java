@@ -55,7 +55,7 @@ public class InfantryPistolWhisper4Subsonic extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 6223510544656968966L;
 
     public InfantryPistolWhisper4Subsonic() {
         super();

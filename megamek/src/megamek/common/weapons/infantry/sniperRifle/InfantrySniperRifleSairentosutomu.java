@@ -55,7 +55,7 @@ public class InfantrySniperRifleSairentosutomu extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 356625563416742906L;
 
     public InfantrySniperRifleSairentosutomu() {
         super();

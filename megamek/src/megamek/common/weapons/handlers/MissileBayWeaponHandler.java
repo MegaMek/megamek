@@ -68,7 +68,7 @@ import megamek.server.totalWarfare.TWGameManager;
 public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
 
     @Serial
-    private static final long serialVersionUID = -1618484541772117621L;
+    private static final long serialVersionUID = 945673735215510853L;
 
     @Deprecated(since = "0.51.0", forRemoval = true)
     protected MissileBayWeaponHandler() {

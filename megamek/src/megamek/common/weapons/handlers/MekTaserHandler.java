@@ -55,7 +55,7 @@ import megamek.server.totalWarfare.TWGameManager;
 
 public class MekTaserHandler extends AmmoWeaponHandler {
     @Serial
-    private static final long serialVersionUID = 1308895663099714573L;
+    private static final long serialVersionUID = 131387096733707152L;
 
     public MekTaserHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);

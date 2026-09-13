@@ -52,7 +52,7 @@ public class WhiteSharkTHandler extends TeleMissileHandler {
      *
      */
     @Serial
-    private static final long serialVersionUID = -2536312899803153911L;
+    private static final long serialVersionUID = 6872873860550766704L;
 
     /**
      *

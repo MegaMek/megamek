@@ -53,7 +53,7 @@ public class ISBALRM1OS extends LRMWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -5976936994611000430L;
+    private static final long serialVersionUID = -853249238070571717L;
 
     /**
      *

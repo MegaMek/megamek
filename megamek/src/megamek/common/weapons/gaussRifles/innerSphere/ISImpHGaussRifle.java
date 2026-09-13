@@ -61,7 +61,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class ISImpHGaussRifle extends GaussWeapon {
     @Serial
-    private static final long serialVersionUID = -2379383217525139478L;
+    private static final long serialVersionUID = 3789175791741661108L;
 
     public ISImpHGaussRifle() {
         super();

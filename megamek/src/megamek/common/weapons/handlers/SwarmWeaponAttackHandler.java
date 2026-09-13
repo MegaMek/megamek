@@ -56,7 +56,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class SwarmWeaponAttackHandler extends WeaponHandler {
     @Serial
-    private static final long serialVersionUID = -2439937071168853215L;
+    private static final long serialVersionUID = 1380036615097073489L;
 
     /**
      *

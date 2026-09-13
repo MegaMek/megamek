@@ -62,7 +62,7 @@ import megamek.server.totalWarfare.TWGameManager;
 
 public class PlasmaCannonHandler extends AmmoWeaponHandler {
     @Serial
-    private static final long serialVersionUID = 2304364403526293671L;
+    private static final long serialVersionUID = -3811691687212886942L;
 
     /**
      *

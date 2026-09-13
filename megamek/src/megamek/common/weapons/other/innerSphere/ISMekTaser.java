@@ -61,7 +61,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class ISMekTaser extends AmmoWeapon {
     @Serial
-    private static final long serialVersionUID = 4393086562754363816L;
+    private static final long serialVersionUID = 2775449484760009041L;
 
     public ISMekTaser() {
         super();

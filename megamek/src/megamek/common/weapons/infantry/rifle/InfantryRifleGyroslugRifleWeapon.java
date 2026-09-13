@@ -57,7 +57,7 @@ public class InfantryRifleGyroslugRifleWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -8731393824138237811L;
 
     public InfantryRifleGyroslugRifleWeapon() {
         super();

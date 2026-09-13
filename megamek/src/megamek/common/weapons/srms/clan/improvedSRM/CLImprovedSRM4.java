@@ -50,7 +50,7 @@ import megamek.common.weapons.srms.SRMWeapon;
  */
 public class CLImprovedSRM4 extends SRMWeapon {
     @Serial
-    private static final long serialVersionUID = 4338199179135810932L;
+    private static final long serialVersionUID = 5929175447045317972L;
 
     public CLImprovedSRM4() {
         super();

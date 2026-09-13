@@ -57,7 +57,7 @@ import megamek.server.totalWarfare.TWGameManager;
 
 public class EnergyWeaponHandler extends WeaponHandler {
     @Serial
-    private static final long serialVersionUID = 2452514543790235562L;
+    private static final long serialVersionUID = 7441860530503536391L;
 
     /**
      *

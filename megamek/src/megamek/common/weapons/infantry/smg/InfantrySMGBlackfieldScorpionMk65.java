@@ -54,7 +54,7 @@ public class InfantrySMGBlackfieldScorpionMk65 extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -2868196045858163536L;
 
     public InfantrySMGBlackfieldScorpionMk65() {
         super();

@@ -57,7 +57,7 @@ public class InfantrySupportDavidLightGaussRifleWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -6309873408480282086L;
 
     public InfantrySupportDavidLightGaussRifleWeapon() {
         super();

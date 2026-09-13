@@ -54,7 +54,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class MekMortarHandler extends AmmoWeaponHandler {
     @Serial
-    private static final long serialVersionUID = -2073773899108954657L;
+    private static final long serialVersionUID = -5983384543898474208L;
     String sSalvoType = " shell(s) ";
 
     /**

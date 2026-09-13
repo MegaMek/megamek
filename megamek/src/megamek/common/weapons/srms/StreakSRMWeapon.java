@@ -55,7 +55,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public abstract class StreakSRMWeapon extends SRMWeapon {
     @Serial
-    private static final long serialVersionUID = 9157660680598071296L;
+    private static final long serialVersionUID = -173335605297069595L;
 
     public StreakSRMWeapon() {
         super();

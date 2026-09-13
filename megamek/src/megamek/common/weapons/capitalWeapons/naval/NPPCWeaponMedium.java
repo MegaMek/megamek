@@ -48,7 +48,7 @@ import megamek.common.enums.TechRating;
  */
 public class NPPCWeaponMedium extends NPPCWeapon {
     @Serial
-    private static final long serialVersionUID = 8756042527483383101L;
+    private static final long serialVersionUID = 6614877968246889226L;
 
     public NPPCWeaponMedium() {
         super();

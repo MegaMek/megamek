@@ -48,7 +48,7 @@ import megamek.common.enums.TechRating;
  */
 public class CLLightTAG extends TAGWeapon {
     @Serial
-    private static final long serialVersionUID = -6411290826952751265L;
+    private static final long serialVersionUID = -3671826663425908263L;
 
     public CLLightTAG() {
         super();

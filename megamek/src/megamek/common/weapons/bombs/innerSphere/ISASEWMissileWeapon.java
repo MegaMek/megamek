@@ -64,7 +64,7 @@ public class ISASEWMissileWeapon extends ThunderboltWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -2094737986722961212L;
+    private static final long serialVersionUID = -701412562773251603L;
 
     public ISASEWMissileWeapon() {
         super();

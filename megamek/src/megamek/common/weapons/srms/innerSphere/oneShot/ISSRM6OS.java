@@ -52,7 +52,7 @@ public class ISSRM6OS extends SRMWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -1926715836221080572L;
+    private static final long serialVersionUID = 3572648678703338142L;
 
     /**
      *

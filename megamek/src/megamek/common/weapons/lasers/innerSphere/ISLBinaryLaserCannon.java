@@ -50,7 +50,7 @@ import megamek.common.weapons.lasers.LaserWeapon;
  */
 public class ISLBinaryLaserCannon extends LaserWeapon {
     @Serial
-    private static final long serialVersionUID = -6849916948609019186L;
+    private static final long serialVersionUID = -4138531989274359588L;
 
     public ISLBinaryLaserCannon() {
         super();

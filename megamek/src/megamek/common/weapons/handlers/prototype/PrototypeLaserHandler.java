@@ -54,7 +54,7 @@ public class PrototypeLaserHandler extends EnergyWeaponHandler {
      *
      */
     @Serial
-    private static final long serialVersionUID = 6832340682515730916L;
+    private static final long serialVersionUID = 9211816385250845332L;
 
     /**
      *

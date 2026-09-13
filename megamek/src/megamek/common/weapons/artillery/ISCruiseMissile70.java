@@ -50,7 +50,7 @@ import megamek.common.equipment.AmmoType;
  */
 public class ISCruiseMissile70 extends ArtilleryWeapon {
     @Serial
-    private static final long serialVersionUID = 5323886711682442495L;
+    private static final long serialVersionUID = -119611611484761944L;
 
     public ISCruiseMissile70() {
         super();

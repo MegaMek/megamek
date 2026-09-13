@@ -56,7 +56,7 @@ public class InfantrySupportRecoillessRifleLightWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 101218428695850403L;
 
     public InfantrySupportRecoillessRifleLightWeapon() {
         super();

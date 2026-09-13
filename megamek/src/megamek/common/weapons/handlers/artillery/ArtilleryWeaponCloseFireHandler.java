@@ -49,7 +49,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class ArtilleryWeaponCloseFireHandler extends ArtilleryWeaponDistantFireHandler {
     @Serial
-    private static final long serialVersionUID = 7116191142234200717L;
+    private static final long serialVersionUID = 3676050246483382480L;
 
     /**
      *

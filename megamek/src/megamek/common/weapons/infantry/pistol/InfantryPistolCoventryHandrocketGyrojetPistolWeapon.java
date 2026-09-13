@@ -57,7 +57,7 @@ public class InfantryPistolCoventryHandrocketGyrojetPistolWeapon extends Infantr
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -9110740125782070320L;
 
     public InfantryPistolCoventryHandrocketGyrojetPistolWeapon() {
         super();

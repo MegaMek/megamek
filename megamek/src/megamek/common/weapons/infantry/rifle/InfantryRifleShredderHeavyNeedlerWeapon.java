@@ -57,7 +57,7 @@ public class InfantryRifleShredderHeavyNeedlerWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 7473640872734698112L;
 
     public InfantryRifleShredderHeavyNeedlerWeapon() {
         super();

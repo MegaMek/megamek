@@ -44,7 +44,7 @@ import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
  */
 public abstract class SubCapMissileWeapon extends CapitalMissileWeapon {
     @Serial
-    private static final long serialVersionUID = 9186993166684654767L;
+    private static final long serialVersionUID = 907942154647489592L;
 
     public SubCapMissileWeapon() {
         super();

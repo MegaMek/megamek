@@ -52,7 +52,7 @@ public class CLSRM5 extends SRMWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = 9051765359928076836L;
+    private static final long serialVersionUID = -2300180618999574366L;
 
     /**
      *

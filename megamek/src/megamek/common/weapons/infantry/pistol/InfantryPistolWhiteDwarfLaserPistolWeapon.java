@@ -57,7 +57,7 @@ public class InfantryPistolWhiteDwarfLaserPistolWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 3953424177922154268L;
 
     public InfantryPistolWhiteDwarfLaserPistolWeapon() {
         super();

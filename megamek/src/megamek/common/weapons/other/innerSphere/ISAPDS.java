@@ -50,7 +50,7 @@ import megamek.common.weapons.AmmoWeapon;
  */
 public class ISAPDS extends AmmoWeapon {
     @Serial
-    private static final long serialVersionUID = 5678281956614161074L;
+    private static final long serialVersionUID = -6401183460663087624L;
 
     public ISAPDS() {
         super();

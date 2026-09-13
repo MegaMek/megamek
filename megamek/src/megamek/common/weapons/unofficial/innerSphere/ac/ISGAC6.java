@@ -51,7 +51,7 @@ import megamek.common.weapons.autoCannons.ACWeapon;
  */
 public class ISGAC6 extends ACWeapon {
     @Serial
-    private static final long serialVersionUID = 49211848611799265L;
+    private static final long serialVersionUID = -6177317271812182608L;
 
     public ISGAC6() {
         super();

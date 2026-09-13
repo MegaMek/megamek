@@ -50,7 +50,7 @@ import megamek.common.weapons.lasers.PulseLaserWeapon;
  */
 public class CLPulseLaserMicro extends PulseLaserWeapon {
     @Serial
-    private static final long serialVersionUID = -3335298535182304490L;
+    private static final long serialVersionUID = 6425671468492738693L;
 
     public CLPulseLaserMicro() {
         super();

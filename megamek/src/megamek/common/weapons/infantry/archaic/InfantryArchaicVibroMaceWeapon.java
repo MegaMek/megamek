@@ -57,7 +57,7 @@ public class InfantryArchaicVibroMaceWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 3432892891085685910L;
 
     public InfantryArchaicVibroMaceWeapon() {
         super();

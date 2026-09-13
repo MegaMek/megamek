@@ -53,7 +53,7 @@ import megamek.common.weapons.flamers.VehicleFlamerWeapon;
  */
 public class ISHeavyFlamer extends VehicleFlamerWeapon {
     @Serial
-    private static final long serialVersionUID = -3957472644909347725L;
+    private static final long serialVersionUID = -6383106114576755239L;
 
     public ISHeavyFlamer() {
         super();

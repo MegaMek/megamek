@@ -56,7 +56,7 @@ public class InfantryGrenadeStandardWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 1039856538343128850L;
 
     public InfantryGrenadeStandardWeapon() {
         super();

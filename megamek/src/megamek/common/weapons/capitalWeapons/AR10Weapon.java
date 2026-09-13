@@ -50,7 +50,7 @@ import megamek.common.equipment.Mounted;
  */
 public class AR10Weapon extends CapitalMissileWeapon {
     @Serial
-    private static final long serialVersionUID = 8756042527483383101L;
+    private static final long serialVersionUID = -4413094002320414507L;
 
     public AR10Weapon() {
         super();

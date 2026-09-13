@@ -52,7 +52,7 @@ public class CLSRT5OS extends SRTWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = 9051765359928076836L;
+    private static final long serialVersionUID = 5635996203108045648L;
 
     /**
      *

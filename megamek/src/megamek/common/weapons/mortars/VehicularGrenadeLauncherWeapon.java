@@ -65,7 +65,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
     @Serial
-    private static final long serialVersionUID = 3343394645568467135L;
+    private static final long serialVersionUID = 937814279444058680L;
 
     public VehicularGrenadeLauncherWeapon() {
         super();

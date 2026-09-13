@@ -57,7 +57,7 @@ public class InfantryRifleZeusHeavyWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 4562185954494724405L;
 
     public InfantryRifleZeusHeavyWeapon() {
         super();

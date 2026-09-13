@@ -63,7 +63,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class CapitalMissileHandler extends AmmoWeaponHandler {
     @Serial
-    private static final long serialVersionUID = -1618484541772117621L;
+    private static final long serialVersionUID = 7984714817947662068L;
     boolean advancedPD;
 
     /**

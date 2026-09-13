@@ -57,7 +57,7 @@ public class InfantrySupportHeavyPulseLaserWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 4032424669379042400L;
 
     public InfantrySupportHeavyPulseLaserWeapon() {
         super();

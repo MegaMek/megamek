@@ -50,7 +50,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class SRMHandler extends MissileWeaponHandler {
     @Serial
-    private static final long serialVersionUID = -1618484541772117621L;
+    private static final long serialVersionUID = -1645908902756608721L;
 
     public SRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         this(t, w, g, m, 0);

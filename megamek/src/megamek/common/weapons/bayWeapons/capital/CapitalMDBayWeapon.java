@@ -45,7 +45,7 @@ import megamek.common.weapons.bayWeapons.AmmoBayWeapon;
  */
 public class CapitalMDBayWeapon extends AmmoBayWeapon {
     @Serial
-    private static final long serialVersionUID = 8756042527483383101L;
+    private static final long serialVersionUID = -6367874542826258567L;
 
     public CapitalMDBayWeapon() {
         super();

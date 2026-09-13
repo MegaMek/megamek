@@ -56,7 +56,7 @@ public class InfantryShotgunDoubleBarrelWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -975285589924447300L;
 
     public InfantryShotgunDoubleBarrelWeapon() {
         super();

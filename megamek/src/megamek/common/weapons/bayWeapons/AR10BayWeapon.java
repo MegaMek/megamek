@@ -65,7 +65,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class AR10BayWeapon extends AmmoBayWeapon {
     @Serial
-    private static final long serialVersionUID = 8756042527483383101L;
+    private static final long serialVersionUID = -5078437709899973091L;
 
     public AR10BayWeapon() {
         super();

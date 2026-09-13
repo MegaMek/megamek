@@ -54,7 +54,7 @@ import megamek.server.totalWarfare.TWGameManager;
 
 public class HyperLaserHandler extends EnergyWeaponHandler {
     @Serial
-    private static final long serialVersionUID = 1;
+    private static final long serialVersionUID = -7169676182496904803L;
 
     /**
      *

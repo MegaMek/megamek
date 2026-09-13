@@ -57,7 +57,7 @@ public class InfantryRifleFederatedBarrettM61ALaserInfernoWeapon extends Infantr
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 6901239550191336753L;
 
     public InfantryRifleFederatedBarrettM61ALaserInfernoWeapon() {
         super();

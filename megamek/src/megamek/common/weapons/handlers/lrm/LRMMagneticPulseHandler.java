@@ -54,7 +54,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class LRMMagneticPulseHandler extends LRMHandler {
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 836864915349561680L;
 
     /** Warheads needed per +1 heat for LRM-class launchers (TO:AUE p.182). */
     private static final int LRM_HEAT_DIVISOR = MagneticPulseState.LRM_HEAT_DIVISOR;

@@ -57,7 +57,7 @@ public class InfantrySupportMk2PortableAAWeapon extends InfantryWeapon {
      *
      */
     @Serial
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -3436767102480423082L;
 
     public InfantrySupportMk2PortableAAWeapon() {
         super();

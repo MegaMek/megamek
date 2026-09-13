@@ -48,7 +48,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 public class InfantryLaserPistolBrightStarL7 extends InfantryWeapon {
 
     @Serial
-    private static final long serialVersionUID = 1L; // Update for each unique class
+    private static final long serialVersionUID = 4860608780687895139L; // Update for each unique class
 
     public InfantryLaserPistolBrightStarL7() {
         super();

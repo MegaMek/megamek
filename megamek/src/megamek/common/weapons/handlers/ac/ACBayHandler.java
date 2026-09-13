@@ -54,7 +54,7 @@ import megamek.server.totalWarfare.TWGameManager;
 public class ACBayHandler extends AmmoBayWeaponHandler {
 
     @Serial
-    private static final long serialVersionUID = -1618484541772117621L;
+    private static final long serialVersionUID = 711686060074135064L;
 
     /**
      *

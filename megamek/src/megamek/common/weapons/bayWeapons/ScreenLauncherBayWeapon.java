@@ -55,7 +55,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class ScreenLauncherBayWeapon extends AmmoBayWeapon {
     @Serial
-    private static final long serialVersionUID = 8756042527483383101L;
+    private static final long serialVersionUID = 8651453929789795240L;
 
     public ScreenLauncherBayWeapon() {
         super();

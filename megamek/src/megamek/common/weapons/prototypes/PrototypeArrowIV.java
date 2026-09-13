@@ -51,7 +51,7 @@ import megamek.common.weapons.artillery.ArtilleryWeapon;
  */
 public class PrototypeArrowIV extends ArtilleryWeapon {
     @Serial
-    private static final long serialVersionUID = -4495524659692575107L;
+    private static final long serialVersionUID = -6647647175841992738L;
 
     public PrototypeArrowIV() {
         super();

@@ -49,7 +49,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 public class InfantryLaserRifleSyrtisFirebolt12Repaired extends InfantryWeapon {
 
     @Serial
-    private static final long serialVersionUID = 1L; // Update for each unique class
+    private static final long serialVersionUID = 6760430472256827128L; // Update for each unique class
 
     public InfantryLaserRifleSyrtisFirebolt12Repaired() {
         super();

@@ -54,7 +54,7 @@ import megamek.common.interfaces.ITechnology;
  */
 public class SubCapMissileSwordfishWeapon extends SubCapMissileWeapon {
     @Serial
-    private static final long serialVersionUID = 3827228773281489872L;
+    private static final long serialVersionUID = -3693918970809852697L;
 
     public SubCapMissileSwordfishWeapon() {
         super();

@@ -59,7 +59,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class CapitalMissileBayWeapon extends AmmoBayWeapon {
     @Serial
-    private static final long serialVersionUID = 8756042527483383101L;
+    private static final long serialVersionUID = -8168858835926620230L;
 
     // There's no RAW minimum, but it can't be 0...
     public static final int CAPITAL_MISSILE_MIN_VELOCITY = 1;

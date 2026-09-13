@@ -47,7 +47,7 @@ import megamek.server.totalWarfare.TWGameManager;
  */
 public class ACTracerHandler extends ACWeaponHandler {
     @Serial
-    private static final long serialVersionUID = 7326881584091651519L;
+    private static final long serialVersionUID = -6583316033329051343L;
 
     public ACTracerHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);

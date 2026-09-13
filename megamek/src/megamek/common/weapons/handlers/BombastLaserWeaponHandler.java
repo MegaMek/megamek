@@ -37,12 +37,12 @@ package megamek.common.weapons.handlers;
 import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.ChargeLevel;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -65,7 +65,7 @@ public class BombastLaserWeaponHandler extends EnergyWeaponHandler {
     public BombastLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager gameManager)
           throws EntityLoadingException {
         super(toHit, waa, game, gameManager);
-        generalDamageType = HitData.DAMAGE_ENERGY;
+        generalDamageType = HitDamageType.DAMAGE_ENERGY;
     }
 
     @Override

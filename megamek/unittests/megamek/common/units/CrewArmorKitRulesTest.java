@@ -39,12 +39,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
+
 import megamek.common.TechConstants;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.AtmosphericTaint;
+import megamek.common.planetaryConditions.EjectionHazard;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -190,6 +193,51 @@ class CrewArmorKitRulesTest {
         assertFalse(CrewArmorKitRules.coversSomethingIn(kit(SPACESUIT), fairWeather),
               "nobody needs telling their kit made no difference");
         assertFalse(CrewArmorKitRules.coversSomethingIn(null, toxicAir));
+    }
+
+    @Test
+    void aKitAnswersOnlyTheHazardsItActuallyCovers() {
+        // The MekWarrior Kit (Advanced) is what the reporter on issue #8947 issued to their whole force on a
+        // tainted world, and it carries the combat suit flag.
+        EquipmentType advancedKit = EquipmentType.get("MekWarrior Kit (Advanced)");
+        assertNotNull(advancedKit, "MekWarrior Kit (Advanced) should exist");
+        EquipmentType spacesuit = EquipmentType.get("Spacesuit");
+        assertNotNull(spacesuit, "Spacesuit should exist");
+
+        // Its sealed neurohelmet supplies air, so it answers the air
+        assertTrue(CrewArmorKitRules.answers(advancedKit, EjectionHazard.TAINTED_AIR));
+        assertTrue(CrewArmorKitRules.answers(advancedKit, EjectionHazard.TOXIC_AIR));
+        // Armored cooling gear answers heat, but nothing about it answers cold
+        assertTrue(CrewArmorKitRules.answers(advancedKit, EjectionHazard.EXTREME_HEAT));
+        assertFalse(CrewArmorKitRules.answers(advancedKit, EjectionHazard.EXTREME_COLD));
+        // It has no gloves and never seals, so it holds no pressure
+        assertFalse(CrewArmorKitRules.answers(advancedKit, EjectionHazard.VACUUM),
+              "A combat suit must never be treated as answering vacuum; saying so would kill the crew");
+
+        // A spacesuit is the other way round
+        assertTrue(CrewArmorKitRules.answers(spacesuit, EjectionHazard.VACUUM));
+        assertTrue(CrewArmorKitRules.answers(spacesuit, EjectionHazard.EXTREME_COLD));
+
+        // A Light Environment Suit is rated for tainted air and not for toxic air, TO:AUE p.162. Treating the two
+        // as the same hazard would tell the player this crew is safe in air that kills them.
+        EquipmentType lightSuit = EquipmentType.get("Environment Suit, Light");
+        assertNotNull(lightSuit, "Environment Suit, Light should exist");
+        assertTrue(CrewArmorKitRules.answers(lightSuit, EjectionHazard.TAINTED_AIR));
+        assertFalse(CrewArmorKitRules.answers(lightSuit, EjectionHazard.TOXIC_AIR));
+
+        // Nothing anyone wears answers being picked up and thrown
+        for (EquipmentType kit : List.of(advancedKit, spacesuit)) {
+            assertFalse(CrewArmorKitRules.answers(kit, EjectionHazard.TORNADO));
+            assertFalse(CrewArmorKitRules.answers(kit, EjectionHazard.STORM));
+        }
+    }
+
+    @Test
+    void aCrewWithNoKitIsAnsweredByNothing() {
+        for (EjectionHazard hazard : EjectionHazard.values()) {
+            assertFalse(CrewArmorKitRules.answers(null, hazard),
+                  "A crew wearing nothing is protected from nothing");
+        }
     }
 
     @Test

@@ -33,14 +33,15 @@ package megamek.common.rules.core;
  */
 
 
+import java.util.Vector;
+
 import megamek.common.HitData;
 import megamek.common.Report;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.rules.RulesArmor;
 import megamek.server.totalWarfare.TWDamageManager;
-
-import java.util.Vector;
 
 public class CoreRulesArmor extends RulesArmor {
     /**
@@ -117,9 +118,13 @@ public class CoreRulesArmor extends RulesArmor {
      * Impact armor reduces damage from falls, collisions, and buildings by half. 1/3 for physical
      */
     @Override
-    public int reduceImpactDamage(int entityId, HitData hit, int damage, Vector<Report> reportVec, int damageType) {
+    public int reduceImpactDamage(int entityId,
+                                  HitData hit,
+                                  int damage,
+                                  Vector<Report> reportVec,
+                                  HitDamageType damageType) {
         Report report;
-        if (hit.isFallDamage() || damageType == HitData.DAMAGE_PHYSICAL_NONATTACK) {
+        if (hit.isFallDamage() || damageType == HitDamageType.DAMAGE_PHYSICAL_NONATTACK) {
             damage = Math.max(1, damage / 2);
             report = new Report(6099);
             report.subject = entityId;
@@ -130,7 +135,7 @@ public class CoreRulesArmor extends RulesArmor {
             return damage;
         }
         // CORE collision and building damage currently are as below, need to be as above
-        
+
         // As long as there is even 1 point of armor in this location, reduce _all_ damage
         // to 2 points for every whole 3 points applied (IntOps pg 88).
         damage = Math.max(1, (2 * (damage / 3)) + (damage % 3));

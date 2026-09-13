@@ -49,6 +49,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscType;
 import megamek.common.net.enums.PacketCommand;
@@ -512,7 +513,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                         table = ToHitData.HIT_PUNCH;
                     }
                     HitData hit = entity.rollHitLocation(table, ToHitData.SIDE_FRONT);
-                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
+                    hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL_NONATTACK);
                     vPhaseReport.addAll(gameManager.damageEntity(entity, hit, next));
                     remaining -= next;
                 }

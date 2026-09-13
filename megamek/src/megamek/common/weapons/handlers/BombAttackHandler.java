@@ -40,7 +40,6 @@ import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.HexTarget;
-import megamek.common.HitData;
 import megamek.common.Messages;
 import megamek.common.Player;
 import megamek.common.Report;
@@ -54,6 +53,7 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.scatter.Scatter;
 import megamek.common.compute.scatter.ScatterMethod;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
@@ -82,7 +82,7 @@ public class BombAttackHandler extends WeaponHandler {
     public BombAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
           throws EntityLoadingException {
         super(toHit, waa, g, m);
-        generalDamageType = HitData.DAMAGE_NONE;
+        generalDamageType = HitDamageType.DAMAGE_NONE;
     }
 
     /**

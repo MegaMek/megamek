@@ -227,16 +227,20 @@ public class MapMenu extends JPopupMenu {
         for (IBuilding candidate : board.getBuildingsAt(coords)) {
             if (!(candidate instanceof AbstractBuildingEntity building)) { continue; }
             var doors = building.getDesign().getDoors();
+            var shown = new HashSet<BuildingDesign.Door>();
             for (int index = 0; index < doors.size(); index++) {
                 var door = doors.get(index);
                 int floor = BuildingElevation.currentFloor(building, door.position().hex(), door.position().level());
-                if (!building.relativeToBoard(door.position().hex()).equals(coords) || floor < 0) {
+                if (!building.relativeToBoard(door.position().hex()).equals(coords) || floor < 0 || shown.contains(door)) {
                     continue;
                 }
                 boolean open = building.getBuildingRuntimeState().isDoorOpen(door);
-                int facing = (door.facing() + building.getFacing()) % 6;
+                var opening = BuildingDoors.opening(doors, door);
+                shown.addAll(opening);
+                String facing = opening.stream().mapToInt(segment -> (segment.facing() + building.getFacing()) % 6)
+                      .distinct().sorted().mapToObj(side -> directions[side]).collect(java.util.stream.Collectors.joining("/"));
                 int elevation = BuildingElevation.base(building, coords) + floor;
-                JMenuItem item = new JMenuItem((open ? "Close " : "Open ") + directions[facing] + " door: "
+                JMenuItem item = new JMenuItem((open ? "Close " : "Open ") + facing + (opening.size() > 1 ? " large door: " : " door: ")
                       + building.getShortName() + ", Level " + (elevation == 0 ? "G" : elevation));
                 item.setEnabled(building.getBuildingRuntimeState().canChangeDoor(building, door, client.getLocalPlayer()));
                 int doorIndex = index;

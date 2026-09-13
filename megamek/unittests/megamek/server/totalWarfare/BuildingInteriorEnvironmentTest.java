@@ -249,6 +249,28 @@ class BuildingInteriorEnvironmentTest {
         assertEquals(2, surviving.position().level(), "saved floor identity remains stable");
     }
 
+    @Test
+    void openingALinkedDoorAppliesExposureAtEveryHexInTheOpening() {
+        var south = new CubeCoords(0, 1, -1);
+        // Capital-scale compartments flood separately, so updating only the operated hex is insufficient.
+        var structure = building(IBuilding.CASTLE_BRIAN, 3, List.of(CubeCoords.ZERO, south));
+        structure.getDesign().setSite(BuildingDesign.Site.UNDERWATER);
+        structure.getDesign().setBaseLevel(-3);
+        structure.getDesign().setEnvironmentalSealing(true);
+        structure.getDesign().getDoors().addAll(List.of(
+              new BuildingDesign.Door(new BuildingDesign.Position(CubeCoords.ZERO, 1), 1, 1, 1),
+              new BuildingDesign.Door(new BuildingDesign.Position(CubeCoords.ZERO, 1), 2, 1, 1),
+              new BuildingDesign.Door(new BuildingDesign.Position(south, 1), 1, 1, 1)));
+        var manager = manager(structure);
+        manager.getGame().setPhase(GamePhase.END);
+        assertTrue(manager.changeBuildingDoor(0, structure.getId(), 0, true));
+        var state = structure.getBuildingRuntimeState();
+        for (var hex : List.of(CubeCoords.ZERO, south)) {
+            assertTrue(state.isBreached(hex));
+            assertTrue(state.isFlooded(hex, 1));
+        }
+    }
+
     @Test void settledEquipmentUsesTheFloodedPhysicalFloorWithoutChangingItsDesignPlacement() throws Exception {
         var structure = building(IBuilding.STANDARD, 4, List.of(CubeCoords.ZERO));
         var lower = structure.addEquipment(new ISLaserMedium(), 2);
@@ -736,10 +758,6 @@ class BuildingInteriorEnvironmentTest {
         loaded.getDesign().remap(position -> position.hex().equals(NORTH) ? null : position, side -> side);
         assertTrue(loaded.getDesign().getBayDoors().isEmpty());
         assertNull(loaded.getDesign().getPortalHex3());
-        var legacy = mobile(3, List.of(CubeCoords.ZERO, NORTH));
-        megamek.common.loaders.BuildingDesignCodec.read(new megamek.common.util.BuildingBlock(), legacy);
-        assertTrue(legacy.getDesign().getBayDoors().isEmpty());
-        assertNull(legacy.getDesign().getPortalHex2());
     }
 
     @Test

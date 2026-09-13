@@ -231,7 +231,7 @@ class MobileStructureBayDoorDamageTest {
         assertTrue(MobileStructureCargoRules.loadableUnits(f.mobile(), projected).contains(f.first()));
     }
 
-    @Test void countOnlyLegacyBayDamageDoesNotCreateAnAuthoredDoor() {
+    @Test void mainlineCountOnlyBayDamageDoesNotCreateAnAuthoredDoor() {
         var f = fixture(IBuilding.FORTRESS, 2, List.of());
         assertTrue(BuildingBayDoors.damage(f.mobile(), f.bay(), null));
         assertEquals(1, f.bay().getCurrentDoors());

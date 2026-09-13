@@ -66,6 +66,29 @@ import org.junit.jupiter.api.Test;
 class BuildingConstructionTest {
     private static final CubeCoords EAST = new CubeCoords(1, 0, -1);
 
+    @Test
+    void doorCodecRoundTripsLinkedAndIndependentDoors() throws Exception {
+        for (int group : new int[] { 0, 9, Integer.MAX_VALUE }) {
+            var building = building(2);
+            var doors = building.getDesign().getDoors();
+            doors.add(new BuildingDesign.Door(new BuildingDesign.Position(CubeCoords.ZERO, 0), 0, 2, group));
+            doors.add(new BuildingDesign.Door(new BuildingDesign.Position(CubeCoords.ZERO, 0), 1, 2, group));
+            var block = BLKFile.getBlock(building);
+            assertEquals("0,0,0/0;0;2;" + group, block.getDataAsString("building_doors")[0]);
+            var loaded = (BuildingEntity) new BLKStructureFile(block).getEntity();
+            assertEquals(doors, loaded.getDesign().getDoors());
+        }
+    }
+
+    @Test
+    void doorCodecRejectsMalformedRows() {
+        for (String suffix : List.of("", ";", ";-1", ";2147483648", ";text", ";1;extra")) {
+            var block = new BuildingBlock();
+            block.writeBlockData("building_doors", "0,0,0/0;0;1" + suffix);
+            assertThrows(EntityLoadingException.class, () -> BuildingDesignCodec.read(block, building(2)));
+        }
+    }
+
     @BeforeAll
     static void initialize() {
         EquipmentType.initializeTypes();

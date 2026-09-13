@@ -340,6 +340,65 @@ class BuildingRulesRegressionTest {
         assertFalse(manager.changeBuildingDoor(0, unit.getId(), 0, false), "the former owner lost these controls");
     }
 
+    @Test
+    void linkedDoorsShareStateCooldownAndPassageAcrossHexesAndSaveLoad() throws Exception {
+        var south = new CubeCoords(0, 1, -1);
+        var unit = structure(false, 2, List.of(CubeCoords.ZERO, south));
+        var doors = unit.getDesign().getDoors();
+        doors.addAll(List.of(
+              new BuildingDesign.Door(new BuildingDesign.Position(CubeCoords.ZERO, 0), 1, 2, 1),
+              new BuildingDesign.Door(new BuildingDesign.Position(CubeCoords.ZERO, 0), 2, 2, 1),
+              new BuildingDesign.Door(new BuildingDesign.Position(south, 0), 1, 2, 1),
+              new BuildingDesign.Door(new BuildingDesign.Position(CubeCoords.ZERO, 0), 4, 2, 1)));
+        var manager = manager(unit);
+        var game = manager.getGame();
+        game.setPhase(megamek.common.enums.GamePhase.END);
+        assertTrue(manager.changeBuildingDoor(0, unit.getId(), 0, true));
+        var state = unit.getBuildingRuntimeState();
+        for (int index = 0; index < 3; index++) {
+            var door = doors.get(index);
+            assertTrue(state.isDoorOpen(door));
+            assertFalse(manager.changeBuildingDoor(0, unit.getId(), index, false), "A different segment cannot bypass the turn limit");
+            var inner = unit.relativeToBoard(door.position().hex());
+            assertTrue(state.openPassage(unit, new Tank(), inner, inner.translated(door.facing()), 0));
+        }
+        assertFalse(state.isDoorOpen(doors.getLast()), "A disconnected segment with the same saved group id stays independent");
+        String xml = SerializationHelper.getSaveGameXStream().toXML(unit);
+        var saved = (BuildingEntity) SerializationHelper.getLoadSaveGameXStream().fromXML(xml);
+        assertTrue(saved.getDesign().getDoors().stream().limit(3).allMatch(saved.getBuildingRuntimeState()::isDoorOpen));
+        var received = roundTrip(unit);
+        game.setEntity(received.getId(), received);
+        game.setRoundCount(game.getRoundCount() + 1);
+        assertTrue(manager.changeBuildingDoor(0, received.getId(), 2, false));
+        assertTrue(received.getDesign().getDoors().stream().noneMatch(received.getBuildingRuntimeState()::isDoorOpen));
+    }
+
+    @Test
+    void capturingOneLinkedSegmentTransfersTheWholeOpening() {
+        var unit = structure(false, 2, List.of(CubeCoords.ZERO));
+        unit.getDesign().getDoors().addAll(List.of(
+              new BuildingDesign.Door(new BuildingDesign.Position(CubeCoords.ZERO, 0), 0, 2, 1),
+              new BuildingDesign.Door(new BuildingDesign.Position(CubeCoords.ZERO, 0), 1, 2, 1)));
+        var manager = manager(unit);
+        var game = manager.getGame();
+        var enemy = new Player(1, "Opponent");
+        game.addPlayer(1, enemy);
+        var infantry = new ConvInfantry();
+        infantry.setId(2);
+        infantry.setOwner(enemy);
+        infantry.setPosition(ORIGIN);
+        infantry.setDeployed(true);
+        game.addEntity(infantry);
+        game.setPhase(megamek.common.enums.GamePhase.END);
+        assertFalse(manager.changeBuildingDoor(1, unit.getId(), 0, true));
+        unit.newRound(1);
+        assertTrue(manager.changeBuildingDoor(1, unit.getId(), 0, true));
+        game.setRoundCount(2);
+        assertFalse(manager.changeBuildingDoor(0, unit.getId(), 1, false));
+        assertTrue(manager.changeBuildingDoor(1, unit.getId(), 1, false));
+        assertTrue(unit.getDesign().getDoors().stream().noneMatch(unit.getBuildingRuntimeState()::isDoorOpen));
+    }
+
     @ParameterizedTest
     @ValueSource(ints = { 1, 2 })
     void openDoorsMustFitTheUnitAndAvoidWallDamage(int height) {
@@ -710,19 +769,20 @@ class BuildingRulesRegressionTest {
         assertEquals(40, restored.getIndustrialElevator(location, 4).getCapacityTons());
         assertNull(restored.getIndustrialElevator(location, 2));
         assertEquals(int.class, java.io.ObjectStreamClass.lookup(megamek.common.IndustrialElevator.class)
-              .getField("capacityTons").getType(), "old Java saves retain their integer capacity field");
+              .getField("capacityTons").getType(), "origin/main Java saves retain their integer capacity field");
     }
 
     @Test
-    void legacySingleElevatorRegistryMigratesWithoutResettingPlatform() throws Exception {
-        Game legacy = new Game();
+    void mainlineSingleElevatorRegistryMigratesWithoutResettingPlatform() throws Exception {
+        Game mainline = new Game();
         var location = megamek.common.board.BoardLocation.of(ORIGIN, 0);
         var elevator = new megamek.common.IndustrialElevator(location, -2, 0, 50);
         elevator.setPlatformLevel(-1);
         var field = Game.class.getDeclaredField("industrialElevators");
         field.setAccessible(true);
-        field.set(legacy, new java.util.concurrent.ConcurrentHashMap<>(Map.of(location, elevator)));
-        Game restored = roundTrip(legacy);
+        // origin/main stores one IndustrialElevator per location, without a list wrapper.
+        field.set(mainline, new java.util.concurrent.ConcurrentHashMap<>(Map.of(location, elevator)));
+        Game restored = roundTrip(mainline);
         assertEquals(-1, restored.getIndustrialElevator(location).getPlatformLevel());
         assertEquals(50, restored.getIndustrialElevator(location).getCapacityTons());
     }

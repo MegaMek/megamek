@@ -1,7 +1,36 @@
 /*
  * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
- * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
  */
+
 package megamek.common.loaders;
 
 import java.util.ArrayList;
@@ -63,7 +92,8 @@ public final class BuildingDesignCodec {
         write(block, "building_bridge_decks", entity.getInternalBuilding().getOriginalCoordsList().stream()
               .filter(design.getBridgeDecks()::containsKey).map(hex -> cube(hex) + ";" + design.bridgeDeck(hex)).toList());
         write(block, "building_doors", design.getDoors().stream()
-              .map(door -> position(door.position()) + ";" + door.facing() + ";" + door.height()).toList());
+              .map(door -> position(door.position()) + ";" + door.facing() + ";" + door.height()
+                    + ";" + door.linkGroup()).toList());
         write(block, "building_elevators", design.getElevators().stream().map(lift -> cube(lift.hex()) + ";" + lift.capacity() + ";"
               + lift.exits().entrySet().stream().sorted(Map.Entry.comparingByKey())
                     .map(exit -> exit.getKey() + "=" + exit.getValue()).collect(Collectors.joining(","))).toList());
@@ -207,8 +237,12 @@ public final class BuildingDesignCodec {
                 }
             }
             for (String line : lines(block, "building_doors")) {
-                String[] values = parts(line, ";", 3);
-                design.getDoors().add(new BuildingDesign.Door(position(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2])));
+                String[] values = parts(line, ";", 4);
+                int group = Integer.parseInt(values[3]);
+                if (group < 0) {
+                    throw new IllegalArgumentException("Invalid building door link group");
+                }
+                design.getDoors().add(new BuildingDesign.Door(position(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), group));
             }
             for (String line : lines(block, "building_elevators")) {
                 String[] values = parts(line, ";", 3);

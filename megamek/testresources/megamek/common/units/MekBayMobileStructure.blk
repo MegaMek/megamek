@@ -102,7 +102,7 @@ cargobay:10.0:1:7::-1:0
 </coords>
 
 <building_doors>
-0,0,0/0;0;2
+0,0,0/0;0;2;0
 </building_doors>
 
 <building_bay_doors>

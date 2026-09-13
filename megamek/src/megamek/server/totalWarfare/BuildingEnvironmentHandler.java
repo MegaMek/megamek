@@ -185,6 +185,12 @@ final class BuildingEnvironmentHandler extends AbstractTWRuleHandler {
     }
 
     void doorChanged(AbstractBuildingEntity building, BuildingDesign.Door door, Vector<Report> reports) {
+        for (var segment : BuildingDoors.opening(building.getDesign().getDoors(), door)) {
+            doorSegmentChanged(building, segment, reports);
+        }
+    }
+
+    private void doorSegmentChanged(AbstractBuildingEntity building, BuildingDesign.Door door, Vector<Report> reports) {
         int doorHeight = BuildingElevation.doorwayHeight(building, door);
         if (!building.getBuildingRuntimeState().isDoorOpen(door) || doorHeight == 0) {
             return;

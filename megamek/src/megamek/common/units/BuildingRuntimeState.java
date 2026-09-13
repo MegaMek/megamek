@@ -59,28 +59,26 @@ public class BuildingRuntimeState implements Serializable {
     private final Map<CubeCoords, Integer> phaseDamage = new HashMap<>();
     private GamePhase damagePhase;
     private int damageRound = -1;
-    private Map<CubeCoords, Integer> collapsedHeights;
+    private final Map<CubeCoords, Integer> collapsedHeights = new HashMap<>();
     private Integer atmosphereExposureRound;
     private boolean atmosphereExposed;
     private Integer openFloodStartRound;
     private int openFloodDepth;
     private int openFloodRate;
-    private Set<Integer> inactiveSurvivalGear;
-    private Set<Integer> failedSurvivalGear;
-    private Set<CubeCoords> structuralBreaches;
+    private final Set<Integer> inactiveSurvivalGear = new HashSet<>();
+    private final Set<Integer> failedSurvivalGear = new HashSet<>();
+    private final Set<CubeCoords> structuralBreaches = new HashSet<>();
     private MobileStructurePortalRules.Connection portalConnection;
     private Integer interiorComplexId;
-    private Map<Integer, BuildingFlightDeckRules.State> flightDecks;
-    private Map<BuildingDesign.BayDoor, Integer> damagedBayDoors;
+    private final Map<Integer, BuildingFlightDeckRules.State> flightDecks = new HashMap<>();
+    private final Map<BuildingDesign.BayDoor, Integer> damagedBayDoors = new HashMap<>();
 
     /** Hangars may have two identical door placements, so damage counts physical doors at that placement. */
     public Map<BuildingDesign.BayDoor, Integer> getDamagedBayDoors() {
-        if (damagedBayDoors == null) { damagedBayDoors = new HashMap<>(); }
         return damagedBayDoors;
     }
 
     public Map<Integer, BuildingFlightDeckRules.State> getFlightDecks() {
-        if (flightDecks == null) { flightDecks = new HashMap<>(); }
         return flightDecks;
     }
 
@@ -101,27 +99,21 @@ public class BuildingRuntimeState implements Serializable {
     }
 
     public boolean hasStructuralBreach(CubeCoords hex) {
-        return structuralBreaches != null && structuralBreaches.contains(hex);
+        return structuralBreaches.contains(hex);
     }
 
     public void markStructuralBreach(CubeCoords hex) {
-        if (structuralBreaches == null) {
-            structuralBreaches = new HashSet<>();
-        }
         structuralBreaches.add(hex);
     }
 
     /** Heights survive loss of ceiling/CF so environment processing still knows the affected interior volume. */
     public void rememberCollapsedHex(CubeCoords hex, int height) {
-        if (collapsedHeights == null) {
-            collapsedHeights = new HashMap<>();
-        }
         collapsedHeights.putIfAbsent(hex, height);
     }
 
     public int enclosureHeight(AbstractBuildingEntity building, CubeCoords hex) {
         return Math.max(building.getInternalBuilding().getHeight(hex),
-              collapsedHeights == null ? 0 : collapsedHeights.getOrDefault(hex, 0));
+              collapsedHeights.getOrDefault(hex, 0));
     }
 
     public boolean encloses(AbstractBuildingEntity building, Entity entity) {
@@ -156,9 +148,6 @@ public class BuildingRuntimeState implements Serializable {
 
     /** Only needed when survival equipment is explicitly carried but not in use; ordinary equipped units are ready. */
     public void setSurvivalGearInactive(int entityId, boolean inactive) {
-        if (inactiveSurvivalGear == null) {
-            inactiveSurvivalGear = new HashSet<>();
-        }
         if (inactive) {
             inactiveSurvivalGear.add(entityId);
         } else {
@@ -167,21 +156,18 @@ public class BuildingRuntimeState implements Serializable {
     }
 
     public boolean needsSurvivalGearRoll(int entityId) {
-        return inactiveSurvivalGear != null && inactiveSurvivalGear.contains(entityId);
+        return inactiveSurvivalGear.contains(entityId);
     }
 
     public void resolveSurvivalGear(int entityId, boolean success) {
         setSurvivalGearInactive(entityId, false);
         if (!success) {
-            if (failedSurvivalGear == null) {
-                failedSurvivalGear = new HashSet<>();
-            }
             failedSurvivalGear.add(entityId);
         }
     }
 
     public boolean survivalGearFailed(int entityId) {
-        return failedSurvivalGear != null && failedSurvivalGear.contains(entityId);
+        return failedSurvivalGear.contains(entityId);
     }
 
     public void startOpenSpaceFlood(int round, int waterAboveRoof) {
@@ -289,7 +275,8 @@ public class BuildingRuntimeState implements Serializable {
               || !building.getDesign().getDoors().contains(door)
               || !building.isIn(building.relativeToBoard(door.position().hex()))
               || BuildingElevation.doorwayHeight(building, door) == 0
-              || java.util.Objects.equals(doorChangedRound.get(door), game.getRoundCount())) {
+              || BuildingDoors.opening(building.getDesign().getDoors(), door).stream()
+                    .anyMatch(segment -> java.util.Objects.equals(doorChangedRound.get(segment), game.getRoundCount()))) {
             return false;
         }
         Player controller = game.getPlayer(doorControllers.getOrDefault(door, building.getOwnerId()));
@@ -310,13 +297,16 @@ public class BuildingRuntimeState implements Serializable {
         if (isDoorOpen(door) == open || !canChangeDoor(building, door, player)) {
             return false;
         }
-        if (open) {
-            openDoors.add(door);
-        } else {
-            openDoors.remove(door);
+        // Reuse the existing persisted segment state, updating the whole opening atomically.
+        for (Door segment : BuildingDoors.opening(building.getDesign().getDoors(), door)) {
+            if (open) {
+                openDoors.add(segment);
+            } else {
+                openDoors.remove(segment);
+            }
+            doorChangedRound.put(segment, building.getGame().getRoundCount());
+            doorControllers.put(segment, player.getId());
         }
-        doorChangedRound.put(door, building.getGame().getRoundCount());
-        doorControllers.put(door, player.getId());
         return true;
     }
 

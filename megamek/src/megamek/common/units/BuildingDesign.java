@@ -56,7 +56,11 @@ public class BuildingDesign implements Serializable {
     public record Position(CubeCoords hex, int level) implements Serializable { }
 
     /** An exterior door begins at the specified floor and extends upward for height levels. */
-    public record Door(Position position, int facing, int height) implements Serializable { }
+    public record Door(Position position, int facing, int height, int linkGroup) implements Serializable {
+        public Door(Position position, int facing, int height) {
+            this(position, facing, height, 0);
+        }
+    }
 
     /** Each served level records a bit mask of the internal hexsides through which the lift can be entered. */
     public record Elevator(CubeCoords hex, double capacity, Map<Integer, Integer> exits) implements Serializable {
@@ -87,7 +91,7 @@ public class BuildingDesign implements Serializable {
     /** A transport bay door is associated with one bay and an exterior edge, independently of bay tonnage. */
     public record BayDoor(int bayNumber, Position position, int facing) implements Serializable { }
 
-    private List<BayDoor> bayDoors = new ArrayList<>();
+    private final List<BayDoor> bayDoors = new ArrayList<>();
     private CubeCoords portalHex2;
     private CubeCoords portalHex3;
     private boolean environmentalSealing;
@@ -235,9 +239,6 @@ public class BuildingDesign implements Serializable {
     public void setPortalHex3(CubeCoords hex) { portalHex3 = hex; }
 
     public List<BayDoor> getBayDoors() {
-        if (bayDoors == null) {
-            bayDoors = new ArrayList<>();
-        }
         return bayDoors;
     }
 
@@ -308,8 +309,9 @@ public class BuildingDesign implements Serializable {
         });
         bridgeDecks.clear();
         bridgeDecks.putAll(decks);
-        doors.replaceAll(door -> new Door(transform.apply(door.position()), facing.applyAsInt(door.facing()), door.height()));
+        doors.replaceAll(door -> new Door(transform.apply(door.position()), facing.applyAsInt(door.facing()), door.height(), door.linkGroup()));
         doors.removeIf(door -> door.position() == null);
+        BuildingDoors.normalize(doors);
         getBayDoors().replaceAll(door -> new BayDoor(door.bayNumber(), transform.apply(door.position()), facing.applyAsInt(door.facing())));
         getBayDoors().removeIf(door -> door.position() == null);
         elevators.replaceAll(lift -> {

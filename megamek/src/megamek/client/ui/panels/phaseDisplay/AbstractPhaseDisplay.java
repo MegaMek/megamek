@@ -157,6 +157,11 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         return butDone;
     }
 
+    /** Turn completion controls, separate from commands that edit the pending orders. */
+    public java.util.List<MegaMekButton> getCompletionButtons() {
+        return java.util.List.of(butDone);
+    }
+
     /**
      * Sends a Done packet to the server. Shortcut for clientGUI.getClient().sendDone(true).
      *

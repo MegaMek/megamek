@@ -206,6 +206,14 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     /** Returns the list of buttons that should be displayed. */
     protected abstract List<MegaMekButton> getButtonList();
 
+    /** Complete current command set, independent of the classic button page. The buttons own availability and dispatch. */
+    public final List<MegaMekButton> getActionButtons() {
+        return getButtonList().stream().filter(java.util.Objects::nonNull).distinct()
+              .filter(button -> !"More".equalsIgnoreCase(button.getActionCommand())
+                    && !button.getActionCommand().toLowerCase(java.util.Locale.ROOT).endsWith("more"))
+              .toList();
+    }
+
     /** set button that should be displayed. */
     protected abstract void setButtons();
 

@@ -659,7 +659,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
 
     /** Returns the current entity. */
-    private Entity currentEntity() {
+    public Entity currentEntity() {
         return game.getEntity(cen);
     }
 

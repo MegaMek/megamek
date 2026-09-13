@@ -42,6 +42,14 @@ sourceSets {
 }
 
 dependencies {
+    // The optional GPU battle window shares the Java game model with the Swing client.
+    def gdxVersion = '1.14.2'
+    implementation "com.badlogicgames.gdx:gdx:${gdxVersion}"
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:${gdxVersion}"
+    implementation "com.badlogicgames.gdx:gdx-freetype:${gdxVersion}"
+    runtimeOnly "com.badlogicgames.gdx:gdx-platform:${gdxVersion}:natives-desktop"
+    runtimeOnly "com.badlogicgames.gdx:gdx-freetype-platform:${gdxVersion}:natives-desktop"
+
     implementation 'com.fasterxml.jackson.core:jackson-core:2.21.4'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.21.2'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.2'
@@ -573,6 +581,21 @@ test {
             '--add-opens', 'java.base/java.util.concurrent=ALL-UNNAMED'
 
     finalizedBy jacocoTestReport
+}
+
+// Explicit opt-in: requires an actual desktop OpenGL context, unlike the regular geometry/source tests.
+tasks.register('gpuBoardSmoke', Test) {
+    description = 'Renders the GPU battle view with shipped artwork and saves top/isometric screenshots'
+    group = 'verification'
+    dependsOn testClasses, stageDataFiles
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform { includeTags 'on-demand' }
+    filter { includeTestsMatching 'megamek.client.ui.clientGUI.boardview.gpu.*SmokeTest' }
+    jvmArgs = mmJvmOptions
+    systemProperty 'java.awt.headless', 'false'
+    systemProperty 'megamek.gpu.screenshots', layout.buildDirectory.dir('gpu-board-review').get().asFile.absolutePath
+    outputs.upToDateWhen { false }
 }
 
 jacocoTestReport {

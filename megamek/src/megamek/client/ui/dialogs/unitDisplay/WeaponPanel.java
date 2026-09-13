@@ -56,13 +56,13 @@ import megamek.client.Client;
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.comboBoxes.MMComboBox;
 import megamek.client.ui.panels.phaseDisplay.FiringDisplay;
 import megamek.client.ui.panels.phaseDisplay.TargetingPhaseDisplay;
+import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
@@ -1219,6 +1219,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         return ((WeaponListModel) weaponList.getModel()).getWeaponAt(selected);
     }
 
+    /** Existing target and to-hit presentation for alternative board UIs. */
+    public String getTargetSummary() {
+        return wTargetInfo.getText() + "<br>" + toHitText.getText();
+    }
+
+    public JComboBox<String> getAmmoSelector() {
+        return m_chAmmo;
+    }
+
     /**
      * @return the AmmoMounted currently selected by the ammo selector combo box, if any. The returned AmmoMounted may
      *       or may not be the ammo that is linked to the weapon.
@@ -1767,7 +1776,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         } else {
             wDamR.setText(Integer.toString(weaponType.getDamage()));
         }
-        
+
         if (mounted.getType().hasFlag(WeaponType.F_BOMBAST_LASER)) {
             int damage = (mounted.curMode().equals("Damage 16")) ? 16 : (mounted.curMode().equals("Damage 12")) ? 12 :
                                                                          8;

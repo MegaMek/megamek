@@ -74,9 +74,9 @@ import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.commands.*;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
-import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.event.MekDisplayListener;
+import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.audio.AudioService;
 import megamek.client.ui.clientGUI.audio.SoundManager;
@@ -85,6 +85,7 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.CollapseWarning;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.RulerDialog;
+import megamek.client.ui.clientGUI.boardview.gpu.GpuBoardWindow;
 import megamek.client.ui.clientGUI.boardview.overlay.BoardToastOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.ChatterBoxOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.KeyBindingsOverlay;
@@ -254,6 +255,8 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_MINI_MAP = "viewMinimap";
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview";
     public static final String VIEW_ZOOM_IN = "viewZoomIn";
+    public static final String VIEW_GPU_BOARD = "viewGpuBoard";
+    public static final String VIEW_CLASSIC_BOARD = "viewClassicBoard";
     public static final String VIEW_ZOOM_OUT = "viewZoomOut";
     public static final String VIEW_ZOOM_OVERVIEW_TOGGLE = "viewZoomOverviewToggle";
     public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric";
@@ -1523,6 +1526,14 @@ public class ClientGUI extends AbstractClientGUI
                 break;
             case VIEW_ZOOM_IN:
                 boardViews.get(0).zoomIn();
+                break;
+            case VIEW_GPU_BOARD:
+                getCurrentBoardView().filter(BoardView.class::isInstance).map(BoardView.class::cast)
+                      .ifPresent(board -> GpuBoardWindow.open(
+                            board, () -> curPanel));
+                break;
+            case VIEW_CLASSIC_BOARD:
+                GpuBoardWindow.showClassic(this);
                 break;
             case VIEW_ZOOM_OUT:
                 boardViews.get(0).zoomOut();
@@ -3494,7 +3505,7 @@ public class ClientGUI extends AbstractClientGUI
                     Object[] options;
                     MovePath[] paths;
                     int optionType;
-                    if (Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepForward, true) 
+                    if (Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepForward, true)
                           && Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepBackward,
                           false)) {
                         options = new Object[3];

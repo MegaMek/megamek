@@ -38,6 +38,7 @@ import java.util.List;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
@@ -67,12 +68,19 @@ public final class CrewSidearmRules {
     public static final int DEFAULT_SMALL_ARMS_VEHICLE_CREW = 5;
     /** The Small Arms skill an aerospace crew fires with on foot when none was recorded for them. */
     public static final int DEFAULT_SMALL_ARMS_AEROSPACE_CREW = 6;
-    /** The internal name of the sidearm a MekWarrior is handed when none was named for them. */
-    public static final String DEFAULT_SIDEARM_MEK_WARRIOR = "Auto-Pistol";
-    /** The internal name of the sidearm a vehicle crew is handed when none was named for them. */
-    public static final String DEFAULT_SIDEARM_VEHICLE_CREW = "Submachine Gun";
+    /**
+     * The internal name of the sidearm a MekWarrior is handed when none was named for them. The laser pistol
+     * rather than the auto-pistol because it is the one generic pistol with a range value above zero: a range-0
+     * weapon fires only at a target in its own hex, which leaves a pilot on foot unable to shoot at anything.
+     */
+    public static final String DEFAULT_SIDEARM_MEK_WARRIOR = "Laser Pistol";
+    /**
+     * The internal name of the sidearm a vehicle crew is handed when none was named for them: the rifle every
+     * crew was handed before this rule, because no generic submachine gun reaches past its own hex.
+     */
+    public static final String DEFAULT_SIDEARM_VEHICLE_CREW = EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE;
     /** The internal name of the sidearm an aerospace crew is handed when none was named for them. */
-    public static final String DEFAULT_SIDEARM_AEROSPACE_CREW = "Auto-Pistol";
+    public static final String DEFAULT_SIDEARM_AEROSPACE_CREW = "Laser Pistol";
 
     private CrewSidearmRules() {
     }
@@ -103,9 +111,9 @@ public final class CrewSidearmRules {
     }
 
     /**
-     * The sidearm a crew of this unit is handed when none was named for them, with the rule in play: a pistol for
-     * a MekWarrior or an aerospace pilot, who have a cockpit to fit it in and little else, and a submachine gun for
-     * a vehicle crew, who have a whole vehicle. Crews who never leave their unit on foot get nothing.
+     * The sidearm a crew of this unit is handed when none was named for them, with the rule in play: a laser
+     * pistol for a MekWarrior or an aerospace pilot, who have a cockpit to fit it in and little else, and the rifle
+     * for a vehicle crew, who have a whole vehicle. Crews who never leave their unit on foot get nothing.
      *
      * @param entity the unit the crew is aboard, or {@code null}
      *

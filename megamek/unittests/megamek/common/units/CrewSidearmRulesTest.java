@@ -193,15 +193,26 @@ class CrewSidearmRulesTest {
 
     @Test
     void eachKindOfCrewHasItsOwnDefaultSidearm() {
-        assertEquals(AUTO_PISTOL, CrewSidearmRules.defaultSidearmName(new BipedMek()),
+        assertEquals(LASER_PISTOL, CrewSidearmRules.defaultSidearmName(new BipedMek()),
               "a MekWarrior has a cockpit to fit a pistol in and little else");
-        assertEquals("Submachine Gun", CrewSidearmRules.defaultSidearmName(new Tank()),
-              "a vehicle crew has a whole vehicle");
-        assertEquals(AUTO_PISTOL, CrewSidearmRules.defaultSidearmName(new AeroSpaceFighter()));
+        assertEquals(AUTO_RIFLE, CrewSidearmRules.defaultSidearmName(new Tank()),
+              "a vehicle crew has a whole vehicle, and no generic submachine gun reaches past its own hex");
+        assertEquals(LASER_PISTOL, CrewSidearmRules.defaultSidearmName(new AeroSpaceFighter()));
         assertNull(CrewSidearmRules.defaultSidearmName(new ConvInfantry()));
         assertNull(CrewSidearmRules.defaultSidearmName(null));
-        assertTrue(CrewSidearmRules.isSidearmCandidate(weapon("Submachine Gun")),
+        assertTrue(CrewSidearmRules.isSidearmCandidate(weapon(LASER_PISTOL)),
               "the default must itself be something one person can carry");
+    }
+
+    @Test
+    void theDefaultWeaponsReachPastTheirOwnHex() {
+        // A weapon whose range value is 0 fires only at a target in its own hex, which is what made the first
+        // choice of defaults useless in play: the crew showed "Target out of range" at everything.
+        for (Entity ride : List.of(new BipedMek(), new Tank(), new AeroSpaceFighter())) {
+            InfantryWeapon defaultWeapon = (InfantryWeapon) weapon(CrewSidearmRules.defaultSidearmName(ride));
+            assertTrue(defaultWeapon.getInfantryRange() >= 1,
+                  defaultWeapon.getName() + " must have a range value of at least 1");
+        }
     }
 
     @Test
@@ -210,14 +221,14 @@ class CrewSidearmRulesTest {
 
         CrewSidearmRules.recordDefaultEquipment(mek, game);
 
-        assertEquals(AUTO_PISTOL, mek.getCrew().getSidearmName(0));
+        assertEquals(LASER_PISTOL, mek.getCrew().getSidearmName(0));
         assertEquals(6, mek.getCrew().getSmallArms(0));
 
-        Mek mekAlreadyEquipped = mekCarrying(LASER_PISTOL);
+        Mek mekAlreadyEquipped = mekCarrying(AUTO_PISTOL);
         mekAlreadyEquipped.getCrew().setSmallArms(3, 0);
         CrewSidearmRules.recordDefaultEquipment(mekAlreadyEquipped, game);
 
-        assertEquals(LASER_PISTOL, mekAlreadyEquipped.getCrew().getSidearmName(0), "a named weapon is kept");
+        assertEquals(AUTO_PISTOL, mekAlreadyEquipped.getCrew().getSidearmName(0), "a named weapon is kept");
         assertEquals(3, mekAlreadyEquipped.getCrew().getSmallArms(0), "a recorded skill is never overwritten");
     }
 

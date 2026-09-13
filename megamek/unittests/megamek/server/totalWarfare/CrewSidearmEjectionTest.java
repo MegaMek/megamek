@@ -73,6 +73,7 @@ import org.mockito.Mockito;
 class CrewSidearmEjectionTest {
 
     private static final String AUTO_PISTOL = "Auto-Pistol";
+    private static final String LASER_PISTOL = "Laser Pistol";
     private static final String AUTO_RIFLE = "InfantryAssaultRifle";
     private static final String BOARD_DATA = """
           size 4 4
@@ -154,13 +155,13 @@ class CrewSidearmEjectionTest {
     }
 
     @Test
-    void aMekWarriorIssuedNothingGetsTheDefaultPistol() {
+    void aMekWarriorIssuedNothingGetsTheDefaultLaserPistol() {
         Mek mek = deployedMek(2, null);
 
         gameManager.ejectEntity(mek, false, false);
 
-        assertEquals(AUTO_PISTOL, primaryWeaponOf(crewOnFootFrom(mek)),
-              "with the rule on, a MekWarrior nobody equipped still steps out with a pistol");
+        assertEquals(LASER_PISTOL, primaryWeaponOf(crewOnFootFrom(mek)),
+              "with the rule on, a MekWarrior nobody equipped still steps out with a pistol that reaches");
     }
 
     @Test
@@ -195,13 +196,13 @@ class CrewSidearmEjectionTest {
     }
 
     @Test
-    void aVehicleCrewIssuedNothingGetsTheDefaultSubmachineGun() {
+    void aVehicleCrewIssuedNothingGetsTheRifleAsBefore() {
         Tank tank = deploy(new Tank(), 6, null);
 
         gameManager.ejectEntity(tank, false, false);
 
-        assertEquals("Submachine Gun", primaryWeaponOf(crewOnFootFrom(tank)),
-              "a vehicle crew has room for more than a pistol");
+        assertEquals(AUTO_RIFLE, primaryWeaponOf(crewOnFootFrom(tank)),
+              "a vehicle crew has room for a rifle, and it is the one generic long arm that reaches");
     }
 
     @Test

@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,32 +31,21 @@
  * affiliated with Microsoft.
  */
 
-package megamek.common.weapons.handlers.srm;
-
-import java.io.Serial;
-
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.enums.HitDamageType;
-import megamek.common.game.Game;
-import megamek.common.loaders.EntityLoadingException;
-import megamek.common.weapons.DamageType;
-import megamek.server.totalWarfare.TWGameManager;
+package megamek.common.enums;
 
 /**
- * @author Sebastian Brocks
+ * Used by HitData for the damage types. Used by Armor for damage reductions
  */
-public class SRMAXHandler extends SRMHandler {
-    @Serial
-    private static final long serialVersionUID = 8049199984294733124L;
-
-    public SRMAXHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
-        super(t, w, g, m);
-        sSalvoType = " acid-head missile(s) ";
-
-        nSalvoBonus = Game.rulesManager.getRulesAmmo().getAXMissileModifier();
-        damageType = DamageType.ACID;
-        generalDamageType = HitDamageType.DAMAGE_AX;
-    }
+public enum HitDamageType {
+    DAMAGE_NONE,
+    DAMAGE_PHYSICAL,
+    DAMAGE_ENERGY,
+    DAMAGE_MISSILE,
+    DAMAGE_BALLISTIC,
+    DAMAGE_ARMOR_PIERCING,
+    DAMAGE_ARMOR_PIERCING_MISSILE,
+    DAMAGE_IGNORES_DMG_REDUCTION,
+    DAMAGE_AX,
+    DAMAGE_PHYSICAL_NONATTACK,
+    DAMAGE_HEAT;
 }
-//Rules for AX Warheads are found in Tactical Operations: Advanced Units and Equipment (6th Printing), pg. 179

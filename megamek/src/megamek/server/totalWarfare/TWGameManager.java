@@ -52,7 +52,6 @@ import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.common.*;
-import megamek.common.InfantryActionDeclaration;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
@@ -74,6 +73,7 @@ import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.ChargeLevel;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.HitDamageType;
 import megamek.common.enums.MoveStepType;
 import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.enums.WeaponSortOrder;
@@ -4856,7 +4856,7 @@ public class TWGameManager extends AbstractGameManager {
                         table = ToHitData.HIT_SPECIAL_PROTO;
                     }
                     HitData hitData = entity.rollHitLocation(table, side);
-                    hitData.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                    hitData.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
                     addReport(damageEntity(entity, hitData, Math.min(5, damage)));
                     damage -= 5;
                 }
@@ -5073,7 +5073,7 @@ public class TWGameManager extends AbstractGameManager {
                         // tables for punches and kicks
                         HitData hit = target.rollHitLocation(ToHitData.HIT_NORMAL,
                               ComputeSideTable.sideTable(entity, target));
-                        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                        hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
                         // Damage equals tonnage, divided by 5.
                         // ASSUMPTION: damage is applied in one hit.
                         addReport(damageEntity(target, hit, (int) Math.round(entity.getWeight() / 5)));
@@ -5146,7 +5146,7 @@ public class TWGameManager extends AbstractGameManager {
                     // Apply damage to the attacker.
                     int toAttacker = ChargeAttackAction.getDamageTakenBy(entity, bldg, nextPos);
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(nextPos));
-                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
+                    hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL_NONATTACK);
                     addReport(damageEntity(entity, hit, toAttacker));
                     addNewLines();
 
@@ -5346,7 +5346,7 @@ public class TWGameManager extends AbstractGameManager {
             while (damage > 0) {
                 int cluster = Math.min(5, damage);
                 HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
                 addReport(damageEntity(entity, hit, cluster));
                 damage -= cluster;
             }
@@ -5569,12 +5569,12 @@ public class TWGameManager extends AbstractGameManager {
             default -> null; // Motive damage instead
         };
         if (hit != null) {
-            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
             addReport(damageEntity(entity, hit, damage));
             // If the vehicle has two turrets, they both take full damage.
             if ((hit.getLocation() == Tank.LOC_TURRET) && !(entity.hasNoDualTurret())) {
                 hit = new HitData(Tank.LOC_TURRET_2);
-                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
                 addReport(damageEntity(entity, hit, damage));
             }
         } else {
@@ -9400,7 +9400,7 @@ public class TWGameManager extends AbstractGameManager {
                     while (damage > 0) {
                         int cluster = Math.min(5, damage);
                         HitData hit = Game.rulesManager.getRulesPhysical().getFallFromAboveTable(affaTarget);
-                        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
+                        hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL_NONATTACK);
                         vPhaseReport.addAll(damageEntity(affaTarget, hit, cluster));
                         damage -= cluster;
                     }
@@ -12285,7 +12285,7 @@ public class TWGameManager extends AbstractGameManager {
 
         if (te != null) {
             hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
             r = new Report(4045);
             r.subject = ae.getId();
             r.add(toHit.getTableDesc());
@@ -12578,7 +12578,7 @@ public class TWGameManager extends AbstractGameManager {
 
         if (te != null) {
             HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
             r = new Report(4045);
             r.subject = ae.getId();
             r.add(toHit.getTableDesc());
@@ -12837,7 +12837,7 @@ public class TWGameManager extends AbstractGameManager {
             }
 
             HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-            hit.setGeneralDamageType(HitData.DAMAGE_ENERGY);
+            hit.setGeneralDamageType(HitDamageType.DAMAGE_ENERGY);
 
             // The building shields all units from a certain amount of damage.
             // The amount is based upon the building's CF at the phase's start.
@@ -13028,7 +13028,7 @@ public class TWGameManager extends AbstractGameManager {
 
         if (te != null) {
             HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
 
             r = new Report(4045);
             r.subject = ae.getId();
@@ -13233,7 +13233,7 @@ public class TWGameManager extends AbstractGameManager {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
             toHit.setSideTable(ToHitData.SIDE_FRONT);
             HitData hit = ae.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
             r = new Report(4095);
             r.subject = ae.getId();
             r.addDesc(ae);
@@ -13257,7 +13257,7 @@ public class TWGameManager extends AbstractGameManager {
                 // Handle Entity targets.
                 if (te != null) {
                     HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                    hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
                     r = new Report(4045);
                     r.subject = ae.getId();
                     r.add(toHit.getTableDesc());
@@ -13400,7 +13400,7 @@ public class TWGameManager extends AbstractGameManager {
                 int damage = Math.min(5, hits);
                 hits -= damage;
                 HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
                 r = new Report(4135);
                 r.subject = ae.getId();
                 r.add(te.getLocationAbbr(hit));
@@ -13563,7 +13563,7 @@ public class TWGameManager extends AbstractGameManager {
                 hits -= damage;
 
                 HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
                 r = new Report(4135);
                 r.subject = ae.getId();
                 r.add(te.getLocationAbbr(hit));
@@ -13726,7 +13726,7 @@ public class TWGameManager extends AbstractGameManager {
             // Apply damage to conventional infantry
             // Toxin gas is area-effect - no terrain modifiers (IO pg 79)
             HitData hit = targetEntity.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
             hit.setIgnoreInfantryDoubleDamage(true);
             addReport(damageEntity(targetEntity, hit, damage));
         }
@@ -13867,7 +13867,7 @@ public class TWGameManager extends AbstractGameManager {
             addReport(report);
 
             HitData hit = target.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
             addReport(damageEntity(target, hit, damage));
         }
 
@@ -13954,7 +13954,7 @@ public class TWGameManager extends AbstractGameManager {
         // Apply 1 point internal damage to head
         int damage = SuicideImplantsAttackAction.getHostDamageFor();
         HitData hit = new HitData(Mek.LOC_HEAD);
-        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
 
         report = new Report(4588);
         report.subject = mek.getId();
@@ -13996,7 +13996,7 @@ public class TWGameManager extends AbstractGameManager {
         // Apply 1 point damage to nose (armor first)
         int damage = SuicideImplantsAttackAction.getHostDamageFor();
         HitData hit = new HitData(Aero.LOC_NOSE);
-        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
 
         addReport(damageEntity(aero, hit, damage));
 
@@ -14046,7 +14046,7 @@ public class TWGameManager extends AbstractGameManager {
                 addReport(report);
 
                 HitData hit = new HitData(location);
-                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
                 addReport(damageEntity(tank, hit, damage, false, DamageType.NONE, true, false, false));
 
                 // Roll for critical hit
@@ -14319,7 +14319,7 @@ public class TWGameManager extends AbstractGameManager {
 
         if (te != null) {
             HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
             r = new Report(4045);
             r.subject = ae.getId();
             r.add(toHit.getTableDesc());
@@ -15297,7 +15297,7 @@ public class TWGameManager extends AbstractGameManager {
             // Apply damage to the attacker.
             int toAttacker = ChargeAttackAction.getDamageTakenBy(ae, bldg, target.getPosition());
             HitData hit = ae.rollHitLocation(ToHitData.HIT_NORMAL, ae.sideTable(target.getPosition()));
-            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
             addReport(damageEntity(ae, hit, toAttacker, false, DamageType.NONE, false, false, throughFront));
             addNewLines();
             entityUpdate(ae.getId());
@@ -15469,7 +15469,7 @@ public class TWGameManager extends AbstractGameManager {
             // Apply damage to the attacker.
             int toAttacker = AirMekRamAttackAction.getDamageTakenBy(ae, target, ae.delta_distance);
             HitData hit = new HitData(Mek.LOC_CENTER_TORSO);
-            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
             addReport(damageEntity(ae, hit, toAttacker, false, DamageType.NONE, false, false, throughFront));
             addNewLines();
             entityUpdate(ae.getId());
@@ -15933,7 +15933,7 @@ public class TWGameManager extends AbstractGameManager {
                 hit = ae.rollHitLocation(toHit.getHitTable(), ae.sideTable(te.getPosition()));
             }
             damageTaken -= cluster;
-            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
             cluster = checkForSpikes(ae, hit.getLocation(), cluster, te, Mek.LOC_CENTER_TORSO);
 
             if (ae.hasShield()) {
@@ -16029,7 +16029,7 @@ public class TWGameManager extends AbstractGameManager {
                 addReport(r);
             } else {
                 HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
                 if (bDirect) {
                     hit.makeDirectBlow(directBlowCritMod);
                 }
@@ -16895,7 +16895,7 @@ public class TWGameManager extends AbstractGameManager {
                 while (damage > 0) {
                     int cluster = Math.min(5, damage);
                     HitData hit = targetEntity.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                    hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
                     if (directBlow) {
                         hit.makeDirectBlow(toHit.getMoS() / 3);
                     }
@@ -16966,7 +16966,7 @@ public class TWGameManager extends AbstractGameManager {
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
             HitData hit = ae.rollHitLocation(ToHitData.HIT_KICK, ToHitData.SIDE_FRONT);
-            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
             addReport(damageEntity(ae, hit, cluster));
             damageTaken -= cluster;
         }
@@ -19370,12 +19370,12 @@ public class TWGameManager extends AbstractGameManager {
 
     private static boolean isArmorDamageReduction(HitData hit, int armorType) {
         boolean armorDamageReduction = ((armorType == EquipmentType.T_ARMOR_BA_REACTIVE) &&
-              ((hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE))) ||
+                                        ((hit.getGeneralDamageType() == HitDamageType.DAMAGE_MISSILE))) ||
               (hit.getGeneralDamageType() ==
-                    HitData.DAMAGE_ARMOR_PIERCING_MISSILE);
+               HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE);
         // Check for reflective armor
         if ((armorType == EquipmentType.T_ARMOR_BA_REFLECTIVE) &&
-              (hit.getGeneralDamageType() == HitData.DAMAGE_ENERGY)) {
+            (hit.getGeneralDamageType() == HitDamageType.DAMAGE_ENERGY || hit.getGeneralDamageType() == HitDamageType.DAMAGE_HEAT)) {
             armorDamageReduction = true;
         }
         return armorDamageReduction;
@@ -22838,7 +22838,7 @@ public class TWGameManager extends AbstractGameManager {
                 if ((en instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR) && rerollRotorHits) {
                     continue;
                 }
-                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
                 int[] isBefore = { en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT),
                                    en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR) };
                 vDesc.addAll(damageEntity(en, hit, cluster));
@@ -22877,7 +22877,7 @@ public class TWGameManager extends AbstractGameManager {
             while (damage > 0) {
                 int cluster = Math.min(5, damage);
                 HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL, impactSide);
-                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
                 int[] isBefore = { en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT),
                                    en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR) };
                 vDesc.addAll(damageEntity(en, hit, cluster));
@@ -28608,7 +28608,7 @@ public class TWGameManager extends AbstractGameManager {
                         side = ToHitData.SIDE_REAR;
                     }
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, side);
-                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
+                    hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL_NONATTACK);
                     withoutLocationMotiveRoll(hit);
                     buildingReport.addAll(damageEntity(entity, hit, damage));
                 }

@@ -67,6 +67,7 @@ import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
@@ -135,7 +136,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean announcedEntityFiring = false;
     protected boolean missed = false;
     protected DamageType damageType;
-    protected int generalDamageType = HitData.DAMAGE_NONE;
+    protected HitDamageType generalDamageType = HitDamageType.DAMAGE_NONE;
     protected Vector<Integer> insertedAttacks = new Vector<>();
     protected int numWeapons; // for capital fighters/fighter squadrons
     protected int numWeaponsHit; // for capital fighters/fighter squadrons

@@ -50,6 +50,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.game.Game;
@@ -1668,8 +1669,8 @@ public class TWDamageManager implements IDamageManager {
         // adjust VTOL rotor damage
         if ((tank instanceof VTOL) &&
               (hit.getLocation() == VTOL.LOC_ROTOR) &&
-              (hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL
-                    && hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL_NONATTACK) &&
+            (hit.getGeneralDamageType() != HitDamageType.DAMAGE_PHYSICAL
+             && hit.getGeneralDamageType() != HitDamageType.DAMAGE_PHYSICAL_NONATTACK) &&
               !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_FULL_ROTOR_HITS)) {
             damage = (damage + 9) / 10;
         }
@@ -2810,7 +2811,7 @@ public class TWDamageManager implements IDamageManager {
 
             // Apply damage using SUICIDE_IMPLANT_REACTION type to prevent recursion
             HitData hit = new HitData(target.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT).getLocation());
-            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
             reports.addAll(damageEntity(target, hit, damage, false,
                   DamageType.SUICIDE_IMPLANT_REACTION, false, false, true, false, false, new Vector<>()));
         }
@@ -3483,10 +3484,10 @@ public class TWDamageManager implements IDamageManager {
             int origDamage = damage;
 
             if (ferroLamellorArmor &&
-                  (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
-                  (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) &&
-                  (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION) &&
-                  (hit.getGeneralDamageType() != HitData.DAMAGE_AX)) {
+                (hit.getGeneralDamageType() != HitDamageType.DAMAGE_ARMOR_PIERCING) &&
+                (hit.getGeneralDamageType() != HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE) &&
+                (hit.getGeneralDamageType() != HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION) &&
+                (hit.getGeneralDamageType() != HitDamageType.DAMAGE_AX)) {
                 tmpDamageHold = damage;
                 damage = (int) Math.floor((((double) damage) * 4) / 5);
                 if (damage <= 0) {
@@ -3499,13 +3500,13 @@ public class TWDamageManager implements IDamageManager {
                 report.add(damage);
                 reportVec.addElement(report);
             } else if (ballisticArmor &&
-                  ((hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE) ||
-                        (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING) ||
-                        (hit.getGeneralDamageType() == HitData.DAMAGE_BALLISTIC) ||
-                        (hit.getGeneralDamageType() == HitData.DAMAGE_AX)
+                       ((hit.getGeneralDamageType() == HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE) ||
+                        (hit.getGeneralDamageType() == HitDamageType.DAMAGE_ARMOR_PIERCING) ||
+                        (hit.getGeneralDamageType() == HitDamageType.DAMAGE_BALLISTIC) ||
+                        (hit.getGeneralDamageType() == HitDamageType.DAMAGE_AX)
                         //AX doesn't affect ballistic-reinforced armor, TO:AUE (6th), pg. 179
                         ||
-                        (hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE))) {
+                        (hit.getGeneralDamageType() == HitDamageType.DAMAGE_MISSILE))) {
                 tmpDamageHold = damage;
                 damage = Math.max(1, damage / 2);
                 report = new Report(6088);
@@ -3513,11 +3514,11 @@ public class TWDamageManager implements IDamageManager {
                 report.indent(3);
                 report.add(damage);
                 reportVec.addElement(report);
-            } else if (impactArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL || hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL_NONATTACK)) {
+            } else if (impactArmor && (hit.getGeneralDamageType() == HitDamageType.DAMAGE_PHYSICAL || hit.getGeneralDamageType() == HitDamageType.DAMAGE_PHYSICAL_NONATTACK)) {
                 damage = Game.rulesManager.getRulesArmor().reduceImpactDamage(entityId, hit, damage, reportVec,
                       hit.getGeneralDamageType());
             } else if (reflectiveArmor &&
-                  (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL || hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL_NONATTACK) &&
+                       (hit.getGeneralDamageType() == HitDamageType.DAMAGE_PHYSICAL || hit.getGeneralDamageType() == HitDamageType.DAMAGE_PHYSICAL_NONATTACK) &&
                   !isBattleArmor) { // BA reflect does not receive extra physical damage
                 tmpDamageHold = damage;
                 int currArmor = entity.getArmor(hit);
@@ -3544,7 +3545,7 @@ public class TWDamageManager implements IDamageManager {
                 report.add(dmgToDouble);
                 report.add(damage);
                 reportVec.addElement(report);
-            } else if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_ENERGY)) {
+            } else if (reflectiveArmor && (hit.getGeneralDamageType() == HitDamageType.DAMAGE_ENERGY || hit.getGeneralDamageType() == HitDamageType.DAMAGE_HEAT)) {
                 tmpDamageHold = damage;
                 damage = (int) Math.floor(((double) damage) / 2);
                 if (tmpDamageHold == 1) {
@@ -3556,8 +3557,8 @@ public class TWDamageManager implements IDamageManager {
                 report.add(damage);
                 reportVec.addElement(report);
             } else if (reactiveArmor &&
-                  ((hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE) ||
-                        (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE) ||
+                       ((hit.getGeneralDamageType() == HitDamageType.DAMAGE_MISSILE) ||
+                        (hit.getGeneralDamageType() == HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE) ||
                         areaSatArty)) {
                 tmpDamageHold = damage;
                 damage = (int) Math.floor(((double) damage) / 2);
@@ -3578,9 +3579,10 @@ public class TWDamageManager implements IDamageManager {
                 report = new Report(6093);
                 report.subject = entityId;
                 report.indent(3);
+                report.add(tmpDamageHold);
                 report.add(damage);
                 reportVec.addElement(report);
-            } else if (hit.getGeneralDamageType() == HitData.DAMAGE_AX) {
+            } else if (hit.getGeneralDamageType() == HitDamageType.DAMAGE_AX) {
                 tmpDamageHold = Game.rulesManager.getRulesAmmo().getAXMissileDamage(entity.getArmor(hit), mods, damage);
                 if (tmpDamageHold != damage) {
                     damage = tmpDamageHold;
@@ -3611,9 +3613,9 @@ public class TWDamageManager implements IDamageManager {
             // Need to account for the possibility of hardened armor here
             int armorThreshold = entity.getArmor(hit);
             if (hardenedArmor &&
-                  (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
-                  (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) &&
-                  (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
+                (hit.getGeneralDamageType() != HitDamageType.DAMAGE_ARMOR_PIERCING) &&
+                (hit.getGeneralDamageType() != HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE) &&
+                (hit.getGeneralDamageType() != HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION)) {
                 armorThreshold *= 2;
                 armorThreshold -= (entity.isHardenedArmorDamaged(hit)) ? 1 : 0;
                 reportVec.lastElement().newlines = 0;
@@ -3635,9 +3637,9 @@ public class TWDamageManager implements IDamageManager {
                 // armor absorbs all damage
                 // Hardened armor deals with damage in its own fashion...
                 if (hardenedArmor &&
-                      (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
-                      (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) &&
-                      (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
+                    (hit.getGeneralDamageType() != HitDamageType.DAMAGE_ARMOR_PIERCING) &&
+                    (hit.getGeneralDamageType() != HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE) &&
+                    (hit.getGeneralDamageType() != HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION)) {
                     armorThreshold -= damage;
                     entity.setHardenedArmorDamaged(hit, (armorThreshold % 2) > 0);
                     entity.setArmor((armorThreshold / 2) + (armorThreshold % 2), hit);
@@ -3689,11 +3691,11 @@ public class TWDamageManager implements IDamageManager {
                 // damage goes on to internal
                 int absorbed = Math.max(entity.getArmor(hit), 0);
                 if (hardenedArmor &&
-                      (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING) &&
-                      (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
+                    (hit.getGeneralDamageType() != HitDamageType.DAMAGE_ARMOR_PIERCING) &&
+                    (hit.getGeneralDamageType() != HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE)) {
                     absorbed = (absorbed * 2) - ((entity.isHardenedArmorDamaged(hit)) ? 1 : 0);
                 }
-                if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL || hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL_NONATTACK)
+                if (reflectiveArmor && (hit.getGeneralDamageType() == HitDamageType.DAMAGE_PHYSICAL || hit.getGeneralDamageType() == HitDamageType.DAMAGE_PHYSICAL_NONATTACK)
                       && !isBattleArmor) {
                     absorbed = (int) Math.ceil(absorbed / 2.0);
                     damage = tmpDamageHold;

@@ -37,7 +37,6 @@ package megamek.common.weapons.handlers.plasma;
 import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.HitData;
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -45,6 +44,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponType;
@@ -57,7 +57,6 @@ import megamek.common.units.IBuilding;
 import megamek.common.weapons.handlers.AmmoWeaponHandler;
 import megamek.common.weapons.ppc.innerSphere.ISHeavyPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISLightPlasmaRifle;
-import megamek.common.weapons.ppc.innerSphere.ISPlasmaRifle;
 import megamek.server.totalWarfare.TWGameManager;
 
 public class PlasmaRifleHandler extends AmmoWeaponHandler {
@@ -73,15 +72,12 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     public PlasmaRifleHandler(ToHitData toHitData, WeaponAttackAction weaponAttackAction, Game game,
           TWGameManager twGameManager) throws EntityLoadingException {
         super(toHitData, weaponAttackAction, game, twGameManager);
-        generalDamageType = HitData.DAMAGE_ENERGY;
+        generalDamageType = HitDamageType.DAMAGE_HEAT;
     }
 
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding bldg, int hits,
           int nCluster, int bldgAbsorbs) {
-        if (hit != null) {
-            hit.setHeatWeapon(true);
-        }
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
         if (!missed && entityTarget.tracksHeat()) {
             Report report = new Report(3400);

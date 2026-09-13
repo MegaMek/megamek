@@ -39,16 +39,16 @@ import static megamek.common.bays.Bay.UNSET_BAY;
 import static megamek.common.equipment.MiscType.F_CHAFF_POD;
 import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.swing.*;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -179,6 +179,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private boolean isUnJammingRAC;
     private boolean isUsingChaff;
+    private int originalFacing = -1;
 
     // Deployment settings.
     private final Set<ElevationOption> lastHexDeploymentOptions = new HashSet<>();
@@ -636,6 +637,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         final Entity selectedEntity = game.getEntity(entityID);
         lastHexDeploymentOptions.clear();
         lastDeploymentOption = null;
+        originalFacing = -1;
 
         if (selectedEntity == null) {
             LOGGER.error("Tried to select non-existent entity with id {}", entityID);
@@ -696,7 +698,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             markDeploymentHexes(selectedEntity);
             DeploymentHelper facingHelper = new DeploymentHelper(clientgui);
             if (game != null && Game.rulesManager.getRulesGame().canWalkOnThisRound(selectedEntity)) {
-                facingHelper.setStartingFacing(selectedEntity, game.getPlayersList());
+                facingHelper.setStartingFacing(selectedEntity, game.getPlayersList(), null);
             }
         } else if (Game.rulesManager.getRulesGame().isWalkOnDeployment() && selectedEntity.isDeployed()) {
             markDeploymentHexes(null);
@@ -2812,6 +2814,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                                       false)) {
                     return;
                 }
+                if (originalFacing == -1) {
+                    deploymentHelper.setStartingFacing(currentlySelectedEntity, game.getPlayersList(), coords);
+                }
                 DeploymentPosition deploymentPosition = deploymentHelper.determineDeploymentPosition(
                         currentlySelectedEntity,
                         coords,
@@ -2824,6 +2829,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 }
                 int elevation = deploymentPosition.elevation();
                 int facing = deploymentPosition.facing();
+                originalFacing = facing;
                 lastDeploymentOption = deploymentPosition.lastDeploymentOption();
                 if (game.getBoard(boardId).isLegalDeployment(coords, currentlySelectedEntity)
                     && !currentlySelectedEntity.isLocationProhibited(
@@ -7479,6 +7485,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (currentlySelectedEntity != null) {
                 lastDeploymentOption = null;
                 lastHexDeploymentOptions.clear();
+                originalFacing = -1;
             }
 
         }

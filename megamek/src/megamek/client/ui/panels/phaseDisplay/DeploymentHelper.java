@@ -374,7 +374,7 @@ public class DeploymentHelper {
     }
 
     public void setStartingFacing(Entity entity,
-                                  List<Player> players) {
+          List<Player> players, @Nullable Coords sourceCoords) {
         int playerStartingPos = entity.getStartingPos();
         int enemyStartingPos = -1;
         int enemyTeamNumber = -1;
@@ -396,7 +396,9 @@ public class DeploymentHelper {
         if (teamCount == 1) {
             // All the enemies share the same starting team, and assuming starting position
             enemyStartingPos = enemiesList.get(0).getStartingPos();
-            Coords entityStartingPos = entity.getGame().getBoard().getDeploymentCenter(entity.getStartingPos());
+            Coords entityStartingPos =
+                  (sourceCoords != null) ? sourceCoords :
+                        entity.getGame().getBoard().getDeploymentCenter(entity.getStartingPos());
             Coords enemyDeploymentCenter = entity.getGame().getBoard().getDeploymentCenter(enemyStartingPos);
             facing = entityStartingPos.direction(enemyDeploymentCenter);
             entity.setFacing(facing);

@@ -46,7 +46,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
+import javax.swing.ToolTipManager;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
@@ -165,6 +167,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private int cen = Entity.NONE; // current entity number
     // is the shift key held?
     private boolean turnMode = false;
+    private int originalFacing = -1;
     private boolean assaultDropPreference = false;
     /**
      * Whether the crews-will-die-if-they-eject warning has already been given this deployment phase.
@@ -260,6 +263,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     public void selectEntity(int en) {
         lastHexDeploymentOptions.clear();
         lastDeploymentOption = null;
+        originalFacing = -1;
 
         // hmm, sometimes this gets called when there's no ready entities?
         Entity entity = game.getEntity(en);
@@ -290,7 +294,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         markDeploymentHexes(entity);
         DeploymentHelper facingHelper = new DeploymentHelper(clientgui);
         if (game != null) {
-            facingHelper.setStartingFacing(entity, game.getPlayersList());
+            facingHelper.setStartingFacing(entity, game.getPlayersList(), null);
         }
         boolean assaultDropOption = game.getOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP);
         setAssaultDropEnabled(entity.canAssaultDrop() && assaultDropOption);
@@ -847,6 +851,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
 
             DeploymentHelper deploymentHelper = new DeploymentHelper(clientgui);
+            if (originalFacing == -1) {
+                deploymentHelper.setStartingFacing(entity, game.getPlayersList(), coords);
+                originalFacing = entity.getFacing();
+            }
             if (!deploymentHelper.checkDeployment(board, entity, coords, assaultDropPreference)) {
                 return;
             }
@@ -1182,6 +1190,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 lastDeploymentOption = null;
                 lastHexDeploymentOptions.clear();
                 clear();
+                originalFacing = -1;
             }
         }
     }

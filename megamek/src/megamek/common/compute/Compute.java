@@ -6470,7 +6470,9 @@ public class Compute {
                 continue;
             }
             entities = game.getEntities(tempcoords);
-            if (entities.hasNext()) {
+            // Every unit in the hex, not just the first. TO:AUE p.183 makes every unit at the same distance a
+            // candidate, chosen at random among them, so stopping at the first one silently narrowed the field.
+            while (entities.hasNext()) {
                 tempEntity = entities.next();
                 if (!tempEntity.getTargetedBySwarm(aeId, weaponId)) {
                     // we found a target
@@ -6485,6 +6487,7 @@ public class Compute {
         }
         return null;
     }
+
 
     public static @Nullable Coords getFinalPosition(Coords currentPosition, int... v) {
         if ((v == null) || (v.length != 6) || (currentPosition == null)) {

@@ -191,11 +191,14 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
                   UIUtil.formatSideTooltip(Messages.getString("CustomMekDialog.choSidearm.tooltip")));
             addAdvancedRow(Messages.getString("CustomMekDialog.choSidearm"), choSidearm);
         }
-        // Likewise the Small Arms field opens on the unit's default when nothing was recorded
-        int smallArmsShown = entity.getCrew().hasSmallArms(slot)
-              ? entity.getCrew().getSmallArms(slot)
-              : CrewSidearmRules.defaultSmallArms(entity);
-        fldSmallArms.setText((smallArmsShown == Crew.SMALL_ARMS_UNSET) ? "" : Integer.toString(smallArmsShown));
+        // Likewise the Small Arms field opens on the unit's default when nothing was recorded. Filled only when
+        // the field is shown, so a hidden field never carries a default back onto the crew.
+        if (showsPersonalEquipment) {
+            int smallArmsShown = entity.getCrew().hasSmallArms(slot)
+                  ? entity.getCrew().getSmallArms(slot)
+                  : CrewSidearmRules.defaultSmallArms(entity);
+            fldSmallArms.setText((smallArmsShown == Crew.SMALL_ARMS_UNSET) ? "" : Integer.toString(smallArmsShown));
+        }
         fldTough.setText(Integer.toString(entity.getCrew().getToughness(slot)));
         fldFatigue.setText(Integer.toString(entity.getCrew().getCrewFatigue(slot)));
         if (entity.getCrew().getSlotCount() > 1) {
@@ -772,6 +775,17 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
 
     public boolean isClanPilot() {
         return chkClanPilot.isSelected();
+    }
+
+    /**
+     * Whether the kit, sidearm and Small Arms controls are shown for this crew member: the crew personal equipment
+     * rule is on and this unit's crew can leave it on foot. When they are not shown, nothing the player could not
+     * see should be written back onto the crew.
+     *
+     * @return {@code true} if the personal equipment controls are on this panel
+     */
+    public boolean showsPersonalEquipment() {
+        return showsPersonalEquipment;
     }
 
     /**

@@ -136,6 +136,21 @@ public final class CrewSidearmRules {
     }
 
     /**
+     * Records on the crew whether the optional rule is in force as they leave their unit, which is what decides
+     * whether a Small Arms skill written on them is used on foot. The crew carries the answer itself because it has
+     * no game to ask, and the value may have been written by a campaign that never looked at the option.
+     *
+     * @param crew the crew leaving their unit, or {@code null}
+     * @param game the game whose options say whether the rule is in force, or {@code null}
+     */
+    public static void markSmallArmsInPlay(@Nullable Crew crew, @Nullable Game game) {
+        if (crew == null) {
+            return;
+        }
+        crew.setSmallArmsInPlay(isRuleInPlay(game));
+    }
+
+    /**
      * Records the default sidearm and Small Arms skill on every crew slot that has none, with the optional rule in
      * play. Called as the crew leaves their unit, so a pilot nobody equipped still steps out with a pistol and fires
      * it as a MekWarrior rather than with the rifle and the gunnery they used aboard. A slot that already carries a

@@ -254,6 +254,23 @@ class CrewSidearmEjectionTest {
         assertEquals(5, crewOnFootFrom(tank).getCrew().getGunnery(), "vehicle crews are trained to 5");
     }
 
+    /**
+     * A campaign may write a Small Arms value onto a crew without ever looking at the game option. The option, not
+     * the presence of a value, decides whether it is used.
+     */
+    @Test
+    void aRecordedSmallArmsSkillIsIgnoredWithCrewPersonalEquipmentOff() {
+        game.getOptions().getOption(OptionsConstants.RPG_COMBAT_SUITS).setValue(false);
+        Mek mek = deployedMek(16, null);
+        mek.getCrew().setGunnery(2, 0);
+        mek.getCrew().setSmallArms(6, 0);
+
+        gameManager.ejectEntity(mek, false, false);
+
+        assertEquals(2, crewOnFootFrom(mek).getCrew().getGunnery(),
+              "with the rule off a recorded Small Arms value changes nothing");
+    }
+
     @Test
     void withCrewPersonalEquipmentOffACrewShootsWithGunneryAsBefore() {
         game.getOptions().getOption(OptionsConstants.RPG_COMBAT_SUITS).setValue(false);

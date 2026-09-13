@@ -89,6 +89,8 @@ public class Crew implements Serializable {
      * {@link #SMALL_ARMS_UNSET} where none was recorded. Same caveat as above.
      */
     private int[] smallArms;
+    /** Whether the crew personal equipment rule was on when this crew left their unit; see {@link #usesSmallArms}. */
+    private boolean smallArmsInPlay;
     private final Portrait[] portraits;
 
     private final int[] gunnery;
@@ -559,14 +561,32 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Whether this crew now fires with Small Arms rather than gunnery: they have left their unit, and a Small Arms
-     * skill was recorded for whoever is shooting. Mirrors how a LAM pilot switches skills on conversion, with the
-     * ejection the server already records as the switch.
+     * Whether the crew personal equipment rule was in force when this crew left their unit. Recorded by the
+     * server at ejection, and carried with the crew so clients and saves agree, because the crew has no game to
+     * ask and a Small Arms value may have been written by a campaign that never looked at the option.
+     *
+     * @param inPlay {@code true} if the rule is on, so a recorded Small Arms skill is used on foot
+     */
+    public void setSmallArmsInPlay(final boolean inPlay) {
+        smallArmsInPlay = inPlay;
+    }
+
+    /**
+     * @return {@code true} if the crew personal equipment rule was in force when this crew left their unit
+     */
+    public boolean isSmallArmsInPlay() {
+        return smallArmsInPlay;
+    }
+
+    /**
+     * Whether this crew now fires with Small Arms rather than gunnery: they have left their unit under the crew
+     * personal equipment rule, and a Small Arms skill was recorded for whoever is shooting. Mirrors how a LAM pilot
+     * switches skills on conversion, with the ejection the server already records as the switch.
      *
      * @return {@code true} if Small Arms replaces every gunnery figure
      */
     protected boolean usesSmallArms() {
-        return ejected && hasSmallArms(gunnerPos);
+        return ejected && smallArmsInPlay && hasSmallArms(gunnerPos);
     }
 
     public Portrait[] getPortraits() {

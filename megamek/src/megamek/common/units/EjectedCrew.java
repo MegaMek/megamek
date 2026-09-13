@@ -106,6 +106,7 @@ public class EjectedCrew extends ConvInfantry {
         Game rideGame = originalRide.getGame();
         // Whoever was not given a sidearm or a Small Arms skill gets their ride's defaults from here on. Recorded
         // on the shared crew, so a crew who later leaves an escape pod already carries them.
+        CrewSidearmRules.markSmallArmsInPlay(originalRide.getCrew(), rideGame);
         CrewSidearmRules.recordDefaultEquipment(originalRide, rideGame);
         armOnLeaving(CrewSidearmRules.crewSidearm(originalRide, rideGame), rideGame, originalRide.getDisplayName());
         issueArmorKitIfWorn(CrewArmorKitRules.crewArmorKit(originalRide, rideGame), originalRide.getDisplayName());
@@ -231,6 +232,7 @@ public class EjectedCrew extends ConvInfantry {
         // carries and wears. Before this the pod path armed the crew but never dressed them, so a tank crew who
         // rode out in a pod stepped out in coveralls whatever they had been issued.
         boolean isClanCrew = crew.isClanPilot();
+        CrewSidearmRules.markSmallArmsInPlay(crew, game);
         armOnLeaving(CrewSidearmRules.crewSidearm(crew, isClanCrew, game), game, crew.getName());
         issueArmorKitIfWorn(CrewArmorKitRules.crewArmorKit(crew, isClanCrew, game), crew.getName());
     }

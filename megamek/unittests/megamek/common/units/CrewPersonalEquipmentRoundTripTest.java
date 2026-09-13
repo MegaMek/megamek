@@ -121,6 +121,7 @@ class CrewPersonalEquipmentRoundTripTest {
         Crew crew = new Crew(CrewType.SINGLE);
         crew.setSidearmName(AUTO_PISTOL, 0);
         crew.setSmallArms(6, 0);
+        crew.setSmallArmsInPlay(true);
         crew.setArmorKitName(SNOWSUIT, 0);
 
         Crew restored = throughJavaSerialization(crew);
@@ -128,6 +129,7 @@ class CrewPersonalEquipmentRoundTripTest {
         assertEquals(AUTO_PISTOL, restored.getSidearmName(0));
         assertEquals(6, restored.getSmallArms(0));
         assertTrue(restored.hasSmallArms(0));
+        assertTrue(restored.isSmallArmsInPlay(), "the rule flag travels to clients with the crew");
         assertEquals(SNOWSUIT, restored.getArmorKitName(0));
     }
 

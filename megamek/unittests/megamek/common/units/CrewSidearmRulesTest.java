@@ -233,6 +233,18 @@ class CrewSidearmRulesTest {
     }
 
     @Test
+    void theRuleIsRecordedOnTheCrewAsTheyLeave() {
+        Crew crew = new Crew(CrewType.SINGLE);
+        CrewSidearmRules.markSmallArmsInPlay(crew, game);
+        assertTrue(crew.isSmallArmsInPlay());
+
+        game.getOptions().getOption(OptionsConstants.RPG_COMBAT_SUITS).setValue(false);
+        CrewSidearmRules.markSmallArmsInPlay(crew, game);
+        assertFalse(crew.isSmallArmsInPlay(), "the crew carries the answer, since it has no game to ask later");
+        CrewSidearmRules.markSmallArmsInPlay(null, game);
+    }
+
+    @Test
     void theDefaultsAreNotRecordedWithTheRuleOff() {
         game.getOptions().getOption(OptionsConstants.RPG_COMBAT_SUITS).setValue(false);
         Mek mek = mekCarrying(null);

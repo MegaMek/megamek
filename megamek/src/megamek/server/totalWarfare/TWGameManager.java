@@ -30300,8 +30300,6 @@ public class TWGameManager extends AbstractGameManager {
             }
         } // End entity-is-Mek or fighter
         else if (game.hasBoardLocationOf(entity) && (entity instanceof Tank)) {
-            // Marked ejected before the crew is built and sent, for the same reason as the MekWarrior above.
-            entity.getCrew().setEjected(true);
             EjectedCrew crew = new EjectedCrew(entity);
             // Need to set game manually; since game.addEntity not called yet
             // Don't want to do this yet, as Entity may not be added
@@ -30331,6 +30329,10 @@ public class TWGameManager extends AbstractGameManager {
             }
             crew.setPosition(legalPosition);
             crew.setBoardId(entity.getBoardId());
+            // Marked ejected only now, once the crew has a hex to stand in but before they are sent, for the
+            // same reason as the MekWarrior above. Any earlier and a crew with nowhere to go would stay flagged
+            // ejected inside a vehicle they never left.
+            entity.getCrew().setEjected(true);
             // Add Entity to game
             game.addEntity(crew);
             // Tell clients about new entity

@@ -1677,7 +1677,18 @@ public class CustomMekDialog extends AbstractButtonDialog
                     return;
                 }
 
-                int smallArms = panCrewMember[i].getSmallArms();
+                int smallArms;
+                try {
+                    smallArms = panCrewMember[i].getSmallArms();
+                } catch (NumberFormatException exception) {
+                    msg = Messages.getString("CustomMekDialog.EnterSmallArmsBetween0_8");
+                    title = Messages.getString("CustomMekDialog.NumberFormatError");
+                    JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.getFrame(),
+                          msg,
+                          title,
+                          JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 boolean isSmallArmsRecorded = smallArms != Crew.SMALL_ARMS_UNSET;
                 boolean isSmallArmsOutOfRange = (smallArms < 0) || (smallArms > Crew.MAX_SKILL);
                 if (isSmallArmsRecorded && isSmallArmsOutOfRange) {
@@ -1740,9 +1751,14 @@ public class CustomMekDialog extends AbstractButtonDialog
                 // crew hits are damage, so they are edited in the damage editor rather than here
                 entity.getCrew().setGender(gender, i);
                 entity.getCrew().setClanPilot(panCrewMember[i].isClanPilot(), i);
-                entity.getCrew().setArmorKitName(panCrewMember[i].getArmorKitName(), i);
-                entity.getCrew().setSidearmName(panCrewMember[i].getSidearmName(), i);
-                entity.getCrew().setSmallArms(smallArms, i);
+                // Personal equipment is written back only when its controls were shown. With the rule off, or
+                // for a crew that never leaves on foot, the controls are hidden and the crew keeps whatever a
+                // campaign or an earlier lobby wrote, rather than being silently cleared or handed a default.
+                if (panCrewMember[i].showsPersonalEquipment()) {
+                    entity.getCrew().setArmorKitName(panCrewMember[i].getArmorKitName(), i);
+                    entity.getCrew().setSidearmName(panCrewMember[i].getSidearmName(), i);
+                    entity.getCrew().setSmallArms(smallArms, i);
+                }
                 if (clientGUI != null) {
                     entity.getCrew().setPortrait(panCrewMember[i].getPortrait().clone(), i);
                 }

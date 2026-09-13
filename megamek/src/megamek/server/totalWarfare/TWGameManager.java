@@ -145,6 +145,8 @@ import megamek.common.weapons.handlers.capitalMissile.CapitalMissileBearingsOnly
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.*;
+import megamek.server.UnitOwnershipRules;
+import megamek.server.UnitOwnershipRules.OwnershipVerdict;
 import megamek.server.commands.*;
 import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryResult;
@@ -26364,38 +26366,13 @@ public class TWGameManager extends AbstractGameManager {
      */
     private boolean mayAddUnitFor(Entity entity, int connIndex) {
         Player sender = game.getPlayer(connIndex);
-        if (sender == null) {
-            LOGGER.error("Refusing a unit from connection {}, which belongs to no player", connIndex);
-            return false;
-        }
         Player owner = game.getPlayer(entity.getOwnerId());
-        if (owner == null) {
-            LOGGER.error("Player {} tried to add {} for player #{}, who is not in the game",
-                  sender.getName(), entity.getShortNameRaw(), entity.getOwnerId());
-            sendServerChat(String.format(
-                  "Player %s tried to add a unit (%s) for a player who is not in the game; it was rejected.",
-                  sender.getName(), entity.getShortNameRaw()));
-            return false;
+        OwnershipVerdict verdict = UnitOwnershipRules.verdictFor(sender, owner);
+        UnitOwnershipRules.logDecision("add", verdict, sender, owner, entity.getShortNameRaw());
+        if (!verdict.isAllowed()) {
+            sendServerChat(UnitOwnershipRules.refusalMessage("add", sender, owner, entity.getShortNameRaw()));
         }
-        if (owner.getId() == sender.getId()) {
-            return true;
-        }
-        if (sender.isGameMaster()) {
-            return true;
-        }
-        if (owner.isBot()) {
-            // The hole this rule cannot close: any client may stock any bot. Recorded so it can be seen after the
-            // fact, since the server cannot tell whose bot this is.
-            LOGGER.info("[AddUnit] {} added {} to the bot {}",
-                  sender.getName(), entity.getShortNameRaw(), owner.getName());
-            return true;
-        }
-        LOGGER.warn("[AddUnit] refusing {} from {}: it is owned by {}, who is neither them nor a bot, and they are "
-                    + "not a gamemaster", entity.getShortNameRaw(), sender.getName(), owner.getName());
-        sendServerChat(String.format(
-              "Player %s attempted to add a unit (%s) belonging to %s, the unit was rejected.",
-              sender.getName(), entity.getShortNameRaw(), owner.getName()));
-        return false;
+        return verdict.isAllowed();
     }
 
     /**

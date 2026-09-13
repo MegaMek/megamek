@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Set;
 
 import megamek.common.Player;
+import megamek.common.annotations.Nullable;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.game.Game;
@@ -52,6 +53,7 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
+import megamek.server.UnitOwnershipRules.OwnershipVerdict;
 import megamek.server.totalWarfare.TWGameManager;
 
 public class ServerLobbyHelper {
@@ -266,7 +268,32 @@ public class ServerLobbyHelper {
         // Get the local (server) entities
         var serverEntities = new HashSet<Entity>();
         entityList.stream().map(e -> game.getEntity(e.getId())).forEach(serverEntities::add);
+
+        // The owner arrives in the payload, so it is checked here rather than trusted (issue #8860). Each unit is
+        // judged on its own: a sender may own some of a mixed selection and not the rest.
+        Player sender = game.getPlayer(connId);
+        List<Entity> permitted = new ArrayList<>();
         for (Entity entity : serverEntities) {
+            if (entity == null) {
+                continue;
+            }
+            OwnershipVerdict verdict = UnitOwnershipRules.verdictFor(sender, newOwner);
+            if (verdict.isAllowed() && !mayActFor(sender, entity.getOwner())) {
+                // Handing over someone else's unit is a different question from who may receive it.
+                verdict = OwnershipVerdict.NOT_PERMITTED;
+            }
+            UnitOwnershipRules.logDecision("reassign", verdict, sender, newOwner, entity.getShortNameRaw());
+            if (verdict.isAllowed()) {
+                permitted.add(entity);
+            } else {
+                gameManager.sendServerChat(
+                      UnitOwnershipRules.refusalMessage("reassign", sender, newOwner, entity.getShortNameRaw()));
+            }
+        }
+        if (permitted.isEmpty()) {
+            return;
+        }
+        for (Entity entity : permitted) {
             entity.setOwner(newOwner);
         }
         game.getForces().correct();
@@ -279,6 +306,37 @@ public class ServerLobbyHelper {
      * Handles a force assign full packet, changing the owner of forces and everything in them. This method is intended
      * for use in the lobby!
      */
+    /**
+     * Whether the sender may act for a unit's current owner: their own unit, one of their bots, or anything at all if
+     * they hold Gamemaster. Giving a unit away is a separate question from who may receive it, so both are checked.
+     *
+     * @param sender       the player on the sending connection, or {@code null}
+     * @param currentOwner the unit's owner before the change, or {@code null}
+     *
+     * @return {@code true} if the sender may hand this unit over
+     */
+    private static boolean mayActFor(@Nullable Player sender, @Nullable Player currentOwner) {
+        return UnitOwnershipRules.verdictFor(sender, currentOwner).isAllowed();
+    }
+
+    /**
+     * Whether the sender may act for every unit in a force. A force moves whole, so one unit they may not give is
+     * enough to refuse it.
+     *
+     * @param sender   the player on the sending connection, or {@code null}
+     * @param entities the units in the force
+     *
+     * @return {@code true} if every unit is the sender's to hand over
+     */
+    private static boolean mayActForAll(@Nullable Player sender, Collection<Entity> entities) {
+        for (Entity entity : entities) {
+            if (!mayActFor(sender, entity.getOwner())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static void receiveForceAssignFull(
           Packet packet, int connId, Game game, TWGameManager gameManager
     ) throws InvalidPacketDataException {
@@ -299,8 +357,23 @@ public class ServerLobbyHelper {
         serverForces.stream().map(forces::getFullSubForces).forEach(allSubForces::addAll);
         serverForces.removeIf(allSubForces::contains);
 
+        Player forceSender = game.getPlayer(connId);
         for (Force force : serverForces) {
             Collection<Entity> entities = ForceAssignable.filterToEntityList(forces.getFullEntities(force));
+
+            // Same rule as a unit reassignment (issue #8860). A force moves whole or not at all, so if any unit in
+            // it is not the sender's to give, the force is refused rather than partly moved.
+            OwnershipVerdict verdict = UnitOwnershipRules.verdictFor(forceSender, newOwner);
+            if (verdict.isAllowed() && !mayActForAll(forceSender, entities)) {
+                verdict = OwnershipVerdict.NOT_PERMITTED;
+            }
+            UnitOwnershipRules.logDecision("reassign force", verdict, forceSender, newOwner, force.getName());
+            if (!verdict.isAllowed()) {
+                gameManager.sendServerChat(
+                      UnitOwnershipRules.refusalMessage("reassign force", forceSender, newOwner, force.getName()));
+                continue;
+            }
+
             forces.assignFullForces(force, newOwner);
             for (Entity entity : entities) {
                 entity.setOwner(newOwner);

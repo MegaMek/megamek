@@ -159,4 +159,60 @@ class EntityAddOwnershipTest {
         gameManager.handlePacket(SENDER_CONNECTION, new Packet(PacketCommand.ENTITY_ADD, List.of(entity)));
         assertEquals(0, game.getEntitiesVector().size(), "an owner who is not in the game must be refused");
     }
+
+    /** Reassigning an existing unit, which is how a player actually gives one to their bot. */
+    private void reassign(int unitOwnerConnection, int newOwnerConnection, int overConnection) {
+        Entity entity = addedUnitFor(unitOwnerConnection);
+        gameManager.handlePacket(overConnection,
+              new Packet(PacketCommand.ENTITY_ASSIGN, List.of(entity), newOwnerConnection));
+    }
+
+    /** Puts one unit straight into the game owned by the given player, bypassing the add packet. */
+    private Entity addedUnitFor(int ownerConnection) {
+        Entity entity;
+        try {
+            entity = new MekFileParser(new File("testresources/data/mekfiles/" + TEST_UNIT + ".mtf")).getEntity();
+        } catch (Exception ex) {
+            fail("Failed to load " + TEST_UNIT + ": " + ex.getMessage());
+            return null;
+        }
+        entity.setGame(game);
+        entity.setCrew(new Crew(CrewType.SINGLE));
+        entity.setOwner(game.getPlayer(ownerConnection));
+        entity.setId(game.getNextEntityId());
+        game.addEntity(entity);
+        return entity;
+    }
+
+    private int ownerOfTheOnlyUnit() {
+        return game.getEntitiesVector().get(0).getOwnerId();
+    }
+
+    @Test
+    void aPlayerMayGiveTheirOwnUnitToTheirBot() {
+        // The ordinary way to stock a Princess, and what the add-packet guard never sees.
+        reassign(SENDER_CONNECTION, BOT_CONNECTION, SENDER_CONNECTION);
+        assertEquals(BOT_CONNECTION, ownerOfTheOnlyUnit(), "giving your own unit to a bot must keep working");
+    }
+
+    @Test
+    void aPlayerMayNotGiveAwayAUnitTheyDoNotOwn() {
+        reassign(OTHER_HUMAN_CONNECTION, BOT_CONNECTION, SENDER_CONNECTION);
+        assertEquals(OTHER_HUMAN_CONNECTION, ownerOfTheOnlyUnit(),
+              "handing away another player's unit must be refused");
+    }
+
+    @Test
+    void aPlayerMayNotPushTheirUnitOntoAnotherHuman() {
+        reassign(SENDER_CONNECTION, OTHER_HUMAN_CONNECTION, SENDER_CONNECTION);
+        assertEquals(SENDER_CONNECTION, ownerOfTheOnlyUnit(),
+              "pushing your unit onto another player must be refused");
+    }
+
+    @Test
+    void aGameMasterMayReassignBetweenOtherPlayers() {
+        game.getPlayer(SENDER_CONNECTION).setGameMaster(true);
+        reassign(OTHER_HUMAN_CONNECTION, BOT_CONNECTION, SENDER_CONNECTION);
+        assertEquals(BOT_CONNECTION, ownerOfTheOnlyUnit(), "a gamemaster may move anybody's units");
+    }
 }

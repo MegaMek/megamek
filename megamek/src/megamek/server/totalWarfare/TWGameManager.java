@@ -145,6 +145,8 @@ import megamek.common.weapons.handlers.capitalMissile.CapitalMissileBearingsOnly
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.*;
+import megamek.server.UnitOwnershipRules;
+import megamek.server.UnitOwnershipRules.OwnershipVerdict;
 import megamek.server.commands.*;
 import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryResult;
@@ -26346,6 +26348,34 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Whether the client on this connection may add a unit owned by the unit's stated owner.
+     *
+     * <p>The owner travels in the payload and used to be taken on trust. The client offers only legal recipients,
+     * but a rule enforced on one side only is a rule the other side cannot rely on: two unrelated client changes
+     * once combined to hand every connecting player's units to the host for several days (issue #8860).</p>
+     *
+     * <p>Three cases are allowed. Adding to yourself, which is the ordinary one. Adding as a gamemaster, who is
+     * meant to be able to set up anybody. And adding to a bot, because since #8808 a unit for your own Princess
+     * travels over your connection carrying the bot's owner id, and the server holds no record of which human runs
+     * which bot. That last case is the known weak point, so it is logged rather than passed over in silence.</p>
+     *
+     * @param entity    the unit being added, carrying the owner the client claims for it
+     * @param connIndex the connection the packet arrived on
+     *
+     * @return {@code true} if the unit may be added
+     */
+    private boolean mayAddUnitFor(Entity entity, int connIndex) {
+        Player sender = game.getPlayer(connIndex);
+        Player owner = game.getPlayer(entity.getOwnerId());
+        OwnershipVerdict verdict = UnitOwnershipRules.verdictFor(sender, owner);
+        UnitOwnershipRules.logDecision("add", verdict, sender, owner, entity.getShortNameRaw());
+        if (!verdict.isAllowed()) {
+            sendServerChat(UnitOwnershipRules.refusalMessage("add", sender, owner, entity.getShortNameRaw()));
+        }
+        return verdict.isAllowed();
+    }
+
+    /**
      * Checks if an entity added by the client is valid and if so, adds it to the list
      *
      * @param packet    the packet to be processed
@@ -26363,6 +26393,11 @@ public class TWGameManager extends AbstractGameManager {
         // when removing
         // illegal entities
         for (final Entity entity : new ArrayList<>(entities)) {
+            if (!mayAddUnitFor(entity, connIndex)) {
+                entities.remove(entity);
+                continue;
+            }
+
             // Create a TestEntity instance for supported unit types
             TestEntity testEntity = TestEntity.getEntityVerifier(entity);
             entity.restore();

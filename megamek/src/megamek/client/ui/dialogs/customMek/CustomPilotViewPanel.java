@@ -135,8 +135,10 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
      * (initiative, commander) through {@link #addAdvancedRow(String, JComponent)}.
      */
     private JPanel advancedSection;
-    private static final int ADVANCED_PAIRS_PER_ROW = 3;
+    private static final int ADVANCED_PAIRS_PER_ROW = 2;
     private int advancedPairCount = 0;
+    /** Whether the kit, sidearm and Small Arms controls are shown: the rule is on and this crew can leave on foot. */
+    private boolean showsPersonalEquipment;
     private final int sectionGap = UIUtil.scaleForGUI(10);
 
     private Portrait portrait;
@@ -169,42 +171,30 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
         sectionsRow.add(buildSkillsSection(parent, slot), sectionConstraints(1));
 
         advancedSection = buildAdvancedSection();
-        chkClanPilot.setText("");
-        chkClanPilot.setSelected(entity.getCrew().isClanPilot(slot));
-        if (entity.getCrew().getSlotCount() > 1) {
-            // Multi-crew: this panel is a per-member tab with no command controls, so add the flag right away.
-            // Single pilot: the dialog calls addClanPilotAdvancedRow() while interleaving its command controls,
-            // placing the flag after Commander Initiative.
-            addClanPilotAdvancedRow();
-        }
-        if (CrewArmorKitRules.isRuleInPlay(parent.getClient().getGame())
-              && CrewArmorKitRules.canWearArmorKit(entity)) {
+        // The Advanced section reads two pairs to a row, in this order: the kit and the sidearm, then the
+        // command controls beside Small Arms, then toughness and fatigue. The first row is added here; for a
+        // single pilot the dialog adds its command controls next and then calls addCrewMemberRows(), for a
+        // multi-crew member tab there are no command controls and the rest follows at once.
+        showsPersonalEquipment = CrewArmorKitRules.isRuleInPlay(parent.getClient().getGame())
+              && CrewArmorKitRules.canWearArmorKit(entity);
+        if (showsPersonalEquipment) {
             populateArmorKitChoices(parent.getClient().getGame(), entity, slot);
             refreshArmorKitTooltip();
             choArmorKit.addActionListener(event -> refreshArmorKitTooltip());
             addAdvancedRow(Messages.getString("CustomMekDialog.choArmorKit"), choArmorKit);
-        }
-        if (CrewSidearmRules.isRuleInPlay(parent.getClient().getGame())
-              && CrewSidearmRules.canCarrySidearm(entity)) {
             populateSidearmChoices(parent.getClient().getGame(), entity, slot);
             choSidearm.setToolTipText(
                   UIUtil.formatSideTooltip(Messages.getString("CustomMekDialog.choSidearm.tooltip")));
             addAdvancedRow(Messages.getString("CustomMekDialog.choSidearm"), choSidearm);
-            fldSmallArms.setToolTipText(
-                  UIUtil.formatSideTooltip(Messages.getString("CustomMekDialog.labSmallArms.tooltip")));
-            addAdvancedRow(Messages.getString("CustomMekDialog.labSmallArms"), fldSmallArms);
         }
         fldSmallArms.setText(entity.getCrew().hasSmallArms(slot)
               ? Integer.toString(entity.getCrew().getSmallArms(slot))
               : "");
-        if (parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
-            addAdvancedRow(Messages.getString("CustomMekDialog.labTough"), fldTough);
-        }
         fldTough.setText(Integer.toString(entity.getCrew().getToughness(slot)));
-        if (parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_FATIGUE)) {
-            addAdvancedRow(Messages.getString("CustomMekDialog.labFatigue"), fldFatigue);
-        }
         fldFatigue.setText(Integer.toString(entity.getCrew().getCrewFatigue(slot)));
+        if (entity.getCrew().getSlotCount() > 1) {
+            addCrewMemberRows(parent.getClient().getGame());
+        }
 
         JPanel crewRoleSection = buildCrewRoleSection(parent, slot);
         if (crewRoleSection.getComponentCount() > 0) {
@@ -245,12 +235,17 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
               .anchor(GridBagConstraints.NORTHWEST).insets(0, 0, sectionGap, 0);
     }
 
-    /** Puts the Advanced section under the identity section at its full width, once, on the first row added. */
+    /**
+     * Puts the Advanced section under the whole sections row, once, on the first row added. It spans every
+     * column rather than sitting in the identity section's column: in one column its width became the identity
+     * section's width, which pushed the skills section to the far right of the dialog.
+     */
     private void attachAdvancedSection() {
         if (advancedSection.getParent() == null) {
             sectionsRow.add(advancedSection, GBC.std().gridX(0).gridY(1)
+                  .gridWidth(GridBagConstraints.REMAINDER)
                   .anchor(GridBagConstraints.NORTHWEST)
-                  .fill(GridBagConstraints.HORIZONTAL).weightX(0)
+                  .fill(GridBagConstraints.NONE).weightX(0)
                   .insets(0, 6, sectionGap, 0));
             sectionsRow.revalidate();
         }
@@ -356,11 +351,25 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Adds the clan pilot flag as an Advanced pair. Called at construction for multi-crew units; for single-pilot
-     * units the dialog calls it at the agreed point while interleaving its command controls.
+     * Adds the rest of this crew member's Advanced pairs: the Small Arms skill under the sidearm, then the
+     * option-gated toughness and fatigue fields. For a single pilot the dialog calls this after it has added its
+     * command controls, so that Small Arms lands beside them on the second row; for a multi-crew member tab the
+     * constructor calls it directly.
+     *
+     * @param game the game whose options say which fields are shown
      */
-    public void addClanPilotAdvancedRow() {
-        addAdvancedRow(Messages.getString("CustomMekDialog.chkClanPilot"), chkClanPilot);
+    public void addCrewMemberRows(Game game) {
+        if (showsPersonalEquipment) {
+            fldSmallArms.setToolTipText(
+                  UIUtil.formatSideTooltip(Messages.getString("CustomMekDialog.labSmallArms.tooltip")));
+            addAdvancedRow(Messages.getString("CustomMekDialog.labSmallArms"), fldSmallArms);
+        }
+        if (game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
+            addAdvancedRow(Messages.getString("CustomMekDialog.labTough"), fldTough);
+        }
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_FATIGUE)) {
+            addAdvancedRow(Messages.getString("CustomMekDialog.labFatigue"), fldFatigue);
+        }
     }
 
     /**
@@ -552,6 +561,13 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
                 skillsSection.add(fldGunneryAero, GBC.eol());
             }
         }
+
+        // Clan Pilot reads under gunnery: it is a fact about the person, like their skills, not an option
+        skillsSection.add(new JLabel(Messages.getString("CustomMekDialog.chkClanPilot"), SwingConstants.RIGHT),
+              GBC.std());
+        skillsSection.add(chkClanPilot, GBC.eol());
+        chkClanPilot.setText("");
+        chkClanPilot.setSelected(entity.getCrew().isClanPilot(slot));
 
         if (entity.getCrew() instanceof LAMPilot pilot) {
             fldGunneryL.setText(Integer.toString(pilot.getGunneryMekL()));

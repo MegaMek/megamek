@@ -1260,6 +1260,28 @@ public class CustomMekDialog extends AbstractButtonDialog
         return status;
     }
 
+    /**
+     * The commander flag and, when the option is on, its initiative bonus beside it, as one control for a single
+     * pilot's Advanced section. A tick box on its own is a few pixels wide and its label was being cut off; paired
+     * with the number it decides, both read at a glance.
+     *
+     * @param commandInitiative whether the Commander Initiative option is on, so the bonus field is shown
+     *
+     * @return the panel holding the flag and, optionally, the bonus field
+     */
+    private JPanel commanderControls(boolean commandInitiative) {
+        JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        controls.add(chCommander);
+        if (commandInitiative) {
+            JLabel commandInitLabel = new JLabel(Messages.getString("CustomMekDialog.labCommandInit"));
+            commandInitLabel.setBorder(BorderFactory.createEmptyBorder(0, UIUtil.scaleForGUI(10), 0,
+                  UIUtil.scaleForGUI(4)));
+            controls.add(commandInitLabel);
+            controls.add(fldCommandInit);
+        }
+        return controls;
+    }
+
     private void refreshDeployment() {
         if (this.clientGUI == null) {
             return;
@@ -2222,17 +2244,15 @@ public class CustomMekDialog extends AbstractButtonDialog
         boolean individualInitiative = gameOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE);
         boolean commandInitiative = gameOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT);
         if (!multipleEntities && (panCrewMember.length == 1)) {
-            // Single pilot: fold the crew-level controls into the pilot's Advanced section. Clan Pilot goes
-            // after Commander Initiative (the two swapped places by request).
+            // Single pilot: fold the crew-level controls into the pilot's Advanced section. The commander flag
+            // and its initiative field share one pair on the second row, beside Small Arms; the rest of the
+            // pilot's own rows follow, and the individual initiative bonus comes last.
+            panCrewMember[0].addAdvancedRow(Messages.getString("CustomMekDialog.labCommander"),
+                  commanderControls(commandInitiative));
+            panCrewMember[0].addCrewMemberRows(client.getGame());
             if (individualInitiative) {
                 panCrewMember[0].addAdvancedRow(Messages.getString("CustomMekDialog.labInit"), fldInit);
             }
-            if (commandInitiative) {
-                panCrewMember[0].addAdvancedRow(Messages.getString("CustomMekDialog.labCommandInit"),
-                      fldCommandInit);
-            }
-            panCrewMember[0].addClanPilotAdvancedRow();
-            panCrewMember[0].addAdvancedRow(Messages.getString("CustomMekDialog.labCommander"), chCommander);
         } else {
             // Multi-crew: the shared Crew tab gets its own Command section
             JPanel commandSection = new JPanel(new GridBagLayout());

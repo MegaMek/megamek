@@ -1091,4 +1091,42 @@ class ComputeTest {
             assertFalse(Compute.isInBuilding(getGame(), mek));
         }
     }
+
+    @Test
+    void groundMoverRevealsAHiddenUnitAsItPasses() {
+        // TW p.260: the shot follows from being revealed by enemy movement, and the target may continue its move
+        // afterwards, which is only possible part way through a move. Walking past used to reveal nothing.
+        Entity groundMover = mock(Entity.class);
+        when(groundMover.isAirborne()).thenReturn(false);
+
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(groundMover, 0),
+              "moving into the hidden unit's own hex reveals it");
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(groundMover, 1),
+              "moving adjacent reveals it, whether or not the mover stops there");
+        assertFalse(Compute.revealsHiddenUnitForPointblankShot(groundMover, 2),
+              "two hexes away is out of reach");
+    }
+
+    @Test
+    void airborneMoverRevealsOnlyWhatItFliesOverWithoutAProbe() {
+        Entity flyer = mock(Entity.class);
+        when(flyer.isAirborne()).thenReturn(true);
+        when(flyer.getBAPRange()).thenReturn(0);
+
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(flyer, 0), "it reveals what it overflies");
+        assertFalse(Compute.revealsHiddenUnitForPointblankShot(flyer, 1),
+              "without an Active Probe an adjacent hex is not revealed");
+    }
+
+    @Test
+    void airborneMoverWithAProbeRevealsAnAdjacentHex() {
+        Entity flyerWithProbe = mock(Entity.class);
+        when(flyerWithProbe.isAirborne()).thenReturn(true);
+        when(flyerWithProbe.getBAPRange()).thenReturn(4);
+
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(flyerWithProbe, 1),
+              "an Active Probe extends the reveal to an adjacent hex");
+        assertFalse(Compute.revealsHiddenUnitForPointblankShot(flyerWithProbe, 0),
+              "with a probe the reveal is the adjacent hex, not the overflown one");
+    }
 }

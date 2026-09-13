@@ -36,15 +36,12 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.util.HashMap;
-import java.util.Map;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Function;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -63,28 +60,28 @@ import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.comboBoxes.SearchableComboBox;
-import megamek.common.units.Crew;
-import megamek.common.units.CrewArmorKitRules;
-import megamek.common.units.CrewSidearmRules;
-import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.client.ui.dialogs.iconChooser.PortraitChooserDialog;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.Gender;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
-import megamek.common.planetaryConditions.EjectionHazard;
-import megamek.common.enums.Gender;
 import megamek.common.icons.Portrait;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryConditions.EjectionHazard;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewArmorKitRules;
+import megamek.common.units.CrewSidearmRules;
 import megamek.common.units.Entity;
 import megamek.common.units.EntitySelector;
 import megamek.common.units.Infantry;
 import megamek.common.units.LAMPilot;
 import megamek.common.units.ProtoMek;
 import megamek.common.units.Tank;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * Controls for customizing crew in the chat lounge. For most crew types this is part of the pilot tab. For multi-crew
@@ -104,16 +101,16 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
     private final JCheckBox chkMissing = new JCheckBox(Messages.getString("CustomMekDialog.chkMissing"));
     private final JTextField fldName = new JTextField(30);
     private final JTextField fldNick = new JTextField(30);
-    private final Map<String, String> armorKitNamesByDisplayName = new HashMap<>();
-    private final Map<String, String> sidearmNamesByDisplayName = new HashMap<>();
     private final JCheckBox chkClanPilot = new JCheckBox(Messages.getString("CustomMekDialog.chkClanPilot"));
     /**
-     * The kit and sidearm choosers, searchable by typing like the munition choosers. Built only when the rule is
-     * on and this crew can leave on foot, because the searchable box takes its whole list at construction; {@code
-     * null} otherwise, and every reader treats that as "none chosen".
+     * The kit and sidearm choosers, searchable by typing like the munition choosers because both lists run long.
+     * The searchable box takes its whole list at construction, so each starts as a placeholder holding only the
+     * "none" entry and is rebuilt with the real list once the rule is known to be on for this crew.
      */
-    private SearchableComboBox<String> choArmorKit;
-    private SearchableComboBox<String> choSidearm;
+    private SearchableComboBox<EquipmentChoice> choArmorKit = new SearchableComboBox<>("choArmorKit",
+          List.of(EquipmentChoice.NO_KIT), EquipmentChoice::displayName);
+    private SearchableComboBox<EquipmentChoice> choSidearm = new SearchableComboBox<>("choSidearm",
+          List.of(EquipmentChoice.NO_SIDEARM), EquipmentChoice::displayName);
     private final JTextField fldSmallArms = new JTextField(4);
     private final JTextField fldGunnery = new JTextField(4);
     private final JTextField fldGunneryL = new JTextField(4);
@@ -190,7 +187,8 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
             choArmorKit.addActionListener(event -> refreshArmorKitTooltip());
             addAdvancedRow(Messages.getString("CustomMekDialog.choArmorKit"), choArmorKit);
             choSidearm = buildSidearmChooser(parent.getClient().getGame(), entity, slot);
-            setTooltipOnBoxAndEditor(choSidearm, Messages.getString("CustomMekDialog.choSidearm.tooltip"));
+            choSidearm.setToolTipText(
+                  UIUtil.formatSideTooltip(Messages.getString("CustomMekDialog.choSidearm.tooltip")));
             addAdvancedRow(Messages.getString("CustomMekDialog.choSidearm"), choSidearm);
         }
         // Likewise the Small Arms field opens on the unit's default when nothing was recorded
@@ -216,12 +214,8 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
             fldName.setEnabled(false);
             fldNick.setEnabled(false);
             chkClanPilot.setEnabled(false);
-            if (choArmorKit != null) {
-                choArmorKit.setEnabled(false);
-            }
-            if (choSidearm != null) {
-                choSidearm.setEnabled(false);
-            }
+            choArmorKit.setEnabled(false);
+            choSidearm.setEnabled(false);
             fldSmallArms.setEnabled(false);
             fldGunnery.setEnabled(false);
             fldGunneryL.setEnabled(false);
@@ -274,22 +268,23 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
      *
      * @return the chooser
      */
-    private SearchableComboBox<String> buildArmorKitChooser(Game game, Entity entity, int slot) {
-        String noKit = Messages.getString("CustomMekDialog.choArmorKit.none");
-        List<String> choices = new ArrayList<>();
-        choices.add(noKit);
+    private SearchableComboBox<EquipmentChoice> buildArmorKitChooser(Game game, Entity entity, int slot) {
+        List<EquipmentChoice> choices = new ArrayList<>();
+        choices.add(EquipmentChoice.NO_KIT);
         for (EquipmentType armorKit : CrewArmorKitRules.availableArmorKits()) {
             if (!CrewArmorKitRules.isAvailableIn(armorKit, entity, game)) {
                 continue;
             }
-            armorKitNamesByDisplayName.put(armorKit.getName(), armorKit.getInternalName());
-            choices.add(armorKit.getName());
+            choices.add(new EquipmentChoice(armorKit.getName(), armorKit.getInternalName()));
         }
-        SearchableComboBox<String> chooser = new SearchableComboBox<>("choArmorKit", choices, Function.identity());
+        SearchableComboBox<EquipmentChoice> chooser =
+              new SearchableComboBox<>("choArmorKit", choices, EquipmentChoice::displayName);
         String wornKitName = entity.getCrew().getArmorKitName(slot);
         EquipmentType wornKit = (wornKitName == null) ? null : EquipmentType.get(wornKitName);
-        boolean isOffered = (wornKit != null) && armorKitNamesByDisplayName.containsKey(wornKit.getName());
-        chooser.setSelectedItem(isOffered ? wornKit.getName() : noKit);
+        EquipmentChoice worn = (wornKit == null)
+              ? EquipmentChoice.NO_KIT
+              : new EquipmentChoice(wornKit.getName(), wornKit.getInternalName());
+        chooser.setSelectedItem(choices.contains(worn) ? worn : EquipmentChoice.NO_KIT);
         return chooser;
     }
 
@@ -299,33 +294,30 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
      * dropdown always describes the kit the crew member would actually leave in.
      */
     private void refreshArmorKitTooltip() {
-        if (choArmorKit == null) {
-            return;
-        }
         String chosenKitName = getArmorKitName();
         EquipmentType chosenKit = (chosenKitName == null) ? null : EquipmentType.get(chosenKitName);
         String kitDescription = (chosenKit == null)
               ? Messages.getString("CustomMekDialog.choArmorKit.tooltip.none")
               : describeArmorKit(chosenKit);
-        setTooltipOnBoxAndEditor(choArmorKit,
-              kitDescription + "<br><br>" + Messages.getString("CustomMekDialog.choArmorKit.tooltip"));
+        choArmorKit.setToolTipText(UIUtil.formatSideTooltip(
+              kitDescription + "<br><br>" + Messages.getString("CustomMekDialog.choArmorKit.tooltip")));
     }
 
     /**
-     * Sets a tooltip on a searchable chooser and on the text editor that fills most of it, with the searchable
-     * box's own "type to search" hint kept at the end. Without this the editor's hint would be the only tooltip
-     * the pointer ever meets, and the description would show only on the arrow button.
+     * One entry in the kit or sidearm dropdown: what the player reads, and the internal name the crew is given.
      *
-     * @param chooser the chooser to describe
-     * @param text    the description, as HTML fragments
+     * <p>{@link #NO_KIT} and {@link #NO_SIDEARM} stand for having nothing, carrying a {@code null} internal name
+     * so the caller can hand it straight back without a special case.</p>
+     *
+     * @param displayName  the equipment's name as the player sees it
+     * @param internalName the name the crew records, or {@code null} for none
      */
-    private static void setTooltipOnBoxAndEditor(SearchableComboBox<String> chooser, String text) {
-        String tooltip = UIUtil.formatSideTooltip(
-              text + "<br><br><i>" + Messages.getString("SearchableComboBox.tooltip") + "</i>");
-        chooser.setToolTipText(tooltip);
-        if (chooser.getEditor().getEditorComponent() instanceof JComponent editorComponent) {
-            editorComponent.setToolTipText(tooltip);
-        }
+    private record EquipmentChoice(String displayName, @Nullable String internalName) {
+
+        private static final EquipmentChoice NO_KIT =
+              new EquipmentChoice(Messages.getString("CustomMekDialog.choArmorKit.none"), null);
+        private static final EquipmentChoice NO_SIDEARM =
+              new EquipmentChoice(Messages.getString("CustomMekDialog.choSidearm.none"), null);
     }
 
     /**
@@ -377,18 +369,17 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
      *
      * @return the chooser
      */
-    private SearchableComboBox<String> buildSidearmChooser(Game game, Entity entity, int slot) {
-        String noSidearm = Messages.getString("CustomMekDialog.choSidearm.none");
-        List<String> choices = new ArrayList<>();
-        choices.add(noSidearm);
+    private SearchableComboBox<EquipmentChoice> buildSidearmChooser(Game game, Entity entity, int slot) {
+        List<EquipmentChoice> choices = new ArrayList<>();
+        choices.add(EquipmentChoice.NO_SIDEARM);
         for (InfantryWeapon sidearm : CrewSidearmRules.availableSidearms()) {
             if (!CrewSidearmRules.isAvailableIn(sidearm, entity, game)) {
                 continue;
             }
-            sidearmNamesByDisplayName.put(sidearm.getName(), sidearm.getInternalName());
-            choices.add(sidearm.getName());
+            choices.add(new EquipmentChoice(sidearm.getName(), sidearm.getInternalName()));
         }
-        SearchableComboBox<String> chooser = new SearchableComboBox<>("choSidearm", choices, Function.identity());
+        SearchableComboBox<EquipmentChoice> chooser =
+              new SearchableComboBox<>("choSidearm", choices, EquipmentChoice::displayName);
         // A crew member with nothing recorded opens on their unit's default, which is what they would step out
         // with anyway; pressing OK then records it, and None is still there to choose.
         String carriedName = entity.getCrew().getSidearmName(slot);
@@ -396,8 +387,10 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
             carriedName = CrewSidearmRules.defaultSidearmName(entity);
         }
         EquipmentType carried = (carriedName == null) ? null : EquipmentType.get(carriedName);
-        boolean isOffered = (carried != null) && sidearmNamesByDisplayName.containsKey(carried.getName());
-        chooser.setSelectedItem(isOffered ? carried.getName() : noSidearm);
+        EquipmentChoice carriedChoice = (carried == null)
+              ? EquipmentChoice.NO_SIDEARM
+              : new EquipmentChoice(carried.getName(), carried.getInternalName());
+        chooser.setSelectedItem(choices.contains(carriedChoice) ? carriedChoice : EquipmentChoice.NO_SIDEARM);
         return chooser;
     }
 
@@ -785,22 +778,16 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
      * @return the internal name of the armor kit chosen for this crew member, or {@code null} for none
      */
     public @Nullable String getArmorKitName() {
-        String chosen = (choArmorKit == null) ? null : choArmorKit.getSelectedItem();
-        if ((chosen == null) || chosen.equals(Messages.getString("CustomMekDialog.choArmorKit.none"))) {
-            return null;
-        }
-        return armorKitNamesByDisplayName.get(chosen);
+        EquipmentChoice chosen = choArmorKit.getSelectedItem();
+        return (chosen == null) ? null : chosen.internalName();
     }
 
     /**
      * @return the internal name of the sidearm chosen for this crew member, or {@code null} for none
      */
     public @Nullable String getSidearmName() {
-        String chosen = (choSidearm == null) ? null : choSidearm.getSelectedItem();
-        if ((chosen == null) || chosen.equals(Messages.getString("CustomMekDialog.choSidearm.none"))) {
-            return null;
-        }
-        return sidearmNamesByDisplayName.get(chosen);
+        EquipmentChoice chosen = choSidearm.getSelectedItem();
+        return (chosen == null) ? null : chosen.internalName();
     }
 
     /**

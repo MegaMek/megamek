@@ -912,6 +912,9 @@ public class MoveStep implements Serializable {
             // A climb mode change is only meta info and does not count as an action
             setFirstStep();
 
+        } else if (prev.isFirstStep() && (prev.getType() == MoveStepType.DEPLOY)) {
+            //Walk-on deployment
+            setFirstStep();
         } else if (prev.isFirstStep()
                    && prev.isTurning
                    && entity instanceof ConvInfantry infantry
@@ -2180,6 +2183,10 @@ public class MoveStep implements Serializable {
 
         if ((type == MoveStepType.CLIMB_MODE_ON) || (type == MoveStepType.CLIMB_MODE_OFF)) {
             movementType = prev.movementType;
+        }
+        if (type == MoveStepType.DEPLOY) {
+            // Deployment
+            movementType = EntityMovementType.MOVE_NONE;
         }
         // check for ejection (always legal?)
         if (type == MoveStepType.EJECT) {

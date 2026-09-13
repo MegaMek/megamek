@@ -59,7 +59,8 @@ class DeployStep implements PhasePass {
                                           final Entity entity,
                                           MoveStep prev,
                                           final CachedEntityState cachedEntityState) {
-        if (entity.isDropShip() && entity.isAeroLandedOnGroundMap()) {
+        // Aerospace units need a clean slate to move
+        if (entity.isAero()) {
             moveStep.setMp(0);
             return PhasePassResult.BREAK;
         }

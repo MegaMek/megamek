@@ -2967,10 +2967,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                                                   targetAero.getCurrentVelocity());
 
                     // Warn if this ram would dishonor the player in the eyes of a Forced Withdrawal bot.
-                    if (needNagForDishonor()
-                        && HonorNagHelper.wouldBeDishonored(game, currentlySelectedEntity, target)) {
-                        if (checkNagForDishonor(Messages.getString("HonorNag.title"),
-                                                Messages.getString("HonorNag.message"))) {
+                    String ramDishonorWarning = needNagForDishonor()
+                          ? HonorNagHelper.warningFor(game, currentlySelectedEntity, target) : null;
+                    if (ramDishonorWarning != null) {
+                        if (checkNagForDishonor(Messages.getString("HonorNag.title"), ramDishonorWarning)) {
                             clear();
                             return;
                         }
@@ -3080,10 +3080,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         msg = "MovementDisplay.AirMekRamDialog.message";
                     }
                     // Warn if this charge would dishonor the player in the eyes of a Forced Withdrawal bot.
-                    if (needNagForDishonor()
-                        && HonorNagHelper.wouldBeDishonored(game, currentlySelectedEntity, target)) {
-                        if (checkNagForDishonor(Messages.getString("HonorNag.title"),
-                                                Messages.getString("HonorNag.message"))) {
+                    String chargeDishonorWarning = needNagForDishonor()
+                          ? HonorNagHelper.warningFor(game, currentlySelectedEntity, target) : null;
+                    if (chargeDishonorWarning != null) {
+                        if (checkNagForDishonor(Messages.getString("HonorNag.title"), chargeDishonorWarning)) {
                             clear();
                             return;
                         }
@@ -3196,10 +3196,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                                       + ".dfaModifier"));
 
                         // Warn if this DFA would dishonor the player in the eyes of a Forced Withdrawal bot.
-                        if (needNagForDishonor()
-                            && HonorNagHelper.wouldBeDishonored(game, currentlySelectedEntity, target)) {
-                            if (checkNagForDishonor(Messages.getString("HonorNag.title"),
-                                                    Messages.getString("HonorNag.message"))) {
+                        String dfaDishonorWarning = needNagForDishonor()
+                              ? HonorNagHelper.warningFor(game, currentlySelectedEntity, target) : null;
+                        if (dfaDishonorWarning != null) {
+                            if (checkNagForDishonor(Messages.getString("HonorNag.title"), dfaDishonorWarning)) {
                                 clear();
                                 return;
                             }

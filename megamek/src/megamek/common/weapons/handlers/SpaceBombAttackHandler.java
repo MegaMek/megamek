@@ -38,9 +38,9 @@ import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.HitData;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.enums.BombType;
@@ -72,7 +72,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
     public SpaceBombAttackHandler(ToHitData toHit, WeaponAttackAction weaponAttackAction, Game game,
           TWGameManager twGameManager) throws EntityLoadingException {
         super(toHit, weaponAttackAction, game, twGameManager);
-        generalDamageType = HitData.DAMAGE_NONE;
+        generalDamageType = HitDamageType.DAMAGE_NONE;
     }
 
     /**

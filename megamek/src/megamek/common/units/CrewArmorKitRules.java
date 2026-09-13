@@ -144,19 +144,35 @@ public final class CrewArmorKitRules {
      * @return the kit, or {@code null} if the crew wear none or the rule is off
      */
     public static @Nullable EquipmentType crewArmorKit(@Nullable Entity entity, @Nullable Game game) {
-        if (!isRuleInPlay(game)) {
-            return null;
-        }
         boolean hasNoCrewToAskAbout = (entity == null) || (entity.getCrew() == null);
         if (hasNoCrewToAskAbout || !canWearArmorKit(entity)) {
             return null;
         }
-        String kitName = entity.getCrew().getAnyArmorKitName();
+        return crewArmorKit(entity.getCrew(), entity.isClan(), game);
+    }
+
+    /**
+     * The kit this crew would leave wearing, asked of the crew itself rather than the unit it is aboard. For the
+     * crew of a Combat Vehicle Escape Pod, whose ride is already gone by the time they step out, this is the only
+     * form that can be asked.
+     *
+     * @param crew       the crew, or {@code null}
+     * @param isClanCrew whether Clan dates decide what has been invented
+     * @param game       the game whose options say whether the rule is in force, or {@code null}
+     *
+     * @return the kit, or {@code null} if the crew wear none or the rule is off
+     */
+    public static @Nullable EquipmentType crewArmorKit(@Nullable Crew crew, boolean isClanCrew,
+          @Nullable Game game) {
+        if ((crew == null) || !isRuleInPlay(game)) {
+            return null;
+        }
+        String kitName = crew.getAnyArmorKitName();
         if ((kitName == null) || kitName.isBlank()) {
             return null;
         }
         EquipmentType armorKit = EquipmentType.get(kitName);
-        if ((armorKit == null) || !isAvailableIn(armorKit, entity, game)) {
+        if ((armorKit == null) || !isAvailableIn(armorKit, isClanCrew, game)) {
             return null;
         }
         return armorKit;
@@ -174,11 +190,24 @@ public final class CrewArmorKitRules {
      */
     public static boolean isAvailableIn(@Nullable EquipmentType armorKit, @Nullable Entity entity,
           @Nullable Game game) {
+        boolean isClanCrew = (entity != null) && entity.isClan();
+        return isAvailableIn(armorKit, isClanCrew, game);
+    }
+
+    /**
+     * @param armorKit   the kit to check, or {@code null}
+     * @param isClanCrew whether Clan dates apply
+     * @param game       the game whose year applies, or {@code null}
+     *
+     * @return {@code true} if a crew may have this kit in this year
+     *
+     * @see #isAvailableIn(EquipmentType, Entity, Game)
+     */
+    public static boolean isAvailableIn(@Nullable EquipmentType armorKit, boolean isClanCrew, @Nullable Game game) {
         if ((armorKit == null) || (game == null)) {
             return false;
         }
         int year = game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
-        boolean isClanCrew = (entity != null) && entity.isClan();
         return armorKit.isAvailableIn(year, isClanCrew, false);
     }
 

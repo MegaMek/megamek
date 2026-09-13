@@ -61,7 +61,10 @@ import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.common.units.Crew;
 import megamek.common.units.CrewArmorKitRules;
+import megamek.common.units.CrewSidearmRules;
+import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.client.ui.dialogs.iconChooser.PortraitChooserDialog;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
@@ -97,8 +100,11 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
     private final JTextField fldName = new JTextField(30);
     private final JTextField fldNick = new JTextField(30);
     private final Map<String, String> armorKitNamesByDisplayName = new HashMap<>();
+    private final Map<String, String> sidearmNamesByDisplayName = new HashMap<>();
     private final JCheckBox chkClanPilot = new JCheckBox(Messages.getString("CustomMekDialog.chkClanPilot"));
     private final JComboBox<String> choArmorKit = new JComboBox<>();
+    private final JComboBox<String> choSidearm = new JComboBox<>();
+    private final JTextField fldSmallArms = new JTextField(4);
     private final JTextField fldGunnery = new JTextField(4);
     private final JTextField fldGunneryL = new JTextField(4);
     private final JTextField fldGunneryM = new JTextField(4);
@@ -149,7 +155,7 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
         // too-narrow window now clips at the row's right edge instead of crushing the inputs.
         for (JTextField inputField : List.of(fldName, fldNick, fldGunnery, fldGunneryL, fldGunneryM, fldGunneryB,
               fldPiloting, fldGunneryAero, fldGunneryAeroL, fldGunneryAeroM, fldGunneryAeroB, fldPilotingAero,
-              fldArtillery, fldTough, fldFatigue)) {
+              fldArtillery, fldTough, fldFatigue, fldSmallArms)) {
             inputField.setMinimumSize(inputField.getPreferredSize());
         }
 
@@ -175,6 +181,19 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
                   UIUtil.formatSideTooltip(Messages.getString("CustomMekDialog.choArmorKit.tooltip")));
             addAdvancedRow(Messages.getString("CustomMekDialog.choArmorKit"), choArmorKit);
         }
+        if (CrewSidearmRules.isRuleInPlay(parent.getClient().getGame())
+              && CrewSidearmRules.canCarrySidearm(entity)) {
+            populateSidearmChoices(parent.getClient().getGame(), entity, slot);
+            choSidearm.setToolTipText(
+                  UIUtil.formatSideTooltip(Messages.getString("CustomMekDialog.choSidearm.tooltip")));
+            addAdvancedRow(Messages.getString("CustomMekDialog.choSidearm"), choSidearm);
+            fldSmallArms.setToolTipText(
+                  UIUtil.formatSideTooltip(Messages.getString("CustomMekDialog.labSmallArms.tooltip")));
+            addAdvancedRow(Messages.getString("CustomMekDialog.labSmallArms"), fldSmallArms);
+        }
+        fldSmallArms.setText(entity.getCrew().hasSmallArms(slot)
+              ? Integer.toString(entity.getCrew().getSmallArms(slot))
+              : "");
         if (parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
             addAdvancedRow(Messages.getString("CustomMekDialog.labTough"), fldTough);
         }
@@ -197,6 +216,8 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
             fldNick.setEnabled(false);
             chkClanPilot.setEnabled(false);
             choArmorKit.setEnabled(false);
+            choSidearm.setEnabled(false);
+            fldSmallArms.setEnabled(false);
             fldGunnery.setEnabled(false);
             fldGunneryL.setEnabled(false);
             fldGunneryM.setEnabled(false);
@@ -253,6 +274,29 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
         String wornKitName = entity.getCrew().getArmorKitName(slot);
         EquipmentType wornKit = (wornKitName == null) ? null : EquipmentType.get(wornKitName);
         choArmorKit.setSelectedItem((wornKit == null) ? noKit : wornKit.getName());
+    }
+
+    /**
+     * Fills the sidearm chooser with every one-person weapon available in the year being played, plus an entry for
+     * carrying none, and selects whatever this crew member already carries.
+     *
+     * @param game   the game whose year decides what has been invented
+     * @param entity the unit whose crew is being configured
+     * @param slot   the crew slot this panel is for
+     */
+    private void populateSidearmChoices(Game game, Entity entity, int slot) {
+        String noSidearm = Messages.getString("CustomMekDialog.choSidearm.none");
+        choSidearm.addItem(noSidearm);
+        for (InfantryWeapon sidearm : CrewSidearmRules.availableSidearms()) {
+            if (!CrewSidearmRules.isAvailableIn(sidearm, entity, game)) {
+                continue;
+            }
+            sidearmNamesByDisplayName.put(sidearm.getName(), sidearm.getInternalName());
+            choSidearm.addItem(sidearm.getName());
+        }
+        String carriedName = entity.getCrew().getSidearmName(slot);
+        EquipmentType carried = (carriedName == null) ? null : EquipmentType.get(carriedName);
+        choSidearm.setSelectedItem((carried == null) ? noSidearm : carried.getName());
     }
 
     /**
@@ -623,6 +667,28 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
             return null;
         }
         return armorKitNamesByDisplayName.get(chosen.toString());
+    }
+
+    /**
+     * @return the internal name of the sidearm chosen for this crew member, or {@code null} for none
+     */
+    public @Nullable String getSidearmName() {
+        Object chosen = choSidearm.getSelectedItem();
+        if ((chosen == null) || chosen.equals(Messages.getString("CustomMekDialog.choSidearm.none"))) {
+            return null;
+        }
+        return sidearmNamesByDisplayName.get(chosen.toString());
+    }
+
+    /**
+     * @return the Small Arms skill entered for this crew member, or {@link Crew#SMALL_ARMS_UNSET} when the field
+     *       was left blank
+     *
+     * @throws NumberFormatException if the field holds something that is not a number, like the other skill fields
+     */
+    public int getSmallArms() {
+        String entered = fldSmallArms.getText().trim();
+        return entered.isEmpty() ? Crew.SMALL_ARMS_UNSET : Integer.parseInt(entered);
     }
 
     public int getGunnery() {

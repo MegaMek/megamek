@@ -1655,6 +1655,19 @@ public class CustomMekDialog extends AbstractButtonDialog
                     return;
                 }
 
+                int smallArms = panCrewMember[i].getSmallArms();
+                boolean isSmallArmsRecorded = smallArms != Crew.SMALL_ARMS_UNSET;
+                boolean isSmallArmsOutOfRange = (smallArms < 0) || (smallArms > Crew.MAX_SKILL);
+                if (isSmallArmsRecorded && isSmallArmsOutOfRange) {
+                    msg = Messages.getString("CustomMekDialog.EnterSmallArmsBetween0_8");
+                    title = Messages.getString("CustomMekDialog.NumberFormatError");
+                    JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.getFrame(),
+                          msg,
+                          title,
+                          JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 long gunneryRounded = Math.round((gunneryL + gunneryB + gunneryM) / 3.0);
                 if (entity.getCrew() instanceof LAMPilot pilot) {
                     if (client.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
@@ -1706,6 +1719,8 @@ public class CustomMekDialog extends AbstractButtonDialog
                 entity.getCrew().setGender(gender, i);
                 entity.getCrew().setClanPilot(panCrewMember[i].isClanPilot(), i);
                 entity.getCrew().setArmorKitName(panCrewMember[i].getArmorKitName(), i);
+                entity.getCrew().setSidearmName(panCrewMember[i].getSidearmName(), i);
+                entity.getCrew().setSmallArms(smallArms, i);
                 if (clientGUI != null) {
                     entity.getCrew().setPortrait(panCrewMember[i].getPortrait().clone(), i);
                 }

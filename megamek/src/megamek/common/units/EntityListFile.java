@@ -1693,6 +1693,11 @@ public class EntityListFile {
         output.write("\" " + MULParser.ATTR_CLAN_PILOT + "=\"" + crew.isClanPilot(pos));
         String armorKitName = crew.getArmorKitName(pos);
         output.write("\" " + MULParser.ATTR_ARMOR_KIT + "=\"" + ((armorKitName == null) ? "" : armorKitName));
+        String sidearmName = crew.getSidearmName(pos);
+        output.write("\" " + MULParser.ATTR_SIDEARM + "=\"" + ((sidearmName == null) ? "" : sidearmName));
+        if (crew.hasSmallArms(pos)) {
+            output.write("\" " + MULParser.ATTR_SMALL_ARMS + "=\"" + crew.getSmallArms(pos));
+        }
 
         if ((null != entity.getGame()) &&
               entity.gameOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {

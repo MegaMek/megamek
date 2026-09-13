@@ -176,6 +176,8 @@ public class MULParser {
     public static final String ATTR_PICKUP_ID = "pickUpId";
     public static final String ATTR_CLAN_PILOT = "clanperson";
     public static final String ATTR_ARMOR_KIT = "armorkit";
+    public static final String ATTR_SIDEARM = "sidearm";
+    public static final String ATTR_SMALL_ARMS = "smallarms";
     public static final String ATTR_NICK = "nick";
     public static final String ATTR_GENDER = "gender";
     public static final String ATTR_CAT_PORTRAIT = "portraitCat";
@@ -1592,6 +1594,33 @@ public class MULParser {
     }
 
     /**
+     * Reads a crew member's Small Arms skill, if the file carries one. A missing or blank attribute leaves the
+     * skill unset, so the crew member fires on foot with their gunnery; a value outside the skill range is reported
+     * and ignored rather than trusted.
+     *
+     * @param crew       the crew being filled in
+     * @param slot       the crew slot these attributes belong to
+     * @param attributes the attributes read for that slot
+     */
+    private void setSmallArmsAttribute(final Crew crew, final int slot, final Map<String, String> attributes) {
+        if (!attributes.containsKey(ATTR_SMALL_ARMS) || attributes.get(ATTR_SMALL_ARMS).isBlank()) {
+            return;
+        }
+        int smallArmsValue;
+        try {
+            smallArmsValue = Integer.parseInt(attributes.get(ATTR_SMALL_ARMS));
+        } catch (NumberFormatException ignored) {
+            warning.append("Found invalid small arms value: ").append(attributes.get(ATTR_SMALL_ARMS)).append(".\n");
+            return;
+        }
+        if ((smallArmsValue < 0) || (smallArmsValue > Crew.MAX_SKILL)) {
+            warning.append("Found invalid small arms value: ").append(attributes.get(ATTR_SMALL_ARMS)).append(".\n");
+            return;
+        }
+        crew.setSmallArms(smallArmsValue, slot);
+    }
+
+    /**
      * Helper method that parses attributes common to both single/collective crews and individual slots of a unit with a
      * multi-crew cockpit.
      *
@@ -1768,6 +1797,13 @@ public class MULParser {
             if ((attributes.containsKey(ATTR_ARMOR_KIT)) && !attributes.get(ATTR_ARMOR_KIT).isBlank()) {
                 crew.setArmorKitName(attributes.get(ATTR_ARMOR_KIT), slot);
             }
+
+            // The sidearm and the Small Arms skill cross on the same seam. A blank or absent attribute leaves the
+            // crew member unarmed and firing with their gunnery on foot, which is what every older file means.
+            if ((attributes.containsKey(ATTR_SIDEARM)) && !attributes.get(ATTR_SIDEARM).isBlank()) {
+                crew.setSidearmName(attributes.get(ATTR_SIDEARM), slot);
+            }
+            setSmallArmsAttribute(crew, slot, attributes);
 
             if ((attributes.containsKey(ATTR_CAT_PORTRAIT)) && !attributes.get(ATTR_CAT_PORTRAIT).isBlank()) {
                 crew.getPortrait(slot).setCategory(attributes.get(ATTR_CAT_PORTRAIT));

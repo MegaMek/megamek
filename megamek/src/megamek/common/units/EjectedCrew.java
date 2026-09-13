@@ -38,8 +38,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import megamek.common.Player;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.game.InitiativeRoll;
 import megamek.common.options.OptionsConstants;
@@ -101,18 +103,52 @@ public class EjectedCrew extends ConvInfantry {
         }
         setOriginalRideId(originalRide.getId());
         setOriginalRideExternalId(originalRide.getExternalIdAsString());
-        Game tmpGame = originalRide.getGame();
-        if (tmpGame != null
-              && (!(this instanceof MekWarrior)
-              || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MEKWARRIORS))) {
-            try {
-                addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE), LOC_INFANTRY);
-                setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
-            } catch (Exception ex) {
-                logger.error("", ex);
-            }
+        Game rideGame = originalRide.getGame();
+        armOnLeaving(CrewSidearmRules.crewSidearm(originalRide, rideGame), rideGame, originalRide.getDisplayName());
+        issueArmorKitIfWorn(CrewArmorKitRules.crewArmorKit(originalRide, rideGame), originalRide.getDisplayName());
+    }
+
+    /**
+     * Puts a weapon in this crew's hands as they leave their unit: the sidearm they were issued if they have one,
+     * otherwise the generic rifle every crew has always been handed.
+     * <p>
+     * Whether they may be armed at all is unchanged. Vehicle and aerospace crews always are; a MekWarrior is armed
+     * only under {@link OptionsConstants#ADVANCED_ARMED_MEKWARRIORS}, whatever they were issued. The weapon is
+     * both mounted, so it appears in the weapon list and can be fired, and set as the primary weapon, which is
+     * what the damage per trooper is read from.
+     *
+     * @param sidearm  the weapon the crew were issued, or {@code null} for the default
+     * @param game     the game whose options decide whether this crew may be armed, or {@code null}
+     * @param rideName the unit they are leaving, for the log
+     */
+    private void armOnLeaving(@Nullable InfantryWeapon sidearm, @Nullable Game game, String rideName) {
+        if (game == null) {
+            logger.debug("[CrewSidearm] {}: left {} with no game to ask, so unarmed", getDisplayName(), rideName);
+            return;
         }
-        issueArmorKitIfWorn(originalRide);
+        boolean isMekWarrior = this instanceof MekWarrior;
+        boolean mekWarriorsMayBeArmed = game.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MEKWARRIORS);
+        if (isMekWarrior && !mekWarriorsMayBeArmed) {
+            logger.debug("[CrewSidearm] {}: left {} unarmed, Armed MekWarriors is off", getDisplayName(), rideName);
+            return;
+        }
+        InfantryWeapon weapon = (sidearm != null)
+              ? sidearm
+              : (InfantryWeapon) EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE);
+        if (weapon == null) {
+            // The equipment tables have not been loaded, which only a test can arrange.
+            logger.error("[CrewSidearm] {}: no weapon to hand a crew leaving {}", getDisplayName(), rideName);
+            return;
+        }
+        try {
+            addEquipment(weapon, LOC_INFANTRY);
+            setPrimaryWeapon(weapon);
+        } catch (LocationFullException exception) {
+            logger.error("Could not arm a crew leaving " + rideName, exception);
+            return;
+        }
+        logger.debug("[CrewSidearm] {}: left {} carrying {}{}", getDisplayName(), rideName, weapon.getName(),
+              (sidearm == null) ? " (the default rifle)" : "");
     }
 
     /**
@@ -123,16 +159,15 @@ public class EjectedCrew extends ConvInfantry {
      * which happens if the equipment is merely added to the list. With that done, every existing rule about what
      * conventional infantry survives reads the kit, and needs nothing new written for it.
      *
-     * @param originalRide the unit this crew is leaving
+     * @param armorKit the kit the crew were wearing, or {@code null} for none
+     * @param rideName the unit they are leaving, for the log
      */
-    private void issueArmorKitIfWorn(Entity originalRide) {
-        EquipmentType armorKit = CrewArmorKitRules.crewArmorKit(originalRide, originalRide.getGame());
+    private void issueArmorKitIfWorn(@Nullable EquipmentType armorKit, String rideName) {
         if (armorKit == null) {
             return;
         }
         setArmorKit(armorKit);
-        logger.debug("[CrewArmorKit] {}: left {} wearing {}",
-              getDisplayName(), originalRide.getDisplayName(), armorKit.getName());
+        logger.debug("[CrewArmorKit] {}: left {} wearing {}", getDisplayName(), rideName, armorKit.getName());
     }
 
     /**
@@ -189,15 +224,12 @@ public class EjectedCrew extends ConvInfantry {
             }
             setInternal(crew.getSize() - dead, LOC_INFANTRY);
         }
-        if (game != null && (!(this instanceof MekWarrior)
-              || gameOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MEKWARRIORS))) {
-            try {
-                addEquipment(EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE), LOC_INFANTRY);
-                setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
-            } catch (Exception ex) {
-                logger.error("", ex);
-            }
-        }
+        // The ride is gone by the time a crew steps out of an escape pod, so the crew itself is asked what it
+        // carries and wears. Before this the pod path armed the crew but never dressed them, so a tank crew who
+        // rode out in a pod stepped out in coveralls whatever they had been issued.
+        boolean isClanCrew = crew.isClanPilot();
+        armOnLeaving(CrewSidearmRules.crewSidearm(crew, isClanCrew, game), game, crew.getName());
+        issueArmorKitIfWorn(CrewArmorKitRules.crewArmorKit(crew, isClanCrew, game), crew.getName());
     }
 
     /**

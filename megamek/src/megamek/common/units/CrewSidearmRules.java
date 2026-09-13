@@ -61,7 +61,111 @@ public final class CrewSidearmRules {
 
     private static final MMLogger LOGGER = MMLogger.create(CrewSidearmRules.class);
 
+    /** The Small Arms skill a MekWarrior fires with on foot when none was recorded for them. */
+    public static final int DEFAULT_SMALL_ARMS_MEK_WARRIOR = 6;
+    /** The Small Arms skill a vehicle crew fires with on foot when none was recorded for them. */
+    public static final int DEFAULT_SMALL_ARMS_VEHICLE_CREW = 5;
+    /** The Small Arms skill an aerospace crew fires with on foot when none was recorded for them. */
+    public static final int DEFAULT_SMALL_ARMS_AEROSPACE_CREW = 6;
+    /** The internal name of the sidearm a MekWarrior is handed when none was named for them. */
+    public static final String DEFAULT_SIDEARM_MEK_WARRIOR = "Auto-Pistol";
+    /** The internal name of the sidearm a vehicle crew is handed when none was named for them. */
+    public static final String DEFAULT_SIDEARM_VEHICLE_CREW = "Submachine Gun";
+    /** The internal name of the sidearm an aerospace crew is handed when none was named for them. */
+    public static final String DEFAULT_SIDEARM_AEROSPACE_CREW = "Auto-Pistol";
+
     private CrewSidearmRules() {
+    }
+
+    /**
+     * The Small Arms skill a crew of this unit falls back to when none was recorded for them: MekWarriors and
+     * aerospace crews are trained to 6, vehicle crews to 5. Crews who never leave their unit on foot have no
+     * default, because they never fire one.
+     *
+     * @param entity the unit the crew is aboard, or {@code null}
+     *
+     * @return the default skill, or {@link Crew#SMALL_ARMS_UNSET} if this crew never fights on foot
+     */
+    public static int defaultSmallArms(@Nullable Entity entity) {
+        if (!canCarrySidearm(entity)) {
+            return Crew.SMALL_ARMS_UNSET;
+        }
+        if (entity instanceof Mek) {
+            return DEFAULT_SMALL_ARMS_MEK_WARRIOR;
+        }
+        if (entity instanceof Tank) {
+            return DEFAULT_SMALL_ARMS_VEHICLE_CREW;
+        }
+        if (entity.isAero()) {
+            return DEFAULT_SMALL_ARMS_AEROSPACE_CREW;
+        }
+        return Crew.SMALL_ARMS_UNSET;
+    }
+
+    /**
+     * The sidearm a crew of this unit is handed when none was named for them, with the rule in play: a pistol for
+     * a MekWarrior or an aerospace pilot, who have a cockpit to fit it in and little else, and a submachine gun for
+     * a vehicle crew, who have a whole vehicle. Crews who never leave their unit on foot get nothing.
+     *
+     * @param entity the unit the crew is aboard, or {@code null}
+     *
+     * @return the internal name of the default weapon, or {@code null} if this crew never fights on foot
+     */
+    public static @Nullable String defaultSidearmName(@Nullable Entity entity) {
+        if (!canCarrySidearm(entity)) {
+            return null;
+        }
+        if (entity instanceof Mek) {
+            return DEFAULT_SIDEARM_MEK_WARRIOR;
+        }
+        if (entity instanceof Tank) {
+            return DEFAULT_SIDEARM_VEHICLE_CREW;
+        }
+        if (entity.isAero()) {
+            return DEFAULT_SIDEARM_AEROSPACE_CREW;
+        }
+        return null;
+    }
+
+    /**
+     * Records the default sidearm and Small Arms skill on every crew slot that has none, with the optional rule in
+     * play. Called as the crew leaves their unit, so a pilot nobody equipped still steps out with a pistol and fires
+     * it as a MekWarrior rather than with the rifle and the gunnery they used aboard. A slot that already carries a
+     * value is left alone, and with the rule off nothing is recorded, so every crew leaves exactly as they did
+     * before the rule existed.
+     *
+     * @param entity the unit the crew is leaving, or {@code null}
+     * @param game   the game whose options say whether the rule is in force, or {@code null}
+     */
+    public static void recordDefaultEquipment(@Nullable Entity entity, @Nullable Game game) {
+        boolean hasNoCrewToRecordFor = (entity == null) || (entity.getCrew() == null);
+        if (hasNoCrewToRecordFor || !isRuleInPlay(game)) {
+            return;
+        }
+        Crew crew = entity.getCrew();
+        String defaultSidearm = defaultSidearmName(entity);
+        int defaultSkill = defaultSmallArms(entity);
+        int slotsGivenTheSidearm = 0;
+        int slotsGivenTheSkill = 0;
+        for (int slot = 0; slot < crew.getSlotCount(); slot++) {
+            boolean hasNoSidearm = (crew.getSidearmName(slot) == null) || crew.getSidearmName(slot).isBlank();
+            if ((defaultSidearm != null) && hasNoSidearm) {
+                crew.setSidearmName(defaultSidearm, slot);
+                slotsGivenTheSidearm++;
+            }
+            if ((defaultSkill != Crew.SMALL_ARMS_UNSET) && !crew.hasSmallArms(slot)) {
+                crew.setSmallArms(defaultSkill, slot);
+                slotsGivenTheSkill++;
+            }
+        }
+        if (slotsGivenTheSidearm > 0) {
+            LOGGER.debug("[CrewSidearm] {}: {} crew slot(s) had no sidearm named, handing out the default {}",
+                  entity.getDisplayName(), slotsGivenTheSidearm, defaultSidearm);
+        }
+        if (slotsGivenTheSkill > 0) {
+            LOGGER.debug("[CrewSidearm] {}: {} crew slot(s) had no Small Arms recorded, using the default of {}",
+                  entity.getDisplayName(), slotsGivenTheSkill, defaultSkill);
+        }
     }
 
     /**

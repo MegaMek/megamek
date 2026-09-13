@@ -104,6 +104,9 @@ public class EjectedCrew extends ConvInfantry {
         setOriginalRideId(originalRide.getId());
         setOriginalRideExternalId(originalRide.getExternalIdAsString());
         Game rideGame = originalRide.getGame();
+        // Whoever was not given a sidearm or a Small Arms skill gets their ride's defaults from here on. Recorded
+        // on the shared crew, so a crew who later leaves an escape pod already carries them.
+        CrewSidearmRules.recordDefaultEquipment(originalRide, rideGame);
         armOnLeaving(CrewSidearmRules.crewSidearm(originalRide, rideGame), rideGame, originalRide.getDisplayName());
         issueArmorKitIfWorn(CrewArmorKitRules.crewArmorKit(originalRide, rideGame), originalRide.getDisplayName());
     }

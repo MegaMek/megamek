@@ -286,6 +286,51 @@ public final class CrewArmorKitRules {
     }
 
     /**
+     * The hazards some kit or other can answer, in a stable order for listing. A tornado or a storm picks up
+     * anyone whatever they wear, so those two are never listed as something a kit could have answered.
+     *
+     * @return the hazards worth describing a kit against
+     */
+    public static List<EjectionHazard> hazardsAKitCanAnswer() {
+        return List.of(EjectionHazard.VACUUM, EjectionHazard.TAINTED_AIR, EjectionHazard.TOXIC_AIR,
+              EjectionHazard.EXTREME_HEAT, EjectionHazard.EXTREME_COLD);
+    }
+
+    /**
+     * The hazards this kit keeps its wearer alive in, for telling a player what a kit is worth before they pick it.
+     *
+     * @param armorKit the kit, or {@code null} for none
+     *
+     * @return the hazards it answers, in listing order; empty for no kit or a kit that answers nothing
+     */
+    public static List<EjectionHazard> hazardsAnswered(@Nullable EquipmentType armorKit) {
+        List<EjectionHazard> answered = new ArrayList<>();
+        for (EjectionHazard hazard : hazardsAKitCanAnswer()) {
+            if (answers(armorKit, hazard)) {
+                answered.add(hazard);
+            }
+        }
+        return answered;
+    }
+
+    /**
+     * The hazards this kit does not keep its wearer alive in, among those some kit could have.
+     *
+     * @param armorKit the kit, or {@code null} for none
+     *
+     * @return the hazards it leaves unanswered, in listing order
+     */
+    public static List<EjectionHazard> hazardsNotAnswered(@Nullable EquipmentType armorKit) {
+        List<EjectionHazard> unanswered = new ArrayList<>();
+        for (EjectionHazard hazard : hazardsAKitCanAnswer()) {
+            if (!answers(armorKit, hazard)) {
+                unanswered.add(hazard);
+            }
+        }
+        return unanswered;
+    }
+
+    /**
      * The lethal hazards out there that this crew's kit does not answer, which is what would actually kill them.
      *
      * <p>An empty result means the crew survives ejecting into these conditions, so there is nothing to warn the

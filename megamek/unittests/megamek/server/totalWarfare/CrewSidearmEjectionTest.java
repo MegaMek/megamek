@@ -154,13 +154,13 @@ class CrewSidearmEjectionTest {
     }
 
     @Test
-    void aMekWarriorIssuedNothingStillGetsTheRifle() {
+    void aMekWarriorIssuedNothingGetsTheDefaultPistol() {
         Mek mek = deployedMek(2, null);
 
         gameManager.ejectEntity(mek, false, false);
 
-        assertEquals(AUTO_RIFLE, primaryWeaponOf(crewOnFootFrom(mek)),
-              "nothing changes for a crew that names no weapon");
+        assertEquals(AUTO_PISTOL, primaryWeaponOf(crewOnFootFrom(mek)),
+              "with the rule on, a MekWarrior nobody equipped still steps out with a pistol");
     }
 
     @Test
@@ -195,13 +195,26 @@ class CrewSidearmEjectionTest {
     }
 
     @Test
-    void aVehicleCrewIssuedNothingIsArmedAsBefore() {
+    void aVehicleCrewIssuedNothingGetsTheDefaultSubmachineGun() {
         Tank tank = deploy(new Tank(), 6, null);
 
         gameManager.ejectEntity(tank, false, false);
 
-        assertEquals(AUTO_RIFLE, primaryWeaponOf(crewOnFootFrom(tank)),
-              "vehicle crews were always handed the rifle, whatever the MekWarrior option says");
+        assertEquals("Submachine Gun", primaryWeaponOf(crewOnFootFrom(tank)),
+              "a vehicle crew has room for more than a pistol");
+    }
+
+    @Test
+    void withCrewPersonalEquipmentOffEveryCrewStillGetsTheRifle() {
+        game.getOptions().getOption(OptionsConstants.RPG_COMBAT_SUITS).setValue(false);
+        Mek mek = deployedMek(14, null);
+        Tank tank = deploy(new Tank(), 15, null);
+
+        gameManager.ejectEntity(mek, false, false);
+        gameManager.ejectEntity(tank, false, false);
+
+        assertEquals(AUTO_RIFLE, primaryWeaponOf(crewOnFootFrom(mek)), "the old behaviour, untouched");
+        assertEquals(AUTO_RIFLE, primaryWeaponOf(crewOnFootFrom(tank)));
     }
 
     @Test
@@ -220,14 +233,36 @@ class CrewSidearmEjectionTest {
     }
 
     @Test
-    void aPilotWithNoSmallArmsRecordedShootsWithGunneryAsBefore() {
+    void aPilotWithNoSmallArmsRecordedShootsWithTheMekWarriorDefault() {
         Mek mek = deployedMek(8, AUTO_PISTOL);
         mek.getCrew().setGunnery(2, 0);
 
         gameManager.ejectEntity(mek, false, false);
 
+        assertEquals(6, crewOnFootFrom(mek).getCrew().getGunnery(),
+              "a MekWarrior nobody entered a skill for is trained to 6 with a sidearm, not to their Mek gunnery");
+    }
+
+    @Test
+    void aVehicleCrewWithNoSmallArmsRecordedShootsWithTheVehicleDefault() {
+        Tank tank = deploy(new Tank(), 12, null);
+        tank.getCrew().setGunnery(3, 0);
+
+        gameManager.ejectEntity(tank, false, false);
+
+        assertEquals(5, crewOnFootFrom(tank).getCrew().getGunnery(), "vehicle crews are trained to 5");
+    }
+
+    @Test
+    void withCrewPersonalEquipmentOffACrewShootsWithGunneryAsBefore() {
+        game.getOptions().getOption(OptionsConstants.RPG_COMBAT_SUITS).setValue(false);
+        Mek mek = deployedMek(13, null);
+        mek.getCrew().setGunnery(2, 0);
+
+        gameManager.ejectEntity(mek, false, false);
+
         assertEquals(2, crewOnFootFrom(mek).getCrew().getGunnery(),
-              "nobody's odds change until a Small Arms value is written");
+              "with the rule off nothing about ejection changes, default included");
     }
 
     @Test

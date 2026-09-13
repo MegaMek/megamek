@@ -69,7 +69,10 @@ import megamek.client.ui.dialogs.iconChooser.PortraitChooserDialog;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
+import megamek.common.planetaryConditions.EjectionHazard;
 import megamek.common.enums.Gender;
 import megamek.common.icons.Portrait;
 import megamek.common.options.OptionsConstants;
@@ -177,8 +180,8 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
         if (CrewArmorKitRules.isRuleInPlay(parent.getClient().getGame())
               && CrewArmorKitRules.canWearArmorKit(entity)) {
             populateArmorKitChoices(parent.getClient().getGame(), entity, slot);
-            choArmorKit.setToolTipText(
-                  UIUtil.formatSideTooltip(Messages.getString("CustomMekDialog.choArmorKit.tooltip")));
+            refreshArmorKitTooltip();
+            choArmorKit.addActionListener(event -> refreshArmorKitTooltip());
             addAdvancedRow(Messages.getString("CustomMekDialog.choArmorKit"), choArmorKit);
         }
         if (CrewSidearmRules.isRuleInPlay(parent.getClient().getGame())
@@ -274,6 +277,59 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
         String wornKitName = entity.getCrew().getArmorKitName(slot);
         EquipmentType wornKit = (wornKitName == null) ? null : EquipmentType.get(wornKitName);
         choArmorKit.setSelectedItem((wornKit == null) ? noKit : wornKit.getName());
+    }
+
+    /**
+     * Rewrites the armor kit tooltip for whatever kit is selected: what it does for a crew that ejects, then the
+     * general note on the rule. Called at construction and again whenever the selection changes, so hovering the
+     * dropdown always describes the kit the crew member would actually leave in.
+     */
+    private void refreshArmorKitTooltip() {
+        String chosenKitName = getArmorKitName();
+        EquipmentType chosenKit = (chosenKitName == null) ? null : EquipmentType.get(chosenKitName);
+        String kitDescription = (chosenKit == null)
+              ? Messages.getString("CustomMekDialog.choArmorKit.tooltip.none")
+              : describeArmorKit(chosenKit);
+        choArmorKit.setToolTipText(UIUtil.formatSideTooltip(
+              kitDescription + "<br><br>" + Messages.getString("CustomMekDialog.choArmorKit.tooltip")));
+    }
+
+    /**
+     * What a kit is worth to a crew on foot, in the order a player asks: how much damage it turns, which lethal
+     * conditions it keeps them alive in, which it does not, and whether it slows them.
+     *
+     * @param armorKit the kit to describe
+     *
+     * @return the description, as HTML fragments joined by line breaks
+     */
+    private static String describeArmorKit(EquipmentType armorKit) {
+        List<String> lines = new ArrayList<>();
+        lines.add("<b>" + armorKit.getName() + "</b>");
+        if (armorKit instanceof MiscType miscType) {
+            lines.add(Messages.getString("CustomMekDialog.choArmorKit.tooltip.divisor", miscType.getDamageDivisor()));
+        }
+        List<EjectionHazard> answered = CrewArmorKitRules.hazardsAnswered(armorKit);
+        if (answered.isEmpty()) {
+            lines.add(Messages.getString("CustomMekDialog.choArmorKit.tooltip.answersNothing"));
+        } else {
+            lines.add(Messages.getString("CustomMekDialog.choArmorKit.tooltip.answers", hazardList(answered)));
+        }
+        List<EjectionHazard> unanswered = CrewArmorKitRules.hazardsNotAnswered(armorKit);
+        if (!unanswered.isEmpty()) {
+            lines.add(Messages.getString("CustomMekDialog.choArmorKit.tooltip.leaves", hazardList(unanswered)));
+        }
+        if (armorKit.hasFlag(MiscTypeFlag.S_ENCUMBERING)) {
+            lines.add(Messages.getString("CustomMekDialog.choArmorKit.tooltip.encumbering"));
+        }
+        return String.join("<br>", lines);
+    }
+
+    private static String hazardList(List<EjectionHazard> hazards) {
+        List<String> names = new ArrayList<>();
+        for (EjectionHazard hazard : hazards) {
+            names.add(hazard.getDisplayName());
+        }
+        return String.join(", ", names);
     }
 
     /**

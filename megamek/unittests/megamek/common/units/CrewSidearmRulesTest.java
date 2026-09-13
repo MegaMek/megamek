@@ -181,6 +181,59 @@ class CrewSidearmRulesTest {
     }
 
     @Test
+    void eachKindOfCrewHasItsOwnDefaultSmallArms() {
+        assertEquals(6, CrewSidearmRules.defaultSmallArms(new BipedMek()), "MekWarriors are trained to 6");
+        assertEquals(5, CrewSidearmRules.defaultSmallArms(new Tank()), "vehicle crews to 5");
+        assertEquals(6, CrewSidearmRules.defaultSmallArms(new AeroSpaceFighter()), "aerospace crews to 6");
+        assertEquals(Crew.SMALL_ARMS_UNSET, CrewSidearmRules.defaultSmallArms(new ConvInfantry()),
+              "a platoon never fires as a dismounted crew, so it has no default");
+        assertEquals(Crew.SMALL_ARMS_UNSET, CrewSidearmRules.defaultSmallArms(new ProtoMek()));
+        assertEquals(Crew.SMALL_ARMS_UNSET, CrewSidearmRules.defaultSmallArms(null));
+    }
+
+    @Test
+    void eachKindOfCrewHasItsOwnDefaultSidearm() {
+        assertEquals(AUTO_PISTOL, CrewSidearmRules.defaultSidearmName(new BipedMek()),
+              "a MekWarrior has a cockpit to fit a pistol in and little else");
+        assertEquals("Submachine Gun", CrewSidearmRules.defaultSidearmName(new Tank()),
+              "a vehicle crew has a whole vehicle");
+        assertEquals(AUTO_PISTOL, CrewSidearmRules.defaultSidearmName(new AeroSpaceFighter()));
+        assertNull(CrewSidearmRules.defaultSidearmName(new ConvInfantry()));
+        assertNull(CrewSidearmRules.defaultSidearmName(null));
+        assertTrue(CrewSidearmRules.isSidearmCandidate(weapon("Submachine Gun")),
+              "the default must itself be something one person can carry");
+    }
+
+    @Test
+    void theDefaultsFillOnlyTheSlotsNobodyRecorded() {
+        Mek mek = mekCarrying(null);
+
+        CrewSidearmRules.recordDefaultEquipment(mek, game);
+
+        assertEquals(AUTO_PISTOL, mek.getCrew().getSidearmName(0));
+        assertEquals(6, mek.getCrew().getSmallArms(0));
+
+        Mek mekAlreadyEquipped = mekCarrying(LASER_PISTOL);
+        mekAlreadyEquipped.getCrew().setSmallArms(3, 0);
+        CrewSidearmRules.recordDefaultEquipment(mekAlreadyEquipped, game);
+
+        assertEquals(LASER_PISTOL, mekAlreadyEquipped.getCrew().getSidearmName(0), "a named weapon is kept");
+        assertEquals(3, mekAlreadyEquipped.getCrew().getSmallArms(0), "a recorded skill is never overwritten");
+    }
+
+    @Test
+    void theDefaultsAreNotRecordedWithTheRuleOff() {
+        game.getOptions().getOption(OptionsConstants.RPG_COMBAT_SUITS).setValue(false);
+        Mek mek = mekCarrying(null);
+
+        CrewSidearmRules.recordDefaultEquipment(mek, game);
+
+        assertNull(mek.getCrew().getSidearmName(0));
+        assertFalse(mek.getCrew().hasSmallArms(0),
+              "with the rule off every crew leaves exactly as before: the rifle, fired with their gunnery");
+    }
+
+    @Test
     void aVehicleCrewIsAnsweredByTheFirstSlotThatNamesAWeapon() {
         Crew tankCrew = new Crew(CrewType.CREW);
         tankCrew.setSidearmName(null, 0);

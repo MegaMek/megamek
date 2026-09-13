@@ -10410,13 +10410,6 @@ public class TWGameManager extends AbstractGameManager {
                 entity.setAltitude(entity.getAltitude() - aero.getAltLoss());
                 aero.setAltLossThisRound(aero.getAltLoss());
                 aero.resetAltLoss();
-                // This is altitude the attacker spends on its own air-to-ground attacks: 2 for a dive bomb,
-                // 1 for a standard attack. Spending the last of it puts the unit on the ground, which is a
-                // crash. Without this the fighter sits at altitude zero still counted as airborne, unable to
-                // spend the velocity it is holding and unable to do anything else either (issue #8931).
-                if (checkCrash(entity)) {
-                    addReport(processCrash(entity, aero.getCurrentVelocity(), entity.getPosition()));
-                }
                 entityUpdate(entity.getId());
             }
         }

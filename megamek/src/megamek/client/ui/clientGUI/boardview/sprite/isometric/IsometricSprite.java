@@ -117,6 +117,10 @@ public class IsometricSprite extends HexSprite {
         } else {
             p = bv.getHexLocation(entity.getSecondaryPositions().get(secondaryPos));
         }
+        if (p == null) {
+            // The entity has no position, there is nothing to draw
+            return;
+        }
         Graphics2D g2 = (Graphics2D) g;
 
         if (onlyDetectedBySensors()) {

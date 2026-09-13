@@ -642,6 +642,12 @@ class LobbyMekPopup {
 
             // Late deployment
             JMenu lateMenu = new JMenu("Deployment round");
+            if (Game.rulesManager.getRulesGame().isWalkOnDeployment()) {
+                lateMenu.add(menuItem(Messages.getString("ChatLounge.deploysPreGame"),
+                      LMP_DEPLOY + "|" + Entity.DEPLOY_ROUND_PRE_GAME + eIds,
+                      true,
+                      listener));
+            }
             lateMenu.add(menuItem("At game start", LMP_DEPLOY + "|0" + eIds, true, listener));
             for (int i = 1; i < 11; i++) {
                 lateMenu.add(menuItem("Before round " + i, LMP_DEPLOY + "|" + i + eIds, true, listener));
@@ -800,7 +806,7 @@ class LobbyMekPopup {
 
                     } else if (!entity.isC3CompanyCommander()
                           && (entity.hasC3M() ? lanceRolesCompatible(game, entity, other)
-                                : other.isC3IndependentMaster())) {
+                          : other.isC3IndependentMaster())) {
                         // Slaves connect to lance masters; masters connect to company commanders or - forming an
                         // All-C3-Master lance (CR p.199) - to lance masters whose dependents are all masters too.
                         String item = "<HTML>Connect to " + other.getShortNameRaw() + idString(game, other.getId());
@@ -823,9 +829,9 @@ class LobbyMekPopup {
     }
 
     /**
-     * Returns true when the joining unit's role fits the dependents already connected to the given master. A lance
-     * is homogeneous (CR p.199): all C3 Slaves, or - under the All-C3-Master rule - all C3 Masters in slave roles,
-     * so a master may not join a lance of slaves and vice versa.
+     * Returns true when the joining unit's role fits the dependents already connected to the given master. A lance is
+     * homogeneous (CR p.199): all C3 Slaves, or - under the All-C3-Master rule - all C3 Masters in slave roles, so a
+     * master may not join a lance of slaves and vice versa.
      */
     private static boolean lanceRolesCompatible(Game game, Entity joiningUnit, Entity master) {
         boolean joinerIsMaster = joiningUnit.hasC3M();

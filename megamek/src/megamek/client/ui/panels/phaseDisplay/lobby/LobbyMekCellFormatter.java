@@ -71,28 +71,43 @@ class LobbyMekCellFormatter {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    /** Corner of the branch drawn before a carried or towed unit. Escaped to keep the source plain ASCII. */
+    /**
+     * Corner of the branch drawn before a carried or towed unit. Escaped to keep the source plain ASCII.
+     */
     private static final String BRANCH_CORNER = "\u2514";
 
-    /** One length of branch. Repeated once per level, so a deeper load reads as a longer arm. */
+    /**
+     * One length of branch. Repeated once per level, so a deeper load reads as a longer arm.
+     */
     private static final String BRANCH_ARM = "\u2500";
 
-    /** Top of the bracket drawn on the first member of a masterless C3 network (C3i, NC3, Nova CEWS). */
+    /**
+     * Top of the bracket drawn on the first member of a masterless C3 network (C3i, NC3, Nova CEWS).
+     */
     private static final String BRANCH_TOP = "\u250c";
 
-    /** Middle rung of the bracket drawn on inner members of a masterless C3 network. */
+    /**
+     * Middle rung of the bracket drawn on inner members of a masterless C3 network.
+     */
     private static final String BRANCH_TEE = "\u251c";
 
-    /** Stops a malformed C3 master chain from spinning while counting how deep a unit sits. */
+    /**
+     * Stops a malformed C3 master chain from spinning while counting how deep a unit sits.
+     */
     private static final int MAX_C3_DEPTH = 3;
 
-    /** Stops a malformed load loop from spinning while counting how deep a unit sits. */
+    /**
+     * Stops a malformed load loop from spinning while counting how deep a unit sits.
+     */
     private static final int MAX_CARRIER_DEPTH = 16;
 
     private LobbyMekCellFormatter() {
     }
 
-    static String unitTableEntry(InGameObject unit, ChatLounge lobby, boolean forceView, boolean compactView) {
+    static String unitTableEntry(InGameObject unit,
+          ChatLounge lobby,
+          boolean forceView,
+          boolean compactView) {
         if (unit instanceof Entity) {
             return compactView ? formatUnitCompact((Entity) unit, lobby, forceView)
                   : formatUnitFull((Entity) unit, lobby, forceView);
@@ -104,7 +119,10 @@ class LobbyMekCellFormatter {
         }
     }
 
-    static String pilotTableEntry(InGameObject unit, boolean compactView, boolean hide, boolean rpgSkills) {
+    static String pilotTableEntry(InGameObject unit,
+          boolean compactView,
+          boolean hide,
+          boolean rpgSkills) {
         if (unit instanceof Entity) {
             return compactView ? formatPilotCompact((Entity) unit, hide, rpgSkills)
                   : formatPilotFull((Entity) unit, hide);
@@ -117,9 +135,9 @@ class LobbyMekCellFormatter {
     }
 
     /**
-     * Returns the branch drawn in front of a unit that rides on another, indented and lengthened by how deeply it
-     * sits. A Mek inside a DropShip inside a JumpShip is drawn further in than the DropShip carrying it, so a stack
-     * reads as a tree rather than a flat run of identical marks.
+     * Returns the branch drawn in front of a unit that rides on another, indented and lengthened by how deeply it sits.
+     * A Mek inside a DropShip inside a JumpShip is drawn further in than the DropShip carrying it, so a stack reads as
+     * a tree rather than a flat run of identical marks.
      */
     static String carriedBranch(Entity entity) {
         int depth = carriedDepth(entity);
@@ -131,7 +149,9 @@ class LobbyMekCellFormatter {
         return "&nbsp;".repeat(depth) + BRANCH_CORNER + BRANCH_ARM.repeat(depth) + "&nbsp;";
     }
 
-    /** How many carriers sit above this unit: 1 for a DropShip in a JumpShip, 2 for a Mek inside that DropShip. */
+    /**
+     * How many carriers sit above this unit: 1 for a DropShip in a JumpShip, 2 for a Mek inside that DropShip.
+     */
     private static int carriedDepth(Entity entity) {
         int depth = 0;
         Entity current = entity;
@@ -149,7 +169,9 @@ class LobbyMekCellFormatter {
         return depth;
     }
 
-    /** The unit this one rides on, carried in a bay or towed behind, or {@code null} when neither. */
+    /**
+     * The unit this one rides on, carried in a bay or towed behind, or {@code null} when neither.
+     */
     private static Entity carrierOf(Entity entity) {
         if (entity.getGame() == null) {
             return null;
@@ -168,8 +190,8 @@ class LobbyMekCellFormatter {
     /**
      * Returns the tractor heading the train this unit is towed by, or {@code null} when it is not towed.
      * <p>
-     * Deployment belongs to that tractor: a train goes where it goes. A trailer only gets a setting of its own once
-     * the game starts and the tractor's is copied onto it, so the lobby has to read it from the head of the train.
+     * Deployment belongs to that tractor: a train goes where it goes. A trailer only gets a setting of its own once the
+     * game starts and the tractor's is copied onto it, so the lobby has to read it from the head of the train.
      * </p>
      */
     private static Entity trainHeadOf(Entity entity) {
@@ -182,11 +204,11 @@ class LobbyMekCellFormatter {
 
     /**
      * Returns the branch drawn in front of a C3 network member, so a network reads as the tree from the rulebook's
-     * configuration diagram. The C3 sorter wrapper keeps members adjacent in hierarchy order under every sorter, so
-     * the branch always points at the row above it. Hierarchical C3 draws a corner per level below the network's
-     * top unit (lance masters one level in, their slaves two). C3i, NC3 and Nova CEWS networks have no master, so
-     * their members are drawn as a flat bracket instead: a top corner on the first member, rungs on inner members
-     * and a bottom corner on the last, showing they belong together without inventing a hierarchy.
+     * configuration diagram. The C3 sorter wrapper keeps members adjacent in hierarchy order under every sorter, so the
+     * branch always points at the row above it. Hierarchical C3 draws a corner per level below the network's top unit
+     * (lance masters one level in, their slaves two). C3i, NC3 and Nova CEWS networks have no master, so their members
+     * are drawn as a flat bracket instead: a top corner on the first member, rungs on inner members and a bottom corner
+     * on the last, showing they belong together without inventing a hierarchy.
      */
     static String c3Branch(Entity entity) {
         if (!entity.hasAnyC3System()) {
@@ -208,7 +230,9 @@ class LobbyMekCellFormatter {
         return "&nbsp;".repeat(depth) + BRANCH_CORNER + BRANCH_ARM.repeat(depth) + "&nbsp;";
     }
 
-    /** The opening corner for a unit heading a hierarchical C3 network; empty for units networked with no one. */
+    /**
+     * The opening corner for a unit heading a hierarchical C3 network; empty for units networked with no one.
+     */
     private static String hierarchicalNetworkTopBranch(Entity entity) {
         Game game = entity.getGame();
         if ((game == null) || !entity.hasC3()) {
@@ -222,7 +246,9 @@ class LobbyMekCellFormatter {
         return "";
     }
 
-    /** How many masters sit above this unit: 1 for a lance master under a company commander, 2 for its slaves. */
+    /**
+     * How many masters sit above this unit: 1 for a lance master under a company commander, 2 for its slaves.
+     */
     private static int c3Depth(Entity entity) {
         int depth = 0;
         Entity current = entity;
@@ -240,7 +266,9 @@ class LobbyMekCellFormatter {
         return depth;
     }
 
-    /** The flat bracket for masterless networks; empty when the unit is not networked with anyone. */
+    /**
+     * The flat bracket for masterless networks; empty when the unit is not networked with anyone.
+     */
     private static String peerNetworkBracket(Entity entity) {
         Game game = entity.getGame();
         String netId = entity.getC3NetId();
@@ -280,7 +308,9 @@ class LobbyMekCellFormatter {
      * Creates and returns the display content of the Unit column for the given entity and for the non-compact display
      * mode. When blindDrop is true, the unit details are not given.
      */
-    static String formatUnitFull(Entity entity, ChatLounge lobby, boolean forceView) {
+    static String formatUnitFull(Entity entity,
+          ChatLounge lobby,
+          boolean forceView) {
         StringBuilder result = new StringBuilder("<HTML><NOBR>" + fontHTML());
 
         Client client = lobby.getClientGUI().getClient();
@@ -513,7 +543,7 @@ class LobbyMekCellFormatter {
             }
             int so = entity.getStartingOffset(true);
             int sw = entity.getStartingWidth(true);
-            if ((so != 0) || (sw != 3)) {
+            if ((so != 0) || !(sw == 3 || (sw == 1 && Game.rulesManager.getRulesGame().isWalkOnDeployment()))) {
                 result.append(", ").append(so);
                 result.append(", ").append(sw);
             }
@@ -705,6 +735,10 @@ class LobbyMekCellFormatter {
             result.append(", ").append(entity.getOffBoardDistance());
         }
 
+        if (entity.getDeployRound() == Entity.DEPLOY_ROUND_PRE_GAME) {
+            firstEntry = dotSpacer(result, firstEntry);
+            result.append(getString("ChatLounge.deploysPreGame"));
+        }
         if (entity.getDeployRound() > 0) {
             firstEntry = dotSpacer(result, firstEntry);
             result.append(getString("ChatLounge.deploysAfterRound", entity.getDeployRound()));
@@ -783,7 +817,9 @@ class LobbyMekCellFormatter {
      * Creates and returns the display content of the C3-MekTree cell for the given entity and for the compact display
      * mode. Assumes that no enemy or blind-drop-hidden units are provided.
      */
-    static String formatUnitCompact(Entity entity, ChatLounge lobby, boolean forceView) {
+    static String formatUnitCompact(Entity entity,
+          ChatLounge lobby,
+          boolean forceView) {
         Client client = lobby.getClientGUI().getClient();
         Game game = client.getGame();
         GameOptions options = game.getOptions();
@@ -1116,7 +1152,8 @@ class LobbyMekCellFormatter {
      * Creates and returns the display content of the C3-MekTree cell for the given entity and for the compact display
      * mode. Assumes that no enemy or blind-drop-hidden units are provided.
      */
-    static String formatForceCompact(Force force, ChatLounge lobby) {
+    static String formatForceCompact(Force force,
+          ChatLounge lobby) {
         return formatForce(force, lobby);
     }
 
@@ -1124,11 +1161,13 @@ class LobbyMekCellFormatter {
      * Creates and returns the display content of the C3-MekTree cell for the given entity and for the compact display
      * mode. Assumes that no enemy or blind-drop-hidden units are provided.
      */
-    static String formatForceFull(Force force, ChatLounge lobby) {
+    static String formatForceFull(Force force,
+          ChatLounge lobby) {
         return formatForce(force, lobby);
     }
 
-    private static String formatForce(Force force, ChatLounge lobby) {
+    private static String formatForce(Force force,
+          ChatLounge lobby) {
         Client client = lobby.getClientGUI().getClient();
         Game game = client.getGame();
         Player localPlayer = client.getLocalPlayer();
@@ -1207,7 +1246,9 @@ class LobbyMekCellFormatter {
      * Creates and returns the display content of the Pilot column for the given entity and for the compact display
      * mode. When blindDrop is true, the pilot details are not given.
      */
-    static String formatPilotCompact(Entity entity, boolean blindDrop, boolean rpgSkills) {
+    static String formatPilotCompact(Entity entity,
+          boolean blindDrop,
+          boolean rpgSkills) {
         Crew pilot = entity.getCrew();
         StringBuilder result = new StringBuilder("<HTML><NOBR>");
         result.append(fontHTML());
@@ -1249,7 +1290,8 @@ class LobbyMekCellFormatter {
      * Creates and returns the display content of the Pilot column for the given entity and for the non-compact display
      * mode. When blindDrop is true, the pilot details are not given.
      */
-    static String formatPilotFull(Entity entity, boolean blindDrop) {
+    static String formatPilotFull(Entity entity,
+          boolean blindDrop) {
         StringBuilder result = new StringBuilder("<HTML><NOBR>");
 
         final Crew crew = entity.getCrew();
@@ -1308,26 +1350,30 @@ class LobbyMekCellFormatter {
         return result.toString();
     }
 
-    static void formatSpan(StringBuilder current, Color color) {
+    static void formatSpan(StringBuilder current,
+          Color color) {
         current.append("<SPAN style=color:");
         current.append(Integer.toHexString(color.getRGB() & 0xFFFFFF));
         current.append(";>");
     }
 
     @Deprecated(since = "0.51.0", forRemoval = true)
-    static void formatSpan(StringBuilder current, String hexColor) {
+    static void formatSpan(StringBuilder current,
+          String hexColor) {
         current.append("<SPAN style=color:");
         current.append(hexColor);
         current.append(";>");
     }
 
     @Deprecated(since = "0.51.0", forRemoval = true)
-    static void fullIDString(StringBuilder current, int id) {
+    static void fullIDString(StringBuilder current,
+          int id) {
         formatSpan(current, uiGray());
         current.append(" [ID: ").append(id).append("]</SPAN>");
     }
 
-    static boolean dotSpacer(StringBuilder current, boolean firstElement) {
+    static boolean dotSpacer(StringBuilder current,
+          boolean firstElement) {
         if (!firstElement) {
             current.append(MekTableModel.DOT_SPACER);
         }

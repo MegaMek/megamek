@@ -3122,6 +3122,12 @@ public class TWGameManager extends AbstractGameManager {
         for (Entity entity : game.inGameTWEntities()) {
             if (entity.isSelectableThisTurn()) {
                 final Player player = entity.getOwner();
+                if (phase.isDeployment() && Game.rulesManager.getRulesGame().canWalkOnThisRound(entity)) {
+                    continue;
+                }
+                if (!Game.rulesManager.getRulesGame().eligibleForPhase(entity, phase)) {
+                    continue;
+                }
                 if ((entity instanceof SpaceStation) &&
                       (game.getPhase().isMovement() || game.getPhase().isDeployment())) {
                     player.incrementSpaceStationTurns();

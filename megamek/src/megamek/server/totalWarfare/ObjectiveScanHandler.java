@@ -56,7 +56,6 @@ import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.ScanPayout;
 import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import megamek.common.equipment.ScanMission;
-import megamek.common.game.Game;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
@@ -70,11 +69,11 @@ import megamek.server.victory.VictoryPointTracker;
 /**
  * Resolves the scans units ordered this turn, and settles the readings of units that have left the battlefield.
  * Runs in the End Phase before the control resolution, so any points it awards are in the tally the victory check
- * reads (Objectives series, part 4; Core Rules p.233 Scanning and p.217 the Sensor Check mission; Total Warfare
- * p.187 Scanning).
+ * reads (Objectives series, part 4; Core Rulebook p.233 Scanning and p.217 the Sensor Check mission, and the
+ * optional TacOps: Advanced Rules p.187 Scanning).
  *
  * <p>A unit may order one scan per turn, at any hex, building or unit in range and line of sight. The scan is a
- * sensor check under the game's ruleset. On a success the handler looks at what is there: a Scan point the
+ * sensor check under whichever scanning rules the game has in force. On a success the handler looks at what is there: a Scan point the
  * scanner's own side placed, or an enemy unit while the Sensor Check mission is on, banks a reading on the
  * scanning unit; anything else reports nothing of interest, so a player cannot tell a hidden objective from an
  * empty hex by the answer alone. A reading is worth nothing until the unit that carries it leaves over its home
@@ -162,7 +161,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         if ((target == null) || (target.getPosition() == null) || (scanner.getPosition() == null)) {
             return Messages.getString("ObjectiveScan.targetGone");
         }
-        RulesScanning rules = Game.rulesManager.getRulesScanning();
+        RulesScanning rules = ScanMission.scanningRules(getGame());
         TargetRoll targetRoll = rules.scanTargetRoll(scanner, target);
         if (targetRoll.getValue() == TargetRoll.IMPOSSIBLE) {
             return targetRoll.getDesc();
@@ -221,7 +220,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
             return;
         }
         String targetName = describeTarget(target);
-        RulesScanning rules = Game.rulesManager.getRulesScanning();
+        RulesScanning rules = ScanMission.scanningRules(getGame());
         int distance = scanner.getPosition().distance(target.getPosition());
         int range = rules.scanningRange(scanner, target);
         if (distance > range) {

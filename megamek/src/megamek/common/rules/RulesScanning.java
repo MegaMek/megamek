@@ -49,7 +49,7 @@ import megamek.common.units.Targetable;
  * The rules for scanning an objective, a hex or an enemy unit with a unit's sensors, as the Objectives series
  * uses them. The two rulebooks differ on nearly every point: under Core Rules (p.233 Scanning, p.113 Sensor
  * Checks) a scan is a sensor check, a Piloting roll at +3 that ignores every ordinary modifier, reaching 2 hexes
- * or an active probe's range; under Total Warfare (p.187 Scanning) a unit with working sensors scans anything in
+ * or an active probe's range; under the optional TacOps: Advanced Rules scanning rule (p.187) a unit with working sensors scans anything in
  * line of sight with no roll unless the target sits inside hostile ECM. The server's scan pass asks this class
  * two things and does the rest itself: how far a unit can scan, and what it needs to roll against a target.
  */
@@ -57,7 +57,7 @@ public abstract class RulesScanning {
 
     /** Probe level of a unit with no working active probe. */
     /**
-     * The scanning range of a ruleset that puts no distance limit on a scan: under Total Warfare a unit scans
+     * The scanning range of a ruleset that puts no distance limit on a scan: under the optional TacOps scanning rule a unit scans
      * whatever its sensors can reach, so the only limits are line of sight and the rules below.
      */
     public static final int UNLIMITED_RANGE = Integer.MAX_VALUE;

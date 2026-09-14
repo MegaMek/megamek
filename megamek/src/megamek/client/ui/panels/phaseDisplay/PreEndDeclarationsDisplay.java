@@ -64,7 +64,6 @@ import megamek.common.equipment.BridgeLayerLogic;
 import megamek.common.equipment.BridgeLayerState;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.ScanMission;
-import megamek.common.game.Game;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesScanning;
 import megamek.common.units.AbstractBuildingEntity;
@@ -693,7 +692,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             return Messages.getString("PreEndDeclarationsDisplay.scanRefused",
                   Messages.getString("ObjectiveScan.cannotScanNow"));
         }
-        RulesScanning rules = Game.rulesManager.getRulesScanning();
+        RulesScanning rules = ScanMission.scanningRules(game);
         TargetRoll targetRoll = rules.scanTargetRoll(scanner, scanTarget);
         if (targetRoll.getValue() == TargetRoll.IMPOSSIBLE) {
             return Messages.getString("PreEndDeclarationsDisplay.scanRefused", targetRoll.getDesc());
@@ -727,7 +726,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         selectingScanTarget = true;
         setStatusBarText(Messages.getString("PreEndDeclarationsDisplay.SelectScanTarget",
               scanner.getShortName(),
-              scanningRangeText(Game.rulesManager.getRulesScanning().scanningRange(scanner, null))));
+              scanningRangeText(ScanMission.scanningRules(game).scanningRange(scanner, null))));
         LOGGER.debug("[Scan] {} waiting for a hex or unit to scan", scanner.getShortName());
     }
 

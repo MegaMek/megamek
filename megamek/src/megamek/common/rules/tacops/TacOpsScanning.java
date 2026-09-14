@@ -30,7 +30,7 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.common.rules.totalwarfare;
+package megamek.common.rules.tacops;
 
 import megamek.common.Messages;
 import megamek.common.annotations.Nullable;
@@ -41,17 +41,17 @@ import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 
 /**
- * Scanning under Total Warfare (p.187 Scanning). Any Mek, vehicle, battle armour or grounded aerospace unit with
+ * Scanning under the optional Tactical Operations: Advanced Rules scanning rule (p.187). Switched on by the TacOps Scanning game option; the Core Rulebook mission check applies otherwise. Any Mek, vehicle, battle armour or grounded aerospace unit with
  * working sensors scans one target in line of sight per turn, at any distance, with no roll: the target's
  * controller simply answers. A target sitting inside ECM hostile to the scanner forces a 2D6 roll of 8 or better
  * first. A unit whose sensors have been hit, or conventional infantry, which has no sensors, is limited to visual
  * inspection: 3 hexes, automatic, and ECM has no effect on it. An airborne aerospace unit cannot scan.
  */
-public class TWRulesScanning extends RulesScanning {
+public class TacOpsScanning extends RulesScanning {
 
-    /** Visual inspection reaches this far (Total Warfare p.187). */
+    /** Visual inspection reaches this far (TacOps: Advanced Rules p.187). */
     public static final int VISUAL_INSPECTION_RANGE = 3;
-    /** A scan of a target inside hostile ECM needs this on 2D6 (Total Warfare p.187). */
+    /** A scan of a target inside hostile ECM needs this on 2D6 (TacOps: Advanced Rules p.187). */
     public static final int ECM_TARGET_NUMBER = 8;
     /** Standard sensors reach anything in line of sight; the caller bounds the search by the board. */
     public static final int SENSOR_RANGE = UNLIMITED_RANGE;

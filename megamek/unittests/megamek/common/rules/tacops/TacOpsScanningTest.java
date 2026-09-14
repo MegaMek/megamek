@@ -30,7 +30,7 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-package megamek.common.rules.totalwarfare;
+package megamek.common.rules.tacops;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -54,10 +54,10 @@ import org.junit.jupiter.api.Test;
  * Scanning under Total Warfare p.187: no roll with working sensors, 8+ under hostile ECM, visual inspection at 3
  * hexes for units without sensors, and no scanning from the air.
  */
-class TWRulesScanningTest {
+class TacOpsScanningTest {
 
     /** The rules with the ECM question answered by the test rather than by the board. */
-    private static final class RulesWithEcmAnswer extends TWRulesScanning {
+    private static final class RulesWithEcmAnswer extends TacOpsScanning {
         private boolean targetInsideHostileEcm = false;
 
         @Override
@@ -85,7 +85,7 @@ class TWRulesScanningTest {
 
         assertEquals(TargetRoll.AUTOMATIC_SUCCESS, roll.getValue());
         assertFalse(roll.needsRoll());
-        assertEquals(TWRulesScanning.SENSOR_RANGE, rules.scanningRange(scanner, enemy), "distance is the board's, not the rule's");
+        assertEquals(TacOpsScanning.SENSOR_RANGE, rules.scanningRange(scanner, enemy), "distance is the board's, not the rule's");
     }
 
     @Test
@@ -93,7 +93,7 @@ class TWRulesScanningTest {
         rules.targetInsideHostileEcm = true;
 
         TargetRoll roll = rules.scanTargetRoll(scanner, enemy);
-        assertEquals(TWRulesScanning.ECM_TARGET_NUMBER, roll.getValue());
+        assertEquals(TacOpsScanning.ECM_TARGET_NUMBER, roll.getValue());
         assertTrue(roll.needsRoll());
     }
 
@@ -102,7 +102,7 @@ class TWRulesScanningTest {
         when(scanner.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD)).thenReturn(1);
         rules.targetInsideHostileEcm = true;
 
-        assertEquals(TWRulesScanning.VISUAL_INSPECTION_RANGE, rules.scanningRange(scanner, enemy));
+        assertEquals(TacOpsScanning.VISUAL_INSPECTION_RANGE, rules.scanningRange(scanner, enemy));
         assertEquals(TargetRoll.AUTOMATIC_SUCCESS, rules.scanTargetRoll(scanner, enemy).getValue());
     }
 
@@ -112,7 +112,7 @@ class TWRulesScanningTest {
         when(platoon.getCrew()).thenReturn(mock(Crew.class));
         when(platoon.isConventionalInfantry()).thenReturn(true);
 
-        assertEquals(TWRulesScanning.VISUAL_INSPECTION_RANGE, rules.scanningRange(platoon, enemy));
+        assertEquals(TacOpsScanning.VISUAL_INSPECTION_RANGE, rules.scanningRange(platoon, enemy));
         assertEquals(TargetRoll.AUTOMATIC_SUCCESS, rules.scanTargetRoll(platoon, enemy).getValue());
     }
 

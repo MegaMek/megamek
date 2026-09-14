@@ -381,6 +381,7 @@ public class OptionsConstants {
     public static final String ADVANCED_SUPPRESS_DB_BV = "suppress_double_blind_bv";
     public static final String ADVANCED_TEAM_VISION = "team_vision";
     public static final String ADVANCED_TAC_OPS_BAP = "tacops_bap";
+    public static final String ADVANCED_TAC_OPS_SCANNING = "tacops_scanning";
     public static final String ADVANCED_TAC_OPS_ECCM = "tacops_eccm";
     public static final String ADVANCED_TAC_OPS_C3_EMERGENCY_MASTER = "tacops_c3_emergency_master";
     public static final String ADVANCED_TAC_OPS_GHOST_TARGET = "tacops_ghost_target";

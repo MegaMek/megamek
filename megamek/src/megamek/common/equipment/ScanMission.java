@@ -38,6 +38,8 @@ import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rules.RulesScanning;
+import megamek.common.rules.tacops.TacOpsScanning;
 import megamek.common.units.Entity;
 
 /**
@@ -84,6 +86,24 @@ public final class ScanMission {
      *       to scan under the game's ruleset - the reasons a scan could be refused, aerospace or wrecked sensors, are
      *       the ruleset's
      */
+    /**
+     * The scanning rules in force. The Core Rulebook's mission scanning check (p. 233) is the baseline in any game
+     * with objectives; a game that switches on the optional TacOps: Advanced Rules scanning rule (p. 187) uses that
+     * instead, where sensors read a target without a roll and an active probe is answered by a 2D6 roll of 8.
+     *
+     * @param game the game, or {@code null} before a unit has one
+     *
+     * @return the rules a scan is resolved by
+     */
+    public static RulesScanning scanningRules(@Nullable Game game) {
+        boolean isTacOpsScanning = (game != null)
+              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SCANNING);
+        return isTacOpsScanning ? TAC_OPS_SCANNING : Game.rulesManager.getRulesScanning();
+    }
+
+    /** The optional TacOps scanning rules, held once because they carry no state. */
+    private static final TacOpsScanning TAC_OPS_SCANNING = new TacOpsScanning();
+
     public static boolean canOrderScan(Entity unit) {
         Game game = unit.getGame();
         if (!isInPlay(game)) {
@@ -94,6 +114,6 @@ public final class ScanMission {
         if (!isOnTheBoard) {
             return false;
         }
-        return Game.rulesManager.getRulesScanning().scanningRange(unit, null) > 0;
+        return scanningRules(unit.getGame()).scanningRange(unit, null) > 0;
     }
 }

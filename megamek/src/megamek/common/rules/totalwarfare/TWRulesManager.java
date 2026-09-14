@@ -36,6 +36,7 @@ package megamek.common.rules.totalwarfare;
 import megamek.common.rules.*;
 import megamek.common.rules.RulesManager;
 import megamek.common.rules.RulesTarget;
+import megamek.common.rules.core.CoreRulesScanning;
 
 public class TWRulesManager implements RulesManager {
     private TWRulesTarget twRulesTarget = new TWRulesTarget();
@@ -53,7 +54,7 @@ public class TWRulesManager implements RulesManager {
     private TWRulesPhysical twRulesPhysical = new TWRulesPhysical();
     private TWRulesPilot twRulesPilot = new TWRulesPilot();
     private TWRulesPSR twRulesPsr = new TWRulesPSR();
-    private TWRulesScanning twRulesScanning = new TWRulesScanning();
+    private CoreRulesScanning missionScanning = new CoreRulesScanning();
     private TWRulesTerrain twRulesTerrain = new TWRulesTerrain();
     private TWRulesUnderwater twRulesUnderwater = new TWRulesUnderwater();
     private TWRulesUnits twRulesUnits = new TWRulesUnits();
@@ -153,7 +154,7 @@ public class TWRulesManager implements RulesManager {
      * {@inheritDoc}
      * Returns the Total Warfare implementation for scanning objectives and units.
      */
-    public RulesScanning getRulesScanning() { return twRulesScanning; }
+    public RulesScanning getRulesScanning() { return missionScanning; }
 
     /**
      * {@inheritDoc}

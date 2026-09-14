@@ -53,6 +53,7 @@ import megamek.common.equipment.BankedScan;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
+import megamek.common.equipment.ObjectiveScoringScheme.ScanPayout;
 import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import megamek.common.equipment.ScanMission;
 import megamek.common.game.Game;
@@ -98,6 +99,9 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
     static final int REPORT_READINGS_CARRIED = 7153;
     static final int REPORT_READINGS_LOST_WRONG_EDGE = 7132;
     static final int REPORT_READING_BANKED = 7150;
+    static final int REPORT_POINTS_HELD_WHILE_ALIVE = 7154;
+    /** Says a successful scan needs no line of its own beyond the scoring line above it. */
+    static final int NO_PLAIN_LINE = 0;
     static final int REPORT_SCAN_REVEALS = 7151;
     static final int REPORT_SCAN_POINTS_TAKEN_BACK = 7152;
 
@@ -317,6 +321,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
                     gameManager.entityUpdate(scanner.getId());
                 }
                 case ON_SCAN -> scoreScanPoint(scanPoint, scanner, sideOf(scanner.getOwner()));
+                default -> { /* every payout is handled; the lines below add what each one tells the player */ }
                 case ON_SCAN_UNTIL_LOST -> {
                     // paid now, and the reading stays on the unit so the points can be taken back if it is lost
                     scoreScanPoint(scanPoint, scanner, sideOf(scanner.getOwner()));
@@ -325,7 +330,8 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
                     gameManager.entityUpdate(scanner.getId());
                 }
             }
-            reportWhatTheScanGave(scanner, scanPoint.getScanRevealsNote());
+            reportWhatTheScanGave(scanner, scanPoint.getScanRevealsNote(),
+                  plainLineFor(scanPoint.getScoringScheme().getScanPayout()));
             return;
         }
         boolean isSensorCheckMission = getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK);
@@ -334,7 +340,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
             LOGGER.info("[Scan] {} banked a reading of enemy {} - {} reading(s) carried", scanner.getShortName(),
                   targetUnit.getShortName(), scanner.getBankedScans().size());
             gameManager.entityUpdate(scanner.getId());
-            reportWhatTheScanGave(scanner, "");
+            reportWhatTheScanGave(scanner, "", REPORT_READING_BANKED);
             return;
         }
         LOGGER.debug("[Scan] {} scanned {}: nothing of interest there for its side", scanner.getShortName(),
@@ -353,11 +359,13 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
      * @param scanner the unit that scanned
      * @param note    what the point reveals, or empty
      */
-    private void reportWhatTheScanGave(Entity scanner, String note) {
+    private void reportWhatTheScanGave(Entity scanner, String note, int plainLineId) {
         if (note.isEmpty() || (scanner.getOwner() == null)) {
-            Report report = new Report(REPORT_READING_BANKED, Report.PUBLIC);
-            report.indent();
-            addReport(report);
+            if (plainLineId != NO_PLAIN_LINE) {
+                Report report = new Report(plainLineId, Report.PUBLIC);
+                report.indent();
+                addReport(report);
+            }
             return;
         }
         LOGGER.info("[Scan] the point reveals its note to {}", scanner.getOwner().getName());
@@ -366,6 +374,20 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         report.indent();
         report.add(note);
         addReport(report);
+    }
+
+    /**
+     * @param payout how the point pays
+     *
+     * @return the report line that follows a successful scan when the point reveals nothing: what the reading is
+     *       worth now. A point that simply pays needs no line, because the scoring line already said so.
+     */
+    private static int plainLineFor(ScanPayout payout) {
+        return switch (payout) {
+            case ON_EXIT -> REPORT_READING_BANKED;
+            case ON_SCAN_UNTIL_LOST -> REPORT_POINTS_HELD_WHILE_ALIVE;
+            case ON_SCAN -> NO_PLAIN_LINE;
+        };
     }
 
     /**

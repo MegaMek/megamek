@@ -294,7 +294,7 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
             // the owner's colour drains toward white with the grip
             case DEFEND -> blend(ownerColor(marker), NEUTRAL_COLOR, fraction);
             // control is instantaneous and is painted in full
-            case STANDARD, RAID -> controllerColor(marker);
+            case STANDARD, RAID, SCAN -> controllerColor(marker);
         };
     }
 

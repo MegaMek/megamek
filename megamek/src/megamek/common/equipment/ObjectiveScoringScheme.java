@@ -83,7 +83,13 @@ public class ObjectiveScoringScheme implements Serializable {
         /** Mission option: the owner's grip on the point is drained by enemy presence; at zero it falls. */
         DEFEND,
         /** Mission option: a progress meter contested by both sides; at the threshold the point is captured. */
-        CAPTURE
+        CAPTURE,
+        /**
+         * Mission option: the point is scanned rather than held. A unit within scanning range with line of sight
+         * passes a sensor check and banks the reading; the point pays its value to the owner once a unit carrying
+         * the reading leaves over its home edge (or on the scan itself, when the point does not require that).
+         */
+        SCAN
     }
 
     /** How the {@code HOLD} preset counts held turns; the player chooses this at game setup. */
@@ -106,6 +112,7 @@ public class ObjectiveScoringScheme implements Serializable {
     private int defendGrip = 0;
     private boolean defendGripInitialized = false;
     private boolean retainsControlWhenEmpty = false;
+    private boolean scanCarriedHome = true;
     private Map<Integer, Integer> heldTurnsByTeam = new HashMap<>();
     private Map<Integer, Integer> heldTurnsByPlayer = new HashMap<>();
     private Map<Integer, Integer> captureProgressByTeam = new HashMap<>();
@@ -163,6 +170,34 @@ public class ObjectiveScoringScheme implements Serializable {
         scheme.threshold = pointsToCapture;
         scheme.ratePerTurn = progressPerTurn;
         return scheme;
+    }
+
+    /**
+     * @param carriedHome {@code true} when the point pays only once a unit carrying its reading leaves over its home
+     *                    edge; {@code false} when it pays on the scan itself
+     *
+     * @return a Scan scheme: the point is read with a sensor check rather than held
+     */
+    public static ObjectiveScoringScheme scan(boolean carriedHome) {
+        ObjectiveScoringScheme scheme = new ObjectiveScoringScheme();
+        scheme.preset = SchemePreset.SCAN;
+        scheme.scanCarriedHome = carriedHome;
+        return scheme;
+    }
+
+    /**
+     * Whether a Scan point pays only once its reading reaches home. On, the default, a scout must leave over its
+     * home edge on the earliest exit turn or later with the reading banked, and a scout that dies first takes the
+     * reading with it. Off, the point pays on the successful scan and there is no counterplay.
+     *
+     * @return {@code true} when the reading must be carried home before it scores
+     */
+    public boolean isScanCarriedHome() {
+        return scanCarriedHome;
+    }
+
+    public void setScanCarriedHome(boolean scanCarriedHome) {
+        this.scanCarriedHome = scanCarriedHome;
     }
 
     public SchemePreset getPreset() {
@@ -345,6 +380,8 @@ public class ObjectiveScoringScheme implements Serializable {
             case HOLD -> Math.max(0, threshold - getHeldTurns(team, playerId));
             case DEFEND -> Math.max(0, getDefendGrip());
             case CAPTURE -> Math.max(0, threshold - getCaptureProgress(team, playerId));
+            // one reading carried home decides a scan point
+            case SCAN -> 1;
             case STANDARD, RAID -> -1;
         };
     }
@@ -440,7 +477,7 @@ public class ObjectiveScoringScheme implements Serializable {
             case HOLD -> bestHeldTurns() + "/" + threshold;
             case DEFEND -> getDefendGrip() + "/" + threshold;
             case CAPTURE -> bestCaptureProgress() + "/" + threshold;
-            case STANDARD, RAID -> null;
+            case STANDARD, RAID, SCAN -> null;
         };
     }
 
@@ -476,7 +513,7 @@ public class ObjectiveScoringScheme implements Serializable {
             case HOLD -> Math.min(1.0, bestHeldTurns() / (double) threshold);
             case CAPTURE -> Math.min(1.0, bestCaptureProgress() / (double) threshold);
             case DEFEND -> Math.min(1.0, (threshold - getDefendGrip()) / (double) threshold);
-            case STANDARD, RAID -> 1.0;
+            case STANDARD, RAID, SCAN -> 1.0;
         };
     }
 

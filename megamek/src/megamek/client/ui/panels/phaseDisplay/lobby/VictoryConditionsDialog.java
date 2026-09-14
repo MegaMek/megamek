@@ -86,7 +86,8 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
     private static final Set<String> OBJECTIVE_OPTIONS = Set.of(
           OptionsConstants.VICTORY_USE_OBJECTIVES,
           OptionsConstants.VICTORY_VP_WIN_THRESHOLD,
-          OptionsConstants.VICTORY_VP_SUDDEN_DEATH);
+          OptionsConstants.VICTORY_VP_SUDDEN_DEATH,
+          OptionsConstants.VICTORY_USE_SENSOR_CHECK);
 
     /** Unscaled width the objectives note wraps at, a little under the tab's preferred width. */
     private static final int NOTE_WIDTH = 500;

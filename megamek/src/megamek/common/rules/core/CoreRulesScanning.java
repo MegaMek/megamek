@@ -34,6 +34,8 @@ package megamek.common.rules.core;
 
 import megamek.common.Messages;
 import megamek.common.annotations.Nullable;
+import megamek.common.compute.ComputeECM;
+import megamek.common.equipment.MiscType;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesScanning;
 import megamek.common.units.Entity;
@@ -43,9 +45,10 @@ import megamek.common.units.Targetable;
  * Scanning under the Core Rules (p.233 Scanning, p.113 Sensor Checks). A scan is a sensor check: a Piloting Skill
  * Roll that ignores every ordinary Piloting modifier, at +3 for scanning, +2 with one sensor critical hit (two
  * hits prevent sensor checks altogether), minus the level of a working active probe that is not inside hostile
- * ECM, and +2 against a target with an active stealth system. The range is 2 hexes, or the probe's range. Infantry
- * scan the hex they stand in automatically. Aerospace units - fighters, small craft and DropShips - cannot scan; a
- * VTOL is a vehicle and scans like one, airborne or not.
+ * ECM, and +2 against a target with an active stealth system. The range is 2 hexes, or the probe's range. A probe
+ * is negated when either the probe or the target sits inside hostile ECM (p.197); a Bloodhound ignores ordinary ECM
+ * and is negated only by Angel ECM. Infantry scan the hex they stand in automatically. Aerospace units - fighters,
+ * small craft and DropShips - cannot scan; a VTOL is a vehicle and scans like one, airborne or not.
  */
 public class CoreRulesScanning extends RulesScanning {
 
@@ -61,12 +64,55 @@ public class CoreRulesScanning extends RulesScanning {
     public static final int DEFAULT_SCANNING_RANGE = 2;
 
     @Override
-    public int scanningRange(Entity scanner) {
+    public int scanningRange(Entity scanner, @Nullable Targetable target) {
         if (refusalReason(scanner) != null) {
             return 0;
         }
-        int probeRange = scanner.hasBAP(true) ? scanner.getBAPRange() : 0;
+        int probeRange = hasWorkingProbeAgainst(scanner, target) ? scanner.getBAPRange() : 0;
         return Math.max(DEFAULT_SCANNING_RANGE, probeRange);
+    }
+
+    /**
+     * Whether the unit's active probe works against this target. {@code hasBAP(true)} already answers for the probe's
+     * own hex and for the Bloodhound's immunity to ordinary ECM; this adds the target's end of the line (Core Rules
+     * p.197): a standard probe is negated by any hostile ECM covering the target, a Bloodhound only by Angel ECM.
+     *
+     * @param scanner the scanning unit
+     * @param target  the target, or {@code null} to ask only about the probe's own hex
+     *
+     * @return {@code true} when the probe gives its range and its target number bonus against this target
+     */
+    boolean hasWorkingProbeAgainst(Entity scanner, @Nullable Targetable target) {
+        if (!scanner.hasBAP(true)) {
+            return false;
+        }
+        if ((target == null) || (target.getPosition() == null)) {
+            return true;
+        }
+        if (hasBloodhound(scanner)) {
+            return !isTargetInsideHostileAngelEcm(scanner, target);
+        }
+        return !isTargetInsideHostileEcm(scanner, target);
+    }
+
+    /**
+     * @param scanner the scanning unit
+     *
+     * @return {@code true} when the unit's working probe is a Bloodhound
+     */
+    private static boolean hasBloodhound(Entity scanner) {
+        return scanner.getMisc().stream()
+              .anyMatch(mounted -> mounted.getType().hasFlag(MiscType.F_BLOODHOUND) && !mounted.isInoperable());
+    }
+
+    /** Seam for tests: whether ECM hostile to the scanner covers the target's hex. */
+    protected boolean isTargetInsideHostileEcm(Entity scanner, Targetable target) {
+        return ComputeECM.isAffectedByECM(scanner, target.getPosition(), target.getPosition());
+    }
+
+    /** Seam for tests: whether Angel ECM hostile to the scanner covers the target's hex. */
+    protected boolean isTargetInsideHostileAngelEcm(Entity scanner, Targetable target) {
+        return ComputeECM.isAffectedByAngelECM(scanner, target.getPosition(), target.getPosition());
     }
 
     @Override
@@ -84,7 +130,7 @@ public class CoreRulesScanning extends RulesScanning {
         if (sensorCriticalHits(scanner) > 0) {
             roll.addModifier(SENSOR_HIT_MODIFIER, Messages.getString("RulesScanning.sensorHit"));
         }
-        int probeLevel = activeProbeLevel(scanner);
+        int probeLevel = hasWorkingProbeAgainst(scanner, target) ? activeProbeLevel(scanner) : PROBE_LEVEL_NONE;
         if (probeLevel > PROBE_LEVEL_NONE) {
             roll.addModifier(-probeLevel, Messages.getString("RulesScanning.activeProbe", probeLevel));
         }

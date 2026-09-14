@@ -136,18 +136,25 @@ public final class VictoryHexPropertiesPane {
         startingControlCombo.setEnabled(retainControlCheckbox.isSelected());
         retainControlCheckbox.addActionListener(event ->
               startingControlCombo.setEnabled(retainControlCheckbox.isSelected()));
+        // a Scan point's one setting: whether the reading must reach home before it pays
+        JCheckBox carriedHomeCheckbox = new JCheckBox();
+        carriedHomeCheckbox.setSelected(scheme.isScanCarriedHome());
+        carriedHomeCheckbox.setToolTipText(Messages.getString("VictoryHex.carriedHome.tooltip"));
+        JLabel carriedHomeLabel = new JLabel(Messages.getString("VictoryHex.carriedHome"));
 
         JLabel thresholdLabel = new JLabel();
         JLabel rateLabel = new JLabel();
         JLabel countingLabel = new JLabel(Messages.getString("VictoryHex.counting"));
         JLabel schemeDescription = new JLabel();
         SchemeControls controls = new SchemeControls(schemeCombo, countingCombo, thresholdSpinner, rateSpinner,
-              retainControlCheckbox, thresholdLabel, rateLabel, countingLabel, schemeDescription);
+              retainControlCheckbox, carriedHomeCheckbox, carriedHomeLabel, thresholdLabel, rateLabel, countingLabel,
+              schemeDescription);
         schemeCombo.addActionListener(event -> refreshSchemeRows(controls));
         countingCombo.addActionListener(event -> refreshSchemeRows(controls));
         thresholdSpinner.addChangeListener(event -> refreshSchemeRows(controls));
         rateSpinner.addChangeListener(event -> refreshSchemeRows(controls));
         retainControlCheckbox.addActionListener(event -> refreshSchemeRows(controls));
+        carriedHomeCheckbox.addActionListener(event -> refreshSchemeRows(controls));
         refreshSchemeRows(controls);
 
         // the order a player decides these in: what kind of point is this, how is it won, who holds it
@@ -161,12 +168,13 @@ public final class VictoryHexPropertiesPane {
         addRow(propertiesPanel, 1, thresholdLabel, thresholdSpinner);
         addRow(propertiesPanel, 2, countingLabel, countingCombo);
         addRow(propertiesPanel, 3, rateLabel, rateSpinner);
-        addRow(propertiesPanel, 4, new JLabel(Messages.getString("VictoryHex.retainControl")), retainControlCheckbox);
-        addRow(propertiesPanel, 5, new JLabel(Messages.getString("VictoryHex.startingControl")),
+        addRow(propertiesPanel, 4, carriedHomeLabel, carriedHomeCheckbox);
+        addRow(propertiesPanel, 5, new JLabel(Messages.getString("VictoryHex.retainControl")), retainControlCheckbox);
+        addRow(propertiesPanel, 6, new JLabel(Messages.getString("VictoryHex.startingControl")),
               startingControlCombo);
-        addRow(propertiesPanel, 6, new JLabel(Messages.getString("VictoryHex.radius")), radiusSpinner);
-        addRow(propertiesPanel, 7, new JLabel(Messages.getString("VictoryHex.victoryPoints")), victoryPointSpinner);
-        pinRowsToTheTop(propertiesPanel, 8);
+        addRow(propertiesPanel, 7, new JLabel(Messages.getString("VictoryHex.radius")), radiusSpinner);
+        addRow(propertiesPanel, 8, new JLabel(Messages.getString("VictoryHex.victoryPoints")), victoryPointSpinner);
+        pinRowsToTheTop(propertiesPanel, 9);
 
         JPanel editorPanel = new JPanel();
         editorPanel.setLayout(new BoxLayout(editorPanel, BoxLayout.PAGE_AXIS));
@@ -188,6 +196,7 @@ public final class VictoryHexPropertiesPane {
         }
         boolean retainsControl = retainControlCheckbox.isSelected();
         scheme.setRetainsControlWhenEmpty(retainsControl);
+        scheme.setScanCarriedHome(carriedHomeCheckbox.isSelected());
         // a greyed dropdown keeps whatever it last showed, so its choice only counts while retention is on;
         // without retention the first End Phase would clear a starting holder anyway
         ControlChoice startingControl = retainsControl
@@ -218,13 +227,16 @@ public final class VictoryHexPropertiesPane {
      * @param thresholdSpinner  the threshold value (turns to secure, starting grip or points to capture)
      * @param rateSpinner       the per-turn rate (grip drain or capture progress)
      * @param retainControl     whether the point keeps its holder once the zone empties
+     * @param carriedHome       whether a Scan point pays only once its reading reaches home
+     * @param carriedHomeLabel  the label of that box, shown only for a Scan point
      * @param thresholdLabel    the label naming the threshold for the selected preset
      * @param rateLabel         the label naming the rate for the selected preset
      * @param countingLabel     the label of the counting selector
      * @param schemeDescription the live plain-words description of the configured scheme
      */
     private record SchemeControls(JComboBox<SchemePreset> schemeCombo, JComboBox<HoldCounting> countingCombo,
-          JSpinner thresholdSpinner, JSpinner rateSpinner, JCheckBox retainControl, JLabel thresholdLabel,
+          JSpinner thresholdSpinner, JSpinner rateSpinner, JCheckBox retainControl, JCheckBox carriedHome,
+          JLabel carriedHomeLabel, JLabel thresholdLabel,
           JLabel rateLabel, JLabel countingLabel, JLabel schemeDescription) {}
 
     /**
@@ -264,7 +276,7 @@ public final class VictoryHexPropertiesPane {
         Object rate = controls.rateSpinner().getValue();
         HoldCounting counting = (HoldCounting) controls.countingCombo().getSelectedItem();
         String presetDescription = describeConfiguredPreset(preset, threshold, rate, counting,
-              controls.retainControl().isSelected());
+              controls.retainControl().isSelected(), controls.carriedHome().isSelected());
         controls.schemeDescription().setText("<html><body style='width: 260px'>" + presetDescription
               + "</body></html>");
         controls.schemeCombo().setToolTipText(presetDescription);
@@ -276,6 +288,9 @@ public final class VictoryHexPropertiesPane {
               || (preset == SchemePreset.CAPTURE);
         boolean usesRate = (preset == SchemePreset.DEFEND) || (preset == SchemePreset.CAPTURE);
         boolean usesCounting = preset == SchemePreset.HOLD;
+        boolean usesCarriedHome = preset == SchemePreset.SCAN;
+        controls.carriedHomeLabel().setVisible(usesCarriedHome);
+        controls.carriedHome().setVisible(usesCarriedHome);
         controls.thresholdLabel().setVisible(usesThreshold);
         controls.thresholdSpinner().setVisible(usesThreshold);
         controls.rateLabel().setVisible(usesRate);
@@ -348,8 +363,11 @@ public final class VictoryHexPropertiesPane {
      * @return the plain-words what-it-does / how-to-make-it-work description of the point as configured
      */
     private static String describeConfiguredPreset(SchemePreset preset, Object threshold, Object rate,
-          HoldCounting counting, boolean retainsControl) {
+          HoldCounting counting, boolean retainsControl, boolean scanCarriedHome) {
         String presetDescription = switch (preset) {
+            case SCAN -> Messages.getString(scanCarriedHome
+                  ? "VictoryHex.describe.scan.carried"
+                  : "VictoryHex.describe.scan.immediate");
             case HOLD -> Messages.getString("VictoryHex.describe.hold."
                   + counting.name().toLowerCase(Locale.ROOT), threshold);
             case DEFEND -> Messages.getString("VictoryHex.describe.defend", threshold, rate);
@@ -373,7 +391,7 @@ public final class VictoryHexPropertiesPane {
         return switch (preset) {
             case DEFEND -> "VictoryHex.startingGrip";
             case CAPTURE -> "VictoryHex.pointsToCapture";
-            case HOLD, STANDARD, RAID -> "VictoryHex.turnsToSecure";
+            case HOLD, STANDARD, RAID, SCAN -> "VictoryHex.turnsToSecure";
         };
     }
 
@@ -474,6 +492,6 @@ public final class VictoryHexPropertiesPane {
      */
     public static String describeScheme(ObjectiveScoringScheme scheme) {
         return describeConfiguredPreset(scheme.getPreset(), scheme.getThreshold(), scheme.getRatePerTurn(),
-              scheme.getHoldCounting(), scheme.retainsControlWhenEmpty());
+              scheme.getHoldCounting(), scheme.retainsControlWhenEmpty(), scheme.isScanCarriedHome());
     }
 }

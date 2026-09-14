@@ -85,6 +85,7 @@ public final class VictoryOptionLayout {
         DEPENDS_ON.put(OptionsConstants.VICTORY_GAME_KILL_COUNT, OptionsConstants.VICTORY_USE_KILL_COUNT);
         DEPENDS_ON.put(OptionsConstants.VICTORY_VP_WIN_THRESHOLD, OptionsConstants.VICTORY_USE_OBJECTIVES);
         DEPENDS_ON.put(OptionsConstants.VICTORY_VP_SUDDEN_DEATH, OptionsConstants.VICTORY_USE_OBJECTIVES);
+        DEPENDS_ON.put(OptionsConstants.VICTORY_USE_SENSOR_CHECK, OptionsConstants.VICTORY_USE_OBJECTIVES);
     }
 
     private VictoryOptionLayout() {

@@ -62,7 +62,23 @@ import org.junit.jupiter.api.Test;
  */
 class CoreRulesScanningTest {
 
-    private final CoreRulesScanning rules = new CoreRulesScanning();
+    /** The rules with the ECM questions answered by the test rather than by the board. */
+    private static final class RulesWithEcmAnswers extends CoreRulesScanning {
+        private boolean targetInsideHostileEcm = false;
+        private boolean targetInsideHostileAngelEcm = false;
+
+        @Override
+        protected boolean isTargetInsideHostileEcm(Entity scanner, Targetable target) {
+            return targetInsideHostileEcm;
+        }
+
+        @Override
+        protected boolean isTargetInsideHostileAngelEcm(Entity scanner, Targetable target) {
+            return targetInsideHostileAngelEcm;
+        }
+    }
+
+    private final RulesWithEcmAnswers rules = new RulesWithEcmAnswers();
     private Mek scanner;
     private Targetable hexTarget;
 
@@ -88,7 +104,7 @@ class CoreRulesScanningTest {
 
     @Test
     void testTheDefaultRangeIsTwoHexes() {
-        assertEquals(CoreRulesScanning.DEFAULT_SCANNING_RANGE, rules.scanningRange(scanner));
+        assertEquals(CoreRulesScanning.DEFAULT_SCANNING_RANGE, rules.scanningRange(scanner, hexTarget));
     }
 
     @Test
@@ -99,14 +115,14 @@ class CoreRulesScanningTest {
         when(scanner.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD)).thenReturn(2);
         TargetRoll blocked = rules.scanTargetRoll(scanner, hexTarget);
         assertEquals(TargetRoll.IMPOSSIBLE, blocked.getValue());
-        assertEquals(0, rules.scanningRange(scanner), "a unit that cannot check has no range either");
+        assertEquals(0, rules.scanningRange(scanner, hexTarget), "a unit that cannot check has no range either");
     }
 
     @Test
     void testAWorkingProbeExtendsTheRangeAndLowersTheNumberByItsLevel() {
         mountProbe(scanner, "BeagleActiveProbe", 4);
 
-        assertEquals(4, rules.scanningRange(scanner), "the probe's range replaces the default 2");
+        assertEquals(4, rules.scanningRange(scanner, hexTarget), "the probe's range replaces the default 2");
         assertEquals(5, rules.scanTargetRoll(scanner, hexTarget).getValue(), "4 + 3 - 2 for a Beagle-class probe");
     }
 
@@ -114,7 +130,7 @@ class CoreRulesScanningTest {
     void testABloodhoundIsLevelThreeAndALightProbeLevelOne() {
         mountProbe(scanner, "BloodhoundActiveProbe", 8);
         assertEquals(4, rules.scanTargetRoll(scanner, hexTarget).getValue(), "4 + 3 - 3");
-        assertEquals(8, rules.scanningRange(scanner));
+        assertEquals(8, rules.scanningRange(scanner, hexTarget));
 
         mountProbe(scanner, "ISLightActiveProbe", 3);
         assertEquals(6, rules.scanTargetRoll(scanner, hexTarget).getValue(), "4 + 3 - 1");
@@ -126,8 +142,32 @@ class CoreRulesScanningTest {
         // hasBAP(true) is the engine's "working and not negated by ECM" answer
         when(scanner.hasBAP(true)).thenReturn(false);
 
-        assertEquals(CoreRulesScanning.DEFAULT_SCANNING_RANGE, rules.scanningRange(scanner));
+        assertEquals(CoreRulesScanning.DEFAULT_SCANNING_RANGE, rules.scanningRange(scanner, hexTarget));
         assertEquals(7, rules.scanTargetRoll(scanner, hexTarget).getValue());
+    }
+
+    @Test
+    void testAStandardProbeIsAlsoNegatedByEcmCoveringTheTarget() {
+        // Core Rules p.197: the probe cannot scan anything if it OR the target is inside hostile ECM
+        mountProbe(scanner, "BeagleActiveProbe", 4);
+        rules.targetInsideHostileEcm = true;
+
+        assertEquals(CoreRulesScanning.DEFAULT_SCANNING_RANGE, rules.scanningRange(scanner, hexTarget));
+        assertEquals(7, rules.scanTargetRoll(scanner, hexTarget).getValue(), "no probe bonus either");
+        assertEquals(4, rules.scanningRange(scanner, null), "the probe itself still works: only this target is jammed");
+    }
+
+    @Test
+    void testABloodhoundIgnoresOrdinaryEcmOnTheTargetButNotAngel() {
+        mountProbe(scanner, "BloodhoundActiveProbe", 8);
+        rules.targetInsideHostileEcm = true;
+
+        assertEquals(8, rules.scanningRange(scanner, hexTarget));
+        assertEquals(4, rules.scanTargetRoll(scanner, hexTarget).getValue(), "4 + 3 - 3, ordinary ECM ignored");
+
+        rules.targetInsideHostileAngelEcm = true;
+        assertEquals(CoreRulesScanning.DEFAULT_SCANNING_RANGE, rules.scanningRange(scanner, hexTarget));
+        assertEquals(7, rules.scanTargetRoll(scanner, hexTarget).getValue(), "Angel ECM negates a Bloodhound");
     }
 
     @Test
@@ -146,7 +186,7 @@ class CoreRulesScanningTest {
         when(fighter.getCrew()).thenReturn(mock(Crew.class));
 
         assertEquals(TargetRoll.IMPOSSIBLE, rules.scanTargetRoll(fighter, hexTarget).getValue());
-        assertEquals(0, rules.scanningRange(fighter));
+        assertEquals(0, rules.scanningRange(fighter, hexTarget));
     }
 
     @Test
@@ -187,6 +227,7 @@ class CoreRulesScanningTest {
     private static void mountProbe(Entity unit, String internalName, int range) {
         MiscType probeType = mock(MiscType.class);
         when(probeType.hasFlag(MiscType.F_BAP)).thenReturn(true);
+        when(probeType.hasFlag(MiscType.F_BLOODHOUND)).thenReturn(internalName.contains("Bloodhound"));
         when(probeType.getInternalName()).thenReturn(internalName);
         MiscMounted probe = mock(MiscMounted.class);
         when(probe.getType()).thenReturn(probeType);

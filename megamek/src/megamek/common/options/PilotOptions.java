@@ -144,6 +144,8 @@ public class PilotOptions extends AbstractOptions {
         addOption(edge, OptionsConstants.EDGE_WHEN_KO, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_EXPLOSION, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_MASC_FAILS, true);
+        // off by default: a scan is cheap to repeat, so Edge is the player's call, not the default
+        addOption(edge, OptionsConstants.EDGE_WHEN_SCAN_FAILS, false);
         //Aero Triggers
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_ALT_LOSS, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_EXPLOSION, true);

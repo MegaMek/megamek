@@ -85,7 +85,7 @@ class TWRulesScanningTest {
 
         assertEquals(TargetRoll.AUTOMATIC_SUCCESS, roll.getValue());
         assertFalse(roll.needsRoll());
-        assertEquals(TWRulesScanning.SENSOR_RANGE, rules.scanningRange(scanner), "distance is the board's, not the rule's");
+        assertEquals(TWRulesScanning.SENSOR_RANGE, rules.scanningRange(scanner, enemy), "distance is the board's, not the rule's");
     }
 
     @Test
@@ -102,7 +102,7 @@ class TWRulesScanningTest {
         when(scanner.getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD)).thenReturn(1);
         rules.targetInsideHostileEcm = true;
 
-        assertEquals(TWRulesScanning.VISUAL_INSPECTION_RANGE, rules.scanningRange(scanner));
+        assertEquals(TWRulesScanning.VISUAL_INSPECTION_RANGE, rules.scanningRange(scanner, enemy));
         assertEquals(TargetRoll.AUTOMATIC_SUCCESS, rules.scanTargetRoll(scanner, enemy).getValue());
     }
 
@@ -112,7 +112,7 @@ class TWRulesScanningTest {
         when(platoon.getCrew()).thenReturn(mock(Crew.class));
         when(platoon.isConventionalInfantry()).thenReturn(true);
 
-        assertEquals(TWRulesScanning.VISUAL_INSPECTION_RANGE, rules.scanningRange(platoon));
+        assertEquals(TWRulesScanning.VISUAL_INSPECTION_RANGE, rules.scanningRange(platoon, enemy));
         assertEquals(TargetRoll.AUTOMATIC_SUCCESS, rules.scanTargetRoll(platoon, enemy).getValue());
     }
 
@@ -125,7 +125,7 @@ class TWRulesScanningTest {
         Targetable hexTarget = mock(Targetable.class);
 
         assertEquals(TargetRoll.IMPOSSIBLE, rules.scanTargetRoll(fighter, hexTarget).getValue());
-        assertEquals(0, rules.scanningRange(fighter));
+        assertEquals(0, rules.scanningRange(fighter, hexTarget));
 
         when(fighter.isAirborne()).thenReturn(false);
         assertEquals(TargetRoll.AUTOMATIC_SUCCESS, rules.scanTargetRoll(fighter, hexTarget).getValue());

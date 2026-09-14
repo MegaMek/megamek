@@ -81,6 +81,8 @@ public final class ObjectiveDeserializer {
     private static final String SCHEME_HOLD = "hold";
     private static final String SCHEME_DEFEND = "defend";
     private static final String SCHEME_CAPTURE = "capture";
+    private static final String SCHEME_SCAN = "scan";
+    private static final String SCAN_CARRIED_HOME = "carriedHome";
     private static final String HOLD_TURNS = "turns";
     private static final String HOLD_COUNTING = "counting";
     private static final String COUNTING_CUMULATIVE = "cumulative";
@@ -179,6 +181,9 @@ public final class ObjectiveDeserializer {
             case SCHEME_CAPTURE -> ObjectiveScoringScheme.capture(
                   node.hasNonNull(CAPTURE_POINTS) ? node.get(CAPTURE_POINTS).asInt() : 1,
                   node.hasNonNull(CAPTURE_RATE) ? node.get(CAPTURE_RATE).asInt() : 1);
+            // carriedHome defaults to true: the reading must reach home unless the mission says otherwise
+            case SCHEME_SCAN -> ObjectiveScoringScheme.scan(
+                  !node.hasNonNull(SCAN_CARRIED_HOME) || node.get(SCAN_CARRIED_HOME).asBoolean());
             default -> throw new IllegalArgumentException("Unknown scoring scheme " + scheme
                   + " for objective " + marker.generalName());
         });

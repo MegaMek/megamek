@@ -66,11 +66,14 @@ public abstract class RulesScanning {
 
     /**
      * @param scanner the unit that wants to scan
+     * @param target  what it wants to scan, or {@code null} for the unit's general reach; an active probe is negated
+     *                by hostile ECM at either end (Core Rules p.197), so the reach against a particular target can be
+     *                shorter than the unit's own
      *
      * @return the farthest hex distance at which the unit can scan under these rules, or 0 when it cannot scan at
      *       all; line of sight is checked separately by the caller
      */
-    public abstract int scanningRange(Entity scanner);
+    public abstract int scanningRange(Entity scanner, @Nullable Targetable target);
 
     /**
      * The roll a scan needs. The value is {@link TargetRoll#IMPOSSIBLE} with the reason in the description when

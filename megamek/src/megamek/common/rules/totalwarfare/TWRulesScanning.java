@@ -57,7 +57,7 @@ public class TWRulesScanning extends RulesScanning {
     public static final int SENSOR_RANGE = Integer.MAX_VALUE;
 
     @Override
-    public int scanningRange(Entity scanner) {
+    public int scanningRange(Entity scanner, @Nullable Targetable target) {
         if (refusalReason(scanner) != null) {
             return 0;
         }

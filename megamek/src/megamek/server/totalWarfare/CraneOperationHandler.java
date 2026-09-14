@@ -70,11 +70,14 @@ class CraneOperationHandler extends AbstractTWRuleHandler {
      * Records a unit's declaration to be loaded by crane. The step was checked on the client; this repeats the check
      * so a stale or tampered path cannot start an illegal operation.
      *
-     * @param unit   the VTOL, fighter or Small Craft to be loaded
-     * @param target the carrier named by the step, may be {@code null}
+     * @param unit         the VTOL, fighter or Small Craft to be loaded
+     * @param target       the carrier named by the step, may be {@code null}
+     * @param isOnlyAction {@code true} if the server found no step before this one in the path; crane loading must be
+     *                     the unit's only action, and this is worked out on the server rather than trusted from the
+     *                     client's step
      */
-    void declareLoad(Entity unit, @Nullable Targetable target) {
-        String illegalReason = CraneRules.loadByCraneIllegalReason(unit, target, true, getGame());
+    void declareLoad(Entity unit, @Nullable Targetable target, boolean isOnlyAction) {
+        String illegalReason = CraneRules.loadByCraneIllegalReason(unit, target, isOnlyAction, getGame());
         if (illegalReason != null) {
             LOGGER.info("[Crane] {}: load by crane rejected - {}", unit.getDisplayName(), illegalReason);
             return;
@@ -93,14 +96,18 @@ class CraneOperationHandler extends AbstractTWRuleHandler {
     /**
      * Records a carrier's declaration to unload a carried unit by crane, with the hex and facing chosen for it.
      *
-     * @param carrier  the Small Craft or DropShip declaring the unloading
-     * @param target   the carried unit named by the step, may be {@code null}
-     * @param position the hex chosen for the unit, may be {@code null}
-     * @param facing   the facing chosen for the unit, may be {@code null}
+     * @param carrier      the Small Craft or DropShip declaring the unloading
+     * @param target       the carried unit named by the step, may be {@code null}
+     * @param position     the hex chosen for the unit, may be {@code null}
+     * @param facing       the facing chosen for the unit, may be {@code null}
+     * @param isOnlyAction {@code true} if the server found no step before this one in the path; crane unloading must
+     *                     be the carrier's only action, and this is worked out on the server rather than trusted from
+     *                     the client's step
      */
     void declareUnload(Entity carrier, @Nullable Targetable target, @Nullable Coords position,
-          @Nullable Integer facing) {
-        String illegalReason = CraneRules.unloadByCraneIllegalReason(carrier, target, position, true, getGame());
+          @Nullable Integer facing, boolean isOnlyAction) {
+        String illegalReason = CraneRules.unloadByCraneIllegalReason(carrier, target, position, isOnlyAction,
+              getGame());
         if (illegalReason != null) {
             LOGGER.info("[Crane] {}: unload by crane rejected - {}", carrier.getDisplayName(), illegalReason);
             return;

@@ -113,7 +113,7 @@ class CraneOperationHandlerTest extends GameBoardTestCase {
     @DisplayName("A VTOL is aboard at the end of the fourth turn after the declaring turn (TW p.90)")
     void vtolIsLoadedAfterFourTurns() {
         VTOL vtol = placeVtol();
-        new CraneOperationHandler(gameManager).declareLoad(vtol, dropShip);
+        new CraneOperationHandler(gameManager).declareLoad(vtol, dropShip, true);
         assertNotNull(dropShip.getCraneOperations().findFor(vtol.getId()), "The declaration is recorded");
 
         gameManager.checkCraneOperations();
@@ -137,7 +137,7 @@ class CraneOperationHandlerTest extends GameBoardTestCase {
     void firingCancelsLoading() throws LocationFullException {
         VTOL vtol = placeVtol();
         vtol.addEquipment(EquipmentType.get("ISMediumLaser"), Tank.LOC_FRONT);
-        new CraneOperationHandler(gameManager).declareLoad(vtol, dropShip);
+        new CraneOperationHandler(gameManager).declareLoad(vtol, dropShip, true);
         gameManager.checkCraneOperations();
 
         vtol.getWeaponList().getFirst().setUsedThisRound(true);
@@ -151,7 +151,7 @@ class CraneOperationHandlerTest extends GameBoardTestCase {
     @DisplayName("Moving while waiting cancels crane loading")
     void movingCancelsLoading() {
         VTOL vtol = placeVtol();
-        new CraneOperationHandler(gameManager).declareLoad(vtol, dropShip);
+        new CraneOperationHandler(gameManager).declareLoad(vtol, dropShip, true);
         gameManager.checkCraneOperations();
 
         vtol.delta_distance = 2;
@@ -165,7 +165,7 @@ class CraneOperationHandlerTest extends GameBoardTestCase {
     @DisplayName("The DropShip lifting off cancels crane loading")
     void liftOffCancelsLoading() {
         VTOL vtol = placeVtol();
-        new CraneOperationHandler(gameManager).declareLoad(vtol, dropShip);
+        new CraneOperationHandler(gameManager).declareLoad(vtol, dropShip, true);
         gameManager.checkCraneOperations();
 
         dropShip.setAltitude(1);
@@ -180,7 +180,7 @@ class CraneOperationHandlerTest extends GameBoardTestCase {
         VTOL vtol = placeVtol();
         vtol.setPosition(new Coords(0, 0));
 
-        new CraneOperationHandler(gameManager).declareLoad(vtol, dropShip);
+        new CraneOperationHandler(gameManager).declareLoad(vtol, dropShip, true);
 
         assertTrue(dropShip.getCraneOperations().isEmpty(), "Nothing is recorded");
     }
@@ -189,7 +189,7 @@ class CraneOperationHandlerTest extends GameBoardTestCase {
     @DisplayName("A carried VTOL is placed in its chosen hex and facing at the end of the third turn (TW p.91)")
     void vtolIsUnloadedAfterThreeTurns() {
         VTOL vtol = loadedVtol();
-        new CraneOperationHandler(gameManager).declareUnload(dropShip, vtol, BESIDE_DROPSHIP, FACING_SOUTH_WEST);
+        new CraneOperationHandler(gameManager).declareUnload(dropShip, vtol, BESIDE_DROPSHIP, FACING_SOUTH_WEST, true);
         assertNotNull(dropShip.getCraneOperations().findFor(vtol.getId()), "The declaration is recorded");
 
         gameManager.checkCraneOperations();
@@ -209,7 +209,7 @@ class CraneOperationHandlerTest extends GameBoardTestCase {
     @DisplayName("An unloading whose hex is blocked waits and unloads once the hex clears")
     void blockedUnloadingWaits() {
         VTOL vtol = loadedVtol();
-        new CraneOperationHandler(gameManager).declareUnload(dropShip, vtol, BESIDE_DROPSHIP, FACING_SOUTH_WEST);
+        new CraneOperationHandler(gameManager).declareUnload(dropShip, vtol, BESIDE_DROPSHIP, FACING_SOUTH_WEST, true);
         // A VTOL may share a hex with one friendly Mek, so it takes two to break the stacking limit
         BipedMek firstBlocker = createBlocker(40);
         BipedMek secondBlocker = createBlocker(41);
@@ -229,6 +229,27 @@ class CraneOperationHandlerTest extends GameBoardTestCase {
 
         assertFalse(vtol.getTransportId() == dropShip.getId(), "Unloaded once the hex is clear");
         assertEquals(BESIDE_DROPSHIP, vtol.getPosition(), "Placed in the chosen hex");
+    }
+
+    @Test
+    @DisplayName("A crane loading declared after other steps in the same path is rejected on the server")
+    void loadDeclaredAfterOtherStepsIsRejected() {
+        VTOL vtol = placeVtol();
+
+        new CraneOperationHandler(gameManager).declareLoad(vtol, dropShip, false);
+
+        assertTrue(dropShip.getCraneOperations().isEmpty(), "Crane loading must be the unit's only action");
+    }
+
+    @Test
+    @DisplayName("A crane unloading declared after other steps in the same path is rejected on the server")
+    void unloadDeclaredAfterOtherStepsIsRejected() {
+        VTOL vtol = loadedVtol();
+
+        new CraneOperationHandler(gameManager).declareUnload(dropShip, vtol, BESIDE_DROPSHIP, FACING_SOUTH_WEST, false);
+
+        assertTrue(dropShip.getCraneOperations().isEmpty(), "Crane unloading must be the carrier's only action");
+        assertEquals(dropShip.getId(), vtol.getTransportId(), "The VTOL stays aboard");
     }
 
     private BipedMek createBlocker(int id) {

@@ -70,6 +70,7 @@ import megamek.client.ui.panels.phaseDisplay.FiringDisplay;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.client.ui.panels.phaseDisplay.PhysicalDisplay;
 import megamek.client.ui.panels.phaseDisplay.TargetingPhaseDisplay;
+import megamek.client.ui.panels.phaseDisplay.VictoryHexPropertiesPane;
 import megamek.client.ui.panels.phaseDisplay.commands.MoveCommand;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
@@ -90,10 +91,12 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.EquipmentFlag;
 import megamek.common.equipment.EquipmentMode;
+import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.MinefieldTarget;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
@@ -750,9 +753,50 @@ public class MapMenu extends JPopupMenu {
             // legally set depends on what the hex already holds, and the generated form cannot know that.
             menu.add(createChangeTerrainMenuItem());
             menu.add(createBuildingMenuItem());
+            if (client.getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
+                menu.add(createObjectiveMenuItem());
+            }
             menu.add(specialCommandsMenu);
         }
         return menu;
+    }
+
+    /**
+     * Opens the control point pane on the hex that was right-clicked, to change the objective there, remove it, or
+     * put a new one there, at any time in the game. The edit goes to the server, which replaces the marker and
+     * tells every client (Objectives series, game master tools).
+     */
+    private JMenuItem createObjectiveMenuItem() {
+        ObjectiveMarker existing = objectiveAt(coords);
+        JMenuItem item = new JMenuItem(Messages.getString(
+              (existing != null) ? "Gamemaster.cmd.objective.edit" : "Gamemaster.cmd.objective.add"));
+        item.addActionListener(event -> editObjectiveAsGameMaster(existing));
+        return item;
+    }
+
+    private @Nullable ObjectiveMarker objectiveAt(Coords hex) {
+        for (ICarryable groundObject : client.getGame().getGroundObjects(hex)) {
+            if (groundObject instanceof ObjectiveMarker marker) {
+                return marker;
+            }
+        }
+        return null;
+    }
+
+    private void editObjectiveAsGameMaster(@Nullable ObjectiveMarker existing) {
+        ObjectiveMarker marker = existing;
+        if (marker == null) {
+            marker = new ObjectiveMarker();
+            marker.setName(Messages.getString("VictoryHex.name", coords.getBoardNum()));
+            marker.setOwnerId(client.getLocalPlayer().getId());
+        }
+        VictoryHexPropertiesPane.Result result = VictoryHexPropertiesPane.edit(gui.getFrame(), marker,
+              client.getGame().getPlayersList(), true);
+        switch (result) {
+            case SAVED -> client.sendObjectiveEdit(coords, marker);
+            case REMOVED -> client.sendObjectiveEdit(coords, null);
+            case CANCELLED -> { /* nothing sent; the server's copy stands */ }
+        }
     }
 
     /** Opens the Building dialog on the hex that was right-clicked, to put one up, change it or remove it. */

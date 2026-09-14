@@ -82,6 +82,7 @@ import megamek.common.equipment.Flare;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePollEvent;
 import megamek.common.event.GameReportEvent;
@@ -1711,6 +1712,17 @@ public class Client extends AbstractClient {
      */
     public void sendScanOrder(ScanAction order) {
         send(new Packet(PacketCommand.ENTITY_SCAN_ORDER, order));
+    }
+
+    /**
+     * Sends a game master's edit of the objective at a hex, at any time in the game (Objectives series).
+     *
+     * @param coords the hex
+     * @param marker the objective to put there, or {@code null} to remove the one that is there
+     */
+    public void sendObjectiveEdit(Coords coords, @Nullable ObjectiveMarker marker) {
+        LOGGER.debug("Sending a game master objective edit for hex {}", coords.getBoardNum());
+        send(new Packet(PacketCommand.OBJECTIVE_EDIT, coords, marker));
     }
 
     /**

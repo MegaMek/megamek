@@ -32,6 +32,7 @@
  */
 package megamek.server.totalWarfare;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +45,7 @@ import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.event.GameToastEvent;
+import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import megamek.server.victory.VictoryPointTracker;
@@ -148,6 +150,56 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
      * show up in everyone's lobby board preview again. A marker whose owner no longer exists is dropped with a
      * logged warning.
      */
+    /**
+     * A game master's edit of the objective at a hex, at any time in the game: the marker there is replaced by the
+     * one sent, or removed when none is sent, every client is told, and the change is announced in chat so the
+     * players know the mission moved. Anyone who is not a game master is refused and logged.
+     *
+     * @param packet the packet: the hex, then the marker or {@code null}
+     * @param connId the sending connection
+     */
+    void receiveObjectiveEdit(Packet packet, int connId) {
+        Player sender = getGame().getPlayer(connId);
+        if ((sender == null) || !sender.isGameMaster()) {
+            VICTORY_HEX_LOGGER.warn("[Objective] Dropping an objective edit from {}: only a game master may change it",
+                  (sender == null) ? "an unknown connection" : sender.getName());
+            return;
+        }
+        if (!(packet.getObject(0) instanceof Coords coords)) {
+            VICTORY_HEX_LOGGER.warn("[Objective] Dropping an objective edit from {}: no hex in the packet",
+                  sender.getName());
+            return;
+        }
+        Object payload = packet.getObject(1);
+        ObjectiveMarker replacement = null;
+        if (payload instanceof ObjectiveMarker sentMarker) {
+            replacement = sentMarker;
+        } else if (payload != null) {
+            VICTORY_HEX_LOGGER.warn("[Objective] Dropping an objective edit from {}: the payload is not an objective",
+                  sender.getName());
+            return;
+        }
+        int replacedCount = 0;
+        for (ICarryable groundObject : new ArrayList<>(getGame().getGroundObjects(coords))) {
+            if (groundObject instanceof ObjectiveMarker existing) {
+                getGame().removeGroundObject(coords, existing);
+                replacedCount++;
+            }
+        }
+        String change;
+        if (replacement != null) {
+            getGame().placeGroundObject(coords, replacement);
+            change = Messages.getString("ObjectiveEdit.changed", replacement.generalName());
+        } else {
+            change = Messages.getString("ObjectiveEdit.removed");
+        }
+        VICTORY_HEX_LOGGER.info("[Objective] Game master {} {} at {}, {} marker(s) replaced", sender.getName(),
+              change, coords.getBoardNum(), replacedCount);
+        gameManager.sendGroundObjectUpdate();
+        gameManager.sendServerChat(Messages.getString("ObjectiveEdit.announce", sender.getName(), change,
+              coords.getBoardNum()));
+    }
+
     void returnObjectivesToLobby() {
         int returnedCount = 0;
         for (Map.Entry<Coords, List<ICarryable>> hexObjects : getGame().getGroundObjects().entrySet()) {

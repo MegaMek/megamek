@@ -294,7 +294,9 @@ public enum PacketCommand {
      */
     ENTITY_EJECTION_SETTING_CHANGE,
     /** A player's declaration for an infantry action in a building, in the Pre-End Declarations phase. */
-    INFANTRY_ACTION_DECLARATION;
+    INFANTRY_ACTION_DECLARATION,
+    /** A unit's order to scan a hex or unit in the End Phase (Objectives series); carries a {@code ScanAction}. */
+    ENTITY_SCAN_ORDER;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

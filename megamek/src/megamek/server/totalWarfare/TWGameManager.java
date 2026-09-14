@@ -1213,6 +1213,9 @@ public class TWGameManager extends AbstractGameManager {
                 case ENTITY_DEPLOY_BRIDGE:
                     receiveDeployBridge(packet, connId);
                     break;
+                case ENTITY_SCAN_ORDER:
+                    new ObjectiveScanHandler(this).receiveScanOrder(packet.data()[0], connId);
+                    break;
                 case INFANTRY_ACTION_DECLARATION:
                     receiveInfantryActionDeclaration(packet, connId);
                     break;

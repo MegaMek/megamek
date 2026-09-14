@@ -1704,6 +1704,16 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Sends a unit's order to scan a hex or unit in the End Phase (Objectives series, scanning). Sent as soon as the
+     * player gives it, in the pre-End declarations phase; a later order from the same unit replaces it.
+     *
+     * @param order the scan order
+     */
+    public void sendScanOrder(ScanAction order) {
+        send(new Packet(PacketCommand.ENTITY_SCAN_ORDER, order));
+    }
+
+    /**
      * Sends the local player's declaration for an infantry action in a building (TO:AR pp. 169 to 172).
      *
      * @param declaration what the player commits or withdraws

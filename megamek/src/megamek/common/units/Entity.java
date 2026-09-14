@@ -75,6 +75,7 @@ import megamek.common.compute.ComputeECM;
 import megamek.common.enums.*;
 import megamek.common.equipment.*;
 import megamek.common.equipment.BankedScan;
+import megamek.common.equipment.ScanMission;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.equipment.enums.MiscTypeFlag;
@@ -11906,7 +11907,8 @@ public abstract class Entity extends TurnOrdered
               || canAnnounceAbandon()
               || hasMinesweeper()
               || ownerHasDemolitionCharge()
-              || BridgeLayerLogic.canDeclareBridgeDeploy(this, game);
+              || BridgeLayerLogic.canDeclareBridgeDeploy(this, game)
+              || ScanMission.canOrderScan(this);
     }
 
     /**
@@ -11932,7 +11934,8 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean hasEntityScopedPreEndDeclaration() {
         // Bridge-Layer (AVLB) deployment is declared per unit (TM p.242 / TW); an infantry action is declared once
-        // per player per building, so it collapses to one turn like the other player-wide declarations.
+        // per player per building, so it collapses to one turn like the other player-wide declarations. So does a
+        // scan: the player gives every scanning unit its order in the one turn, each sent as it is given.
         return BridgeLayerLogic.canDeclareBridgeDeploy(this, game);
     }
 

@@ -53,6 +53,7 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
+import megamek.common.equipment.ScanMission;
 import megamek.common.game.Game;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.options.OptionsConstants;
@@ -101,6 +102,77 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
 
     ObjectiveScanHandler(TWGameManager gameManager) {
         super(gameManager);
+    }
+
+    /**
+     * Receives a unit's scan order from its player, in the pre-End declarations phase. The order is checked the way
+     * the End Phase will check it - the unit is the sender's, it can scan, the target is in range and in line of
+     * sight - and stored on the unit; a later order from the same unit replaces it. Refusals are logged and told to
+     * the sender, and change nothing.
+     *
+     * @param payload the packet's payload, expected to be a {@link ScanAction}
+     * @param connId  the sending connection, which must own the unit
+     */
+    void receiveScanOrder(Object payload, int connId) {
+        if (!(payload instanceof ScanAction order)) {
+            LOGGER.warn("[Scan] connection {} sent a scan order that is not a ScanAction - ignored", connId);
+            return;
+        }
+        Entity scanner = getGame().getEntity(order.getEntityId());
+        Player sender = getGame().getPlayer(connId);
+        if ((scanner == null) || (sender == null) || !sender.equals(scanner.getOwner())) {
+            LOGGER.warn("[Scan] connection {} ordered a scan for unit {}, which it does not own - ignored", connId,
+                  order.getEntityId());
+            return;
+        }
+        if (!getGame().getPhase().isPreEndDeclarations()) {
+            LOGGER.warn("[Scan] {} ordered a scan outside the pre-End declarations phase ({}) - ignored",
+                  scanner.getShortName(), getGame().getPhase());
+            return;
+        }
+        String refusal = orderRefusal(scanner, order);
+        if (refusal != null) {
+            LOGGER.info("[Scan] {} may not scan {}: {}", scanner.getShortName(), describeOrderTarget(order), refusal);
+            gameManager.sendServerChat(connId, Messages.getString("ObjectiveScan.orderRefused",
+                  scanner.getShortName(), describeOrderTarget(order), refusal));
+            return;
+        }
+        scanner.setPendingScan(order);
+        LOGGER.info("[Scan] {} will scan {} in the End Phase", scanner.getShortName(), describeOrderTarget(order));
+        gameManager.entityUpdate(scanner.getId());
+    }
+
+    /**
+     * @return why the order cannot be given, or {@code null} when it can: the same range, line of sight and ruleset
+     *       questions the End Phase asks, so an order that is accepted here resolves there
+     */
+    private @Nullable String orderRefusal(Entity scanner, ScanAction order) {
+        if (!ScanMission.canOrderScan(scanner)) {
+            return Messages.getString("ObjectiveScan.cannotScanNow");
+        }
+        Targetable target = order.resolveTarget(getGame());
+        if ((target == null) || (target.getPosition() == null) || (scanner.getPosition() == null)) {
+            return Messages.getString("ObjectiveScan.targetGone");
+        }
+        RulesScanning rules = Game.rulesManager.getRulesScanning();
+        TargetRoll targetRoll = rules.scanTargetRoll(scanner, target);
+        if (targetRoll.getValue() == TargetRoll.IMPOSSIBLE) {
+            return targetRoll.getDesc();
+        }
+        int distance = scanner.getPosition().distance(target.getPosition());
+        int range = rules.scanningRange(scanner, target);
+        if (distance > range) {
+            return Messages.getString("ObjectiveScan.outOfRange", distance, range);
+        }
+        if (!hasLineOfSight(scanner, target)) {
+            return Messages.getString("ObjectiveScan.noLineOfSight");
+        }
+        return null;
+    }
+
+    private String describeOrderTarget(ScanAction order) {
+        Coords position = order.resolveTargetPosition(getGame());
+        return (position == null) ? Messages.getString("ObjectiveScan.unitNoLongerThere") : position.getBoardNum();
     }
 
     /**

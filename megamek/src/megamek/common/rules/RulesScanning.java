@@ -56,6 +56,21 @@ import megamek.common.units.Targetable;
 public abstract class RulesScanning {
 
     /** Probe level of a unit with no working active probe. */
+    /**
+     * The scanning range of a ruleset that puts no distance limit on a scan: under Total Warfare a unit scans
+     * whatever its sensors can reach, so the only limits are line of sight and the rules below.
+     */
+    public static final int UNLIMITED_RANGE = Integer.MAX_VALUE;
+
+    /**
+     * @param scanningRange a range from {@link #scanningRange(Entity, Targetable)}
+     *
+     * @return {@code true} when that range puts no limit on how far a scan may reach
+     */
+    public static boolean isUnlimitedRange(int scanningRange) {
+        return scanningRange >= UNLIMITED_RANGE;
+    }
+
     public static final int PROBE_LEVEL_NONE = 0;
     /** Light Active Probe (Core Rules p.233). */
     public static final int PROBE_LEVEL_LIGHT = 1;

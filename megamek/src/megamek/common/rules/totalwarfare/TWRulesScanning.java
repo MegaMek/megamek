@@ -54,7 +54,7 @@ public class TWRulesScanning extends RulesScanning {
     /** A scan of a target inside hostile ECM needs this on 2D6 (Total Warfare p.187). */
     public static final int ECM_TARGET_NUMBER = 8;
     /** Standard sensors reach anything in line of sight; the caller bounds the search by the board. */
-    public static final int SENSOR_RANGE = Integer.MAX_VALUE;
+    public static final int SENSOR_RANGE = UNLIMITED_RANGE;
 
     @Override
     public int scanningRange(Entity scanner, @Nullable Targetable target) {

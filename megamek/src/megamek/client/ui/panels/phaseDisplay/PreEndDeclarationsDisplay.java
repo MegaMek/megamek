@@ -727,8 +727,20 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         selectingScanTarget = true;
         setStatusBarText(Messages.getString("PreEndDeclarationsDisplay.SelectScanTarget",
               scanner.getShortName(),
-              Game.rulesManager.getRulesScanning().scanningRange(scanner, null)));
+              scanningRangeText(Game.rulesManager.getRulesScanning().scanningRange(scanner, null))));
         LOGGER.debug("[Scan] {} waiting for a hex or unit to scan", scanner.getShortName());
+    }
+
+    /**
+     * @param scanningRange the unit's scanning range
+     *
+     * @return the range as the player should read it: the number of hexes, or a word for a ruleset that sets no
+     *       distance limit, so the status bar never shows a meaningless very large number
+     */
+    private static String scanningRangeText(int scanningRange) {
+        return RulesScanning.isUnlimitedRange(scanningRange)
+              ? Messages.getString("PreEndDeclarationsDisplay.scanRangeSensors")
+              : String.valueOf(scanningRange);
     }
 
     /**

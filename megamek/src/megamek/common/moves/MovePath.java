@@ -235,6 +235,11 @@ public class MovePath implements Cloneable, Serializable {
         return addStep(new MoveStep(this, type, additionalIntData));
     }
 
+    public MovePath addStep(final MoveStepType type, final Targetable target, final Coords pos,
+          final Map<Integer, Integer> additionalIntData) {
+        return addStep(new MoveStep(this, type, target, pos, additionalIntData));
+    }
+
     public MovePath addStep(final MoveStepType type, final boolean noCost, final boolean isManeuver,
           final int maneuverType) {
         return addStep(new MoveStep(this, type, noCost, isManeuver, maneuverType));
@@ -422,12 +427,12 @@ public class MovePath implements Cloneable, Serializable {
                 prevStep = s;
             }
         }
-        
+
         if (steps.size() > 1 && entity instanceof Mek && ((Mek) entity).countBadLegs() > 0 && Game.rulesManager instanceof CoreRulesManager) {
             MoveStep lastStep = steps.getLast();
             MoveStep prevStep = steps.getFirst();
-            if ((lastStep.getPosition().equals(prevStep.getPosition()) 
-            || lastStep.getMovementType(true) != EntityMovementType.MOVE_WALK) 
+            if ((lastStep.getPosition().equals(prevStep.getPosition())
+            || lastStep.getMovementType(true) != EntityMovementType.MOVE_WALK)
             && !(entity instanceof QuadMek && ((QuadMek) entity).countBadLegs() < 3)) {
                 for (MoveStep s : steps) {
                    s.setDanger(true);

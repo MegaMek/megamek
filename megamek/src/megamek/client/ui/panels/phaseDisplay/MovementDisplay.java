@@ -115,6 +115,7 @@ import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.game.IGame;
 import megamek.common.moves.ClimbingHelper;
+import megamek.common.moves.MountPathHelper;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
@@ -1751,6 +1752,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         butSkipTurn.setEnabled(false);
         setLoadEnabled(false);
         setMountEnabled(false);
+        getBtn(MoveCommand.MOVE_LOAD_BY_CRANE).setEnabled(false);
+        getBtn(MoveCommand.MOVE_UNLOAD_BY_CRANE).setEnabled(false);
         setTowEnabled(false);
         setUnloadEnabled(false);
         setDisconnectEnabled(false);
@@ -1881,6 +1884,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateLayMineButton();
 
         unloadableUnits = currentlySelectedEntity.getUnloadableUnits();
+        if (currentlySelectedEntity instanceof SmallCraft) {
+            // VTOLs, fighters and small craft cannot dismount under their own power; they leave by Unload by Crane
+            unloadableUnits.removeIf(CraneRules::isCraneOnlyUnit);
+        }
         towedUnits = currentlySelectedEntity.getLoadedTrailers();
 
         updateLoadButtons();
@@ -2391,6 +2398,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
             gear = GEAR_LAND;
         } else if ((gear == GEAR_LAND) || (gear == GEAR_JUMP)) {
             extendPathTo(dest, boardId, MoveStepType.FORWARDS);
+            if (gear == GEAR_LAND) {
+                // Clicking a friendly transport stops the path beside it so the Mount button can board it
+                Entity transport = MountPathHelper.trimToMountableTransport(cmd, dest, boardId, game);
+                if (transport != null) {
+                    LOGGER.debug("[Mount] {}: clicked {} at {}; path stops beside it at {}",
+                          currentEntity().getDisplayName(), transport.getDisplayName(), dest, cmd.getFinalCoords());
+                }
+            }
             if (shouldDesignateFlightPath(currentEntity())) {
                 // Interpreting TW p.242 to mean that designating a flight path is optional, as making A2G attacks is
                 // certainly optional
@@ -4327,6 +4342,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateUnloadButton();
         updateTowingButtons();
         updateMountButton();
+        updateCraneButtons();
         updatePickupCargoButton();
         updateDropCargoButton();
     }
@@ -4450,13 +4466,80 @@ public class MovementDisplay extends ActionPhaseDisplay {
             elev = cmd.getFinalElevation();
             mpUsed = cmd.getMpUsed();
         }
-        final boolean canMount = isFinalPositionOnBoard() &&
-              !movingEntity.isAirborne() &&
-              (mpUsed <= Math.ceil(movingEntity.getWalkMP() / 2.0)) &&
+        final boolean hasMountableUnit = isFinalPositionOnBoard() &&
               !Compute.getMountableUnits(movingEntity, pos, finalBoardId(),
                     elev + game.getBoard(movingEntity).getHex(pos).getLevel(),
                     game).isEmpty();
+        // Same rule the MOUNT step enforces on the path, so the button only lights when the mount would be legal
+        final boolean isJumping = (null != cmd) && cmd.isJumping();
+        final MountPathHelper.MountRestriction restriction = MountPathHelper.mountRestriction(movingEntity,
+              movingEntity.getWalkMP(), mpUsed, isJumping);
+        final boolean canMount = hasMountableUnit &&
+              !movingEntity.isAirborne() &&
+              (restriction == MountPathHelper.MountRestriction.NONE);
+        if (hasMountableUnit) {
+            // Only logged next to a transport, when the player expects the button, so the log is not flooded
+            LOGGER.debug("[Mount] {}: Mount button {} (MP used {} of Walking MP {}, jumping {}, restriction {})",
+                  movingEntity.getDisplayName(), canMount ? "enabled" : "disabled", mpUsed,
+                  movingEntity.getWalkMP(), isJumping, restriction);
+        }
         setMountEnabled(canMount);
+    }
+
+    /** Updates the Load by Crane and Unload by Crane buttons; both must be the unit's only action (TW p.90-91). */
+    private void updateCraneButtons() {
+        final Entity currentEntity = currentEntity();
+        final boolean hasPlottedMove = (cmd != null) && (cmd.length() > 0);
+
+        boolean canLoadByCrane = false;
+        if ((currentEntity != null) && !hasPlottedMove && CraneRules.isCraneOnlyUnit(currentEntity)) {
+            boolean isAlreadyWaiting = CraneRules.findCarrierWorkingOn(currentEntity.getId(), game) != null;
+            boolean hasCarrierInReach = !CraneRules.carriersInReach(currentEntity, game).isEmpty();
+            canLoadByCrane = !isAlreadyWaiting && hasCarrierInReach;
+            LOGGER.debug("[Crane] {}: Load by Crane button {} (already waiting {}, carrier in reach {})",
+                  currentEntity.getDisplayName(), canLoadByCrane ? "enabled" : "disabled", isAlreadyWaiting,
+                  hasCarrierInReach);
+        }
+        getBtn(MoveCommand.MOVE_LOAD_BY_CRANE).setEnabled(canLoadByCrane);
+
+        boolean canUnloadByCrane = false;
+        if ((currentEntity instanceof SmallCraft carrier) && !hasPlottedMove && CraneRules.isGroundedCarrier(carrier)) {
+            canUnloadByCrane = !CraneRules.craneUnloadableUnits(carrier).isEmpty();
+            LOGGER.debug("[Crane] {}: Unload by Crane button {}", carrier.getDisplayName(),
+                  canUnloadByCrane ? "enabled" : "disabled");
+        }
+        getBtn(MoveCommand.MOVE_UNLOAD_BY_CRANE).setEnabled(canUnloadByCrane);
+    }
+
+    /** Asks for the unit, hex and facing, then declares crane unloading as the carrier's only action (TW p.91). */
+    private void unloadByCrane() {
+        if (!(currentEntity() instanceof SmallCraft carrier)) {
+            return;
+        }
+        Entity unit = CraneCommandDialogs.chooseUnit(clientgui.getFrame(), carrier,
+              CraneRules.craneUnloadableUnits(carrier));
+        if (unit == null) {
+            return;
+        }
+        List<Coords> positions = CraneRules.unloadPositions(carrier, unit, game);
+        if (positions.isEmpty()) {
+            clientgui.addToast(ToastLevel.ERROR, Messages.getString("MovementDisplay.NoPlaceToUnload.message"),
+                  carrier);
+            return;
+        }
+        Coords position = CraneCommandDialogs.chooseUnloadHex(clientgui.getFrame(), carrier, positions);
+        if (position == null) {
+            return;
+        }
+        Integer facing = CraneCommandDialogs.chooseFacing(clientgui.getFrame(), unit);
+        if (facing == null) {
+            return;
+        }
+        LOGGER.debug("[Crane] {}: declaring Unload by Crane of {} into {} facing {}", carrier.getDisplayName(),
+              unit.getDisplayName(), position, facing);
+        cmd.addStep(MoveStepType.UNLOAD_BY_CRANE, unit, position, Map.of(MoveStep.CRANE_UNLOAD_FACING_KEY, facing));
+        updateMove();
+        ready();
     }
 
     /** Updates the status of the Tow and Disconnect buttons. */
@@ -4527,7 +4610,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
     }
 
-    private Entity getMountedUnit() {
+    private @Nullable Entity getMountedUnit() {
         Entity currentEntity = currentEntity();
         Entity choice = null;
         Coords pos = currentEntity.getPosition();
@@ -4581,6 +4664,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       null,
                       retVal,
                       null);
+                if (bayString == null) {
+                    // The player cancelled the bay choice, so do not mount
+                    LOGGER.debug("[Mount] {} cancelled the bay choice for {}; not mounting",
+                          currentEntity.getDisplayName(), choice.getDisplayName());
+                    currentEntity.setTargetBay(UNSET_BAY);
+                    return null;
+                }
                 currentEntity.setTargetBay(MathUtility.parseInt(bayString.substring(0, bayString.indexOf(" "))));
                 // We need to update the entity here so that the server knows
                 // about our target bay
@@ -6655,6 +6745,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 addStepToMovePath(MoveStepType.MOUNT, other);
                 ready();
             }
+        } else if (actionCmd.equals(MoveCommand.MOVE_LOAD_BY_CRANE.getCmd())) {
+            SmallCraft carrier = CraneCommandDialogs.chooseCarrier(clientgui.getFrame(), currentEntity(),
+                  CraneRules.carriersInReach(currentEntity(), game));
+            if (carrier != null) {
+                addStepToMovePath(MoveStepType.LOAD_BY_CRANE, carrier);
+                ready();
+            }
+        } else if (actionCmd.equals(MoveCommand.MOVE_UNLOAD_BY_CRANE.getCmd())) {
+            unloadByCrane();
         } else if (actionCmd.equals(MoveCommand.MOVE_UNLOAD.getCmd())) {
             Entity other = getUnloadedUnit();
             if (other != null) {

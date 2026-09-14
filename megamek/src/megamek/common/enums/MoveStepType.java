@@ -108,6 +108,8 @@ public enum MoveStepType {
     DROP(false, "Drop"),
     VERTICAL_LAND(false, "Vertical Landing"),
     MOUNT(false, "Mount"),
+    LOAD_BY_CRANE(false, "LoadByCrane"),
+    UNLOAD_BY_CRANE(false, "UnloadByCrane"),
     UNDOCK(false, "Undock"),
     TAKE_COVER(false, "TakeCover"),
     CONVERT_MODE(false, "ConvMode"),

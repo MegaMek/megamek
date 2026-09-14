@@ -3159,6 +3159,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             } else if ((entity instanceof RubbleClearer) && (step.getType() == MoveStepType.CLEAR_RUBBLE)) {
                 beginRubbleClearing(entity, step.getPosition());
+            } else if (step.getType() == MoveStepType.LOAD_BY_CRANE) {
+                new CraneOperationHandler(gameManager).declareLoad(entity, step.getTarget(getGame()));
+            } else if (step.getType() == MoveStepType.UNLOAD_BY_CRANE) {
+                new CraneOperationHandler(gameManager).declareUnload(entity, step.getTarget(getGame()),
+                      step.getTargetPosition(), step.getAdditionalData(MoveStep.CRANE_UNLOAD_FACING_KEY));
             }
 
             // If we have turned, check whether we have fulfilled any turn mode

@@ -35,7 +35,6 @@ package megamek.common.moves;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.lang.System;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -69,7 +68,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
-import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
 
@@ -103,6 +101,9 @@ public class MoveStep implements Serializable {
     public static final int BRIDGE_TARGET_Y_KEY = 1;
     public static final int BRIDGE_EXITS_KEY = 2;
     public static final int BRIDGE_TYPE_KEY = 3;
+
+    /** Additional int data key for an UNLOAD_BY_CRANE step: the facing the unloaded unit is placed with. */
+    public static final int CRANE_UNLOAD_FACING_KEY = 0;
 
     private final MoveStepType type;
     private int targetId = Entity.NONE;
@@ -340,6 +341,22 @@ public class MoveStep implements Serializable {
     public MoveStep(MovePath path, MoveStepType type, Map<Integer, Integer> additionalIntData) {
         this(path, type);
 
+        additionalData.putAll(additionalIntData);
+    }
+
+    /**
+     * Creates a step with a target unit, a target hex and additional int data, such as an UNLOAD_BY_CRANE step that
+     * names the carried unit, the hex to place it in and its facing.
+     *
+     * @param path              the path this step belongs to
+     * @param type              the step type
+     * @param target            the unit the step acts on
+     * @param pos               the hex the step acts on
+     * @param additionalIntData extra data keyed by the step type's keys
+     */
+    public MoveStep(MovePath path, MoveStepType type, Targetable target, Coords pos,
+          Map<Integer, Integer> additionalIntData) {
+        this(path, type, target, pos);
         additionalData.putAll(additionalIntData);
     }
 
@@ -842,7 +859,12 @@ public class MoveStep implements Serializable {
               null,
               climbMode,
               true);
-        if ((violation != null) && (getType() != MoveStepType.CHARGE) && (getType() != MoveStepType.DFA)) {
+        // A MOUNT step boards the adjacent transport, so the unit does not end its move in this hex. A Mek may move
+        // through a friendly Mek's hex but may not end its move there (TW, Occupied Hexes and Stacking)
+        if ((violation != null)
+              && (getType() != MoveStepType.CHARGE)
+              && (getType() != MoveStepType.DFA)
+              && (getType() != MoveStepType.MOUNT)) {
             setStackingViolation(true);
         }
 
@@ -1011,7 +1033,7 @@ public class MoveStep implements Serializable {
         int[] tempMv = entity.getVectors();
 
         mv = new int[] { 0, 0, 0, 0, 0, 0 };
-        System.arraycopy(tempMv, 0, mv, 0, 6);
+        java.lang.System.arraycopy(tempMv, 0, mv, 0, 6);
 
         // if ASF get velocity
         if (entity.isAero()) {
@@ -2941,7 +2963,44 @@ public class MoveStep implements Serializable {
         }
 
         if (stepType == MoveStepType.MOUNT) {
+            MountPathHelper.MountRestriction restriction = MountPathHelper.mountRestriction(entity,
+                  cachedEntityState.getWalkMP(), prev.getMpUsed(), isJumping());
+            if (restriction != MountPathHelper.MountRestriction.NONE) {
+                LOGGER.debug("[Mount] {} may not mount after spending {} MP (Walking MP {}, jumping {}): {}",
+                      entity.getDisplayName(), prev.getMpUsed(), cachedEntityState.getWalkMP(), isJumping(),
+                      restriction);
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+                return;
+            }
             movementType = EntityMovementType.MOVE_WALK;
+        }
+
+        // Crane loading and unloading for grounded Small Craft and DropShips (TW p.90-91); the rules live in CraneRules
+        if (stepType == MoveStepType.LOAD_BY_CRANE) {
+            String illegalReason = CraneRules.loadByCraneIllegalReason(entity, getTarget(game), isFirstStep(), game);
+            if (illegalReason != null) {
+                LOGGER.debug("[Crane] {}: load by crane illegal - {}", entity.getDisplayName(), illegalReason);
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+                return;
+            }
+            movementType = EntityMovementType.MOVE_NONE;
+        }
+        if (stepType == MoveStepType.UNLOAD_BY_CRANE) {
+            String illegalReason = CraneRules.unloadByCraneIllegalReason(entity, getTarget(game), getTargetPosition(),
+                  isFirstStep(), game);
+            if (illegalReason != null) {
+                LOGGER.debug("[Crane] {}: unload by crane illegal - {}", entity.getDisplayName(), illegalReason);
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+                return;
+            }
+            movementType = EntityMovementType.MOVE_NONE;
+        }
+        if ((stepType == MoveStepType.UNLOAD) && (entity instanceof SmallCraft)
+              && (getTarget(game) instanceof Entity unloadedUnit) && CraneRules.isCraneOnlyUnit(unloadedUnit)) {
+            LOGGER.debug("[Crane] {}: {} cannot dismount under its own power; it must be unloaded by crane",
+                  entity.getDisplayName(), unloadedUnit.getDisplayName());
+            movementType = EntityMovementType.MOVE_ILLEGAL;
+            return;
         }
 
         if (stepType == MoveStepType.BOOTLEGGER) {
@@ -3733,7 +3792,7 @@ public class MoveStep implements Serializable {
               (movementType == EntityMovementType.MOVE_VTOL_WALK) ||
               (movementType == EntityMovementType.MOVE_VTOL_RUN) ||
               (movementType == EntityMovementType.MOVE_VTOL_SPRINT);
-        
+
         if ((movementType != EntityMovementType.MOVE_JUMP) && !isVTOLFlight) {
             int maxDown = Game.rulesManager.getRulesTerrain().getMaxElevationChangeAllowed(srcHex, destHex,
                   entity.getMaxElevationDown(srcAlt));
@@ -3796,7 +3855,7 @@ public class MoveStep implements Serializable {
         boolean isDownCliff = !src.equals(dest) &&
               srcHex.hasCliffTopTowards(destHex) &&
               (stepHeight == -1 || stepHeight == -2);
-        
+
         // For vehicles exc. VTOL, WIGE, upward Sheer Cliffs is forbidden
         // QuadVees in vehicle mode drive as vehicles, IO p.133
         if ((vehicleAffectedByCliff || quadVeeVehicleMode) && isUpCliff && !isPavementStep) {

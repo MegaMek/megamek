@@ -422,11 +422,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void cancel() {
         boolean keepDeployment = true;
         if (cmd != null) {
-            boolean jumpDeploy = ((cmd.length() == 2 &&
-                                   cmd.getLastStep().getType() == MoveStepType.START_JUMP) ||
-                                  (cmd.length() == 3 && cmd.getLastStep()
-                                                           .getType() == MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER));
-            keepDeployment = ((cmd.length() > 1) && !jumpDeploy && (deploymentAnchor(cmd) != null));
+            // Escape once drops the movement and keeps the placement; Escape on a bare placement drops it too
+            keepDeployment = !isDeploymentOnly(cmd) && (deploymentAnchor(cmd) != null);
         }
         clear(keepDeployment);
         Entity currentEntity = currentEntity();
@@ -2004,12 +2001,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             currentlySelectedEntity.setBoardId(anchor.boardId());
             currentlySelectedEntity.setFacing(anchor.facing());
             currentlySelectedEntity.setDeployed(true);
-            addStepToMovePath(MoveStepType.DEPLOY);
-            markDeploymentHexes(null);
             if (savedGear == GEAR_JUMP) {
                 gear = GEAR_JUMP;
-                initializeJumpMovePath();
             }
+            addDeploymentToMovePath();
+            markDeploymentHexes(null);
         } else if (wasWalkOn) {
             // Press escape twice
             if (currentlySelectedEntity.isDeployed()) {
@@ -2114,8 +2110,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
             currentlySelectedEntity.setPosition(null);
             clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
             markDeploymentHexes(currentlySelectedEntity);
+            cmd.removeLastStep();
+            // The jump was declared ahead of the placement; with the placement gone it has nothing to apply to
+            while ((cmd.getLastStep() != null) && isJumpDeclaration(cmd.getLastStep().getType())) {
+                cmd.removeLastStep();
+            }
+        } else {
+            cmd.removeLastStep();
         }
-        cmd.removeLastStep();
 
         if (cmd.length() == 0) {
             clear();
@@ -2859,10 +2861,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     currentlySelectedEntity.setSecondaryFacing(facing);
                     currentlySelectedEntity.setDeployed(true);
                     cmd = new MovePath(game, currentlySelectedEntity);
-                    addStepToMovePath(MoveStepType.DEPLOY);
-                    if (gear == GEAR_JUMP) {
-                        initializeJumpMovePath();
-                    }
+                    addDeploymentToMovePath();
                 } else {
                     String msg = Messages.getString("DeploymentDisplay.cantDeployInto",
                                                     currentlySelectedEntity.getShortName(),
@@ -6729,9 +6728,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     jumpSubGear = GEAR_SUB_MEK_BOOSTERS;
                 }
             }
-            if (!cmd.isJumping()) {
-                initializeJumpMovePath();
-            }
+            declareJumpForCurrentPath();
             Color jumpColor = GUIP.getMoveJumpColor();
             clientgui.boardViews().forEach(bv -> ((BoardView) bv).setHighlightColor(jumpColor));
             computeMovementEnvelope(entity);
@@ -6867,9 +6864,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
             gear = MovementDisplay.GEAR_DFA;
             computeMovementEnvelope(entity);
-            if (!cmd.isJumping()) {
-                initializeJumpMovePath();
-            }
+            declareJumpForCurrentPath();
         } else if (actionCmd.equals(MoveCommand.MOVE_RAM.getCmd())) {
             if (gear != MovementDisplay.GEAR_LAND) {
                 clear();
@@ -8976,19 +8971,63 @@ public class MovementDisplay extends ActionPhaseDisplay {
         entity.setFacing(entity.getPosition().direction(coords));
         entity.setSecondaryFacing(entity.getFacing());
         cmd = new MovePath(game, entity);
-        addStepToMovePath(MoveStepType.DEPLOY);
-        if (gear == GEAR_JUMP) {
-            initializeJumpMovePath();
-        }
+        addDeploymentToMovePath();
         clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(entity));
         clientgui.updateFiringArc(entity);
         clientgui.showSensorRanges(entity);
     }
 
     private boolean pathZeroOrDeploy() {
-        if (cmd.length() == 0 || (cmd.length() == 1 && cmd.getLastStep().getType() == MoveStepType.DEPLOY)) {
-            return true;
+        return (cmd.length() == 0) || isDeploymentOnly(cmd);
+    }
+
+    /**
+     * Adds the walk-on placement to the current path. In jump gear the jump is declared first, the way
+     * {@code START_JUMP} leads every other jump path, so the deploy hex compiles as the first hex of the jump
+     * (1 MP) rather than as a walked hex paying its terrain cost. The unit must already be marked deployed, or
+     * {@link #initializeJumpMovePath()} adds nothing.
+     */
+    private void addDeploymentToMovePath() {
+        if ((gear == GEAR_JUMP) || (gear == GEAR_DFA)) {
+            initializeJumpMovePath();
         }
-        return false;
+        addStepToMovePath(MoveStepType.DEPLOY);
+    }
+
+    /**
+     * Declares a jump on the current path if it is not one already. A walk-on unit that is only placed so far has
+     * its path rebuilt so the declaration leads the deploy step; anything else just gets the declaration appended.
+     */
+    private void declareJumpForCurrentPath() {
+        if (cmd.isJumping()) {
+            return;
+        }
+        Entity movingEntity = currentEntity();
+        if ((movingEntity != null) && isDeploymentOnly(cmd)) {
+            cmd = new MovePath(game, movingEntity);
+            addDeploymentToMovePath();
+        } else {
+            initializeJumpMovePath();
+        }
+    }
+
+    /**
+     * @param path the current path, may be empty
+     * @return {@code true} when the path holds a walk-on placement and nothing but the jump declaration around it
+     */
+    private static boolean isDeploymentOnly(MovePath path) {
+        boolean hasDeployment = false;
+        for (MoveStep step : path.getStepVector()) {
+            if (step.getType() == MoveStepType.DEPLOY) {
+                hasDeployment = true;
+            } else if (!isJumpDeclaration(step.getType())) {
+                return false;
+            }
+        }
+        return hasDeployment;
+    }
+
+    private static boolean isJumpDeclaration(MoveStepType type) {
+        return (type == MoveStepType.START_JUMP) || (type == MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER);
     }
 }

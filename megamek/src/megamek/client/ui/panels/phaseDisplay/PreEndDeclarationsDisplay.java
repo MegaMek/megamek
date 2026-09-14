@@ -193,6 +193,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         setTooltip(PreEndCommand.PREEND_ABANDON);
         setTooltip(PreEndCommand.PREEND_DETONATE_CHARGES);
         setTooltip(PreEndCommand.PREEND_MINESWEEPER);
+        setTooltip(PreEndCommand.PREEND_SCAN);
     }
 
     private void setTooltip(PreEndCommand command) {
@@ -210,6 +211,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         buttonList.add(buttons.get(PreEndCommand.PREEND_DETONATE_CHARGES));
         buttonList.add(buttons.get(PreEndCommand.PREEND_MINESWEEPER));
         buttonList.add(buttons.get(PreEndCommand.PREEND_DEPLOY_BRIDGE));
+        buttonList.add(buttons.get(PreEndCommand.PREEND_SCAN));
         buttonList.add(buttons.get(PreEndCommand.PREEND_NEXT));
         return buttonList;
     }

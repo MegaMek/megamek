@@ -44,6 +44,7 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -146,9 +147,15 @@ public final class VictoryHexPropertiesPane {
         JLabel rateLabel = new JLabel();
         JLabel countingLabel = new JLabel(Messages.getString("VictoryHex.counting"));
         JLabel schemeDescription = new JLabel();
+        JLabel retainControlLabel = new JLabel(Messages.getString("VictoryHex.retainControl"));
+        JLabel startingControlLabel = new JLabel(Messages.getString("VictoryHex.startingControl"));
+        JLabel radiusLabel = new JLabel(Messages.getString("VictoryHex.radius"));
+        // a scan point is read, not held: nothing about control applies to it, so these rows go away with it
+        List<JComponent> controlRows = List.of(retainControlLabel, retainControlCheckbox, startingControlLabel,
+              startingControlCombo, radiusLabel, radiusSpinner);
         SchemeControls controls = new SchemeControls(schemeCombo, countingCombo, thresholdSpinner, rateSpinner,
-              retainControlCheckbox, carriedHomeCheckbox, carriedHomeLabel, thresholdLabel, rateLabel, countingLabel,
-              schemeDescription);
+              retainControlCheckbox, carriedHomeCheckbox, carriedHomeLabel, controlRows, thresholdLabel, rateLabel,
+              countingLabel, schemeDescription);
         schemeCombo.addActionListener(event -> refreshSchemeRows(controls));
         countingCombo.addActionListener(event -> refreshSchemeRows(controls));
         thresholdSpinner.addChangeListener(event -> refreshSchemeRows(controls));
@@ -169,10 +176,9 @@ public final class VictoryHexPropertiesPane {
         addRow(propertiesPanel, 2, countingLabel, countingCombo);
         addRow(propertiesPanel, 3, rateLabel, rateSpinner);
         addRow(propertiesPanel, 4, carriedHomeLabel, carriedHomeCheckbox);
-        addRow(propertiesPanel, 5, new JLabel(Messages.getString("VictoryHex.retainControl")), retainControlCheckbox);
-        addRow(propertiesPanel, 6, new JLabel(Messages.getString("VictoryHex.startingControl")),
-              startingControlCombo);
-        addRow(propertiesPanel, 7, new JLabel(Messages.getString("VictoryHex.radius")), radiusSpinner);
+        addRow(propertiesPanel, 5, retainControlLabel, retainControlCheckbox);
+        addRow(propertiesPanel, 6, startingControlLabel, startingControlCombo);
+        addRow(propertiesPanel, 7, radiusLabel, radiusSpinner);
         addRow(propertiesPanel, 8, new JLabel(Messages.getString("VictoryHex.victoryPoints")), victoryPointSpinner);
         pinRowsToTheTop(propertiesPanel, 9);
 
@@ -194,7 +200,9 @@ public final class VictoryHexPropertiesPane {
         if (result != 0) {
             return Result.CANCELLED;
         }
-        boolean retainsControl = retainControlCheckbox.isSelected();
+        // a scan point has no control to keep or to start with, whatever the hidden rows still say
+        boolean isScanPoint = schemeCombo.getSelectedItem() == SchemePreset.SCAN;
+        boolean retainsControl = !isScanPoint && retainControlCheckbox.isSelected();
         scheme.setRetainsControlWhenEmpty(retainsControl);
         scheme.setScanCarriedHome(carriedHomeCheckbox.isSelected());
         // a greyed dropdown keeps whatever it last showed, so its choice only counts while retention is on;
@@ -229,6 +237,7 @@ public final class VictoryHexPropertiesPane {
      * @param retainControl     whether the point keeps its holder once the zone empties
      * @param carriedHome       whether a Scan point pays only once its reading reaches home
      * @param carriedHomeLabel  the label of that box, shown only for a Scan point
+     * @param controlRows       the retention, starting holder and radius rows, hidden for a Scan point
      * @param thresholdLabel    the label naming the threshold for the selected preset
      * @param rateLabel         the label naming the rate for the selected preset
      * @param countingLabel     the label of the counting selector
@@ -236,7 +245,7 @@ public final class VictoryHexPropertiesPane {
      */
     private record SchemeControls(JComboBox<SchemePreset> schemeCombo, JComboBox<HoldCounting> countingCombo,
           JSpinner thresholdSpinner, JSpinner rateSpinner, JCheckBox retainControl, JCheckBox carriedHome,
-          JLabel carriedHomeLabel, JLabel thresholdLabel,
+          JLabel carriedHomeLabel, List<JComponent> controlRows, JLabel thresholdLabel,
           JLabel rateLabel, JLabel countingLabel, JLabel schemeDescription) {}
 
     /**
@@ -291,6 +300,9 @@ public final class VictoryHexPropertiesPane {
         boolean usesCarriedHome = preset == SchemePreset.SCAN;
         controls.carriedHomeLabel().setVisible(usesCarriedHome);
         controls.carriedHome().setVisible(usesCarriedHome);
+        for (JComponent controlRow : controls.controlRows()) {
+            controlRow.setVisible(!usesCarriedHome);
+        }
         controls.thresholdLabel().setVisible(usesThreshold);
         controls.thresholdSpinner().setVisible(usesThreshold);
         controls.rateLabel().setVisible(usesRate);

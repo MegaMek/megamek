@@ -34,6 +34,8 @@ package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.mock;
@@ -41,10 +43,16 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import megamek.common.CriticalSlot;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
+import megamek.common.units.Mek;
+import megamek.testUtilities.MMTestUtilities;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -362,5 +370,92 @@ class FireControlHeatAwarenessTest {
         fireControl.applyTsmHeatIncentive(mek, hotPlan);
         verify(coolPlan).setUtility(50.0 + coolBonus);
         verify(hotPlan).setUtility(50.0 + hotBonus);
+    }
+
+    // --- engine critical heat (#8823) --------------------------------------------------------
+
+    /** Two engine criticals on a Mek: 5 heat each, charged by HeatResolver every turn. */
+    private static final int TWO_MEK_ENGINE_CRITS_HEAT = 10;
+
+    @BeforeAll
+    static void initializeEquipment() {
+        EquipmentType.initializeTypes();
+    }
+
+    private Mek loadFusionMek() {
+        Entity entity = MMTestUtilities.getEntityForUnitTesting("Enforcer III ENF-6M", false);
+        assertNotNull(entity, "Test unit could not be loaded");
+        return assertInstanceOf(Mek.class, entity, "Test unit is not a Mek");
+    }
+
+    @Test
+    void engineCriticalsLowerHeatTolerance() {
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.getEngineCritHeat()).thenReturn(TWO_MEK_ENGINE_CRITS_HEAT);
+        // capacity 10 - (heat 0 + engine crits 10) + 5 = 5, i.e. 10 lower than the undamaged 15
+        assertEquals(5, fireControl.calcHeatTolerance(mek, false));
+    }
+
+    @Test
+    void engineCriticalsRaiseProjectedEndOfTurnHeat() {
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.getHeat()).thenReturn(15);
+        when(mek.getEngineCritHeat()).thenReturn(TWO_MEK_ENGINE_CRITS_HEAT);
+        // heat 15 + weapon 4 + engine crits 10 - capacity 10 = 19, not the 9 an undamaged Mek reaches
+        assertEquals(19, fireControl.projectedEndOfTurnHeat(mek, 4));
+    }
+
+    @Test
+    void tsmMekWithEngineCriticalsKeepsCeilingRelativeTolerance() {
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.hasTSM(false)).thenReturn(true);
+        when(mek.getEngineCritHeat()).thenReturn(TWO_MEK_ENGINE_CRITS_HEAT);
+        // The engine heat counts toward the TSM ceiling, so the Mek gets that much less room to fire.
+        assertEquals(HEAT_CAPACITY - TWO_MEK_ENGINE_CRITS_HEAT + FireControl.TSM_HEAT_CEILING,
+              fireControl.calcHeatTolerance(mek, false));
+    }
+
+    @Test
+    void tsmMekWithEngineCriticalsReachesActivationWithASmallerShot() {
+        BipedMek mek = newHeatTrackingMek();
+        when(mek.getHeat()).thenReturn(5);
+        when(mek.hasTSM(false)).thenReturn(true);
+        when(mek.getEngineCritHeat()).thenReturn(TWO_MEK_ENGINE_CRITS_HEAT);
+        FiringPlan plan = mock(FiringPlan.class);
+        // without plan: 5 + 10 - 10 = 5 (below 9); with plan: 5 + 4 + 10 - 10 = 9 -> activates.
+        // Undamaged, the same shot ends at 0 and would not.
+        when(plan.getHeat()).thenReturn(4);
+        assertTrue(fireControl.firingActivatesTsm(mek, plan));
+    }
+
+    @Test
+    void realMekEngineCriticalsAddFiveHeatPerHit() {
+        Mek mek = loadFusionMek();
+        int undamagedHeat = fireControl.predictUnavoidableHeat(mek);
+
+        mek.damageSystem(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_CENTER_TORSO, 2);
+
+        assertEquals(undamagedHeat + TWO_MEK_ENGINE_CRITS_HEAT, fireControl.predictUnavoidableHeat(mek));
+    }
+
+    @Test
+    void shutDownMekAddsNoEngineCriticalHeat() {
+        Mek mek = loadFusionMek();
+        int undamagedHeat = fireControl.predictUnavoidableHeat(mek);
+
+        mek.damageSystem(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_ENGINE, Mek.LOC_CENTER_TORSO, 2);
+        mek.setShutDown(true);
+
+        assertEquals(undamagedHeat, fireControl.predictUnavoidableHeat(mek));
+    }
+
+    @Test
+    void aerospaceFighterEngineHitsAddTwoHeatPerHit() {
+        AeroSpaceFighter fighter = new AeroSpaceFighter();
+        int undamagedHeat = fireControl.predictUnavoidableHeat(fighter);
+
+        fighter.setEngineHits(2);
+
+        assertEquals(undamagedHeat + 4, fireControl.predictUnavoidableHeat(fighter));
     }
 }

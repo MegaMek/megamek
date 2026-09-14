@@ -173,10 +173,17 @@ public class VictorySetupDisplay extends StatusBarPhaseDisplay {
     private void handleHexClick(Coords coords) {
         ObjectiveMarker existingMarker = findMarkerAt(coords);
         if (existingMarker != null) {
-            if (existingMarker.getOwnerId() != player.getId()) {
+            boolean isOwnPoint = existingMarker.getOwnerId() == player.getId();
+            // a game master authors the mission for every side, so any point is theirs to open
+            boolean isGameMaster = player.isGameMaster();
+            if (!isOwnPoint && !isGameMaster) {
                 clientgui.addToast(ToastLevel.WARNING,
                       Messages.getString("VictorySetupDisplay.notYourPoint"));
                 return;
+            }
+            if (!isOwnPoint) {
+                VICTORY_HEX_LOGGER.info("[VictoryHex] game master {} opens the point at {} owned by player {}",
+                      player.getName(), coords.getBoardNum(), existingMarker.getOwnerId());
             }
             editMarker(coords, existingMarker);
             return;

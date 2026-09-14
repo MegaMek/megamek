@@ -34,6 +34,7 @@ package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyDouble;
@@ -48,6 +49,7 @@ import megamek.common.game.Game;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.testUtilities.MMTestUtilities;
 import org.junit.jupiter.api.BeforeAll;
@@ -381,9 +383,9 @@ class FireControlHeatAwarenessTest {
     }
 
     private Mek loadFusionMek() {
-        Mek mek = (Mek) MMTestUtilities.getEntityForUnitTesting("Enforcer III ENF-6M", false);
-        assertNotNull(mek, "Test unit could not be loaded");
-        return mek;
+        Entity entity = MMTestUtilities.getEntityForUnitTesting("Enforcer III ENF-6M", false);
+        assertNotNull(entity, "Test unit could not be loaded");
+        return assertInstanceOf(Mek.class, entity, "Test unit is not a Mek");
     }
 
     @Test

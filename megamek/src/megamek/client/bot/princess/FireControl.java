@@ -2383,9 +2383,10 @@ public class FireControl {
      * disutility. The tolerance is lowered by every source of heat the engine will add this turn on top
      * of the unit's current, already-resolved heat: heat already committed this turn (movement heat sits
      * in {@link Entity#heatBuildup} once the unit has moved), the projected heat of a move still being
-     * evaluated ({@code predictedMovementHeat}), and predicted environmental heat from planetary
-     * temperature (see {@link #predictEnvironmentalHeat(Entity)}). Extreme cold raises the tolerance,
-     * modelling the free cooling the engine grants below -30 C.
+     * evaluated ({@code predictedMovementHeat}), predicted environmental heat from planetary temperature
+     * (see {@link #predictEnvironmentalHeat(Entity)}), active stealth armor heat, and engine critical heat
+     * (see {@link #predictUnavoidableHeat(Entity)}). Extreme cold raises the tolerance, modelling the free
+     * cooling the engine grants below -30 C.
      *
      * @param entity                the unit that would be firing
      * @param isAero                {@code true} if the shooter is an Aero (stiffer overheat penalty), or
@@ -2485,8 +2486,8 @@ public class FireControl {
     /**
      * Estimates the heat this unit will carry after the upcoming heat phase if it executes a firing plan
      * of the given weapon heat: its current heat plus everything the engine will add this turn (committed
-     * movement heat, predicted environmental heat, active-stealth-armor heat, and the plan's weapon heat)
-     * minus its heat-sink dissipation ({@link Entity#getHeatCapacity()}), floored at zero. Unlike a raw
+     * movement heat, predicted environmental heat, active-stealth-armor heat, engine critical heat, and the
+     * plan's weapon heat; see {@link #predictUnavoidableHeat(Entity)}) minus its heat-sink dissipation ({@link Entity#getHeatCapacity()}), floored at zero. Unlike a raw
      * sum of heat sources this accounts for heat sinks shedding heat every turn, so a well-cooled unit may
      * never reach a target heat level no matter what it fires.
      *
@@ -2511,8 +2512,9 @@ public class FireControl {
      * {@link #calcHeatTolerance(Entity, Boolean, int)} and {@link #projectedEndOfTurnHeat(Entity, int)} build
      * their projection from this, so a new heat source added here reaches both.
      * <p>
-     * Engine critical heat is charged by {@code HeatResolver} every turn and cannot be avoided; it is already
-     * {@code 0} for a shut-down unit or one without a fusion engine.
+     * Engine critical heat is taken from {@link Entity#getEngineCritHeat()}, the same value {@code HeatResolver}
+     * charges every turn, so the forecast matches whatever that method reports for the unit type (including
+     * heat from partial engine repairs).
      * </p>
      *
      * @param shooter the unit whose heat is being projected

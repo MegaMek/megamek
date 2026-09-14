@@ -284,6 +284,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         int round = getGame().getCurrentRound();
         ObjectiveMarker scanPoint = scanPointOwnedBySideAt(scanner, target.getPosition());
         if (scanPoint != null) {
+            revealTheNote(scanner, scanPoint);
             if (scanPoint.getScoringScheme().isScanCarriedHome()) {
                 scanner.bankScan(BankedScan.ofObjective(round, target.getPosition(), scanPoint.generalName()));
                 LOGGER.info("[Scan] {} banked a reading of {} - {} reading(s) carried", scanner.getShortName(),
@@ -308,6 +309,20 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         report.addDesc(scanner);
         report.add(targetName);
         addReport(report);
+    }
+
+    /**
+     * Tells the scanning unit's player what the scan reveals, when the point carries a note. Sent as a chat line to
+     * that player alone, since the note is the mission's secret and the other side has not earned it.
+     */
+    private void revealTheNote(Entity scanner, ObjectiveMarker scanPoint) {
+        String note = scanPoint.getScanRevealsNote();
+        if (note.isEmpty() || (scanner.getOwner() == null)) {
+            return;
+        }
+        LOGGER.info("[Scan] {} reveals its note to {}", scanPoint.generalName(), scanner.getOwner().getName());
+        gameManager.sendServerChat(scanner.getOwnerId(),
+              Messages.getString("ObjectiveScan.reveals", scanner.getShortName(), scanPoint.generalName(), note));
     }
 
     /**

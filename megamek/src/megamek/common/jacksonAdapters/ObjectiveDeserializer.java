@@ -83,6 +83,7 @@ public final class ObjectiveDeserializer {
     private static final String SCHEME_CAPTURE = "capture";
     private static final String SCHEME_SCAN = "scan";
     private static final String SCAN_CARRIED_HOME = "carriedHome";
+    private static final String SCAN_REVEALS = "reveals";
     private static final String HOLD_TURNS = "turns";
     private static final String HOLD_COUNTING = "counting";
     private static final String COUNTING_CUMULATIVE = "cumulative";
@@ -128,6 +129,9 @@ public final class ObjectiveDeserializer {
             marker.setInvulnerable(!node.get(DESTRUCTIBLE).asBoolean());
         }
         parseScheme(marker, node);
+        if (node.hasNonNull(SCAN_REVEALS)) {
+            marker.setScanRevealsNote(node.get(SCAN_REVEALS).asText());
+        }
         parseVariants(marker, node);
         if (marker.isPotential() && marker.isFalseObjective()) {
             throw new IllegalArgumentException("Objective " + marker.generalName()

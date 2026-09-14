@@ -51,6 +51,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
@@ -92,7 +93,7 @@ public final class VictoryHexPropertiesPane {
      *
      * @return what the user chose; on {@link Result#REMOVED} the caller removes the marker itself
      */
-    public static Result edit(JFrame frame, ObjectiveMarker marker, List<Player> players) {
+    public static Result edit(JFrame frame, ObjectiveMarker marker, List<Player> players, boolean gameMaster) {
         ObjectiveScoringScheme scheme = marker.getScoringScheme();
         JSpinner radiusSpinner = new JSpinner(
               new SpinnerNumberModel(marker.getControlRadius(), 0, ObjectiveMarker.MAX_CONTROL_RADIUS, 1));
@@ -142,6 +143,10 @@ public final class VictoryHexPropertiesPane {
         carriedHomeCheckbox.setSelected(scheme.isScanCarriedHome());
         carriedHomeCheckbox.setToolTipText(Messages.getString("VictoryHex.carriedHome.tooltip"));
         JLabel carriedHomeLabel = new JLabel(Messages.getString("VictoryHex.carriedHome"));
+        // a game master can write what the scan reveals; the note is sent to the scanning side on a success
+        JTextField revealsField = new JTextField(marker.getScanRevealsNote(), REVEALS_COLUMNS);
+        revealsField.setToolTipText(Messages.getString("VictoryHex.scanReveals.tooltip"));
+        JLabel revealsLabel = new JLabel(Messages.getString("VictoryHex.scanReveals"));
 
         JLabel thresholdLabel = new JLabel();
         JLabel rateLabel = new JLabel();
@@ -151,10 +156,13 @@ public final class VictoryHexPropertiesPane {
         JLabel startingControlLabel = new JLabel(Messages.getString("VictoryHex.startingControl"));
         JLabel radiusLabel = new JLabel(Messages.getString("VictoryHex.radius"));
         // a scan point is read, not held: nothing about control applies to it, so these rows go away with it
+        List<JComponent> scanRows = gameMaster
+              ? List.of(carriedHomeLabel, carriedHomeCheckbox, revealsLabel, revealsField)
+              : List.of(carriedHomeLabel, carriedHomeCheckbox);
         List<JComponent> controlRows = List.of(retainControlLabel, retainControlCheckbox, startingControlLabel,
               startingControlCombo, radiusLabel, radiusSpinner);
         SchemeControls controls = new SchemeControls(schemeCombo, countingCombo, thresholdSpinner, rateSpinner,
-              retainControlCheckbox, carriedHomeCheckbox, carriedHomeLabel, controlRows, thresholdLabel, rateLabel,
+              retainControlCheckbox, carriedHomeCheckbox, scanRows, controlRows, thresholdLabel, rateLabel,
               countingLabel, schemeDescription);
         schemeCombo.addActionListener(event -> refreshSchemeRows(controls));
         countingCombo.addActionListener(event -> refreshSchemeRows(controls));
@@ -176,11 +184,14 @@ public final class VictoryHexPropertiesPane {
         addRow(propertiesPanel, 2, countingLabel, countingCombo);
         addRow(propertiesPanel, 3, rateLabel, rateSpinner);
         addRow(propertiesPanel, 4, carriedHomeLabel, carriedHomeCheckbox);
-        addRow(propertiesPanel, 5, retainControlLabel, retainControlCheckbox);
-        addRow(propertiesPanel, 6, startingControlLabel, startingControlCombo);
-        addRow(propertiesPanel, 7, radiusLabel, radiusSpinner);
-        addRow(propertiesPanel, 8, new JLabel(Messages.getString("VictoryHex.victoryPoints")), victoryPointSpinner);
-        pinRowsToTheTop(propertiesPanel, 9);
+        if (gameMaster) {
+            addRow(propertiesPanel, 5, revealsLabel, revealsField);
+        }
+        addRow(propertiesPanel, 6, retainControlLabel, retainControlCheckbox);
+        addRow(propertiesPanel, 7, startingControlLabel, startingControlCombo);
+        addRow(propertiesPanel, 8, radiusLabel, radiusSpinner);
+        addRow(propertiesPanel, 9, new JLabel(Messages.getString("VictoryHex.victoryPoints")), victoryPointSpinner);
+        pinRowsToTheTop(propertiesPanel, 10);
 
         JPanel editorPanel = new JPanel();
         editorPanel.setLayout(new BoxLayout(editorPanel, BoxLayout.PAGE_AXIS));
@@ -218,6 +229,9 @@ public final class VictoryHexPropertiesPane {
         }
         marker.setControlRadius((Integer) radiusSpinner.getValue());
         marker.setVictoryPointValue((Integer) victoryPointSpinner.getValue());
+        if (gameMaster) {
+            marker.setScanRevealsNote(revealsField.getText());
+        }
         scheme.setPreset((SchemePreset) schemeCombo.getSelectedItem());
         scheme.setThreshold((Integer) thresholdSpinner.getValue());
         scheme.setRatePerTurn((Integer) rateSpinner.getValue());
@@ -236,7 +250,8 @@ public final class VictoryHexPropertiesPane {
      * @param rateSpinner       the per-turn rate (grip drain or capture progress)
      * @param retainControl     whether the point keeps its holder once the zone empties
      * @param carriedHome       whether a Scan point pays only once its reading reaches home
-     * @param carriedHomeLabel  the label of that box, shown only for a Scan point
+     * @param scanRows          the rows shown only for a Scan point: the carried-home box and, for a game master, the
+     *                          note the scan reveals
      * @param controlRows       the retention, starting holder and radius rows, hidden for a Scan point
      * @param thresholdLabel    the label naming the threshold for the selected preset
      * @param rateLabel         the label naming the rate for the selected preset
@@ -245,8 +260,11 @@ public final class VictoryHexPropertiesPane {
      */
     private record SchemeControls(JComboBox<SchemePreset> schemeCombo, JComboBox<HoldCounting> countingCombo,
           JSpinner thresholdSpinner, JSpinner rateSpinner, JCheckBox retainControl, JCheckBox carriedHome,
-          JLabel carriedHomeLabel, List<JComponent> controlRows, JLabel thresholdLabel,
+          List<JComponent> scanRows, List<JComponent> controlRows, JLabel thresholdLabel,
           JLabel rateLabel, JLabel countingLabel, JLabel schemeDescription) {}
+
+    /** Width of the game master's note field, in text columns. */
+    private static final int REVEALS_COLUMNS = 24;
 
     /**
      * Adds one label-and-control row to the properties grid. Both cells share the row's width equally, so the
@@ -298,8 +316,9 @@ public final class VictoryHexPropertiesPane {
         boolean usesRate = (preset == SchemePreset.DEFEND) || (preset == SchemePreset.CAPTURE);
         boolean usesCounting = preset == SchemePreset.HOLD;
         boolean usesCarriedHome = preset == SchemePreset.SCAN;
-        controls.carriedHomeLabel().setVisible(usesCarriedHome);
-        controls.carriedHome().setVisible(usesCarriedHome);
+        for (JComponent scanRow : controls.scanRows()) {
+            scanRow.setVisible(usesCarriedHome);
+        }
         for (JComponent controlRow : controls.controlRows()) {
             controlRow.setVisible(!usesCarriedHome);
         }

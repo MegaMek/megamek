@@ -83,6 +83,11 @@ public class ObjectiveMarker extends GroundObject {
     private boolean destroyed = false;
     private boolean insideBuilding = false;
     private boolean buildingLinkInitialized = false;
+    /**
+     * What a successful scan of this point tells the scanning side, written by a game master, a scenario file or
+     * MekHQ: "The scan reveals..." Empty when there is nothing to say. Sent only to the side that scanned.
+     */
+    private String scanRevealsNote = "";
     private boolean destructionProcessed = false;
     private int controllingTeam = NO_CONTROLLER;
     private int controllingPlayerId = NO_CONTROLLER;
@@ -159,6 +164,16 @@ public class ObjectiveMarker extends GroundObject {
     /** @return The victory points this objective is worth when it scores (default 1) */
     public int getVictoryPointValue() {
         return victoryPointValue;
+    }
+
+    /** @return the note a successful scan of this point delivers to the scanning side; empty when there is none */
+    public String getScanRevealsNote() {
+        return (scanRevealsNote == null) ? "" : scanRevealsNote;
+    }
+
+    /** @param scanRevealsNote what the scan reveals, or empty for nothing; {@code null} is treated as empty */
+    public void setScanRevealsNote(String scanRevealsNote) {
+        this.scanRevealsNote = (scanRevealsNote == null) ? "" : scanRevealsNote.trim();
     }
 
     public void setVictoryPointValue(int victoryPointValue) {

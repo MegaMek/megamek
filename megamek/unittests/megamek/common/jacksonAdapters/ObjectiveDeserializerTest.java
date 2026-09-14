@@ -252,6 +252,18 @@ class ObjectiveDeserializerTest {
     }
 
     @Test
+    void testAScanPointCanCarryTheNoteTheScanReveals() throws Exception {
+        ObjectiveInfo info = ObjectiveDeserializer.parse(parseYaml("""
+              name: Research Station
+              at: [ 4, 4 ]
+              scheme: scan
+              reveals: The station is a front for a Word of Blake listening post.
+              """));
+        assertEquals("The station is a front for a Word of Blake listening post.",
+              info.marker().getScanRevealsNote());
+    }
+
+    @Test
     void testUnknownSchemeIsRejected() {
         assertThrows(IllegalArgumentException.class, () -> ObjectiveDeserializer.parse(parseYaml("""
               name: Bad Point

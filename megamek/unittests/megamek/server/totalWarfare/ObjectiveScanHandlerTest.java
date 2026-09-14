@@ -186,6 +186,19 @@ class ObjectiveScanHandlerTest {
     }
 
     @Test
+    void testASuccessfulScanTellsTheScanningPlayerWhatItReveals() {
+        ObjectiveMarker scanPoint = scanPointOf(alice, true);
+        scanPoint.setScanRevealsNote("Fresh tracks lead north.");
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+
+        handler.resolveScans();
+
+        verify(gameManager).sendServerChat(org.mockito.ArgumentMatchers.eq(alice.getId()),
+              org.mockito.ArgumentMatchers.contains("Fresh tracks lead north."));
+    }
+
+    @Test
     void testAScanOfAnEmptyHexFindsNothingOfInterest() {
         BipedMek scout = mekOf(alice, SCANNER_HEX);
         orderScan(scout, EMPTY_HEX);

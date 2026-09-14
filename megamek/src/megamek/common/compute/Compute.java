@@ -6470,7 +6470,9 @@ public class Compute {
                 continue;
             }
             entities = game.getEntities(tempcoords);
-            if (entities.hasNext()) {
+            // Every unit in the hex, not just the first. TO:AUE p.183 makes every unit at the same distance a
+            // candidate, chosen at random among them, so stopping at the first one silently narrowed the field.
+            while (entities.hasNext()) {
                 tempEntity = entities.next();
                 if (!tempEntity.getTargetedBySwarm(aeId, weaponId)) {
                     // we found a target
@@ -6485,6 +6487,7 @@ public class Compute {
         }
         return null;
     }
+
 
     public static @Nullable Coords getFinalPosition(Coords currentPosition, int... v) {
         if ((v == null) || (v.length != 6) || (currentPosition == null)) {
@@ -7885,6 +7888,32 @@ public class Compute {
         }
 
         return true;
+    }
+
+    /**
+     * Whether a moving enemy reveals a hidden unit in a way that lets it take a point-blank shot (TW p.260).
+     *
+     * <p>A hidden unit revealed by enemy movement may immediately make the shot, and the rule allows the target to
+     * "continue its move after the attack" when it has MP left. That is only possible part way through a move, so a
+     * ground unit reveals as it passes rather than only when it stops. Requiring the mover to stop meant walking
+     * past a hidden unit did nothing at all.</p>
+     *
+     * <p>An airborne mover is different: it reveals what it flies over, so the range depends on whether it carries
+     * an Active Probe.</p>
+     *
+     * @param mover    the unit that is moving
+     * @param distance hexes between the mover's current step and the hidden unit
+     *
+     * @return {@code true} if the hidden unit is revealed and may take its shot
+     */
+    public static boolean revealsHiddenUnitForPointblankShot(Entity mover, int distance) {
+        if (distance > 1) {
+            return false;
+        }
+        if (!mover.isAirborne()) {
+            return true;
+        }
+        return distance == ((mover.getBAPRange() > 0) ? 1 : 0);
     }
 
     /**

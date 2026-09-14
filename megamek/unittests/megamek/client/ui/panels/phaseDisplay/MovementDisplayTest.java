@@ -167,6 +167,33 @@ class MovementDisplayTest {
     }
 
     @Test
+    @DisplayName("clear declares the jump before the deploy step so the deploy hex is a jump hex")
+    void clearWithJumpGearDeclaresTheJumpBeforeTheDeployStep() throws Exception {
+        BipedMek mek = new BipedMek();
+        mek.setGame(game);
+        mek.setPosition(new Coords(0, 0));
+        mek.setBoardId(game.getBoard().getBoardId());
+        game.addEntity(mek);
+        movementDisplay.currentEntity = mek.getId();
+
+        MovePath jumpPath = new MovePath(game, mek);
+        jumpPath.addStep(MoveStepType.DEPLOY);
+        setField(movementDisplay, "cmd", jumpPath);
+        setField(movementDisplay, "gear", MovementDisplay.GEAR_JUMP);
+
+        movementDisplay.clear();
+
+        MovePath refreshed = (MovePath) readField(movementDisplay, "cmd");
+        assertNotNull(refreshed, "clear should rebuild the jump path.");
+        assertEquals(MoveStepType.START_JUMP, refreshed.getStep(0).getType(),
+              "The jump must be declared before the deploy step, as it leads every other jump path.");
+        assertEquals(MoveStepType.DEPLOY, refreshed.getStep(1).getType(),
+              "The deploy step follows the jump declaration.");
+        assertTrue(refreshed.getStep(1).isJumping(),
+              "A deploy step compiled after the jump declaration is a jump hex, costing 1 MP rather than terrain.");
+    }
+
+    @Test
     @DisplayName("movement path rebuild keeps a deploy step for walk-on deployments")
     void clearRebuildsWalkOnMovementPathWithDeployStep() throws Exception {
         BipedMek mek = new BipedMek();

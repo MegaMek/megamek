@@ -95,7 +95,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
     static final int REPORT_SCAN_AUTOMATIC = 7128;
     static final int REPORT_SCAN_EDGE_REROLL = 7129;
     static final int REPORT_SCAN_POINT_SCORED = 7130;
-    static final int REPORT_READINGS_CARRIED = 7131;
+    static final int REPORT_READINGS_CARRIED = 7153;
     static final int REPORT_READINGS_LOST_WRONG_EDGE = 7132;
     static final int REPORT_READING_BANKED = 7150;
     static final int REPORT_SCAN_REVEALS = 7151;

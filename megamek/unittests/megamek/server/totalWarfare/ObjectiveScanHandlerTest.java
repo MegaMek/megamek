@@ -182,6 +182,7 @@ class ObjectiveScanHandlerTest {
         assertNull(scout.getPendingScan(), "the order is spent");
         assertFalse(scanPoint.getScoringScheme().isDecided(), "the point pays only once the reading is home");
         assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_SCAN_SUCCESS));
+        assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_READING_BANKED), "nothing to reveal: the plain line");
         verify(gameManager).entityUpdate(scout.getId());
         assertNull(VictoryPointTracker.findTracker(game.getVictoryContext()), "nothing scored yet");
     }
@@ -195,8 +196,16 @@ class ObjectiveScanHandlerTest {
 
         handler.resolveScans();
 
-        verify(gameManager).sendServerChat(org.mockito.ArgumentMatchers.eq(alice.getId()),
-              org.mockito.ArgumentMatchers.contains("Fresh tracks lead north."));
+        ArgumentCaptor<Report> reports = ArgumentCaptor.forClass(Report.class);
+        verify(gameManager, atLeastOnce()).addReport(reports.capture());
+        Report reveal = reports.getAllValues().stream()
+              .filter(report -> report.messageId == ObjectiveScanHandler.REPORT_SCAN_REVEALS)
+              .findFirst()
+              .orElseThrow();
+        assertEquals(Report.PLAYER, reveal.type, "the note is the scanning player's alone");
+        assertEquals(alice.getId(), reveal.player);
+        assertFalse(reportIds().contains(ObjectiveScanHandler.REPORT_READING_BANKED),
+              "the note replaces the plain banked line");
     }
 
     @Test

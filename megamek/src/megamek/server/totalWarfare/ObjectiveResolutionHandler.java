@@ -842,13 +842,18 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
      */
     private String standingHolder(ObjectiveMarker marker) {
         ObjectiveScoringScheme scheme = marker.getScoringScheme();
+        boolean isScanPoint = scheme.getPreset() == ObjectiveScoringScheme.SchemePreset.SCAN;
         if (scheme.isDecided()) {
             int securedTeam = scheme.getSecuredTeam();
             int securedPlayer = scheme.getSecuredPlayerId();
             String securedBy = (securedTeam != ObjectiveScoringScheme.NO_SIDE)
                   ? teamDisplayName(securedTeam)
                   : playerName(securedPlayer);
-            return "secured by " + securedBy;
+            return (isScanPoint ? "scanned and reported home by " : "secured by ") + securedBy;
+        }
+        if (isScanPoint) {
+            // a scan point is read, not held: who is standing in it says nothing about it
+            return "not yet reported home";
         }
         if (marker.getControllingTeam() != ObjectiveMarker.NO_CONTROLLER) {
             return "held by " + teamDisplayName(marker.getControllingTeam());

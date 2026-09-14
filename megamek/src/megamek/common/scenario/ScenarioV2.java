@@ -58,6 +58,7 @@ import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
+import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.game.AbstractGame;
@@ -66,7 +67,6 @@ import megamek.common.game.GameType;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
 import megamek.common.hexArea.HexArea;
-import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
 import megamek.common.interfaces.IStartingPositions;
@@ -115,6 +115,7 @@ public class ScenarioV2 implements Scenario {
     private static final String LEVEL_UP_TO = "upTo";
     private static final String LEVEL_NAME = "name";
     private static final String STARTING_VICTORY_POINTS = "startingVictoryPoints";
+    private static final String SCAN_TARGETS = "scanTargets";
     private static final String MESSAGES = "messages";
     private static final String END = "end";
     private static final String TRIGGER = "trigger";
@@ -195,6 +196,7 @@ public class ScenarioV2 implements Scenario {
         parseOptions(game);
         parseVictoryPointLevels(game);
         parsePlayers(game);
+        parseScanTargets(game);
         parseMessages(game);
         parseGameEndEvents(game);
         parseGeneralEvents(game);
@@ -341,6 +343,33 @@ public class ScenarioV2 implements Scenario {
      * {@code upTo:} to catch every higher total. Example: up to 10 "Pyrrhic victory", up to 20 "Minor victory",
      * unbounded "Overwhelming victory".
      */
+    /**
+     * Parses the game-level {@code scanTargets:} list of unit ids and marks those units as the mission's scan
+     * targets (Core Rules p.217, the Sensor Check mission). When any unit is designated, only designated units
+     * score when scanned; without the key every enemy unit does. Runs after the players and their units.
+     *
+     * @param game the game being built
+     *
+     * @throws IllegalArgumentException when a listed id names no unit in the scenario
+     */
+    private void parseScanTargets(IGame game) {
+        if (!node.has(SCAN_TARGETS) || !(game instanceof Game twGame)) {
+            return;
+        }
+        int designated = 0;
+        for (JsonNode scanTargetIdNode : node.get(SCAN_TARGETS)) {
+            int unitId = scanTargetIdNode.asInt();
+            Entity target = twGame.getEntity(unitId);
+            if (target == null) {
+                throw new IllegalArgumentException("scanTargets entry " + unitId
+                      + " names no unit in this scenario - check the unit ids");
+            }
+            target.setDesignatedScanTarget(true);
+            designated++;
+        }
+        logger.info("[Scan] scenario designates {} unit(s) as scan targets", designated);
+    }
+
     private void parseVictoryPointLevels(IGame game) {
         if (!node.has(VICTORY_LEVELS) || !(game instanceof Game twGame)) {
             return;

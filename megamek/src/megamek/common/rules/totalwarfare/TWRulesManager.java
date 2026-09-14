@@ -53,6 +53,7 @@ public class TWRulesManager implements RulesManager {
     private TWRulesPhysical twRulesPhysical = new TWRulesPhysical();
     private TWRulesPilot twRulesPilot = new TWRulesPilot();
     private TWRulesPSR twRulesPsr = new TWRulesPSR();
+    private TWRulesScanning twRulesScanning = new TWRulesScanning();
     private TWRulesTerrain twRulesTerrain = new TWRulesTerrain();
     private TWRulesUnderwater twRulesUnderwater = new TWRulesUnderwater();
     private TWRulesUnits twRulesUnits = new TWRulesUnits();
@@ -147,6 +148,12 @@ public class TWRulesManager implements RulesManager {
      * Returns the Total Warfare implementation for Piloting Skill Rolls (PSRs).
      */
     public RulesPSR getRulesPSR() { return twRulesPsr; }
+
+    /**
+     * {@inheritDoc}
+     * Returns the Total Warfare implementation for scanning objectives and units.
+     */
+    public RulesScanning getRulesScanning() { return twRulesScanning; }
 
     /**
      * {@inheritDoc}

@@ -140,9 +140,8 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     private boolean declarationMade;
     /** The player answered a prompt about an infantry action this turn, so ending the turn needs no warning. */
     private boolean promptAnswered;
-    /** The hex the player last clicked, so a Scan order can point at a bare hex as well as at a unit. */
-    private Coords selectedCoords = null;
-    private int selectedBoardId = 0;
+    /** True while waiting for the player to click the hex or unit the selected unit should scan. */
+    private boolean selectingScanTarget = false;
     /** The last state the Infantry Action button was set to, so the log records changes and not every refresh. */
     private boolean infantryActionOffered;
 
@@ -519,12 +518,14 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
                 completeDeployBridge(coords);
                 return;
             }
-
-            // the clicked hex is remembered whether or not a unit stands in it: a Scan order can point at either
-            selectedCoords = coords;
-            selectedBoardId = event.getBoardId();
+            if (selectingScanTarget) {
+                completeScan(coords, event.getBoardId());
+                return;
+            }
             Targetable chosenTarget = chooseTarget(coords);
-            target(chosenTarget);
+            if (chosenTarget != null) {
+                target(chosenTarget);
+            }
         }
     }
 
@@ -622,7 +623,8 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         // Bridge-Layer (AVLB) deployment is entity-scoped: it depends on the selected unit (vehicle or quad Mek).
         boolean canDeployBridge = (entity != null) && BridgeLayerLogic.canDeclareBridgeDeploy(entity, game);
         setDeployBridgeEnabled(canDeployBridge);
-        setScanEnabled(isMyTurn() && (scanRefusal() == null));
+        // lit whenever the selected unit could scan at all; where it scans is asked for after the press
+        setScanEnabled(isMyTurn() && (entity != null) && ScanMission.canOrderScan(entity));
         if (entity != null) {
             // Show the button on its first selectable bridge from the start (e.g. "Deploy Right Bridge" on a unit
             // with two bridges) rather than a generic label.
@@ -682,16 +684,14 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     }
 
     /**
-     * @return why the selected unit cannot scan the selected hex or unit, or {@code null} when it can. The same three
-     *       questions the server asks when it resolves the order - the ruleset, range, line of sight - so the button
-     *       never offers what the server would refuse. An empty reason means there is simply nothing selected.
+     * @return why the selected unit cannot scan that hex or unit, or {@code null} when it can. The same three questions
+     *       the server asks when it resolves the order - the ruleset, range, line of sight - so no order is sent that
+     *       the server would refuse.
      */
-    private @Nullable String scanRefusal() {
-        Entity scanner = game.getEntity(currentEntity);
-        Targetable scanTarget = scanTarget();
-        if ((scanner == null) || (scanTarget == null) || (scanTarget.getPosition() == null)
-              || !ScanMission.canOrderScan(scanner)) {
-            return "";
+    private @Nullable String scanRefusal(Entity scanner, Targetable scanTarget) {
+        if ((scanTarget.getPosition() == null) || !ScanMission.canOrderScan(scanner)) {
+            return Messages.getString("PreEndDeclarationsDisplay.scanRefused",
+                  Messages.getString("ObjectiveScan.cannotScanNow"));
         }
         RulesScanning rules = Game.rulesManager.getRulesScanning();
         TargetRoll targetRoll = rules.scanTargetRoll(scanner, scanTarget);
@@ -710,42 +710,53 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     }
 
     /**
-     * @return what a Scan order would point at: the selected unit when there is one, otherwise the last clicked hex,
-     *       or {@code null} when nothing has been clicked
-     */
-    private @Nullable Targetable scanTarget() {
-        if (target instanceof Entity) {
-            return target;
-        }
-        if (selectedCoords == null) {
-            return null;
-        }
-        return new HexTarget(selectedCoords, selectedBoardId, Targetable.TYPE_HEX_CLEAR);
-    }
-
-    /**
-     * Sends the selected unit's order to scan the selected hex or unit in the End Phase. The order goes to the
-     * server at once, like the other declarations of this phase, so the player can go on to give other units
-     * theirs before pressing Done. One scan per unit per turn: a later order replaces an earlier one.
+     * The Scan button: asks the player for the hex or unit to scan, and pressing it again withdraws the question.
+     * The order itself is sent from {@link #completeScan(Coords, int)} when the hex is clicked.
      */
     private void doScan() {
         Entity scanner = game.getEntity(currentEntity);
-        Targetable scanTarget = scanTarget();
-        if ((scanner == null) || (scanTarget == null) || (scanTarget.getPosition() == null)) {
+        if (scanner == null) {
             return;
         }
-        String refusal = scanRefusal();
+        if (selectingScanTarget) {
+            selectingScanTarget = false;
+            setStatusBarText(Messages.getString("PreEndDeclarationsDisplay.its_your_turn"));
+            LOGGER.debug("[Scan] {} scan order withdrawn before a target was chosen", scanner.getShortName());
+            return;
+        }
+        selectingScanTarget = true;
+        setStatusBarText(Messages.getString("PreEndDeclarationsDisplay.SelectScanTarget",
+              scanner.getShortName(),
+              Game.rulesManager.getRulesScanning().scanningRange(scanner, null)));
+        LOGGER.debug("[Scan] {} waiting for a hex or unit to scan", scanner.getShortName());
+    }
+
+    /**
+     * Sends the selected unit's order to scan the clicked hex, or the unit standing in it, in the End Phase. The
+     * order goes to the server at once, like the other declarations of this phase, so the player can go on to give
+     * other units theirs before pressing Done. One scan per unit per turn: a later order replaces an earlier one.
+     *
+     * @param coords  the clicked hex
+     * @param boardId the board it is on
+     */
+    private void completeScan(Coords coords, int boardId) {
+        selectingScanTarget = false;
+        setStatusBarText(Messages.getString("PreEndDeclarationsDisplay.its_your_turn"));
+        Entity scanner = game.getEntity(currentEntity);
+        if (scanner == null) {
+            return;
+        }
+        Targetable chosen = chooseTarget(coords);
+        Targetable scanTarget = (chosen != null) ? chosen : new HexTarget(coords, boardId, Targetable.TYPE_HEX_CLEAR);
+        String refusal = scanRefusal(scanner, scanTarget);
         if (refusal != null) {
-            if (!refusal.isEmpty()) {
-                clientgui.addToast(ToastLevel.WARNING, refusal, scanner);
-            }
-            LOGGER.debug("[Scan] {} cannot scan {}: {}", scanner.getShortName(),
-                  scanTarget.getPosition().getBoardNum(), refusal.isEmpty() ? "nothing to scan with" : refusal);
+            clientgui.addToast(ToastLevel.WARNING, refusal, scanner);
+            LOGGER.debug("[Scan] {} cannot scan {}: {}", scanner.getShortName(), coords.getBoardNum(), refusal);
             return;
         }
         ScanAction order = (scanTarget instanceof Entity targetUnit)
               ? new ScanAction(currentEntity, targetUnit.getId())
-              : new ScanAction(currentEntity, scanTarget.getPosition(), selectedBoardId);
+              : new ScanAction(currentEntity, coords, boardId);
         clientgui.getClient().sendScanOrder(order);
         String targetName = (scanTarget instanceof Entity targetUnit)
               ? targetUnit.getShortName()
@@ -945,6 +956,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         // Reset the multi-mode Deploy Bridge selection for the newly selected unit; updateButtons() sets the label.
         selectingDeployBridgeHex = false;
         selectedDeployBridgeIndex = 0;
+        selectingScanTarget = false;
         clientgui.setSelectedEntityNum(entityId);
         clientgui.getUnitDisplay().displayEntity(selected);
         clientgui.getBoardView().highlight(selected.getPosition());

@@ -444,6 +444,10 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         if (marker.isDestroyed()) {
             return false;
         }
+        if (marker.getScoringScheme().getPreset() == ObjectiveScoringScheme.SchemePreset.SCAN) {
+            // read, not held: the scan pass scores it, and there is no zone to resolve control over
+            return false;
+        }
         if (marker.isPotential() && !marker.isConfirmed()) {
             LOGGER.debug("[Objective] {} at {} is an unconfirmed objective candidate - it cannot score until "
                   + "confirmed by a scan", marker.generalName(), objective.position());

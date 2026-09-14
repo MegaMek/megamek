@@ -269,6 +269,8 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         report.addDesc(scanner);
         report.add(targetName);
         report.add(targetRoll.getValue());
+        // the breakdown, so a player can see whether the probe counted and what jammed it
+        report.add(targetRoll.getDesc());
         report.add(roll.getIntValue());
         addReport(report);
         return succeeded;

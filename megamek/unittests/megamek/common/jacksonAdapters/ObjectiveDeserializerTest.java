@@ -233,22 +233,32 @@ class ObjectiveDeserializerTest {
     }
 
     @Test
-    void testScanSchemeMustBeCarriedHomeUnlessTheMissionSaysOtherwise() throws Exception {
+    void testScanSchemePaysOnExitUnlessTheMissionSaysOtherwise() throws Exception {
         ObjectiveInfo carried = ObjectiveDeserializer.parse(parseYaml("""
               name: Research Station
               at: [ 4, 4 ]
               scheme: scan
               """));
         assertEquals(SchemePreset.SCAN, carried.marker().getScoringScheme().getPreset());
-        assertTrue(carried.marker().getScoringScheme().isScanCarriedHome(), "the reading must reach home by default");
+        assertEquals(ObjectiveScoringScheme.ScanPayout.ON_EXIT, carried.marker().getScoringScheme().getScanPayout(),
+              "the reading must reach home by default");
+
+        ObjectiveInfo untilLost = ObjectiveDeserializer.parse(parseYaml("""
+              name: Research Station
+              at: [ 4, 4 ]
+              scheme: scan
+              payout: scanUntilLost
+              """));
+        assertEquals(ObjectiveScoringScheme.ScanPayout.ON_SCAN_UNTIL_LOST,
+              untilLost.marker().getScoringScheme().getScanPayout());
 
         ObjectiveInfo immediate = ObjectiveDeserializer.parse(parseYaml("""
               name: Research Station
               at: [ 4, 4 ]
               scheme: scan
-              carriedHome: false
+              payout: scan
               """));
-        assertFalse(immediate.marker().getScoringScheme().isScanCarriedHome(), "a plain recon race pays on the scan");
+        assertEquals(ObjectiveScoringScheme.ScanPayout.ON_SCAN, immediate.marker().getScoringScheme().getScanPayout());
     }
 
     @Test

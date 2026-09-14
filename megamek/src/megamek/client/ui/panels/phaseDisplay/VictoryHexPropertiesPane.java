@@ -61,6 +61,7 @@ import megamek.common.Player;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
+import megamek.common.equipment.ObjectiveScoringScheme.ScanPayout;
 import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 
 /**
@@ -138,11 +139,11 @@ public final class VictoryHexPropertiesPane {
         startingControlCombo.setEnabled(retainControlCheckbox.isSelected());
         retainControlCheckbox.addActionListener(event ->
               startingControlCombo.setEnabled(retainControlCheckbox.isSelected()));
-        // a Scan point's one setting: whether the reading must reach home before it pays
-        JCheckBox carriedHomeCheckbox = new JCheckBox();
-        carriedHomeCheckbox.setSelected(scheme.isScanCarriedHome());
-        carriedHomeCheckbox.setToolTipText(Messages.getString("VictoryHex.carriedHome.tooltip"));
-        JLabel carriedHomeLabel = new JLabel(Messages.getString("VictoryHex.carriedHome"));
+        // a Scan point's one setting: when its points are paid
+        JComboBox<ScanPayout> payoutCombo = new JComboBox<>(ScanPayout.values());
+        payoutCombo.setSelectedItem(scheme.getScanPayout());
+        payoutCombo.setRenderer(new MessageKeyRenderer("VictoryHex.payout.", true));
+        JLabel payoutLabel = new JLabel(Messages.getString("VictoryHex.scanPayout"));
         // a game master can write what the scan reveals; the note is sent to the scanning side on a success
         JTextField revealsField = new JTextField(marker.getScanRevealsNote(), REVEALS_COLUMNS);
         revealsField.setToolTipText(Messages.getString("VictoryHex.scanReveals.tooltip"));
@@ -157,19 +158,19 @@ public final class VictoryHexPropertiesPane {
         JLabel radiusLabel = new JLabel(Messages.getString("VictoryHex.radius"));
         // a scan point is read, not held: nothing about control applies to it, so these rows go away with it
         List<JComponent> scanRows = gameMaster
-              ? List.of(carriedHomeLabel, carriedHomeCheckbox, revealsLabel, revealsField)
-              : List.of(carriedHomeLabel, carriedHomeCheckbox);
+              ? List.of(payoutLabel, payoutCombo, revealsLabel, revealsField)
+              : List.of(payoutLabel, payoutCombo);
         List<JComponent> controlRows = List.of(retainControlLabel, retainControlCheckbox, startingControlLabel,
               startingControlCombo, radiusLabel, radiusSpinner);
         SchemeControls controls = new SchemeControls(schemeCombo, countingCombo, thresholdSpinner, rateSpinner,
-              retainControlCheckbox, carriedHomeCheckbox, scanRows, controlRows, thresholdLabel, rateLabel,
+              retainControlCheckbox, payoutCombo, scanRows, controlRows, thresholdLabel, rateLabel,
               countingLabel, schemeDescription);
         schemeCombo.addActionListener(event -> refreshSchemeRows(controls));
         countingCombo.addActionListener(event -> refreshSchemeRows(controls));
         thresholdSpinner.addChangeListener(event -> refreshSchemeRows(controls));
         rateSpinner.addChangeListener(event -> refreshSchemeRows(controls));
         retainControlCheckbox.addActionListener(event -> refreshSchemeRows(controls));
-        carriedHomeCheckbox.addActionListener(event -> refreshSchemeRows(controls));
+        payoutCombo.addActionListener(event -> refreshSchemeRows(controls));
         refreshSchemeRows(controls);
 
         // the order a player decides these in: what kind of point is this, how is it won, who holds it
@@ -183,7 +184,7 @@ public final class VictoryHexPropertiesPane {
         addRow(propertiesPanel, 1, thresholdLabel, thresholdSpinner);
         addRow(propertiesPanel, 2, countingLabel, countingCombo);
         addRow(propertiesPanel, 3, rateLabel, rateSpinner);
-        addRow(propertiesPanel, 4, carriedHomeLabel, carriedHomeCheckbox);
+        addRow(propertiesPanel, 4, payoutLabel, payoutCombo);
         if (gameMaster) {
             addRow(propertiesPanel, 5, revealsLabel, revealsField);
         }
@@ -215,7 +216,7 @@ public final class VictoryHexPropertiesPane {
         boolean isScanPoint = schemeCombo.getSelectedItem() == SchemePreset.SCAN;
         boolean retainsControl = !isScanPoint && retainControlCheckbox.isSelected();
         scheme.setRetainsControlWhenEmpty(retainsControl);
-        scheme.setScanCarriedHome(carriedHomeCheckbox.isSelected());
+        scheme.setScanPayout((ScanPayout) payoutCombo.getSelectedItem());
         // a greyed dropdown keeps whatever it last showed, so its choice only counts while retention is on;
         // without retention the first End Phase would clear a starting holder anyway
         ControlChoice startingControl = retainsControl
@@ -249,8 +250,8 @@ public final class VictoryHexPropertiesPane {
      * @param thresholdSpinner  the threshold value (turns to secure, starting grip or points to capture)
      * @param rateSpinner       the per-turn rate (grip drain or capture progress)
      * @param retainControl     whether the point keeps its holder once the zone empties
-     * @param carriedHome       whether a Scan point pays only once its reading reaches home
-     * @param scanRows          the rows shown only for a Scan point: the carried-home box and, for a game master, the
+     * @param scanPayout        when a Scan point pays its points
+     * @param scanRows          the rows shown only for a Scan point: the payout choice and, for a game master, the
      *                          note the scan reveals
      * @param controlRows       the retention, starting holder and radius rows, hidden for a Scan point
      * @param thresholdLabel    the label naming the threshold for the selected preset
@@ -259,7 +260,7 @@ public final class VictoryHexPropertiesPane {
      * @param schemeDescription the live plain-words description of the configured scheme
      */
     private record SchemeControls(JComboBox<SchemePreset> schemeCombo, JComboBox<HoldCounting> countingCombo,
-          JSpinner thresholdSpinner, JSpinner rateSpinner, JCheckBox retainControl, JCheckBox carriedHome,
+          JSpinner thresholdSpinner, JSpinner rateSpinner, JCheckBox retainControl, JComboBox<ScanPayout> scanPayout,
           List<JComponent> scanRows, List<JComponent> controlRows, JLabel thresholdLabel,
           JLabel rateLabel, JLabel countingLabel, JLabel schemeDescription) {}
 
@@ -303,7 +304,7 @@ public final class VictoryHexPropertiesPane {
         Object rate = controls.rateSpinner().getValue();
         HoldCounting counting = (HoldCounting) controls.countingCombo().getSelectedItem();
         String presetDescription = describeConfiguredPreset(preset, threshold, rate, counting,
-              controls.retainControl().isSelected(), controls.carriedHome().isSelected());
+              controls.retainControl().isSelected(), (ScanPayout) controls.scanPayout().getSelectedItem());
         controls.schemeDescription().setText("<html><body style='width: 260px'>" + presetDescription
               + "</body></html>");
         controls.schemeCombo().setToolTipText(presetDescription);
@@ -394,11 +395,10 @@ public final class VictoryHexPropertiesPane {
      * @return the plain-words what-it-does / how-to-make-it-work description of the point as configured
      */
     private static String describeConfiguredPreset(SchemePreset preset, Object threshold, Object rate,
-          HoldCounting counting, boolean retainsControl, boolean scanCarriedHome) {
+          HoldCounting counting, boolean retainsControl, ScanPayout scanPayout) {
         String presetDescription = switch (preset) {
-            case SCAN -> Messages.getString(scanCarriedHome
-                  ? "VictoryHex.describe.scan.carried"
-                  : "VictoryHex.describe.scan.immediate");
+            case SCAN -> Messages.getString("VictoryHex.describe.scan."
+                  + scanPayout.name().toLowerCase(Locale.ROOT));
             case HOLD -> Messages.getString("VictoryHex.describe.hold."
                   + counting.name().toLowerCase(Locale.ROOT), threshold);
             case DEFEND -> Messages.getString("VictoryHex.describe.defend", threshold, rate);
@@ -523,6 +523,6 @@ public final class VictoryHexPropertiesPane {
      */
     public static String describeScheme(ObjectiveScoringScheme scheme) {
         return describeConfiguredPreset(scheme.getPreset(), scheme.getThreshold(), scheme.getRatePerTurn(),
-              scheme.getHoldCounting(), scheme.retainsControlWhenEmpty(), scheme.isScanCarriedHome());
+              scheme.getHoldCounting(), scheme.retainsControlWhenEmpty(), scheme.getScanPayout());
     }
 }

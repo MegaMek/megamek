@@ -55,12 +55,15 @@ public final class BankedScan implements Serializable {
     private final int targetEntityId;
     private final Coords objectivePosition;
     private final String description;
+    private final boolean pointsPaidOnScan;
 
-    private BankedScan(int gameRound, int targetEntityId, @Nullable Coords objectivePosition, String description) {
+    private BankedScan(int gameRound, int targetEntityId, @Nullable Coords objectivePosition, String description,
+          boolean pointsPaidOnScan) {
         this.gameRound = gameRound;
         this.targetEntityId = targetEntityId;
         this.objectivePosition = objectivePosition;
         this.description = description;
+        this.pointsPaidOnScan = pointsPaidOnScan;
     }
 
     /**
@@ -71,7 +74,18 @@ public final class BankedScan implements Serializable {
      * @return a banked reading of a scan point
      */
     public static BankedScan ofObjective(int gameRound, Coords objectivePosition, String description) {
-        return new BankedScan(gameRound, Entity.NONE, objectivePosition, description);
+        return new BankedScan(gameRound, Entity.NONE, objectivePosition, description, false);
+    }
+
+    /**
+     * @param gameRound         the round the scan succeeded in
+     * @param objectivePosition the hex of the scan point that was read
+     * @param description       the point's name, for reports and tooltips
+     *
+     * @return a reading of a scan point whose points were paid on the scan and are taken back if the unit is lost
+     */
+    public static BankedScan ofObjectivePaidOnScan(int gameRound, Coords objectivePosition, String description) {
+        return new BankedScan(gameRound, Entity.NONE, objectivePosition, description, true);
     }
 
     /**
@@ -82,7 +96,15 @@ public final class BankedScan implements Serializable {
      * @return a banked reading of an enemy unit (the Sensor Check mission)
      */
     public static BankedScan ofEnemyUnit(int gameRound, int targetEntityId, String description) {
-        return new BankedScan(gameRound, targetEntityId, null, description);
+        return new BankedScan(gameRound, targetEntityId, null, description, false);
+    }
+
+    /**
+     * @return {@code true} when the points for this reading were paid on the scan and only stand while the unit
+     *       carrying it survives; {@code false} when they are still to be paid on exit
+     */
+    public boolean isPointsPaidOnScan() {
+        return pointsPaidOnScan;
     }
 
     /** @return the round the scan succeeded in */

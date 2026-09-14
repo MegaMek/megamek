@@ -99,6 +99,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
     static final int REPORT_READINGS_LOST_WRONG_EDGE = 7132;
     static final int REPORT_READING_BANKED = 7150;
     static final int REPORT_SCAN_REVEALS = 7151;
+    static final int REPORT_SCAN_POINTS_TAKEN_BACK = 7152;
 
     /** Worth of one reading of an enemy unit in the Sensor Check mission (Core Rules p.217). */
     static final int VICTORY_POINTS_PER_UNIT_READING = 1;
@@ -308,16 +309,23 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         int round = getGame().getCurrentRound();
         ObjectiveMarker scanPoint = scanPointOwnedBySideAt(scanner, target.getPosition());
         if (scanPoint != null) {
-            if (scanPoint.getScoringScheme().isScanCarriedHome()) {
-                scanner.bankScan(BankedScan.ofObjective(round, target.getPosition(), scanPoint.generalName()));
-                LOGGER.info("[Scan] {} banked a reading of {} - {} reading(s) carried", scanner.getShortName(),
-                      scanPoint.generalName(), scanner.getBankedScans().size());
-                gameManager.entityUpdate(scanner.getId());
-                reportWhatTheScanGave(scanner, scanPoint.getScanRevealsNote());
-            } else {
-                scoreScanPoint(scanPoint, scanner, sideOf(scanner.getOwner()));
-                reportWhatTheScanGave(scanner, scanPoint.getScanRevealsNote());
+            switch (scanPoint.getScoringScheme().getScanPayout()) {
+                case ON_EXIT -> {
+                    scanner.bankScan(BankedScan.ofObjective(round, target.getPosition(), scanPoint.generalName()));
+                    LOGGER.info("[Scan] {} banked a reading of {} - {} reading(s) carried", scanner.getShortName(),
+                          scanPoint.generalName(), scanner.getBankedScans().size());
+                    gameManager.entityUpdate(scanner.getId());
+                }
+                case ON_SCAN -> scoreScanPoint(scanPoint, scanner, sideOf(scanner.getOwner()));
+                case ON_SCAN_UNTIL_LOST -> {
+                    // paid now, and the reading stays on the unit so the points can be taken back if it is lost
+                    scoreScanPoint(scanPoint, scanner, sideOf(scanner.getOwner()));
+                    scanner.bankScan(BankedScan.ofObjectivePaidOnScan(round, target.getPosition(),
+                          scanPoint.generalName()));
+                    gameManager.entityUpdate(scanner.getId());
+                }
             }
+            reportWhatTheScanGave(scanner, scanPoint.getScanRevealsNote());
             return;
         }
         boolean isSensorCheckMission = getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK);
@@ -408,14 +416,23 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
             }
             unit.setBankedScansRedeemed(true);
             boolean fled = unit.getRemovalCondition() == IEntityRemovalConditions.REMOVE_IN_RETREAT;
-            int readings = unit.getBankedScans().size();
             if (!fled) {
-                LOGGER.info("[Scan] {} was lost with {} reading(s) - they are lost with it", unit.getShortName(),
-                      readings);
-                Report report = new Report(REPORT_READINGS_LOST_WITH_UNIT, Report.PUBLIC);
-                report.addDesc(unit);
-                report.add(readings);
-                addReport(report);
+                takeBackPointsPaidOnScan(unit);
+                int unpaidReadings = countUnpaidReadings(unit);
+                if (unpaidReadings > 0) {
+                    LOGGER.info("[Scan] {} was lost with {} reading(s) - they are lost with it", unit.getShortName(),
+                          unpaidReadings);
+                    Report report = new Report(REPORT_READINGS_LOST_WITH_UNIT, Report.PUBLIC);
+                    report.addDesc(unit);
+                    report.add(unpaidReadings);
+                    addReport(report);
+                }
+                continue;
+            }
+            // a scout that left the battlefield by any exit keeps what it was paid on the scan
+            int readings = countUnpaidReadings(unit);
+            if (readings == 0) {
+                LOGGER.info("[Scan] {} left with nothing still to be paid", unit.getShortName());
                 continue;
             }
             int exitTurn = exitTurn();
@@ -443,6 +460,60 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         }
     }
 
+    /**
+     * @return how many of the unit's readings are still waiting to be paid on exit; readings paid on the scan are
+     *       not counted
+     */
+    private static int countUnpaidReadings(Entity unit) {
+        return (int) unit.getBankedScans().stream().filter(reading -> !reading.isPointsPaidOnScan()).count();
+    }
+
+    /**
+     * The take-back for a Scan point that paid on the scan but only while the scout lived: the points come off
+     * the side's total and the point is open to be scanned again.
+     */
+    private void takeBackPointsPaidOnScan(Entity unit) {
+        Side side = sideOf(unit.getOwner());
+        if (side == null) {
+            return;
+        }
+        for (BankedScan reading : unit.getBankedScans()) {
+            if (!reading.isPointsPaidOnScan() || (reading.getObjectivePosition() == null)) {
+                continue;
+            }
+            ObjectiveMarker scanPoint = scanPointAt(reading.getObjectivePosition());
+            if ((scanPoint == null) || !scanPoint.getScoringScheme().isDecided()) {
+                continue;
+            }
+            int points = scanPoint.getVictoryPointValue();
+            ObjectiveScoringScheme scheme = scanPoint.getScoringScheme();
+            scheme.setSecuredBy(ObjectiveScoringScheme.NO_SIDE, ObjectiveScoringScheme.NO_SIDE);
+            scheme.setVictoryPointsAwarded(false);
+            creditVictoryPoints(side, -points, "lost with " + unit.getShortName() + " before it left: "
+                  + scanPoint.generalName());
+            LOGGER.info("[Scan] {} was lost - the {} point(s) paid for scanning {} are taken back from {}",
+                  unit.getShortName(), points, scanPoint.generalName(), displayName(side));
+            Report report = new Report(REPORT_SCAN_POINTS_TAKEN_BACK, Report.PUBLIC);
+            report.addDesc(unit);
+            report.add(points);
+            report.add(scanPoint.generalName());
+            addReport(report);
+        }
+        gameManager.sendGroundObjectUpdate();
+    }
+
+    /** @return the Scan point at the hex, whatever its owner or state, or {@code null} */
+    private @Nullable ObjectiveMarker scanPointAt(Coords position) {
+        for (ICarryable groundObject : getGame().getGroundObjects(position)) {
+            boolean isScanPoint = (groundObject instanceof ObjectiveMarker marker)
+                  && (marker.getScoringScheme().getPreset() == SchemePreset.SCAN);
+            if (isScanPoint) {
+                return (ObjectiveMarker) groundObject;
+            }
+        }
+        return null;
+    }
+
     /** Turns a home-bound unit's readings into points: each Scan point once for the side, each enemy reading one. */
     private void payOutReadings(Entity unit) {
         Side side = sideOf(unit.getOwner());
@@ -453,6 +524,9 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         int pointsAwarded = 0;
         Set<Coords> pointsAlreadyPaid = new HashSet<>();
         for (BankedScan reading : unit.getBankedScans()) {
+            if (reading.isPointsPaidOnScan()) {
+                continue;
+            }
             if (reading.isObjectiveReading()) {
                 Coords position = reading.getObjectivePosition();
                 if (!pointsAlreadyPaid.add(position)) {

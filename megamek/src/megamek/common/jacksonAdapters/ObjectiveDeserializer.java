@@ -82,7 +82,10 @@ public final class ObjectiveDeserializer {
     private static final String SCHEME_DEFEND = "defend";
     private static final String SCHEME_CAPTURE = "capture";
     private static final String SCHEME_SCAN = "scan";
-    private static final String SCAN_CARRIED_HOME = "carriedHome";
+    private static final String SCAN_PAYOUT = "payout";
+    private static final String PAYOUT_ON_SCAN = "scan";
+    private static final String PAYOUT_ON_SCAN_UNTIL_LOST = "scanUntilLost";
+    private static final String PAYOUT_ON_EXIT = "exit";
     private static final String SCAN_REVEALS = "reveals";
     private static final String HOLD_TURNS = "turns";
     private static final String HOLD_COUNTING = "counting";
@@ -141,6 +144,24 @@ public final class ObjectiveDeserializer {
         return new ObjectiveInfo(marker, readPosition(marker, node));
     }
 
+    /**
+     * @return the objective's {@code payout:} - {@code scan}, {@code scanUntilLost} or {@code exit} - with exit, the
+     *       reading carried home, as the default
+     */
+    private static ObjectiveScoringScheme.ScanPayout parseScanPayout(ObjectiveMarker marker, JsonNode node) {
+        if (!node.hasNonNull(SCAN_PAYOUT)) {
+            return ObjectiveScoringScheme.ScanPayout.ON_EXIT;
+        }
+        String payout = node.get(SCAN_PAYOUT).asText();
+        return switch (payout) {
+            case PAYOUT_ON_SCAN -> ObjectiveScoringScheme.ScanPayout.ON_SCAN;
+            case PAYOUT_ON_SCAN_UNTIL_LOST -> ObjectiveScoringScheme.ScanPayout.ON_SCAN_UNTIL_LOST;
+            case PAYOUT_ON_EXIT -> ObjectiveScoringScheme.ScanPayout.ON_EXIT;
+            default -> throw new IllegalArgumentException("Unknown scan payout " + payout + " for objective "
+                  + marker.generalName() + " - use scan, scanUntilLost or exit");
+        };
+    }
+
     private static Coords readPosition(ObjectiveMarker marker, JsonNode node) {
         try {
             if (node.has(AT)) {
@@ -185,9 +206,7 @@ public final class ObjectiveDeserializer {
             case SCHEME_CAPTURE -> ObjectiveScoringScheme.capture(
                   node.hasNonNull(CAPTURE_POINTS) ? node.get(CAPTURE_POINTS).asInt() : 1,
                   node.hasNonNull(CAPTURE_RATE) ? node.get(CAPTURE_RATE).asInt() : 1);
-            // carriedHome defaults to true: the reading must reach home unless the mission says otherwise
-            case SCHEME_SCAN -> ObjectiveScoringScheme.scan(
-                  !node.hasNonNull(SCAN_CARRIED_HOME) || node.get(SCAN_CARRIED_HOME).asBoolean());
+            case SCHEME_SCAN -> ObjectiveScoringScheme.scan(parseScanPayout(marker, node));
             default -> throw new IllegalArgumentException("Unknown scoring scheme " + scheme
                   + " for objective " + marker.generalName());
         });

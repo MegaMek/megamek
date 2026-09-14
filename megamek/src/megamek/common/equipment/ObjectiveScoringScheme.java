@@ -86,10 +86,20 @@ public class ObjectiveScoringScheme implements Serializable {
         CAPTURE,
         /**
          * Mission option: the point is scanned rather than held. A unit within scanning range with line of sight
-         * passes a sensor check and banks the reading; the point pays its value to the owner once a unit carrying
-         * the reading leaves over its home edge (or on the scan itself, when the point does not require that).
+         * passes a sensor check; when the point pays is its {@link ScanPayout}: on the scan, on the scan but taken
+         * back if the scout is lost, or only once a unit carrying the reading leaves over its home edge.
          */
         SCAN
+    }
+
+    /** When a {@code SCAN} point pays its victory points; the player chooses this at game setup. */
+    public enum ScanPayout {
+        /** The moment a scan succeeds, and nothing takes it back. */
+        ON_SCAN,
+        /** The moment a scan succeeds, but the points are lost again if the scout is destroyed or captured before it leaves. */
+        ON_SCAN_UNTIL_LOST,
+        /** Only once a unit carrying the reading leaves over its home edge on the exit turn or later (the default). */
+        ON_EXIT
     }
 
     /** How the {@code HOLD} preset counts held turns; the player chooses this at game setup. */
@@ -112,7 +122,7 @@ public class ObjectiveScoringScheme implements Serializable {
     private int defendGrip = 0;
     private boolean defendGripInitialized = false;
     private boolean retainsControlWhenEmpty = false;
-    private boolean scanCarriedHome = true;
+    private ScanPayout scanPayout = ScanPayout.ON_EXIT;
     private Map<Integer, Integer> heldTurnsByTeam = new HashMap<>();
     private Map<Integer, Integer> heldTurnsByPlayer = new HashMap<>();
     private Map<Integer, Integer> captureProgressByTeam = new HashMap<>();
@@ -173,31 +183,32 @@ public class ObjectiveScoringScheme implements Serializable {
     }
 
     /**
-     * @param carriedHome {@code true} when the point pays only once a unit carrying its reading leaves over its home
-     *                    edge; {@code false} when it pays on the scan itself
+     * @param payout when the point pays: on the scan, on the scan but taken back if the scout is lost, or only once
+     *               the reading gets home
      *
      * @return a Scan scheme: the point is read with a sensor check rather than held
      */
-    public static ObjectiveScoringScheme scan(boolean carriedHome) {
+    public static ObjectiveScoringScheme scan(ScanPayout payout) {
         ObjectiveScoringScheme scheme = new ObjectiveScoringScheme();
         scheme.preset = SchemePreset.SCAN;
-        scheme.scanCarriedHome = carriedHome;
+        scheme.scanPayout = payout;
         return scheme;
     }
 
     /**
-     * Whether a Scan point pays only once its reading reaches home. On, the default, a scout must leave over its
-     * home edge on the earliest exit turn or later with the reading banked, and a scout that dies first takes the
-     * reading with it. Off, the point pays on the successful scan and there is no counterplay.
+     * When a Scan point pays. {@link ScanPayout#ON_EXIT}, the default, makes the scout carry the reading home over
+     * its edge on the exit turn or later and lose it if it dies first. {@link ScanPayout#ON_SCAN_UNTIL_LOST} pays at
+     * once but takes the points back if the scout is destroyed or captured before it leaves. {@link ScanPayout#ON_SCAN}
+     * pays at once with no counterplay.
      *
-     * @return {@code true} when the reading must be carried home before it scores
+     * @return when the point pays; never {@code null}, a scheme from an older save reads as on exit
      */
-    public boolean isScanCarriedHome() {
-        return scanCarriedHome;
+    public ScanPayout getScanPayout() {
+        return (scanPayout == null) ? ScanPayout.ON_EXIT : scanPayout;
     }
 
-    public void setScanCarriedHome(boolean scanCarriedHome) {
-        this.scanCarriedHome = scanCarriedHome;
+    public void setScanPayout(ScanPayout scanPayout) {
+        this.scanPayout = scanPayout;
     }
 
     public SchemePreset getPreset() {

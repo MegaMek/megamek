@@ -100,7 +100,7 @@ class ScanOrderPacketTest {
         ObjectiveMarker scanPoint = new ObjectiveMarker();
         scanPoint.setName("Depot");
         scanPoint.setOwnerId(OWNER_CONNECTION);
-        scanPoint.setScoringScheme(ObjectiveScoringScheme.scan(true));
+        scanPoint.setScoringScheme(ObjectiveScoringScheme.scan(ObjectiveScoringScheme.ScanPayout.ON_EXIT));
         game.placeGroundObject(pointHex, scanPoint);
 
         scout = new BipedMek();

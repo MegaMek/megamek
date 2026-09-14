@@ -56,6 +56,7 @@ import megamek.common.board.Coords;
 import megamek.common.equipment.BankedScan;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
+import megamek.common.equipment.ObjectiveScoringScheme.ScanPayout;
 import megamek.common.game.Game;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.options.GameOptions;
@@ -171,7 +172,7 @@ class ObjectiveScanHandlerTest {
 
     @Test
     void testAScanOfTheSidesOwnScanPointBanksAReadingOnTheUnit() {
-        ObjectiveMarker scanPoint = scanPointOf(alice, true);
+        ObjectiveMarker scanPoint = scanPointOf(alice, ScanPayout.ON_EXIT);
         BipedMek scout = mekOf(alice, SCANNER_HEX);
         orderScan(scout, POINT_HEX);
 
@@ -189,7 +190,7 @@ class ObjectiveScanHandlerTest {
 
     @Test
     void testASuccessfulScanTellsTheScanningPlayerWhatItReveals() {
-        ObjectiveMarker scanPoint = scanPointOf(alice, true);
+        ObjectiveMarker scanPoint = scanPointOf(alice, ScanPayout.ON_EXIT);
         scanPoint.setScanRevealsNote("Fresh tracks lead north.");
         BipedMek scout = mekOf(alice, SCANNER_HEX);
         orderScan(scout, POINT_HEX);
@@ -221,7 +222,7 @@ class ObjectiveScanHandlerTest {
 
     @Test
     void testAnotherSidesScanPointLooksLikeNothingOfInterest() {
-        scanPointOf(bob, true);
+        scanPointOf(bob, ScanPayout.ON_EXIT);
         BipedMek scout = mekOf(alice, SCANNER_HEX);
         orderScan(scout, POINT_HEX);
 
@@ -233,7 +234,7 @@ class ObjectiveScanHandlerTest {
 
     @Test
     void testAFailedCheckBanksNothing() {
-        scanPointOf(alice, true);
+        scanPointOf(alice, ScanPayout.ON_EXIT);
         BipedMek scout = mekOf(alice, SCANNER_HEX);
         orderScan(scout, POINT_HEX);
         handler.nextRoll = 7;
@@ -247,7 +248,7 @@ class ObjectiveScanHandlerTest {
 
     @Test
     void testATargetOutOfRangeOrOutOfSightIsRefusedWithoutARoll() {
-        scanPointOf(alice, true);
+        scanPointOf(alice, ScanPayout.ON_EXIT);
         BipedMek scout = mekOf(alice, new Coords(0, 3));
         orderScan(scout, POINT_HEX);
 
@@ -263,7 +264,7 @@ class ObjectiveScanHandlerTest {
 
     @Test
     void testAPointThatNeedNotBeCarriedHomePaysOnTheScan() {
-        ObjectiveMarker scanPoint = scanPointOf(alice, false);
+        ObjectiveMarker scanPoint = scanPointOf(alice, ScanPayout.ON_SCAN);
         BipedMek scout = mekOf(alice, SCANNER_HEX);
         orderScan(scout, POINT_HEX);
 
@@ -275,9 +276,50 @@ class ObjectiveScanHandlerTest {
     }
 
     @Test
+    void testPointsPaidOnTheScanAreTakenBackWhenTheScoutIsLostBeforeItLeaves() {
+        ObjectiveMarker scanPoint = scanPointOf(alice, ScanPayout.ON_SCAN_UNTIL_LOST);
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+
+        handler.resolveScans();
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(POINT_VALUE, tracker.getTeamVictoryPoints(1), "paid the moment the scan succeeds");
+        assertTrue(scanPoint.getScoringScheme().isDecided());
+        assertEquals(1, scout.getBankedScans().size(), "the reading stays on the scout as the stake");
+
+        // the defender's answer: the scout dies before it gets off the board
+        scout.setRemovalCondition(IEntityRemovalConditions.REMOVE_SALVAGEABLE);
+        when(game.getGraveyardEntities()).thenReturn(Collections.enumeration(List.of(scout)));
+        when(game.getEntitiesVector()).thenReturn(List.of());
+        handler.resolveScans();
+
+        assertEquals(0, tracker.getTeamVictoryPoints(1), "the points are taken back");
+        assertFalse(scanPoint.getScoringScheme().isDecided(), "and the point is open to be scanned again");
+        assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_SCAN_POINTS_TAKEN_BACK));
+    }
+
+    @Test
+    void testPointsPaidOnTheScanStayWhenTheScoutLeavesByAnyExit() {
+        ObjectiveMarker scanPoint = scanPointOf(alice, ScanPayout.ON_SCAN_UNTIL_LOST);
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+        handler.resolveScans();
+
+        // round 2, over the wrong edge: neither the exit turn nor the home edge applies to points already paid
+        alice.setStartingPos(Board.START_N);
+        scout.setRetreatedDirection(OffBoardDirection.SOUTH);
+        leaveOverTheHomeEdge(scout, 2);
+        handler.resolveScans();
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(POINT_VALUE, tracker.getTeamVictoryPoints(1), "still paid, and paid once");
+        assertTrue(scanPoint.getScoringScheme().isDecided());
+    }
+
+    @Test
     void testOrdersAreDroppedWhenObjectivesAreOff() {
         gameOptions.getOption(OptionsConstants.VICTORY_USE_OBJECTIVES).setValue(false);
-        scanPointOf(alice, true);
+        scanPointOf(alice, ScanPayout.ON_EXIT);
         BipedMek scout = mekOf(alice, SCANNER_HEX);
         orderScan(scout, POINT_HEX);
 
@@ -335,7 +377,7 @@ class ObjectiveScanHandlerTest {
 
     @Test
     void testCarryingAReadingHomeOnTheExitTurnPaysThePointOnce() {
-        ObjectiveMarker scanPoint = scanPointOf(alice, true);
+        ObjectiveMarker scanPoint = scanPointOf(alice, ScanPayout.ON_EXIT);
         BipedMek scout = mekOf(alice, SCANNER_HEX);
         scout.bankScan(BankedScan.ofObjective(3, POINT_HEX, scanPoint.generalName()));
         leaveOverTheHomeEdge(scout, 5);
@@ -358,7 +400,7 @@ class ObjectiveScanHandlerTest {
 
     @Test
     void testLeavingBeforeTheExitTurnLosesTheReadings() {
-        ObjectiveMarker scanPoint = scanPointOf(alice, true);
+        ObjectiveMarker scanPoint = scanPointOf(alice, ScanPayout.ON_EXIT);
         BipedMek scout = mekOf(alice, SCANNER_HEX);
         scout.bankScan(BankedScan.ofObjective(3, POINT_HEX, scanPoint.generalName()));
         leaveOverTheHomeEdge(scout, 4);
@@ -373,7 +415,7 @@ class ObjectiveScanHandlerTest {
 
     @Test
     void testLeavingOverTheWrongEdgeLosesTheReadingsWhenTheSideHasAHomeEdge() {
-        ObjectiveMarker scanPoint = scanPointOf(alice, true);
+        ObjectiveMarker scanPoint = scanPointOf(alice, ScanPayout.ON_EXIT);
         alice.setStartingPos(Board.START_N);
         BipedMek scout = mekOf(alice, SCANNER_HEX);
         scout.bankScan(BankedScan.ofObjective(3, POINT_HEX, scanPoint.generalName()));
@@ -405,7 +447,7 @@ class ObjectiveScanHandlerTest {
 
     @Test
     void testADestroyedScoutTakesItsReadingsWithIt() {
-        ObjectiveMarker scanPoint = scanPointOf(alice, true);
+        ObjectiveMarker scanPoint = scanPointOf(alice, ScanPayout.ON_EXIT);
         BipedMek scout = mekOf(alice, SCANNER_HEX);
         scout.bankScan(BankedScan.ofObjective(3, POINT_HEX, scanPoint.generalName()));
         scout.setRemovalCondition(IEntityRemovalConditions.REMOVE_SALVAGEABLE);
@@ -421,12 +463,12 @@ class ObjectiveScanHandlerTest {
 
     // --- fixture ---
 
-    private ObjectiveMarker scanPointOf(Player owner, boolean carriedHome) {
+    private ObjectiveMarker scanPointOf(Player owner, ScanPayout payout) {
         ObjectiveMarker marker = new ObjectiveMarker();
         marker.setName("Depot");
         marker.setOwnerId(owner.getId());
         marker.setVictoryPointValue(POINT_VALUE);
-        marker.setScoringScheme(ObjectiveScoringScheme.scan(carriedHome));
+        marker.setScoringScheme(ObjectiveScoringScheme.scan(payout));
         when(game.getGroundObjects(POINT_HEX)).thenReturn(List.of(marker));
         return marker;
     }

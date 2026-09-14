@@ -62,6 +62,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.Roll;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
@@ -276,6 +277,15 @@ class ObjectiveScanHandlerTest {
         assertNull(scout.getPendingScan());
         assertTrue(scout.getBankedScans().isEmpty());
         verify(gameManager, never()).addReport(org.mockito.ArgumentMatchers.any(Report.class));
+    }
+
+    @Test
+    void testTheCheckBreakdownReadsBaseFirstThenSignedModifiers() {
+        TargetRoll roll = new TargetRoll(5, "Piloting skill");
+        roll.addModifier(3, "scanning");
+        roll.addModifier(-2, "active probe level 2");
+
+        assertEquals("Piloting skill 5, +3 scanning, -2 active probe level 2", ObjectiveScanHandler.breakdownOf(roll));
     }
 
     // --- the Sensor Check mission: enemy units as targets ---

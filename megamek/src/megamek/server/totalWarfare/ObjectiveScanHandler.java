@@ -43,6 +43,7 @@ import megamek.common.LosEffects;
 import megamek.common.OffBoardDirection;
 import megamek.common.Player;
 import megamek.common.Report;
+import megamek.common.TargetRollModifier;
 import megamek.common.actions.ScanAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
@@ -270,10 +271,31 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         report.add(targetName);
         report.add(targetRoll.getValue());
         // the breakdown, so a player can see whether the probe counted and what jammed it
-        report.add(targetRoll.getDesc());
+        report.add(breakdownOf(targetRoll));
         report.add(roll.getIntValue());
         addReport(report);
         return succeeded;
+    }
+
+    /**
+     * @param targetRoll the check
+     *
+     * @return the check's parts in reading order: the base first as "Piloting skill 5", then each modifier with its
+     *       sign, "+3 scanning", "-2 active probe level 2"
+     */
+    static String breakdownOf(TargetRoll targetRoll) {
+        List<String> parts = new ArrayList<>();
+        boolean isBase = true;
+        for (TargetRollModifier modifier : targetRoll.getModifiers()) {
+            if (isBase) {
+                parts.add(modifier.description() + " " + modifier.value());
+                isBase = false;
+            } else {
+                String sign = (modifier.value() < 0) ? "-" : "+";
+                parts.add(sign + Math.abs(modifier.value()) + " " + modifier.description());
+            }
+        }
+        return String.join(", ", parts);
     }
 
     /**

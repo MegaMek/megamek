@@ -40,10 +40,12 @@ import java.util.Set;
 
 import megamek.client.ui.Messages;
 import megamek.common.LosEffects;
+import megamek.common.OffBoardDirection;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.actions.ScanAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.BankedScan;
@@ -92,6 +94,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
     static final int REPORT_SCAN_EDGE_REROLL = 7129;
     static final int REPORT_SCAN_POINT_SCORED = 7130;
     static final int REPORT_READINGS_CARRIED = 7131;
+    static final int REPORT_READINGS_LOST_WRONG_EDGE = 7132;
 
     /** Worth of one reading of an enemy unit in the Sensor Check mission (Core Rules p.217). */
     static final int VICTORY_POINTS_PER_UNIT_READING = 1;
@@ -302,6 +305,16 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
                 addReport(report);
                 continue;
             }
+            if (!leftOverHomeEdge(unit)) {
+                LOGGER.info("[Scan] {} left over the {} edge, not its side's home edge - its {} reading(s) are lost",
+                      unit.getShortName(), unit.getRetreatedDirection(), readings);
+                Report report = new Report(REPORT_READINGS_LOST_WRONG_EDGE, Report.PUBLIC);
+                report.addDesc(unit);
+                report.add(String.valueOf(unit.getRetreatedDirection()).toLowerCase(java.util.Locale.ROOT));
+                report.add(readings);
+                addReport(report);
+                continue;
+            }
             payOutReadings(unit);
         }
     }
@@ -432,6 +445,47 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
 
     private int exitTurn() {
         return getGame().getOptions().intOption(OptionsConstants.VICTORY_SCAN_EXIT_TURN);
+    }
+
+    /**
+     * Core Rules p.217: the readings score when the unit leaves "via its home edge". A lobby game lets a unit flee
+     * over any edge, so the home edge is read from where the side deployed: north means the north edge, a corner
+     * means either of its two edges. A side deployed anywhere, on any edge or in the centre has no single home
+     * edge, and any edge counts; a scenario that wants a particular edge sets the player's flee zone, which the
+     * flee itself already enforces.
+     *
+     * @param unit the unit that fled
+     *
+     * @return {@code true} when the unit left over an edge that counts as home
+     */
+    static boolean leftOverHomeEdge(Entity unit) {
+        Player owner = unit.getOwner();
+        if (owner == null) {
+            return true;
+        }
+        Set<OffBoardDirection> homeEdges = homeEdgesOf(owner.getStartingPos());
+        OffBoardDirection fledOver = unit.getRetreatedDirection();
+        boolean directionUnknown = (fledOver == null) || (fledOver == OffBoardDirection.NONE);
+        return homeEdges.isEmpty() || directionUnknown || homeEdges.contains(fledOver);
+    }
+
+    /**
+     * @param startingPosition a {@link Board} starting position
+     *
+     * @return the edges that count as home for a side deployed there; empty when no single edge does
+     */
+    static Set<OffBoardDirection> homeEdgesOf(int startingPosition) {
+        return switch (startingPosition) {
+            case Board.START_N -> Set.of(OffBoardDirection.NORTH);
+            case Board.START_S -> Set.of(OffBoardDirection.SOUTH);
+            case Board.START_E -> Set.of(OffBoardDirection.EAST);
+            case Board.START_W -> Set.of(OffBoardDirection.WEST);
+            case Board.START_NE -> Set.of(OffBoardDirection.NORTH, OffBoardDirection.EAST);
+            case Board.START_NW -> Set.of(OffBoardDirection.NORTH, OffBoardDirection.WEST);
+            case Board.START_SE -> Set.of(OffBoardDirection.SOUTH, OffBoardDirection.EAST);
+            case Board.START_SW -> Set.of(OffBoardDirection.SOUTH, OffBoardDirection.WEST);
+            default -> Set.of();
+        };
     }
 
     private static boolean isSameSide(@Nullable Player first, @Nullable Player second) {

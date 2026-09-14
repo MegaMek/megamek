@@ -47,9 +47,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import megamek.common.OffBoardDirection;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.actions.ScanAction;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.BankedScan;
 import megamek.common.equipment.ObjectiveMarker;
@@ -335,6 +337,38 @@ class ObjectiveScanHandlerTest {
         assertFalse(scanPoint.getScoringScheme().isDecided());
         assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_READINGS_LOST_EARLY_EXIT));
         assertTrue(scout.isBankedScansRedeemed(), "settled once, never again");
+    }
+
+    @Test
+    void testLeavingOverTheWrongEdgeLosesTheReadingsWhenTheSideHasAHomeEdge() {
+        ObjectiveMarker scanPoint = scanPointOf(alice, true);
+        alice.setStartingPos(Board.START_N);
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        scout.bankScan(BankedScan.ofObjective(3, POINT_HEX, scanPoint.generalName()));
+        scout.setRetreatedDirection(OffBoardDirection.EAST);
+        leaveOverTheHomeEdge(scout, 5);
+
+        handler.resolveScans();
+
+        assertNull(VictoryPointTracker.findTracker(game.getVictoryContext()), "east is not the north side's home");
+        assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_READINGS_LOST_WRONG_EDGE));
+
+        // a side deployed anywhere has no single home edge, so any edge counts
+        alice.setStartingPos(Board.START_ANY);
+        BipedMek secondScout = mekOf(alice, SCANNER_HEX);
+        secondScout.bankScan(BankedScan.ofObjective(4, POINT_HEX, scanPoint.generalName()));
+        secondScout.setRetreatedDirection(OffBoardDirection.EAST);
+        leaveOverTheHomeEdge(secondScout, 6);
+        handler.resolveScans();
+        assertEquals(POINT_VALUE, VictoryPointTracker.findTracker(game.getVictoryContext()).getTeamVictoryPoints(1));
+    }
+
+    @Test
+    void testCornerDeploymentsHaveTwoHomeEdges() {
+        assertEquals(java.util.Set.of(OffBoardDirection.NORTH, OffBoardDirection.EAST),
+              ObjectiveScanHandler.homeEdgesOf(Board.START_NE));
+        assertEquals(java.util.Set.of(OffBoardDirection.SOUTH), ObjectiveScanHandler.homeEdgesOf(Board.START_S));
+        assertTrue(ObjectiveScanHandler.homeEdgesOf(Board.START_CENTER).isEmpty());
     }
 
     @Test

@@ -33,9 +33,9 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
+import megamek.common.rules.*;
 import megamek.common.rules.RulesManager;
 import megamek.common.rules.RulesTarget;
-import megamek.common.rules.*;
 
 public class TWRulesManager implements RulesManager {
     private TWRulesTarget twRulesTarget = new TWRulesTarget();
@@ -179,4 +179,3 @@ public class TWRulesManager implements RulesManager {
      */
     public RulesWeapons getRulesWeapons() { return twRulesWeapons; }
 }
-

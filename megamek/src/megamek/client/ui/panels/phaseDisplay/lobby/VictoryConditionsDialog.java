@@ -52,10 +52,10 @@ import javax.swing.JTextField;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.DialogOptionListener;
-import megamek.client.ui.panels.VictoryOptionLayout;
-import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 import megamek.client.ui.panels.DialogOptionComponentYPanel;
+import megamek.client.ui.panels.VictoryOptionLayout;
+import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.common.options.BasicOption;
 import megamek.common.options.GameOptions;
@@ -87,7 +87,8 @@ public class VictoryConditionsDialog extends AbstractButtonDialog implements Dia
           OptionsConstants.VICTORY_USE_OBJECTIVES,
           OptionsConstants.VICTORY_VP_WIN_THRESHOLD,
           OptionsConstants.VICTORY_VP_SUDDEN_DEATH,
-          OptionsConstants.VICTORY_USE_SENSOR_CHECK);
+          OptionsConstants.VICTORY_USE_SENSOR_CHECK,
+          OptionsConstants.VICTORY_SCAN_EXIT_TURN);
 
     /** Unscaled width the objectives note wraps at, a little under the tab's preferred width. */
     private static final int NOTE_WIDTH = 500;

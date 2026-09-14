@@ -85,9 +85,11 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.RulesScanning;
 import megamek.common.turns.TriggerAPPodTurn;
 import megamek.common.turns.TriggerBPodTurn;
 import megamek.common.units.*;
@@ -122,6 +124,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         FIRE_NEXT_TARG("fireNextTarg"),
         FIRE_MODE("fireMode"),
         FIRE_SPOT("fireSpot"),
+        FIRE_SCAN("fireScan"),
         FIRE_FLIP_ARMS("fireFlipArms"),
         FIRE_FLIP_MOUNT("fireFlipMount"),
         FIRE_ROTATE_TURRET("fireRotateTurret"),
@@ -286,6 +289,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
     /** The last hex the player selected, used by the firing-phase Extinguish button. */
     private Coords selectedCoords = null;
+    /** The objectives feature log: a Scan order that was refused or queued, for playtests. */
+    private static final MMLogger VICTORY_HEX_LOGGER = MMLogger.create("megamek.feature.VictoryHex");
     private int selectedBoardId = 0;
 
     /**
@@ -1812,6 +1817,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         } else {
             setSpotEnabled(false);
         }
+        updateScan();
 
         // update target panel
 
@@ -2039,6 +2045,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             selectedCoords = coords;
             selectedBoardId = event.getBoardId();
             updateExtinguish();
+            updateScan();
             if (isStrafing) {
                 if (currentEntity().getPassedThroughBoardId() == event.getBoardId()) {
                     if (isValidStrafingHex(coords)) {
@@ -2177,6 +2184,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             findClub();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_SPOT.getCmd())) {
             doSpot();
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_SCAN.getCmd())) {
+            doScan();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_NEXT_TARG.getCmd())) {
             boolean onlyValidTargets = (ev.getModifiers() & ActionEvent.SHIFT_MASK) > 0;
             boolean ignoreAllies = (ev.getModifiers() & ActionEvent.CTRL_MASK) > 0;
@@ -2555,6 +2564,90 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
     protected void setSpotEnabled(boolean enabled) {
         enableFiringButton(FiringCommand.FIRE_SPOT, enabled);
+    }
+
+    protected void setScanEnabled(boolean enabled) {
+        enableFiringButton(FiringCommand.FIRE_SCAN, enabled);
+    }
+
+    /**
+     * The Scan button follows the last clicked hex or unit: on when the current unit could scan it under the game's
+     * rules, in range and in line of sight, with objectives in play. The same three questions the server asks when
+     * it resolves the order, so the button never offers what the server would refuse.
+     */
+    private void updateScan() {
+        setScanEnabled(scanRefusal() == null);
+    }
+
+    /**
+     * @return why the current unit cannot scan the selected target, or {@code null} when it can; the reason is the
+     *       toast shown when the player presses Scan anyway through the menu
+     */
+    private @Nullable String scanRefusal() {
+        Entity scanner = currentEntity();
+        Targetable scanTarget = scanTarget();
+        if ((scanner == null) || (scanTarget == null) || (scanner.getPosition() == null)) {
+            return "";
+        }
+        if (!game.getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
+            return "";
+        }
+        RulesScanning rules = Game.rulesManager.getRulesScanning();
+        TargetRoll targetRoll = rules.scanTargetRoll(scanner, scanTarget);
+        if (targetRoll.getValue() == TargetRoll.IMPOSSIBLE) {
+            return Messages.getString("FiringDisplay.scanRefused", targetRoll.getDesc());
+        }
+        int distance = scanner.getPosition().distance(scanTarget.getPosition());
+        int range = rules.scanningRange(scanner, scanTarget);
+        if (distance > range) {
+            return Messages.getString("FiringDisplay.scanOutOfRange", distance, range);
+        }
+        if (!LosEffects.calculateLOS(game, scanner, scanTarget).canSee()) {
+            return Messages.getString("FiringDisplay.scanNoLineOfSight");
+        }
+        return null;
+    }
+
+    /**
+     * @return what a Scan order would point at: the selected unit when there is one, otherwise the last clicked
+     *       hex, or {@code null} when nothing has been clicked
+     */
+    private @Nullable Targetable scanTarget() {
+        if (target instanceof Entity) {
+            return target;
+        }
+        if (selectedCoords == null) {
+            return null;
+        }
+        return new HexTarget(selectedCoords, selectedBoardId, Targetable.TYPE_HEX_CLEAR);
+    }
+
+    /**
+     * Orders the current unit to scan the selected hex or unit at the end of the turn. One scan per unit per turn:
+     * an earlier Scan order this turn is withdrawn first.
+     */
+    protected void doScan() {
+        Entity scanner = currentEntity();
+        Targetable scanTarget = scanTarget();
+        if ((scanner == null) || (scanTarget == null)) {
+            return;
+        }
+        String refusal = scanRefusal();
+        if (refusal != null) {
+            if (!refusal.isEmpty()) {
+                clientgui.addToast(ToastLevel.WARNING, refusal, scanner);
+            }
+            VICTORY_HEX_LOGGER.debug("[Scan] {} cannot scan {}: {}", scanner.getShortName(),
+                  scanTarget.getPosition().getBoardNum(), refusal.isEmpty() ? "no target or objectives off" : refusal);
+            return;
+        }
+        attacks.removeIf(action -> action instanceof ScanAction);
+        ScanAction order = (scanTarget instanceof Entity targetUnit)
+              ? new ScanAction(currentEntity, targetUnit.getId())
+              : new ScanAction(currentEntity, scanTarget.getPosition(), selectedBoardId);
+        addAttack(order);
+        VICTORY_HEX_LOGGER.debug("[Scan] {} will scan {} at the end of the turn", scanner.getShortName(),
+              scanTarget.getPosition().getBoardNum());
     }
 
     protected void setSearchlightEnabled(boolean enabled) {

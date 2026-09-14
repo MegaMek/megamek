@@ -336,6 +336,9 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 // Sync remaining ECM fields to clients
                 gameManager.sendSyncTemporaryECMFields();
 
+                // Scans first: a reading carried home this round is in the tally before control is
+                // resolved and before the victory check reads it
+                gameManager.resolveScans();
                 // Resolve objective control and score victory points before the victory check so the
                 // check sees this round's tally
                 gameManager.resolveObjectives();

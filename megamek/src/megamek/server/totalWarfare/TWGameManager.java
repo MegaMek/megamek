@@ -10243,6 +10243,8 @@ public class TWGameManager extends AbstractGameManager {
                     entity.setSpotting(true);
                     entity.setSpotTargetId(spotAction.getTargetId());
                 }
+                // a scan is resolved in the End Phase; a later order from the same unit replaces this one
+                case ScanAction scanAction -> entity.setPendingScan(scanAction);
                 default ->
                     // add to the normal attack list.
                       game.addAction(ea);
@@ -16308,6 +16310,14 @@ public class TWGameManager extends AbstractGameManager {
      */
     void resolveObjectives() {
         new ObjectiveResolutionHandler(this).resolveObjectives();
+    }
+
+    /**
+     * Resolves the scans units ordered this turn and settles the readings of units that have left. Delegates to
+     * {@link ObjectiveScanHandler} so the scanning rules do not add to this already very large class.
+     */
+    void resolveScans() {
+        new ObjectiveScanHandler(this).resolveScans();
     }
 
     /**

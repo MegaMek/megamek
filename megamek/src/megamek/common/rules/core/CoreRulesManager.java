@@ -33,9 +33,9 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.rules.*;
 import megamek.common.rules.RulesManager;
 import megamek.common.rules.RulesTarget;
-import megamek.common.rules.*;
 
 public class CoreRulesManager implements RulesManager {
     private CoreRulesTarget coreRulesTarget = new CoreRulesTarget();

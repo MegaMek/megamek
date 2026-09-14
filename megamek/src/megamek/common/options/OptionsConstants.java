@@ -358,6 +358,7 @@ public class OptionsConstants {
     public static final String VICTORY_VP_WIN_THRESHOLD = "vp_win_threshold";
     public static final String VICTORY_VP_SUDDEN_DEATH = "vp_sudden_death";
     public static final String VICTORY_USE_SENSOR_CHECK = "use_sensor_check";
+    public static final String VICTORY_SCAN_EXIT_TURN = "scan_exit_turn";
 
     public static final String ALLOWED_CANON_ONLY = "canon_only";
     public static final String ALLOWED_YEAR = "year";

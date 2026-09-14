@@ -804,11 +804,16 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             return;
         }
         List<PlacedObjective> objectives = findAllObjectives();
-        if (objectives.isEmpty()) {
+        boolean isSensorCheckMission = getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK);
+        if (objectives.isEmpty() && !isSensorCheckMission) {
             return;
         }
         addReport(new Report(REPORT_VICTORY_CONDITIONS_HEADER, Report.PUBLIC));
         reportVictoryPointTotals();
+        new ObjectiveScanHandler(gameManager).reportReadingsCarried();
+        if (objectives.isEmpty()) {
+            return;
+        }
         addReport(new Report(REPORT_STANDINGS_INTRO, Report.PUBLIC));
         for (PlacedObjective objective : objectives) {
             ObjectiveMarker marker = objective.marker();

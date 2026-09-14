@@ -226,7 +226,8 @@ final class GameOptionsPresentation {
               OptionsConstants.VICTORY_USE_OBJECTIVES,
               OptionsConstants.VICTORY_VP_WIN_THRESHOLD,
               OptionsConstants.VICTORY_VP_SUDDEN_DEATH,
-              OptionsConstants.VICTORY_USE_SENSOR_CHECK);
+              OptionsConstants.VICTORY_USE_SENSOR_CHECK,
+              OptionsConstants.VICTORY_SCAN_EXIT_TURN);
 
         register(ALLOWED_UNITS, GENERAL_UNITS_AND_TECHNOLOGY, "allowedUnits.availability",
               OptionsConstants.ALLOWED_CANON_ONLY,

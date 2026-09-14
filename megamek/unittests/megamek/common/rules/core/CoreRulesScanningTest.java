@@ -46,13 +46,13 @@ import megamek.common.board.Coords;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Aero;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
-import megamek.common.units.Aero;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

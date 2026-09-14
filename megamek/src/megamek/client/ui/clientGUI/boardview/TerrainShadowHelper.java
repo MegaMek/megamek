@@ -101,6 +101,26 @@ class TerrainShadowHelper {
      */
     @Nullable
     BufferedImage updateShadowMap() {
+        return updateShadowMap(true);
+    }
+
+    /** Shadow travel per elevation level in board pixels; shared by the classic and GPU renderers. */
+    @Nullable
+    Point lightDirection() {
+        Board board = boardView.getBoard();
+        if (!GUIP.getShadowMap() || board == null || board.isSpace() || board.getBoardType() == BoardType.SKY
+              || boardView.game.getPhase().isUnknown()) {
+            return null;
+        }
+        PlanetaryConditions conditions = boardView.game.getPlanetaryConditions();
+        if (conditions.getLight().isMoonlessOrPitchBack()) {
+            return new Point(0, 0);
+        }
+        return conditions.getLight().isDusk() ? new Point(-38, 14) : new Point(-19, 7);
+    }
+
+    @Nullable
+    BufferedImage updateShadowMap(boolean includeElevation) {
         // Issues:
         // Bridge shadows show a gap towards connected hexes. I don't know why.
         // More than one super image on a hex (building + road) doesn't work. how do I get
@@ -111,14 +131,12 @@ class TerrainShadowHelper {
         // for this level alone; soften up;
         // copy to real shadow map with clipping area active; get new clean shadow map for next shadowed level;
         // too much hassle currently; it works so beautifully
-        if (!GUIP.getShadowMap()) {
+        Point direction = lightDirection();
+        if (direction == null) {
             return null;
         }
 
         Board board = boardView.getBoard();
-        if ((board == null) || board.isSpace() || (board.getBoardType() == BoardType.SKY)) {
-            return null;
-        }
 
         if (boardView.getBoardSize() == null) {
             boardView.updateBoardSize();
@@ -128,12 +146,6 @@ class TerrainShadowHelper {
             return null;
         }
 
-        // Map editor? No shadows
-        if (boardView.game.getPhase().isUnknown()) {
-            return null;
-        }
-
-        PlanetaryConditions conditions = boardView.game.getPlanetaryConditions();
         long stT = System.nanoTime();
 
         // 1) create or get the hex shadow
@@ -156,15 +168,7 @@ class TerrainShadowHelper {
         Graphics2D g = shadowMap.createGraphics();
 
         // Compute shadow angle based on planetary conditions.
-        double[] lightDirection;
-        if (conditions.getLight().isMoonlessOrPitchBack()) {
-            lightDirection = new double[] { 0, 0 };
-        } else if (conditions.getLight().isDusk()) {
-            // TODO: replace when made user controlled
-            lightDirection = new double[] { -38, 14 };
-        } else {
-            lightDirection = new double[] { -19, 7 };
-        }
+        double[] lightDirection = { direction.x, direction.y };
 
         // Shadows for elevation
         // 1a) Sort the board hexes by elevation
@@ -223,7 +227,7 @@ class TerrainShadowHelper {
         // 3) Find all level differences
         final int maxDiff = 35; // limit all diffs to this value
         Set<Integer> lDiffs = new TreeSet<>();
-        for (int shadowed = board.getMinElevation(); shadowed < board.getMaxElevation(); shadowed++) {
+        for (int shadowed = board.getMinElevation(); includeElevation && shadowed < board.getMaxElevation(); shadowed++) {
             if (levelClips.get(shadowed) == null) {
                 continue;
             }
@@ -270,7 +274,7 @@ class TerrainShadowHelper {
         }
 
         // 5) Actually draw the elevation shadows
-        for (int shadowed = board.getMinElevation(); shadowed < board.getMaxElevation(); shadowed++) {
+        for (int shadowed = board.getMinElevation(); includeElevation && shadowed < board.getMaxElevation(); shadowed++) {
             if (levelClips.get(shadowed) == null) {
                 continue;
             }

@@ -56,6 +56,12 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
 
     protected MegaMekButton butSkipTurn;
 
+    @Override
+    public List<MegaMekButton> getCompletionButtons() {
+        return butSkipTurn == null || !butSkipTurn.isVisible() ? super.getCompletionButtons()
+              : List.of(getButDone(), butSkipTurn);
+    }
+
     /** The currently selected unit for taking action. Not necessarily equal to the unit shown in the unit viewer. */
     protected int currentEntity = Entity.NONE;
 

@@ -35,6 +35,7 @@ package megamek.client.ui.clientGUI;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -57,8 +58,8 @@ import megamek.client.bot.princess.ArtilleryCommandAndControl.ArtilleryOrder;
 import megamek.client.bot.princess.ArtilleryCommandAndControl.SpecialAmmo;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.ChatCommands;
-import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.BuildingEditDialog;
 import megamek.client.ui.dialogs.HexEditDialog;
@@ -66,6 +67,7 @@ import megamek.client.ui.dialogs.NoteDialog;
 import megamek.client.ui.dialogs.TurretFacingDialog;
 import megamek.client.ui.dialogs.UnitEditorDialog;
 import megamek.client.ui.entityreadout.LiveReadoutDialog;
+import megamek.client.ui.panels.phaseDisplay.ActionPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.FiringDisplay;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.client.ui.panels.phaseDisplay.PhysicalDisplay;
@@ -127,13 +129,11 @@ public class MapMenu extends JPopupMenu {
         client = gui.getClient();
         game = client.getGame();
         board = game.getBoard(boardId);
-        selectedEntity = myEntity = gui.getDisplayedUnit();
+        selectedEntity = myEntity = panel instanceof ActionPhaseDisplay action
+              ? action.currentEntity() : gui.getDisplayedUnit();
         boardLocation = BoardLocation.of(coords, boardId);
 
         hasMenu = createMenu();
-        // make popups not consume mouse events outside them
-        // so board dragging can start correctly when this menu is open
-        UIManager.put("PopupMenu.consumeEventOnClose", false);
     }
 
     private boolean canSelectEntities() {
@@ -158,7 +158,7 @@ public class MapMenu extends JPopupMenu {
         addIfNotEmpty(createViewMenu());
 
         if (client.isMyTurn() && (myEntity != null)) {
-            selectTarget();
+            findTarget();
             addIfNotEmpty(createTargetMenu());
             // Don't show some menus for a unit that is not on this board
             if (boardLocation.isOn(myEntity.getBoardId())) {
@@ -1176,8 +1176,12 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createFireJMenuItem(FiringDisplay firingDisplay) {
         JMenuItem item = new JMenuItem("Fire");
 
-        boolean isFireAllowed = firingDisplay.isFireAllowed();
+        boolean targetInHex = firingDisplay.getTarget() != null
+              && boardLocation.equals(firingDisplay.getTarget().getBoardLocation());
+        boolean isFireAllowed = targetInHex && firingDisplay.isFireAllowed();
         item.setEnabled(isFireAllowed);
+        item.setToolTipText(targetInHex ? gui.getUnitDisplay().wPan.getTargetSummary()
+              : Messages.getString("GpuBoard.selectTargetFirst"));
         if (!isFireAllowed) {
             logger.debug("[MapMenu] Fire item disabled for {}: the Fire button is not currently enabled; "
                   + "the unit display's to-hit line states the reason", myEntity.getShortName());
@@ -1282,7 +1286,29 @@ public class MapMenu extends JPopupMenu {
 
         }
 
+        if (!isMovementPhase) {
+            targetBeforeActions(menu);
+        }
         return menu;
+    }
+
+    private void targetBeforeActions(JMenu menu) {
+        for (Component component : menu.getMenuComponents()) {
+            if (component instanceof JMenu nested) {
+                targetBeforeActions(nested);
+            } else if (component instanceof JMenuItem item) {
+                ActionListener[] listeners = item.getActionListeners();
+                for (ActionListener listener : listeners) {
+                    item.removeActionListener(listener);
+                }
+                item.addActionListener(event -> {
+                    selectTarget();
+                    for (ActionListener listener : listeners) {
+                        listener.actionPerformed(event);
+                    }
+                });
+            }
+        }
     }
 
     private JMenu createStandMenu() {
@@ -1574,13 +1600,9 @@ public class MapMenu extends JPopupMenu {
 
     void plotCourse(ActionEvent e) {
         ((MovementDisplay) currentPanel).actionPerformed(e);
-
-        // Cursor over the hex.
-        gui.getBoardView()
-              .mouseAction(coords, BoardViewEvent.BOARD_HEX_CURSOR, InputEvent.BUTTON1_DOWN_MASK, MouseEvent.BUTTON1);
-        // Click
-        gui.getBoardView()
-              .mouseAction(coords, BoardViewEvent.BOARD_HEX_CLICKED, InputEvent.BUTTON1_DOWN_MASK, MouseEvent.BUTTON1);
+        BoardView view = (BoardView) gui.getBoardView(boardLocation);
+        view.mouseAction(coords, BoardView.BOARD_HEX_DRAG, InputEvent.BUTTON1_DOWN_MASK, MouseEvent.BUTTON1);
+        view.mouseAction(coords, BoardView.BOARD_HEX_CLICK, InputEvent.BUTTON1_DOWN_MASK, MouseEvent.BUTTON1);
     }
 
     Targetable decodeTargetInfo(String info) {
@@ -1774,7 +1796,7 @@ public class MapMenu extends JPopupMenu {
         return item;
     }
 
-    private void selectTarget() {
+    private void findTarget() {
         Vector<Entity> list = new Vector<>();
 
         Player localPlayer = client.getLocalPlayer();
@@ -1793,7 +1815,16 @@ public class MapMenu extends JPopupMenu {
         }
 
         if (list.size() == 1) {
-            myTarget = selectedEntity = list.firstElement();
+            myTarget = list.firstElement();
+        }
+    }
+
+    /** Applies the inspected target only when an action is chosen (or the classic popup is shown). */
+    public void selectTarget() {
+        if (client.isMyTurn() && myEntity != null) {
+            findTarget();
+        }
+        if (myTarget != null) {
             if (currentPanel instanceof FiringDisplay panel) {
                 panel.target(myTarget);
             } else if (currentPanel instanceof PhysicalDisplay) {
@@ -2005,8 +2036,10 @@ public class MapMenu extends JPopupMenu {
 
     @Override
     public void show(Component comp, int x, int y) {
+        UIManager.put("PopupMenu.consumeEventOnClose", false);
         if (client.isMyTurn() && (myEntity != null)) {
             selectTarget();
+            createMenu();
         }
         super.show(comp, x, y);
     }

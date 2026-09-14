@@ -182,6 +182,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JCheckBoxMenuItem viewPlanetaryConditionsOverlay = new JCheckBoxMenuItem(getString(
           "CommonMenuBar.viewPlanetaryConditions"));
     private final JMenuItem viewZoomIn = new JMenuItem(getString("CommonMenuBar.viewZoomIn"));
+    private final JMenuItem viewGpuBoard = new JMenuItem(getString("CommonMenuBar.viewGpuBoard"));
+    private final JMenuItem viewClassicBoard = new JMenuItem(getString("CommonMenuBar.viewClassicBoard"));
     private final JMenuItem viewZoomOut = new JMenuItem(getString("CommonMenuBar.viewZoomOut"));
     private final JMenuItem viewZoomOverviewToggle = new JMenuItem(getString("CommonMenuBar.viewZoomOverviewToggle"));
     private final JMenuItem viewLabels = new JMenuItem(getString("CommonMenuBar.viewLabels"));
@@ -370,6 +372,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu = new JMenu(Messages.getString("CommonMenuBar.ViewMenu"));
         menu.setMnemonic(VK_V);
         add(menu);
+        initMenuItem(viewClassicBoard, menu, VIEW_CLASSIC_BOARD);
+        initMenuItem(viewGpuBoard, menu, VIEW_GPU_BOARD);
+        menu.addSeparator();
         initMenuItem(viewClientSettings, menu, VIEW_CLIENT_SETTINGS, VK_S);
         initMenuItem(viewIncGUIScale, menu, VIEW_INC_GUI_SCALE);
         initMenuItem(viewDecGUIScale, menu, VIEW_DEC_GUI_SCALE);
@@ -578,6 +583,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boolean isInGame = isGame && phase.isDuringOrAfter(GamePhase.DEPLOYMENT);
         boolean isInGameBoardView = isInGame && phase.isOnMap();
         boolean isBoardView = isInGameBoardView || isBoardEditor;
+        viewGpuBoard.setEnabled(isInGame);
+        // Returning to the classic UI must remain possible through reports and phase transitions.
+        viewClassicBoard.setEnabled(isGame);
         boolean canSave = !phase.isUnknown()
               && !phase.isSelection()
               && !phase.isExchange()

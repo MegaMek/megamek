@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,6 +41,9 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityWeightClass;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class BattleArmorCostCalculator {
 
@@ -118,12 +121,14 @@ public class BattleArmorCostCalculator {
         costs[idx++] = Math.max(0, CostCalculator.getWeaponsAndEquipmentCost(battleArmor, ignoreAmmo));
         costs[idx] = -battleArmor.getSquadSize();
 
-        double cost = CostCalculator.calculateCost(costs);
+        double roundedCost = BigDecimal.valueOf(CostCalculator.calculateCost(costs))
+              .setScale(2, RoundingMode.UP)
+              .doubleValue();
         String[] systemNames = { "Chassis", "Jumping/VTOL/UMU", "Ground Movement", "Manipulators", "Armor",
                                  "Augmentations", "Clan Structure Multiplier", "Training", "Equipment", "Troopers" };
-        CostCalculator.fillInReport(costReport, battleArmor, ignoreAmmo, systemNames, 8, cost, costs);
+        CostCalculator.fillInReport(costReport, battleArmor, ignoreAmmo, systemNames, 8, roundedCost, costs);
 
-        return cost;
+        return roundedCost;
     }
 
     /**

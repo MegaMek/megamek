@@ -37,6 +37,9 @@ import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.units.Aero;
 import megamek.common.equipment.ArmorType;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class AeroCostCalculator {
 
     public static double calculateCost(Aero aero, CalculationReport costReport, boolean ignoreAmmo) {
@@ -80,11 +83,13 @@ public class AeroCostCalculator {
         CostCalculator.removeNegativeAdditiveCosts(costs);
 
         costs[idx] = -aero.getPriceMultiplier();
-        double cost = CostCalculator.calculateCost(costs);
+        double roundedCost = BigDecimal.valueOf(CostCalculator.calculateCost(costs))
+              .setScale(2, RoundingMode.UP)
+              .doubleValue();
         String[] systemNames = { "Cockpit", "Life Support", "Sensors", "Structure", "Flight Systems", "Engine",
                                  "Fuel Tanks", "Armor", "Heat Sinks", "Equipment", "Weight Multiplier" };
-        CostCalculator.fillInReport(costReport, aero, ignoreAmmo, systemNames, 9, cost, costs);
+        CostCalculator.fillInReport(costReport, aero, ignoreAmmo, systemNames, 9, roundedCost, costs);
 
-        return Math.round(cost);
+        return roundedCost;
     }
 }

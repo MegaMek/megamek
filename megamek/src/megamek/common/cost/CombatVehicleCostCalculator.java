@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,6 +33,8 @@
 
 package megamek.common.cost;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
@@ -267,7 +269,9 @@ public class CombatVehicleCostCalculator {
 
         ArrayList<String> left = getLeft(tank);
         String[] systemNames = left.toArray(new String[0]);
-        long roundedCost = Math.round(cost);
+        double roundedCost = BigDecimal.valueOf(cost)
+              .setScale(2, RoundingMode.UP)
+              .doubleValue();
           CostCalculator.fillInReport(costReport, tank, ignoreAmmo, systemNames, equipmentIndex, structCostIdx,
               roundedCost, costs);
         return roundedCost;

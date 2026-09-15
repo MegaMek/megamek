@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,6 +41,9 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.LandAirMek;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadVee;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class MekCostCalculator {
 
@@ -180,13 +183,15 @@ public class MekCostCalculator {
             weightMultiplier = 1 + (mek.getWeight() / 400f);
         }
         costs[i] = -weightMultiplier; // negative just marks it as multiplier
-        cost = Math.round(cost * weightMultiplier);
+        double roundedCost = BigDecimal.valueOf(cost * weightMultiplier)
+              .setScale(2, RoundingMode.UP)
+              .doubleValue();
         String[] systemNames = { "Cockpit", "Life Support", "Sensors", "Myomer", "Structure", "Actuators",
                                  "Engine", "Gyro", "Jump Jets", "Heatsinks", "Full Head Ejection System",
                                  "Armored System Components", "Armor", "Equipment",
                                  "Conversion Equipment", "Quirk Multiplier", "Omni Multiplier", "Weight Multiplier" };
-        CostCalculator.fillInReport(costReport, mek, ignoreAmmo, systemNames, 13, cost, costs);
-        return cost;
+        CostCalculator.fillInReport(costReport, mek, ignoreAmmo, systemNames, 13, roundedCost, costs);
+        return roundedCost;
     }
 
     private static int getStructureCost(Mek mek) {

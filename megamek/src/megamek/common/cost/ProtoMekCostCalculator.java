@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,9 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.units.ProtoMek;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class ProtoMekCostCalculator {
 
@@ -106,12 +109,14 @@ public class ProtoMekCostCalculator {
         CostCalculator.removeNegativeAdditiveCosts(costs);
 
         costs[idx] = -protoMek.getPriceMultiplier();
-        double cost = CostCalculator.calculateCost(costs);
+        double roundedCost = BigDecimal.valueOf(CostCalculator.calculateCost(costs))
+              .setScale(2, RoundingMode.UP)
+              .doubleValue();
         String[] systemNames = { "Cockpit", "Life Support", "Sensors", "Musculature", "Structure", "Arm Actuators",
                                  "Leg Actuators", "Engine", "Jump Jets", "Heatsinks", "Armor", "Equipment",
                                  "Weight Multiplier" };
-        CostCalculator.fillInReport(costReport, protoMek, ignoreAmmo, systemNames, 11, cost, costs);
+        CostCalculator.fillInReport(costReport, protoMek, ignoreAmmo, systemNames, 11, roundedCost, costs);
 
-        return cost;
+        return roundedCost;
     }
 }

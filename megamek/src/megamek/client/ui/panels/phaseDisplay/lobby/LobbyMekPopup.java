@@ -266,9 +266,6 @@ class LobbyMekPopup {
         }
 
         popup.add(deployMenu(clientGui, hasJoinedEntities, listener, joinedEntities));
-        if (isScanTargetMenuUseful(clientGui)) {
-            popup.add(scanTargetMenu(hasJoinedEntities, listener, joinedEntities));
-        }
         popup.add(randomizeMenu(hasJoinedEntities, listener, seIds));
         popup.add(munitionsConfigMenu(hasJoinedEntities, listener, joinedEntities));
         popup.add(swapPilotMenu(hasJoinedEntities, joinedEntities, clientGui, listener));
@@ -618,23 +615,6 @@ class LobbyMekPopup {
     }
 
     /**
-     * Returns the "Wanted for Scanning" submenu, where a game master names the units the mission wants read. Set it
-     * here rather than in play, because a unit that arrives later is in the lobby long before it is on the board.
-     */
-    private static JMenu scanTargetMenu(boolean enabled, ActionListener listener, Set<Entity> entities) {
-        String eIds = enToken(entities);
-        JMenu menu = new JMenu(Messages.getString("ChatLounge.ScanTarget"));
-        boolean anyWanted = entities.stream().anyMatch(Entity::isDesignatedScanTarget);
-        boolean anyNotWanted = entities.stream().anyMatch(entity -> !entity.isDesignatedScanTarget());
-        menu.add(menuItem(Messages.getString("ChatLounge.ScanTarget.wanted"),
-              LMP_SCAN_TARGET + "|" + LMP_SCAN_WANTED + eIds, enabled && anyNotWanted, listener));
-        menu.add(menuItem(Messages.getString("ChatLounge.ScanTarget.notWanted"),
-              LMP_SCAN_TARGET + "|" + LMP_SCAN_NOT_WANTED + eIds, enabled && anyWanted, listener));
-        menu.setEnabled(enabled);
-        return menu;
-    }
-
-    /**
      * Returns the "Deploy" submenu, allowing late deployment
      */
     private static JMenu deployMenu(ClientGUI clientGui, boolean enabled, ActionListener listener,
@@ -648,6 +628,17 @@ class LobbyMekPopup {
                 boolean anyNotHidden = entities.stream().anyMatch(e -> !e.isHidden());
                 menu.add(menuItem("Hidden", LMP_HIDDEN + "|" + LMP_HIDE + eIds, anyNotHidden, listener));
                 menu.add(menuItem("Not Hidden", LMP_HIDDEN + "|" + LMP_NO_HIDE + eIds, anyHidden, listener));
+                menu.add(ScalingPopup.spacer());
+            }
+
+            // The mission's scan targets are a game master's to set, and only matter in a game with objectives
+            if (isScanTargetMenuUseful(clientGui)) {
+                boolean anyWanted = entities.stream().anyMatch(Entity::isDesignatedScanTarget);
+                boolean anyNotWanted = entities.stream().anyMatch(e -> !e.isDesignatedScanTarget());
+                menu.add(menuItem(Messages.getString("ChatLounge.ScanTarget.wanted"),
+                      LMP_SCAN_TARGET + "|" + LMP_SCAN_WANTED + eIds, anyNotWanted, listener));
+                menu.add(menuItem(Messages.getString("ChatLounge.ScanTarget.notWanted"),
+                      LMP_SCAN_TARGET + "|" + LMP_SCAN_NOT_WANTED + eIds, anyWanted, listener));
                 menu.add(ScalingPopup.spacer());
             }
 

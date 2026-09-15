@@ -166,6 +166,9 @@ public class CustomMekDialog extends AbstractButtonDialog
     private final JCheckBox chDeployDugIn = new JCheckBox();
     private final JLabel labHidden = new JLabel(Messages.getString("CustomMekDialog.labHidden"), SwingConstants.RIGHT);
     private final JCheckBox chHidden = new JCheckBox();
+    private final JLabel labScanTarget = new JLabel(Messages.getString("CustomMekDialog.labScanTarget"),
+          SwingConstants.RIGHT);
+    private final JCheckBox chScanTarget = new JCheckBox();
 
     private final JLabel labDeployStealth = new JLabel(Messages.getString("CustomMekDialog.labDeployStealth"),
           SwingConstants.RIGHT);
@@ -1768,6 +1771,9 @@ public class CustomMekDialog extends AbstractButtonDialog
         // Apply multiple-entity settings
         for (Entity entity : entities) {
             entity.setHidden(chHidden.isSelected());
+            if (isScanTargetSettable()) {
+                entity.setDesignatedScanTarget(chScanTarget.isSelected());
+            }
             setStealth(entity, chDeployStealth.isSelected());
 
             if (chOffBoard.isSelected()) {
@@ -2353,6 +2359,15 @@ public class CustomMekDialog extends AbstractButtonDialog
             chHidden.setSelected(entity.isHidden());
         }
 
+        // Which units the mission wants scanned is the game master's to decide, so nobody else is shown the box
+        if (isScanTargetSettable()) {
+            labScanTarget.setToolTipText(Messages.getString("CustomMekDialog.labScanTarget.tooltip"));
+            chScanTarget.setToolTipText(Messages.getString("CustomMekDialog.labScanTarget.tooltip"));
+            panDeploy.add(labScanTarget, GBC.std());
+            panDeploy.add(chScanTarget, GBC.eol());
+            chScanTarget.setSelected(entity.isDesignatedScanTarget());
+        }
+
         if (hasStealth) {
             panDeploy.add(labDeployStealth, GBC.std());
             panDeploy.add(chDeployStealth, GBC.std());
@@ -2417,6 +2432,7 @@ public class CustomMekDialog extends AbstractButtonDialog
             chDeployHullDown.setEnabled(false);
             chCommander.setEnabled(false);
             chHidden.setEnabled(false);
+            chScanTarget.setEnabled(false);
             chDeployStealth.setEnabled(false);
             chOffBoard.setEnabled(false);
             choOffBoardDirection.setEnabled(false);
@@ -2448,6 +2464,17 @@ public class CustomMekDialog extends AbstractButtonDialog
         panButtons.add(butCancel);
         panButtons.add(butNext);
         return panButtons;
+    }
+
+    /**
+     * @return {@code true} when this dialog should offer the scan target box: a game master, in a game that uses
+     *       objectives. A game master may set it for any unit, their own side's or the enemy's, because the mission
+     *       is theirs to write.
+     */
+    private boolean isScanTargetSettable() {
+        Player localPlayer = client.getLocalPlayer();
+        return (localPlayer != null) && localPlayer.isGameMaster()
+              && gameOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES);
     }
 
     private GameOptions gameOptions() {

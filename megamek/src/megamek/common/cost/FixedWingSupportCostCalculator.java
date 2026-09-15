@@ -38,13 +38,13 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.Engine;
-import megamek.common.units.EntityWeightClass;
-import megamek.common.units.FixedWingSupport;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
-import megamek.common.equipment.ArmorType;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.FixedWingSupport;
 import megamek.common.verifier.SupportVeeStructure;
 
 public class FixedWingSupportCostCalculator {

@@ -33,6 +33,9 @@
 
 package megamek.common.cost;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CriticalSlot;
 import megamek.common.equipment.ArmorType;
@@ -41,9 +44,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.LandAirMek;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadVee;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class MekCostCalculator {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,6 +39,9 @@ import megamek.common.bays.Bay;
 import megamek.common.bays.InfantryBay;
 import megamek.common.units.Dropship;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class DropShipCostCalculator {
 
     public static double calculateCost(Dropship dropShip, CalculationReport costReport, boolean ignoreAmmo) {
@@ -76,13 +79,14 @@ public class DropShipCostCalculator {
         CostCalculator.removeNegativeAdditiveCosts(costs);
 
         costs[idx] = -dropShip.getPriceMultiplier();
-        double cost = CostCalculator.calculateCost(costs);
         String[] systemNames = { "Bridge", "Computer", "Life Support", "Sensors", "Fire Control Computer",
                                  "Gunnery Control Systems", "Structural Integrity", "Attitude Thruster", "Landing Gear",
                                  "Engine", "Drive Unit", "Fuel Tanks", "Armor", "Heat Sinks", "Weapons/Equipment",
                                  "Docking Collar",
                                  "Bays", "Quarters", "Life Boats/Escape Pods", "Final Multiplier" };
-        long roundedCost = Math.round(cost);
+        double roundedCost = BigDecimal.valueOf(CostCalculator.calculateCost(costs))
+              .setScale(2, RoundingMode.UP)
+              .doubleValue();
         CostCalculator.fillInReport(costReport, dropShip, ignoreAmmo, systemNames, 14, roundedCost, costs);
         return roundedCost;
     }

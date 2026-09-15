@@ -33,7 +33,6 @@
 
 package megamek.common.cost;
 
-import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -225,10 +224,6 @@ public class CostCalculator {
         NumberFormat costFormatter = NumberFormat.getInstance();
         costFormatter.setMinimumFractionDigits(2);
         costFormatter.setMaximumFractionDigits(2);
-        NumberFormat totalCostFormatter = NumberFormat.getInstance();
-        totalCostFormatter.setMinimumFractionDigits(2);
-        totalCostFormatter.setMaximumFractionDigits(2);
-        totalCostFormatter.setRoundingMode(RoundingMode.CEILING);
         NumberFormat multiplierFormatter = NumberFormat.getInstance();
         costReport.addHeader("Cost Calculation for " + entity.getChassis() + " " + entity.getModel());
         for (int l = 0; l < systemNames.length; l++) {
@@ -252,7 +247,7 @@ public class CostCalculator {
                 }
             }
         }
-        costReport.addResultLine("Total Cost (C-bills)", "", totalCostFormatter.format(cost));
+        costReport.addResultLine("Total Cost (C-bills)", "", costFormatter.format(cost));
     }
 
 

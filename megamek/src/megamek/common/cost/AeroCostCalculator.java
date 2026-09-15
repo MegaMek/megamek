@@ -33,12 +33,12 @@
 
 package megamek.common.cost;
 
-import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.units.Aero;
-import megamek.common.equipment.ArmorType;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
+import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.equipment.ArmorType;
+import megamek.common.units.Aero;
 
 public class AeroCostCalculator {
 

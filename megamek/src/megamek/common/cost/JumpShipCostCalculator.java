@@ -33,15 +33,15 @@
 
 package megamek.common.cost;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.bays.BattleArmorBay;
 import megamek.common.bays.Bay;
 import megamek.common.bays.InfantryBay;
 import megamek.common.equipment.ArmorType;
 import megamek.common.units.Jumpship;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class JumpShipCostCalculator {
 

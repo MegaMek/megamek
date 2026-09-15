@@ -33,6 +33,9 @@
 
 package megamek.common.cost;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.MDAugmentationType;
@@ -41,9 +44,6 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityWeightClass;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class BattleArmorCostCalculator {
 

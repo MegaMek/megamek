@@ -33,14 +33,14 @@
 
 package megamek.common.cost;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.enums.MDAugmentationType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Infantry;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class InfantryCostCalculator {
 

@@ -33,13 +33,13 @@
 
 package megamek.common.cost;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.equipment.ArmorType;
 import megamek.common.units.SmallCraft;
 import megamek.common.verifier.TestSmallCraft;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class SmallCraftCostCalculator {
 

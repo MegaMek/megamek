@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -113,6 +113,8 @@ public class SwingCalculationReport implements CalculationReport {
             return this;
         } else {
             newLine();
+            gbc.gridwidth = 3;
+            report.add(Box.createVerticalStrut(8), gbc);
             gbc.gridx = 3;
             gbc.anchor = GridBagConstraints.LINE_END;
             gbc.fill = GridBagConstraints.HORIZONTAL;

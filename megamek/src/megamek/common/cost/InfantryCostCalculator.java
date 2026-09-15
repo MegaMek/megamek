@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,6 +32,9 @@
  */
 
 package megamek.common.cost;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.enums.MDAugmentationType;
@@ -122,10 +125,12 @@ public class InfantryCostCalculator {
         // MD Augmentation costs (per-trooper, IO rules)
         costs[idx] = calculateAugmentationCost(infantry);
 
-        double cost = CostCalculator.calculateCost(costs);
+        double roundedCost = BigDecimal.valueOf(CostCalculator.calculateCost(costs))
+              .setScale(2, RoundingMode.UP)
+              .doubleValue();
         String[] systemNames = { "Weapons", "Armor", "Multiplier", "Field Gun", "Mount", "Augmentations" };
-        CostCalculator.fillInReport(costReport, infantry, ignoreAmmo, systemNames, -1, cost, costs);
-        return cost;
+        CostCalculator.fillInReport(costReport, infantry, ignoreAmmo, systemNames, -1, roundedCost, costs);
+        return roundedCost;
     }
 
     /**

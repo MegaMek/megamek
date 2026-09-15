@@ -1720,6 +1720,17 @@ public class Client extends AbstractClient {
      * @param coords the hex
      * @param marker the objective to put there, or {@code null} to remove the one that is there
      */
+    /**
+     * Sends a game master's marking of a unit as one the mission wants scanned (Objectives series).
+     *
+     * @param entityId   the unit
+     * @param designated {@code true} to ask for it to be scanned, {@code false} to drop the request
+     */
+    public void sendScanDesignation(int entityId, boolean designated) {
+        LOGGER.debug("Sending a scan designation for unit {}: {}", entityId, designated);
+        send(new Packet(PacketCommand.SCAN_DESIGNATION, entityId, designated));
+    }
+
     public void sendObjectiveEdit(Coords coords, @Nullable ObjectiveMarker marker) {
         LOGGER.debug("Sending a game master objective edit for hex {}", coords.getBoardNum());
         send(new Packet(PacketCommand.OBJECTIVE_EDIT, coords, marker));

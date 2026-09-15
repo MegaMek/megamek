@@ -1857,6 +1857,11 @@ public final class UnitToolTip {
             result += addToTT("ScanReadings", NOBR, entity.getBankedScans().size()) + " ";
         }
 
+        // A unit the mission wants scanned (Objectives series), so a scout can see what it was sent for
+        if (entity.isDesignatedScanTarget()) {
+            result += addToTT("ScanTarget", NOBR) + " ";
+        }
+
         if (entity.hasAnyTypeNarcPodsAttached()) {
             String sNarced = addToTT(entity.hasNarcPodsAttached() ? "Narced" : "INarced", NOBR) + " ";
             attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getPrecautionColor())));

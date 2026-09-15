@@ -301,7 +301,12 @@ public enum PacketCommand {
      * A game master's edit of the objective at a hex, at any time in the game: the hex and the marker to put there,
      * or {@code null} to remove it (Objectives series).
      */
-    OBJECTIVE_EDIT;
+    OBJECTIVE_EDIT,
+    /**
+     * A game master's marking of an enemy unit as one the mission wants scanned, or the removal of that marking:
+     * the unit's id and whether it is wanted (Objectives series).
+     */
+    SCAN_DESIGNATION;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

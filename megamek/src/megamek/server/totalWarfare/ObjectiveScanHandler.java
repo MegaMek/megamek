@@ -57,6 +57,7 @@ import megamek.common.equipment.ObjectiveScoringScheme.ScanPayout;
 import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import megamek.common.equipment.ScanMission;
 import megamek.common.interfaces.IEntityRemovalConditions;
+import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
@@ -65,6 +66,8 @@ import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 import megamek.server.victory.VictoryPointTracker;
+import megamek.server.victory.VictoryPointTracker.ScanOutcome;
+import megamek.server.victory.VictoryPointTracker.ScanRecord;
 
 /**
  * Resolves the scans units ordered this turn, and settles the readings of units that have left the battlefield.
@@ -245,6 +248,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
             addReport(report);
         }
         if (!succeeded) {
+            logScan(scanner, target, targetName, ScanOutcome.FAILED, false, 0);
             return;
         }
         bankWhatIsThere(scanner, target, targetName);
@@ -331,6 +335,9 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
             }
             reportWhatTheScanGave(scanner, scanPoint.getScanRevealsNote(),
                   plainLineFor(scanPoint.getScoringScheme().getScanPayout()));
+            boolean paidNow = scanPoint.getScoringScheme().getScanPayout() != ScanPayout.ON_EXIT;
+            logScan(scanner, target, scanPoint.generalName(), ScanOutcome.SUCCEEDED, true,
+                  paidNow ? scanPoint.getVictoryPointValue() : 0);
             return;
         }
         boolean isSensorCheckMission = getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK);
@@ -340,6 +347,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
                   targetUnit.getShortName(), scanner.getBankedScans().size());
             gameManager.entityUpdate(scanner.getId());
             reportWhatTheScanGave(scanner, "", REPORT_READING_BANKED);
+            logScan(scanner, target, targetUnit.getShortName(), ScanOutcome.SUCCEEDED, false, 0);
             return;
         }
         LOGGER.debug("[Scan] {} scanned {}: nothing of interest there for its side", scanner.getShortName(),
@@ -348,6 +356,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         report.addDesc(scanner);
         report.add(targetName);
         addReport(report);
+        logScan(scanner, target, targetName, ScanOutcome.NOTHING_FOUND, false, 0);
     }
 
     /**
@@ -373,6 +382,63 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         report.indent();
         report.add(note);
         addReport(report);
+    }
+
+    /**
+     * A game master's marking of a unit as one the mission wants scanned, at any time in the game. Once any unit
+     * on the board is marked, only marked units are worth reading in a Sensor Check mission, so a convoy can be
+     * made the objective while the escort is not. Anyone who is not a game master is refused and logged.
+     *
+     * @param packet the packet: the unit's id, then whether it is wanted
+     * @param connId the sending connection
+     */
+    public void receiveScanDesignation(Packet packet, int connId) {
+        Player sender = getGame().getPlayer(connId);
+        if ((sender == null) || !sender.isGameMaster()) {
+            LOGGER.warn("[Scan] Dropping a scan designation from {}: only a game master may set the mission's targets",
+                  (sender == null) ? "an unknown connection" : sender.getName());
+            return;
+        }
+        if (!(packet.getObject(0) instanceof Integer entityId) || !(packet.getObject(1) instanceof Boolean wanted)) {
+            LOGGER.warn("[Scan] Dropping a scan designation from {}: the packet does not name a unit",
+                  sender.getName());
+            return;
+        }
+        Entity unit = getGame().getEntity(entityId);
+        if (unit == null) {
+            LOGGER.warn("[Scan] Dropping a scan designation from {}: unit {} is not on the battlefield",
+                  sender.getName(), entityId);
+            return;
+        }
+        unit.setDesignatedScanTarget(wanted);
+        LOGGER.info("[Scan] Game master {} {} {} as a scan target", sender.getName(),
+              wanted ? "marked" : "unmarked", unit.getShortName());
+        gameManager.entityUpdate(unit.getId());
+        gameManager.sendServerChat(Messages.getString(
+              wanted ? "ObjectiveScan.designated" : "ObjectiveScan.undesignated",
+              sender.getName(), unit.getShortName()));
+    }
+
+    /**
+     * Writes one resolved scan into the game's after-action record, so a campaign can ask afterwards which unit
+     * read which objective on which turn. Kept on the victory point tracker, which already rides the game's
+     * victory context into savegames.
+     *
+     * @param scanner    the unit that scanned
+     * @param target     what it scanned
+     * @param targetName the name to record, which is the objective's name when it found one
+     * @param outcome    how the scan ended
+     * @param wasObjective {@code true} when the scan found an objective of the scanner's own side
+     * @param pointsPaid the victory points paid at once, 0 when the reading must be carried home first
+     */
+    private void logScan(Entity scanner, Targetable target, String targetName, ScanOutcome outcome,
+          boolean wasObjective, int pointsPaid) {
+        Coords position = target.getPosition();
+        int targetUnitId = (target instanceof Entity targetUnit) ? targetUnit.getId() : Entity.NONE;
+        VictoryPointTracker.getTracker(getGame())
+              .recordScan(new ScanRecord(getGame().getCurrentRound(), scanner.getId(), scanner.getShortName(),
+                    scanner.getOwnerId(), outcome, targetName,
+                    (position == null) ? "" : position.getBoardNum(), targetUnitId, wasObjective, pointsPaid));
     }
 
     /**

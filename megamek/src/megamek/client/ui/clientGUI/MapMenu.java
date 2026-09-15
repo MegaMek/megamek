@@ -44,6 +44,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -755,6 +756,9 @@ public class MapMenu extends JPopupMenu {
             menu.add(createBuildingMenuItem());
             if (client.getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
                 menu.add(createObjectiveMenuItem());
+                if (!entities.isEmpty()) {
+                    menu.add(createScanTargetMenu(entities));
+                }
             }
             menu.add(specialCommandsMenu);
         }
@@ -772,6 +776,21 @@ public class MapMenu extends JPopupMenu {
               (existing != null) ? "Gamemaster.cmd.objective.edit" : "Gamemaster.cmd.objective.add"));
         item.addActionListener(event -> editObjectiveAsGameMaster(existing));
         return item;
+    }
+
+    /**
+     * Marks the units standing in the right-clicked hex as ones the mission wants scanned, or unmarks them. Ticking
+     * every vehicle of a convoy makes the convoy the scanning objective: once any unit is marked, only marked units
+     * are worth reading (Objectives series, game master tools).
+     */
+    private JMenu createScanTargetMenu(List<Entity> entities) {
+        JMenu menu = new JMenu(Messages.getString("Gamemaster.cmd.scanTarget"));
+        for (Entity entity : entities) {
+            JCheckBoxMenuItem item = new JCheckBoxMenuItem(entity.getShortName(), entity.isDesignatedScanTarget());
+            item.addActionListener(event -> client.sendScanDesignation(entity.getId(), item.isSelected()));
+            menu.add(item);
+        }
+        return menu;
     }
 
     private @Nullable ObjectiveMarker objectiveAt(Coords hex) {

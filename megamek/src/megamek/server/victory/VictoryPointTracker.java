@@ -84,9 +84,41 @@ public class VictoryPointTracker implements Serializable {
     public record VictoryPointAward(int gameRound, Recipient recipient, int recipientId, int points, String reason)
           implements Serializable {}
 
+    /** How a scan ended, for the scan log. */
+    public enum ScanOutcome {
+        /** The sensor check passed, or the scan needed no check. */
+        SUCCEEDED,
+        /** The sensor check failed. */
+        FAILED,
+        /** The check passed but there was nothing at the target worth reporting. */
+        NOTHING_FOUND
+    }
+
+    /**
+     * One scan a unit made, kept for the after-action record: who scanned what, when, and what it was worth. Every
+     * resolved scan is logged, successes and failures alike, so a campaign can ask which scout read which objective
+     * on which turn.
+     *
+     * @param gameRound            the game round the scan resolved in
+     * @param scannerId            the scanning unit's id
+     * @param scannerName          the scanning unit's short name at the time of the scan
+     * @param scannerOwnerId       the id of the player who owned the scanning unit
+     * @param outcome              how the scan ended
+     * @param targetName           the objective's name, the unit's name, or the hex, as the report named it
+     * @param targetBoardNum       the hex that was scanned, as a board number, or an empty string if it had none
+     * @param targetUnitId         the scanned unit's id, or {@link megamek.common.units.Entity#NONE} for a hex
+     * @param wasObjective         {@code true} when what was found was an objective of the scanner's own side
+     * @param victoryPointsAwarded the victory points this scan paid at once, which is 0 when the reading must be
+     *                             carried home first
+     */
+    public record ScanRecord(int gameRound, int scannerId, String scannerName, int scannerOwnerId,
+                             ScanOutcome outcome, String targetName, String targetBoardNum, int targetUnitId,
+                             boolean wasObjective, int victoryPointsAwarded) implements Serializable {}
+
     private final Map<Integer, Integer> playerVictoryPoints = new HashMap<>();
     private final Map<Integer, Integer> teamVictoryPoints = new HashMap<>();
     private final List<VictoryPointAward> awardLog = new ArrayList<>();
+    private final List<ScanRecord> scanLog = new ArrayList<>();
     private boolean endScoringDone = false;
     private boolean pointDecided = false;
 
@@ -179,6 +211,26 @@ public class VictoryPointTracker implements Serializable {
     }
 
     /** @return An unmodifiable snapshot of all victory point awards made in this game, in award order */
+    /**
+     * Adds one resolved scan to the after-action record. Kept in the tracker, so it rides the game's victory
+     * context into savegames and is there for a campaign to read when the game ends.
+     *
+     * @param record the scan to log
+     */
+    public void recordScan(ScanRecord record) {
+        scanLog.add(record);
+        LOGGER.debug("[Scan] Round {}: {} scanned {} - {}, {} VP", record.gameRound(), record.scannerName(),
+              record.targetName(), record.outcome(), record.victoryPointsAwarded());
+    }
+
+    /**
+     * @return every scan resolved this game, in the order they happened. Successes, failures and scans that found
+     *       nothing are all here.
+     */
+    public List<ScanRecord> getScanLog() {
+        return List.copyOf(scanLog);
+    }
+
     public List<VictoryPointAward> getAwardLog() {
         return List.copyOf(awardLog);
     }

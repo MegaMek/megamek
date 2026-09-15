@@ -70,6 +70,8 @@ import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 import megamek.server.victory.VictoryPointTracker;
+import megamek.server.victory.VictoryPointTracker.ScanOutcome;
+import megamek.server.victory.VictoryPointTracker.ScanRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -185,7 +187,8 @@ class ObjectiveScanHandlerTest {
         assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_SCAN_SUCCESS));
         assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_READING_BANKED), "nothing to reveal: the plain line");
         verify(gameManager).entityUpdate(scout.getId());
-        assertNull(VictoryPointTracker.findTracker(game.getVictoryContext()), "nothing scored yet");
+        assertEquals(0, VictoryPointTracker.getTracker(game).getPlayerVictoryPoints(alice.getId()),
+              "nothing scored yet: the reading must be carried home first");
     }
 
     @Test
@@ -337,6 +340,88 @@ class ObjectiveScanHandlerTest {
         roll.addModifier(-2, "active probe level 2");
 
         assertEquals("Piloting skill 5, +3 scanning, -2 active probe level 2", ObjectiveScanHandler.breakdownOf(roll));
+    }
+
+    // --- the after-action scan log ---
+
+    @Test
+    void testASuccessfulScanOfAPointIsWrittenToTheScanLog() {
+        ObjectiveMarker scanPoint = scanPointOf(alice, ScanPayout.ON_SCAN);
+        scanPoint.setVictoryPointValue(3);
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        when(game.getCurrentRound()).thenReturn(4);
+        orderScan(scout, POINT_HEX);
+
+        handler.resolveScans();
+
+        List<ScanRecord> log = VictoryPointTracker.getTracker(game).getScanLog();
+        assertEquals(1, log.size(), "one scan, one entry");
+        ScanRecord record = log.getFirst();
+        assertEquals(4, record.gameRound(), "the turn it happened on");
+        assertEquals(scout.getId(), record.scannerId());
+        assertEquals(alice.getId(), record.scannerOwnerId());
+        assertEquals(ScanOutcome.SUCCEEDED, record.outcome());
+        assertEquals(POINT_HEX.getBoardNum(), record.targetBoardNum(), "which hex was read");
+        assertTrue(record.wasObjective(), "it found an objective of its own side");
+        assertEquals(3, record.victoryPointsAwarded(), "a point that pays on the scan pays into the log too");
+    }
+
+    @Test
+    void testAReadingStillToBeCarriedHomeLogsNoPointsYet() {
+        ObjectiveMarker scanPoint = scanPointOf(alice, ScanPayout.ON_EXIT);
+        scanPoint.setVictoryPointValue(3);
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+
+        handler.resolveScans();
+
+        ScanRecord record = VictoryPointTracker.getTracker(game).getScanLog().getFirst();
+        assertTrue(record.wasObjective());
+        assertEquals(0, record.victoryPointsAwarded(), "nothing is paid until the reading gets home");
+    }
+
+    @Test
+    void testAFailedCheckIsLoggedToo() {
+        scanPointOf(alice, ScanPayout.ON_EXIT);
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+        handler.nextRoll = 2;
+
+        handler.resolveScans();
+
+        ScanRecord record = VictoryPointTracker.getTracker(game).getScanLog().getFirst();
+        assertEquals(ScanOutcome.FAILED, record.outcome(), "a failure is data too");
+        assertFalse(record.wasObjective(), "a failed scan found nothing");
+        assertEquals(0, record.victoryPointsAwarded());
+    }
+
+    @Test
+    void testAScanThatFoundNothingIsLogged() {
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+
+        handler.resolveScans();
+
+        ScanRecord record = VictoryPointTracker.getTracker(game).getScanLog().getFirst();
+        assertEquals(ScanOutcome.NOTHING_FOUND, record.outcome());
+        assertEquals(POINT_HEX.getBoardNum(), record.targetBoardNum());
+    }
+
+    @Test
+    void testEveryScanOfTheGameStaysInTheLogInOrder() {
+        scanPointOf(alice, ScanPayout.ON_EXIT);
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        when(game.getCurrentRound()).thenReturn(2);
+        orderScan(scout, POINT_HEX);
+        handler.resolveScans();
+        when(game.getCurrentRound()).thenReturn(3);
+        orderScan(scout, new Coords(4, 3));
+        handler.resolveScans();
+
+        List<ScanRecord> log = VictoryPointTracker.getTracker(game).getScanLog();
+        assertEquals(2, log.size(), "both scans are kept, not just the last");
+        assertEquals(2, log.getFirst().gameRound());
+        assertEquals(3, log.get(1).gameRound());
     }
 
     // --- the Sensor Check mission: enemy units as targets ---

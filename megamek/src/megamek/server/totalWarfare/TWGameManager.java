@@ -1219,6 +1219,9 @@ public class TWGameManager extends AbstractGameManager {
                 case OBJECTIVE_EDIT:
                     new ObjectivePlacementHandler(this).receiveObjectiveEdit(packet, connId);
                     break;
+                case SCAN_DESIGNATION:
+                    new ObjectiveScanHandler(this).receiveScanDesignation(packet, connId);
+                    break;
                 case INFANTRY_ACTION_DECLARATION:
                     receiveInfantryActionDeclaration(packet, connId);
                     break;

@@ -33,6 +33,7 @@
 package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,6 +51,9 @@ import megamek.common.game.Game;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewType;
 import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,6 +76,7 @@ class ObjectiveEditPacketTest {
     private Game game;
     private Coords pointHex;
     private ObjectiveMarker original;
+    private BipedMek convoyTruck;
 
     @BeforeEach
     void setUp() {
@@ -97,6 +102,17 @@ class ObjectiveEditPacketTest {
         original.setVictoryPointValue(1);
         original.setScoringScheme(ObjectiveScoringScheme.scan(ObjectiveScoringScheme.ScanPayout.ON_EXIT));
         game.placeGroundObject(pointHex, original);
+
+        convoyTruck = new BipedMek();
+        convoyTruck.setGame(game);
+        convoyTruck.setId(game.getNextEntityId());
+        convoyTruck.setChassis("Convoy");
+        convoyTruck.setModel("T-1");
+        convoyTruck.setCrew(new Crew(CrewType.SINGLE));
+        convoyTruck.setOwner(player);
+        convoyTruck.setPosition(new Coords(2, 2));
+        convoyTruck.setDeployed(true);
+        game.addEntity(convoyTruck);
     }
 
     private ObjectiveMarker editedCopy() {
@@ -148,6 +164,41 @@ class ObjectiveEditPacketTest {
         assertEquals(1, atTheHex.size());
         assertSame(placed, atTheHex.getFirst());
         assertEquals(1, markersAtThePoint().size(), "the other point is untouched");
+    }
+
+    @Test
+    void testAGameMasterCanMarkAUnitAsWantedForScanning() {
+        gameManager.handlePacket(GAME_MASTER_CONNECTION,
+              new Packet(PacketCommand.SCAN_DESIGNATION, convoyTruck.getId(), true));
+
+        assertTrue(convoyTruck.isDesignatedScanTarget(), "the mission now wants this vehicle read");
+        Mockito.verify(gameManager).entityUpdate(convoyTruck.getId());
+    }
+
+    @Test
+    void testAGameMasterCanTakeTheMarkingBackOff() {
+        convoyTruck.setDesignatedScanTarget(true);
+
+        gameManager.handlePacket(GAME_MASTER_CONNECTION,
+              new Packet(PacketCommand.SCAN_DESIGNATION, convoyTruck.getId(), false));
+
+        assertFalse(convoyTruck.isDesignatedScanTarget(), "the request is dropped");
+    }
+
+    @Test
+    void testAPlayerWhoIsNotAGameMasterCannotMarkAUnit() {
+        gameManager.handlePacket(PLAYER_CONNECTION,
+              new Packet(PacketCommand.SCAN_DESIGNATION, convoyTruck.getId(), true));
+
+        assertFalse(convoyTruck.isDesignatedScanTarget(), "only a game master sets the mission's targets");
+    }
+
+    @Test
+    void testAMarkingForAUnitThatIsNotThereChangesNothing() {
+        gameManager.handlePacket(GAME_MASTER_CONNECTION,
+              new Packet(PacketCommand.SCAN_DESIGNATION, 9999, true));
+
+        assertFalse(convoyTruck.isDesignatedScanTarget());
     }
 
     @Test

@@ -969,6 +969,8 @@ public class ClientGUI extends AbstractClientGUI
         FortifyBuildSpriteHandler fortifyBuildSpriteHandler = new FortifyBuildSpriteHandler(this, client.getGame());
         DugInSpriteHandler dugInSpriteHandler = new DugInSpriteHandler(this, client.getGame());
         RubbleClearSpriteHandler rubbleClearSpriteHandler = new RubbleClearSpriteHandler(this, client.getGame());
+        CraneOperationSpriteHandler craneOperationSpriteHandler = new CraneOperationSpriteHandler(this,
+              client.getGame());
 
         spriteHandlers.addAll(List.of(movementEnvelopeHandler,
               movementModifierSpriteHandler,
@@ -985,7 +987,8 @@ public class ClientGUI extends AbstractClientGUI
               fleeZoneSpriteHandler,
               fortifyBuildSpriteHandler,
               dugInSpriteHandler,
-              rubbleClearSpriteHandler));
+              rubbleClearSpriteHandler,
+              craneOperationSpriteHandler));
         spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
     }
 

@@ -94,6 +94,9 @@ public class SmallCraft extends Aero {
     private int escapePodsLaunched = 0;
     private int lifeBoatsLaunched = 0;
 
+    /** Units being loaded or unloaded by this carrier's cranes (TW p.90-91). */
+    private CraneOperations craneOperations = new CraneOperations();
+
     private static final TechAdvancement TA_SM_CRAFT = new TechAdvancement(TechBase.ALL).setAdvancement(DATE_NONE,
                 2350,
                 2400)
@@ -154,6 +157,25 @@ public class SmallCraft extends Aero {
     @Override
     public boolean isSmallCraft() {
         return true;
+    }
+
+    /** @return the crane loading and unloading work in progress for this carrier (TW p.90-91) */
+    public CraneOperations getCraneOperations() {
+        return craneOperations;
+    }
+
+    /**
+     * Saves written before crane loading existed have no crane state; gives them an empty one when they load. Protected
+     * so DropShips, which extend this class, get it too.
+     *
+     * @return this unit
+     */
+    @Serial
+    protected Object readResolve() {
+        if (craneOperations == null) {
+            craneOperations = new CraneOperations();
+        }
+        return this;
     }
 
     @Override

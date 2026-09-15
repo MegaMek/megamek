@@ -41,6 +41,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.rules.RulesWeapons;
 import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 
 public class CoreRulesWeapons extends RulesWeapons {
 
@@ -81,7 +82,7 @@ public class CoreRulesWeapons extends RulesWeapons {
                          Vector<Report> reports,
                          int entityId) {
         if (!mounted.isAutocannonHit()) {
-            if (mounted.getNumCriticalSlots() == 1) {
+            if (mounted.getNumCriticalSlots() == 1 || !(mounted.getEntity() instanceof Mek)) {
                 cs.setHit(false);
             }
             mounted.setHit(false);

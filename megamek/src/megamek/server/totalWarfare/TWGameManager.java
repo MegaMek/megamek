@@ -30230,6 +30230,11 @@ public class TWGameManager extends AbstractGameManager {
                     vDesc.addElement(r);
                 }
             }
+            // The crew is marked ejected before the pilot is built and sent, not only after: the pilot shares
+            // the crew object, and the copy a client receives must already carry the flag, because it is what
+            // switches the crew from gunnery to Small Arms once on foot. Set later, the client would show a
+            // to-hit number the server does not use.
+            entity.getCrew().setEjected(true);
             // create the MekWarrior in any case, for campaign tracking
             MekWarrior pilot = new MekWarrior(entity);
             pilot.setDeployed(true);
@@ -30351,6 +30356,10 @@ public class TWGameManager extends AbstractGameManager {
             }
             crew.setPosition(legalPosition);
             crew.setBoardId(entity.getBoardId());
+            // Marked ejected only now, once the crew has a hex to stand in but before they are sent, for the
+            // same reason as the MekWarrior above. Any earlier and a crew with nowhere to go would stay flagged
+            // ejected inside a vehicle they never left.
+            entity.getCrew().setEjected(true);
             // Add Entity to game
             game.addEntity(crew);
             // Tell clients about new entity
@@ -30910,6 +30919,8 @@ public class TWGameManager extends AbstractGameManager {
                 return vDesc;
             }
 
+            // Marked ejected before the pilot is built and sent; see ejectEntity for why the order matters.
+            entity.getCrew().setEjected(true);
             // create the MekWarrior in any case, for campaign tracking
             MekWarrior pilot = new MekWarrior(entity);
             pilot.getCrew().setUnconscious(entity.getCrew().isUnconscious());
@@ -30954,6 +30965,8 @@ public class TWGameManager extends AbstractGameManager {
             if (conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
                 return vDesc;
             }
+            // Marked ejected before the crew is built and sent; see ejectEntity for why the order matters.
+            entity.getCrew().setEjected(true);
             EjectedCrew crew = new EjectedCrew(entity);
             crew.setDeployed(true);
             crew.setId(game.getNextEntityId());

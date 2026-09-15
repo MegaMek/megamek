@@ -109,6 +109,11 @@ public class LAMPilot extends Crew {
         pilot.setToughness(crew.getToughness(0), 0);
         pilot.setCrewFatigue(crew.getCrewFatigue(0), 0);
         pilot.setOptions(crew.getOptions());
+        // Personal equipment and the skill it is used with travel with the pilot too, or a LAM pilot would eject
+        // in coveralls with nothing in hand however the campaign kitted them.
+        pilot.setArmorKitName(crew.getArmorKitName(0), 0);
+        pilot.setSidearmName(crew.getSidearmName(0), 0);
+        pilot.setSmallArms(crew.getSmallArms(0), 0);
 
         pilot.setExternalIdAsString(crew.getExternalIdAsString(0), 0);
 
@@ -209,46 +214,59 @@ public class LAMPilot extends Crew {
 
     @Override
     public int getGunnery() {
-        return getSkillModifiers().adjustGunnery(useAeroGunnery() ? getGunneryAero() : getGunneryMek());
+        return getSkillModifiers().adjustGunnery(rawGunnery());
     }
 
     @Override
     public int getGunneryB() {
-        return getSkillModifiers().adjustGunnery(useAeroGunnery() ? getGunneryAeroB() : getGunneryMekB());
+        return getSkillModifiers().adjustGunnery(rawGunneryB());
     }
 
     @Override
     public int getGunneryL() {
-        return getSkillModifiers().adjustGunnery(useAeroGunnery() ? getGunneryAeroL() : getGunneryMekL());
+        return getSkillModifiers().adjustGunnery(rawGunneryL());
     }
 
     @Override
     public int getGunneryM() {
-        return getSkillModifiers().adjustGunnery(useAeroGunnery() ? getGunneryAeroM() : getGunneryMekM());
+        return getSkillModifiers().adjustGunnery(rawGunneryM());
     }
 
     /*
      * The stored skills the getters above adjust are the mode-dependent LAM fields, not the base class arrays, so
-     * the raw hooks the applied-modifier math subtracts must pick the same fields.
+     * the raw hooks the applied-modifier math subtracts must pick the same fields. A pilot on foot with a Small
+     * Arms skill recorded is neither in Mek nor fighter mode, so the base class answers for them first.
      */
 
     @Override
     protected int rawGunnery() {
+        if (usesSmallArms()) {
+            return super.rawGunnery();
+        }
         return useAeroGunnery() ? getGunneryAero() : getGunneryMek();
     }
 
     @Override
     protected int rawGunneryB() {
+        if (usesSmallArms()) {
+            return super.rawGunneryB();
+        }
         return useAeroGunnery() ? getGunneryAeroB() : getGunneryMekB();
     }
 
     @Override
     protected int rawGunneryL() {
+        if (usesSmallArms()) {
+            return super.rawGunneryL();
+        }
         return useAeroGunnery() ? getGunneryAeroL() : getGunneryMekL();
     }
 
     @Override
     protected int rawGunneryM() {
+        if (usesSmallArms()) {
+            return super.rawGunneryM();
+        }
         return useAeroGunnery() ? getGunneryAeroM() : getGunneryMekM();
     }
 

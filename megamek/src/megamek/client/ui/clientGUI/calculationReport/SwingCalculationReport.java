@@ -113,6 +113,8 @@ public class SwingCalculationReport implements CalculationReport {
             return this;
         } else {
             newLine();
+            gbc.gridwidth = 3;
+            report.add(Box.createVerticalStrut(8), gbc);
             gbc.gridx = 3;
             gbc.anchor = GridBagConstraints.LINE_END;
             gbc.fill = GridBagConstraints.HORIZONTAL;

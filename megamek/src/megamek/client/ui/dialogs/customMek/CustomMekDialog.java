@@ -1281,6 +1281,28 @@ public class CustomMekDialog extends AbstractButtonDialog
         return status;
     }
 
+    /**
+     * The commander flag and, when the option is on, its initiative bonus beside it, as one control for a single
+     * pilot's Advanced section. A tick box on its own is a few pixels wide and its label was being cut off; paired
+     * with the number it decides, both read at a glance.
+     *
+     * @param commandInitiative whether the Commander Initiative option is on, so the bonus field is shown
+     *
+     * @return the panel holding the flag and, optionally, the bonus field
+     */
+    private JPanel commanderControls(boolean commandInitiative) {
+        JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        controls.add(chCommander);
+        if (commandInitiative) {
+            JLabel commandInitLabel = new JLabel(Messages.getString("CustomMekDialog.labCommandInit"));
+            commandInitLabel.setBorder(BorderFactory.createEmptyBorder(0, UIUtil.scaleForGUI(10), 0,
+                  UIUtil.scaleForGUI(4)));
+            controls.add(commandInitLabel);
+            controls.add(fldCommandInit);
+        }
+        return controls;
+    }
+
     private void refreshDeployment() {
         if (this.clientGUI == null) {
             return;
@@ -1690,6 +1712,30 @@ public class CustomMekDialog extends AbstractButtonDialog
                     return;
                 }
 
+                int smallArms;
+                try {
+                    smallArms = panCrewMember[i].getSmallArms();
+                } catch (NumberFormatException exception) {
+                    msg = Messages.getString("CustomMekDialog.EnterSmallArmsBetween0_8");
+                    title = Messages.getString("CustomMekDialog.NumberFormatError");
+                    JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.getFrame(),
+                          msg,
+                          title,
+                          JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                boolean isSmallArmsRecorded = smallArms != Crew.SMALL_ARMS_UNSET;
+                boolean isSmallArmsOutOfRange = (smallArms < 0) || (smallArms > Crew.MAX_SKILL);
+                if (isSmallArmsRecorded && isSmallArmsOutOfRange) {
+                    msg = Messages.getString("CustomMekDialog.EnterSmallArmsBetween0_8");
+                    title = Messages.getString("CustomMekDialog.NumberFormatError");
+                    JOptionPane.showMessageDialog(clientGUI == null ? this : clientGUI.getFrame(),
+                          msg,
+                          title,
+                          JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 long gunneryRounded = Math.round((gunneryL + gunneryB + gunneryM) / 3.0);
                 if (entity.getCrew() instanceof LAMPilot pilot) {
                     if (client.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
@@ -1740,7 +1786,14 @@ public class CustomMekDialog extends AbstractButtonDialog
                 // crew hits are damage, so they are edited in the damage editor rather than here
                 entity.getCrew().setGender(gender, i);
                 entity.getCrew().setClanPilot(panCrewMember[i].isClanPilot(), i);
-                entity.getCrew().setArmorKitName(panCrewMember[i].getArmorKitName(), i);
+                // Personal equipment is written back only when its controls were shown. With the rule off, or
+                // for a crew that never leaves on foot, the controls are hidden and the crew keeps whatever a
+                // campaign or an earlier lobby wrote, rather than being silently cleared or handed a default.
+                if (panCrewMember[i].showsPersonalEquipment()) {
+                    entity.getCrew().setArmorKitName(panCrewMember[i].getArmorKitName(), i);
+                    entity.getCrew().setSidearmName(panCrewMember[i].getSidearmName(), i);
+                    entity.getCrew().setSmallArms(smallArms, i);
+                }
                 if (clientGUI != null) {
                     entity.getCrew().setPortrait(panCrewMember[i].getPortrait().clone(), i);
                 }
@@ -2262,17 +2315,15 @@ public class CustomMekDialog extends AbstractButtonDialog
         boolean individualInitiative = gameOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE);
         boolean commandInitiative = gameOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT);
         if (!multipleEntities && (panCrewMember.length == 1)) {
-            // Single pilot: fold the crew-level controls into the pilot's Advanced section. Clan Pilot goes
-            // after Commander Initiative (the two swapped places by request).
+            // Single pilot: fold the crew-level controls into the pilot's Advanced section. The commander flag
+            // and its initiative field share one pair on the second row, beside Small Arms; the rest of the
+            // pilot's own rows follow, and the individual initiative bonus comes last.
+            panCrewMember[0].addAdvancedRow(Messages.getString("CustomMekDialog.labCommander"),
+                  commanderControls(commandInitiative));
+            panCrewMember[0].addCrewMemberRows(client.getGame());
             if (individualInitiative) {
                 panCrewMember[0].addAdvancedRow(Messages.getString("CustomMekDialog.labInit"), fldInit);
             }
-            if (commandInitiative) {
-                panCrewMember[0].addAdvancedRow(Messages.getString("CustomMekDialog.labCommandInit"),
-                                                fldCommandInit);
-            }
-            panCrewMember[0].addClanPilotAdvancedRow();
-            panCrewMember[0].addAdvancedRow(Messages.getString("CustomMekDialog.labCommander"), chCommander);
         } else {
             // Multi-crew: the shared Crew tab gets its own Command section
             JPanel commandSection = new JPanel(new GridBagLayout());

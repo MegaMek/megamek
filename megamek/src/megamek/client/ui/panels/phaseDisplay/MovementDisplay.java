@@ -39,16 +39,16 @@ import static megamek.common.bays.Bay.UNSET_BAY;
 import static megamek.common.equipment.MiscType.F_CHAFF_POD;
 import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -4692,13 +4692,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private void updateLoadButton() {
         final Entity currentEntity = currentEntity();
-        if (!currentEntity.isDeployed()) {
+        if (currentEntity == null) {
             setLoadEnabled(false);
             return;
         }
-        if ((currentEntity == null) || (currentEntity.getWalkMP() <= 0 && !currentEntity.isAerospace()) || (
-                currentEntity.isAerospace()
-                && currentEntity.isAirborne())) {
+        if (!currentEntity.isDeployed() || (currentEntity.getWalkMP() <= 0 && !currentEntity.isAerospace()) || (
+                currentEntity.isAerospace() && currentEntity.isAirborne())) {
             setLoadEnabled(false);
             return;
         }
@@ -4723,11 +4722,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private void updateUnloadButton() {
         final Entity currentEntity = currentEntity();
-        if (!currentEntity.isDeployed()) {
-            setUnloadEnabled(false);
+        if (currentEntity == null) {
+            setLoadEnabled(false);
             return;
         }
-        if (currentEntity == null) {
+        if (!currentEntity.isDeployed()) {
             setUnloadEnabled(false);
             return;
         }
@@ -4862,6 +4861,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private Entity getMountedUnit() {
         Entity currentEntity = currentEntity();
         Entity choice = null;
+        if (currentEntity == null) {
+            return null;
+        }
         Coords pos = currentEntity.getPosition();
         int elev = currentEntity.getElevation();
         if (null != cmd) {
@@ -5322,6 +5324,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private @Nullable Coords getUnloadPosition(Entity unloaded) {
         Entity currentEntity = currentEntity();
+        if (currentEntity == null) {
+            return null;
+        }
         // we need to allow the user to select a hex for offloading
         Coords pos = currentEntity.getPosition();
         int elev = game.getBoard(currentEntity).getHex(pos).getLevel() + currentEntity.getElevation();
@@ -5585,6 +5590,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private TreeMap<Integer, Vector<Integer>> getLaunchedUnits() {
         Entity currentEntity = currentEntity();
         TreeMap<Integer, Vector<Integer>> choices = new TreeMap<>();
+        if (currentEntity == null) {
+            LOGGER.error("MovementDisplay#getLaunchedUnits() called without a valid entity");
+            return choices;
+        }
 
         Vector<Entity> launchableFighters = currentEntity.getLaunchableFighters();
         Vector<Entity> launchableSmallCraft = currentEntity.getLaunchableSmallCraft();
@@ -5696,6 +5705,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private TreeMap<Integer, Vector<Integer>> getUndockedUnits() {
         Entity currentlySelectedEntity = currentEntity();
         TreeMap<Integer, Vector<Integer>> choices = new TreeMap<>();
+        if (currentlySelectedEntity == null) {
+            LOGGER.error("MovementDisplay#getUndockedUnits() called without a valid entity");
+            return choices;
+        }
 
         Vector<Entity> launchableFighters = currentlySelectedEntity.getLaunchableFighters();
         Vector<Entity> launchableSmallCraft = currentlySelectedEntity.getLaunchableSmallCraft();
@@ -5934,7 +5947,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private int getRecoveryUnit() {
         final Entity currentEntity = currentEntity();
         List<Entity> choices = new ArrayList<>();
-
+        if (currentEntity == null) {
+            LOGGER.error("MovementDisplay#getRecoveryUnits() called without a valid entity");
+            return NO_UNIT_SELECTED;
+        }
         // collect all possible choices
         Coords loadedPos = cmd.getFinalCoords();
         if (game.useVectorMove()) {
@@ -6011,6 +6027,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         final Entity currentEntity = currentEntity();
         List<Entity> choices = new ArrayList<>();
 
+        if (currentEntity == null) {
+            LOGGER.error("MovementDisplay#getUnitJoined() called without a valid entity");
+            return NO_UNIT_SELECTED;
+        }
         // collect all possible choices
         Coords loadedPos = cmd.getFinalCoords();
         if (game.useVectorMove()) {
@@ -6132,6 +6152,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private void checkAtmosphere() {
         final Entity currentEntity = currentEntity();
+        if (currentEntity == null) {
+            return;
+        }
         if ((currentEntity instanceof IAero aero) && !aero.isSpaceborne()) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             if (aero.isSpheroid() || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN)) {
@@ -6153,7 +6176,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Assume that we have *no* choice.
         Targetable choice = null;
-
         // Get the available choices.
 
         // Convert the choices into a List of targets.
@@ -6199,7 +6221,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void dumpBombs() {
-        if (!currentEntity().isAero()) {
+        final Entity currentEntity = currentEntity();
+        if (currentEntity == null) {
+            return;
+        }
+        if (!currentEntity.isAero()) {
             return;
         }
 
@@ -6209,7 +6235,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         // bring up a dialog to dump bombs, then make a control roll and report success or failure should update mp
         // available
-        int numFighters = currentEntity().getActiveSubEntities().size();
+        int numFighters = currentEntity.getActiveSubEntities().size();
         BombPayloadDialog dumpBombsDialog = new BombPayloadDialog(clientgui.getFrame(),
                                                                   Messages.getString(
                                                                           "MovementDisplay.BombDumpDialog.title"),
@@ -6222,10 +6248,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (dumpBombsDialog.getAnswer()) {
             dumpBombsDialog.getChoices();
             // first make a control roll
-            PilotingRollData psr = currentEntity().getBasePilotingRoll(overallMoveType);
+            PilotingRollData psr = currentEntity.getBasePilotingRoll(overallMoveType);
             Roll diceRoll = Compute.rollD6(2);
             Report report = new Report(9500);
-            report.subject = currentEntity().getId();
+            report.subject = currentEntity.getId();
             report.add(currentEntity().getDisplayName());
             report.add(psr);
             report.add(diceRoll);
@@ -6251,6 +6277,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * based on maneuver type add the appropriate steps return true if we should redraw the movement data
      */
     private boolean addManeuver(int type) {
+        final Entity currentEntity = currentEntity();
+        if (currentEntity == null) {
+            return false;
+        }
         cmd.addManeuver(type);
         switch (type) {
             case ManeuverType.MAN_HAMMERHEAD:
@@ -6269,10 +6299,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 gear = MovementDisplay.GEAR_SPLIT_S;
                 return false;
             case ManeuverType.MAN_VIFF:
-                if (!currentEntity().isAero()) {
+                if (!currentEntity.isAero()) {
                     return false;
                 }
-                IAero a = (IAero) currentEntity();
+                IAero a = (IAero) currentEntity;
                 MoveStep last = cmd.getLastStep();
                 int vel = a.getCurrentVelocity();
                 if (null != last) {
@@ -6287,7 +6317,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             case ManeuverType.MAN_SIDE_SLIP_LEFT:
                 // If we are on a ground map, slide slip works slightly differently
                 // See Total Warfare pg 85
-                if (game.getBoard(currentEntity()).isGround()) {
+                if (game.getBoard(currentEntity).isGround()) {
                     for (int i = 0; i < 8; i++) {
                         addStepToMovePath(MoveStepType.LATERAL_LEFT, true, true, type);
                     }
@@ -6301,7 +6331,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             case ManeuverType.MAN_SIDE_SLIP_RIGHT:
                 // If we are on a ground map, slide slip works slightly differently
                 // See Total Warfare pg 85
-                if (game.getBoard(currentEntity()).isGround()) {
+                if (game.getBoard(currentEntity).isGround()) {
                     for (int i = 0; i < 8; i++) {
                         addStepToMovePath(MoveStepType.LATERAL_RIGHT, true, true, type);
                     }

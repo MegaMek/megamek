@@ -173,6 +173,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     Map<UnitTargetPair, LosEffects> losCache) {
         super(gameManager);
         this.entity = entity;
+        if (entity == null) {
+            logger.error("MovePathHandler: entity is null");
+        }
         this.md = md;
         this.losCache = (losCache == null) ? new HashMap<>() : losCache;
     }

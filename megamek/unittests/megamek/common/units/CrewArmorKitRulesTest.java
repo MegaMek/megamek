@@ -241,6 +241,20 @@ class CrewArmorKitRulesTest {
     }
 
     @Test
+    void aKitDescribesWhatItAnswersAndWhatItDoesNot() {
+        // A spacesuit is sealed with its own air, so it answers vacuum and both bad airs, and it is insulated
+        // against cold; nothing about it sheds heat.
+        assertEquals(List.of(EjectionHazard.VACUUM, EjectionHazard.TAINTED_AIR, EjectionHazard.TOXIC_AIR,
+                    EjectionHazard.EXTREME_COLD),
+              CrewArmorKitRules.hazardsAnswered(kit(SPACESUIT)));
+        assertEquals(List.of(EjectionHazard.EXTREME_HEAT), CrewArmorKitRules.hazardsNotAnswered(kit(SPACESUIT)));
+        assertTrue(CrewArmorKitRules.hazardsAnswered(kit(COVERALLS)).isEmpty());
+        assertTrue(CrewArmorKitRules.hazardsAnswered(null).isEmpty());
+        assertFalse(CrewArmorKitRules.hazardsAKitCanAnswer().contains(EjectionHazard.TORNADO),
+              "nothing anyone wears answers being picked up and thrown, so it is not worth listing");
+    }
+
+    @Test
     void aFullCombatSuitKitCostsTheSumOfItsThreePieces() {
         assertEquals(20000 + 1400 + 175, CrewArmorKitRules.COMBAT_SUIT_KIT_COST_C_BILLS,
               "combat suit, combat neurohelmet and plasteel boots (A Time of War p.294)");

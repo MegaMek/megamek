@@ -1699,6 +1699,8 @@ public class TWGameManager extends AbstractGameManager {
         }
         addReport(report);
 
+        new ObjectiveScanHandler(this).reportTheScanRecord();
+
         bvReports(false);
 
         // List the survivors

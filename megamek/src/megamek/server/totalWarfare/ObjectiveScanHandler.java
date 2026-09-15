@@ -102,6 +102,8 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
     static final int REPORT_READINGS_LOST_WRONG_EDGE = 7132;
     static final int REPORT_READING_BANKED = 7150;
     static final int REPORT_POINTS_HELD_WHILE_ALIVE = 7154;
+    static final int REPORT_SCAN_RECORD_HEADER = 7155;
+    static final int REPORT_SCAN_RECORD_LINE = 7156;
     /** Says a successful scan needs no line of its own beyond the scoring line above it. */
     static final int NO_PLAIN_LINE = 0;
     static final int REPORT_SCAN_REVEALS = 7151;
@@ -382,6 +384,42 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         report.indent();
         report.add(note);
         addReport(report);
+    }
+
+    /**
+     * Prints what every unit scanned this game, once, in the end of mission report. Without this the scan log is
+     * only in the game's saved state, and nobody can see whether it is right.
+     */
+    void reportTheScanRecord() {
+        List<ScanRecord> scanLog = VictoryPointTracker.getTracker(getGame()).getScanLog();
+        if (scanLog.isEmpty()) {
+            return;
+        }
+        addReport(new Report(REPORT_SCAN_RECORD_HEADER, Report.PUBLIC));
+        for (ScanRecord record : scanLog) {
+            Report line = new Report(REPORT_SCAN_RECORD_LINE, Report.PUBLIC);
+            line.indent();
+            line.add(record.gameRound());
+            line.add(record.scannerName());
+            line.add(record.targetName());
+            line.add(outcomeWording(record));
+            addReport(line);
+        }
+    }
+
+    /**
+     * @param record one logged scan
+     *
+     * @return how that scan ended, in the words the end of mission report uses
+     */
+    private static String outcomeWording(ScanRecord record) {
+        return switch (record.outcome()) {
+            case FAILED -> Messages.getString("ObjectiveScan.record.failed");
+            case NOTHING_FOUND -> Messages.getString("ObjectiveScan.record.nothing");
+            case SUCCEEDED -> (record.victoryPointsAwarded() > 0)
+                  ? Messages.getString("ObjectiveScan.record.scored", record.victoryPointsAwarded())
+                  : Messages.getString("ObjectiveScan.record.read");
+        };
     }
 
     /**

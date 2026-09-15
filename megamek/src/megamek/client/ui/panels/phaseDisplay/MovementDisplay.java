@@ -205,14 +205,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
     /** Valid hexes for the current bridge build selection stage. */
     private final Set<Coords> validBridgeSelectionHexes = new HashSet<>();
 
-    /** The carried unit waiting for the player to click the hex the cranes will unload it into, or null. */
-    private Entity craneUnloadUnit;
+    /**
+     * The unit a grounded Small Craft or DropShip is unloading, waiting for the player to click the hex it goes into,
+     * or null. Covers both crane unloading and units dismounting under their own power.
+     */
+    private Entity unloadHexUnit;
 
-    /** The hexes the cranes can unload {@link #craneUnloadUnit} into, highlighted while the player chooses. */
-    private final Set<Coords> validCraneUnloadHexes = new HashSet<>();
+    /** The hexes {@link #unloadHexUnit} can be unloaded into, highlighted while the player chooses. */
+    private final Set<Coords> validUnloadHexes = new HashSet<>();
 
-    /** The markers on the hexes the cranes can unload into, shown while the player chooses. */
-    private final List<CraneUnloadTargetSprite> craneUnloadTargetSprites = new ArrayList<>();
+    /** The markers on the hexes the unit can be unloaded into, shown while the player chooses. */
+    private final List<CraneUnloadTargetSprite> unloadTargetSprites = new ArrayList<>();
 
     // buttons
     private Map<MoveCommand, MegaMekButton> buttons;
@@ -1840,8 +1843,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         // Cancel crane unloading hex selection if active
-        if (craneUnloadUnit != null) {
-            cancelCraneUnloadSelection();
+        if (unloadHexUnit != null) {
+            cancelUnloadHexSelection();
         }
 
         // clear board cursors
@@ -2618,11 +2621,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        // While choosing the hex the cranes unload into, a click picks that hex and never plots a movement path
-        if (craneUnloadUnit != null) {
+        // While choosing the hex to unload a unit into, a click picks that hex and never plots a movement path
+        if (unloadHexUnit != null) {
             if ((boardViewEvent.getType() == BoardViewEvent.BOARD_HEX_CLICKED)
                   && (boardViewEvent.getCoords() != null)) {
-                handleCraneUnloadClick(boardViewEvent.getCoords());
+                handleUnloadHexClick(boardViewEvent.getCoords());
             }
             return;
         }
@@ -4622,61 +4625,92 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * @param unit    the carried unit only the cranes can unload
      */
     private void unloadByCrane(SmallCraft carrier, Entity unit) {
-        List<Coords> positions = CraneRules.unloadPositions(carrier, unit, game);
+        startUnloadHexSelection(carrier, unit, CraneRules.unloadPositions(carrier, unit, game));
+    }
+
+    /**
+     * Highlights the hexes a unit can be unloaded into from a grounded Small Craft or DropShip so the player can click
+     * one; the facing is asked for after the click. Used both for crane unloading and for units dismounting under their
+     * own power (TW p.91).
+     *
+     * @param carrier   the grounded carrier doing the unloading
+     * @param unit      the carried unit to unload
+     * @param positions the hexes the unit may be unloaded into
+     */
+    private void startUnloadHexSelection(SmallCraft carrier, Entity unit, List<Coords> positions) {
+        String logTag = CraneRules.isCraneOnlyUnit(unit) ? "[Crane]" : "[Mount]";
         if (positions.isEmpty()) {
-            LOGGER.debug("[Crane] {}: no hex to unload {} into", carrier.getDisplayName(), unit.getDisplayName());
+            LOGGER.debug("{} {}: no hex to unload {} into", logTag, carrier.getDisplayName(), unit.getDisplayName());
             clientgui.addToast(ToastLevel.ERROR, Messages.getString("MovementDisplay.NoPlaceToUnload.message"),
                   carrier);
             return;
         }
-        craneUnloadUnit = unit;
-        validCraneUnloadHexes.clear();
-        validCraneUnloadHexes.addAll(positions);
+        unloadHexUnit = unit;
+        validUnloadHexes.clear();
+        validUnloadHexes.addAll(positions);
         // Mark each hex on its own: the movement envelope outlines both edges of the band around a DropShip, which
         // reads as two rings
         clientgui.clearMovementEnvelope();
         if (clientgui.getBoardView(carrier) instanceof BoardView boardView) {
-            for (Coords coords : validCraneUnloadHexes) {
-                craneUnloadTargetSprites.add(new CraneUnloadTargetSprite(boardView, coords,
-                      GUIP.getMoveDefaultColor()));
+            for (Coords coords : validUnloadHexes) {
+                unloadTargetSprites.add(new CraneUnloadTargetSprite(boardView, coords, GUIP.getMoveDefaultColor()));
             }
-            boardView.addSprites(craneUnloadTargetSprites);
+            boardView.addSprites(unloadTargetSprites);
         }
-        setStatusBarText(Messages.getString("MovementDisplay.CraneUnload.selectHex", unit.getShortName()));
-        LOGGER.debug("[Crane] {}: choosing the hex to unload {} into from {}", carrier.getDisplayName(),
+        String selectHexKey = CraneRules.isCraneOnlyUnit(unit)
+              ? "MovementDisplay.CraneUnload.selectHex"
+              : "MovementDisplay.Dismount.selectHex";
+        setStatusBarText(Messages.getString(selectHexKey, unit.getShortName()));
+        LOGGER.debug("{} {}: choosing the hex to unload {} into from {}", logTag, carrier.getDisplayName(),
               unit.getDisplayName(), positions);
     }
 
     /**
-     * Handles a board click while the player chooses the crane unloading hex. A click outside the highlighted hexes is
-     * ignored with a hint, so a stray click does not throw the choice away.
+     * Handles a board click while the player chooses the hex to unload a unit into. A click outside the highlighted
+     * hexes is ignored with a hint, so a stray click does not throw the choice away.
      *
      * @param clicked the clicked hex
      */
-    private void handleCraneUnloadClick(Coords clicked) {
-        Entity unit = craneUnloadUnit;
+    private void handleUnloadHexClick(Coords clicked) {
+        Entity unit = unloadHexUnit;
         if (!(currentEntity() instanceof SmallCraft carrier) || (unit == null)) {
-            cancelCraneUnloadSelection();
+            cancelUnloadHexSelection();
             return;
         }
-        if (!validCraneUnloadHexes.contains(clicked)) {
-            LOGGER.debug("[Crane] {}: ignoring click at {}, not a hex the cranes reach {}", carrier.getDisplayName(),
-                  clicked, validCraneUnloadHexes);
-            clientgui.addToast(ToastLevel.WARNING,
-                  Messages.getString("MovementDisplay.CraneUnload.invalidHex", carrier.getShortName()), carrier);
+        boolean byCrane = CraneRules.isCraneOnlyUnit(unit);
+        String logTag = byCrane ? "[Crane]" : "[Mount]";
+        if (!validUnloadHexes.contains(clicked)) {
+            LOGGER.debug("{} {}: ignoring click at {}, not a highlighted unload hex {}", logTag,
+                  carrier.getDisplayName(), clicked, validUnloadHexes);
+            String invalidHexMessage = byCrane
+                  ? Messages.getString("MovementDisplay.CraneUnload.invalidHex", carrier.getShortName())
+                  : Messages.getString("MovementDisplay.Dismount.invalidHex", unit.getShortName());
+            clientgui.addToast(ToastLevel.WARNING, invalidHexMessage, carrier);
             return;
         }
-        cancelCraneUnloadSelection();
+        cancelUnloadHexSelection();
         Integer facing = CraneCommandDialogs.chooseFacing(clientgui.getFrame(), unit);
         if (facing == null) {
-            LOGGER.debug("[Crane] {}: facing choice cancelled; not unloading {}", carrier.getDisplayName(),
+            LOGGER.debug("{} {}: facing choice cancelled; not unloading {}", logTag, carrier.getDisplayName(),
                   unit.getDisplayName());
             return;
         }
-        LOGGER.debug("[Crane] {}: declaring Unload by Crane of {} into {} facing {}", carrier.getDisplayName(),
-              unit.getDisplayName(), clicked, facing);
-        cmd.addStep(MoveStepType.UNLOAD_BY_CRANE, unit, clicked, Map.of(MoveStep.CRANE_UNLOAD_FACING_KEY, facing));
-        updateMove();
+        if (byCrane) {
+            LOGGER.debug("[Crane] {}: declaring Unload by Crane of {} into {} facing {}", carrier.getDisplayName(),
+                  unit.getDisplayName(), clicked, facing);
+            addStepToMovePath(MoveStepType.UNLOAD_BY_CRANE, unit, clicked,
+                  Map.of(MoveStep.CRANE_UNLOAD_FACING_KEY, facing));
+        } else {
+            LOGGER.debug("[Mount] {}: unloading {} into {} facing {}", carrier.getDisplayName(),
+                  unit.getDisplayName(), clicked, facing);
+            int length = cmd.length();
+            addStepToMovePath(MoveStepType.UNLOAD, unit, clicked, Map.of(MoveStep.UNLOAD_FACING_KEY, facing));
+            if (!((length == cmd.length()) || (cmd.getLastStepMovementType() == EntityMovementType.MOVE_ILLEGAL))) {
+                // Record the hashcode of the target hex temporarily, for filtering
+                unit.setTargetBay(clicked.hashCode());
+            }
+        }
+        // Small Craft and DropShips get extra unloading turns, so ready them now
         ready();
     }
 
@@ -4701,12 +4735,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
         ready();
     }
 
-    /** Ends the crane unloading hex choice and clears the highlighting. */
-    private void cancelCraneUnloadSelection() {
-        craneUnloadUnit = null;
-        validCraneUnloadHexes.clear();
-        clientgui.boardViews().forEach(boardView -> boardView.removeSprites(craneUnloadTargetSprites));
-        craneUnloadTargetSprites.clear();
+    /** Ends the unloading hex choice and clears the highlighting. */
+    private void cancelUnloadHexSelection() {
+        unloadHexUnit = null;
+        validUnloadHexes.clear();
+        clientgui.boardViews().forEach(boardView -> boardView.removeSprites(unloadTargetSprites));
+        unloadTargetSprites.clear();
         clientgui.clearMovementEnvelope();
     }
 
@@ -5239,13 +5273,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     /**
-     * Returns a position to unload a unit into or null if the player cancels the dialog.
+     * Returns the hexes the current unit can unload a carried unit into.
      *
      * @param unloaded The unit to unload
      *
-     * @return The position to unload to
+     * @return The positions the unit may be unloaded into; empty if there are none
      */
-    private @Nullable Coords getUnloadPosition(Entity unloaded) {
+    private List<Coords> unloadPositions(Entity unloaded) {
         Entity currentEntity = currentEntity();
         // we need to allow the user to select a hex for offloading
         Coords pos = currentEntity.getPosition();
@@ -5295,7 +5329,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
         ring.removeAll(toRemove);
+        return ring;
+    }
 
+    /**
+     * Returns a position to unload a unit into or null if the player cancels the dialog.
+     *
+     * @param unloaded The unit to unload
+     *
+     * @return The position to unload to
+     */
+    private @Nullable Coords getUnloadPosition(Entity unloaded) {
+        Entity currentEntity = currentEntity();
+        List<Coords> ring = unloadPositions(unloaded);
         if (ring.isEmpty()) {
             clientgui.addToast(ToastLevel.ERROR,
                   Messages.getString("MovementDisplay.NoPlaceToUnload.message"), currentEntity());
@@ -6993,31 +7039,20 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       !currentEntity().getAllTowedUnits().isEmpty() ||
                       currentEntity().getTowedBy() != Entity.NONE) {
                     // unload into adjacent hexes
-                    Coords pos = getUnloadPosition(other);
-                    Integer chosenFacing = null;
-                    if ((null != pos) && (currentEntity() instanceof SmallCraft)) {
-                        // A unit dismounting a Small Craft or DropShip chooses its facing (TW p.91)
-                        chosenFacing = CraneCommandDialogs.chooseFacing(clientgui.getFrame(), other);
-                        if (chosenFacing == null) {
-                            LOGGER.debug("[Mount] {}: facing choice cancelled; not unloading {}",
-                                  currentEntity().getDisplayName(), other.getDisplayName());
-                            pos = null;
-                        } else {
-                            LOGGER.debug("[Mount] {}: unloading {} into {} facing {}", currentEntity().getDisplayName(),
-                                  other.getDisplayName(), pos, chosenFacing);
-                        }
+                    Coords pos = null;
+                    if (currentEntity() instanceof SmallCraft carrier) {
+                        // A unit dismounting a Small Craft or DropShip is placed by clicking a highlighted hex, then
+                        // chooses its facing (TW p.91); the click handler declares the step
+                        startUnloadHexSelection(carrier, other, unloadPositions(other));
+                    } else {
+                        pos = getUnloadPosition(other);
                     }
                     if (null != pos) {
                         // set other's position and end this turn - the unloading unit will get
                         // another turn for further unloading later
                         // Also mark the chosen unit as planning to unload this turn.
                         int length = cmd.length();
-                        if (chosenFacing != null) {
-                            addStepToMovePath(MoveStepType.UNLOAD, other, pos,
-                                  Map.of(MoveStep.UNLOAD_FACING_KEY, chosenFacing));
-                        } else {
-                            addStepToMovePath(MoveStepType.UNLOAD, other, pos);
-                        }
+                        addStepToMovePath(MoveStepType.UNLOAD, other, pos);
                         if (!(length == cmd.length()
                               || cmd.getLastStepMovementType() == EntityMovementType.MOVE_ILLEGAL)) {
                             // Record the hashcode of the target hex temporarily, for filtering.

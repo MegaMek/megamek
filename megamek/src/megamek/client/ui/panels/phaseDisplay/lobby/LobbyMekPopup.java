@@ -609,9 +609,17 @@ class LobbyMekPopup {
      * submenu is offered to nobody else.
      */
     private static boolean isScanTargetMenuUseful(ClientGUI clientGui) {
-        return clientGui.getClient().getLocalPlayer().isGameMaster()
-              && clientGui.getClient().getGame().getOptions()
-                    .booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES);
+        Player personAtTheKeyboard = clientGui.getClient().getLocalPlayer();
+        if ((personAtTheKeyboard == null) || !personAtTheKeyboard.isGameMaster()) {
+            logger.debug("[Scan] Scan target items hidden: {} is not a game master",
+                  (personAtTheKeyboard == null) ? "no local player" : personAtTheKeyboard.getName());
+            return false;
+        }
+        if (!clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
+            logger.debug("[Scan] Scan target items hidden: the game does not use objectives");
+            return false;
+        }
+        return true;
     }
 
     /**

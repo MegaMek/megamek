@@ -173,6 +173,8 @@ public class LobbyActions {
      */
     void applyScanTarget(Collection<Entity> entities, boolean wanted) {
         if (!validateUpdate(entities)) {
+            logger.debug("[Scan] Scan target change refused for {} unit(s): the lobby would not allow the update",
+                  entities.size());
             return;
         }
         Set<Entity> updateCandidates = new HashSet<>();
@@ -180,6 +182,11 @@ public class LobbyActions {
             if (entity.isDesignatedScanTarget() != wanted) {
                 entity.setDesignatedScanTarget(wanted);
                 updateCandidates.add(entity);
+                // a local bot's unit is sent through the bot's own client, so name the sender for a playtest log
+                Client sender = correctSender(entity);
+                logger.info("[Scan] {} {} wanted for scanning, owned by {}, sent by {}", entity.getShortName(),
+                      wanted ? "marked" : "unmarked", entity.getOwner().getName(),
+                      (sender == null) ? "nobody" : sender.getLocalPlayer().getName());
             }
         }
         sendUpdates(updateCandidates);

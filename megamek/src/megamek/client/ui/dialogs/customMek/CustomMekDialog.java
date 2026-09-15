@@ -99,6 +99,7 @@ import megamek.common.units.*;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.bayWeapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
+import megamek.logging.MMLogger;
 import megamek.server.ServerBoardHelper;
 
 /**
@@ -209,6 +210,8 @@ public class CustomMekDialog extends AbstractButtonDialog
     private final List<Entity> entities;
     private boolean okay;
     private int status = CustomMekDialog.DONE;
+
+    private static final MMLogger LOGGER = MMLogger.create(CustomMekDialog.class);
 
     private final ClientGUI clientGUI;
     private final Client client;
@@ -2472,9 +2475,19 @@ public class CustomMekDialog extends AbstractButtonDialog
      *       is theirs to write.
      */
     private boolean isScanTargetSettable() {
-        Player localPlayer = client.getLocalPlayer();
-        return (localPlayer != null) && localPlayer.isGameMaster()
-              && gameOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES);
+        // Ask the person at the keyboard, not the unit's owner. For a local bot's unit the lobby opens this dialog
+        // with the bot's client, whose player is the bot, so the dialog's own client would never be a game master.
+        Player personAtTheKeyboard = getClient().getLocalPlayer();
+        if ((personAtTheKeyboard == null) || !personAtTheKeyboard.isGameMaster()) {
+            LOGGER.debug("[Scan] Scan target box hidden: {} is not a game master",
+                  (personAtTheKeyboard == null) ? "no local player" : personAtTheKeyboard.getName());
+            return false;
+        }
+        if (!gameOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
+            LOGGER.debug("[Scan] Scan target box hidden: the game does not use objectives");
+            return false;
+        }
+        return true;
     }
 
     private GameOptions gameOptions() {

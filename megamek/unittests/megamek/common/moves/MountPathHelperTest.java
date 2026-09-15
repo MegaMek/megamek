@@ -93,6 +93,22 @@ class MountPathHelperTest extends GameBoardTestCase {
     }
 
     @Test
+    @DisplayName("A dismounting unit keeps the facing it chose; with no valid choice it faces away from the carrier")
+    void dismountFacingUsesTheChosenFacing() {
+        Coords carrierHex = new Coords(0, 5);
+        Coords hexNorthOfCarrier = new Coords(0, 4);
+        int north = 0;
+        int southWest = 4;
+
+        assertEquals(southWest, MountPathHelper.dismountFacing(carrierHex, hexNorthOfCarrier, southWest),
+              "The facing the player chose is used (TW p.91)");
+        assertEquals(north, MountPathHelper.dismountFacing(carrierHex, hexNorthOfCarrier, null),
+              "With no choice the unit faces away from the carrier, as before");
+        assertEquals(north, MountPathHelper.dismountFacing(carrierHex, hexNorthOfCarrier, 6),
+              "A facing outside 0-5 is ignored");
+    }
+
+    @Test
     @DisplayName("Clicking a DropShip with no room leaves the path unchanged")
     void clickingFullDropShipLeavesPathUnchanged() {
         placeDropShip(false);

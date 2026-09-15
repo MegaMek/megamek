@@ -116,6 +116,23 @@ public final class MountPathHelper {
     }
 
     /**
+     * Returns the facing a dismounted unit is placed with. A unit dismounting a Small Craft or DropShip chooses its
+     * facing (TW p.91); when no valid choice was made, it faces away from the carrier, as before.
+     *
+     * @param carrierPosition the carrier's hex
+     * @param unloadPosition  the hex the unit is placed in
+     * @param chosenFacing    the facing the player chose, from 0 (north) to 5, or {@code null} if none was chosen
+     *
+     * @return the facing to place the unit with
+     */
+    public static int dismountFacing(Coords carrierPosition, Coords unloadPosition, @Nullable Integer chosenFacing) {
+        if ((chosenFacing != null) && (chosenFacing >= 0) && (chosenFacing <= 5)) {
+            return chosenFacing;
+        }
+        return carrierPosition.direction(unloadPosition);
+    }
+
+    /**
      * If the path ends inside a transport standing in the clicked hex, and the moving unit could mount that transport
      * from the last hex before it, removes the steps inside the transport.
      *

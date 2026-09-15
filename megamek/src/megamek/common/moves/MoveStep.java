@@ -105,6 +105,12 @@ public class MoveStep implements Serializable {
     /** Additional int data key for an UNLOAD_BY_CRANE step: the facing the unloaded unit is placed with. */
     public static final int CRANE_UNLOAD_FACING_KEY = 0;
 
+    /**
+     * Additional int data key for an UNLOAD step: the facing a unit dismounting a Small Craft or DropShip chose (TW
+     * p.91).
+     */
+    public static final int UNLOAD_FACING_KEY = 0;
+
     private final MoveStepType type;
     private int targetId = Entity.NONE;
     private int targetType = Targetable.TYPE_ENTITY;

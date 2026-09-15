@@ -40,6 +40,7 @@ import megamek.common.GameBoardTestCase;
 import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.enums.MoveStepType;
+import megamek.common.units.BipedMek;
 import megamek.common.units.Dropship;
 import megamek.common.units.VTOL;
 import org.junit.jupiter.api.DisplayName;
@@ -94,5 +95,35 @@ class CraneUnloadFacingCompileTest extends GameBoardTestCase {
         assertEquals(UNLOAD_HEX, compiledStep.getTargetPosition(), "The unloading hex should survive compiling");
         assertEquals(SOUTH, compiledStep.getAdditionalData(MoveStep.CRANE_UNLOAD_FACING_KEY),
               "The chosen facing should survive compiling");
+    }
+
+    @Test
+    @DisplayName("Compiling an ordinary unload step keeps the dismount facing the player chose (TW p.91)")
+    void compileKeepsDismountFacing() {
+        setBoard("CRANE_UNLOAD_BOARD");
+        Player player = new Player(0, "Player");
+        getGame().addPlayer(player.getId(), player);
+
+        Dropship carrier = new Dropship();
+        carrier.setId(20);
+        carrier.setOwner(player);
+        getGame().addEntity(carrier);
+        carrier.setDeployed(true);
+        carrier.setPosition(CARRIER_HEX);
+
+        BipedMek carriedMek = new BipedMek();
+        carriedMek.setId(31);
+        carriedMek.setOwner(player);
+        getGame().addEntity(carriedMek);
+
+        MovePath movePath = new MovePath(getGame(), carrier);
+        movePath.addStep(MoveStepType.UNLOAD, carriedMek, UNLOAD_HEX, Map.of(MoveStep.UNLOAD_FACING_KEY, SOUTH));
+
+        movePath.compile(getGame(), carrier, false);
+
+        MoveStep compiledStep = movePath.getLastStep();
+        assertEquals(MoveStepType.UNLOAD, compiledStep.getType(), "The unload step should remain");
+        assertEquals(SOUTH, compiledStep.getAdditionalData(MoveStep.UNLOAD_FACING_KEY),
+              "The chosen dismount facing should survive compiling");
     }
 }

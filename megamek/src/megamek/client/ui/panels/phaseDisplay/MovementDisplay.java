@@ -1113,6 +1113,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateMove();
     }
 
+    private void addStepToMovePath(MoveStepType moveStep, Entity entity, Coords coords,
+          Map<Integer, Integer> additionalIntData) {
+        cmd.addStep(moveStep, entity, coords, additionalIntData);
+        updateMove();
+    }
+
     private void addStepToMovePath(MoveStepType moveStep, Minefield minefield) {
         cmd.addStep(moveStep, minefield);
         updateMove();
@@ -6988,12 +6994,30 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       currentEntity().getTowedBy() != Entity.NONE) {
                     // unload into adjacent hexes
                     Coords pos = getUnloadPosition(other);
+                    Integer chosenFacing = null;
+                    if ((null != pos) && (currentEntity() instanceof SmallCraft)) {
+                        // A unit dismounting a Small Craft or DropShip chooses its facing (TW p.91)
+                        chosenFacing = CraneCommandDialogs.chooseFacing(clientgui.getFrame(), other);
+                        if (chosenFacing == null) {
+                            LOGGER.debug("[Mount] {}: facing choice cancelled; not unloading {}",
+                                  currentEntity().getDisplayName(), other.getDisplayName());
+                            pos = null;
+                        } else {
+                            LOGGER.debug("[Mount] {}: unloading {} into {} facing {}", currentEntity().getDisplayName(),
+                                  other.getDisplayName(), pos, chosenFacing);
+                        }
+                    }
                     if (null != pos) {
                         // set other's position and end this turn - the unloading unit will get
                         // another turn for further unloading later
                         // Also mark the chosen unit as planning to unload this turn.
                         int length = cmd.length();
-                        addStepToMovePath(MoveStepType.UNLOAD, other, pos);
+                        if (chosenFacing != null) {
+                            addStepToMovePath(MoveStepType.UNLOAD, other, pos,
+                                  Map.of(MoveStep.UNLOAD_FACING_KEY, chosenFacing));
+                        } else {
+                            addStepToMovePath(MoveStepType.UNLOAD, other, pos);
+                        }
                         if (!(length == cmd.length()
                               || cmd.getLastStepMovementType() == EntityMovementType.MOVE_ILLEGAL)) {
                             // Record the hashcode of the target hex temporarily, for filtering.

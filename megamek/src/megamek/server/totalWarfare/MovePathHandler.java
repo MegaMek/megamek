@@ -74,6 +74,7 @@ import megamek.common.event.GameToastEvent;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.moves.ClimbingHelper;
+import megamek.common.moves.MountPathHelper;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.net.packets.InvalidPacketDataException;
@@ -4177,7 +4178,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // If the step has a targetPosition, use that
                 if (null != step.getTargetPosition()) {
                     unloadPos = step.getTargetPosition();
-                    unloadFacing = curPos.direction(unloadPos);
+                    // A unit dismounting a Small Craft or DropShip chooses its facing (TW p.91); otherwise it faces
+                    // away from the carrier
+                    unloadFacing = MountPathHelper.dismountFacing(curPos, unloadPos,
+                          step.getAdditionalData(MoveStep.UNLOAD_FACING_KEY));
                 }
 
                 if (!gameManager.unloadUnit(entity, unloaded, unloadPos, unloadFacing,

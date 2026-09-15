@@ -42,12 +42,14 @@ import static org.mockito.ArgumentMatchers.anyInt;
 
 import megamek.common.GameBoardTestCase;
 import megamek.common.Player;
+import megamek.common.Report;
 import megamek.common.bays.LightVehicleBay;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
+import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.BipedMek;
 import megamek.common.units.CraneOperation;
@@ -133,8 +135,8 @@ class CraneOperationHandlerTest extends GameBoardTestCase {
     }
 
     @Test
-    @DisplayName("Firing a weapon while waiting cancels crane loading")
-    void firingCancelsLoading() throws LocationFullException {
+    @DisplayName("Firing a weapon while waiting does not cancel crane loading (TW p.90 does not say so)")
+    void firingDoesNotCancelLoading() throws LocationFullException {
         VTOL vtol = placeVtol();
         vtol.addEquipment(EquipmentType.get("ISMediumLaser"), Tank.LOC_FRONT);
         new CraneOperationHandler(gameManager).declareLoad(vtol, dropShip, true);
@@ -143,8 +145,59 @@ class CraneOperationHandlerTest extends GameBoardTestCase {
         vtol.getWeaponList().getFirst().setUsedThisRound(true);
         gameManager.checkCraneOperations();
 
-        assertNull(dropShip.getCraneOperations().findFor(vtol.getId()), "The loading is cancelled");
-        assertEquals(Entity.NONE, vtol.getTransportId(), "The VTOL is not loaded");
+        CraneOperation operation = dropShip.getCraneOperations().findFor(vtol.getId());
+        assertNotNull(operation, "The loading carries on after the VTOL fires");
+        assertEquals(1, operation.getTurnsCompleted(), "The turn of crane work is still banked");
+    }
+
+    @Test
+    @DisplayName("A unit waiting for the cranes can stop waiting, and is not loaded")
+    void unitCanStopWaitingToBeLoaded() {
+        VTOL vtol = placeVtol();
+        CraneOperationHandler handler = new CraneOperationHandler(gameManager);
+        handler.declareLoad(vtol, dropShip, true);
+        gameManager.checkCraneOperations();
+
+        handler.stopOperation(vtol, dropShip);
+
+        assertNull(dropShip.getCraneOperations().findFor(vtol.getId()), "The loading is stopped");
+        for (int turn = 1; turn <= 4; turn++) {
+            gameManager.checkCraneOperations();
+        }
+        assertEquals(Entity.NONE, vtol.getTransportId(), "The VTOL is never loaded");
+    }
+
+    @Test
+    @DisplayName("A carrier can stop unloading a unit, which stays aboard")
+    void carrierCanStopUnloading() {
+        VTOL vtol = loadedVtol();
+        CraneOperationHandler handler = new CraneOperationHandler(gameManager);
+        handler.declareUnload(dropShip, vtol, BESIDE_DROPSHIP, FACING_SOUTH_WEST, true);
+        gameManager.checkCraneOperations();
+
+        handler.stopOperation(dropShip, vtol);
+
+        assertNull(dropShip.getCraneOperations().findFor(vtol.getId()), "The unloading is stopped");
+        for (int turn = 1; turn <= 3; turn++) {
+            gameManager.checkCraneOperations();
+        }
+        assertEquals(dropShip.getId(), vtol.getTransportId(), "The VTOL stays aboard");
+    }
+
+    @Test
+    @DisplayName("A stop naming the wrong carrier is rejected on the server")
+    void stopForAnotherCarrierIsRejected() {
+        VTOL vtol = placeVtol();
+        CraneOperationHandler handler = new CraneOperationHandler(gameManager);
+        handler.declareLoad(vtol, dropShip, true);
+        Dropship otherDropShip = new Dropship();
+        otherDropShip.setId(21);
+        otherDropShip.setOwner(game.getPlayer(0));
+        game.addEntity(otherDropShip);
+
+        handler.stopOperation(vtol, otherDropShip);
+
+        assertNotNull(dropShip.getCraneOperations().findFor(vtol.getId()), "The real loading is untouched");
     }
 
     @Test
@@ -250,6 +303,63 @@ class CraneOperationHandlerTest extends GameBoardTestCase {
 
         assertTrue(dropShip.getCraneOperations().isEmpty(), "Crane unloading must be the carrier's only action");
         assertEquals(dropShip.getId(), vtol.getTransportId(), "The VTOL stays aboard");
+    }
+
+    @Test
+    @DisplayName("A unit destroyed while waiting for the cranes is reported, not silently dropped")
+    void destroyedWaitingUnitIsReported() {
+        VTOL vtol = placeVtol();
+        new CraneOperationHandler(gameManager).declareLoad(vtol, dropShip, true);
+        gameManager.checkCraneOperations();
+
+        // Damage destroys the unit and it leaves the game before the End Phase, as a DropShip's exhaust does
+        vtol.setDestroyed(true);
+        game.removeEntity(vtol.getId(), IEntityRemovalConditions.REMOVE_DEVASTATED);
+        gameManager.getMainPhaseReport().clear();
+        gameManager.checkCraneOperations();
+
+        assertNull(dropShip.getCraneOperations().findFor(vtol.getId()), "The loading is cancelled");
+        assertTrue(wasReported(5357), "The player is told the loading was cancelled because the unit was destroyed");
+    }
+
+    @Test
+    @DisplayName("Lifting off cancels crane unloading with a report that says the carrier lifted off")
+    void liftOffCancelsUnloadingWithItsOwnReport() {
+        VTOL vtol = loadedVtol();
+        new CraneOperationHandler(gameManager).declareUnload(dropShip, vtol, BESIDE_DROPSHIP, FACING_SOUTH_WEST, true);
+        gameManager.checkCraneOperations();
+
+        dropShip.setAltitude(1);
+        gameManager.getMainPhaseReport().clear();
+        gameManager.checkCraneOperations();
+
+        assertEquals(dropShip.getId(), vtol.getTransportId(), "The VTOL stays aboard");
+        assertTrue(wasReported(5363), "The report names lifting off");
+        assertFalse(wasReported(5365), "The report does not claim the carrier was destroyed");
+    }
+
+    @Test
+    @DisplayName("A destroyed carrier cancels crane unloading with a report that says it was destroyed")
+    void destroyedCarrierCancelsUnloadingWithItsOwnReport() {
+        VTOL vtol = loadedVtol();
+        new CraneOperationHandler(gameManager).declareUnload(dropShip, vtol, BESIDE_DROPSHIP, FACING_SOUTH_WEST, true);
+        gameManager.checkCraneOperations();
+
+        dropShip.setDestroyed(true);
+        gameManager.getMainPhaseReport().clear();
+        gameManager.checkCraneOperations();
+
+        assertTrue(wasReported(5365), "The report names the carrier's destruction");
+        assertFalse(wasReported(5363), "The report does not claim the carrier lifted off");
+    }
+
+    private boolean wasReported(int messageId) {
+        for (Report report : gameManager.getMainPhaseReport()) {
+            if (report.messageId == messageId) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private BipedMek createBlocker(int id) {

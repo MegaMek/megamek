@@ -186,6 +186,83 @@ class CraneRulesTest extends GameBoardTestCase {
               "The DropShip is the carrier working on the VTOL");
     }
 
+    @Test
+    @DisplayName("A carrier's plain Load refuses VTOLs, fighters and small craft; they board by crane (TW p.87, p.90)")
+    void craneOnlyUnitsCannotUsePlainLoad() {
+        Dropship dropShip = new Dropship();
+        assertTrue(CraneRules.mustBoardByCrane(dropShip, new VTOL()), "A VTOL boards a DropShip by crane");
+        assertTrue(CraneRules.mustBoardByCrane(dropShip, new AeroSpaceFighter()), "A fighter boards by crane");
+        assertTrue(CraneRules.mustBoardByCrane(dropShip, new SmallCraft()), "A small craft boards by crane");
+        assertFalse(CraneRules.mustBoardByCrane(dropShip, new BipedMek()), "A Mek may still be loaded");
+        assertFalse(CraneRules.mustBoardByCrane(new Tank(), new ConvInfantry()),
+              "Carriers other than small craft and DropShips are not affected");
+    }
+
+    @Test
+    @DisplayName("A stop is legal only for the unit and carrier in that crane work")
+    void stopIsLegalOnlyForTheUnitsInvolved() {
+        Dropship dropShip = placeDropShip(0, true);
+        VTOL waitingVtol = placeVtol(0, BESIDE_DROPSHIP, 1);
+        assertNotNull(CraneRules.stopCraneOperationIllegalReason(waitingVtol, dropShip),
+              "Nothing to stop before the loading is declared");
+
+        dropShip.getCraneOperations().add(CraneOperation.load(waitingVtol.getId(), BESIDE_DROPSHIP));
+        assertNull(CraneRules.stopCraneOperationIllegalReason(waitingVtol, dropShip),
+              "The waiting VTOL may stop waiting");
+        assertNotNull(CraneRules.stopCraneOperationIllegalReason(dropShip, waitingVtol),
+              "A loading is stopped by the waiting unit, not as if it were an unloading");
+        assertNotNull(CraneRules.stopCraneOperationIllegalReason(waitingVtol, null), "A stop must name the carrier");
+    }
+
+    @Test
+    @DisplayName("Counts a carrier's crane operations in progress, loading and unloading together")
+    void countsPendingCraneOperations() {
+        Dropship dropShip = placeDropShip(0, true);
+        assertEquals(0, CraneRules.pendingOperationCount(dropShip), "Nothing is declared yet");
+
+        dropShip.getCraneOperations().add(CraneOperation.load(30, BESIDE_DROPSHIP));
+        dropShip.getCraneOperations().add(CraneOperation.unload(31, BESIDE_DROPSHIP, 0));
+
+        assertEquals(2, CraneRules.pendingOperationCount(dropShip), "A loading and an unloading both count");
+        assertEquals(0, CraneRules.pendingOperationCount(new BipedMek()), "A Mek carries no crane operations");
+        assertEquals(0, CraneRules.pendingOperationCount(null), "No unit has no crane operations");
+    }
+
+    @Test
+    @DisplayName("Units already waiting for the cranes take up bay space, so a third VTOL cannot wait for a 2-slot bay")
+    void waitingUnitsCountAgainstBaySpace() {
+        // placeDropShip gives a light vehicle bay with 2 slots
+        Dropship dropShip = placeDropShip(0, true);
+        VTOL firstVtol = placeVtolWithId(31);
+        VTOL secondVtol = placeVtolWithId(32);
+        VTOL thirdVtol = placeVtolWithId(33);
+        dropShip.getCraneOperations().add(CraneOperation.load(firstVtol.getId(), BESIDE_DROPSHIP));
+        dropShip.getCraneOperations().add(CraneOperation.load(secondVtol.getId(), BESIDE_DROPSHIP));
+
+        assertNotNull(CraneRules.loadByCraneIllegalReason(thirdVtol, dropShip, true, getGame()),
+              "Both slots are spoken for by the two waiting VTOLs");
+        assertTrue(CraneRules.carriersInReach(thirdVtol, getGame()).isEmpty(),
+              "Load by Crane is not offered to the third VTOL");
+        assertNull(CraneRules.loadByCraneIllegalReason(secondVtol, dropShip, true, getGame()),
+              "A waiting unit does not count against its own slot");
+
+        dropShip.getCraneOperations().remove(secondVtol.getId());
+        assertNull(CraneRules.loadByCraneIllegalReason(thirdVtol, dropShip, true, getGame()),
+              "Once one VTOL stops waiting, its slot is free again");
+    }
+
+    private VTOL placeVtolWithId(int unitId) {
+        VTOL vtol = new VTOL();
+        vtol.setId(unitId);
+        vtol.setWeight(20);
+        vtol.setOwner(getGame().getPlayer(0));
+        getGame().addEntity(vtol);
+        vtol.setDeployed(true);
+        vtol.setElevation(1);
+        vtol.setPosition(BESIDE_DROPSHIP);
+        return vtol;
+    }
+
     private Dropship placeDropShip(int ownerId, boolean hasVehicleBay) {
         setBoard("CRANE_BOARD");
         addPlayers();

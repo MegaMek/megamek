@@ -40,7 +40,6 @@ import javax.swing.JOptionPane;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.common.annotations.Nullable;
-import megamek.common.board.Coords;
 import megamek.common.units.Entity;
 import megamek.common.units.SmallCraft;
 
@@ -87,65 +86,6 @@ final class CraneCommandDialogs {
               SharedUtility.getDisplayArray(choices),
               null);
         return (SharedUtility.getTargetPicked(choices, input) instanceof SmallCraft carrier) ? carrier : null;
-    }
-
-    /**
-     * Picks the carried unit the cranes should unload, asking only when there is more than one.
-     *
-     * @param frame   the parent window
-     * @param carrier the carrier doing the unloading
-     * @param units   the units the cranes could unload
-     *
-     * @return the chosen unit, or {@code null} if there is none or the player cancelled
-     */
-    static @Nullable Entity chooseUnit(JFrame frame, SmallCraft carrier, List<Entity> units) {
-        if (units.isEmpty()) {
-            return null;
-        }
-        if (units.size() == 1) {
-            return units.getFirst();
-        }
-        String input = (String) JOptionPane.showInputDialog(frame,
-              Messages.getString("MovementDisplay.UnloadByCraneDialog.message", carrier.getShortName()),
-              Messages.getString("MovementDisplay.UnloadByCraneDialog.title"),
-              JOptionPane.QUESTION_MESSAGE,
-              null,
-              SharedUtility.getDisplayArray(units),
-              null);
-        return (SharedUtility.getTargetPicked(units, input) instanceof Entity unit) ? unit : null;
-    }
-
-    /**
-     * Picks the hex a unit is unloaded into.
-     *
-     * @param frame     the parent window
-     * @param carrier   the carrier doing the unloading
-     * @param positions the legal unloading hexes, not empty
-     *
-     * @return the chosen hex, or {@code null} if the player cancelled
-     */
-    static @Nullable Coords chooseUnloadHex(JFrame frame, SmallCraft carrier, List<Coords> positions) {
-        String[] choices = new String[positions.size()];
-        for (int i = 0; i < positions.size(); i++) {
-            choices[i] = positions.get(i).getBoardNum();
-        }
-        String selected = (String) JOptionPane.showInputDialog(frame,
-              Messages.getString("MovementDisplay.ChooseHex.message", carrier.getShortName(),
-                    carrier.getUnusedString()),
-              Messages.getString("MovementDisplay.ChooseHex.title"),
-              JOptionPane.QUESTION_MESSAGE,
-              null,
-              choices,
-              null);
-        if (selected == null) {
-            return null;
-        }
-        for (Coords position : positions) {
-            if (selected.equals(position.getBoardNum())) {
-                return position;
-            }
-        }
-        return null;
     }
 
     /**

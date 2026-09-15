@@ -52,9 +52,9 @@ import megamek.logging.MMLogger;
  * the unit aboard in the End Phase of the fourth turn after it; a declared unloading puts the unit in its chosen hex in
  * the End Phase of the third turn after it.
  * <p>
- * Loading is cancelled if the unit leaves the hex it waits in, moves, fires a weapon, the carrier lifts off, or either
- * unit is destroyed. An unloading whose chosen hex is blocked when the work is done waits and tries again each End
- * Phase. Extracted from {@link TWGameManager} so that large class does not also carry the crane rules;
+ * Loading is cancelled if the unit leaves the hex it waits in, moves, the carrier lifts off, or either unit is
+ * destroyed; firing does not cancel it, as TW does not say so. A player may also stop loading or unloading. An
+ * unloading whose chosen hex is blocked when the work is done waits and tries again each End Phase. Extracted from {@link TWGameManager} so that large class does not also carry the crane rules;
  * {@link TWGameManager#checkCraneOperations()} delegates here once per End Phase.
  * </p>
  */
@@ -125,6 +125,41 @@ class CraneOperationHandler extends AbstractTWRuleHandler {
     }
 
     /**
+     * Stops crane work at a player's request. A unit waiting beside a carrier stops waiting and is not loaded; a carrier
+     * stops unloading a unit, which stays aboard. Checked again here so a stale or tampered path cannot stop work it
+     * does not own.
+     *
+     * @param actor  the unit declaring the stop
+     * @param target the carrier when stopping loading, or the carried unit when stopping unloading; may be
+     *               {@code null}
+     */
+    void stopOperation(Entity actor, @Nullable Targetable target) {
+        String illegalReason = CraneRules.stopCraneOperationIllegalReason(actor, target);
+        if (illegalReason != null) {
+            LOGGER.info("[Crane] {}: stop crane work rejected - {}", actor.getDisplayName(), illegalReason);
+            return;
+        }
+        if ((actor instanceof SmallCraft carrier) && (target instanceof Entity carriedUnit)
+              && (carrier.getCraneOperations().findFor(carriedUnit.getId()) != null)) {
+            LOGGER.info("[Crane] {} stops unloading {} by crane; it stays aboard", carrier.getDisplayName(),
+                  carriedUnit.getDisplayName());
+            endOperation(carrier, carriedUnit.getId());
+            Report report = carrierReport(5364, carrier);
+            report.addDesc(carriedUnit);
+            addReport(report);
+            return;
+        }
+        if (target instanceof SmallCraft carrier) {
+            LOGGER.info("[Crane] {} stops waiting to be loaded into {}", actor.getDisplayName(),
+                  carrier.getDisplayName());
+            endOperation(carrier, actor.getId());
+            Report report = unitReport(5355, actor);
+            report.add(carrier.getDisplayName());
+            addReport(report);
+        }
+    }
+
+    /**
      * End Phase work for every crane operation in the game: confirms newly declared operations, banks a turn of work on
      * the others, cancels any that no longer qualify, and loads or unloads the units whose work is done.
      */
@@ -149,9 +184,17 @@ class CraneOperationHandler extends AbstractTWRuleHandler {
     private void progressLoading(SmallCraft carrier, CraneOperation operation) {
         Entity unit = getGame().getEntity(operation.getUnitId());
         if (unit == null) {
-            LOGGER.info("[Crane] {}: unit {} waiting to be loaded no longer exists; operation dropped",
-                  carrier.getDisplayName(), operation.getUnitId());
-            endOperation(carrier, operation.getUnitId());
+            // Destroyed and fled units leave the game before the End Phase, so they are looked up among the removed
+            Entity removedUnit = findOutOfGameEntity(operation.getUnitId());
+            if (removedUnit == null) {
+                LOGGER.info("[Crane] {}: unit {} waiting to be loaded no longer exists; operation dropped",
+                      carrier.getDisplayName(), operation.getUnitId());
+                endOperation(carrier, operation.getUnitId());
+            } else if (removedUnit.isDestroyed() || removedUnit.isDoomed()) {
+                cancelLoading(carrier, removedUnit, 5357, false, "the unit waiting to be loaded was destroyed");
+            } else {
+                cancelLoading(carrier, removedUnit, 5354, true, "the unit waiting to be loaded left the battlefield");
+            }
             return;
         }
         if (unit.isDestroyed() || unit.isDoomed() || carrier.isDestroyed() || carrier.isDoomed()) {
@@ -168,11 +211,6 @@ class CraneOperationHandler extends AbstractTWRuleHandler {
             cancelLoading(carrier, unit, 5354, true, "the unit moved or is out of the cranes' reach");
             return;
         }
-        if (CraneRules.hasFiredWeapons(unit)) {
-            cancelLoading(carrier, unit, 5355, false, "the unit fired a weapon");
-            return;
-        }
-
         if (!operation.isStarted()) {
             operation.start();
             LOGGER.info("[Crane] {} starts loading {} by crane; aboard in {} turns", carrier.getDisplayName(),
@@ -221,10 +259,22 @@ class CraneOperationHandler extends AbstractTWRuleHandler {
             return;
         }
         if (!CraneRules.isGroundedCarrier(carrier)) {
-            LOGGER.info("[Crane] {}: crane unloading of {} cancelled - the carrier is no longer grounded or was "
-                  + "destroyed", carrier.getDisplayName(), unit.getDisplayName());
+            int reportId;
+            String reason;
+            if (carrier.isDestroyed() || carrier.isDoomed()) {
+                reportId = 5365;
+                reason = "the carrier was destroyed";
+            } else if (carrier.isAirborne()) {
+                reportId = 5363;
+                reason = "the carrier lifted off";
+            } else {
+                reportId = 5366;
+                reason = "the carrier left the board";
+            }
+            LOGGER.info("[Crane] {}: crane unloading of {} cancelled - {}", carrier.getDisplayName(),
+                  unit.getDisplayName(), reason);
             endOperation(carrier, unit.getId());
-            Report report = unitReport(5363, unit);
+            Report report = unitReport(reportId, unit);
             report.add(carrier.getDisplayName());
             addReport(report);
             return;
@@ -291,6 +341,15 @@ class CraneOperationHandler extends AbstractTWRuleHandler {
             report.add(carrier.getDisplayName());
         }
         addReport(report);
+    }
+
+    private @Nullable Entity findOutOfGameEntity(int unitId) {
+        for (Entity entity : getGame().getOutOfGameEntitiesVector()) {
+            if (entity.getId() == unitId) {
+                return entity;
+            }
+        }
+        return null;
     }
 
     private void endOperation(SmallCraft carrier, int unitId) {

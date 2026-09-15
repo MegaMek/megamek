@@ -33,7 +33,9 @@
 package megamek.common.units;
 
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 import megamek.common.Hex;
 import megamek.common.annotations.Nullable;
@@ -41,7 +43,6 @@ import megamek.common.bays.Bay;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
 
 /**
@@ -84,6 +85,21 @@ public final class CraneRules {
               && !carrier.isDestroyed()
               && !carrier.isDoomed()
               && (carrier.getPosition() != null);
+    }
+
+    /**
+     * Counts the crane operations a carrier has in progress, loading and unloading together. Lifting off cancels all of
+     * them, so the player is warned before taking off.
+     *
+     * @param carrier the possible carrier, may be {@code null}
+     *
+     * @return the number of crane operations in progress; 0 when the unit is not a Small Craft or DropShip
+     */
+    public static int pendingOperationCount(@Nullable Entity carrier) {
+        if (carrier instanceof SmallCraft smallCraft) {
+            return smallCraft.getCraneOperations().getOperations().size();
+        }
+        return 0;
     }
 
     /**
@@ -138,6 +154,46 @@ public final class CraneRules {
     }
 
     /**
+     * Finds a bay for a unit after setting aside room for every other unit already waiting for this carrier's cranes.
+     * TW limits crane loading only by bay space (TW p.90: doors are not used), so several units must not all wait four
+     * turns for the same last slot. Each waiting unit takes the first bay that fits it, in the same order the bays are
+     * searched when the loading finishes.
+     *
+     * @param carrier the Small Craft or DropShip
+     * @param unit    the unit asking to be loaded
+     * @param game    the game, used to find the units already waiting
+     *
+     * @return a bay with room for the unit once the waiting units are counted, or {@code null} if there is none
+     */
+    public static @Nullable Bay findBayAfterWaitingUnits(SmallCraft carrier, Entity unit, Game game) {
+        Map<Bay, Double> reservedSpace = new IdentityHashMap<>();
+        for (CraneOperation operation : carrier.getCraneOperations().getOperations()) {
+            if (!operation.isLoading() || (operation.getUnitId() == unit.getId())) {
+                continue;
+            }
+            Entity waitingUnit = game.getEntity(operation.getUnitId());
+            if (waitingUnit == null) {
+                continue;
+            }
+            Bay reservedBay = bayWithRoom(carrier, waitingUnit, reservedSpace);
+            if (reservedBay != null) {
+                reservedSpace.merge(reservedBay, reservedBay.spaceForUnit(waitingUnit), Double::sum);
+            }
+        }
+        return bayWithRoom(carrier, unit, reservedSpace);
+    }
+
+    private static @Nullable Bay bayWithRoom(Entity carrier, Entity unit, Map<Bay, Double> reservedSpace) {
+        for (Bay bay : carrier.getTransportBays()) {
+            double freeSpace = bay.getUnused() - reservedSpace.getOrDefault(bay, 0.0);
+            if (bay.canLoad(unit) && (freeSpace >= bay.spaceForUnit(unit))) {
+                return bay;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Lists the friendly grounded Small Craft and DropShips whose cranes can load the unit where it stands now.
      *
      * @param unit the VTOL, fighter or Small Craft to be loaded
@@ -159,7 +215,7 @@ public final class CraneRules {
                       && !carriers.contains(carrier)
                       && !carrier.isEnemyOf(unit)
                       && isInReach(unit, position, carrier, game)
-                      && (findBayFor(carrier, unit) != null)) {
+                      && (findBayAfterWaitingUnits(carrier, unit, game) != null)) {
                     carriers.add(carrier);
                 }
             }
@@ -254,6 +310,9 @@ public final class CraneRules {
         if (findBayFor(carrier, unit) == null) {
             return "the carrier has no suitable bay space";
         }
+        if (findBayAfterWaitingUnits(carrier, unit, game) == null) {
+            return "the carrier's free bay space is already taken by units waiting for its cranes";
+        }
         return null;
     }
 
@@ -292,19 +351,47 @@ public final class CraneRules {
     }
 
     /**
-     * Checks whether a unit fired any weapon this round, which cancels crane loading.
+     * Checks whether a carrier must refuse to take a unit aboard with its ordinary Load action. VTOLs, fighters and Small
+     * Craft only go aboard a grounded Small Craft or DropShip by crane (TW p.87 and p.90); an airborne carrier takes
+     * fighters and Small Craft aboard by recovery instead, which does not use Load.
      *
-     * @param unit the unit waiting to be loaded
+     * @param carrier the unit loading
+     * @param unit    the unit to be loaded
      *
-     * @return {@code true} if any of its weapons were used this round
+     * @return {@code true} if the unit may only board this carrier by crane
      */
-    public static boolean hasFiredWeapons(Entity unit) {
-        for (WeaponMounted weapon : unit.getWeaponList()) {
-            if (weapon.isUsedThisRound()) {
-                return true;
+    public static boolean mustBoardByCrane(Entity carrier, Entity unit) {
+        return (carrier instanceof SmallCraft) && isCraneOnlyUnit(unit);
+    }
+
+    /**
+     * Checks a declared STOP_CRANE_OPERATION step. A unit waiting beside a carrier may stop waiting, and a carrier may
+     * stop unloading a unit, which then stays aboard. TW has no rule for stopping, but loading needs the unit to stay
+     * beside the carrier, so a player can always stop by moving away; this is the same choice without the move.
+     *
+     * @param actor  the unit declaring the step
+     * @param target the other unit in the crane work: the carrier when stopping loading, the carried unit when
+     *               stopping unloading; may be {@code null}
+     *
+     * @return why the step is illegal, for logging, or {@code null} if it is legal
+     */
+    public static @Nullable String stopCraneOperationIllegalReason(Entity actor, @Nullable Targetable target) {
+        if (!(target instanceof Entity otherUnit)) {
+            return "no unit was named";
+        }
+        if (actor instanceof SmallCraft carrier) {
+            CraneOperation unloading = carrier.getCraneOperations().findFor(otherUnit.getId());
+            if ((unloading != null) && !unloading.isLoading()) {
+                return null;
             }
         }
-        return false;
+        if (otherUnit instanceof SmallCraft carrier) {
+            CraneOperation loading = carrier.getCraneOperations().findFor(actor.getId());
+            if ((loading != null) && loading.isLoading()) {
+                return null;
+            }
+        }
+        return "the cranes are not loading the unit into, or unloading it from, that carrier";
     }
 
     /**

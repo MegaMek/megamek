@@ -3002,6 +3002,22 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_ILLEGAL;
             return;
         }
+        if ((stepType == MoveStepType.LOAD) && (getTarget(game) instanceof Entity loadedUnit)
+              && CraneRules.mustBoardByCrane(entity, loadedUnit)) {
+            LOGGER.debug("[Crane] {}: {} cannot be loaded directly; it boards a grounded carrier by crane",
+                  entity.getDisplayName(), loadedUnit.getDisplayName());
+            movementType = EntityMovementType.MOVE_ILLEGAL;
+            return;
+        }
+        if (stepType == MoveStepType.STOP_CRANE_OPERATION) {
+            String illegalReason = CraneRules.stopCraneOperationIllegalReason(entity, getTarget(game));
+            if (illegalReason != null) {
+                LOGGER.debug("[Crane] {}: stop crane work illegal - {}", entity.getDisplayName(), illegalReason);
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+                return;
+            }
+            movementType = EntityMovementType.MOVE_NONE;
+        }
 
         if (stepType == MoveStepType.BOOTLEGGER) {
             // Bootlegger requires three hexes straight and is illegal for tracked, WiGE, or

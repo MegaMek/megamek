@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -66,10 +66,6 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
     MOVE_LOAD("moveLoad", MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK | MovementDisplay.CMD_VTOL),
     MOVE_UNLOAD("moveUnload", MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK | MovementDisplay.CMD_VTOL),
     MOVE_MOUNT("moveMount", MovementDisplay.CMD_GROUND),
-    // Crane loading and unloading for grounded Small Craft and DropShips (TW p.90-91). Grounded aerospace units use the
-    // CMD_TANK button set, so both the waiting fighter/small craft and the carrier see these.
-    MOVE_LOAD_BY_CRANE("moveLoadByCrane", MovementDisplay.CMD_VTOL | MovementDisplay.CMD_TANK),
-    MOVE_UNLOAD_BY_CRANE("moveUnloadByCrane", MovementDisplay.CMD_TANK),
     MOVE_TOW("moveTow", MovementDisplay.CMD_TANK),
     MOVE_DISCONNECT("moveDisconnect", MovementDisplay.CMD_TANK),
     MOVE_UNJAM("moveUnjam", MovementDisplay.CMD_NON_INF),

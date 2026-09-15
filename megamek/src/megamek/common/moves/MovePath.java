@@ -718,7 +718,9 @@ public class MovePath implements Cloneable, Serializable {
         for (int i = 0; i < temp.size(); i++) {
             MoveStep step = temp.elementAt(i);
             if ((step.getTargetPosition() != null) && (step.getTarget(getGame()) != null)) {
-                step = new MoveStep(this, step.getType(), step.getTarget(getGame()), step.getTargetPosition());
+                // Keep the additional data too, such as the facing chosen for an UNLOAD_BY_CRANE step
+                step = new MoveStep(this, step.getType(), step.getTarget(getGame()), step.getTargetPosition(),
+                      step.getAdditionalData());
             } else if (step.getTarget(getGame()) != null) {
                 step = new MoveStep(this, step.getType(), step.getTarget(getGame()));
             } else if (step.getRecoveryUnit() != -1) {

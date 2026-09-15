@@ -3167,6 +3167,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 new CraneOperationHandler(gameManager).declareUnload(entity, step.getTarget(getGame()),
                       step.getTargetPosition(), step.getAdditionalData(MoveStep.CRANE_UNLOAD_FACING_KEY),
                       previousStep == null);
+            } else if (step.getType() == MoveStepType.STOP_CRANE_OPERATION) {
+                new CraneOperationHandler(gameManager).stopOperation(entity, step.getTarget(getGame()));
             }
 
             // If we have turned, check whether we have fulfilled any turn mode

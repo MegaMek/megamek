@@ -305,6 +305,70 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     void processMovement() {
+        // Do the deployment first, if using Walk-on-deployment. avoids future issues
+        if (md.contains(MoveStepType.DEPLOY) && Game.rulesManager.getRulesGame().isWalkOnDeployment()) {
+            DeploymentServerHelper deploymentProcess = new DeploymentServerHelper(gameManager);
+            // We don't set done in a walk on deployment
+            boolean setDone = false;
+            boolean assaultDrop = false;
+            Coords position;
+            int boardId;
+            int facing;
+            int entityElevation;
+            Vector<Entity> loadVector = new Vector<>(entity.getLoadedUnits());
+            MoveStep step = null;
+            // Ok, so deployment wasn't the first step. let's get where it was
+            ListIterator<MoveStep> steps = md.getSteps();
+            while (steps.hasNext()) {
+                step = steps.next();
+                if (step.getType() == MoveStepType.DEPLOY) {
+                    break;
+                }
+            }
+            if (step != null) {
+                position = step.getPosition();
+                boardId = step.getBoardId();
+                facing = step.getFacing();
+                entityElevation = entity.isAero() ? step.getAltitude() : step.getElevation();
+            } else {
+                position = entity.getPosition();
+                boardId = entity.getBoardId();
+                facing = entity.getFacing();
+                entityElevation = entity.getElevation();
+            }
+
+            boolean isLegalLocation = deploymentProcess.isLegalDeployment(position, boardId, entity, facing);
+            if (!isLegalLocation) {
+                String msg = "server got invalid deployment packet from connection " + entity.getOwnerId();
+                msg += ", Entity: " + entity.getShortName();
+                logger.error(msg);
+                gameManager.send(entity.getOwnerId(), gameManager.getPacketHelper().createTurnListPacket());
+
+                return;
+            }
+
+            deploymentProcess.processDeployment(entity,
+                                                position,
+                                                boardId,
+                                                facing,
+                                                entityElevation,
+                                                loadVector,
+                                                assaultDrop,
+                                                setDone);
+            Hex hex = gameManager.getGame().getBoard(boardId).getHex(position);
+            addReport(gameManager.doSetLocationsExposure(entity, hex, false, entity.getElevation()));
+            // Update Aero sensors for a space or atmospheric game
+            if (entity instanceof IAero aero) {
+                aero.updateSensorOptions();
+            }
+
+            // Update visibility indications if using double-blind.
+            if (gameManager.doBlind()) {
+                gameManager.updateVisibilityIndicator(null);
+            }
+            TWGameManager.datasetLogger.append(getGame(), true);
+        }
+
         // TacOps Climbing: check if a climbing/dangling entity lost its climbing ability
         // due to actuator damage since last turn (TO:AR p.20)
         // Climbing requires 1+ arms; dangling requires 2 arms
@@ -980,68 +1044,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
             return;
         }
 
-        if (md.contains(MoveStepType.DEPLOY) && Game.rulesManager.getRulesGame().isWalkOnDeployment()) {
-            DeploymentServerHelper deploymentProcess = new DeploymentServerHelper(gameManager);
-            // We don't set done in a walk on deployment
-            boolean setDone = false;
-            boolean assaultDrop = false;
-            Coords position;
-            int boardId;
-            int facing;
-            int entityElevation;
-            Vector<Entity> loadVector = new Vector<>(entity.getLoadedUnits());
-            MoveStep step = null;
-            // Ok, so deployment wasn't the first step. let's get where it was
-            ListIterator<MoveStep> steps = md.getSteps();
-            while (steps.hasNext()) {
-                step = steps.next();
-                if (step.getType() == MoveStepType.DEPLOY) {
-                    break;
-                }
-            }
-            if (step != null) {
-                position = step.getPosition();
-                boardId = step.getBoardId();
-                facing = step.getFacing();
-                entityElevation = entity.isAero() ? step.getAltitude() : step.getElevation();
-            } else {
-                position = entity.getPosition();
-                boardId = entity.getBoardId();
-                facing = entity.getFacing();
-                entityElevation = entity.getElevation();
-            }
-
-            boolean isLegalLocation = deploymentProcess.isLegalDeployment(position, boardId, entity, facing);
-            if (!isLegalLocation) {
-                String msg = "server got invalid deployment packet from connection " + entity.getOwnerId();
-                msg += ", Entity: " + entity.getShortName();
-                logger.error(msg);
-                gameManager.send(entity.getOwnerId(), gameManager.getPacketHelper().createTurnListPacket());
-
-                return;
-            }
-
-            deploymentProcess.processDeployment(entity,
-                                                position,
-                                                boardId,
-                                                facing,
-                                                entityElevation,
-                                                loadVector,
-                                                assaultDrop,
-                                                setDone);
-            Hex hex = gameManager.getGame().getBoard(boardId).getHex(position);
-            addReport(gameManager.doSetLocationsExposure(entity, hex, false, entity.getElevation()));
-            // Update Aero sensors for a space or atmospheric game
-            if (entity instanceof IAero aero) {
-                aero.updateSensorOptions();
-            }
-
-            // Update visibility indications if using double-blind.
-            if (gameManager.doBlind()) {
-                gameManager.updateVisibilityIndicator(null);
-            }
-            TWGameManager.datasetLogger.append(getGame(), true);
-        }
         // okay, proceed with movement calculations
         lastPos = entity.getPosition();
         curPos = entity.getPosition();

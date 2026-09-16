@@ -68,7 +68,7 @@ public class CoreRulesExplosions extends RulesExplosions {
             Report report;
 
             int cap = caseIId ? 1 : cased ? 10 : 20;
-            if (damage < cap) {
+            if (damage <= cap) {
                 return damage;
             }
 

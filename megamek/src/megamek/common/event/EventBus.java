@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,8 +33,6 @@
 
 package megamek.common.event;
 
-import megamek.logging.MMLogger;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -42,6 +40,8 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import megamek.logging.MMLogger;
 
 public final class EventBus {
     private static final MMLogger LOGGER = MMLogger.create(EventBus.class);
@@ -91,6 +91,13 @@ public final class EventBus {
 
     @SuppressWarnings("unchecked")
     public void register(Object handler) {
+        synchronized (REGISTER_LOCK) {
+            // Cancel any pending unregister for this handler. Unregisters are deferred onto unregisterQueue and only
+            // applied at the start of the next trigger(), so a detach/reattach cycle that unregisters then
+            // re-registers with no intervening trigger() would otherwise leave the queued removal in place. The next
+            // trigger() would then drop a handler supposed to be live. Reconciling here keeps it registered.
+            unregisterQueue.remove(handler);
+        }
         if (handlerMap.containsKey(handler)) {
             return;
         }

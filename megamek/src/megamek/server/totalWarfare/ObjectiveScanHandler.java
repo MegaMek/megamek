@@ -522,7 +522,13 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         if (!isEnemy) {
             return false;
         }
-        boolean anyDesignated = getGame().getEntitiesVector().stream().anyMatch(Entity::isDesignatedScanTarget);
+        boolean anyDesignated = false;
+        for (Entity unit : getGame().getEntitiesVector()) {
+            if (unit.isDesignatedScanTarget()) {
+                anyDesignated = true;
+                break;
+            }
+        }
         return !anyDesignated || target.isDesignatedScanTarget();
     }
 
@@ -590,7 +596,13 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
      *       not counted
      */
     private static int countUnpaidReadings(Entity unit) {
-        return (int) unit.getBankedScans().stream().filter(reading -> !reading.isPointsPaidOnScan()).count();
+        int unpaidReadings = 0;
+        for (BankedScan reading : unit.getBankedScans()) {
+            if (!reading.isPointsPaidOnScan()) {
+                unpaidReadings++;
+            }
+        }
+        return unpaidReadings;
     }
 
     /**

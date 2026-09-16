@@ -641,8 +641,15 @@ class LobbyMekPopup {
 
             // The mission's scan targets are a game master's to set, and only matter in a game with objectives
             if (isScanTargetMenuUseful(clientGui)) {
-                boolean anyWanted = entities.stream().anyMatch(Entity::isDesignatedScanTarget);
-                boolean anyNotWanted = entities.stream().anyMatch(e -> !e.isDesignatedScanTarget());
+                boolean anyWanted = false;
+                boolean anyNotWanted = false;
+                for (Entity entity : entities) {
+                    if (entity.isDesignatedScanTarget()) {
+                        anyWanted = true;
+                    } else {
+                        anyNotWanted = true;
+                    }
+                }
                 menu.add(menuItem(Messages.getString("ChatLounge.ScanTarget.wanted"),
                       LMP_SCAN_TARGET + "|" + LMP_SCAN_WANTED + eIds, anyNotWanted, listener));
                 menu.add(menuItem(Messages.getString("ChatLounge.ScanTarget.notWanted"),

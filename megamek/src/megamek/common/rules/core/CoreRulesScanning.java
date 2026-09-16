@@ -35,6 +35,7 @@ package megamek.common.rules.core;
 import megamek.common.Messages;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.ComputeECM;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesScanning;
@@ -101,8 +102,12 @@ public class CoreRulesScanning extends RulesScanning {
      * @return {@code true} when the unit's working probe is a Bloodhound
      */
     private static boolean hasBloodhound(Entity scanner) {
-        return scanner.getMisc().stream()
-              .anyMatch(mounted -> mounted.getType().hasFlag(MiscType.F_BLOODHOUND) && !mounted.isInoperable());
+        for (MiscMounted mounted : scanner.getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_BLOODHOUND) && !mounted.isInoperable()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Seam for tests: whether ECM hostile to the scanner covers the target's hex. */

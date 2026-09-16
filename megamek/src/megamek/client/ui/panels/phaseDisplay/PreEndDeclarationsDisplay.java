@@ -627,6 +627,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         setScanEnabled(isMyTurn() && (entity != null) && ScanMission.canOrderScan(entity));
         // Without this the button is never switched on, so a player cannot move off whichever unit came first
         setNextUnitEnabled(isMyTurn() && (eligibleUnits().size() > 1));
+        updateScanButtonLabel();
         if (entity != null) {
             // Show the button on its first selectable bridge from the start (e.g. "Deploy Right Bridge" on a unit
             // with two bridges) rather than a generic label.
@@ -726,6 +727,16 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         buttons.get(PreEndCommand.PREEND_NEXT).setEnabled(enabled);
     }
 
+    /**
+     * The Scan button is its own cancel: pressing it a second time backs out. Players went looking for a separate
+     * Cancel button, so while a target is being picked the button says Cancel Scan instead.
+     */
+    private void updateScanButtonLabel() {
+        buttons.get(PreEndCommand.PREEND_SCAN).setText(Messages.getString(selectingScanTarget
+              ? "PreEndDeclarationsDisplay.scanCancel"
+              : "PreEndDeclarationsDisplay.scan"));
+    }
+
     protected void setScanEnabled(boolean enabled) {
         buttons.get(PreEndCommand.PREEND_SCAN).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(PreEndCommand.PREEND_SCAN.getCmd(), enabled);
@@ -770,6 +781,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             selectingScanTarget = false;
             setStatusBarText(Messages.getString("PreEndDeclarationsDisplay.its_your_turn"));
             LOGGER.debug("[Scan] {} scan order withdrawn before a target was chosen", scanner.getShortName());
+            updateScanButtonLabel();
             return;
         }
         selectingScanTarget = true;
@@ -777,6 +789,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
               scanner.getShortName(),
               scanningRangeText(ScanMission.scanningRules(game).scanningRange(scanner, null))));
         LOGGER.debug("[Scan] {} waiting for a hex or unit to scan", scanner.getShortName());
+        updateScanButtonLabel();
     }
 
     /**
@@ -824,6 +837,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         LOGGER.info("[Scan] {} ordered to scan {} in the End Phase", scanner.getShortName(), targetName);
         clientgui.addToast(ToastLevel.SUCCESS,
               Messages.getString("PreEndDeclarationsDisplay.scanQueued", scanner.getShortName(), targetName));
+        updateScanButtonLabel();
         registerDeclaration();
     }
 

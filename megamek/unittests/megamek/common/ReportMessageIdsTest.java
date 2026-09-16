@@ -59,9 +59,9 @@ class ReportMessageIdsTest {
     void testNoReportIdIsDefinedTwice() throws IOException {
         Set<String> seenIds = new HashSet<>();
         List<String> duplicateIds = new ArrayList<>();
-        try (InputStream stream = ReportMessageIdsTest.class.getResourceAsStream(REPORT_MESSAGES)) {
-            assertTrue(stream != null, "the report message file is on the classpath");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+        InputStream stream = ReportMessageIdsTest.class.getResourceAsStream(REPORT_MESSAGES);
+        assertTrue(stream != null, "the report message file is on the classpath");
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
             String line = reader.readLine();
             while (line != null) {
                 int separator = line.indexOf('=');

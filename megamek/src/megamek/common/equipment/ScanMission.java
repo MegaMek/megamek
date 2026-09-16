@@ -79,13 +79,9 @@ public final class ScanMission {
         return false;
     }
 
-    /**
-     * @param unit the unit that might scan
-     *
-     * @return {@code true} when scanning is in play and the unit is on the board, alive, not being carried, and able
-     *       to scan under the game's ruleset - the reasons a scan could be refused, aerospace or wrecked sensors, are
-     *       the ruleset's
-     */
+    /** The optional TacOps scanning rules, held once because they carry no state. */
+    private static final TacOpsScanning TAC_OPS_SCANNING = new TacOpsScanning();
+
     /**
      * The scanning rules in force. The Core Rulebook's mission scanning check (p. 233) is the baseline in any game
      * with objectives; a game that switches on the optional TacOps: Advanced Rules scanning rule (p. 187) uses that
@@ -101,9 +97,13 @@ public final class ScanMission {
         return isTacOpsScanning ? TAC_OPS_SCANNING : Game.rulesManager.getRulesScanning();
     }
 
-    /** The optional TacOps scanning rules, held once because they carry no state. */
-    private static final TacOpsScanning TAC_OPS_SCANNING = new TacOpsScanning();
-
+    /**
+     * @param unit the unit that might scan
+     *
+     * @return {@code true} when scanning is in play and the unit is on the board, alive, not being carried, and able
+     *       to scan under the game's ruleset - the reasons a scan could be refused, aerospace or wrecked sensors, are
+     *       the ruleset's
+     */
     public static boolean canOrderScan(Entity unit) {
         Game game = unit.getGame();
         if (!isInPlay(game)) {

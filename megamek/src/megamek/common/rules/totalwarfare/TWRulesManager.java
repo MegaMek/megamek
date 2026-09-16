@@ -152,8 +152,10 @@ public class TWRulesManager implements RulesManager {
 
     /**
      * {@inheritDoc}
-     * Returns the Total Warfare implementation for scanning objectives and units.
+     * Returns the Core Rulebook's mission scanning check, which applies whichever ruleset is in play: scanning an
+     * objective is a mission rule rather than a Total Warfare one.
      */
+    @Override
     public RulesScanning getRulesScanning() { return missionScanning; }
 
     /**

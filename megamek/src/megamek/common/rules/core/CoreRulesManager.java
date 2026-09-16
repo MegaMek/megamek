@@ -153,6 +153,7 @@ public class CoreRulesManager implements RulesManager {
      * {@inheritDoc}
      * Returns the Core Rules implementation for scanning objectives and units.
      */
+    @Override
     public RulesScanning getRulesScanning() { return coreRulesScanning; }
 
     /**

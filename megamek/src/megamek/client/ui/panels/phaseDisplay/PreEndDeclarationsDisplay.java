@@ -38,6 +38,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.swing.SwingUtilities;
 
 import megamek.client.event.BoardViewEvent;
@@ -626,7 +627,14 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         // lit whenever the selected unit could scan at all; where it scans is asked for after the press
         setScanEnabled(isMyTurn() && (entity != null) && ScanMission.canOrderScan(entity));
         // Without this the button is never switched on, so a player cannot move off whichever unit came first
-        setNextUnitEnabled(isMyTurn() && (eligibleUnits().size() > 1));
+        List<Entity> eligible = eligibleUnits();
+        boolean canChangeUnit = isMyTurn() && (eligible.size() > 1);
+        setNextUnitEnabled(canChangeUnit);
+        if (!canChangeUnit) {
+            LOGGER.debug("[PreEnd] Next Unit disabled: myTurn={}, {} of the player's unit(s) can act this phase [{}]",
+                  isMyTurn(), eligible.size(),
+                  eligible.stream().map(Entity::getShortName).collect(Collectors.joining(", ")));
+        }
         updateScanButtonLabel();
         if (entity != null) {
             // Show the button on its first selectable bridge from the start (e.g. "Deploy Right Bridge" on a unit

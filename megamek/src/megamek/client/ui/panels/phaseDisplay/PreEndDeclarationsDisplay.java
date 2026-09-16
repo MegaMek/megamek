@@ -747,6 +747,8 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         scanButton.setText(Messages.getString(cancels
               ? "PreEndDeclarationsDisplay.scanCancel"
               : "PreEndDeclarationsDisplay.scan"));
+        // Lit for as long as scanning is armed, so the player can see the mode is on and that pressing it undoes it
+        scanButton.setActive(cancels);
         LOGGER.debug("[Scan] button label -> {} (unit={}, picking={}, orderQueued={}, enabled={})",
               cancels ? "Cancel Scan" : "Scan",
               (scanner == null) ? "none selected" : scanner.getShortName(),

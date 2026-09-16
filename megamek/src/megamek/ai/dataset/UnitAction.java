@@ -45,6 +45,7 @@ import megamek.common.moves.MoveStep;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.UnitRole;
+import megamek.logging.MMLogger;
 
 /**
  * Flexible container for unit action data using a map-based approach with enum keys.
@@ -52,6 +53,7 @@ import megamek.common.units.UnitRole;
  * @author Luana Coppio
  */
 public class UnitAction extends EntityDataMap<UnitAction.Field> {
+    private static final MMLogger LOGGER = MMLogger.create(UnitAction.class);
 
     /**
      * Enum defining all available unit action fields.
@@ -153,12 +155,20 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
               .put(Field.PRONE, movePath.getFinalProne())
               .put(Field.LEGAL, movePath.isMoveLegal());
 
-        // Failure chance calculation
-        map.put(Field.CHANCE_OF_FAILURE,
-              SharedUtility.getPSRList(movePath)
-                    .stream()
-                    .map(psr -> psr.getValue() / 36d)
-                    .reduce(1.0, (a, b) -> a * b));
+        // Failure chance calculation. The piloting roll replay starts from the entity's current position, which is
+        // gone once the move loaded the unit (Mount, carrier recovery) or took it off the board. The value then
+        // matches a move that needs no rolls.
+        if (entity.getPosition() == null) {
+            LOGGER.debug("Piloting roll replay skipped: {} has no position (loaded or off board)",
+                  entity.getShortName());
+            map.put(Field.CHANCE_OF_FAILURE, 1.0);
+        } else {
+            map.put(Field.CHANCE_OF_FAILURE,
+                  SharedUtility.getPSRList(movePath)
+                        .stream()
+                        .map(psr -> psr.getValue() / 36d)
+                        .reduce(1.0, (a, b) -> a * b));
+        }
 
         // Movement steps
         map.put(Field.STEPS, movePath.getStepVector().stream().map(MoveStep::getType).collect(Collectors.toList()));

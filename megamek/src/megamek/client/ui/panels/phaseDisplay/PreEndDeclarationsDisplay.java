@@ -742,9 +742,15 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     private void updateScanButtonLabel() {
         Entity scanner = game.getEntity(currentEntity);
         boolean orderQueued = (scanner != null) && (scanner.getPendingScan() != null);
-        buttons.get(PreEndCommand.PREEND_SCAN).setText(Messages.getString((selectingScanTarget || orderQueued)
+        boolean cancels = selectingScanTarget || orderQueued;
+        MegaMekButton scanButton = buttons.get(PreEndCommand.PREEND_SCAN);
+        scanButton.setText(Messages.getString(cancels
               ? "PreEndDeclarationsDisplay.scanCancel"
               : "PreEndDeclarationsDisplay.scan"));
+        LOGGER.debug("[Scan] button label -> {} (unit={}, picking={}, orderQueued={}, enabled={})",
+              cancels ? "Cancel Scan" : "Scan",
+              (scanner == null) ? "none selected" : scanner.getShortName(),
+              selectingScanTarget, orderQueued, scanButton.isEnabled());
     }
 
     protected void setScanEnabled(boolean enabled) {

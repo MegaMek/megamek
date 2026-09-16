@@ -33,6 +33,8 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import java.util.Vector;
+
 import megamek.common.CriticalSlot;
 import megamek.common.HitData;
 import megamek.common.Report;
@@ -45,8 +47,6 @@ import megamek.common.rules.RulesExplosions;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.Mek;
-
-import java.util.Vector;
 
 public class CoreRulesExplosions extends RulesExplosions {
     /**
@@ -246,7 +246,7 @@ public class CoreRulesExplosions extends RulesExplosions {
     public boolean arePodsExplosive(Mounted<?> mounted) {
         return false;
     }
-    
+
     /**
     * {@inheritDoc}
     * Explosions are reduced under Core rules.

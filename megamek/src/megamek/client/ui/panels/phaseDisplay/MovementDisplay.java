@@ -631,6 +631,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * Selects an entity, by number, for movement.
      */
     public void selectEntity(int entityID) {
+        final Entity oldEntity = currentEntity();
+        if (oldEntity != null) {
+            clear(false);
+        }
         final Entity selectedEntity = game.getEntity(entityID);
         lastHexDeploymentOptions.clear();
         lastDeploymentOption = null;

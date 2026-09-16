@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,6 +33,9 @@
 
 package megamek.common.cost;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.equipment.HandheldWeapon;
 
@@ -40,13 +43,16 @@ public class HandheldWeaponCostCalculator {
     public static double calculateCost(HandheldWeapon hhw, CalculationReport report, boolean ignoreAmmo) {
         var equipCost = CostCalculator.getWeaponsAndEquipmentCost(hhw, report, ignoreAmmo);
         var structureCost = CostCalculator.getWeaponsAndEquipmentCost(hhw, false);
+        double roundedCost = BigDecimal.valueOf(equipCost + structureCost)
+              .setScale(2, RoundingMode.UP)
+              .doubleValue();
         CostCalculator.fillInReport(report,
               hhw,
               ignoreAmmo,
               new String[] { "Structure", "Equipment" },
               1,
-              equipCost + structureCost,
+              roundedCost,
               new double[] { structureCost, equipCost });
-        return equipCost + structureCost;
+        return roundedCost;
     }
 }

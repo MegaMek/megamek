@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,9 +33,12 @@
 
 package megamek.common.cost;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.units.ConvFighter;
 import megamek.common.equipment.ArmorType;
+import megamek.common.units.ConvFighter;
 import megamek.common.verifier.TestEntity;
 
 public class ConvFighterCostCalculator {
@@ -93,11 +96,13 @@ public class ConvFighterCostCalculator {
         CostCalculator.removeNegativeAdditiveCosts(costs);
 
         costs[idx] = -fighter.getPriceMultiplier();
-        double cost = CostCalculator.calculateCost(costs);
+        double roundedCost = BigDecimal.valueOf(CostCalculator.calculateCost(costs))
+              .setScale(2, RoundingMode.UP)
+              .doubleValue();
         String[] systemNames = { "Avionics", "VSTOL Gear", "Structure", "Flight Systems", "Engine", "Fuel Tanks",
                                  "Armor", "Heat Sinks", "Equipment", "Power Amplifiers", "Weight Multiplier" };
-        CostCalculator.fillInReport(costReport, fighter, ignoreAmmo, systemNames, 8, cost, costs);
+        CostCalculator.fillInReport(costReport, fighter, ignoreAmmo, systemNames, 8, roundedCost, costs);
 
-        return Math.round(cost);
+        return roundedCost;
     }
 }

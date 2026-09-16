@@ -35,6 +35,7 @@ package megamek.client.ui.clientGUI.boardview;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Vector;
 
@@ -44,6 +45,8 @@ import megamek.common.game.Game;
 import megamek.common.units.Tank;
 import megamek.common.units.UnitLocation;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -58,6 +61,36 @@ class BoardViewMovingUnitTest {
     }
 
     @Test
+    @DisplayName("A unit with no position after its move is not animated")
+    void unitWithoutPositionIsNotAnimated() {
+        Tank tank = new Tank();
+        tank.setId(1);
+        // The load cleared the position; the entity update still carries the path the unit walked
+        tank.setPosition(null);
+
+        assertFalse(BoardView.canAnimateMove(tank), "A unit with no position has no hex to draw a ghost in");
+        assertFalse(BoardView.canAnimateMove(null), "A missing unit is never animated");
+    }
+
+    @Test
+    @DisplayName("A unit that still has a position is animated as before")
+    void unitWithPositionIsAnimated() {
+        Tank tank = new Tank();
+        tank.setId(1);
+        tank.setPosition(new Coords(2, 2));
+
+        assertTrue(BoardView.canAnimateMove(tank), "An ordinary move is still animated");
+    }
+
+    /**
+     * Drives the guard through the real {@link BoardView}, which is what threw in the issue. Constructing a BoardView
+     * reads the tileset from the shipped data set, which the test task does not stage, so this is tagged
+     * {@code on-demand} and excluded from the normal test run. Run it with
+     * {@code gradlew :megamek:test --tests BoardViewMovingUnitTest -PincludeTags=on-demand} on a staged checkout.
+     */
+    @Test
+    @Tag("on-demand")
+    @DisplayName("addMovingUnit skips a unit with no position (needs staged data)")
     void addMovingUnitSkipsUnitWithoutPosition() throws Exception {
         Game game = new Game();
         BoardView boardView = new BoardView(game, null, null, 0);
@@ -65,7 +98,6 @@ class BoardViewMovingUnitTest {
         Tank tank = new Tank();
         tank.setId(1);
         tank.setGame(game);
-        // The mount cleared the position; the entity update still carries the path it walked
         tank.setPosition(null);
         Vector<UnitLocation> movePath = new Vector<>();
         movePath.add(new UnitLocation(tank.getId(), new Coords(2, 2), 0, 0, 0));

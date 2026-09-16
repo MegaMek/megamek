@@ -45,7 +45,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -4431,14 +4430,20 @@ public class MovementDisplay extends ActionPhaseDisplay {
             candidates.addAll(game.getEntitiesVector(coords, finalBoardId()));
         }
 
-        final boolean canLoad = candidates
-              .stream()
-              .filter(other -> !currentEntity.canTow(other.getId()))
-              .filter(Entity::isLoadableThisTurn)
-              // VTOLs, fighters and small craft board a grounded carrier only by crane (TW p.87, p.90)
-              .filter(other -> !CraneRules.mustBoardByCrane(currentEntity, other))
-              .anyMatch(other -> currentEntity.canLoad(other, true, cmd.getFinalElevation()) &&
-                    other.getTargetBay() == UNSET_BAY);
+        boolean canLoad = false;
+        for (Entity other : candidates) {
+            if (currentEntity.canTow(other.getId()) || !other.isLoadableThisTurn()) {
+                continue;
+            }
+            // VTOLs, fighters and small craft board a grounded carrier only by crane (TW p.87, p.90)
+            if (CraneRules.mustBoardByCrane(currentEntity, other)) {
+                continue;
+            }
+            if (currentEntity.canLoad(other, true, cmd.getFinalElevation()) && (other.getTargetBay() == UNSET_BAY)) {
+                canLoad = true;
+                break;
+            }
+        }
         setLoadEnabled(canLoad);
     }
 
@@ -5231,9 +5236,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
             LOGGER.error("No loaded units");
         } else if ((unloadableUnits.size() + craneUnits.size()) > 1) {
             // Only show the units we are not already planning to unload, then the units only the cranes can unload
-            List<Entity> filteredUnits = unloadableUnits
-                  .stream()
-                  .filter(entity -> entity.getTargetBay() == UNSET_BAY).collect(Collectors.toCollection(ArrayList::new));
+            List<Entity> filteredUnits = new ArrayList<>();
+            for (Entity unloadable : unloadableUnits) {
+                if (unloadable.getTargetBay() == UNSET_BAY) {
+                    filteredUnits.add(unloadable);
+                }
+            }
             filteredUnits.addAll(craneUnits);
             // Units the cranes are already unloading are labelled as a stop, so they read differently from an unload
             String[] choiceLabels = new String[filteredUnits.size()];

@@ -70,6 +70,7 @@ import megamek.client.ui.entityreadout.LiveReadoutDialog;
 import megamek.client.ui.panels.phaseDisplay.FiringDisplay;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.client.ui.panels.phaseDisplay.PhysicalDisplay;
+import megamek.client.ui.panels.phaseDisplay.PreEndDeclarationsDisplay;
 import megamek.client.ui.panels.phaseDisplay.TargetingPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.VictoryHexPropertiesPane;
 import megamek.client.ui.panels.phaseDisplay.commands.MoveCommand;
@@ -303,6 +304,8 @@ public class MapMenu extends JPopupMenu {
                         ((FiringDisplay) currentPanel).selectEntity(selectedEntity.getId());
                     } else if (currentPanel instanceof PhysicalDisplay) {
                         ((PhysicalDisplay) currentPanel).selectEntity(selectedEntity.getId());
+                    } else if (currentPanel instanceof PreEndDeclarationsDisplay preEndDisplay) {
+                        preEndDisplay.selectEntity(selectedEntity.getId());
                     }
                 }
             } catch (Exception ex) {

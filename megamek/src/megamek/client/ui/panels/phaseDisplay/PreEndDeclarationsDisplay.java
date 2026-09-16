@@ -34,6 +34,7 @@ package megamek.client.ui.panels.phaseDisplay;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -233,7 +234,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         } else if (ev.getActionCommand().equals(PreEndCommand.PREEND_SCAN.getCmd())) {
             doScan();
         } else if (ev.getActionCommand().equals(PreEndCommand.PREEND_NEXT.getCmd())) {
-            selectEntity(clientgui.getClient().getNextEntityNum(currentEntity));
+            selectEntity(nextEligibleUnit());
         }
     }
 
@@ -624,6 +625,8 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         setDeployBridgeEnabled(canDeployBridge);
         // lit whenever the selected unit could scan at all; where it scans is asked for after the press
         setScanEnabled(isMyTurn() && (entity != null) && ScanMission.canOrderScan(entity));
+        // Without this the button is never switched on, so a player cannot move off whichever unit came first
+        setNextUnitEnabled(isMyTurn() && (eligibleUnits().size() > 1));
         if (entity != null) {
             // Show the button on its first selectable bridge from the start (e.g. "Deploy Right Bridge" on a unit
             // with two bridges) rather than a generic label.
@@ -676,6 +679,52 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         updateButtons();
     }
 
+
+    /**
+     * The local player's units that can do something in this phase, in display order. The pre-End declarations are
+     * player-wide rather than one turn per unit, so the player must be free to move between their own units.
+     *
+     * @return those units, which may be empty
+     */
+    private List<Entity> eligibleUnits() {
+        List<Entity> eligible = new ArrayList<>();
+        for (Entity entity : game.getEntitiesVector()) {
+            boolean isMine = (entity.getOwner() != null)
+                  && (entity.getOwnerId() == clientgui.getClient().getLocalPlayer().getId());
+            if (isMine && entity.isEligibleForPreEndDeclarations()) {
+                eligible.add(entity);
+            }
+        }
+        eligible.sort(Comparator.comparingInt(Entity::getId));
+        return eligible;
+    }
+
+    /**
+     * @return the id of the next of the player's own units that can act this phase, wrapping around, or the current
+     *       one when there is nothing else to move to
+     */
+    private int nextEligibleUnit() {
+        List<Entity> eligible = eligibleUnits();
+        if (eligible.isEmpty()) {
+            return currentEntity;
+        }
+        int position = -1;
+        for (int index = 0; index < eligible.size(); index++) {
+            if (eligible.get(index).getId() == currentEntity) {
+                position = index;
+                break;
+            }
+        }
+        Entity next = eligible.get((position + 1) % eligible.size());
+        LOGGER.debug("[PreEnd] Next Unit: {} of {} eligible, moving to {}", position + 1, eligible.size(),
+              next.getShortName());
+        return next.getId();
+    }
+
+    /** Lights the Next Unit button when the player has more than one unit worth moving between. */
+    protected void setNextUnitEnabled(boolean enabled) {
+        buttons.get(PreEndCommand.PREEND_NEXT).setEnabled(enabled);
+    }
 
     protected void setScanEnabled(boolean enabled) {
         buttons.get(PreEndCommand.PREEND_SCAN).setEnabled(enabled);
@@ -952,9 +1001,12 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     }
 
     /**
-     * Selects an entity for this turn
+     * Selects one of the local player's units for this turn. Public because the map menu's right-click Select
+     * offers it, the same way it does in the Movement, Firing and Physical phases.
+     *
+     * @param entityId the unit to select
      */
-    private void selectEntity(int entityId) {
+    public void selectEntity(int entityId) {
         Entity selected = game.getEntity(entityId);
         if (selected == null) {
             return;

@@ -732,7 +732,9 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * Cancel button, so while a target is being picked the button says Cancel Scan instead.
      */
     private void updateScanButtonLabel() {
-        buttons.get(PreEndCommand.PREEND_SCAN).setText(Messages.getString(selectingScanTarget
+        Entity scanner = game.getEntity(currentEntity);
+        boolean orderQueued = (scanner != null) && (scanner.getPendingScan() != null);
+        buttons.get(PreEndCommand.PREEND_SCAN).setText(Messages.getString((selectingScanTarget || orderQueued)
               ? "PreEndDeclarationsDisplay.scanCancel"
               : "PreEndDeclarationsDisplay.scan"));
     }
@@ -781,6 +783,17 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             selectingScanTarget = false;
             setStatusBarText(Messages.getString("PreEndDeclarationsDisplay.its_your_turn"));
             LOGGER.debug("[Scan] {} scan order withdrawn before a target was chosen", scanner.getShortName());
+            updateScanButtonLabel();
+            return;
+        }
+        if (scanner.getPendingScan() != null) {
+            // The order is already with the server, so take it back rather than making the player pick another hex
+            clientgui.getClient().sendScanWithdraw(scanner.getId());
+            scanner.setPendingScan(null);
+            setStatusBarText(Messages.getString("PreEndDeclarationsDisplay.its_your_turn"));
+            clientgui.addToast(ToastLevel.INFO,
+                  Messages.getString("PreEndDeclarationsDisplay.scanWithdrawn", scanner.getShortName()));
+            LOGGER.info("[Scan] {} withdrew its scan order", scanner.getShortName());
             updateScanButtonLabel();
             return;
         }

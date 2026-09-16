@@ -1222,6 +1222,9 @@ public class TWGameManager extends AbstractGameManager {
                 case SCAN_DESIGNATION:
                     new ObjectiveScanHandler(this).receiveScanDesignation(packet, connId);
                     break;
+                case ENTITY_SCAN_WITHDRAW:
+                    new ObjectiveScanHandler(this).receiveScanWithdraw(packet, connId);
+                    break;
                 case INFANTRY_ACTION_DECLARATION:
                     receiveInfantryActionDeclaration(packet, connId);
                     break;

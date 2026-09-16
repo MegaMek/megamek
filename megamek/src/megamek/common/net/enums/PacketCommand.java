@@ -306,7 +306,9 @@ public enum PacketCommand {
      * A game master's marking of an enemy unit as one the mission wants scanned, or the removal of that marking:
      * the unit's id and whether it is wanted (Objectives series).
      */
-    SCAN_DESIGNATION;
+    SCAN_DESIGNATION,
+    /** A unit's withdrawal of the scan it ordered this turn, before the End Phase resolves it; carries its id. */
+    ENTITY_SCAN_WITHDRAW;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

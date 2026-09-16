@@ -1715,6 +1715,17 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Withdraws the scan a unit ordered this turn, so it scans nothing when the End Phase resolves (Objectives
+     * series). Ordering a different target replaces an order; this clears it outright.
+     *
+     * @param entityId the unit whose order is withdrawn
+     */
+    public void sendScanWithdraw(int entityId) {
+        LOGGER.debug("Withdrawing the scan order for unit {}", entityId);
+        send(new Packet(PacketCommand.ENTITY_SCAN_WITHDRAW, entityId));
+    }
+
+    /**
      * Sends a game master's marking of a unit as one the mission wants scanned (Objectives series).
      *
      * @param entityId   the unit

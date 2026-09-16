@@ -423,6 +423,40 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
     }
 
     /**
+     * Withdraws the scan a unit ordered this turn. Guarded the same way as the order itself: only the unit's owner,
+     * and only while the pre-End declarations phase is running, because after that the End Phase has already read
+     * the order.
+     *
+     * @param packet the packet: the unit's id
+     * @param connId the sending connection
+     */
+    public void receiveScanWithdraw(Packet packet, int connId) {
+        if (!(packet.getObject(0) instanceof Integer entityId)) {
+            LOGGER.warn("[Scan] connection {} sent a scan withdrawal without a unit - ignored", connId);
+            return;
+        }
+        Entity scanner = getGame().getEntity(entityId);
+        Player sender = getGame().getPlayer(connId);
+        if ((scanner == null) || (sender == null) || !sender.equals(scanner.getOwner())) {
+            LOGGER.warn("[Scan] connection {} withdrew the scan of unit {}, which it does not own - ignored", connId,
+                  entityId);
+            return;
+        }
+        if (!getGame().getPhase().isPreEndDeclarations()) {
+            LOGGER.warn("[Scan] {} withdrew a scan outside the pre-End declarations phase ({}) - ignored",
+                  scanner.getShortName(), getGame().getPhase());
+            return;
+        }
+        if (scanner.getPendingScan() == null) {
+            LOGGER.debug("[Scan] {} had no scan order to withdraw", scanner.getShortName());
+            return;
+        }
+        scanner.setPendingScan(null);
+        LOGGER.info("[Scan] {} withdrew its scan order and will scan nothing this turn", scanner.getShortName());
+        gameManager.entityUpdate(scanner.getId());
+    }
+
+    /**
      * A game master's marking of a unit as one the mission wants scanned, at any time in the game. Once any unit
      * on the board is marked, only marked units are worth reading in a Sensor Check mission, so a convoy can be
      * made the objective while the escort is not. Anyone who is not a game master is refused and logged.

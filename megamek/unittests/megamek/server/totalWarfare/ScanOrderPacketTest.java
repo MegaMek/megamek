@@ -126,6 +126,38 @@ class ScanOrderPacketTest {
     }
 
     @Test
+    void testTheOwnerCanWithdrawTheOrderItGave() {
+        gameManager.handlePacket(OWNER_CONNECTION,
+              new Packet(PacketCommand.ENTITY_SCAN_ORDER, new ScanAction(scout.getId(), pointHex, 0)));
+        assertNotNull(scout.getPendingScan(), "the order is in place before it is withdrawn");
+
+        gameManager.handlePacket(OWNER_CONNECTION, new Packet(PacketCommand.ENTITY_SCAN_WITHDRAW, scout.getId()));
+
+        assertNull(scout.getPendingScan(), "the unit scans nothing in the End Phase");
+    }
+
+    @Test
+    void testAnotherPlayerCannotWithdrawTheOrder() {
+        gameManager.handlePacket(OWNER_CONNECTION,
+              new Packet(PacketCommand.ENTITY_SCAN_ORDER, new ScanAction(scout.getId(), pointHex, 0)));
+
+        gameManager.handlePacket(OTHER_CONNECTION, new Packet(PacketCommand.ENTITY_SCAN_WITHDRAW, scout.getId()));
+
+        assertNotNull(scout.getPendingScan(), "only the unit's owner may take its order back");
+    }
+
+    @Test
+    void testAWithdrawalOutsideThePreEndPhaseChangesNothing() {
+        gameManager.handlePacket(OWNER_CONNECTION,
+              new Packet(PacketCommand.ENTITY_SCAN_ORDER, new ScanAction(scout.getId(), pointHex, 0)));
+        game.setPhase(GamePhase.MOVEMENT);
+
+        gameManager.handlePacket(OWNER_CONNECTION, new Packet(PacketCommand.ENTITY_SCAN_WITHDRAW, scout.getId()));
+
+        assertNotNull(scout.getPendingScan(), "the End Phase has already read the order by then");
+    }
+
+    @Test
     void testAnotherPlayersOrderForTheUnitChangesNothing() {
         gameManager.handlePacket(OTHER_CONNECTION,
               new Packet(PacketCommand.ENTITY_SCAN_ORDER, new ScanAction(scout.getId(), pointHex, 0)));

@@ -42,6 +42,7 @@ import megamek.client.ui.SharedUtility;
 import megamek.common.compute.Compute;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.UnitRole;
@@ -163,11 +164,11 @@ public class UnitAction extends EntityDataMap<UnitAction.Field> {
                   entity.getShortName());
             map.put(Field.CHANCE_OF_FAILURE, 1.0);
         } else {
-            map.put(Field.CHANCE_OF_FAILURE,
-                  SharedUtility.getPSRList(movePath)
-                        .stream()
-                        .map(psr -> psr.getValue() / 36d)
-                        .reduce(1.0, (a, b) -> a * b));
+            double chanceOfFailure = 1.0;
+            for (TargetRoll pilotingRoll : SharedUtility.getPSRList(movePath)) {
+                chanceOfFailure *= pilotingRoll.getValue() / 36d;
+            }
+            map.put(Field.CHANCE_OF_FAILURE, chanceOfFailure);
         }
 
         // Movement steps

@@ -35,21 +35,33 @@ package megamek.ai.dataset;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 
+import java.util.List;
+
+import megamek.client.ui.SharedUtility;
 import megamek.common.GameBoardTestCase;
 import megamek.common.Player;
 import megamek.common.enums.MoveStepType;
 import megamek.common.moves.MovePath;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Tank;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 /**
  * Regression tests for megamek #8972: building a dataset row from a finished move must not fail when the move left
  * the unit without a position (it mounted a DropShip, was recovered by a carrier, or left the board).
  */
 class UnitActionFromMovePathTest extends GameBoardTestCase {
+
+    private static final int FIRST_ROLL_TARGET = 8;
+    private static final int SECOND_ROLL_TARGET = 9;
 
     static {
         initializeBoard("OPEN_3X3", """
@@ -76,22 +88,38 @@ class UnitActionFromMovePathTest extends GameBoardTestCase {
     }
 
     @Test
+    @DisplayName("A unit left without a position records no failure chance and never replays the rolls")
     void fromMovePathWithLoadedUnitDoesNotThrow() {
         MovePath movePath = createTankPath();
         // The server loads the unit during processMovement, which clears its position before the path is logged
         movePath.getEntity().setPosition(null);
 
-        UnitAction unitAction = assertDoesNotThrow(() -> UnitAction.fromMovePath(movePath));
+        try (MockedStatic<SharedUtility> sharedUtility = Mockito.mockStatic(SharedUtility.class)) {
+            UnitAction unitAction = assertDoesNotThrow(() -> UnitAction.fromMovePath(movePath));
 
-        assertEquals(1.0, unitAction.get(UnitAction.Field.CHANCE_OF_FAILURE));
+            assertEquals(1.0, unitAction.get(UnitAction.Field.CHANCE_OF_FAILURE),
+                  "A move that needs no rolls records a failure chance of 1.0");
+            // Without the guard this call happens and throws, because the replay starts from the missing position
+            sharedUtility.verify(() -> SharedUtility.getPSRList(any(MovePath.class)), never());
+        }
     }
 
     @Test
+    @DisplayName("A unit still on the board replays its piloting rolls into the failure chance")
     void fromMovePathWithUnitOnBoardStillReplaysPilotingRolls() {
         MovePath movePath = createTankPath();
+        List<TargetRoll> pilotingRolls = List.of(new TargetRoll(FIRST_ROLL_TARGET, "test roll"),
+              new TargetRoll(SECOND_ROLL_TARGET, "test roll"));
 
-        UnitAction unitAction = assertDoesNotThrow(() -> UnitAction.fromMovePath(movePath));
+        try (MockedStatic<SharedUtility> sharedUtility = Mockito.mockStatic(SharedUtility.class)) {
+            sharedUtility.when(() -> SharedUtility.getPSRList(any(MovePath.class))).thenReturn(pilotingRolls);
 
-        assertNotNull(unitAction.get(UnitAction.Field.CHANCE_OF_FAILURE));
+            UnitAction unitAction = assertDoesNotThrow(() -> UnitAction.fromMovePath(movePath));
+
+            double expected = (FIRST_ROLL_TARGET / 36d) * (SECOND_ROLL_TARGET / 36d);
+            assertEquals(expected, (Double) unitAction.get(UnitAction.Field.CHANCE_OF_FAILURE), 1e-9,
+                  "Each roll's target number over 36 is multiplied into the failure chance");
+            sharedUtility.verify(() -> SharedUtility.getPSRList(any(MovePath.class)), times(1));
+        }
     }
 }

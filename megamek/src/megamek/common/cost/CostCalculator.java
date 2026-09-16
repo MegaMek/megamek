@@ -225,6 +225,7 @@ public class CostCalculator {
         costFormatter.setMinimumFractionDigits(2);
         costFormatter.setMaximumFractionDigits(2);
         NumberFormat multiplierFormatter = NumberFormat.getInstance();
+        multiplierFormatter.setMaximumFractionDigits(10);
         costReport.addHeader("Cost Calculation for " + entity.getChassis() + " " + entity.getModel());
         for (int l = 0; l < systemNames.length; l++) {
             if (l == equipIndex) {

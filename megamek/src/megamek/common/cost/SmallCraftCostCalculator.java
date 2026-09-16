@@ -58,7 +58,7 @@ public class SmallCraftCostCalculator {
                                  "Gunnery Control Systems", "Structure", "Attitude Thruster", "Landing Gear", "Engine",
                                  "Drive Unit", "Fuel Tanks", "Armor", "Heat Sinks", "Equipment", "Weight Multiplier" };
         CostCalculator.fillInReport(costReport, smallCraft, ignoreAmmo, systemNames, 14, roundedCost, costs);
-        return Math.round(roundedCost);
+        return roundedCost;
     }
 
     /**

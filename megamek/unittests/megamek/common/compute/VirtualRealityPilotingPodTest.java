@@ -39,16 +39,20 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.MMConstants;
+import megamek.common.CriticalSlot;
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.Player;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.autoResolve.damage.EntityFinalState;
+import megamek.common.autoResolve.damage.MekDamageApplier;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.VirtualRealityPilotingPod.Interference;
 import megamek.common.compute.VirtualRealityPilotingPod.InterferenceState;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponMounted;
@@ -251,6 +255,18 @@ class VirtualRealityPilotingPodTest {
         assertEquals("TSEMP hit", interference.source());
     }
 
+    @Test
+    void iNarcEcmPodBlindsThePod() {
+        podMek.attachINarcPod(new INarcPod(enemyPlayer.getTeam(), INarcPod.ECM, Mek.LOC_CENTER_TORSO));
+        // Pods attach at the start of the next round
+        podMek.newRound(1);
+        assertTrue(podMek.isINarcedWith(INarcPod.ECM));
+
+        Interference interference = VirtualRealityPilotingPod.getInterference(podMek);
+        assertEquals(InterferenceState.BLINDED, interference.state());
+        assertEquals("iNarc ECM pod", interference.source());
+    }
+
     // ---- Effects of blindness ----
 
     @Test
@@ -351,6 +367,35 @@ class VirtualRealityPilotingPodTest {
         assertTrue(standard.hasEjectSeat());
         HitData transferred = standard.getTransferLocation(new HitData(Mek.LOC_HEAD));
         assertEquals(Entity.LOC_DESTROYED, transferred.getLocation());
+    }
+
+    @Test
+    void autoResolveCountsLifeSupportHitsInEveryTorsoOfThePod() {
+        podMek.addTorsoMountedCockpit(true);
+        destroyLifeSupport(podMek, Mek.LOC_LEFT_TORSO);
+        destroyLifeSupport(podMek, Mek.LOC_RIGHT_TORSO);
+        destroyLifeSupport(podMek, Mek.LOC_CENTER_TORSO);
+        assertEquals(3, new MekDamageApplier(podMek, EntityFinalState.ANY).getLifeSupportHits());
+
+        Mek torsoMounted = createMek(Mek.COCKPIT_TORSO_MOUNTED, friendlyPlayer, 3);
+        torsoMounted.addTorsoMountedCockpit(false);
+        destroyLifeSupport(torsoMounted, Mek.LOC_LEFT_TORSO);
+        destroyLifeSupport(torsoMounted, Mek.LOC_RIGHT_TORSO);
+        assertEquals(2, new MekDamageApplier(torsoMounted, EntityFinalState.ANY).getLifeSupportHits());
+    }
+
+    /** Marks the life support slot in the given location as destroyed. */
+    private static void destroyLifeSupport(Mek mek, int location) {
+        for (int slotIndex = 0; slotIndex < mek.getNumberOfCriticalSlots(location); slotIndex++) {
+            CriticalSlot slot = mek.getCritical(location, slotIndex);
+            boolean isLifeSupport = (slot != null) && (slot.getType() == CriticalSlot.TYPE_SYSTEM)
+                  && (slot.getIndex() == Mek.SYSTEM_LIFE_SUPPORT);
+            if (isLifeSupport) {
+                slot.setDestroyed(true);
+                return;
+            }
+        }
+        throw new AssertionError("No life support slot in location " + location);
     }
 
     @Test

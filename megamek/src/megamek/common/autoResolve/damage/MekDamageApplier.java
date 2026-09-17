@@ -206,10 +206,17 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
 
 
     public int getLifeSupportHits() {
-        return entity.getHitCriticalSlots(
-              TYPE_SYSTEM,
-              Mek.SYSTEM_LIFE_SUPPORT,
-              entity.hasTorsoMountedCockpit() ? Mek.LOC_CENTER_TORSO : Mek.LOC_HEAD);
+        if (!entity.hasTorsoMountedCockpit()) {
+            return entity.getHitCriticalSlots(TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, Mek.LOC_HEAD);
+        }
+        // A torso-mounted cockpit keeps its life support in the side torsos (TO:AR p.112); a Virtual Reality
+        // Piloting Pod adds a third slot in the center torso (IO:AE p.63)
+        int lifeSupportHits = entity.getHitCriticalSlots(TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, Mek.LOC_LEFT_TORSO)
+              + entity.getHitCriticalSlots(TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, Mek.LOC_RIGHT_TORSO);
+        if (entity.hasVirtualRealityPilotingPod()) {
+            lifeSupportHits += entity.getHitCriticalSlots(TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, Mek.LOC_CENTER_TORSO);
+        }
+        return lifeSupportHits;
     }
 
     @Override

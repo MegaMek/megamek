@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -108,6 +108,9 @@ public enum MoveStepType {
     DROP(false, "Drop"),
     VERTICAL_LAND(false, "Vertical Landing"),
     MOUNT(false, "Mount"),
+    LOAD_BY_CRANE(false, "LoadByCrane"),
+    UNLOAD_BY_CRANE(false, "UnloadByCrane"),
+    STOP_CRANE_OPERATION(false, "StopCraneOperation"),
     UNDOCK(false, "Undock"),
     TAKE_COVER(false, "TakeCover"),
     CONVERT_MODE(false, "ConvMode"),

@@ -74,6 +74,7 @@ import megamek.common.event.GameToastEvent;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.moves.ClimbingHelper;
+import megamek.common.moves.MountPathHelper;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.net.packets.InvalidPacketDataException;
@@ -3392,6 +3393,16 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             } else if ((entity instanceof RubbleClearer) && (step.getType() == MoveStepType.CLEAR_RUBBLE)) {
                 beginRubbleClearing(entity, step.getPosition());
+            } else if (step.getType() == MoveStepType.LOAD_BY_CRANE) {
+                // Only-action check comes from the server's own walk of the path, not the client's step flags
+                new CraneOperationHandler(gameManager).declareLoad(entity, step.getTarget(getGame()),
+                      previousStep == null);
+            } else if (step.getType() == MoveStepType.UNLOAD_BY_CRANE) {
+                new CraneOperationHandler(gameManager).declareUnload(entity, step.getTarget(getGame()),
+                      step.getTargetPosition(), step.getAdditionalData(MoveStep.CRANE_UNLOAD_FACING_KEY),
+                      previousStep == null);
+            } else if (step.getType() == MoveStepType.STOP_CRANE_OPERATION) {
+                new CraneOperationHandler(gameManager).stopOperation(entity, step.getTarget(getGame()));
             }
 
             // If we have turned, check whether we have fulfilled any turn mode
@@ -4505,7 +4516,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // If the step has a targetPosition, use that
                 if (null != step.getTargetPosition()) {
                     unloadPos = step.getTargetPosition();
-                    unloadFacing = curPos.direction(unloadPos);
+                    // A unit dismounting a Small Craft or DropShip chooses its facing (TW p.91); otherwise it faces
+                    // away from the carrier
+                    unloadFacing = MountPathHelper.dismountFacing(curPos, unloadPos,
+                          step.getAdditionalData(MoveStep.UNLOAD_FACING_KEY));
                 }
 
                 if (!gameManager.unloadUnit(entity, unloaded, unloadPos, unloadFacing, step.getElevation())) {

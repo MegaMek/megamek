@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -177,7 +177,10 @@ public class TROView {
         model.put("techBase", formatTechBase(entity));
         model.put("tonnage", NumberFormat.getInstance().format(entity.getWeight()));
         model.put("battleValue", NumberFormat.getInstance().format(entity.calculateBattleValue()));
-        model.put("cost", NumberFormat.getInstance().format(entity.getCost(false)));
+        NumberFormat costFormatter = NumberFormat.getInstance();
+        costFormatter.setMinimumFractionDigits(2);
+        costFormatter.setMaximumFractionDigits(2);
+        model.put("cost", costFormatter.format(entity.getCost(false)));
 
         final StringJoiner quirksList = getQuirksList(entity);
         if (quirksList.length() > 0) {

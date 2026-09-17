@@ -98,6 +98,7 @@ import megamek.common.interfaces.IStartingPositions;
 import megamek.common.interfaces.ReportEntry;
 import megamek.common.internationalization.I18n;
 import megamek.common.loaders.MapSettings;
+import megamek.common.moves.MountPathHelper;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.net.enums.PacketCommand;
@@ -3658,6 +3659,24 @@ public class TWGameManager extends AbstractGameManager {
      * @param unit   - the <code>Entity</code> being loaded.
      */
     public void loadUnit(Entity loader, Entity unit, int bayNumber) {
+        // Do not check for elevation during the lobby or deployment
+        boolean checkElevation = !getGame().getPhase().isLounge() && !getGame().getPhase().isDeployment();
+        loadUnitWithElevationRule(loader, unit, bayNumber, checkElevation);
+    }
+
+    /**
+     * Have the loader load the indicated unit by crane. Crane loading (TW p.90) lifts a unit aboard from anywhere within
+     * two levels, so the loader and the unit need not share an elevation.
+     *
+     * @param loader    the grounded Small Craft or DropShip loading the unit
+     * @param unit      the unit being loaded
+     * @param bayNumber the bay to load into
+     */
+    void loadUnitByCrane(Entity loader, Entity unit, int bayNumber) {
+        loadUnitWithElevationRule(loader, unit, bayNumber, false);
+    }
+
+    private void loadUnitWithElevationRule(Entity loader, Entity unit, int bayNumber, boolean checkElevation) {
         // ProtoMeks share a single turn for a Point. When loading one we don't remove its turn unless it's the last
         // unit in the Point to act.
         int remainingProtoMeks = 0;
@@ -3710,8 +3729,7 @@ public class TWGameManager extends AbstractGameManager {
             ((FighterSquadron) loader).updateWeaponGroups();
         }
 
-        // Load the unit. Do not check for elevation during deployment
-        boolean checkElevation = !getGame().getPhase().isLounge() && !getGame().getPhase().isDeployment();
+        // Load the unit
         try {
             loader.load(unit, checkElevation, bayNumber);
         } catch (IllegalArgumentException e) {
@@ -3975,8 +3993,8 @@ public class TWGameManager extends AbstractGameManager {
             unit.setUnloaded(false);
             unit.setDone(false);
 
-            // unit uses half of walk mp and is treated as moving one hex
-            unit.mpUsed = unit.getOriginalWalkMP() / 2;
+            // unit uses half of walk mp, cost rounded up (TW p.91, errata v11.01), and is treated as moving one hex
+            unit.mpUsed = MountPathHelper.mountOrDismountMpCost(unit.getOriginalWalkMP());
             unit.delta_distance = 1;
         }
 
@@ -16331,6 +16349,15 @@ public class TWGameManager extends AbstractGameManager {
      */
     void checkClearRubble() {
         new RubbleClearingHandler(this).checkClearRubble();
+    }
+
+    /**
+     * End-phase resolution for units being loaded into or unloaded from grounded Small Craft and DropShips by crane,
+     * TW p.90-91. Delegates to {@link CraneOperationHandler} so the crane rules do not add to this already very large
+     * class.
+     */
+    void checkCraneOperations() {
+        new CraneOperationHandler(this).checkCraneOperations();
     }
 
     /**

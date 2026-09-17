@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,7 @@ import java.awt.image.ImageObserver;
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.sprite.CraneOperationSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.HexSprite;
 import megamek.client.ui.util.EntityWreckHelper;
 import megamek.common.Player;
@@ -218,6 +219,11 @@ public class IsometricSprite extends HexSprite {
         if ((trackThisEntitiesVisibilityInfo(entity) && !entity.isVisibleToEnemy() && translucentHiddenUnits) ||
               (entity.relHeight() < 0)) {
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+        }
+        // A unit the cranes are loading fades out as each turn of work is banked (TW p.90)
+        float craneLoadingOpacity = CraneOperationSprite.loadingOpacity(entity, bv.game);
+        if (craneLoadingOpacity < 1f) {
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, craneLoadingOpacity));
         }
         g.drawImage(bv.getScaledImage(bv.getTileManager().imageFor(entity, secondaryPos), true), 0, 0, this);
         g.dispose();

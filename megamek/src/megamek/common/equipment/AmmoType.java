@@ -195,7 +195,8 @@ public class AmmoType extends EquipmentType {
         WHITE_SHARK_T(111, "White Shark-T", AmmoCategory.Missile),
         BARRACUDA_T(112, "Barracuda-T", AmmoCategory.Missile),
         INFANTRY(113, "Infantry", AmmoCategory.Special),
-        NLRM_TORPEDO(114, "NLRM Torpedo", AmmoCategory.Missile);
+        NLRM_TORPEDO(114, "NLRM Torpedo", AmmoCategory.Missile),
+        GAC(115, "Gatling Autocannon", AmmoCategory.Ballistic);
 
         private static final Map<Integer, AmmoTypeEnum> INDEX_LOOKUP = new HashMap<>();
 
@@ -15937,7 +15938,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS Gatling AC/2 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoTypeEnum.AC;
+        ammo.ammoType = AmmoTypeEnum.GAC;
         ammo.shots = 22;
         ammo.bv = 12;
         ammo.cost = 1000;
@@ -15963,7 +15964,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS Gatling AC/4 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
-        ammo.ammoType = AmmoTypeEnum.AC;
+        ammo.ammoType = AmmoTypeEnum.GAC;
         ammo.shots = 11;
         ammo.bv = 22;
         ammo.cost = 1000;
@@ -15989,7 +15990,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS Gatling AC/6 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
-        ammo.ammoType = AmmoTypeEnum.AC;
+        ammo.ammoType = AmmoTypeEnum.GAC;
         ammo.shots = 7;
         ammo.bv = 40;
         ammo.cost = 1000;
@@ -16015,7 +16016,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS Gatling AC/8 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 8;
-        ammo.ammoType = AmmoTypeEnum.AC;
+        ammo.ammoType = AmmoTypeEnum.GAC;
         ammo.shots = 5;
         ammo.bv = 53;
         ammo.cost = 1000;
@@ -16341,6 +16342,7 @@ public class AmmoType extends EquipmentType {
                 case AC_IMP:
                 case AC_ROTARY:
                 case PAC:
+                case GAC:
                     // Add the munition name to the beginning of the display name.
                     nameBuf = new StringBuilder(name);
                     nameBuf.append(" ");
@@ -16928,13 +16930,13 @@ public class AmmoType extends EquipmentType {
         }
 
         if (hasExactMunitionType(munition, Munitions.M_ARMOR_PIERCING)
-              && hasAmmoType(munition, AmmoTypeEnum.AC, AmmoTypeEnum.LAC, AmmoTypeEnum.PAC)) {
+              && hasAmmoType(munition, AmmoTypeEnum.AC, AmmoTypeEnum.LAC, AmmoTypeEnum.PAC, AmmoTypeEnum.GAC)) {
             return rulesRefs(existing,
                   rulesRef(SourceBookCode.BMM, 106),
                   rulesRef(SourceBookCode.TW, 140));
         }
         if (hasExactMunitionType(munition, Munitions.M_CASELESS)
-              && hasAmmoType(munition, AmmoTypeEnum.AC, AmmoTypeEnum.LAC, AmmoTypeEnum.AC_ROTARY)) {
+              && hasAmmoType(munition, AmmoTypeEnum.AC, AmmoTypeEnum.LAC, AmmoTypeEnum.AC_ROTARY, AmmoTypeEnum.GAC)) {
             if (munition.ammoType == AmmoTypeEnum.AC_ROTARY) {
                 return rulesRefs(existing, rulesRef(SourceBookCode.CORE, 191));
             }
@@ -16943,11 +16945,11 @@ public class AmmoType extends EquipmentType {
                   rulesRef(SourceBookCode.CORE, 191));
         }
         if (hasExactMunitionType(munition, Munitions.M_FLAK)
-              && hasAmmoType(munition, AmmoTypeEnum.AC, AmmoTypeEnum.LAC, AmmoTypeEnum.PAC)) {
+              && hasAmmoType(munition, AmmoTypeEnum.AC, AmmoTypeEnum.LAC, AmmoTypeEnum.PAC, AmmoTypeEnum.GAC)) {
             return rulesRefs(existing, rulesRef(SourceBookCode.CORE, 192));
         }
         if (hasExactMunitionType(munition, Munitions.M_FLECHETTE)
-              && hasAmmoType(munition, AmmoTypeEnum.AC, AmmoTypeEnum.LAC, AmmoTypeEnum.PAC)) {
+              && hasAmmoType(munition, AmmoTypeEnum.AC, AmmoTypeEnum.LAC, AmmoTypeEnum.PAC, AmmoTypeEnum.GAC)) {
             if (munition.ammoType == AmmoTypeEnum.PAC) {
                 return rulesRefs(existing, rulesRef(SourceBookCode.BMM, 107));
             }
@@ -16956,7 +16958,7 @@ public class AmmoType extends EquipmentType {
                   rulesRef(SourceBookCode.TW, 141));
         }
         if (hasExactMunitionType(munition, Munitions.M_PRECISION)
-              && hasAmmoType(munition, AmmoTypeEnum.AC, AmmoTypeEnum.LAC)) {
+              && hasAmmoType(munition, AmmoTypeEnum.AC, AmmoTypeEnum.LAC, AmmoTypeEnum.GAC)) {
             return rulesRefs(existing,
                   rulesRef(SourceBookCode.BMM, 107),
                   rulesRef(SourceBookCode.TW, 142));

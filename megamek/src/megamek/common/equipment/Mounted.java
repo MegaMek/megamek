@@ -895,6 +895,24 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return jammed;
     }
 
+    /**
+     * Whether a critical hit on this equipment would set off an explosion right now, judged the way the server's
+     * critical-hit resolution judges it: the equipment is explosive by type and state (ammo with shots left, a
+     * hyper-velocity autocannon, a jammed rotary autocannon, a charged capacitor), or it is a launcher holding
+     * hot-loaded ammo, and the explosion would deal damage. Destroyed equipment cannot explode again, and a
+     * powered-down gauss rifle or an empty bin would explode for nothing. The gamemaster's Explode button is
+     * offered exactly where this holds, and the server refuses the explosion where it does not.
+     *
+     * @return {@code true} if exploding this equipment now would do something
+     */
+    public boolean wouldExplodeWhenHit() {
+        if (isDestroyed()) {
+            return false;
+        }
+        boolean isExplosiveNow = getType().isExplosive(this) || isHotLoaded() || (hasChargedCapacitor() != 0);
+        return isExplosiveNow && (getExplosionDamage() > 0);
+    }
+
     public void setJammed(boolean j) {
         jammedThisPhase = j;
     }

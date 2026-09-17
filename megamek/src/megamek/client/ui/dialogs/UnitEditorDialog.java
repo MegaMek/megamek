@@ -48,6 +48,7 @@ import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.swing.*;
 
 import megamek.MegaMek;
@@ -67,6 +68,7 @@ import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.damage.PreExistingDamageApplier;
 import megamek.common.compute.damage.PreExistingDamageLevel;
+import megamek.common.equipment.Mounted;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
 
@@ -93,6 +95,8 @@ public class UnitEditorDialog extends JDialog {
     private static final String WITHDRAW_UNIT_COMMAND = "/rescue %d";
     /** Hands the unit to another player, by unit id then player id. */
     private static final String CHANGE_OWNER_COMMAND = "/changeOwner %d %d";
+    /** Sets off one piece of equipment as a critical hit would, by unit id then equipment number. */
+    private static final String EXPLODE_EQUIPMENT_COMMAND = "/explode %d %d";
 
     /** Guards the owner chooser against the listener firing again while its value is put back after a cancel. */
     private boolean reassigningOwner;
@@ -187,6 +191,7 @@ public class UnitEditorDialog extends JDialog {
             panelBuilder.addSkillModifiersColumn();
             diagram = new DamageEditorDiagram(entity, controls);
             wireFlaggedEquipmentLinks();
+            wireExplodeButtons();
             GridBagConstraints gridBagConstraints = new GridBagConstraints();
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy = 0;
@@ -261,6 +266,43 @@ public class UnitEditorDialog extends JDialog {
                 }
             });
         }
+    }
+
+    /** Makes each Explode button ask for confirmation and then have the server set the equipment off. */
+    private void wireExplodeButtons() {
+        for (Map.Entry<Integer, JButton> explodeButton : controls.explodeButtons.entrySet()) {
+            explodeButton.getValue().addActionListener(event -> explodeEquipment(explodeButton.getKey()));
+        }
+    }
+
+    /**
+     * Has the server explode the given equipment as a critical hit would, after the gamemaster confirms. Like
+     * Destroy Unit this is a server act, not an edit: the command goes out and the dialog closes without
+     * committing its other edits, since the explosion changes the very values they would overwrite.
+     */
+    private void explodeEquipment(int equipmentNumber) {
+        Mounted<?> mounted = entity.getEquipment(equipmentNumber);
+        if (mounted == null) {
+            return;
+        }
+        int choice = JOptionPane.showConfirmDialog(this,
+              String.format(Messages.getString("UnitEditorDialog.explode.confirm"), mounted.getName(),
+                    entity.getDisplayName()),
+              Messages.getString("UnitEditorDialog.explode"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.WARNING_MESSAGE);
+        if (choice != JOptionPane.YES_OPTION) {
+            return;
+        }
+        if (client == null) {
+            LOGGER.error("Cannot explode the {} on {}: the damage editor was opened without a client",
+                  mounted.getName(), entity.getDisplayName());
+            return;
+        }
+        LOGGER.info("Exploding the {} on {} at the request of the damage editor", mounted.getName(),
+              entity.getDisplayName());
+        client.sendChat(String.format(EXPLODE_EQUIPMENT_COMMAND, entity.getId(), equipmentNumber));
+        setVisible(false);
     }
 
     /**

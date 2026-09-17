@@ -51,6 +51,7 @@ import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -678,9 +679,30 @@ public class UnitDamagePanelBuilder {
             if ((entity instanceof AbstractBuildingEntity building) && (mounted instanceof WeaponMounted weapon)) {
                 control = withBuildingWeaponSwitches(building, equipmentNumber, weapon, control);
             }
+            if (offersExplodeButton(mounted)) {
+                control = appendedToRow(control, explodeButton(equipmentNumber));
+            }
             controls.addCritOfLocation(mounted.getLocation(), crit);
             addLabeledRow(equipmentPanel(mounted.getLocation()), label, control);
         }
+    }
+
+    /**
+     * Whether the equipment's row gets an Explode button: in the gamemaster's in-game editor, where there is a
+     * server to resolve the damage, and only for equipment a critical hit would set off right now. Buildings are
+     * left out until their damage path has been tried with it.
+     */
+    private boolean offersExplodeButton(Mounted<?> mounted) {
+        return offersEquipmentSettings() && !(entity instanceof AbstractBuildingEntity)
+              && mounted.wouldExplodeWhenHit();
+    }
+
+    /** The Explode button of a row, registered for the dialog to wire to the server's explode command. */
+    private JButton explodeButton(int equipmentNumber) {
+        JButton button = new JButton(Messages.getString("UnitEditorDialog.explode"));
+        button.setToolTipText(UIUtil.formatSideTooltip(Messages.getString("UnitEditorDialog.explode.tooltip")));
+        controls.explodeButtons.put(equipmentNumber, button);
+        return button;
     }
 
     /**

@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -174,6 +175,12 @@ public class UnitDamageControls {
 
     /** The flagged-equipment summary lines, wired by the dialog to open their location on click. */
     public final List<EquipmentStateLink> equipmentStateLinks = new ArrayList<>();
+
+    /**
+     * The Explode button of each piece of equipment a critical hit would set off, by equipment number. Only a
+     * gamemaster's in-game editor builds these; the dialog wires them to the server's explode command.
+     */
+    public final Map<Integer, JButton> explodeButtons = new HashMap<>();
 
     /* system crits */
     public CheckCritPanel engineCrit;

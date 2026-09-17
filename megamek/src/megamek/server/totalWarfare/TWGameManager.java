@@ -359,6 +359,7 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new CheckBVTeamCommand(server));
         commands.add(new NukeCommand(server, this));
         commands.add(new KillCommand(server, this));
+        commands.add(new ExplodeEquipmentCommand(server, this));
         commands.add(new OrbitalBombardmentCommand(server, this));
         commands.add(new ChangeOwnershipCommand(server, this));
         commands.add(new SkillModifierCommand(server, this));
@@ -421,6 +422,19 @@ public class TWGameManager extends AbstractGameManager {
      * @return the handler that applies a gamemaster's edits to a building, created on first use for the same reason as
      *       {@link #lobbyBoardHandler()}
      */
+    /**
+     * Sets off one piece of a unit's equipment at a gamemaster's request, as a critical hit would; the
+     * {@code /explode} command's entry point. See {@link EquipmentExplosionHandler}.
+     *
+     * @param entity  the unit carrying the equipment
+     * @param mounted the equipment to set off
+     *
+     * @return what happened, for the gamemaster to be told
+     */
+    public EquipmentExplosionHandler.Outcome explodeEquipmentForGamemaster(Entity entity, Mounted<?> mounted) {
+        return new EquipmentExplosionHandler(this).explode(entity, mounted);
+    }
+
     public BuildingEditHandler buildingEditHandler() {
         if (buildingEditHandler == null) {
             buildingEditHandler = new BuildingEditHandler(this);

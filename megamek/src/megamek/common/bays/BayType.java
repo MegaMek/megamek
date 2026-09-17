@@ -185,7 +185,7 @@ public enum BayType implements ITechnologyDelegator {
     }
 
     public static @Nullable BayType parse(String name) {
-        if (null != name) {
+        if (name != null) {
             for (BayType bt : values()) {
                 if (bt.toString().equalsIgnoreCase(name)) {
                     return bt;

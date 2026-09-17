@@ -71,7 +71,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -1924,7 +1923,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     public void configPlayer() {
         Client c = getSelectedClient();
-        if (null == c) {
+        if (c == null) {
             return;
         }
 

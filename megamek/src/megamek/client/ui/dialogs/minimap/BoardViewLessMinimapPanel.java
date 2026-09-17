@@ -40,14 +40,7 @@ import static megamek.client.ui.dialogs.minimap.MinimapUnitSymbols.STRAT_SYMBOL_
 import static megamek.common.units.Terrains.BUILDING;
 import static megamek.common.units.Terrains.FUEL_TANK;
 
-import java.awt.BasicStroke;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Stroke;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -60,8 +53,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import megamek.MMConstants;
 import megamek.client.Client;
@@ -195,7 +187,7 @@ public class BoardViewLessMinimapPanel extends JPanel implements OverlayPainter 
                     Targetable target = ((Game) game).getTarget(attackAction.getTargetType(),
                           attackAction.getTargetId());
                     // sanity check...
-                    if ((null == source) || (null == target)) {
+                    if ((source == null) || (target == null)) {
                         return;
                     }
 

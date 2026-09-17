@@ -193,7 +193,7 @@ public abstract class AbstractGameManager implements IGameManager {
     private void receivePlayerDone(Packet packet, int connIndex) throws InvalidPacketDataException {
         boolean ready = packet.getBooleanValue(0);
         Player player = getGame().getPlayer(connIndex);
-        if (null != player) {
+        if (player != null) {
             player.setDone(ready);
             // The done ledger: two multi-hour hangs (2026-08-14/15) ended at "a done-ack vanished
             // in a report phase" with nothing recorded on either side. One line per ack makes the

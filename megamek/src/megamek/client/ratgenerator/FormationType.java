@@ -32,15 +32,6 @@
  */
 package megamek.client.ratgenerator;
 
-import static megamek.common.units.UnitRole.*;
-
-import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
@@ -60,6 +51,15 @@ import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.common.weapons.tag.TAGWeapon;
 import megamek.logging.MMLogger;
+
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static megamek.common.units.UnitRole.*;
 
 /**
  * Defines a Campaign Operations formation type (e.g., Battle Lance, Assault Lance, Aerospace Superiority Squadron),
@@ -522,7 +522,7 @@ public class FormationType {
         }
 
         final GroupingConstraint useGrouping;
-        if (null == groupingCriteria) {
+        if (groupingCriteria == null) {
             useGrouping = null;
         } else {
             useGrouping = groupingCriteria.copy();
@@ -2519,7 +2519,7 @@ public class FormationType {
      */
     private static boolean checkUnitMatch(final MekSummary ms0, final MekSummary ms1) {
         final ModelRecord mRec = RATGenerator.getInstance().getModelRecord(ms0.getName());
-        if (null != mRec && mRec.isOmni()) {
+        if (mRec != null && mRec.isOmni()) {
             return ms0.getChassis().equals(ms1.getChassis());
         } else {
             return ms0.getName().equals(ms1.getName());

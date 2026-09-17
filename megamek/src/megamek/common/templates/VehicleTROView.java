@@ -133,7 +133,7 @@ public class VehicleTROView extends TROView {
         }
         for (final Transporter t : tank.getTransports()) {
             final Map<String, Object> row = this.formatTransporter(t, tank.getLocationName(Tank.LOC_BODY));
-            if (null == row) {
+            if (row == null) {
                 continue;
             }
             if (tank.isOmni() && !tank.isPodMountedTransport(t)) {

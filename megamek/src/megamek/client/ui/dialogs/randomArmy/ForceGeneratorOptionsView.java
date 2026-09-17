@@ -32,14 +32,7 @@
  */
 package megamek.client.ui.dialogs.randomArmy;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -59,7 +52,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.swing.*;
-import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
@@ -1084,7 +1076,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     private void clearForce() {
-        if (null != onGenerate) {
+        if (onGenerate != null) {
             onGenerate.accept(null);
         }
         clearSummaryTable();
@@ -1601,7 +1593,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     private TOCNode findTOCNode() {
         Ruleset rs = Ruleset.findRuleset(forceDesc);
-        if (null == rs) {
+        if (rs == null) {
             return null;
         }
         TOCNode toc;

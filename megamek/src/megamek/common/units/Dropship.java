@@ -578,7 +578,7 @@ public class Dropship extends SmallCraft {
             // Used for when clearing deployment positions. We need to clear the secondary positions as well.
             secondaryPositions.clear();
         }
-        if ((getAltitude() == 0) && (null != game) && !isSpaceborne() && (position != null)) {
+        if ((getAltitude() == 0) && (game != null) && !isSpaceborne() && (position != null)) {
             secondaryPositions.put(0, position);
             secondaryPositions.put(1, position.translated(getFacing()));
             secondaryPositions.put(2, position.translated((getFacing() + 1) % 6));
@@ -635,7 +635,7 @@ public class Dropship extends SmallCraft {
             Hex hex = game.getHex(pos, getBoardId());
             // if the hex is null, then we are offboard. Don't let units
             // land offboard.
-            if (null == hex) {
+            if (hex == null) {
                 return "landing area not on the map";
             }
             if (hex.containsTerrain(Terrains.WATER)) {
@@ -648,7 +648,7 @@ public class Dropship extends SmallCraft {
 
     @Override
     public boolean usesWeaponBays() {
-        if (null == game) {
+        if (game == null) {
             return true;
         }
         return (isAirborne() || isSpaceborne() || game.getPhase().isLounge());

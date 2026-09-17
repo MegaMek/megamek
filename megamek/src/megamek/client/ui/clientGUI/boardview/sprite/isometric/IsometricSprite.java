@@ -186,7 +186,7 @@ public class IsometricSprite extends HexSprite {
 
         if (drawFuelLeak) {
             Image fuelLeak = bv.getScaledImage(bv.getTileManager().bottomLayerFuelLeakMarkerFor(entity), true);
-            if (null != fuelLeak) {
+            if (fuelLeak != null) {
                 graph.drawImage(fuelLeak, x, y, observer);
             }
         }
@@ -196,7 +196,7 @@ public class IsometricSprite extends HexSprite {
 
         if (drawMotiveWreckage) {
             Image motiveWreckage = bv.getScaledImage(bv.getTilesetManager().bottomLayerMotiveMarkerFor(entity), true);
-            if (null != motiveWreckage) {
+            if (motiveWreckage != null) {
                 graph.drawImage(motiveWreckage, x, y, observer);
             }
         }

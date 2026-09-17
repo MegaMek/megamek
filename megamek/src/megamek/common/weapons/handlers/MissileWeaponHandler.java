@@ -487,7 +487,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         Entity entityTarget = (Entity) target;
         // any AMS attacks by the target?
         List<WeaponMounted> lCounters = weaponAttackAction.getCounterEquipment();
-        if (null != lCounters) {
+        if (lCounters != null) {
             // resolve AMS counter-fire
             for (WeaponMounted counter : lCounters) {
                 // Set up differences between different types of AMS

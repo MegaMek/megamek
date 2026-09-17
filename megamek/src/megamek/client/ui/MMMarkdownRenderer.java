@@ -72,7 +72,7 @@ public class MMMarkdownRenderer {
      * @return a string rendered to html
      */
     public static String getRenderedHtml(@Nullable String input) {
-        if (null == input) {
+        if (input == null) {
             return "";
         } else {
             return RENDERER.htmlRenderer.render(RENDERER.parser.parse(input));

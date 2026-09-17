@@ -402,17 +402,17 @@ public class GameOptions extends BasicGameOptions {
 
         // Migrate old boolean track_neural_interface_hardware to new CHOICE neural_interface_mode
         // Old false = implant-only benefits = Pilot Only mode (not Off)
-        if ((null != name) && name.equals(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
+        if ((name != null) && name.equals(OptionsConstants.ADVANCED_TRACK_NEURAL_INTERFACE_HARDWARE)) {
             name = OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE;
             value = Boolean.parseBoolean(value.toString())
                   ? OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING
                   : OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY;
         }
 
-        if ((null != name) && (null != value)) {
+        if ((name != null) && (value != null)) {
             IOption tempOption = getOption(name);
 
-            if (null != tempOption) {
+            if (tempOption != null) {
                 if (!tempOption.getValue().toString()
                       .equals(value.toString())) {
                     try {

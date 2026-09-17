@@ -33,13 +33,6 @@
  */
 package megamek.client.bot.princess;
 
-import java.io.File;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
 import megamek.client.bot.BotClient;
 import megamek.client.bot.BotHeatEquipmentManager;
 import megamek.client.bot.ChatProcessor;
@@ -105,6 +98,13 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.StopSwarmAttack;
 import megamek.logging.MMLogger;
 import org.apache.logging.log4j.Level;
+
+import java.io.File;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class Princess extends BotClient {
     private static final MMLogger LOGGER = MMLogger.create(Princess.class);
@@ -996,7 +996,7 @@ public class Princess extends BotClient {
     }
 
     public void addStrategicBuildingTarget(final Coords coords) {
-        if (null == coords) {
+        if (coords == null) {
             throw new NullPointerException("Coords is null.");
         }
         if (!getGame().getBoard().contains(coords)) {
@@ -1007,7 +1007,7 @@ public class Princess extends BotClient {
     }
 
     public void removeStrategicBuildingTarget(final Coords coords) {
-        if (null == coords) {
+        if (coords == null) {
             throw new NullPointerException("Coords is null.");
         }
         if (!getGame().getBoard().contains(coords)) {
@@ -1032,7 +1032,7 @@ public class Princess extends BotClient {
     }
 
     public Targetable getAppropriateTarget(Coords strategicTarget, int boardId) {
-        if (null == game.getBoard(boardId).getBuildingAt(strategicTarget)) {
+        if (game.getBoard(boardId).getBuildingAt(strategicTarget) == null) {
             return new HexTarget(strategicTarget, boardId, Targetable.TYPE_HEX_CLEAR);
         } else {
             return new BuildingTarget(strategicTarget, game.getBoard(boardId), false);
@@ -1085,7 +1085,7 @@ public class Princess extends BotClient {
 
         // get the coordinates I can deploy on
         final Coords deployCoords = getFirstValidCoords(getEntity(entityNum), startingCoords);
-        if (null == deployCoords) {
+        if (deployCoords == null) {
             // if I cannot deploy anywhere, then I get rid of the entity instead so that we may go about our business
             LOGGER.error("getCoordsAround gave no location for {}. Removing unit.", getEntity(entityNum).getChassis());
 
@@ -1227,7 +1227,7 @@ public class Princess extends BotClient {
             final IBuilding building = game.getBoard(deployedUnit).getBuildingAt(coords);
             final Hex hex = game.getBoard(deployedUnit).getHex(coords);
 
-            if (null != building) {
+            if (building != null) {
                 final int buildingHeight = hex.terrainLevel(Terrains.BLDG_ELEV);
 
                 // check stacking violation at the roof level
@@ -1240,7 +1240,7 @@ public class Princess extends BotClient {
                       deployedUnit.climbMode(),
                       true);
                 // Ignore coords that could cause a stacking violation
-                if (null == violation) {
+                if (violation == null) {
                     turretDeploymentLocations.add(coords);
                 }
             }
@@ -1410,7 +1410,7 @@ public class Princess extends BotClient {
             int size;
             for (Coords dest : localCopy) {
                 deployStep.setPosition(dest);
-                if (null != super.getFirstValidCoords(deployedUnit, List.of(dest))) {
+                if (super.getFirstValidCoords(deployedUnit, List.of(dest)) != null) {
                     hazard = -((BasicPathRanker) ranker).checkPathForHazards(mp, deployedUnit, game);
                     if (deployedUnit instanceof BuildingEntity
                           && getBoard() != null
@@ -1556,7 +1556,7 @@ public class Princess extends BotClient {
                       getHonorUtil(),
                       game,
                       ammoConservation);
-                if ((null != plan) && (plan.getExpectedDamage() > 0)) {
+                if ((plan != null) && (plan.getExpectedDamage() > 0)) {
                     getFireControl(shooter).loadAmmo(shooter, plan);
                     plan.sortPlan();
 
@@ -1753,6 +1753,7 @@ public class Princess extends BotClient {
             sendAttackData(shooter.getId(), fallback);
         }
     }
+
 
     /**
      * Ends a firing turn that has no shooter to declare for. A plain {@code return} is treated as success by
@@ -2746,9 +2747,8 @@ public class Princess extends BotClient {
 
             if (!getGame().getPhase().isSimultaneous(getGame()) &&
                   (entity.isOffBoard() ||
-                        (null == entity.getPosition()) ||
-                        entity.isUnloadedThisTurn() ||
-                        !Objects.requireNonNull(getGame().getTurn()).isValidEntity(entity, getGame()))) {
+                   (entity.isUnloadedThisTurn() ||
+                    !Objects.requireNonNull(getGame().getTurn()).isValidEntity(entity, getGame())))) {
                 msg.append("cannot be moved.");
                 continue;
             }
@@ -3246,7 +3246,7 @@ public class Princess extends BotClient {
         }
 
         final Hex hex = getGame().getHex(mover.getPosition(), mover.getBoardId());
-        return (null != hex) && hex.containsTerrain(Terrains.FIRE) && (0 < hex.getFireTurn());
+        return (hex != null) && hex.containsTerrain(Terrains.FIRE) && (0 < hex.getFireTurn());
     }
 
     boolean isImmobilized(final Entity mover) {
@@ -3397,7 +3397,7 @@ public class Princess extends BotClient {
 
             final List<MovePath> paths = getMovePathsAndSetNecessaryTargets(entity, false);
 
-            if (null == paths) {
+            if (paths == null) {
                 LOGGER.warn("No valid paths found.");
                 return performPathPostProcessing(new MovePath(game, entity), 0);
             }
@@ -3665,7 +3665,7 @@ public class Princess extends BotClient {
 
                 for (final int id : attackedBy) {
                     final Entity entity = getGame().getEntity(id);
-                    if (null == entity) {
+                    if (entity == null) {
                         continue;
                     }
 
@@ -3737,7 +3737,7 @@ public class Princess extends BotClient {
             // reset strategic targets
             fireControlState.setAdditionalTargets(new ArrayList<>());
             for (final Coords strategicTarget : getStrategicBuildingTargets()) {
-                if (null == game.getBoard().getBuildingAt(strategicTarget)) {
+                if (game.getBoard().getBuildingAt(strategicTarget) == null) {
                     fireControlState.addAdditionalTarget(getAppropriateTarget(strategicTarget));
                     sendChat("No building to target in Hex " +
                           strategicTarget.toFriendlyString() +
@@ -4092,7 +4092,7 @@ public class Princess extends BotClient {
     @Override
     public synchronized void die() {
         super.die();
-        if (null != precognition) {
+        if (precognition != null) {
             precognition.signalDone();
             precognitionThread.interrupt();
         }
@@ -4303,7 +4303,7 @@ public class Princess extends BotClient {
 
     @Override
     protected void disconnected() {
-        if (null != precognition) {
+        if (precognition != null) {
             precognition.signalDone();
             precognitionThread.interrupt();
         }
@@ -4498,7 +4498,7 @@ public class Princess extends BotClient {
 
         // if there are no enemies on the board, then we're not unloading anything.
         // infantry can't clear hexes, so let's not unload them for that purpose
-        if ((null == closestEnemy) || (closestEnemy.getTargetType() == Targetable.TYPE_HEX_CLEAR)) {
+        if ((closestEnemy == null) || (closestEnemy.getTargetType() == Targetable.TYPE_HEX_CLEAR)) {
             return;
         }
 
@@ -4575,7 +4575,7 @@ public class Princess extends BotClient {
         }
 
         // if there are no enemies on the board, then we're not launching anything.
-        if ((null == closestEnemy) || (closestEnemy.getTargetType() != Targetable.TYPE_ENTITY)) {
+        if ((closestEnemy == null) || (closestEnemy.getTargetType() != Targetable.TYPE_ENTITY)) {
             return;
         }
 
@@ -4628,7 +4628,7 @@ public class Princess extends BotClient {
                 shouldAbandon = true;
             }
             // Aero and no clearance to take off?  You guessed it: straight to Abandon!
-            if (aero.canTakeOffHorizontally() && (null != aero.hasRoomForHorizontalTakeOff())) {
+            if (aero.canTakeOffHorizontally() && (aero.hasRoomForHorizontalTakeOff() != null)) {
                 shouldAbandon = true;
             }
             // Effectively immobile Aerospace?  Believe it or not, Abandon!

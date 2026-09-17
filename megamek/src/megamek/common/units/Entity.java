@@ -36,7 +36,7 @@ package megamek.common.units;
 
 import static megamek.common.bays.Bay.UNSET_BAY;
 
-import java.awt.Image;
+import java.awt.*;
 import java.io.Serial;
 import java.util.*;
 import java.util.List;
@@ -1361,7 +1361,7 @@ public abstract class Entity extends TurnOrdered
                 throw new IllegalStateException("Entity doesn't know its owner's ID.");
             }
             Player player = game.getPlayer(ownerId);
-            if (null == player) {
+            if (player == null) {
                 LOGGER.debug("Entity can't find player #{}", ownerId);
             } else {
                 setOwner(player);
@@ -2041,13 +2041,13 @@ public abstract class Entity extends TurnOrdered
      */
     @Override
     public boolean isEnemyOf(Entity other) {
-        if (null == other) {
+        if (other == null) {
             return false;
         }
-        if (null == getOwner()) {
+        if (getOwner() == null){
             return ((id != other.getId()) && (ownerId != other.ownerId));
         }
-        return (id != other.getId()) && ((null == other.getOwner()) || getOwner().isEnemyOf(other.getOwner()));
+        return (id != other.getId()) && ((other.getOwner() == null) || getOwner().isEnemyOf(other.getOwner()));
     }
 
     public Crew getCrew() {
@@ -4211,7 +4211,7 @@ public abstract class Entity extends TurnOrdered
     public String getLocationName(int loc) {
         String[] locationNames = getLocationNames();
 
-        if ((null == locationNames) || (loc >= locationNames.length)) {
+        if ((locationNames == null) || (loc >= locationNames.length)) {
             return "";
         }
 
@@ -4239,7 +4239,7 @@ public abstract class Entity extends TurnOrdered
     public String getLocationAbbr(int loc) {
         String[] locationAbbreviations = getLocationAbbreviations();
 
-        if ((null == locationAbbreviations) || (loc >= locationAbbreviations.length)) {
+        if ((locationAbbreviations == null) || (loc >= locationAbbreviations.length)) {
             return "";
         }
         if (loc == Entity.LOC_NONE) {
@@ -5719,7 +5719,7 @@ public abstract class Entity extends TurnOrdered
         // is spreadable
         for (int slot = 0; slot < getNumberOfCriticalSlots(location); slot++) {
             CriticalSlot criticalSlot = getCritical(location, slot);
-            if ((null != criticalSlot) && (criticalSlot.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
+            if ((criticalSlot != null) && (criticalSlot.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
                 Mounted<?> mount = criticalSlot.getMount();
                 if (mount == null) {
                     continue;
@@ -6248,7 +6248,7 @@ public abstract class Entity extends TurnOrdered
      */
     public int getNumberOfCriticalSlots(int location) {
         int[] noOfSlots = getNoOfSlots();
-        if ((null == noOfSlots) || (location >= noOfSlots.length) || (location == LOC_NONE)) {
+        if ((noOfSlots == null) || (location >= noOfSlots.length) || (location == LOC_NONE)) {
             return 0;
         }
         return noOfSlots[location];
@@ -7286,7 +7286,7 @@ public abstract class Entity extends TurnOrdered
             }
         }
         // Boosted Comm Implant grants C3i access for any unit (pilots/crew/troops)
-        return (null != crew) && hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT);
+        return (crew != null) && hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT);
     }
 
     /**
@@ -8013,7 +8013,7 @@ public abstract class Entity extends TurnOrdered
         // make sensor checks
         sensorCheck = Compute.d6(2);
         // if the current sensor is BAP and BAP is critted, then switch to the first thing that works
-        if ((null != nextSensor) && nextSensor.isBAP() && !hasBAP(false)) {
+        if ((nextSensor != null) && nextSensor.isBAP() && !hasBAP(false)) {
             for (Sensor sensor : getSensors()) {
                 if (!sensor.isBAP()) {
                     nextSensor = sensor;
@@ -8023,7 +8023,7 @@ public abstract class Entity extends TurnOrdered
         }
 
         // change the active sensor, if requested
-        if (null != nextSensor) {
+        if (nextSensor != null) {
             activeSensor = nextSensor;
         }
 
@@ -8036,12 +8036,12 @@ public abstract class Entity extends TurnOrdered
         ghostTargetOffensiveBonus = 0;
 
         // update fatigue count
-        if ((null != crew) && isDeployed()) {
+        if ((crew != null) && isDeployed()) {
             crew.incrementFatigueCount();
         }
 
         // count down any temporary gamemaster skill modifiers, which clear themselves when their time runs out
-        if (null != crew) {
+        if (crew != null) {
             crew.getSkillModifiers().newRound();
         }
 
@@ -8588,7 +8588,7 @@ public abstract class Entity extends TurnOrdered
         if (this == obj) {
             return true;
         }
-        if ((null == obj) || (getClass() != obj.getClass())) {
+        if ((obj == null) || (getClass() != obj.getClass())) {
             return false;
         }
         final Entity other = (Entity) obj;
@@ -8801,7 +8801,7 @@ public abstract class Entity extends TurnOrdered
         }
         // check weather conditions for all entities
         int weatherMod = conditions.getWeatherPilotPenalty();
-        boolean hasAllWeather = (null == crew) || !hasAbility(OptionsConstants.UNOFFICIAL_ALL_WEATHER);
+        boolean hasAllWeather = (crew == null) || !hasAbility(OptionsConstants.UNOFFICIAL_ALL_WEATHER);
         if ((weatherMod != 0) && !isSpaceborne() && hasAllWeather) {
             roll.addModifier(weatherMod, conditions.getWeather().toString());
         }
@@ -9080,7 +9080,7 @@ public abstract class Entity extends TurnOrdered
         }
 
         // we need to make this check on the first move forward and anytime the hex is not clear or is a level change
-        boolean levelChange = (null != prevHex) && (prevHex.getLevel() != curHex.getLevel());
+        boolean levelChange = (prevHex != null) && (prevHex.getLevel() != curHex.getLevel());
         boolean moved = (curHex.movementCost(this) > 0) || levelChange;
         if (conditions.isRecklessConditions() &&
             !lastPos.equals(curPos) &&
@@ -9290,7 +9290,7 @@ public abstract class Entity extends TurnOrdered
             return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "jumping units don't skid");
         }
 
-        if ((null != prevStep) && prevStep.isHasJustStood()) {
+        if ((prevStep != null) && prevStep.isHasJustStood()) {
             return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "units don't skid from getting up");
         }
 
@@ -9543,7 +9543,7 @@ public abstract class Entity extends TurnOrdered
 
         // check for movement inside a hangar
         IBuilding curBldg = board.getBuildingAt(curPos);
-        if ((null != curBldg) &&
+        if ((curBldg != null) &&
             curBldg.isIn(prevPos) &&
             (curBldg.getBldgClass() == IBuilding.HANGAR) &&
             (curHex.terrainLevel(Terrains.BLDG_ELEV) > height()) &&
@@ -12265,7 +12265,7 @@ public abstract class Entity extends TurnOrdered
      * @param round The current round number.
      */
     public void deployOffBoard(int round) {
-        if (null == game) {
+        if (game == null) {
             throw new IllegalStateException("game not set; possible serialization error");
         }
         // N.B. 17 / 2 = 8, but the middle of 1..17 is 9, so we
@@ -13454,7 +13454,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public boolean hasEngine() {
-        return (null != engine);
+        return (engine != null);
     }
 
     public void setEngine(Engine e) {
@@ -13877,7 +13877,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public boolean isCapitalFighter(boolean lounge) {
-        if (null == game) {
+        if (game == null) {
             return false;
         }
 
@@ -14150,7 +14150,7 @@ public abstract class Entity extends TurnOrdered
 
     public boolean hasArcFired(int location,
                                boolean rearMount) {
-        if ((null == frontArcFired) || (null == rearArcFired)) {
+        if ((frontArcFired == null) || (rearArcFired == null)) {
             resetFiringArcs();
         }
         if ((location > locations()) || (location < 0)) {
@@ -14165,7 +14165,7 @@ public abstract class Entity extends TurnOrdered
 
     public void setArcFired(int location,
                             boolean rearMount) {
-        if ((null == frontArcFired) || (null == rearArcFired)) {
+        if ((frontArcFired == null) || (rearArcFired == null)) {
             resetFiringArcs();
         }
         if ((location > locations()) || (location < 0)) {
@@ -15461,7 +15461,7 @@ public abstract class Entity extends TurnOrdered
      * count all the quirks for this unit, positive and negative
      */
     public int countQuirks() {
-        if ((null == game) || !gameOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+        if ((game == null) || !gameOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return 0;
         }
 
@@ -15471,7 +15471,7 @@ public abstract class Entity extends TurnOrdered
     public int countWeaponQuirks() {
         int count = 0;
 
-        if ((null == game) || !gameOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+        if ((game == null) || !gameOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return count;
         }
 
@@ -15482,7 +15482,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public int countPartialRepairs() {
-        if ((null == game) || !gameOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIAL_REPAIRS)) {
+        if ((game == null) || !gameOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIAL_REPAIRS)) {
             return 0;
         }
 
@@ -15493,7 +15493,7 @@ public abstract class Entity extends TurnOrdered
      * count the quirks for this unit, for a given group name
      */
     public int countQuirks(String grpKey) {
-        if ((null == game) || !gameOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+        if ((game == null) || !gameOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return 0;
         }
 
@@ -15504,7 +15504,7 @@ public abstract class Entity extends TurnOrdered
      * Returns a string of all the quirk "codes" for this entity, using sep as the separator
      */
     public String getQuirkList(String sep) {
-        if ((null == game) || !gameOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+        if ((game == null) || !gameOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return "";
         }
 
@@ -16308,7 +16308,7 @@ public abstract class Entity extends TurnOrdered
      * non-destroyed units should be considered possible salvage.
      */
     public boolean canEscape() {
-        if (null == getCrew()) {
+        if (getCrew() == null){
             return false;
         }
         // if the crew is unconscious, dead, or ejected, no escape
@@ -17132,7 +17132,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public int getAllowedPhysicalAttacks() {
-        if ((null != crew) && hasAbility(OptionsConstants.PILOT_MELEE_MASTER)) {
+        if ((crew != null) && hasAbility(OptionsConstants.PILOT_MELEE_MASTER)) {
             return 2;
         }
         return 1;
@@ -18137,7 +18137,7 @@ public abstract class Entity extends TurnOrdered
      * @return true if the entity has this ability from some source
      */
     public boolean hasAbility(String name) {
-        if (null != getCrew()) {
+        if (getCrew() != null){
             return getCrew().getOptions().booleanOption(name);
         }
         // TODO: look for the ability at the player level
@@ -18154,7 +18154,7 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean hasAbility(String name,
                               String choice) {
-        if (null != getCrew()) {
+        if (getCrew() != null){
             return getCrew().getOptions().stringOption(name).equals(choice);
         }
         return false;

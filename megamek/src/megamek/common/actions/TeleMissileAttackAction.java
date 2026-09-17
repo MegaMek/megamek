@@ -180,7 +180,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         // We need to know how much heat has been assigned to offensive weapons fire by
         // the defender this round
         int weaponHeat = getLargeCraftHeat(entityTarget) + entityTarget.heatBuildup;
-        if (null != lCounters) {
+        if (lCounters != null) {
             for (WeaponMounted counter : lCounters) {
                 // Point defenses only fire vs attacks against the arc they protect
                 Entity pdEnt = counter.getEntity();

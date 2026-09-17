@@ -511,7 +511,7 @@ class ComputeToHitIsImpossible {
         }
 
         // Must target infantry in buildings from the inside.
-        if (targetInBuilding && (entityTarget instanceof Infantry) && (null == los.getThruBldg())) {
+        if (targetInBuilding && (entityTarget instanceof Infantry) && (los.getThruBldg() == null)) {
             return Messages.getString("WeaponAttackAction.CantShootThruBuilding");
         }
 
@@ -1173,7 +1173,7 @@ class ComputeToHitIsImpossible {
                 }
                 // ADA is _fired_ by artillery but is just a Flak attack, and so bypasses these
                 // restrictions
-                if (null != ammoType && !ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
+                if (ammoType != null && !ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
                     // Direct fire artillery cannot be fired at less than 6 hexes,
                     // except at ASFs in the air (TO:AR 6th print, p153.)
                     if (!(target.isAirborne()) && (Compute.effectiveDistance(game, attacker, target) <= 6)) {
@@ -1678,7 +1678,7 @@ class ComputeToHitIsImpossible {
                         // Or split ground-to-air fire across multiple targets
                         if (prevAttack.isGroundToAir(game) &&
                               Compute.isGroundToAir(attacker, target) &&
-                              (null != entityTarget) &&
+                            (entityTarget != null) &&
                               (prevAttack.getTargetId() != entityTarget.getId())) {
                             return Messages.getString("WeaponAttackAction.OneTargetForGta");
                         }

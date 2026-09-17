@@ -32,20 +32,9 @@
  */
 package megamek.client.ui.dialogs.unitEditor;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.io.Serial;
-import javax.swing.BoxLayout;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JSplitPane;
+import javax.swing.*;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -186,18 +175,18 @@ public class DamageEditorDiagram extends JSplitPane implements LocationSelectLis
      */
     private void wireDamageColoring() {
         for (int location = 0; location < entity.locations(); location++) {
-            if (null != controls.spnArmor[location]) {
+            if (controls.spnArmor[location] != null) {
                 controls.spnArmor[location].addChangeListener(event -> refreshDamageDisplay());
             }
-            if (null != controls.spnRear[location]) {
+            if (controls.spnRear[location] != null) {
                 controls.spnRear[location].addChangeListener(event -> refreshDamageDisplay());
             }
-            if (null != controls.spnInternal[location]) {
+            if (controls.spnInternal[location] != null) {
                 controls.spnInternal[location].addChangeListener(event -> refreshDamageDisplay());
             }
         }
         // the diagram carries a heat scale, so it follows the heat control too
-        if (null != controls.spnHeat) {
+        if (controls.spnHeat != null) {
             controls.spnHeat.addChangeListener(event -> refreshDamageDisplay());
         }
         // a location with a critical hit is striped on the diagram, so it follows the crit controls as well
@@ -218,13 +207,13 @@ public class DamageEditorDiagram extends JSplitPane implements LocationSelectLis
             if (!(entity instanceof Aero)) {
                 worstColor = colorSpinner(controls.spnInternal[location], entity.getOInternal(location), worstColor);
             }
-            if ((null != controls.locationLabels) && (null != controls.locationLabels[location]) && (null != worstColor)) {
+            if ((controls.locationLabels != null) && (controls.locationLabels[location] != null) && (worstColor != null)) {
                 controls.locationLabels[location].setForeground(worstColor);
             }
         }
-        if ((entity instanceof Aero aero) && (null != controls.structuralIntegrityLabel) && (null != controls.spnInternal[0])) {
+        if ((entity instanceof Aero aero) && (controls.structuralIntegrityLabel != null) && (controls.spnInternal[0] != null)) {
             Color siColor = colorSpinner(controls.spnInternal[0], aero.getOSI(), null);
-            if (null != siColor) {
+            if (siColor != null) {
                 controls.structuralIntegrityLabel.setForeground(siColor);
             }
         }
@@ -235,7 +224,7 @@ public class DamageEditorDiagram extends JSplitPane implements LocationSelectLis
      * one, so callers can color the location label by its worst value.
      */
     private @Nullable Color colorSpinner(@Nullable JSpinner spinner, int originalValue, @Nullable Color worstSoFar) {
-        if ((null == spinner) || (originalValue <= 0)) {
+        if ((spinner == null) || (originalValue <= 0)) {
             return worstSoFar;
         }
         int currentValue = (Integer) spinner.getValue();
@@ -257,10 +246,10 @@ public class DamageEditorDiagram extends JSplitPane implements LocationSelectLis
     }
 
     private @Nullable Color moreSevere(@Nullable Color first, @Nullable Color second) {
-        if (null == second) {
+        if (second == null) {
             return first;
         }
-        if (null == first) {
+        if (first == null) {
             return second;
         }
         GUIPreferences guiPreferences = GUIPreferences.getInstance();
@@ -322,20 +311,20 @@ public class DamageEditorDiagram extends JSplitPane implements LocationSelectLis
     /** Writes the spinner values into the unit so the armor diagram can be drawn from them. */
     private void applyPendingValuesForDisplay() {
         for (int location = 0; location < entity.locations(); location++) {
-            if (null != controls.spnArmor[location]) {
+            if (controls.spnArmor[location] != null) {
                 entity.setArmor((Integer) controls.spnArmor[location].getValue(), location, false);
             }
-            if (null != controls.spnRear[location]) {
+            if (controls.spnRear[location] != null) {
                 entity.setArmor((Integer) controls.spnRear[location].getValue(), location, true);
             }
-            if ((null != controls.spnInternal[location]) && !(entity instanceof Aero)) {
+            if ((controls.spnInternal[location] != null) && !(entity instanceof Aero)) {
                 entity.setInternal((Integer) controls.spnInternal[location].getValue(), location);
             }
         }
-        if ((entity instanceof Aero aero) && (null != controls.spnInternal[0])) {
+        if ((entity instanceof Aero aero) && (controls.spnInternal[0] != null)) {
             aero.setSI((Integer) controls.spnInternal[0].getValue());
         }
-        if (null != controls.spnHeat) {
+        if (controls.spnHeat != null) {
             entity.heat = (Integer) controls.spnHeat.getValue();
         }
     }

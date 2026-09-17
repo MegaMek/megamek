@@ -34,6 +34,11 @@
  */
 package megamek.client.generator;
 
+import megamek.common.Configuration;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
+import megamek.logging.MMLogger;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -56,11 +61,6 @@ import java.util.Vector;
 import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import megamek.common.Configuration;
-import megamek.common.loaders.MekSummary;
-import megamek.common.loaders.MekSummaryCache;
-import megamek.logging.MMLogger;
 
 /**
  * This class sets up a random unit generator that can then be used to read in user-created input files of random
@@ -176,7 +176,7 @@ public class RandomUnitGenerator implements Serializable {
             float totalWeight = 0.0f;
             RatEntry re = new RatEntry();
             String line;
-            while (null != (line = reader.readLine())) {
+            while ((line = reader.readLine()) != null) {
                 if (interrupted) {
                     return;
                 }
@@ -215,7 +215,7 @@ public class RandomUnitGenerator implements Serializable {
                     }
 
                     // The @ symbol denotes a reference to another RAT rather than a unit.
-                    if (!name.startsWith("@") && (null == msc.getMek(name))) {
+                    if (!name.startsWith("@") && (msc.getMek(name) == null)) {
                         LOGGER.error("The unit {} could not be found in the {} RAT ({})", name, key, fileName);
                         continue;
                     }
@@ -231,7 +231,7 @@ public class RandomUnitGenerator implements Serializable {
                     re.getWeights().set(i, re.getWeights().get(i) / totalWeight);
                 }
                 rats.put(key, re);
-                if (null != node) {
+                if (node != null) {
                     node.children.add(new RatTreeNode(key));
                 }
             }
@@ -253,7 +253,7 @@ public class RandomUnitGenerator implements Serializable {
                 }
             }
 
-            if (null == subNode) {
+            if (subNode == null) {
                 subNode = new RatTreeNode(pathElements[i]);
                 result.children.addElement(subNode);
             }
@@ -278,12 +278,12 @@ public class RandomUnitGenerator implements Serializable {
             return;
         }
 
-        if ((null == dir) || (null == node)) {
+        if ((dir == null) || (node == null)) {
             return;
         }
 
         File[] files = dir.listFiles();
-        if (null == files) {
+        if (files == null) {
             return;
         }
 
@@ -375,7 +375,7 @@ public class RandomUnitGenerator implements Serializable {
             }
 
             Map<String, RatEntry> ratMap = getRatMap();
-            if (null != ratMap) {
+            if (ratMap != null) {
                 RatEntry re = ratMap.get(ratName);
                 if (filter != null) {
                     RatEntry filtered = new RatEntry();
@@ -397,7 +397,7 @@ public class RandomUnitGenerator implements Serializable {
                     }
                     re = filtered;
                 }
-                if ((null != re) && !re.getUnits().isEmpty()) {
+                if ((re != null) && !re.getUnits().isEmpty()) {
                     for (int roll = 0; roll < numRolls; roll++) {
                         double rand = getRandom();
                         int i = 0;
@@ -414,7 +414,7 @@ public class RandomUnitGenerator implements Serializable {
                         }
 
                         MekSummary unit = getMekByName(name);
-                        if (null != unit) {
+                        if (unit != null) {
                             units.add(unit);
                         }
                     }
@@ -463,7 +463,7 @@ public class RandomUnitGenerator implements Serializable {
     }
 
     public static synchronized RandomUnitGenerator getInstance() {
-        if (null == rug) {
+        if (rug == null) {
             rug = new RandomUnitGenerator();
         }
 

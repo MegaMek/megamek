@@ -456,7 +456,7 @@ public class ASSpecialAbilityConverter {
         for (int location = 0; location < entity.locations(); location++) {
             for (int slot = 0; slot < entity.getNumberOfCriticalSlots(location); slot++) {
                 CriticalSlot crit = entity.getCritical(location, slot);
-                if (null != crit) {
+                if (crit != null) {
                     if (crit.isArmored()) {
                         assign("Armored Critical Slot", ARM);
                         return;

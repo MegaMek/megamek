@@ -34,36 +34,6 @@
  */
 package megamek.client.ui.clientGUI;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.HeadlessException;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Consumer;
-import java.util.jar.JarFile;
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import megamek.MMConstants;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
@@ -181,6 +151,30 @@ import megamek.common.voting.Poll;
 import megamek.common.voting.PollStatus;
 import megamek.common.weapons.handlers.WeaponOrderHandler;
 import megamek.logging.MMLogger;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
+import java.util.jar.JarFile;
 
 public class ClientGUI extends AbstractClientGUI
       implements BoardViewListener, ActionListener, IPreferenceChangeListener, MekDisplayListener, ILocalBots,
@@ -3025,7 +3019,7 @@ public class ClientGUI extends AbstractClientGUI
         // from the same directory that MM is in
         var mmlPath = CP.getMmlPath();
         var autodetect = false;
-        if (null == mmlPath || mmlPath.isBlank()) {
+        if (mmlPath == null || mmlPath.isBlank()) {
             autodetect = true;
             mmlPath = "MegaMekLab.jar";
         }
@@ -4090,7 +4084,7 @@ public class ClientGUI extends AbstractClientGUI
             // An experimental bot that fails to stand up must not leave the seat empty: the player asked
             // for a bot in that slot, so Princess takes it instead. Guarded like the first attempt, so a
             // failure here degrades to an empty seat and a log line rather than a crash.
-            if ((null == botClient) && (AIType.PRINCESS != aiType)) {
+            if ((botClient == null) && (AIType.PRINCESS != aiType)) {
                 message.append(" Falling back to Princess. ");
                 try {
                     botClient = util.replaceGhostWithBot(AIType.PRINCESS, newBotSettings.get(ghostName),

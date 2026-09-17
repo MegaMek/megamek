@@ -77,7 +77,7 @@ public class MekCostCalculator {
             default -> 200000;
         };
         if (mek.hasEiCockpit()
-              && ((null != mek.getCrew()) && mek.hasAbility(OptionsConstants.MD_EI_IMPLANT))) {
+            && ((mek.getCrew() != null) && mek.hasAbility(OptionsConstants.MD_EI_IMPLANT))){
             cockpitCost = 400000;
         }
         costs[i++] = cockpitCost;

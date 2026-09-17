@@ -32,12 +32,7 @@
  */
 package megamek.client.ui.dialogs.randomArmy;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -70,17 +65,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import megamek.client.Client;
-import megamek.client.ratgenerator.C3NetworkConfigurator;
-import megamek.client.ratgenerator.CarrierLoadingConfigurator;
-import megamek.client.ratgenerator.CrewDescriptor;
-import megamek.client.ratgenerator.ExistingLift;
-import megamek.client.ratgenerator.ForceDescriptor;
-import megamek.client.ratgenerator.FormationType;
-import megamek.client.ratgenerator.GenerationContext;
-import megamek.client.ratgenerator.RATGenerator;
-import megamek.client.ratgenerator.Ruleset;
-import megamek.client.ratgenerator.ShipReroller;
-import megamek.client.ratgenerator.TransportBranchMerger;
+import megamek.client.ratgenerator.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
@@ -710,7 +695,7 @@ public class ForceGeneratorViewUi implements ActionListener {
             txtSearch.setText("");
         }
 
-        if (null != fd) {
+        if (fd != null) {
             lblOrganization.setText(Ruleset.findRuleset(fd).getEschelonNames(fd.getUnitType() == null
                   ? ""
                   : UnitType.getTypeName(fd.getUnitType())).get(fd.getEchelonCode()));
@@ -1467,7 +1452,7 @@ public class ForceGeneratorViewUi implements ActionListener {
 
         @Override
         public void addTreeModelListener(TreeModelListener listener) {
-            if (null != listener && !listeners.contains(listener)) {
+            if (listener != null && !listeners.contains(listener)) {
                 listeners.add(listener);
             }
         }
@@ -1511,7 +1496,7 @@ public class ForceGeneratorViewUi implements ActionListener {
 
         @Override
         public void removeTreeModelListener(TreeModelListener listener) {
-            if (null != listener) {
+            if (listener != null) {
                 listeners.remove(listener);
             }
         }

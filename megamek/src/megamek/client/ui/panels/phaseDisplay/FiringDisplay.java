@@ -623,7 +623,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 addAttack(actions.nextElement());
             }
             ready();
-        } else if ((turn instanceof TriggerBPodTurn) && (null != currentEntity())) {
+        } else if ((turn instanceof TriggerBPodTurn) && (currentEntity() != null)) {
             disableButtons();
             TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui, currentEntity(),
                   ((TriggerBPodTurn) turn).getAttackType());

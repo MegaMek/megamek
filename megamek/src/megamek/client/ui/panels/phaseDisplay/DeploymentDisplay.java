@@ -374,8 +374,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void endMyTurn() {
         Entity next = game.getNextEntity(game.getTurnIndex());
         if (game.getPhase().isDeployment() &&
-            (null != next) &&
-            (null != currentEntity()) &&
+            (next != null) &&
+            (currentEntity() != null) &&
             (next.getOwnerId() != currentEntity().getOwnerId())) {
             clientgui.maybeShowUnitDisplay();
         }
@@ -1260,7 +1260,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
         final Client client = clientgui.getClient();
         final Entity e = client.getGame().getEntity(b.getEntityId());
-        if (null == e) {
+        if (e == null) {
             return;
         }
         clientgui.clearFieldOfFire();

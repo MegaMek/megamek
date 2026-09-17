@@ -34,17 +34,6 @@
 
 package megamek.common.units;
 
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.Vector;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.HitData;
 import megamek.common.LosEffects;
@@ -61,6 +50,17 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
 import megamek.logging.MMLogger;
+
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.Vector;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Fighter squadrons are basically "containers" for a bunch of fighters.
@@ -400,7 +400,7 @@ public class FighterSquadron extends AeroSpaceFighter {
                     loc = LandAirMek.getAeroLocation(loc);
                 }
                 String key = mounted.getType().getInternalName() + ":" + loc;
-                if (null == groups.get(key)) {
+                if (groups.get(key) == null) {
                     groups.put(key, mounted.getNWeapons());
                 } else if (!mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
                     groups.put(key, groups.get(key) + mounted.getNWeapons());
@@ -411,7 +411,7 @@ public class FighterSquadron extends AeroSpaceFighter {
         // equipment or add new ones if there is none
         Set<String> newSet = groups.keySet();
         for (String key : newSet) {
-            if (null != weaponGroups.get(key) && null != getEquipment(weaponGroups.get(key))) {
+            if (weaponGroups.get(key) != null && getEquipment(weaponGroups.get(key)) != null) {
                 // then this equipment is already loaded, so we just need to
                 // correctly update the number of weapons
                 getEquipment(weaponGroups.get(key)).setNWeapons(groups.get(key));

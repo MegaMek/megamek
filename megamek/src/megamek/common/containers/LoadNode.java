@@ -279,7 +279,7 @@ class LoadNode {
      */
     private HashMap<String, Integer> decodeImperatives(String iString) {
         HashMap<String, Integer> c = new HashMap<>();
-        if (null != iString) {
+        if (iString != null) {
             for (String aType : iString.split(":")) {
                 c.put(aType, c.getOrDefault(aType, 0) + 1);
             }

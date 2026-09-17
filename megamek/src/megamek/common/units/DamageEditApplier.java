@@ -97,7 +97,7 @@ public class DamageEditApplier {
 
     public void applyToEntity() {
         for (int i = 0; i < entity.locations(); i++) {
-            if ((null != spec.internal) && (null != spec.internal[i])) {
+            if ((spec.internal != null) && (spec.internal[i] != null)) {
                 int internal = spec.internal[i];
                 if (internal <= 0) {
                     internal = IArmorState.ARMOR_DESTROYED;
@@ -108,14 +108,14 @@ public class DamageEditApplier {
                     entity.setInternal(internal, i);
                 }
             }
-            if ((null != spec.armor) && (null != spec.armor[i])) {
+            if ((spec.armor != null) && (spec.armor[i] != null)) {
                 int armor = spec.armor[i];
                 if (armor <= 0) {
                     armor = IArmorState.ARMOR_DESTROYED;
                 }
                 entity.setArmor(armor, i);
             }
-            if (entity.hasRearArmor(i) && (null != spec.rearArmor) && (null != spec.rearArmor[i])) {
+            if (entity.hasRearArmor(i) && (spec.rearArmor != null) && (spec.rearArmor[i] != null)) {
                 int rear = spec.rearArmor[i];
                 if (rear <= 0) {
                     rear = IArmorState.ARMOR_DESTROYED;
@@ -126,7 +126,7 @@ public class DamageEditApplier {
         for (Map.Entry<Integer, Integer> equipmentHit : spec.equipmentHits.entrySet()) {
             int equipmentNumber = equipmentHit.getKey();
             Mounted<?> mounted = entity.getEquipment(equipmentNumber);
-            if (null == mounted) {
+            if (mounted == null) {
                 continue;
             }
             int hits = equipmentHit.getValue();
@@ -147,34 +147,34 @@ public class DamageEditApplier {
 
         // now systems
         if (entity instanceof Mek) {
-            if (null != spec.centerEngineHits) {
+            if (spec.centerEngineHits != null) {
                 entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
                       Mek.SYSTEM_ENGINE,
                       Mek.LOC_CENTER_TORSO,
                       spec.centerEngineHits);
             }
-            if (null != spec.leftEngineHits) {
+            if (spec.leftEngineHits != null) {
                 entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
                       Mek.SYSTEM_ENGINE,
                       Mek.LOC_LEFT_TORSO,
                       spec.leftEngineHits);
             }
-            if (null != spec.rightEngineHits) {
+            if (spec.rightEngineHits != null) {
                 entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
                       Mek.SYSTEM_ENGINE,
                       Mek.LOC_RIGHT_TORSO,
                       spec.rightEngineHits);
             }
-            if (null != spec.gyroHits) {
+            if (spec.gyroHits != null) {
                 entity.damageSystem(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, spec.gyroHits);
             }
-            if (null != spec.sensorHits) {
+            if (spec.sensorHits != null) {
                 entity.damageSystem(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, spec.sensorHits);
             }
-            if (null != spec.lifeSupportHits) {
+            if (spec.lifeSupportHits != null) {
                 entity.damageSystem(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_LIFE_SUPPORT, spec.lifeSupportHits);
             }
-            if (null != spec.cockpitHits) {
+            if (spec.cockpitHits != null) {
                 entity.damageSystem(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_COCKPIT, spec.cockpitHits);
             }
             for (Map.Entry<Integer, Integer> avionicsHit : spec.lamAvionicsHits.entrySet()) {
@@ -190,11 +190,11 @@ public class DamageEditApplier {
                       landingGearHit.getValue());
             }
 
-            if (null != spec.actuatorHits) {
+            if (spec.actuatorHits != null) {
                 for (int i = 0; i < spec.actuatorHits.length; i++) {
                     for (int j = 0; j < spec.actuatorHits[i].length; j++) {
                         Integer actuatorHit = spec.actuatorHits[i][j];
-                        if (null == actuatorHit) {
+                        if (actuatorHit == null) {
                             continue;
                         }
                         int location = i + Mek.LOC_RIGHT_ARM;
@@ -209,7 +209,7 @@ public class DamageEditApplier {
                         // A leg carries one conversion gear, so it is applied once. This used to be written as a
                         // loop that ran four times over the same control, applying the same hits to the same gear.
                         Integer conversionGearHit = spec.actuatorHits[i][DamageEditSpec.CONVERSION_GEAR_INDEX];
-                        if (null != conversionGearHit) {
+                        if (conversionGearHit != null) {
                             entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
                                   QuadVee.SYSTEM_CONVERSION_GEAR,
                                   i + Mek.LOC_RIGHT_ARM,
@@ -219,9 +219,9 @@ public class DamageEditApplier {
                 }
             }
         } else if (entity instanceof ProtoMek) {
-            if (null != spec.protoHits) {
+            if (spec.protoHits != null) {
                 for (int location = 0; location < entity.locations(); location++) {
-                    if (null == spec.protoHits[location]) {
+                    if (spec.protoHits[location] == null) {
                         continue;
                     }
                     if ((location == ProtoMek.LOC_LEFT_ARM) || (location == ProtoMek.LOC_RIGHT_ARM)) {
@@ -251,24 +251,24 @@ public class DamageEditApplier {
                 }
             }
         } else if (entity instanceof Tank tank) {
-            if (null != spec.engineHits) {
+            if (spec.engineHits != null) {
                 if (spec.engineHits > 0) {
                     tank.engineHit();
                 } else {
                     tank.engineFix();
                 }
             }
-            if (null != spec.turretLockHits) {
+            if (spec.turretLockHits != null) {
                 if (spec.turretLockHits > 0) {
                     tank.lockTurret(0);
                 } else {
                     tank.unlockTurret();
                 }
             }
-            if (null != spec.sensorHits) {
+            if (spec.sensorHits != null) {
                 tank.setSensorHits(spec.sensorHits);
             }
-            if (null != spec.motiveHits) {
+            if (spec.motiveHits != null) {
                 tank.resetMovementDamage();
                 tank.addMovementDamage(spec.motiveHits);
 
@@ -276,17 +276,17 @@ public class DamageEditApplier {
                 // tank
                 tank.applyMovementDamage();
             }
-            if ((tank instanceof VTOL) && (null != spec.flightStabilizerHits)) {
+            if ((tank instanceof VTOL) && (spec.flightStabilizerHits != null)) {
                 if (spec.flightStabilizerHits > 0) {
                     tank.setStabiliserHit(VTOL.LOC_ROTOR);
                 } else {
                     tank.clearStabiliserHit(VTOL.LOC_ROTOR);
                 }
             }
-            if (null != spec.stabilizerHits) {
+            if (spec.stabilizerHits != null) {
                 for (int location = 0; location < tank.locations(); location++) {
                     Integer stabilizerHit = spec.stabilizerHits[location];
-                    if (null == stabilizerHit) {
+                    if (stabilizerHit == null) {
                         continue;
                     }
                     if (stabilizerHit > 0) {
@@ -297,50 +297,50 @@ public class DamageEditApplier {
                 }
             }
         } else if (entity instanceof Aero aero) {
-            if (null != spec.avionicsHits) {
+            if (spec.avionicsHits != null) {
                 aero.setAvionicsHits(spec.avionicsHits);
             }
-            if (null != spec.fcsHits) {
+            if (spec.fcsHits != null) {
                 aero.setFCSHits(spec.fcsHits);
             }
-            if (null != spec.cicHits) {
+            if (spec.cicHits != null) {
                 aero.setCICHits(spec.cicHits);
             }
-            if (null != spec.engineHits) {
+            if (spec.engineHits != null) {
                 aero.setEngineHits(spec.engineHits);
             }
-            if (null != spec.sensorHits) {
+            if (spec.sensorHits != null) {
                 aero.setSensorHits(spec.sensorHits);
             }
-            if (null != spec.gearHits) {
+            if (spec.gearHits != null) {
                 aero.setGearHit(spec.gearHits > 0);
             }
-            if (null != spec.lifeSupportHits) {
+            if (spec.lifeSupportHits != null) {
                 aero.setLifeSupport(spec.lifeSupportHits == 0);
             }
-            if (null != spec.leftThrusterHits) {
+            if (spec.leftThrusterHits != null) {
                 aero.setLeftThrustHits(spec.leftThrusterHits);
             }
-            if (null != spec.rightThrusterHits) {
+            if (spec.rightThrusterHits != null) {
                 aero.setRightThrustHits(spec.rightThrusterHits);
             }
-            if ((null != spec.dockCollarHits) && (aero instanceof Dropship)) {
+            if ((spec.dockCollarHits != null) && (aero instanceof Dropship)) {
                 ((Dropship) aero).setDamageDockCollar(spec.dockCollarHits > 0);
             }
-            if ((null != spec.kfBoomHits) && (aero instanceof Dropship)) {
+            if ((spec.kfBoomHits != null) && (aero instanceof Dropship)) {
                 ((Dropship) aero).setDamageKFBoom(spec.kfBoomHits > 0);
             }
             // cargo bays and bay doors
-            if (((aero instanceof Dropship) || (aero instanceof Jumpship)) && (null != spec.bayCapacityRemaining)) {
+            if (((aero instanceof Dropship) || (aero instanceof Jumpship)) && (spec.bayCapacityRemaining != null)) {
                 int b = 0;
                 for (Bay bay : aero.getTransportBays()) {
                     Double bayCapacity = spec.bayCapacityRemaining[b];
-                    if (null == bayCapacity) {
+                    if (bayCapacity == null) {
                         continue;
                     }
                     bay.setBayDamage(bay.getCapacity() - bayCapacity);
                     Integer doorHits = spec.bayDoorHits[b];
-                    if (null == doorHits) {
+                    if (doorHits == null) {
                         continue;
                     }
                     if ((bay.getCurrentDoors() > 0) && (doorHits > 0)) {
@@ -363,7 +363,7 @@ public class DamageEditApplier {
             if (aero instanceof Jumpship jumpship) {
                 double damagedCollars = 0.0;
                 int damagedDecks = 0;
-                if (null != spec.workingDockingCollars) {
+                if (spec.workingDockingCollars != null) {
                     damagedCollars = aero.getDockingCollars().size() - (double) spec.workingDockingCollars;
                 }
                 // First, reset damaged collars to undamaged. Otherwise, you get weirdness when
@@ -380,7 +380,7 @@ public class DamageEditApplier {
                     collar.setDamaged(true);
                     damagedCollars--;
                 }
-                if (null != spec.gravDeckHits) {
+                if (spec.gravDeckHits != null) {
                     damagedDecks = spec.gravDeckHits;
                 }
                 // reset all grav decks to undamaged
@@ -394,28 +394,28 @@ public class DamageEditApplier {
                     }
                 }
                 // KF Drive and Sail
-                if (null != spec.kfIntegrity) {
+                if (spec.kfIntegrity != null) {
                     jumpship.setKFIntegrity(spec.kfIntegrity);
                 }
-                if (null != spec.chargingSystemHits) {
+                if (spec.chargingSystemHits != null) {
                     jumpship.setKFChargingSystemHit(spec.chargingSystemHits > 0);
                 }
-                if (null != spec.driveCoilHits) {
+                if (spec.driveCoilHits != null) {
                     jumpship.setKFDriveCoilHit(spec.driveCoilHits > 0);
                 }
-                if (null != spec.driveControllerHits) {
+                if (spec.driveControllerHits != null) {
                     jumpship.setKFDriveControllerHit(spec.driveControllerHits > 0);
                 }
-                if (null != spec.fieldInitiatorHits) {
+                if (spec.fieldInitiatorHits != null) {
                     jumpship.setKFFieldInitiatorHit(spec.fieldInitiatorHits > 0);
                 }
-                if (null != spec.heliumTankHits) {
+                if (spec.heliumTankHits != null) {
                     jumpship.setKFHeliumTankHit(spec.heliumTankHits > 0);
                 }
-                if (null != spec.lfBatteryHits) {
+                if (spec.lfBatteryHits != null) {
                     jumpship.setLFBatteryHit(spec.lfBatteryHits > 0);
                 }
-                if (null != spec.sailIntegrity) {
+                if (spec.sailIntegrity != null) {
                     jumpship.setSailIntegrity(spec.sailIntegrity);
                 }
             }
@@ -443,10 +443,10 @@ public class DamageEditApplier {
             return;
         }
 
-        if (null != spec.buildingPowerSwitchedOff) {
+        if (spec.buildingPowerSwitchedOff != null) {
             building.setPowerSwitchedOff(spec.buildingPowerSwitchedOff);
         }
-        if (null != spec.buildingStunnedTurns) {
+        if (spec.buildingStunnedTurns != null) {
             building.setStunnedTurns(spec.buildingStunnedTurns);
         }
         for (Map.Entry<Integer, Boolean> gunnersKilled : spec.buildingGunnersKilled.entrySet()) {
@@ -587,7 +587,7 @@ public class DamageEditApplier {
     private void logAppliedEdits() {
         StringBuilder summary = new StringBuilder();
         for (int location = 0; location < entity.locations(); location++) {
-            if ((null == spec.armor) || (null == spec.armor[location])) {
+            if ((spec.armor == null) || (spec.armor[location] == null)) {
                 continue;
             }
             summary.append(' ')
@@ -616,11 +616,11 @@ public class DamageEditApplier {
      */
     private void applyCrewHits() {
         Crew crew = entity.getCrew();
-        if ((null == crew) || (null == spec.crewHits)) {
+        if ((crew == null) || (spec.crewHits == null)) {
             return;
         }
         for (int slot = 0; slot < spec.crewHits.length; slot++) {
-            if (null == spec.crewHits[slot]) {
+            if (spec.crewHits[slot] == null) {
                 continue;
             }
             // Revive the crew member first, then set the hits. Fewer than six revives a wounded or dead member;
@@ -639,7 +639,7 @@ public class DamageEditApplier {
      */
     private void applySkillModifiers() {
         Crew crew = entity.getCrew();
-        if ((null == crew) || (null == spec.gunneryModifier)) {
+        if ((crew == null) || (spec.gunneryModifier == null)) {
             return;
         }
         TemporarySkillModifiers modifiers = crew.getSkillModifiers();
@@ -649,7 +649,7 @@ public class DamageEditApplier {
               spec.pilotingPermanent ? TemporarySkillModifiers.PERMANENT : spec.pilotingRounds);
         // absent where the editor had no initiative row, which is any game without individual initiative;
         // an active initiative modifier is left alone there rather than silently cleared
-        if (null != spec.initiativeModifier) {
+        if (spec.initiativeModifier != null) {
             modifiers.setInitiative(spec.initiativeModifier,
                   spec.initiativePermanent ? TemporarySkillModifiers.PERMANENT : spec.initiativeRounds);
         }
@@ -660,29 +660,29 @@ public class DamageEditApplier {
      * dialog uses, so that a unit shut down here is shut down the same way as one shut down there.
      */
     private void applyStatus() {
-        if (null != spec.shutdown) {
+        if (spec.shutdown != null) {
             if (spec.shutdown) {
                 entity.performManualShutdown();
             } else {
                 entity.performManualStartup();
             }
         }
-        if (null != spec.prone) {
+        if (spec.prone != null) {
             entity.setProne(spec.prone);
         }
-        if (null != spec.hullDown) {
+        if (spec.hullDown != null) {
             entity.setHullDown(spec.hullDown);
         }
-        if (null != spec.hidden) {
+        if (spec.hidden != null) {
             entity.setHidden(spec.hidden);
         }
-        if (null != spec.stealth) {
+        if (spec.stealth != null) {
             setStealth(spec.stealth);
         }
-        if ((null != spec.dugIn) && (entity instanceof Infantry infantry)) {
+        if ((spec.dugIn != null) && (entity instanceof Infantry infantry)) {
             infantry.setDugIn(spec.dugIn ? Infantry.DUG_IN_COMPLETE : Infantry.DUG_IN_NONE);
         }
-        if ((null != spec.fuel) && (entity instanceof Aero aero)) {
+        if ((spec.fuel != null) && (entity instanceof Aero aero)) {
             aero.setCurrentFuel(spec.fuel);
         }
     }
@@ -712,7 +712,7 @@ public class DamageEditApplier {
     }
 
     private void applyHeat() {
-        if (null != spec.heat) {
+        if (spec.heat != null) {
             entity.heat = spec.heat;
         }
     }

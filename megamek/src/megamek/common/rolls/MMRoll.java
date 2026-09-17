@@ -245,7 +245,7 @@ public class MMRoll extends Roll {
         int start = 1;
         int whichRNG = MMRandom.R_DEFAULT;
 
-        if (null == args || 0 == args.length) {
+        if (args == null || 0 == args.length) {
             count = 2;
         } else if (1 == args.length) {
             count = MathUtility.parseInt(args[0]);

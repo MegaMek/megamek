@@ -59,7 +59,7 @@ public final class EventBus {
 
     public static EventBus getInstance() {
         synchronized (INSTANCE_LOCK) {
-            if (null == instance) {
+            if (instance == null) {
                 instance = new EventBus();
             }
         }
@@ -82,7 +82,7 @@ public final class EventBus {
 
     private List<Class<?>> getClasses(Class<?> leaf) {
         List<Class<?>> result = new ArrayList<>();
-        while (null != leaf) {
+        while (leaf != null) {
             result.add(leaf);
             leaf = leaf.getSuperclass();
         }
@@ -157,10 +157,10 @@ public final class EventBus {
         synchronized (REGISTER_LOCK) {
             for (Object handler : unregisterQueue.keySet()) {
                 List<EventListener> listenerList = handlerMap.remove(handler);
-                if (null != listenerList) {
+                if (listenerList != null) {
                     for (EventListener listener : listenerList) {
                         List<EventListener> eventListeners = eventMap.get(listener.getEventType());
-                        if (null != eventListeners) {
+                        if (eventListeners != null) {
                             eventListeners.remove(listener);
                         }
                     }
@@ -185,7 +185,7 @@ public final class EventBus {
 
     private void internalTrigger(Class<? extends MMEvent> eventClass, MMEvent event) {
         List<EventListener> eventListeners = eventMap.get(eventClass);
-        if (null != eventListeners) {
+        if (eventListeners != null) {
             eventListeners.sort(EVENT_SORTER);
             for (EventListener listener : eventListeners) {
                 listener.trigger(event);

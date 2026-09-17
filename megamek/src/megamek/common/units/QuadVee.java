@@ -227,7 +227,7 @@ public class QuadVee extends QuadMek {
             }
         }
 
-        if (!mpCalculationSetting.ignoreWeather() && (null != game)) {
+        if (!mpCalculationSetting.ignoreWeather() && (game != null)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
@@ -499,7 +499,7 @@ public class QuadVee extends QuadMek {
             }
             // are we wheeled and in light snow?
             Hex hex = game.getHexOf(this);
-            if ((null != hex) && getMovementMode().isWheeled()
+            if ((hex != null) && getMovementMode().isWheeled()
                   && (hex.terrainLevel(Terrains.SNOW) == 1)) {
                 roll.addModifier(1, "thin snow");
             }

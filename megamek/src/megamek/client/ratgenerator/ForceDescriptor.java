@@ -252,7 +252,7 @@ public class ForceDescriptor {
     public void generateUnits(ProgressListener l, double progress) {
         // If the parent node has a chassis or model assigned, it carries through to the
         // children.
-        if (null != parent) {
+        if (parent != null) {
             chassis.addAll(parent.getChassis());
             models.addAll(parent.getModels());
         }
@@ -287,10 +287,10 @@ public class ForceDescriptor {
         // formation requirements, generate using default parameters.
         if (subForces.isEmpty()) {
             ModelRecord modelRecord = generate();
-            if (null == modelRecord && !models.isEmpty()) {
+            if (modelRecord == null && !models.isEmpty()) {
                 modelRecord = RATGenerator.getInstance().getModelRecord(getModelName());
             }
-            if (null != modelRecord) {
+            if (modelRecord != null) {
                 setUnit(modelRecord);
             } else if (models.isEmpty() && chassis.size() == 1) {
                 // Chassis-only element (e.g. a named WarShip referenced by chassis for a faction with
@@ -309,18 +309,18 @@ public class ForceDescriptor {
                       describeUnitType(unitType), faction, year, weightClass, roles, models, chassis);
             }
         } else {
-            if (null != formationType) {
+            if (formationType != null) {
                 generateFormationByBlock();
             } else {
                 // Each <subforces> block tagged the children it produced with its own generate rule,
                 // so a node holding several of them honours each in turn. A node with one block yields
                 // one group and behaves exactly as it did when the rule was read off the node itself.
                 Map<String, List<ForceDescriptor>> byBlockRule = subForces.stream()
-                      .filter(sub -> null != sub.getGenerationRule())
+                                                                          .filter(sub -> sub.getGenerationRule() != null)
                       .collect(Collectors.groupingBy(ForceDescriptor::getGenerationRule));
                 if (!byBlockRule.isEmpty()) {
                     byBlockRule.forEach(this::generateByRule);
-                } else if (null != generationRule) {
+                } else if (generationRule != null) {
                     // No child carries a rule, so fall back to the node's own - an older shape, and
                     // what an attached force still looks like.
                     generateByRule(generationRule, subForces);
@@ -330,7 +330,7 @@ public class ForceDescriptor {
         int count = subForces.size() + attached.size();
         subForces.forEach(fd -> fd.generateUnits(l, progress / count));
         attached.forEach(fd -> fd.generateUnits(l, progress / count));
-        if (count == 0 && null != l) {
+        if (count == 0 && l != null) {
             l.updateProgress(progress, "Populating force tree");
         }
     }
@@ -353,8 +353,7 @@ public class ForceDescriptor {
      */
     private boolean generateAndAssignFormation(List<ForceDescriptor> subs, boolean chassis, int numGroups) {
         Map<Boolean, List<ForceDescriptor>> eligibleSubs = subs.stream()
-              .collect(Collectors.groupingBy(fd -> null !=
-                    fd.getUnitType() &&
+                                                               .collect(Collectors.groupingBy(fd -> fd.getUnitType() != null &&
                     (formationType.isAllowedUnitType(
                           fd.getUnitType())) ||
                     (augmented &&
@@ -427,7 +426,7 @@ public class ForceDescriptor {
         // Heavy/Assault Hunter lance).
         Set<Integer> formationWeightClasses = new TreeSet<>();
         for (ForceDescriptor sub : subs) {
-            if (sub.useWeightClass() && (null != sub.getWeightClass())
+            if (sub.useWeightClass() && (sub.getWeightClass() != null)
                   && (sub.getWeightClass() >= EntityWeightClass.WEIGHT_ULTRA_LIGHT)) {
                 formationWeightClasses.add(sub.getWeightClass());
             }
@@ -597,7 +596,7 @@ public class ForceDescriptor {
         if (!baseSubs.isEmpty()) {
             baseUnitList = generateFormation(baseSubs, networkMask, numGroups);
         }
-        if (null == baseUnitList) {
+        if (baseUnitList == null) {
             generateLance(baseSubs);
             baseUnitList = baseSubs.stream()
                   .map(ForceDescriptor::getModelName)
@@ -871,7 +870,7 @@ public class ForceDescriptor {
             element = true;
             movementModes.clear();
             movementModes.add(unit.getMovementMode());
-            if (null == unitType) {
+            if (unitType == null) {
                 unitType = unit.getUnitType();
             }
             if (((unitType == UnitType.MEK) ||
@@ -1240,7 +1239,7 @@ public class ForceDescriptor {
         while (weightTierIndex < 5) {
             for (int roleStrictness = 3; roleStrictness >= 0; roleStrictness--) {
                 List<Integer> weightClasses = new ArrayList<>();
-                if (useWeightClass() && null != workingCopy.getWeightClass()
+                if (useWeightClass() && workingCopy.getWeightClass() != null
                       && workingCopy.getWeightClass() >= EntityWeightClass.WEIGHT_ULTRA_LIGHT) {
                     weightClasses.add(workingCopy.getWeightClass());
                 }
@@ -1294,7 +1293,7 @@ public class ForceDescriptor {
                     workingCopy.getMovementModes().clear();
                 } else {
                     if (useWeightClass() &&
-                          null != weightClass &&
+                        weightClass != null &&
                           weightClass != -1 &&
                           weightClass < alternateWeights.length &&
                           weightTierIndex < alternateWeights[weightClass].length) {
@@ -1339,7 +1338,7 @@ public class ForceDescriptor {
         int count = subForces.size() + attached.size();
         subForces.forEach(fd -> fd.loadEntities(l, progress / count));
         attached.forEach(fd -> fd.loadEntities(l, progress / count));
-        if (count == 0 && null != l) {
+        if (count == 0 && l != null) {
             l.updateProgress(progress, "Loading entities");
         }
     }
@@ -2038,7 +2037,7 @@ public class ForceDescriptor {
         double wc;
         if (!subForces.isEmpty()) {
             wc = subForces.stream().mapToDouble(ForceDescriptor::recalcWeightClass).sum() / subForces.size();
-        } else if (null != weightClass && weightClass >= 0) {
+        } else if (weightClass != null && weightClass >= 0) {
             wc = weightClass;
         } else {
             wc = EntityWeightClass.WEIGHT_MEDIUM;
@@ -2052,7 +2051,7 @@ public class ForceDescriptor {
         // weight-skewed factions (e.g. Clan Coyote) where every cluster averages Heavy and the
         // recalculated weight would collapse all names to one type. Falls back to the recalculated
         // weight when the picker never set one (rolledWeightClass null/unset).
-        if (null != nameNodes) {
+        if (nameNodes != null) {
             int recalculatedWeightClass = weightClass;
             if ((rolledWeightClass != null) && (rolledWeightClass >= 0)) {
                 weightClass = rolledWeightClass;
@@ -2209,7 +2208,7 @@ public class ForceDescriptor {
             retVal = retVal.replace("{cardinalOrdinal}", cardinalOrdinal(getNameIndex() + 1));
             retVal = retVal.replace("{alpha}", Character.toString((char) (getNameIndex() + 'A')));
             if (retVal.contains("{formation}")) {
-                if (null != formationType && null != formationType.getName()) {
+                if (formationType != null && formationType.getName() != null) {
                     // The formation itself rather than the family it belongs to. A Heavy Battle lance and a Light
                     // Battle lance are both "Battle" by category, and an Anti-Air lance is "Fire", so naming by
                     // category threw away the very thing the player chose - a lance built as Anti-Air read "Fire
@@ -2304,7 +2303,7 @@ public class ForceDescriptor {
         if (echelonName != null) {
             retVal.append(" ").append(echelonName);
         }
-        if (null != formationType) {
+        if (formationType != null) {
             retVal.append(" (").append(formationType.getName()).append(")");
         }
         return retVal.toString();
@@ -2408,7 +2407,7 @@ public class ForceDescriptor {
     }
 
     public String getUnitTypeName() {
-        if (null != unitType) {
+        if (unitType != null) {
             return UnitType.getTypeDisplayableName(unitType);
         }
         return "";
@@ -2434,7 +2433,7 @@ public class ForceDescriptor {
      */
     public String ratGeneratorRating() {
         FactionRecord fRec = getFactionRec();
-        if ((null != fRec) &&
+        if ((fRec != null) &&
               !fRec.getRatingLevels().contains(rating) &&
               (getRatingLevel() >= 0) &&
               !fRec.getRatingLevels().isEmpty()) {

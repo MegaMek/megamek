@@ -55,7 +55,6 @@ import megamek.common.units.Targetable;
  */
 public abstract class RulesScanning {
 
-    /** Probe level of a unit with no working active probe. */
     /**
      * The scanning range of a ruleset that puts no distance limit on a scan: under the optional TacOps scanning rule a unit scans
      * whatever its sensors can reach, so the only limits are line of sight and the rules below.
@@ -71,6 +70,7 @@ public abstract class RulesScanning {
         return scanningRange >= UNLIMITED_RANGE;
     }
 
+    /** Probe level of a unit with no working active probe. */
     public static final int PROBE_LEVEL_NONE = 0;
     /** Light Active Probe (Core Rules p.233). */
     public static final int PROBE_LEVEL_LIGHT = 1;

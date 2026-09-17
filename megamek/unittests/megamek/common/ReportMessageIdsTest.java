@@ -22,7 +22,8 @@
  * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
  * of The Topps Company, Inc. All Rights Reserved.
  *
- * Catalyst Game Labs and the Catalyst Game Labs logo are tradema oductions, LLC.
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
  *
  * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
  * Microsoft's "Game Content Usage Rules"

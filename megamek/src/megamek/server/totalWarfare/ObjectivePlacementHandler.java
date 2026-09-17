@@ -143,14 +143,6 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Returns every objective marker on the board to its owner's ground-objects-to-place list, restoring the board
-     * position as the marker's lobby position. Called when the game is reset back to the lobby, before the game
-     * (and with it the ground object map) is cleared - without this, returning to the lobby would silently lose all
-     * designated victory hexes. The reset then sends player updates to every client, so the restored designations
-     * show up in everyone's lobby board preview again. A marker whose owner no longer exists is dropped with a
-     * logged warning.
-     */
-    /**
      * A game master's edit of the objective at a hex, at any time in the game: the marker there is replaced by the
      * one sent, or removed when none is sent, every client is told, and the change is announced in chat so the
      * players know the mission moved. Anyone who is not a game master is refused and logged.
@@ -200,6 +192,14 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
               coords.getBoardNum()));
     }
 
+    /**
+     * Returns every objective marker on the board to its owner's ground-objects-to-place list, restoring the board
+     * position as the marker's lobby position. Called when the game is reset back to the lobby, before the game
+     * (and with it the ground object map) is cleared - without this, returning to the lobby would silently lose all
+     * designated victory hexes. The reset then sends player updates to every client, so the restored designations
+     * show up in everyone's lobby board preview again. A marker whose owner no longer exists is dropped with a
+     * logged warning.
+     */
     void returnObjectivesToLobby() {
         int returnedCount = 0;
         for (Map.Entry<Coords, List<ICarryable>> hexObjects : getGame().getGroundObjects().entrySet()) {

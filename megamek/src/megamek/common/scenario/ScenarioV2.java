@@ -338,12 +338,6 @@ public class ScenarioV2 implements Scenario {
     }
 
     /**
-     * Reads the scenario's graded victory scale ({@code victoryLevels:}): an ordered list of bands, each with a
-     * {@code name:} and an {@code upTo:} bound on the winner's final victory point total; the last band may omit
-     * {@code upTo:} to catch every higher total. Example: up to 10 "Pyrrhic victory", up to 20 "Minor victory",
-     * unbounded "Overwhelming victory".
-     */
-    /**
      * Parses the game-level {@code scanTargets:} list of unit ids and marks those units as the mission's scan
      * targets (Core Rules p.217, the Sensor Check mission). When any unit is designated, only designated units
      * score when scanned; without the key every enemy unit does. Runs after the players and their units.
@@ -370,6 +364,12 @@ public class ScenarioV2 implements Scenario {
         logger.info("[Scan] scenario designates {} unit(s) as scan targets", designated);
     }
 
+    /**
+     * Reads the scenario's graded victory scale ({@code victoryLevels:}): an ordered list of bands, each with a
+     * {@code name:} and an {@code upTo:} bound on the winner's final victory point total; the last band may omit
+     * {@code upTo:} to catch every higher total. Example: up to 10 "Pyrrhic victory", up to 20 "Minor victory",
+     * unbounded "Overwhelming victory".
+     */
     private void parseVictoryPointLevels(IGame game) {
         if (!node.has(VICTORY_LEVELS) || !(game instanceof Game twGame)) {
             return;

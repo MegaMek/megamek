@@ -210,7 +210,6 @@ public class VictoryPointTracker implements Serializable {
         return !playerVictoryPoints.isEmpty() || !teamVictoryPoints.isEmpty();
     }
 
-    /** @return An unmodifiable snapshot of all victory point awards made in this game, in award order */
     /**
      * Adds one resolved scan to the after-action record. Kept in the tracker, so it rides the game's victory
      * context into savegames and is there for a campaign to read when the game ends.
@@ -231,6 +230,7 @@ public class VictoryPointTracker implements Serializable {
         return List.copyOf(scanLog);
     }
 
+    /** @return An unmodifiable snapshot of all victory point awards made in this game, in award order */
     public List<VictoryPointAward> getAwardLog() {
         return List.copyOf(awardLog);
     }

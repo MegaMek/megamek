@@ -44,7 +44,7 @@ import megamek.common.units.Targetable;
 
 /**
  * A unit's order to scan something with its sensors this turn: a hex, a building hex or another unit. Declared in
- * the Firing phase beside the attacks and resolved in the End Phase, where the scan is rolled and the result
+ * the pre-End declarations phase and resolved in the End Phase, where the scan is rolled and the result
  * reported - a banked reading when there was an objective to read, "nothing of interest" when there was not. One
  * per unit per turn; a later order replaces an earlier one.
  */

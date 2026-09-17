@@ -146,7 +146,6 @@ import megamek.common.weapons.handlers.capitalMissile.CapitalMissileBearingsOnly
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.*;
-import megamek.server.UnitOwnershipRules;
 import megamek.server.UnitOwnershipRules.OwnershipVerdict;
 import megamek.server.commands.*;
 import megamek.server.props.OrbitalBombardment;
@@ -29791,10 +29790,9 @@ public class TWGameManager extends AbstractGameManager {
                 // If we're punching while prone (at a Tank,
                 // duh), then we can only use one arm.
                 if (ae.isProne()) {
-                    double oddsLeft = Compute.oddsAbove(toHit.getValue(),
-                          ae.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING));
-                    double oddsRight = Compute.oddsAbove(toHitRight.getValue(),
-                          ae.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING));
+                    boolean hasNaturalAptitudePiloting = ae.getCrew().isHasNaturalAptitudePiloting();
+                    double oddsLeft = Compute.oddsAbove(toHit.getValue(), hasNaturalAptitudePiloting);
+                    double oddsRight = Compute.oddsAbove(toHitRight.getValue(), hasNaturalAptitudePiloting);
                     // Use the best attack.
                     if ((oddsLeft * damage) > (oddsRight * damageRight)) {
                         paa.setArm(PunchAttackAction.LEFT);

@@ -36,7 +36,6 @@ package megamek.client.bot.princess;
 import megamek.client.bot.princess.geometry.CoordFacingCombo;
 import megamek.common.board.Coords;
 import megamek.common.moves.MovePath;
-import megamek.common.options.OptionsConstants;
 import megamek.common.units.BuildingTarget;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
@@ -103,8 +102,8 @@ public class EntityState {
         building = false;
         aero = entity.isAero();
         airborne = entity.isAirborne() || entity.isAirborneVTOLorWIGE();
-        naturalAptGun = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-        naturalAptPilot = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        naturalAptGun = entity.getCrew().isHasNaturalAptitudeGunnery();
+        naturalAptPilot = entity.getCrew().isHasNaturalAptitudePiloting();
     }
 
     /**
@@ -132,8 +131,8 @@ public class EntityState {
         immobile = path.getEntity().isImmobile();
         jumping = path.isJumping();
         movementType = path.getLastStepMovementType();
-        naturalAptGun = path.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-        naturalAptPilot = path.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        naturalAptGun = path.getEntity().getCrew().isHasNaturalAptitudeGunnery();
+        naturalAptPilot = path.getEntity().getCrew().isHasNaturalAptitudePiloting();
         setSecondaryFacing(getFacing());
     }
 

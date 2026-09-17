@@ -95,7 +95,6 @@ import megamek.common.game.InitiativeRoll;
 import megamek.common.moves.MovePath;
 import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
-import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.rolls.TargetRoll;
@@ -1326,7 +1325,7 @@ public abstract class BotClient extends Client {
             return 0;
         }
         int potentialDmg = (int) Math.ceil((double) building.getCurrentCF(coords) / 10);
-        boolean aptGunnery = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+        boolean aptGunnery = entity.getCrew().isHasNaturalAptitudeGunnery();
         double oddsTakeDmg = 1 - (Compute.oddsAbove(entity.getCrew().getPiloting(), aptGunnery) / 100);
         return potentialDmg * oddsTakeDmg;
     }
@@ -1356,7 +1355,7 @@ public abstract class BotClient extends Client {
             return 0.0f;
         }
 
-        boolean naturalAptGunnery = attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+        boolean naturalAptGunnery = attacker.getCrew().isHasNaturalAptitudeGunnery();
         Mounted<?> weapon = attacker.getEquipment(weaponAttackAction.getWeaponId());
         ToHitData hitData = weaponAttackAction.toHit(game, allECMInfo);
         if (hitData.getValue() > 12) {

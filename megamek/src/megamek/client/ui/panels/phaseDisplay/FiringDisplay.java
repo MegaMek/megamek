@@ -1883,7 +1883,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                     clientgui.getUnitDisplay().wPan.setToHit(toHit);
                     setFireEnabled(true);
                 } else {
-                    boolean natAptGunnery = attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+                    boolean natAptGunnery = attacker.getCrew().isHasNaturalAptitudeGunnery();
                     clientgui.getUnitDisplay().wPan.setToHit(toHit, natAptGunnery);
 
                     setFireEnabled(true);

@@ -915,7 +915,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                     setFireEnabled(true);
                 } else {
                     clientgui.getUnitDisplay().wPan.setToHit(toHit,
-                          attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY));
+                          attacker.getCrew().isHasNaturalAptitudeGunnery());
                     setFireEnabled(true);
                 }
             }

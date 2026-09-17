@@ -765,7 +765,7 @@ public class PointblankShotDisplay extends FiringDisplay {
                 clientgui.getUnitDisplay().wPan.setToHit(toHit);
                 setFireEnabled(true);
             } else {
-                boolean natAptGunnery = currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+                boolean natAptGunnery = currentEntity().getCrew().isHasNaturalAptitudeGunnery();
                 clientgui.getUnitDisplay().wPan.setToHit(toHit, natAptGunnery);
                 setFireEnabled(true);
             }

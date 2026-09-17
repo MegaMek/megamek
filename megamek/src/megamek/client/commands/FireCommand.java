@@ -40,22 +40,21 @@ import java.util.Vector;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.common.equipment.AmmoType;
-import megamek.common.compute.Compute;
-import megamek.common.compute.ComputeArc;
-import megamek.common.units.Entity;
-import megamek.common.equipment.Mounted;
-import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Targetable;
 import megamek.common.ToHitData;
-import megamek.common.equipment.WeaponType;
 import megamek.common.actions.AbstractEntityAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.compute.Compute;
+import megamek.common.compute.ComputeArc;
 import megamek.common.enums.AimingMode;
-import megamek.common.options.OptionsConstants;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
 
 /**
@@ -316,7 +315,7 @@ public class FireCommand extends ClientCommand {
             } else {
                 str += " To hit: " + toHit.getValueAsString() + " ("
                       + Compute.oddsAbove(toHit.getValue(),
-                      currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY)) + "%)";
+                      currentEntity().getCrew().isHasNaturalAptitudeGunnery()) + "%)";
             }
             str += " To Hit modifiers: " + toHit.getDesc();
         }

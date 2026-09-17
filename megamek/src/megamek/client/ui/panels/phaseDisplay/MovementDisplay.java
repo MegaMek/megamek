@@ -2755,7 +2755,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                           Messages.getString("MovementDisplay.RamDialog.message",
                                 toHit.getValueAsString(),
                                 Compute.oddsAbove(toHit.getValue(),
-                                      currentlySelectedEntity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+                                      currentlySelectedEntity.getCrew().isHasNaturalAptitudePiloting()),
                                 toHit.getDesc(),
                                 toDefender,
                                 toHit.getTableDesc(),

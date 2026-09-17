@@ -61,17 +61,20 @@ public class LAMPilot extends Crew {
     private int pilotingAero;
 
     public LAMPilot(LandAirMek lam) {
-        this(lam, RandomNameGenerator.UNNAMED_FULL_NAME, 4, 5,
-              4, 5, Gender.RANDOMIZE, false, null);
+        this(lam, RandomNameGenerator.UNNAMED_FULL_NAME, 4, 5, 4, false, 5, false, Gender.RANDOMIZE, false, null);
     }
 
     public LAMPilot(LandAirMek lam, String name, int gunneryMek, int pilotingMek,
-          int gunneryAero, int pilotingAero, Gender gender, boolean clanPilot,
+          int gunneryAero, boolean hasNaturalAptitudeGunnery, int pilotingAero,
+          boolean hasNaturalAptitudePiloting, Gender gender, boolean clanPilot,
           Map<Integer, Map<String, String>> extraData) {
-        super(CrewType.SINGLE, name, 1, gunneryMek, pilotingMek, gender, clanPilot, extraData);
+        super(CrewType.SINGLE, name, 1, gunneryMek, hasNaturalAptitudeGunnery, pilotingMek,
+              hasNaturalAptitudePiloting, gender, clanPilot, extraData);
         this.lam = lam;
         this.gunneryAero = gunneryAero;
+        this.hasNaturalAptitudeGunnery = hasNaturalAptitudeGunnery;
         this.pilotingAero = pilotingAero;
+        this.hasNaturalAptitudePiloting = hasNaturalAptitudePiloting;
         this.gunneryAeroB = gunneryAero;
         this.gunneryAeroL = gunneryAero;
         this.gunneryAeroM = gunneryAero;
@@ -88,8 +91,9 @@ public class LAMPilot extends Crew {
     public static LAMPilot convertToLAMPilot(LandAirMek lam, Crew crew) {
         Map<Integer, Map<String, String>> extraData = new HashMap<>();
         extraData.put(0, crew.getExtraDataForCrewMember(0));
-        LAMPilot pilot = new LAMPilot(lam, crew.getName(), crew.getGunnery(), crew.getPiloting(),
-              crew.getGunnery(), crew.getPiloting(), crew.getGender(), crew.isClanPilot(), extraData);
+        LAMPilot pilot = new LAMPilot(lam, crew.getName(), crew.getGunnery(), crew.getPiloting(), crew.getGunnery(),
+              crew.isHasNaturalAptitudeGunnery(), crew.getPiloting(), crew.isHasNaturalAptitudePiloting(),
+              crew.getGender(), crew.isClanPilot(), extraData);
         pilot.setNickname(crew.getNickname(), 0);
         pilot.setPortrait(crew.getPortrait(0).clone(), 0);
         pilot.setGunneryL(crew.getGunneryL(), 0);

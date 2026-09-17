@@ -68,7 +68,6 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.PILOT_MANEUVERING_ACE, false);
         addOption(adv, OptionsConstants.PILOT_MELEE_MASTER, false);
         addOption(adv, OptionsConstants.PILOT_MELEE_SPECIALIST, false);
-        addOption(adv, OptionsConstants.PILOT_APTITUDE_PILOTING, false);
         addOption(adv, OptionsConstants.PILOT_SHAKY_STICK, false);
         addOption(adv, OptionsConstants.PILOT_TM_FOREST_RANGER, false);
         addOption(adv, OptionsConstants.PILOT_TM_FROGMAN, false);
@@ -87,7 +86,6 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.GUNNERY_GOLDEN_GOOSE, false);
         addOption(adv, OptionsConstants.GUNNERY_SPECIALIST, new Vector<>());
         addOption(adv, OptionsConstants.GUNNERY_MULTI_TASKER, false);
-        addOption(adv, OptionsConstants.PILOT_APTITUDE_GUNNERY, false);
         addOption(adv, OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY, false);
         addOption(adv, OptionsConstants.GUNNERY_OBLIQUE_ATTACKER, false);
         addOption(adv, OptionsConstants.GUNNERY_RANGE_MASTER, new Vector<>());

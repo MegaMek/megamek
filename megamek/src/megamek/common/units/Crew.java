@@ -94,9 +94,9 @@ public class Crew implements Serializable {
     private final Portrait[] portraits;
 
     private final int[] gunnery;
-    private boolean hasNaturalAptitudeGunnery;
+    protected boolean hasNaturalAptitudeGunnery;
     private final int[] piloting;
-    private boolean hasNaturalAptitudePiloting;
+    protected boolean hasNaturalAptitudePiloting;
     private final int[] hits; // hits taken
 
     private final String[] externalId;

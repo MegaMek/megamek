@@ -36,17 +36,7 @@ package megamek.client.bot.princess;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Stream;
 
 import megamek.client.bot.Messages;
@@ -3046,7 +3036,7 @@ public class BasicPathRanker extends PathRanker {
         if (waterRoll.getValue() == TargetRoll.CHECK_FALSE) {
             return 0.0;
         }
-        boolean naturalAptPilot = movingUnit.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        boolean naturalAptPilot = movingUnit.getCrew().isHasNaturalAptitudePiloting();
         return 1.0 - (Compute.oddsAbove(waterRoll.getValue(), naturalAptPilot) / 100.0);
     }
 

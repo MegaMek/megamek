@@ -45,7 +45,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -59,6 +58,7 @@ import megamek.client.ui.clientGUI.boardview.CollapseWarning;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.AbstractBoardViewOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.clientGUI.boardview.sprite.CraneUnloadTargetSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.FlyOverSprite;
 import megamek.client.ui.dialogs.ChoiceDialog;
 import megamek.client.ui.dialogs.ConfirmDialog;
@@ -115,6 +115,7 @@ import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.game.IGame;
 import megamek.common.moves.ClimbingHelper;
+import megamek.common.moves.MountPathHelper;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
@@ -202,6 +203,18 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private final List<BridgeBuildPlan> bridgeBuildPlans = new ArrayList<>();
     /** Valid hexes for the current bridge build selection stage. */
     private final Set<Coords> validBridgeSelectionHexes = new HashSet<>();
+
+    /**
+     * The unit a grounded Small Craft or DropShip is unloading, waiting for the player to click the hex it goes into,
+     * or null. Covers both crane unloading and units dismounting under their own power.
+     */
+    private Entity unloadHexUnit;
+
+    /** The hexes {@link #unloadHexUnit} can be unloaded into, highlighted while the player chooses. */
+    private final Set<Coords> validUnloadHexes = new HashSet<>();
+
+    /** The markers on the hexes the unit can be unloaded into, shown while the player chooses. */
+    private final List<CraneUnloadTargetSprite> unloadTargetSprites = new ArrayList<>();
 
     // buttons
     private Map<MoveCommand, MegaMekButton> buttons;
@@ -1102,6 +1115,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateMove();
     }
 
+    private void addStepToMovePath(MoveStepType moveStep, Entity entity, Coords coords,
+          Map<Integer, Integer> additionalIntData) {
+        cmd.addStep(moveStep, entity, coords, additionalIntData);
+        updateMove();
+    }
+
     private void addStepToMovePath(MoveStepType moveStep, Minefield minefield) {
         cmd.addStep(moveStep, minefield);
         updateMove();
@@ -1822,6 +1841,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             cancelBridgeBuildSelection();
         }
 
+        // Cancel crane unloading hex selection if active
+        if (unloadHexUnit != null) {
+            cancelUnloadHexSelection();
+        }
+
         // clear board cursors
         clientgui.boardViews().forEach(IBoardView::clearMarkedHexes);
         // Needed to clear best move modifiers
@@ -1881,6 +1905,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateLayMineButton();
 
         unloadableUnits = currentlySelectedEntity.getUnloadableUnits();
+        if (currentlySelectedEntity instanceof SmallCraft) {
+            // VTOLs, fighters and small craft cannot dismount under their own power; Unload offers them by crane
+            unloadableUnits.removeIf(CraneRules::isCraneOnlyUnit);
+        }
         towedUnits = currentlySelectedEntity.getLoadedTrailers();
 
         updateLoadButtons();
@@ -2391,6 +2419,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
             gear = GEAR_LAND;
         } else if ((gear == GEAR_LAND) || (gear == GEAR_JUMP)) {
             extendPathTo(dest, boardId, MoveStepType.FORWARDS);
+            if (gear == GEAR_LAND) {
+                // Clicking a friendly transport stops the path beside it so the Mount button can board it
+                Entity transport = MountPathHelper.trimToMountableTransport(cmd, dest, boardId, game);
+                if (transport != null) {
+                    LOGGER.debug("[Mount] {}: clicked {} at {}; path stops beside it at {}",
+                          currentEntity().getDisplayName(), transport.getDisplayName(), dest, cmd.getFinalCoords());
+                }
+            }
             if (shouldDesignateFlightPath(currentEntity())) {
                 // Interpreting TW p.242 to mean that designating a flight path is optional, as making A2G attacks is
                 // certainly optional
@@ -2580,6 +2616,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 LOGGER.debug("[BuildBridge] board click during stage {} at {}", bridgeSelectionStage,
                       boardViewEvent.getCoords());
                 handleBridgeSelectionClick(boardViewEvent.getCoords());
+            }
+            return;
+        }
+
+        // While choosing the hex to unload a unit into, a click picks that hex and never plots a movement path
+        if (unloadHexUnit != null) {
+            if ((boardViewEvent.getType() == BoardViewEvent.BOARD_HEX_CLICKED)
+                  && (boardViewEvent.getCoords() != null)) {
+                handleUnloadHexClick(boardViewEvent.getCoords());
             }
             return;
         }
@@ -4385,12 +4430,20 @@ public class MovementDisplay extends ActionPhaseDisplay {
             candidates.addAll(game.getEntitiesVector(coords, finalBoardId()));
         }
 
-        final boolean canLoad = candidates
-              .stream()
-              .filter(other -> !currentEntity.canTow(other.getId()))
-              .filter(Entity::isLoadableThisTurn)
-              .anyMatch(other -> currentEntity.canLoad(other, true, cmd.getFinalElevation()) &&
-                    other.getTargetBay() == UNSET_BAY);
+        boolean canLoad = false;
+        for (Entity other : candidates) {
+            if (currentEntity.canTow(other.getId()) || !other.isLoadableThisTurn()) {
+                continue;
+            }
+            // VTOLs, fighters and small craft board a grounded carrier only by crane (TW p.87, p.90)
+            if (CraneRules.mustBoardByCrane(currentEntity, other)) {
+                continue;
+            }
+            if (currentEntity.canLoad(other, true, cmd.getFinalElevation()) && (other.getTargetBay() == UNSET_BAY)) {
+                canLoad = true;
+                break;
+            }
+        }
         setLoadEnabled(canLoad);
     }
 
@@ -4402,8 +4455,18 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
+        setUnloadButtonLabel(MoveCommand.MOVE_UNLOAD.getCmd());
         if ((currentEntity instanceof SmallCraft) || currentEntity.isSupportVehicle()) {
-            setUnloadEnabled(!unloadableUnits.isEmpty() && !currentEntity.isAirborne());
+            // A grounded carrier's Unload also offers the units only its cranes can unload (TW p.91), and the units
+            // the cranes are already unloading, so that work can be stopped
+            boolean hasUnitToUnload = !unloadableUnits.isEmpty() || !craneUnloadChoices(currentEntity).isEmpty();
+            boolean hasUnitToStopUnloading = !craneStopUnloadingChoices(currentEntity).isEmpty();
+            if (hasUnitToStopUnloading && !hasUnitToUnload) {
+                // Nothing to unload, only crane unloading to stop: the button says so, as Mount reads Stop Loading
+                setUnloadButtonLabel("moveStopUnloadingByCrane");
+                LOGGER.debug("[Crane] {}: Unload button reads Stop Unloading", currentEntity.getDisplayName());
+            }
+            setUnloadEnabled((hasUnitToUnload || hasUnitToStopUnloading) && !currentEntity.isAirborne());
             return;
         }
 
@@ -4438,6 +4501,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private void updateMountButton() {
         final Entity movingEntity = currentEntity();
+        if ((movingEntity != null) && CraneRules.isCraneOnlyUnit(movingEntity)) {
+            updateLoadByCraneButton(movingEntity);
+            return;
+        }
+        setMountButtonLabel(MoveCommand.MOVE_MOUNT.getCmd());
         if ((movingEntity == null) || (movingEntity instanceof SmallCraft)) {
             setMountEnabled(false);
             return;
@@ -4450,13 +4518,235 @@ public class MovementDisplay extends ActionPhaseDisplay {
             elev = cmd.getFinalElevation();
             mpUsed = cmd.getMpUsed();
         }
-        final boolean canMount = isFinalPositionOnBoard() &&
-              !movingEntity.isAirborne() &&
-              (mpUsed <= Math.ceil(movingEntity.getWalkMP() / 2.0)) &&
+        final boolean hasMountableUnit = isFinalPositionOnBoard() &&
               !Compute.getMountableUnits(movingEntity, pos, finalBoardId(),
                     elev + game.getBoard(movingEntity).getHex(pos).getLevel(),
                     game).isEmpty();
+        // Same rule the MOUNT step enforces on the path, so the button only lights when the mount would be legal
+        final boolean isJumping = (null != cmd) && cmd.isJumping();
+        final MountPathHelper.MountRestriction restriction = MountPathHelper.mountRestriction(movingEntity,
+              movingEntity.getWalkMP(), mpUsed, isJumping);
+        final boolean canMount = hasMountableUnit &&
+              !movingEntity.isAirborne() &&
+              (restriction == MountPathHelper.MountRestriction.NONE);
+        if (hasMountableUnit) {
+            // Only logged next to a transport, when the player expects the button, so the log is not flooded
+            LOGGER.debug("[Mount] {}: Mount button {} (MP used {} of Walking MP {}, jumping {}, restriction {})",
+                  movingEntity.getDisplayName(), canMount ? "enabled" : "disabled", mpUsed,
+                  movingEntity.getWalkMP(), isJumping, restriction);
+        }
         setMountEnabled(canMount);
+    }
+
+    /**
+     * VTOLs, fighters and small craft cannot mount under their own power (TW p.90), so for them the Mount button reads
+     * Load by Crane. Declaring it must be the unit's only action this turn.
+     */
+    private void updateLoadByCraneButton(Entity unit) {
+        final boolean hasPlottedMove = (cmd != null) && (cmd.length() > 0);
+        SmallCraft waitingForCarrier = CraneRules.findCarrierWorkingOn(unit.getId(), game);
+        if (waitingForCarrier != null) {
+            // Already waiting for a carrier's cranes, so the button offers to stop waiting
+            setMountButtonLabel("moveStopLoadingByCrane");
+            LOGGER.debug("[Crane] {}: Mount button reads Stop Loading, {} (waiting for {})", unit.getDisplayName(),
+                  hasPlottedMove ? "disabled" : "enabled", waitingForCarrier.getDisplayName());
+            setMountEnabled(!hasPlottedMove);
+            return;
+        }
+        setMountButtonLabel("moveLoadByCrane");
+        boolean canLoadByCrane = false;
+        if (!hasPlottedMove) {
+            canLoadByCrane = !CraneRules.carriersInReach(unit, game).isEmpty();
+            LOGGER.debug("[Crane] {}: Mount button reads Load by Crane, {} (carrier in reach {})",
+                  unit.getDisplayName(), canLoadByCrane ? "enabled" : "disabled", canLoadByCrane);
+        }
+        setMountEnabled(canLoadByCrane);
+    }
+
+    /**
+     * Labels the Mount button, which reads Load by Crane or Stop Loading for units only a crane can load.
+     *
+     * @param command the message key of the label, without the "MovementDisplay." prefix
+     */
+    private void setMountButtonLabel(String command) {
+        getBtn(MoveCommand.MOVE_MOUNT).setText(Messages.getString("MovementDisplay." + command));
+        getBtn(MoveCommand.MOVE_MOUNT).setToolTipText(
+              createToolTip(command, "MovementDisplay.", MoveCommand.MOVE_MOUNT.getHotKeyDesc()));
+    }
+
+    /**
+     * Lists the carried units the cranes could unload right now. Crane unloading needs a grounded carrier and must be
+     * its only action this turn (TW p.91).
+     *
+     * @param carrier the selected unit
+     *
+     * @return the units only the cranes can unload, or an empty list when the selected unit cannot use cranes now
+     */
+    private List<Entity> craneUnloadChoices(@Nullable Entity carrier) {
+        if (!(carrier instanceof SmallCraft smallCraft)) {
+            return List.of();
+        }
+        List<Entity> craneUnits = CraneRules.craneUnloadableUnits(smallCraft);
+        if (craneUnits.isEmpty()) {
+            return List.of();
+        }
+        final boolean hasPlottedMove = (cmd != null) && (cmd.length() > 0);
+        final boolean isGrounded = CraneRules.isGroundedCarrier(smallCraft);
+        LOGGER.debug("[Crane] {}: Unload offers {} unit(s) by crane: {} (plotted move {}, grounded {})",
+              smallCraft.getDisplayName(), craneUnits.size(), !hasPlottedMove && isGrounded, hasPlottedMove,
+              isGrounded);
+        if (hasPlottedMove || !isGrounded) {
+            return List.of();
+        }
+        return craneUnits;
+    }
+
+    /**
+     * Lists the carried units the cranes are already unloading, which the player may choose to stop unloading.
+     *
+     * @param carrier the selected unit
+     *
+     * @return the units being unloaded by crane, or an empty list when the selected unit is not unloading any
+     */
+    private List<Entity> craneStopUnloadingChoices(@Nullable Entity carrier) {
+        List<Entity> unitsBeingUnloaded = new ArrayList<>();
+        if (!(carrier instanceof SmallCraft smallCraft)) {
+            return unitsBeingUnloaded;
+        }
+        for (Entity loadedUnit : smallCraft.getLoadedUnits()) {
+            CraneOperation operation = smallCraft.getCraneOperations().findFor(loadedUnit.getId());
+            if ((operation != null) && !operation.isLoading()) {
+                unitsBeingUnloaded.add(loadedUnit);
+            }
+        }
+        return unitsBeingUnloaded;
+    }
+
+    /**
+     * Starts crane unloading (TW p.91): highlights the hexes the cranes can reach so the player can click one. The
+     * facing is asked for after the click.
+     *
+     * @param carrier the grounded carrier doing the unloading
+     * @param unit    the carried unit only the cranes can unload
+     */
+    private void unloadByCrane(SmallCraft carrier, Entity unit) {
+        startUnloadHexSelection(carrier, unit, CraneRules.unloadPositions(carrier, unit, game));
+    }
+
+    /**
+     * Highlights the hexes a unit can be unloaded into from a grounded Small Craft or DropShip so the player can click
+     * one; the facing is asked for after the click. Used both for crane unloading and for units dismounting under their
+     * own power (TW p.91).
+     *
+     * @param carrier   the grounded carrier doing the unloading
+     * @param unit      the carried unit to unload
+     * @param positions the hexes the unit may be unloaded into
+     */
+    private void startUnloadHexSelection(SmallCraft carrier, Entity unit, List<Coords> positions) {
+        String logTag = CraneRules.isCraneOnlyUnit(unit) ? "[Crane]" : "[Mount]";
+        if (positions.isEmpty()) {
+            LOGGER.debug("{} {}: no hex to unload {} into", logTag, carrier.getDisplayName(), unit.getDisplayName());
+            clientgui.addToast(ToastLevel.ERROR, Messages.getString("MovementDisplay.NoPlaceToUnload.message"),
+                  carrier);
+            return;
+        }
+        unloadHexUnit = unit;
+        validUnloadHexes.clear();
+        validUnloadHexes.addAll(positions);
+        // Mark each hex on its own: the movement envelope outlines both edges of the band around a DropShip, which
+        // reads as two rings
+        clientgui.clearMovementEnvelope();
+        if (clientgui.getBoardView(carrier) instanceof BoardView boardView) {
+            for (Coords coords : validUnloadHexes) {
+                unloadTargetSprites.add(new CraneUnloadTargetSprite(boardView, coords, GUIP.getMoveDefaultColor()));
+            }
+            boardView.addSprites(unloadTargetSprites);
+        }
+        String selectHexKey = CraneRules.isCraneOnlyUnit(unit)
+              ? "MovementDisplay.CraneUnload.selectHex"
+              : "MovementDisplay.Dismount.selectHex";
+        setStatusBarText(Messages.getString(selectHexKey, unit.getShortName()));
+        LOGGER.debug("{} {}: choosing the hex to unload {} into from {}", logTag, carrier.getDisplayName(),
+              unit.getDisplayName(), positions);
+    }
+
+    /**
+     * Handles a board click while the player chooses the hex to unload a unit into. A click outside the highlighted
+     * hexes is ignored with a hint, so a stray click does not throw the choice away.
+     *
+     * @param clicked the clicked hex
+     */
+    private void handleUnloadHexClick(Coords clicked) {
+        Entity unit = unloadHexUnit;
+        if (!(currentEntity() instanceof SmallCraft carrier) || (unit == null)) {
+            cancelUnloadHexSelection();
+            return;
+        }
+        boolean byCrane = CraneRules.isCraneOnlyUnit(unit);
+        String logTag = byCrane ? "[Crane]" : "[Mount]";
+        if (!validUnloadHexes.contains(clicked)) {
+            LOGGER.debug("{} {}: ignoring click at {}, not a highlighted unload hex {}", logTag,
+                  carrier.getDisplayName(), clicked, validUnloadHexes);
+            String invalidHexMessage = byCrane
+                  ? Messages.getString("MovementDisplay.CraneUnload.invalidHex", carrier.getShortName())
+                  : Messages.getString("MovementDisplay.Dismount.invalidHex", unit.getShortName());
+            clientgui.addToast(ToastLevel.WARNING, invalidHexMessage, carrier);
+            return;
+        }
+        cancelUnloadHexSelection();
+        Integer facing = CraneCommandDialogs.chooseFacing(clientgui.getFrame(), unit);
+        if (facing == null) {
+            LOGGER.debug("{} {}: facing choice cancelled; not unloading {}", logTag, carrier.getDisplayName(),
+                  unit.getDisplayName());
+            return;
+        }
+        if (byCrane) {
+            LOGGER.debug("[Crane] {}: declaring Unload by Crane of {} into {} facing {}", carrier.getDisplayName(),
+                  unit.getDisplayName(), clicked, facing);
+            addStepToMovePath(MoveStepType.UNLOAD_BY_CRANE, unit, clicked,
+                  Map.of(MoveStep.CRANE_UNLOAD_FACING_KEY, facing));
+        } else {
+            LOGGER.debug("[Mount] {}: unloading {} into {} facing {}", carrier.getDisplayName(),
+                  unit.getDisplayName(), clicked, facing);
+            int length = cmd.length();
+            addStepToMovePath(MoveStepType.UNLOAD, unit, clicked, Map.of(MoveStep.UNLOAD_FACING_KEY, facing));
+            if (!((length == cmd.length()) || (cmd.getLastStepMovementType() == EntityMovementType.MOVE_ILLEGAL))) {
+                // Record the hashcode of the target hex temporarily, for filtering
+                unit.setTargetBay(clicked.hashCode());
+            }
+        }
+        // Small Craft and DropShips get extra unloading turns, so ready them now
+        ready();
+    }
+
+    /**
+     * Asks the player to confirm, then declares that the carrier stops unloading a unit, which stays aboard.
+     *
+     * @param carrier the carrier doing the unloading
+     * @param unit    the unit the cranes are unloading
+     */
+    private void stopCraneUnloading(SmallCraft carrier, Entity unit) {
+        int answer = JOptionPane.showConfirmDialog(clientgui.getFrame(),
+              Messages.getString("MovementDisplay.StopCraneUnloadingDialog.message", unit.getShortName(),
+                    carrier.getShortName()),
+              Messages.getString("MovementDisplay.StopCraneUnloadingDialog.title"),
+              JOptionPane.YES_NO_OPTION);
+        if (answer != JOptionPane.YES_OPTION) {
+            LOGGER.debug("[Crane] {}: kept unloading {}", carrier.getDisplayName(), unit.getDisplayName());
+            return;
+        }
+        LOGGER.debug("[Crane] {}: declaring Stop Unloading for {}", carrier.getDisplayName(), unit.getDisplayName());
+        addStepToMovePath(MoveStepType.STOP_CRANE_OPERATION, unit);
+        ready();
+    }
+
+    /** Ends the unloading hex choice and clears the highlighting. */
+    private void cancelUnloadHexSelection() {
+        unloadHexUnit = null;
+        validUnloadHexes.clear();
+        clientgui.boardViews().forEach(boardView -> boardView.removeSprites(unloadTargetSprites));
+        unloadTargetSprites.clear();
+        clientgui.clearMovementEnvelope();
     }
 
     /** Updates the status of the Tow and Disconnect buttons. */
@@ -4527,7 +4817,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
     }
 
-    private Entity getMountedUnit() {
+    private @Nullable Entity getMountedUnit() {
         Entity currentEntity = currentEntity();
         Entity choice = null;
         Coords pos = currentEntity.getPosition();
@@ -4581,6 +4871,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       null,
                       retVal,
                       null);
+                if (bayString == null) {
+                    // The player cancelled the bay choice, so do not mount
+                    LOGGER.debug("[Mount] {} cancelled the bay choice for {}; not mounting",
+                          currentEntity.getDisplayName(), choice.getDisplayName());
+                    currentEntity.setTargetBay(UNSET_BAY);
+                    return null;
+                }
                 currentEntity.setTargetBay(MathUtility.parseInt(bayString.substring(0, bayString.indexOf(" "))));
                 // We need to update the entity here so that the server knows
                 // about our target bay
@@ -4604,7 +4901,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             for (Entity other : game.getEntitiesVector(coords)) {
                 // Only allow selecting units that aren't already getting loaded
                 if (other.isLoadableThisTurn() && (currentEntity() != null) && currentEntity().canLoad(other, true,
-                      cmd.getFinalElevation()) && (other.getTargetBay() == UNSET_BAY)) {
+                      cmd.getFinalElevation()) && (other.getTargetBay() == UNSET_BAY)
+                      && !CraneRules.mustBoardByCrane(currentEntity(), other)) {
                     choices.addElement(other);
                 }
             }
@@ -4929,14 +5227,30 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private @Nullable Entity getUnloadedUnit() {
         Entity currentEntity = currentEntity();
+        // Units only the cranes can unload, then units the cranes are already unloading (choosing one stops that work)
+        List<Entity> unitsBeingUnloaded = craneStopUnloadingChoices(currentEntity);
+        List<Entity> craneUnits = new ArrayList<>(craneUnloadChoices(currentEntity));
+        craneUnits.addAll(unitsBeingUnloaded);
         Entity choice = null;
-        if (unloadableUnits.isEmpty()) {
+        if (unloadableUnits.isEmpty() && craneUnits.isEmpty()) {
             LOGGER.error("No loaded units");
-        } else if (unloadableUnits.size() > 1) {
-            // Only show the units we are not already planning to unload
-            List<Entity> filteredUnits = unloadableUnits
-                  .stream()
-                  .filter(entity -> entity.getTargetBay() == UNSET_BAY).collect(Collectors.toList());
+        } else if ((unloadableUnits.size() + craneUnits.size()) > 1) {
+            // Only show the units we are not already planning to unload, then the units only the cranes can unload
+            List<Entity> filteredUnits = new ArrayList<>();
+            for (Entity unloadable : unloadableUnits) {
+                if (unloadable.getTargetBay() == UNSET_BAY) {
+                    filteredUnits.add(unloadable);
+                }
+            }
+            filteredUnits.addAll(craneUnits);
+            // Units the cranes are already unloading are labelled as a stop, so they read differently from an unload
+            String[] choiceLabels = new String[filteredUnits.size()];
+            for (int index = 0; index < filteredUnits.size(); index++) {
+                Entity unit = filteredUnits.get(index);
+                choiceLabels[index] = unitsBeingUnloaded.contains(unit)
+                      ? Messages.getString("MovementDisplay.UnloadUnitDialog.stopUnloading", unit.getDisplayName())
+                      : unit.getDisplayName();
+            }
             // If we have multiple choices, display a selection dialog.
             String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                   Messages.getString("MovementDisplay.UnloadUnitDialog.message",
@@ -4945,9 +5259,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
                   Messages.getString("MovementDisplay.UnloadUnitDialog.title"),
                   JOptionPane.QUESTION_MESSAGE,
                   null,
-                  SharedUtility.getDisplayArray(filteredUnits),
+                  choiceLabels,
                   null);
-            choice = (Entity) SharedUtility.getTargetPicked(filteredUnits, input);
+            for (int index = 0; index < choiceLabels.length; index++) {
+                if (choiceLabels[index].equals(input)) {
+                    choice = filteredUnits.get(index);
+                    break;
+                }
+            }
+        } else if (unloadableUnits.isEmpty()) {
+            // Only one choice, and only the cranes can unload it.
+            choice = craneUnits.getFirst();
         } else {
             // Only one choice.
             choice = unloadableUnits.getFirst();
@@ -4959,13 +5281,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     /**
-     * Returns a position to unload a unit into or null if the player cancels the dialog.
+     * Returns the hexes the current unit can unload a carried unit into.
      *
      * @param unloaded The unit to unload
      *
-     * @return The position to unload to
+     * @return The positions the unit may be unloaded into; empty if there are none
      */
-    private @Nullable Coords getUnloadPosition(Entity unloaded) {
+    private List<Coords> unloadPositions(Entity unloaded) {
         Entity currentEntity = currentEntity();
         // we need to allow the user to select a hex for offloading
         Coords pos = currentEntity.getPosition();
@@ -5015,7 +5337,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
         ring.removeAll(toRemove);
+        return ring;
+    }
 
+    /**
+     * Returns a position to unload a unit into or null if the player cancels the dialog.
+     *
+     * @param unloaded The unit to unload
+     *
+     * @return The position to unload to
+     */
+    private @Nullable Coords getUnloadPosition(Entity unloaded) {
+        Entity currentEntity = currentEntity();
+        List<Coords> ring = unloadPositions(unloaded);
         if (ring.isEmpty()) {
             clientgui.addToast(ToastLevel.ERROR,
                   Messages.getString("MovementDisplay.NoPlaceToUnload.message"), currentEntity());
@@ -5828,6 +6162,27 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MineLayingDialog mld = new MineLayingDialog(clientgui.getFrame(), currentEntity());
         mld.setVisible(true);
         return mld.getAnswer() ? mld.getMine() : -1;
+    }
+
+    /**
+     * Builds the lift-off confirmation. Lifting off cancels every crane operation the carrier has in progress (TW
+     * p.90-91), so when there are any the confirmation says so.
+     *
+     * @return the confirmation text to show the player
+     */
+    private String takeOffConfirmationMessage() {
+        Entity entity = currentEntity();
+        String message = Messages.getString("MovementDisplay.TakeOffDialog.message");
+        int craneOperations = CraneRules.pendingOperationCount(entity);
+        if (craneOperations > 0) {
+            LOGGER.debug("[Crane] {} asks to lift off with {} crane operation(s) in progress; warning shown",
+                  entity.getDisplayName(), craneOperations);
+            return message + "\n\n"
+                  + Messages.getString("MovementDisplay.TakeOffDialog.craneWarning", craneOperations);
+        }
+        LOGGER.debug("[Crane] {} asks to lift off with no crane operations in progress; no warning",
+              entity.getDisplayName());
+        return message;
     }
 
     private void dumpBombs() {
@@ -6650,14 +7005,39 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 addStepToMovePath(MoveStepType.DISCONNECT, other);
             } // else - didn't find a unit to tow
         } else if (actionCmd.equals(MoveCommand.MOVE_MOUNT.getCmd())) {
-            Entity other = getMountedUnit();
-            if (other != null) {
-                addStepToMovePath(MoveStepType.MOUNT, other);
+            SmallCraft waitingForCarrier = CraneRules.isCraneOnlyUnit(currentEntity())
+                  ? CraneRules.findCarrierWorkingOn(currentEntity().getId(), game) : null;
+            if (waitingForCarrier != null) {
+                // For a unit already waiting for the cranes the Mount button reads Stop Loading
+                LOGGER.debug("[Crane] {}: declaring Stop Loading for {}", currentEntity().getDisplayName(),
+                      waitingForCarrier.getDisplayName());
+                addStepToMovePath(MoveStepType.STOP_CRANE_OPERATION, waitingForCarrier);
                 ready();
+            } else if (CraneRules.isCraneOnlyUnit(currentEntity())) {
+                // For VTOLs, fighters and small craft the Mount button reads Load by Crane (TW p.90)
+                SmallCraft carrier = CraneCommandDialogs.chooseCarrier(clientgui.getFrame(), currentEntity(),
+                      CraneRules.carriersInReach(currentEntity(), game));
+                if (carrier != null) {
+                    addStepToMovePath(MoveStepType.LOAD_BY_CRANE, carrier);
+                    ready();
+                }
+            } else {
+                Entity other = getMountedUnit();
+                if (other != null) {
+                    addStepToMovePath(MoveStepType.MOUNT, other);
+                    ready();
+                }
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_UNLOAD.getCmd())) {
             Entity other = getUnloadedUnit();
-            if (other != null) {
+            if ((other != null) && (currentEntity() instanceof SmallCraft carrier)
+                  && CraneRules.isCraneOnlyUnit(other)) {
+                if (carrier.getCraneOperations().findFor(other.getId()) != null) {
+                    stopCraneUnloading(carrier, other);
+                } else {
+                    unloadByCrane(carrier, other);
+                }
+            } else if (other != null) {
                 if (!other.isInfantry() ||
                       currentEntity() instanceof SmallCraft ||
                       (currentEntity().isSupportVehicle() && (currentEntity().getWeightClass()
@@ -6667,7 +7047,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       !currentEntity().getAllTowedUnits().isEmpty() ||
                       currentEntity().getTowedBy() != Entity.NONE) {
                     // unload into adjacent hexes
-                    Coords pos = getUnloadPosition(other);
+                    Coords pos = null;
+                    if (currentEntity() instanceof SmallCraft carrier) {
+                        // A unit dismounting a Small Craft or DropShip is placed by clicking a highlighted hex, then
+                        // chooses its facing (TW p.91); the click handler declares the step
+                        startUnloadHexSelection(carrier, other, unloadPositions(other));
+                    } else {
+                        pos = getUnloadPosition(other);
+                    }
                     if (null != pos) {
                         // set other's position and end this turn - the unloading unit will get
                         // another turn for further unloading later
@@ -7020,7 +7407,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                             ((IAero) currentEntity()).hasRoomForHorizontalTakeOff()), currentEntity());
             } else {
                 if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.TakeOffDialog.title"),
-                      Messages.getString("MovementDisplay.TakeOffDialog.message"))) {
+                      takeOffConfirmationMessage())) {
                     clear();
                     addStepToMovePath(MoveStepType.TAKEOFF);
                     ready();
@@ -7028,7 +7415,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_VERT_TAKE_OFF.getCmd())) {
             if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.TakeOffDialog.title"),
-                  Messages.getString("MovementDisplay.TakeOffDialog.message"))) {
+                  takeOffConfirmationMessage())) {
                 clear();
                 addStepToMovePath(MoveStepType.VERTICAL_TAKE_OFF);
                 ready();
@@ -7422,6 +7809,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void setUnloadEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_UNLOAD).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_UNLOAD.getCmd(), enabled);
+    }
+
+    /**
+     * Labels the Unload button, which reads Stop Unloading when a carrier has only crane unloading left to stop.
+     *
+     * @param command the message key of the label, without the "MovementDisplay." prefix
+     */
+    private void setUnloadButtonLabel(String command) {
+        getBtn(MoveCommand.MOVE_UNLOAD).setText(Messages.getString("MovementDisplay." + command));
+        getBtn(MoveCommand.MOVE_UNLOAD).setToolTipText(
+              createToolTip(command, "MovementDisplay.", MoveCommand.MOVE_UNLOAD.getHotKeyDesc()));
     }
 
     private void setDisconnectEnabled(boolean enabled) {

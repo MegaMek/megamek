@@ -7181,6 +7181,9 @@ public class Compute {
         }
 
         List<Entity> mountable = new ArrayList<>();
+        // Non-infantry mount from within two levels of the transport (TW p.90). Infantry mount as though the carrier
+        // were a Large Support Vehicle, which needs the same level (TW p.89 and p.224).
+        int maximumLevelDifference = entity.isInfantry() ? 0 : 2;
         // the rules don't say that the unit must be facing loader, so lets take the ring
         for (Coords c : pos.allAdjacent()) {
             Hex hex = game.getBoard(boardId).getHex(c);
@@ -7195,7 +7198,7 @@ public class Compute {
                       || other.getTowedBy() != Entity.NONE)
                       && other.canLoad(entity)
                       && !other.isAirborne()
-                      && (Math.abs((hex.getLevel() + other.getElevation()) - elev) < 3)
+                      && (Math.abs((hex.getLevel() + other.getElevation()) - elev) <= maximumLevelDifference)
                       && !mountable.contains(other)) {
                     mountable.add(other);
                 }

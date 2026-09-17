@@ -256,6 +256,7 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.checkLayExplosives();
                 gameManager.checkBuildBridges();
                 gameManager.checkClearRubble();
+                gameManager.checkCraneOperations();
                 gameManager.checkDeployBridges();
                 gameManager.resolveInfantryActions();
                 gameManager.resolveHarJelRepairs();

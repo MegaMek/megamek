@@ -5608,6 +5608,15 @@ public final class BoardView extends AbstractBoardView
         zoom();
     }
 
+    /**
+     * Reset the zoom level to the BASE_ZOOM_INDEX
+     */
+    @Override
+    public void zoomReset() {
+        zoomIndex = BASE_ZOOM_INDEX;
+        zoom();
+    }
+
     @Override
     public void zoomOverviewToggle() {
         if (!zoomOverview) {

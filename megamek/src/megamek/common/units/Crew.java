@@ -94,7 +94,9 @@ public class Crew implements Serializable {
     private final Portrait[] portraits;
 
     private final int[] gunnery;
+    private boolean hasNaturalAptitudeGunnery;
     private final int[] piloting;
+    private boolean hasNaturalAptitudePiloting;
     private final int[] hits; // hits taken
 
     private final String[] externalId;
@@ -217,7 +219,7 @@ public class Crew implements Serializable {
      * @param crewType the crew type to use.
      */
     public Crew(CrewType crewType) {
-        this(crewType, "Unnamed", crewType.getCrewSlots(), 4, 5, Gender.FEMALE, false, null);
+        this(crewType, "Unnamed", crewType.getCrewSlots(), 4, false, 5, false, Gender.FEMALE, false, null);
     }
 
     /**
@@ -230,9 +232,8 @@ public class Crew implements Serializable {
      * @param clanPilot if the crew or commander is a clanPilot
      * @param extraData any extra data passed to be stored with this Crew.
      */
-    public Crew(CrewType crewType, String name, int size, int gunnery, int piloting, Gender gender, boolean clanPilot,
-          Map<Integer, Map<String, String>> extraData) {
-        this(crewType, name, size, gunnery, gunnery, gunnery, piloting, gender, clanPilot, extraData);
+    public Crew(CrewType crewType, String name, int size, int gunnery, boolean hasNaturalAptitudeGunnery, int piloting, boolean hasNaturalAptitudePiloting, Gender gender, boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
+        this(crewType, name, size, gunnery, gunnery, gunnery, hasNaturalAptitudeGunnery, piloting, hasNaturalAptitudePiloting, gender, clanPilot, extraData);
     }
 
     /**
@@ -247,8 +248,7 @@ public class Crew implements Serializable {
      * @param clanPilot if the crew or commander is a clanPilot
      * @param extraData any extra data passed to be stored with this Crew.
      */
-    public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB, int piloting,
-          Gender gender, boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
+    public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB, boolean hasNaturalAptitudeGunnery, int piloting, boolean hasNaturalAptitudePiloting, Gender gender, boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
         this.crewType = crewType;
         this.size = Math.max(size, crewType.getCrewSlots());
         this.currentSize = size;
@@ -285,8 +285,10 @@ public class Crew implements Serializable {
         Arrays.fill(this.gunneryM, gunneryM);
         this.artillery = new int[slots];
         Arrays.fill(this.artillery, avGunnery);
+        this.hasNaturalAptitudeGunnery = hasNaturalAptitudeGunnery;
         this.piloting = new int[slots];
         Arrays.fill(this.piloting, piloting);
+        this.hasNaturalAptitudePiloting = hasNaturalAptitudePiloting;
 
         initBonus = 0;
         commandBonus = 0;
@@ -732,6 +734,10 @@ public class Crew implements Serializable {
         return usesSmallArms() ? getSmallArms(gunnerPos) : gunneryB[gunnerPos];
     }
 
+    public boolean isHasNaturalAptitudeGunnery() {
+        return hasNaturalAptitudeGunnery;
+    }
+
     protected int rawArtillery() {
         return artillery[gunnerPos];
     }
@@ -742,6 +748,10 @@ public class Crew implements Serializable {
 
     protected int rawPiloting(EntityMovementType moveType) {
         return piloting[pilotPos];
+    }
+
+    public boolean isHasNaturalAptitudePiloting() {
+        return hasNaturalAptitudePiloting;
     }
 
     public int getGunnery(int pos) {
@@ -942,12 +952,20 @@ public class Crew implements Serializable {
         gunneryB[pos] = gunnery;
     }
 
+    public void setHasNaturalAptitudeGunnery(boolean hasNaturalAptitudeGunnery) {
+        this.hasNaturalAptitudeGunnery = hasNaturalAptitudeGunnery;
+    }
+
     public void setArtillery(int artillery, int pos) {
         this.artillery[pos] = artillery;
     }
 
     public void setPiloting(int piloting, int pos) {
         this.piloting[pos] = piloting;
+    }
+
+    public void setHasNaturalAptitudePiloting(boolean hasNaturalAptitudePiloting) {
+        this.hasNaturalAptitudePiloting = hasNaturalAptitudePiloting;
     }
 
     public void setHits(int hits, int pos) {
@@ -1487,7 +1505,7 @@ public class Crew implements Serializable {
     }
 
     public Roll rollGunnerySkill() {
-        if (getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY)) {
+        if (hasNaturalAptitudeGunnery) {
             return Compute.rollD6(3, 2);
         }
 
@@ -1495,7 +1513,7 @@ public class Crew implements Serializable {
     }
 
     public Roll rollPilotingSkill() {
-        if (getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING)) {
+        if (hasNaturalAptitudePiloting) {
             return Compute.rollD6(3, 2);
         }
 
